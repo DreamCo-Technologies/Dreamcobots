@@ -1,0 +1,60 @@
+{
+  "schema": "dreamco.original_bot_recovery.v1",
+  "version": "1.0.0",
+  "mission": "Recover every usable bot and system under original-bots, reconcile it against the canonical App_bots fleet, and expose truly missing original workers as supplemental Buddy-routable profiles without corrupting the verified 1,051 canonical baseline.",
+  "sources": {
+    "canonical_fleet": "App_bots/**/*.json",
+    "original_archive": "original-bots/**/*"
+  },
+  "recovery_states": ["already_canonical","supplemental_recovered","merge_review","system_asset","unsupported_file","parse_error"],
+  "identity_rules": [
+    "Normalize slug, display name, capabilities and source before comparison.",
+    "Exact normalized slug matches remain canonical and are not duplicated.",
+    "Strong normalized-name matches with different slugs become merge_review instead of duplicate workers.",
+    "Original bot-like records not represented in App_bots become supplemental_recovered workers.",
+    "Original system/code/config assets are retained in the recovery inventory even when they are not bot profiles.",
+    "Never delete original-bots source files during recovery."
+  ],
+  "division_inference": {
+    "default": "DreamAgents",
+    "keyword_map": {
+      "code|developer|debug|software|github|program": "DreamCodeLab",
+      "sales|lead|crm|appointment": "DreamSalesPro",
+      "finance|accounting|budget|stock|invest": "DreamFinance",
+      "real estate|property|mortgage|housing": "DreamRealEstate",
+      "data|analytics|sql|database": "DreamData",
+      "automation|workflow|scheduler": "DreamAutomation",
+      "content|writer|blog|seo": "DreamContent",
+      "trade|supplier|manufacturer|import|export": "DreamTrade",
+      "legal|law|contract": "DreamLegal",
+      "security|cyber|vulnerability": "DreamCyber",
+      "health|medical|wellness": "DreamHealth",
+      "education|teacher|tutor|course": "DreamEducation",
+      "construction|carpentry|building": "DreamConstruction",
+      "transport|logistics|vehicle": "DreamTransport",
+      "food|restaurant|recipe": "DreamFood",
+      "science|research|laboratory": "DreamScience",
+      "art|music|film|actor|design": "DreamArts",
+      "social|influencer|community": "DreamSocial",
+      "payment|stripe|checkout": "DreamPayments",
+      "loan|credit|funding": "DreamLoans",
+      "business|startup|entrepreneur": "DreamBizLaunch",
+      "agent|assistant|bot": "DreamAgents"
+    }
+  },
+  "supplemental_runtime": {
+    "enabled": true,
+    "canonical_count_must_remain": 1051,
+    "supplemental_profiles_are_separately_counted": true,
+    "shared_runtime": "server/fleet-runtime.ts",
+    "default_execution_mode": "sandbox",
+    "live_external_actions": "approval_required",
+    "external_integrations": "configuration_and_sandbox_required"
+  },
+  "outputs": [
+    "config/generated/original-bot-recovery.json",
+    "config/generated/recovered-original-bot-overlay.json",
+    "reports/ORIGINAL_BOT_RECOVERY.md"
+  ],
+  "truth_rule": "Recovery proves source inventory and Buddy-routable shared sandbox profiles. It does not prove every recovered historical implementation still works; recovered workers must pass the same sandbox/runtime certification before production claims."
+}
