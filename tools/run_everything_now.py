@@ -18,6 +18,7 @@ MAX_STEPS=[
  ('legacy_recovery',[sys.executable,'tools/recover_legacy_bots.py']),
  ('unified_bot_system',[sys.executable,'tools/build_unified_bot_system.py']),
  ('bot_accounting',[sys.executable,'tools/audit_all_bots_categories_and_agents.py']),
+ ('work_platform_benchmarks',[sys.executable,'tools/build_work_platform_benchmarks.py']),
  ('universal_task_sandbox',[sys.executable,'tools/build_universal_human_ai_task_sandbox.py']),
  ('full_potential_sandbox',[sys.executable,'tools/build_full_potential_sandbox_catalog.py']),
  ('bot_sandbox_curriculum',[sys.executable,'tools/build_bot_sandbox_curriculum.py']),
@@ -27,6 +28,7 @@ MAX_STEPS=[
  ('notes_to_code',[sys.executable,'tools/build_notes_to_code_backlog.py']),
  ('resource_matrix',[sys.executable,'tools/build_resource_sandbox_matrix.py']),
  ('connection_truth',[sys.executable,'tools/audit_runtime_connections.py']),
+ ('ontology_snapshot',[sys.executable,'tools/build_ontology_snapshot.py']),
  ('trusted_code',[sys.executable,'tools/audit_trusted_code_delivery.py']),
  ('maximum_sandbox',[sys.executable,'tools/build_maximum_sandbox_matrix.py']),
  ('production_verification',['node','--import','tsx','tools/run_universal_verification.ts','--production']),
@@ -45,14 +47,14 @@ def run(name,command):
 def main()->int:
     ap=argparse.ArgumentParser(); ap.add_argument('--mode',choices=['quick','standard','maximum'],default='maximum'); args=ap.parse_args()
     steps=MAX_STEPS
-    if args.mode=='quick': steps=MAX_STEPS[:5]+MAX_STEPS[-2:]
-    elif args.mode=='standard': steps=MAX_STEPS[:12]+MAX_STEPS[-4:]
+    if args.mode=='quick': steps=MAX_STEPS[:6]+MAX_STEPS[-2:]
+    elif args.mode=='standard': steps=MAX_STEPS[:14]+MAX_STEPS[-4:]
     results=[]
     for name,command in steps:
         print(f'\n[run-everything] {name}: {" ".join(command)}',flush=True)
         results.append(run(name,command))
     failures=[r for r in results if r['exit_code']!=0]
-    payload={'schema':'dreamco.run_everything_now_result.v1','generated_at':datetime.now(timezone.utc).isoformat(),'mode':args.mode,'step_count':len(results),'passed':sum(r['exit_code']==0 for r in results),'failed':len(failures),'results':results,'first_failure':failures[0] if failures else None,'truth_boundary':CFG['truth_rule']}
+    payload={'schema':'dreamco.run_everything_now_result.v2','generated_at':datetime.now(timezone.utc).isoformat(),'mode':args.mode,'step_count':len(results),'passed':sum(r['exit_code']==0 for r in results),'failed':len(failures),'results':results,'first_failure':failures[0] if failures else None,'truth_boundary':CFG['truth_rule']}
     OUT.parent.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n')
     lines=['# Run Everything Now','',f"- Mode: **{args.mode}**",f"- Passed: **{payload['passed']}/{len(results)}**",f"- Failed: **{len(failures)}**",'', '| Step | Seconds | Result |','| --- | ---: | --- |']
     for r in results: lines.append(f"| {r['name']} | {r['duration_seconds']} | {'PASS' if r['exit_code']==0 else 'FAIL'} |")
