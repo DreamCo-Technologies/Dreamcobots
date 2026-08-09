@@ -12,7 +12,16 @@ WORK=ROOT/'config/generated/universal-work-ai-catalog.json'
 TASKS=ROOT/'config/generated/universal-human-ai-task-sandbox.json'
 OUT=ROOT/'config/generated/maximum-sandbox-matrix.json'
 
-OVERLAYS=['happy_path','negative','boundary','malformed_input','permission','privacy','security','recovery','idempotency','concurrency_when_applicable','speed','accuracy','cost','observability','rollback_when_applicable']
+OVERLAYS=[
+ 'happy_path','negative','boundary','empty_null_missing','malformed_input','property_invariant_when_applicable','metamorphic_when_applicable','fuzz_when_applicable',
+ 'adversarial_prompt_input_when_applicable','tool_output_poisoning_when_applicable','permission','privacy','security','secret_handling','injection','authorization_isolation',
+ 'recovery','fault_injection','dependency_failure','network_loss','timeout','rate_limit','retry_backoff','circuit_breaker','idempotency','concurrency_when_applicable','race_condition_when_applicable',
+ 'load_when_applicable','stress_when_applicable','soak_when_applicable','memory_resource_leak_when_applicable','speed','accuracy','cost','quality_regression','data_quality','data_drift_when_applicable',
+ 'schema_contract','backward_compatibility','dependency_upgrade','dependency_downgrade_when_supported','migration','backup_restore_when_applicable','rollback_when_applicable',
+ 'observability','alerting','audit_trail','accessibility_when_ui','keyboard_screen_reader_when_ui','localization_when_applicable','timezone_locale_when_applicable','responsive_cross_device_when_ui',
+ 'cross_platform_when_applicable','offline_degraded_mode_when_supported','large_input_long_context_when_applicable','duplicate_replay','partial_failure','human_handoff','approval_gate','unsafe_action_refusal',
+ 'business_value_measurement_when_applicable','platform_policy_fit_when_external','rights_provenance_when_creative','professional_oversight_when_regulated'
+]
 
 
 def ensure(path:Path,cmd:list[str]):
@@ -31,7 +40,7 @@ def main()->int:
     for occ in work.get('occupations',[]): workers.append({'worker_id':occ['worker_slug'],'worker_type':'occupation_specialist','source':'O*NET','status':'sandbox_only'})
     for task in work.get('tasks',[]): workers.append({'worker_id':task['worker_slug'],'worker_type':'task_specialist','source':'O*NET','status':'sandbox_only'})
     payload={
-      'schema':'dreamco.maximum_sandbox_matrix.v1',
+      'schema':'dreamco.maximum_sandbox_matrix.v2',
       'worker_count':len(workers),
       'canonical_workers':sum(w['worker_type']=='canonical_bot' for w in workers),
       'legacy_candidate_workers':sum(w['worker_type']=='legacy_candidate' for w in workers),
@@ -41,8 +50,9 @@ def main()->int:
       'test_overlays':OVERLAYS,
       'minimum_test_dimensions_per_applicable_case':len(OVERLAYS),
       'workers':workers,
-      'application_rule':'Each worker maps only to applicable task/domain/tool/API/resource/job cases, but every applicable case receives all relevant overlays. Shared infrastructure tests are inherited with dependency evidence rather than duplicated pointlessly.',
-      'live_user_gate':'No worker graduates to live-user autonomous operation until applicable runtime tests, security/privacy/permission checks, recovery, speed and accuracy thresholds pass.',
+      'application_rule':'Each worker maps only to applicable task/domain/tool/API/resource/job cases, but every applicable case receives all relevant overlays. Shared infrastructure evidence is inherited with dependency/provenance links instead of duplicated pointlessly.',
+      'evidence_rule':'Each executed test records worker/capability or shared-owner target, fixture/input class, expected invariant, observed output, latency/cost where applicable, pass/fail, commit, environment and evidence reference.',
+      'live_user_gate':'No worker graduates to live-user autonomous operation until applicable runtime tests, security/privacy/permission checks, recovery, speed, accuracy, observability, rollback and human-handoff thresholds pass.',
       'truth_boundary':'This matrix defines maximum required coverage. Planned mappings are not counted as passed until executable test evidence exists.'
     }
     OUT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n')
