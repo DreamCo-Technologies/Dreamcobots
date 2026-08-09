@@ -1,0 +1,65 @@
+name: Revenue and Data Readiness
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "53 16 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "config/intelligent-data-storage-program.json"
+      - "config/live-revenue-gate.json"
+      - "config/autonomous-bot-business-owner-program.json"
+      - "tools/build_bot_business_owner_curriculum.py"
+      - "tools/build_bot_sandbox_curriculum.py"
+      - "tools/build_live_revenue_readiness.py"
+      - "tests/test_live_revenue_and_intelligent_storage.py"
+      - "server/stripeClient.ts"
+      - ".github/workflows/revenue-data-readiness.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: revenue-data-readiness-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Generate business and sandbox curricula
+        run: |
+          python3 tools/build_bot_business_owner_curriculum.py
+          python3 tools/build_bot_sandbox_curriculum.py
+      - name: Generate live revenue readiness registry
+        run: python3 tools/build_live_revenue_readiness.py
+      - name: Verify data and revenue gates
+        run: python3 -m unittest tests.test_live_revenue_and_intelligent_storage
+      - name: Summarize readiness
+        if: always()
+        run: |
+          {
+            echo "# Revenue and Data Readiness"
+            echo
+            if [ -f config/generated/live-revenue-readiness.json ]; then
+              python3 -c "import json; d=json.load(open('config/generated/live-revenue-readiness.json')); print('- Bots evaluated:',d['bot_count']); print('- Live enabled:',d['live_enabled_count']); print('- Eligible pending owner:',d['eligible_pending_owner_count'])"
+            fi
+            echo "- Live revenue is blocked by default. Verified Stripe events—not forecasts—are the only source of recorded real revenue."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Save readiness evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: revenue-data-readiness-${{ github.run_id }}
+          path: |
+            config/generated/live-revenue-readiness.json
+            config/generated/bot-business-owner-curriculum.json
+            config/generated/bot-sandbox-curriculum.json
+          if-no-files-found: warn
+          retention-days: 14
