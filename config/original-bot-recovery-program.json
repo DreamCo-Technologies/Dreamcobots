@@ -1,19 +1,25 @@
 {
-  "schema": "dreamco.original_bot_recovery.v1",
-  "version": "1.0.0",
-  "mission": "Recover every usable bot and system under original-bots, reconcile it against the canonical App_bots fleet, and expose truly missing original workers as supplemental Buddy-routable profiles without corrupting the verified 1,051 canonical baseline.",
+  "schema": "dreamco.original_bot_recovery.v2",
+  "version": "2.0.0",
+  "mission": "Recover every usable bot and system under original-bots, bots, and attached_assets; reconcile them against the canonical App_bots fleet; and expose truly missing historical workers as supplemental Buddy-routable profiles without corrupting the verified 1,051 canonical baseline.",
   "sources": {
     "canonical_fleet": "App_bots/**/*.json",
-    "original_archive": "original-bots/**/*"
+    "historical_roots": ["original-bots/**/*", "bots/**/*", "attached_assets/**/*"]
+  },
+  "source_roles": {
+    "original-bots": "historical bot/system archive",
+    "bots": "historical and current bot profile/archive material",
+    "attached_assets": "supporting uploads/assets; only bot/system definitions become worker candidates"
   },
   "recovery_states": ["already_canonical","supplemental_recovered","merge_review","system_asset","unsupported_file","parse_error"],
   "identity_rules": [
     "Normalize slug, display name, capabilities and source before comparison.",
     "Exact normalized slug matches remain canonical and are not duplicated.",
     "Strong normalized-name matches with different slugs become merge_review instead of duplicate workers.",
-    "Original bot-like records not represented in App_bots become supplemental_recovered workers.",
-    "Original system/code/config assets are retained in the recovery inventory even when they are not bot profiles.",
-    "Never delete original-bots source files during recovery."
+    "Bot-like records not represented in App_bots become supplemental_recovered workers.",
+    "System/code/config assets are retained in the recovery inventory even when they are not bot profiles.",
+    "Images, media, archives and ordinary attachments remain assets unless accompanying structured text identifies a bot/system definition.",
+    "Never delete historical source files during recovery."
   ],
   "division_inference": {
     "default": "DreamAgents",
@@ -49,7 +55,8 @@
     "shared_runtime": "server/fleet-runtime.ts",
     "default_execution_mode": "sandbox",
     "live_external_actions": "approval_required",
-    "external_integrations": "configuration_and_sandbox_required"
+    "external_integrations": "configuration_and_sandbox_required",
+    "promotion_to_canonical_fleet": "requires explicit reviewed onboarding, division placement, runtime tests, regenerated fleet evidence and updated baseline contract"
   },
   "outputs": [
     "config/generated/original-bot-recovery.json",
