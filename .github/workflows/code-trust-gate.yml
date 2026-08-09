@@ -46,8 +46,8 @@ jobs:
           python-version: "3.13"
       - name: Install locked dependencies
         run: npm ci
-      - name: Validate trusted-code policy
-        run: python3 -m unittest tests.test_trusted_code_delivery
+      - name: Validate trusted-code policies
+        run: python3 -m unittest tests.test_trusted_code_delivery tests.test_change_impact_test_policy
       - name: Determine change range
         id: range
         shell: bash
@@ -83,7 +83,8 @@ jobs:
             tests.test_offline_generator_universal_sandbox \
             tests.test_platform_evolution \
             tests.test_engineering_gap_closure_team \
-            tests.test_trusted_code_delivery
+            tests.test_trusted_code_delivery \
+            tests.test_change_impact_test_policy
       - name: Supply-chain audit
         run: npm audit --audit-level=high
       - name: Build production artifact
