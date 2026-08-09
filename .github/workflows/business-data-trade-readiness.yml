@@ -14,6 +14,8 @@ on:
       - "config/china-us-tech-manufacturing-scout-program.json"
       - "config/us-manufacturer-rfq-marketplace-program.json"
       - "shared/intelligent-data-policy.ts"
+      - "server/live-revenue-policy.ts"
+      - "server/stripeClient.ts"
       - "tools/build_live_revenue_readiness.py"
       - "tools/build_system_progress_status.py"
       - "tools/build_manufacturer_marketplace_catalog.py"
@@ -21,6 +23,7 @@ on:
       - "tests/business-data-trade-readiness.test.ts"
       - "website/manufacturer-marketplace.html"
       - ".github/agents/manufacturer-marketplace-bot.agent.md"
+      - ".github/agents/china-us-tech-manufacturing-scout.agent.md"
       - ".github/workflows/business-data-trade-readiness.yml"
 
 permissions:
@@ -51,16 +54,16 @@ jobs:
           python3 tools/build_bot_business_owner_curriculum.py
       - name: Build live revenue readiness
         run: python3 tools/build_live_revenue_readiness.py
+      - name: Build manufacturer marketplace catalog
+        run: python3 tools/build_manufacturer_marketplace_catalog.py
       - name: Refresh engineering gaps and gauges
         run: |
           python3 tools/build_github_platform_benchmark.py
           python3 tools/build_engineering_gap_closure_plan.py
           python3 tools/build_system_progress_status.py
-      - name: Build manufacturer marketplace catalog
-        run: python3 tools/build_manufacturer_marketplace_catalog.py
       - name: Run readiness tests
         run: node --import tsx --test tests/business-data-trade-readiness.test.ts
-      - name: Check marketplace page exists
+      - name: Check marketplace page and generated data
         run: test -s website/manufacturer-marketplace.html && test -s website/data/manufacturer-marketplace.json
       - name: Owner summary
         if: always()
@@ -69,13 +72,13 @@ jobs:
             echo "# Business / Data / Trade Readiness"
             echo
             if [ -f config/generated/system-progress-status.json ]; then
-              python3 -c "import json; d=json.load(open('config/generated/system-progress-status.json')); print('- System build status:',d['system_build_status']); print('- Engineering gaps:',d['gap_count']); print('- Average gap progress:',str(d['average_gap_percent'])+'%')"
+              python3 -c "import json; d=json.load(open('config/generated/system-progress-status.json')); print('- System build status:',d['system_build_status']); print('- Engineering gaps:',d['gap_count']); print('- Average gap progress:',str(d['average_gap_percent'])+'%'); print('- Live-enabled bots:',d['live_revenue']['live_enabled']); print('- Marketplace status:',d['manufacturer_marketplace']['status'])"
             fi
             if [ -f config/generated/live-revenue-readiness.json ]; then
               python3 -c "import json; d=json.load(open('config/generated/live-revenue-readiness.json')); print('- Bots checked for monetization:',d['bot_count']); print('- Live-enabled bots:',d['live_enabled_count']); print('- Eligible pending owner:',d['eligible_pending_owner_count'])"
             fi
             if [ -f website/data/manufacturer-marketplace.json ]; then
-              python3 -c "import json; d=json.load(open('website/data/manufacturer-marketplace.json')); print('- Manufacturer marketplace:',d['status']); print('- Verified manufacturers loaded:',d['manufacturer_count']); print('- RFQs:',d['rfq_count']); print('- Opportunities:',d['opportunity_count'])"
+              python3 -c "import json; d=json.load(open('website/data/manufacturer-marketplace.json')); print('- Manufacturer marketplace:',d['status']); print('- Verified manufacturers loaded:',d['manufacturer_count']); print('- Authorized source adapter classes:',len(d['source_adapters'])); print('- Marketplace sandbox checks:',len(d['sandbox_requirements']))"
             fi
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Save evidence
@@ -87,6 +90,7 @@ jobs:
             config/generated/live-revenue-readiness.json
             config/generated/system-progress-status.json
             config/generated/bot-business-owner-curriculum.json
+            config/generated/bot-sandbox-curriculum.json
             website/data/manufacturer-marketplace.json
           if-no-files-found: warn
           retention-days: 14
