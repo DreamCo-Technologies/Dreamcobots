@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DreamCo Manufacturer Marketplace</title>
+  <style>
+    body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:#0b1020;color:#f6f7fb}header,main{max-width:1100px;margin:auto;padding:24px}h1{font-size:clamp(2rem,5vw,4rem);margin:.2em 0}p{line-height:1.55;color:#cbd2e1}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}.card{background:#151c31;border:1px solid #2a3555;border-radius:18px;padding:18px}.pill{display:inline-block;background:#222d4b;border-radius:999px;padding:7px 10px;margin:4px 4px 4px 0;font-size:.86rem}button{background:#f6f7fb;color:#0b1020;border:0;border-radius:12px;padding:12px 16px;font-weight:700}input,textarea,select{width:100%;box-sizing:border-box;padding:12px;margin:6px 0 12px;border-radius:10px;border:1px solid #364362;background:#0f1527;color:#fff}.muted{font-size:.9rem;color:#8fa0c2}.status{font-weight:700}.empty{border:1px dashed #4b5a7a;padding:14px;border-radius:12px;color:#aebbd4}
+  </style>
+</head>
+<body>
+<header>
+  <div class="pill">DreamTrade</div><div class="pill">U.S. Manufacturing</div><div class="pill">RFQ Marketplace</div>
+  <h1>Find manufacturers. Post what you need. Compare real quotes.</h1>
+  <p>DreamCo's manufacturer marketplace prototype connects buyers with U.S. manufacturers while Buddy handles sourcing research, RFQ preparation, quote comparison, quality evidence, trade-risk checks, and contract workflow preparation.</p>
+</header>
+<main>
+  <section class="grid">
+    <article class="card"><h2>Search manufacturers</h2><input id="search" placeholder="CNC, plastics, electronics, packaging…"/><button id="searchBtn">Search</button><p class="muted">Verified supplier data will appear only after authorized sources or manufacturer onboarding are connected.</p></article>
+    <article class="card"><h2>Post an RFQ</h2><input id="rfqTitle" placeholder="What do you need made?"/><textarea id="rfqDetails" rows="5" placeholder="Quantity, material, dimensions, certifications, lead time…"></textarea><button id="rfqBtn">Build RFQ draft</button></article>
+    <article class="card"><h2>China → U.S. opportunity scout</h2><p>Compare public/authorized Chinese technology and manufacturing capability with U.S. availability, then identify sourcing, private-label, or domestic-production opportunities.</p><button id="scoutBtn">View scout framework</button></article>
+  </section>
+  <section class="card" style="margin-top:16px"><h2>Marketplace status</h2><div id="status" class="status">Loading…</div><div id="stats" class="grid" style="margin-top:12px"></div></section>
+  <section class="card" style="margin-top:16px"><h2>Manufacturers</h2><div id="manufacturers" class="empty">No verified manufacturers have been loaded into this prototype yet.</div></section>
+  <section class="card" style="margin-top:16px"><h2>RFQ workflow</h2><div class="grid"><div>1. Define requirement</div><div>2. Find/verify manufacturers</div><div>3. Compare quotes</div><div>4. Sample + QA</div><div>5. Negotiate terms</div><div>6. Contract approval</div><div>7. Payment milestones</div><div>8. Production + inspection</div></div></section>
+</main>
+<script>
+(async()=>{let data;try{data=await fetch('./data/manufacturer-marketplace.json').then(r=>r.json())}catch(e){document.getElementById('status').textContent='Catalog not generated yet';return}document.getElementById('status').textContent=data.status;const stats=[['Manufacturers',data.manufacturer_count],['RFQs',data.rfq_count],['Quotes',data.quote_count],['Opportunities',data.opportunity_count]];document.getElementById('stats').innerHTML=stats.map(([a,b])=>`<div class="card"><strong>${b}</strong><div class="muted">${a}</div></div>`).join('');if(data.manufacturers?.length){document.getElementById('manufacturers').innerHTML=data.manufacturers.map(m=>`<div class="card"><strong>${m.name}</strong><div>${m.verification_status||'unverified'}</div></div>`).join('')}})();
+document.getElementById('rfqBtn').onclick=()=>{const title=document.getElementById('rfqTitle').value.trim(),details=document.getElementById('rfqDetails').value.trim();alert(title?`RFQ draft ready for Buddy review: ${title}\n\n${details}`:'Add what you need made first.')};
+document.getElementById('searchBtn').onclick=()=>alert('Manufacturer search becomes live when verified/authorized supplier sources are connected.');
+document.getElementById('scoutBtn').onclick=()=>alert('Buddy will compare authorized China/U.S. technology and manufacturing evidence, then score sourcing and domestic-manufacturing opportunities.');
+</script>
+</body>
+</html>
