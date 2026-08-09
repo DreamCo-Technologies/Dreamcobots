@@ -1,0 +1,32 @@
+{
+  "schema": "dreamco.live_user_testing_readiness.v1",
+  "version": "1.0.0",
+  "mission": "Allow DreamCo to graduate from internal sandbox to controlled live-user testing only when build, runtime, sandbox, security, privacy, observability, rollback and support evidence are ready.",
+  "required_gates": [
+    "full system core operational certification passes",
+    "Code Trust has zero release blockers",
+    "bot accounting is complete",
+    "applicable sandbox runtime evidence passes",
+    "maximum sandbox overlays include negative/security/permission/recovery/speed/accuracy",
+    "production runtime smoke passes",
+    "observability and failure capture are enabled",
+    "rollback or safe-disable path exists",
+    "privacy/data-storage policy passes",
+    "high-risk actions remain approval gated",
+    "real money movement remains separately authorized",
+    "known limitations are disclosed",
+    "support/debug path exists",
+    "pilot scope and success metrics are defined"
+  ],
+  "rollout_stages": [
+    {"id":"internal_only","max_users":0,"purpose":"engineering/sandbox"},
+    {"id":"owner_pilot","max_users":3,"purpose":"owner and trusted internal testers"},
+    {"id":"closed_alpha","max_users":20,"purpose":"small controlled external group"},
+    {"id":"closed_beta","max_users":100,"purpose":"broader controlled testing"},
+    {"id":"limited_release","max_users":1000,"purpose":"measured production ramp"},
+    {"id":"general_release","max_users":null,"purpose":"normal availability after evidence"}
+  ],
+  "success_metrics": ["task completion rate","correctness","user-reported defects","crash/error rate","latency","support burden","permission/safety violations","data/privacy incidents","rollback events","retention/usefulness","cost per completed task"],
+  "automatic_pause_conditions": ["critical security/privacy finding","data-loss risk","payment/auth failure","sustained error-rate spike","failed deployment health","unsafe action execution","owner pause"],
+  "truth_rule": "Live-user readiness is a controlled pilot decision, not proof that every defect is gone. Rollout expands only when measured evidence remains healthy."
+}
