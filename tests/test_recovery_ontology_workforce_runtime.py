@@ -21,12 +21,11 @@ class RecoveryOntologyWorkforceRuntimeTests(unittest.TestCase):
         cls.creative=json.loads((ROOT/'config/creative-studio-mastery-benchmarks.json').read_text())
         cls.government=json.loads((ROOT/'config/government-nonprofit-contract-readiness.json').read_text())
         cls.gov_sources=json.loads((ROOT/'config/government-source-adapters.json').read_text())
-        cls.value=json.loads((ROOT/'config/continuous-value-discovery-program.json').read_text())
+        cls.value=json.loads((ROOT/'config/continuous-human-value-discovery.json').read_text())
         cls.repo_connections=json.loads((ROOT/'config/repository-system-connection-policy.json').read_text())
 
     def test_legacy_sources_merge_through_one_governed_pipeline(self):
-        self.assertEqual(set(self.recovery['source_roots']),{'App_bots','original-bots','bots','attached_assets'})
-        self.assertEqual(self.recovery['canonical_root'],'App_bots')
+        self.assertEqual(set(self.recovery['source_roots']),{'App_bots','original-bots','bots','attached_assets'}); self.assertEqual(self.recovery['canonical_root'],'App_bots')
         text=' '.join(self.recovery['recovery_pipeline']).lower()
         for phrase in ['enumerate every file','dedup','unique bot candidates','universal sandbox','runtime route']: self.assertIn(phrase,text)
         gate=' '.join(self.recovery['promotion_gate']).lower()
@@ -39,12 +38,10 @@ class RecoveryOntologyWorkforceRuntimeTests(unittest.TestCase):
 
     def test_work_factory_covers_jobs_tasks_platforms_money_and_guardrails(self):
         self.assertGreaterEqual(len(self.work['task_dimensions']),20); self.assertGreaterEqual(len(self.work['opportunity_platform_classes']),10); self.assertGreaterEqual(len(self.work['benchmark_dimensions']),10)
-        self.assertTrue(self.work['money_experiment']['required']); self.assertTrue(self.work['money_experiment']['never_guarantee_income']); self.assertIn('O*NET occupation/task datasets',self.work['authoritative_job_sources'])
-        self.assertGreaterEqual(len(self.work_platforms['platforms']),10); self.assertIn('must not invent prices',self.work_platforms['truth_rule'].lower())
+        self.assertTrue(self.work['money_experiment']['required']); self.assertTrue(self.work['money_experiment']['never_guarantee_income']); self.assertIn('O*NET occupation/task datasets',self.work['authoritative_job_sources']); self.assertGreaterEqual(len(self.work_platforms['platforms']),10); self.assertIn('must not invent prices',self.work_platforms['truth_rule'].lower())
 
     def test_universal_ai_computer_app_benchmark_has_parallel_gap_rule(self):
-        self.assertGreaterEqual(len(self.universal['domains']),10); self.assertGreaterEqual(len(self.universal['benchmark_dimensions']),20); self.assertGreaterEqual(len(self.universal['gap_parallel_workers']),8)
-        self.assertIn('every failed or missing benchmark',self.universal['gap_rule'].lower()); self.assertIn('software/tool product opportunities',self.universal['continuous_opportunity_loops'])
+        self.assertGreaterEqual(len(self.universal['domains']),10); self.assertGreaterEqual(len(self.universal['benchmark_dimensions']),20); self.assertGreaterEqual(len(self.universal['gap_parallel_workers']),8); self.assertIn('every failed or missing benchmark',self.universal['gap_rule'].lower()); self.assertIn('software/tool product opportunities',self.universal['continuous_opportunity_loops'])
 
     def test_business_lifecycle_covers_start_operate_grow_and_exit(self):
         self.assertGreaterEqual(len(self.business['organization_styles']),30); self.assertGreaterEqual(len(self.business['lifecycle_phases']),10)
@@ -52,18 +49,15 @@ class RecoveryOntologyWorkforceRuntimeTests(unittest.TestCase):
         self.assertGreaterEqual(len(self.business['specialist_lanes']),15)
 
     def test_creative_mastery_covers_end_to_end_film_books_music(self):
-        self.assertGreaterEqual(len(self.creative['film']),25); self.assertGreaterEqual(len(self.creative['books']),20); self.assertGreaterEqual(len(self.creative['music']),20)
-        self.assertGreaterEqual(len(self.creative['benchmark_dimensions']),15); self.assertIn('rights',self.creative['rights_rule'].lower())
+        self.assertGreaterEqual(len(self.creative['film']),50); self.assertGreaterEqual(len(self.creative['books']),40); self.assertGreaterEqual(len(self.creative['music']),45); self.assertGreaterEqual(len(self.creative['benchmark_dimensions']),20); self.assertIn('rights',self.creative['rights_rule'].lower())
 
     def test_government_nonprofit_and_contracting_preserve_human_authority(self):
-        self.assertGreaterEqual(len(self.government['government_job_families']),20); self.assertGreaterEqual(len(self.government['contracting_lifecycle']),15); self.assertGreaterEqual(len(self.government['nonprofit_lifecycle']),15)
-        self.assertGreaterEqual(len(self.gov_sources['sources']),6); self.assertIn('no invented registrations or certifications',' '.join(self.gov_sources['guardrails']).lower())
-        self.assertIn('authorized humans',self.government['truth_rule'].lower())
+        self.assertGreaterEqual(len(self.government['government_job_families']),20); self.assertGreaterEqual(len(self.government['contracting_lifecycle']),15); self.assertGreaterEqual(len(self.government['nonprofit_lifecycle']),15); self.assertGreaterEqual(len(self.gov_sources['sources']),6); self.assertIn('no invented registrations or certifications',' '.join(self.gov_sources['guardrails']).lower()); self.assertIn('authorized humans',self.government['truth_rule'].lower())
 
     def test_continuous_value_discovery_never_stops_at_feature_ideas(self):
         ids={row['id'] for row in self.value['loops']}
-        for needed in {'human_productivity','buddy_intelligence','software_products','business_owner_value','permitted_revenue_experiments','government_nonprofit_value'}: self.assertIn(needed,ids)
-        self.assertIn('consequential external actions',self.value['truth_rule'].lower())
+        for needed in {'productivity','intelligence','software_products','business_owner','autonomous_revenue','government','contracts','nonprofit'}: self.assertIn(needed,ids)
+        self.assertIn('consequential external actions',self.value['truth_rule'].lower()); self.assertIn('hypotheses',self.value['promotion_rule'].lower())
 
     def test_runtime_is_durable_synchronized_and_fail_safe(self):
         c=self.runtime['coordination']
