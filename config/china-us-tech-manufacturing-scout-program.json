@@ -1,0 +1,34 @@
+{
+  "schema": "dreamco.china_us_tech_manufacturing_scout.v1",
+  "version": "1.0.0",
+  "owner_division": "DreamTrade",
+  "mission": "Compare public/authorized Chinese technology, products, manufacturing capability and supplier ecosystems with current U.S. availability/capability, then surface evidence-backed sourcing, domestic-manufacturing, Shopify, Amazon, wholesale and contract opportunities.",
+  "source_classes": [
+    "official manufacturer websites",
+    "authorized Alibaba/Alibaba.com supplier/RFQ data",
+    "authorized 1688/AliExpress/Temu data or user-provided exports",
+    "trade-show/exhibitor directories",
+    "public product catalogs",
+    "patent/publication databases",
+    "official standards/certification databases",
+    "public company registries",
+    "U.S. manufacturer directories and permitted supplier APIs/feeds",
+    "U.S. manufacturer websites",
+    "retailer/marketplace availability through permitted APIs/feeds",
+    "government import/export/trade statistics",
+    "tariff/customs/export-control resources",
+    "public research papers and technical documentation"
+  ],
+  "comparison_dimensions": ["technology/function","product category","manufacturing process","materials","performance","price band","MOQ","lead time","customization","tooling","certifications","quality evidence","capacity","U.S. availability","U.S. manufacturing capability","U.S. supplier count","import dependence","landed cost","tariff exposure","trade controls","IP risk","safety/regulatory requirements","repairability","support","demand signals","competition","margin potential","private-label fit","Shopify fit","Amazon fit","wholesale fit","contract-manufacturing fit"],
+  "opportunity_types": ["source existing product","private label","ODM customization","OEM contract manufacturing","bring manufacturing to U.S.","license technology","build U.S. alternative","component sourcing","supplier substitution","B2B wholesale","Shopify DTC","Amazon marketplace","U.S. manufacturer contract","government procurement research"],
+  "us_gap_confidence": {
+    "high":"multiple independent U.S. searches show no close domestic equivalent and source coverage is strong",
+    "medium":"few/weak equivalents found; more validation required",
+    "low":"coverage incomplete or domestic equivalents may exist"
+  },
+  "supplier_verification": ["business identity","manufacturer-vs-trader status","factory location","certifications","sample/inspection evidence","capacity evidence","references/reputation","payment terms","quality agreement","IP/confidentiality","incoterms/shipping","insurance where relevant","sanctions/export-control screening where relevant"],
+  "commerce_scorecard": ["demand","gross-margin estimate","competition","differentiation","MOQ affordability","cash-cycle risk","shipping complexity","returns risk","regulatory risk","IP risk","platform-policy fit","supplier concentration","domestic-manufacturing opportunity","confidence"],
+  "guardrails": ["use public/authorized access only","respect marketplace/API terms and rate limits","do not bypass anti-bot controls","do not claim manufacturer identity without verification","do not claim U.S. absence from one failed search","screen legal/regulatory/IP/trade risks before recommending sale/import","label estimated margins and demand as estimates"],
+  "outputs": ["technology comparison card","supplier evidence card","U.S. gap card","Shopify opportunity card","Amazon opportunity card","domestic manufacturing opportunity","RFQ-ready specification","risk checklist","next-validation steps"],
+  "truth_rule": "The scout identifies opportunities from bounded current evidence. It does not prove a technology is unavailable in the U.S., a supplier is genuine, a product may legally be imported/sold, or an ecommerce opportunity will be profitable without further validation."
+}
