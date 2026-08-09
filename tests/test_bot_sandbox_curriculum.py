@@ -6,6 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 APP_BOTS = ROOT / "App_bots"
 PROGRAM = ROOT / "config" / "bot-universal-sandbox-skill-gap-program.json"
 GENERATED = ROOT / "config" / "generated" / "bot-sandbox-curriculum.json"
+UNIVERSAL = ROOT / "config" / "generated" / "universal-human-ai-task-sandbox.json"
 
 
 class BotSandboxCurriculumTests(unittest.TestCase):
@@ -55,11 +56,27 @@ class BotSandboxCurriculumTests(unittest.TestCase):
             self.assertEqual(row["benchmark_gap_plan"]["status"], "required")
             self.assertTrue(row["benchmark_gap_plan"]["shared_fix_first"])
             self.assertTrue(row["graduation"]["requires_runtime_evidence"])
+            self.assertTrue(row["graduation"]["requires_universal_task_coverage"])
+            self.assertTrue(row["graduation"]["requires_all_applicable_universal_tests_pass"])
+            universal = row["universal_task_sandbox"]
+            self.assertTrue(universal["all_applicable_tests_must_pass_for_graduation"])
+            self.assertEqual(universal["selection_status"], "runtime_mapping_required")
         self.assertEqual(data["declared_capability_count"], source_capability_count)
         self.assertEqual(
             data["planned_capability_test_instances"],
             source_capability_count * len(self.program["capability_test_dimensions"]),
         )
+
+    def test_universal_task_catalog_if_present_is_large_and_attached(self):
+        if not UNIVERSAL.exists() or not GENERATED.exists():
+            self.skipTest("universal task catalog and curriculum are generated in platform/fleet workflows")
+        universal = json.loads(UNIVERSAL.read_text(encoding="utf-8"))
+        data = json.loads(GENERATED.read_text(encoding="utf-8"))
+        self.assertGreaterEqual(universal["category_count"], 50000)
+        self.assertTrue(data["universal_task_catalog_available"])
+        self.assertEqual(data["universal_task_base_category_count"], universal["category_count"])
+        for row in data["bots"][:250]:
+            self.assertEqual(row["universal_task_sandbox"]["base_category_count_available"], universal["category_count"])
 
     def test_gap_closing_cannot_be_declared_without_evidence(self):
         joined = json.dumps(self.program).lower()
