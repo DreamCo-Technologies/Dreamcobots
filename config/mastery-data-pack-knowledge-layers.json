@@ -1,0 +1,22 @@
+{
+  "schema": "dreamco.mastery_data_pack_knowledge_layers.v1",
+  "version": "1.0.0",
+  "extends": "config/mastery-data-pack-marketplace-program.json",
+  "mission": "Make every Mastery Data Pack a structured knowledge system, not only a dataset, by bundling the lawful database, book/reference, API, library, workflow, troubleshooting, evaluation and provenance knowledge needed to use the subject in practice.",
+  "required_layers": {
+    "database_knowledge": ["relational schema examples","document schema examples","graph/vector schema examples","entity relationships","data dictionary","constraints","indexes","transactions","query examples","SQL patterns","ETL/ELT patterns","migration patterns","backup/restore","access/security patterns","performance tuning","sample data","database benchmark fixtures"],
+    "book_reference_knowledge": ["public-domain/open-license books when redistribution permits","bibliography","chapter/topic map","reading sequence","concept index","book-to-skill map","study questions","citation metadata","library/purchase references for copyrighted works that cannot be redistributed"],
+    "api_sdk_knowledge": ["official API documentation references","OpenAPI/JSON Schema when available","endpoint catalog","authentication modes","request/response examples","errors","pagination","webhooks","rate limits","idempotency","SDK examples","mock fixtures","provider sandbox instructions","API regression tests","version/migration notes"],
+    "library_framework_knowledge": ["official docs","installation","versions","compatibility","core APIs","recipes","anti-patterns","debugging","security notes","upgrade guides","benchmark fixtures"],
+    "domain_reference_knowledge": ["ontology","terminology","standards","units","formulas","SOPs","decision trees","checklists","common failure modes","professional handoff boundaries"],
+    "tool_workflow_knowledge": ["tool inventory","input/output contracts","workflow traces","automation recipes","retry/recovery","permissions","audit receipts","cost/latency notes"],
+    "troubleshooting_knowledge": ["known errors","root causes","diagnostic sequence","safe fixes","rollback","regression fixtures","when to escalate"],
+    "evaluation_knowledge": ["baseline tasks","held-out tests","edge cases","adversarial cases","rubrics","deterministic graders","benchmark references","before/after scorecards"],
+    "provenance_rights_knowledge": ["source","version","license","commercial-use rights","redistribution rights","attribution","freshness","checksum/release id","privacy/PII status","known limitations"]
+  },
+  "composition_rule": "A pack may omit a layer only when that layer is genuinely not applicable and the omission is recorded with a reason.",
+  "book_rights_rule": "Do not copy copyrighted books, movies, courses, scripts or manuals into a package without rights. Use bibliographies, metadata, lawful excerpts within policy, public-domain/open-license works, or user-provided licensed content.",
+  "api_secret_rule": "Store API schemas/examples and sandbox instructions, never user secrets or provider credentials inside a distributable pack.",
+  "integration_targets": ["config/mastery-data-pack-marketplace-program.json","config/universal-model-training-library-data-pack-program.json","config/data-package-maximal-testing-program.json","config/buddy-bootcamp-program.json"],
+  "truth_rule": "A knowledge layer is considered present only when the package contains validated references/assets and its rights/provenance metadata; naming a layer does not prove completeness."
+}
