@@ -29,6 +29,7 @@ on:
       - "tools/**"
       - "tests/**"
       - "config/**"
+      - "App_bots/**"
       - "package.json"
       - ".github/agents/**"
       - "AGENTS.md"
@@ -123,6 +124,9 @@ jobs:
               ;;
             fleet)
               {
+                python3 tools/audit_bot_division_placement.py
+                cp config/generated/bot-division-placement-audit.json tmp/buddy-actions/bot-division-placement-audit.json
+                cp reports/BOT_DIVISION_PLACEMENT_AUDIT.md tmp/buddy-actions/BOT_DIVISION_PLACEMENT_AUDIT.md
                 npm run buddy:fleet
                 npm run buddy:fleet-quality
                 npm run buddy:fleet:e2e
@@ -130,7 +134,10 @@ jobs:
               } 2>&1 | tee tmp/buddy-actions/test.log
               ;;
             full)
-              npx tsx tools/run_universal_verification.ts --full 2>&1 | tee tmp/buddy-actions/test.log
+              {
+                python3 tools/audit_bot_division_placement.py
+                npx tsx tools/run_universal_verification.ts --full
+              } 2>&1 | tee tmp/buddy-actions/test.log
               ;;
             *)
               echo "Unknown suite: $suite" | tee tmp/buddy-actions/test.log
@@ -160,6 +167,11 @@ jobs:
               echo
               echo "### Resource sandbox matrix"
               python3 -c "import json; d=json.load(open('tmp/buddy-actions/resource-sandbox-test-matrix.json')); print(f'- Resource types: {d[\"resource_type_count\"]}'); print(f'- Shared families: {d[\"shared_family_count\"]}'); print(f'- Planned test instances: {d[\"planned_test_count\"]}')"
+            fi
+            if [ -f tmp/buddy-actions/bot-division-placement-audit.json ]; then
+              echo
+              echo "### Bot division placement audit"
+              python3 -c "import json; d=json.load(open('tmp/buddy-actions/bot-division-placement-audit.json')); print(f'- Profiles scanned: {d[\"profiles_scanned\"]}'); print(f'- Expected divisions: {d[\"expected_divisions\"]}'); print(f'- Status counts: {d[\"status_counts\"]}'); print(f'- Duplicate slugs: {len(d[\"duplicate_slugs\"])}')"
             fi
             echo
             echo "### Last test output"
