@@ -1,0 +1,110 @@
+name: Code Trust Gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "server/**"
+      - "shared/**"
+      - "client/**"
+      - "website/**"
+      - "tools/**"
+      - "script/**"
+      - "tests/**"
+      - "config/**"
+      - "App_bots/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/agents/**"
+      - ".github/workflows/code-trust-gate.yml"
+  pull_request:
+  schedule:
+    - cron: "23 7 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: code-trust-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trusted-code:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Validate trusted-code policy
+        run: python3 -m unittest tests.test_trusted_code_delivery
+      - name: Static syntax and type audit
+        run: python3 tools/audit_trusted_code_delivery.py
+      - name: Full repository verification
+        run: npm run test:repository
+      - name: Fleet end-to-end verification
+        run: npm run buddy:fleet:e2e
+      - name: Python policy and platform regression suites
+        run: |
+          python3 -m unittest \
+            tests.test_full_potential_sandbox \
+            tests.test_universal_human_ai_task_sandbox \
+            tests.test_bot_sandbox_curriculum \
+            tests.test_offline_generator_universal_sandbox \
+            tests.test_platform_evolution \
+            tests.test_engineering_gap_closure_team \
+            tests.test_trusted_code_delivery
+      - name: Supply-chain audit
+        run: npm audit --audit-level=high
+      - name: Build production artifact
+        run: npm run build
+      - name: Build release-quality receipt
+        if: always()
+        run: |
+          mkdir -p tmp/code-trust
+          python3 - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+          audit_path=Path('config/generated/trusted-code-delivery-audit.json')
+          audit=json.loads(audit_path.read_text()) if audit_path.exists() else {}
+          receipt={
+            'schema':'dreamco.code_trust_receipt.v1',
+            'commit':'${{ github.sha }}',
+            'run_id':'${{ github.run_id }}',
+            'generated_at':datetime.now(timezone.utc).isoformat(),
+            'job_status':'${{ job.status }}',
+            'static_release_blockers':audit.get('release_blockers',[]),
+            'source_files':audit.get('source_file_count'),
+            'test_files':audit.get('test_file_count'),
+            'release_status':'verified_candidate' if '${{ job.status }}' == 'success' and not audit.get('release_blockers') else 'blocked',
+            'truth_boundary':'A passing receipt means required configured checks passed for this commit; it is not proof that no possible bug exists.'
+          }
+          Path('tmp/code-trust/release-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print('## Code Trust Gate', file=open('${GITHUB_STEP_SUMMARY}','a'))
+          print('', file=open('${GITHUB_STEP_SUMMARY}','a'))
+          print(f"- Release status: **{receipt['release_status']}**", file=open('${GITHUB_STEP_SUMMARY}','a'))
+          print(f"- Source files inventoried: {receipt['source_files']}", file=open('${GITHUB_STEP_SUMMARY}','a'))
+          print(f"- Test files inventoried: {receipt['test_files']}", file=open('${GITHUB_STEP_SUMMARY}','a'))
+          print(f"- Static blockers: {len(receipt['static_release_blockers'])}", file=open('${GITHUB_STEP_SUMMARY}','a'))
+          PY
+      - name: Upload trust evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: code-trust-${{ github.run_id }}
+          path: |
+            config/generated/trusted-code-delivery-audit.json
+            reports/TRUSTED_CODE_DELIVERY_AUDIT.md
+            tmp/code-trust/
+            tmp/dreamco-verification/
+          if-no-files-found: warn
+          retention-days: 14
