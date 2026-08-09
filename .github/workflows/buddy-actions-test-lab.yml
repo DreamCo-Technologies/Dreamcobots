@@ -128,6 +128,9 @@ jobs:
               ;;
             fleet)
               {
+                python3 tools/build_bot_sandbox_curriculum.py
+                python3 -m unittest tests.test_bot_sandbox_curriculum
+                cp config/generated/bot-sandbox-curriculum.json tmp/buddy-actions/bot-sandbox-curriculum.json
                 python3 tools/audit_bot_division_placement.py
                 cp config/generated/bot-division-placement-audit.json tmp/buddy-actions/bot-division-placement-audit.json
                 cp reports/BOT_DIVISION_PLACEMENT_AUDIT.md tmp/buddy-actions/BOT_DIVISION_PLACEMENT_AUDIT.md
@@ -139,6 +142,8 @@ jobs:
               ;;
             full)
               {
+                python3 tools/build_bot_sandbox_curriculum.py
+                python3 -m unittest tests.test_bot_sandbox_curriculum
                 python3 tools/audit_bot_division_placement.py
                 npx tsx tools/run_universal_verification.ts --full
               } 2>&1 | tee tmp/buddy-actions/test.log
@@ -170,6 +175,11 @@ jobs:
               echo
               echo "### Resource sandbox matrix"
               python3 -c "import json; d=json.load(open('tmp/buddy-actions/resource-sandbox-test-matrix.json')); print('- Resource types:',d['resource_type_count']); print('- Shared families:',d['shared_family_count']); print('- Planned test instances:',d['planned_test_count'])"
+            fi
+            if [ -f tmp/buddy-actions/bot-sandbox-curriculum.json ]; then
+              echo
+              echo "### Universal bot sandbox"
+              python3 -c "import json; d=json.load(open('tmp/buddy-actions/bot-sandbox-curriculum.json')); print('- Bots:',d['bot_count']); print('- Divisions:',d['division_count']); print('- Declared capabilities:',d['declared_capability_count']); print('- Capability test instances:',d['planned_capability_test_instances']); print('- Efficiency measurements:',d['planned_efficiency_measurements'])"
             fi
             if [ -f tmp/buddy-actions/bot-division-placement-audit.json ]; then
               echo
