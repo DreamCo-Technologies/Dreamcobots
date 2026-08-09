@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { validateIntelligentStorage } from "../shared/intelligent-data-policy.ts";
+import { assertBotLiveCheckoutAllowed } from "../server/live-revenue-policy.ts";
 
 const root = process.cwd();
 const readJson = (rel: string) => JSON.parse(fs.readFileSync(path.join(root, rel), "utf8"));
@@ -28,6 +29,10 @@ test("live revenue defaults to sandbox and requires explicit owner enable", () =
   assert.match(gate.truth_rule, /owner/i);
   assert.match(gate.truth_rule, /verified Stripe events/i);
   assert.match(gate.live_actions.charge, /never direct raw-card charge/i);
+});
+
+test("server-side Stripe guard fails closed for a bot that is not live enabled", () => {
+  assert.throws(() => assertBotLiveCheckoutAllowed("definitely-not-live-enabled"), /not enabled/i);
 });
 
 test("live revenue readiness registry does not invent enabled bots", () => {
