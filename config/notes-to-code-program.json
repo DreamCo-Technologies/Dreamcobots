@@ -1,0 +1,31 @@
+{
+  "schema": "dreamco.notes_to_code.v1",
+  "version": "1.0.0",
+  "mission": "Convert actionable DreamCo notes into structured implementation work so ideas do not remain stranded in Markdown, chat exports or planning files.",
+  "source_types": ["markdown","text","issue_export","chat_export","json_notes"],
+  "pipeline": [
+    "discover note files",
+    "extract headings, checkboxes and actionable statements",
+    "classify documentation vs idea vs bug vs capability vs benchmark gap vs architecture decision",
+    "search repository for existing implementation before creating work",
+    "deduplicate against existing issues/config/tests/code",
+    "identify canonical owner and division",
+    "write acceptance criteria",
+    "write sandbox/test requirements",
+    "write security/permission/cost boundaries",
+    "generate code-change candidate or builder issue",
+    "run focused verification",
+    "only mark implemented when executable evidence exists"
+  ],
+  "code_candidate_outputs": ["source_files","tests","generator_updates","config_updates","documentation_updates","migration_notes","rollback_notes"],
+  "status_values": ["documentation_only","already_implemented","needs_review","ready_for_builder","in_progress","verified_complete","blocked"],
+  "rules": [
+    "Do not convert explanatory documentation into pointless code merely because it is a note.",
+    "Every actionable note must become either existing-code evidence, a deduplicated implementation candidate, or a clear blocked/rejected reason.",
+    "Search before building to avoid duplicate systems.",
+    "Notes describing shared fleet behavior should target shared infrastructure first.",
+    "High-risk or consequential capabilities require explicit review and guardrails before implementation.",
+    "A note is not complete because code was generated; tests and evidence must pass."
+  ],
+  "truth_rule": "Notes-to-code means actionable notes are routed into executable implementation work. It does not mean every sentence or historical note should literally become source code."
+}
