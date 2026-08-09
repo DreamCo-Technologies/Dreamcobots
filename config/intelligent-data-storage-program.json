@@ -1,0 +1,44 @@
+{
+  "schema": "dreamco.intelligent_data_storage.v1",
+  "version": "1.0.0",
+  "extends": ["config/buddy-portable-vault-program.json"],
+  "mission": "Store DreamCo/user/business data intelligently with user ownership, local-first portability, classification, provenance, deduplication, retention, least-privilege access and purpose-bound retrieval.",
+  "data_classes": ["public","internal","user_private","sensitive_personal","financial","credential_secret","regulated_or_high_impact","generated_derived"],
+  "storage_tiers": {
+    "public":"portable local catalog or approved shared cache",
+    "internal":"local encrypted workspace by default",
+    "user_private":"user-owned encrypted vault",
+    "sensitive_personal":"user-owned encrypted vault with explicit purpose/access logging",
+    "financial":"encrypted vault; tokenize/reference external payment providers; never raw payment-card storage",
+    "credential_secret":"secret store/environment/keychain only; never ordinary files, logs, datasets or packs",
+    "regulated_or_high_impact":"encrypted vault plus domain-specific permission/retention rules",
+    "generated_derived":"store with source lineage and inherited sensitivity from inputs"
+  },
+  "required_metadata": ["record_id","owner_id","data_class","purpose","source","provenance","created_at","updated_at","freshness","retention_class","access_scope","consent_or_permission","checksum_or_dedupe_key","lineage","exportable","deletable"],
+  "intelligent_behaviors": [
+    "classify before storage",
+    "inherit highest sensitivity from source inputs",
+    "deduplicate exact and near-duplicate records where appropriate",
+    "retain provenance and source lineage",
+    "separate durable user facts from temporary task context",
+    "prefer references over copied external data when rights or freshness make copying inappropriate",
+    "index for retrieval without exposing secrets",
+    "expire stale temporary/cache data",
+    "let users export/delete their owned data",
+    "record which bot/tool used sensitive data and for what purpose",
+    "do not include private/user data in distributable data packages without explicit rights",
+    "never store raw payment-card data"
+  ],
+  "retention_classes": {
+    "ephemeral":"task/session only unless user saves it",
+    "cache":"short-lived and refreshable",
+    "project":"until project deletion/export or policy expiry",
+    "user_memory":"until user edits/deletes or configured retention expires",
+    "business_record":"retained according to business/legal policy configured by owner",
+    "security_audit":"minimum necessary security evidence with sensitive fields redacted",
+    "secret":"never copied into general storage; held only by approved secret manager"
+  },
+  "retrieval_policy": ["purpose-match","owner/tenant boundary","permission check","freshness check","minimum necessary fields","source/provenance available","sensitivity-aware logging"],
+  "data_package_policy": "Data packages may contain only data/assets the owner has rights to distribute, with provenance/license/privacy metadata and no credentials or unauthorized private user data.",
+  "truth_rule": "The policy defines required storage behavior. Existing storage paths are considered compliant only after executable tests demonstrate classification, access boundaries, export/delete, provenance, retention and secret-handling behavior."
+}
