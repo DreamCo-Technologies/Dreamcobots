@@ -1,0 +1,85 @@
+name: DreamCo Platform Evolution
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "47 13 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "config/universal-human-ai-software-task-sandbox.json"
+      - "config/github-platform-parity-benchmark.json"
+      - "config/notes-to-code-program.json"
+      - "config/bot-universal-sandbox-skill-gap-program.json"
+      - "tools/build_universal_human_ai_task_sandbox.py"
+      - "tools/build_github_platform_benchmark.py"
+      - "tools/build_notes_to_code_backlog.py"
+      - "tools/build_bot_sandbox_curriculum.py"
+      - "tests/test_universal_human_ai_task_sandbox.py"
+      - "tests/test_platform_evolution.py"
+      - "tests/test_bot_sandbox_curriculum.py"
+      - ".github/agents/notes-to-code-builder.agent.md"
+      - ".github/workflows/dreamco-platform-evolution.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-platform-evolution-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Create universal human/AI/software task sandbox
+        run: python3 tools/build_universal_human_ai_task_sandbox.py
+      - name: Convert repository notes into implementation backlog
+        run: python3 tools/build_notes_to_code_backlog.py
+      - name: Benchmark DreamCo against GitHub platform capabilities
+        run: python3 tools/build_github_platform_benchmark.py
+      - name: Attach universal task sandbox to every bot curriculum
+        run: python3 tools/build_bot_sandbox_curriculum.py
+      - name: Verify platform evolution contracts
+        run: |
+          python3 -m unittest \
+            tests.test_universal_human_ai_task_sandbox \
+            tests.test_platform_evolution \
+            tests.test_bot_sandbox_curriculum
+      - name: Build owner summary
+        if: always()
+        run: |
+          {
+            echo "# DreamCo Platform Evolution"
+            echo
+            if [ -f config/generated/universal-human-ai-task-sandbox.json ]; then
+              python3 -c "import json; d=json.load(open('config/generated/universal-human-ai-task-sandbox.json')); print('- Universal task sandbox categories:', d['category_count']); print('- Task actions:', d['task_action_count']); print('- Domains:', d['domain_count']); print('- Overlays:', d['overlay_count'])"
+            fi
+            if [ -f config/generated/bot-sandbox-curriculum.json ]; then
+              python3 -c "import json; d=json.load(open('config/generated/bot-sandbox-curriculum.json')); print('- Bots attached:', d['bot_count']); print('- Declared capabilities:', d['declared_capability_count']); print('- Universal task categories available to curricula:', d['universal_task_base_category_count'])"
+            fi
+            if [ -f config/generated/notes-to-code-backlog.json ]; then
+              python3 -c "import json; d=json.load(open('config/generated/notes-to-code-backlog.json')); print('- Note files scanned:', d['files_scanned']); print('- Actionable note candidates:', d['actionable_note_count'])"
+            fi
+            if [ -f config/generated/github-platform-parity-benchmark.json ]; then
+              python3 -c "import json; d=json.load(open('config/generated/github-platform-parity-benchmark.json')); print('- GitHub benchmark capabilities:', d['capability_count']); print('- Benchmark status counts:', d['status_counts']); print('- Full parity claimed:', d['parity_complete'])"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Save platform evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: dreamco-platform-evolution-${{ github.run_id }}
+          path: |
+            config/generated/universal-human-ai-task-sandbox.json
+            config/generated/bot-sandbox-curriculum.json
+            config/generated/notes-to-code-backlog.json
+            config/generated/github-platform-parity-benchmark.json
+            reports/GITHUB_PLATFORM_PARITY_BENCHMARK.md
+          if-no-files-found: warn
+          retention-days: 14
