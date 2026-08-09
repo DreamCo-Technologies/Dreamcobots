@@ -1,11 +1,13 @@
 {
-  "schema": "dreamco.operational_ontology.v1",
-  "version": "1.0.0",
-  "mission": "Provide an operational digital twin of DreamCo so bots, users, data, jobs, tasks, tools, tests, resources, businesses, deployments, payments, devices, models and evidence are modeled as typed objects with governed links, actions, functions, permissions and lineage.",
+  "schema": "dreamco.operational_ontology.v2",
+  "version": "2.0.0",
+  "mission": "Provide an operational digital twin of DreamCo and the work it studies so bots, users, businesses, governments, data, jobs, tasks, tools, tests, resources, deployments, payments and evidence are modeled as typed objects with governed links, actions, functions, permissions and lineage.",
   "object_types": [
-    "User","Organization","Bot","SpecialistAgent","Division","Capability","Tool","Function","Task","HumanTask","Occupation","JobRole","Opportunity","Platform","Marketplace","Customer","Lead","Offer","Campaign","Business","Product","Service","Project","Workflow","Action","Approval","Resource","DataSource","Dataset","DataPackage","Document","BookReference","Api","Library","Model","ModelWeight","Prompt","Evaluation","Benchmark","SandboxTest","TestRun","Evidence","Failure","Bug","Gap","BuilderPlan","PullRequest","Commit","Repository","Deployment","Environment","Device","Connection","CredentialReference","Payment","RevenueEvent","Supplier","Manufacturer","RFQ","Quote","ContractDraft","Order","Shipment","Risk","Policy","Permission","AuditEvent","Metric","Alert"
+    "User","Organization","Government","Jurisdiction","GovernmentLevel","GovernmentDepartment","GovernmentProgram","GovernmentService","GovernmentForm","GovernmentFee","GovernmentJob","PublicBudget","PublicSpendingRecord","PublicDebtRecord","PublicRevenueRecord","PublicFundAccount","PublicContract","PublicGrant","PublicAsset","EconomicDevelopmentPlan","HousingProgram","PropertyOpportunity",
+    "Bot","SpecialistAgent","Division","Capability","Tool","Function","Task","HumanTask","Occupation","JobRole","Opportunity","Platform","Marketplace","Customer","Lead","Offer","Campaign","Business","Product","Service","Project","Workflow","Action","Approval","Resource","DataSource","Dataset","DataPackage","Document","BookReference","Api","Library","Model","ModelWeight","Prompt","Evaluation","Benchmark","SandboxTest","TestRun","Evidence","Failure","Bug","Gap","BuilderPlan","PullRequest","Commit","Repository","Deployment","Environment","Device","Connection","CredentialReference","Payment","RevenueEvent","Supplier","Manufacturer","RFQ","Quote","ContractDraft","Order","Shipment","Risk","Policy","Permission","AuditEvent","Metric","Alert"
   ],
   "link_types": [
+    "JURISDICTION_HAS_LEVEL","GOVERNMENT_OPERATES_IN_JURISDICTION","DEPARTMENT_BELONGS_TO_GOVERNMENT","DEPARTMENT_PROVIDES_PROGRAM","PROGRAM_PROVIDES_SERVICE","SERVICE_USES_FORM","SERVICE_CHARGES_FEE","DEPARTMENT_EMPLOYS_JOB","JOB_CONTAINS_HUMAN_TASK","DEPARTMENT_CONTROLS_BUDGET","BUDGET_FUNDS_PROGRAM","SPENDING_CHARGED_TO_DEPARTMENT","SPENDING_CHARGED_TO_PROGRAM","SPENDING_PAID_TO_RECIPIENT","DEBT_BELONGS_TO_JURISDICTION","REVENUE_BELONGS_TO_JURISDICTION","CONTRACT_AWARDED_BY_DEPARTMENT","GRANT_AWARDED_BY_DEPARTMENT","PUBLIC_ASSET_OWNED_BY_JURISDICTION","ECONOMIC_PLAN_TARGETS_JURISDICTION","HOUSING_PROGRAM_OPERATES_IN_JURISDICTION","PROPERTY_OPPORTUNITY_LOCATED_IN_JURISDICTION",
     "USER_OWNS_ORGANIZATION","USER_USES_BOT","BOT_BELONGS_TO_DIVISION","BOT_HAS_CAPABILITY","BOT_USES_TOOL","BOT_CALLS_FUNCTION","BOT_PERFORMS_TASK","BOT_SPECIALIZES_IN_JOB_ROLE","JOB_ROLE_CONTAINS_HUMAN_TASK","TASK_APPLIES_TO_PLATFORM","TASK_CREATES_OPPORTUNITY","OPPORTUNITY_TARGETS_CUSTOMER","BUSINESS_OFFERS_PRODUCT","BUSINESS_OFFERS_SERVICE","BOT_OPERATES_BUSINESS","BOT_MARKETS_OFFER","CAMPAIGN_USES_PLATFORM","TASK_REQUIRES_RESOURCE","DATA_PACKAGE_CONTAINS_DATASET","DATA_PACKAGE_REFERENCES_BOOK","DATA_PACKAGE_DOCUMENTS_API","DATA_PACKAGE_DOCUMENTS_LIBRARY","MODEL_TRAINED_WITH_DATA_PACKAGE","MODEL_EVALUATED_BY_BENCHMARK","CAPABILITY_TESTED_BY_SANDBOX_TEST","SANDBOX_TEST_PRODUCES_TEST_RUN","TEST_RUN_PRODUCES_EVIDENCE","FAILURE_REVEALS_GAP","GAP_ASSIGNED_TO_BUILDER_PLAN","BUILDER_PLAN_CHANGES_REPOSITORY","COMMIT_DEPLOYS_TO_ENVIRONMENT","DEPLOYMENT_RUNS_ON_DEVICE","CONNECTION_LINKS_PLATFORM","PAYMENT_PRODUCES_REVENUE_EVENT","SUPPLIER_IS_MANUFACTURER","RFQ_SENT_TO_MANUFACTURER","MANUFACTURER_RETURNS_QUOTE","QUOTE_RELATES_TO_CONTRACT_DRAFT","ORDER_USES_QUOTE","RISK_GOVERNED_BY_POLICY","ACTION_REQUIRES_PERMISSION","ACTION_REQUIRES_APPROVAL","AUDIT_EVENT_RECORDS_ACTION","METRIC_MEASURES_OBJECT","ALERT_REFERENCES_FAILURE"
   ],
   "interfaces": {
@@ -14,28 +16,18 @@
     "KnowledgeAsset":["Dataset","DataPackage","Document","BookReference","Api","Library"],
     "OperationalEvidence":["TestRun","Evidence","Metric","AuditEvent"],
     "CommercialEntity":["Business","Offer","Product","Service","Opportunity","Customer","Lead"],
+    "GovernmentEntity":["Government","Jurisdiction","GovernmentDepartment","GovernmentProgram","GovernmentService","GovernmentJob"],
+    "FiscalRecord":["PublicBudget","PublicSpendingRecord","PublicDebtRecord","PublicRevenueRecord","PublicContract","PublicGrant"],
     "ExternalEndpoint":["Platform","Marketplace","Api","Device","Connection"]
   },
   "action_types": [
-    "AssignBotToTask","RouteTaskToDivision","CreateSandboxTest","RunSandboxTest","RecordEvidence","OpenGap","AssignGapBuilder","ProposeCodeChange","ReviewCodeChange","PromoteBotCapability","CreateBusinessExperiment","PostSandboxRFQ","CompareQuotes","RequestApproval","EnableLiveRevenue","PauseLiveRevenue","DeployPrototype","PromoteDeployment","RollbackDeployment","ImportLegacyBot","MergeLegacyCapability","RetireDuplicateBot","CreateDataPackage","RefreshDataPackage","BenchmarkJobTask","GenerateSpecialistWorker"
+    "AssignBotToTask","RouteTaskToDivision","CreateSandboxTest","RunSandboxTest","RecordEvidence","OpenGap","AssignGapBuilder","ProposeCodeChange","ReviewCodeChange","PromoteBotCapability","CreateBusinessExperiment","PostSandboxRFQ","CompareQuotes","RequestApproval","EnableLiveRevenue","PauseLiveRevenue","DeployPrototype","PromoteDeployment","RollbackDeployment","ImportLegacyBot","MergeLegacyCapability","RetireDuplicateBot","CreateDataPackage","RefreshDataPackage","BenchmarkJobTask","GenerateSpecialistWorker","DiscoverJurisdiction","DiscoverGovernmentDepartment","DiscoverGovernmentService","BenchmarkGovernmentDepartment","BenchmarkGovernmentJob","SimplifyGovernmentService","RefreshPublicDebt","RefreshPublicSpending","TracePublicMoney","BuildEconomicDevelopmentPlan","DiscoverHousingOpportunity"
   ],
   "functions": [
-    "resolveCanonicalOwner","findBestBot","findBestDivision","scoreCapabilityGap","scoreTaskFit","scoreJobAutomationPotential","scoreHumanAssistPotential","scoreRevenuePotential","scorePlatformFit","scoreRisk","scoreEvidenceStrength","computeGapProgress","computeFleetReadiness","computeLiveUserReadiness","deduplicateBotIdentity","resolveOntologyLinks","traceLineage","findSharedInfrastructureFix","selectCheapestValidModel","selectRequiredSandboxTests"
+    "resolveCanonicalOwner","findBestBot","findBestDivision","scoreCapabilityGap","scoreTaskFit","scoreJobAutomationPotential","scoreHumanAssistPotential","scoreRevenuePotential","scorePlatformFit","scoreRisk","scoreEvidenceStrength","computeGapProgress","computeFleetReadiness","computeLiveUserReadiness","deduplicateBotIdentity","resolveOntologyLinks","traceLineage","findSharedInfrastructureFix","selectCheapestValidModel","selectRequiredSandboxTests","mapDepartmentToGovernmentFunction","scoreGovernmentServiceFriction","scoreGovernmentDepartmentProductivityGap","tracePublicSpending","compareBudgetToActual","computeDebtChangeFromOfficialRecords","scoreEconomicDevelopmentOpportunity","scoreHousingProgramFit"
   ],
   "object_requirements": ["stable deterministic id","type","owner scope","source/provenance","created_at","updated_at","version","security classification","lifecycle state"],
-  "governance": {
-    "dynamic_security": true,
-    "minimum_necessary_access": true,
-    "actions_permission_checked": true,
-    "high_impact_actions_approval_gated": true,
-    "all_changes_audited": true,
-    "lineage_required": true,
-    "generated_objects_not_runtime_verified_by_default": true
-  },
-  "self_modeling": {
-    "enabled": true,
-    "rule": "Buddy may inspect its ontology, propose new object/link/action/function types, and generate migrations when recurring real-world concepts are not represented, but ontology schema changes require tests, compatibility review, and canonical-owner approval.",
-    "gap_detection": ["untyped recurring entity","orphan resource","capability without tests","task without worker","worker without owner","connection without evidence","gap without builder","business without fulfillment path","data without provenance"]
-  },
-  "truth_rule": "The ontology is DreamCo's independent operational model inspired by modern object/link/action architectures; it does not copy proprietary Palantir implementation details and generated ontology entries require source and runtime evidence."
+  "governance": {"dynamic_security":true,"minimum_necessary_access":true,"actions_permission_checked":true,"high_impact_actions_approval_gated":true,"all_changes_audited":true,"lineage_required":true,"generated_objects_not_runtime_verified_by_default":true,"government_facts_require_authoritative_source":true,"fiscal_values_require_source_date_and_definition":true},
+  "self_modeling": {"enabled":true,"rule":"Buddy may inspect its ontology, propose new object/link/action/function types, and generate migrations when recurring real-world concepts are not represented, but ontology schema changes require tests, compatibility review, and canonical-owner approval.","gap_detection":["untyped recurring entity","orphan resource","capability without tests","task without worker","worker without owner","connection without evidence","gap without builder","business without fulfillment path","data without provenance","government service without authoritative source","department without benchmark","public fiscal value without source date","government job without task map"]},
+  "truth_rule": "The ontology is DreamCo's independent operational model inspired by modern object/link/action architectures; it does not copy proprietary Palantir implementation details. Government structures, services, fees, jobs and fiscal records require jurisdiction-specific authoritative sources and generated ontology entries require runtime evidence."
 }
