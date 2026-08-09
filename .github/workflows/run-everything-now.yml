@@ -21,6 +21,7 @@ on:
       - "tests/**"
       - "server/**"
       - "shared/**"
+      - "docs/**"
       - ".github/agents/**"
       - ".github/workflows/run-everything-now.yml"
 
@@ -76,31 +77,45 @@ jobs:
           python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
           import json
           from pathlib import Path
+          def load(path):
+              p=Path(path)
+              return json.loads(p.read_text()) if p.exists() else {}
           print('# Run Everything Now')
           print()
-          p=Path('config/generated/run-everything-now-latest.json')
-          if p.exists():
-              d=json.loads(p.read_text())
+          d=load('config/generated/run-everything-now-latest.json')
+          if d:
               print(f"- Mode: **{d['mode']}**")
               print(f"- Passed: **{d['passed']}/{d['step_count']}**")
               print(f"- Failed: **{d['failed']}**")
-              if d.get('first_failure'):
-                  print(f"- First root-cause candidate: **{d['first_failure']['name']}**")
-          r=Path('config/generated/legacy-bot-recovery-manifest.json')
-          if r.exists():
-              d=json.loads(r.read_text())
-              print(f"- Legacy files inventoried: **{d['file_count']}**")
-              print(f"- Recoverable legacy candidate files: **{d['recoverable_candidate_file_count']}**")
-          w=Path('config/generated/universal-work-ai-catalog.json')
-          if w.exists():
-              d=json.loads(w.read_text())
-              print(f"- O*NET occupations: **{d['occupation_count']}**")
-              print(f"- O*NET tasks: **{d['task_count']}**")
-          m=Path('config/generated/maximum-sandbox-matrix.json')
-          if m.exists():
-              d=json.loads(m.read_text())
-              print(f"- Maximum sandbox workers: **{d['worker_count']}**")
-              print(f"- Sandbox overlays per applicable case: **{d['minimum_test_dimensions_per_applicable_case']}**")
+              if d.get('first_failure'): print(f"- First root-cause candidate: **{d['first_failure']['name']}**")
+          r=load('config/generated/legacy-bot-recovery-manifest.json')
+          if r:
+              print(f"- Legacy files inventoried: **{r['file_count']}**")
+              print(f"- Recoverable legacy candidate files: **{r['recoverable_candidate_file_count']}**")
+          p=load('config/generated/legacy-bot-promotion-backlog.json')
+          if p: print(f"- Legacy promotion candidates: **{p['candidate_count']}**")
+          c=load('config/generated/legacy-capability-merge-proposals.json')
+          if c: print(f"- Legacy duplicate merge proposals: **{c['proposal_count']}**")
+          w=load('config/generated/universal-work-ai-catalog.json')
+          if w:
+              print(f"- O*NET occupations: **{w['occupation_count']}**")
+              print(f"- O*NET tasks: **{w['task_count']}**")
+          b=load('config/generated/work-platform-benchmark-backlog.json')
+          if b: print(f"- Work/platform benchmark cases: **{b['benchmark_case_count']}**")
+          m=load('config/generated/maximum-sandbox-matrix.json')
+          if m:
+              print(f"- Maximum sandbox workers: **{m['worker_count']}**")
+              print(f"- Sandbox overlays per applicable case: **{m['minimum_test_dimensions_per_applicable_case']}**")
+          mr=load('config/generated/maximum-sandbox-runtime-audit.json')
+          if mr: print(f"- Canonical runtime sandbox coverage: **{mr['canonical_worker_runtime_coverage_percent']}%**")
+          o=load('config/generated/dreamco-ontology-snapshot.json')
+          if o: print(f"- Ontology objects/links: **{o['object_count']}/{o['link_count']}**")
+          rs=load('config/generated/runtime-sync-plan.json')
+          if rs: print(f"- Runtime synchronized workers/lanes: **{rs['worker_count']}/{rs['parallel_lane_count']}**")
+          mp=load('config/generated/manufacturing-productivity-benchmarks.json')
+          if mp: print(f"- Manufacturing productivity cases: **{mp['benchmark_case_count']}**")
+          live=load('config/generated/live-user-testing-readiness.json')
+          if live: print(f"- Live-user stage: **{live['recommended_stage']}**")
           PY
       - name: Open or update repair issue when failures exist
         if: always()
@@ -122,10 +137,8 @@ jobs:
           Path('tmp-run-all-issue.md').write_text('\n'.join(body))
           q=subprocess.run(['gh','issue','list','--state','open','--search',title+' in:title','--json','number','--jq','.[0].number // empty'],capture_output=True,text=True)
           number=q.stdout.strip()
-          if number:
-              subprocess.run(['gh','issue','comment',number,'--body-file','tmp-run-all-issue.md'],check=False)
-          else:
-              subprocess.run(['gh','issue','create','--title',title,'--body-file','tmp-run-all-issue.md'],check=False)
+          if number: subprocess.run(['gh','issue','comment',number,'--body-file','tmp-run-all-issue.md'],check=False)
+          else: subprocess.run(['gh','issue','create','--title',title,'--body-file','tmp-run-all-issue.md'],check=False)
           PY
       - name: Upload all evidence
         if: always()
@@ -135,13 +148,23 @@ jobs:
           path: |
             config/generated/run-everything-now-latest.json
             config/generated/legacy-bot-recovery-manifest.json
+            config/generated/legacy-capability-merge-proposals.json
+            config/generated/legacy-bot-promotion-backlog.json
             config/generated/unified-bot-system.json
+            config/generated/runtime-sync-plan.json
             config/generated/universal-work-ai-catalog.json
+            config/generated/work-platform-benchmark-backlog.json
+            config/generated/manufacturing-productivity-benchmarks.json
             config/generated/maximum-sandbox-matrix.json
+            config/generated/maximum-sandbox-runtime-audit.json
+            config/generated/dreamco-ontology-snapshot.json
             config/generated/full-system-operational-certification.json
+            config/generated/live-user-testing-readiness.json
             config/generated/system-progress-status.json
             reports/RUN_EVERYTHING_NOW.md
             reports/LEGACY_BOT_RECOVERY.md
+            reports/LEGACY_BOT_PROMOTION_BACKLOG.md
+            reports/LEGACY_CAPABILITY_MERGE_PROPOSALS.md
           if-no-files-found: warn
           retention-days: 21
       - name: Fail workflow when Run Everything found blockers
