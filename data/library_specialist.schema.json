@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.example/schemas/library-specialist.schema.json",
+  "title": "DreamCo Library Specialist",
+  "type": "object",
+  "required": ["id", "ecosystem", "package", "official_sources", "certification"],
+  "properties": {
+    "id": {"type": "string", "minLength": 3},
+    "ecosystem": {"type": "string", "minLength": 1},
+    "package": {"type": "string", "minLength": 1},
+    "version": {"type": ["string", "null"]},
+    "official_sources": {"type": "array", "items": {"type": "string"}},
+    "capability_index": {"type": "array", "items": {"type": "string"}},
+    "api_index": {"type": "array", "items": {"type": "string"}},
+    "common_use_cases": {"type": "array", "items": {"type": "string"}},
+    "advanced_use_cases": {"type": "array", "items": {"type": "string"}},
+    "performance_notes": {"type": "array", "items": {"type": "string"}},
+    "compatibility": {"type": "array", "items": {"type": "string"}},
+    "security_notes": {"type": "array", "items": {"type": "string"}},
+    "examples": {"type": "array", "items": {"type": "string"}},
+    "test_matrix": {"type": "array", "items": {"type": "string"}},
+    "innovation_hypotheses": {"type": "array", "items": {"type": "string"}},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "last_verified": {"type": ["string", "null"], "format": "date-time"},
+    "certification": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["discovered", "indexed", "testing", "certified", "quarantined"]},
+        "reason": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
