@@ -1,0 +1,7 @@
+{
+  "schema": "dreamco.runtime_connection_evidence.v1",
+  "evidence": [],
+  "required_fields": ["connection_id", "status", "tested_at", "probe_type", "evidence_reference"],
+  "allowed_statuses": ["sandbox_verified", "runtime_verified", "blocked", "revoked"],
+  "truth_rule": "Do not add runtime_verified without a successful authorized live probe. Never store raw credentials or tokens in this file."
+}
