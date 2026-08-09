@@ -1,0 +1,45 @@
+name: Bug or broken bot
+
+description: Report something that is not working.
+title: "[Bug] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: "Describe what happened in plain language. Do not paste passwords, API keys, bank data, private customer data, or other secrets."
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should have happened?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead?
+    validations:
+      required: true
+  - type: input
+    id: actions_run
+    attributes:
+      label: GitHub Actions run URL
+      description: Add the failed run link if there is one.
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How can we reproduce it?
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Buddy
+        - Bot fleet or division
+        - Resource/scout system
+        - Website or Pages
+        - GitHub Actions
+        - API or connector
+        - Data or model system
+        - Other
+    validations:
+      required: true
