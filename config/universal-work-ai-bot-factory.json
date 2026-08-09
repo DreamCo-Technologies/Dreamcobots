@@ -1,0 +1,25 @@
+{
+  "schema": "dreamco.universal_work_ai_bot_factory.v1",
+  "version": "1.0.0",
+  "mission": "Continuously discover human occupations and tasks, determine what AI can safely automate or assist, benchmark each task on applicable platforms, and generate tested specialist workers without bloating the canonical fleet.",
+  "authoritative_job_sources": ["O*NET occupation/task datasets","U.S. BLS occupational employment and wage data","public government occupational classifications","user-provided employer/job descriptions with permission"],
+  "opportunity_platform_classes": ["employer job boards","freelance marketplaces","service marketplaces","creator platforms","ecommerce platforms","developer marketplaces","app marketplaces","local business directories","procurement/RFQ systems","professional-services marketplaces","direct business websites","DreamCo marketplace"],
+  "task_dimensions": ["occupation","industry","task","deliverable","inputs","outputs","tools","knowledge","skills","human_interaction","physical_world_requirement","licensing_requirement","decision_risk","privacy_risk","financial_risk","automation_fit","assist_fit","quality_metric","speed_metric","cost_metric","platforms","revenue_model"],
+  "automation_levels": ["not_suitable","human_only_required","assist_only","human_review_required","sandbox_autonomous","live_autonomous_low_risk_with_permission"],
+  "benchmark_dimensions": ["correctness","completeness","speed","cost","reliability","customer_value","platform_fit","human_review_time","tool_use","error_recovery","security","privacy","compliance","profitability_simulation"],
+  "worker_factory": {
+    "worker_types": ["occupation specialist","task specialist","platform specialist","tool specialist","sales specialist","fulfillment specialist","QA specialist"],
+    "generated_worker_status": "sandbox_only_until_graduated",
+    "canonical_fleet_promotion_required": false,
+    "promotion_path": "proven specialist may be proposed for canonical fleet onboarding after runtime routing, sandbox, accounting and Code Trust gates pass"
+  },
+  "money_experiment": {
+    "required": true,
+    "mode": "sandbox_simulation_by_default",
+    "target": "model realistic earning paths per task/role using current platform constraints and verified pricing evidence",
+    "never_guarantee_income": true
+  },
+  "regulated_boundaries": ["medical diagnosis/treatment","legal representation/unauthorized practice","financial fiduciary decisions","licensed engineering signoff","regulated safety-critical decisions","employment discrimination decisions","other jurisdiction-specific licensed work"],
+  "runtime_outputs": ["occupation catalog","human task catalog","AI assist map","AI automation map","platform opportunity map","task benchmark suite","generated specialist worker catalog","capability gaps","builder plans","business experiments"],
+  "truth_rule": "A task is not labeled automatable or profitable from description alone. DreamCo requires sandbox performance, platform-policy fit, risk classification, and where needed human review or professional oversight."
+}
