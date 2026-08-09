@@ -1,0 +1,19 @@
+{
+  "schema": "dreamco.work_platform_benchmark_registry.v1",
+  "version": "1.0.0",
+  "platforms": [
+    {"id":"employer_job_boards","examples":["general job boards","company career pages"],"applies_to":["occupation","employment"],"access_state":"adapter_or_authorized_research_required"},
+    {"id":"freelance_marketplaces","examples":["general freelance marketplaces"],"applies_to":["project","digital task","professional service"],"access_state":"adapter_or_authorized_research_required"},
+    {"id":"gig_service_marketplaces","examples":["local/digital service marketplaces"],"applies_to":["bounded service","local service"],"access_state":"adapter_or_authorized_research_required"},
+    {"id":"creator_platforms","examples":["video","audio","newsletter","social creator platforms"],"applies_to":["content","media","education","creative"],"access_state":"adapter_or_authorized_research_required"},
+    {"id":"ecommerce_marketplaces","examples":["general ecommerce marketplaces"],"applies_to":["product","private label","digital goods"],"access_state":"adapter_or_authorized_research_required"},
+    {"id":"developer_marketplaces","examples":["code/service/plugin marketplaces"],"applies_to":["software","automation","API","developer service"],"access_state":"adapter_or_authorized_research_required"},
+    {"id":"app_marketplaces","examples":["mobile","desktop","browser","SaaS marketplaces"],"applies_to":["app","software product"],"access_state":"adapter_or_authorized_research_required"},
+    {"id":"procurement_rfq","examples":["public procurement","private RFQ","manufacturer RFQ"],"applies_to":["B2B service","manufacturing","contract"],"access_state":"adapter_or_authorized_research_required"},
+    {"id":"direct_business_sales","examples":["company websites","email/phone with permission","local business outreach"],"applies_to":["B2B service","consulting","automation"],"access_state":"approval_gated_for_real_outreach"},
+    {"id":"dreamco_marketplace","examples":["DreamCo services","data packages","bot skills","manufacturer marketplace"],"applies_to":["verified DreamCo capability"],"access_state":"internal_build_in_progress"}
+  ],
+  "benchmark_fields": ["task_id","occupation","platform_id","applicability","policy_fit","deliverable_fit","automation_level","human_review_requirement","pricing_unit","price_evidence","fees","estimated_fulfillment_cost","estimated_margin","quality_metric","speed_metric","competition","demand_evidence","risk","runtime_connection_state","last_verified"],
+  "applicability_values": ["not_applicable","possible","strong_fit","requires_human_worker","requires_physical_presence","regulated_or_restricted"],
+  "truth_rule": "Platform applicability and earning potential must be verified against current platform rules and evidence. DreamCo must not invent prices, job availability, demand, or platform permission."
+}
