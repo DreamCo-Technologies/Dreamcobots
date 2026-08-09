@@ -1,0 +1,58 @@
+name: Self Working System
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "config/offline-buddy-repository-engine.json"
+      - "config/dreamco-generator-factory.json"
+      - "config/universal-api-task-sandbox-program.json"
+      - "tools/buddy_local_repository.py"
+      - "tools/dreamco_generator_factory.py"
+      - "tools/build_universal_api_task_sandbox.py"
+      - "tests/test_offline_generator_universal_sandbox.py"
+      - ".github/workflows/self-working-system.yml"
+  schedule:
+    - cron: "29 9 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: self-working-system-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Initialize local Buddy workspace before install
+        run: python3 tools/buddy_local_repository.py init
+      - name: Install dependencies
+        run: npm ci
+      - name: Verify offline engine and universal generator/sandbox contracts
+        run: python3 -m unittest tests.test_offline_generator_universal_sandbox
+      - name: Build generator registry for every bot
+        run: python3 tools/dreamco_generator_factory.py registry
+      - name: Run local-first health check
+        run: python3 tools/buddy_local_repository.py check
+      - name: Save local-equivalent evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: self-working-system-${{ github.run_id }}
+          path: |
+            .buddy-local/
+            config/generated/dreamco-generator-registry.json
+          if-no-files-found: warn
+          retention-days: 7
