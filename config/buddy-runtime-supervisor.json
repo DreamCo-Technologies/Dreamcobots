@@ -1,0 +1,27 @@
+{
+  "schema": "dreamco.buddy_runtime_supervisor.v1",
+  "version": "1.0.0",
+  "mission": "Keep DreamCo workers coordinated as durable supervised jobs with heartbeats, leases, restart/retry, checkpoints, shared queues, evidence and clear authority boundaries.",
+  "worker_groups": ["command_core","canonical_fleet","specialist_agents","legacy_recovery","sandbox_workers","gap_builders","job_task_workers","resource_scouts","business_workers","data_workers","model_workers","deployment_workers","observability_workers"],
+  "coordination": {
+    "ontology_is_shared_state_model": true,
+    "canonical_owner_required": true,
+    "shared_task_queue": true,
+    "per_owner_serialization": true,
+    "independent_parallelism": true,
+    "maximum_parallel_lanes": 32,
+    "heartbeat_seconds": 60,
+    "lease_seconds": 300,
+    "checkpoint_after_step": true,
+    "idempotency_key_required": true,
+    "dead_letter_queue": true,
+    "crash_restart": true,
+    "exponential_backoff": true,
+    "circuit_breaker_for_external_dependencies": true
+  },
+  "sync_contract": ["task_id","worker_id","owner_division","ontology_object_ids","lease_id","state","checkpoint","inputs_hash","outputs_hash","test_evidence","started_at","heartbeat_at","completed_at","failure_id"],
+  "states": ["queued","leased","running","waiting_dependency","waiting_approval","testing","completed","failed_retriable","failed_blocked","cancelled"],
+  "safe_always_on": ["research public/authorized sources","sandbox tests","benchmarking","debugging","gap planning","data/package maintenance","local builds","non-consequential simulations","health checks"],
+  "approval_gated": ["live money movement","real ad spend","real external outreach","contracts","applications","publishing under user identity","destructive production changes","regulated high-impact actions"],
+  "truth_rule": "Always-on means recurring supervised execution with restart and evidence. It does not imply infinite compute, zero downtime, or permission to perform consequential live actions autonomously."
+}
