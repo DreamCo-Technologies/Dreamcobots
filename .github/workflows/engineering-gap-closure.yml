@@ -1,0 +1,129 @@
+name: Engineering Gap Closure
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "19 14 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "config/engineering-gap-closure-team.json"
+      - "config/github-platform-parity-benchmark.json"
+      - "tools/build_engineering_gap_closure_plan.py"
+      - "tools/build_github_platform_benchmark.py"
+      - "tests/test_engineering_gap_closure_team.py"
+      - ".github/workflows/engineering-gap-closure.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: engineering-gap-closure-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Build current GitHub parity benchmark
+        run: python3 tools/build_github_platform_benchmark.py
+      - name: Build engineering gap plan
+        run: python3 tools/build_engineering_gap_closure_plan.py
+      - name: Verify team and plan
+        run: python3 -m unittest tests.test_engineering_gap_closure_team
+      - id: matrix
+        name: Build parallel owner matrix
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          plan=json.loads(Path('config/generated/engineering-gap-closure-plan.json').read_text())
+          owners={}
+          for gap in plan['gaps']:
+              owners.setdefault(gap['primary_owner'], []).append(gap['gap_id'])
+          include=[]
+          for i,(owner,gaps) in enumerate(sorted(owners.items()),1):
+              include.append({'owner':owner,'slot':i,'gaps':','.join(gaps)})
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:
+              f.write('matrix='+json.dumps({'include':include},separators=(',',':'))+'\n')
+          PY
+
+  owner-lane:
+    needs: plan
+    if: ${{ needs.plan.outputs.matrix != '' }}
+    strategy:
+      fail-fast: false
+      max-parallel: 32
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    concurrency:
+      group: engineering-owner-${{ github.ref }}-${{ matrix.owner }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: npm ci
+      - name: Record lane
+        run: |
+          echo "Owner: ${{ matrix.owner }}"
+          echo "Gaps: ${{ matrix.gaps }}"
+      - name: Run repository evidence and safety verification for this owner lane
+        run: |
+          python3 tools/build_github_platform_benchmark.py
+          python3 tools/build_engineering_gap_closure_plan.py
+          python3 -m unittest tests.test_engineering_gap_closure_team
+          python3 tools/run_safe_self_repair.py
+      - name: Run universal verification
+        run: npx tsx tools/run_universal_verification.ts --quick
+      - name: Summarize lane
+        if: always()
+        run: |
+          {
+            echo "# Engineering Gap Lane"
+            echo
+            echo "Owner: **${{ matrix.owner }}**"
+            echo "Gaps: `${{ matrix.gaps }}`"
+            echo
+            echo "This lane validates and prepares evidence-driven closure work. Source-code gaps are not auto-declared closed unless the required implementation and runtime evidence exist."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  final-review:
+    needs: [plan, owner-lane]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: python3 tools/build_github_platform_benchmark.py
+      - run: python3 tools/build_engineering_gap_closure_plan.py
+      - name: Final engineering summary
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          p=json.loads(Path('config/generated/engineering-gap-closure-plan.json').read_text())
+          print('# Engineering Gap Closure')
+          print()
+          print(f"- Current gaps requiring work/review: {p['gap_count']}")
+          print(f"- Parallel slots available: {p['parallel_slots']}")
+          print(f"- Owner load: {p['owner_load']}")
+          print('- A gap is closed only when the full completion gate and runtime evidence pass.')
+          PY
