@@ -8,9 +8,11 @@ on:
       - "config/offline-buddy-repository-engine.json"
       - "config/dreamco-generator-factory.json"
       - "config/universal-api-task-sandbox-program.json"
+      - "config/buddy-self-repair-controller.json"
       - "tools/buddy_local_repository.py"
       - "tools/dreamco_generator_factory.py"
       - "tools/build_universal_api_task_sandbox.py"
+      - "tools/run_safe_self_repair.py"
       - "tests/test_offline_generator_universal_sandbox.py"
       - ".github/workflows/self-working-system.yml"
   schedule:
@@ -39,11 +41,17 @@ jobs:
       - name: Initialize local Buddy workspace before install
         run: python3 tools/buddy_local_repository.py init
       - name: Install dependencies
-        run: npm ci
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p .buddy-local/logs
+          npm ci 2>&1 | tee .buddy-local/logs/npm-install.log
       - name: Verify offline engine and universal generator/sandbox contracts
         run: python3 -m unittest tests.test_offline_generator_universal_sandbox
       - name: Build generator registry for every bot
         run: python3 tools/dreamco_generator_factory.py registry
+      - name: Run deterministic self-repair and regression checks
+        run: python3 tools/run_safe_self_repair.py
       - name: Run local-first health check
         run: python3 tools/buddy_local_repository.py check
       - name: Save local-equivalent evidence
@@ -54,5 +62,8 @@ jobs:
           path: |
             .buddy-local/
             config/generated/dreamco-generator-registry.json
+            config/generated/full-potential-sandbox-catalog.json
+            config/generated/bot-sandbox-curriculum.json
+            config/generated/council-bot-career-paths.json
           if-no-files-found: warn
           retention-days: 7
