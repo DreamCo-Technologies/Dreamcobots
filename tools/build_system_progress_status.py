@@ -11,6 +11,7 @@ GAPS = ROOT / "config" / "generated" / "engineering-gap-closure-plan.json"
 GH = ROOT / "config" / "generated" / "github-platform-parity-benchmark.json"
 REVENUE = ROOT / "config" / "generated" / "live-revenue-readiness.json"
 MARKET = ROOT / "website" / "data" / "manufacturer-marketplace.json"
+CERT = ROOT / "config" / "generated" / "full-system-operational-certification.json"
 OUT = ROOT / "config" / "generated" / "system-progress-status.json"
 
 
@@ -24,12 +25,12 @@ def main() -> int:
     gh = read_json(GH, {"status_counts": {}, "parity_complete": False})
     revenue = read_json(REVENUE, {"bot_count": 0, "live_enabled_count": 0, "eligible_pending_owner_count": 0})
     market = read_json(MARKET, {"status": "not_generated", "manufacturer_count": 0, "rfq_count": 0, "quote_count": 0, "opportunity_count": 0})
+    cert = read_json(CERT, {"status": "not_run", "core_operational_certified": False, "fully_operational_and_connected_claim_allowed": False, "speed_summary": {}, "accuracy_summary": {}, "connection_summary": {}})
 
     stage_weights = {row["id"]: int(row["weight"]) for row in cfg["gap_stages"]}
     stage_order = [row["id"] for row in cfg["gap_stages"]]
     rows = []
     for gap in gaps.get("gaps", []):
-        # Generated gap plans prove discovery/ownership/acceptance intent, but not implementation/test success.
         achieved = {"discovered", "deduplicated", "owner_assigned", "acceptance_defined"}
         percent = sum(stage_weights[s] for s in achieved)
         rows.append({
@@ -50,13 +51,26 @@ def main() -> int:
             "required_stages": stage_order,
         })
 
-    red = False
-    yellow = bool(rows) or gh.get("parity_complete") is False or revenue.get("live_enabled_count", 0) < revenue.get("bot_count", 0)
-    status = "red" if red else ("yellow" if yellow else "green")
+    if cert.get("status") == "blocked":
+        status = "red"
+    elif cert.get("core_operational_certified") is True and cert.get("fully_operational_and_connected_claim_allowed") is True and not rows and gh.get("parity_complete") is True:
+        status = "green"
+    else:
+        status = "yellow"
+
     payload = {
-        "schema": "dreamco.system_progress_status.v2",
+        "schema": "dreamco.system_progress_status.v3",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "system_build_status": status,
+        "full_system_certification": {
+            "status": cert.get("status", "not_run"),
+            "core_operational_certified": cert.get("core_operational_certified", False),
+            "fully_operational_and_connected_claim_allowed": cert.get("fully_operational_and_connected_claim_allowed", False),
+            "speed": cert.get("speed_summary", {}),
+            "accuracy": cert.get("accuracy_summary", {}),
+            "connections": cert.get("connection_summary", {}),
+            "release_blockers": cert.get("release_blockers", []),
+        },
         "gap_count": len(rows),
         "average_gap_percent": round(sum(r["percent_complete"] for r in rows) / len(rows), 1) if rows else 100.0,
         "github_parity_status_counts": gh.get("status_counts", {}),
@@ -82,10 +96,9 @@ def main() -> int:
     print(json.dumps({
         "ok": True,
         "status": status,
+        "certification": payload["full_system_certification"]["status"],
         "gaps": len(rows),
         "average_gap_percent": payload["average_gap_percent"],
-        "live_enabled": payload["live_revenue"]["live_enabled"],
-        "marketplace_status": payload["manufacturer_marketplace"]["status"],
         "output": str(OUT.relative_to(ROOT)),
     }, indent=2))
     return 0
