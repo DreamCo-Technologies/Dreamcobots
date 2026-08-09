@@ -1,0 +1,30 @@
+{
+  "schema": "dreamco.live_revenue_gate.v1",
+  "version": "1.0.0",
+  "mission": "Allow a DreamCo bot to use Buddy's Stripe-backed live payment path only after technical, business, payment, safety and owner-authorization gates pass.",
+  "default_mode": "sandbox_only",
+  "required_gates": [
+    "bot exists in canonical fleet",
+    "sellable capability is verified by runtime evidence",
+    "applicable universal sandbox tests pass",
+    "business-owner curriculum exists",
+    "offer/pricing/fulfillment/support plan passes simulation",
+    "$1000 revenue experiment has a measured sandbox result",
+    "Stripe test checkout succeeds",
+    "decline/refund/cancel/idempotency/webhook tests pass",
+    "privacy/security/permission tests pass",
+    "no release-blocking build or deployment failure",
+    "owner explicitly enables live monetization for that bot/offer"
+  ],
+  "live_actions": {
+    "create_live_checkout":"approval required until bot+offer is explicitly enabled",
+    "charge":"never direct raw-card charge by bot; use Stripe-hosted/tokenized payment flows",
+    "refund":"explicit approval unless owner establishes bounded refund automation policy",
+    "subscription_change":"approval/policy gated",
+    "ad_spend":"separate explicit budget authorization required",
+    "payout_or_transfer":"separate explicit financial authorization required"
+  },
+  "eligibility_states": ["sandbox_only","tests_in_progress","eligible_pending_owner","live_enabled","suspended"],
+  "suspension_triggers": ["payment test regression","security/privacy failure","fraud anomaly","deployment outage","material customer complaint pattern","owner disables bot","offer no longer matches verified capability"],
+  "truth_rule": "Passing tests can make a bot eligible for live monetization, but it does not authorize spending, outreach, contracts, refunds, payouts or charges beyond the owner's configured live permissions. Revenue is recorded only from verified Stripe events, never from forecasts or simulations."
+}
