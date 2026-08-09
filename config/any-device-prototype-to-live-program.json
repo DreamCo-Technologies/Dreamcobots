@@ -1,0 +1,36 @@
+{
+  "schema": "dreamco.any_device_prototype_to_live.v1",
+  "version": "1.0.0",
+  "mission": "Let a user describe, prototype, test, package and publish software from phone, tablet, browser, desktop or CLI with the simplest possible DreamCo workflow and multiple deployment targets.",
+  "input_surfaces": ["mobile_browser","desktop_browser","phone_app","tablet","desktop_app","cli","api","voice_to_spec","notes_to_code"],
+  "prototype_types": ["static_site","web_app","pwa","api","backend_service","automation","bot","agent","dashboard","data_app","mobile_app_project","desktop_app_project","browser_extension_project","game_prototype","library","cli","documentation_site","ecommerce_frontend","business_portal"],
+  "prototype_pipeline": ["plain_language_spec","requirements","scaffold","code","preview","sandbox","tests","security_scan","accessibility_scan","performance_budget","artifact","shareable_preview"],
+  "go_live_targets": [
+    "local_network","static_host","github_pages_compatible","vercel_compatible","cloudflare_pages_compatible","netlify_compatible","container_host","vps","serverless_functions","docker","kubernetes","pwa_install","apple_app_store_project","google_play_project","microsoft_store_project","macos_distribution_project","windows_distribution_project","linux_package_project","browser_extension_store_project","npm_package","python_package","container_registry","self_hosted_dreamco"
+  ],
+  "deployment_contract": {
+    "adapter_interface": ["validate","build","preview","deploy","verify","rollback","logs","cost_estimate"],
+    "live_publish_requires_credentials": true,
+    "live_publish_requires_target_permission": true,
+    "paid_deployments_require_cost_confirmation": true,
+    "app_store_submission_may_require_external_developer_accounts_and_review": true,
+    "every_target_requires_post_deploy_health_check": true,
+    "every_target_requires_rollback_plan": true
+  },
+  "quality_model": {
+    "bug_free_code_guarantee": false,
+    "goal": "zero known release-blocking defects at release gate",
+    "required_layers": ["lint","typecheck","unit","integration","contract","end_to_end","negative","security","dependency","accessibility","performance","cross_device","deployment_smoke","rollback_test","observability"],
+    "release_rule": "Do not call code bug-free. Release only when defined gates pass, no known release-blocking defect remains, and residual risk is recorded."
+  },
+  "device_experience": {
+    "phone_first": true,
+    "plain_language_default": true,
+    "advanced_controls_optional": true,
+    "one_primary_action": "Build / Test / Go Live",
+    "automatic_complexity_hiding": true,
+    "downloadable_source_and_artifacts": true,
+    "provider_portability": true
+  },
+  "truth_rule": "DreamCo can aim to provide adapters for every major deployment path, but going live can depend on external credentials, platform policies, fees, network access and review. A prototype is not considered live until the target deployment and health check succeed."
+}
