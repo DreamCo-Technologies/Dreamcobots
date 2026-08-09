@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -14,6 +15,8 @@ OUT=ROOT/'config/generated/dreamco-ontology-snapshot.json'
 
 def load(path,default): return json.loads(path.read_text()) if path.exists() else default
 
+def stable_id(value:str)->str: return hashlib.sha256(value.encode('utf-8')).hexdigest()[:16]
+
 def main()->int:
     unified=load(UNIFIED,{'canonical_bots':[],'legacy_candidates':[]})
     work=load(WORK,{'occupations':[],'tasks':[]})
@@ -24,10 +27,10 @@ def main()->int:
         bid=f"bot:{bot['slug']}"; objects.append({'id':bid,'type':'Bot','name':bot.get('display_name'),'state':bot.get('status'),'source':bot.get('source')})
         did=f"division:{bot['division']}"; links.append({'type':'BOT_BELONGS_TO_DIVISION','from':bid,'to':did})
         for cap in bot.get('capabilities',[]):
-            cid=f"capability:{bot['slug']}:{abs(hash(cap))}"; objects.append({'id':cid,'type':'Capability','name':cap}); links.append({'type':'BOT_HAS_CAPABILITY','from':bid,'to':cid})
+            cid=f"capability:{bot['slug']}:{stable_id(cap)}"; objects.append({'id':cid,'type':'Capability','name':cap}); links.append({'type':'BOT_HAS_CAPABILITY','from':bid,'to':cid})
     divisions=sorted({b['division'] for b in unified.get('canonical_bots',[])})
     for division in divisions: objects.append({'id':f'division:{division}','type':'Division','name':division})
-    for row in unified.get('legacy_candidates',[]): objects.append({'id':f"legacy:{row.get('slug') or row['source']}",'type':'SpecialistAgent','name':row.get('slug') or row['source'],'state':'legacy_pending_promotion','source':row['source']})
+    for row in unified.get('legacy_candidates',[]): objects.append({'id':f"legacy:{row.get('slug') or stable_id(row['source'])}",'type':'SpecialistAgent','name':row.get('slug') or row['source'],'state':'legacy_pending_promotion','source':row['source']})
     for occ in work.get('occupations',[]): objects.append({'id':f"occupation:{occ['occupation_id']}",'type':'Occupation','name':occ['title'],'source':'O*NET'})
     for task in work.get('tasks',[]):
         tid=f"human-task:{task['task_id']}"; objects.append({'id':tid,'type':'HumanTask','name':task['task'],'state':task['automation_level'],'source':'O*NET'}); links.append({'type':'JOB_ROLE_CONTAINS_HUMAN_TASK','from':f"occupation:{task['occupation_id']}",'to':tid})
