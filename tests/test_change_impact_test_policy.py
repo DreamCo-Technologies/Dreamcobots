@@ -22,12 +22,26 @@ class ChangeImpactTestPolicyTests(unittest.TestCase):
         words = set(self.policy["high_risk_path_keywords"])
         for word in {"stripe", "payment", "billing", "auth", "security", "secret", "privacy", "webhook", "migration", "database", "deploy", "permission", "tenant", "delete"}:
             self.assertIn(word, words)
+        aliases = self.policy["high_risk_test_aliases"]
+        self.assertIn("stripe", aliases)
+        self.assertIn("auth", aliases)
+        self.assertIn("database", aliases)
 
     def test_changed_executable_code_requires_relevant_evidence(self):
         blockers = " ".join(self.policy["release_blockers"]).lower()
-        self.assertIn("changed executable file has no verification evidence", blockers)
-        self.assertIn("high-risk change lacks stronger evidence", blockers)
+        self.assertIn("no relevant verification evidence", blockers)
+        self.assertIn("domain-relevant stronger evidence", blockers)
         self.assertIn("shared-core change lacks dependent-system regression evidence", blockers)
+
+    def test_silent_test_bypasses_are_explicit_blockers(self):
+        blockers = " ".join(self.policy["release_blockers"]).lower()
+        self.assertIn("test file deleted", blockers)
+        self.assertIn("test skip marker", blockers)
+        anti = " ".join(self.policy["evidence_rules"]["anti_bypass"]).lower()
+        self.assertIn("deleted", anti)
+        self.assertIn("skip", anti)
+        self.assertIn("unrelated", anti)
+        self.assertGreaterEqual(len(self.policy["skip_markers"]), 6)
 
     def test_exemptions_are_explicit_and_temporary(self):
         required = set(self.policy["exemptions"]["required_fields"])
