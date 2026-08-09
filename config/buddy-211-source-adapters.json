@@ -1,0 +1,19 @@
+{
+  "schema": "dreamco.buddy_211_source_adapters.v1",
+  "version": "1.0.0",
+  "sources": [
+    {"id":"usa_gov_services","authority":"U.S. General Services Administration / USA.gov","purpose":"federal government services, benefits and program navigation","scope":"federal","access":"public web","runtime_state":"research_adapter_ready","freshness_rule":"eligibility/application claims require current page retrieval"},
+    {"id":"usa_gov_benefits","authority":"USA.gov","purpose":"benefit and financial-help discovery","scope":"federal and state links","access":"public web","runtime_state":"research_adapter_ready","freshness_rule":"published program rules must be rechecked at runtime"},
+    {"id":"united_way_211","authority":"United Way 211 network","purpose":"local non-emergency health, human-service and community-resource referral","scope":"local/community","access":"public directory and local 211 handoff","runtime_state":"research_adapter_ready","freshness_rule":"local availability/provider details require current lookup"},
+    {"id":"state_social_services","authority":"state/territorial/tribal agencies","purpose":"state/local benefits and social-service programs","scope":"jurisdiction-specific","access":"official public portals/APIs where available","runtime_state":"jurisdiction_adapter_required","freshness_rule":"resolve user jurisdiction before screening"},
+    {"id":"local_government_services","authority":"county/city/local public agencies","purpose":"permits, licenses, records, local assistance and civic services","scope":"local","access":"official public portals/APIs where available","runtime_state":"jurisdiction_adapter_required","freshness_rule":"verify agency/domain and current rules"},
+    {"id":"sam_contract_opportunities","authority":"U.S. General Services Administration / SAM.gov","purpose":"federal procurement opportunity discovery","scope":"federal contracting","access":"public search/data services where authorized","runtime_state":"adapter_planned","freshness_rule":"opportunity/deadline/set-aside claims require current SAM.gov evidence"},
+    {"id":"sam_contract_awards","authority":"SAM.gov","purpose":"federal award and procurement market research","scope":"federal contracting","access":"public/authorized contracting data","runtime_state":"adapter_planned","freshness_rule":"award/incumbent/spend claims require current evidence"},
+    {"id":"grants_gov","authority":"Grants.gov","purpose":"federal grant opportunities for eligible organizations/entities","scope":"federal grants","access":"public search/authorized data services","runtime_state":"adapter_planned","freshness_rule":"do not confuse organization grants with personal benefits"},
+    {"id":"sba","authority":"U.S. Small Business Administration","purpose":"small-business assistance and federal contracting readiness","scope":"business","access":"public official guidance","runtime_state":"research_adapter_ready","freshness_rule":"certification/eligibility requires current official verification"},
+    {"id":"usajobs","authority":"U.S. Office of Personnel Management / USAJOBS","purpose":"federal employment and hiring-process information","scope":"federal jobs","access":"public/authorized source","runtime_state":"adapter_planned","freshness_rule":"current openings and qualification claims require runtime evidence"}
+  ],
+  "source_selection_rule": "Prefer the responsible government agency for program rules and application requirements. Use 211-style/community directories for discovery and referral, then verify consequential qualifications with the responsible provider/agency.",
+  "security_rule": "Do not place raw SSNs, passwords, identity-verification secrets, payment credentials or government portal credentials in benchmark artifacts.",
+  "truth_rule": "A source being listed means Buddy knows where to verify; it does not mean every source is live-connected or every program/resource is currently available."
+}
