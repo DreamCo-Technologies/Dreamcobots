@@ -1,0 +1,69 @@
+name: Government Transparency Refresh
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 12 * * *"
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: government-transparency-refresh
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Validate global government architecture
+        run: python3 -m unittest tests.test_global_government_system
+      - name: Refresh authoritative public fiscal data
+        run: python3 tools/refresh_public_fiscal_data.py
+      - name: Rebuild global government benchmarks
+        run: |
+          python3 tools/build_government_public_sector_benchmarks.py
+          python3 tools/build_global_government_benchmarks.py
+          python3 tools/build_government_department_improvement_backlog.py
+          python3 tools/build_public_money_transparency.py
+          python3 tools/build_parallel_benchmark_gap_registry.py
+      - name: Summarize fiscal evidence
+        if: always()
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          print('# Government Transparency Refresh')
+          p=Path('config/generated/public-fiscal-latest.json')
+          if not p.exists():
+              print('- Public fiscal evidence was not generated.')
+              raise SystemExit(0)
+          d=json.loads(p.read_text())
+          print(f"- Verified sources: **{d.get('runtime_verified_source_count',0)}**")
+          print(f"- Debt records: **{len(d.get('debt_records',[]))}**")
+          print(f"- Agency spending records: **{len(d.get('agency_spending_records',[]))}**")
+          print(f"- Failed sources: **{d.get('failed_source_count',0)}**")
+          debt=(d.get('debt_records') or [{}])[0]
+          if debt:
+              print(f"- U.S. debt source date: **{debt.get('source_record_date')}**")
+          PY
+      - name: Upload public transparency evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: government-transparency-${{ github.run_id }}
+          path: |
+            config/generated/public-fiscal-latest.json
+            config/generated/government-public-sector-benchmarks.json
+            config/generated/global-government-benchmarks.json
+            config/generated/government-department-improvement-benchmarks.json
+            config/generated/public-money-transparency-benchmarks.json
+            config/generated/parallel-benchmark-gap-registry.json
+          if-no-files-found: warn
+          retention-days: 30
