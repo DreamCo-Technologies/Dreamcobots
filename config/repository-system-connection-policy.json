@@ -1,0 +1,10 @@
+{
+  "schema": "dreamco.repository_system_connection_policy.v1",
+  "version": "1.0.0",
+  "mission": "Prove that DreamCo's declared internal systems resolve to real repository files, scripts, workflows, configs, generated artifacts or explicit external adapters, and expose orphan/dangling connections as engineering gaps.",
+  "source_classes": ["package scripts","Run Everything Now steps","Full System Certification steps","config file path references","workflow run commands","agent command references","generated artifact dependencies","runtime route/config references"],
+  "connection_states": ["resolved","generated_at_runtime","external_adapter","optional","missing","ambiguous"],
+  "release_blockers": ["required Run Everything tool path missing","required certification tool path missing","package script references missing executable","required config dependency missing","canonical bot source root missing"],
+  "quality_checks": ["path exists","referenced command exists","generated dependency has a builder","builder output matches consumer path","no duplicate canonical owner","external connection truth explicitly separated from internal file connection"],
+  "truth_rule": "Internal repository connectivity means references resolve and required builders/consumers agree. It does not prove an external API or platform is live-connected; external connections require their own runtime evidence."
+}
