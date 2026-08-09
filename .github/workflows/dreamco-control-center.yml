@@ -49,6 +49,8 @@ jobs:
             check-everything)
               {
                 python3 tools/audit_actions_health.py
+                python3 tools/build_bot_sandbox_curriculum.py
+                python3 -m unittest tests.test_bot_sandbox_curriculum
                 python3 tools/audit_bot_division_placement.py
                 python3 tools/build_resource_sandbox_matrix.py
                 node --import tsx --test tests/buddy-resource-sandbox.test.ts
@@ -65,7 +67,15 @@ jobs:
               npm run easy:resources 2>&1 | tee tmp/control-center/run.log
               ;;
             test-fleet)
-              npm run easy:fleet 2>&1 | tee tmp/control-center/run.log
+              {
+                python3 tools/build_bot_sandbox_curriculum.py
+                python3 -m unittest tests.test_bot_sandbox_curriculum
+                python3 tools/audit_bot_division_placement.py
+                npm run buddy:fleet
+                npm run buddy:fleet-quality
+                npm run buddy:fleet:e2e
+                npm run buddy:daily-division-benchmarks
+              } 2>&1 | tee tmp/control-center/run.log
               ;;
             test-website)
               {
@@ -74,7 +84,11 @@ jobs:
               } 2>&1 | tee tmp/control-center/run.log
               ;;
             full-test)
-              npm run test:repository 2>&1 | tee tmp/control-center/run.log
+              {
+                python3 tools/build_bot_sandbox_curriculum.py
+                python3 -m unittest tests.test_bot_sandbox_curriculum
+                npm run test:repository
+              } 2>&1 | tee tmp/control-center/run.log
               ;;
           esac
       - name: Make simple summary
@@ -84,6 +98,11 @@ jobs:
             echo "# DreamCo Control Center"
             echo
             echo "Task: **${{ inputs.task }}**"
+            if [ -f config/generated/bot-sandbox-curriculum.json ]; then
+              echo
+              echo "## Bot sandbox"
+              python3 -c "import json; d=json.load(open('config/generated/bot-sandbox-curriculum.json')); print('- Bots:',d['bot_count']); print('- Divisions:',d['division_count']); print('- Capabilities:',d['declared_capability_count']); print('- Planned capability tests:',d['planned_capability_test_instances']); print('- Planned efficiency measurements:',d['planned_efficiency_measurements'])"
+            fi
             echo
             echo "## Last output"
             echo '```text'
@@ -102,5 +121,6 @@ jobs:
             config/generated/actions-health-report.json
             config/generated/bot-division-placement-audit.json
             config/generated/resource-sandbox-test-matrix.json
+            config/generated/bot-sandbox-curriculum.json
           if-no-files-found: ignore
           retention-days: 7
