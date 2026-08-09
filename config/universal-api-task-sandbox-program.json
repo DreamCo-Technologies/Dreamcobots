@@ -1,0 +1,21 @@
+{
+  "schema": "dreamco.universal_api_task_sandbox.v1",
+  "version": "1.0.0",
+  "mission": "Let Buddy adapt one sandbox system to any user-chosen API or task by translating the API/task contract into reusable validation, safety, efficiency, failure, benchmark and recovery scenarios.",
+  "supported_targets": ["http_api","local_function","cli_command","file_transform","database_task","queue_job","workflow","model_call","agent_task","browser_task","device_task","data_pipeline","user_defined_task"],
+  "required_target_spec": ["target_id","target_type","objective","inputs","expected_outputs","side_effect_level","permissions","success_metrics"],
+  "optional_api_spec": ["base_url","method","path","headers_schema","auth_mode","request_schema","response_schema","rate_limit","timeout","sandbox_or_test_endpoint","idempotency_key"],
+  "optional_task_spec": ["command_or_callable","working_directory","fixtures","allowed_files","allowed_network","allowed_tools","timeout","rollback","cleanup"],
+  "shared_test_dimensions": [
+    "discovery","input_schema","output_schema","happy_path","missing_required_input","invalid_type","boundary_value","empty_value","oversized_input","malformed_input","unicode","multilingual","ambiguous_instruction","contradictory_instruction","permission_allowed","permission_denied","approval_required","wrong_scope","secret_redaction","pii_minimization","timeout","retry","rate_limit","partial_failure","dependency_failure","offline_mode","cancellation","resume","rollback","idempotency","duplicate_request","concurrency","ordering","pagination","streaming","cache_behavior","version_drift","schema_drift","security_input","prompt_injection_when_relevant","unsafe_redirect_when_relevant","file_safety_when_relevant","cost_limit","latency_p50","latency_p95","throughput","memory","cpu","network_bytes","tool_calls","model_calls","user_steps","correctness","completeness","precision","recall","explainability","accessibility","audit_receipt","failure_visibility","fallback","manual_handoff","regression","same_fixture_benchmark"
+  ],
+  "execution_modes": ["static_contract","synthetic_fixture","mock","local_sandbox","provider_sandbox","staging","authorized_read_only_live"],
+  "side_effect_levels": {
+    "none":"may run automatically in sandbox",
+    "read_only":"may run against approved read-only target",
+    "reversible_write":"requires configured approval and rollback",
+    "consequential":"draft/simulate only unless explicit approval and policy allow execution"
+  },
+  "benchmark_gap_output": ["baseline","target","failure_modes","efficiency_metrics","quality_metrics","competitor_or_reference","gap_priority","repair_or_skill_plan"],
+  "truth_rule": "Universal means the framework can accept arbitrary target contracts; it does not mean an unknown API can be safely or correctly exercised without its schema, authentication, permissions, terms and sandbox/staging details."
+}
