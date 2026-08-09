@@ -9,6 +9,7 @@ on:
     paths:
       - "website/**"
       - "tools/build_buddy_public_site.py"
+      - "tools/build_manufacturer_marketplace_catalog.py"
       - "tools/check_deployment_cost_policy.py"
       - "tools/generate_buddy_model_router.py"
       - "tools/check_buddy_model_benchmarks.mjs"
@@ -39,6 +40,11 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
       - name: Run deployment preflight
         run: |
           python3 tools/check_deployment_cost_policy.py
@@ -46,7 +52,10 @@ jobs:
           node tools/check_buddy_model_benchmarks.mjs
           python3 tools/generate_buddy_distribution_catalog.py --check
           python3 tools/generate_repository_test_registry.py
+          python3 tools/build_manufacturer_marketplace_catalog.py
           python3 tools/build_buddy_public_site.py --check
+          test -s website/manufacturer-marketplace.html
+          test -s website/data/manufacturer-marketplace.json
 
       - name: Check browser JavaScript syntax
         run: |
