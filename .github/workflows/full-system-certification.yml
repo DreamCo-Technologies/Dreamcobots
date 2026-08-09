@@ -16,6 +16,10 @@ on:
       - "tests/**"
       - "config/**"
       - "App_bots/**"
+      - "original-bots/**"
+      - "bots/**"
+      - "attached_assets/**"
+      - "docs/**"
       - "package.json"
       - "package-lock.json"
       - ".github/agents/**"
@@ -45,15 +49,33 @@ jobs:
           python-version: "3.13"
 
       - name: Clean locked dependency install
-        run: npm ci
+        run: |
+          npm ci
+          python3 -m pip install --disable-pip-version-check openpyxl
 
       - name: Validate certification policies
         run: |
           python3 -m unittest \
             tests.test_full_system_operational_certification \
             tests.test_trusted_code_delivery \
-            tests.test_change_impact_test_policy
+            tests.test_change_impact_test_policy \
+            tests.test_recovery_ontology_workforce_runtime
           node --import tsx --test tests/server-health-runtime-policy.test.ts
+
+      - name: Recover and unify legacy bot system
+        run: |
+          python3 tools/recover_legacy_bots.py
+          python3 tools/build_legacy_capability_merge_proposals.py
+          python3 tools/build_legacy_promotion_backlog.py
+          python3 tools/build_unified_bot_system.py
+          python3 tools/build_runtime_sync_plan.py
+
+      - name: Build work manufacturing and ontology evidence
+        run: |
+          python3 tools/build_universal_work_ai_catalog.py || python3 tools/build_universal_work_ai_catalog.py --offline
+          python3 tools/build_work_platform_benchmarks.py
+          python3 tools/build_manufacturing_productivity_benchmarks.py
+          python3 tools/build_ontology_snapshot.py
 
       - name: Refresh connection catalog and truth audit
         run: |
@@ -66,16 +88,27 @@ jobs:
       - name: Run trusted-code static audit
         run: python3 tools/audit_trusted_code_delivery.py
 
+      - name: Build maximum sandbox plan
+        run: |
+          python3 tools/build_universal_human_ai_task_sandbox.py
+          python3 tools/build_full_potential_sandbox_catalog.py
+          python3 tools/build_bot_sandbox_curriculum.py
+          python3 tools/build_maximum_sandbox_matrix.py
+
       - name: Run business data and trade readiness tests
         run: |
           python3 tools/build_bot_business_owner_curriculum.py
-          python3 tools/build_bot_sandbox_curriculum.py
           python3 tools/build_live_revenue_readiness.py
           python3 tools/build_manufacturer_marketplace_catalog.py
           node --import tsx --test tests/business-data-trade-readiness.test.ts
 
       - name: Run full production verification
         run: npx tsx tools/run_universal_verification.ts --production
+
+      - name: Re-verify fleet E2E and inherit canonical sandbox evidence
+        run: |
+          npm run buddy:fleet:e2e
+          python3 tools/audit_maximum_sandbox_runtime.py
 
       - name: Run speed and accuracy benchmarks
         run: python3 tools/run_system_speed_accuracy_benchmarks.py
@@ -90,27 +123,38 @@ jobs:
         if: always()
         run: python3 tools/build_full_system_certification.py
 
+      - name: Build live-user readiness
+        if: always()
+        run: python3 tools/build_live_user_testing_readiness.py || true
+
       - name: Certification summary
         if: always()
         run: |
           python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
           import json
           from pathlib import Path
-          path=Path('config/generated/full-system-operational-certification.json')
+          def load(path):
+              p=Path(path)
+              return json.loads(p.read_text()) if p.exists() else {}
+          d=load('config/generated/full-system-operational-certification.json')
           print('# Full System Certification')
           print()
-          if not path.exists():
+          if not d:
               print('Certification receipt was not generated because prerequisite evidence is missing.')
               raise SystemExit(0)
-          d=json.loads(path.read_text())
           print(f"- Status: **{d['status']}**")
           print(f"- Core operationally certified: **{d['core_operational_certified']}**")
           print(f"- Fully operational + connected claim allowed: **{d['fully_operational_and_connected_claim_allowed']}**")
           print(f"- Speed: **{d['speed_summary']['passed']}/{d['speed_summary']['total']}**")
           print(f"- Accuracy: **{d['accuracy_summary']['passed']}/{d['accuracy_summary']['total']}**")
           print(f"- Runtime connections: **{d['connection_summary']['runtime_verified']}/{d['connection_summary']['declared']}**")
-          print(f"- Startup: **{d['runtime_summary']['startup_seconds']}s**")
-          print(f"- Health latency: **{d['runtime_summary']['health_latency_ms']}ms**")
+          print(f"- Legacy files/candidates: **{d['recovery_summary']['legacy_files']}/{d['recovery_summary']['recoverable_candidates']}**")
+          print(f"- Canonical sandbox runtime coverage: **{d['sandbox_summary']['canonical_runtime_coverage_percent']}%**")
+          print(f"- Ontology objects/links: **{d['ontology_summary']['objects']}/{d['ontology_summary']['links']}**")
+          print(f"- Work benchmark cases: **{d['work_summary']['benchmark_cases']}**")
+          print(f"- Manufacturing benchmark cases: **{d['manufacturing_summary']['benchmark_cases']}**")
+          live=load('config/generated/live-user-testing-readiness.json')
+          if live: print(f"- Live-user recommended stage: **{live['recommended_stage']}**")
           if d['release_blockers']:
               print('- Blockers:')
               for blocker in d['release_blockers']:
@@ -129,11 +173,26 @@ jobs:
             config/generated/runtime-connection-readiness.json
             config/generated/trusted-code-delivery-audit.json
             config/generated/bot-accounting-placement-audit.json
+            config/generated/legacy-bot-recovery-manifest.json
+            config/generated/legacy-capability-merge-proposals.json
+            config/generated/legacy-bot-promotion-backlog.json
+            config/generated/unified-bot-system.json
+            config/generated/runtime-sync-plan.json
+            config/generated/universal-work-ai-catalog.json
+            config/generated/work-platform-benchmark-backlog.json
+            config/generated/manufacturing-productivity-benchmarks.json
+            config/generated/dreamco-ontology-snapshot.json
+            config/generated/maximum-sandbox-matrix.json
+            config/generated/maximum-sandbox-runtime-audit.json
+            config/generated/live-user-testing-readiness.json
             tmp/dreamco-verification/latest.json
             reports/FULL_SYSTEM_OPERATIONAL_CERTIFICATION.md
             reports/SYSTEM_SPEED_ACCURACY_BENCHMARKS.md
             reports/RUNTIME_CONNECTION_READINESS.md
             reports/TRUSTED_CODE_DELIVERY_AUDIT.md
             reports/BOT_ACCOUNTING_PLACEMENT_AUDIT.md
+            reports/LEGACY_BOT_RECOVERY.md
+            reports/LEGACY_CAPABILITY_MERGE_PROPOSALS.md
+            reports/LEGACY_BOT_PROMOTION_BACKLOG.md
           if-no-files-found: warn
           retention-days: 21
