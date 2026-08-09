@@ -128,6 +128,9 @@ jobs:
               ;;
             fleet)
               {
+                python3 tools/build_full_potential_sandbox_catalog.py
+                python3 -m unittest tests.test_full_potential_sandbox
+                cp config/generated/full-potential-sandbox-catalog.json tmp/buddy-actions/full-potential-sandbox-catalog.json
                 python3 tools/build_bot_sandbox_curriculum.py
                 python3 -m unittest tests.test_bot_sandbox_curriculum
                 cp config/generated/bot-sandbox-curriculum.json tmp/buddy-actions/bot-sandbox-curriculum.json
@@ -144,6 +147,8 @@ jobs:
               ;;
             full)
               {
+                python3 tools/build_full_potential_sandbox_catalog.py
+                python3 -m unittest tests.test_full_potential_sandbox
                 python3 tools/build_bot_sandbox_curriculum.py
                 python3 -m unittest tests.test_bot_sandbox_curriculum
                 python3 tools/build_council_bot_career_paths.py
@@ -178,6 +183,11 @@ jobs:
               echo
               echo "### Resource sandbox matrix"
               python3 -c "import json; d=json.load(open('tmp/buddy-actions/resource-sandbox-test-matrix.json')); print('- Resource types:',d['resource_type_count']); print('- Shared families:',d['shared_family_count']); print('- Planned test instances:',d['planned_test_count'])"
+            fi
+            if [ -f tmp/buddy-actions/full-potential-sandbox-catalog.json ]; then
+              echo
+              echo "### Full-potential sandbox"
+              python3 -c "import json; d=json.load(open('tmp/buddy-actions/full-potential-sandbox-catalog.json')); print('- Test families:',d['test_family_count']); print('- Axes:',d['axis_count']); print('- Shared sandbox categories:',d['category_count'])"
             fi
             if [ -f tmp/buddy-actions/bot-sandbox-curriculum.json ]; then
               echo
