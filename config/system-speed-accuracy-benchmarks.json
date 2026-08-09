@@ -1,0 +1,27 @@
+{
+  "schema": "dreamco.system_speed_accuracy_benchmarks.v1",
+  "version": "1.0.0",
+  "speed_benchmarks": [
+    {"id":"types","command":["npm","run","check"],"hard_budget_seconds":180},
+    {"id":"fleet_catalog","command":["npm","run","buddy:fleet"],"hard_budget_seconds":180},
+    {"id":"fleet_e2e","command":["npm","run","buddy:fleet:e2e"],"hard_budget_seconds":900},
+    {"id":"connections","command":["npm","run","buddy:connections"],"hard_budget_seconds":180},
+    {"id":"model_router","command":["npm","run","buddy:models"],"hard_budget_seconds":180},
+    {"id":"model_benchmarks","command":["npm","run","buddy:model-benchmarks"],"hard_budget_seconds":240},
+    {"id":"search","command":["npm","run","buddy:search"],"hard_budget_seconds":180},
+    {"id":"production_build","command":["npm","run","build"],"hard_budget_seconds":600}
+  ],
+  "accuracy_benchmarks": [
+    {"id":"governed_correctness","command":["npm","run","test:governed"],"metric":"pass_rate","minimum":1.0},
+    {"id":"fleet_correctness","command":["npm","run","buddy:fleet:e2e"],"metric":"pass_rate","minimum":1.0},
+    {"id":"trusted_code_policy","command":["python3","-m","unittest","tests.test_trusted_code_delivery","tests.test_change_impact_test_policy"],"metric":"pass_rate","minimum":1.0},
+    {"id":"platform_policy","command":["python3","-m","unittest","tests.test_platform_evolution","tests.test_engineering_gap_closure_team"],"metric":"pass_rate","minimum":1.0}
+  ],
+  "regression_policy": {
+    "record_each_run": true,
+    "warn_slowdown_percent": 20,
+    "fail_only_on_hard_budget": true,
+    "accuracy_regression_is_blocker": true
+  },
+  "truth_rule": "These benchmarks measure repository-controlled deterministic checks. External APIs, models, devices, and deployments need their own runtime latency and task-quality fixtures when connected."
+}
