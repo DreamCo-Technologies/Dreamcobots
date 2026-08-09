@@ -16,10 +16,13 @@ OVERLAY = ROOT / "config" / "generated" / "recovered-original-bot-overlay.json"
 REPORT = ROOT / "reports" / "ORIGINAL_BOT_RECOVERY.md"
 
 TEXT_SUFFIXES = {".md", ".txt", ".py", ".js", ".ts", ".tsx", ".json", ".yaml", ".yml", ".toml", ".ini", ".cfg"}
-BOT_HINT = re.compile(r"\b(bot|agent|assistant|copilot|ai|worker)\b", re.I)
+CODE_SUFFIXES = {".py", ".js", ".ts", ".tsx"}
+BOT_HINT = re.compile(r"\b(bot|agent|assistant|copilot|ai worker)\b", re.I)
+BOT_NAME_HINT = re.compile(r"(bot|agent|assistant|copilot)", re.I)
 SYSTEM_HINT = re.compile(r"\b(system|engine|runtime|workflow|orchestrat|router|registry|service|platform|framework|pipeline|sandbox)\b", re.I)
 FRONTMATTER_FIELD = re.compile(r"^(name|title|slug|description|category|capabilities)\s*:\s*(.+)$", re.I | re.M)
 HEADING = re.compile(r"^#\s+(.+)$", re.M)
+CLASS_OR_EXPORT_BOT = re.compile(r"(?:class|const|function|export\s+(?:class|const|function))\s+[A-Za-z0-9_]*(?:Bot|Agent|Assistant|Copilot)\b", re.I)
 
 
 def slugify(value: str) -> str:
@@ -107,16 +110,35 @@ def json_candidates(path: Path, doc) -> list[dict]:
 
 
 def text_candidate(path: Path, text: str) -> list[dict]:
-    if not BOT_HINT.search(f"{path.stem} {text[:4000]}"):
-        return []
+    root_name = next((part for part in path.parts if part in {"original-bots", "bots", "attached_assets"}), "")
     fields = {m.group(1).lower(): m.group(2).strip() for m in FRONTMATTER_FIELD.finditer(text[:5000])}
     heading = HEADING.search(text[:3000])
-    display = fields.get("name") or fields.get("title") or (heading.group(1).strip() if heading else path.stem.replace("_", " ").replace("-", " ").title())
+    heading_text = heading.group(1).strip() if heading else ""
+    filename_bot = bool(BOT_NAME_HINT.search(path.stem))
+    heading_bot = bool(BOT_NAME_HINT.search(heading_text))
+    code_bot = bool(CLASS_OR_EXPORT_BOT.search(text[:12000])) if path.suffix.lower() in CODE_SUFFIXES else False
+    structured_identity = bool(fields.get("name") or fields.get("title") or fields.get("slug")) and bool(
+        fields.get("capabilities") or fields.get("description") or BOT_HINT.search(" ".join(fields.values()))
+    )
+    broad_hint = bool(BOT_HINT.search(f"{path.stem} {text[:4000]}"))
+
+    if root_name == "attached_assets":
+        qualifies = structured_identity or filename_bot or heading_bot or code_bot
+    elif root_name == "bots":
+        qualifies = structured_identity or filename_bot or heading_bot or code_bot or broad_hint
+    else:
+        qualifies = structured_identity or filename_bot or heading_bot or code_bot or broad_hint
+    if not qualifies:
+        return []
+
+    display = fields.get("name") or fields.get("title") or heading_text or path.stem.replace("_", " ").replace("-", " ").title()
     slug = slugify(fields.get("slug") or display)
     caps = capabilities_from_value(fields.get("capabilities", ""))
     if not caps:
         bullets = re.findall(r"^\s*[-*]\s+(.{3,180})$", text, re.M)
         caps = [b.strip() for b in bullets[:20] if not b.lower().startswith(("http", "copyright", "license"))]
+    if not caps and code_bot:
+        caps = ["Recovered executable bot/agent implementation; capability extraction and sandbox certification required"]
     return [{
         "display_name": display,
         "slug": slug,
@@ -234,7 +256,7 @@ def main() -> int:
         "truth_boundary": program["truth_rule"],
     }
     inventory = {
-        "schema": "dreamco.original_bot_recovery.generated.v3",
+        "schema": "dreamco.original_bot_recovery.generated.v4",
         "canonical_bot_count": len(canonical_by_slug),
         "historical_roots": [str(path.relative_to(ROOT)) for path in HISTORICAL_ROOTS],
         "original_candidate_count": len(candidates),
