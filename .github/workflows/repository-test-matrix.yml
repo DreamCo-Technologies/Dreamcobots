@@ -1,8 +1,21 @@
 name: Repository Test Matrix
 
 on:
-  pull_request:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "server/**"
+      - "shared/**"
+      - "client/**"
+      - "website/**"
+      - "tools/**"
+      - "tests/**"
+      - "config/**"
+      - "App_bots/**"
+      - "package.json"
+      - ".github/workflows/repository-test-matrix.yml"
+  pull_request:
   schedule:
     - cron: "17 11 * * *"
 
@@ -16,17 +29,19 @@ concurrency:
 jobs:
   governed-local-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
       - run: npm ci
+      - name: Check Actions health
+        run: python3 tools/audit_actions_health.py
       - name: Check builder team readiness
         run: npx tsx tools/check_builder_team_readiness.ts
       - name: Validate Buddy personality and acting program
@@ -37,7 +52,22 @@ jobs:
         run: npx tsx tools/generate_buddy_success_program.ts
       - name: Refresh derived fleet quality program for this exact commit
         run: npx tsx tools/generate_buddy_fleet_quality_program.ts
+      - name: Audit bot division placement
+        run: python3 tools/audit_bot_division_placement.py
       - name: Refresh derived repository registry after all generators
         run: python3 tools/generate_repository_test_registry.py
       - name: Run DreamCo Universal Verification Engine
         run: npx tsx tools/run_universal_verification.ts
+      - name: Save debugging evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: repository-test-${{ github.run_id }}
+          path: |
+            tmp/dreamco-verification/
+            reports/ACTIONS_HEALTH_REPORT.md
+            reports/BOT_DIVISION_PLACEMENT_AUDIT.md
+            config/generated/actions-health-report.json
+            config/generated/bot-division-placement-audit.json
+          if-no-files-found: ignore
+          retention-days: 7
