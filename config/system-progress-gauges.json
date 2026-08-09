@@ -1,0 +1,28 @@
+{
+  "schema": "dreamco.system_progress_gauges.v1",
+  "version": "1.0.0",
+  "mission": "Give the owner one truthful view of every engineering gap, sandbox/build stage, business-readiness gate and system-wide release status.",
+  "gap_stages": [
+    {"id":"discovered","weight":5},
+    {"id":"deduplicated","weight":5},
+    {"id":"owner_assigned","weight":5},
+    {"id":"acceptance_defined","weight":10},
+    {"id":"sandbox_tests_defined","weight":10},
+    {"id":"baseline_recorded","weight":5},
+    {"id":"implementation_started","weight":10},
+    {"id":"focused_tests_pass","weight":15},
+    {"id":"security_review_pass","weight":10},
+    {"id":"affected_regressions_pass","weight":10},
+    {"id":"rollback_verified","weight":5},
+    {"id":"runtime_evidence_pass","weight":10}
+  ],
+  "gap_gauge_fields": ["gap_id","category","owner","percent_complete","stage","blockers","tests_passed","tests_required","security_status","rollback_status","runtime_evidence_status","risk","priority","updated_at"],
+  "system_build_status": {
+    "red":"release-blocking build/security/data-loss/payment or deployment failure exists",
+    "yellow":"no critical blocker, but required tests/evidence/gaps remain",
+    "green":"all required current release gates pass with no known release blocker",
+    "release_candidate":"green plus deployment/package/rollback/observability verification completed"
+  },
+  "dashboards": ["engineering gaps","bot sandbox","GitHub parity","open-source evolution","data packages","business-owner readiness","Stripe live-revenue readiness","deployments","security","Actions health"],
+  "truth_rule": "Percent complete measures required evidence stages, not developer optimism. A gap cannot reach 100% until runtime evidence passes."
+}
