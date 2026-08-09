@@ -1,0 +1,44 @@
+{
+  "schema": "dreamco.live_revenue_readiness.v1",
+  "version": "1.0.0",
+  "mission": "Allow a bot to progress from sandbox monetization to real Stripe-backed revenue only after technical, business, data, security, payment and owner-authorization evidence is complete.",
+  "required_gates": [
+    "verified sellable capability",
+    "applicable sandbox tests pass",
+    "business-owner curriculum complete",
+    "$1000 revenue simulation completed with assumptions recorded",
+    "offer/pricing/fulfillment/support plan exists",
+    "Stripe test-mode checkout passes",
+    "declined payment path passes",
+    "webhook signature verification passes",
+    "duplicate event/idempotency tests pass",
+    "refund/cancellation flow passes when applicable",
+    "payment reconciliation evidence exists",
+    "privacy/data-storage policy passes",
+    "no raw card data storage",
+    "security and dependency checks pass",
+    "terms/refund/customer disclosure requirements reviewed",
+    "owner explicitly enables live revenue for this bot/offering"
+  ],
+  "states": ["sandbox_only","test_payment_ready","business_pilot_ready","live_revenue_eligible","live_revenue_enabled","paused","revoked"],
+  "default_state": "sandbox_only",
+  "live_enablement": {
+    "automatic": false,
+    "owner_authorization_required": true,
+    "per_bot_or_offer_scope": true,
+    "spending_not_implied": true,
+    "real_ad_spend_separate_approval": true,
+    "refunds_separate_permission": true,
+    "external_outreach_separate_permission": true
+  },
+  "stripe": {
+    "shared_owner": "server/stripeClient.ts",
+    "bots_receive_secret_keys": false,
+    "test_mode_first": true,
+    "live_mode_uses_shared_payment_abstraction": true,
+    "raw_card_storage": false
+  },
+  "continuous_monitoring": ["payment failures","chargebacks","refund rate","customer complaints","fulfillment failures","security findings","privacy findings","margin/cost drift","provider/API failures"],
+  "automatic_pause_conditions": ["payment security failure","webhook verification failure","critical privacy/security failure","known prohibited data handling","fulfillment system unavailable","owner revokes permission"],
+  "truth_rule": "Passing the readiness gate makes a bot eligible for owner-approved live monetization; it does not guarantee customers, revenue, profitability, legal sufficiency or permission to spend money or contact people."
+}
