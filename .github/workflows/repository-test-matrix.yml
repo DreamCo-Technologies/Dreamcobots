@@ -13,6 +13,7 @@ on:
       - "tests/**"
       - "config/**"
       - "App_bots/**"
+      - ".github/agents/**"
       - "package.json"
       - ".github/workflows/repository-test-matrix.yml"
   pull_request:
@@ -54,6 +55,8 @@ jobs:
         run: npx tsx tools/generate_buddy_fleet_quality_program.ts
       - name: Audit bot division placement
         run: python3 tools/audit_bot_division_placement.py
+      - name: Audit all bots categories divisions and specialist agents
+        run: python3 tools/audit_all_bots_categories_and_agents.py
       - name: Refresh derived repository registry after all generators
         run: python3 tools/generate_repository_test_registry.py
       - name: Run DreamCo Universal Verification Engine
@@ -67,7 +70,9 @@ jobs:
             tmp/dreamco-verification/
             reports/ACTIONS_HEALTH_REPORT.md
             reports/BOT_DIVISION_PLACEMENT_AUDIT.md
+            reports/BOT_ACCOUNTING_PLACEMENT_AUDIT.md
             config/generated/actions-health-report.json
             config/generated/bot-division-placement-audit.json
+            config/generated/bot-accounting-placement-audit.json
           if-no-files-found: ignore
           retention-days: 7
