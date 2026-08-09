@@ -1,0 +1,79 @@
+{
+  "schema": "dreamco.trusted_code_delivery.v1",
+  "version": "1.0.0",
+  "mission": "Make DreamCo one of the most trustworthy coding systems possible by refusing to present generated or changed code as production-ready until layered executable evidence passes.",
+  "promise": "Never promise bug-free software. Promise evidence, transparency, fail-closed release gates, rapid repair, and zero known release-blocking defects at delivery time.",
+  "quality_layers": [
+    "requirements_and_acceptance_criteria",
+    "canonical_owner_and_architecture_review",
+    "syntax_and_parse_validation",
+    "type_checking",
+    "static_analysis",
+    "unit_tests",
+    "integration_tests",
+    "contract_and_schema_tests",
+    "negative_and_error_path_tests",
+    "boundary_and_edge_case_tests",
+    "regression_tests",
+    "property_invariant_tests_when_applicable",
+    "fuzz_or_malformed_input_tests_when_applicable",
+    "concurrency_and_idempotency_tests_when_applicable",
+    "security_and_secret_handling_tests",
+    "dependency_and_supply_chain_review",
+    "privacy_and_permission_tests",
+    "accessibility_tests_for_user_interfaces",
+    "performance_and_resource_budget_tests",
+    "end_to_end_tests",
+    "build_and_packaging_tests",
+    "deployment_smoke_tests",
+    "rollback_or_safe_revert_test",
+    "observability_and_failure_visibility",
+    "post_release_regression_monitoring"
+  ],
+  "risk_classes": {
+    "low": ["documentation","copy","non-executable metadata"],
+    "normal": ["UI behavior","business logic","generator changes","ordinary APIs"],
+    "high": ["authentication","authorization","payments","user data","database migrations","deployment","security","external side effects","concurrency","billing"],
+    "critical": ["secret handling","financial movement","destructive production actions","tenant isolation","security controls","data deletion"]
+  },
+  "minimum_evidence": {
+    "low": ["focused_validation"],
+    "normal": ["focused_tests","type_or_syntax_check","affected_regression_suite","build_when_applicable"],
+    "high": ["normal_requirements","negative_tests","security_privacy_review","integration_tests","rollback_path","runtime_or_sandbox_evidence"],
+    "critical": ["high_requirements","independent_review","adversarial_tests","explicit_approval","full_affected_suite","audit_evidence"]
+  },
+  "generated_code_rules": [
+    "Generate tests with code whenever executable behavior changes.",
+    "Do not call generated code verified merely because it compiles.",
+    "Do not silently catch or hide test/build errors.",
+    "Do not weaken thresholds or delete meaningful tests to obtain green CI.",
+    "When fixing a defect, preserve a regression fixture that would fail before the fix.",
+    "Prefer shared fixes at the canonical owner over duplicated patches.",
+    "Unverified code must be labeled draft/prototype/not-yet-verified.",
+    "Record known limitations and residual risks with the delivered artifact."
+  ],
+  "change_impact_rules": [
+    "Every changed executable file must map to at least one focused test, generated verification check, or documented not-applicable reason.",
+    "Shared/core changes require dependent-system regression tests.",
+    "Schema/API changes require compatibility checks.",
+    "Payment/auth/security changes require negative and permission tests.",
+    "Deployment changes require smoke and rollback evidence.",
+    "Bug fixes require a regression test whenever reasonably reproducible."
+  ],
+  "release_blockers": [
+    "syntax/type/build failure",
+    "failing required test",
+    "known critical/high security defect",
+    "missing required test evidence for a high/critical change",
+    "unreviewed destructive migration",
+    "secret exposure",
+    "raw payment credential handling",
+    "known data-loss or tenant-isolation defect",
+    "failed deployment health check",
+    "missing rollback path for high-risk deployment",
+    "hidden/skipped failure without approved reason"
+  ],
+  "delivery_receipt": ["commit_or_artifact_id","risk_class","checks_run","checks_passed","checks_failed","known_limitations","residual_risk","rollback_path","verification_timestamp","release_status"],
+  "release_statuses": ["draft","testing","blocked","verified_candidate","released","regressed","recalled"],
+  "truth_rule": "No finite test suite can prove the absence of every possible bug. DreamCo's trust standard is to maximize defect detection, block known-bad or insufficiently-tested code, show evidence, and repair regressions quickly."
+}
