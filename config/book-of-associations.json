@@ -1,0 +1,45 @@
+{
+  "schema": "dreamco.book_of_associations.v1",
+  "purpose": "Give every DreamCo sales, marketing, partnership, procurement, grant, nonprofit and market-intelligence bot a shared organization graph instead of isolated lists.",
+  "entity_types": [
+    "trade association", "professional association", "chamber of commerce", "business league",
+    "industry council", "standards organization", "certification organization", "licensing board",
+    "economic development organization", "small-business support organization", "incubator", "accelerator",
+    "university entrepreneurship center", "investor network", "supplier diversity council", "cooperative",
+    "conference and trade-show organizer", "vendor directory", "government partner network", "nonprofit network",
+    "foundation network", "arts council", "workforce development board", "export/trade organization", "local merchant group"
+  ],
+  "fields": [
+    "association_id", "name", "entity_type", "industries", "professions", "geography", "service_area",
+    "website", "contact_routes", "membership_types", "membership_cost_when_public", "eligibility",
+    "member_directory", "events", "conferences", "training", "certifications", "standards", "publications",
+    "sponsorship_options", "advertising_options", "partnership_options", "referral_options", "vendor_options",
+    "procurement_options", "grant_options", "speaker_options", "chapter_structure", "API_or_downloads",
+    "source_url", "source_type", "last_verified", "license_or_terms_notes", "confidence", "notes"
+  ],
+  "discovery_jobs": [
+    "find associations relevant to a bot's customer industry",
+    "find associations relevant to a prospect's profession",
+    "find local chambers and merchant groups",
+    "find sponsorship and advertising inventory",
+    "find public member/vendor directories where use is permitted",
+    "find conferences and speaking opportunities",
+    "find partnership and referral programs",
+    "find standards and certifications that affect product design",
+    "find procurement and supplier-diversity pathways",
+    "find nonprofit and foundation networks",
+    "find training and workforce-development partners"
+  ],
+  "sales_integration": {
+    "lead_generation": "Association data can identify market segments, public contact paths and organization relationships, but collection and outreach must respect terms, privacy, anti-spam rules and platform policies.",
+    "sales_rep": "The universal sales rep system should use association context for personalization, credibility, partnership angles and event timing.",
+    "advertising": "Association sponsorships, newsletters, publications, directories, events and member programs feed the 500-method advertising benchmark.",
+    "government": "Public-sector and supplier-diversity networks feed government-contract readiness and subcontractor discovery.",
+    "nonprofit": "Nonprofit and foundation networks feed grants, referrals, collaboration and service-delivery discovery."
+  },
+  "parallel_bots": [
+    "association-discovery-bot", "association-verification-bot", "partnership-bot", "sponsorship-bot",
+    "event-opportunity-bot", "directory-compliance-bot", "sales-handoff-bot", "knowledge-graph-bot"
+  ],
+  "truth_rule": "Do not represent an organization as endorsing DreamCo merely because it appears in the Book of Associations. Store provenance and verification dates, and re-check time-sensitive membership, contact, event, advertising and procurement information before acting."
+}
