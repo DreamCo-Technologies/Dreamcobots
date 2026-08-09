@@ -1,0 +1,107 @@
+{
+  "schema": "dreamco.council_bot_career_entrepreneur.v1",
+  "version": "1.0.0",
+  "mission": "Make the DreamCo Council continuously maintain a measurable career path for every bot from recruit to specialist, operator, product owner, business operator, and entrepreneur-capable service, using Buddy Bootcamp evidence, benchmark-gap closure, real user outcomes, and business-readiness gates.",
+  "applies_to": "every canonical bot in App_bots/*.json",
+  "council_roles": [
+    {"id":"capability_council","owns":["capability coverage","skill ladder","tool/function readiness","benchmark gaps"]},
+    {"id":"quality_council","owns":["tests","reliability","efficiency","regressions","graduation evidence"]},
+    {"id":"safety_council","owns":["permissions","security","privacy","rights","regulated-domain boundaries"]},
+    {"id":"business_council","owns":["customer problem","offer","pricing","unit economics","market demand","sales readiness","support readiness","business graduation"]},
+    {"id":"entrepreneur_council","owns":["independent product path","business model experimentation","customer acquisition plan","operating playbook","reinvestment/learning loop","owner approval boundaries"]}
+  ],
+  "career_stages": [
+    {"id":"recruit","goal":"Mission, division, capabilities, guardrails and sandbox curriculum are correct."},
+    {"id":"apprentice","goal":"Core capability fixtures pass and missing skills have drills."},
+    {"id":"specialist","goal":"Domain hard cases, tools and professional workflows pass."},
+    {"id":"operator","goal":"Multi-step work, recovery, permissions, state and efficiency meet targets."},
+    {"id":"senior_specialist","goal":"Bot closes competitor/open-source gaps and teaches reusable lessons."},
+    {"id":"product_owner","goal":"Bot has a clear user problem, product/service promise, evidence, onboarding and measurable value."},
+    {"id":"business_operator","goal":"Bot can support pricing, sales, fulfillment, support, analytics and improvement with required human approvals."},
+    {"id":"entrepreneur_candidate","goal":"Bot has a validated business thesis, customer path, unit economics, operating plan and bounded autonomy proposal."},
+    {"id":"entrepreneur_ready","goal":"Council evidence supports launch or independent SaaS/product operation under configured owner permissions and legal/commercial requirements."}
+  ],
+  "required_scorecard": [
+    "capability_coverage",
+    "sandbox_pass_rate",
+    "tool_function_readiness",
+    "benchmark_gap_closure",
+    "reliability",
+    "recovery",
+    "security_privacy_rights",
+    "latency_efficiency",
+    "cost_efficiency",
+    "user_effort",
+    "user_value",
+    "market_need",
+    "customer_fit",
+    "offer_clarity",
+    "pricing_readiness",
+    "sales_readiness",
+    "fulfillment_readiness",
+    "support_readiness",
+    "unit_economics_readiness",
+    "business_compliance_readiness",
+    "shared_fleet_contribution"
+  ],
+  "entrepreneur_curriculum": [
+    "identify a painful/frequent customer problem",
+    "define a measurable outcome",
+    "validate demand with lawful research",
+    "map competitors and substitutes",
+    "design the smallest useful offer",
+    "estimate delivery cost and margin",
+    "design pricing options",
+    "create lead/customer acquisition plan",
+    "prepare sales discovery and objection handling",
+    "build fulfillment SOP",
+    "build customer support SOP",
+    "build retention/renewal loop",
+    "measure conversion, cost, time saved and customer value",
+    "identify compliance/insurance/license/professional requirements",
+    "define approved autonomy boundaries",
+    "run sandbox business simulation",
+    "run pilot with owner approval when appropriate",
+    "record real outcomes",
+    "close business benchmark gaps",
+    "graduate to marketplace/SaaS/enterprise stage when evidence supports it"
+  ],
+  "career_update_triggers": [
+    "bot capability changes",
+    "new tool/function becomes available",
+    "sandbox result changes",
+    "benchmark result changes",
+    "competitor baseline changes",
+    "user outcome evidence changes",
+    "pricing/cost changes",
+    "new regulation/license/terms requirement",
+    "new business opportunity discovered",
+    "shared fleet improvement affects the bot"
+  ],
+  "council_review_cycle": {
+    "on_change": true,
+    "scheduled": "daily lightweight review plus deeper periodic benchmark refresh",
+    "priority": ["release blockers","safety/permission failures","major capability gaps","high-value business gaps","efficiency gaps","long-horizon entrepreneur research"],
+    "rule": "Career stage can move forward or backward when evidence changes. Titles are earned by current evidence, not permanently granted."
+  },
+  "business_graduation_alignment": [
+    "internal prototype",
+    "internal production tool",
+    "DreamCo service",
+    "marketplace offering",
+    "independent SaaS/product",
+    "enterprise platform"
+  ],
+  "owner_permission_boundaries": [
+    "Bots may autonomously research, simulate, benchmark, draft, test and optimize inside approved environments.",
+    "Real outreach, purchases, spending, contracts, credit/loan applications, financial transfers, public publishing and destructive production changes require the configured owner approval.",
+    "Entrepreneur-ready does not mean legally incorporated, funded, profitable, or approved to transact without owner authorization."
+  ],
+  "actions_integration": {
+    "generator": "python3 tools/build_council_bot_career_paths.py",
+    "output": "config/generated/council-bot-career-paths.json",
+    "fleet_suite": "Buddy Actions Test Lab -> fleet",
+    "control_center": "DreamCo Control Center -> test-fleet"
+  },
+  "truth_rule": "The Council maintains career and entrepreneur-readiness plans from repository evidence. A bot is not an autonomous business owner merely because a stage is generated; real launch status requires appropriate deployment, business, legal, financial and owner-approval evidence."
+}
