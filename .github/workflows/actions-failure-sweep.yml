@@ -1,0 +1,96 @@
+name: Actions Failure Sweep
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "11 * * * *"
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Scan recent runs from every workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p sweep
+          gh run list --limit 100 --json databaseId,workflowName,status,conclusion,createdAt,updatedAt,url,headSha,event > sweep/runs.json
+          python3 - <<'PY'
+          import json
+          from datetime import datetime, timedelta, timezone
+          from pathlib import Path
+          rows=json.loads(Path('sweep/runs.json').read_text())
+          cutoff=datetime.now(timezone.utc)-timedelta(hours=24)
+          bad=[]
+          for row in rows:
+              if row.get('status')!='completed':
+                  continue
+              if row.get('conclusion') not in {'failure','timed_out','action_required','stale'}:
+                  continue
+              created=row.get('createdAt')
+              try:
+                  dt=datetime.fromisoformat(created.replace('Z','+00:00'))
+              except Exception:
+                  dt=cutoff
+              if dt>=cutoff:
+                  bad.append(row)
+          Path('sweep/failures.json').write_text(json.dumps(bad,indent=2)+'\n')
+          lines=['# Actions Failure Sweep','',f'Recent failed runs (24h): **{len(bad)}**','']
+          for row in bad:
+              lines.append(f"- {row.get('workflowName')} — {row.get('conclusion')} — run {row.get('databaseId')} — {row.get('url')}")
+          if not bad:
+              lines.append('- No failed/timed-out/action-required/stale runs found in the last 24 hours.')
+          Path('sweep/report.md').write_text('\n'.join(lines)+'\n')
+          PY
+          cat sweep/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open repair issues for uncovered failures
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' > sweep/ids.txt
+          import json
+          from pathlib import Path
+          for row in json.loads(Path('sweep/failures.json').read_text()):
+              print(row['databaseId'])
+          PY
+          while read -r run_id; do
+            [ -z "$run_id" ] && continue
+            existing=$(gh issue list --state open --search "Actions run $run_id in:title" --json number --jq '.[0].number // empty')
+            [ -n "$existing" ] && continue
+            run=$(gh run view "$run_id" --json workflowName,conclusion,url,headSha,event)
+            workflow=$(printf '%s' "$run" | jq -r '.workflowName')
+            conclusion=$(printf '%s' "$run" | jq -r '.conclusion')
+            url=$(printf '%s' "$run" | jq -r '.url')
+            sha=$(printf '%s' "$run" | jq -r '.headSha')
+            event=$(printf '%s' "$run" | jq -r '.event')
+            cat > sweep/issue.md <<EOF
+          A GitHub Actions run needs repair.
+
+          - Workflow: **$workflow**
+          - Conclusion: **$conclusion**
+          - Event: **$event**
+          - Commit: \`$sha\`
+          - Run: $url
+
+          **Repair rule:** inspect the first failing job/step, reproduce the smallest root cause, fix without weakening tests, then rerun the affected suite. Use **Agents → Buddy Debugger** for the repair path.
+          EOF
+            gh issue create --title "Actions run $run_id failed: $workflow" --body-file sweep/issue.md
+          done < sweep/ids.txt
+
+      - name: Save sweep evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: actions-failure-sweep-${{ github.run_id }}
+          path: sweep/
+          if-no-files-found: warn
+          retention-days: 14
