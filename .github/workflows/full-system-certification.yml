@@ -1,0 +1,138 @@
+name: Full System Certification
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 9 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "server/**"
+      - "shared/**"
+      - "client/**"
+      - "website/**"
+      - "tools/**"
+      - "script/**"
+      - "tests/**"
+      - "config/**"
+      - "App_bots/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/agents/**"
+      - ".github/workflows/full-system-certification.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: full-system-certification-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Clean locked dependency install
+        run: npm ci
+
+      - name: Validate certification policies
+        run: |
+          python3 -m unittest \
+            tests.test_full_system_operational_certification \
+            tests.test_trusted_code_delivery \
+            tests.test_change_impact_test_policy
+
+      - name: Refresh connection catalog and truth audit
+        run: |
+          npm run buddy:connections
+          python3 tools/audit_runtime_connections.py
+
+      - name: Account for every bot division category and specialist agent
+        run: python3 tools/audit_all_bots_categories_and_agents.py
+
+      - name: Run trusted-code static audit
+        run: python3 tools/audit_trusted_code_delivery.py
+
+      - name: Run business data and trade readiness tests
+        run: |
+          python3 tools/build_bot_business_owner_curriculum.py
+          python3 tools/build_bot_sandbox_curriculum.py
+          python3 tools/build_live_revenue_readiness.py
+          python3 tools/build_manufacturer_marketplace_catalog.py
+          node --import tsx --test tests/business-data-trade-readiness.test.ts
+
+      - name: Run full production verification
+        run: npx tsx tools/run_universal_verification.ts --production
+
+      - name: Run speed and accuracy benchmarks
+        run: python3 tools/run_system_speed_accuracy_benchmarks.py
+
+      - name: Supply-chain vulnerability gate
+        run: npm audit --audit-level=high
+
+      - name: Smoke-test built production runtime
+        run: python3 tools/smoke_production_runtime.py
+
+      - name: Build full certification receipt
+        if: always()
+        run: python3 tools/build_full_system_certification.py
+
+      - name: Certification summary
+        if: always()
+        run: |
+          if [ -f config/generated/full-system-operational-certification.json ]; then
+            python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          d=json.load(open('config/generated/full-system-operational-certification.json'))
+          print('# Full System Certification')
+          print()
+          print(f"- Status: **{d['status']}**")
+          print(f"- Core operationally certified: **{d['core_operational_certified']}**")
+          print(f"- Fully operational + connected claim allowed: **{d['fully_operational_and_connected_claim_allowed']}**")
+          print(f"- Speed: **{d['speed_summary']['passed']}/{d['speed_summary']['total']}**")
+          print(f"- Accuracy: **{d['accuracy_summary']['passed']}/{d['accuracy_summary']['total']}**")
+          print(f"- Runtime connections: **{d['connection_summary']['runtime_verified']}/{d['connection_summary']['declared']}**")
+          print(f"- Startup: **{d['runtime_summary']['startup_seconds']}s**")
+          print(f"- Health latency: **{d['runtime_summary']['health_latency_ms']}ms**")
+          if d['release_blockers']:
+              print('- Blockers:')
+              for blocker in d['release_blockers']:
+                  print(f"  - {blocker}")
+          PY
+          else
+            echo "# Full System Certification" >> "$GITHUB_STEP_SUMMARY"
+            echo "Certification receipt was not generated because an earlier prerequisite failed before evidence could be assembled." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload certification evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: full-system-certification-${{ github.run_id }}
+          path: |
+            config/generated/full-system-operational-certification.json
+            config/generated/system-speed-accuracy-benchmarks.json
+            config/generated/production-runtime-smoke.json
+            config/generated/runtime-connection-readiness.json
+            config/generated/trusted-code-delivery-audit.json
+            config/generated/bot-accounting-placement-audit.json
+            tmp/dreamco-verification/latest.json
+            reports/FULL_SYSTEM_OPERATIONAL_CERTIFICATION.md
+            reports/SYSTEM_SPEED_ACCURACY_BENCHMARKS.md
+            reports/RUNTIME_CONNECTION_READINESS.md
+            reports/TRUSTED_CODE_DELIVERY_AUDIT.md
+            reports/BOT_ACCOUNTING_PLACEMENT_AUDIT.md
+          if-no-files-found: warn
+          retention-days: 21
