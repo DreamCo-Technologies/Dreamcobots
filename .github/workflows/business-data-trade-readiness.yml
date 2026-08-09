@@ -1,0 +1,92 @@
+name: Business Data Trade Readiness
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "7 15 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "config/intelligent-data-storage-program.json"
+      - "config/live-revenue-gate.json"
+      - "config/system-progress-gauges.json"
+      - "config/mastery-data-pack-knowledge-layers.json"
+      - "config/china-us-tech-manufacturing-scout-program.json"
+      - "config/us-manufacturer-rfq-marketplace-program.json"
+      - "shared/intelligent-data-policy.ts"
+      - "tools/build_live_revenue_readiness.py"
+      - "tools/build_system_progress_status.py"
+      - "tools/build_manufacturer_marketplace_catalog.py"
+      - "tools/build_bot_business_owner_curriculum.py"
+      - "tests/business-data-trade-readiness.test.ts"
+      - "website/manufacturer-marketplace.html"
+      - ".github/agents/manufacturer-marketplace-bot.agent.md"
+      - ".github/workflows/business-data-trade-readiness.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: business-data-trade-readiness-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: npm ci
+      - name: Refresh prerequisite fleet/business evidence
+        run: |
+          python3 tools/build_universal_human_ai_task_sandbox.py
+          python3 tools/build_bot_sandbox_curriculum.py
+          python3 tools/build_bot_business_owner_curriculum.py
+      - name: Build live revenue readiness
+        run: python3 tools/build_live_revenue_readiness.py
+      - name: Refresh engineering gaps and gauges
+        run: |
+          python3 tools/build_github_platform_benchmark.py
+          python3 tools/build_engineering_gap_closure_plan.py
+          python3 tools/build_system_progress_status.py
+      - name: Build manufacturer marketplace catalog
+        run: python3 tools/build_manufacturer_marketplace_catalog.py
+      - name: Run readiness tests
+        run: node --import tsx --test tests/business-data-trade-readiness.test.ts
+      - name: Check marketplace page exists
+        run: test -s website/manufacturer-marketplace.html && test -s website/data/manufacturer-marketplace.json
+      - name: Owner summary
+        if: always()
+        run: |
+          {
+            echo "# Business / Data / Trade Readiness"
+            echo
+            if [ -f config/generated/system-progress-status.json ]; then
+              python3 -c "import json; d=json.load(open('config/generated/system-progress-status.json')); print('- System build status:',d['system_build_status']); print('- Engineering gaps:',d['gap_count']); print('- Average gap progress:',str(d['average_gap_percent'])+'%')"
+            fi
+            if [ -f config/generated/live-revenue-readiness.json ]; then
+              python3 -c "import json; d=json.load(open('config/generated/live-revenue-readiness.json')); print('- Bots checked for monetization:',d['bot_count']); print('- Live-enabled bots:',d['live_enabled_count']); print('- Eligible pending owner:',d['eligible_pending_owner_count'])"
+            fi
+            if [ -f website/data/manufacturer-marketplace.json ]; then
+              python3 -c "import json; d=json.load(open('website/data/manufacturer-marketplace.json')); print('- Manufacturer marketplace:',d['status']); print('- Verified manufacturers loaded:',d['manufacturer_count']); print('- RFQs:',d['rfq_count']); print('- Opportunities:',d['opportunity_count'])"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Save evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: business-data-trade-${{ github.run_id }}
+          path: |
+            config/generated/live-revenue-readiness.json
+            config/generated/system-progress-status.json
+            config/generated/bot-business-owner-curriculum.json
+            website/data/manufacturer-marketplace.json
+          if-no-files-found: warn
+          retention-days: 14
