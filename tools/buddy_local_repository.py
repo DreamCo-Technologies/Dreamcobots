@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import shutil
 import subprocess
 import sys
@@ -57,6 +56,18 @@ def status() -> dict:
     return result
 
 
+def run_many(commands: list[tuple[list[str], str]]) -> int:
+    failed = []
+    for command, log_name in commands:
+        code = run(command, log_name, allow_failure=True)
+        if code:
+            failed.append({"command": command, "exit_code": code, "log": f".buddy-local/logs/{log_name}"})
+    report = {"ok": not failed, "failed": failed}
+    (LOCAL / "state" / "last-command.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(report, indent=2))
+    return 0 if not failed else 1
+
+
 def local_check() -> int:
     init_dirs()
     commands = [
@@ -67,23 +78,73 @@ def local_check() -> int:
         ([sys.executable, "tools/audit_bot_division_placement.py"], "division-placement.log"),
         ([sys.executable, "tools/dreamco_generator_factory.py", "registry"], "generator-registry.log"),
     ]
-    failed = []
-    for command, log_name in commands:
-        code = run(command, log_name, allow_failure=True)
-        if code:
-            failed.append({"command": command, "exit_code": code, "log": f".buddy-local/logs/{log_name}"})
+    code = run_many(commands)
+    report_path = LOCAL / "state" / "last-command.json"
+    report = json.loads(report_path.read_text(encoding="utf-8"))
     if shutil.which("node") and (ROOT / "node_modules").exists():
-        code = run(["node", "--import", "tsx", "--test", "tests/buddy-resource-sandbox.test.ts"], "resource-sandbox-test.log", allow_failure=True)
-        if code:
-            failed.append({"command": ["node", "--import", "tsx", "--test", "tests/buddy-resource-sandbox.test.ts"], "exit_code": code, "log": ".buddy-local/logs/resource-sandbox-test.log"})
-    report = {
-        "ok": not failed,
-        "failed": failed,
-        "note": "Node-based checks are skipped when node_modules is unavailable; run install when dependencies are available.",
-    }
+        node_code = run(["node", "--import", "tsx", "--test", "tests/buddy-resource-sandbox.test.ts"], "resource-sandbox-test.log", allow_failure=True)
+        if node_code:
+            report["failed"].append({"command": ["node", "--import", "tsx", "--test", "tests/buddy-resource-sandbox.test.ts"], "exit_code": node_code, "log": ".buddy-local/logs/resource-sandbox-test.log"})
+            report["ok"] = False
+            code = 1
+    report["note"] = "Node-based checks are skipped when node_modules is unavailable; Python/local repository checks still run offline."
     (LOCAL / "state" / "last-check.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2))
-    return 0 if not failed else 1
+    return code
+
+
+def local_test() -> int:
+    init_dirs()
+    commands = [
+        ([sys.executable, "-m", "unittest", "tests.test_offline_generator_universal_sandbox"], "offline-generator-sandbox-tests.log"),
+        ([sys.executable, "-m", "unittest", "tests.test_full_potential_sandbox", "tests.test_bot_sandbox_curriculum"], "sandbox-curriculum-tests.log"),
+    ]
+    if shutil.which("node") and (ROOT / "node_modules").exists():
+        commands.append((["node", "--import", "tsx", "--test", "tests/buddy-resource-sandbox.test.ts"], "resource-sandbox-node-tests.log"))
+    return run_many(commands)
+
+
+def local_fleet() -> int:
+    init_dirs()
+    commands = [
+        ([sys.executable, "tools/build_full_potential_sandbox_catalog.py"], "fleet-full-potential.log"),
+        ([sys.executable, "tools/build_bot_sandbox_curriculum.py"], "fleet-curriculum.log"),
+        ([sys.executable, "tools/build_council_bot_career_paths.py"], "fleet-careers.log"),
+        ([sys.executable, "tools/audit_bot_division_placement.py"], "fleet-placement.log"),
+        ([sys.executable, "tools/dreamco_generator_factory.py", "registry"], "fleet-generators.log"),
+    ]
+    return run_many(commands)
+
+
+def local_resources() -> int:
+    init_dirs()
+    return run_many([([sys.executable, "tools/build_resource_sandbox_matrix.py"], "resource-matrix.log")])
+
+
+def local_sandbox() -> int:
+    init_dirs()
+    return run_many([
+        ([sys.executable, "tools/build_full_potential_sandbox_catalog.py"], "sandbox-catalog.log"),
+        ([sys.executable, "-m", "unittest", "tests.test_full_potential_sandbox"], "sandbox-tests.log"),
+    ])
+
+
+def local_generate() -> int:
+    init_dirs()
+    return run_many([([sys.executable, "tools/dreamco_generator_factory.py", "registry"], "generator-registry.log")])
+
+
+def local_build() -> int:
+    init_dirs()
+    if shutil.which("npm") and (ROOT / "node_modules").exists():
+        return run_many([(["npm", "run", "build"], "application-build.log")])
+    # Offline fallback still verifies the static public-site source/generators.
+    return run_many([([sys.executable, "tools/build_buddy_public_site.py", "--check"], "public-site-check.log")])
+
+
+def local_repair() -> int:
+    init_dirs()
+    return run_many([([sys.executable, "tools/run_safe_self_repair.py"], "safe-self-repair.log")])
 
 
 def diagnose() -> int:
@@ -118,7 +179,6 @@ def repair_plan() -> int:
         "automatic_repairs_applied": [],
         "review_required": [],
     }
-    # Safe deterministic repair: required evidence directories.
     init_dirs()
     plan["automatic_repairs_applied"].append("ensured .buddy-local evidence/work/release/sync directories exist")
     for issue in diagnosis.get("issues", []):
@@ -142,6 +202,7 @@ def package_release(name: str) -> int:
         "config/generated/full-potential-sandbox-catalog.json",
         "config/generated/bot-sandbox-curriculum.json",
         "config/generated/council-bot-career-paths.json",
+        "config/generated/resource-sandbox-test-matrix.json",
         "reports/ACTIONS_HEALTH_REPORT.md",
         "reports/BOT_DIVISION_PLACEMENT_AUDIT.md",
     ]
@@ -167,28 +228,42 @@ def queue_sync(note: str) -> int:
     return 0
 
 
+def serve(port: int) -> int:
+    init_dirs()
+    print(f"Serving Buddy website locally on http://127.0.0.1:{port} . Press Ctrl-C to stop.")
+    return subprocess.run([sys.executable, "-m", "http.server", str(port), "--bind", "127.0.0.1", "--directory", str(ROOT / "website")], cwd=ROOT).returncode
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Offline-first Buddy repository control engine")
     sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("init")
-    sub.add_parser("status")
-    sub.add_parser("check")
-    sub.add_parser("diagnose")
-    sub.add_parser("repair-plan")
+    for command in ["init", "status", "check", "test", "fleet", "resources", "sandbox", "generate", "diagnose", "repair-plan", "repair", "build"]:
+        sub.add_parser(command)
     release = sub.add_parser("release-bundle")
     release.add_argument("name")
+    package = sub.add_parser("package")
+    package.add_argument("name")
+    server = sub.add_parser("serve")
+    server.add_argument("--port", type=int, default=8000)
     sync = sub.add_parser("queue-sync")
     sync.add_argument("note")
     args = parser.parse_args()
 
     if args.command == "init":
         init_dirs(); print(json.dumps({"ok": True, "root": str(ROOT), "local": str(LOCAL.relative_to(ROOT))}, indent=2)); return 0
-    if args.command == "status":
-        print(json.dumps(status(), indent=2)); return 0
+    if args.command == "status": print(json.dumps(status(), indent=2)); return 0
     if args.command == "check": return local_check()
+    if args.command == "test": return local_test()
+    if args.command == "fleet": return local_fleet()
+    if args.command == "resources": return local_resources()
+    if args.command == "sandbox": return local_sandbox()
+    if args.command == "generate": return local_generate()
     if args.command == "diagnose": return diagnose()
     if args.command == "repair-plan": return repair_plan()
-    if args.command == "release-bundle": return package_release(args.name)
+    if args.command == "repair": return local_repair()
+    if args.command == "build": return local_build()
+    if args.command in {"release-bundle", "package"}: return package_release(args.name)
+    if args.command == "serve": return serve(args.port)
     if args.command == "queue-sync": return queue_sync(args.note)
     return 2
 
