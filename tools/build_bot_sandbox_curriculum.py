@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -11,9 +13,18 @@ UNIVERSAL_TASK = ROOT / "config" / "generated" / "universal-human-ai-task-sandbo
 OUT = ROOT / "config" / "generated" / "bot-sandbox-curriculum.json"
 
 
+def ensure_universal_task_catalog() -> dict:
+    if not UNIVERSAL_TASK.exists():
+        subprocess.run([sys.executable, str(ROOT / "tools" / "build_universal_human_ai_task_sandbox.py")], cwd=ROOT, check=True)
+    data = json.loads(UNIVERSAL_TASK.read_text(encoding="utf-8"))
+    if data.get("category_count", 0) < 50000:
+        raise SystemExit(f"universal task sandbox coverage too small: {data.get('category_count', 0)}")
+    return data
+
+
 def main() -> int:
     program = json.loads(PROGRAM.read_text(encoding="utf-8"))
-    universal = json.loads(UNIVERSAL_TASK.read_text(encoding="utf-8")) if UNIVERSAL_TASK.exists() else None
+    universal = ensure_universal_task_catalog()
     capability_dims = program["capability_test_dimensions"]
     tool_dims = program["tool_test_dimensions"]
     function_dims = program["function_test_dimensions"]
@@ -53,8 +64,8 @@ def main() -> int:
                 "capability_tests": capability_tests,
                 "universal_task_sandbox": {
                     "catalog": "config/generated/universal-human-ai-task-sandbox.json",
-                    "catalog_status": "available" if universal else "must_generate_first",
-                    "base_category_count_available": universal.get("category_count") if universal else 0,
+                    "catalog_status": "available",
+                    "base_category_count_available": universal["category_count"],
                     "selection_status": "runtime_mapping_required",
                     "selection_rule": "Map every declared capability and discovered tool/function to all relevant task-action/domain/complexity rows plus applicable modality, environment, personal/business, security, permission, efficiency, recovery and benchmark overlays.",
                     "all_applicable_tests_must_pass_for_graduation": True,
@@ -98,8 +109,8 @@ def main() -> int:
         "schema": "dreamco.bot_sandbox_curriculum.v1",
         "program": str(PROGRAM.relative_to(ROOT)),
         "universal_task_catalog": str(UNIVERSAL_TASK.relative_to(ROOT)),
-        "universal_task_catalog_available": bool(universal),
-        "universal_task_base_category_count": universal.get("category_count") if universal else 0,
+        "universal_task_catalog_available": True,
+        "universal_task_base_category_count": universal["category_count"],
         "bot_count": len(bots),
         "division_count": len({b['division'] for b in bots}),
         "declared_capability_count": total_capabilities,
