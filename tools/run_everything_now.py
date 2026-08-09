@@ -36,6 +36,7 @@ MAX_STEPS=[
  ('maximum_sandbox',[sys.executable,'tools/build_maximum_sandbox_matrix.py']),
  ('production_verification',['node','--import','tsx','tools/run_universal_verification.ts','--production']),
  ('fleet_e2e',['npm','run','buddy:fleet:e2e']),
+ ('maximum_sandbox_runtime',[sys.executable,'tools/audit_maximum_sandbox_runtime.py']),
  ('speed_accuracy',[sys.executable,'tools/run_system_speed_accuracy_benchmarks.py']),
  ('production_smoke',[sys.executable,'tools/smoke_production_runtime.py']),
  ('full_certification',[sys.executable,'tools/build_full_system_certification.py']),
@@ -52,13 +53,13 @@ def main()->int:
     ap=argparse.ArgumentParser(); ap.add_argument('--mode',choices=['quick','standard','maximum'],default='maximum'); args=ap.parse_args()
     steps=MAX_STEPS
     if args.mode=='quick': steps=MAX_STEPS[:8]+MAX_STEPS[-3:]
-    elif args.mode=='standard': steps=MAX_STEPS[:17]+MAX_STEPS[-5:]
+    elif args.mode=='standard': steps=MAX_STEPS[:17]+MAX_STEPS[-6:]
     results=[]
     for name,command in steps:
         print(f'\n[run-everything] {name}: {" ".join(command)}',flush=True)
         results.append(run(name,command))
     failures=[r for r in results if r['exit_code']!=0]
-    payload={'schema':'dreamco.run_everything_now_result.v4','generated_at':datetime.now(timezone.utc).isoformat(),'mode':args.mode,'step_count':len(results),'passed':sum(r['exit_code']==0 for r in results),'failed':len(failures),'results':results,'first_failure':failures[0] if failures else None,'truth_boundary':CFG['truth_rule']}
+    payload={'schema':'dreamco.run_everything_now_result.v5','generated_at':datetime.now(timezone.utc).isoformat(),'mode':args.mode,'step_count':len(results),'passed':sum(r['exit_code']==0 for r in results),'failed':len(failures),'results':results,'first_failure':failures[0] if failures else None,'truth_boundary':CFG['truth_rule']}
     OUT.parent.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n')
     lines=['# Run Everything Now','',f"- Mode: **{args.mode}**",f"- Passed: **{payload['passed']}/{len(results)}**",f"- Failed: **{len(failures)}**",'', '| Step | Seconds | Result |','| --- | ---: | --- |']
     for r in results: lines.append(f"| {r['name']} | {r['duration_seconds']} | {'PASS' if r['exit_code']==0 else 'FAIL'} |")
