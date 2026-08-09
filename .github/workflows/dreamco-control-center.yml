@@ -1,0 +1,106 @@
+name: DreamCo Control Center
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "What do you want DreamCo to do?"
+        required: true
+        default: "check-everything"
+        type: choice
+        options:
+          - check-everything
+          - check-actions
+          - test-buddy
+          - test-resources
+          - test-fleet
+          - test-website
+          - full-test
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-control-center-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install
+        run: npm ci
+      - name: Run chosen task
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p tmp/control-center
+          task="${{ inputs.task }}"
+          case "$task" in
+            check-everything)
+              {
+                python3 tools/audit_actions_health.py
+                python3 tools/audit_bot_division_placement.py
+                python3 tools/build_resource_sandbox_matrix.py
+                node --import tsx --test tests/buddy-resource-sandbox.test.ts
+                npx tsx tools/run_universal_verification.ts --quick
+              } 2>&1 | tee tmp/control-center/run.log
+              ;;
+            check-actions)
+              python3 tools/audit_actions_health.py 2>&1 | tee tmp/control-center/run.log
+              ;;
+            test-buddy)
+              npm run easy:check 2>&1 | tee tmp/control-center/run.log
+              ;;
+            test-resources)
+              npm run easy:resources 2>&1 | tee tmp/control-center/run.log
+              ;;
+            test-fleet)
+              npm run easy:fleet 2>&1 | tee tmp/control-center/run.log
+              ;;
+            test-website)
+              {
+                npm run buddy:site:check
+                npm run buddy:deployment-cost-check
+              } 2>&1 | tee tmp/control-center/run.log
+              ;;
+            full-test)
+              npm run test:repository 2>&1 | tee tmp/control-center/run.log
+              ;;
+          esac
+      - name: Make simple summary
+        if: always()
+        run: |
+          {
+            echo "# DreamCo Control Center"
+            echo
+            echo "Task: **${{ inputs.task }}**"
+            echo
+            echo "## Last output"
+            echo '```text'
+            tail -n 120 tmp/control-center/run.log 2>/dev/null || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Save reports
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: dreamco-control-center-${{ github.run_id }}
+          path: |
+            tmp/control-center/
+            reports/ACTIONS_HEALTH_REPORT.md
+            reports/BOT_DIVISION_PLACEMENT_AUDIT.md
+            config/generated/actions-health-report.json
+            config/generated/bot-division-placement-audit.json
+            config/generated/resource-sandbox-test-matrix.json
+          if-no-files-found: ignore
+          retention-days: 7
