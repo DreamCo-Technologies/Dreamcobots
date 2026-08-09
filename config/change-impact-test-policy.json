@@ -1,0 +1,21 @@
+{
+  "schema": "dreamco.change_impact_test_policy.v1",
+  "version": "1.0.0",
+  "mission": "Ensure changed executable code cannot be labeled release-ready solely because unrelated tests pass.",
+  "executable_extensions": [".py", ".ts", ".tsx", ".js", ".mjs", ".cjs"],
+  "test_paths": ["tests/"],
+  "high_risk_path_keywords": ["stripe", "payment", "billing", "auth", "security", "secret", "privacy", "webhook", "migration", "schema", "database", "deploy", "release", "permission", "tenant", "delete"],
+  "shared_core_prefixes": ["server/", "shared/", "tools/", "script/"],
+  "evidence_rules": {
+    "normal": ["at least one changed test file or focused verification mapping", "type/syntax check", "affected regression suite"],
+    "high": ["normal evidence", "negative/error-path test", "security/privacy/permission review", "integration/contract evidence", "rollback or safe-revert evidence when applicable"],
+    "shared_core": ["dependent-system regression evidence", "broad repository verification"]
+  },
+  "exemptions": {
+    "file": "config/change-impact-test-exemptions.json",
+    "required_fields": ["path", "reason", "owner", "expires"],
+    "rule": "Exemptions are temporary, explicit, reviewable, and cannot be used for critical payment/auth/security/destructive behavior changes."
+  },
+  "release_blockers": ["changed executable file has no verification evidence and no valid exemption", "high-risk change lacks stronger evidence", "shared-core change lacks dependent-system regression evidence"],
+  "truth_rule": "Relevant test mapping improves confidence but cannot prove absence of every defect."
+}
