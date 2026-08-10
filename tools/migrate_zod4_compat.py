@@ -56,12 +56,12 @@ def main() -> int:
         text = path.read_text(encoding="utf-8")
         original = text
         for old, new in replacements:
+            if new in text:
+                continue
             if old in text:
                 text = text.replace(old, new)
-            elif new in text:
                 continue
-            else:
-                raise SystemExit(f"Neither legacy nor migrated pattern found in {rel}: {old}")
+            raise SystemExit(f"Neither legacy nor migrated pattern found in {rel}: {old}")
         if text != original:
             path.write_text(text, encoding="utf-8")
             changed.append(rel)
