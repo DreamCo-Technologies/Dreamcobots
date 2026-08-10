@@ -1,10 +1,47 @@
 {
-  "schema": "dreamco.repository_system_connection_policy.v1",
-  "version": "1.0.0",
-  "mission": "Prove that DreamCo's declared internal systems resolve to real repository files, scripts, workflows, configs, generated artifacts or explicit external adapters, and expose orphan/dangling connections as engineering gaps.",
-  "source_classes": ["package scripts","Run Everything Now steps","Full System Certification steps","config file path references","workflow run commands","agent command references","generated artifact dependencies","runtime route/config references"],
-  "connection_states": ["resolved","generated_at_runtime","external_adapter","optional","missing","ambiguous"],
-  "release_blockers": ["required Run Everything tool path missing","required certification tool path missing","package script references missing executable","required config dependency missing","canonical bot source root missing"],
-  "quality_checks": ["path exists","referenced command exists","generated dependency has a builder","builder output matches consumer path","no duplicate canonical owner","external connection truth explicitly separated from internal file connection"],
-  "truth_rule": "Internal repository connectivity means references resolve and required builders/consumers agree. It does not prove an external API or platform is live-connected; external connections require their own runtime evidence."
+  "schema": "dreamco.repository_system_connection_policy.v2",
+  "version": "2.0.0",
+  "mission": "Inspect every discoverable DreamCo bot, division, capability, tool, API/integration and critical repository dependency; classify connection truth and automatically route every non-working state to an accountable builder path.",
+  "entity_classes": ["bot", "division", "capability", "tool", "API/integration", "benchmark", "workflow", "critical dependency", "generated artifact"],
+  "connection_states": [
+    "working", "disconnected", "partial", "duplicate", "missing_dependency", "needs_builder_bot", "external_adapter_unverified", "generated_at_runtime"
+  ],
+  "working_definition": "Repository evidence shows the entity exists, has its required canonical references, and applicable generated/runtime/test evidence is present. External services additionally require authorized runtime evidence before they can be called working.",
+  "classification_rules": {
+    "working": "required source/reference/evidence exists and no known blocker is present",
+    "disconnected": "entity exists but no canonical routing/consumer/registry path can be found",
+    "partial": "some required connection stages exist but one or more verification stages are missing",
+    "duplicate": "multiple competing canonical identities or exact stable IDs are discovered",
+    "missing_dependency": "a required referenced file, executable, package, builder output, adapter or prerequisite is absent",
+    "needs_builder_bot": "a measured non-working state has no existing safe repair implementation and needs an assigned builder lane",
+    "external_adapter_unverified": "the API/integration is declared but no current authorized runtime verification exists",
+    "generated_at_runtime": "the consumer path is valid but the evidence artifact is intentionally produced by a builder/run"
+  },
+  "connection_stages": ["present", "canonical", "registered", "routable", "importable_or_invokable", "dependency_complete", "sandbox_tested", "runtime_verified_when_applicable", "permissioned", "observable", "documented"],
+  "source_classes": [
+    "App_bots division catalogs", "seed/runtime bot profiles", "bot fleet generator", "API registry", "package scripts", "Run Everything Now steps",
+    "Full System Certification dependencies", "workflow commands", "tests", "routes", "generated catalogs", "runtime connection readiness", "repository references"
+  ],
+  "builder_assignment": {
+    "bot_or_capability": ["agent_runtime_builder", "sandbox_qa_builder", "release_reviewer"],
+    "tool_or_workflow": ["ci_reliability_builder", "platform_builder", "sandbox_qa_builder"],
+    "API/integration": ["platform_builder", "security_builder", "sandbox_qa_builder"],
+    "dependency": ["migration_compatibility_builder", "security_builder", "ci_reliability_builder"],
+    "duplicate": ["chief_architect", "migration_compatibility_builder", "release_reviewer"],
+    "division": ["chief_architect", "agent_runtime_builder", "sandbox_qa_builder"]
+  },
+  "release_blockers": [
+    "required Run Everything tool path missing", "required certification tool path missing", "package script references missing executable",
+    "required config dependency missing", "canonical bot source root missing", "duplicate canonical bot slug", "required builder output has no builder"
+  ],
+  "quality_checks": [
+    "path exists", "stable ID uniqueness", "referenced command exists", "generated dependency has a builder", "builder output matches consumer path",
+    "bot belongs to exactly one canonical division unless explicitly shared", "runtime route/fleet registration exists", "tests or sandbox contract exists",
+    "external connection truth is separated from internal file connection", "every non-working entity has a builder assignment"
+  ],
+  "outputs": [
+    "config/generated/repository-system-connections.json", "config/generated/repo-wide-connection-map.json",
+    "config/generated/repo-connection-builder-backlog.json", "reports/REPOSITORY_SYSTEM_CONNECTIONS.md"
+  ],
+  "truth_rule": "Internal repository connectivity never proves an external API/platform is authenticated or live. The auditor must prefer partial/unverified over a false working claim and must keep every gap visible until evidence closes it."
 }

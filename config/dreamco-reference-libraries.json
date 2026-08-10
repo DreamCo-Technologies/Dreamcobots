@@ -1,0 +1,40 @@
+{
+  "schema": "dreamco.reference_libraries.v1",
+  "version": "1.1.0",
+  "mission": "Give every DreamCo bot shared, source-aware playbooks so business, sales and industry work is reusable rather than rediscovered independently.",
+  "libraries": [
+    {
+      "id": "business_playbook",
+      "name": "Business Playbook",
+      "purpose": "Step-by-step processes for starting, running, improving, financing, expanding and winding down for-profit and nonprofit organizations.",
+      "sources": ["config/business-billable-lifecycle-catalog.json", "config/generated/business-billable-services-150.json", "config/business-lifecycle-benchmark.json", "config/autonomous-bot-business-owner-program.json"],
+      "core_loop": ["define problem", "identify customer", "create solution", "MVP", "validate", "price", "repeatable sales", "KPIs", "review", "continuous improvement"]
+    },
+    {
+      "id": "book_of_associations",
+      "name": "Book of Associations",
+      "purpose": "Organizations, trade groups, chambers, professional societies, certification bodies, government agencies, nonprofits, vendor directories, franchise groups, conferences, local business groups, networking groups, labor organizations where relevant, licensing boards, education institutions, incubators, accelerators, investor groups and business alliances.",
+      "source": "config/book-of-associations.json"
+    },
+    {
+      "id": "marketing_sales_playbook",
+      "name": "Marketing & Sales Playbook",
+      "purpose": "Advertising methods, channel selection, sales scripts, funnels, outreach sequences, demos, proposals, pricing experiments, objection handling, closing, CRM, referrals, affiliates, reviews, customer success, upsells, renewals and win-back.",
+      "sources": ["config/dreamco-revenue-os.json", "config/generated/advertising-methods-500.json"]
+    },
+    {
+      "id": "industry_knowledge_library",
+      "name": "Industry Knowledge Library",
+      "purpose": "Industry-specific regulations and compliance support, certifications, standards, software, APIs, suppliers, associations, competitors, workflows, benchmarks and best practices with provenance and freshness tracking.",
+      "fields": ["industry", "subindustry", "jurisdiction", "workflow", "regulations", "certifications", "standards", "software", "APIs", "suppliers", "associations", "competitors", "benchmarks", "source", "last_verified", "license_or_terms", "confidence"]
+    }
+  ],
+  "retrieval_rules": [
+    "Prefer authoritative and primary sources for current legal, regulatory, government, standards and platform facts.",
+    "Record source/version/date for time-sensitive material.",
+    "Expire stale facts rather than silently presenting them as current.",
+    "Separate general educational workflow support from regulated professional conclusions.",
+    "Share reusable verified knowledge across bots while preserving permissions and customer data boundaries."
+  ],
+  "truth_rule": "The libraries provide reusable context and workflows; current facts still require freshness and source checks where applicable."
+}

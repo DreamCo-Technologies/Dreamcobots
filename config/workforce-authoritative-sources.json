@@ -1,0 +1,37 @@
+{
+  "schema": "dreamco.workforce_authoritative_sources.v1",
+  "sources": [
+    {
+      "id": "onet_database",
+      "name": "O*NET 30.3 Database",
+      "publisher": "U.S. Department of Labor, Employment and Training Administration",
+      "role": "optional_authoritative_workforce_adapter",
+      "enabled_by_default": false,
+      "hard_dependency": false,
+      "offline_required": false,
+      "current_release_at_design_time": "30.3",
+      "release_date_at_design_time": "2026-05",
+      "known_counts_at_design_time": {
+        "occupations": 1016,
+        "task_statements": 18796,
+        "job_titles": 57543
+      },
+      "delivery": ["downloadable ZIP", "CSV", "JSON", "Excel", "SQL", "RDF", "Web Services API"],
+      "license": "CC BY 4.0 for the downloadable O*NET 30.3 Database, subject to O*NET license conditions and exceptions",
+      "attribution_required": true,
+      "refresh_strategy": "Prefer a pinned downloadable snapshot for reproducible/offline benchmark builds; optionally refresh through official API or current ZIP when explicitly enabled. Never make Buddy startup depend on O*NET network availability.",
+      "ingest_tables": ["Occupation Data", "Task Statements", "Job Titles", "Work Activities", "Skills", "Knowledge", "Abilities", "Work Context", "Work Styles", "Technology Skills", "Tools Used"],
+      "normalization": ["preserve O*NET-SOC code", "preserve source row identity where available", "deduplicate alternate titles without deleting provenance", "map tasks to DreamCo benchmark intents", "map work activities to capability families", "record source version and retrieval date"],
+      "benchmark_outputs": ["occupation coverage", "task coverage", "assistability", "automation suitability", "human-review requirement", "tool requirements", "safety/regulatory flags", "time-saved potential", "product opportunity", "government-job relevance", "business-service relevance"],
+      "source_urls": {
+        "database": "https://www.onetcenter.org/database.html",
+        "api_reference": "https://services.onetcenter.org/reference/database",
+        "license": "https://www.onetcenter.org/license_db.html"
+      }
+    }
+  ],
+  "offline_behavior": {
+    "when_source_unavailable": "Use the most recent locally cached/pinned snapshot if present; otherwise skip authoritative workforce enrichment and continue with DreamCo-native benchmarks.",
+    "must_not_break": ["Buddy startup", "routing", "local sandbox", "existing benchmark generation", "existing bot registry"]
+  }
+}
