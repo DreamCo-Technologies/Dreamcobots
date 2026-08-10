@@ -36,7 +36,7 @@ jobs:
             echo "# Dependency Security Repair"
             echo
             echo "Runs npm's non-forcing security repair, then compiles and runs governed tests before committing package/lockfile changes to the review branch."
-            echo "It never uses npm audit fix --force, never merges main, and refuses to commit a repair that breaks the repository checks."
+            echo "Major-version forcing is prohibited; this workflow never merges main and refuses to commit a repair that breaks repository checks."
           } >> "$GITHUB_STEP_SUMMARY"
       - run: npm ci
       - name: Record pre-repair audit
