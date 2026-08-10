@@ -15,6 +15,7 @@ on:
       - "App_bots/**"
       - ".github/agents/**"
       - "package.json"
+      - "requirements.txt"
       - ".github/workflows/repository-test-matrix.yml"
   pull_request:
   schedule:
@@ -40,7 +41,10 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
+          cache: pip
       - run: npm ci
+      - name: Install declared Python dependencies
+        run: python3 -m pip install --disable-pip-version-check -r requirements.txt
       - name: Check Actions health
         run: python3 tools/audit_actions_health.py
       - name: Check builder team readiness
@@ -49,10 +53,12 @@ jobs:
         run: python3 tools/check_buddy_personality_acting_program.py
       - name: Refresh Buddy search index
         run: npx tsx tools/generate_dreamco_search_index.ts
-      - name: Refresh Buddy success program
-        run: npx tsx tools/generate_buddy_success_program.ts
+      - name: Refresh canonical fleet catalog and master registry
+        run: npx tsx tools/generate_bot_fleet_catalog.ts
       - name: Refresh derived fleet quality program for this exact commit
         run: npx tsx tools/generate_buddy_fleet_quality_program.ts
+      - name: Refresh Buddy success program after fleet-derived evidence
+        run: npx tsx tools/generate_buddy_success_program.ts
       - name: Audit bot division placement
         run: python3 tools/audit_bot_division_placement.py
       - name: Audit all bots categories divisions and specialist agents
@@ -74,5 +80,7 @@ jobs:
             config/generated/actions-health-report.json
             config/generated/bot-division-placement-audit.json
             config/generated/bot-accounting-placement-audit.json
+            config/master_bot_registry.json
+            config/generated/buddy_success_program.json
           if-no-files-found: ignore
           retention-days: 7
