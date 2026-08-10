@@ -1,0 +1,70 @@
+{
+  "schema": "dreamco.repository_total_mastery_roadmap.v1",
+  "mission": "Turn the whole repository into measured, executable product capability: inventory every file, sandbox code and tools, convert useful non-code/reference assets into structured requirements/fixtures/code where appropriate, verify resource bindings, and maintain an evidence-based completion meter and ETA.",
+  "current_evidence_baseline": {
+    "canonical_bots": 1051,
+    "declared_bot_capability_contracts": 8408,
+    "repository_controlled_capability_contracts_passing": 8408,
+    "repository_file_inventory": "repository-test-registry",
+    "known_file_kind_counts": {
+      "bot_source": 134,
+      "client_source": 105,
+      "configuration": 36,
+      "documentation": 17,
+      "generator_or_tool": 32,
+      "platform_module": 29,
+      "policy": 18,
+      "project_file": 25,
+      "provider_adapter": 17,
+      "reference_asset": 153,
+      "server_source": 22,
+      "shared_contract": 15,
+      "test": 52,
+      "web_asset": 169,
+      "web_page": 41,
+      "workflow": 3
+    }
+  },
+  "meter_dimensions": [
+    {"id":"inventory","weight":10,"done_when":"every tracked repository file has kind, owner, dependency/consumer and intended disposition"},
+    {"id":"bot_contracts","weight":15,"done_when":"all declared bot capability contracts pass repository-controlled sandbox E2E"},
+    {"id":"runtime_bindings","weight":15,"done_when":"every claimed capability has executable runtime/tool/model binding or is explicitly non-runtime"},
+    {"id":"tool_function_tests","weight":10,"done_when":"every discoverable tool/function has normal, failure, permission, timeout and composition fixtures"},
+    {"id":"resource_500_verification","weight":10,"done_when":"the owner-designated 500-resource catalog is located, normalized, each entry classified declared/configured/authenticated/tested/certified/blocked, and no connection is claimed without executable evidence"},
+    {"id":"repository_file_conversion","weight":10,"done_when":"every useful reference/document/attached asset is classified keep-as-reference, convert-to-schema, convert-to-fixture, convert-to-code, archive, or delete-by-owner; generated code is tested"},
+    {"id":"benchmark_mastery","weight":10,"done_when":"required domain/role/quality/security/efficiency benchmarks are measured and mastered for release scope"},
+    {"id":"forecasting_foresight","weight":5,"done_when":"every division has calibrated forecasting benchmarks and rolling scored forecasts"},
+    {"id":"creative_industries","weight":5,"done_when":"film/TV/music/advertising role and quality suites meet professional delivery floors"},
+    {"id":"security_privacy_rights","weight":5,"done_when":"required security/privacy/rights suites have no unresolved release-blocking failures"},
+    {"id":"deployment_observability","weight":5,"done_when":"release path, telemetry, rollback, health and cost controls are certified"}
+  ],
+  "time_estimation": {
+    "unit": "engineering-worker-hours",
+    "rule": "ETA is calculated from remaining benchmark/file/tool/resource work after measured throughput exists; calendar ETA must include available parallel lanes, dependencies, rate limits, approvals and paid-provider constraints.",
+    "initial_estimation_bands": {
+      "small_fixture_or_metadata_item":"0.1-0.5",
+      "tool_or_adapter_contract":"0.5-4",
+      "new_shared_capability":"2-16",
+      "complex_domain_suite":"8-40",
+      "external_provider_certification":"1-8 plus provider/approval wait time"
+    },
+    "confidence_rule": "Do not publish a precise full-build date until at least two measured work batches establish throughput. Show low/base/high ETA ranges instead."
+  },
+  "parallelism": {
+    "goal":"maximum safe parallelism, not literally instantaneous execution",
+    "default_max_workers":32,
+    "parallelize":["read-only inventory","independent benchmark suites","independent capability discovery","static analysis","independent tool fixtures","resource metadata verification"],
+    "serialize":["writes to the same canonical file","schema migrations with shared state","rate-limited provider calls","paid calls without budget approval","production changes"],
+    "reason":"Physical compute, API limits, dependencies and shared writers make truly instantaneous full-repository benchmarking impossible; bounded parallelism prevents races and false evidence."
+  },
+  "continuous_bootcamp": {
+    "never_stop_means":"scheduled/event-driven discovery, sandboxing and regression learning continue indefinitely while respecting budgets, rate limits, permissions and safety boundaries",
+    "loops":["capability discovery","tool discovery","forecasting","benchmark gaps","repair/retest","open-source intelligence","dataset discovery","dataset quality/provenance","competitor parity","creative quality","security regression"],
+    "mastery_decay":"mastered evidence expires or reopens when code/model/tool/provider/data changes or freshness SLA is exceeded"
+  },
+  "capability_lead_engine": {
+    "sources":["new repository changes","failed user tasks","benchmark misses","new model/tool/API releases","open-source releases","job postings and task taxonomies","industry workflow changes","customer objections","competitor capability changes","dataset releases","forecast signals"],
+    "output":["candidate capability","user/job value","owner division","required tools/resources","benchmark plan","estimated effort","risk/rights","priority","sandbox fixture","promotion criteria"]
+  },
+  "truth_boundary":"The 8,408 passing contracts are a strong repository-controlled bot baseline, not proof that every repository file, tool, external resource, provider, professional workflow or live integration is complete. The meter must score those layers separately."
+}
