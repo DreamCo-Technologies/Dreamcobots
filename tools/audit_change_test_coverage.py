@@ -59,6 +59,16 @@ def relevant_tests_for(path: str, tests: list[str]) -> list[str]:
     return matches
 
 
+def focused_tests_for(path: str, tests: list[str]) -> list[str]:
+    changed_tests = set(tests)
+    matches = []
+    for mapping in POLICY.get("focused_test_mappings", []):
+        if path not in mapping.get("sources", []):
+            continue
+        matches.extend(test for test in mapping.get("tests", []) if test in changed_tests)
+    return sorted(set(matches))
+
+
 def high_risk_matches(path: str) -> list[str]:
     lower = path.lower()
     return [word for word in POLICY["high_risk_path_keywords"] if word in lower]
@@ -110,11 +120,15 @@ def main() -> int:
         high = bool(risk_words)
         shared = any(path.startswith(prefix) for prefix in POLICY["shared_core_prefixes"])
         exemption = valid_exemption(path)
-        relevant = relevant_tests_for(path, tests)
+        heuristic_tests = relevant_tests_for(path, tests)
+        focused_tests = focused_tests_for(path, tests)
+        relevant = sorted(set(heuristic_tests + focused_tests))
         high_tests = high_risk_test_evidence(risk_words, tests)
         evidence = []
         if relevant:
             evidence.append("relevant_changed_test")
+        if focused_tests:
+            evidence.append("focused_test_mapping")
         if shared:
             evidence.append("broad_repository_verification_required")
         if high:
@@ -131,6 +145,7 @@ def main() -> int:
             "risk_keywords": risk_words,
             "shared_core": shared,
             "relevant_tests": relevant,
+            "focused_tests": focused_tests,
             "high_risk_tests": high_tests,
             "evidence": evidence,
             "exemption": exemption,

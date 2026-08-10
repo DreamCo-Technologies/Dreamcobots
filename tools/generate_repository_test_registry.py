@@ -30,6 +30,7 @@ SKIPPED_ROOTS = {
 SKIPPED_FILES = {
     GENERATED.relative_to(ROOT).as_posix(),
     PUBLIC.relative_to(ROOT).as_posix(),
+    "config/generated/change-impact-test-coverage.json",
     "website/data/repository-system-map.json",
 }
 TEXT_SUFFIXES = {
