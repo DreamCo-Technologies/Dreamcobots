@@ -1,0 +1,909 @@
+{
+  "schema": "dreamco.actions_health.v1",
+  "workflow_count": 21,
+  "critical_error_count": 0,
+  "warning_count": 0,
+  "operational_workflow_count": 0,
+  "live_evidence_note": "The browser refreshes public GitHub run data when available. Static checks alone never prove a workflow is operational.",
+  "baseline": {
+    "checkout": "actions/checkout@v7",
+    "setup_node": "actions/setup-node@v6",
+    "setup_python": "actions/setup-python@v6",
+    "upload_artifact": "actions/upload-artifact@v6",
+    "configure_pages": "actions/configure-pages@v6",
+    "upload_pages_artifact": "actions/upload-pages-artifact@v5",
+    "deploy_pages": "actions/deploy-pages@v5"
+  },
+  "findings": [
+    {
+      "workflow": ".github/workflows/actions-failure-sweep.yml",
+      "filename": "actions-failure-sweep.yml",
+      "display_name": "Actions Failure Sweep",
+      "purpose": "Find recent failed runs, group repeated failures, and prepare repair evidence.",
+      "triggers": [
+        "manual",
+        "schedule",
+        "issues"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Fingerprint repeated failures by workflow, job, and failing step.",
+        "Link each repair proposal to the exact run logs and commit SHA.",
+        "Track recurrence so fixed failures can be proven closed."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/actions-failure-sweep.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/actions-failure-watch.yml",
+      "filename": "actions-failure-watch.yml",
+      "display_name": "Actions Failure Watch",
+      "purpose": "Watch completed workflow runs and open a bounded failure investigation when needed.",
+      "triggers": [
+        "issues",
+        "workflow completion"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Deduplicate alerts from the same root cause.",
+        "Add a cooldown so noisy failures do not create repeated work.",
+        "Escalate only after the log and affected path are captured."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/actions-failure-watch.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/actions-health.yml",
+      "filename": "actions-health.yml",
+      "display_name": "Actions Health",
+      "purpose": "Audit workflow syntax, action versions, script references, and stale repository paths.",
+      "triggers": [
+        "manual",
+        "push",
+        "pull request",
+        "schedule"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-python@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [
+        "tools/audit_actions_health.py"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish the generated health catalog to the Actions dashboard.",
+        "Flag unpinned or unexpectedly new action majors.",
+        "Compare every referenced command with package scripts and repository files."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/actions-health.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/buddy-actions-test-lab.yml",
+      "filename": "buddy-actions-test-lab.yml",
+      "display_name": "Buddy Actions Test Lab",
+      "purpose": "Run Buddy's governed test laboratory and preserve reviewable debug evidence.",
+      "triggers": [
+        "manual",
+        "push",
+        "pull request"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/setup-python@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [
+        "buddy:behavior",
+        "buddy:connected-life",
+        "buddy:connections",
+        "buddy:daily-division-benchmarks",
+        "buddy:fleet",
+        "buddy:fleet-quality",
+        "buddy:fleet:e2e",
+        "buddy:repository-audit",
+        "buddy:search",
+        "buddy:self-improvement",
+        "buddy:site:check",
+        "buddy:success"
+      ],
+      "referenced_files": [
+        "tools/audit_bot_division_placement.py",
+        "tools/build_bot_sandbox_curriculum.py",
+        "tools/build_council_bot_career_paths.py",
+        "tools/build_full_potential_sandbox_catalog.py",
+        "tools/build_resource_sandbox_matrix.py",
+        "tools/run_universal_verification.ts"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Split contract, integration, and browser evidence into named artifacts.",
+        "Add a retry only for explicitly classified flaky infrastructure failures.",
+        "Record the exact dependency lock hash with every test result."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-actions-test-lab.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/builder-issue-reconciler.yml",
+      "filename": "builder-issue-reconciler.yml",
+      "display_name": "Builder Issue Reconciler",
+      "purpose": "Compare builder issues with current repository evidence and keep unresolved gaps visible.",
+      "triggers": [
+        "manual",
+        "issues"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/setup-python@v6"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [
+        "tools/audit_actions_health.py",
+        "tools/generate_buddy_fleet_quality_program.ts",
+        "tools/generate_repository_test_registry.py",
+        "tools/reconcile_builder_issues.mjs"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Attach repository evidence before changing an issue state.",
+        "Group duplicate goals without deleting unique requirements.",
+        "Require a passing test reference before marking build work complete."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/builder-issue-reconciler.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/business-data-trade-readiness.yml",
+      "filename": "business-data-trade-readiness.yml",
+      "display_name": "Business Data Trade Readiness",
+      "purpose": "Verify consent, ownership, licensing, and deletion controls for data products.",
+      "triggers": [
+        "manual",
+        "push",
+        "schedule"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/setup-python@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [
+        "tools/build_bot_business_owner_curriculum.py",
+        "tools/build_bot_sandbox_curriculum.py",
+        "tools/build_engineering_gap_closure_plan.py",
+        "tools/build_github_platform_benchmark.py",
+        "tools/build_live_revenue_readiness.py",
+        "tools/build_manufacturer_marketplace_catalog.py",
+        "tools/build_system_progress_status.py",
+        "tools/build_universal_human_ai_task_sandbox.py"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Verify consent and resale rights per source record.",
+        "Exercise deletion and export requests with synthetic fixtures.",
+        "Block packages that lack provenance or retention limits."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/business-data-trade-readiness.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/code-trust-gate.yml",
+      "filename": "code-trust-gate.yml",
+      "display_name": "Code Trust Gate",
+      "purpose": "Block unreviewed code from promotion when tests, evidence, or trust controls fail.",
+      "triggers": [
+        "manual",
+        "push",
+        "pull request",
+        "schedule"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/setup-python@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [
+        "buddy:fleet:e2e",
+        "build",
+        "test:repository"
+      ],
+      "referenced_files": [
+        "tools/audit_change_test_coverage.py",
+        "tools/audit_trusted_code_delivery.py"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Require clean-install type checking and production build evidence.",
+        "Publish change-impact coverage for every edited executable file.",
+        "Keep protected actions behind explicit owner approval."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/code-trust-gate.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/codeql.yml",
+      "filename": "codeql.yml",
+      "display_name": "CodeQL Security Scan",
+      "purpose": "Scan supported source code for security vulnerabilities with GitHub CodeQL.",
+      "triggers": [
+        "manual",
+        "push",
+        "pull request",
+        "schedule"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Scan every supported language present in the repository.",
+        "Upload actionable locations and affected paths.",
+        "Measure unresolved high-severity findings before release."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/codeql.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/dependency-review.yml",
+      "filename": "dependency-review.yml",
+      "display_name": "Dependency Review",
+      "purpose": "Review dependency changes for known risk before a pull request is merged.",
+      "triggers": [
+        "pull request"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/dependency-review-action@v5"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Require GitHub Dependency Graph before treating this check as operational.",
+        "Fail on newly introduced critical vulnerabilities.",
+        "Document an owner-reviewed exception path with expiration dates."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/dependency-review.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/deploy-buddy-pages.yml",
+      "filename": "deploy-buddy-pages.yml",
+      "display_name": "Deploy Buddy Website",
+      "purpose": "Validate and deploy the static Buddy experience to GitHub Pages.",
+      "triggers": [
+        "manual",
+        "push"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-python@v6",
+        "actions/setup-node@v6",
+        "actions/configure-pages@v6",
+        "actions/upload-pages-artifact@v5",
+        "actions/deploy-pages@v5"
+      ],
+      "npm_scripts": [
+        "test:actions-page"
+      ],
+      "referenced_files": [
+        "tools/build_buddy_public_site.py",
+        "tools/build_manufacturer_marketplace_catalog.py",
+        "tools/check_buddy_demand_ontology.mjs",
+        "tools/check_buddy_model_benchmarks.mjs",
+        "tools/check_deployment_cost_policy.py",
+        "tools/generate_buddy_benchmark_index.py",
+        "tools/generate_buddy_distribution_catalog.py",
+        "tools/generate_buddy_model_router.py",
+        "tools/generate_repository_test_registry.py"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 2,
+        "runner_jobs": 2,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Run link, JavaScript, and mobile layout checks before deployment.",
+        "Publish the Actions and benchmark catalogs in the offline shell.",
+        "Add a post-deploy smoke test against the Pages URL."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/deploy-buddy-pages.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/dreamco-control-center.yml",
+      "filename": "dreamco-control-center.yml",
+      "display_name": "DreamCo Control Center",
+      "purpose": "Coordinate repository health, registry checks, and control-center evidence.",
+      "triggers": [
+        "manual"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/setup-python@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [
+        "buddy:daily-division-benchmarks",
+        "buddy:deployment-cost-check",
+        "buddy:fleet",
+        "buddy:fleet-quality",
+        "buddy:fleet:e2e",
+        "buddy:site:check",
+        "easy:check",
+        "easy:resources",
+        "test:repository"
+      ],
+      "referenced_files": [
+        "tools/audit_actions_health.py",
+        "tools/audit_bot_division_placement.py",
+        "tools/build_bot_sandbox_curriculum.py",
+        "tools/build_resource_sandbox_matrix.py",
+        "tools/run_universal_verification.ts"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Summarize failed gates by owner and affected system.",
+        "Link dashboard states to generated repository evidence.",
+        "Prevent unknown states from being displayed as healthy."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/dreamco-control-center.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/dreamco-live-dashboard.yml",
+      "filename": "dreamco-live-dashboard.yml",
+      "display_name": "DreamCo Live Dashboard",
+      "purpose": "Build dashboard evidence across registered DreamCo modules and workflows.",
+      "triggers": [
+        "manual",
+        "push"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/setup-python@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [
+        "buddy:site:check",
+        "easy:check",
+        "easy:fleet",
+        "easy:resources"
+      ],
+      "referenced_files": [
+        "tools/audit_actions_health.py",
+        "tools/audit_bot_division_placement.py",
+        "tools/build_resource_sandbox_matrix.py",
+        "tools/run_universal_verification.ts"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Replace hard-coded module assumptions with generated registry mappings.",
+        "Expose evidence age and last successful run per module.",
+        "Separate repository-ready status from live-provider readiness."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/dreamco-live-dashboard.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/dreamco-platform-evolution.yml",
+      "filename": "dreamco-platform-evolution.yml",
+      "display_name": "DreamCo Platform Evolution",
+      "purpose": "Measure platform gaps and prepare bounded improvement proposals.",
+      "triggers": [
+        "manual",
+        "push",
+        "schedule"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-python@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [
+        "tools/build_bot_sandbox_curriculum.py",
+        "tools/build_github_platform_benchmark.py",
+        "tools/build_notes_to_code_backlog.py",
+        "tools/build_universal_human_ai_task_sandbox.py"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Rank proposals by user value, risk, cost, and evidence gap.",
+        "Create changes only on review branches.",
+        "Require rollback evidence before promotion."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/dreamco-platform-evolution.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/engineering-gap-closure.yml",
+      "filename": "engineering-gap-closure.yml",
+      "display_name": "Engineering Gap Closure",
+      "purpose": "Turn verified engineering gaps into prioritized, testable repair work.",
+      "triggers": [
+        "manual",
+        "push",
+        "schedule"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-python@v6",
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/setup-python@v6",
+        "actions/checkout@v7",
+        "actions/setup-python@v6"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [
+        "tools/build_engineering_gap_closure_plan.py",
+        "tools/build_github_platform_benchmark.py",
+        "tools/run_safe_self_repair.py",
+        "tools/run_universal_verification.ts"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 3,
+        "runner_jobs": 3,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Assign each gap a reproducible fixture and acceptance gate.",
+        "Cap parallel work to the available runner budget.",
+        "Close gaps only when the relevant regression test passes."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/engineering-gap-closure.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/full-system-certification.yml",
+      "filename": "full-system-certification.yml",
+      "display_name": "Full System Certification",
+      "purpose": "Run the broad release-candidate certification suite across the repository.",
+      "triggers": [
+        "manual",
+        "push",
+        "schedule"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/setup-python@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [
+        "buddy:connections",
+        "buddy:fleet:e2e"
+      ],
+      "referenced_files": [
+        "tools/audit_all_bots_categories_and_agents.py",
+        "tools/audit_maximum_sandbox_runtime.py",
+        "tools/audit_repository_connections.py",
+        "tools/audit_runtime_connections.py",
+        "tools/audit_trusted_code_delivery.py",
+        "tools/build_bot_business_owner_curriculum.py",
+        "tools/build_bot_sandbox_curriculum.py",
+        "tools/build_business_lifecycle_benchmarks.py",
+        "tools/build_continuous_value_discovery_backlog.py",
+        "tools/build_creative_mastery_benchmarks.py",
+        "tools/build_full_potential_sandbox_catalog.py",
+        "tools/build_full_system_certification.py",
+        "tools/build_government_public_sector_benchmarks.py",
+        "tools/build_legacy_capability_merge_proposals.py",
+        "tools/build_legacy_promotion_backlog.py",
+        "tools/build_live_revenue_readiness.py",
+        "tools/build_live_user_testing_readiness.py",
+        "tools/build_manufacturer_marketplace_catalog.py",
+        "tools/build_manufacturing_productivity_benchmarks.py",
+        "tools/build_maximum_sandbox_matrix.py",
+        "tools/build_ontology_snapshot.py",
+        "tools/build_parallel_benchmark_gap_registry.py",
+        "tools/build_runtime_sync_plan.py",
+        "tools/build_unified_bot_system.py",
+        "tools/build_universal_capability_benchmark.py",
+        "tools/build_universal_human_ai_task_sandbox.py",
+        "tools/build_universal_work_ai_catalog.py",
+        "tools/build_work_platform_benchmarks.py",
+        "tools/recover_legacy_bots.py",
+        "tools/run_system_speed_accuracy_benchmarks.py",
+        "tools/run_universal_verification.ts",
+        "tools/smoke_production_runtime.py"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Partition fast required gates from longer evidence suites.",
+        "Publish a machine-readable release certificate.",
+        "Block certification when generated artifacts drift from source."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/full-system-certification.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/government-transparency-refresh.yml",
+      "filename": "government-transparency-refresh.yml",
+      "display_name": "Government Transparency Refresh",
+      "purpose": "Refresh public-government resource catalogs with provenance checks.",
+      "triggers": [
+        "manual",
+        "schedule",
+        "issues"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-python@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [
+        "tools/build_global_government_benchmarks.py",
+        "tools/build_government_department_improvement_backlog.py",
+        "tools/build_government_public_sector_benchmarks.py",
+        "tools/build_parallel_benchmark_gap_registry.py",
+        "tools/build_public_money_transparency.py",
+        "tools/refresh_public_fiscal_data.py"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Use official sources and record retrieval dates.",
+        "Detect stale, moved, or withdrawn programs.",
+        "Keep eligibility language informational and source-linked."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/government-transparency-refresh.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/open-source-evolution.yml",
+      "filename": "open-source-evolution.yml",
+      "display_name": "Open Source Evolution",
+      "purpose": "Evaluate open-source opportunities without promoting unreviewed code.",
+      "triggers": [
+        "manual",
+        "push",
+        "schedule"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/setup-python@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [
+        "buddy:dependencies",
+        "buddy:model-benchmarks",
+        "buddy:models",
+        "buddy:open-model-lab",
+        "buddy:self-improvement"
+      ],
+      "referenced_files": [
+        "tools/build_full_potential_sandbox_catalog.py",
+        "tools/scan_open_source_ai_ecosystem.py"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Verify licenses and provenance before sandboxing a project.",
+        "Benchmark in an isolated environment with fixed resource limits.",
+        "Require human review before generated changes reach a protected branch."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/open-source-evolution.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/parallel-benchmark-gap-builders.yml",
+      "filename": "parallel-benchmark-gap-builders.yml",
+      "display_name": "Parallel Benchmark Gap Builders",
+      "purpose": "Run independent benchmark lanes and collect evidence for remaining gaps.",
+      "triggers": [
+        "manual",
+        "push",
+        "pull request"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-python@v6",
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/setup-python@v6"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [
+        "tools/audit_actions_health.py",
+        "tools/check_guardrails_benchmark_program.py",
+        "tools/plan_parallel_benchmark_gaps.py",
+        "tools/run_universal_verification.ts"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 2,
+        "runner_jobs": 2,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Give each lane an independent timeout and artifact.",
+        "Compare results only on identical fixtures and versions.",
+        "Stop lanes whose cost or failure threshold exceeds policy."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/parallel-benchmark-gap-builders.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/repository-test-matrix.yml",
+      "filename": "repository-test-matrix.yml",
+      "display_name": "Repository Test Matrix",
+      "purpose": "Exercise the repository's language, generator, policy, and site test matrix.",
+      "triggers": [
+        "manual",
+        "push",
+        "pull request",
+        "schedule"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/setup-python@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [
+        "tools/audit_actions_health.py",
+        "tools/audit_all_bots_categories_and_agents.py",
+        "tools/audit_bot_division_placement.py",
+        "tools/check_buddy_personality_acting_program.py",
+        "tools/check_builder_team_readiness.ts",
+        "tools/generate_buddy_fleet_quality_program.ts",
+        "tools/generate_buddy_success_program.ts",
+        "tools/generate_dreamco_search_index.ts",
+        "tools/generate_repository_test_registry.py",
+        "tools/run_universal_verification.ts"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Test from a clean dependency install on supported runtimes.",
+        "Map each failed suite to the files and contracts it protects.",
+        "Publish coverage gaps alongside pass counts."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/repository-test-matrix.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/run-everything-now.yml",
+      "filename": "run-everything-now.yml",
+      "display_name": "Run Everything Now",
+      "purpose": "Provide an owner-triggered, bounded entry point for the full verification stack.",
+      "triggers": [
+        "manual",
+        "push",
+        "schedule"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/setup-python@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [
+        "tools/build_system_progress_status.py",
+        "tools/build_universal_work_ai_catalog.py",
+        "tools/run_everything_now.py"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Show the estimated runner cost before dispatch.",
+        "Allow owners to select safe test groups instead of always running all jobs.",
+        "Require explicit inputs for any networked or external-write lane."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/run-everything-now.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/self-working-system.yml",
+      "filename": "self-working-system.yml",
+      "display_name": "Self Working System",
+      "purpose": "Schedule local-first maintenance checks and stop at guarded external actions.",
+      "triggers": [
+        "manual",
+        "push",
+        "schedule"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-python@v6",
+        "actions/setup-node@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [
+        "tools/buddy_local_repository.py",
+        "tools/dreamco_generator_factory.py",
+        "tools/run_safe_self_repair.py"
+      ],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Keep scheduled work read-only or sandboxed by default.",
+        "Pause automatically after repeated failures or budget limits.",
+        "Require fresh approval for every outside write, payment, or outreach action."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/self-working-system.yml",
+      "static_status": "static_checks_passed"
+    }
+  ],
+  "truth_boundary": "Static workflow health catches missing/invalid references and stale architecture signals; a workflow is operational only after a GitHub Actions run succeeds."
+}

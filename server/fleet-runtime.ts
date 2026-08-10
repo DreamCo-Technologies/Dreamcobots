@@ -11,7 +11,7 @@ import {
 
 export const fleetExecutionRequestSchema = z.object({
   objective: z.string().trim().min(10).max(4_000),
-  input: z.record(z.unknown()).default({}),
+  input: z.record(z.string(), z.unknown()).default({}),
   requestedCapabilities: z.array(z.string().trim().min(2).max(160)).max(20).default([]),
   liveActionRequested: z.boolean().default(false),
 }).strict();

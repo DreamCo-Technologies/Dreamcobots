@@ -7,6 +7,7 @@ import {
   createIntentResult,
   createOntologyPlan,
   createSuccessProfilePlan,
+  successProfileRequestSchema,
 } from "../server/buddy-success-policy";
 import { buildBuddySuccessProgram } from "../tools/generate_buddy_success_program";
 
@@ -24,6 +25,16 @@ test("success questionnaire is useful, bounded, and avoids secret collection", (
   assert.match(plan.botContext, /Launch a tested service prototype/);
   assert.equal(plan.storedByThisRoute, false);
   assert.equal(plan.boundaries.guaranteedIncomeClaims, false);
+});
+
+test("success profile record inputs preserve named questionnaire answers", () => {
+  const request = successProfileRequestSchema.parse({
+    profileId: "owner-local",
+    answers: { primary_outcome: "Ship a verified prototype" },
+    shareWithBots: false,
+    ownerConfirmsNoSecrets: true,
+  });
+  assert.equal(request.answers.primary_outcome, "Ship a verified prototype");
 });
 
 test("success profiles reject credentials and identifiers", () => {

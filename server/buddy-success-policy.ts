@@ -17,7 +17,7 @@ const answerValueSchema = z.union([
 
 export const successProfileRequestSchema = z.object({
   profileId: z.string().trim().min(3).max(120),
-  answers: z.record(answerValueSchema),
+  answers: z.record(z.string(), answerValueSchema),
   shareWithBots: z.boolean(),
   ownerConfirmsNoSecrets: z.literal(true),
 }).strict();
@@ -39,7 +39,7 @@ export const growthExperimentRequestSchema = z.object({
 export const ontologyPlanRequestSchema = z.object({
   profileId: z.string().trim().min(3).max(120),
   mode: z.enum(["balanced", "growth", "low_effort", "evidence_first", "custom"]),
-  weights: z.record(z.number().int().min(0).max(100)),
+  weights: z.record(z.string(), z.number().int().min(0).max(100)),
 }).strict();
 
 export const intentRequestSchema = z.object({

@@ -4,6 +4,7 @@
   const links = [
     { href: 'dashboard.html', label: '📊 Dashboard' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
+    { href: 'actions.html', label: '⚙️ Actions' },
     { href: 'success.html', label: '📈 Success Center' },
     { href: 'search.html', label: '🔎 DreamSearch' },
     { href: 'studio.html', label: '🎮 Creative Studio' },

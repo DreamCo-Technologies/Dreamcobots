@@ -13,7 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import {
   BrainCircuit, Code2, Zap, Map, Hammer, GraduationCap, Bug, ShieldCheck,
-  Github, Search, Mic, ImageIcon, Globe, Users, Database, Terminal,
+  GitFork as Github, Search, Mic, ImageIcon, Globe, Users, Database, Terminal,
   GitPullRequest, Rocket, RefreshCw, CheckCircle2, Lock, Layers,
   Star, Sparkles, Send, ExternalLink, Copy, BookOpen, BarChart3,
   FileCode2, Cpu, ArrowRight, Activity, AlertCircle, ChevronRight,

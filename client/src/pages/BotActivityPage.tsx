@@ -12,7 +12,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { BotActivityResponse, BotActivityItem } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import {
-  Github, RefreshCw, UploadCloud, Bot, Activity, CheckCircle2, AlertCircle,
+  GitFork as Github, RefreshCw, UploadCloud, Bot, Activity, CheckCircle2, AlertCircle,
   Loader2, FolderOpen, GitPullRequest, ExternalLink, FileCode, Coffee,
   BarChart2, Play, Zap, BrainCircuit, Globe, Download, Clock, TrendingUp,
   Building2, Calculator, FlaskConical, Brain, Trophy, Cpu, Network, Store,

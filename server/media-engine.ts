@@ -73,7 +73,7 @@ export const mediaRenderPlanRequestSchema = z.object({
   objective: z.string().trim().min(10).max(4000),
   script: z.string().trim().max(12000).default(""),
   characterRole: z.string().trim().min(2).max(160).default("Buddy guide"),
-  personalityTraits: z.record(z.number().min(0).max(1)).default({ warmth: 0.8, clarity: 0.9 }),
+  personalityTraits: z.record(z.string(), z.number().min(0).max(1)).default({ warmth: 0.8, clarity: 0.9 }),
   preferredEngineId: z.string().trim().max(80).optional(),
   performanceMode: z.enum(["spoken_conversation", "narration", "rap", "melodic_rap", "singing", "character_acting", "commercial_delivery", "multilingual_delivery"]).optional(),
   tempoBpm: z.number().int().min(40).max(240).optional(),

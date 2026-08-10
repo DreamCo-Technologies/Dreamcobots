@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from tools.audit_actions_health import MAX_MAJOR, OUT_JSON, main
+from tools.audit_actions_health import MAX_MAJOR, OUT_JSON, PUBLIC_JSON, main
 
 
 class ActionsHealthAuditTest(unittest.TestCase):
@@ -14,6 +14,11 @@ class ActionsHealthAuditTest(unittest.TestCase):
         report = json.loads(OUT_JSON.read_text(encoding="utf-8"))
         self.assertEqual(report["critical_error_count"], 0)
         self.assertEqual(report["warning_count"], 0)
+        public_report = json.loads(PUBLIC_JSON.read_text(encoding="utf-8"))
+        self.assertEqual(public_report, report)
+        self.assertEqual(len(report["findings"]), report["workflow_count"])
+        self.assertTrue(all(len(item["upgrades"]) == 3 for item in report["findings"]))
+        self.assertTrue(all(item["github_url"].startswith("https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/") for item in report["findings"]))
 
 
 if __name__ == "__main__":

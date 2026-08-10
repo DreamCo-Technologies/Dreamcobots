@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import test from "node:test";
 
-import { FleetRuntimeRegistry } from "../server/fleet-runtime";
+import { FleetRuntimeRegistry, fleetExecutionRequestSchema } from "../server/fleet-runtime";
 
 test("instantiates and health-checks all 1,051 fleet profiles", () => {
   const registry = FleetRuntimeRegistry.fromFile();
@@ -26,6 +26,15 @@ test("executes a bot-specific sandbox task packet", () => {
   assert.equal(result.status, "sandbox_task_packet_ready");
   assert.equal(result.bot.slug, "gaming-titan");
   assert.equal(result.liveExternalActionTaken, false);
+});
+
+test("fleet execution accepts named structured sandbox inputs", () => {
+  const request = fleetExecutionRequestSchema.parse({
+    objective: "Prepare a bounded local sandbox task with structured inputs.",
+    input: { grade: 8, subject: "history" },
+  });
+  assert.equal(request.input.grade, 8);
+  assert.equal(request.input.subject, "history");
 });
 
 test("Buddy chooses the strongest declared specialist for a natural-language task", () => {

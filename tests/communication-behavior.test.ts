@@ -19,6 +19,7 @@ test("professional communication applies evidence and formality floors", () => {
     },
   });
   const plan = buildCommunicationPlan(request);
+  assert.equal(request.profile.traits.formality, 0.2);
   assert.equal(plan.profile.professionalOverride, true);
   assert.equal(plan.profile.slangAllowed, false);
   assert.ok(plan.profile.traits.formality >= 0.9);

@@ -32,7 +32,7 @@ const selfReportIds = new Set(catalog.self_report_dimensions.map((trait) => trai
 const contextIds = Object.keys(catalog.contexts) as [string, ...string[]];
 const cueIds = Object.keys(catalog.explicit_cue_guidance) as [string, ...string[]];
 
-const unitRecordSchema = z.record(z.number().min(0).max(1));
+const unitRecordSchema = z.record(z.string(), z.number().min(0).max(1));
 
 export const communicationProfileSchema = z.object({
   traits: unitRecordSchema.default({}),
@@ -53,10 +53,19 @@ export const communicationProfileSchema = z.object({
   }
 });
 
+const defaultCommunicationProfile: z.output<typeof communicationProfileSchema> = {
+  traits: {},
+  selfReportDimensions: {},
+  adaptSlang: true,
+  voiceCueAdaptation: false,
+  voiceCueConsent: false,
+  retainBehaviorHistory: false,
+};
+
 export const communicationPlanRequestSchema = z.object({
   objective: z.string().trim().min(3).max(4000),
   context: z.enum(contextIds).default("casual"),
-  profile: communicationProfileSchema.default({}),
+  profile: communicationProfileSchema.default(defaultCommunicationProfile),
   ownerConfirmedCue: z.enum(cueIds).optional(),
 }).strict();
 

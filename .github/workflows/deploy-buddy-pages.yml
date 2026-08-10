@@ -56,6 +56,7 @@ jobs:
           python3 tools/generate_buddy_benchmark_index.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
           python3 tools/build_buddy_public_site.py --check
+          npm run test:actions-page
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
 
@@ -68,6 +69,7 @@ jobs:
           node --check website/data-control.js
           node --check website/open-model-lab.js
           node --check website/test-center.js
+          node --check website/actions.js
           node --check website/page-actions.js
           node --check website/nav.js
           node --check website/service-worker.js

@@ -145,6 +145,18 @@
       "public_data": "data/repository-system-map.json",
       "cadence": "every public-site change",
       "status": "local_release_checks_ready_deployment_requires_workflow"
+    },
+    {
+      "id": "github-actions-health",
+      "name": "GitHub Actions health and upgrade tracking",
+      "area": "Automation",
+      "scope": "Workflow syntax, action versions, triggers, controls, public run evidence, and per-workflow upgrade plans",
+      "generator": "tools/audit_actions_health.py",
+      "check_command": "npm run test:actions-page",
+      "public_page": "actions.html",
+      "public_data": "data/actions-health-report.json",
+      "cadence": "every workflow change and public run refresh",
+      "status": "static_checks_ready_live_runs_loaded_in_browser"
     }
   ]
 }

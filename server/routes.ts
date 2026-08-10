@@ -255,8 +255,8 @@ const openai = new OpenAI({
 
 function zodValidationError(err: z.ZodError) {
   return {
-    message: err.errors[0]?.message ?? "Invalid request",
-    field: err.errors[0]?.path?.join("."),
+    message: err.issues[0]?.message ?? "Invalid request",
+    field: err.issues[0]?.path?.join("."),
   };
 }
 

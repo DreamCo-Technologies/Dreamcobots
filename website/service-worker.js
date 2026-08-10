@@ -1,11 +1,15 @@
-const SHELL_CACHE = 'buddy-shell-v47';
-const RUNTIME_CACHE = 'buddy-runtime-v47';
+const SHELL_CACHE = 'buddy-shell-v48';
+const RUNTIME_CACHE = 'buddy-runtime-v48';
 const APP_SHELL = [
   './',
   './buddy.html',
   './phone.html',
   './buddy.css?v=28',
   './buddy.js?v=28',
+  './actions.html',
+  './actions.css?v=1',
+  './actions.js?v=1',
+  './data/actions-health-report.json',
   './success.html',
   './success.css?v=2',
   './success.js?v=4',

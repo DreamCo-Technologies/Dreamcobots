@@ -167,6 +167,20 @@
       "public_tracking_ready": true,
       "scope": "Pages, assets, navigation, service worker, required controls, JavaScript syntax, and deployment cost policy",
       "status": "local_release_checks_ready_deployment_requires_workflow"
+    },
+    {
+      "area": "Automation",
+      "cadence": "every workflow change and public run refresh",
+      "check_command": "npm run test:actions-page",
+      "generator": "tools/audit_actions_health.py",
+      "id": "github-actions-health",
+      "live_results_completed": 0,
+      "name": "GitHub Actions health and upgrade tracking",
+      "public_data": "data/actions-health-report.json",
+      "public_page": "actions.html",
+      "public_tracking_ready": true,
+      "scope": "Workflow syntax, action versions, triggers, controls, public run evidence, and per-workflow upgrade plans",
+      "status": "static_checks_ready_live_runs_loaded_in_browser"
     }
   ],
   "realisticPlan": [
@@ -476,13 +490,13 @@
   "reviewedOn": "2026-08-10",
   "schema": "dreamco.benchmark_index.v1",
   "summary": {
-    "benchmarkPrograms": 12,
+    "benchmarkPrograms": 13,
     "credentialGatedSuites": 2,
     "liveBenchmarkPrograms": 0,
     "localReadySuites": 25,
-    "publicTrackingPrograms": 12,
+    "publicTrackingPrograms": 13,
     "repositorySuites": 27,
-    "trackedBenchmarkSurfaces": 39
+    "trackedBenchmarkSurfaces": 40
   },
   "truthContract": {
     "catalogOrContractPassMeansLiveBenchmarkPassed": false,

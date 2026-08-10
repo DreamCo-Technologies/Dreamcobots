@@ -1,8 +1,8 @@
 # Buddy Benchmark Index
 
-- Benchmark programs: 12
+- Benchmark programs: 13
 - Repository suites: 27
-- Tracked benchmark surfaces: 39
+- Tracked benchmark surfaces: 40
 - Live benchmark programs with evidence: 0
 
 ## Programs
@@ -19,5 +19,6 @@
 - **Daily division contract benchmarks** (45 divisions): `local_contract_runner_ready_live_competitors_required`
 - **Connections and adapter readiness** (Connections): `planner_ready_credentials_and_live_probes_required`
 - **GitHub Pages release contract** (Public website): `local_release_checks_ready_deployment_requires_workflow`
+- **GitHub Actions health and upgrade tracking** (Automation): `static_checks_ready_live_runs_loaded_in_browser`
 
 Catalog and contract readiness are not live benchmark results.

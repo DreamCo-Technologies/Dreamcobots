@@ -10,7 +10,7 @@ import { apiRequest } from "@/lib/queryClient";
 import {
   GitBranch, RefreshCw, CheckCircle2, XCircle, Clock, Zap, CreditCard,
   Globe, Terminal, TestTube2, Wifi, WifiOff, Play, RotateCcw, Shield,
-  ChevronRight, Copy, ExternalLink, AlertTriangle, Activity, Github,
+  ChevronRight, Copy, ExternalLink, AlertTriangle, Activity, GitFork as Github,
   FlaskConical, Code, DollarSign, Lock, Key, Database,
 } from "lucide-react";
 
