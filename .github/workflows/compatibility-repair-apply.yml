@@ -1,0 +1,57 @@
+name: Compatibility Repair Apply
+
+on:
+  pull_request:
+    paths:
+      - "tools/migrate_zod4_compat.py"
+      - ".github/workflows/compatibility-repair-apply.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: compatibility-repair-${{ github.event.pull_request.head.ref }}
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out the PR branch, not the synthetic merge ref
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 2
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Explain this action
+        run: |
+          {
+            echo "# Compatibility Repair Apply"
+            echo
+            echo "Applies only deterministic, idempotent compatibility repairs that are encoded in tools/migrate_zod4_compat.py. It compiles and runs the governed tests before committing any changed source back to this review branch."
+            echo "It cannot write main and does not merge the pull request."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - run: npm ci
+      - name: Apply bounded repairs
+        run: python3 tools/migrate_zod4_compat.py
+      - name: Compile repaired source
+        run: npm run check
+      - name: Verify governed contracts
+        run: npm run test:governed
+      - name: Commit verified compatibility repair to review branch
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No compatibility changes remain." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name "dreamco-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add server/fleet-runtime.ts server/media-quality-lab.ts server/routes.ts server/communication-behavior.ts tools/generate_buddy_fleet_quality_program.ts
+          git commit -m "repair library compatibility and governed contracts"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
