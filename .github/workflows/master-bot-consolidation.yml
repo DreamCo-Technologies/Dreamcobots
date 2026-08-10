@@ -37,7 +37,7 @@ jobs:
       - name: Build reversible master-bot merge plan
         run: python3 tools/build_master_bot_consolidation.py
       - name: Verify consolidation rules
-        run: python3 -m pytest -q tests/test_master_bot_consolidation.py
+        run: python3 -m unittest tests.test_master_bot_consolidation
       - name: Summary
         if: always()
         run: cat reports/MASTER_BOT_CONSOLIDATION.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
