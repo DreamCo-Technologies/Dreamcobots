@@ -1,0 +1,31 @@
+{
+  "schema": "dreamco.master_bot_consolidation.v1",
+  "mode": "master_first_alias_merge",
+  "preserve_all_capabilities": true,
+  "delete_specialist_profiles": false,
+  "command_core_master_slug": "dreambot",
+  "usage_window_days": 30,
+  "low_use_execution_threshold": 2,
+  "rules": [
+    "Every division has one master bot responsible for broad routing and orchestration.",
+    "Low-use specialists become aliases/sub-capabilities of their division master instead of being deleted.",
+    "A specialist with unique capabilities keeps those capabilities attached to its master group.",
+    "Usage-based merging requires telemetry evidence; missing telemetry is labeled unknown rather than guessed.",
+    "Owner-selected specialists remain directly addressable for compatibility and rollback.",
+    "Buddy/DreamBot may route to hidden specialists when a specialist remains the best capability match.",
+    "Consolidation must never reduce the canonical capability inventory.",
+    "All merge decisions must be reversible and recorded with source provenance."
+  ],
+  "master_selection": {
+    "prefer_slugs": ["dreambot", "buddy-bot"],
+    "prefer_name_terms": ["master", "core", "lead", "chief", "hub", "orchestrator", "director"],
+    "prefer_categories": ["system", "orchestration", "management", "operations"],
+    "fallback": "highest declared capability count, then stable slug order"
+  },
+  "routing_policy": {
+    "default_surface": "masters_only",
+    "specialists_visible_on_demand": true,
+    "specialist_direct_route_supported": true,
+    "low_use_specialist_behavior": "alias_to_master_with_capability_retention"
+  }
+}
