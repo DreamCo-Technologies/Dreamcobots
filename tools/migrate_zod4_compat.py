@@ -17,9 +17,6 @@ REPLACEMENTS = {
             "const scorecard = catalog.scorecards[modality] as { dimensions: Record<string, number>; release_threshold: number };",
         ),
     ],
-    "server/routes.ts": [
-        ("error.errors", "error.issues"),
-    ],
     "server/communication-behavior.ts": [
         (
             "const traitIds = new Set(traitDefinitions.map((trait) => trait.id));",
