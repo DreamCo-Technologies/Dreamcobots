@@ -1,0 +1,64 @@
+{
+  "schema": "dreamco.intelligent_task_router.v1",
+  "mission": "Route each task to the smallest high-quality combination of master bot, temporary specialists, model, tools, and systems; activate only what is needed and tear temporary workers down after evidence is recorded.",
+  "priority_order": [
+    "correctness_and_quality",
+    "required_tool_and_modality_fit",
+    "safety_and_permissions",
+    "benchmark_mastery",
+    "runtime_latency",
+    "total_cost",
+    "privacy_and_locality"
+  ],
+  "activation_policy": {
+    "default": "lazy",
+    "activate_only_required_systems": true,
+    "activate_only_required_bots": true,
+    "activate_only_required_model_connector": true,
+    "temporary_subbots_expire_after_task": true,
+    "warm_cache_only_for_reused_hot_paths": true,
+    "idle_worker_shutdown": true,
+    "max_parallel_task_workers": 32,
+    "single_writer_per_canonical_owner": true
+  },
+  "mastery_policy": {
+    "mastered_requires_passing_benchmark_evidence": true,
+    "production_ready_requires_mastery_plus_security_plus_reliability": true,
+    "live_external_actions_require_separate_approval": true,
+    "regression_revokes_mastered_state": true,
+    "model_or_tool_version_change_requires_retest": true
+  },
+  "routing_signals": [
+    "objective",
+    "required capabilities",
+    "required tools",
+    "required modalities",
+    "context length",
+    "data sensitivity",
+    "latency budget",
+    "quality target",
+    "cost budget",
+    "connected providers",
+    "local hardware",
+    "benchmark evidence",
+    "recent failure history"
+  ],
+  "system_groups": [
+    {"id":"coding","signals":["code","bug","repository","typescript","python","javascript","compile","test"],"systems":["fleet_runtime","repository_tests","code_trust","model_router"]},
+    {"id":"research","signals":["research","current","source","web","compare","evidence"],"systems":["model_router","search","grounding","citations"]},
+    {"id":"media","signals":["image","video","audio","voice","music","design"],"systems":["media_engine","media_quality_lab","model_router"]},
+    {"id":"business","signals":["sales","lead","business","revenue","customer","market"],"systems":["workforce","governed_leads","model_router"]},
+    {"id":"data","signals":["file","note","document","memory","data","spreadsheet","pdf"],"systems":["personal_data_fabric","search","model_router"]},
+    {"id":"connections","signals":["api","oauth","connector","integration","app"],"systems":["connection_policy","outbound_adapters","model_router"]},
+    {"id":"security","signals":["security","vulnerability","dependency","secret","auth","permission"],"systems":["code_trust","dependency_review","codeql","model_router"]}
+  ],
+  "runtime_savings": {
+    "avoid_full_fleet_boot": true,
+    "avoid_all_provider_initialization": true,
+    "reuse_cached_catalogs": true,
+    "reuse_benchmark_results_until_invalidation": true,
+    "skip_unaffected_suites_when_change_impact_is_known": true,
+    "prefer_targeted_tests_before_full_suite": true,
+    "escalate_to_full_suite_before_release": true
+  }
+}
