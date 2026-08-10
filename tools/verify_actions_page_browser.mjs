@@ -42,9 +42,10 @@ try {
   await page.screenshot({ path: '/tmp/dreamco-actions-mobile.png', fullPage: true });
 
   const failures = [];
+  const expectedWorkflows = Number(desktop.workflows);
   if (desktop.title !== 'Actions control room') failures.push('desktop title');
-  if (desktop.rows !== 21 || mobile.rows !== 21) failures.push('workflow count');
-  if (desktop.upgrades !== '63') failures.push('upgrade count');
+  if (desktop.rows !== expectedWorkflows || mobile.rows !== expectedWorkflows) failures.push('workflow count');
+  if (Number(desktop.upgrades) !== expectedWorkflows * 3) failures.push('upgrade count');
   if (desktop.benchmarks !== '40') failures.push('benchmark surface count');
   if (!desktop.dialog || desktop.dialogUpgrades !== 3) failures.push('detail dialog');
   if (desktop.overflow || mobile.overflow) failures.push('horizontal overflow');

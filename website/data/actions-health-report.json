@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.actions_health.v1",
-  "workflow_count": 21,
+  "workflow_count": 22,
   "critical_error_count": 0,
   "warning_count": 0,
   "operational_workflow_count": 0,
@@ -902,6 +902,40 @@
         "Require fresh approval for every outside write, payment, or outreach action."
       ],
       "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/self-working-system.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
+      "workflow": ".github/workflows/tool-skill-readiness.yml",
+      "filename": "tool-skill-readiness.yml",
+      "display_name": "Buddy Tool and Skill Readiness",
+      "purpose": "Verify Buddy's tool and skill catalog, guardrails, evidence, and readiness classifications.",
+      "triggers": [
+        "manual",
+        "push",
+        "pull request"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [],
+      "referenced_files": [],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Add executable fixtures for every tool and skill readiness class.",
+        "Publish failed requirement IDs with the generated readiness artifact.",
+        "Keep destructive, paid, and external-write tools behind explicit approval."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/tool-skill-readiness.yml",
       "static_status": "static_checks_passed"
     }
   ],

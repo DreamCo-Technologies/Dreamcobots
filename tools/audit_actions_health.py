@@ -50,6 +50,7 @@ WORKFLOW_PURPOSES = {
     "repository-test-matrix.yml": "Exercise the repository's language, generator, policy, and site test matrix.",
     "run-everything-now.yml": "Provide an owner-triggered, bounded entry point for the full verification stack.",
     "self-working-system.yml": "Schedule local-first maintenance checks and stop at guarded external actions.",
+    "tool-skill-readiness.yml": "Verify Buddy's tool and skill catalog, guardrails, evidence, and readiness classifications.",
 }
 
 WORKFLOW_UPGRADES = {
@@ -74,6 +75,7 @@ WORKFLOW_UPGRADES = {
     "repository-test-matrix.yml": ["Test from a clean dependency install on supported runtimes.", "Map each failed suite to the files and contracts it protects.", "Publish coverage gaps alongside pass counts."],
     "run-everything-now.yml": ["Show the estimated runner cost before dispatch.", "Allow owners to select safe test groups instead of always running all jobs.", "Require explicit inputs for any networked or external-write lane."],
     "self-working-system.yml": ["Keep scheduled work read-only or sandboxed by default.", "Pause automatically after repeated failures or budget limits.", "Require fresh approval for every outside write, payment, or outreach action."],
+    "tool-skill-readiness.yml": ["Add executable fixtures for every tool and skill readiness class.", "Publish failed requirement IDs with the generated readiness artifact.", "Keep destructive, paid, and external-write tools behind explicit approval."],
 }
 
 TRIGGER_PATTERNS = {
