@@ -1,0 +1,80 @@
+name: Repository Revamp
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "App_bots/**"
+      - "config/dreamco-must-have-subbot-team.json"
+      - "server/subbot-team-engine.ts"
+      - "server/unified-worker-runtime.ts"
+      - "tests/subbot-team-engine.test.ts"
+      - "tools/build_repository_revolution_map.py"
+      - "website/revamp.html"
+      - ".github/workflows/repository-revamp.yml"
+  push:
+    branches: [main]
+    paths:
+      - "App_bots/**"
+      - "config/dreamco-must-have-subbot-team.json"
+      - "server/subbot-team-engine.ts"
+      - "server/unified-worker-runtime.ts"
+      - "tests/subbot-team-engine.test.ts"
+      - "tools/build_repository_revolution_map.py"
+      - "website/revamp.html"
+      - ".github/workflows/repository-revamp.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repository-revamp-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  map-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install locked JavaScript dependencies
+        run: npm ci
+      - name: Build every-item every-file every-bot revamp map
+        run: python3 tools/build_repository_revolution_map.py
+      - name: Verify 30-upgrade category contract
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('website/data/repository-revamp-map.json').read_text())
+          assert d['category_count'] == 15
+          assert d['upgrades_per_category'] == 30
+          assert all(row['upgrade_count'] == 30 for row in d['categories'])
+          assert d['file_count'] == len(d['files'])
+          assert d['bot_count'] == len(d['bots'])
+          assert d['division_master_count'] == 45
+          assert d['bot_count'] == 1051
+          print({'root_items':d['root_item_count'],'files':d['file_count'],'bots':d['bot_count'],'upgrade_contracts':d['total_category_upgrade_contracts']})
+          PY
+      - name: Verify every worker can build task-scoped sub-bot teams
+        run: node --import tsx --test tests/subbot-team-engine.test.ts
+      - name: Add owner summary
+        if: always()
+        run: cat reports/REPOSITORY_REVAMP_MAP.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+      - name: Save revamp evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: repository-revamp-${{ github.run_id }}
+          path: |
+            website/data/repository-revamp-map.json
+            reports/REPOSITORY_REVAMP_MAP.md
+          if-no-files-found: warn
+          retention-days: 14
