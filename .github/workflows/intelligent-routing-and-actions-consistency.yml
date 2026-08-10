@@ -1,0 +1,91 @@
+name: Intelligent Routing and Actions Consistency
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "config/buddy-intelligent-task-router.json"
+      - "config/model-mastery-benchmark-program.json"
+      - "config/model-capability-manifest.json"
+      - "server/intelligent-task-router.ts"
+      - "server/model-intelligence-router.ts"
+      - "tests/intelligent-task-router.test.ts"
+      - "tests/model-intelligence-router.test.ts"
+      - "tools/audit_actions_consistency.py"
+      - ".github/workflows/**"
+  push:
+    branches: [main]
+    paths:
+      - "config/buddy-intelligent-task-router.json"
+      - "config/model-mastery-benchmark-program.json"
+      - "config/model-capability-manifest.json"
+      - "server/intelligent-task-router.ts"
+      - "server/model-intelligence-router.ts"
+      - "tests/intelligent-task-router.test.ts"
+      - "tests/model-intelligence-router.test.ts"
+      - "tools/audit_actions_consistency.py"
+      - ".github/workflows/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: intelligent-routing-actions-consistency-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Explain this action
+        run: |
+          {
+            echo "# Intelligent Routing and Actions Consistency"
+            echo
+            echo "**Owner:** Verifies that Buddy wakes only the bots/models/tools needed for a task and that your Actions page follows a common operating standard."
+            echo "**Performance:** Checks lazy activation, task compilation, maximum 32 independent lanes, and one-writer-per-owner conflict prevention."
+            echo "**Model quality:** Keeps quality first while requiring task/tool/modality/context fit before cost and speed tie-breakers."
+            echo "**Cost:** Confirms Buddy shortlists instead of calling all 500 models for every task."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - run: npm ci
+      - name: Verify model intelligence
+        run: node --import tsx --test tests/model-intelligence-router.test.ts
+      - name: Verify intelligent lazy task routing
+        run: node --import tsx --test tests/intelligent-task-router.test.ts
+      - name: Verify model mastery benchmark contract
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const p=JSON.parse(fs.readFileSync('config/model-mastery-benchmark-program.json','utf8'));
+          if(p.catalog_target_count!==500) throw new Error('Model mastery must cover the 500-target benchmark program');
+          if(p.mastery_dimensions.length!==32) throw new Error(`Expected 32 mastery dimensions, got ${p.mastery_dimensions.length}`);
+          if(p.parallel_gap_policy.maximum_parallel_lanes!==32) throw new Error('Expected 32 max mastery lanes');
+          if(p.parallel_gap_policy.maximum_parallel_writers_per_owner!==1) throw new Error('Single-writer owner lock required');
+          console.log({dimensions:p.mastery_dimensions.length, maxParallel:p.parallel_gap_policy.maximum_parallel_lanes});
+          NODE
+      - name: Audit Actions consistency
+        run: python3 tools/audit_actions_consistency.py
+      - name: Add consistency report
+        if: always()
+        run: |
+          echo >> "$GITHUB_STEP_SUMMARY"
+          cat reports/ACTIONS_CONSISTENCY_REPORT.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+      - name: Save evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: intelligent-routing-actions-${{ github.run_id }}
+          path: |
+            config/generated/actions-consistency-report.json
+            reports/ACTIONS_CONSISTENCY_REPORT.md
+          if-no-files-found: warn
+          retention-days: 14
