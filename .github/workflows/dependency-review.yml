@@ -1,11 +1,16 @@
 name: Dependency Review
 
 on:
+  workflow_dispatch:
   pull_request:
     branches: [main]
 
 permissions:
   contents: read
+
+concurrency:
+  group: dependency-review-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   dependency-review:
@@ -17,6 +22,14 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Explain this action
+        run: |
+          {
+            echo "# Dependency Review"
+            echo
+            echo "Checks dependency changes and the installed lockfile for high-severity supply-chain vulnerabilities."
+            echo "If GitHub Dependency Graph is disabled, the native dependency-diff step may be unavailable, but the locked npm audit still protects the gate."
+          } >> "$GITHUB_STEP_SUMMARY"
       - run: npm ci
       - name: Review dependency changes when Dependency Graph is enabled
         id: dependency_review
