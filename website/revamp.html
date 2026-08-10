@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Repository Revamp — DreamCo Empire OS</title>
+  <meta name="description" content="DreamCo repository-wide plain-English map: every top-level item, every inventoried file, every canonical bot, and 30 upgrade contracts for each architecture category." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .revamp-shell{padding:48px 0 80px}.eyebrow{font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:var(--primary2)}.hero{padding:28px}.hero h1{font-size:2.15rem;margin:8px 0}.stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-top:18px}.stat{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px}.stat strong{display:block;font-size:1.3rem}.section{margin-top:34px}.section-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:14px}.section-head p{max-width:760px}.root-grid,.category-grid,.bot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.root-card details,.category-card details{margin-top:10px}.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}.detail-grid p,.detail-grid li{font-size:.81rem;color:var(--text2)}.detail-grid ul{padding-left:18px}.upgrade-list{counter-reset:upgrade;display:grid;gap:7px;margin-top:12px}.upgrade{padding:10px;border:1px solid var(--border);background:var(--card2);border-radius:10px;font-size:.8rem}.upgrade strong{font-family:var(--mono);color:var(--primary2)}.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}.filters input,.filters select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px}.filters input{flex:1;min-width:260px}.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:14px}.file-table{width:100%;border-collapse:collapse;min-width:900px}.file-table th,.file-table td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);font-size:.78rem;vertical-align:top}.file-table th{position:sticky;top:0;background:var(--card);z-index:1}.mono{font-family:var(--mono)}.pager{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:10px}.pager button{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:7px 10px;cursor:pointer}.bot-card{padding:18px}.bot-card h3{font-size:.96rem}.bot-meta{font-size:.76rem;color:var(--text3);margin-top:5px}.truth{border-left:4px solid var(--amber)}
+    @media(max-width:1000px){.stats{grid-template-columns:repeat(3,1fr)}.root-grid,.category-grid,.bot-grid,.detail-grid{grid-template-columns:1fr}}@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main class="container revamp-shell">
+  <section class="card hero">
+    <div class="eyebrow">Repository-wide revamp engine</div>
+    <h1>Explain everything. Upgrade systematically. Preserve what works.</h1>
+    <p>This map is built from the checked-out DreamCo repository. It explains top-level items for owners, users, investors, and engineers; inventories files; inventories canonical bots; selects division masters; and attaches one of 15 architecture categories with exactly 30 upgrade contracts per category.</p>
+    <div class="stats">
+      <div class="stat"><span>Root items</span><strong id="root-count">—</strong></div>
+      <div class="stat"><span>Files</span><strong id="file-count">—</strong></div>
+      <div class="stat"><span>Bots</span><strong id="bot-count">—</strong></div>
+      <div class="stat"><span>Masters</span><strong id="master-count">—</strong></div>
+      <div class="stat"><span>Categories</span><strong id="category-count">15</strong></div>
+      <div class="stat"><span>Upgrades/category</span><strong id="upgrade-count">30</strong></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px"><a href="actions.html" class="btn btn-primary btn-sm">Actions Control Center</a><a href="system-map.html" class="btn btn-outline btn-sm">Verified System Map</a><a href="bots.html" class="btn btn-outline btn-sm">Bot Fleet</a></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><div class="eyebrow">Repository root</div><h2>Every top-level item explained</h2></div><p>This replaces “what is this folder?” guessing with four audience views and a direct 30-upgrade category pack.</p></div>
+    <div id="root-grid" class="root-grid"><div class="card">Loading repository root…</div></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><div class="eyebrow">Upgrade system</div><h2>15 categories × 30 upgrade contracts</h2></div><p>These are review targets, not fake certification. A category is “upgraded” only when applicable implementation evidence and tests exist.</p></div>
+    <div id="category-grid" class="category-grid"><div class="card">Loading upgrade packs…</div></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><div class="eyebrow">Every file</div><h2>Repository file inventory and explanation</h2></div><p>Search by path, explanation, or category. Each file inherits the 30-upgrade pack for its architecture category plus five file-specific review priorities.</p></div>
+    <div class="filters"><input id="file-search" type="search" placeholder="Search files…"/><select id="file-category"><option value="">All categories</option></select></div>
+    <div class="table-wrap"><table class="file-table"><thead><tr><th>File</th><th>Category</th><th>What it is</th><th>Top review priority</th></tr></thead><tbody id="file-body"></tbody></table></div>
+    <div class="pager"><span id="file-page-label"></span><button id="file-prev">Previous</button><button id="file-next">Next</button></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><div class="eyebrow">Every canonical bot</div><h2>Master-first bot review</h2></div><p>Each bot remains accounted for. Masters orchestrate; specialists stay under masters; future merges preserve slugs as aliases until regression evidence proves the consolidation.</p></div>
+    <div class="filters"><input id="bot-search" type="search" placeholder="Search bots, divisions, categories, descriptions…"/><select id="bot-role"><option value="">All roles</option><option value="division_master">Division masters</option><option value="specialist_under_master">Specialists under masters</option></select></div>
+    <div id="bot-grid" class="bot-grid"></div>
+    <div class="pager"><span id="bot-page-label"></span><button id="bot-prev">Previous</button><button id="bot-next">Next</button></div>
+  </section>
+
+  <section class="section"><div class="card truth"><div class="eyebrow">Truth boundary</div><h2 style="margin:8px 0">“Reviewed” is not the same as “implemented”</h2><p id="truth">Upgrade recommendations are design targets. Each changed file still needs dependency-aware implementation and tests; bot merges remain reversible until routing and regression evidence passes.</p></div></section>
+</main>
+<script>
+let DATA={root_items:[],categories:[],files:[],bots:[]};let filePage=0,botPage=0;const PAGE=60;
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const list=a=>`<ul>${(a||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`;
+function rootCard(r){return `<div class="card root-card"><div class="eyebrow">${esc(r.kind)} • ${esc(r.category)}</div><h3 class="mono" style="margin-top:6px">${esc(r.name)}</h3><details><summary class="btn btn-outline btn-sm">Explain this item</summary><div class="detail-grid"><div><strong>For owner</strong><p>${esc(r.owner_explanation)}</p></div><div><strong>For user</strong><p>${esc(r.user_explanation)}</p></div><div><strong>For investor</strong><p>${esc(r.investor_explanation)}</p></div><div><strong>For engineer</strong><p>${esc(r.engineer_explanation)}</p></div></div><p class="bot-meta">30-upgrade pack: <strong>${esc(r['30_upgrade_pack_reference'])}</strong></p></details></div>`}
+function categoryCard(c){return `<div class="card category-card"><div class="eyebrow">30 upgrades • ${esc(c.id)}</div><h3 style="margin-top:6px">${esc(c.label)}</h3><p style="font-size:.82rem;margin-top:6px">${esc(c.focus)}</p><details><summary class="btn btn-outline btn-sm" style="margin-top:10px">Show all 30 upgrades</summary><div class="upgrade-list">${(c.upgrades||[]).map(u=>`<div class="upgrade"><strong>#${u.number} ${esc(u.id)}</strong><div>${esc(u.upgrade)}</div></div>`).join('')}</div></details></div>`}
+function renderRoots(){document.getElementById('root-grid').innerHTML=DATA.root_items.map(rootCard).join('')||'<div class="card">No root inventory.</div>'}
+function renderCategories(){document.getElementById('category-grid').innerHTML=DATA.categories.map(categoryCard).join('')}
+function filteredFiles(){const q=document.getElementById('file-search').value.toLowerCase(),c=document.getElementById('file-category').value;return DATA.files.filter(f=>(!q||JSON.stringify(f).toLowerCase().includes(q))&&(!c||f.category===c))}
+function renderFiles(){const rows=filteredFiles();const max=Math.max(0,Math.ceil(rows.length/PAGE)-1);filePage=Math.min(filePage,max);const slice=rows.slice(filePage*PAGE,(filePage+1)*PAGE);document.getElementById('file-body').innerHTML=slice.map(f=>`<tr><td class="mono">${esc(f.path)}</td><td>${esc(f.category)}</td><td>${esc(f.explanation)}</td><td>${esc(f.specific_upgrade_priorities?.[0]||'')}</td></tr>`).join('');document.getElementById('file-page-label').textContent=`${rows.length?filePage*PAGE+1:0}-${Math.min((filePage+1)*PAGE,rows.length)} of ${rows.length}`;}
+function filteredBots(){const q=document.getElementById('bot-search').value.toLowerCase(),r=document.getElementById('bot-role').value;return DATA.bots.filter(b=>(!q||JSON.stringify(b).toLowerCase().includes(q))&&(!r||b.architecture_role===r))}
+function renderBots(){const rows=filteredBots();const max=Math.max(0,Math.ceil(rows.length/PAGE)-1);botPage=Math.min(botPage,max);const slice=rows.slice(botPage*PAGE,(botPage+1)*PAGE);document.getElementById('bot-grid').innerHTML=slice.map(b=>`<div class="card bot-card"><div class="eyebrow">${esc(b.division)} • ${esc(b.architecture_role)}</div><h3>${esc(b.name)}</h3><div class="bot-meta mono">${esc(b.slug)} • master: ${esc(b.master_slug)} • ${b.capability_count} capabilities</div><p style="font-size:.8rem;margin-top:7px">${esc(b.description)}</p></div>`).join('');document.getElementById('bot-page-label').textContent=`${rows.length?botPage*PAGE+1:0}-${Math.min((botPage+1)*PAGE,rows.length)} of ${rows.length}`;}
+async function init(){const r=await fetch('data/repository-revamp-map.json',{cache:'no-store'});if(!r.ok)throw new Error('revamp map unavailable');DATA=await r.json();document.getElementById('root-count').textContent=DATA.root_item_count;document.getElementById('file-count').textContent=DATA.file_count;document.getElementById('bot-count').textContent=DATA.bot_count;document.getElementById('master-count').textContent=DATA.division_master_count;document.getElementById('category-count').textContent=DATA.category_count;document.getElementById('upgrade-count').textContent=DATA.upgrades_per_category;document.getElementById('truth').textContent=DATA.truth_boundary;document.getElementById('file-category').innerHTML='<option value="">All categories</option>'+DATA.categories.map(c=>`<option value="${esc(c.id)}">${esc(c.label)}</option>`).join('');renderRoots();renderCategories();renderFiles();renderBots();}
+document.getElementById('file-search').addEventListener('input',()=>{filePage=0;renderFiles()});document.getElementById('file-category').addEventListener('change',()=>{filePage=0;renderFiles()});document.getElementById('file-prev').addEventListener('click',()=>{filePage=Math.max(0,filePage-1);renderFiles()});document.getElementById('file-next').addEventListener('click',()=>{const max=Math.max(0,Math.ceil(filteredFiles().length/PAGE)-1);filePage=Math.min(max,filePage+1);renderFiles()});document.getElementById('bot-search').addEventListener('input',()=>{botPage=0;renderBots()});document.getElementById('bot-role').addEventListener('change',()=>{botPage=0;renderBots()});document.getElementById('bot-prev').addEventListener('click',()=>{botPage=Math.max(0,botPage-1);renderBots()});document.getElementById('bot-next').addEventListener('click',()=>{const max=Math.max(0,Math.ceil(filteredBots().length/PAGE)-1);botPage=Math.min(max,botPage+1);renderBots()});init().catch(e=>{document.getElementById('root-grid').innerHTML=`<div class="card truth">${esc(e.message)}. Run the repository revamp generator before deployment.</div>`});
+</script>
+</body>
+</html>
