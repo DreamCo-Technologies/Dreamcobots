@@ -19,10 +19,14 @@ def evidence_for_dimension(dimension: dict, manifest: dict) -> dict:
     evidence_files = [
         "config/model-mastery-benchmark-program.json",
         "config/model-capability-manifest.json",
+        "config/intelligent-task-router.json",
+        "config/benchmark-mastery-distillation-policy.json",
         "server/model-intelligence-router.ts",
         "server/model-protocol-compiler.ts",
+        "server/intelligent-task-router.ts",
         "tests/model-intelligence-router.test.ts",
         "tests/model-protocol-compiler.test.ts",
+        "tests/intelligent-task-router.test.ts",
     ]
     checks = {
         "program_declared": True,
@@ -33,6 +37,8 @@ def evidence_for_dimension(dimension: dict, manifest: dict) -> dict:
         "provider_capabilities_present": bool(providers),
         "runtime_router_present": (ROOT / "server/model-intelligence-router.ts").exists(),
         "protocol_compiler_present": (ROOT / "server/model-protocol-compiler.ts").exists(),
+        "task_router_present": (ROOT / "server/intelligent-task-router.ts").exists(),
+        "mastery_distillation_present": (ROOT / "config/benchmark-mastery-distillation-policy.json").exists(),
     }
 
     task_specific_evidence = {
@@ -42,11 +48,13 @@ def evidence_for_dimension(dimension: dict, manifest: dict) -> dict:
         "agent_handoff": "server/intelligent-task-router.ts",
         "task_decomposition": "server/intelligent-task-router.ts",
         "subbot_compilation": "server/intelligent-task-router.ts",
-        "cost_efficiency": "config/buddy-intelligent-task-router.json",
-        "context_efficiency": "config/buddy-intelligent-task-router.json",
+        "cost_efficiency": "config/intelligent-task-router.json",
+        "context_efficiency": "config/intelligent-task-router.json",
         "local_inference_efficiency": "config/model-capability-manifest.json",
         "task_specific_leaderboard": "server/model-intelligence-router.ts",
         "fallback_quality": "config/buddy-model-router.json",
+        "ensemble_value": "config/benchmark-mastery-distillation-policy.json",
+        "judge_calibration": "config/benchmark-mastery-distillation-policy.json",
     }.get(dimension_id)
     if task_specific_evidence:
         checks["task_specific_contract_present"] = (ROOT / task_specific_evidence).exists()
@@ -64,6 +72,12 @@ def evidence_for_dimension(dimension: dict, manifest: dict) -> dict:
         "checks": checks,
         "missing": missing,
         "evidence_files": sorted(set(evidence_files)),
+        "gap_worker": {
+            "type": "task_scoped_benchmark_master",
+            "active": state == "gap_found",
+            "single_writer_owner": dimension["owner"],
+            "next_action": "create or extend the smallest canonical fixture/implementation needed for this dimension, run targeted evidence, then send passing behavior to mastery distillation",
+        },
         "live_model_benchmark_state": "not_run_requires_shortlist_provider_or_local_runtime",
         "mastery_state": "fixture_ready" if state == "passing_contract" else "gap_found",
         "truth_boundary": "Static/runtime contracts can make a dimension fixture-ready; mastered_current_revision requires actual task fixtures and applicable live/local model evidence.",
@@ -85,15 +99,17 @@ def main() -> int:
 
     results.sort(key=lambda row: row["dimension"])
     payload = {
-        "schema": "dreamco.model_mastery_gap_report.v1",
+        "schema": "dreamco.model_mastery_gap_report.v2",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "parallel_lane_count": len(results),
         "maximum_parallel_lanes": max_parallel,
         "catalog_target_count": program.get("catalog_target_count"),
         "passing_contract_count": sum(row["state"] == "passing_contract" for row in results),
         "gap_count": sum(row["state"] == "gap_found" for row in results),
+        "active_gap_worker_count": sum(row["gap_worker"]["active"] for row in results),
         "live_calls_executed": 0,
-        "cost_strategy": "shared repository evidence plus 32 parallel lightweight assessors; shortlist before any paid/live benchmark",
+        "cost_strategy": "shared repository evidence plus 32 parallel lightweight assessors; only gap lanes stay active; shortlist before any paid/live benchmark",
+        "distillation_handoff": "config/benchmark-mastery-distillation-policy.json",
         "dimensions": results,
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -103,6 +119,7 @@ def main() -> int:
         "lanes": payload["parallel_lane_count"],
         "passing_contracts": payload["passing_contract_count"],
         "gaps": payload["gap_count"],
+        "active_gap_workers": payload["active_gap_worker_count"],
         "live_calls": 0,
         "output": str(OUT.relative_to(ROOT)),
     }, indent=2))
