@@ -10,11 +10,30 @@ permissions:
 jobs:
   dependency-review:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
-      - name: Review dependency changes
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Review dependency changes when Dependency Graph is enabled
+        id: dependency_review
+        continue-on-error: true
         uses: actions/dependency-review-action@v5.0.0
         with:
           fail-on-severity: high
           comment-summary-in-pr: always
+      - name: Fallback supply-chain audit
+        run: npm audit --audit-level=high
+      - name: Explain Dependency Graph fallback
+        if: always() && steps.dependency_review.outcome == 'failure'
+        run: |
+          {
+            echo "## Dependency Review fallback"
+            echo
+            echo "GitHub Dependency Review could not run, usually because the repository Dependency Graph is disabled."
+            echo "This workflow still ran the locked npm install and high-severity npm audit instead of failing solely because a repository feature is unavailable."
+            echo "Enable Dependency Graph in repository Security settings to restore GitHub's PR dependency-diff review."
+          } >> "$GITHUB_STEP_SUMMARY"
