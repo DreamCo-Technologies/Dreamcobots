@@ -35,7 +35,7 @@ type RouterPolicy = {
 };
 
 const policy = JSON.parse(
-  readFileSync(resolve(process.cwd(), "config", "buddy-intelligent-task-router.json"), "utf8"),
+  readFileSync(resolve(process.cwd(), "config", "intelligent-task-router.json"), "utf8"),
 ) as RouterPolicy;
 
 const fleet = JSON.parse(
