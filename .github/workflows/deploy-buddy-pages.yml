@@ -9,6 +9,7 @@ on:
     paths:
       - "website/**"
       - "tools/build_buddy_public_site.py"
+      - "tools/build_actions_control_center.py"
       - "tools/build_manufacturer_marketplace_catalog.py"
       - "tools/check_deployment_cost_policy.py"
       - "tools/generate_buddy_model_router.py"
@@ -16,7 +17,7 @@ on:
       - "tools/generate_buddy_distribution_catalog.py"
       - "tools/generate_repository_test_registry.py"
       - "config/**"
-      - ".github/workflows/deploy-buddy-pages.yml"
+      - ".github/workflows/**"
 
 permissions:
   contents: read
@@ -53,9 +54,12 @@ jobs:
           python3 tools/generate_buddy_distribution_catalog.py --check
           python3 tools/generate_repository_test_registry.py
           python3 tools/build_manufacturer_marketplace_catalog.py
+          python3 tools/build_actions_control_center.py
           python3 tools/build_buddy_public_site.py --check
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
+          test -s website/actions.html
+          test -s website/data/actions-control-center.json
 
       - name: Check browser JavaScript syntax
         run: |
