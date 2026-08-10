@@ -1,5 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
+import { registerIntelligentRoutingRoutes } from "./intelligent-routing-routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import { getUncachableStripeClient } from './stripeClient';
@@ -79,6 +80,7 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
+registerIntelligentRoutingRoutes(app);
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
