@@ -1,32 +1,85 @@
 {
-  "schema": "dreamco.intelligent_task_router.v1",
+  "schema": "dreamco.intelligent_task_router.v2",
+  "canonical": true,
   "mission": "Route each task to the smallest high-quality combination of master bot, temporary specialists, model, tools, and systems; activate only what is needed and tear temporary workers down after evidence is recorded.",
+  "primary_objective": "best_work",
   "priority_order": [
-    "correctness_and_quality",
-    "required_tool_and_modality_fit",
-    "safety_and_permissions",
-    "benchmark_mastery",
-    "runtime_latency",
-    "total_cost",
-    "privacy_and_locality"
+    "hard safety and authorization requirements",
+    "required task capability",
+    "verified benchmark quality for this task class",
+    "required model tools and modalities",
+    "required context window",
+    "reliability and regression history",
+    "runtime availability",
+    "latency",
+    "cost",
+    "privacy and locality"
   ],
   "activation_policy": {
     "default": "lazy",
+    "lazy_activation": true,
     "activate_only_required_systems": true,
     "activate_only_required_bots": true,
     "activate_only_required_model_connector": true,
+    "activate_only_needed_bots": true,
+    "activate_only_needed_models": true,
+    "activate_only_needed_tools": true,
     "temporary_subbots_expire_after_task": true,
+    "task_scoped_subbots_expire": true,
     "warm_cache_only_for_reused_hot_paths": true,
+    "reuse_warm_worker_when_same_scope": true,
     "idle_worker_shutdown": true,
+    "duplicate_worker_suppression": true,
     "max_parallel_task_workers": 32,
-    "single_writer_per_canonical_owner": true
+    "maximum_parallel_independent_lanes": 32,
+    "maximum_parallel_writers_per_owner": 1,
+    "single_writer_per_canonical_owner": true,
+    "parallel_reads_allowed": true,
+    "parallel_sandbox_benchmarks_allowed": true
+  },
+  "task_compiler": {
+    "steps": [
+      "classify objective",
+      "extract required capabilities",
+      "extract required tools modalities and context",
+      "resolve canonical master",
+      "create temporary sub-bots only for uncovered specialties",
+      "rank model candidates by verified task quality",
+      "build dependency DAG",
+      "parallelize independent nodes",
+      "serialize conflicting writes",
+      "attach acceptance tests",
+      "execute sandbox or approval-gated live plan",
+      "record evidence",
+      "update routing benchmark metadata",
+      "tear down task-scoped workers"
+    ],
+    "do_not_compile": [
+      "duplicate work already satisfied by an upstream node",
+      "models with no relevant task tool or modality advantage",
+      "idle permanent sub-bots",
+      "live external actions without required approval",
+      "paid model calls when an equivalent verified route meets the required quality floor unless the owner requests maximum quality regardless of cost"
+    ]
   },
   "mastery_policy": {
     "mastered_requires_passing_benchmark_evidence": true,
     "production_ready_requires_mastery_plus_security_plus_reliability": true,
     "live_external_actions_require_separate_approval": true,
     "regression_revokes_mastered_state": true,
-    "model_or_tool_version_change_requires_retest": true
+    "model_or_tool_version_change_requires_retest": true,
+    "subbot_mastery_promotes_reusable_knowledge_to_parent_master": true,
+    "mastery_does_not_remove_regression_testing": true
+  },
+  "quality_policy": {
+    "quality_first": true,
+    "brand_neutral": true,
+    "single_global_best_model_claim_forbidden": true,
+    "per_task_best_model_required": true,
+    "fresh_benchmark_evidence_preferred": true,
+    "fallback_chain_required": true,
+    "ensemble_only_when_expected_quality_gain_exceeds_extra_cost_and_latency": true,
+    "judge_model_must_not_grade_its_own_output_when_independent_grader_is_available": true
   },
   "routing_signals": [
     "objective",
@@ -55,10 +108,28 @@
   "runtime_savings": {
     "avoid_full_fleet_boot": true,
     "avoid_all_provider_initialization": true,
+    "avoid_duplicate_inference": true,
     "reuse_cached_catalogs": true,
     "reuse_benchmark_results_until_invalidation": true,
+    "cache_task_classification": true,
+    "cache_safe_reusable_prefixes": true,
+    "batch_compatible_requests": true,
+    "right_size_context": true,
+    "right_size_model": true,
     "skip_unaffected_suites_when_change_impact_is_known": true,
     "prefer_targeted_tests_before_full_suite": true,
+    "use_cheaper_model_only_when_quality_floor_is_preserved": true,
+    "stop_benchmark_when_acceptance_or_rejection_is_decisive": true,
+    "do_not_run_all_500_models_for_every_task": true,
+    "shortlist_then_benchmark": true,
     "escalate_to_full_suite_before_release": true
+  },
+  "learning_policy": {
+    "routing_updates_require_evidence": true,
+    "successful_routes_raise_task_specific_confidence": true,
+    "failures_lower_task_specific_confidence": true,
+    "provider_or_model_revision_invalidates_stale_confidence": true,
+    "verified_model_strengths_are_shared_across_the_fleet": true,
+    "verified_model_weaknesses_create_fallback_rules_and_gap_work": true
   }
 }
