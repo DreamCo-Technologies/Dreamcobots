@@ -32,7 +32,15 @@ const selfReportIds = new Set(catalog.self_report_dimensions.map((trait) => trai
 const contextIds = Object.keys(catalog.contexts) as [string, ...string[]];
 const cueIds = Object.keys(catalog.explicit_cue_guidance) as [string, ...string[]];
 
-const unitRecordSchema = z.record(z.number().min(0).max(1));
+const unitRecordSchema = z.record(z.string(), z.number().min(0).max(1));
+const defaultCommunicationProfile = {
+  traits: {},
+  selfReportDimensions: {},
+  adaptSlang: true,
+  voiceCueAdaptation: false,
+  voiceCueConsent: false,
+  retainBehaviorHistory: false,
+};
 
 export const communicationProfileSchema = z.object({
   traits: unitRecordSchema.default({}),
@@ -56,7 +64,7 @@ export const communicationProfileSchema = z.object({
 export const communicationPlanRequestSchema = z.object({
   objective: z.string().trim().min(3).max(4000),
   context: z.enum(contextIds).default("casual"),
-  profile: communicationProfileSchema.default({}),
+  profile: communicationProfileSchema.default(defaultCommunicationProfile),
   ownerConfirmedCue: z.enum(cueIds).optional(),
 }).strict();
 
@@ -81,7 +89,7 @@ function validateNoClinicalObjective(objective: string): void {
 export function buildCommunicationPlan(request: z.infer<typeof communicationPlanRequestSchema>) {
   validateNoClinicalObjective(request.objective);
   const context = catalog.contexts[request.context];
-  const traits = { ...defaultTraits(), ...request.profile.traits };
+  const traits: Record<string, number> = { ...defaultTraits(), ...request.profile.traits };
   for (const [id, floor] of Object.entries(context.trait_floors ?? {})) {
     traits[id] = Math.max(traits[id] ?? 0, floor);
   }
