@@ -1,0 +1,20 @@
+{
+  "schema": "dreamco.master_bot_consolidation.v1",
+  "mode": "capability_preserving_alias_merge",
+  "global_master": "buddy-bot",
+  "usage_window_days": 30,
+  "rare_use_threshold": 2,
+  "minimum_capability_overlap_for_merge": 0.75,
+  "rules": [
+    "Never delete a specialist capability when consolidating a bot profile.",
+    "Keep the original slug as a reversible alias so saved links and user requests continue to work.",
+    "Choose a master inside the same division unless Buddy is explicitly the global master.",
+    "Only call a bot low-use when usage telemetry covers the configured window; missing telemetry is unknown, not zero.",
+    "Exact or near-duplicate specialists may be merge candidates even without usage telemetry when their capability overlap is proven.",
+    "A master must inherit the union of capabilities from merged aliases before a merge can become active.",
+    "Consolidation must not reduce fleet capability coverage, certification evidence, approval gates, or routing traceability.",
+    "Every merge must be reversible by restoring the alias as a directly routed specialist.",
+    "Default Buddy routing may prefer master bots while explicit specialist slugs remain supported.",
+    "Master-bot routing changes require fleet regression tests before production activation."
+  ]
+}
