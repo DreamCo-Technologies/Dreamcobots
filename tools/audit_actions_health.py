@@ -13,12 +13,12 @@ PACKAGE = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
 SCRIPTS = set(PACKAGE.get("scripts", {}))
 
 MAX_MAJOR = {
-    "actions/checkout": 6,
+    "actions/checkout": 7,
     "actions/setup-node": 6,
     "actions/setup-python": 6,
     "actions/upload-artifact": 6,
     "actions/configure-pages": 6,
-    "actions/upload-pages-artifact": 4,
+    "actions/upload-pages-artifact": 5,
     "actions/deploy-pages": 5,
 }
 
@@ -53,8 +53,8 @@ def main() -> int:
             clean = rel.rstrip("),]")
             if not (ROOT / clean).exists():
                 item["errors"].append(f"missing referenced file: {clean}")
-        if "bots/" in text and (ROOT / "App_bots").exists():
-            item["warnings"].append("references legacy bots/ path; verify against canonical App_bots fleet")
+        if re.search(r"(?<![A-Za-z0-9_-])bots/", text) and not (ROOT / "bots").exists():
+            item["warnings"].append("references missing legacy bots/ path")
         if "seed-bots" in text or "seed-buddy-bot" in text:
             item["warnings"].append("uses seed-file proxy; prefer current canonical fleet/generated registries")
         if "actions/checkout@v4" in text or "actions/setup-node@v4" in text or "actions/setup-python@v5" in text:
@@ -69,12 +69,12 @@ def main() -> int:
         "critical_error_count": critical,
         "warning_count": warnings,
         "baseline": {
-            "checkout": "actions/checkout@v6",
+            "checkout": "actions/checkout@v7",
             "setup_node": "actions/setup-node@v6",
             "setup_python": "actions/setup-python@v6",
             "upload_artifact": "actions/upload-artifact@v6",
             "configure_pages": "actions/configure-pages@v6",
-            "upload_pages_artifact": "actions/upload-pages-artifact@v4",
+            "upload_pages_artifact": "actions/upload-pages-artifact@v5",
             "deploy_pages": "actions/deploy-pages@v5"
         },
         "findings": findings,

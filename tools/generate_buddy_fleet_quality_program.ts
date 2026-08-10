@@ -12,7 +12,7 @@ type QualitySource = {
   truth_policy: Record<string, boolean>;
   benchmark_dimensions: Array<{ id: string; label: string; target: string }>;
   competitor_discovery: Record<string, unknown>;
-  quality_workers: Array<{ slug: string; role: string }>;
+  quality_workers: Array<{ slug: string; fleet_slug?: string; role: string }>;
   release_pipeline: Array<{ id: string; gate: string }>;
   dependency_gates: string[];
   continuous_learning: Record<string, unknown>;
@@ -42,7 +42,12 @@ export function buildFleetQualityProgram() {
   const fleetSlugs = new Set(fleet.bots.map((bot) => bot.identity.slug));
   const dimensionIds = source.benchmark_dimensions.map((dimension) => dimension.id);
   const phaseIds = source.release_pipeline.map((phase) => phase.id);
-  const workerSlugs = source.quality_workers.map((worker) => worker.slug);
+  const qualityWorkers = source.quality_workers.map((worker) => ({
+    slug: worker.fleet_slug || worker.slug,
+    program_slug: worker.slug,
+    role: worker.role,
+  }));
+  const workerSlugs = qualityWorkers.map((worker) => worker.slug);
 
   if (new Set(dimensionIds).size !== dimensionIds.length || dimensionIds.length < 10) {
     throw new Error("Fleet quality dimensions must be unique and comprehensive.");
@@ -59,6 +64,9 @@ export function buildFleetQualityProgram() {
   }
   for (const slug of workerSlugs) {
     if (!fleetSlugs.has(slug)) throw new Error(`Fleet quality worker does not resolve: ${slug}`);
+  }
+  if (new Set(workerSlugs).size !== workerSlugs.length) {
+    throw new Error("Fleet quality workers must resolve to unique fleet profiles");
   }
 
   const bots = fleet.bots.map((bot) => {
@@ -195,7 +203,7 @@ export function buildFleetQualityProgram() {
     },
     benchmark_dimensions: source.benchmark_dimensions,
     competitor_discovery: source.competitor_discovery,
-    quality_workers: source.quality_workers,
+    quality_workers: qualityWorkers,
     release_pipeline: source.release_pipeline,
     dependency_gates: source.dependency_gates,
     continuous_learning: source.continuous_learning,

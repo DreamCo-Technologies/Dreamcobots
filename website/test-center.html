@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="test-center.css?v=3" />
+  <link rel="stylesheet" href="test-center.css?v=4" />
 </head>
 <body class="test-center-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -30,6 +30,28 @@
     <div><span>Test files</span><strong id="test-tests-count">--</strong></div>
     <div><span>Suites</span><strong id="test-suites-count">--</strong></div>
     <div><span>Blocked</span><strong id="test-blocked-count">--</strong></div>
+  </section>
+
+  <section class="benchmark-index" aria-labelledby="benchmark-index-heading">
+    <div class="test-workspace-heading">
+      <div><p>One public evidence map</p><h2 id="benchmark-index-heading">Benchmark tracking index</h2></div>
+      <a class="btn btn-outline btn-sm" href="models.html#demand-explorer-title">Demand and model benchmarks</a>
+    </div>
+    <p class="quality-intro">Every major benchmark program and repository suite is linked to a public page, generated evidence asset, reviewed command, cadence, and next evidence gate. A catalog or contract pass never counts as a live benchmark.</p>
+    <div class="benchmark-index-metrics" aria-label="Benchmark index summary">
+      <div><span>Programs</span><strong id="benchmark-program-count">--</strong></div>
+      <div><span>Repository suites</span><strong id="benchmark-suite-count">--</strong></div>
+      <div><span>Tracked surfaces</span><strong id="benchmark-surface-count">--</strong></div>
+      <div><span>Public programs</span><strong id="benchmark-public-count">--</strong></div>
+      <div><span>Live evidence</span><strong id="benchmark-live-count">0</strong></div>
+    </div>
+    <ol id="benchmark-plan-stages" class="benchmark-plan-stages"></ol>
+    <div class="benchmark-index-toolbar">
+      <label for="benchmark-program-search">Find a benchmark<input id="benchmark-program-search" type="search" placeholder="Models, media, bots, security" autocomplete="off" /></label>
+      <label for="benchmark-area-filter">Area<select id="benchmark-area-filter"><option value="all">All areas</option></select></label>
+      <span id="benchmark-index-status" class="test-scan-id" aria-live="polite">Loading benchmark index</span>
+    </div>
+    <div id="benchmark-program-list" class="benchmark-program-list"></div>
   </section>
 
   <section class="improvement-guardrails" aria-labelledby="improvement-heading">
@@ -138,6 +160,7 @@
 
 <script src="data/buddy-fleet-quality-program.js?v=2"></script>
 <script src="data/buddy-self-improvement.js?v=1"></script>
-<script src="test-center.js?v=3" defer></script>
+<script src="data/buddy-benchmark-index.js?v=1"></script>
+<script src="test-center.js?v=4" defer></script>
 </body>
 </html>

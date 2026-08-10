@@ -41,11 +41,14 @@ test('Model Lab exposes organization discovery and benchmark controls', () => {
 
 test('organization registry keeps membership, capabilities, and connections separate', () => {
   assert.equal(registry.summary.existingBenchmarkTargets, 500);
+  assert.equal(registry.summary.existingProviders, 100);
   assert.ok(registry.summary.allianceMembers >= 190);
+  assert.equal(registry.summary.organizationRecords, 296);
   assert.equal(registry.summary.organizationRecords, registry.existingProviders.length + registry.allianceMembers.length);
   assert.equal(registry.truthContract.allianceMembershipMeansProviderConnection, false);
   assert.equal(registry.truthContract.directoryMembershipMeansCapabilityVerified, false);
   assert.equal(registry.truthContract.liveBenchmarksCompleted, 0);
+  assert.equal(registry.summary.connectedOrganizationAdapters, 0);
   assert.ok(registry.allianceMembers.every((item) => item.connectedAdapter === false));
 });
 

@@ -50,8 +50,10 @@ jobs:
           python3 tools/check_deployment_cost_policy.py
           python3 tools/generate_buddy_model_router.py --check
           node tools/check_buddy_model_benchmarks.mjs
+          node tools/check_buddy_demand_ontology.mjs
           python3 tools/generate_buddy_distribution_catalog.py --check
           python3 tools/generate_repository_test_registry.py
+          python3 tools/generate_buddy_benchmark_index.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
           python3 tools/build_buddy_public_site.py --check
           test -s website/manufacturer-marketplace.html

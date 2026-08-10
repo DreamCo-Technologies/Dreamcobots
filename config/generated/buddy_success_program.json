@@ -22,9 +22,9 @@
     "ai_organization_records": 296,
     "alliance_directory_members": 196,
     "dynamic_model_discovery_sources": 20,
-    "referenced_resource_hosts": 243,
+    "referenced_resource_hosts": 319,
     "verified_live_resource_hosts": 0,
-    "source_files_scanned_for_resources": 552,
+    "source_files_scanned_for_resources": 785,
     "robot_division_archetypes": 45
   },
   "questionnaire": [
@@ -5148,102 +5148,122 @@
       {
         "provider": "OpenAI",
         "catalog": "https://developers.openai.com/api/docs/models",
-        "region": "United States"
+        "region": "United States",
+        "connectorId": "openai"
       },
       {
         "provider": "Google",
         "catalog": "https://ai.google.dev/gemini-api/docs/models",
-        "region": "United States"
+        "region": "United States",
+        "connectorId": "google_gemini"
       },
       {
         "provider": "Anthropic",
         "catalog": "https://platform.claude.com/docs/en/about-claude/models/overview",
-        "region": "United States"
+        "region": "United States",
+        "connectorId": "anthropic"
       },
       {
         "provider": "Microsoft",
         "catalog": "https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure",
-        "region": "United States"
+        "region": "United States",
+        "connectorId": "azure_foundry"
       },
       {
         "provider": "Amazon",
         "catalog": "https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html",
-        "region": "United States"
+        "region": "United States",
+        "connectorId": "amazon_bedrock"
       },
       {
         "provider": "Hugging Face",
         "catalog": "https://huggingface.co/models",
-        "region": "Global"
+        "region": "Global",
+        "connectorId": "huggingface"
       },
       {
         "provider": "Alibaba Cloud",
         "catalog": "https://www.alibabacloud.com/help/en/model-studio/models",
-        "region": "China"
+        "region": "China",
+        "connectorId": "alibaba_model_studio"
       },
       {
         "provider": "Baidu",
         "catalog": "https://cloud.baidu.com/doc/qianfan/index.html",
-        "region": "China"
+        "region": "China",
+        "connectorId": "baidu_qianfan"
       },
       {
         "provider": "Mistral AI",
         "catalog": "https://docs.mistral.ai/models/overview",
-        "region": "France"
+        "region": "France",
+        "connectorId": "mistral"
       },
       {
         "provider": "Ollama",
         "catalog": "https://ollama.com/library",
-        "region": "Global"
+        "region": "Global",
+        "connectorId": "local_open_model"
       },
       {
         "provider": "NVIDIA",
         "catalog": "https://docs.nvidia.com/nim/",
-        "region": "United States"
+        "region": "United States",
+        "connectorId": "nvidia_nim"
       },
       {
         "provider": "Cohere",
         "catalog": "https://docs.cohere.com/v1/docs/models",
-        "region": "Canada"
+        "region": "Canada",
+        "connectorId": "cohere"
       },
       {
         "provider": "xAI",
         "catalog": "https://docs.x.ai/developers/models",
-        "region": "United States"
+        "region": "United States",
+        "connectorId": "xai"
       },
       {
         "provider": "Groq",
         "catalog": "https://console.groq.com/docs/models",
-        "region": "United States"
+        "region": "United States",
+        "connectorId": "groq"
       },
       {
         "provider": "Together AI",
         "catalog": "https://docs.together.ai/docs/serverless/models",
-        "region": "United States"
+        "region": "United States",
+        "connectorId": "together_ai"
       },
       {
         "provider": "Fireworks AI",
         "catalog": "https://docs.fireworks.ai/models/overview",
-        "region": "United States"
+        "region": "United States",
+        "connectorId": "fireworks_ai"
       },
       {
         "provider": "Cerebras",
         "catalog": "https://inference-docs.cerebras.ai/models/overview",
-        "region": "United States"
+        "region": "United States",
+        "connectorId": "cerebras"
       },
       {
         "provider": "Replicate",
         "catalog": "https://replicate.com/docs/topics/models/official-models",
-        "region": "United States"
+        "region": "United States",
+        "connectorId": "replicate"
       },
       {
         "provider": "Stability AI",
         "catalog": "https://platform.stability.ai/docs/",
-        "region": "United Kingdom"
+        "region": "United Kingdom",
+        "connectorId": "stability_ai"
       },
       {
         "provider": "Black Forest Labs",
         "catalog": "https://docs.bfl.ai/release-notes",
-        "region": "Germany"
+        "region": "Germany",
+        "connectorId": "black_forest_labs"
       }
     ],
     "permanent_best_model_ranking_claimed": false,
@@ -5261,7 +5281,7 @@
     "secure_key_intake": "authenticated_loopback_to_macos_keychain"
   },
   "resource_inventory": {
-    "source_files_scanned": 552,
+    "source_files_scanned": 785,
     "resources": [
       {
         "id": "resource-911c13aa033f90ab",
@@ -5372,6 +5392,15 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-5e37a657db113385",
+        "host": "api-docs.deepseek.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-a5c7bb15217223a9",
         "host": "api-inference.huggingface.co",
         "mention_count": 1,
@@ -5471,6 +5500,15 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-13f9c0d3f6ce3455",
+        "host": "api.fiscaldata.treasury.gov",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-0f675469cbba038a",
         "host": "api.fiverr.com",
         "mention_count": 1,
@@ -5500,7 +5538,16 @@
       {
         "id": "resource-5b3097c5c7bd083b",
         "host": "api.github.com",
-        "mention_count": 18,
+        "mention_count": 19,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-76df1dbd73cf293f",
+        "host": "api.grants.gov",
+        "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -5536,7 +5583,7 @@
       {
         "id": "resource-f3c1a6a4172d2cdb",
         "host": "api.sam.gov",
-        "mention_count": 1,
+        "mention_count": 2,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -5563,7 +5610,7 @@
       {
         "id": "resource-e54b98161acbd581",
         "host": "api.usaspending.gov",
-        "mention_count": 2,
+        "mention_count": 4,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -5615,6 +5662,24 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-8453f59b15c6d604",
+        "host": "baymard.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-8e399bbf21b29e66",
+        "host": "beam.ai",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-bb1b9b9ba6a4fbaf",
         "host": "benchmark.com",
         "mention_count": 1,
@@ -5644,6 +5709,15 @@
       {
         "id": "resource-cb7806a7b3430979",
         "host": "bluevine.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-d8ca7f53284c44ac",
+        "host": "botpress.com",
         "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
@@ -5750,6 +5824,15 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-ab99b2cf568f7fc7",
+        "host": "consensus.app",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-ad7997e2cb665dec",
         "host": "console.anthropic.com",
         "mention_count": 1,
@@ -5831,6 +5914,15 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-1d3878b46b30bd7f",
+        "host": "deepmind.google",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-4bc30dc79a6a4fb3",
         "host": "developer-docs.amazon.com",
         "mention_count": 1,
@@ -5858,9 +5950,54 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-784e061f180a33fa",
+        "host": "developer.grammarly.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-5aa55a927e419fea",
+        "host": "developer.salesforce.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-3487a34ecae26ee6",
+        "host": "developer.semrush.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-72be8e6fe9d3206e",
+        "host": "developer.stackblitz.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-b01b430b891ec3bb",
         "host": "developer.walmart.com",
         "mention_count": 2,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-bc0bdf2d82237bc0",
+        "host": "developerportal.thomsonreuters.com",
+        "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -5903,8 +6040,71 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-0edea07e36954951",
+        "host": "developers.gamma.app",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-6db038858c34c8b9",
+        "host": "developers.hubspot.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-9de232aa82c81763",
+        "host": "developers.intercom.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-a059584488d25d1c",
+        "host": "developers.jasper.ai",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-f8a0a59f23d6773b",
+        "host": "developers.make.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-55c0c53bf7efecb5",
+        "host": "developers.notion.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-0a94054f905f1d6f",
         "host": "developers.openai.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-13543b44dcad7616",
+        "host": "developers.tidio.com",
         "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
@@ -5923,6 +6123,15 @@
       {
         "id": "resource-c49e09260b0cd45c",
         "host": "divvy.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-618a16cc4436c98b",
+        "host": "docs.ahrefs.com",
         "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
@@ -5984,6 +6193,51 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-2a9d4ebe9cb280a4",
+        "host": "docs.crewai.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-051c7420212f3348",
+        "host": "docs.cursor.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-6d62bee5eaeb197e",
+        "host": "docs.datarobot.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-d7e2cad6e01de4a2",
+        "host": "docs.dev.runwayml.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-62ebfcc4f653e7cd",
+        "host": "docs.devin.ai",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-dbcba97760682192",
         "host": "docs.fireworks.ai",
         "mention_count": 1,
@@ -5995,7 +6249,61 @@
       {
         "id": "resource-26ca8550a0510ee2",
         "host": "docs.github.com",
-        "mention_count": 2,
+        "mention_count": 3,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-22697f1e28086fa6",
+        "host": "docs.heygen.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-d26e0bb3461fb661",
+        "host": "docs.langchain.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-82b3e8e4604d03a6",
+        "host": "docs.lovable.dev",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-e0cd740f3ee7b04e",
+        "host": "docs.lumalabs.ai",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-ba48a219edb2320e",
+        "host": "docs.mendable.ai",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-2a9d130ab040cf09",
+        "host": "docs.midjourney.com",
+        "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -6013,6 +6321,33 @@
       {
         "id": "resource-f7b0557ebb45f1b6",
         "host": "docs.nvidia.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-54ad9c520003382f",
+        "host": "docs.obviously.ai",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-493b4d0996754222",
+        "host": "docs.perplexity.ai",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-53dc7ce57804ba3c",
+        "host": "docs.pinecone.io",
         "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
@@ -6047,6 +6382,51 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-1387ab4f166f5be0",
+        "host": "docs.stripe.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-9b6c32c30821a1be",
+        "host": "docs.surferseo.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-29836713428930ab",
+        "host": "docs.synthesia.io",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-551b9c1e4e205475",
+        "host": "docs.tabnine.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-b3a56f0848dcfc9c",
+        "host": "docs.tavily.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-a51c1169d913031a",
         "host": "docs.together.ai",
         "mention_count": 2,
@@ -6074,8 +6454,44 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-7991e2b05674ef7a",
+        "host": "docs.wandb.ai",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-bbbde9240d1707c6",
+        "host": "docs.weaviate.io",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-6ec264916b7681ab",
         "host": "docs.webhook.site",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-5be5819370bf91cf",
+        "host": "docs.windsurf.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-c724bed50bbc68b7",
+        "host": "docs.wordware.ai",
         "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
@@ -6086,6 +6502,15 @@
         "id": "resource-d032282c3c7e1b87",
         "host": "docs.x.ai",
         "mention_count": 3,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-3505628133d2a6d0",
+        "host": "docs.zapier.com",
+        "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -6113,6 +6538,24 @@
         "id": "resource-6a929cd0b3ba4677",
         "host": "duckduckgo.com",
         "mention_count": 5,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-b6b9ee7013bc8684",
+        "host": "ec.europa.eu",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-df610709f56c5c16",
+        "host": "elicit.com",
+        "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -6220,7 +6663,7 @@
       {
         "id": "resource-3aeb002460381c6f",
         "host": "github.com",
-        "mention_count": 103,
+        "mention_count": 109,
         "status": "configuration_required",
         "verified_live": false,
         "health_check_evidence": null,
@@ -6292,7 +6735,7 @@
       {
         "id": "resource-ae1f45a5b387e18d",
         "host": "huggingface.co",
-        "mention_count": 8,
+        "mention_count": 9,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -6389,8 +6832,26 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-9a8e875a2ef00c83",
+        "host": "klingai.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-4a6d1ad53d221a55",
         "host": "learn.microsoft.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-db8e6fb27a63b561",
+        "host": "legalesedecoder.com",
         "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
@@ -6446,6 +6907,15 @@
         "id": "resource-0f4b8b516e16a3a9",
         "host": "mockoon.com",
         "mention_count": 2,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-6db38d319a7775b0",
+        "host": "monica.im",
+        "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -6553,7 +7023,7 @@
       {
         "id": "resource-bb438e1309fd5686",
         "host": "openai.com",
-        "mention_count": 1,
+        "mention_count": 3,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -6589,7 +7059,7 @@
       {
         "id": "resource-6d145e0d6d1e4e2e",
         "host": "opencollective.com",
-        "mention_count": 35,
+        "mention_count": 37,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -6668,8 +7138,35 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-03dba20a17a775c8",
+        "host": "pictory.ai",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-2bf61824f7a22498",
+        "host": "pika.art",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-ee8a45a7ffc91222",
         "host": "pitchblack.us",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-04cea180421fb5f7",
+        "host": "plaid.com",
         "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
@@ -6767,6 +7264,15 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-8726f177817a80c1",
+        "host": "qwenlm.github.io",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-b7d743f86b4f985c",
         "host": "ramp.com",
         "mention_count": 1,
@@ -6785,6 +7291,15 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-8eb42e50f6571e41",
+        "host": "rasa.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-3caef2ded075750e",
         "host": "rd.usda.gov",
         "mention_count": 2,
@@ -6796,7 +7311,16 @@
       {
         "id": "resource-0dc11026ac75c015",
         "host": "registry.npmjs.org",
-        "mention_count": 636,
+        "mention_count": 635,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-e90055945785ef69",
+        "host": "relevanceai.com",
+        "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -6857,6 +7381,15 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-360220ea93a91c89",
+        "host": "scale.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-9e3019015f4e8a11",
         "host": "search.brave.com",
         "mention_count": 2,
@@ -6875,6 +7408,15 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-c809c8317c47041a",
+        "host": "seed.bytedance.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-2bbbdc9124f641c0",
         "host": "sellingpartnerapi-na.amazon.com",
         "mention_count": 1,
@@ -6886,6 +7428,15 @@
       {
         "id": "resource-14227c25deb917a7",
         "host": "sendgrid.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-9cf89ae7eaeabc24",
+        "host": "sensortower.com",
         "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
@@ -6994,7 +7545,16 @@
       {
         "id": "resource-1ffda32ad70e3cac",
         "host": "stripe.com",
-        "mention_count": 6,
+        "mention_count": 7,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-0e68a172fd3d0a46",
+        "host": "suno.com",
+        "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -7073,6 +7633,15 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-5239258154a10f81",
+        "host": "tome.app",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-3b36edce556a0fd3",
         "host": "toptal.com",
         "mention_count": 1,
@@ -7102,6 +7671,15 @@
       {
         "id": "resource-c767835dcd3c15ea",
         "host": "ui.shadcn.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-9bfaf1c0ea2e384e",
+        "host": "undetectable.ai",
         "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
@@ -7156,6 +7734,15 @@
       {
         "id": "resource-affbdb2089fe2895",
         "host": "venture.angellist.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-9baad27eab20fb98",
+        "host": "vercel.com",
         "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
@@ -7226,9 +7813,27 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-1a6f9c722a08b976",
+        "host": "www.apple.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-cc05b8faba8fa034",
         "host": "www.assemblyai.com",
         "mention_count": 2,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-675c2aec2be305a6",
+        "host": "www.beautiful.ai",
+        "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -7253,6 +7858,15 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-333d8f2df254f5db",
+        "host": "www.canva.dev",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-bd6bf1e59c23d64a",
         "host": "www.census.gov",
         "mention_count": 1,
@@ -7262,8 +7876,35 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-2220d81694b25c2b",
+        "host": "www.copy.ai",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-3c9f1d84f274ab82",
         "host": "www.copyright.gov",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-5bfcb4694dee8188",
+        "host": "www.descript.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-151619ace2f9747f",
+        "host": "www.duolingo.com",
         "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
@@ -7289,6 +7930,15 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-343f97250f505a84",
+        "host": "www.harvey.ai",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-420275488422b5a4",
         "host": "www.hud.gov",
         "mention_count": 2,
@@ -7298,9 +7948,36 @@
         "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
       },
       {
+        "id": "resource-485b521fdedbbf03",
+        "host": "www.khanacademy.org",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-87c65cdb62f09ec9",
+        "host": "www.lingyiwanwu.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
         "id": "resource-ee4afecd906fd5b4",
         "host": "www.llama.com",
-        "mention_count": 2,
+        "mention_count": 3,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-aaeae207232ddfdb",
+        "host": "www.onetcenter.org",
+        "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -7319,6 +7996,15 @@
         "id": "resource-d334a48c6dd47b64",
         "host": "www.patreon.com",
         "mention_count": 3,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-d5fdee6f355ee769",
+        "host": "www.phind.com",
+        "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,
         "health_check_evidence": null,
@@ -7363,6 +8049,24 @@
       {
         "id": "resource-ebba2da3c96afe2c",
         "host": "www.twilio.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-408e16945728a35a",
+        "host": "www.typeform.com",
+        "mention_count": 1,
+        "status": "reference_only",
+        "verified_live": false,
+        "health_check_evidence": null,
+        "next_step": "Review the official API or export path, define least-privilege scopes, and add a sandboxed connector contract."
+      },
+      {
+        "id": "resource-b23041e8da00388a",
+        "host": "www.udio.com",
         "mention_count": 1,
         "status": "reference_only",
         "verified_live": false,

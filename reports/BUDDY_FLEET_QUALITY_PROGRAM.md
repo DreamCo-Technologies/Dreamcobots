@@ -20,12 +20,14 @@ This report separates repository contract evidence from live end-to-end and comp
 | catalog_and_route | Profile schema, stable ID, Buddy route, and governed runtime evidence exist. |
 | repository_contract | Every declared capability passes its repository-controlled fixture. |
 | dependency_closure | Manifests, lockfiles, imports, licenses, runtime versions, and vulnerabilities are checked. |
-| adapter_contract | Every required API has a mock, failure, timeout, retry, and secret-handling test. |
+| adapter_contract | Every required API has a mock, failure, timeout, retry, idempotency, rate-limit, and secret-handling test. |
+| open_source_parity | Relevant lawful open-source and vibe-coding alternatives have been discovered, license/security checked, and parity status recorded. |
 | live_end_to_end | Authenticated staging proves the full user flow without production writes. |
-| competitor_baseline | Current competitors run the same approved fixtures with cost and version evidence. |
-| release_candidate | Build, tests, accessibility, security, performance, and regression checks pass on a review branch. |
-| owner_review | A human owner reviews scope, evidence, cost, permissions, and rollback before merge. |
-| production_observation | Deployment health, errors, latency, costs, and rollback are verified after release. |
+| competitor_baseline | Up to 30 current relevant competitors/substitutes per capability are discovered where the market supports it; selected candidates run the same approved fixtures with cost/version evidence. |
+| measured_gap_parallel_sprint | Measured gaps fan out to non-overlapping builder lanes and every completed repair has retest evidence. |
+| release_candidate | Build, tests, accessibility, security, performance, guardrails, and regression checks pass on a review branch. |
+| owner_review | A human owner reviews scope, evidence, cost, permissions, rights, and rollback before merge. |
+| production_observation | Deployment health, errors, latency, costs, user value, and rollback are verified after release. |
 
 ## Continuous Improvement Boundary
 

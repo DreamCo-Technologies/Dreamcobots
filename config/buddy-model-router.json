@@ -14,6 +14,7 @@
       "label": "Buddy Native",
       "mode": "free",
       "protocol": "local_planner",
+      "implementation_status": "local_ready",
       "availability": "always",
       "secret_references": [],
       "task_types": ["planning", "routing", "capability testing", "sandbox task packets"]
@@ -23,6 +24,7 @@
       "label": "Local Open Model",
       "mode": "free",
       "protocol": "openai_compatible_local",
+      "implementation_status": "contract_only",
       "availability": "configuration_required",
       "secret_references": ["LOCAL_MODEL_BASE_URL"],
       "task_types": ["private chat", "coding", "summarization", "offline workflows"]
@@ -32,6 +34,7 @@
       "label": "OpenAI",
       "mode": "premium",
       "protocol": "provider_adapter",
+      "implementation_status": "adapter_implemented",
       "availability": "configuration_required",
       "secret_references": ["OPENAI_API_KEY", "AI_INTEGRATIONS_OPENAI_API_KEY"],
       "task_types": ["general chat", "coding", "reasoning", "image", "audio"]
@@ -41,6 +44,7 @@
       "label": "Anthropic",
       "mode": "premium",
       "protocol": "provider_adapter",
+      "implementation_status": "contract_only",
       "availability": "configuration_required",
       "secret_references": ["ANTHROPIC_API_KEY"],
       "task_types": ["long context", "coding", "analysis", "writing"]
@@ -50,6 +54,7 @@
       "label": "Google Gemini",
       "mode": "premium",
       "protocol": "provider_adapter",
+      "implementation_status": "contract_only",
       "availability": "configuration_required",
       "secret_references": ["GOOGLE_GENERATIVE_AI_API_KEY", "GEMINI_API_KEY"],
       "task_types": ["multimodal", "long context", "research", "coding"]
@@ -59,6 +64,7 @@
       "label": "xAI",
       "mode": "premium",
       "protocol": "provider_adapter",
+      "implementation_status": "contract_only",
       "availability": "configuration_required",
       "secret_references": ["XAI_API_KEY"],
       "task_types": ["general chat", "reasoning", "coding"]
@@ -68,6 +74,7 @@
       "label": "Mistral AI",
       "mode": "premium",
       "protocol": "provider_adapter",
+      "implementation_status": "contract_only",
       "availability": "configuration_required",
       "secret_references": ["MISTRAL_API_KEY"],
       "task_types": ["coding", "multilingual", "document analysis"]
@@ -77,6 +84,7 @@
       "label": "Cohere",
       "mode": "premium",
       "protocol": "provider_adapter",
+      "implementation_status": "contract_only",
       "availability": "configuration_required",
       "secret_references": ["COHERE_API_KEY"],
       "task_types": ["enterprise search", "retrieval", "classification", "generation"]
@@ -86,6 +94,7 @@
       "label": "DeepSeek",
       "mode": "premium",
       "protocol": "provider_adapter",
+      "implementation_status": "contract_only",
       "availability": "configuration_required",
       "secret_references": ["DEEPSEEK_API_KEY"],
       "task_types": ["reasoning", "coding", "math"]
@@ -95,9 +104,140 @@
       "label": "OpenRouter",
       "mode": "premium",
       "protocol": "provider_catalog_adapter",
+      "implementation_status": "contract_only",
       "availability": "configuration_required",
       "secret_references": ["OPENROUTER_API_KEY"],
       "task_types": ["provider catalog", "model comparison", "fallback routing"]
+    },
+    {
+      "id": "azure_foundry",
+      "label": "Microsoft Foundry",
+      "mode": "premium",
+      "protocol": "cloud_provider_adapter",
+      "implementation_status": "contract_only",
+      "availability": "configuration_required",
+      "secret_references": ["AZURE_OPENAI_API_KEY", "AZURE_AI_FOUNDRY_API_KEY"],
+      "task_types": ["model catalog", "enterprise inference", "multimodal"]
+    },
+    {
+      "id": "amazon_bedrock",
+      "label": "Amazon Bedrock",
+      "mode": "premium",
+      "protocol": "cloud_identity_adapter",
+      "implementation_status": "contract_only",
+      "availability": "configuration_required",
+      "secret_references": ["AWS_ACCESS_KEY_ID", "AWS_PROFILE"],
+      "task_types": ["model catalog", "enterprise inference", "agents"]
+    },
+    {
+      "id": "huggingface",
+      "label": "Hugging Face",
+      "mode": "premium",
+      "protocol": "provider_catalog_adapter",
+      "implementation_status": "contract_only",
+      "availability": "configuration_required",
+      "secret_references": ["HUGGINGFACE_TOKEN", "HF_TOKEN"],
+      "task_types": ["open models", "inference endpoints", "embeddings", "media"]
+    },
+    {
+      "id": "alibaba_model_studio",
+      "label": "Alibaba Cloud Model Studio",
+      "mode": "premium",
+      "protocol": "cloud_provider_adapter",
+      "implementation_status": "contract_only",
+      "availability": "configuration_required",
+      "secret_references": ["DASHSCOPE_API_KEY"],
+      "task_types": ["multilingual", "reasoning", "coding", "media"]
+    },
+    {
+      "id": "baidu_qianfan",
+      "label": "Baidu Qianfan",
+      "mode": "premium",
+      "protocol": "cloud_provider_adapter",
+      "implementation_status": "contract_only",
+      "availability": "configuration_required",
+      "secret_references": ["QIANFAN_API_KEY", "QIANFAN_SECRET_KEY"],
+      "task_types": ["multilingual", "reasoning", "agents", "media"]
+    },
+    {
+      "id": "nvidia_nim",
+      "label": "NVIDIA NIM",
+      "mode": "premium",
+      "protocol": "openai_compatible_provider",
+      "implementation_status": "contract_only",
+      "availability": "configuration_required",
+      "secret_references": ["NVIDIA_API_KEY", "NGC_API_KEY"],
+      "task_types": ["inference", "vision", "retrieval", "enterprise deployment"]
+    },
+    {
+      "id": "groq",
+      "label": "Groq",
+      "mode": "premium",
+      "protocol": "openai_compatible_provider",
+      "implementation_status": "contract_only",
+      "availability": "configuration_required",
+      "secret_references": ["GROQ_API_KEY"],
+      "task_types": ["low-latency inference", "reasoning", "coding", "speech"]
+    },
+    {
+      "id": "together_ai",
+      "label": "Together AI",
+      "mode": "premium",
+      "protocol": "openai_compatible_provider",
+      "implementation_status": "contract_only",
+      "availability": "configuration_required",
+      "secret_references": ["TOGETHER_API_KEY"],
+      "task_types": ["open model inference", "fine tuning", "embeddings", "image"]
+    },
+    {
+      "id": "fireworks_ai",
+      "label": "Fireworks AI",
+      "mode": "premium",
+      "protocol": "openai_compatible_provider",
+      "implementation_status": "contract_only",
+      "availability": "configuration_required",
+      "secret_references": ["FIREWORKS_API_KEY"],
+      "task_types": ["serverless inference", "fine tuning", "embeddings", "image"]
+    },
+    {
+      "id": "cerebras",
+      "label": "Cerebras Inference",
+      "mode": "premium",
+      "protocol": "openai_compatible_provider",
+      "implementation_status": "contract_only",
+      "availability": "configuration_required",
+      "secret_references": ["CEREBRAS_API_KEY"],
+      "task_types": ["fast inference", "reasoning", "coding"]
+    },
+    {
+      "id": "replicate",
+      "label": "Replicate",
+      "mode": "premium",
+      "protocol": "provider_catalog_adapter",
+      "implementation_status": "contract_only",
+      "availability": "configuration_required",
+      "secret_references": ["REPLICATE_API_TOKEN"],
+      "task_types": ["open models", "image", "video", "audio"]
+    },
+    {
+      "id": "stability_ai",
+      "label": "Stability AI",
+      "mode": "premium",
+      "protocol": "media_provider_adapter",
+      "implementation_status": "contract_only",
+      "availability": "configuration_required",
+      "secret_references": ["STABILITY_API_KEY"],
+      "task_types": ["image generation", "image editing", "3d", "audio"]
+    },
+    {
+      "id": "black_forest_labs",
+      "label": "Black Forest Labs",
+      "mode": "premium",
+      "protocol": "media_provider_adapter",
+      "implementation_status": "contract_only",
+      "availability": "configuration_required",
+      "secret_references": ["BFL_API_KEY"],
+      "task_types": ["image generation", "image editing"]
     }
   ]
 }

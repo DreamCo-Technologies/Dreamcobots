@@ -39,6 +39,17 @@ test("approved premium mode still requires a configured provider adapter", () =>
   assert.equal(plan.providerCallExecuted, false);
 });
 
+test("a configured contract-only provider is not mislabeled as an implemented adapter", () => {
+  const plan = resolveBuddyModelPlan({
+    modelMode: "premium",
+    modelConnectorId: "google_gemini",
+    approvePaidModelForThisRequest: true,
+  }, { GEMINI_API_KEY: "configured-for-test" });
+  assert.equal(plan.status, "adapter_implementation_required");
+  assert.equal(plan.connector.implementationStatus, "contract_only");
+  assert.equal(plan.providerCallExecuted, false);
+});
+
 test("Buddy ranks task-fit candidates without calling them or claiming a permanent best", () => {
   const plan = selectBuddyModelsForTask({
     objective: "Debug my repository, repair the TypeScript code, and run tests",

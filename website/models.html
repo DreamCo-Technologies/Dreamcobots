@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css?v=40" />
-  <link rel="stylesheet" href="models.css?v=4" />
+  <link rel="stylesheet" href="models.css?v=5" />
 </head>
 <body class="model-lab-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -31,9 +31,51 @@
   <section class="model-metrics" aria-label="Benchmark catalog summary">
     <div><span>Targets</span><strong id="metric-targets">500</strong></div>
     <div><span>Providers</span><strong id="metric-providers">0</strong></div>
+    <div><span>Source links</span><strong id="metric-sources">0</strong></div>
+    <div><span>Setup paths</span><strong id="metric-setup">0</strong></div>
     <div><span>Test suites</span><strong id="metric-suites">0</strong></div>
+    <div><span>Live connected</span><strong id="metric-live-connections">0</strong></div>
     <div><span>Live evidence</span><strong id="metric-live">0</strong></div>
-    <div><span>Catalog review</span><strong id="metric-review">Loading</strong></div>
+  </section>
+
+  <section class="model-source-coverage" aria-labelledby="model-source-title">
+    <div>
+      <p class="model-lab-eyebrow">Connection truth</p>
+      <h2 id="model-source-title">Every target has a governed source and setup route</h2>
+      <p id="model-source-summary">Loading 500 target connection records.</p>
+    </div>
+    <dl>
+      <div><dt>Catalog review</dt><dd id="metric-review">Loading</dd></div>
+      <div><dt>Credential state</dt><dd id="model-credential-state">Backend only</dd></div>
+      <div><dt>Exact-model probes</dt><dd id="model-probe-state">0 passed</dd></div>
+    </dl>
+    <a class="btn btn-outline btn-sm" href="connections.html">Connection center</a>
+  </section>
+
+  <section class="demand-explorer" aria-labelledby="demand-explorer-title">
+    <header>
+      <div>
+        <p class="model-lab-eyebrow">Market demand to model choice</p>
+        <h2 id="demand-explorer-title">Start with the job people are trying to accomplish</h2>
+        <p>Browse three 100-reason research catalogs. Every reason maps to a task category, required capabilities, and 20 provider-diverse model options for the user to choose from.</p>
+      </div>
+      <div class="demand-metrics" aria-label="Demand catalog summary">
+        <div><strong id="demand-reason-count">300</strong><span>reasons</span></div>
+        <div><strong id="demand-category-count">0</strong><span>categories</span></div>
+        <div><strong id="demand-option-count">20</strong><span>model choices</span></div>
+      </div>
+    </header>
+    <div id="demand-catalog-tabs" class="demand-tabs" role="tablist" aria-label="Demand research catalogs"></div>
+    <div class="demand-toolbar">
+      <label for="demand-search">Find a user job<input id="demand-search" type="search" placeholder="Write, learn, shop, build, travel" autocomplete="off" /></label>
+      <label for="demand-category">Category<select id="demand-category"><option value="all">All categories</option></select></label>
+      <span id="demand-result-count" aria-live="polite">Loading demand catalog</span>
+    </div>
+    <div id="demand-reason-list" class="demand-reason-list"></div>
+    <footer>
+      <p id="demand-evidence-note">Ranks are editorial coverage order, not measured market share.</p>
+      <div id="demand-source-links" class="demand-source-links"></div>
+    </footer>
   </section>
 
   <section class="model-router-workspace" aria-labelledby="model-router-title">
@@ -56,7 +98,7 @@
         <select id="model-route-tier"><option value="free">Free first</option><option value="any">Any tier</option><option value="premium">Premium candidates</option></select>
       </label>
       <label for="model-route-count">Shortlist size
-        <select id="model-route-count"><option value="3">3</option><option value="5" selected>5</option><option value="8">8</option><option value="12">12</option></select>
+          <select id="model-route-count"><option value="3">3</option><option value="5">5</option><option value="8">8</option><option value="12">12</option><option value="20" selected>20</option></select>
       </label>
       <div class="model-priority-grid" aria-label="Routing priorities">
         <label for="model-priority-quality">Quality evidence <input id="model-priority-quality" type="range" min="0" max="1" value="0.7" step="0.1" /></label>
@@ -89,7 +131,7 @@
 
       <div class="model-table-wrap" tabindex="0" aria-label="Benchmark targets">
         <table class="model-table">
-          <thead><tr><th scope="col">Run</th><th scope="col">Target</th><th scope="col">Provider</th><th scope="col">Category</th><th scope="col">Catalog</th><th scope="col">Live result</th></tr></thead>
+          <thead><tr><th scope="col">Run</th><th scope="col">Target</th><th scope="col">Provider</th><th scope="col">Category</th><th scope="col">Source</th><th scope="col">Connection</th><th scope="col">Live result</th></tr></thead>
           <tbody id="model-rows"></tbody>
         </table>
       </div>
@@ -216,8 +258,9 @@
   <div id="organization-detail-body"></div>
 </dialog>
 
-<script src="data/buddy-model-benchmarks.js?v=2"></script>
+<script src="data/buddy-model-benchmarks.js?v=3"></script>
+<script src="data/buddy-demand-ontology.js?v=1"></script>
 <script src="data/ai-organization-intelligence.js?v=2"></script>
-<script src="models.js?v=4" defer></script>
+<script src="models.js?v=6" defer></script>
 </body>
 </html>

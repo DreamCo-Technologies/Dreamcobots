@@ -349,6 +349,8 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "data" / "dreamco-search-index.js",
         WEBSITE / "data" / "buddy-model-router.js",
         WEBSITE / "data" / "buddy-model-benchmarks.js",
+        WEBSITE / "data" / "buddy-demand-ontology.js",
+        WEBSITE / "data" / "buddy-benchmark-index.js",
         WEBSITE / "data" / "buddy-open-model-coding-lab.js",
         WEBSITE / "data" / "buddy-open-secure-ai-defense.js",
         WEBSITE / "data" / "buddy-success-program.js",
@@ -495,6 +497,7 @@ def validate_site() -> dict[str, Any]:
         "model-priority-quality", "model-priority-cost", "model-priority-latency", "model-priority-privacy",
         "model-route-discovery", "model-route-status", "model-route-results",
         "export-model-json", "export-model-csv",
+        "demand-search", "demand-category", "demand-reason-list", "demand-result-count",
     }
     if model_parser:
         for control_id in sorted(required_model_controls - model_parser.ids):
@@ -597,6 +600,10 @@ def validate_site() -> dict[str, Any]:
         "quality-detail-body", "quality-download-plan", "quality-send-buddy",
         "improvement-mode", "improvement-stage-count", "grounding-control-count",
         "improvement-live-changes", "improvement-loop-list", "grounding-control-list",
+        "benchmark-program-count", "benchmark-suite-count", "benchmark-surface-count",
+        "benchmark-public-count", "benchmark-live-count", "benchmark-plan-stages",
+        "benchmark-program-search", "benchmark-area-filter", "benchmark-index-status",
+        "benchmark-program-list",
     }
     if test_center_parser:
         for control_id in sorted(required_test_center_controls - test_center_parser.ids):

@@ -10,6 +10,7 @@ type ModelConnector = {
   label: string;
   mode: "free" | "premium";
   protocol: string;
+  implementation_status: "local_ready" | "adapter_implemented" | "contract_only";
   availability: string;
   secret_references: string[];
   task_types: string[];
@@ -87,6 +88,20 @@ const PROVIDER_CONNECTOR_IDS: Record<string, string> = {
   mistralai: "mistral",
   cohere: "cohere",
   deepseek: "deepseek",
+  microsoft: "azure_foundry",
+  amazon: "amazon_bedrock",
+  huggingface: "huggingface",
+  alibabacloud: "alibaba_model_studio",
+  baidu: "baidu_qianfan",
+  ollama: "local_open_model",
+  nvidia: "nvidia_nim",
+  groq: "groq",
+  togetherai: "together_ai",
+  fireworksai: "fireworks_ai",
+  cerebras: "cerebras",
+  replicate: "replicate",
+  stabilityai: "stability_ai",
+  blackforestlabs: "black_forest_labs",
 };
 
 let configCache: ModelRouterConfig | undefined;
@@ -128,13 +143,16 @@ export function resolveBuddyModelPlan(
 
   const configured = isConfigured(connector, environment);
   const paidApprovalRequired = request.modelMode === "premium" && !request.approvePaidModelForThisRequest;
+  const implementationReady = connector.implementation_status !== "contract_only";
   const status = request.modelMode === "free"
-    ? configured ? "free_route_ready" : "configuration_required"
+    ? configured && implementationReady ? "free_route_ready" : configured ? "adapter_implementation_required" : "configuration_required"
     : paidApprovalRequired
       ? "paid_approval_required"
-      : configured
+      : configured && implementationReady
         ? "provider_adapter_ready"
-        : "configuration_required";
+        : configured
+          ? "adapter_implementation_required"
+          : "configuration_required";
 
   return {
     schema: "dreamco.buddy_model_plan.v1",
@@ -144,6 +162,7 @@ export function resolveBuddyModelPlan(
       label: connector.label,
       protocol: connector.protocol,
       configured,
+      implementationStatus: connector.implementation_status,
       taskTypes: connector.task_types,
     },
     selectedModelId: request.selectedModelId || "provider_default_for_task",
@@ -157,6 +176,8 @@ export function resolveBuddyModelPlan(
       ? "Approve premium use for this one request or switch back to free."
       : status === "configuration_required"
         ? "Connect the selected provider with a backend secret reference."
+        : status === "adapter_implementation_required"
+          ? "The credential reference exists, but a governed execution adapter must pass sandbox tests before use."
         : request.modelMode === "premium"
           ? "The authenticated provider adapter may execute this approved request."
           : "Buddy Native will prepare the response locally without a provider charge.",
@@ -245,6 +266,8 @@ export function selectBuddyModelsForTask(
           ? "adapter_required"
           : !connectorConfigured
             ? "configuration_required"
+            : connector.implementation_status === "contract_only"
+              ? "adapter_required"
             : candidate.target.provider === "DreamCo"
               ? "local_route_ready"
               : "exact_model_verification_required";

@@ -66,6 +66,12 @@ import {
   buddyModelSelectionRequestSchema,
   selectBuddyModelsForTask,
 } from "./buddy-model-policy";
+import { getModelSourceConnectionAudit } from "./model-source-connection-policy";
+import {
+  demandModelMatchRequestSchema,
+  getDemandOntology,
+  matchDemandReasonToModels,
+} from "./demand-model-policy";
 import {
   createOpenModelComparisonPlan,
   createRepositoryTrackingPlan,
@@ -3270,6 +3276,28 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
 
   app.get("/api/buddy/models/encyclopedia", (_req, res) => {
     res.json(getModelBenchmarkEncyclopedia());
+  });
+
+  app.get("/api/buddy/models/connections", (_req, res) => {
+    res.json(getModelSourceConnectionAudit());
+  });
+
+  app.get("/api/buddy/models/demand-ontology", (_req, res) => {
+    res.json(getDemandOntology());
+  });
+
+  app.post("/api/buddy/models/demand-match", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Demand matching is locked by the kill switch" });
+    }
+    const parsed = demandModelMatchRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(matchDemandReasonToModels(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid demand match" });
+    }
   });
 
   app.post("/api/buddy/models/select", async (req, res) => {

@@ -1,0 +1,150 @@
+{
+  "schema": "dreamco.benchmark_index_source.v1",
+  "reviewed_on": "2026-08-10",
+  "programs": [
+    {
+      "id": "repository-evidence",
+      "name": "Repository contracts and interfaces",
+      "area": "Repository",
+      "scope": "Source files, API routes, pages, test files, dependencies, and governed suites",
+      "generator": "tools/generate_repository_test_registry.py",
+      "check_command": "npm run buddy:repository-audit",
+      "public_page": "test-center.html",
+      "public_data": "data/repository-test-registry.json?v=4",
+      "cadence": "every reviewed change",
+      "status": "local_evidence_ready"
+    },
+    {
+      "id": "fleet-capability-quality",
+      "name": "Bot capability and competitor quality",
+      "area": "Bot fleet",
+      "scope": "Per-bot learning paths, capability contracts, competitor fixtures, and production gates",
+      "generator": "tools/generate_buddy_fleet_quality_program.ts",
+      "check_command": "npm run buddy:fleet-quality",
+      "public_page": "test-center.html#fleet-quality-heading",
+      "public_data": "data/buddy-fleet-quality-program.js?v=2",
+      "cadence": "weekly and before releases",
+      "status": "repository_contracts_ready_live_competitors_required"
+    },
+    {
+      "id": "model-system-benchmarks",
+      "name": "Model capability and routing benchmarks",
+      "area": "AI models",
+      "scope": "500 targets, 12 signed suites, model routing, source links, and exact-version evidence",
+      "generator": "tools/generate_buddy_model_benchmarks.ts",
+      "check_command": "npm run buddy:model-benchmarks",
+      "public_page": "models.html",
+      "public_data": "data/buddy-model-benchmarks.js?v=3",
+      "cadence": "weekly catalog review and approved live runs",
+      "status": "catalog_ready_live_adapters_required"
+    },
+    {
+      "id": "demand-model-fit",
+      "name": "Market demand to model fit",
+      "area": "Market demand",
+      "scope": "300 research-derived user reasons mapped to tasks, capabilities, and 20 model choices",
+      "generator": "tools/generate_buddy_demand_ontology.ts",
+      "check_command": "npm run buddy:demand-ontology",
+      "public_page": "models.html#demand-explorer-title",
+      "public_data": "data/buddy-demand-ontology.js?v=1",
+      "cadence": "quarterly research review",
+      "status": "ontology_ready_live_relevance_study_required"
+    },
+    {
+      "id": "ai-organization-intelligence",
+      "name": "AI organization and ecosystem comparison",
+      "area": "AI ecosystem",
+      "scope": "Provider and organization catalogs, user jobs, tools, regions, and evidence dimensions",
+      "generator": "tools/generate_ai_organization_intelligence.py",
+      "check_command": "npm run buddy:ai-organizations",
+      "public_page": "models.html#organization-intelligence",
+      "public_data": "data/ai-organization-intelligence.js?v=2",
+      "cadence": "monthly source review",
+      "status": "catalog_ready_live_organization_runs_required"
+    },
+    {
+      "id": "media-quality",
+      "name": "Voice, image, video, and media quality",
+      "area": "Creative media",
+      "scope": "Consent, provenance, rendering, quality gates, local engines, and optional adapters",
+      "generator": "tools/generate_buddy_media_quality_lab.py",
+      "check_command": "npm run buddy:media-quality",
+      "public_page": "studio.html",
+      "public_data": "data/buddy-media-quality-lab.js?v=22",
+      "cadence": "every engine or workflow change",
+      "status": "contract_ready_local_weights_and_live_renders_required"
+    },
+    {
+      "id": "open-model-coding",
+      "name": "Open model coding lab",
+      "area": "Open source",
+      "scope": "Open model families, coding tasks, local runtimes, repository sandboxes, and frontier references",
+      "generator": "tools/generate_buddy_open_model_lab.py",
+      "check_command": "npm run buddy:open-model-lab",
+      "public_page": "open-model-lab.html",
+      "public_data": "data/buddy-open-model-coding-lab.js",
+      "cadence": "monthly and before runtime promotion",
+      "status": "catalog_ready_local_runtime_execution_required"
+    },
+    {
+      "id": "ai-defense",
+      "name": "Open and secure AI defense",
+      "area": "Security",
+      "scope": "Threat domains, defensive controls, supply chain, model discovery, and governed assessment fixtures",
+      "generator": "tools/generate_buddy_open_secure_ai_defense.ts",
+      "check_command": "npm run buddy:defense",
+      "public_page": "security.html",
+      "public_data": "data/buddy-open-secure-ai-defense.js",
+      "cadence": "every dependency or security-sensitive change",
+      "status": "defensive_contracts_ready_authorized_sandbox_required"
+    },
+    {
+      "id": "recursive-improvement",
+      "name": "Recursive improvement regression safety",
+      "area": "Buddy",
+      "scope": "Reproduction, evidence, bounded proposals, review branches, rollback, and hallucination controls",
+      "generator": "tools/generate_buddy_self_improvement.py",
+      "check_command": "npm run buddy:self-improvement",
+      "public_page": "test-center.html#improvement-heading",
+      "public_data": "data/buddy-self-improvement.js?v=1",
+      "cadence": "every proposed self-improvement",
+      "status": "guardrails_ready_no_autonomous_promotion"
+    },
+    {
+      "id": "division-contracts",
+      "name": "Daily division contract benchmarks",
+      "area": "45 divisions",
+      "scope": "Division capabilities, production gates, evidence contracts, and bounded parallel worker plans",
+      "generator": "tools/run_daily_division_benchmarks.ts",
+      "check_command": "npm run buddy:daily-division-benchmarks",
+      "public_page": "success.html",
+      "public_data": "data/buddy-success-program.js?v=2",
+      "cadence": "daily local contracts and approved release checks",
+      "status": "local_contract_runner_ready_live_competitors_required"
+    },
+    {
+      "id": "connection-readiness",
+      "name": "Connections and adapter readiness",
+      "area": "Connections",
+      "scope": "Authentication methods, secret references, setup paths, adapter contracts, and approval gates",
+      "generator": "tools/generate_buddy_connection_catalog.py",
+      "check_command": "npm run buddy:connections",
+      "public_page": "connections.html",
+      "public_data": "data/buddy-connection-catalog.json?v=2",
+      "cadence": "every connector or secret-policy change",
+      "status": "planner_ready_credentials_and_live_probes_required"
+    },
+    {
+      "id": "public-site-release",
+      "name": "GitHub Pages release contract",
+      "area": "Public website",
+      "scope": "Pages, assets, navigation, service worker, required controls, JavaScript syntax, and deployment cost policy",
+      "generator": "tools/build_buddy_public_site.py",
+      "check_command": "npm run buddy:site:check",
+      "public_page": "buddy.html",
+      "public_data": "data/repository-system-map.json",
+      "cadence": "every public-site change",
+      "status": "local_release_checks_ready_deployment_requires_workflow"
+    }
+  ]
+}

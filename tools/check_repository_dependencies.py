@@ -14,6 +14,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 SKIPPED_ROOTS = {".git", ".vercel", "__pycache__", "dist", "logs", "node_modules", "reports"}
 DEPENDENCY_SECTIONS = ("dependencies", "devDependencies", "optionalDependencies")
+PYTHON_REQUIREMENT_FILES = ("requirements.txt", "requirements-dev.txt", "requirements-tools.txt")
 
 
 def read_object(path: Path) -> dict[str, Any]:
@@ -72,6 +73,27 @@ def standard_library_roots() -> set[str]:
     return roots
 
 
+def declared_python_roots() -> tuple[set[str], list[str]]:
+    declared: set[str] = set()
+    manifests: list[str] = []
+    for name in PYTHON_REQUIREMENT_FILES:
+        path = ROOT / name
+        if not path.is_file():
+            continue
+        manifests.append(name)
+        for raw_line in path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.split("#", 1)[0].strip()
+            if not line or line.startswith(("-", "http://", "https://", "git+")):
+                continue
+            package = line.split(";", 1)[0].split("[", 1)[0]
+            for marker in ("===", "==", ">=", "<=", "~=", "!=", ">", "<"):
+                package = package.split(marker, 1)[0]
+            root = package.strip().replace("-", "_").lower()
+            if root:
+                declared.add(root)
+    return declared, manifests
+
+
 def audit_dependencies() -> dict[str, Any]:
     package = read_object(ROOT / "package.json")
     lock = read_object(ROOT / "package-lock.json")
@@ -97,7 +119,11 @@ def audit_dependencies() -> dict[str, Any]:
     errors.extend(syntax_errors)
     local_roots = local_python_roots()
     stdlib = standard_library_roots()
-    undeclared_python = sorted(imports - stdlib - local_roots)
+    declared_python, python_manifests = declared_python_roots()
+    undeclared_python = sorted(
+        name for name in imports - stdlib - local_roots
+        if name.replace("-", "_").lower() not in declared_python
+    )
     if undeclared_python:
         errors.append(
             "Python imports require a declared environment manifest or repository-local package: "
@@ -115,6 +141,8 @@ def audit_dependencies() -> dict[str, Any]:
         "direct_node_dependencies": direct_node_dependencies,
         "python_files_parsed": len(files),
         "python_import_roots": len(imports),
+        "python_environment_manifests": python_manifests,
+        "declared_python_dependencies": sorted(declared_python),
         "undeclared_python_imports": undeclared_python,
         "errors": errors,
         "boundary": "TypeScript resolution is verified by npm run check; optional provider credentials and external binaries are tested by their adapter suites.",
