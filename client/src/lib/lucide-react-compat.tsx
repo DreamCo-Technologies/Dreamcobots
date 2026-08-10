@@ -1,11 +1,8 @@
 import * as React from "react"
 
-export * from "lucide-react-original"
-
 /**
- * Backward-compatible generic code-hosting/network icon.
- * Lucide no longer ships brand logos; existing DreamCo callers keep the
- * historical `Github` component name without depending on a brand asset.
+ * Generic code-hosting/network icon used where older DreamCo UI imported the
+ * removed Lucide `Github` brand export. This intentionally is not a brand logo.
  */
 export const Github = React.forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>(
   ({ className, width = 24, height = 24, strokeWidth = 2, ...props }, ref) => (
