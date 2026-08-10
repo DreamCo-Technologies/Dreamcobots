@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+CLIENT = ROOT / "client" / "src"
 
 REPLACEMENTS = {
     "server/fleet-runtime.ts": [
@@ -47,6 +49,44 @@ REPLACEMENTS = {
     ],
 }
 
+LUCIDE_IMPORT_RE = re.compile(r'import\s*\{(?P<body>.*?)\}\s*from\s*["\']lucide-react["\'];?', re.DOTALL)
+LOCAL_GITHUB_IMPORT = 'import { Github } from "@/lib/lucide-react-compat";'
+
+
+def migrate_github_icon_imports() -> list[str]:
+    changed: list[str] = []
+    for path in sorted(CLIENT.rglob("*.tsx")):
+        text = path.read_text(encoding="utf-8")
+        original = text
+
+        def replace(match: re.Match[str]) -> str:
+            body = match.group("body")
+            names = [item.strip() for item in body.replace("\n", " ").split(",") if item.strip()]
+            if "Github" not in names:
+                return match.group(0)
+            names = [name for name in names if name != "Github"]
+            if not names:
+                return ""
+            if "\n" in body:
+                rendered = "\n  " + ",\n  ".join(names) + ",\n"
+            else:
+                rendered = " " + ", ".join(names) + " "
+            return f'import {{{rendered}}} from "lucide-react";'
+
+        text = LUCIDE_IMPORT_RE.sub(replace, text)
+        if text != original and LOCAL_GITHUB_IMPORT not in text:
+            lines = text.splitlines()
+            insert_at = 0
+            while insert_at < len(lines) and lines[insert_at].startswith("import "):
+                insert_at += 1
+            lines.insert(insert_at, LOCAL_GITHUB_IMPORT)
+            text = "\n".join(lines) + ("\n" if original.endswith("\n") else "")
+
+        if text != original:
+            path.write_text(text, encoding="utf-8")
+            changed.append(str(path.relative_to(ROOT)))
+    return changed
+
 
 def main() -> int:
     changed = []
@@ -67,7 +107,9 @@ def main() -> int:
             changed.append(rel)
         else:
             already_current.append(rel)
-    print({"ok": True, "changed": changed, "already_current": already_current})
+
+    changed.extend(migrate_github_icon_imports())
+    print({"ok": True, "changed": sorted(set(changed)), "already_current": already_current})
     return 0
 
 
