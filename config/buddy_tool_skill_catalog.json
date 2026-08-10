@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "2026-08-10",
+  "purpose": "Human-readable and machine-testable catalog of Buddy tools and skills: what each does, whether DreamCo needs it, and how Buddy should use it to train or test other AI models.",
+  "evidencePolicy": {
+    "noHallucinationRule": "Buddy must cite a command, report path, source URL, or explicit not-verified note before claiming a tool or skill works.",
+    "requiredReport": "reports/tool-skill-readiness-report.md",
+    "approvalRequiredFor": [
+      "posting_to_social_media",
+      "contacting_customers",
+      "spending_money",
+      "moving_money",
+      "installing_dependencies",
+      "publishing_code",
+      "training_external_model_with_private_data"
+    ]
+  },
+  "tools": [
+    {
+      "id": "github_repository_read",
+      "name": "GitHub Repository Reader",
+      "needed": true,
+      "whatItDoes": "Reads files, issues, pull requests, workflows, and repository structure so Buddy can understand DreamCo before acting.",
+      "howToUse": "Use for code search, issue comparison, audit evidence, and training other AI models on public repository context.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs",
+      "risk": "low"
+    },
+    {
+      "id": "github_repository_write",
+      "name": "GitHub Repository Writer",
+      "needed": true,
+      "whatItDoes": "Creates or updates repository files after approval.",
+      "howToUse": "Use only after Buddy drafts a plan and owner approval is granted. Prefer pull requests for large changes.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs",
+      "risk": "medium",
+      "requiresApproval": true
+    },
+    {
+      "id": "sandbox_no_hallucination_audit",
+      "name": "Sandbox No-Hallucination Audit",
+      "needed": true,
+      "whatItDoes": "Checks repo evidence, syntax, JSON validity, and unsupported absolute claims.",
+      "howToUse": "Run before Buddy claims bots, tools, skills, customer systems, or dashboards are ready. Report evidence is required before marking any claim verified.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs --strict",
+      "risk": "low"
+    },
+    {
+      "id": "autonomous_readiness_audit",
+      "name": "Autonomous Readiness Audit",
+      "needed": true,
+      "whatItDoes": "Validates semi-autonomous cash-loop, social, occupational, tool finder, skill finder, and Buddy chat readiness files.",
+      "howToUse": "Run before enabling customer discovery, social drafts, tool discovery, or skill-building workflows. Owner approval is required before activating customer contact, social posting, or money workflows.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs --strict",
+      "risk": "low"
+    },
+    {
+      "id": "tool_finder_bot",
+      "name": "Tool Finder Bot",
+      "needed": true,
+      "whatItDoes": "Finds useful public tools, GitHub repositories, official docs, package registry entries, workflows, and MCP servers.",
+      "howToUse": "Use to research tools for each division, then score fit, security, cost, documentation, maintenance, and integration effort.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs",
+      "risk": "medium"
+    },
+    {
+      "id": "tool_builder_bot",
+      "name": "Tool Builder Bot",
+      "needed": true,
+      "whatItDoes": "Turns repeated needs into internal tools, templates, scripts, dashboards, workflows, or GitHub Actions.",
+      "howToUse": "Use after Tool Finder identifies a gap. Builds should require approval before file writes or dependency installs.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs",
+      "risk": "medium",
+      "requiresApproval": true
+    },
+    {
+      "id": "skill_finder_bot",
+      "name": "Skill Finder Bot",
+      "needed": true,
+      "whatItDoes": "Finds job skills, playbooks, public references, training topics, and methods from sourced public information.",
+      "howToUse": "Use for occupational bots and model training plans. Store source, confidence, usable knowledge, and next experiment.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs",
+      "risk": "medium"
+    },
+    {
+      "id": "skill_builder_bot",
+      "name": "Skill Builder Bot",
+      "needed": true,
+      "whatItDoes": "Converts validated skills into prompts, tests, checklists, lessons, and training paths.",
+      "howToUse": "Use only after Skill Finder provides sourced evidence. Do not train external models with private data without approval.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs",
+      "risk": "medium"
+    },
+    {
+      "id": "social_media_draft_studio",
+      "name": "Social Media Draft Studio",
+      "needed": true,
+      "whatItDoes": "Drafts social posts, campaigns, ad ideas, content calendars, and platform-specific copy.",
+      "howToUse": "Use in draft-only mode until platform secrets and owner approval are configured.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs",
+      "risk": "medium",
+      "requiresApproval": true
+    },
+    {
+      "id": "customer_discovery",
+      "name": "Customer Discovery",
+      "needed": true,
+      "whatItDoes": "Finds customer segments, researches public signals, scores fit, drafts outreach, and creates CRM-ready lead notes.",
+      "howToUse": "Use for real estate, Fiverr/services, lead generation, and occupational bots. Human approval is required before contact.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs",
+      "risk": "medium",
+      "requiresApproval": true
+    }
+  ],
+  "skills": [
+    {
+      "id": "evidence_based_reporting",
+      "name": "Evidence-Based Reporting",
+      "needed": true,
+      "whatItDoes": "Forces Buddy to say what was tested, what was not verified, and what evidence supports each claim.",
+      "howToUse": "Use in every final report, dashboard status, and training handoff.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs"
+    },
+    {
+      "id": "customer_problem_mapping",
+      "name": "Customer Problem Mapping",
+      "needed": true,
+      "whatItDoes": "Maps a customer type to pain points, offer ideas, MVP tests, pricing, and KPIs.",
+      "howToUse": "Use before lead gen, real estate outreach, Fiverr gig building, or sales campaigns. Human approval is required before outreach, pricing promises, or customer contact.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs"
+    },
+    {
+      "id": "occupational_efficiency_mapping",
+      "name": "Occupational Efficiency Mapping",
+      "needed": true,
+      "whatItDoes": "Studies a job or hustle category and identifies how bots can make humans faster, safer, or more profitable.",
+      "howToUse": "Use for occupational bot workers and job-family training paths.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs"
+    },
+    {
+      "id": "sourced_memory_curation",
+      "name": "Sourced Memory Curation",
+      "needed": true,
+      "whatItDoes": "Stores learned information with source URL, confidence, usable knowledge, and next experiment.",
+      "howToUse": "Use whenever Buddy teaches another AI model or updates a bot learning path.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs"
+    },
+    {
+      "id": "model_training_handoff",
+      "name": "Model Training Handoff",
+      "needed": true,
+      "whatItDoes": "Packages DreamCo knowledge into clean prompts, examples, tests, and evaluation rubrics for other AI models.",
+      "howToUse": "Use only with approved public/safe data. Never include secrets, private customer data, or unsourced claims.",
+      "testCommand": "node automation-tools/agents/tool-skill-readiness-audit.cjs"
+    }
+  ]
+}

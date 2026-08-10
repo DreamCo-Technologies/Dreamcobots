@@ -1,0 +1,45 @@
+name: Buddy Tool and Skill Readiness
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - config/buddy_tool_skill_catalog.json
+      - automation-tools/agents/tool-skill-readiness-audit.cjs
+      - docs/BUDDY_TOOL_SKILL_CATALOG.md
+      - .github/workflows/tool-skill-readiness.yml
+  push:
+    branches:
+      - main
+    paths:
+      - config/buddy_tool_skill_catalog.json
+      - automation-tools/agents/tool-skill-readiness-audit.cjs
+      - docs/BUDDY_TOOL_SKILL_CATALOG.md
+      - .github/workflows/tool-skill-readiness.yml
+
+jobs:
+  readiness:
+    name: Test Buddy tool and skill catalog
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validate Buddy tools and skills
+        run: node automation-tools/agents/tool-skill-readiness-audit.cjs --strict
+
+      - name: Upload readiness report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: buddy-tool-skill-readiness-report
+          path: |
+            reports/tool-skill-readiness-report.json
+            reports/tool-skill-readiness-report.md
