@@ -8,6 +8,18 @@ ROOT = Path(__file__).resolve().parents[1]
 REPLACEMENTS = {
     "server/fleet-runtime.ts": [
         ("z.record(z.unknown())", "z.record(z.string(), z.unknown())"),
+        (
+            "} from \"./buddy-model-policy\";\n",
+            "} from \"./buddy-model-policy\";\nimport { selectBestModelForTask } from \"./model-intelligence-router\";\n",
+        ),
+        (
+            "    const preferred = request.preferredBotSlug ? this.runtimes.get(request.preferredBotSlug) : undefined;",
+            "    const modelIntelligencePlan = selectBestModelForTask({\n      objective: request.objective,\n      requiredCapabilities: request.requestedCapabilities,\n      allowPaid: request.modelMode === \"premium\" && request.approvePaidModelForThisRequest,\n      qualityPriority: 1,\n      costPriority: 0.25,\n      latencyPriority: 0.25,\n      privacyPriority: 0.35,\n    });\n    const preferred = request.preferredBotSlug ? this.runtimes.get(request.preferredBotSlug) : undefined;",
+        ),
+        (
+            "      modelPlan,\n      execution,",
+            "      modelPlan,\n      modelIntelligencePlan,\n      execution,",
+        ),
     ],
     "server/media-quality-lab.ts": [
         ("z.record(z.number().min(0).max(1))", "z.record(z.string(), z.number().min(0).max(1))"),
