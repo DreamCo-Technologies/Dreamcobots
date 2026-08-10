@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "tools/migrate_zod4_compat.py"
+      - "client/src/lib/lucide-react-compat.tsx"
       - ".github/workflows/compatibility-repair-apply.yml"
 
 permissions:
@@ -33,8 +34,8 @@ jobs:
           {
             echo "# Compatibility Repair Apply"
             echo
-            echo "Applies only deterministic, idempotent compatibility repairs that are encoded in tools/migrate_zod4_compat.py. It compiles and runs the governed tests before committing any changed source back to this review branch."
-            echo "It cannot write main and does not merge the pull request."
+            echo "Applies only deterministic, idempotent compatibility repairs encoded in tools/migrate_zod4_compat.py, including known Zod 4 and removed-icon migrations."
+            echo "It compiles and runs governed tests before committing changed source back to this review branch. It cannot write main and does not merge the pull request."
           } >> "$GITHUB_STEP_SUMMARY"
       - run: npm ci
       - name: Apply bounded repairs
@@ -52,6 +53,18 @@ jobs:
           fi
           git config user.name "dreamco-actions"
           git config user.email "actions@users.noreply.github.com"
-          git add server/fleet-runtime.ts server/media-quality-lab.ts server/routes.ts server/communication-behavior.ts tools/generate_buddy_fleet_quality_program.ts
+          git add \
+            server/fleet-runtime.ts \
+            server/media-quality-lab.ts \
+            server/routes.ts \
+            server/communication-behavior.ts \
+            tools/generate_buddy_fleet_quality_program.ts \
+            client/src/lib/lucide-react-compat.tsx \
+            client/src/components/AppShell.tsx \
+            client/src/pages/ActionsPage.tsx \
+            client/src/pages/BotActivityPage.tsx \
+            client/src/pages/BuddyPage.tsx \
+            client/src/pages/ConversationPage.tsx \
+            client/src/pages/SandboxPage.tsx
           git commit -m "repair library compatibility and governed contracts"
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
