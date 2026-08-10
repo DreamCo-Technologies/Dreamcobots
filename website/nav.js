@@ -12,6 +12,7 @@
     { href: 'calculator.html', label: '🧮 Calculator Lab' },
     { href: 'divisions.html', label: '🏛️ Divisions' },
     { href: 'bots.html', label: '🤖 Bot Fleet' },
+    { href: 'actions.html', label: '🧭 Actions Center' },
     { href: 'test-center.html', label: '🧪 Test Center' },
     { href: 'security.html', label: '🛡️ Defense Center' },
     { href: 'system-map.html', label: '🗺️ Repository Map' },
@@ -110,7 +111,6 @@
   `;
   document.head.appendChild(style);
 
-  // Rebuild V2: add contextual action buttons to the real Codex-built pages.
   if (!document.querySelector('script[data-dreamco-page-actions]')) {
     const pageActions = document.createElement('script');
     pageActions.src = 'page-actions.js?v=1';
