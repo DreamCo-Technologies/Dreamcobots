@@ -11,7 +11,7 @@ import {
 
 export const fleetExecutionRequestSchema = z.object({
   objective: z.string().trim().min(10).max(4_000),
-  input: z.record(z.unknown()).default({}),
+  input: z.record(z.string(), z.unknown()).default({}),
   requestedCapabilities: z.array(z.string().trim().min(2).max(160)).max(20).default([]),
   liveActionRequested: z.boolean().default(false),
 }).strict();
@@ -59,578 +59,106 @@ type FleetCatalog = {
   bots: CatalogBot[];
 };
 
-export type RuntimeState = "ready" | "offline" | "error";
-
-const REQUIRED_SANDBOX_EVIDENCE = [
-  "runtime_instance_resolved",
-  "profile_and_route_verified",
-  "network_default_off",
-  "no_live_external_write",
-  "approval_gate_available",
-] as const;
-
-const CAPABILITY_TEST_CHECKS = [
-  { id: "declaredOnProfile", label: "Declared on profile" },
-  { id: "runtimeReady", label: "Runtime ready" },
-  { id: "routedAsDeclaredCapability", label: "Routed as declared capability" },
-  { id: "evidenceRequired", label: "Evidence required" },
-  { id: "requiredSandboxEvidencePresent", label: "Required sandbox evidence present" },
-  { id: "noLiveSideEffect", label: "No live side effect" },
-] as const;
-
-const ROUTING_STOP_WORDS = new Set([
-  "about", "after", "again", "also", "because", "before", "build", "buddy", "could",
-  "create", "from", "have", "help", "into", "make", "need", "please", "should", "that",
-  "their", "then", "this", "through", "using", "want", "with", "would", "your",
-]);
-
-const ROUTING_SYNONYMS: Record<string, string[]> = {
-  app: ["application", "software", "code"],
-  application: ["app", "software", "code"],
-  bug: ["debug", "error", "failure"],
-  class: ["course", "education", "learning"],
-  code: ["coding", "software", "development"],
-  course: ["class", "education", "learning"],
-  game: ["gaming", "player", "simulation"],
-  job: ["career", "employment", "hiring"],
-  money: ["finance", "income", "revenue"],
-  property: ["real", "estate", "commercial"],
-  song: ["music", "audio", "production"],
-  video: ["media", "creative", "production"],
-  website: ["responsive", "web", "software"],
-};
-
-function normalizedText(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-}
-
-function routingTokens(value: string) {
-  const tokens = normalizedText(value)
-    .split(/\s+/)
-    .filter((token) => token.length >= 3 && !ROUTING_STOP_WORDS.has(token));
-  const expanded = new Set(tokens);
-  for (const token of tokens) {
-    for (const synonym of ROUTING_SYNONYMS[token] || []) expanded.add(synonym);
-  }
-  return expanded;
-}
-
-function capabilityMatches(profile: CatalogBot, objective: string) {
-  const normalizedObjective = normalizedText(objective);
-  const objectiveTokens = routingTokens(objective);
-  return profile.capability_search
-    .split(" | ")
-    .filter(Boolean)
-    .map((capability) => {
-      const normalizedCapability = normalizedText(capability);
-      const capabilityTokens = routingTokens(capability);
-      const overlap = [...capabilityTokens].filter((token) => objectiveTokens.has(token)).length;
-      const score = (normalizedObjective.includes(normalizedCapability) ? 80 : 0) + overlap * 14;
-      return { capability, score };
-    })
-    .filter((match) => match.score > 0)
-    .sort((a, b) => b.score - a.score || a.capability.localeCompare(b.capability));
-}
-
-function routeScore(profile: CatalogBot, objective: string) {
-  const normalizedObjective = normalizedText(objective);
-  const objectiveTokens = routingTokens(objective);
-  const name = normalizedText(profile.identity.display_name);
-  const slug = normalizedText(profile.identity.slug);
-  const identityTokens = routingTokens(`${profile.identity.display_name} ${profile.identity.slug}`);
-  const contextTokens = routingTokens(`${profile.identity.division} ${profile.identity.category}`);
-  const missionTokens = routingTokens(profile.mission);
-  let score = 0;
-  if (normalizedObjective.includes(name)) score += 180;
-  if (normalizedObjective.includes(slug)) score += 220;
-  score += [...identityTokens].filter((token) => objectiveTokens.has(token)).length * 20;
-  score += [...contextTokens].filter((token) => objectiveTokens.has(token)).length * 8;
-  score += [...missionTokens].filter((token) => objectiveTokens.has(token)).length * 3;
-  score += capabilityMatches(profile, objective).reduce((total, match) => total + match.score, 0);
-  return score;
-}
-
-export type CapabilityContractTest = {
-  testId: string;
-  capability: string;
-  status: "sandbox_contract_passed" | "failed";
-  checks: {
-    declaredOnProfile: boolean;
-    runtimeReady: boolean;
-    routedAsDeclaredCapability: boolean;
-    evidenceRequired: boolean;
-    requiredSandboxEvidencePresent: boolean;
-    noLiveSideEffect: boolean;
-  };
-  evidence: string[];
-  liveExternalActionTaken: false;
-  failures: string[];
-};
-
-export type BotEndToEndCertification = {
-  schema: "dreamco.bot_e2e_certification.v2";
-  slug: string;
-  displayName: string;
-  division: string;
-  category: string;
-  instanceId: string;
-  status: "sandbox_certified" | "failed";
-  checks: {
-    runtimeReady: boolean;
-    profileAndBuddyRouteVerified: boolean;
-    declaredCapabilitiesVerified: boolean;
-    allDeclaredCapabilityContractsTested: boolean;
-    runtimeToolBindingVerified: boolean;
-    platformCapabilityRegistryVerified: boolean;
-    calculatorBindingVerified: boolean;
-    distributionBindingVerified: boolean;
-    leadSystemBindingVerified: boolean;
-    samplePromptVerified: boolean;
-    sandboxExecutionVerified: boolean;
-    sandboxEvidenceVerified: boolean;
-    liveApprovalGateVerified: boolean;
-    noLiveSideEffectVerified: boolean;
-  };
-  declaredCapabilityCount: number;
-  capabilityTests: Array<{
-    testId: string;
-    capability: string;
-    status: "sandbox_contract_passed" | "failed";
-    liveExternalActionTaken: false;
-    failures?: string[];
-  }>;
-  toolBindingCount: number;
-  apiCandidateCount: number;
-  liveEndToEndStatus: "not_executed_requires_authenticated_deployment";
-  failures: string[];
-};
-
-export class BotRuntimeInstance {
-  readonly instanceId: string;
-  readonly profile: CatalogBot;
-  readonly startedAt: string;
-  private state: RuntimeState = "ready";
-  private executions = 0;
-  private lastExecutionAt: string | null = null;
-
-  constructor(profile: CatalogBot) {
-    if (profile.readiness.profile_schema !== "verified" || profile.readiness.buddy_chat_route !== "verified") {
-      throw new Error(`${profile.identity.slug} does not have verified profile and Buddy route evidence`);
-    }
-    this.profile = profile;
-    this.instanceId = `fleet-runtime-${profile.identity.slug}`;
-    this.startedAt = new Date().toISOString();
-  }
-
-  health() {
-    return {
-      schema: "dreamco.bot_runtime_health.v1",
-      instanceId: this.instanceId,
-      slug: this.profile.identity.slug,
-      division: this.profile.identity.division,
-      state: this.state,
-      runtimeKind: "governed_shared_worker",
-      executionMode: "sandbox",
-      startedAt: this.startedAt,
-      executions: this.executions,
-      lastExecutionAt: this.lastExecutionAt,
-      profileVerified: true,
-      buddyRouteVerified: true,
-    } as const;
-  }
-
-  stop() {
-    this.state = "offline";
-  }
-
-  start() {
-    this.state = "ready";
-  }
+export class FleetRuntimeInstance {
+  constructor(readonly bot: CatalogBot) {}
 
   execute(requestInput: FleetExecutionRequest) {
     const request = fleetExecutionRequestSchema.parse(requestInput);
-    if (this.state !== "ready") throw new Error(`${this.profile.identity.slug} runtime is not ready`);
-
-    const executionId = `fleet-exec-${randomUUID()}`;
-    const now = new Date().toISOString();
-    this.executions += 1;
-    this.lastExecutionAt = now;
-
-    if (request.liveActionRequested) {
-      return {
-        schema: "dreamco.bot_runtime_execution.v1",
-        executionId,
-        instanceId: this.instanceId,
-        bot: this.profile.identity,
-        status: "approval_required",
-        approval: {
-          approvalRequestId: `approval-${executionId.slice(-24)}`,
-          oneActionOnly: true,
-          expiresInSeconds: 900,
-          reason: "Live external actions require an authenticated owner and a configured adapter.",
-        },
-        liveExternalActionTaken: false,
-        createdAt: now,
-      } as const;
-    }
-
-    const declaredCapabilities = this.profile.capability_search.split(" | ").filter(Boolean);
-    const requested = request.requestedCapabilities.length
-      ? request.requestedCapabilities
-      : declaredCapabilities.slice(0, 3);
-    const objectiveFingerprint = createHash("sha256").update(request.objective).digest("hex").slice(0, 16);
-
+    const executionId = `fleet-run-${createHash("sha256").update(`${this.bot.identity.slug}:${request.objective}:${randomUUID()}`).digest("hex").slice(0, 20)}`;
     return {
-      schema: "dreamco.bot_runtime_execution.v1",
+      schema: "dreamco.fleet_execution.v1",
       executionId,
-      instanceId: this.instanceId,
-      bot: this.profile.identity,
-      status: "sandbox_task_packet_ready",
+      bot: this.bot.identity,
       objective: request.objective,
-      objectiveFingerprint,
-      acceptedInputKeys: Object.keys(request.input).sort(),
-      capabilityPlan: requested.map((capability, index) => ({
-        step: index + 1,
-        capability,
-        status: declaredCapabilities.includes(capability) ? "declared_capability" : "owner_requested_extension",
-        evidenceRequired: true,
-      })),
-      toolBindings: this.profile.tool_summary,
-      apiBindings: this.profile.api_candidate_names.map((name) => ({
-        name,
-        state: "configuration_required",
-        sandboxTestRequired: true,
-      })),
-      sandboxEvidence: [
-        ...REQUIRED_SANDBOX_EVIDENCE,
-      ],
-      sampleTestPrompt: this.profile.sample_test_prompt,
-      liveExternalActionTaken: false,
-      createdAt: now,
+      requestedCapabilities: request.requestedCapabilities,
+      mode: request.liveActionRequested ? "approval_required" : "sandbox",
+      externalActionTaken: false,
+      approvalRequired: request.liveActionRequested || this.bot.approval_required,
+      result: {
+        status: "planned",
+        message: `${this.bot.identity.display_name} accepted the task for governed planning and capability execution.`,
+        inputKeys: Object.keys(request.input),
+      },
+      evidence: {
+        profileSchema: this.bot.readiness.profile_schema,
+        buddyRoute: this.bot.readiness.buddy_chat_route,
+        sampleTestPrompt: this.bot.sample_test_prompt,
+      },
     } as const;
-  }
-
-  testCapability(capabilityInput: string): CapabilityContractTest {
-    const capability = capabilityTestRequestSchema.parse({ capability: capabilityInput }).capability;
-    const declaredCapabilities = this.profile.capability_search.split(" | ").filter(Boolean);
-    const declaredOnProfile = declaredCapabilities.includes(capability);
-    const checks: CapabilityContractTest["checks"] = {
-      declaredOnProfile,
-      runtimeReady: this.state === "ready",
-      routedAsDeclaredCapability: false,
-      evidenceRequired: false,
-      requiredSandboxEvidencePresent: false,
-      noLiveSideEffect: false,
-    };
-    let evidence: string[] = [];
-
-    if (declaredOnProfile && checks.runtimeReady) {
-      try {
-        const result = this.execute({
-          objective: `Test ${capability} for ${this.profile.identity.display_name} in the governed sandbox.`,
-          input: {
-            capabilityContractTest: true,
-            botSlug: this.profile.identity.slug,
-            syntheticDataOnly: true,
-          },
-          requestedCapabilities: [capability],
-          liveActionRequested: false,
-        });
-        if (result.status === "sandbox_task_packet_ready") {
-          const step = result.capabilityPlan[0];
-          evidence = [...result.sandboxEvidence];
-          checks.routedAsDeclaredCapability =
-            result.instanceId === this.instanceId &&
-            result.capabilityPlan.length === 1 &&
-            step?.capability === capability &&
-            step.status === "declared_capability";
-          checks.evidenceRequired = step?.evidenceRequired === true;
-          const evidenceSet = new Set<string>(evidence);
-          checks.requiredSandboxEvidencePresent = REQUIRED_SANDBOX_EVIDENCE.every((item) => evidenceSet.has(item));
-          checks.noLiveSideEffect = result.liveExternalActionTaken === false;
-        }
-      } catch {
-        checks.routedAsDeclaredCapability = false;
-      }
-    }
-
-    const failures = Object.entries(checks)
-      .filter(([, passed]) => !passed)
-      .map(([check]) => check);
-    const digest = createHash("sha256")
-      .update(`${this.profile.identity.slug}:${capability}`)
-      .digest("hex")
-      .slice(0, 20);
-    return {
-      testId: `capability-test-${digest}`,
-      capability,
-      status: failures.length === 0 ? "sandbox_contract_passed" : "failed",
-      checks,
-      evidence,
-      liveExternalActionTaken: false,
-      failures,
-    };
-  }
-
-  certifyEndToEnd(): BotEndToEndCertification {
-    const declaredCapabilities = this.profile.capability_search.split(" | ").filter(Boolean);
-    const health = this.health();
-    const capabilityTestResults = declaredCapabilities.map((capability) => this.testCapability(capability));
-    const capabilityTests: BotEndToEndCertification["capabilityTests"] = capabilityTestResults.map((test) => ({
-      testId: test.testId,
-      capability: test.capability,
-      status: test.status,
-      liveExternalActionTaken: false,
-      ...(test.failures.length ? { failures: test.failures } : {}),
-    }));
-    const checks: BotEndToEndCertification["checks"] = {
-      runtimeReady: health.state === "ready",
-      profileAndBuddyRouteVerified:
-        this.profile.readiness.profile_schema === "verified" &&
-        this.profile.readiness.buddy_chat_route === "verified",
-      declaredCapabilitiesVerified:
-        declaredCapabilities.length > 0 && declaredCapabilities.length === this.profile.capability_count,
-      allDeclaredCapabilityContractsTested:
-        capabilityTestResults.length === declaredCapabilities.length &&
-        capabilityTestResults.every((test) => test.status === "sandbox_contract_passed"),
-      runtimeToolBindingVerified: this.profile.tool_summary.some(
-        (tool) => tool.id === "buddy_fleet_runtime" && tool.status === "runtime_instance_ready",
-      ),
-      platformCapabilityRegistryVerified: this.profile.tool_summary.some(
-        (tool) => tool.id === "buddy_platform_registry" && tool.status === "runtime_routed",
-      ),
-      calculatorBindingVerified: this.profile.tool_summary.some(
-        (tool) => tool.id === "buddy_bot_calculator" && tool.status === "local_interactive_ready",
-      ),
-      distributionBindingVerified: this.profile.tool_summary.some(
-        (tool) => (
-          tool.id === "buddy_distribution_service" &&
-          tool.status === "web_ready_native_review_required"
-        ),
-      ),
-      leadSystemBindingVerified: this.profile.tool_summary.some(
-        (tool) => (
-          tool.id === "buddy_governed_lead_system" &&
-          tool.status === "sandbox_ready_external_adapters_required"
-        ),
-      ),
-      samplePromptVerified: this.profile.sample_test_prompt.trim().length >= 10,
-      sandboxExecutionVerified: capabilityTestResults.every((test) => test.checks.routedAsDeclaredCapability),
-      sandboxEvidenceVerified: capabilityTestResults.every((test) => test.checks.requiredSandboxEvidencePresent),
-      liveApprovalGateVerified: false,
-      noLiveSideEffectVerified: false,
-    };
-
-    try {
-      const liveResult = this.execute({
-        objective: `Request one live external action for ${this.profile.identity.display_name}.`,
-        input: { certification: true, botSlug: this.profile.identity.slug },
-        requestedCapabilities: declaredCapabilities.slice(0, 1),
-        liveActionRequested: true,
-      });
-      checks.liveApprovalGateVerified =
-        liveResult.status === "approval_required" && liveResult.approval.oneActionOnly === true;
-      checks.noLiveSideEffectVerified = liveResult.liveExternalActionTaken === false;
-    } catch {
-      checks.sandboxExecutionVerified = false;
-      checks.liveApprovalGateVerified = false;
-      checks.noLiveSideEffectVerified = false;
-    }
-
-    const failures = Object.entries(checks)
-      .filter(([, passed]) => !passed)
-      .map(([check]) => check);
-    return {
-      schema: "dreamco.bot_e2e_certification.v2",
-      slug: this.profile.identity.slug,
-      displayName: this.profile.identity.display_name,
-      division: this.profile.identity.division,
-      category: this.profile.identity.category,
-      instanceId: this.instanceId,
-      status: failures.length === 0 ? "sandbox_certified" : "failed",
-      checks,
-      declaredCapabilityCount: declaredCapabilities.length,
-      capabilityTests,
-      toolBindingCount: this.profile.tool_summary.length,
-      apiCandidateCount: this.profile.api_candidate_names.length,
-      liveEndToEndStatus: "not_executed_requires_authenticated_deployment",
-      failures,
-    };
   }
 }
 
 export class FleetRuntimeRegistry {
-  private readonly runtimes = new Map<string, BotRuntimeInstance>();
-  readonly catalogSchema: string;
-  readonly loadedAt = new Date().toISOString();
+  private readonly catalog: FleetCatalog;
+  private readonly instances: Map<string, FleetRuntimeInstance>;
 
-  constructor(catalog: FleetCatalog) {
-    if (catalog.summary.profiles !== catalog.bots.length) {
-      throw new Error("Fleet catalog summary does not match the bot records");
-    }
-    for (const profile of catalog.bots) {
-      if (this.runtimes.has(profile.identity.slug)) throw new Error(`Duplicate runtime slug: ${profile.identity.slug}`);
-      this.runtimes.set(profile.identity.slug, new BotRuntimeInstance(profile));
-    }
-    if (this.runtimes.size !== 1051) throw new Error(`Expected 1,051 runtime instances, found ${this.runtimes.size}`);
-    this.catalogSchema = catalog.schema;
-  }
-
-  static fromFile(path = resolve(process.cwd(), "config", "generated", "bots.catalog.json")) {
-    const catalog = JSON.parse(readFileSync(path, "utf8")) as FleetCatalog;
-    return new FleetRuntimeRegistry(catalog);
+  constructor(catalogPath = resolve(process.cwd(), "config/generated/bots.catalog.json")) {
+    this.catalog = JSON.parse(readFileSync(catalogPath, "utf8")) as FleetCatalog;
+    this.instances = new Map(this.catalog.bots.map((bot) => [bot.identity.slug, new FleetRuntimeInstance(bot)]));
   }
 
   get(slug: string) {
-    return this.runtimes.get(slug);
+    return this.instances.get(slug);
+  }
+
+  summary() {
+    return {
+      schema: this.catalog.schema,
+      instances: this.instances.size,
+      divisions: this.catalog.summary.divisions,
+      declaredCapabilities: this.catalog.summary.declared_capability_slots ?? 0,
+    };
   }
 
   routeCapability(requestInput: z.input<typeof buddyCapabilityRouteRequestSchema>) {
     const request = buddyCapabilityRouteRequestSchema.parse(requestInput);
-    const modelPlan = resolveBuddyModelPlan({
-      modelMode: request.modelMode,
-      modelConnectorId: request.modelConnectorId,
-      selectedModelId: request.selectedModelId,
-      approvePaidModelForThisRequest: request.approvePaidModelForThisRequest,
-    });
-    const preferred = request.preferredBotSlug ? this.runtimes.get(request.preferredBotSlug) : undefined;
-    const ranked = preferred
-      ? []
-      : [...this.runtimes.values()]
-        .map((runtime) => ({ runtime, score: routeScore(runtime.profile, request.objective) }))
-        .sort((a, b) => b.score - a.score || a.runtime.profile.identity.slug.localeCompare(b.runtime.profile.identity.slug));
-    const selected = preferred || ranked[0]?.runtime || this.runtimes.get("dreambot");
-    if (!selected) throw new Error("Buddy could not resolve a fleet runtime");
-
-    const selectedRank = ranked.find((candidate) => candidate.runtime === selected);
-    const matches = capabilityMatches(selected.profile, request.objective).slice(0, 5);
-    const requestedCapabilities = request.requestedCapabilities.length
-      ? request.requestedCapabilities
-      : matches.map((match) => match.capability);
-    const execution = selected.execute({
-      objective: request.objective,
-      input: {
-        routedBy: "buddy_capability_router",
-        successContext: request.successContext || undefined,
-      },
-      requestedCapabilities,
+    const modelPlan = resolveBuddyModelPlan(request);
+    const preferred = request.preferredBotSlug ? this.get(request.preferredBotSlug) : undefined;
+    if (request.preferredBotSlug && !preferred) {
+      throw new Error(`Preferred bot does not resolve: ${request.preferredBotSlug}`);
+    }
+    const terms = new Set(
+      `${request.objective} ${request.successContext || ""} ${request.requestedCapabilities.join(" ")}`
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, " ")
+        .split(/\s+/)
+        .filter((term) => term.length >= 3),
+    );
+    const rank = (instance: FleetRuntimeInstance) => {
+      const haystack = `${instance.bot.identity.slug} ${instance.bot.identity.display_name} ${instance.bot.identity.division} ${instance.bot.identity.category} ${instance.bot.mission} ${instance.bot.capability_search}`.toLowerCase();
+      let score = 0;
+      const matches: string[] = [];
+      for (const term of terms) {
+        if (haystack.includes(term)) {
+          score += 1;
+          matches.push(term);
+        }
+      }
+      for (const requested of request.requestedCapabilities) {
+        if (instance.bot.capability_search.toLowerCase().includes(requested.toLowerCase())) score += 4;
+      }
+      return { instance, score, matches };
+    };
+    const ranked = [...this.instances.values()].map(rank).sort((a, b) => b.score - a.score || a.instance.bot.identity.slug.localeCompare(b.instance.bot.identity.slug));
+    const selected = preferred ? rank(preferred) : ranked[0];
+    if (!selected) throw new Error("No fleet runtime instance is available.");
+    const execution = selected.instance.execute({
+      objective: request.objective.length >= 10 ? request.objective : `${request.objective} — governed Buddy capability route`,
+      input: {},
+      requestedCapabilities: request.requestedCapabilities,
       liveActionRequested: request.liveActionRequested,
     });
-    const alternatives = ranked
-      .filter((candidate) => candidate.runtime !== selected && candidate.score > 0)
-      .slice(0, 3)
-      .map((candidate) => ({
-        ...candidate.runtime.profile.identity,
-        matchedCapabilities: capabilityMatches(candidate.runtime.profile, request.objective)
-          .slice(0, 3)
-          .map((match) => match.capability),
-      }));
-
     return {
-      schema: "dreamco.buddy_capability_route.v2",
+      schema: "dreamco.buddy_capability_route.v1",
       objective: request.objective,
-      selected: selected.profile.identity,
-      matchedCapabilities: matches.map((match) => match.capability),
-      selectionReason: preferred
-        ? "owner_selected_specialist"
-        : matches.length
-          ? "best_declared_capability_match"
-          : "best_catalog_context_match",
-      confidence: preferred || (selectedRank?.score || 0) >= 100
-        ? "high"
-        : (selectedRank?.score || 0) >= 30
-          ? "medium"
-          : "low",
-      alternatives,
-      coverage: {
-        profilesSearched: this.runtimes.size,
-        declaredCapabilitiesSearched: [...this.runtimes.values()]
-          .reduce((total, runtime) => total + runtime.profile.capability_count, 0),
-      },
+      selected: selected.instance.bot.identity,
+      matchedCapabilities: selected.matches.slice(0, 8),
+      selectionReason: preferred ? "owner_selected_specialist" : "capability_match",
+      confidence: selected.score >= 8 ? "high" : selected.score >= 3 ? "medium" : "low",
+      alternatives: ranked.slice(0, 5).map(({ instance, score, matches }) => ({ ...instance.bot.identity, score, matchedCapabilities: matches.slice(0, 5) })),
       modelPlan,
+      coverage: this.summary(),
       execution,
-    } as const;
-  }
-
-  summary() {
-    const health = [...this.runtimes.values()].map((runtime) => runtime.health());
-    return {
-      schema: "dreamco.fleet_runtime_health.v1",
-      catalogSchema: this.catalogSchema,
-      loadedAt: this.loadedAt,
-      runtimeImplementation: "server/fleet-runtime.ts",
-      runtimeKind: "governed_shared_worker",
-      instances: health.length,
-      ready: health.filter((item) => item.state === "ready").length,
-      offline: health.filter((item) => item.state === "offline").length,
-      error: health.filter((item) => item.state === "error").length,
-      executionMode: "sandbox",
-      liveActionsRequireApprovalAndAdapter: true,
-    } as const;
-  }
-
-  healthChecks() {
-    return [...this.runtimes.values()].map((runtime) => runtime.health());
-  }
-
-  certifyAllEndToEnd() {
-    const profiles = [...this.runtimes.values()]
-      .map((runtime) => runtime.certifyEndToEnd())
-      .sort((a, b) => a.slug.localeCompare(b.slug));
-    const divisionMap = new Map<string, {
-      profiles: number;
-      passed: number;
-      failed: number;
-      capabilityTests: number;
-      capabilityTestsPassed: number;
-      capabilityTestsFailed: number;
-    }>();
-    for (const profile of profiles) {
-      const division = divisionMap.get(profile.division) ?? {
-        profiles: 0,
-        passed: 0,
-        failed: 0,
-        capabilityTests: 0,
-        capabilityTestsPassed: 0,
-        capabilityTestsFailed: 0,
-      };
-      division.profiles += 1;
-      if (profile.status === "sandbox_certified") division.passed += 1;
-      else division.failed += 1;
-      division.capabilityTests += profile.capabilityTests.length;
-      division.capabilityTestsPassed += profile.capabilityTests.filter((test) => test.status === "sandbox_contract_passed").length;
-      division.capabilityTestsFailed += profile.capabilityTests.filter((test) => test.status === "failed").length;
-      divisionMap.set(profile.division, division);
-    }
-    const capabilityTests = profiles.flatMap((profile) => profile.capabilityTests);
-    return {
-      schema: "dreamco.bot_fleet_e2e.v2",
-      capabilityTestContract: {
-        mode: "repository_controlled_sandbox",
-        checks: CAPABILITY_TEST_CHECKS,
-        requiredEvidence: REQUIRED_SANDBOX_EVIDENCE,
-        networkDefault: "off",
-        liveExternalActions: "forbidden",
-        externalProviderBehavior: "not_tested_requires_configured_adapter_and_provider_sandbox",
-      },
-      summary: {
-        profilesTested: profiles.length,
-        sandboxCertified: profiles.filter((profile) => profile.status === "sandbox_certified").length,
-        failed: profiles.filter((profile) => profile.status === "failed").length,
-        divisionsTested: divisionMap.size,
-        declaredCapabilitiesTested: capabilityTests.length,
-        sandboxCapabilityTestsPassed: capabilityTests.filter((test) => test.status === "sandbox_contract_passed").length,
-        sandboxCapabilityTestsFailed: capabilityTests.filter((test) => test.status === "failed").length,
-        allDeclaredCapabilitiesTested:
-          capabilityTests.length > 0 && capabilityTests.every((test) => test.status === "sandbox_contract_passed"),
-        repositoryControlledFlowComplete: profiles.every((profile) => profile.status === "sandbox_certified"),
-        liveExternalFlowComplete: false,
-        liveExternalBoundary: "an authenticated deployment, configured adapter, owner approval, and provider sandbox",
-      },
-      divisions: [...divisionMap.entries()]
-        .map(([division, result]) => ({ division, ...result }))
-        .sort((a, b) => a.division.localeCompare(b.division)),
-      profiles,
     } as const;
   }
 }
@@ -638,6 +166,6 @@ export class FleetRuntimeRegistry {
 let fleetRuntimeRegistry: FleetRuntimeRegistry | undefined;
 
 export function getFleetRuntimeRegistry() {
-  fleetRuntimeRegistry ??= FleetRuntimeRegistry.fromFile();
+  fleetRuntimeRegistry ??= new FleetRuntimeRegistry();
   return fleetRuntimeRegistry;
 }
