@@ -1,5 +1,6 @@
 import { buddyCapabilityRouteRequestSchema, getFleetRuntimeRegistry } from "./fleet-runtime";
 import { getRecoveredFleetRuntimeRegistry } from "./recovered-fleet-runtime";
+import { buildSubBotTeam, subBotTeamRequestSchema } from "./subbot-team-engine";
 import type { z } from "zod";
 
 function normalized(value: string) {
@@ -31,10 +32,17 @@ export class UnifiedWorkerRuntime {
       canonicalBaselinePreserved: canonical.instances === 1051,
       executionMode: "sandbox",
       liveExternalActionsRequireApproval: true,
+      subBotTeams: {
+        enabledForEveryRoutableWorker: true,
+        lifecycle: "task_scoped_and_reversible",
+        permanentPromotionRequiresEvidence: true,
+        overlappingRolesMayMerge: true,
+      },
       sourceOfTruth: {
         canonical: "config/generated/bots.catalog.json",
         recovered: "config/generated/recovered-original-bot-overlay.json",
         legacyUnification: "config/generated/unified-legacy-system.json",
+        subBotBlueprints: "config/dreamco-must-have-subbot-team.json",
       },
     } as const;
   }
@@ -45,6 +53,14 @@ export class UnifiedWorkerRuntime {
     const recovered = this.recovered.get(slug);
     if (recovered) return { source: "recovered" as const, profile: recovered };
     return undefined;
+  }
+
+  planSubBotTeam(requestInput: z.input<typeof subBotTeamRequestSchema>) {
+    const request = subBotTeamRequestSchema.parse(requestInput);
+    if (!this.get(request.ownerBotSlug)) {
+      throw new Error(`Sub-bot team owner does not resolve: ${request.ownerBotSlug}`);
+    }
+    return buildSubBotTeam(request);
   }
 
   routeCapability(requestInput: z.input<typeof buddyCapabilityRouteRequestSchema>) {
