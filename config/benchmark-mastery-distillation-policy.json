@@ -1,0 +1,43 @@
+{
+  "schema": "dreamco.benchmark_mastery_distillation.v1",
+  "mission": "Give every benchmark an active task-scoped Benchmark Master, close gaps in maximum safe parallelism, and distill proven high-quality behavior into cheaper reusable routes without lowering the quality floor.",
+  "mastery_states": ["unknown", "measured", "gap_found", "repairing", "retesting", "mastered", "regressed", "blocked"],
+  "mastered_requires": [
+    "all acceptance tests pass",
+    "no unresolved high-severity security blocker for the suite scope",
+    "no known regression below the accepted baseline",
+    "evidence timestamp and source revision recorded",
+    "required model/tool/provider version recorded when applicable"
+  ],
+  "parallel_policy": {
+    "worker_type": "task_scoped_benchmark_master",
+    "one_worker_per_benchmark_suite": true,
+    "maximum_parallel_workers": 32,
+    "single_writer_per_canonical_owner": true,
+    "read_only_analysis_may_parallelize": true,
+    "failed_workers_do_not_cancel_independent_workers": true,
+    "blocked_suites_remain_visible": true
+  },
+  "distillation_policy": {
+    "purpose": "Reduce future inference/runtime cost by transferring benchmark-proven behavior from the best teacher route into a smaller/cheaper/local student route when quality can be preserved.",
+    "teacher_selection": ["best verified task-specific benchmark result", "tool/modality/context fit", "reliability", "freshness"],
+    "student_selection": ["smaller or cheaper model", "open-weight/local option when license and hardware fit", "same required tools or an equivalent application tool layer", "sufficient context"],
+    "methods": ["prompt/program distillation", "few-shot exemplar compression", "structured-output schema hardening", "tool-routing policy distillation", "retrieval/index distillation", "LoRA/QLoRA when license permits", "supervised fine-tuning on owner-controlled or permitted synthetic data", "preference optimization when justified", "quantization after regression testing", "cache/prefix specialization"],
+    "training_data_rules": ["owner-controlled or license-permitted data only", "synthetic fixtures preferred", "no private user data without explicit training consent", "no proprietary model weights or hidden chain-of-thought extraction", "record provenance and deletion rights"],
+    "acceptance": ["student meets benchmark quality floor", "critical failures do not increase", "tool-call correctness preserved", "latency/cost benefit measured", "security/privacy not degraded", "rollback teacher route retained"],
+    "promotion_rule": "Promote a distilled student only when measured quality remains within the suite tolerance and the cost/latency improvement is material.",
+    "regression_rule": "Any later regression immediately removes distilled-default status and restores the last passing teacher/fallback route."
+  },
+  "cost_efficiency": [
+    "run targeted benchmark tests before umbrella suites",
+    "shortlist models before paid benchmarking",
+    "stop evaluation after a decisive acceptance/rejection result",
+    "reuse unchanged benchmark evidence until invalidated by code/model/tool/provider revision",
+    "batch compatible fixtures",
+    "right-size context windows",
+    "lazy-load workers/models/tools",
+    "tear down task-scoped workers after evidence is stored",
+    "reserve full-system certification for release gates"
+  ],
+  "truth_boundary": "Benchmark mastery is scoped to a specific suite, revision, environment, and evidence set. It is never a permanent universal claim."
+}
