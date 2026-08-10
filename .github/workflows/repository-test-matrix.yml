@@ -42,6 +42,15 @@ jobs:
         with:
           python-version: "3.13"
           cache: pip
+      - name: Explain this action
+        run: |
+          {
+            echo "# Repository Test Matrix"
+            echo
+            echo "**Owner:** This is DreamCo's central local proof lane. It refreshes generated catalogs in dependency order, then runs the universal verification engine."
+            echo "**Performance:** Generated evidence is refreshed once here instead of forcing every specialized benchmark lane to rebuild everything."
+            echo "**Truth:** A pass proves repository-controlled tests for this commit; external providers and live actions still need their own configured evidence."
+          } >> "$GITHUB_STEP_SUMMARY"
       - run: npm ci
       - name: Install declared Python dependencies
         run: python3 -m pip install --disable-pip-version-check -r requirements.txt
