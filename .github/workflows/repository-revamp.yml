@@ -4,23 +4,37 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
+      - ".github/workflows/**"
       - "App_bots/**"
+      - "config/dreamco-essential-master-bots.json"
       - "config/dreamco-must-have-subbot-team.json"
+      - "config/buddy-personal-data-fabric.json"
       - "server/subbot-team-engine.ts"
       - "server/unified-worker-runtime.ts"
+      - "server/personal-data-fabric.ts"
       - "tests/subbot-team-engine.test.ts"
+      - "tests/personal-data-fabric.test.ts"
+      - "tools/build_actions_control_center.py"
       - "tools/build_repository_revolution_map.py"
+      - "website/actions.html"
       - "website/revamp.html"
       - ".github/workflows/repository-revamp.yml"
   push:
     branches: [main]
     paths:
+      - ".github/workflows/**"
       - "App_bots/**"
+      - "config/dreamco-essential-master-bots.json"
       - "config/dreamco-must-have-subbot-team.json"
+      - "config/buddy-personal-data-fabric.json"
       - "server/subbot-team-engine.ts"
       - "server/unified-worker-runtime.ts"
+      - "server/personal-data-fabric.ts"
       - "tests/subbot-team-engine.test.ts"
+      - "tests/personal-data-fabric.test.ts"
+      - "tools/build_actions_control_center.py"
       - "tools/build_repository_revolution_map.py"
+      - "website/actions.html"
       - "website/revamp.html"
       - ".github/workflows/repository-revamp.yml"
 
@@ -34,7 +48,7 @@ concurrency:
 jobs:
   map-and-verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -44,8 +58,25 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
+      - name: Explain this action
+        run: |
+          {
+            echo "# Repository Revamp"
+            echo
+            echo "**Owner:** Rebuilds the plain-English Actions Center and the every-file/every-bot repository makeover map, then verifies master/sub-bot and personal-data contracts."
+            echo
+            echo "**Users:** Checks that personalization stays user-owned and that Buddy's visible experience stays connected to tested repository evidence."
+            echo
+            echo "**Developers:** Regenerates repository inventory, 30-upgrade category contracts, workflow runbooks, and typed runtime tests."
+            echo
+            echo "**Investors:** Produces evidence for repository scale, operational discipline, portability, and product governance rather than relying on bot-count claims."
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Install locked JavaScript dependencies
         run: npm ci
+      - name: Check Actions definitions first
+        run: python3 tools/audit_actions_health.py
+      - name: Rebuild owner-facing Actions Control Center
+        run: python3 tools/build_actions_control_center.py
       - name: Build every-item every-file every-bot revamp map
         run: python3 tools/build_repository_revolution_map.py
       - name: Verify 30-upgrade category contract
@@ -65,16 +96,30 @@ jobs:
           PY
       - name: Verify every worker can build task-scoped sub-bot teams
         run: node --import tsx --test tests/subbot-team-engine.test.ts
-      - name: Add owner summary
+      - name: Verify user-owned personal data fabric
+        run: node --import tsx --test tests/personal-data-fabric.test.ts
+      - name: Build reversible master-bot consolidation evidence
+        run: python3 tools/build_master_bot_consolidation.py
+      - name: Add owner summaries
         if: always()
-        run: cat reports/REPOSITORY_REVAMP_MAP.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+        run: |
+          cat reports/ACTIONS_CONTROL_CENTER.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          echo >> "$GITHUB_STEP_SUMMARY"
+          cat reports/REPOSITORY_REVAMP_MAP.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          echo >> "$GITHUB_STEP_SUMMARY"
+          cat reports/MASTER_BOT_CONSOLIDATION.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
       - name: Save revamp evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
           name: repository-revamp-${{ github.run_id }}
           path: |
+            website/data/actions-control-center.json
             website/data/repository-revamp-map.json
+            config/generated/master-bot-consolidation.json
+            reports/ACTIONS_CONTROL_CENTER.md
             reports/REPOSITORY_REVAMP_MAP.md
+            reports/MASTER_BOT_CONSOLIDATION.md
+            reports/ACTIONS_HEALTH_REPORT.md
           if-no-files-found: warn
           retention-days: 14
