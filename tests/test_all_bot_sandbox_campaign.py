@@ -23,7 +23,7 @@ class AllBotSandboxCampaignTests(unittest.TestCase):
             for capability in bot["capabilities"]:
                 self.assertIn(capability["state"], {"passing", "fixture_ready", "gap_found"})
 
-    def test_nonpassing_capabilities_receive_gap_workers(self):
+    def test_nonpassing_capabilities_receive_gap_workers_and_retest_cycle(self):
         indexed = {gap["gap_id"]: gap for gap in self.campaign["gaps"]}
         for bot in self.campaign["bots"]:
             for capability in bot["capabilities"]:
@@ -35,6 +35,21 @@ class AllBotSandboxCampaignTests(unittest.TestCase):
                 self.assertEqual(gap["status"], "active_gap_worker_assigned")
                 self.assertEqual(gap["worker"]["execution_mode"], "sandbox")
                 self.assertFalse(gap["worker"]["live_external_actions"])
+                self.assertEqual(
+                    gap["worker"]["repair_retest_cycle"],
+                    ["repair candidate", "focused capability retest", "bot retest", "fleet retest"],
+                )
+
+    def test_e2e_green_baseline_marks_campaign_complete(self):
+        summary = self.campaign["e2e_fleet_summary"]
+        if (
+            summary.get("profilesTested") == 1051
+            and summary.get("sandboxCapabilityTestsFailed") == 0
+            and summary.get("sandboxCapabilityTestsPassed") == summary.get("declaredCapabilitiesTested")
+        ):
+            self.assertTrue(self.campaign["sandbox_contract_complete"])
+            self.assertEqual(self.campaign["active_gap_count"], 0)
+            self.assertEqual(self.campaign["passing_capability_count"], self.campaign["declared_capability_count"])
 
     def test_campaign_is_cost_and_side_effect_bounded(self):
         self.assertEqual(self.campaign["maximum_parallel_gap_workers"], 32)
