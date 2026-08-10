@@ -1,0 +1,78 @@
+name: Dependency Security Repair
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/dependency-security-repair.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dependency-security-repair-${{ github.event.pull_request.head.ref || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out the review branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          fetch-depth: 2
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Explain this action
+        run: |
+          {
+            echo "# Dependency Security Repair"
+            echo
+            echo "Runs npm's non-forcing security repair, then compiles and runs governed tests before committing package/lockfile changes to the review branch."
+            echo "It never uses npm audit fix --force, never merges main, and refuses to commit a repair that breaks the repository checks."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - run: npm ci
+      - name: Record pre-repair audit
+        shell: bash
+        run: npm audit --json > /tmp/audit-before.json || true
+      - name: Apply non-breaking npm security fixes
+        run: npm audit fix
+      - name: Compile after dependency repair
+        run: npm run check
+      - name: Run governed regression suite
+        run: npm run test:governed
+      - name: Require no remaining high vulnerabilities
+        run: npm audit --audit-level=high
+      - name: Record post-repair audit
+        if: always()
+        shell: bash
+        run: npm audit --json > /tmp/audit-after.json || true
+      - name: Commit verified dependency repair
+        shell: bash
+        run: |
+          if git diff --quiet -- package.json package-lock.json; then
+            echo "No package or lockfile changes were required." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name "dreamco-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "repair npm dependency vulnerabilities"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+      - name: Save audit evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: dependency-security-repair-${{ github.run_id }}
+          path: |
+            /tmp/audit-before.json
+            /tmp/audit-after.json
+          if-no-files-found: warn
+          retention-days: 14
