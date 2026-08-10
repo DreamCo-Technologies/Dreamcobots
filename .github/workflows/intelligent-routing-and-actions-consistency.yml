@@ -8,9 +8,12 @@ on:
       - "config/model-mastery-benchmark-program.json"
       - "config/model-capability-manifest.json"
       - "server/intelligent-task-router.ts"
+      - "server/intelligent-routing-routes.ts"
       - "server/model-intelligence-router.ts"
       - "server/model-protocol-compiler.ts"
+      - "server/index.ts"
       - "tests/intelligent-task-router.test.ts"
+      - "tests/intelligent-routing-routes.test.ts"
       - "tests/model-intelligence-router.test.ts"
       - "tests/model-protocol-compiler.test.ts"
       - "tools/audit_actions_consistency.py"
@@ -22,9 +25,12 @@ on:
       - "config/model-mastery-benchmark-program.json"
       - "config/model-capability-manifest.json"
       - "server/intelligent-task-router.ts"
+      - "server/intelligent-routing-routes.ts"
       - "server/model-intelligence-router.ts"
       - "server/model-protocol-compiler.ts"
+      - "server/index.ts"
       - "tests/intelligent-task-router.test.ts"
+      - "tests/intelligent-routing-routes.test.ts"
       - "tests/model-intelligence-router.test.ts"
       - "tests/model-protocol-compiler.test.ts"
       - "tools/audit_actions_consistency.py"
@@ -59,15 +65,20 @@ jobs:
             echo "**Performance:** Checks lazy activation, task compilation, maximum 32 independent lanes, and one-writer-per-owner conflict prevention."
             echo "**Model quality:** Keeps quality first while requiring task/tool/modality/context fit before cost and speed tie-breakers."
             echo "**Model communication:** Verifies Buddy can compile one neutral task/tool contract into provider-specific request envelopes without making a live paid call."
+            echo "**API wiring:** Confirms the Buddy server registers the task compiler and model-protocol compiler endpoints."
             echo "**Cost:** Confirms Buddy shortlists instead of calling all 500 models for every task."
           } >> "$GITHUB_STEP_SUMMARY"
       - run: npm ci
+      - name: Compile DreamCo server and client
+        run: npm run check
       - name: Verify model intelligence
         run: node --import tsx --test tests/model-intelligence-router.test.ts
       - name: Verify provider protocol compilation
         run: node --import tsx --test tests/model-protocol-compiler.test.ts
       - name: Verify intelligent lazy task routing
         run: node --import tsx --test tests/intelligent-task-router.test.ts
+      - name: Verify intelligent API registration
+        run: node --import tsx --test tests/intelligent-routing-routes.test.ts
       - name: Verify model mastery benchmark contract
         run: |
           node - <<'NODE'
