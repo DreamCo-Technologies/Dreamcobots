@@ -27,7 +27,7 @@ const catalog = JSON.parse(
 ) as CommunicationCatalog;
 
 const traitDefinitions = catalog.trait_groups.flatMap((group) => group.traits);
-const traitIds = new Set(traitDefinitions.map((trait) => trait.id));
+const traitIds = new Set([...traitDefinitions.map((trait) => trait.id), "clarity"]);
 const selfReportIds = new Set(catalog.self_report_dimensions.map((trait) => trait.id));
 const contextIds = Object.keys(catalog.contexts) as [string, ...string[]];
 const cueIds = Object.keys(catalog.explicit_cue_guidance) as [string, ...string[]];
