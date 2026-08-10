@@ -9,8 +9,10 @@ on:
       - "config/model-capability-manifest.json"
       - "server/intelligent-task-router.ts"
       - "server/model-intelligence-router.ts"
+      - "server/model-protocol-compiler.ts"
       - "tests/intelligent-task-router.test.ts"
       - "tests/model-intelligence-router.test.ts"
+      - "tests/model-protocol-compiler.test.ts"
       - "tools/audit_actions_consistency.py"
       - ".github/workflows/**"
   push:
@@ -21,8 +23,10 @@ on:
       - "config/model-capability-manifest.json"
       - "server/intelligent-task-router.ts"
       - "server/model-intelligence-router.ts"
+      - "server/model-protocol-compiler.ts"
       - "tests/intelligent-task-router.test.ts"
       - "tests/model-intelligence-router.test.ts"
+      - "tests/model-protocol-compiler.test.ts"
       - "tools/audit_actions_consistency.py"
       - ".github/workflows/**"
 
@@ -54,11 +58,14 @@ jobs:
             echo "**Owner:** Verifies that Buddy wakes only the bots/models/tools needed for a task and that your Actions page follows a common operating standard."
             echo "**Performance:** Checks lazy activation, task compilation, maximum 32 independent lanes, and one-writer-per-owner conflict prevention."
             echo "**Model quality:** Keeps quality first while requiring task/tool/modality/context fit before cost and speed tie-breakers."
+            echo "**Model communication:** Verifies Buddy can compile one neutral task/tool contract into provider-specific request envelopes without making a live paid call."
             echo "**Cost:** Confirms Buddy shortlists instead of calling all 500 models for every task."
           } >> "$GITHUB_STEP_SUMMARY"
       - run: npm ci
       - name: Verify model intelligence
         run: node --import tsx --test tests/model-intelligence-router.test.ts
+      - name: Verify provider protocol compilation
+        run: node --import tsx --test tests/model-protocol-compiler.test.ts
       - name: Verify intelligent lazy task routing
         run: node --import tsx --test tests/intelligent-task-router.test.ts
       - name: Verify model mastery benchmark contract
