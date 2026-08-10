@@ -1,0 +1,73 @@
+name: All Bot Sandbox Campaign
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "App_bots/**"
+      - "config/bot-universal-sandbox-skill-gap-program.json"
+      - "config/generated/bot-sandbox-curriculum.json"
+      - "config/generated/buddy_fleet_quality_program.json"
+      - "config/generated/model-mastery-gap-report.json"
+      - "tools/build_bot_sandbox_curriculum.py"
+      - "tools/run_all_bot_sandbox_campaign.py"
+      - "tests/test_bot_sandbox_curriculum.py"
+      - "tests/test_all_bot_sandbox_campaign.py"
+      - ".github/workflows/all-bot-sandbox-campaign.yml"
+  push:
+    branches: [main]
+    paths:
+      - "App_bots/**"
+      - "config/bot-universal-sandbox-skill-gap-program.json"
+      - "tools/build_bot_sandbox_curriculum.py"
+      - "tools/run_all_bot_sandbox_campaign.py"
+      - "tests/test_bot_sandbox_curriculum.py"
+      - "tests/test_all_bot_sandbox_campaign.py"
+      - ".github/workflows/all-bot-sandbox-campaign.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: all-bot-sandbox-campaign-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  campaign:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Explain this action
+        run: |
+          {
+            echo "# All Bot Sandbox Campaign"
+            echo
+            echo "**Owner:** Puts all 1,051 canonical bots into an active sandbox status and maps every declared capability to evidence or an open benchmark gap."
+            echo "**Gap closure:** Every non-passing capability gets a task-scoped gap worker assignment, with shared fixes preferred over repetitive per-bot patches."
+            echo "**Safety:** No live external actions and no paid model calls are executed by this campaign."
+            echo "**Parallelism:** Up to 32 independent gap workers may operate while conflicting writes stay serialized by canonical owner."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Build universal task sandbox and bot curriculum
+        run: python3 tools/build_bot_sandbox_curriculum.py
+      - name: Build active all-bot sandbox campaign
+        run: python3 tools/run_all_bot_sandbox_campaign.py
+      - name: Verify curriculum and active campaign contracts
+        run: python3 -m unittest tests.test_bot_sandbox_curriculum tests.test_all_bot_sandbox_campaign
+      - name: Summarize campaign
+        if: always()
+        run: cat reports/ALL_BOT_SANDBOX_CAMPAIGN.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+      - name: Save sandbox evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: all-bot-sandbox-campaign-${{ github.run_id }}
+          path: |
+            config/generated/bot-sandbox-curriculum.json
+            config/generated/all-bot-sandbox-campaign.json
+            reports/ALL_BOT_SANDBOX_CAMPAIGN.md
+          if-no-files-found: warn
+          retention-days: 14
