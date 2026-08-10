@@ -2,6 +2,26 @@ name: Full System Certification
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - "server/**"
+      - "shared/**"
+      - "client/**"
+      - "website/**"
+      - "tools/**"
+      - "script/**"
+      - "tests/**"
+      - "config/**"
+      - "App_bots/**"
+      - "original-bots/**"
+      - "bots/**"
+      - "attached_assets/**"
+      - "docs/**"
+      - "package.json"
+      - "package-lock.json"
+      - "requirements.txt"
+      - ".github/agents/**"
+      - ".github/workflows/full-system-certification.yml"
   schedule:
     - cron: "41 9 * * *"
   push:
@@ -22,6 +42,7 @@ on:
       - "docs/**"
       - "package.json"
       - "package-lock.json"
+      - "requirements.txt"
       - ".github/agents/**"
       - ".github/workflows/full-system-certification.yml"
 
@@ -47,16 +68,28 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
+          cache: pip
+
+      - name: Explain this action
+        run: |
+          {
+            echo "# Full System Certification"
+            echo
+            echo "**Owner:** This is DreamCo's deepest repository-wide test. It checks the whole system instead of one feature."
+            echo "**Users:** It protects core behavior, privacy, routing, data, media, business, and approval boundaries before release."
+            echo "**Developers:** It rebuilds generated evidence, audits connections, exercises all 1,051 fleet profiles and declared capability contracts, runs production verification, speed/accuracy checks, dependency security, and a production smoke test."
+            echo "**Investors:** It produces a machine-readable release receipt and refuses to claim full operational readiness when evidence is missing."
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Clean locked dependency install
         run: |
           npm ci
-          python3 -m pip install --disable-pip-version-check openpyxl
+          python3 -m pip install --disable-pip-version-check -r requirements.txt
 
       - name: Validate certification policies
         run: |
           python3 -m unittest tests.test_full_system_operational_certification tests.test_trusted_code_delivery tests.test_change_impact_test_policy tests.test_recovery_ontology_workforce_runtime
-          node --import tsx --test tests/server-health-runtime-policy.test.ts
+          node --import tsx --test tests/server-health-runtime-policy.test.ts tests/model-intelligence-router.test.ts
 
       - name: Recover and unify legacy bot system
         run: |
@@ -104,6 +137,11 @@ jobs:
           python3 tools/build_live_revenue_readiness.py
           python3 tools/build_manufacturer_marketplace_catalog.py
           node --import tsx --test tests/business-data-trade-readiness.test.ts
+
+      - name: Verify quality-first model routing and 500-target benchmark integrity
+        run: |
+          node --import tsx --test tests/model-intelligence-router.test.ts tests/buddy-model-policy.test.ts tests/model-benchmark-policy.test.ts
+          npx tsx -e "import {MODEL_BENCHMARK_TARGETS} from './shared/model-benchmark-targets.ts'; if(MODEL_BENCHMARK_TARGETS.length!==500) throw new Error('500-target benchmark integrity failed');"
 
       - name: Run full production verification
         run: npx tsx tools/run_universal_verification.ts --production
