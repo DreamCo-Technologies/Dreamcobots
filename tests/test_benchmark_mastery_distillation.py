@@ -19,6 +19,32 @@ class BenchmarkMasteryDistillationTests(unittest.TestCase):
         self.assertEqual(self.plan["worker_count"], self.plan["suite_count"])
         self.assertEqual(len({row["worker"]["id"] for row in self.plan["suites"]}), self.plan["suite_count"])
 
+    def test_every_suite_has_chatgpt_reviewed_gap_closure_path(self):
+        self.assertEqual(self.plan["gap_closure_path_count"], self.plan["suite_count"])
+        self.assertTrue(self.plan["all_suites_have_gap_closure_path"])
+        self.assertEqual(self.plan["gap_closure_review_standard"], "ChatGPT-reviewed path")
+        required_steps = self.policy["gap_closure_policy"]["required_steps"]
+        self.assertGreaterEqual(len(required_steps), 10)
+        for row in self.plan["suites"]:
+            gap = row["gap_closure"]
+            self.assertTrue(gap["required"])
+            self.assertEqual(gap["review_standard"], "ChatGPT-reviewed path")
+            self.assertEqual(gap["steps"], required_steps)
+            self.assertTrue(gap["promotion_requires_passing_evidence"])
+            self.assertIn("measure", gap["loop"])
+            self.assertIn("retest", gap["loop"])
+            self.assertIn("master or iterate", gap["loop"])
+
+    def test_gap_closure_cannot_fake_mastery(self):
+        prohibited = self.policy["gap_closure_policy"]["prohibited_shortcuts"]
+        joined = " ".join(prohibited).lower()
+        self.assertIn("weakening", joined)
+        self.assertIn("fabricating", joined)
+        self.assertIn("passing evidence", self.policy["truth_boundary"].lower())
+        for row in self.plan["suites"]:
+            self.assertTrue(row["mastery"]["regression_revokes_mastery"])
+            self.assertTrue(row["gap_closure"]["promotion_requires_passing_evidence"])
+
     def test_parallelism_is_bounded_and_lazy(self):
         self.assertLessEqual(self.plan["maximum_parallel_workers"], 32)
         self.assertTrue(self.plan["workers_are_task_scoped"])
