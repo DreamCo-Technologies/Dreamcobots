@@ -20,7 +20,9 @@ class Zod4CompatibilityMigrationTests(unittest.TestCase):
         self.assertIn('"tools/generate_buddy_fleet_quality_program.ts"', source)
         self.assertNotIn("rglob", source)
         self.assertNotIn('glob("**', source)
-        self.assertEqual(len(GITHUB_ICON_FILES), 5)
+        self.assertEqual(len(GITHUB_ICON_FILES), 11)
+        self.assertIn("client/src/pages/BotActivityPage.tsx", GITHUB_ICON_FILES)
+        self.assertIn("client/src/pages/DreamCodeLabPage.tsx", GITHUB_ICON_FILES)
 
     def test_github_icon_rewrite_does_not_cross_unrelated_imports(self) -> None:
         original = '''import { ReactNode } from "react";\nimport { Link } from "wouter";\nimport {\n  Bot,\n  Github,\n  Wrench,\n} from "lucide-react";\nimport ThemeToggle from "@/components/ThemeToggle";\n'''
