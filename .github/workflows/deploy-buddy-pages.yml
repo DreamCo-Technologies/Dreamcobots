@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - buddy-rebuild-v2
+      - codex/master-capability-pages
     paths:
       - "website/**"
       - "tools/build_buddy_public_site.py"
@@ -15,6 +16,7 @@ on:
       - "tools/check_buddy_model_benchmarks.mjs"
       - "tools/generate_buddy_distribution_catalog.py"
       - "tools/generate_repository_test_registry.py"
+      - "tools/generate_dreamco_repository_master_map.py"
       - "config/**"
       - ".github/workflows/deploy-buddy-pages.yml"
 
@@ -53,6 +55,7 @@ jobs:
           node tools/check_buddy_demand_ontology.mjs
           python3 tools/generate_buddy_distribution_catalog.py --check
           python3 tools/generate_repository_test_registry.py
+          python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_buddy_benchmark_index.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
           python3 tools/build_buddy_public_site.py --check
@@ -60,6 +63,7 @@ jobs:
           node --test tests/benchmark-tracker-page.test.mjs tests/service-worker-benchmark-cache.test.mjs
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
+          test -s website/data/repository-master-map.json
 
       - name: Check browser JavaScript syntax
         run: |
