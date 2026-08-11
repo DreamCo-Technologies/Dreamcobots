@@ -17,12 +17,17 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
+      - name: Check out repository context
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
       - name: Scan recent runs from every workflow
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p sweep
-          gh run list --limit 100 --json databaseId,workflowName,status,conclusion,createdAt,updatedAt,url,headSha,event > sweep/runs.json
+          gh run list --repo "$GITHUB_REPOSITORY" --limit 100 --json databaseId,workflowName,status,conclusion,createdAt,updatedAt,url,headSha,event > sweep/runs.json
           python3 - <<'PY'
           import json
           from datetime import datetime, timedelta, timezone
@@ -64,9 +69,9 @@ jobs:
           PY
           while read -r run_id; do
             [ -z "$run_id" ] && continue
-            existing=$(gh issue list --state open --search "Actions run $run_id in:title" --json number --jq '.[0].number // empty')
+            existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "Actions run $run_id in:title" --json number --jq '.[0].number // empty')
             [ -n "$existing" ] && continue
-            run=$(gh run view "$run_id" --json workflowName,conclusion,url,headSha,event)
+            run=$(gh run view "$run_id" --repo "$GITHUB_REPOSITORY" --json workflowName,conclusion,url,headSha,event)
             workflow=$(printf '%s' "$run" | jq -r '.workflowName')
             conclusion=$(printf '%s' "$run" | jq -r '.conclusion')
             url=$(printf '%s' "$run" | jq -r '.url')
@@ -83,7 +88,7 @@ jobs:
 
           **Repair rule:** inspect the first failing job/step, reproduce the smallest root cause, fix without weakening tests, then rerun the affected suite. Use **Agents → Buddy Debugger** for the repair path.
           EOF
-            gh issue create --title "Actions run $run_id failed: $workflow" --body-file sweep/issue.md
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "Actions run $run_id failed: $workflow" --body-file sweep/issue.md
           done < sweep/ids.txt
 
       - name: Save sweep evidence
