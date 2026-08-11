@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Repository Map - DreamCo Empire OS</title>
-  <meta name="description" content="A generated, public-safe map of DreamCo bot registries, divisions, libraries, readiness, and deployment status." />
+  <meta name="description" content="A generated, public-safe map of DreamCo repository files, bots, divisions, Actions, tests, backend, frontend, and GitHub Pages assets." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
@@ -17,9 +17,9 @@
     <div>
       <span class="badge badge-primary">Generated from repository evidence</span>
       <h1>Repository System Map</h1>
-      <p>One public-safe view of what is cataloged, prototyped, approval-gated, and still being completed.</p>
+      <p>One public-safe view of what is cataloged, tested, connected, approval-gated, and still being completed.</p>
     </div>
-    <div class="buddy-inline-actions"><a class="btn btn-outline" href="test-center.html">Open Test Center</a><a class="btn btn-primary" href="buddy.html">Open Buddy</a></div>
+    <div class="buddy-inline-actions"><a class="btn btn-outline" href="actions.html">Open Actions</a><a class="btn btn-outline" href="test-center.html">Open Test Center</a><a class="btn btn-primary" href="buddy.html">Open Buddy</a></div>
   </header>
 
   <section class="system-map-metrics" aria-label="Repository summary">
@@ -34,6 +34,14 @@
 
   <section class="system-map-section">
     <div class="system-map-title">
+      <div><h2>Repository Master Inventory</h2><p>This scan covers source files, workflows, Pages assets, tests, tools, bots, configuration, backend, frontend, shared contracts, platform modules, and documentation. It is an inventory, not proof that every item is runnable.</p></div>
+      <span id="master-map-generated" class="map-generated">Loading master inventory</span>
+    </div>
+    <div id="master-map-grid" class="system-readiness-grid" aria-live="polite"></div>
+  </section>
+
+  <section class="system-map-section">
+    <div class="system-map-title">
       <div><h2>System Readiness</h2><p>Status labels distinguish real repository evidence from public prototypes.</p></div>
       <span id="map-generated" class="map-generated">Loading generated data</span>
     </div>
@@ -41,29 +49,23 @@
   </section>
 
   <section class="system-map-section">
-    <div class="system-map-title">
-      <div><h2>Per-Bot Libraries</h2><p>Generated contracts that organize each bot's tools, APIs, webhooks, workflows, skills, sandboxes, and resources.</p></div>
-    </div>
+    <div class="system-map-title"><div><h2>Per-Bot Libraries</h2><p>Generated contracts organize each bot's tools, APIs, webhooks, workflows, skills, sandboxes, and resources.</p></div></div>
     <div id="system-library-grid" class="system-library-grid"></div>
   </section>
 
   <section class="system-map-section">
     <div class="system-map-title">
       <div><h2>Division Registry</h2><p>The public view exposes missions and counts, never secrets, personal data, raw logs, or private reports.</p></div>
-      <label class="map-search-label" for="division-search">
-        <span>Filter divisions</span>
-        <input id="division-search" type="search" placeholder="Search by name or mission" autocomplete="off" />
-      </label>
+      <label class="map-search-label" for="division-search"><span>Filter divisions</span><input id="division-search" type="search" placeholder="Search by name or mission" autocomplete="off" /></label>
     </div>
     <div id="division-map-grid" class="division-map-grid"></div>
   </section>
 
   <section class="public-contract">
-    <div><span class="badge badge-amber">Public contract</span><h2>Preview, not unattended production</h2></div>
-    <p>The live site presents verified repository structure and browser-based prototypes. It does not claim verified revenue, process payments, execute private bots, contact people, or modify accounts.</p>
+    <div><span class="badge badge-amber">Public contract</span><h2>Evidence, not claims</h2></div>
+    <p>The live site presents verified repository structure and browser-based prototypes. It does not claim verified revenue, process payments, execute private bots, contact people, or modify accounts. A discovered file or planned capability is never treated as mastery without current tests and benchmark evidence.</p>
   </section>
 </main>
-
 <script src="system-map.js" defer></script>
 </body>
 </html>
