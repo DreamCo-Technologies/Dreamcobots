@@ -48,12 +48,20 @@ REPLACEMENTS = {
     ],
 }
 
+# Keep this migration intentionally bounded. GitHub code search on 2026-08-11
+# found these DreamCo TSX files importing the removed Lucide Github brand icon.
 GITHUB_ICON_FILES = (
     "client/src/components/AppShell.tsx",
     "client/src/pages/ActionsPage.tsx",
+    "client/src/pages/BotActivityPage.tsx",
+    "client/src/pages/BotBuilderPage.tsx",
     "client/src/pages/BuddyPage.tsx",
+    "client/src/pages/ConnectionsPage.tsx",
     "client/src/pages/ConversationPage.tsx",
+    "client/src/pages/DreamCodeLabPage.tsx",
+    "client/src/pages/LearningMatrixPage.tsx",
     "client/src/pages/SandboxPage.tsx",
+    "client/src/pages/SettingsPage.tsx",
 )
 
 # The old regex used .*? with DOTALL, which could start at an earlier import and
