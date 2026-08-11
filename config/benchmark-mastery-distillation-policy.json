@@ -1,14 +1,51 @@
 {
-  "schema": "dreamco.benchmark_mastery_distillation.v1",
-  "mission": "Give every benchmark an active task-scoped Benchmark Master, close gaps in maximum safe parallelism, and distill proven high-quality behavior into cheaper reusable routes without lowering the quality floor.",
+  "schema": "dreamco.benchmark_mastery_distillation.v2",
+  "mission": "Give every benchmark an active task-scoped Benchmark Master, require an explicit ChatGPT-reviewed gap-closure path, close gaps in maximum safe parallelism, and distill proven high-quality behavior into cheaper reusable routes without lowering the quality floor.",
   "mastery_states": ["unknown", "measured", "gap_found", "repairing", "retesting", "mastered", "regressed", "blocked"],
   "mastered_requires": [
     "all acceptance tests pass",
     "no unresolved high-severity security blocker for the suite scope",
     "no known regression below the accepted baseline",
     "evidence timestamp and source revision recorded",
-    "required model/tool/provider version recorded when applicable"
+    "required model/tool/provider version recorded when applicable",
+    "gap closure path completed or explicitly marked not needed with evidence"
   ],
+  "gap_closure_policy": {
+    "review_standard": "ChatGPT-reviewed path",
+    "meaning": "A structured remediation plan generated from benchmark evidence and checked against DreamCo safety, test, quality, rollback, cost, and truth-boundary requirements. It is not a claim of endorsement by OpenAI and does not replace passing evidence.",
+    "required_for_every_suite": true,
+    "required_steps": [
+      "measure current benchmark result and preserve raw evidence",
+      "classify the gap by capability, code, model, tool, data, integration, security, latency, cost, or test coverage",
+      "identify the smallest shared root cause before proposing suite-specific patches",
+      "generate at least one bounded repair candidate and one fallback or rollback route",
+      "select the repair using quality-first criteria with safety and correctness as hard gates",
+      "apply the repair in sandbox or review branch only",
+      "run targeted regression tests and the benchmark acceptance tests",
+      "compare before and after evidence including quality, critical failures, latency, and cost when measurable",
+      "retest dependent suites when the repaired component is shared",
+      "promote to mastered only when all acceptance requirements pass",
+      "if still failing, record the blocker and create the next evidence-driven repair iteration"
+    ],
+    "repair_priorities": [
+      "security and correctness",
+      "benchmark quality",
+      "shared root-cause leverage",
+      "reliability and rollback",
+      "latency and runtime efficiency",
+      "cost efficiency"
+    ],
+    "prohibited_shortcuts": [
+      "weakening or deleting a legitimate acceptance test to manufacture a pass",
+      "marking a benchmark mastered from a plan without passing evidence",
+      "fabricating model, tool, provider, or runtime results",
+      "using paid or external consequential actions without the required approval",
+      "training on private user data without explicit training consent"
+    ],
+    "loop": "measure -> diagnose -> plan -> repair -> targeted test -> benchmark retest -> compare -> master or iterate",
+    "shared_fix_rule": "When multiple benchmark gaps share a root cause, repair the canonical shared component first and retest every dependent suite.",
+    "blocked_rule": "A benchmark that cannot be safely closed remains visible as blocked with evidence, owner-action requirements, and the next recommended experiment."
+  },
   "parallel_policy": {
     "worker_type": "task_scoped_benchmark_master",
     "one_worker_per_benchmark_suite": true,
@@ -39,5 +76,5 @@
     "tear down task-scoped workers after evidence is stored",
     "reserve full-system certification for release gates"
   ],
-  "truth_boundary": "Benchmark mastery is scoped to a specific suite, revision, environment, and evidence set. It is never a permanent universal claim."
+  "truth_boundary": "Benchmark mastery is scoped to a specific suite, revision, environment, and evidence set. A ChatGPT-reviewed gap-closure path is a remediation design, not proof of mastery; only passing benchmark evidence can close the gap."
 }
