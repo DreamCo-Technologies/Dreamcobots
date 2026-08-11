@@ -57,6 +57,7 @@ jobs:
           python3 tools/build_manufacturer_marketplace_catalog.py
           python3 tools/build_buddy_public_site.py --check
           npm run test:actions-page
+          node --test tests/benchmark-tracker-page.test.mjs tests/service-worker-benchmark-cache.test.mjs
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
 
@@ -66,6 +67,7 @@ jobs:
           node --check website/install.js
           node --check website/studio.js
           node --check website/models.js
+          node --check website/benchmark-tracker.js
           node --check website/data-control.js
           node --check website/open-model-lab.js
           node --check website/test-center.js

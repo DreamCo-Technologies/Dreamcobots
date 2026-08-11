@@ -41,6 +41,8 @@ jobs:
         with:
           python-version: "3.13"
       - run: npm ci
+      - name: Verify Buddy model progress center
+        run: npm run buddy:model-progress
       - name: Check Actions health
         run: python3 tools/audit_actions_health.py
       - name: Check builder team readiness

@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.actions_health.v1",
-  "workflow_count": 22,
+  "workflow_count": 23,
   "critical_error_count": 0,
   "warning_count": 0,
   "operational_workflow_count": 0,
@@ -695,6 +695,43 @@
       "static_status": "static_checks_passed"
     },
     {
+      "workflow": ".github/workflows/model-progress-center.yml",
+      "filename": "model-progress-center.yml",
+      "display_name": "Buddy Model Progress Center",
+      "purpose": "Run a governed repository workflow and collect reviewable evidence.",
+      "triggers": [
+        "manual",
+        "push",
+        "pull request",
+        "schedule"
+      ],
+      "errors": [],
+      "warnings": [],
+      "actions": [
+        "actions/checkout@v7",
+        "actions/setup-node@v6",
+        "actions/upload-artifact@v6"
+      ],
+      "npm_scripts": [
+        "buddy:model-progress"
+      ],
+      "referenced_files": [],
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Add a deterministic repository fixture.",
+        "Publish reviewable evidence for every failure.",
+        "Require owner approval before external writes."
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/model-progress-center.yml",
+      "static_status": "static_checks_passed"
+    },
+    {
       "workflow": ".github/workflows/open-source-evolution.yml",
       "filename": "open-source-evolution.yml",
       "display_name": "Open Source Evolution",
@@ -798,7 +835,9 @@
         "actions/setup-python@v6",
         "actions/upload-artifact@v6"
       ],
-      "npm_scripts": [],
+      "npm_scripts": [
+        "buddy:model-progress"
+      ],
       "referenced_files": [
         "tools/audit_actions_health.py",
         "tools/audit_all_bots_categories_and_agents.py",

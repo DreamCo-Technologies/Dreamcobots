@@ -1,0 +1,82 @@
+name: Buddy Model Progress Center
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "config/buddy-model-progress-center.json"
+      - "config/generated/buddy_model_progress_center.json"
+      - "server/model-progress-policy.ts"
+      - "tools/generate_buddy_model_progress_center.ts"
+      - "tests/model-progress-policy.test.ts"
+      - "tests/benchmark-tracker-page.test.mjs"
+      - "tests/service-worker-benchmark-cache.test.mjs"
+      - "website/benchmark-tracker.*"
+      - "website/data/buddy-model-progress-center.js"
+      - "website/service-worker.js"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/model-progress-center.yml"
+  push:
+    branches: [main]
+    paths:
+      - "config/buddy-model-progress-center.json"
+      - "config/generated/buddy_model_progress_center.json"
+      - "server/model-progress-policy.ts"
+      - "tools/generate_buddy_model_progress_center.ts"
+      - "tests/model-progress-policy.test.ts"
+      - "tests/benchmark-tracker-page.test.mjs"
+      - "tests/service-worker-benchmark-cache.test.mjs"
+      - "website/benchmark-tracker.*"
+      - "website/data/buddy-model-progress-center.js"
+      - "website/service-worker.js"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/model-progress-center.yml"
+  schedule:
+    - cron: "29 10 * * 0"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-model-progress-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-model-progress:
+    name: Verify catalogs, councils, benchmarks, and Pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Verify generated model progress artifacts
+        run: npm run buddy:model-progress
+
+      - name: Test model routing and public tracker
+        run: |
+          node --import tsx --test tests/model-progress-policy.test.ts
+          node --test tests/benchmark-tracker-page.test.mjs tests/service-worker-benchmark-cache.test.mjs
+          node --check website/benchmark-tracker.js
+
+      - name: Upload model progress evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: buddy-model-progress-${{ github.run_id }}
+          path: |
+            config/generated/buddy_model_progress_center.json
+            website/data/buddy-model-progress-center.js
+          if-no-files-found: error
+          retention-days: 7
