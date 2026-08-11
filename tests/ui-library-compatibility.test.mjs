@@ -44,3 +44,8 @@ test('Actions surfaces keep truthful repository and provider language', () => {
   const nav = read('website/nav.js');
   assert.match(nav, /href: 'actions\.html'/);
 });
+
+test('full repository verification includes fleet receipt drift checks', () => {
+  const packageJson = JSON.parse(read('package.json'));
+  assert.match(packageJson.scripts['test:repository'], /npm run buddy:fleet:e2e/);
+});
