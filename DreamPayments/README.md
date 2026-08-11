@@ -28,6 +28,10 @@ Compete on software capability with Stripe, Square, and bank merchant-processing
 
 DreamSalesPro -> invoice/payment request -> DreamPayments -> provider adapter -> settlement/reconciliation -> DreamFinance -> DreamData -> Buddy recommendations.
 
+## Public-sector connection
+
+DreamPayments may support authorized government payment collection, invoicing, grant administration, procurement payments, fees, and reconciliation as part of Buddy Public Development. It must not bypass public-finance controls, procurement rules, authorization requirements, or applicable law.
+
 ## Go-live rule
 
 Real-money capability requires an approved processor/acquirer/PayFac partner, compliant merchant onboarding, tokenization, secrets management, PCI-scoped architecture, authorization controls, audit logging, monitoring, dispute/refund procedures, and successful sandbox/live certification where applicable.
