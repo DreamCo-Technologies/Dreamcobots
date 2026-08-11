@@ -20,6 +20,7 @@ def stable_worker_id(suite_id: str) -> str:
 def main() -> int:
     suites = json.loads(SUITES.read_text(encoding="utf-8"))
     policy = json.loads(POLICY.read_text(encoding="utf-8"))
+    gap_policy = policy["gap_closure_policy"]
     rows = []
     for index, suite in enumerate(suites.get("suites", []), start=1):
         suite_id = suite["id"]
@@ -43,6 +44,21 @@ def main() -> int:
                 "requirements": policy["mastered_requires"],
                 "regression_revokes_mastery": True,
             },
+            "gap_closure": {
+                "required": gap_policy["required_for_every_suite"],
+                "review_standard": gap_policy["review_standard"],
+                "status": "ready_to_measure",
+                "loop": gap_policy["loop"],
+                "steps": gap_policy["required_steps"],
+                "repair_priorities": gap_policy["repair_priorities"],
+                "prohibited_shortcuts": gap_policy["prohibited_shortcuts"],
+                "shared_fix_rule": gap_policy["shared_fix_rule"],
+                "blocked_rule": gap_policy["blocked_rule"],
+                "targeted_tests": suite.get("tests", []),
+                "targeted_scripts": suite.get("scripts", []),
+                "acceptance_boundary": suite.get("boundary"),
+                "promotion_requires_passing_evidence": True,
+            },
             "evidence": {
                 "sources": suite.get("sources", []),
                 "tests": suite.get("tests", []),
@@ -62,9 +78,12 @@ def main() -> int:
         })
 
     payload = {
-        "schema": "dreamco.benchmark_mastery_distillation_plan.v1",
+        "schema": "dreamco.benchmark_mastery_distillation_plan.v2",
         "suite_count": len(rows),
         "worker_count": len(rows),
+        "gap_closure_path_count": len(rows),
+        "all_suites_have_gap_closure_path": all(row["gap_closure"]["required"] for row in rows),
+        "gap_closure_review_standard": gap_policy["review_standard"],
         "maximum_parallel_workers": policy["parallel_policy"]["maximum_parallel_workers"],
         "one_worker_per_suite": policy["parallel_policy"]["one_worker_per_benchmark_suite"],
         "workers_are_task_scoped": True,
@@ -82,8 +101,12 @@ def main() -> int:
         "",
         f"- Benchmark suites: **{len(rows)}**",
         f"- Task-scoped Benchmark Masters: **{len(rows)}**",
+        f"- Gap-closure paths: **{len(rows)}**",
+        f"- Review standard: **{gap_policy['review_standard']}**",
         f"- Maximum concurrent workers: **{payload['maximum_parallel_workers']}**",
         "- Idle workers consume no runtime.",
+        "- Every suite has a measure -> diagnose -> repair -> retest -> compare path.",
+        "- A reviewed repair path is not a passing result; mastery still requires benchmark evidence.",
         "- Mastery is revision-specific and revoked on regression.",
         "- Distillation is promoted only when the cheaper/student route preserves the benchmark quality floor.",
         "",
@@ -94,11 +117,13 @@ def main() -> int:
             f"- Worker: `{row['worker']['id']}`",
             f"- Area: {row['area']}",
             f"- State: {row['mastery']['state']}",
+            f"- Gap closure: {row['gap_closure']['status']} ({row['gap_closure']['review_standard']})",
+            f"- Loop: {row['gap_closure']['loop']}",
             f"- Distillation: {row['distillation']['state']}",
             "",
         ]
     REPORT.write_text("\n".join(lines), encoding="utf-8")
-    print(json.dumps({"ok": True, "suites": len(rows), "workers": len(rows), "max_parallel": payload["maximum_parallel_workers"]}, indent=2))
+    print(json.dumps({"ok": True, "suites": len(rows), "workers": len(rows), "gap_paths": len(rows), "max_parallel": payload["maximum_parallel_workers"]}, indent=2))
     return 0
 
 
