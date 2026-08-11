@@ -8,7 +8,13 @@ on:
       - buddy-rebuild-v2
     paths:
       - "website/**"
+      - "client/**"
+      - "shared/**"
+      - "package.json"
+      - "package-lock.json"
+      - "vite.config.ts"
       - "tools/build_buddy_public_site.py"
+      - "tools/build_github_pages_full_coverage.py"
       - "tools/build_manufacturer_marketplace_catalog.py"
       - "tools/check_deployment_cost_policy.py"
       - "tools/generate_buddy_model_router.py"
@@ -44,6 +50,10 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          cache: npm
+
+      - name: Install web dependencies
+        run: npm ci --ignore-scripts
 
       - name: Run deployment preflight
         run: |
@@ -56,6 +66,20 @@ jobs:
           python3 tools/build_buddy_public_site.py --check
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
+
+      - name: Build full React app for GitHub Pages
+        run: |
+          rm -rf website/app dist/public
+          VITE_GITHUB_PAGES=true npx vite build --base=./
+          test -s dist/public/index.html
+          cp -R dist/public website/app
+          test -s website/app/index.html
+
+      - name: Verify repo-wide public page coverage
+        run: |
+          python3 tools/build_github_pages_full_coverage.py --check
+          test -s website/page-coverage.html
+          test -s website/data/public-page-coverage.json
 
       - name: Check browser JavaScript syntax
         run: |
