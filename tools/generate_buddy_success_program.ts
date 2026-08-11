@@ -69,6 +69,7 @@ const SKIP_DIRS = new Set([
   "test-results",
   "tmp",
 ]);
+const SKIP_FILES = new Set(["package-lock.json"]);
 const URL_PATTERN = /https:\/\/[a-z0-9][a-z0-9.-]*(?::\d+)?(?:\/[A-Za-z0-9._~:/?#[\]@!$&'()*+,;=%-]*)?/gi;
 
 type Fleet = {
@@ -83,7 +84,7 @@ function digest(value: string) {
 
 function walk(path: string, files: string[] = []) {
   for (const entry of readdirSync(path)) {
-    if (SKIP_DIRS.has(entry) || entry.startsWith(".")) continue;
+    if (SKIP_DIRS.has(entry) || SKIP_FILES.has(entry) || entry.startsWith(".")) continue;
     const full = resolve(path, entry);
     const stat = statSync(full);
     if (stat.isDirectory()) {
