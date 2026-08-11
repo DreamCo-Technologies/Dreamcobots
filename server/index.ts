@@ -10,11 +10,40 @@ const app = express();
 const httpServer = createServer(app);
 const processStartedAt = Date.now();
 
+const defaultAllowedOrigins = [
+  "https://dreamco-technologies.github.io",
+];
+const configuredAllowedOrigins = (process.env.DREAMCO_ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const allowedOrigins = new Set([...defaultAllowedOrigins, ...configuredAllowedOrigins]);
+
 declare module "http" {
   interface IncomingMessage {
     rawBody: unknown;
   }
 }
+
+function applyCors(req: Request, res: Response, next: NextFunction) {
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.has(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Idempotency-Key");
+    res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS");
+  }
+  if (req.method === "OPTIONS") {
+    if (!origin || !allowedOrigins.has(origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+    return res.sendStatus(204);
+  }
+  return next();
+}
+
+app.use(applyCors);
 
 async function initStripe() {
   if (!process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_LIVE_SECRET_KEY) {
@@ -41,6 +70,7 @@ app.get('/api/health', (_req, res) => {
     environment: process.env.NODE_ENV || 'development',
     uptimeSeconds: Math.floor((Date.now() - processStartedAt) / 1000),
     stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY || process.env.STRIPE_LIVE_SECRET_KEY),
+    allowedOrigins: [...allowedOrigins],
     timestamp: new Date().toISOString(),
   });
 });
