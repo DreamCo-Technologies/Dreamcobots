@@ -4,7 +4,7 @@ This setup makes a laptop the local DreamCo development and control environment 
 
 ## One-command bootstrap
 
-From Terminal:
+From Terminal after this change is merged to `main`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/DreamCo-Technologies/Dreamcobots/main/tools/bootstrap_dreamco_laptop.sh -o /tmp/bootstrap_dreamco_laptop.sh
@@ -67,4 +67,4 @@ The laptop can run the same backend locally, but the public Pages site should ta
 
 ## Local status report
 
-The bootstrap writes `.dreamco/laptop-status.txt`. The `.dreamco` folder is intended for local machine status only and must not contain secrets or be treated as a cloud credential store.
+The bootstrap writes `.dreamco/laptop-status.txt`. The `.dreamco` folder and `.env.local` are gitignored and intended for local machine state only. They must not be treated as cloud credential stores or committed to Git.
