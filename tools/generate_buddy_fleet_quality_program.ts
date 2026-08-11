@@ -45,6 +45,7 @@ export function buildFleetQualityProgram() {
   const globalMasterSlug = fleetSlugs.has("dreambot") ? "dreambot" : fleet.bots[0]?.identity.slug;
   if (!globalMasterSlug) throw new Error("Fleet quality program requires at least one routable master bot.");
   const qualityWorkerRoutes = source.quality_workers.map((worker) => ({
+    slug: fleetSlugs.has(worker.slug) ? worker.slug : globalMasterSlug,
     requested_slug: worker.slug,
     resolved_slug: fleetSlugs.has(worker.slug) ? worker.slug : globalMasterSlug,
     role: worker.role,

@@ -1,3 +1,4 @@
+import { Github } from "@/lib/lucide-react-compat";
 import { useState } from "react";
 import { useLocation } from "wouter";
 import Seo from "@/components/Seo";
@@ -12,11 +13,40 @@ import { useCreateConversation } from "@/hooks/use-conversations";
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import {
-  BrainCircuit, Code2, Zap, Map, Hammer, GraduationCap, Bug, ShieldCheck,
-  Github, Search, Mic, ImageIcon, Globe, Users, Database, Terminal,
-  GitPullRequest, Rocket, RefreshCw, CheckCircle2, Lock, Layers,
-  Star, Sparkles, Send, ExternalLink, Copy, BookOpen, BarChart3,
-  FileCode2, Cpu, ArrowRight, Activity, AlertCircle, ChevronRight,
+  BrainCircuit,
+  Code2,
+  Zap,
+  Map,
+  Hammer,
+  GraduationCap,
+  Bug,
+  ShieldCheck,
+  Search,
+  Mic,
+  ImageIcon,
+  Globe,
+  Users,
+  Database,
+  Terminal,
+  GitPullRequest,
+  Rocket,
+  RefreshCw,
+  CheckCircle2,
+  Lock,
+  Layers,
+  Star,
+  Sparkles,
+  Send,
+  ExternalLink,
+  Copy,
+  BookOpen,
+  BarChart3,
+  FileCode2,
+  Cpu,
+  ArrowRight,
+  Activity,
+  AlertCircle,
+  ChevronRight,
 } from "lucide-react";
 
 type BuddyMode = "plan" | "build" | "execute" | "teach" | "vibe" | "agent" | "debug" | "security";

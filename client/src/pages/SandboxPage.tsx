@@ -1,3 +1,4 @@
+import { Github } from "@/lib/lucide-react-compat";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import AppShell from "@/components/AppShell";
@@ -8,10 +9,32 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import {
-  GitBranch, RefreshCw, CheckCircle2, XCircle, Clock, Zap, CreditCard,
-  Globe, Terminal, TestTube2, Wifi, WifiOff, Play, RotateCcw, Shield,
-  ChevronRight, Copy, ExternalLink, AlertTriangle, Activity, Github,
-  FlaskConical, Code, DollarSign, Lock, Key, Database,
+  GitBranch,
+  RefreshCw,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Zap,
+  CreditCard,
+  Globe,
+  Terminal,
+  TestTube2,
+  Wifi,
+  WifiOff,
+  Play,
+  RotateCcw,
+  Shield,
+  ChevronRight,
+  Copy,
+  ExternalLink,
+  AlertTriangle,
+  Activity,
+  FlaskConical,
+  Code,
+  DollarSign,
+  Lock,
+  Key,
+  Database,
 } from "lucide-react";
 
 const STRIPE_TEST_CARDS = [
