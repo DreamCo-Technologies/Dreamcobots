@@ -24,6 +24,10 @@ test("repository registry covers files, routes, pages, and test suites", () => {
   assert.equal(registry.summary.blocked_suites, 0);
   assert.equal(registry.safety_contract.browser_executes_repository_commands, false);
   assert.equal(registry.safety_contract.external_writes, "forbidden");
+  assert.ok(registry.files.every((file) => !file.path.startsWith("config/generated/")));
+  assert.ok(registry.files.every((file) => !file.path.startsWith("website/data/")));
+  assert.ok(registry.files.every((file) => !file.path.startsWith("reports/")));
+  assert.ok(registry.files.every((file) => !file.path.startsWith("tmp/")));
   const suiteIds = new Set(registry.suites.map((suite) => suite.id));
   assert.ok(registry.routes.every((route) => suiteIds.has(route.suite_id)));
   assert.ok(registry.files.every((file) => suiteIds.has(file.suite_id)));
