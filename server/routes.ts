@@ -68,6 +68,13 @@ import {
 } from "./buddy-model-policy";
 import { getModelSourceConnectionAudit } from "./model-source-connection-policy";
 import {
+  createModelImprovementPlan,
+  getModelProgressCenter,
+  modelCouncilRequestSchema,
+  modelImprovementPlanRequestSchema,
+  selectModelCouncil,
+} from "./model-progress-policy";
+import {
   demandModelMatchRequestSchema,
   getDemandOntology,
   matchDemandReasonToModels,
@@ -987,15 +994,13 @@ export async function registerRoutes(
 
   // ===== RIGHTS-CLEARED DATA PACKAGE TEMPLATES =====
   app.get("/api/data-packages", async (_req, res) => {
+    const progress = getModelProgressCenter();
     res.json({
       schema: "dreamco.safe_data_package_templates.v1",
       claim: "Planning templates only. No dataset is listed, licensed, or sold by this endpoint.",
-      templates: [
-        { id: "synthetic-evals", name: "Owner-generated synthetic evaluations", allowed: "Synthetic prompts, expected results, and grader evidence created by the owner", blocked: "Private conversations, provider outputs without rights, personal data" },
-        { id: "open-source-test-evidence", name: "Licensed open-source test evidence", allowed: "Original compatibility results with source revision, license, and provenance", blocked: "Repository code redistributed outside its license" },
-        { id: "public-domain-annotations", name: "Public-domain annotations", allowed: "Owner-created annotations over verified public-domain material", blocked: "Copyrighted or unclear-rights source material" },
-        { id: "original-workflows", name: "Original workflow templates", allowed: "Owner-authored, secret-free workflow schemas and documentation", blocked: "Customer records, credentials, or third-party confidential processes" },
-      ],
+      templates: progress.datasetPackages,
+      templateCount: progress.datasetPackages.length,
+      populatedDatasetCount: 0,
       requiredEvidence: [
         "distinct encrypted source reference",
         "ownership evidence receipt",
@@ -1669,6 +1674,7 @@ export async function registerRoutes(
         { name: "Voice and Likeness", route: "POST /api/buddy/media/render-plan", status: "local-adapter-contract-ready", description: "Local-first adult owner or licensed-performer media with consent, provenance, labeling, license review, and measured quality gates" },
         { name: "Media Quality Lab", route: "POST /api/buddy/media/quality/candidate-plan", status: "evaluation-runtime-ready", description: "Generate multiple local candidates, score voice, image, and video evidence, prevent regressions, and allow comparison claims only after blinded statistical proof" },
         { name: "Communication Behavior", route: "POST /api/buddy/behavior/profile", status: "sandbox-ready", description: "DreamCo-owned personality and communication adaptation with professional context overrides, opt-in voice cues, and no hidden psychological or clinical inference" },
+        { name: "Model Benchmark Tracker", route: "GET /api/buddy/models/progress", status: "catalog-live-evidence-pending", description: "500 target readiness records, free and premium top-20 task councils, benchmark roadmaps, Bootcamp tracks, and rights-safe dataset package templates" },
         { name: "Owned Task Board", route: "Buddy web task workspace", status: "live-local", description: "Capture every freeform request, add tasks at any time, and run, pause, complete, or remove locally stored work" },
         { name: "Opportunity and Workforce Engine", route: "POST /api/buddy/workforce/job-analysis", status: "shadow-ready", description: "Classify work A-F, match real Buddy bots, simulate services and economics, and stop at professional, external-action, payment, and owner-approval gates" },
         { name: "Web Search", route: "POST /api/search/web", status: "live", description: "GitHub + OpenAI synthesis search" },
@@ -3282,6 +3288,24 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     res.json(getModelSourceConnectionAudit());
   });
 
+  app.get("/api/buddy/models/progress", (_req, res) => {
+    res.json(getModelProgressCenter());
+  });
+
+  app.get("/api/buddy/models/council", (req, res) => {
+    const parsed = modelCouncilRequestSchema.safeParse({
+      taskCategory: req.query.taskCategory,
+      mode: req.query.mode || "free",
+      approvePaidModelsForThisRequest: req.query.approvePaidModelsForThisRequest === "true",
+    });
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.json(selectModelCouncil(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid model council" });
+    }
+  });
+
   app.get("/api/buddy/models/demand-ontology", (_req, res) => {
     res.json(getDemandOntology());
   });
@@ -3321,6 +3345,20 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
       return res.status(201).json(createModelBenchmarkPlan(parsed.data));
     } catch (error) {
       return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid benchmark plan" });
+    }
+  });
+
+  app.post("/api/buddy/models/improvement-plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Model improvement planning is locked by the kill switch" });
+    }
+    const parsed = modelImprovementPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createModelImprovementPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid improvement plan" });
     }
   });
 

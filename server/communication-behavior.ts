@@ -3,7 +3,11 @@ import { resolve } from "node:path";
 import { z } from "zod";
 
 type TraitDefinition = { id: string; label: string; default: number };
-type ContextDefinition = { slang_allowed: boolean; trait_floors?: Record<string, number> };
+type ContextDefinition = {
+  slang_allowed: boolean;
+  trait_floors?: Record<string, number>;
+  trait_ceilings?: Record<string, number>;
+};
 type ConversationModel = { response_sequence: string[]; competencies: string[]; anti_patterns: string[] };
 type PsychologyKnowledgeBoundary = { education_domains: string[]; allowed_uses: string[]; forbidden_uses: string[] };
 type CommunicationCatalog = {
@@ -93,6 +97,9 @@ export function buildCommunicationPlan(request: z.infer<typeof communicationPlan
   const traits = { ...defaultTraits(), ...request.profile.traits };
   for (const [id, floor] of Object.entries(context.trait_floors ?? {})) {
     traits[id] = Math.max(traits[id] ?? 0, floor);
+  }
+  for (const [id, ceiling] of Object.entries(context.trait_ceilings ?? {})) {
+    traits[id] = Math.min(traits[id] ?? 0, ceiling);
   }
   const professional = !["casual", "creative"].includes(request.context);
   return {

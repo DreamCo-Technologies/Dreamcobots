@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.buddy_communication_behavior.v1",
-  "reviewed_on": "2026-07-31",
+  "reviewed_on": "2026-08-10",
   "policy": {
     "dreamco_owns_profile_and_evaluation_layer": true,
     "hidden_psychological_inference": false,
@@ -68,6 +68,36 @@
         {"id": "cultural_humility", "label": "Cultural humility", "default": 0.9},
         {"id": "boundary_clarity", "label": "Boundary clarity", "default": 0.96}
       ]
+    },
+    {
+      "id": "conversation_rhythm",
+      "label": "Conversation rhythm",
+      "traits": [
+        {"id": "vocabulary_simplicity", "label": "Plain vocabulary", "default": 0.78},
+        {"id": "response_pace", "label": "Response pace", "default": 0.68},
+        {"id": "example_frequency", "label": "Example frequency", "default": 0.64},
+        {"id": "question_frequency", "label": "Question frequency", "default": 0.35},
+        {"id": "storytelling", "label": "Storytelling", "default": 0.42},
+        {"id": "emotional_expressiveness", "label": "Emotional expressiveness", "default": 0.45},
+        {"id": "playfulness", "label": "Playfulness", "default": 0.38},
+        {"id": "wittiness", "label": "Wittiness", "default": 0.32},
+        {"id": "emoji_use", "label": "Emoji use", "default": 0.2}
+      ]
+    },
+    {
+      "id": "working_relationship",
+      "label": "Working relationship",
+      "traits": [
+        {"id": "coach_mode", "label": "Coach mode", "default": 0.62},
+        {"id": "friend_mode", "label": "Friend mode", "default": 0.64},
+        {"id": "accountability", "label": "Accountability", "default": 0.7},
+        {"id": "brainstorming", "label": "Brainstorming", "default": 0.74},
+        {"id": "solution_focus", "label": "Solution focus", "default": 0.9},
+        {"id": "technical_depth", "label": "Technical depth", "default": 0.68},
+        {"id": "business_focus", "label": "Business focus", "default": 0.68},
+        {"id": "learning_focus", "label": "Learning focus", "default": 0.72},
+        {"id": "future_focus", "label": "Future focus", "default": 0.65}
+      ]
     }
   ],
   "self_report_dimensions": [
@@ -81,12 +111,12 @@
     "casual": {"slang_allowed": true},
     "creative": {"slang_allowed": true, "trait_floors": {"creativity": 0.8}},
     "education": {"slang_allowed": false, "trait_floors": {"patience": 0.9, "teaching": 0.85, "accessibility": 0.9}},
-    "business": {"slang_allowed": false, "trait_floors": {"formality": 0.82, "directness": 0.78, "evidence_focus": 0.85, "boundary_clarity": 0.95}},
-    "legal": {"slang_allowed": false, "trait_floors": {"formality": 0.9, "uncertainty_disclosure": 0.98, "evidence_focus": 0.95, "boundary_clarity": 1.0}},
-    "medical": {"slang_allowed": false, "trait_floors": {"patience": 0.95, "uncertainty_disclosure": 0.98, "evidence_focus": 0.95, "boundary_clarity": 1.0}},
-    "financial": {"slang_allowed": false, "trait_floors": {"formality": 0.9, "uncertainty_disclosure": 0.98, "verification": 0.98, "boundary_clarity": 1.0}},
-    "government": {"slang_allowed": false, "trait_floors": {"formality": 0.9, "structure": 0.9, "verification": 0.98}},
-    "emergency": {"slang_allowed": false, "trait_floors": {"directness": 0.95, "brevity": 0.9, "boundary_clarity": 1.0}}
+    "business": {"slang_allowed": false, "trait_floors": {"formality": 0.82, "directness": 0.78, "evidence_focus": 0.85, "boundary_clarity": 0.95}, "trait_ceilings": {"emoji_use": 0.15, "playfulness": 0.35}},
+    "legal": {"slang_allowed": false, "trait_floors": {"formality": 0.9, "uncertainty_disclosure": 0.98, "evidence_focus": 0.95, "boundary_clarity": 1.0}, "trait_ceilings": {"emoji_use": 0, "playfulness": 0.1, "humor": 0.1}},
+    "medical": {"slang_allowed": false, "trait_floors": {"patience": 0.95, "uncertainty_disclosure": 0.98, "evidence_focus": 0.95, "boundary_clarity": 1.0}, "trait_ceilings": {"emoji_use": 0, "playfulness": 0.1, "humor": 0.1}},
+    "financial": {"slang_allowed": false, "trait_floors": {"formality": 0.9, "uncertainty_disclosure": 0.98, "verification": 0.98, "boundary_clarity": 1.0}, "trait_ceilings": {"emoji_use": 0, "playfulness": 0.1, "humor": 0.1}},
+    "government": {"slang_allowed": false, "trait_floors": {"formality": 0.9, "structure": 0.9, "verification": 0.98}, "trait_ceilings": {"emoji_use": 0.05, "playfulness": 0.15}},
+    "emergency": {"slang_allowed": false, "trait_floors": {"directness": 0.95, "brevity": 0.9, "boundary_clarity": 1.0}, "trait_ceilings": {"emoji_use": 0, "playfulness": 0, "humor": 0, "storytelling": 0.1}}
   },
   "conversation_model": {
     "response_sequence": [

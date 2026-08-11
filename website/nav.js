@@ -31,6 +31,7 @@
     { href: 'government.html', label: '🏛️ Government Resources' },
     { href: 'crypto.html', label: '🔐 Crypto Safety Lab' },
     { href: 'models.html', label: '🤖 AI Models' },
+    { href: 'benchmark-tracker.html', label: '📐 Benchmark Tracker' },
     { href: 'open-model-lab.html', label: '🧪 Open Model Lab' },
     { href: 'leaders.html', label: '🏆 AI Leaders' },
     { href: 'learning.html', label: '📚 Learning' },

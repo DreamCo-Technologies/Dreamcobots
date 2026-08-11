@@ -123,6 +123,7 @@
       moneyActionMode: 'plan_only',
       professionalSupport: 'draft_and_prepare',
       communicationStyle: 'conversational',
+      relationshipStyle: 'teammate',
       voiceToneAdaptation: false,
       behaviorTraits: defaultBehaviorTraits(),
       selfReportDimensions: {},
@@ -252,6 +253,9 @@
     Object.entries(context.trait_floors || {}).forEach(([id, floor]) => {
       traits[id] = Math.max(Number(traits[id] || 0), Number(floor));
     });
+    Object.entries(context.trait_ceilings || {}).forEach(([id, ceiling]) => {
+      traits[id] = Math.min(Number(traits[id] || 0), Number(ceiling));
+    });
     const professional = !['casual', 'creative'].includes(contextId);
     return {
       context: contextId,
@@ -367,15 +371,26 @@
     thread.append(row);
   }
 
-  function responseLead(taskMode) {
+  function responseLead(taskMode, communication) {
     const leads = {
-      Build: 'Absolutely. I will turn that into a bounded build and start with the smallest working version.',
-      Fix: 'Got it. I will reproduce the problem, isolate the cause, and keep each repair reversible.',
-      Create: 'I understand the direction. I will shape it into a clear creative brief, prototype, and review loop.',
-      Plan: 'I can help with that. I will organize the decisions, costs, risks, evidence, and next actions.',
+      Build: 'I will turn that into a bounded build and start with the smallest working version.',
+      Fix: 'I will reproduce the problem, isolate the cause, and keep each repair reversible.',
+      Create: 'I will shape that direction into a clear creative brief, prototype, and review loop.',
+      Plan: 'I will organize the decisions, costs, risks, evidence, and next actions.',
       Discover: 'You do not need to know the steps. I will help define the result, teach unfamiliar parts, and begin with a safe practice task.',
     };
-    return leads[taskMode] || leads.Build;
+    const relationship = boundaryPreferences.relationshipStyle || 'teammate';
+    const introductions = {
+      teammate: 'Let us work through it together.',
+      best_friend: 'I am with you on this.',
+      coach: 'We will make the goal concrete and keep progress visible.',
+      teacher: 'I will handle the work while explaining the parts that help you learn.',
+      creative_partner: 'Let us shape the idea and test the strongest direction.',
+      business_partner: 'I will focus on the result, evidence, cost, and practical value.',
+      concierge: 'I will organize the moving parts and keep the next step easy.',
+    };
+    const direct = Number(communication?.traits?.directness || 0) >= 0.85;
+    return `${direct ? '' : `${introductions[relationship] || introductions.teammate} `}${leads[taskMode] || leads.Build}`.trim();
   }
 
   function planSteps(taskMode) {
@@ -426,7 +441,7 @@
     heading.append(specialistEmoji, specialistName);
 
     const lead = document.createElement('p');
-    lead.textContent = responseLead(mode);
+    lead.textContent = responseLead(mode, result.communicationPlan);
     const route = document.createElement('p');
     route.textContent = `I matched this to ${selected.name} in ${selected.division}. I will prepare and test the work first, then pause before any outside account, purchase, signup, message, publication, or data change.`;
     bubble.append(heading, lead, route);
@@ -467,7 +482,7 @@
       const preferences = result.discovery.boundaryPreferences;
       const preferenceNote = document.createElement('p');
       preferenceNote.className = 'buddy-role-boundary';
-      preferenceNote.textContent = `Your settings: ${preferences.communicationStyle.replaceAll('_', ' ')} style, ${preferences.riskDisclosure} risk detail, ${preferences.moneyActionMode.replaceAll('_', ' ')} for money actions. Exact approval remains required for every outside action.`;
+      preferenceNote.textContent = `Your settings: ${preferences.relationshipStyle.replaceAll('_', ' ')} relationship, ${preferences.communicationStyle.replaceAll('_', ' ')} style, ${preferences.riskDisclosure} risk detail, ${preferences.moneyActionMode.replaceAll('_', ' ')} for money actions. Exact approval remains required for every outside action.`;
       bubble.append(preferenceNote);
     }
     if (result.communicationPlan) {
@@ -529,8 +544,8 @@
     launch.href = 'install.html';
     launch.textContent = 'Launch or domain';
     const benchmark = document.createElement('a');
-    benchmark.href = 'models.html';
-    benchmark.textContent = 'Compare models';
+    benchmark.href = 'benchmark-tracker.html';
+    benchmark.textContent = 'Benchmark tracker';
     const sourceLab = document.createElement('a');
     sourceLab.href = 'open-model-lab.html';
     sourceLab.textContent = 'Open-source lab';
@@ -1409,6 +1424,7 @@
     document.getElementById('boundary-approval').value = boundaryPreferences.approvalMode;
     document.getElementById('boundary-money').value = boundaryPreferences.moneyActionMode;
     document.getElementById('boundary-communication').value = boundaryPreferences.communicationStyle;
+    document.getElementById('boundary-relationship').value = boundaryPreferences.relationshipStyle;
     document.getElementById('boundary-depth').value = boundaryPreferences.guidanceDepth;
     document.getElementById('boundary-tone').checked = boundaryPreferences.voiceToneAdaptation;
     renderBehaviorControls();
@@ -1427,6 +1443,7 @@
       approvalMode: document.getElementById('boundary-approval').value,
       moneyActionMode: document.getElementById('boundary-money').value,
       communicationStyle: document.getElementById('boundary-communication').value,
+      relationshipStyle: document.getElementById('boundary-relationship').value,
       guidanceDepth: document.getElementById('boundary-depth').value,
       voiceToneAdaptation: document.getElementById('boundary-tone').checked,
       behaviorTraits: behavior.traits,

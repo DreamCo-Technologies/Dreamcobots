@@ -1,0 +1,84 @@
+{
+  "schema": "dreamco.buddy_model_progress_center.v1",
+  "version": "1.0.0",
+  "reviewed_on": "2026-08-10",
+  "mission": "Give every model target a truthful connection path, task category, council role, benchmark roadmap, and governed improvement path while making free-first use simple for Buddy users.",
+  "council_policy": {
+    "seats_per_task": 20,
+    "task_categories": 20,
+    "modes": ["free", "premium"],
+    "free_eligible_tiers": ["free", "freemium"],
+    "premium_eligible_tiers": ["paid", "freemium"],
+    "provider_diversity_preferred": true,
+    "metadata_rank_is_quality_evidence": false,
+    "live_promotion_requires_comparable_benchmark_evidence": true,
+    "paid_use_requires_per_request_approval": true,
+    "automatic_paid_upgrade": false
+  },
+  "readiness_gates": [
+    {"id": "cataloged", "label": "Cataloged", "description": "The target has an identity, provider, declared task fit, and access note."},
+    {"id": "categorized", "label": "Categorized", "description": "The target maps to one primary task category and relevant benchmark suites."},
+    {"id": "source_linked", "label": "Source linked", "description": "An official provider or project catalog is recorded."},
+    {"id": "setup_path_ready", "label": "Setup path", "description": "The repository explains the connector, secret reference, sandbox, and approval route."},
+    {"id": "exact_version_verified", "label": "Exact version", "description": "The current executable model ID, version, terms, region, and price have been verified."},
+    {"id": "adapter_sandbox_passed", "label": "Adapter tested", "description": "An authenticated adapter passed its provider sandbox and failure tests."},
+    {"id": "live_benchmark_passed", "label": "Live benchmark", "description": "Comparable signed fixtures produced current quality, latency, reliability, and cost evidence."}
+  ],
+  "benchmark_estimates": {
+    "deterministic": {"baseline_setup": "1-3 engineering days", "first_gap_cycle": "2-6 weeks after a comparable baseline"},
+    "schema": {"baseline_setup": "1-3 engineering days", "first_gap_cycle": "2-6 weeks after a comparable baseline"},
+    "sandbox_tests": {"baseline_setup": "3-7 engineering days", "first_gap_cycle": "4-12 weeks after a comparable baseline"},
+    "citation_validator": {"baseline_setup": "3-7 engineering days", "first_gap_cycle": "4-10 weeks after a comparable baseline"},
+    "policy_assertions": {"baseline_setup": "2-5 engineering days", "first_gap_cycle": "3-8 weeks after a comparable baseline"},
+    "bilingual_review": {"baseline_setup": "5-10 engineering days", "first_gap_cycle": "4-12 weeks after a comparable baseline"},
+    "fixture_assertions": {"baseline_setup": "3-7 engineering days", "first_gap_cycle": "4-12 weeks after a comparable baseline"},
+    "transcript_assertions": {"baseline_setup": "3-7 engineering days", "first_gap_cycle": "4-12 weeks after a comparable baseline"}
+  },
+  "bootcamp_path": [
+    "capture an exact task definition and acceptance checks",
+    "build synthetic and owner-generated fixtures with rights metadata",
+    "record the unmodified baseline on held-out fixtures",
+    "assign the smallest measured gap to an isolated training lane",
+    "prefer prompting, retrieval, tools, or adapters before weight training",
+    "checkpoint every candidate and preserve rollback",
+    "rerun identical held-out, safety, privacy, latency, and cost tests",
+    "promote only a verified improvement after required review"
+  ],
+  "continuous_improvement_policy": {
+    "default_network": "off",
+    "default_budget_usd": 0,
+    "production_self_modification": false,
+    "automatic_model_release": false,
+    "owner_review_required": true,
+    "stop_on_regression": true,
+    "stop_on_budget_limit": true,
+    "stop_on_rights_or_privacy_failure": true,
+    "plateau_requires_strategy_review": true,
+    "scheduled_local_evaluation_allowed": true
+  },
+  "workstreams": [
+    {"id": "model_source_watch", "label": "Model source watch", "kind": "studied", "status": "catalog_ready", "description": "Track official model catalogs, versions, terms, prices, and deprecations without assuming availability."},
+    {"id": "provider_adapter_lab", "label": "Provider adapter lab", "kind": "sandboxed", "status": "implementation_required", "description": "Build one authenticated, rate-limited, failure-tested adapter at a time."},
+    {"id": "frontier_comparison", "label": "Frontier comparison", "kind": "benchmarked", "status": "live_evidence_required", "description": "Use identical signed fixtures and preserve failures, versions, cost, and latency."},
+    {"id": "open_model_gap_closure", "label": "Open model gap closure", "kind": "training", "status": "curriculum_ready", "description": "Turn measured gaps into isolated Buddy Bootcamp drills with rollback and regression gates."},
+    {"id": "opportunity_experiments", "label": "Opportunity experiments", "kind": "revenue", "status": "sandbox_only", "description": "Validate customer problems, offers, pricing, and fulfillment before outreach or spending. Income is never guaranteed."},
+    {"id": "dataset_package_lab", "label": "Dataset package lab", "kind": "data", "status": "template_ready", "description": "Create synthetic, owner-generated, or clearly licensed packages with provenance, privacy, contamination, and usefulness tests."}
+  ],
+  "dataset_package_policy": {
+    "template_count": 50,
+    "records_included": 0,
+    "allowed_inputs": ["synthetic data created for the package", "owner-created data with separate training and resale opt-in", "verified public-domain or open-license material within its terms"],
+    "blocked_inputs": ["private conversations", "provider outputs without training and resale rights", "minor data", "credentials or secrets", "third-party personal or confidential data", "copyrighted material without permission"],
+    "required_artifacts": ["dataset card", "schema and field dictionary", "provenance ledger", "license card", "privacy and secret scan", "deduplication report", "contamination report", "held-out evaluation", "training recipe", "rollback and withdrawal policy"],
+    "sale_requires_verified_release": true
+  },
+  "truth_contract": {
+    "target_is_company_connection": false,
+    "catalog_ready_is_live_ready": false,
+    "council_rank_is_frontier_quality_proof": false,
+    "estimated_time_is_guaranteed": false,
+    "training_template_is_trained_model": false,
+    "dataset_template_contains_sellable_data": false,
+    "revenue_experiment_guarantees_income": false
+  }
+}

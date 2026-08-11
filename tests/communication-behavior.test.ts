@@ -24,6 +24,7 @@ test("professional communication applies evidence and formality floors", () => {
   assert.equal(plan.profile.slangAllowed, false);
   assert.ok(plan.profile.traits.formality >= 0.9);
   assert.ok(plan.profile.traits.evidence_focus >= 0.95);
+  assert.equal(plan.profile.traits.emoji_use, 0);
 });
 
 test("voice-cue adaptation requires explicit opt-in and never diagnoses", () => {
@@ -72,7 +73,7 @@ test("communication benchmark uses synthetic fixtures and aggregate metrics", ()
 test("catalog covers broad interaction traits without hidden inference", () => {
   const catalog = getCommunicationBehaviorCatalog();
   const traits = catalog.trait_groups.flatMap((group) => group.traits);
-  assert.equal(traits.length, 32);
+  assert.equal(traits.length, 50);
   assert.equal(catalog.self_report_dimensions.length, 5);
   assert.equal(catalog.policy.hidden_psychological_inference, false);
   assert.equal(catalog.policy.self_report_only_for_psychology_dimensions, true);

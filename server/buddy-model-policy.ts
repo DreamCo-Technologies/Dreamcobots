@@ -246,7 +246,12 @@ export function selectBuddyModelsForTask(
   const config = getBuddyModelRouterConfig();
   const taskSignals = matchingTaskSignals(request.objective, request.requiredCapabilities);
   const scored = MODEL_BENCHMARK_TARGETS
-    .filter((target) => request.allowDiscovery || !target.discoveryTarget)
+    .filter((target) => {
+      if (target.discoveryTarget) return request.allowDiscovery;
+      if (request.preferredTier === "free") return ["free", "freemium"].includes(target.tier);
+      if (request.preferredTier === "premium") return ["paid", "freemium"].includes(target.tier);
+      return true;
+    })
     .map((target) => targetRoutingScore(target, request, taskSignals))
     .sort((left, right) => right.score - left.score || left.target.id - right.target.id);
   const providerDiverse = scored.filter((candidate, index, all) => (
