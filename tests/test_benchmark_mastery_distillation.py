@@ -40,7 +40,9 @@ class BenchmarkMasteryDistillationTests(unittest.TestCase):
         joined = " ".join(prohibited).lower()
         self.assertIn("weakening", joined)
         self.assertIn("fabricating", joined)
-        self.assertIn("passing evidence", self.policy["truth_boundary"].lower())
+        truth_boundary = self.policy["truth_boundary"].lower()
+        self.assertIn("passing benchmark evidence", truth_boundary)
+        self.assertIn("not proof of mastery", truth_boundary)
         for row in self.plan["suites"]:
             self.assertTrue(row["mastery"]["regression_revokes_mastery"])
             self.assertTrue(row["gap_closure"]["promotion_requires_passing_evidence"])
