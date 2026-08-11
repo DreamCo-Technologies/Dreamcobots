@@ -1,0 +1,87 @@
+name: DreamCo Repository System Watch
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, codex/master-capability-pages]
+    paths-ignore:
+      - "website/data/repository-master-map.json"
+      - "config/generated/repository-master-map.json"
+  schedule:
+    - cron: "31 * * * *"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dreamco-repository-system-watch-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  inventory-and-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install deterministic dependencies
+        run: npm ci
+
+      - name: Generate repository master inventory
+        run: python3 tools/generate_dreamco_repository_master_map.py
+
+      - name: Verify repository and Pages contracts
+        run: |
+          python3 tools/generate_repository_test_registry.py --check
+          npm run test:actions-page
+          node --check website/system-map.js
+          node --check website/actions.js
+          test -s website/system-map.html
+          test -s website/actions.html
+          test -s website/data/repository-master-map.json
+
+      - name: Write system watch summary
+        if: always()
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          p=Path('website/data/repository-master-map.json')
+          d=json.loads(p.read_text()) if p.exists() else {}
+          s=d.get('summary', {})
+          print('# DreamCo Repository System Watch\n')
+          print(f"- Files scanned: **{s.get('files_scanned', 0)}**")
+          print(f"- Actions workflows: **{s.get('workflows', 0)}**")
+          print(f"- Pages assets: **{s.get('pages_assets', 0)}**")
+          print(f"- Test files: **{s.get('test_files', 0)}**")
+          print(f"- Bot sources: **{s.get('bot', 0)}**")
+          print(f"- Backend files: **{s.get('backend', 0)}**")
+          print(f"- Frontend files: **{s.get('frontend', 0)}**")
+          print('\nInventory is evidence of repository coverage, not proof of runtime mastery.')
+          PY
+
+      - name: Save inventory evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: dreamco-repository-system-watch-${{ github.run_id }}
+          path: |
+            website/data/repository-master-map.json
+            config/generated/repository-master-map.json
+          if-no-files-found: warn
+          retention-days: 14
