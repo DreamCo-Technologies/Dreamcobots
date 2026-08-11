@@ -5,7 +5,6 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CLIENT = ROOT / "client" / "src"
 
 REPLACEMENTS = {
     "server/fleet-runtime.ts": [
@@ -49,48 +48,67 @@ REPLACEMENTS = {
     ],
 }
 
-LUCIDE_IMPORT_RE = re.compile(r'import\s*\{(?P<body>.*?)\}\s*from\s*["\']lucide-react["\'];?', re.DOTALL)
+GITHUB_ICON_FILES = (
+    "client/src/components/AppShell.tsx",
+    "client/src/pages/ActionsPage.tsx",
+    "client/src/pages/BuddyPage.tsx",
+    "client/src/pages/ConversationPage.tsx",
+    "client/src/pages/SandboxPage.tsx",
+)
+
+# The old regex used .*? with DOTALL, which could start at an earlier import and
+# consume several unrelated import statements before reaching lucide-react.
+# Restricting the body to characters before the first closing brace keeps the
+# rewrite inside one named-import declaration.
+LUCIDE_IMPORT_RE = re.compile(
+    r'import\s*\{(?P<body>[^}]*)\}\s*from\s*["\']lucide-react["\'];?'
+)
 LOCAL_GITHUB_IMPORT = 'import { Github } from "@/lib/lucide-react-compat";'
+
+
+def rewrite_github_icon_imports(text: str) -> str:
+    changed = False
+
+    def replace(match: re.Match[str]) -> str:
+        nonlocal changed
+        body = match.group("body")
+        names = [item.strip() for item in body.replace("\n", " ").split(",") if item.strip()]
+        if "Github" not in names:
+            return match.group(0)
+        changed = True
+        names = [name for name in names if name != "Github"]
+        if not names:
+            return ""
+        if "\n" in body:
+            rendered = "\n  " + ",\n  ".join(names) + ",\n"
+        else:
+            rendered = " " + ", ".join(names) + " "
+        return f'import {{{rendered}}} from "lucide-react";'
+
+    updated = LUCIDE_IMPORT_RE.sub(replace, text)
+    if changed and LOCAL_GITHUB_IMPORT not in updated:
+        # Prepending is deliberately safer than searching for the end of an
+        # import block: multi-line imports do not have every line prefixed by
+        # the word "import".
+        updated = f"{LOCAL_GITHUB_IMPORT}\n{updated}"
+    return updated
 
 
 def migrate_github_icon_imports() -> list[str]:
     changed: list[str] = []
-    for path in sorted(CLIENT.rglob("*.tsx")):
+    for rel in GITHUB_ICON_FILES:
+        path = ROOT / rel
         text = path.read_text(encoding="utf-8")
-        original = text
-
-        def replace(match: re.Match[str]) -> str:
-            body = match.group("body")
-            names = [item.strip() for item in body.replace("\n", " ").split(",") if item.strip()]
-            if "Github" not in names:
-                return match.group(0)
-            names = [name for name in names if name != "Github"]
-            if not names:
-                return ""
-            if "\n" in body:
-                rendered = "\n  " + ",\n  ".join(names) + ",\n"
-            else:
-                rendered = " " + ", ".join(names) + " "
-            return f'import {{{rendered}}} from "lucide-react";'
-
-        text = LUCIDE_IMPORT_RE.sub(replace, text)
-        if text != original and LOCAL_GITHUB_IMPORT not in text:
-            lines = text.splitlines()
-            insert_at = 0
-            while insert_at < len(lines) and lines[insert_at].startswith("import "):
-                insert_at += 1
-            lines.insert(insert_at, LOCAL_GITHUB_IMPORT)
-            text = "\n".join(lines) + ("\n" if original.endswith("\n") else "")
-
-        if text != original:
-            path.write_text(text, encoding="utf-8")
-            changed.append(str(path.relative_to(ROOT)))
+        updated = rewrite_github_icon_imports(text)
+        if updated != text:
+            path.write_text(updated, encoding="utf-8")
+            changed.append(rel)
     return changed
 
 
 def main() -> int:
-    changed = []
-    already_current = []
+    changed: list[str] = []
+    already_current: list[str] = []
     for rel, replacements in REPLACEMENTS.items():
         path = ROOT / rel
         text = path.read_text(encoding="utf-8")
