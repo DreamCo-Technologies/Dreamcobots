@@ -42,7 +42,16 @@ export function buildFleetQualityProgram() {
   const fleetSlugs = new Set(fleet.bots.map((bot) => bot.identity.slug));
   const dimensionIds = source.benchmark_dimensions.map((dimension) => dimension.id);
   const phaseIds = source.release_pipeline.map((phase) => phase.id);
-  const workerSlugs = source.quality_workers.map((worker) => worker.slug);
+  const globalMasterSlug = fleetSlugs.has("dreambot") ? "dreambot" : fleet.bots[0]?.identity.slug;
+  if (!globalMasterSlug) throw new Error("Fleet quality program requires at least one routable master bot.");
+  const qualityWorkerRoutes = source.quality_workers.map((worker) => ({
+    slug: fleetSlugs.has(worker.slug) ? worker.slug : globalMasterSlug,
+    requested_slug: worker.slug,
+    resolved_slug: fleetSlugs.has(worker.slug) ? worker.slug : globalMasterSlug,
+    role: worker.role,
+    resolution: fleetSlugs.has(worker.slug) ? "exact_specialist" : "global_master_alias",
+  }));
+  const workerSlugs = [...new Set(qualityWorkerRoutes.map((worker) => worker.resolved_slug))];
 
   if (new Set(dimensionIds).size !== dimensionIds.length || dimensionIds.length < 10) {
     throw new Error("Fleet quality dimensions must be unique and comprehensive.");
@@ -56,9 +65,6 @@ export function buildFleetQualityProgram() {
   }
   if (source.learning_path_policy.maximum_parallel_modules < 1) {
     throw new Error("Fleet learning paths must allow at least one active module.");
-  }
-  for (const slug of workerSlugs) {
-    if (!fleetSlugs.has(slug)) throw new Error(`Fleet quality worker does not resolve: ${slug}`);
   }
 
   const bots = fleet.bots.map((bot) => {
@@ -195,7 +201,7 @@ export function buildFleetQualityProgram() {
     },
     benchmark_dimensions: source.benchmark_dimensions,
     competitor_discovery: source.competitor_discovery,
-    quality_workers: source.quality_workers,
+    quality_workers: qualityWorkerRoutes,
     release_pipeline: source.release_pipeline,
     dependency_gates: source.dependency_gates,
     continuous_learning: source.continuous_learning,

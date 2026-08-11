@@ -1,0 +1,81 @@
+name: Zod 4 Migration Repair
+
+on:
+  push:
+    branches:
+      - agent/dream-ai-company-library-intelligence
+    paths:
+      - ".github/workflows/zod4-migration-repair.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: zod4-migration-repair-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/dream-ai-company-library-intelligence
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Apply exact Zod 4 migrations
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              "server/fleet-runtime.ts": [
+                  ("input: z.record(z.unknown()).default({}),", "input: z.record(z.string(), z.unknown()).default({}),"),
+              ],
+              "server/media-quality-lab.ts": [
+                  ("dimensions: z.record(z.number().min(0).max(1)),", "dimensions: z.record(z.string(), z.number().min(0).max(1)),"),
+                  ("hardGates: z.record(z.boolean()),", "hardGates: z.record(z.string(), z.boolean()),"),
+              ],
+              "server/routes.ts": [
+                  ("err.errors[0]?.message", "err.issues[0]?.message"),
+                  ("err.errors[0]?.path", "err.issues[0]?.path"),
+              ],
+          }
+
+          for filename, edits in replacements.items():
+              path = Path(filename)
+              text = path.read_text(encoding="utf-8")
+              for old, new in edits:
+                  count = text.count(old)
+                  if count != 1:
+                      raise SystemExit(f"Expected exactly one match in {filename}: {old!r}; found {count}")
+                  text = text.replace(old, new)
+              path.write_text(text, encoding="utf-8")
+          PY
+      - name: Type-check migrated source
+        run: npm run check
+      - name: Run targeted runtime tests
+        run: |
+          node --import tsx --test \
+            tests/fleet-runtime.test.ts \
+            tests/media-engine.test.ts \
+            tests/media-quality-lab.test.ts \
+            tests/communication-behavior.test.ts
+      - name: Commit verified migration
+        run: |
+          if git diff --quiet; then
+            echo "No migration changes were needed."
+            exit 0
+          fi
+          git config user.name "DreamCo CI Repair"
+          git config user.email "actions@users.noreply.github.com"
+          git add server/fleet-runtime.ts server/media-quality-lab.ts server/routes.ts
+          git commit -m "complete Zod 4 source migration"
+          git push origin HEAD:agent/dream-ai-company-library-intelligence

@@ -29,6 +29,10 @@ permissions:
   contents: read
   issues: write
 
+concurrency:
+  group: actions-failure-watch-${{ github.event.workflow_run.id }}
+  cancel-in-progress: true
+
 jobs:
   capture:
     if: >-

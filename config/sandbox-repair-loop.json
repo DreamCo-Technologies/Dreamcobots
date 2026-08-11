@@ -1,0 +1,63 @@
+{
+  "schema": "dreamco.sandbox_repair_loop.v1",
+  "mission": "After every fleet sandbox test, isolate failed capability contracts, apply only bounded test-backed repairs, retest the affected capability and bot, then rerun the fleet until all declared capability contracts pass or a real blocker is recorded.",
+  "max_rounds_per_run": 8,
+  "stop_after_no_progress_rounds": 2,
+  "success_contract": {
+    "profiles_tested": 1051,
+    "failed_profiles": 0,
+    "all_declared_capabilities_tested": true,
+    "sandbox_capability_tests_failed": 0,
+    "sandbox_capability_tests_passed_equals_declared_capabilities_tested": true,
+    "repository_controlled_flow_complete": true
+  },
+  "repair_order": [
+    "regenerate canonical fleet catalog",
+    "run fleet end-to-end sandbox certification",
+    "extract exact failed capabilities and failure reasons",
+    "prefer one shared deterministic repair over repeated bot-specific patches",
+    "run known idempotent compatibility repairers when their patterns apply",
+    "compile/type-check repaired source",
+    "regenerate fleet-quality evidence",
+    "rerun fleet end-to-end sandbox certification",
+    "rebuild all-bot sandbox campaign",
+    "repeat while failure count is shrinking"
+  ],
+  "allowed_automatic_repairs": [
+    "python3 tools/migrate_zod4_compat.py",
+    "npx tsx tools/generate_bot_fleet_catalog.ts",
+    "npx tsx tools/generate_buddy_fleet_quality_program.ts",
+    "python3 tools/build_bot_sandbox_curriculum.py"
+  ],
+  "forbidden_repairs": [
+    "weakening or deleting a failing test",
+    "marking a capability passed without executable evidence",
+    "npm audit fix --force",
+    "unreviewed arbitrary source rewrites",
+    "live external writes",
+    "paid model calls without approval",
+    "production deployment",
+    "credential changes",
+    "merging main"
+  ],
+  "failure_behavior": {
+    "unknown_or_semantic_gap": "leave red, assign a task-scoped gap worker, preserve exact failure evidence, and require a new candidate repair before the next retest",
+    "external_dependency_gap": "record blocked dependency/provider/permission state rather than looping blindly",
+    "no_progress": "stop the current Actions run after two rounds with no reduction in failed capability count and publish the unresolved queue",
+    "regression": "make the regression a permanent fixture and reopen mastery for the affected bot/capability"
+  },
+  "retest_order": [
+    "failed capability acceptance path",
+    "affected bot sandbox certification",
+    "affected division evidence",
+    "full 1,051-bot fleet end-to-end certification"
+  ],
+  "cost_policy": {
+    "passing_bots_sleep": true,
+    "only_failed_or_affected_paths_get_focused_repair_work": true,
+    "shared_repairs_first": true,
+    "full_fleet_retest_after_candidate_fix": true,
+    "paid_live_provider_benchmarks_default_off": true
+  },
+  "truth_rule": "Repair-until-pass never means fabricate a pass or spin forever. The loop keeps a capability non-passing until executable evidence passes; genuine blockers remain visible and prevent a green result."
+}

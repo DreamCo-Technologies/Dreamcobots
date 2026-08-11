@@ -1,5 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
+import { registerIntelligentRoutingRoutes } from "./intelligent-routing-routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import { getUncachableStripeClient } from './stripeClient';
@@ -9,6 +10,14 @@ import { seedStripeProducts } from './seed-stripe-products';
 const app = express();
 const httpServer = createServer(app);
 const processStartedAt = Date.now();
+
+const publicExecutionOrigins = new Set([
+  "https://dreamco-technologies.github.io",
+  ...(process.env.BUDDY_PUBLIC_EXECUTION_ORIGINS || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean),
+]);
 
 declare module "http" {
   interface IncomingMessage {
@@ -34,6 +43,19 @@ async function initStripe() {
   }
 }
 
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && publicExecutionOrigins.has(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Max-Age", "600");
+  }
+  if (req.method === "OPTIONS") return res.status(204).end();
+  return next();
+});
+
 app.get('/api/health', (_req, res) => {
   res.status(200).json({
     ok: true,
@@ -41,6 +63,7 @@ app.get('/api/health', (_req, res) => {
     environment: process.env.NODE_ENV || 'development',
     uptimeSeconds: Math.floor((Date.now() - processStartedAt) / 1000),
     stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY || process.env.STRIPE_LIVE_SECRET_KEY),
+    publicExecutionBridge: true,
     timestamp: new Date().toISOString(),
   });
 });
@@ -79,6 +102,7 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
+registerIntelligentRoutingRoutes(app);
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {

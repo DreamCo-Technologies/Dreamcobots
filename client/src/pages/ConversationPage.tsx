@@ -1,3 +1,4 @@
+import { Github } from "@/lib/lucide-react-compat";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import Seo from "@/components/Seo";
@@ -23,13 +24,46 @@ import { cn } from "@/lib/utils";
 import type { Message } from "@shared/schema";
 import { api } from "@shared/routes";
 import {
-  Bot, Loader2, Trash2, Wand2, Map, Hammer, Zap, GraduationCap,
-  Sparkles, BrainCircuit, Share2, Download, Mic, Search, Github,
-  BookOpen, Gamepad2, GraduationCap as CourseIcon, Code2, Cpu,
-  CheckCircle2, AlertCircle, ChevronRight, Terminal, FileCode2,
-  Globe, Users, ShieldCheck, BarChart3, Music, ImageIcon, X,
-  Bug, Lock, GitPullRequest, Rocket, FlaskConical, Layers,
-  RefreshCw, Database, Brain,
+  Bot,
+  Loader2,
+  Trash2,
+  Wand2,
+  Map,
+  Hammer,
+  Zap,
+  GraduationCap,
+  Sparkles,
+  BrainCircuit,
+  Share2,
+  Download,
+  Mic,
+  Search,
+  BookOpen,
+  Gamepad2,
+  GraduationCap as CourseIcon,
+  Code2,
+  Cpu,
+  CheckCircle2,
+  AlertCircle,
+  ChevronRight,
+  Terminal,
+  FileCode2,
+  Globe,
+  Users,
+  ShieldCheck,
+  BarChart3,
+  Music,
+  ImageIcon,
+  X,
+  Bug,
+  Lock,
+  GitPullRequest,
+  Rocket,
+  FlaskConical,
+  Layers,
+  RefreshCw,
+  Database,
+  Brain,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 

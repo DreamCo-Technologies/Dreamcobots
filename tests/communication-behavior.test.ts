@@ -25,6 +25,19 @@ test("professional communication applies evidence and formality floors", () => {
   assert.ok(plan.profile.traits.evidence_focus >= 0.95);
 });
 
+test("Zod 4 record schemas preserve string-keyed communication traits", () => {
+  const request = communicationPlanRequestSchema.parse({
+    objective: "Prepare an evidence-focused explanation for a technical review.",
+    context: "business",
+    profile: {
+      traits: { evidence_focus: 0.88, clarity: 0.91 },
+      selfReportDimensions: {},
+    },
+  });
+  assert.equal(request.profile.traits.evidence_focus, 0.88);
+  assert.equal(request.profile.traits.clarity, 0.91);
+});
+
 test("voice-cue adaptation requires explicit opt-in and never diagnoses", () => {
   assert.throws(() => communicationPlanRequestSchema.parse({
     objective: "Adapt the pace of this teaching conversation.",

@@ -38,6 +38,13 @@ function ownerVoiceRequest(overrides: Record<string, unknown> = {}) {
   });
 }
 
+test("Zod 4 media record schema preserves named personality traits", () => {
+  const request = ownerVoiceRequest();
+  assert.equal(request.personalityTraits.warmth, 0.9);
+  assert.equal(request.personalityTraits.clarity, 1);
+  assert.equal(request.personalityTraits.energy, 0.5);
+});
+
 test("local media catalog has no paid provider requirement and honest readiness", () => {
   const catalog = getLocalMediaCatalog();
   assert.equal(catalog.policy.paid_provider_required, false);

@@ -1,0 +1,62 @@
+name: Personal Data Fabric
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "config/buddy-personal-data-fabric.json"
+      - "server/personal-data-fabric.ts"
+      - "tests/personal-data-fabric.test.ts"
+      - ".github/workflows/personal-data-fabric.yml"
+  push:
+    branches: [main]
+    paths:
+      - "config/buddy-personal-data-fabric.json"
+      - "server/personal-data-fabric.ts"
+      - "tests/personal-data-fabric.test.ts"
+      - ".github/workflows/personal-data-fabric.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: personal-data-fabric-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Explain this action
+        run: |
+          {
+            echo "# Personal Data Fabric"
+            echo
+            echo "**Owner:** Checks whether Buddy's user-owned data layer can catalog and search authorized notes, files, images, exports, and records without silently copying private data to DreamCo cloud storage."
+            echo
+            echo "**Users:** Verifies owner-scoped search, metadata export, deletion, and connector revocation behavior."
+            echo
+            echo "**Developers:** Runs typed runtime tests for the portable personal-data manifest/index contract."
+            echo
+            echo "**Investors:** Demonstrates a privacy-first personalization architecture: user ownership, portability, consent, provenance, and replaceable storage/connectors."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - run: npm ci
+      - name: Verify personal data fabric runtime
+        run: node --import tsx --test tests/personal-data-fabric.test.ts
+      - name: Verify policy contract
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const d=JSON.parse(fs.readFileSync('config/buddy-personal-data-fabric.json','utf8'));
+          if(d.ownership!=='user') throw new Error('Personal data must remain user-owned');
+          if(d.cloud_copy_default!==false) throw new Error('Cloud copy must not be the default');
+          if(!d.privacy_controls.includes('export all') || !d.privacy_controls.includes('delete all')) throw new Error('Export/delete controls required');
+          if(d.supported_data_classes.length < 20) throw new Error('Personal data coverage unexpectedly narrow');
+          console.log({supported_data_classes:d.supported_data_classes.length, ownership:d.ownership, storage:d.default_storage});
+          NODE

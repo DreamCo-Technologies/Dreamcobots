@@ -1,13 +1,18 @@
 {
-  "schema": "dreamco.bot_universal_sandbox_skill_gap.v1",
-  "version": "1.0.0",
-  "mission": "Put every canonical DreamCo bot through Buddy Bootcamp with explicit coverage for every declared capability, discoverable tool and callable function, plus efficiency training, skill-building drills, competitor/open-source benchmarks, and measurable gap-closing plans.",
+  "schema": "dreamco.bot_universal_sandbox_skill_gap.v2",
+  "version": "2.0.0",
+  "mission": "Keep every canonical DreamCo bot in an active sandbox mastery campaign with explicit coverage for every declared capability, discoverable tool and callable function, plus efficiency training, model/tool routing benchmarks, competitor/open-source benchmarks, and measurable gap-closing plans.",
   "applies_to": "all canonical bots in App_bots/*.json",
+  "default_execution_mode": "sandbox",
+  "live_external_actions_default": false,
   "inherits": [
     "config/buddy-bootcamp-program.json",
     "config/division-strengthening-placement-program.json",
     "config/buddy-guardrails-benchmark-program.json",
-    "config/shared-fleet-improvement-inheritance.json"
+    "config/shared-fleet-improvement-inheritance.json",
+    "config/intelligent-task-router.json",
+    "config/model-mastery-benchmark-program.json",
+    "config/benchmark-mastery-distillation-policy.json"
   ],
   "required_per_bot": [
     "identity and division contract",
@@ -21,6 +26,7 @@
     "security/privacy/rights tests",
     "latency/resource/cost efficiency tests",
     "user-effort tests",
+    "model/tool routing fit tests",
     "skill ladder",
     "competitor/open-source benchmark plan",
     "gap-closing plan",
@@ -37,6 +43,7 @@
     "permission_denied",
     "safe_cancellation",
     "output_schema_or_quality",
+    "model_route_quality",
     "efficiency",
     "regression"
   ],
@@ -94,6 +101,20 @@
     "instructor: turns lessons into reusable shared tests/skills",
     "graduated: reproducible evidence meets release gates"
   ],
+  "sandbox_states": [
+    "planned",
+    "fixture_ready",
+    "running",
+    "passing",
+    "gap_found",
+    "repairing",
+    "blocked_dependency",
+    "blocked_permission",
+    "blocked_cost",
+    "blocked_provider",
+    "regressed",
+    "mastered_current_revision"
+  ],
   "gap_plan_required_fields": [
     "gap_id",
     "bot_slug",
@@ -114,7 +135,8 @@
     "status"
   ],
   "gap_priority_formula": [
-    "release_blocking safety/permission failures first",
+    "release-blocking safety/permission failures first",
+    "shared infrastructure failures affecting many bots",
     "large user-value gaps",
     "high-frequency capability gaps",
     "large competitor/open-source gaps",
@@ -125,22 +147,35 @@
   ],
   "builder_handoff": {
     "parallel": true,
-    "maximum_parallel_lanes": 20,
+    "maximum_parallel_lanes": 32,
     "same_canonical_owner_serialized": true,
+    "one_gap_worker_per_open_gap": true,
+    "shared_fix_first": true,
     "rules": [
       "do not patch 100 bots when one shared fix can solve the gap",
       "builder candidates must cite failing benchmark evidence",
       "run focused test before broad fleet retest",
       "preserve before/after metrics",
       "regressions become permanent fixtures",
-      "do not weaken tests to declare a gap closed"
+      "do not weaken tests to declare a gap closed",
+      "do not spend on live provider benchmarks until local/static evidence and shortlisting are complete",
+      "close a gap worker only after its acceptance fixture passes"
     ]
   },
+  "activation_policy": {
+    "every_bot_has_active_sandbox_record": true,
+    "only_gap_workers_execute_continuously": true,
+    "passing_bots_retest_on_relevant_change": true,
+    "mastered_bots_sleep_between_regression_triggers": true,
+    "all_live_side_effects_disabled_in_sandbox": true,
+    "paid_model_calls_disabled_by_default": true
+  },
   "actions_integration": {
-    "primary_suite": "Buddy Actions Test Lab -> fleet",
+    "primary_suite": "All Bot Sandbox Campaign",
     "control_center": "DreamCo Control Center -> test-fleet",
     "generator": "python3 tools/build_bot_sandbox_curriculum.py",
-    "coverage_test": "python3 -m unittest tests.test_bot_sandbox_curriculum"
+    "campaign_runner": "python3 tools/run_all_bot_sandbox_campaign.py",
+    "coverage_test": "python3 -m unittest tests.test_bot_sandbox_curriculum tests.test_all_bot_sandbox_campaign"
   },
-  "truth_rule": "A generated curriculum proves coverage planning, not runtime execution. Capability/tool/function tests count as passed only when the appropriate local, mock, sandbox, staging, or approved runtime runner records evidence."
+  "truth_rule": "Every canonical bot must always have an active sandbox status record. Capability/tool/function tests count as passing only when executable local, mock, sandbox, staging, or approved runtime evidence exists. Generated planning alone never counts as a pass."
 }

@@ -9,6 +9,9 @@ on:
     paths:
       - "website/**"
       - "tools/build_buddy_public_site.py"
+      - "tools/enable_buddy_runtime_bridge.py"
+      - "tools/build_actions_control_center.py"
+      - "tools/build_repository_revolution_map.py"
       - "tools/build_manufacturer_marketplace_catalog.py"
       - "tools/check_deployment_cost_policy.py"
       - "tools/generate_buddy_model_router.py"
@@ -16,7 +19,8 @@ on:
       - "tools/generate_buddy_distribution_catalog.py"
       - "tools/generate_repository_test_registry.py"
       - "config/**"
-      - ".github/workflows/deploy-buddy-pages.yml"
+      - "App_bots/**"
+      - ".github/workflows/**"
 
 permissions:
   contents: read
@@ -31,7 +35,7 @@ jobs:
     timeout-minutes: 45
     steps:
       - name: Check out repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
@@ -45,6 +49,15 @@ jobs:
         with:
           node-version: 22
 
+      - name: Explain this action
+        run: |
+          {
+            echo "# Deploy Buddy Website"
+            echo
+            echo "Builds the static GitHub Pages UI and injects the verified Buddy runtime bridge."
+            echo "GitHub Pages itself remains static; real request execution occurs only through a configured Buddy backend and receives an explicit execution receipt."
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Run deployment preflight
         run: |
           python3 tools/check_deployment_cost_policy.py
@@ -53,13 +66,23 @@ jobs:
           python3 tools/generate_buddy_distribution_catalog.py --check
           python3 tools/generate_repository_test_registry.py
           python3 tools/build_manufacturer_marketplace_catalog.py
+          python3 tools/build_actions_control_center.py
+          python3 tools/build_repository_revolution_map.py
           python3 tools/build_buddy_public_site.py --check
+          python3 tools/enable_buddy_runtime_bridge.py
+          grep -q 'buddy-runtime-bridge.js?v=1' website/buddy.html
+          test -s website/buddy-runtime-bridge.js
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
+          test -s website/actions.html
+          test -s website/data/actions-control-center.json
+          test -s website/revamp.html
+          test -s website/data/repository-revamp-map.json
 
       - name: Check browser JavaScript syntax
         run: |
           node --check website/buddy.js
+          node --check website/buddy-runtime-bridge.js
           node --check website/install.js
           node --check website/studio.js
           node --check website/models.js

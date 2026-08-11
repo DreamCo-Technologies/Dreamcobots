@@ -80,8 +80,8 @@ const evidenceSchema = z.object({
 const candidateSchema = z.object({
   id: z.string().trim().regex(/^[A-Za-z0-9_-]{3,120}$/),
   engineId: z.string().trim().min(2).max(80),
-  dimensions: z.record(z.number().min(0).max(1)),
-  hardGates: z.record(z.boolean()),
+  dimensions: z.record(z.string(), z.number().min(0).max(1)),
+  hardGates: z.record(z.string(), z.boolean()),
   medianLatencyMs: z.number().min(0).max(86_400_000),
   evidence: evidenceSchema,
 }).strict();
@@ -203,7 +203,7 @@ export function buildMediaCandidatePlan(input: z.infer<typeof mediaCandidatePlan
 }
 
 function scoreCandidate(candidate: Candidate, modality: Modality, minimumFixtureCount: number) {
-  const scorecard = catalog.scorecards[modality];
+  const scorecard = catalog.scorecards[modality] as { dimensions: Record<string, number>; release_threshold: number };
   const missingDimensions = Object.keys(scorecard.dimensions).filter((dimension) => candidate.dimensions[dimension] === undefined);
   const unknownDimensions = Object.keys(candidate.dimensions).filter((dimension) => scorecard.dimensions[dimension] === undefined);
   const missingGates = catalog.hard_release_gates.filter((gate) => candidate.hardGates[gate] !== true);

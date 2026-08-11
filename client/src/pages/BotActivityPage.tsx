@@ -1,3 +1,4 @@
+import { Github } from "@/lib/lucide-react-compat";
 import { useState } from "react";
 import { Link } from "wouter";
 import AppShell from "@/components/AppShell";
@@ -12,12 +13,49 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { BotActivityResponse, BotActivityItem } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import {
-  Github, RefreshCw, UploadCloud, Bot, Activity, CheckCircle2, AlertCircle,
-  Loader2, FolderOpen, GitPullRequest, ExternalLink, FileCode, Coffee,
-  BarChart2, Play, Zap, BrainCircuit, Globe, Download, Clock, TrendingUp,
-  Building2, Calculator, FlaskConical, Brain, Trophy, Cpu, Network, Store,
-  Wallet, CreditCard, Rocket, Code, Landmark, Bug, Tag, Plug, DollarSign,
-  Sparkles, Shield, LayoutDashboard, ArrowRight, CheckCheck, XCircle,
+  RefreshCw,
+  UploadCloud,
+  Bot,
+  Activity,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  FolderOpen,
+  GitPullRequest,
+  ExternalLink,
+  FileCode,
+  Coffee,
+  BarChart2,
+  Play,
+  Zap,
+  BrainCircuit,
+  Globe,
+  Download,
+  Clock,
+  TrendingUp,
+  Building2,
+  Calculator,
+  FlaskConical,
+  Brain,
+  Trophy,
+  Cpu,
+  Network,
+  Store,
+  Wallet,
+  CreditCard,
+  Rocket,
+  Code,
+  Landmark,
+  Bug,
+  Tag,
+  Plug,
+  DollarSign,
+  Sparkles,
+  Shield,
+  LayoutDashboard,
+  ArrowRight,
+  CheckCheck,
+  XCircle,
 } from "lucide-react";
 
 const REPO = "DreamCo-Technologies/Dreamcobots";

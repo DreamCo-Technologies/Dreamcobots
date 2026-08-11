@@ -16,9 +16,9 @@ MAX_MAJOR = {
     "actions/checkout": 6,
     "actions/setup-node": 6,
     "actions/setup-python": 6,
-    "actions/upload-artifact": 6,
+    "actions/upload-artifact": 7,
     "actions/configure-pages": 6,
-    "actions/upload-pages-artifact": 4,
+    "actions/upload-pages-artifact": 5,
     "actions/deploy-pages": 5,
 }
 
@@ -72,9 +72,9 @@ def main() -> int:
             "checkout": "actions/checkout@v6",
             "setup_node": "actions/setup-node@v6",
             "setup_python": "actions/setup-python@v6",
-            "upload_artifact": "actions/upload-artifact@v6",
+            "upload_artifact": "actions/upload-artifact@v7",
             "configure_pages": "actions/configure-pages@v6",
-            "upload_pages_artifact": "actions/upload-pages-artifact@v4",
+            "upload_pages_artifact": "actions/upload-pages-artifact@v5",
             "deploy_pages": "actions/deploy-pages@v5"
         },
         "findings": findings,

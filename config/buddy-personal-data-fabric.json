@@ -1,0 +1,15 @@
+{
+  "schema": "dreamco.personal_data_fabric.v1",
+  "purpose": "User-owned context layer for finding, importing, organizing, searching, exporting, and deleting authorized personal data used to customize Buddy.",
+  "ownership": "user",
+  "default_storage": "local_or_user_selected",
+  "cloud_copy_default": false,
+  "supported_data_classes": ["notes","documents","images","audio","video","spreadsheets","presentations","pdfs","email_exports","calendar_exports","contact_exports","chat_exports","browser_bookmarks","photos_metadata","app_exports","health_exports","finance_exports","receipts","invoices","projects","code","links","tasks","preferences","custom_records"],
+  "ingestion_modes": ["manual upload","folder import","user-approved connector import","app export import","camera/photo selection","share-sheet intake","clipboard intake","structured API adapter"],
+  "required_metadata": ["source","imported_at","owner","data_class","mime_type","size","content_hash","consent_scope","retention_policy","sensitivity_label","exportable","deletable"],
+  "privacy_controls": ["local-first option","per-source consent","per-item exclusion","sensitivity labels","memory opt-in","redaction","retention expiry","export all","delete all","connector revoke","audit receipt"],
+  "retrieval": ["keyword search","metadata filters","date filters","source filters","semantic search when locally or owner-approved","recent items","pinned items","project collections","person/topic tags"],
+  "assistant_customization": ["explicit preference memory","project context","writing style preferences","frequent contacts by reference","favorite tools","recurring workflows","user vocabulary","accessibility preferences","device preferences","goal context"],
+  "prohibited_defaults": ["silent scraping","credential collection","background third-party account access","biometric identification","hidden sensitive inference","uploading private data to model providers without an approved route"],
+  "portability": {"formats":["json","jsonl","csv","markdown","zip manifest"],"provider_lock_in":false,"stable_item_ids":true,"hash_manifest":true}
+}

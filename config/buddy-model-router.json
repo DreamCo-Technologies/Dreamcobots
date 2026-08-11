@@ -1,103 +1,34 @@
 {
-  "schema": "dreamco.buddy_model_router.v1",
+  "schema": "dreamco.buddy_model_router.v2",
   "default_mode": "free",
   "policy": {
     "automatic_paid_upgrade": false,
     "paid_use_requires_per_request_approval": true,
     "free_fallback_required": true,
     "provider_call_from_static_site": false,
-    "custom_model_ids_allowed_for_connected_providers": true
+    "custom_model_ids_allowed_for_connected_providers": true,
+    "live_catalog_refresh_before_exact_model_execution": true,
+    "benchmark_before_production_promotion": true,
+    "tool_capability_match_required": true,
+    "open_weight_license_check_required": true,
+    "open_weight_hardware_fit_check_required": true
   },
   "connectors": [
-    {
-      "id": "buddy_native",
-      "label": "Buddy Native",
-      "mode": "free",
-      "protocol": "local_planner",
-      "availability": "always",
-      "secret_references": [],
-      "task_types": ["planning", "routing", "capability testing", "sandbox task packets"]
-    },
-    {
-      "id": "local_open_model",
-      "label": "Local Open Model",
-      "mode": "free",
-      "protocol": "openai_compatible_local",
-      "availability": "configuration_required",
-      "secret_references": ["LOCAL_MODEL_BASE_URL"],
-      "task_types": ["private chat", "coding", "summarization", "offline workflows"]
-    },
-    {
-      "id": "openai",
-      "label": "OpenAI",
-      "mode": "premium",
-      "protocol": "provider_adapter",
-      "availability": "configuration_required",
-      "secret_references": ["OPENAI_API_KEY", "AI_INTEGRATIONS_OPENAI_API_KEY"],
-      "task_types": ["general chat", "coding", "reasoning", "image", "audio"]
-    },
-    {
-      "id": "anthropic",
-      "label": "Anthropic",
-      "mode": "premium",
-      "protocol": "provider_adapter",
-      "availability": "configuration_required",
-      "secret_references": ["ANTHROPIC_API_KEY"],
-      "task_types": ["long context", "coding", "analysis", "writing"]
-    },
-    {
-      "id": "google_gemini",
-      "label": "Google Gemini",
-      "mode": "premium",
-      "protocol": "provider_adapter",
-      "availability": "configuration_required",
-      "secret_references": ["GOOGLE_GENERATIVE_AI_API_KEY", "GEMINI_API_KEY"],
-      "task_types": ["multimodal", "long context", "research", "coding"]
-    },
-    {
-      "id": "xai",
-      "label": "xAI",
-      "mode": "premium",
-      "protocol": "provider_adapter",
-      "availability": "configuration_required",
-      "secret_references": ["XAI_API_KEY"],
-      "task_types": ["general chat", "reasoning", "coding"]
-    },
-    {
-      "id": "mistral",
-      "label": "Mistral AI",
-      "mode": "premium",
-      "protocol": "provider_adapter",
-      "availability": "configuration_required",
-      "secret_references": ["MISTRAL_API_KEY"],
-      "task_types": ["coding", "multilingual", "document analysis"]
-    },
-    {
-      "id": "cohere",
-      "label": "Cohere",
-      "mode": "premium",
-      "protocol": "provider_adapter",
-      "availability": "configuration_required",
-      "secret_references": ["COHERE_API_KEY"],
-      "task_types": ["enterprise search", "retrieval", "classification", "generation"]
-    },
-    {
-      "id": "deepseek",
-      "label": "DeepSeek",
-      "mode": "premium",
-      "protocol": "provider_adapter",
-      "availability": "configuration_required",
-      "secret_references": ["DEEPSEEK_API_KEY"],
-      "task_types": ["reasoning", "coding", "math"]
-    },
-    {
-      "id": "openrouter",
-      "label": "OpenRouter",
-      "mode": "premium",
-      "protocol": "provider_catalog_adapter",
-      "availability": "configuration_required",
-      "secret_references": ["OPENROUTER_API_KEY"],
-      "task_types": ["provider catalog", "model comparison", "fallback routing"]
-    }
+    {"id":"buddy_native","label":"Buddy Native","mode":"free","protocol":"local_planner","availability":"always","secret_references":[],"task_types":["planning","routing","capability testing","sandbox task packets","model selection"]},
+    {"id":"local_open_model","label":"DreamCo Local Open-Weight Runtime","mode":"free","protocol":"openai_compatible_local","availability":"configuration_required","secret_references":["LOCAL_MODEL_BASE_URL"],"task_types":["private chat","coding","summarization","offline workflows","reasoning","tool calling","self-hosted inference"]},
+    {"id":"meta_open_weight","label":"Meta Llama Open-Weight Runtime","mode":"free","protocol":"self_hosted_or_partner","availability":"configuration_required","secret_references":["META_LLAMA_BASE_URL","LOCAL_MODEL_BASE_URL"],"task_types":["multimodal","long context","private inference","self-hosted agents"]},
+    {"id":"openai","label":"OpenAI","mode":"premium","protocol":"responses_api","availability":"configuration_required","secret_references":["OPENAI_API_KEY","AI_INTEGRATIONS_OPENAI_API_KEY"],"task_types":["general chat","coding","reasoning","vision","web search","file search","computer use","code execution","image generation","mcp"]},
+    {"id":"anthropic","label":"Anthropic","mode":"premium","protocol":"messages_api","availability":"configuration_required","secret_references":["ANTHROPIC_API_KEY"],"task_types":["long context","coding","analysis","writing","agents","vision","tool use","web search","structured outputs"]},
+    {"id":"google_gemini","label":"Google Gemini","mode":"premium","protocol":"interactions_or_generate_content","availability":"configuration_required","secret_references":["GOOGLE_GENERATIVE_AI_API_KEY","GEMINI_API_KEY"],"task_types":["multimodal","long context","research","coding","computer use","code execution","search grounding","structured outputs"]},
+    {"id":"xai","label":"xAI","mode":"premium","protocol":"responses_api","availability":"configuration_required","secret_references":["XAI_API_KEY"],"task_types":["general chat","reasoning","coding","web search","X search","code interpreter","collections","mcp","voice"]},
+    {"id":"mistral","label":"Mistral AI","mode":"premium","protocol":"mistral_api","availability":"configuration_required","secret_references":["MISTRAL_API_KEY"],"task_types":["coding","multilingual","document analysis","agents","function calling","web search","code interpreter","image generation","document library","ocr","fim","mcp"]},
+    {"id":"cohere","label":"Cohere","mode":"premium","protocol":"provider_adapter","availability":"configuration_required","secret_references":["COHERE_API_KEY"],"task_types":["enterprise search","retrieval","classification","generation"]},
+    {"id":"deepseek","label":"DeepSeek","mode":"premium","protocol":"openai_or_anthropic_compatible","availability":"configuration_required","secret_references":["DEEPSEEK_API_KEY"],"task_types":["reasoning","coding","math","function calling","json output","fim","prefix completion"]},
+    {"id":"alibaba_qwen","label":"Alibaba Cloud Model Studio / Qwen","mode":"premium","protocol":"dashscope_or_openai_compatible","availability":"configuration_required","secret_references":["DASHSCOPE_API_KEY","ALIBABA_MODEL_STUDIO_API_KEY"],"task_types":["reasoning","coding","long context","thinking","function calling","built-in tools","structured outputs"]},
+    {"id":"moonshot","label":"Moonshot AI / Kimi","mode":"premium","protocol":"openai_or_anthropic_compatible","availability":"configuration_required","secret_references":["MOONSHOT_API_KEY","KIMI_API_KEY"],"task_types":["agentic coding","long context","reasoning","tool calling","research","multimodal"]},
+    {"id":"huggingface","label":"Hugging Face / Inference Endpoint","mode":"premium","protocol":"hosted_open_weight","availability":"configuration_required","secret_references":["HUGGINGFACE_API_TOKEN","HF_TOKEN"],"task_types":["open-weight hosting","embeddings","classification","generation","custom deployments"]},
+    {"id":"together","label":"Together AI","mode":"premium","protocol":"openai_compatible_catalog","availability":"configuration_required","secret_references":["TOGETHER_API_KEY"],"task_types":["open-weight inference","model comparison","coding","reasoning","multimodal"]},
+    {"id":"groq","label":"Groq","mode":"premium","protocol":"openai_compatible_catalog","availability":"configuration_required","secret_references":["GROQ_API_KEY"],"task_types":["low-latency open-weight inference","agents","coding","reasoning"]},
+    {"id":"openrouter","label":"OpenRouter","mode":"premium","protocol":"provider_catalog_adapter","availability":"configuration_required","secret_references":["OPENROUTER_API_KEY"],"task_types":["provider catalog","model comparison","fallback routing"]}
   ]
 }

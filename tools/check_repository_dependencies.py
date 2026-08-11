@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import ast
 import json
+import re
 import sys
 import sysconfig
 from pathlib import Path
@@ -14,6 +15,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 SKIPPED_ROOTS = {".git", ".vercel", "__pycache__", "dist", "logs", "node_modules", "reports"}
 DEPENDENCY_SECTIONS = ("dependencies", "devDependencies", "optionalDependencies")
+PYTHON_MANIFESTS = ("requirements.txt",)
 
 
 def read_object(path: Path) -> dict[str, Any]:
@@ -34,6 +36,22 @@ def python_files() -> list[Path]:
 def local_python_roots() -> set[str]:
     roots = {path.stem for path in ROOT.glob("*.py")}
     roots.update(path.name for path in ROOT.iterdir() if path.is_dir() and not path.name.startswith("."))
+    return roots
+
+
+def declared_python_roots() -> set[str]:
+    roots: set[str] = set()
+    for name in PYTHON_MANIFESTS:
+        path = ROOT / name
+        if not path.exists():
+            continue
+        for raw in path.read_text(encoding="utf-8").splitlines():
+            line = raw.split("#", 1)[0].strip()
+            if not line or line.startswith(("-r", "--requirement", "-e", "--editable")):
+                continue
+            package = re.split(r"[<>=!~\[;\s]", line, maxsplit=1)[0].strip()
+            if package:
+                roots.add(package.lower().replace("-", "_"))
     return roots
 
 
@@ -97,7 +115,12 @@ def audit_dependencies() -> dict[str, Any]:
     errors.extend(syntax_errors)
     local_roots = local_python_roots()
     stdlib = standard_library_roots()
-    undeclared_python = sorted(imports - stdlib - local_roots)
+    declared_python = declared_python_roots()
+    normalized_imports = {root.lower().replace("-", "_") for root in imports}
+    undeclared_python = sorted(
+        root for root in normalized_imports
+        if root not in stdlib and root not in local_roots and root not in declared_python
+    )
     if undeclared_python:
         errors.append(
             "Python imports require a declared environment manifest or repository-local package: "
@@ -115,9 +138,10 @@ def audit_dependencies() -> dict[str, Any]:
         "direct_node_dependencies": direct_node_dependencies,
         "python_files_parsed": len(files),
         "python_import_roots": len(imports),
+        "declared_python_import_roots": sorted(declared_python),
         "undeclared_python_imports": undeclared_python,
         "errors": errors,
-        "boundary": "TypeScript resolution is verified by npm run check; optional provider credentials and external binaries are tested by their adapter suites.",
+        "boundary": "TypeScript resolution is verified by npm run check; Python imports must be standard-library, repository-local, or declared in requirements.txt; optional provider credentials and external binaries are tested by their adapter suites.",
     }
     return result
 

@@ -1,0 +1,117 @@
+name: All Bot Sandbox Campaign
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "App_bots/**"
+      - "server/fleet-runtime.ts"
+      - "config/bot-universal-sandbox-skill-gap-program.json"
+      - "config/sandbox-repair-loop.json"
+      - "config/generated/bot-sandbox-curriculum.json"
+      - "config/generated/buddy_fleet_quality_program.json"
+      - "config/generated/model-mastery-gap-report.json"
+      - "tools/build_bot_sandbox_curriculum.py"
+      - "tools/run_bot_fleet_e2e.ts"
+      - "tools/run_all_bot_sandbox_campaign.py"
+      - "tools/run_sandbox_repair_loop.py"
+      - "tools/migrate_zod4_compat.py"
+      - "tests/test_bot_sandbox_curriculum.py"
+      - "tests/test_all_bot_sandbox_campaign.py"
+      - "tests/test_sandbox_repair_loop.py"
+      - ".github/workflows/all-bot-sandbox-campaign.yml"
+  push:
+    branches: [main]
+    paths:
+      - "App_bots/**"
+      - "server/fleet-runtime.ts"
+      - "config/bot-universal-sandbox-skill-gap-program.json"
+      - "config/sandbox-repair-loop.json"
+      - "tools/build_bot_sandbox_curriculum.py"
+      - "tools/run_bot_fleet_e2e.ts"
+      - "tools/run_all_bot_sandbox_campaign.py"
+      - "tools/run_sandbox_repair_loop.py"
+      - "tools/migrate_zod4_compat.py"
+      - "tests/test_bot_sandbox_curriculum.py"
+      - "tests/test_all_bot_sandbox_campaign.py"
+      - "tests/test_sandbox_repair_loop.py"
+      - ".github/workflows/all-bot-sandbox-campaign.yml"
+  schedule:
+    - cron: "43 8 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: all-bot-sandbox-campaign-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  campaign:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Explain this action
+        run: |
+          {
+            echo "# All Bot Sandbox Campaign"
+            echo
+            echo "**Owner:** Protects the 1,051-bot sandbox baseline by testing every declared capability contract and refusing to go green while a capability is failing."
+            echo "**Repair loop:** Test → isolate failed capability → bounded shared repair → focused evidence refresh → bot/fleet retest. The loop repeats while failures are shrinking."
+            echo "**No fake passes:** If a failure cannot be safely repaired automatically, the workflow stays red with the exact unresolved capability queue. Tests are never weakened to close a gap."
+            echo "**Safety:** No live external actions, paid model calls, production deployment, credential changes, or merge-to-main behavior are performed by this workflow."
+            echo "**Efficiency:** Passing bots sleep; repair work targets only failures/shared causes, and full-fleet E2E runs after each candidate repair to prevent regressions."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Install locked JavaScript dependencies
+        run: npm ci
+      - name: Run repair-until-pass sandbox loop
+        run: python3 tools/run_sandbox_repair_loop.py
+      - name: Verify sandbox curriculum, campaign, and repair-loop contracts
+        run: python3 -m unittest tests.test_bot_sandbox_curriculum tests.test_all_bot_sandbox_campaign tests.test_sandbox_repair_loop
+      - name: Require all declared sandbox capability contracts complete
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          e2e=json.loads(Path('website/data/bot-fleet-e2e.json').read_text())['summary']
+          campaign=json.loads(Path('config/generated/all-bot-sandbox-campaign.json').read_text())
+          repair=json.loads(Path('config/generated/sandbox-repair-loop-report.json').read_text())
+          assert e2e['profilesTested'] == 1051
+          assert e2e['failed'] == 0
+          assert e2e['allDeclaredCapabilitiesTested'] is True
+          assert e2e['sandboxCapabilityTestsFailed'] == 0
+          assert e2e['sandboxCapabilityTestsPassed'] == e2e['declaredCapabilitiesTested']
+          assert campaign['sandbox_contract_complete'] is True
+          assert repair['all_capabilities_complete'] is True
+          print({'bots':e2e['profilesTested'],'capabilities':e2e['declaredCapabilitiesTested'],'passed':e2e['sandboxCapabilityTestsPassed'],'failed':e2e['sandboxCapabilityTestsFailed'],'repair_rounds':repair['rounds_executed']})
+          PY
+      - name: Summarize campaign and repair loop
+        if: always()
+        run: |
+          cat reports/ALL_BOT_SANDBOX_CAMPAIGN.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          echo >> "$GITHUB_STEP_SUMMARY"
+          cat reports/SANDBOX_REPAIR_LOOP.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+      - name: Save sandbox and repair evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: all-bot-sandbox-campaign-${{ github.run_id }}
+          path: |
+            website/data/bot-fleet-e2e.json
+            website/data/bot-capability-tests/
+            config/generated/bot-sandbox-curriculum.json
+            config/generated/all-bot-sandbox-campaign.json
+            config/generated/sandbox-repair-loop-report.json
+            reports/BOT_FLEET_E2E.md
+            reports/ALL_BOT_SANDBOX_CAMPAIGN.md
+            reports/SANDBOX_REPAIR_LOOP.md
+          if-no-files-found: warn
+          retention-days: 14

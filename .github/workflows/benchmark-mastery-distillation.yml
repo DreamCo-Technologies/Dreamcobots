@@ -1,0 +1,63 @@
+name: Benchmark Mastery Distillation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "config/repository-test-suites.json"
+      - "config/benchmark-mastery-distillation-policy.json"
+      - "tools/build_benchmark_mastery_distillation.py"
+      - "tests/test_benchmark_mastery_distillation.py"
+      - ".github/workflows/benchmark-mastery-distillation.yml"
+  push:
+    branches: [main]
+    paths:
+      - "config/repository-test-suites.json"
+      - "config/benchmark-mastery-distillation-policy.json"
+      - "tools/build_benchmark_mastery_distillation.py"
+      - "tests/test_benchmark_mastery_distillation.py"
+      - ".github/workflows/benchmark-mastery-distillation.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: benchmark-mastery-distillation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Explain this action
+        run: |
+          {
+            echo "# Benchmark Mastery Distillation"
+            echo
+            echo "**Owner:** Gives every benchmark suite a task-scoped Benchmark Master and a cost-reduction distillation plan."
+            echo "**Speed:** Up to 32 independent workers may run in parallel; idle workers do not stay active."
+            echo "**Quality:** A cheaper/student route can never become default unless it preserves the suite quality floor and rollback route."
+            echo "**Truth:** Mastery is scoped to the tested revision/environment and disappears on regression."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Build benchmark mastery and distillation plan
+        run: python3 tools/build_benchmark_mastery_distillation.py
+      - name: Verify every benchmark has a worker and distillation contract
+        run: python3 -m unittest tests.test_benchmark_mastery_distillation
+      - name: Add plan summary
+        if: always()
+        run: cat reports/BENCHMARK_MASTERY_DISTILLATION.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+      - name: Save evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: benchmark-mastery-distillation-${{ github.run_id }}
+          path: |
+            config/generated/benchmark-mastery-distillation-plan.json
+            reports/BENCHMARK_MASTERY_DISTILLATION.md
+          if-no-files-found: warn
+          retention-days: 14

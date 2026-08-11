@@ -1,3 +1,4 @@
+import { Github } from "@/lib/lucide-react-compat";
 import { ReactNode, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
 import {
@@ -32,7 +33,6 @@ import {
   Trophy,
   Cpu,
   BrainCircuit,
-  Github,
   Wrench,
   Activity,
   TestTube2,

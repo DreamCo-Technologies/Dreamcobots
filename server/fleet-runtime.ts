@@ -8,10 +8,11 @@ import {
   buddyModelRequestSchema,
   resolveBuddyModelPlan,
 } from "./buddy-model-policy";
+import { selectBestModelForTask } from "./model-intelligence-router";
 
 export const fleetExecutionRequestSchema = z.object({
   objective: z.string().trim().min(10).max(4_000),
-  input: z.record(z.unknown()).default({}),
+  input: z.record(z.string(), z.unknown()).default({}),
   requestedCapabilities: z.array(z.string().trim().min(2).max(160)).max(20).default([]),
   liveActionRequested: z.boolean().default(false),
 }).strict();
@@ -493,6 +494,15 @@ export class FleetRuntimeRegistry {
       selectedModelId: request.selectedModelId,
       approvePaidModelForThisRequest: request.approvePaidModelForThisRequest,
     });
+    const modelIntelligencePlan = selectBestModelForTask({
+      objective: request.objective,
+      requiredCapabilities: request.requestedCapabilities,
+      allowPaid: request.modelMode === "premium" && request.approvePaidModelForThisRequest,
+      qualityPriority: 1,
+      costPriority: 0.25,
+      latencyPriority: 0.25,
+      privacyPriority: 0.35,
+    });
     const preferred = request.preferredBotSlug ? this.runtimes.get(request.preferredBotSlug) : undefined;
     const ranked = preferred
       ? []
@@ -548,6 +558,7 @@ export class FleetRuntimeRegistry {
           .reduce((total, runtime) => total + runtime.profile.capability_count, 0),
       },
       modelPlan,
+      modelIntelligencePlan,
       execution,
     } as const;
   }

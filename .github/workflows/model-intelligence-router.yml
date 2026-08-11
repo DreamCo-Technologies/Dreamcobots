@@ -1,0 +1,67 @@
+name: Model Intelligence Router
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "config/model-capability-manifest.json"
+      - "config/buddy-model-router.json"
+      - "server/model-intelligence-router.ts"
+      - "tests/model-intelligence-router.test.ts"
+      - "shared/model-benchmark-targets.ts"
+      - ".github/workflows/model-intelligence-router.yml"
+  push:
+    branches: [main]
+    paths:
+      - "config/model-capability-manifest.json"
+      - "config/buddy-model-router.json"
+      - "server/model-intelligence-router.ts"
+      - "tests/model-intelligence-router.test.ts"
+      - "shared/model-benchmark-targets.ts"
+      - ".github/workflows/model-intelligence-router.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: model-intelligence-router-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Explain this action
+        run: |
+          {
+            echo "# Model Intelligence Router"
+            echo
+            echo "**Owner:** Checks that Buddy keeps the 500-target benchmark program and selects models quality-first for each task."
+            echo "**Users:** Makes sure required tools, modalities, and context matter more than brand name or lowest price."
+            echo "**Developers:** Validates the current frontier/open-weight manifest, connectors, routing scores, paid-use gates, and open-weight-only routing."
+            echo "**Investors:** Demonstrates a provider-neutral model orchestration layer rather than dependence on one AI vendor."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - run: npm ci
+      - name: Verify model intelligence router
+        run: node --import tsx --test tests/model-intelligence-router.test.ts
+      - name: Verify benchmark target count
+        run: npx tsx -e "import {MODEL_BENCHMARK_TARGETS,MODEL_BENCHMARK_TARGET_COUNT} from './shared/model-benchmark-targets.ts'; if(MODEL_BENCHMARK_TARGETS.length!==500||MODEL_BENCHMARK_TARGET_COUNT!==500) process.exit(1); console.log({targets:MODEL_BENCHMARK_TARGETS.length});"
+      - name: Verify manifest contracts
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const d=JSON.parse(fs.readFileSync('config/model-capability-manifest.json','utf8'));
+          const required=['openai','anthropic','google','xai','deepseek','alibaba','mistral','moonshot','meta'];
+          const providers=new Set(d.providers.map(p=>p.id));
+          for(const p of required) if(!providers.has(p)) throw new Error(`Missing provider ${p}`);
+          if(!d.truth_policy.live_catalog_refresh_before_execution) throw new Error('Live catalog refresh gate required');
+          if(!d.truth_policy.benchmark_before_production_promotion) throw new Error('Benchmark gate required');
+          if(!d.open_weight_runtime_policy.required_evidence.includes('quantization regression benchmark')) throw new Error('Open-weight quantization regression evidence required');
+          console.log({providers:d.providers.length, exactCandidates:d.models.length, snapshot:d.snapshot_date});
+          NODE

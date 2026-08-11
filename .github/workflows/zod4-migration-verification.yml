@@ -1,0 +1,60 @@
+name: Zod 4 Migration Verification
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "server/fleet-runtime.ts"
+      - "server/media-quality-lab.ts"
+      - "server/routes.ts"
+      - "tools/migrate_zod4_compat.py"
+      - ".github/workflows/zod4-migration-verification.yml"
+  push:
+    branches: [main]
+    paths:
+      - "server/fleet-runtime.ts"
+      - "server/media-quality-lab.ts"
+      - "server/routes.ts"
+      - "tools/migrate_zod4_compat.py"
+      - ".github/workflows/zod4-migration-verification.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zod4-migration-verification-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-migration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Explain this action
+        run: |
+          {
+            echo "# Zod 4 Migration Verification"
+            echo
+            echo "Converts only known compatibility patterns in an isolated Actions checkout, then compiles the repository before any source replacement is accepted."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - run: npm ci
+      - name: Apply deterministic migration in Actions workspace
+        run: python3 tools/migrate_zod4_compat.py
+      - name: Compile migrated source
+        run: npm run check
+      - name: Save verified migrated files
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: zod4-migrated-source-${{ github.run_id }}
+          path: |
+            server/fleet-runtime.ts
+            server/media-quality-lab.ts
+            server/routes.ts
+          if-no-files-found: error
+          retention-days: 7

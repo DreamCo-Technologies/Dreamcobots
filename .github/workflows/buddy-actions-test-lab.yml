@@ -62,12 +62,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
       - name: Initialize debug evidence
         run: |
           mkdir -p tmp/buddy-actions
           touch tmp/buddy-actions/install.log tmp/buddy-actions/test.log
-      - name: Checkout repository
-        uses: actions/checkout@v7
       - name: Set up Node
         uses: actions/setup-node@v6
         with:
