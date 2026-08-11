@@ -47,10 +47,39 @@ test("Buddy chooses the strongest declared specialist for a natural-language tas
   assert.equal(result.selected.slug, "gaming-titan");
   assert.ok(result.matchedCapabilities.includes("Game building and modding"));
   assert.equal(result.coverage.profilesSearched, 1051);
+  assert.equal(result.coverage.samplePromptContractsSearched, 1051);
   assert.equal(result.coverage.declaredCapabilitiesSearched, 8408);
+  assert.equal(result.interactionMode, "direct_task");
+  assert.equal(result.planningControlsOptional, true);
   assert.equal(result.modelPlan.mode, "free");
   assert.equal(result.modelPlan.connector.id, "buddy_native");
   assert.equal(result.execution.status, "sandbox_task_packet_ready");
+});
+
+test("Buddy keeps explicit planning separate from direct chatbot tasks", () => {
+  const registry = FleetRuntimeRegistry.fromFile();
+  const result = registry.routeCapability({
+    objective: "Plan the safest sequence for connecting model provider accounts.",
+    interactionMode: "plan",
+    requestedCapabilities: [],
+    liveActionRequested: false,
+  });
+  assert.equal(result.interactionMode, "plan");
+  assert.equal(result.planningControlsOptional, true);
+  assert.equal(result.execution.liveExternalActionTaken, false);
+});
+
+test("Buddy routes all-resource onboarding requests to the governed network specialist", () => {
+  const registry = FleetRuntimeRegistry.fromFile();
+  const result = registry.routeCapability({
+    objective: "Connect all 500 AI resources so Buddy can use them efficiently.",
+    interactionMode: "direct_task",
+    requestedCapabilities: [],
+    liveActionRequested: false,
+  });
+  assert.equal(result.selected.slug, "global-bot-network");
+  assert.equal(result.selectionReason, "governed_resource_onboarding_specialist");
+  assert.equal(result.execution.liveExternalActionTaken, false);
 });
 
 test("Buddy premium routing never upgrades or spends automatically", () => {

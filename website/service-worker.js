@@ -1,11 +1,11 @@
-const SHELL_CACHE = 'buddy-shell-v50';
-const RUNTIME_CACHE = 'buddy-runtime-v50';
+const SHELL_CACHE = 'buddy-shell-v53';
+const RUNTIME_CACHE = 'buddy-runtime-v53';
 const APP_SHELL = [
   './',
   './buddy.html',
   './phone.html',
-  './buddy.css?v=28',
-  './buddy.js?v=29',
+  './buddy.css?v=29',
+  './buddy.js?v=31',
   './actions.html',
   './actions.css?v=1',
   './actions.js?v=1',
@@ -46,7 +46,7 @@ const APP_SHELL = [
   './benchmark-tracker.css?v=1',
   './benchmark-tracker.js?v=1',
   './connections.html',
-  './connections.js?v=4',
+  './connections.js?v=5',
   './data/buddy-connection-catalog.json?v=2',
   './open-model-lab.html',
   './open-model-lab.css',
@@ -58,13 +58,14 @@ const APP_SHELL = [
   './test-center.css?v=4',
   './test-center.js?v=4',
   './styles.css?v=41',
+  './styles.css?v=42',
   './nav.js',
   './manifest.webmanifest',
   './data/buddy-routing-index.js',
   './data/dreamco-search-index.js',
   './data/buddy-model-router.js',
   './data/buddy-model-benchmarks.js?v=3',
-  './data/buddy-model-progress-center.js?v=1',
+  './data/buddy-model-progress-center.js?v=2',
   './data/buddy-demand-ontology.js?v=1',
   './data/ai-organization-intelligence.js?v=2',
   './data/buddy-open-model-coding-lab.js',

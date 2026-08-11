@@ -66,7 +66,12 @@ import {
   buddyModelSelectionRequestSchema,
   selectBuddyModelsForTask,
 } from "./buddy-model-policy";
-import { getModelSourceConnectionAudit } from "./model-source-connection-policy";
+import {
+  createResourceOnboardingPlan,
+  getModelSourceConnectionAudit,
+  getResourceOnboardingCatalog,
+  resourceOnboardingPlanRequestSchema,
+} from "./model-source-connection-policy";
 import {
   createModelImprovementPlan,
   getModelProgressCenter,
@@ -3286,6 +3291,24 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
 
   app.get("/api/buddy/models/connections", (_req, res) => {
     res.json(getModelSourceConnectionAudit());
+  });
+
+  app.get("/api/buddy/resources/onboarding-catalog", (_req, res) => {
+    res.json(getResourceOnboardingCatalog());
+  });
+
+  app.post("/api/buddy/resources/onboarding-plan", async (req, res) => {
+    const killSwitch = await storage.getSetting("kill_switch");
+    if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
+      return res.status(423).json({ message: "Resource onboarding planning is locked by the kill switch" });
+    }
+    const parsed = resourceOnboardingPlanRequestSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
+    try {
+      return res.status(201).json(createResourceOnboardingPlan(parsed.data));
+    } catch (error) {
+      return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid resource onboarding request" });
+    }
   });
 
   app.get("/api/buddy/models/progress", (_req, res) => {

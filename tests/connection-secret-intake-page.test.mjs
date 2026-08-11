@@ -20,7 +20,7 @@ test('Access Center unifies connections, authentication methods, and secret stor
   assert.equal(catalog.platform_profiles.length, 3);
   assert.equal(catalog.secret_stores.length, 3);
   assert.deepEqual(catalog.secret_stores.map((store) => store.id).sort(), ['environment', 'managed_vault', 'os_keychain']);
-  assert.match(html, /connections\.js\?v=4/);
+  assert.match(html, /connections\.js\?v=5/);
   assert.match(script, /buddy-connection-catalog\.json\?v=2/);
   assert.match(styles, /\.access-table-wrap[^{]*\{[^}]*overflow:\s*auto/s);
   assert.match(styles, /\.access-table[^{]*\{[^}]*min-width:/s);

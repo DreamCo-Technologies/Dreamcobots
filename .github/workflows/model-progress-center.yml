@@ -7,11 +7,22 @@ on:
       - "config/buddy-model-progress-center.json"
       - "config/generated/buddy_model_progress_center.json"
       - "server/model-progress-policy.ts"
+      - "server/model-source-connection-policy.ts"
+      - "server/fleet-runtime.ts"
+      - "server/routes.ts"
+      - "shared/resource-onboarding.ts"
       - "tools/generate_buddy_model_progress_center.ts"
       - "tests/model-progress-policy.test.ts"
+      - "tests/model-source-connection-policy.test.ts"
+      - "tests/resource-onboarding-policy.test.ts"
+      - "tests/resource-onboarding-page.test.mjs"
+      - "tests/fleet-runtime.test.ts"
       - "tests/benchmark-tracker-page.test.mjs"
       - "tests/service-worker-benchmark-cache.test.mjs"
       - "website/benchmark-tracker.*"
+      - "website/buddy.*"
+      - "website/connections.*"
+      - "website/styles.css"
       - "website/data/buddy-model-progress-center.js"
       - "website/service-worker.js"
       - "package.json"
@@ -23,11 +34,22 @@ on:
       - "config/buddy-model-progress-center.json"
       - "config/generated/buddy_model_progress_center.json"
       - "server/model-progress-policy.ts"
+      - "server/model-source-connection-policy.ts"
+      - "server/fleet-runtime.ts"
+      - "server/routes.ts"
+      - "shared/resource-onboarding.ts"
       - "tools/generate_buddy_model_progress_center.ts"
       - "tests/model-progress-policy.test.ts"
+      - "tests/model-source-connection-policy.test.ts"
+      - "tests/resource-onboarding-policy.test.ts"
+      - "tests/resource-onboarding-page.test.mjs"
+      - "tests/fleet-runtime.test.ts"
       - "tests/benchmark-tracker-page.test.mjs"
       - "tests/service-worker-benchmark-cache.test.mjs"
       - "website/benchmark-tracker.*"
+      - "website/buddy.*"
+      - "website/connections.*"
+      - "website/styles.css"
       - "website/data/buddy-model-progress-center.js"
       - "website/service-worker.js"
       - "package.json"
@@ -64,11 +86,13 @@ jobs:
       - name: Verify generated model progress artifacts
         run: npm run buddy:model-progress
 
-      - name: Test model routing and public tracker
+      - name: Test model routing, provider onboarding, and public Pages
         run: |
-          node --import tsx --test tests/model-progress-policy.test.ts
-          node --test tests/benchmark-tracker-page.test.mjs tests/service-worker-benchmark-cache.test.mjs
+          node --import tsx --test tests/model-progress-policy.test.ts tests/model-source-connection-policy.test.ts tests/resource-onboarding-policy.test.ts tests/fleet-runtime.test.ts
+          node --test tests/benchmark-tracker-page.test.mjs tests/resource-onboarding-page.test.mjs tests/service-worker-benchmark-cache.test.mjs
           node --check website/benchmark-tracker.js
+          node --check website/buddy.js
+          node --check website/connections.js
 
       - name: Upload model progress evidence
         if: always()

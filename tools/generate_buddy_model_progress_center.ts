@@ -6,6 +6,7 @@ import {
   MODEL_BENCHMARK_TARGETS,
   MODEL_DISCOVERY_TASKS,
 } from "../shared/model-benchmark-targets";
+import { buildResourceOnboardingCatalog } from "../shared/resource-onboarding";
 
 type ModelTarget = (typeof MODEL_BENCHMARK_TARGETS)[number];
 type CostMode = "free" | "premium";
@@ -254,6 +255,7 @@ function datasetPackages() {
 
 function buildCatalog() {
   const benchmarkByTarget = new Map(benchmarkCatalog.targets.map((target) => [target.id, target]));
+  const providerOnboarding = buildResourceOnboardingCatalog();
   const connections = MODEL_BENCHMARK_TARGETS.map((target) => {
     const evidence = benchmarkByTarget.get(target.id);
     if (!evidence) throw new Error(`Missing benchmark record for target ${target.id}`);
@@ -361,6 +363,8 @@ function buildCatalog() {
     summary: {
       modelTargets: connections.length,
       providerSources: benchmarkCatalog.summary.providers,
+      providerAccountMaximum: providerOnboarding.filter((provider) => provider.accountRequired).length,
+      noAccountProviderSetups: providerOnboarding.filter((provider) => !provider.accountRequired).length,
       taskCategories: MODEL_DISCOVERY_TASKS.length,
       councils: councils.length,
       seatsPerCouncil: config.council_policy.seats_per_task,
@@ -380,6 +384,7 @@ function buildCatalog() {
     },
     gateCoverage,
     taskCategories: MODEL_DISCOVERY_TASKS,
+    providerOnboarding,
     connections,
     councils,
     benchmarkRoadmaps,
