@@ -2,13 +2,39 @@ name: Deploy Buddy Website
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - "website/**"
+      - "client/**"
+      - "shared/**"
+      - "server/**"
+      - "package.json"
+      - "package-lock.json"
+      - "vite.config.ts"
+      - "tools/build_buddy_public_site.py"
+      - "tools/build_github_pages_full_coverage.py"
+      - "tools/build_manufacturer_marketplace_catalog.py"
+      - "tools/check_deployment_cost_policy.py"
+      - "tools/generate_buddy_model_router.py"
+      - "tools/check_buddy_model_benchmarks.mjs"
+      - "tools/generate_buddy_distribution_catalog.py"
+      - "tools/generate_repository_test_registry.py"
+      - "config/**"
+      - ".github/workflows/deploy-buddy-pages.yml"
   push:
     branches:
       - main
       - buddy-rebuild-v2
     paths:
       - "website/**"
+      - "client/**"
+      - "shared/**"
+      - "server/**"
+      - "package.json"
+      - "package-lock.json"
+      - "vite.config.ts"
       - "tools/build_buddy_public_site.py"
+      - "tools/build_github_pages_full_coverage.py"
       - "tools/build_manufacturer_marketplace_catalog.py"
       - "tools/check_deployment_cost_policy.py"
       - "tools/generate_buddy_model_router.py"
@@ -24,6 +50,9 @@ permissions:
 concurrency:
   group: buddy-github-pages-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  DREAMCO_PAGES_BACKEND_URL: ${{ vars.DREAMCO_BACKEND_URL || 'https://dreamco-buddy-312632932335.us-central1.run.app' }}
 
 jobs:
   build:
@@ -44,6 +73,10 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          cache: npm
+
+      - name: Install web dependencies
+        run: npm ci --ignore-scripts
 
       - name: Run deployment preflight
         run: |
@@ -56,6 +89,27 @@ jobs:
           python3 tools/build_buddy_public_site.py --check
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
+
+      - name: Type-check full frontend and backend
+        run: npm run check
+
+      - name: Build full React app for GitHub Pages and attach backend
+        env:
+          VITE_GITHUB_PAGES: "true"
+          VITE_API_BASE_URL: ${{ env.DREAMCO_PAGES_BACKEND_URL }}
+        run: |
+          rm -rf website/app dist/public
+          npx vite build --base=./
+          test -s dist/public/index.html
+          cp -R dist/public website/app
+          test -s website/app/index.html
+          printf '%s\n' "$VITE_API_BASE_URL" > website/app/backend-endpoint.txt
+
+      - name: Verify repo-wide public page coverage
+        run: |
+          python3 tools/build_github_pages_full_coverage.py --check
+          test -s website/page-coverage.html
+          test -s website/data/public-page-coverage.json
 
       - name: Check browser JavaScript syntax
         run: |
@@ -71,14 +125,17 @@ jobs:
           node --check website/service-worker.js
 
       - name: Configure GitHub Pages
+        if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v6
 
       - name: Upload public website
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v5
         with:
           path: website
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 20

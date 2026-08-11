@@ -1,10 +1,13 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import { installBackendBridge } from "./lib/runtimeBackend";
 import "./index.css";
 
-// In development, unregister any stale service workers to prevent stale cache issues.
-// In production, register the service worker for offline support.
-if ("serviceWorker" in navigator) {
+installBackendBridge();
+
+// GitHub Pages publishes the React client under /app/ and should not register the
+// production root service worker. The static website has its own worker lifecycle.
+if ("serviceWorker" in navigator && import.meta.env.VITE_GITHUB_PAGES !== "true") {
   if (import.meta.env.DEV) {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
       registrations.forEach((r) => r.unregister());

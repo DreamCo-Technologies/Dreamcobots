@@ -1,5 +1,6 @@
-import { Switch, Route, Redirect } from "wouter";
-import { lazy, Suspense, type ComponentType } from "react";
+import { Switch, Route, Redirect, Router as WouterRouter } from "wouter";
+import { useHashLocation } from "wouter/use-hash-location";
+import { lazy, Suspense, type ComponentType, type ReactNode } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -54,7 +55,7 @@ function wrap(Page: ComponentType, name: string) {
   };
 }
 
-function Router() {
+function AppRoutes() {
   return (
     <Switch>
       <Route path="/" component={wrap(ChatIndexPage, "Chat")} />
@@ -92,15 +93,20 @@ function Router() {
       <Route path="/buddy" component={wrap(BuddyPage, "Buddy Bot")} />
       <Route path="/settings" component={wrap(SettingsPage, "Settings")} />
 
-      {/* Legacy / convenience */}
       <Route path="/chat">
         <Redirect to="/" />
       </Route>
 
-      {/* Fallback */}
       <Route component={NotFound} />
     </Switch>
   );
+}
+
+function PagesRouter({ children }: { children: ReactNode }) {
+  if (import.meta.env.VITE_GITHUB_PAGES === "true") {
+    return <WouterRouter hook={useHashLocation}>{children}</WouterRouter>;
+  }
+  return <>{children}</>;
 }
 
 function App() {
@@ -109,7 +115,9 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <ErrorBoundary pageName="Application">
-          <Router />
+          <PagesRouter>
+            <AppRoutes />
+          </PagesRouter>
         </ErrorBoundary>
       </TooltipProvider>
     </QueryClientProvider>
