@@ -1,0 +1,18 @@
+{
+  "schema":"dreamco.500_model_full_matrix_prospectus.v1",
+  "subject":"Buddy versus every catalogued model/provider",
+  "scope":"Run every registered benchmark suite that is applicable to each catalogued model/provider and record comparable evidence by capability.",
+  "entity_rule":"A catalogued model/provider is not treated as evaluated until benchmark evidence exists for the applicable suites. Company/provider metadata and model results remain separate.",
+  "dimensions":["quality","correctness","completeness","speed","efficiency","reliability","safety","independence"],
+  "matrix_axes":["provider","model","model_version","capability","benchmark_suite","task","buddy_result","reference_result","gap","status","evidence","last_verified"],
+  "statuses":["not_catalogued","catalogued","not_applicable","ready","running","passed","failed","blocked","stale","needs_review"],
+  "comparison_rule":"Compare Buddy and each reference model only under the same task fixture, rubric, applicable safety constraints, and declared execution conditions. Do not infer missing results.",
+  "prospectus_sections":["public_provider_summary","model_inventory","capability_scorecard","benchmark_matrix","quality_comparison","speed_comparison","efficiency_comparison","reliability_comparison","safety_results","native_vs_assisted_results","strengths","weaknesses","open_gaps","recent_progress","evidence_and_provenance","limitations","last_verified"],
+  "gap_rule":"Every failed, blocked, stale, or missing applicable benchmark becomes a visible gap or verification state; only passing evidence can close a gap.",
+  "native_mastery_rule":"External-model-assisted execution may be shown as assisted evidence but cannot establish native Buddy mastery.",
+  "pages_rule":"Generate a public-safe prospectus record for each model/provider and a Buddy aggregate comparison. Never expose secrets, private prompts/data, restricted endpoints, or credentials.",
+  "refresh":"daily",
+  "history":"Preserve prior verified snapshots so users can see progress over time.",
+  "scale_rule":"Use batching/parallel execution for independent model-suite cases inside the single benchmark workflow; preserve dependency ordering for repairs and retests.",
+  "cost_rule":"Paid/private models may be catalogued publicly but remain unverified/blocked unless an explicitly approved evaluation adapter is available."
+}
