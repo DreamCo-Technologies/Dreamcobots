@@ -1,0 +1,14 @@
+{
+  "schema":"dreamco.benchmark_gap_priority_policy.v1",
+  "purpose":"Turn discovered benchmark and capability gaps into a bounded, evidence-driven remediation queue.",
+  "priority_dimensions":["user_impact","safety_severity","frequency","breadth","quality_gap","latency_gap","efficiency_gap","regression_risk","shared_fix_leverage","repair_confidence","cost_to_verify"],
+  "ranking_rule":"Rank by safety/user impact first, then shared-fix leverage and recurrence, then measurable quality/performance impact, while penalizing high uncertainty and high verification cost.",
+  "deduplication_rule":"Group failures by normalized root cause, affected capability, route, tool, fixture, and runtime binding before proposing repairs.",
+  "shared_fix_first":true,
+  "parallel_safe_work":["independent benchmark fixtures","read-only inventory","static analysis","evidence validation","non-overlapping sandbox experiments"],
+  "ordered_work":["shared framework repair","schema migrations","runtime binding changes","routing changes with dependent suites","learning-store changes"],
+  "closure_states":["open","triaged","experimenting","repair_ready","repair_applied","benchmarking","dependent_retest","mastered","blocked","needs_owner","stale"],
+  "anti_gaming":["do not lower rubrics","do not remove failing cases","do not change fixtures only to improve scores","do not convert missing evidence to pass","do not hide regressions","do not count external-model assistance as native mastery"],
+  "stop_conditions":["safety regression","unexpected data loss","credential exposure","destructive migration risk","benchmark evidence corruption","unbounded resource consumption","unapproved paid API usage"],
+  "next_action":"Select the highest-priority unresolved gap with a safe, testable, bounded repair hypothesis; otherwise report blocked/needs-owner rather than fabricate progress."
+}
