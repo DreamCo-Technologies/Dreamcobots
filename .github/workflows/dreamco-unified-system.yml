@@ -11,8 +11,9 @@ on:
         description: 'quick, standard, or maximum'
         required: false
         default: standard
+  # Daily benchmark refresh: UTC 02:17 every day.
   schedule:
-    - cron: '17 */6 * * *'
+    - cron: '17 2 * * *'
   push:
     branches: [main]
     paths:
@@ -37,7 +38,7 @@ env:
 
 jobs:
   benchmark-all-500:
-    name: Benchmark all catalogued models in one orchestrated run
+    name: Daily benchmark all catalogued models in one orchestrated run
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
@@ -83,8 +84,7 @@ jobs:
               p=Path(name)
               if not p.exists():
                   raise SystemExit(f'Missing benchmark contract/plan: {name}')
-              if p.suffix == '.json':
-                  json.loads(p.read_text())
+              if p.suffix == '.json': json.loads(p.read_text())
           print(f'Validated {len(required)} benchmark contracts/plans.')
           PY
 
@@ -165,27 +165,17 @@ jobs:
           print('Public/private boundary passed.')
           PY
 
-      - name: Upload one consolidated benchmark evidence artifact
-        if: always()
-        uses: actions/upload-artifact@v6
-        with:
-          name: dreamco-500-model-benchmark-${{ github.run_id }}
-          path: |
-            config/generated/*.json
-            website/data/*.json
-            reports/*.md
-          if-no-files-found: warn
-          retention-days: 21
-
-      - name: Write Actions summary for Pages/Actions dashboard
+      - name: Write daily freshness summary
         if: always()
         run: |
           python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          from datetime import datetime, timezone
           from pathlib import Path
           import json
-          print('# DreamCo 500-Model Benchmark System')
-          print('')
-          print('**One workflow owns the entire 500-model benchmark program.**')
+          print('# DreamCo Daily 500-Model Benchmark Refresh')
+          print(f'- Refresh timestamp (UTC): `{datetime.now(timezone.utc).isoformat()}`')
+          print('- Cadence: **daily at 02:17 UTC**')
+          print('- One workflow owns the complete benchmark program.')
           print('')
           for name in ['config/generated/model-benchmark-evidence.json','config/generated/buddy-500-model-benchmark.json','config/generated/universal-capability-benchmark.json']:
               p=Path(name)
@@ -200,3 +190,15 @@ jobs:
           print('')
           print('Missing, blocked, stale, or unverified models remain visible and are never converted to passes.')
           PY
+
+      - name: Upload one consolidated daily benchmark evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: dreamco-500-model-benchmark-${{ github.run_id }}
+          path: |
+            config/generated/*.json
+            website/data/*.json
+            reports/*.md
+          if-no-files-found: warn
+          retention-days: 30
