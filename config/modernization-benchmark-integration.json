@@ -1,0 +1,26 @@
+{
+  "schema":"dreamco.modernization_benchmark_integration.v1",
+  "source":"owner-approved modernization roadmap",
+  "principles":["small_reviewable_commits","verify_before_claiming","preserve_existing_functionality","review_branch_only","no_fabricated_results"],
+  "phases": [
+    {"id":1,"name":"repository_health","gates":["README","requirements","setup","duplicate_inventory","naming"]},
+    {"id":2,"name":"framework","gates":["global_ai_sources_flow","configuration","logging","metrics","plugin_manager","event_bus","lifecycle_hooks"]},
+    {"id":3,"name":"bot_platform","gates":["plugin_discovery","registration","dependency_injection","metadata","version_compatibility","enable_disable"]},
+    {"id":4,"name":"bot_template_generator","gates":["tools/create_bot.py","generated_readme","dockerfile","requirements","tests","ci","config","plugin","docs"]},
+    {"id":5,"name":"quality","gates":["pytest","coverage","flake8","black","isort","mypy"]},
+    {"id":6,"name":"ci_cd","gates":["lint","tests","framework_compliance","dependency_audit","build_verification","release_workflow","artifacts"]},
+    {"id":7,"name":"releases","gates":["windows","macos","linux","package_verification"]},
+    {"id":8,"name":"downloadable_app","gates":["launcher","windows_installer","macos_app","linux_appimage","release_workflow"]},
+    {"id":9,"name":"web_app","gates":["pages_deployment","download","docs","version_history","release_notes"]},
+    {"id":10,"name":"security","gates":["dependabot","secret_scanning","codeql","security_policy","release_integrity"]},
+    {"id":11,"name":"governance","gates":["issue_templates","pr_template","codeowners","branch_protection_recommendations","labels","milestones","project_board"]},
+    {"id":12,"name":"automation","gates":["bootstrap","repair","cleanup","release","build","test","verify","doctor"]},
+    {"id":13,"name":"testing","gates":["pytest","lint","type_check","coverage","build_verification","local_actions_when_possible"]},
+    {"id":14,"name":"pull_requests","gates":["logical_prs","atomic_commits","reviewable_scope"]},
+    {"id":15,"name":"final_report","gates":["completed_work","changed_files","test_results","coverage","remaining_issues","risks","roadmap"]}
+  ],
+  "benchmark_binding":"Each phase gate becomes an evidence-bearing capability check where practical. A gate is not considered complete until implementation and verification evidence exists.",
+  "parallel_policy":"Run independent discovery, static analysis, documentation checks, and isolated benchmarks in parallel. Serialize shared-state writes and dependency-sensitive migrations.",
+  "safety":"No main merge, production deployment, credential changes, paid model calls, destructive deletion, weakened tests, or fabricated evidence.",
+  "public_pages":"Expose safe phase status, evidence references, blockers, benchmark relationships, and verification summaries without secrets or private data."
+}
