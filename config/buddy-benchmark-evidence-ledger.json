@@ -1,0 +1,9 @@
+{
+  "schema":"buddy.benchmark_evidence_ledger.v1",
+  "purpose":"Give every benchmark a reproducible evidence record spanning quality, performance, efficiency, reliability, safety, and independence.",
+  "record_fields":["benchmark_id","suite_version","fixture_version","environment","runner","hardware","model_and_provider_if_applicable","mode","baseline_reference","task_count","concurrency","cache_state","start_time","end_time","quality_scores","performance_scores","efficiency_scores","reliability_scores","independence_state","failures","root_cause","repair_reference","targeted_test_results","dependent_suite_results","before_after_comparison","rollback_or_fallback","evidence_artifacts","final_state"],
+  "allowed_final_states":["not_run","running","passed","failed","blocked","regression","mastered_candidate","mastered"],
+  "rules":["Missing evidence is unknown, not pass.","Estimated values must be labeled estimates.","Assisted execution must be labeled assisted.","A benchmark cannot be closed by documentation alone.","Performance improvements require quality and regression checks.","Shared repairs require dependent-suite retesting.","Evidence must be sufficient to reproduce or independently audit the result where practical."],
+  "public_projection":["benchmark_id","suite_version","status","quality_summary","latency_summary","throughput_summary","efficiency_summary","reliability_summary","independence_state","trend","evidence_reference","blocker_summary"],
+  "private_exclusions":["secrets","credentials","private_user_data","sensitive_raw_logs","provider_private_keys"]
+}
