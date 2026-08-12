@@ -12,7 +12,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
 import {
-  Bot, BrainCircuit, Activity, RefreshCw, Play, RotateCcw, Github,
+  Bot, BrainCircuit, Activity, RefreshCw, Play, RotateCcw, GitFork as Github,
   GitPullRequest, FolderOpen, FileCode, ExternalLink, CheckCircle2,
   AlertCircle, Clock, Zap, DollarSign, ShoppingBag, Building2, Landmark,
   Search, Filter, ChevronRight, Loader2, XCircle, Globe, Package,
@@ -179,7 +179,7 @@ export default function ActionsPage() {
           <div>
             <h2 className="text-3xl md:text-4xl" data-testid="actions-title">Actions & Agents</h2>
             <p className="mt-1 text-muted-foreground">
-              {bots.length} bots · {tasks.length} tasks · {MONEY_APIS.length} revenue APIs · Full repository control
+              {bots.length} bots · {tasks.length} tasks · {MONEY_APIS.length} provider candidates · Governed repository workspace
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
@@ -640,9 +640,9 @@ export default function ActionsPage() {
               <div className="flex items-center gap-3">
                 <DollarSign className="h-5 w-5 text-green-400" />
                 <div>
-                  <p className="font-bold text-sm text-green-400">Autonomous Revenue APIs</p>
+                  <p className="font-bold text-sm text-green-400">Revenue Provider Candidates</p>
                   <p className="text-xs text-muted-foreground">
-                    {MONEY_APIS.length} money-making APIs organized by category. Each is pre-assigned to the best bot. Bots use these to generate revenue autonomously.
+                    {MONEY_APIS.length} provider candidates organized by category. Documentation, credentials, sandbox evidence, and owner approval are required before live use; outcomes are not guaranteed.
                   </p>
                 </div>
               </div>
@@ -727,7 +727,7 @@ export default function ActionsPage() {
                       </Button>
                       <a href={api.docs} target="_blank" rel="noreferrer" className="flex-shrink-0">
                         <Button size="sm" variant="outline" className="rounded-lg h-8 text-[11px]" data-testid={`test-api-${api.id}`}>
-                          Test
+                          Open docs
                         </Button>
                       </a>
                     </div>

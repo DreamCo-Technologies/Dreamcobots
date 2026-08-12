@@ -23,7 +23,32 @@
 .test-plan,
 .test-inventory,
 .fleet-quality,
-.improvement-guardrails { margin-top: 42px; padding-top: 20px; border-top: 1px solid #30333a; }
+.improvement-guardrails,
+.benchmark-index { margin-top: 42px; padding-top: 20px; border-top: 1px solid #30333a; }
+.benchmark-index-metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 16px 0; border-block: 1px solid #30333a; }
+.benchmark-index-metrics div { min-width: 0; padding: 15px; border-right: 1px solid #30333a; }
+.benchmark-index-metrics div:last-child { border-right: 0; }
+.benchmark-index-metrics span, .benchmark-index-metrics strong { display: block; }
+.benchmark-index-metrics span { color: #858c98; font-size: .62rem; font-weight: 700; text-transform: uppercase; }
+.benchmark-index-metrics strong { margin-top: 4px; font-size: 1.15rem; }
+.benchmark-plan-stages { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border: 1px solid #30333a; border-radius: 8px; overflow: hidden; list-style: none; }
+.benchmark-plan-stages li { min-width: 0; padding: 13px; border-right: 1px solid #30333a; background: #15171c; }
+.benchmark-plan-stages li:last-child { border-right: 0; }
+.benchmark-plan-stages span { color: #62d0a0; font: 600 .62rem "JetBrains Mono", monospace; }
+.benchmark-plan-stages strong { display: block; margin-top: 4px; font-size: .72rem; }
+.benchmark-plan-stages p { margin-top: 5px; color: #858c98; font-size: .62rem; line-height: 1.4; }
+.benchmark-index-toolbar { display: grid; grid-template-columns: minmax(260px, 1fr) 220px auto; align-items: end; gap: 12px; margin-top: 12px; padding: 14px; border: 1px solid #30333a; border-radius: 8px 8px 0 0; background: #17191e; }
+.benchmark-index-toolbar label { color: #858c98; font-size: .65rem; font-weight: 700; text-transform: uppercase; }
+.benchmark-index-toolbar input, .benchmark-index-toolbar select { width: 100%; min-height: 39px; margin-top: 5px; border: 1px solid #383c45; border-radius: 6px; padding: 8px 10px; background: #101217; color: #f1f2f4; font: inherit; text-transform: none; }
+.benchmark-program-list { border: 1px solid #30333a; border-top: 0; border-radius: 0 0 8px 8px; overflow: hidden; }
+.benchmark-program-row { display: grid; grid-template-columns: minmax(240px, 1.3fr) minmax(230px, 1fr) minmax(180px, .75fr) auto; align-items: center; gap: 14px; padding: 13px; border-bottom: 1px solid #292c33; background: #15171c; }
+.benchmark-program-row:last-child { border-bottom: 0; }
+.benchmark-program-copy span { color: #62d0a0; font-size: .6rem; font-weight: 700; text-transform: uppercase; }
+.benchmark-program-copy h3 { margin-top: 3px; font-size: .8rem; }
+.benchmark-program-copy p { margin-top: 4px; color: #858c98; font-size: .66rem; line-height: 1.4; }
+.benchmark-program-evidence, .benchmark-program-state { display: grid; gap: 4px; }
+.benchmark-program-evidence small, .benchmark-program-state small { color: #858c98; font-size: .61rem; }
+.benchmark-program-evidence code { color: #b9d9cb; font-size: .62rem; overflow-wrap: anywhere; }
 .test-workspace-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 15px; }
 .test-workspace-heading h2 { margin-top: 3px; font-size: 1.35rem; }
 .test-scan-id { color: #858c98; font: .68rem "JetBrains Mono", monospace; }
@@ -162,6 +187,9 @@
 .quality-capability-row code { margin-top: 3px; color: #858c98; font-size: .58rem; overflow-wrap: anywhere; }
 .quality-capability-row > span:not(:first-child) { color: #aeb3be; }
 @media (max-width: 1040px) {
+  .benchmark-plan-stages { grid-template-columns: repeat(3, 1fr); }
+  .benchmark-plan-stages li:nth-child(3n) { border-right: 0; }
+  .benchmark-program-row { grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr); }
   .test-metrics { grid-template-columns: repeat(3, 1fr); }
   .test-metrics div:nth-child(3) { border-right: 0; }
   .test-suite-row { grid-template-columns: 30px minmax(180px, 1fr) 140px 180px; }
@@ -174,6 +202,11 @@
   .quality-view-label { grid-column: 1 / -1; text-align: left; }
 }
 @media (max-width: 700px) {
+  .benchmark-index-metrics { grid-template-columns: 1fr 1fr; }
+  .benchmark-index-metrics div:nth-child(even) { border-right: 0; }
+  .benchmark-plan-stages { grid-template-columns: 1fr; }
+  .benchmark-plan-stages li { border-right: 0; border-bottom: 1px solid #30333a; }
+  .benchmark-index-toolbar, .benchmark-program-row { grid-template-columns: 1fr; }
   .test-center-shell { width: min(100% - 24px, 1320px); padding-top: 26px; }
   .test-center-header,
   .test-workspace-heading { align-items: stretch; flex-direction: column; }

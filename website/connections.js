@@ -4,6 +4,7 @@
   const CATALOG_URL = 'data/buddy-connection-catalog.json?v=2';
   const AUDIT_KEY = 'dreamco.buddy.connection.audit.v1';
   const LOCK_KEY = 'dreamco.buddy.connection.locked.v1';
+  const RESOURCE_QUEUE_KEY = 'dreamco.buddy.resource.onboarding.queue.v1';
   const LOCAL_TOKEN_KEY = 'buddy-local-token';
   const SECRET_NAME = /^[A-Za-z][A-Za-z0-9_.:/-]{2,127}$/;
   const TOKEN_LIKE = /(?:github_pat_|gh[pousr]_|ghs_|(?:sk|rk)[-_](?:live|test)?|AIza[0-9A-Za-z_-]+|xox[baprs]-|Bearer\s+|BEGIN .*PRIVATE KEY)/i;
@@ -13,6 +14,8 @@
     locked: localStorage.getItem(LOCK_KEY) === 'true',
     backendConnections: [],
     backendReachable: false,
+    modelProgress: window.BUDDY_MODEL_PROGRESS_CENTER || { summary: {}, taskCategories: [], providerOnboarding: [] },
+    resourceQueue: loadResourceQueue(),
   };
 
   const byId = (id) => document.getElementById(id);
@@ -199,6 +202,182 @@
 
   function saveAudit() {
     localStorage.setItem(AUDIT_KEY, JSON.stringify(state.audit.slice(0, 40)));
+  }
+
+  function loadResourceQueue() {
+    try {
+      const value = JSON.parse(localStorage.getItem(RESOURCE_QUEUE_KEY) || '[]');
+      return Array.isArray(value)
+        ? value.filter((item) => item && typeof item.provider === 'string' && typeof item.status === 'string').slice(0, 100)
+        : [];
+    } catch (_error) {
+      return [];
+    }
+  }
+
+  function saveResourceQueue() {
+    localStorage.setItem(RESOURCE_QUEUE_KEY, JSON.stringify(state.resourceQueue.slice(0, 100)));
+  }
+
+  function updateResourceQueue(provider, status) {
+    const existing = state.resourceQueue.find((item) => item.provider === provider);
+    const update = { provider, status, updatedAt: new Date().toISOString() };
+    if (existing) Object.assign(existing, update);
+    else state.resourceQueue.push(update);
+    state.resourceQueue = state.resourceQueue.slice(0, 100);
+    saveResourceQueue();
+  }
+
+  function resourceAccessMatches(provider, filter) {
+    if (filter === 'all') return true;
+    if (filter === 'no_account') return !provider.accountRequired;
+    if (filter === 'account_required') return provider.accountRequired;
+    if (filter === 'free_first') return !provider.accountRequired || Number(provider.access?.declaredFreeTargetCount || 0) > 0;
+    if (filter === 'paid_review') return provider.accountRequired && Number(provider.access?.declaredFreeTargetCount || 0) === 0;
+    return true;
+  }
+
+  function providerQueueStatus(provider) {
+    const queued = state.resourceQueue.find((item) => item.provider === provider.provider);
+    if (queued) return queued.status;
+    if (provider.liveProviderConnection) return 'live_verified';
+    return provider.accountRequired ? 'user_handoff_required' : 'sandbox_setup_ready';
+  }
+
+  function resourceStatusLabel(status) {
+    return {
+      queue_prepared: 'Queue prepared',
+      handoff_prepared: 'Handoff prepared',
+      setup_opened: 'Setup opened',
+      live_verified: 'Live verified',
+      user_handoff_required: 'User handoff',
+      sandbox_setup_ready: 'Sandbox setup',
+    }[status] || String(status).replaceAll('_', ' ');
+  }
+
+  function prepareProviderHandoff(provider) {
+    if (state.locked) {
+      byId('resource-queue-summary').textContent = 'Unlock the planner before preparing a provider handoff.';
+      return;
+    }
+    try {
+      const url = officialUrl(provider.officialSource);
+      const purpose = `Use ${provider.provider} only for approved Buddy tasks after exact-model sandbox and benchmark checks.`;
+      byId('signup-app').value = provider.provider;
+      byId('signup-url').value = url.href;
+      byId('signup-purpose').value = purpose;
+      renderSignupPlan({ app: provider.provider, url, purpose });
+      updateResourceQueue(provider.provider, 'handoff_prepared');
+      addAudit({ type: 'signup_handoff', app: provider.provider, host: url.hostname, method: 'user_handoff', status: 'user_action_required' });
+      byId('resource-queue-summary').textContent = `${provider.provider} is prepared. The official page opens only when you choose it; you complete protected steps and approve any fee.`;
+      renderResourceOnboarding();
+      byId('signup-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (error) {
+      byId('resource-queue-summary').textContent = error.message || 'Unable to prepare this provider handoff.';
+    }
+  }
+
+  function prepareAllResourceSetups() {
+    if (state.locked) {
+      byId('resource-queue-summary').textContent = 'Unlock the planner before preparing the provider queue.';
+      return;
+    }
+    const providers = state.modelProgress.providerOnboarding || [];
+    state.resourceQueue = providers.map((provider) => ({
+      provider: provider.provider,
+      status: 'queue_prepared',
+      updatedAt: new Date().toISOString(),
+    }));
+    saveResourceQueue();
+    addAudit({
+      type: 'resource_queue',
+      app: `${providers.length} provider setups`,
+      host: location.hostname || 'local-file',
+      method: 'plan_only',
+      status: 'queue_prepared_no_accounts_created',
+    });
+    renderResourceOnboarding();
+  }
+
+  function renderResourceOnboarding() {
+    const providers = state.modelProgress.providerOnboarding || [];
+    const summary = state.modelProgress.summary || {};
+    byId('resource-target-count').textContent = Number(summary.modelTargets || 0).toLocaleString();
+    byId('resource-provider-count').textContent = Number(summary.providerSources || providers.length).toLocaleString();
+    byId('resource-account-count').textContent = Number(summary.providerAccountMaximum || providers.filter((provider) => provider.accountRequired).length).toLocaleString();
+    byId('resource-live-count').textContent = Number(summary.liveConnected || 0).toLocaleString();
+
+    const query = byId('resource-search').value.trim().toLowerCase();
+    const task = byId('resource-task').value;
+    const access = byId('resource-access').value;
+    const visible = providers.filter((provider) => {
+      const taskValues = [...(provider.curatedTaskCategories || []), ...(provider.discoveryTaskCoverage || [])];
+      const haystack = [
+        provider.provider,
+        provider.connectionKind,
+        provider.bestUseSummary,
+        ...(provider.curatedStrengths || []),
+        ...taskValues,
+      ].join(' ').toLowerCase();
+      return (!query || haystack.includes(query))
+        && (task === 'all' || taskValues.includes(task))
+        && resourceAccessMatches(provider, access);
+    });
+
+    const body = byId('resource-provider-rows');
+    body.replaceChildren();
+    visible.forEach((provider) => {
+      const row = document.createElement('tr');
+      const providerCell = document.createElement('td');
+      const providerName = element('strong', '', provider.provider);
+      const official = element('a', '', 'Official source');
+      official.href = provider.officialSource;
+      official.target = provider.officialSource.startsWith('http') ? '_blank' : '_self';
+      official.rel = 'noopener';
+      providerCell.append(providerName, official);
+
+      const useCell = element('td', 'resource-provider-use', provider.bestUseSummary);
+      const accessCell = document.createElement('td');
+      accessCell.append(element('span', provider.accountRequired ? 'badge badge-amber' : 'badge badge-green', provider.access.label));
+      const targetCell = element('td', '', String(provider.targetCount));
+      const actionCell = document.createElement('td');
+      const actions = element('div', 'resource-provider-actions');
+      const status = providerQueueStatus(provider);
+      actions.append(element('span', 'resource-provider-status', resourceStatusLabel(status)));
+
+      if (provider.accountRequired) {
+        const prepare = element('button', 'btn btn-outline btn-sm', 'Prepare handoff');
+        prepare.type = 'button';
+        prepare.addEventListener('click', () => prepareProviderHandoff(provider));
+        actions.append(prepare);
+      } else {
+        const setup = element('a', 'btn btn-outline btn-sm', 'Open sandbox setup');
+        setup.href = provider.setupPath;
+        setup.addEventListener('click', () => {
+          updateResourceQueue(provider.provider, 'setup_opened');
+          renderResourceOnboarding();
+        });
+        actions.append(setup);
+      }
+      const askBuddy = element('a', 'resource-ask-buddy', 'Use with Buddy');
+      askBuddy.href = `buddy.html?prompt=${encodeURIComponent(`Connect ${provider.provider} efficiently for my task. Use the free or local route first, verify exact models, and pause before signup, credentials, paid use, or external changes.`)}`;
+      actions.append(askBuddy);
+      actionCell.append(actions);
+      row.append(providerCell, useCell, accessCell, targetCell, actionCell);
+      body.append(row);
+    });
+    if (!visible.length) {
+      const row = document.createElement('tr');
+      const cell = element('td', 'access-empty', 'No providers match these filters.');
+      cell.colSpan = 5;
+      row.append(cell);
+      body.append(row);
+    }
+    const queued = state.resourceQueue.length;
+    byId('resource-queue-summary').textContent = queued
+      ? `${queued.toLocaleString()} provider setups prepared on this device. Accounts created: 0. Forms submitted: 0. Payments made: 0.`
+      : `${providers.length.toLocaleString()} providers cover ${Number(summary.modelTargets || 0).toLocaleString()} targets. Prepare the queue, then complete one official provider handoff at a time.`;
+    byId('resource-provider-row-count').textContent = `Showing ${visible.length.toLocaleString()} of ${providers.length.toLocaleString()} provider setups.`;
   }
 
   function addAudit(event) {
@@ -433,9 +612,14 @@
 
   function applyQueryPrefill() {
     const params = new URLSearchParams(location.search);
+    const onboarding = String(params.get('onboarding') || '').trim();
     const app = String(params.get('app') || '').trim();
     const rawUrl = String(params.get('url') || '').trim();
     const methodId = String(params.get('method') || '').trim();
+    if (onboarding === 'all') {
+      activatePanel('signup-panel');
+      byId('resource-search').focus();
+    }
     if (!app && !rawUrl && !methodId) return;
     if (app) byId('connection-app').value = app.slice(0, 80);
     if (rawUrl) {
@@ -754,6 +938,10 @@
     byId('access-search').addEventListener('input', renderAccessCenter);
     byId('access-type').addEventListener('change', renderAccessCenter);
     byId('access-status').addEventListener('change', renderAccessCenter);
+    byId('resource-search').addEventListener('input', renderResourceOnboarding);
+    byId('resource-task').addEventListener('change', renderResourceOnboarding);
+    byId('resource-access').addEventListener('change', renderResourceOnboarding);
+    byId('resource-queue-all').addEventListener('click', prepareAllResourceSetups);
     byId('access-new-connection').addEventListener('click', () => { activatePanel('connect-panel'); byId('connection-app').focus(); });
     byId('access-store-secret').addEventListener('click', () => openSecretIntake());
     byId('access-view-auth').addEventListener('click', () => activatePanel('catalog-panel'));
@@ -777,6 +965,14 @@
       saveAudit();
       renderAudit();
     });
+
+    const taskSelect = byId('resource-task');
+    (state.modelProgress.taskCategories || []).forEach((task) => {
+      const option = element('option', '', task);
+      option.value = task;
+      taskSelect.append(option);
+    });
+    renderResourceOnboarding();
 
     try {
       const response = await fetch(CATALOG_URL, { cache: 'no-store' });

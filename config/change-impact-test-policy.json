@@ -26,6 +26,29 @@
   "skip_markers": [".skip(", ".skip(", "skipTest(", "@unittest.skip", "pytest.mark.skip", "test.skip(", "describe.skip(", "it.skip("],
   "shared_core_prefixes": ["server/", "shared/", "tools/", "script/"],
   "generic_source_tokens": ["index", "server", "shared", "client", "tools", "script", "build", "run", "generate", "main", "app"],
+  "focused_test_mappings": [
+    {
+      "sources": [
+        "client/src/components/AppShell.tsx",
+        "client/src/components/ui/calendar.tsx",
+        "client/src/components/ui/chart.tsx",
+        "client/src/components/ui/resizable.tsx",
+        "client/src/pages/BotActivityPage.tsx",
+        "client/src/pages/BuddyPage.tsx",
+        "client/src/pages/ConversationPage.tsx",
+        "client/src/pages/SandboxPage.tsx"
+      ],
+      "tests": ["tests/ui-library-compatibility.test.mjs"]
+    },
+    {
+      "sources": ["client/src/pages/ActionsPage.tsx", "website/nav.js"],
+      "tests": ["tests/actions-page.test.mjs"]
+    },
+    {
+      "sources": ["website/connections.js"],
+      "tests": ["tests/connection-secret-intake-page.test.mjs", "tests/resource-onboarding-page.test.mjs"]
+    }
+  ],
   "evidence_rules": {
     "normal": ["at least one relevant changed test file or focused verification mapping", "type/syntax check", "affected regression suite"],
     "high": ["normal evidence", "domain-relevant changed test", "negative/error-path test", "security/privacy/permission review", "integration/contract evidence", "rollback or safe-revert evidence when applicable"],

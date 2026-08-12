@@ -9,6 +9,7 @@
   const selectedSuites = new Set();
   const quality = window.BUDDY_FLEET_QUALITY_PROGRAM || { summary: {}, bots: [], quality_workers: [], release_pipeline: [] };
   const improvement = window.BUDDY_SELF_IMPROVEMENT || { mode: 'catalog_unavailable', improvement_loop: [], hallucination_controls: [] };
+  const benchmarkIndex = window.BUDDY_BENCHMARK_INDEX || { summary: {}, realisticPlan: [], programs: [], repositorySuites: [] };
 
   function make(tag, text, className) {
     const node = document.createElement(tag);
@@ -33,6 +34,48 @@
 
   function readable(value) {
     return String(value || '').replaceAll('_', ' ');
+  }
+
+  function renderBenchmarkPrograms() {
+    const query = byId('benchmark-program-search').value.trim().toLowerCase();
+    const area = byId('benchmark-area-filter').value;
+    const programs = (benchmarkIndex.programs || []).filter((program) => {
+      const text = `${program.name} ${program.area} ${program.scope} ${program.status}`.toLowerCase();
+      return (!query || text.includes(query)) && (area === 'all' || program.area === area);
+    });
+    const target = byId('benchmark-program-list'); target.replaceChildren();
+    programs.forEach((program) => {
+      const article = make('article', undefined, 'benchmark-program-row');
+      const identity = make('div', undefined, 'benchmark-program-copy');
+      identity.append(make('span', program.area), make('h3', program.name), make('p', program.scope));
+      const evidence = make('div', undefined, 'benchmark-program-evidence');
+      evidence.append(make('small', 'Evidence command'), make('code', program.check_command), make('small', program.cadence));
+      const state = make('div', undefined, 'benchmark-program-state');
+      state.append(make('span', readable(program.status), 'test-status'), make('small', `${program.live_results_completed} live results`));
+      const link = make('a', 'Open tracking', 'btn btn-outline btn-sm'); link.href = program.public_page;
+      article.append(identity, evidence, state, link); target.append(article);
+    });
+    byId('benchmark-index-status').textContent = `${formatter.format(programs.length)} of ${formatter.format(benchmarkIndex.programs?.length || 0)} benchmark programs shown`;
+  }
+
+  function renderBenchmarkIndex() {
+    const summary = benchmarkIndex.summary || {};
+    byId('benchmark-program-count').textContent = formatter.format(summary.benchmarkPrograms || 0);
+    byId('benchmark-suite-count').textContent = formatter.format(summary.repositorySuites || 0);
+    byId('benchmark-surface-count').textContent = formatter.format(summary.trackedBenchmarkSurfaces || 0);
+    byId('benchmark-public-count').textContent = formatter.format(summary.publicTrackingPrograms || 0);
+    byId('benchmark-live-count').textContent = formatter.format(summary.liveBenchmarkPrograms || 0);
+    const areaFilter = byId('benchmark-area-filter');
+    [...new Set((benchmarkIndex.programs || []).map((program) => program.area))].sort().forEach((area) => {
+      const choice = document.createElement('option'); choice.value = area; choice.textContent = area; areaFilter.append(choice);
+    });
+    const stages = byId('benchmark-plan-stages'); stages.replaceChildren();
+    (benchmarkIndex.realisticPlan || []).forEach((stage) => {
+      const item = make('li');
+      item.append(make('span', String(stage.stage).padStart(2, '0')), make('strong', stage.name), make('p', stage.gate));
+      stages.append(item);
+    });
+    renderBenchmarkPrograms();
   }
 
   function renderImprovementGuardrails() {
@@ -356,7 +399,7 @@
   }
 
   async function init() {
-    const response = await fetch('data/repository-test-registry.json?v=3', { cache: 'no-store' });
+    const response = await fetch('data/repository-test-registry.json?v=4', { cache: 'no-store' });
     if (!response.ok) throw new Error(`Test registry request failed: ${response.status}`);
     registry = await response.json();
     renderMetrics();
@@ -369,6 +412,8 @@
   byId('test-route-search').addEventListener('input', renderRoutes);
   byId('quality-search').addEventListener('input', renderQualityBots);
   byId('quality-status-filter').addEventListener('change', renderQualityBots);
+  byId('benchmark-program-search').addEventListener('input', renderBenchmarkPrograms);
+  byId('benchmark-area-filter').addEventListener('change', renderBenchmarkPrograms);
   byId('quality-detail-close').addEventListener('click', () => byId('quality-detail').close());
   byId('quality-download-plan').addEventListener('click', downloadQualityPlan);
   byId('select-local-tests').addEventListener('click', () => {
@@ -397,6 +442,7 @@
 
   renderQualityMetrics();
   renderQualityBots();
+  renderBenchmarkIndex();
   renderImprovementGuardrails();
   init().catch((error) => {
     byId('test-suite-list').replaceChildren(make('p', 'Test registry could not load. Open this site through the local server or deployed site.', 'test-empty'));

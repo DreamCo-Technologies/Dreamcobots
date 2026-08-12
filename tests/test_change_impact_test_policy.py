@@ -33,6 +33,19 @@ class ChangeImpactTestPolicyTests(unittest.TestCase):
         self.assertIn("domain-relevant stronger evidence", blockers)
         self.assertIn("shared-core change lacks dependent-system regression evidence", blockers)
 
+    def test_focused_mappings_reference_owned_sources_and_changed_test_paths(self):
+        mappings = self.policy["focused_test_mappings"]
+        self.assertGreaterEqual(len(mappings), 2)
+        sources = []
+        for mapping in mappings:
+            self.assertTrue(mapping["sources"])
+            self.assertTrue(mapping["tests"])
+            self.assertTrue(all(test.startswith("tests/") for test in mapping["tests"]))
+            sources.extend(mapping["sources"])
+        self.assertEqual(len(sources), len(set(sources)))
+        self.assertIn("client/src/components/ui/calendar.tsx", sources)
+        self.assertIn("website/nav.js", sources)
+
     def test_silent_test_bypasses_are_explicit_blockers(self):
         blockers = " ".join(self.policy["release_blockers"]).lower()
         self.assertIn("test file deleted", blockers)

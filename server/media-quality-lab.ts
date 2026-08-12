@@ -80,8 +80,8 @@ const evidenceSchema = z.object({
 const candidateSchema = z.object({
   id: z.string().trim().regex(/^[A-Za-z0-9_-]{3,120}$/),
   engineId: z.string().trim().min(2).max(80),
-  dimensions: z.record(z.number().min(0).max(1)),
-  hardGates: z.record(z.boolean()),
+  dimensions: z.record(z.string(), z.number().min(0).max(1)),
+  hardGates: z.record(z.string(), z.boolean()),
   medianLatencyMs: z.number().min(0).max(86_400_000),
   evidence: evidenceSchema,
 }).strict();

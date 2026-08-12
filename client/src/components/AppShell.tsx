@@ -32,7 +32,7 @@ import {
   Trophy,
   Cpu,
   BrainCircuit,
-  Github,
+  GitFork as Github,
   Wrench,
   Activity,
   TestTube2,

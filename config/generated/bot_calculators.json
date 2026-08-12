@@ -22,7 +22,7 @@
         "source": "website/calculator-engine.js",
         "status": "local_interactive_ready"
       },
-      "fingerprint": "0e6753e67b00e421",
+      "fingerprint": "fe5bf1fb184efeba",
       "guardrails": [
         "planning estimate only",
         "show assumptions and never guarantee profit or outcomes",
@@ -31,45 +31,45 @@
       ],
       "inputs": [
         {
-          "default": 10,
-          "key": "decisions",
-          "label": "Decisions or deliverables supported",
+          "default": 100,
+          "key": "events",
+          "label": "Exposures or events",
           "max": 100000000,
           "min": 0,
           "step": 1,
           "unit": "number"
         },
         {
-          "default": 30,
-          "key": "hours_saved",
-          "label": "Hours saved",
-          "max": 10000000,
+          "default": 12,
+          "key": "baseline_probability",
+          "label": "Baseline incident probability",
+          "max": 100,
           "min": 0,
           "step": 0.1,
-          "unit": "hours"
+          "unit": "percent"
         },
         {
-          "default": 60,
-          "key": "hourly_value",
-          "label": "Value per hour",
-          "max": 1000000,
+          "default": 5,
+          "key": "residual_probability",
+          "label": "Expected residual probability",
+          "max": 100,
           "min": 0,
-          "step": 0.01,
-          "unit": "currency"
+          "step": 0.1,
+          "unit": "percent"
         },
         {
-          "default": 3000,
-          "key": "avoided_cost",
-          "label": "Conservative avoided cost",
+          "default": 2000,
+          "key": "average_loss",
+          "label": "Average impact per incident",
           "max": 1000000000,
           "min": 0,
           "step": 1,
           "unit": "currency"
         },
         {
-          "default": 1000,
-          "key": "tool_cost",
-          "label": "Research and tool cost",
+          "default": 7500,
+          "key": "mitigation_cost",
+          "label": "Mitigation cost",
           "max": 1000000000,
           "min": 0,
           "step": 1,
@@ -81,37 +81,37 @@
         "calculator": "calculator.html?bot=dreambot",
         "prospectus": "bots.html?prospectus=dreambot"
       },
-      "name": "DreamBot Research and Decision Value Calculator",
+      "name": "DreamBot Risk Reduction Calculator",
       "objective": "Estimate the measurable value, cost, or outcome of multi-bot coordination using user-provided assumptions.",
       "outputs": [
         {
-          "key": "time_value",
-          "label": "Time value",
+          "key": "baseline_risk",
+          "label": "Baseline expected loss",
           "unit": "currency"
         },
         {
-          "key": "gross_value",
-          "label": "Estimated gross value",
+          "key": "residual_risk",
+          "label": "Residual expected loss",
+          "unit": "currency"
+        },
+        {
+          "key": "avoided_loss",
+          "label": "Estimated avoided loss",
           "unit": "currency"
         },
         {
           "key": "net_value",
-          "label": "Estimated net value",
-          "unit": "currency"
-        },
-        {
-          "key": "value_per_decision",
-          "label": "Value per decision",
+          "label": "Net risk-reduction value",
           "unit": "currency"
         },
         {
           "key": "roi",
-          "label": "Estimated ROI",
+          "label": "Estimated mitigation ROI",
           "unit": "percent"
         }
       ],
       "schema": "dreamco.bot_calculator.v1",
-      "template_id": "research_value"
+      "template_id": "risk_reduction"
     },
     {
       "assigned_division_formula": {
@@ -195,7 +195,7 @@
         "prospectus": "bots.html?prospectus=research-bot"
       },
       "name": "Research Bot Research and Decision Value Calculator",
-      "objective": "Estimate the measurable value, cost, or outcome of market research using user-provided assumptions.",
+      "objective": "Estimate the measurable value, cost, or outcome of research planning using user-provided assumptions.",
       "outputs": [
         {
           "key": "time_value",
@@ -248,7 +248,7 @@
         "source": "website/calculator-engine.js",
         "status": "local_interactive_ready"
       },
-      "fingerprint": "984a913c6bcd3115",
+      "fingerprint": "cb2ee5e5352fcf83",
       "guardrails": [
         "planning estimate only",
         "show assumptions and never guarantee profit or outcomes",
@@ -257,58 +257,49 @@
       ],
       "inputs": [
         {
-          "default": 100,
-          "key": "users",
-          "label": "Paying users",
+          "default": 10,
+          "key": "decisions",
+          "label": "Decisions or deliverables supported",
           "max": 100000000,
           "min": 0,
           "step": 1,
           "unit": "number"
         },
         {
-          "default": 25,
-          "key": "monthly_price",
-          "label": "Monthly price per user",
+          "default": 30,
+          "key": "hours_saved",
+          "label": "Hours saved",
           "max": 10000000,
+          "min": 0,
+          "step": 0.1,
+          "unit": "hours"
+        },
+        {
+          "default": 60,
+          "key": "hourly_value",
+          "label": "Value per hour",
+          "max": 1000000,
           "min": 0,
           "step": 0.01,
           "unit": "currency"
         },
         {
-          "default": 3,
-          "key": "variable_cost",
-          "label": "Variable cost per user",
-          "max": 10000000,
-          "min": 0,
-          "step": 0.01,
-          "unit": "currency"
-        },
-        {
-          "default": 900,
-          "key": "fixed_cost",
-          "label": "Fixed monthly cost",
+          "default": 3000,
+          "key": "avoided_cost",
+          "label": "Conservative avoided cost",
           "max": 1000000000,
           "min": 0,
           "step": 1,
           "unit": "currency"
         },
         {
-          "default": 12000,
-          "key": "build_cost",
-          "label": "Build and launch cost",
+          "default": 1000,
+          "key": "tool_cost",
+          "label": "Research and tool cost",
           "max": 1000000000,
           "min": 0,
-          "step": 100,
-          "unit": "currency"
-        },
-        {
-          "default": 12,
-          "key": "months",
-          "label": "Projection months",
-          "max": 1200,
-          "min": 0,
           "step": 1,
-          "unit": "months"
+          "unit": "currency"
         }
       ],
       "links": {
@@ -316,27 +307,27 @@
         "calculator": "calculator.html?bot=task-scheduler",
         "prospectus": "bots.html?prospectus=task-scheduler"
       },
-      "name": "Task Scheduler Software Unit Economics Calculator",
+      "name": "Task Scheduler Research and Decision Value Calculator",
       "objective": "Estimate the measurable value, cost, or outcome of task prioritization using user-provided assumptions.",
       "outputs": [
         {
-          "key": "monthly_revenue",
-          "label": "Monthly recurring revenue",
+          "key": "time_value",
+          "label": "Time value",
           "unit": "currency"
         },
         {
-          "key": "monthly_net",
-          "label": "Monthly contribution",
+          "key": "gross_value",
+          "label": "Estimated gross value",
           "unit": "currency"
-        },
-        {
-          "key": "payback",
-          "label": "Build-cost payback",
-          "unit": "months"
         },
         {
           "key": "net_value",
-          "label": "Projected period value",
+          "label": "Estimated net value",
+          "unit": "currency"
+        },
+        {
+          "key": "value_per_decision",
+          "label": "Value per decision",
           "unit": "currency"
         },
         {
@@ -346,7 +337,7 @@
         }
       ],
       "schema": "dreamco.bot_calculator.v1",
-      "template_id": "software_unit_economics"
+      "template_id": "research_value"
     },
     {
       "assigned_division_formula": {
@@ -370,7 +361,7 @@
         "source": "website/calculator-engine.js",
         "status": "local_interactive_ready"
       },
-      "fingerprint": "30b369ab59fd3c37",
+      "fingerprint": "83925bf67c02ff07",
       "guardrails": [
         "planning estimate only",
         "show assumptions and never guarantee profit or outcomes",
@@ -379,58 +370,49 @@
       ],
       "inputs": [
         {
-          "default": 100,
-          "key": "users",
-          "label": "Paying users",
+          "default": 10,
+          "key": "decisions",
+          "label": "Decisions or deliverables supported",
           "max": 100000000,
           "min": 0,
           "step": 1,
           "unit": "number"
         },
         {
-          "default": 25,
-          "key": "monthly_price",
-          "label": "Monthly price per user",
+          "default": 30,
+          "key": "hours_saved",
+          "label": "Hours saved",
           "max": 10000000,
+          "min": 0,
+          "step": 0.1,
+          "unit": "hours"
+        },
+        {
+          "default": 60,
+          "key": "hourly_value",
+          "label": "Value per hour",
+          "max": 1000000,
           "min": 0,
           "step": 0.01,
           "unit": "currency"
         },
         {
-          "default": 3,
-          "key": "variable_cost",
-          "label": "Variable cost per user",
-          "max": 10000000,
-          "min": 0,
-          "step": 0.01,
-          "unit": "currency"
-        },
-        {
-          "default": 900,
-          "key": "fixed_cost",
-          "label": "Fixed monthly cost",
+          "default": 3000,
+          "key": "avoided_cost",
+          "label": "Conservative avoided cost",
           "max": 1000000000,
           "min": 0,
           "step": 1,
           "unit": "currency"
         },
         {
-          "default": 12000,
-          "key": "build_cost",
-          "label": "Build and launch cost",
+          "default": 1000,
+          "key": "tool_cost",
+          "label": "Research and tool cost",
           "max": 1000000000,
           "min": 0,
-          "step": 100,
-          "unit": "currency"
-        },
-        {
-          "default": 12,
-          "key": "months",
-          "label": "Projection months",
-          "max": 1200,
-          "min": 0,
           "step": 1,
-          "unit": "months"
+          "unit": "currency"
         }
       ],
       "links": {
@@ -438,27 +420,27 @@
         "calculator": "calculator.html?bot=analytics-hub",
         "prospectus": "bots.html?prospectus=analytics-hub"
       },
-      "name": "Analytics Hub Software Unit Economics Calculator",
+      "name": "Analytics Hub Research and Decision Value Calculator",
       "objective": "Estimate the measurable value, cost, or outcome of cross-bot analytics using user-provided assumptions.",
       "outputs": [
         {
-          "key": "monthly_revenue",
-          "label": "Monthly recurring revenue",
+          "key": "time_value",
+          "label": "Time value",
           "unit": "currency"
         },
         {
-          "key": "monthly_net",
-          "label": "Monthly contribution",
+          "key": "gross_value",
+          "label": "Estimated gross value",
           "unit": "currency"
-        },
-        {
-          "key": "payback",
-          "label": "Build-cost payback",
-          "unit": "months"
         },
         {
           "key": "net_value",
-          "label": "Projected period value",
+          "label": "Estimated net value",
+          "unit": "currency"
+        },
+        {
+          "key": "value_per_decision",
+          "label": "Value per decision",
           "unit": "currency"
         },
         {
@@ -468,7 +450,7 @@
         }
       ],
       "schema": "dreamco.bot_calculator.v1",
-      "template_id": "software_unit_economics"
+      "template_id": "research_value"
     },
     {
       "assigned_division_formula": {
@@ -552,7 +534,7 @@
         "prospectus": "bots.html?prospectus=security-compliance"
       },
       "name": "Security & Compliance Risk Reduction Calculator",
-      "objective": "Estimate the measurable value, cost, or outcome of compliance monitoring using user-provided assumptions.",
+      "objective": "Estimate the measurable value, cost, or outcome of defensive security review planning using user-provided assumptions.",
       "outputs": [
         {
           "key": "baseline_risk",
@@ -605,7 +587,7 @@
         "source": "website/calculator-engine.js",
         "status": "local_interactive_ready"
       },
-      "fingerprint": "328145e4c1059dbd",
+      "fingerprint": "c370e44a319a3eea",
       "guardrails": [
         "planning estimate only",
         "show assumptions and never guarantee profit or outcomes",
@@ -614,48 +596,57 @@
       ],
       "inputs": [
         {
-          "default": 100,
-          "key": "events",
-          "label": "Exposures or events",
+          "default": 20,
+          "key": "units",
+          "label": "Tasks, rooms, or work units",
           "max": 100000000,
           "min": 0,
           "step": 1,
           "unit": "number"
         },
         {
-          "default": 12,
-          "key": "baseline_probability",
-          "label": "Baseline incident probability",
-          "max": 100,
+          "default": 3,
+          "key": "hours_per_unit",
+          "label": "Hours per unit",
+          "max": 100000,
           "min": 0,
           "step": 0.1,
-          "unit": "percent"
+          "unit": "hours"
         },
         {
-          "default": 5,
-          "key": "residual_probability",
-          "label": "Expected residual probability",
-          "max": 100,
+          "default": 45,
+          "key": "hourly_cost",
+          "label": "Labor cost per hour",
+          "max": 1000000,
           "min": 0,
-          "step": 0.1,
-          "unit": "percent"
+          "step": 0.01,
+          "unit": "currency"
         },
         {
-          "default": 2000,
-          "key": "average_loss",
-          "label": "Average impact per incident",
+          "default": 4000,
+          "key": "materials",
+          "label": "Materials and direct costs",
           "max": 1000000000,
           "min": 0,
           "step": 1,
           "unit": "currency"
         },
         {
-          "default": 7500,
-          "key": "mitigation_cost",
-          "label": "Mitigation cost",
+          "default": 12,
+          "key": "contingency_rate",
+          "label": "Contingency",
+          "max": 100,
+          "min": 0,
+          "step": 0.1,
+          "unit": "percent"
+        },
+        {
+          "default": 15000,
+          "key": "expected_project_value",
+          "label": "Expected project value",
           "max": 1000000000,
           "min": 0,
-          "step": 1,
+          "step": 100,
           "unit": "currency"
         }
       ],
@@ -664,37 +655,47 @@
         "calculator": "calculator.html?bot=self-debug-engine",
         "prospectus": "bots.html?prospectus=self-debug-engine"
       },
-      "name": "Self-Debug Engine Risk Reduction Calculator",
+      "name": "Self-Debug Engine Project Estimate Calculator",
       "objective": "Estimate the measurable value, cost, or outcome of error detection using user-provided assumptions.",
       "outputs": [
         {
-          "key": "baseline_risk",
-          "label": "Baseline expected loss",
+          "key": "labor_hours",
+          "label": "Estimated labor hours",
+          "unit": "hours"
+        },
+        {
+          "key": "labor_cost",
+          "label": "Estimated labor cost",
           "unit": "currency"
         },
         {
-          "key": "residual_risk",
-          "label": "Residual expected loss",
+          "key": "subtotal",
+          "label": "Estimate subtotal",
           "unit": "currency"
         },
         {
-          "key": "avoided_loss",
-          "label": "Estimated avoided loss",
+          "key": "contingency",
+          "label": "Contingency reserve",
+          "unit": "currency"
+        },
+        {
+          "key": "total_cost",
+          "label": "Recommended project budget",
           "unit": "currency"
         },
         {
           "key": "net_value",
-          "label": "Net risk-reduction value",
+          "label": "Estimated net value",
           "unit": "currency"
         },
         {
           "key": "roi",
-          "label": "Estimated mitigation ROI",
+          "label": "Estimated ROI",
           "unit": "percent"
         }
       ],
       "schema": "dreamco.bot_calculator.v1",
-      "template_id": "risk_reduction"
+      "template_id": "project_estimate"
     },
     {
       "assigned_division_formula": {
@@ -718,7 +719,7 @@
         "source": "website/calculator-engine.js",
         "status": "local_interactive_ready"
       },
-      "fingerprint": "79ba84e22c8fb381",
+      "fingerprint": "a8fbffc056d03d73",
       "guardrails": [
         "planning estimate only",
         "show assumptions and never guarantee profit or outcomes",
@@ -727,58 +728,49 @@
       ],
       "inputs": [
         {
-          "default": 100,
-          "key": "users",
-          "label": "Paying users",
+          "default": 10,
+          "key": "decisions",
+          "label": "Decisions or deliverables supported",
           "max": 100000000,
           "min": 0,
           "step": 1,
           "unit": "number"
         },
         {
-          "default": 25,
-          "key": "monthly_price",
-          "label": "Monthly price per user",
+          "default": 30,
+          "key": "hours_saved",
+          "label": "Hours saved",
           "max": 10000000,
+          "min": 0,
+          "step": 0.1,
+          "unit": "hours"
+        },
+        {
+          "default": 60,
+          "key": "hourly_value",
+          "label": "Value per hour",
+          "max": 1000000,
           "min": 0,
           "step": 0.01,
           "unit": "currency"
         },
         {
-          "default": 3,
-          "key": "variable_cost",
-          "label": "Variable cost per user",
-          "max": 10000000,
-          "min": 0,
-          "step": 0.01,
-          "unit": "currency"
-        },
-        {
-          "default": 900,
-          "key": "fixed_cost",
-          "label": "Fixed monthly cost",
+          "default": 3000,
+          "key": "avoided_cost",
+          "label": "Conservative avoided cost",
           "max": 1000000000,
           "min": 0,
           "step": 1,
           "unit": "currency"
         },
         {
-          "default": 12000,
-          "key": "build_cost",
-          "label": "Build and launch cost",
+          "default": 1000,
+          "key": "tool_cost",
+          "label": "Research and tool cost",
           "max": 1000000000,
           "min": 0,
-          "step": 100,
-          "unit": "currency"
-        },
-        {
-          "default": 12,
-          "key": "months",
-          "label": "Projection months",
-          "max": 1200,
-          "min": 0,
           "step": 1,
-          "unit": "months"
+          "unit": "currency"
         }
       ],
       "links": {
@@ -786,27 +778,27 @@
         "calculator": "calculator.html?bot=cloud-scaler",
         "prospectus": "bots.html?prospectus=cloud-scaler"
       },
-      "name": "Cloud Scaling Engine Software Unit Economics Calculator",
-      "objective": "Estimate the measurable value, cost, or outcome of auto-scaling using user-provided assumptions.",
+      "name": "Cloud Scaling Engine Research and Decision Value Calculator",
+      "objective": "Estimate the measurable value, cost, or outcome of capacity analysis using user-provided assumptions.",
       "outputs": [
         {
-          "key": "monthly_revenue",
-          "label": "Monthly recurring revenue",
+          "key": "time_value",
+          "label": "Time value",
           "unit": "currency"
         },
         {
-          "key": "monthly_net",
-          "label": "Monthly contribution",
+          "key": "gross_value",
+          "label": "Estimated gross value",
           "unit": "currency"
-        },
-        {
-          "key": "payback",
-          "label": "Build-cost payback",
-          "unit": "months"
         },
         {
           "key": "net_value",
-          "label": "Projected period value",
+          "label": "Estimated net value",
+          "unit": "currency"
+        },
+        {
+          "key": "value_per_decision",
+          "label": "Value per decision",
           "unit": "currency"
         },
         {
@@ -816,7 +808,7 @@
         }
       ],
       "schema": "dreamco.bot_calculator.v1",
-      "template_id": "software_unit_economics"
+      "template_id": "research_value"
     },
     {
       "assigned_division_formula": {
@@ -900,7 +892,7 @@
         "prospectus": "bots.html?prospectus=ai-self-learner"
       },
       "name": "AI Self-Learning Module Learning Outcomes Calculator",
-      "objective": "Estimate the measurable value, cost, or outcome of continuous learning using user-provided assumptions.",
+      "objective": "Estimate the measurable value, cost, or outcome of outcome analysis using user-provided assumptions.",
       "outputs": [
         {
           "key": "completers",
@@ -953,7 +945,7 @@
         "source": "website/calculator-engine.js",
         "status": "local_interactive_ready"
       },
-      "fingerprint": "19337c3fea8872b5",
+      "fingerprint": "ba837f83b5b36270",
       "guardrails": [
         "planning estimate only",
         "show assumptions and never guarantee profit or outcomes",
@@ -962,45 +954,45 @@
       ],
       "inputs": [
         {
-          "default": 100,
-          "key": "learners",
-          "label": "Learners",
+          "default": 250,
+          "key": "subscribers",
+          "label": "Subscribers",
           "max": 100000000,
           "min": 0,
           "step": 1,
           "unit": "number"
         },
         {
-          "default": 75,
-          "key": "completion_rate",
-          "label": "Expected completion rate",
-          "max": 100,
+          "default": 19,
+          "key": "monthly_price",
+          "label": "Monthly price",
+          "max": 10000000,
           "min": 0,
-          "step": 0.1,
-          "unit": "percent"
-        },
-        {
-          "default": 20,
-          "key": "improvement_rate",
-          "label": "Measured outcome improvement",
-          "max": 100,
-          "min": 0,
-          "step": 0.1,
-          "unit": "percent"
-        },
-        {
-          "default": 250,
-          "key": "value_per_learner",
-          "label": "Value per improved learner",
-          "max": 100000000,
-          "min": 0,
-          "step": 1,
+          "step": 0.01,
           "unit": "currency"
         },
         {
-          "default": 10000,
-          "key": "program_cost",
-          "label": "Program cost",
+          "default": 4,
+          "key": "monthly_churn",
+          "label": "Monthly churn",
+          "max": 100,
+          "min": 0,
+          "step": 0.1,
+          "unit": "percent"
+        },
+        {
+          "default": 3,
+          "key": "variable_cost",
+          "label": "Variable cost per subscriber",
+          "max": 1000000,
+          "min": 0,
+          "step": 0.01,
+          "unit": "currency"
+        },
+        {
+          "default": 1200,
+          "key": "fixed_cost",
+          "label": "Fixed monthly cost",
           "max": 1000000000,
           "min": 0,
           "step": 1,
@@ -1012,37 +1004,42 @@
         "calculator": "calculator.html?bot=memory-vault",
         "prospectus": "bots.html?prospectus=memory-vault"
       },
-      "name": "Memory Vault AI Learning Outcomes Calculator",
-      "objective": "Estimate the measurable value, cost, or outcome of persistent note storage using user-provided assumptions.",
+      "name": "Memory Vault AI Subscription Economics Calculator",
+      "objective": "Estimate the measurable value, cost, or outcome of preference memory using user-provided assumptions.",
       "outputs": [
         {
-          "key": "completers",
-          "label": "Estimated completers",
+          "key": "monthly_revenue",
+          "label": "Monthly recurring revenue",
+          "unit": "currency"
+        },
+        {
+          "key": "monthly_net",
+          "label": "Monthly contribution",
+          "unit": "currency"
+        },
+        {
+          "key": "annual_net",
+          "label": "Annualized contribution",
+          "unit": "currency"
+        },
+        {
+          "key": "churned",
+          "label": "Estimated monthly churned users",
           "unit": "number"
         },
         {
-          "key": "gross_value",
-          "label": "Outcome-adjusted value",
-          "unit": "currency"
-        },
-        {
-          "key": "cost_per_completion",
-          "label": "Cost per completion",
-          "unit": "currency"
-        },
-        {
-          "key": "net_value",
-          "label": "Estimated net value",
+          "key": "contribution_ltv",
+          "label": "Estimated contribution LTV",
           "unit": "currency"
         },
         {
           "key": "roi",
-          "label": "Estimated ROI",
+          "label": "Estimated annual ROI",
           "unit": "percent"
         }
       ],
       "schema": "dreamco.bot_calculator.v1",
-      "template_id": "learning_outcomes"
+      "template_id": "subscription"
     },
     {
       "assigned_division_formula": {
@@ -1066,7 +1063,7 @@
         "source": "website/calculator-engine.js",
         "status": "local_interactive_ready"
       },
-      "fingerprint": "f18539ee373046b8",
+      "fingerprint": "750a2f4856a4c1ac",
       "guardrails": [
         "planning estimate only",
         "show assumptions and never guarantee profit or outcomes",
@@ -1075,58 +1072,67 @@
       ],
       "inputs": [
         {
-          "default": 100,
-          "key": "users",
-          "label": "Paying users",
-          "max": 100000000,
+          "default": 1000,
+          "key": "items",
+          "label": "Items or transactions",
+          "max": 1000000000,
           "min": 0,
           "step": 1,
           "unit": "number"
         },
         {
+          "default": 8,
+          "key": "minutes_per_item",
+          "label": "Minutes per item",
+          "max": 100000,
+          "min": 0,
+          "step": 0.1,
+          "unit": "minutes"
+        },
+        {
           "default": 25,
-          "key": "monthly_price",
-          "label": "Monthly price per user",
-          "max": 10000000,
+          "key": "time_reduction",
+          "label": "Expected time reduction",
+          "max": 100,
           "min": 0,
-          "step": 0.01,
-          "unit": "currency"
+          "step": 0.1,
+          "unit": "percent"
         },
         {
-          "default": 3,
-          "key": "variable_cost",
-          "label": "Variable cost per user",
-          "max": 10000000,
+          "default": 4,
+          "key": "error_rate",
+          "label": "Current error rate",
+          "max": 100,
           "min": 0,
-          "step": 0.01,
-          "unit": "currency"
+          "step": 0.1,
+          "unit": "percent"
         },
         {
-          "default": 900,
-          "key": "fixed_cost",
-          "label": "Fixed monthly cost",
-          "max": 1000000000,
+          "default": 35,
+          "key": "cost_per_error",
+          "label": "Cost per error",
+          "max": 100000000,
           "min": 0,
           "step": 1,
           "unit": "currency"
         },
         {
-          "default": 12000,
-          "key": "build_cost",
-          "label": "Build and launch cost",
-          "max": 1000000000,
+          "default": 30,
+          "key": "hourly_value",
+          "label": "Labor value per hour",
+          "max": 1000000,
           "min": 0,
-          "step": 100,
+          "step": 0.01,
           "unit": "currency"
         },
         {
-          "default": 12,
-          "key": "months",
-          "label": "Projection months",
-          "max": 1200,
+          "default": 1500,
+          "key": "tool_cost",
+          "label": "Tool or process cost",
+          "max": 1000000000,
           "min": 0,
           "step": 1,
-          "unit": "months"
+          "unit": "currency"
         }
       ],
       "links": {
@@ -1134,27 +1140,32 @@
         "calculator": "calculator.html?bot=research-analyst",
         "prospectus": "bots.html?prospectus=research-analyst"
       },
-      "name": "Research Analyst Agent Software Unit Economics Calculator",
-      "objective": "Estimate the measurable value, cost, or outcome of multi-source research using user-provided assumptions.",
+      "name": "Research Analyst Agent Operations Efficiency Calculator",
+      "objective": "Estimate the measurable value, cost, or outcome of multi-source research planning using user-provided assumptions.",
       "outputs": [
         {
-          "key": "monthly_revenue",
-          "label": "Monthly recurring revenue",
+          "key": "baseline_hours",
+          "label": "Baseline labor hours",
+          "unit": "hours"
+        },
+        {
+          "key": "hours_saved",
+          "label": "Estimated hours saved",
+          "unit": "hours"
+        },
+        {
+          "key": "labor_value",
+          "label": "Estimated labor value",
           "unit": "currency"
         },
         {
-          "key": "monthly_net",
-          "label": "Monthly contribution",
+          "key": "error_cost",
+          "label": "Current error-cost exposure",
           "unit": "currency"
-        },
-        {
-          "key": "payback",
-          "label": "Build-cost payback",
-          "unit": "months"
         },
         {
           "key": "net_value",
-          "label": "Projected period value",
+          "label": "Estimated net value",
           "unit": "currency"
         },
         {
@@ -1164,7 +1175,7 @@
         }
       ],
       "schema": "dreamco.bot_calculator.v1",
-      "template_id": "software_unit_economics"
+      "template_id": "operations_efficiency"
     },
     {
       "assigned_division_formula": {
@@ -1188,7 +1199,7 @@
         "source": "website/calculator-engine.js",
         "status": "local_interactive_ready"
       },
-      "fingerprint": "84e3ca9786fada6b",
+      "fingerprint": "435af55a2fd6e1c4",
       "guardrails": [
         "planning estimate only",
         "show assumptions and never guarantee profit or outcomes",
@@ -1197,58 +1208,67 @@
       ],
       "inputs": [
         {
-          "default": 100,
-          "key": "users",
-          "label": "Paying users",
-          "max": 100000000,
+          "default": 1000,
+          "key": "items",
+          "label": "Items or transactions",
+          "max": 1000000000,
           "min": 0,
           "step": 1,
           "unit": "number"
         },
         {
+          "default": 8,
+          "key": "minutes_per_item",
+          "label": "Minutes per item",
+          "max": 100000,
+          "min": 0,
+          "step": 0.1,
+          "unit": "minutes"
+        },
+        {
           "default": 25,
-          "key": "monthly_price",
-          "label": "Monthly price per user",
-          "max": 10000000,
+          "key": "time_reduction",
+          "label": "Expected time reduction",
+          "max": 100,
           "min": 0,
-          "step": 0.01,
-          "unit": "currency"
+          "step": 0.1,
+          "unit": "percent"
         },
         {
-          "default": 3,
-          "key": "variable_cost",
-          "label": "Variable cost per user",
-          "max": 10000000,
+          "default": 4,
+          "key": "error_rate",
+          "label": "Current error rate",
+          "max": 100,
           "min": 0,
-          "step": 0.01,
-          "unit": "currency"
+          "step": 0.1,
+          "unit": "percent"
         },
         {
-          "default": 900,
-          "key": "fixed_cost",
-          "label": "Fixed monthly cost",
-          "max": 1000000000,
+          "default": 35,
+          "key": "cost_per_error",
+          "label": "Cost per error",
+          "max": 100000000,
           "min": 0,
           "step": 1,
           "unit": "currency"
         },
         {
-          "default": 12000,
-          "key": "build_cost",
-          "label": "Build and launch cost",
-          "max": 1000000000,
+          "default": 30,
+          "key": "hourly_value",
+          "label": "Labor value per hour",
+          "max": 1000000,
           "min": 0,
-          "step": 100,
+          "step": 0.01,
           "unit": "currency"
         },
         {
-          "default": 12,
-          "key": "months",
-          "label": "Projection months",
-          "max": 1200,
+          "default": 1500,
+          "key": "tool_cost",
+          "label": "Tool or process cost",
+          "max": 1000000000,
           "min": 0,
           "step": 1,
-          "unit": "months"
+          "unit": "currency"
         }
       ],
       "links": {
@@ -1256,27 +1276,32 @@
         "calculator": "calculator.html?bot=buddy-bot",
         "prospectus": "bots.html?prospectus=buddy-bot"
       },
-      "name": "Buddy Bot Software Unit Economics Calculator",
-      "objective": "Estimate the measurable value, cost, or outcome of omnichannel task execution using user-provided assumptions.",
+      "name": "Buddy Bot Operations Efficiency Calculator",
+      "objective": "Estimate the measurable value, cost, or outcome of natural-language task routing using user-provided assumptions.",
       "outputs": [
         {
-          "key": "monthly_revenue",
-          "label": "Monthly recurring revenue",
+          "key": "baseline_hours",
+          "label": "Baseline labor hours",
+          "unit": "hours"
+        },
+        {
+          "key": "hours_saved",
+          "label": "Estimated hours saved",
+          "unit": "hours"
+        },
+        {
+          "key": "labor_value",
+          "label": "Estimated labor value",
           "unit": "currency"
         },
         {
-          "key": "monthly_net",
-          "label": "Monthly contribution",
+          "key": "error_cost",
+          "label": "Current error-cost exposure",
           "unit": "currency"
-        },
-        {
-          "key": "payback",
-          "label": "Build-cost payback",
-          "unit": "months"
         },
         {
           "key": "net_value",
-          "label": "Projected period value",
+          "label": "Estimated net value",
           "unit": "currency"
         },
         {
@@ -1286,7 +1311,7 @@
         }
       ],
       "schema": "dreamco.bot_calculator.v1",
-      "template_id": "software_unit_economics"
+      "template_id": "operations_efficiency"
     },
     {
       "assigned_division_formula": {
@@ -1298,7 +1323,7 @@
       },
       "bot": {
         "category": "system",
-        "display_name": "God Mode AI Orchestrator",
+        "display_name": "Empire Orchestrator",
         "division": "CommandCore",
         "emoji": "\ud83e\uddee",
         "slug": "god-mode-bot"
@@ -1369,8 +1394,8 @@
         "calculator": "calculator.html?bot=god-mode-bot",
         "prospectus": "bots.html?prospectus=god-mode-bot"
       },
-      "name": "God Mode AI Orchestrator Research and Decision Value Calculator",
-      "objective": "Estimate the measurable value, cost, or outcome of all-bot simultaneous orchestration using user-provided assumptions.",
+      "name": "Empire Orchestrator Research and Decision Value Calculator",
+      "objective": "Estimate the measurable value, cost, or outcome of cross-division orchestration using user-provided assumptions.",
       "outputs": [
         {
           "key": "time_value",
@@ -1483,7 +1508,7 @@
         "prospectus": "bots.html?prospectus=global-bot-network"
       },
       "name": "Global Bot Network Hub Risk Reduction Calculator",
-      "objective": "Estimate the measurable value, cost, or outcome of global data feed integration using user-provided assumptions.",
+      "objective": "Estimate the measurable value, cost, or outcome of external ai service cataloging using user-provided assumptions.",
       "outputs": [
         {
           "key": "baseline_risk",
@@ -124412,15 +124437,15 @@
     "cash_flow": 55,
     "commerce_margin": 20,
     "creative_project": 66,
-    "learning_outcomes": 63,
-    "operations_efficiency": 108,
-    "project_estimate": 38,
+    "learning_outcomes": 62,
+    "operations_efficiency": 110,
+    "project_estimate": 39,
     "real_estate_flip": 25,
-    "research_value": 28,
+    "research_value": 30,
     "risk_reduction": 246,
     "sales_funnel": 112,
-    "software_unit_economics": 255,
-    "subscription": 34
+    "software_unit_economics": 250,
+    "subscription": 35
   },
   "truth_policy": {
     "assigned_division_formula": "A research reference displayed for the bot; it is not executed as code.",

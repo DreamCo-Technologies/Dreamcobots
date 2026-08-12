@@ -38,6 +38,10 @@ test('guided setup launchers are visible only in Plan mode', () => {
   assert.match(buddySource, /manualModeForNextMessage \? mode : inferIntent\(objective\)/);
   assert.match(buddySource, /freeformPromptAccepted: true/);
   assert.match(buddySource, /guidedSetupRequired: false/);
+  assert.match(buddySource, /interactionMode: mode === 'Plan' \? 'plan' : 'direct_task'/);
+  assert.match(buddySource, /planningControlsOptional: true/);
+  assert.match(buddySource, /Direct task started/);
+  assert.match(buddySource, /if \(directTask\)/);
 });
 
 test('freeform requests are captured in a bounded owner task workspace', () => {

@@ -11,7 +11,7 @@ import {
 
 export const fleetExecutionRequestSchema = z.object({
   objective: z.string().trim().min(10).max(4_000),
-  input: z.record(z.unknown()).default({}),
+  input: z.record(z.string(), z.unknown()).default({}),
   requestedCapabilities: z.array(z.string().trim().min(2).max(160)).max(20).default([]),
   liveActionRequested: z.boolean().default(false),
 }).strict();
@@ -22,6 +22,7 @@ export const capabilityTestRequestSchema = z.object({
 
 export const buddyCapabilityRouteRequestSchema = z.object({
   objective: z.string().trim().min(3).max(4_000),
+  interactionMode: z.enum(["direct_task", "plan"]).default("direct_task"),
   successContext: z.string().trim().max(1_500).optional(),
   preferredBotSlug: z.string().trim().min(2).max(160).optional(),
   requestedCapabilities: z.array(z.string().trim().min(2).max(160)).max(20).default([]),
@@ -85,16 +86,22 @@ const ROUTING_STOP_WORDS = new Set([
 ]);
 
 const ROUTING_SYNONYMS: Record<string, string[]> = {
+  account: ["authentication", "connection", "provider", "signup"],
   app: ["application", "software", "code"],
   application: ["app", "software", "code"],
+  authentication: ["account", "connection", "credential", "oauth"],
   bug: ["debug", "error", "failure"],
   class: ["course", "education", "learning"],
   code: ["coding", "software", "development"],
+  connection: ["account", "api", "authentication", "integration"],
   course: ["class", "education", "learning"],
   game: ["gaming", "player", "simulation"],
   job: ["career", "employment", "hiring"],
   money: ["finance", "income", "revenue"],
   property: ["real", "estate", "commercial"],
+  provider: ["account", "api", "connection", "resource"],
+  resource: ["account", "connection", "model", "provider", "tool"],
+  signup: ["account", "authentication", "connection", "provider"],
   song: ["music", "audio", "production"],
   video: ["media", "creative", "production"],
   website: ["responsive", "web", "software"],
@@ -113,6 +120,13 @@ function routingTokens(value: string) {
     for (const synonym of ROUTING_SYNONYMS[token] || []) expanded.add(synonym);
   }
   return expanded;
+}
+
+function isResourceOnboardingObjective(value: string) {
+  const normalized = normalizedText(value);
+  const connectionIntent = /\b(account|accounts|authenticate|authentication|connect|connection|signup)\b/.test(normalized);
+  const resourceIntent = /\b(500|all resources|all providers|ai resources|model providers|tools and models)\b/.test(normalized);
+  return connectionIntent && resourceIntent;
 }
 
 function capabilityMatches(profile: CatalogBot, objective: string) {
@@ -494,12 +508,15 @@ export class FleetRuntimeRegistry {
       approvePaidModelForThisRequest: request.approvePaidModelForThisRequest,
     });
     const preferred = request.preferredBotSlug ? this.runtimes.get(request.preferredBotSlug) : undefined;
+    const policyPreferred = !preferred && isResourceOnboardingObjective(request.objective)
+      ? this.runtimes.get("global-bot-network")
+      : undefined;
     const ranked = preferred
       ? []
       : [...this.runtimes.values()]
         .map((runtime) => ({ runtime, score: routeScore(runtime.profile, request.objective) }))
         .sort((a, b) => b.score - a.score || a.runtime.profile.identity.slug.localeCompare(b.runtime.profile.identity.slug));
-    const selected = preferred || ranked[0]?.runtime || this.runtimes.get("dreambot");
+    const selected = preferred || policyPreferred || ranked[0]?.runtime || this.runtimes.get("dreambot");
     if (!selected) throw new Error("Buddy could not resolve a fleet runtime");
 
     const selectedRank = ranked.find((candidate) => candidate.runtime === selected);
@@ -527,16 +544,20 @@ export class FleetRuntimeRegistry {
       }));
 
     return {
-      schema: "dreamco.buddy_capability_route.v2",
+      schema: "dreamco.buddy_capability_route.v3",
       objective: request.objective,
+      interactionMode: request.interactionMode,
+      planningControlsOptional: true,
       selected: selected.profile.identity,
       matchedCapabilities: matches.map((match) => match.capability),
       selectionReason: preferred
         ? "owner_selected_specialist"
+        : policyPreferred
+          ? "governed_resource_onboarding_specialist"
         : matches.length
           ? "best_declared_capability_match"
           : "best_catalog_context_match",
-      confidence: preferred || (selectedRank?.score || 0) >= 100
+      confidence: preferred || policyPreferred || (selectedRank?.score || 0) >= 100
         ? "high"
         : (selectedRank?.score || 0) >= 30
           ? "medium"
@@ -544,6 +565,7 @@ export class FleetRuntimeRegistry {
       alternatives,
       coverage: {
         profilesSearched: this.runtimes.size,
+        samplePromptContractsSearched: this.runtimes.size,
         declaredCapabilitiesSearched: [...this.runtimes.values()]
           .reduce((total, runtime) => total + runtime.profile.capability_count, 0),
       },

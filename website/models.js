@@ -2,6 +2,7 @@
   'use strict';
 
   const data = window.BUDDY_MODEL_BENCHMARKS || { summary: {}, suites: [], targets: [] };
+  const demandData = window.BUDDY_DEMAND_ONTOLOGY || { summary: {}, catalogs: [], researchSources: [], reasons: [] };
   const organizationData = window.BUDDY_AI_ORGANIZATIONS || { summary: {}, existingProviders: [], allianceMembers: [], userNeedTaxonomy: [], benchmarkDimensions: [] };
   const targets = data.targets || [];
   const selected = new Set(targets.map((target) => target.id));
@@ -14,6 +15,7 @@
   let visibleOrganizations = [...organizationRecords];
   let latestPlan = null;
   let latestOrganizationPlan = null;
+  let activeDemandCatalog = 'ai_usage';
 
   const routingSignals = [
     ['coding', ['code', 'coding', 'debug', 'software', 'app', 'website', 'repository', 'test']],
@@ -53,11 +55,37 @@
   function renderMetrics() {
     byId('metric-targets').textContent = Number(data.summary.targets || 0).toLocaleString();
     byId('metric-providers').textContent = Number(data.summary.providers || 0).toLocaleString();
+    byId('metric-sources').textContent = Number(data.summary.sourceLinked || 0).toLocaleString();
+    byId('metric-setup').textContent = Number(data.summary.setupPathsReady || 0).toLocaleString();
     byId('metric-suites').textContent = Number(data.summary.suites || 0).toLocaleString();
+    byId('metric-live-connections').textContent = Number(data.summary.liveConnected || 0).toLocaleString();
     byId('metric-live').textContent = Number(data.summary.liveBenchmarked || 0).toLocaleString();
     const reviewed = new Date(`${data.catalogReviewedOn}T00:00:00Z`);
     const ageDays = Math.max(0, Math.floor((Date.now() - reviewed.getTime()) / 86_400_000));
     byId('metric-review').textContent = ageDays > Number(data.staleAfterDays || 14) ? 'Refresh due' : `${ageDays}d ago`;
+    byId('model-source-summary').textContent = `${Number(data.summary.sourceLinked || 0).toLocaleString()} of ${targets.length.toLocaleString()} targets have an official or owner-controlled source, and ${Number(data.summary.setupPathsReady || 0).toLocaleString()} have a secure setup path. ${Number(data.summary.liveConnected || 0).toLocaleString()} have passed an exact-model live connection probe.`;
+  }
+
+  async function hydrateBackendConnectionState() {
+    const configuredBase = typeof window.BUDDY_BACKEND_API_BASE === 'string'
+      ? window.BUDDY_BACKEND_API_BASE.trim()
+      : '';
+    const backendBase = configuredBase
+      || (new URLSearchParams(location.search).get('backend') === '1' ? location.origin : '');
+    if (!backendBase) return;
+    try {
+      const endpoint = new URL('/api/buddy/models/connections', backendBase).toString();
+      const response = await fetch(endpoint, { headers: { Accept: 'application/json' } });
+      if (!response.ok || !String(response.headers.get('content-type') || '').includes('application/json')) return;
+      const audit = await response.json();
+      const summary = audit.summary || {};
+      byId('metric-live-connections').textContent = Number(summary.liveVerifiedTargets || 0).toLocaleString();
+      byId('model-credential-state').textContent = `${Number(summary.credentialConfiguredTargets || 0).toLocaleString()} target routes configured`;
+      byId('model-probe-state').textContent = `${Number(summary.liveVerifiedTargets || 0).toLocaleString()} passed`;
+      byId('model-source-summary').textContent = `${Number(summary.sourceLinkedTargets || 0).toLocaleString()} of ${Number(summary.targets || 0).toLocaleString()} targets have a governed source; ${Number(summary.setupPathTargets || 0).toLocaleString()} have setup paths; ${Number(summary.connectorContractTargets || 0).toLocaleString()} have connector or handoff contracts. Live status still requires an exact-model probe.`;
+    } catch (_) {
+      // Static hosting intentionally falls back to the generated public manifest.
+    }
   }
 
   function renderFilters() {
@@ -79,6 +107,84 @@
     });
   }
 
+  function demandCatalogLabel(catalogId) {
+    return demandData.catalogs.find((catalog) => catalog.id === catalogId)?.label || catalogId.replaceAll('_', ' ');
+  }
+
+  function renderDemandTabs() {
+    const tabs = byId('demand-catalog-tabs');
+    tabs.replaceChildren();
+    (demandData.catalogs || []).forEach((catalog) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.role = 'tab';
+      button.textContent = catalog.label;
+      button.setAttribute('aria-selected', String(catalog.id === activeDemandCatalog));
+      button.addEventListener('click', () => {
+        activeDemandCatalog = catalog.id;
+        renderDemandTabs();
+        renderDemandCategoryOptions();
+        renderDemandReasons();
+      });
+      tabs.append(button);
+    });
+  }
+
+  function renderDemandCategoryOptions() {
+    const select = byId('demand-category');
+    const current = select.value;
+    select.replaceChildren(option('all', 'All categories'));
+    [...new Set((demandData.reasons || []).filter((reason) => reason.catalogId === activeDemandCatalog).map((reason) => reason.category))]
+      .sort().forEach((category) => select.append(option(category, category)));
+    select.value = [...select.options].some((item) => item.value === current) ? current : 'all';
+  }
+
+  function chooseDemandReason(reason) {
+    byId('model-route-objective').value = reason.reason;
+    byId('model-route-capabilities').value = reason.capabilities.join(', ');
+    byId('model-route-tier').value = 'any';
+    byId('model-route-count').value = '20';
+    byId('model-route-discovery').checked = true;
+    byId('model-route-form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    byId('model-route-status').textContent = `${reason.reason} mapped to ${reason.taskCategory} with ${reason.capabilities.join(', ')}. Choose from the 20 prepared model options; no provider has been called.`;
+    byId('model-router-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderDemandReasons() {
+    const query = byId('demand-search').value.trim().toLowerCase();
+    const category = byId('demand-category').value;
+    const reasons = (demandData.reasons || []).filter((reason) => reason.catalogId === activeDemandCatalog)
+      .filter((reason) => category === 'all' || reason.category === category)
+      .filter((reason) => !query || `${reason.reason} ${reason.category} ${reason.taskCategory} ${reason.capabilities.join(' ')}`.toLowerCase().includes(query));
+    const list = byId('demand-reason-list');
+    list.replaceChildren();
+    reasons.forEach((reason) => {
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'demand-reason-row';
+      const rank = document.createElement('span'); rank.className = 'demand-rank'; rank.textContent = String(reason.rank).padStart(3, '0');
+      const copy = document.createElement('span'); copy.className = 'demand-reason-copy';
+      const title = document.createElement('strong'); title.textContent = reason.reason;
+      const meta = document.createElement('small'); meta.textContent = `${reason.category} · ${reason.taskCategory}`;
+      copy.append(title, meta);
+      const capabilities = document.createElement('span'); capabilities.className = 'demand-capabilities'; capabilities.textContent = reason.capabilities.join(' · ');
+      const action = document.createElement('span'); action.className = 'demand-action'; action.textContent = 'Compare 20';
+      button.append(rank, copy, capabilities, action);
+      button.addEventListener('click', () => chooseDemandReason(reason));
+      list.append(button);
+    });
+    byId('demand-result-count').textContent = `${reasons.length.toLocaleString()} of 100 reasons in ${demandCatalogLabel(activeDemandCatalog)}`;
+    const sourceTarget = byId('demand-source-links'); sourceTarget.replaceChildren();
+    (demandData.researchSources || []).filter((source) => source.catalogs.includes(activeDemandCatalog)).forEach((source) => {
+      const link = document.createElement('a'); link.href = source.url; link.target = '_blank'; link.rel = 'noopener'; link.textContent = source.organization; link.title = source.title; sourceTarget.append(link);
+    });
+  }
+
+  function renderDemandExplorer() {
+    byId('demand-reason-count').textContent = Number(demandData.summary?.reasons || 0).toLocaleString();
+    byId('demand-category-count').textContent = Number(demandData.summary?.categories || 0).toLocaleString();
+    byId('demand-option-count').textContent = Number(demandData.summary?.modelOptionsPerReason || 20).toLocaleString();
+    renderDemandTabs(); renderDemandCategoryOptions(); renderDemandReasons();
+  }
+
   function targetText(target) {
     return [target.name, target.provider, target.category, target.bestFor, ...target.declaredCapabilities].join(' ').toLowerCase();
   }
@@ -96,8 +202,8 @@
   }
 
   function exportCatalogCsv() {
-    const headers = ['id', 'name', 'provider', 'category', 'tier', 'discovery_target', 'official_catalog', 'declared_task_fit', 'live_score'];
-    const rows = targets.map((target) => [target.id, target.name, target.provider, target.category, target.tier, target.discoveryTarget, target.officialCatalog || '', target.bestFor, target.liveScore ?? '']);
+    const headers = ['id', 'name', 'provider', 'category', 'tier', 'discovery_target', 'official_source', 'connection_kind', 'connection_status', 'setup_path', 'declared_task_fit', 'live_connected', 'live_score'];
+    const rows = targets.map((target) => [target.id, target.name, target.provider, target.category, target.tier, target.discoveryTarget, target.sourceConnection?.officialSource || target.officialCatalog || '', target.sourceConnection?.connectionKind || '', target.sourceConnection?.status || '', target.sourceConnection?.setupPath || '', target.bestFor, target.sourceConnection?.liveProviderConnection || false, target.liveScore ?? '']);
     const csv = [headers, ...rows].map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(',')).join('\n');
     downloadFile('buddy-ai-systems-encyclopedia.csv', `${csv}\n`, 'text/csv');
   }
@@ -146,10 +252,15 @@
         <div class="model-route-copy"><span>${escapeHtml(candidate.target.provider)} · ${escapeHtml(candidate.target.tier)}</span><h3>${escapeHtml(candidate.target.name)}</h3><p>${escapeHtml(candidate.target.bestFor)}</p></div>
         <dl><div><dt>Metadata fit</dt><dd>${candidate.score.toFixed(1)}</dd></div><div><dt>Coverage</dt><dd>${Math.round(candidate.coverage * 100)}%</dd></div><div><dt>Live score</dt><dd>Not run</dd></div></dl>
         <div class="model-route-tags">${candidate.matchedSignals.map((value) => `<span>${escapeHtml(value)}</span>`).join('') || '<span>general reasoning</span>'}</div>
-        <button class="btn btn-outline btn-sm" type="button" data-route-detail="${candidate.target.id}">Inspect tests</button>
+        <div class="model-route-actions"><button class="btn btn-primary btn-sm" type="button" data-route-choose="${candidate.target.id}">Choose</button><button class="btn btn-outline btn-sm" type="button" data-route-detail="${candidate.target.id}">Inspect tests</button></div>
       </article>`).join('');
     results.hidden = false;
     results.querySelectorAll('[data-route-detail]').forEach((button) => button.addEventListener('click', () => showDetail(Number(button.dataset.routeDetail))));
+    results.querySelectorAll('[data-route-choose]').forEach((button) => button.addEventListener('click', () => {
+      const targetId = Number(button.dataset.routeChoose); const target = targets.find((item) => item.id === targetId);
+      selected.clear(); selected.add(targetId); renderRows();
+      byId('model-route-status').textContent = `${target?.name || 'Model'} selected for benchmark preparation. Selection does not call the provider, authorize payment, or prove live availability.`;
+    }));
     byId('model-route-status').textContent = `${candidates.length} provider-diverse candidates prepared for ${signals.join(', ')}. Quality contributed 0 points because no live signed benchmark evidence exists.`;
   }
 
@@ -178,7 +289,8 @@
         <td><div class="model-target-copy"><button class="model-name-button" type="button" data-model-detail="${target.id}">${escapeHtml(target.name)}</button><span class="model-tier">${escapeHtml(target.tier)}</span></div></td>
         <td>${escapeHtml(target.provider)}</td>
         <td>${escapeHtml(target.category)}</td>
-        <td class="model-evidence ${target.catalogReady ? 'ready' : ''}">${target.catalogReady ? 'Ready' : 'Needs metadata'}</td>
+        <td class="model-evidence ${target.sourceConnection?.sourceLinked ? 'ready' : ''}">${target.sourceConnection?.sourceLinked ? 'Linked' : 'Missing'}</td>
+        <td><a class="model-connection-link" href="${escapeHtml(target.sourceConnection?.setupPath || 'connections.html')}">${escapeHtml((target.sourceConnection?.status || 'setup_required').replaceAll('_', ' '))}</a></td>
         <td class="model-evidence">Not run</td>
       </tr>`).join('');
     body.querySelectorAll('[data-select-target]').forEach((input) => input.addEventListener('change', (event) => {
@@ -198,6 +310,9 @@
     byId('model-detail-title').textContent = target.name;
     byId('model-detail-body').innerHTML = `
       <p><strong>Declared task fit:</strong> ${escapeHtml(target.bestFor)}</p>
+      <h3>Source connection</h3>
+      <p><strong>Status:</strong> ${escapeHtml((target.sourceConnection?.status || 'setup_required').replaceAll('_', ' '))}. A source link or setup route is not proof of a live provider connection.</p>
+      <div class="model-detail-actions"><a class="btn btn-outline btn-sm" href="${escapeHtml(target.sourceConnection?.officialSource || target.officialCatalog || 'connections.html')}" ${String(target.sourceConnection?.officialSource || '').startsWith('http') ? 'target="_blank" rel="noopener"' : ''}>Official source</a><a class="btn btn-outline btn-sm" href="${escapeHtml(target.sourceConnection?.setupPath || 'connections.html')}">Prepare connection</a></div>
       <h3>Declared capabilities</h3><ul>${target.declaredCapabilities.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
       <h3>Prompt and test library</h3><div class="model-prompt-library">${(target.promptLibrary || target.benchmarkSuites || []).map((suiteId) => data.suites.find((suite) => suite.id === suiteId)).filter(Boolean).map((prompt) => `<article><div><strong>${escapeHtml(prompt.label)}</strong><span>${escapeHtml(prompt.grader)} · ${escapeHtml(prompt.modality)}</span></div><p>${escapeHtml(prompt.prompt_fixture)}</p><button class="btn btn-outline btn-sm" type="button" data-prepare-model-test="${escapeHtml(prompt.id)}">Load test</button></article>`).join('')}</div>
       <h3>Evidence status</h3><p>No live score exists yet. Availability, quality, latency, and cost must be recorded by an authenticated adapter using the exact provider model id.</p>`;
@@ -440,6 +555,8 @@
   byId('export-model-json').addEventListener('click', exportCatalogJson);
   byId('export-model-csv').addEventListener('click', exportCatalogCsv);
   byId('model-route-form').addEventListener('submit', prepareModelRoute);
+  byId('demand-search').addEventListener('input', renderDemandReasons);
+  byId('demand-category').addEventListener('change', renderDemandReasons);
   byId('model-detail-close').addEventListener('click', () => byId('model-detail').close());
   ['organization-search', 'organization-source', 'organization-type'].forEach((id) => byId(id).addEventListener(id === 'organization-search' ? 'input' : 'change', renderOrganizationRows));
   byId('organization-select-visible').addEventListener('click', () => { visibleOrganizations.forEach((item) => selectedOrganizations.add(item.id)); renderOrganizationRows(); });
@@ -450,6 +567,8 @@
   byId('organization-detail-close').addEventListener('click', () => byId('organization-detail').close());
 
   renderMetrics();
+  hydrateBackendConnectionState();
+  renderDemandExplorer();
   renderFilters();
   renderSuites();
   renderRows();

@@ -5,6 +5,7 @@
   const modelPolicy = window.BUDDY_MODEL_ROUTER || { defaultMode: 'free', connectors: [] };
   const certifications = window.BUDDY_CAPABILITY_CERTIFICATIONS || { summary: {}, bots: {} };
   const setupCatalog = window.BUDDY_SETUP_CATALOG || { repository: {}, summary: {}, launchers: [] };
+  const modelProgress = window.BUDDY_MODEL_PROGRESS_CENTER || { summary: {}, providerOnboarding: [] };
   const behaviorCatalog = window.BUDDY_COMMUNICATION_BEHAVIOR || { trait_groups: [], self_report_dimensions: [], contexts: {} };
   const successProgram = window.BUDDY_SUCCESS_PROGRAM || { questionnaire: [], intent_detection: { modes: [] } };
   const bots = index.bots.map(unpack);
@@ -123,6 +124,7 @@
       moneyActionMode: 'plan_only',
       professionalSupport: 'draft_and_prepare',
       communicationStyle: 'conversational',
+      relationshipStyle: 'teammate',
       voiceToneAdaptation: false,
       behaviorTraits: defaultBehaviorTraits(),
       selfReportDimensions: {},
@@ -157,10 +159,13 @@
     'this', 'through', 'using', 'want', 'with', 'would', 'your',
   ]);
   const synonyms = {
+    account: ['authentication', 'connection', 'provider', 'signup'],
     app: ['application', 'software', 'code', 'device'], application: ['app', 'software', 'code'],
+    authentication: ['account', 'connection', 'credential', 'oauth'],
     bug: ['debug', 'error', 'failure'], class: ['course', 'education', 'learning'],
     code: ['coding', 'software', 'development'], course: ['class', 'education', 'learning'],
     database: ['data', 'server', 'integration'], device: ['app', 'connection', 'automation'],
+    connection: ['account', 'api', 'authentication', 'integration'],
     domain: ['website', 'dns', 'hosting', 'launch'], game: ['gaming', 'player', 'simulation'],
     actor: ['video', 'media', 'creative', 'production'], car: ['vehicle', 'automotive', 'simulation', 'repair'],
     house: ['building', 'construction', 'real', 'estate', 'simulation'], movie: ['film', 'video', 'media', 'creative', 'production'],
@@ -168,6 +173,8 @@
     invention: ['prototype', 'patent', 'design', 'research'], job: ['career', 'employment', 'hiring'],
     money: ['finance', 'income', 'revenue'], prototype: ['design', 'development', 'testing', 'simulation'],
     property: ['real', 'estate', 'commercial'], server: ['database', 'api', 'integration'],
+    provider: ['account', 'api', 'connection', 'resource'], resource: ['account', 'connection', 'model', 'provider', 'tool'],
+    signup: ['account', 'authentication', 'connection', 'provider'],
     song: ['music', 'audio', 'production'], video: ['media', 'creative', 'production'],
     website: ['responsive', 'web', 'software', 'domain'],
   };
@@ -252,6 +259,9 @@
     Object.entries(context.trait_floors || {}).forEach(([id, floor]) => {
       traits[id] = Math.max(Number(traits[id] || 0), Number(floor));
     });
+    Object.entries(context.trait_ceilings || {}).forEach(([id, ceiling]) => {
+      traits[id] = Math.min(Number(traits[id] || 0), Number(ceiling));
+    });
     const professional = !['casual', 'creative'].includes(contextId);
     return {
       context: contextId,
@@ -280,9 +290,13 @@
       .sort((a, b) => b.score - a.score || a.bot.slug.localeCompare(b.bot.slug));
     const fallback = botBySlug.get('dreambot') || ranked[0]?.bot;
     const continuation = !preferred && (ranked[0]?.score || 0) < 20 ? botBySlug.get(activeSlug) : undefined;
-    const selected = preferred || continuation || ranked[0]?.bot || fallback;
+    const onboarding = !preferred && isResourceOnboardingRequest(objective) ? botBySlug.get('global-bot-network') : undefined;
+    const selected = preferred || onboarding || continuation || ranked[0]?.bot || fallback;
     const matched = selected ? capabilityMatches(selected, objective).slice(0, 5).map((item) => item.capability) : [];
     return {
+      objective,
+      interactionMode: mode === 'Plan' ? 'plan' : 'direct_task',
+      planningControlsOptional: true,
       selected,
       matchedCapabilities: matched,
       coverage: index.summary,
@@ -327,6 +341,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           objective,
+          interactionMode: mode === 'Plan' ? 'plan' : 'direct_task',
           successContext: successProfileContext() || undefined,
           preferredBotSlug: ownerSelectedSpecialist ? activeSlug : (fallback.topScore < 20 ? activeSlug || undefined : undefined),
           requestedCapabilities: [],
@@ -367,15 +382,26 @@
     thread.append(row);
   }
 
-  function responseLead(taskMode) {
+  function responseLead(taskMode, communication) {
     const leads = {
-      Build: 'Absolutely. I will turn that into a bounded build and start with the smallest working version.',
-      Fix: 'Got it. I will reproduce the problem, isolate the cause, and keep each repair reversible.',
-      Create: 'I understand the direction. I will shape it into a clear creative brief, prototype, and review loop.',
-      Plan: 'I can help with that. I will organize the decisions, costs, risks, evidence, and next actions.',
+      Build: 'I will turn that into a bounded build and start with the smallest working version.',
+      Fix: 'I will reproduce the problem, isolate the cause, and keep each repair reversible.',
+      Create: 'I will shape that direction into a clear creative brief, prototype, and review loop.',
+      Plan: 'I will organize the decisions, costs, risks, evidence, and next actions.',
       Discover: 'You do not need to know the steps. I will help define the result, teach unfamiliar parts, and begin with a safe practice task.',
     };
-    return leads[taskMode] || leads.Build;
+    const relationship = boundaryPreferences.relationshipStyle || 'teammate';
+    const introductions = {
+      teammate: 'Let us work through it together.',
+      best_friend: 'I am with you on this.',
+      coach: 'We will make the goal concrete and keep progress visible.',
+      teacher: 'I will handle the work while explaining the parts that help you learn.',
+      creative_partner: 'Let us shape the idea and test the strongest direction.',
+      business_partner: 'I will focus on the result, evidence, cost, and practical value.',
+      concierge: 'I will organize the moving parts and keep the next step easy.',
+    };
+    const direct = Number(communication?.traits?.directness || 0) >= 0.85;
+    return `${direct ? '' : `${introductions[relationship] || introductions.teammate} `}${leads[taskMode] || leads.Build}`.trim();
   }
 
   function planSteps(taskMode) {
@@ -387,6 +413,13 @@
       Discover: ['Describe what success should feel or look like.', 'Map the missing knowledge, tools, specialists, permissions, and costs.', 'Practice each unfamiliar step in a sandbox before doing anything live.'],
     };
     return steps[taskMode] || steps.Build;
+  }
+
+  function isResourceOnboardingRequest(objective) {
+    const value = normalize(objective);
+    const accountIntent = /\b(account|accounts|signup|sign up|connect|connection|authenticate|authentication)\b/.test(value);
+    const resourceIntent = /\b(500|all resources|all providers|model providers|ai resources|tools and models)\b/.test(value);
+    return accountIntent && resourceIntent;
   }
 
   function runCertification(selected, output, button) {
@@ -426,9 +459,12 @@
     heading.append(specialistEmoji, specialistName);
 
     const lead = document.createElement('p');
-    lead.textContent = responseLead(mode);
+    lead.textContent = responseLead(mode, result.communicationPlan);
     const route = document.createElement('p');
-    route.textContent = `I matched this to ${selected.name} in ${selected.division}. I will prepare and test the work first, then pause before any outside account, purchase, signup, message, publication, or data change.`;
+    const directTask = result.interactionMode !== 'plan' && mode !== 'Plan';
+    route.textContent = directTask
+      ? `I matched this to ${selected.name} in ${selected.division} and started a repository-controlled task from your exact message. Outside accounts, purchases, signups, messages, publications, and data changes still pause for the required connection and your exact approval.`
+      : `I matched this to ${selected.name} in ${selected.division}. I will organize the work and pause before any outside account, purchase, signup, message, publication, or data change.`;
     bubble.append(heading, lead, route);
 
     if (successProfileContext()) {
@@ -438,14 +474,42 @@
       bubble.append(profileNote);
     }
 
-    const planList = document.createElement('ol');
-    planList.className = 'buddy-plan-list';
-    planSteps(mode).forEach((step) => {
-      const item = document.createElement('li');
-      item.textContent = step;
-      planList.append(item);
-    });
-    bubble.append(planList);
+    if (directTask) {
+      const workStatus = document.createElement('div');
+      workStatus.className = 'buddy-direct-task-status';
+      const workTitle = document.createElement('strong');
+      workTitle.textContent = 'Direct task started';
+      const workDetail = document.createElement('p');
+      const profileCount = Number(result.coverage?.profilesSearched || result.coverage?.profiles || index.summary.profiles || 0);
+      const capabilityCount = Number(result.coverage?.declaredCapabilitiesSearched || result.coverage?.capabilities || index.summary.capabilities || 0);
+      workDetail.textContent = `Buddy checked ${profileCount.toLocaleString()} specialists and ${capabilityCount.toLocaleString()} declared capabilities. Planning buttons are optional; keep chatting to add details, change direction, or start another task.`;
+      workStatus.append(workTitle, workDetail);
+      bubble.append(workStatus);
+    } else {
+      const planList = document.createElement('ol');
+      planList.className = 'buddy-plan-list';
+      planSteps(mode).forEach((step) => {
+        const item = document.createElement('li');
+        item.textContent = step;
+        planList.append(item);
+      });
+      bubble.append(planList);
+    }
+
+    if (isResourceOnboardingRequest(result.objective || '')) {
+      const onboarding = document.createElement('div');
+      onboarding.className = 'buddy-resource-onboarding';
+      const summary = document.createElement('p');
+      const targetCount = Number(modelProgress.summary?.modelTargets || 500);
+      const providerCount = Number(modelProgress.summary?.providerSources || 100);
+      const accountMaximum = Number(modelProgress.summary?.providerAccountMaximum || providerCount);
+      summary.textContent = `${targetCount.toLocaleString()} catalog targets map to ${providerCount.toLocaleString()} provider setups, with at most ${accountMaximum.toLocaleString()} provider account handoffs. Buddy prepares the queue; protected provider steps stay user-supervised.`;
+      const open = document.createElement('a');
+      open.href = 'connections.html?onboarding=all';
+      open.textContent = 'Open all-resource setup queue';
+      onboarding.append(summary, open);
+      bubble.append(onboarding);
+    }
 
     if (result.discovery?.needsQuestion || mode === 'Discover') {
       const discovery = document.createElement('div');
@@ -467,7 +531,7 @@
       const preferences = result.discovery.boundaryPreferences;
       const preferenceNote = document.createElement('p');
       preferenceNote.className = 'buddy-role-boundary';
-      preferenceNote.textContent = `Your settings: ${preferences.communicationStyle.replaceAll('_', ' ')} style, ${preferences.riskDisclosure} risk detail, ${preferences.moneyActionMode.replaceAll('_', ' ')} for money actions. Exact approval remains required for every outside action.`;
+      preferenceNote.textContent = `Your settings: ${preferences.relationshipStyle.replaceAll('_', ' ')} relationship, ${preferences.communicationStyle.replaceAll('_', ' ')} style, ${preferences.riskDisclosure} risk detail, ${preferences.moneyActionMode.replaceAll('_', ' ')} for money actions. Exact approval remains required for every outside action.`;
       bubble.append(preferenceNote);
     }
     if (result.communicationPlan) {
@@ -529,8 +593,8 @@
     launch.href = 'install.html';
     launch.textContent = 'Launch or domain';
     const benchmark = document.createElement('a');
-    benchmark.href = 'models.html';
-    benchmark.textContent = 'Compare models';
+    benchmark.href = 'benchmark-tracker.html';
+    benchmark.textContent = 'Benchmark tracker';
     const sourceLab = document.createElement('a');
     sourceLab.href = 'open-model-lab.html';
     sourceLab.textContent = 'Open-source lab';
@@ -675,8 +739,10 @@
     addUserMessage(objective);
     input.value = '';
     sendButton.disabled = true;
-    sendButton.textContent = 'Routing...';
-    routeStatus.textContent = `${inferredMode} intent detected. Checking ${Number(index.summary.profiles || 0).toLocaleString()} specialists...`;
+    sendButton.textContent = 'Working...';
+    routeStatus.textContent = inferredMode === 'Plan'
+      ? `Planning across ${Number(index.summary.profiles || 0).toLocaleString()} specialists...`
+      : `Starting your task across ${Number(index.summary.profiles || 0).toLocaleString()} specialists...`;
     const result = await routePrompt(objective);
     addBuddyMessage(result);
     const selectedName = result.selected?.name || result.selected?.display_name || 'the best available specialist';
@@ -1409,6 +1475,7 @@
     document.getElementById('boundary-approval').value = boundaryPreferences.approvalMode;
     document.getElementById('boundary-money').value = boundaryPreferences.moneyActionMode;
     document.getElementById('boundary-communication').value = boundaryPreferences.communicationStyle;
+    document.getElementById('boundary-relationship').value = boundaryPreferences.relationshipStyle;
     document.getElementById('boundary-depth').value = boundaryPreferences.guidanceDepth;
     document.getElementById('boundary-tone').checked = boundaryPreferences.voiceToneAdaptation;
     renderBehaviorControls();
@@ -1427,6 +1494,7 @@
       approvalMode: document.getElementById('boundary-approval').value,
       moneyActionMode: document.getElementById('boundary-money').value,
       communicationStyle: document.getElementById('boundary-communication').value,
+      relationshipStyle: document.getElementById('boundary-relationship').value,
       guidanceDepth: document.getElementById('boundary-depth').value,
       voiceToneAdaptation: document.getElementById('boundary-tone').checked,
       behaviorTraits: behavior.traits,

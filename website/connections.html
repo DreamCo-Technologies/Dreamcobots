@@ -6,7 +6,7 @@
   <title>Buddy App Connections - DreamCo Empire OS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=41" />
+  <link rel="stylesheet" href="styles.css?v=42" />
 </head>
 <body>
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -277,6 +277,51 @@
   </section>
 
   <section id="signup-panel" class="connection-panel" hidden>
+    <section class="resource-onboarding-center" aria-labelledby="resource-onboarding-title">
+      <header class="resource-onboarding-heading">
+        <div>
+          <div class="connections-kicker">500-target setup map</div>
+          <h2 id="resource-onboarding-title">Provider onboarding queue</h2>
+          <p>One efficient setup per provider, ordered local and free-first. Preparing the queue does not create accounts, accept terms, submit forms, spend money, or prove a live connection.</p>
+        </div>
+        <button id="resource-queue-all" class="btn btn-primary btn-sm" type="button">Prepare all provider setups</button>
+      </header>
+
+      <div class="resource-onboarding-metrics" aria-label="Resource onboarding summary">
+        <div><strong id="resource-target-count">...</strong><span>Model targets</span></div>
+        <div><strong id="resource-provider-count">...</strong><span>Provider setups</span></div>
+        <div><strong id="resource-account-count">...</strong><span>Maximum accounts</span></div>
+        <div><strong id="resource-live-count">0</strong><span>Verified live</span></div>
+      </div>
+
+      <div class="resource-onboarding-toolbar">
+        <label for="resource-search">Search
+          <input id="resource-search" type="search" placeholder="Provider, task, strength, or setup type" autocomplete="off" />
+        </label>
+        <label for="resource-task">Task
+          <select id="resource-task"><option value="all">All task categories</option></select>
+        </label>
+        <label for="resource-access">Access
+          <select id="resource-access">
+            <option value="all">All setups</option>
+            <option value="free_first">Free or local first</option>
+            <option value="no_account">No account required</option>
+            <option value="account_required">Account required</option>
+            <option value="paid_review">Paid or unverified access</option>
+          </select>
+        </label>
+      </div>
+
+      <p id="resource-queue-summary" class="resource-queue-summary" aria-live="polite">Loading provider setup catalog.</p>
+      <div class="resource-provider-table-wrap" tabindex="0" aria-label="Provider onboarding catalog">
+        <table class="resource-provider-table">
+          <thead><tr><th scope="col">Provider</th><th scope="col">Best declared use</th><th scope="col">Access</th><th scope="col">Targets</th><th scope="col">Setup</th></tr></thead>
+          <tbody id="resource-provider-rows"></tbody>
+        </table>
+      </div>
+      <p id="resource-provider-row-count" class="access-row-count" aria-live="polite"></p>
+    </section>
+
     <div class="connections-workbench">
       <form id="signup-form" class="connection-surface connection-form">
         <div class="connection-section-heading">
@@ -337,6 +382,7 @@
   </form>
 </dialog>
 
-<script src="connections.js?v=4" defer></script>
+<script src="data/buddy-model-progress-center.js?v=2"></script>
+<script src="connections.js?v=5" defer></script>
 </body>
 </html>

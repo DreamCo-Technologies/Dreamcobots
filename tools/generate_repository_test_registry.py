@@ -25,11 +25,20 @@ SKIPPED_ROOTS = {
     "dist",
     "logs",
     "node_modules",
+    "playwright-report",
     "reports",
+    "test-results",
+    "tmp",
+}
+SKIPPED_SUBTREES = {
+    ("config", "generated"),
+    ("server", "public"),
+    ("website", "data"),
 }
 SKIPPED_FILES = {
     GENERATED.relative_to(ROOT).as_posix(),
     PUBLIC.relative_to(ROOT).as_posix(),
+    "config/generated/change-impact-test-coverage.json",
     "website/data/repository-system-map.json",
 }
 TEXT_SUFFIXES = {
@@ -68,6 +77,8 @@ def normalized_files() -> list[Path]:
             continue
         relative = path.relative_to(ROOT)
         if any(part in SKIPPED_ROOTS for part in relative.parts):
+            continue
+        if any(relative.parts[: len(parts)] == parts for parts in SKIPPED_SUBTREES):
             continue
         if relative.as_posix() in SKIPPED_FILES:
             continue

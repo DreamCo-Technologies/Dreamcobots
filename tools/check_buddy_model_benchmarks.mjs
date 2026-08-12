@@ -24,15 +24,19 @@ sourceTargets.forEach((sourceTarget, index) => {
   if (target.id !== sourceTarget.id || target.name !== sourceTarget.name) {
     throw new Error(`Benchmark target drift at position ${index + 1}`);
   }
-  if (!target.catalogReady || target.liveEvidenceStatus !== "not_run" || target.liveScore !== null || target.promptLibrary.length < 4) {
+  if (!target.catalogReady || !target.officialCatalog || !target.sourceConnection?.sourceLinked || !target.sourceConnection?.setupPathReady || target.liveEvidenceStatus !== "not_run" || target.liveScore !== null || target.promptLibrary.length < 4) {
     throw new Error(`Invalid evidence state for ${target.name}`);
   }
 });
 
 catalog.targets.slice(sourceTargets.length).forEach((target) => {
-  if (!target.discoveryTarget || !target.officialCatalog || target.liveEvidenceStatus !== "discovery_required" || target.liveScore !== null) {
+  if (!target.discoveryTarget || !target.officialCatalog || !target.sourceConnection?.sourceLinked || !target.sourceConnection?.setupPathReady || target.liveEvidenceStatus !== "discovery_required" || target.liveScore !== null) {
     throw new Error(`Invalid discovery evidence state for ${target.name}`);
   }
 });
+
+if (catalog.summary.sourceLinked !== 500 || catalog.summary.setupPathsReady !== 500 || catalog.summary.liveConnected !== 0) {
+  throw new Error("Model source connection summary is invalid");
+}
 
 console.log(JSON.stringify(catalog.summary));

@@ -325,7 +325,7 @@
         "accessibility_label": "DreamBot logo"
       },
       "prospectus": {
-        "mission": "Central AI brain that coordinates all bots, monitors performance, and reallocates resources across the DreamCo Empire.",
+        "mission": "Central governed coordinator for routing work across DreamCo bots, tracking runtime state, and preparing auditable task plans.",
         "target_users": "All DreamCo users",
         "catalog_business_model": "Included with all tiers",
         "catalog_price_range": "Free",
@@ -354,17 +354,17 @@
         "specialization": {
           "division": "CommandCore",
           "category": "system",
-          "mission": "Central AI brain that coordinates all bots, monitors performance, and reallocates resources across the DreamCo Empire.",
+          "mission": "Central governed coordinator for routing work across DreamCo bots, tracking runtime state, and preparing auditable task plans.",
           "ideal_customer_segments": [
             "All DreamCo users"
           ],
-          "core_offer": "DreamBot: Central AI brain that coordinates all bots, monitors performance, and reallocates resources across the DreamCo Empire.",
+          "core_offer": "DreamBot: Central governed coordinator for routing work across DreamCo bots, tracking runtime state, and preparing auditable task plans.",
           "promised_outputs": [
             "Multi-bot coordination",
-            "Performance monitoring",
-            "Resource allocation",
-            "Task scheduling",
-            "System analytics"
+            "Capability-aware routing",
+            "Task prioritization",
+            "Runtime health aggregation",
+            "Cross-division planning"
           ],
           "catalog_revenue_model": "Included with all tiers",
           "catalog_price_range": "Free",
@@ -394,10 +394,10 @@
             ],
             "need_signals": [
               "Needs help with Multi-bot coordination",
-              "Needs help with Performance monitoring",
-              "Needs help with Resource allocation",
-              "Needs help with Task scheduling",
-              "Needs help with System analytics"
+              "Needs help with Capability-aware routing",
+              "Needs help with Task prioritization",
+              "Needs help with Runtime health aggregation",
+              "Needs help with Cross-division planning"
             ],
             "exclusion_rules": [
               "no minors",
@@ -514,58 +514,58 @@
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#dreambot"
         },
         {
-          "name": "Performance monitoring",
+          "name": "Capability-aware routing",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-fb16de8792a3d20057a4",
+          "test_id": "capability-test-15de2751e8f05c7436d9",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#dreambot"
         },
         {
-          "name": "Resource allocation",
+          "name": "Task prioritization",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-ec7b35ea7969d05cc8f2",
+          "test_id": "capability-test-f0441d2fa299abedc0ab",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#dreambot"
         },
         {
-          "name": "Task scheduling",
+          "name": "Runtime health aggregation",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-02b10d0f83e326ed57aa",
+          "test_id": "capability-test-f1e291140ea26c42f02d",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#dreambot"
         },
         {
-          "name": "System analytics",
+          "name": "Cross-division planning",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-c982051b9f8241fcd3f4",
+          "test_id": "capability-test-8bfe2e8f98ebe20a8977",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#dreambot"
         },
         {
-          "name": "Real-time monitoring dashboard",
+          "name": "Approval-aware orchestration",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-84cb7e946cd9fa31a2ff",
+          "test_id": "capability-test-4686e5485cf57d19217b",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#dreambot"
         },
         {
-          "name": "Automated error recovery",
+          "name": "Failure escalation",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-345139d9a6a9a253b2ea",
+          "test_id": "capability-test-14d2d723ed644e594baf",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#dreambot"
         },
         {
-          "name": "Cross-bot data sharing",
+          "name": "Audit receipt preparation",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-3d399108064c41ce1234",
+          "test_id": "capability-test-1d863e13c879c2dc38f0",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#dreambot"
         }
@@ -618,27 +618,15 @@
           "name": "Permission-gated lead discovery and follow-up system",
           "status": "sandbox_ready_external_adapters_required",
           "evidence": "server/governed-leads.ts"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
         }
       ],
       "api_candidates": [
-        {
-          "name": "Datadog",
-          "category": "apm",
-          "description": "Application performance",
-          "tier": "enterprise",
-          "status": "configuration_required",
-          "sandbox_required": true,
-          "secret_policy": "backend_secret_reference_only"
-        },
-        {
-          "name": "Prometheus",
-          "category": "monitoring",
-          "description": "Metrics & alerting",
-          "tier": "enterprise",
-          "status": "configuration_required",
-          "sandbox_required": true,
-          "secret_policy": "backend_secret_reference_only"
-        },
         {
           "name": "Sentry",
           "category": "errors",
@@ -649,9 +637,27 @@
           "secret_policy": "backend_secret_reference_only"
         },
         {
+          "name": "Datadog",
+          "category": "apm",
+          "description": "Application performance",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
           "name": "New Relic",
           "category": "observability",
           "description": "Full-stack observability",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Prometheus",
+          "category": "monitoring",
+          "description": "Metrics & alerting",
           "tier": "enterprise",
           "status": "configuration_required",
           "sandbox_required": true,
@@ -680,17 +686,19 @@
           "sandbox evidence",
           "approval request when required"
         ],
-        "sensitivity": "standard_business_data",
-        "sensitive_domains": [],
+        "sensitivity": "potentially_sensitive",
+        "sensitive_domains": [
+          "health"
+        ],
         "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
         "retention": "owner-configurable with deletion and revocation support"
       },
       "approvals": {
         "default_mode": "sandbox",
         "approval_required": true,
-        "high_impact_profile": false,
+        "high_impact_profile": true,
         "triggers": [
-          "any live external write or publish action"
+          "health"
         ],
         "channels_supported": [
           "in_app",
@@ -717,22 +725,22 @@
         ],
         "api_tests": [
           {
-            "api": "Datadog",
-            "mode": "mock_contract_test",
-            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
-          },
-          {
-            "api": "Prometheus",
-            "mode": "mock_contract_test",
-            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
-          },
-          {
             "api": "Sentry",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
           {
+            "api": "Datadog",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
             "api": "New Relic",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Prometheus",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
@@ -760,7 +768,7 @@
         ],
         "runtime_seed_duplicates": 0
       },
-      "sample_test_prompt": "Test every declared capability for DreamBot in sandbox mode: Multi-bot coordination; Performance monitoring; Resource allocation; Task scheduling; System analytics; Real-time monitoring dashboard; Automated error recovery; Cross-bot data sharing. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+      "sample_test_prompt": "Test every declared capability for DreamBot in sandbox mode: Multi-bot coordination; Capability-aware routing; Task prioritization; Runtime health aggregation; Cross-division planning; Approval-aware orchestration; Failure escalation; Audit receipt preparation. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "identity": {
@@ -785,7 +793,7 @@
         "accessibility_label": "Research Bot logo"
       },
       "prospectus": {
-        "mission": "Deep research and analysis engine for market intelligence and competitive positioning.",
+        "mission": "Research planning and synthesis agent for source-backed market, product, competitor, and topic analysis when approved research adapters are available.",
         "target_users": "Researchers, analysts, strategists",
         "catalog_business_model": "Included with all tiers",
         "catalog_price_range": "Free",
@@ -814,19 +822,19 @@
         "specialization": {
           "division": "CommandCore",
           "category": "system",
-          "mission": "Deep research and analysis engine for market intelligence and competitive positioning.",
+          "mission": "Research planning and synthesis agent for source-backed market, product, competitor, and topic analysis when approved research adapters are available.",
           "ideal_customer_segments": [
             "Researchers",
             "analysts",
             "strategists"
           ],
-          "core_offer": "Research Bot: Deep research and analysis engine for market intelligence and competitive positioning.",
+          "core_offer": "Research Bot: Research planning and synthesis agent for source-backed market, product, competitor, and topic analysis when approved research adapters are available.",
           "promised_outputs": [
-            "Market research",
+            "Research planning",
+            "Source discovery planning",
             "Competitor analysis",
-            "Trend detection",
-            "Data synthesis",
-            "Report generation"
+            "Trend analysis",
+            "Evidence synthesis"
           ],
           "catalog_revenue_model": "Included with all tiers",
           "catalog_price_range": "Free",
@@ -857,11 +865,11 @@
               "strategists"
             ],
             "need_signals": [
-              "Needs help with Market research",
+              "Needs help with Research planning",
+              "Needs help with Source discovery planning",
               "Needs help with Competitor analysis",
-              "Needs help with Trend detection",
-              "Needs help with Data synthesis",
-              "Needs help with Report generation"
+              "Needs help with Trend analysis",
+              "Needs help with Evidence synthesis"
             ],
             "exclusion_rules": [
               "no minors",
@@ -872,10 +880,10 @@
           },
           "discovery": {
             "query_templates": [
-              "Researchers, analysts, strategists requesting Market research",
+              "Researchers, analysts, strategists requesting Research planning",
               "organizations seeking system support",
               "inbound requests matching Research Bot",
-              "existing customers who opted in to Market research updates"
+              "existing customers who opted in to Research planning updates"
             ],
             "authorized_source_types": [
               "owner supplied records",
@@ -970,10 +978,18 @@
       },
       "capabilities": [
         {
-          "name": "Market research",
+          "name": "Research planning",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-6e9498e7305a051346a2",
+          "test_id": "capability-test-0f3a6975a527fe14186d",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-bot"
+        },
+        {
+          "name": "Source discovery planning",
+          "source": "App_bots/CommandCore.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-72e1c472dc6438394b8b",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-bot"
         },
@@ -986,50 +1002,42 @@
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-bot"
         },
         {
-          "name": "Trend detection",
+          "name": "Trend analysis",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-db92c2476ccd0ae22f14",
+          "test_id": "capability-test-e7fe24606aeb90612246",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-bot"
         },
         {
-          "name": "Data synthesis",
+          "name": "Evidence synthesis",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-a77c987f7fe8fa2c0a16",
+          "test_id": "capability-test-c2734e5232cff002a8be",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-bot"
         },
         {
-          "name": "Report generation",
+          "name": "Citation tracking",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-33e390afcd6cc411bcd8",
+          "test_id": "capability-test-9d5d144ed580cd124a64",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-bot"
         },
         {
-          "name": "Real-time monitoring dashboard",
+          "name": "Uncertainty labeling",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-26cf52b628e88a748b7e",
+          "test_id": "capability-test-61e04754b2a265b0a7e5",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-bot"
         },
         {
-          "name": "Automated error recovery",
+          "name": "Research report generation",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-92c9d73b8701650327d5",
-          "test_status": "reported_by_fleet_e2e",
-          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-bot"
-        },
-        {
-          "name": "Cross-bot data sharing",
-          "source": "App_bots/CommandCore.json",
-          "evidence_level": "catalog_declared",
-          "test_id": "capability-test-e39f3058f14c4091bb2d",
+          "test_id": "capability-test-13e67145e3dafbe9a447",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-bot"
         }
@@ -1082,27 +1090,15 @@
           "name": "Permission-gated lead discovery and follow-up system",
           "status": "sandbox_ready_external_adapters_required",
           "evidence": "server/governed-leads.ts"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
         }
       ],
       "api_candidates": [
-        {
-          "name": "Datadog",
-          "category": "apm",
-          "description": "Application performance",
-          "tier": "enterprise",
-          "status": "configuration_required",
-          "sandbox_required": true,
-          "secret_policy": "backend_secret_reference_only"
-        },
-        {
-          "name": "Prometheus",
-          "category": "monitoring",
-          "description": "Metrics & alerting",
-          "tier": "enterprise",
-          "status": "configuration_required",
-          "sandbox_required": true,
-          "secret_policy": "backend_secret_reference_only"
-        },
         {
           "name": "Sentry",
           "category": "errors",
@@ -1113,9 +1109,27 @@
           "secret_policy": "backend_secret_reference_only"
         },
         {
+          "name": "Datadog",
+          "category": "apm",
+          "description": "Application performance",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
           "name": "New Relic",
           "category": "observability",
           "description": "Full-stack observability",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Prometheus",
+          "category": "monitoring",
+          "description": "Metrics & alerting",
           "tier": "enterprise",
           "status": "configuration_required",
           "sandbox_required": true,
@@ -1181,22 +1195,22 @@
         ],
         "api_tests": [
           {
-            "api": "Datadog",
-            "mode": "mock_contract_test",
-            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
-          },
-          {
-            "api": "Prometheus",
-            "mode": "mock_contract_test",
-            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
-          },
-          {
             "api": "Sentry",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
           {
+            "api": "Datadog",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
             "api": "New Relic",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Prometheus",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
@@ -1224,7 +1238,7 @@
         ],
         "runtime_seed_duplicates": 0
       },
-      "sample_test_prompt": "Test every declared capability for Research Bot in sandbox mode: Market research; Competitor analysis; Trend detection; Data synthesis; Report generation; Real-time monitoring dashboard; Automated error recovery; Cross-bot data sharing. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+      "sample_test_prompt": "Test every declared capability for Research Bot in sandbox mode: Research planning; Source discovery planning; Competitor analysis; Trend analysis; Evidence synthesis; Citation tracking; Uncertainty labeling; Research report generation. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "identity": {
@@ -1249,7 +1263,7 @@
         "accessibility_label": "Task Scheduler logo"
       },
       "prospectus": {
-        "mission": "Prioritizes high-ROI tasks automatically across all divisions.",
+        "mission": "Creates bounded schedules for approved tasks, tracks dependencies and deadlines, and separates read-only checks from actions requiring fresh approval.",
         "target_users": "Operations managers",
         "catalog_business_model": "SaaS subscription",
         "catalog_price_range": "$99/mo",
@@ -1278,17 +1292,17 @@
         "specialization": {
           "division": "CommandCore",
           "category": "system",
-          "mission": "Prioritizes high-ROI tasks automatically across all divisions.",
+          "mission": "Creates bounded schedules for approved tasks, tracks dependencies and deadlines, and separates read-only checks from actions requiring fresh approval.",
           "ideal_customer_segments": [
             "Operations managers"
           ],
-          "core_offer": "Task Scheduler: Prioritizes high-ROI tasks automatically across all divisions.",
+          "core_offer": "Task Scheduler: Creates bounded schedules for approved tasks, tracks dependencies and deadlines, and separates read-only checks from actions requiring fresh approval.",
           "promised_outputs": [
             "Task prioritization",
-            "Auto-scheduling",
+            "Schedule planning",
             "Dependency tracking",
             "Deadline management",
-            "Advanced analytics dashboard"
+            "Recurring read-only check planning"
           ],
           "catalog_revenue_model": "SaaS subscription",
           "catalog_price_range": "$99/mo",
@@ -1318,10 +1332,10 @@
             ],
             "need_signals": [
               "Needs help with Task prioritization",
-              "Needs help with Auto-scheduling",
+              "Needs help with Schedule planning",
               "Needs help with Dependency tracking",
               "Needs help with Deadline management",
-              "Needs help with Advanced analytics dashboard"
+              "Needs help with Recurring read-only check planning"
             ],
             "exclusion_rules": [
               "no minors",
@@ -1438,10 +1452,10 @@
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#task-scheduler"
         },
         {
-          "name": "Auto-scheduling",
+          "name": "Schedule planning",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-50afff3ca2b2284fc733",
+          "test_id": "capability-test-92ef2c880a0c40d9d4bd",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#task-scheduler"
         },
@@ -1462,34 +1476,34 @@
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#task-scheduler"
         },
         {
-          "name": "Advanced analytics dashboard",
+          "name": "Recurring read-only check planning",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-2fbaf2800cb1509f3728",
+          "test_id": "capability-test-806031e186cb2fb9d205",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#task-scheduler"
         },
         {
-          "name": "Priority email support",
+          "name": "Approval boundary tracking",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-fb678bf48380d0c94628",
+          "test_id": "capability-test-9834aa7132eaeb8a2f70",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#task-scheduler"
         },
         {
-          "name": "API access",
+          "name": "Run status reporting",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-5554470300bd4a505b36",
+          "test_id": "capability-test-5758d1b405b1e6d5337b",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#task-scheduler"
         },
         {
-          "name": "Custom integrations",
+          "name": "Failure rescheduling",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-7db7b0b6c26ab5cd92f7",
+          "test_id": "capability-test-49196bd613c097df0e41",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#task-scheduler"
         }
@@ -1544,10 +1558,10 @@
           "evidence": "server/governed-leads.ts"
         },
         {
-          "id": "buddy_connection_broker",
-          "name": "Buddy Connection Broker",
-          "status": "backend_broker_available",
-          "evidence": "dreamco_platform/connections/broker.py"
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
         }
       ],
       "api_candidates": [
@@ -1618,10 +1632,9 @@
       "approvals": {
         "default_mode": "sandbox",
         "approval_required": true,
-        "high_impact_profile": true,
+        "high_impact_profile": false,
         "triggers": [
-          "email",
-          "call"
+          "any live external write or publish action"
         ],
         "channels_supported": [
           "in_app",
@@ -1691,7 +1704,7 @@
         ],
         "runtime_seed_duplicates": 0
       },
-      "sample_test_prompt": "Test every declared capability for Task Scheduler in sandbox mode: Task prioritization; Auto-scheduling; Dependency tracking; Deadline management; Advanced analytics dashboard; Priority email support; API access; Custom integrations. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+      "sample_test_prompt": "Test every declared capability for Task Scheduler in sandbox mode: Task prioritization; Schedule planning; Dependency tracking; Deadline management; Recurring read-only check planning; Approval boundary tracking; Run status reporting; Failure rescheduling. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "identity": {
@@ -1716,7 +1729,7 @@
         "accessibility_label": "Analytics Hub logo"
       },
       "prospectus": {
-        "mission": "Combines all bot analytics into actionable intelligence dashboards.",
+        "mission": "Combines bot, workflow, benchmark, cost, reliability, and user-job metrics into evidence-linked scorecards.",
         "target_users": "Executives, analysts",
         "catalog_business_model": "SaaS subscription",
         "catalog_price_range": "$99/mo",
@@ -1745,18 +1758,18 @@
         "specialization": {
           "division": "CommandCore",
           "category": "system",
-          "mission": "Combines all bot analytics into actionable intelligence dashboards.",
+          "mission": "Combines bot, workflow, benchmark, cost, reliability, and user-job metrics into evidence-linked scorecards.",
           "ideal_customer_segments": [
             "Executives",
             "analysts"
           ],
-          "core_offer": "Analytics Hub: Combines all bot analytics into actionable intelligence dashboards.",
+          "core_offer": "Analytics Hub: Combines bot, workflow, benchmark, cost, reliability, and user-job metrics into evidence-linked scorecards.",
           "promised_outputs": [
             "Cross-bot analytics",
             "KPI tracking",
-            "ROI calculation",
-            "Performance reports",
-            "Advanced analytics dashboard"
+            "Cost analysis",
+            "Benchmark aggregation",
+            "Reliability reporting"
           ],
           "catalog_revenue_model": "SaaS subscription",
           "catalog_price_range": "$99/mo",
@@ -1788,9 +1801,9 @@
             "need_signals": [
               "Needs help with Cross-bot analytics",
               "Needs help with KPI tracking",
-              "Needs help with ROI calculation",
-              "Needs help with Performance reports",
-              "Needs help with Advanced analytics dashboard"
+              "Needs help with Cost analysis",
+              "Needs help with Benchmark aggregation",
+              "Needs help with Reliability reporting"
             ],
             "exclusion_rules": [
               "no minors",
@@ -1915,50 +1928,50 @@
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#analytics-hub"
         },
         {
-          "name": "ROI calculation",
+          "name": "Cost analysis",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-cbc9e33a8a6c7acd2f82",
+          "test_id": "capability-test-8dd83140723a6fcc8958",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#analytics-hub"
         },
         {
-          "name": "Performance reports",
+          "name": "Benchmark aggregation",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-e316f16c38099fa187da",
+          "test_id": "capability-test-1d856cec3ca5b294f9ce",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#analytics-hub"
         },
         {
-          "name": "Advanced analytics dashboard",
+          "name": "Reliability reporting",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-ac794eaf36d7992a47ea",
+          "test_id": "capability-test-0b8599752cdbd4a36859",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#analytics-hub"
         },
         {
-          "name": "Priority email support",
+          "name": "Failure trend analysis",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-cc1872d75b9d577c275d",
+          "test_id": "capability-test-ed8d8a8c241aecdf9c9d",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#analytics-hub"
         },
         {
-          "name": "API access",
+          "name": "Evidence freshness tracking",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-d91959adcb730afa7fc6",
+          "test_id": "capability-test-573d004a790a79ae23ab",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#analytics-hub"
         },
         {
-          "name": "Custom integrations",
+          "name": "Executive scorecards",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-da6e7dea14745bb6955e",
+          "test_id": "capability-test-ed420cdd282c2b7fc88b",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#analytics-hub"
         }
@@ -2011,19 +2024,13 @@
           "name": "Permission-gated lead discovery and follow-up system",
           "status": "sandbox_ready_external_adapters_required",
           "evidence": "server/governed-leads.ts"
-        },
-        {
-          "id": "buddy_connection_broker",
-          "name": "Buddy Connection Broker",
-          "status": "backend_broker_available",
-          "evidence": "dreamco_platform/connections/broker.py"
         }
       ],
       "api_candidates": [
         {
-          "name": "Datadog",
-          "category": "apm",
-          "description": "Application performance",
+          "name": "Prometheus",
+          "category": "monitoring",
+          "description": "Metrics & alerting",
           "tier": "enterprise",
           "status": "configuration_required",
           "sandbox_required": true,
@@ -2039,18 +2046,18 @@
           "secret_policy": "backend_secret_reference_only"
         },
         {
-          "name": "New Relic",
-          "category": "observability",
-          "description": "Full-stack observability",
+          "name": "Datadog",
+          "category": "apm",
+          "description": "Application performance",
           "tier": "enterprise",
           "status": "configuration_required",
           "sandbox_required": true,
           "secret_policy": "backend_secret_reference_only"
         },
         {
-          "name": "Prometheus",
-          "category": "monitoring",
-          "description": "Metrics & alerting",
+          "name": "New Relic",
+          "category": "observability",
+          "description": "Full-stack observability",
           "tier": "enterprise",
           "status": "configuration_required",
           "sandbox_required": true,
@@ -2087,9 +2094,9 @@
       "approvals": {
         "default_mode": "sandbox",
         "approval_required": true,
-        "high_impact_profile": true,
+        "high_impact_profile": false,
         "triggers": [
-          "email"
+          "any live external write or publish action"
         ],
         "channels_supported": [
           "in_app",
@@ -2116,7 +2123,7 @@
         ],
         "api_tests": [
           {
-            "api": "Datadog",
+            "api": "Prometheus",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
@@ -2126,12 +2133,12 @@
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
           {
-            "api": "New Relic",
+            "api": "Datadog",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
           {
-            "api": "Prometheus",
+            "api": "New Relic",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
@@ -2159,7 +2166,7 @@
         ],
         "runtime_seed_duplicates": 0
       },
-      "sample_test_prompt": "Test every declared capability for Analytics Hub in sandbox mode: Cross-bot analytics; KPI tracking; ROI calculation; Performance reports; Advanced analytics dashboard; Priority email support; API access; Custom integrations. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+      "sample_test_prompt": "Test every declared capability for Analytics Hub in sandbox mode: Cross-bot analytics; KPI tracking; Cost analysis; Benchmark aggregation; Reliability reporting; Failure trend analysis; Evidence freshness tracking; Executive scorecards. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "identity": {
@@ -2184,8 +2191,8 @@
         "accessibility_label": "Security & Compliance logo"
       },
       "prospectus": {
-        "mission": "GDPR, CCPA, IP protection, global franchise law, SaaS licensing compliance engine.",
-        "target_users": "Legal teams, compliance officers",
+        "mission": "Prepares defensive security and compliance reviews, records evidence, and routes legal or regulatory conclusions to qualified human review where required.",
+        "target_users": "Security, legal, and compliance teams",
         "catalog_business_model": "Enterprise license",
         "catalog_price_range": "$499/mo",
         "pricing_evidence": "catalog_claim_not_verified_revenue",
@@ -2213,18 +2220,19 @@
         "specialization": {
           "division": "CommandCore",
           "category": "system",
-          "mission": "GDPR, CCPA, IP protection, global franchise law, SaaS licensing compliance engine.",
+          "mission": "Prepares defensive security and compliance reviews, records evidence, and routes legal or regulatory conclusions to qualified human review where required.",
           "ideal_customer_segments": [
-            "Legal teams",
-            "compliance officers"
+            "Security",
+            "legal",
+            "compliance teams"
           ],
-          "core_offer": "Security & Compliance: GDPR, CCPA, IP protection, global franchise law, SaaS licensing compliance engine.",
+          "core_offer": "Security & Compliance: Prepares defensive security and compliance reviews, records evidence, and routes legal or regulatory conclusions to qualified human review where required.",
           "promised_outputs": [
-            "Compliance monitoring",
-            "Security audits",
-            "IP protection",
-            "Regulatory alerts",
-            "Advanced analytics dashboard"
+            "Defensive security review planning",
+            "Policy control checks",
+            "Dependency and provenance review",
+            "Permission boundary review",
+            "Evidence collection planning"
           ],
           "catalog_revenue_model": "Enterprise license",
           "catalog_price_range": "$499/mo",
@@ -2250,15 +2258,16 @@
           "status": "sandbox_ready_external_adapters_required",
           "ideal_customer_profile": {
             "segments": [
-              "Legal teams",
-              "compliance officers"
+              "Security",
+              "legal",
+              "compliance teams"
             ],
             "need_signals": [
-              "Needs help with Compliance monitoring",
-              "Needs help with Security audits",
-              "Needs help with IP protection",
-              "Needs help with Regulatory alerts",
-              "Needs help with Advanced analytics dashboard"
+              "Needs help with Defensive security review planning",
+              "Needs help with Policy control checks",
+              "Needs help with Dependency and provenance review",
+              "Needs help with Permission boundary review",
+              "Needs help with Evidence collection planning"
             ],
             "exclusion_rules": [
               "no minors",
@@ -2269,10 +2278,10 @@
           },
           "discovery": {
             "query_templates": [
-              "Legal teams, compliance officers requesting Compliance monitoring",
+              "Security, legal, and compliance teams requesting Defensive security review planning",
               "organizations seeking system support",
               "inbound requests matching Security & Compliance",
-              "existing customers who opted in to Compliance monitoring updates"
+              "existing customers who opted in to Defensive security review planning updates"
             ],
             "authorized_source_types": [
               "owner supplied records",
@@ -2367,66 +2376,66 @@
       },
       "capabilities": [
         {
-          "name": "Compliance monitoring",
+          "name": "Defensive security review planning",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-6f51af4c685fb76a6940",
+          "test_id": "capability-test-e7cdad2bf1f8e630404d",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#security-compliance"
         },
         {
-          "name": "Security audits",
+          "name": "Policy control checks",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-7e3bdac2dd21d9c6eedc",
+          "test_id": "capability-test-9f7c6235cfe7b68dc457",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#security-compliance"
         },
         {
-          "name": "IP protection",
+          "name": "Dependency and provenance review",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-3bc71ee8498b055efbb2",
+          "test_id": "capability-test-48b76de2593e28f589b7",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#security-compliance"
         },
         {
-          "name": "Regulatory alerts",
+          "name": "Permission boundary review",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-5322d48087e6c0b21c80",
+          "test_id": "capability-test-5bbd9da30241af89065d",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#security-compliance"
         },
         {
-          "name": "Advanced analytics dashboard",
+          "name": "Evidence collection planning",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-9e57060d9576b3eaff64",
+          "test_id": "capability-test-4fcfeaaae28a06a3a071",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#security-compliance"
         },
         {
-          "name": "Priority email support",
+          "name": "Regulatory research support",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-9dadb4fe6738b55afb00",
+          "test_id": "capability-test-2fdc15c44b4b8d82329c",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#security-compliance"
         },
         {
-          "name": "API access",
+          "name": "Risk escalation",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-374e716b2267b27550d3",
+          "test_id": "capability-test-ebda819de8bb6fe8a1f9",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#security-compliance"
         },
         {
-          "name": "Custom integrations",
+          "name": "Professional review handoff",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-772c761163423497e2cf",
+          "test_id": "capability-test-ae395916935ec2665859",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#security-compliance"
         }
@@ -2479,24 +2488,9 @@
           "name": "Permission-gated lead discovery and follow-up system",
           "status": "sandbox_ready_external_adapters_required",
           "evidence": "server/governed-leads.ts"
-        },
-        {
-          "id": "buddy_connection_broker",
-          "name": "Buddy Connection Broker",
-          "status": "backend_broker_available",
-          "evidence": "dreamco_platform/connections/broker.py"
         }
       ],
       "api_candidates": [
-        {
-          "name": "Prometheus",
-          "category": "monitoring",
-          "description": "Metrics & alerting",
-          "tier": "enterprise",
-          "status": "configuration_required",
-          "sandbox_required": true,
-          "secret_policy": "backend_secret_reference_only"
-        },
         {
           "name": "Datadog",
           "category": "apm",
@@ -2510,6 +2504,15 @@
           "name": "New Relic",
           "category": "observability",
           "description": "Full-stack observability",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Prometheus",
+          "category": "monitoring",
+          "description": "Metrics & alerting",
           "tier": "enterprise",
           "status": "configuration_required",
           "sandbox_required": true,
@@ -2549,6 +2552,7 @@
         ],
         "sensitivity": "potentially_sensitive",
         "sensitive_domains": [
+          "legal",
           "security"
         ],
         "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
@@ -2559,8 +2563,8 @@
         "approval_required": true,
         "high_impact_profile": true,
         "triggers": [
-          "security",
-          "email"
+          "legal",
+          "security"
         ],
         "channels_supported": [
           "in_app",
@@ -2587,17 +2591,17 @@
         ],
         "api_tests": [
           {
-            "api": "Prometheus",
-            "mode": "mock_contract_test",
-            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
-          },
-          {
             "api": "Datadog",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
           {
             "api": "New Relic",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Prometheus",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
@@ -2630,7 +2634,7 @@
         ],
         "runtime_seed_duplicates": 0
       },
-      "sample_test_prompt": "Test every declared capability for Security & Compliance in sandbox mode: Compliance monitoring; Security audits; IP protection; Regulatory alerts; Advanced analytics dashboard; Priority email support; API access; Custom integrations. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+      "sample_test_prompt": "Test every declared capability for Security & Compliance in sandbox mode: Defensive security review planning; Policy control checks; Dependency and provenance review; Permission boundary review; Evidence collection planning; Regulatory research support; Risk escalation; Professional review handoff. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "identity": {
@@ -2655,8 +2659,8 @@
         "accessibility_label": "Self-Debug Engine logo"
       },
       "prospectus": {
-        "mission": "Detects errors, fixes issues, escalates only when human intervention is required.",
-        "target_users": "DevOps teams",
+        "mission": "Detects reproducible software and workflow failures, proposes bounded repairs, reruns approved tests, and escalates unresolved or high-impact changes.",
+        "target_users": "Developers and DevOps teams",
         "catalog_business_model": "Enterprise license",
         "catalog_price_range": "$499/mo",
         "pricing_evidence": "catalog_claim_not_verified_revenue",
@@ -2684,17 +2688,18 @@
         "specialization": {
           "division": "CommandCore",
           "category": "system",
-          "mission": "Detects errors, fixes issues, escalates only when human intervention is required.",
+          "mission": "Detects reproducible software and workflow failures, proposes bounded repairs, reruns approved tests, and escalates unresolved or high-impact changes.",
           "ideal_customer_segments": [
+            "Developers",
             "DevOps teams"
           ],
-          "core_offer": "Self-Debug Engine: Detects errors, fixes issues, escalates only when human intervention is required.",
+          "core_offer": "Self-Debug Engine: Detects reproducible software and workflow failures, proposes bounded repairs, reruns approved tests, and escalates unresolved or high-impact changes.",
           "promised_outputs": [
             "Error detection",
-            "Auto-repair",
-            "Escalation management",
-            "System health monitoring",
-            "Advanced analytics dashboard"
+            "Failure classification",
+            "Root-cause analysis",
+            "Repair proposal generation",
+            "Regression test planning"
           ],
           "catalog_revenue_model": "Enterprise license",
           "catalog_price_range": "$499/mo",
@@ -2720,14 +2725,15 @@
           "status": "sandbox_ready_external_adapters_required",
           "ideal_customer_profile": {
             "segments": [
+              "Developers",
               "DevOps teams"
             ],
             "need_signals": [
               "Needs help with Error detection",
-              "Needs help with Auto-repair",
-              "Needs help with Escalation management",
-              "Needs help with System health monitoring",
-              "Needs help with Advanced analytics dashboard"
+              "Needs help with Failure classification",
+              "Needs help with Root-cause analysis",
+              "Needs help with Repair proposal generation",
+              "Needs help with Regression test planning"
             ],
             "exclusion_rules": [
               "no minors",
@@ -2738,7 +2744,7 @@
           },
           "discovery": {
             "query_templates": [
-              "DevOps teams requesting Error detection",
+              "Developers and DevOps teams requesting Error detection",
               "organizations seeking system support",
               "inbound requests matching Self-Debug Engine",
               "existing customers who opted in to Error detection updates"
@@ -2844,10 +2850,42 @@
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#self-debug-engine"
         },
         {
-          "name": "Auto-repair",
+          "name": "Failure classification",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-472caa96bc281da36bf0",
+          "test_id": "capability-test-2ab54df4d875923bbb0d",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#self-debug-engine"
+        },
+        {
+          "name": "Root-cause analysis",
+          "source": "App_bots/CommandCore.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-76881dc0ab276f674880",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#self-debug-engine"
+        },
+        {
+          "name": "Repair proposal generation",
+          "source": "App_bots/CommandCore.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-8ae9f8c636e9b28e1778",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#self-debug-engine"
+        },
+        {
+          "name": "Regression test planning",
+          "source": "App_bots/CommandCore.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-2575f2d88aac84062a1e",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#self-debug-engine"
+        },
+        {
+          "name": "Safe retry logic",
+          "source": "App_bots/CommandCore.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-9ca230a0e91a1da16516",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#self-debug-engine"
         },
@@ -2860,42 +2898,10 @@
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#self-debug-engine"
         },
         {
-          "name": "System health monitoring",
+          "name": "Repair evidence tracking",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-97db760b48db11cb2cff",
-          "test_status": "reported_by_fleet_e2e",
-          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#self-debug-engine"
-        },
-        {
-          "name": "Advanced analytics dashboard",
-          "source": "App_bots/CommandCore.json",
-          "evidence_level": "catalog_declared",
-          "test_id": "capability-test-da3a0c8ab1fc07081e78",
-          "test_status": "reported_by_fleet_e2e",
-          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#self-debug-engine"
-        },
-        {
-          "name": "Priority email support",
-          "source": "App_bots/CommandCore.json",
-          "evidence_level": "catalog_declared",
-          "test_id": "capability-test-a26d1c4769728a301704",
-          "test_status": "reported_by_fleet_e2e",
-          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#self-debug-engine"
-        },
-        {
-          "name": "API access",
-          "source": "App_bots/CommandCore.json",
-          "evidence_level": "catalog_declared",
-          "test_id": "capability-test-3c51c676def00521863e",
-          "test_status": "reported_by_fleet_e2e",
-          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#self-debug-engine"
-        },
-        {
-          "name": "Custom integrations",
-          "source": "App_bots/CommandCore.json",
-          "evidence_level": "catalog_declared",
-          "test_id": "capability-test-24c3f7f1a9717d54af49",
+          "test_id": "capability-test-679e53ff04fca63e6e9b",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#self-debug-engine"
         }
@@ -2950,12 +2956,6 @@
           "evidence": "server/governed-leads.ts"
         },
         {
-          "id": "buddy_connection_broker",
-          "name": "Buddy Connection Broker",
-          "status": "backend_broker_available",
-          "evidence": "dreamco_platform/connections/broker.py"
-        },
-        {
           "id": "buddy_code_workspace",
           "name": "Buddy Code Workspace",
           "status": "shared_runtime_route",
@@ -2973,15 +2973,6 @@
           "secret_policy": "backend_secret_reference_only"
         },
         {
-          "name": "Prometheus",
-          "category": "monitoring",
-          "description": "Metrics & alerting",
-          "tier": "enterprise",
-          "status": "configuration_required",
-          "sandbox_required": true,
-          "secret_policy": "backend_secret_reference_only"
-        },
-        {
           "name": "Datadog",
           "category": "apm",
           "description": "Application performance",
@@ -2994,6 +2985,15 @@
           "name": "New Relic",
           "category": "observability",
           "description": "Full-stack observability",
+          "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Prometheus",
+          "category": "monitoring",
+          "description": "Metrics & alerting",
           "tier": "enterprise",
           "status": "configuration_required",
           "sandbox_required": true,
@@ -3022,20 +3022,17 @@
           "sandbox evidence",
           "approval request when required"
         ],
-        "sensitivity": "potentially_sensitive",
-        "sensitive_domains": [
-          "health"
-        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
         "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
         "retention": "owner-configurable with deletion and revocation support"
       },
       "approvals": {
         "default_mode": "sandbox",
         "approval_required": true,
-        "high_impact_profile": true,
+        "high_impact_profile": false,
         "triggers": [
-          "health",
-          "email"
+          "any live external write or publish action"
         ],
         "channels_supported": [
           "in_app",
@@ -3067,17 +3064,17 @@
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
           {
-            "api": "Prometheus",
-            "mode": "mock_contract_test",
-            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
-          },
-          {
             "api": "Datadog",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
           {
             "api": "New Relic",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Prometheus",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
@@ -3105,7 +3102,7 @@
         ],
         "runtime_seed_duplicates": 0
       },
-      "sample_test_prompt": "Test every declared capability for Self-Debug Engine in sandbox mode: Error detection; Auto-repair; Escalation management; System health monitoring; Advanced analytics dashboard; Priority email support; API access; Custom integrations. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+      "sample_test_prompt": "Test every declared capability for Self-Debug Engine in sandbox mode: Error detection; Failure classification; Root-cause analysis; Repair proposal generation; Regression test planning; Safe retry logic; Escalation management; Repair evidence tracking. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "identity": {
@@ -3130,7 +3127,7 @@
         "accessibility_label": "Cloud Scaling Engine logo"
       },
       "prospectus": {
-        "mission": "Auto-scales computing resources across bots for optimal performance.",
+        "mission": "Analyzes workload, latency, reliability, and cost signals to recommend or execute approved infrastructure scaling through configured cloud adapters.",
         "target_users": "Infrastructure teams",
         "catalog_business_model": "Usage-based",
         "catalog_price_range": "$299/mo",
@@ -3159,17 +3156,17 @@
         "specialization": {
           "division": "CommandCore",
           "category": "system",
-          "mission": "Auto-scales computing resources across bots for optimal performance.",
+          "mission": "Analyzes workload, latency, reliability, and cost signals to recommend or execute approved infrastructure scaling through configured cloud adapters.",
           "ideal_customer_segments": [
             "Infrastructure teams"
           ],
-          "core_offer": "Cloud Scaling Engine: Auto-scales computing resources across bots for optimal performance.",
+          "core_offer": "Cloud Scaling Engine: Analyzes workload, latency, reliability, and cost signals to recommend or execute approved infrastructure scaling through configured cloud adapters.",
           "promised_outputs": [
-            "Auto-scaling",
-            "Load balancing",
+            "Capacity analysis",
+            "Scaling plan generation",
+            "Load distribution planning",
             "Resource optimization",
-            "Cost management",
-            "Advanced analytics dashboard"
+            "Cost modeling"
           ],
           "catalog_revenue_model": "Usage-based",
           "catalog_price_range": "$299/mo",
@@ -3198,11 +3195,11 @@
               "Infrastructure teams"
             ],
             "need_signals": [
-              "Needs help with Auto-scaling",
-              "Needs help with Load balancing",
+              "Needs help with Capacity analysis",
+              "Needs help with Scaling plan generation",
+              "Needs help with Load distribution planning",
               "Needs help with Resource optimization",
-              "Needs help with Cost management",
-              "Needs help with Advanced analytics dashboard"
+              "Needs help with Cost modeling"
             ],
             "exclusion_rules": [
               "no minors",
@@ -3213,10 +3210,10 @@
           },
           "discovery": {
             "query_templates": [
-              "Infrastructure teams requesting Auto-scaling",
+              "Infrastructure teams requesting Capacity analysis",
               "organizations seeking system support",
               "inbound requests matching Cloud Scaling Engine",
-              "existing customers who opted in to Auto-scaling updates"
+              "existing customers who opted in to Capacity analysis updates"
             ],
             "authorized_source_types": [
               "owner supplied records",
@@ -3311,18 +3308,26 @@
       },
       "capabilities": [
         {
-          "name": "Auto-scaling",
+          "name": "Capacity analysis",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-a037456df472a128d6d2",
+          "test_id": "capability-test-2c2d3614f92b3a868351",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#cloud-scaler"
         },
         {
-          "name": "Load balancing",
+          "name": "Scaling plan generation",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-3ad7e05e1df9ccabb60d",
+          "test_id": "capability-test-8c906f9a7a2271291e4b",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#cloud-scaler"
+        },
+        {
+          "name": "Load distribution planning",
+          "source": "App_bots/CommandCore.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-7aa6e145c16e8951c7d0",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#cloud-scaler"
         },
@@ -3335,42 +3340,34 @@
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#cloud-scaler"
         },
         {
-          "name": "Cost management",
+          "name": "Cost modeling",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-21735c866ec91c5e3834",
+          "test_id": "capability-test-ed2cb60d2495ffb576c3",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#cloud-scaler"
         },
         {
-          "name": "Advanced analytics dashboard",
+          "name": "Reliability threshold checks",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-785785c08c59612d334f",
+          "test_id": "capability-test-ffb995be0bdd3c3e5f84",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#cloud-scaler"
         },
         {
-          "name": "Priority email support",
+          "name": "Cloud adapter readiness checks",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-23239dc28772189afd35",
+          "test_id": "capability-test-9fca63b0809cff26a09d",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#cloud-scaler"
         },
         {
-          "name": "API access",
+          "name": "Scaling audit receipts",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-16d987ee65184a4cf34c",
-          "test_status": "reported_by_fleet_e2e",
-          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#cloud-scaler"
-        },
-        {
-          "name": "Custom integrations",
-          "source": "App_bots/CommandCore.json",
-          "evidence_level": "catalog_declared",
-          "test_id": "capability-test-c87b58920d275a045ee0",
+          "test_id": "capability-test-897f39e243994a6e053f",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#cloud-scaler"
         }
@@ -3425,10 +3422,10 @@
           "evidence": "server/governed-leads.ts"
         },
         {
-          "id": "buddy_connection_broker",
-          "name": "Buddy Connection Broker",
-          "status": "backend_broker_available",
-          "evidence": "dreamco_platform/connections/broker.py"
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
         }
       ],
       "api_candidates": [
@@ -3499,9 +3496,9 @@
       "approvals": {
         "default_mode": "sandbox",
         "approval_required": true,
-        "high_impact_profile": true,
+        "high_impact_profile": false,
         "triggers": [
-          "email"
+          "any live external write or publish action"
         ],
         "channels_supported": [
           "in_app",
@@ -3571,7 +3568,7 @@
         ],
         "runtime_seed_duplicates": 0
       },
-      "sample_test_prompt": "Test every declared capability for Cloud Scaling Engine in sandbox mode: Auto-scaling; Load balancing; Resource optimization; Cost management; Advanced analytics dashboard; Priority email support; API access; Custom integrations. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+      "sample_test_prompt": "Test every declared capability for Cloud Scaling Engine in sandbox mode: Capacity analysis; Scaling plan generation; Load distribution planning; Resource optimization; Cost modeling; Reliability threshold checks; Cloud adapter readiness checks; Scaling audit receipts. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "identity": {
@@ -3596,8 +3593,8 @@
         "accessibility_label": "AI Self-Learning Module logo"
       },
       "prospectus": {
-        "mission": "Continuously learns from market trends, competitor behavior, and bot performance to improve all systems.",
-        "target_users": "AI teams",
+        "mission": "Turns approved benchmark, failure, user-feedback, and outcome evidence into proposed routing, prompt, policy, and capability improvements that must pass regression gates before promotion.",
+        "target_users": "AI and platform teams",
         "catalog_business_model": "Enterprise license",
         "catalog_price_range": "$999/mo",
         "pricing_evidence": "catalog_claim_not_verified_revenue",
@@ -3625,17 +3622,18 @@
         "specialization": {
           "division": "CommandCore",
           "category": "system",
-          "mission": "Continuously learns from market trends, competitor behavior, and bot performance to improve all systems.",
+          "mission": "Turns approved benchmark, failure, user-feedback, and outcome evidence into proposed routing, prompt, policy, and capability improvements that must pass regression gates before promotion.",
           "ideal_customer_segments": [
-            "AI teams"
+            "AI",
+            "platform teams"
           ],
-          "core_offer": "AI Self-Learning Module: Continuously learns from market trends, competitor behavior, and bot performance to improve all systems.",
+          "core_offer": "AI Self-Learning Module: Turns approved benchmark, failure, user-feedback, and outcome evidence into proposed routing, prompt, policy, and capability improvements that must pass regression gates before promotion.",
           "promised_outputs": [
-            "Continuous learning",
-            "Pattern recognition",
-            "Strategy optimization",
-            "Adaptive behavior",
-            "Advanced analytics dashboard"
+            "Outcome analysis",
+            "Pattern detection",
+            "Benchmark trend analysis",
+            "Routing improvement proposals",
+            "Prompt improvement proposals"
           ],
           "catalog_revenue_model": "Enterprise license",
           "catalog_price_range": "$999/mo",
@@ -3661,14 +3659,15 @@
           "status": "sandbox_ready_external_adapters_required",
           "ideal_customer_profile": {
             "segments": [
-              "AI teams"
+              "AI",
+              "platform teams"
             ],
             "need_signals": [
-              "Needs help with Continuous learning",
-              "Needs help with Pattern recognition",
-              "Needs help with Strategy optimization",
-              "Needs help with Adaptive behavior",
-              "Needs help with Advanced analytics dashboard"
+              "Needs help with Outcome analysis",
+              "Needs help with Pattern detection",
+              "Needs help with Benchmark trend analysis",
+              "Needs help with Routing improvement proposals",
+              "Needs help with Prompt improvement proposals"
             ],
             "exclusion_rules": [
               "no minors",
@@ -3679,10 +3678,10 @@
           },
           "discovery": {
             "query_templates": [
-              "AI teams requesting Continuous learning",
+              "AI and platform teams requesting Outcome analysis",
               "organizations seeking system support",
               "inbound requests matching AI Self-Learning Module",
-              "existing customers who opted in to Continuous learning updates"
+              "existing customers who opted in to Outcome analysis updates"
             ],
             "authorized_source_types": [
               "owner supplied records",
@@ -3777,66 +3776,66 @@
       },
       "capabilities": [
         {
-          "name": "Continuous learning",
+          "name": "Outcome analysis",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-2563a62fcd5fce322c03",
+          "test_id": "capability-test-6c8a891d59db0ecf0106",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#ai-self-learner"
         },
         {
-          "name": "Pattern recognition",
+          "name": "Pattern detection",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-261a01cfd16443936711",
+          "test_id": "capability-test-524bcea9e47f7472bfaa",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#ai-self-learner"
         },
         {
-          "name": "Strategy optimization",
+          "name": "Benchmark trend analysis",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-782095d7867f12b487c5",
+          "test_id": "capability-test-4d2e051c9aa3073a8b97",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#ai-self-learner"
         },
         {
-          "name": "Adaptive behavior",
+          "name": "Routing improvement proposals",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-14c5252f53a6ac67cdf4",
+          "test_id": "capability-test-17a8314fff8d75c009b7",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#ai-self-learner"
         },
         {
-          "name": "Advanced analytics dashboard",
+          "name": "Prompt improvement proposals",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-a8b5aa178413a8f77f71",
+          "test_id": "capability-test-74d8f459b4ac27868982",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#ai-self-learner"
         },
         {
-          "name": "Priority email support",
+          "name": "Regression-aware learning",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-55416b6edbcdcecd138a",
+          "test_id": "capability-test-5b0fe5311fecfeaa1800",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#ai-self-learner"
         },
         {
-          "name": "API access",
+          "name": "Change evidence generation",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-381c5f64453706d79d2f",
+          "test_id": "capability-test-0d891fe3a2c9f05da5bb",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#ai-self-learner"
         },
         {
-          "name": "Custom integrations",
+          "name": "Owner-controlled promotion",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-1279d0ed0df80c11c3fc",
+          "test_id": "capability-test-e8625f0814e7d85fff33",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#ai-self-learner"
         }
@@ -3897,10 +3896,10 @@
           "evidence": "dreamco_platform/creative/studio.py"
         },
         {
-          "id": "buddy_connection_broker",
-          "name": "Buddy Connection Broker",
-          "status": "backend_broker_available",
-          "evidence": "dreamco_platform/connections/broker.py"
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
         }
       ],
       "api_candidates": [
@@ -3971,9 +3970,9 @@
       "approvals": {
         "default_mode": "sandbox",
         "approval_required": true,
-        "high_impact_profile": true,
+        "high_impact_profile": false,
         "triggers": [
-          "email"
+          "any live external write or publish action"
         ],
         "channels_supported": [
           "in_app",
@@ -4043,7 +4042,7 @@
         ],
         "runtime_seed_duplicates": 0
       },
-      "sample_test_prompt": "Test every declared capability for AI Self-Learning Module in sandbox mode: Continuous learning; Pattern recognition; Strategy optimization; Adaptive behavior; Advanced analytics dashboard; Priority email support; API access; Custom integrations. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+      "sample_test_prompt": "Test every declared capability for AI Self-Learning Module in sandbox mode: Outcome analysis; Pattern detection; Benchmark trend analysis; Routing improvement proposals; Prompt improvement proposals; Regression-aware learning; Change evidence generation; Owner-controlled promotion. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "identity": {
@@ -4068,7 +4067,7 @@
         "accessibility_label": "Memory Vault AI logo"
       },
       "prospectus": {
-        "mission": "Persistent memory manager that stores, retrieves, and organizes notes, preferences, and learned patterns across all bots and sessions. Keeps track of everything the empire learns.",
+        "mission": "User-controlled memory service for approved preferences, projects, decisions, and learning context with retention controls and sensitive-memory defaults off.",
         "target_users": "All DreamCo users",
         "catalog_business_model": "Included with all tiers",
         "catalog_price_range": "Free",
@@ -4097,17 +4096,17 @@
         "specialization": {
           "division": "CommandCore",
           "category": "system",
-          "mission": "Persistent memory manager that stores, retrieves, and organizes notes, preferences, and learned patterns across all bots and sessions. Keeps track of everything the empire learns.",
+          "mission": "User-controlled memory service for approved preferences, projects, decisions, and learning context with retention controls and sensitive-memory defaults off.",
           "ideal_customer_segments": [
             "All DreamCo users"
           ],
-          "core_offer": "Memory Vault AI: Persistent memory manager that stores, retrieves, and organizes notes, preferences, and learned patterns across all bots and sessions. Keeps track of everything the empire learns.",
+          "core_offer": "Memory Vault AI: User-controlled memory service for approved preferences, projects, decisions, and learning context with retention controls and sensitive-memory defaults off.",
           "promised_outputs": [
-            "Persistent note storage",
-            "Cross-bot memory sharing",
-            "Pattern learning",
-            "Context recall",
-            "Session memory"
+            "Preference memory",
+            "Project memory",
+            "Decision history",
+            "Context retrieval",
+            "Memory categorization"
           ],
           "catalog_revenue_model": "Included with all tiers",
           "catalog_price_range": "Free",
@@ -4136,11 +4135,11 @@
               "All DreamCo users"
             ],
             "need_signals": [
-              "Needs help with Persistent note storage",
-              "Needs help with Cross-bot memory sharing",
-              "Needs help with Pattern learning",
-              "Needs help with Context recall",
-              "Needs help with Session memory"
+              "Needs help with Preference memory",
+              "Needs help with Project memory",
+              "Needs help with Decision history",
+              "Needs help with Context retrieval",
+              "Needs help with Memory categorization"
             ],
             "exclusion_rules": [
               "no minors",
@@ -4151,10 +4150,10 @@
           },
           "discovery": {
             "query_templates": [
-              "All DreamCo users requesting Persistent note storage",
+              "All DreamCo users requesting Preference memory",
               "organizations seeking system support",
               "inbound requests matching Memory Vault AI",
-              "existing customers who opted in to Persistent note storage updates"
+              "existing customers who opted in to Preference memory updates"
             ],
             "authorized_source_types": [
               "owner supplied records",
@@ -4249,66 +4248,66 @@
       },
       "capabilities": [
         {
-          "name": "Persistent note storage",
+          "name": "Preference memory",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-befb451b0c50b2f30317",
+          "test_id": "capability-test-e1936c30cf063052b05a",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#memory-vault"
         },
         {
-          "name": "Cross-bot memory sharing",
+          "name": "Project memory",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-d6e1c58b53354eda8052",
+          "test_id": "capability-test-521a1e10af1bb2fdc6a0",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#memory-vault"
         },
         {
-          "name": "Pattern learning",
+          "name": "Decision history",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-42466cbca0518ce219b7",
+          "test_id": "capability-test-2073c90434bbd59baecc",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#memory-vault"
         },
         {
-          "name": "Context recall",
+          "name": "Context retrieval",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-d226c490931397206023",
+          "test_id": "capability-test-fb201b19314f17d385fa",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#memory-vault"
         },
         {
-          "name": "Session memory",
+          "name": "Memory categorization",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-b08238fa05db76bd4d2c",
+          "test_id": "capability-test-2c0e8e534fb1a122736b",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#memory-vault"
         },
         {
-          "name": "Preference tracking",
+          "name": "Retention controls",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-3c4632324f9a6e2b04eb",
+          "test_id": "capability-test-f7e7edea3c139b315810",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#memory-vault"
         },
         {
-          "name": "Knowledge graph building",
+          "name": "User correction and deletion controls",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-642cbd32b196e6961fd4",
+          "test_id": "capability-test-43eed353cc9eec12a385",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#memory-vault"
         },
         {
-          "name": "Auto-tagging and categorization",
+          "name": "Knowledge relationship indexing",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-0cdec9a2e6b88a7ec8bf",
+          "test_id": "capability-test-c8ff2890767879fbac72",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#memory-vault"
         }
@@ -4367,18 +4366,15 @@
           "name": "Buddy Creative Studio",
           "status": "local_prototype_available",
           "evidence": "dreamco_platform/creative/studio.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
         }
       ],
       "api_candidates": [
-        {
-          "name": "Sentry",
-          "category": "errors",
-          "description": "Error tracking",
-          "tier": "pro",
-          "status": "configuration_required",
-          "sandbox_required": true,
-          "secret_policy": "backend_secret_reference_only"
-        },
         {
           "name": "Datadog",
           "category": "apm",
@@ -4402,6 +4398,15 @@
           "category": "monitoring",
           "description": "Metrics & alerting",
           "tier": "enterprise",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
+          "name": "Sentry",
+          "category": "errors",
+          "description": "Error tracking",
+          "tier": "pro",
           "status": "configuration_required",
           "sandbox_required": true,
           "secret_policy": "backend_secret_reference_only"
@@ -4437,9 +4442,9 @@
       "approvals": {
         "default_mode": "sandbox",
         "approval_required": true,
-        "high_impact_profile": true,
+        "high_impact_profile": false,
         "triggers": [
-          "call"
+          "any live external write or publish action"
         ],
         "channels_supported": [
           "in_app",
@@ -4466,11 +4471,6 @@
         ],
         "api_tests": [
           {
-            "api": "Sentry",
-            "mode": "mock_contract_test",
-            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
-          },
-          {
             "api": "Datadog",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
@@ -4482,6 +4482,11 @@
           },
           {
             "api": "Prometheus",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
+            "api": "Sentry",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
@@ -4509,7 +4514,7 @@
         ],
         "runtime_seed_duplicates": 0
       },
-      "sample_test_prompt": "Test every declared capability for Memory Vault AI in sandbox mode: Persistent note storage; Cross-bot memory sharing; Pattern learning; Context recall; Session memory; Preference tracking; Knowledge graph building; Auto-tagging and categorization. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+      "sample_test_prompt": "Test every declared capability for Memory Vault AI in sandbox mode: Preference memory; Project memory; Decision history; Context retrieval; Memory categorization; Retention controls; User correction and deletion controls; Knowledge relationship indexing. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "identity": {
@@ -4534,7 +4539,7 @@
         "accessibility_label": "Research Analyst Agent logo"
       },
       "prospectus": {
-        "mission": "Deep research agent that analyzes topics thoroughly, synthesizes information from multiple sources, and produces comprehensive reports.",
+        "mission": "Produces structured source-backed research packets from approved sources, clearly separating evidence, inference, uncertainty, and unresolved questions.",
         "target_users": "Researchers, analysts, consultants",
         "catalog_business_model": "SaaS subscription",
         "catalog_price_range": "$99/mo",
@@ -4563,17 +4568,17 @@
         "specialization": {
           "division": "CommandCore",
           "category": "research",
-          "mission": "Deep research agent that analyzes topics thoroughly, synthesizes information from multiple sources, and produces comprehensive reports.",
+          "mission": "Produces structured source-backed research packets from approved sources, clearly separating evidence, inference, uncertainty, and unresolved questions.",
           "ideal_customer_segments": [
             "Researchers",
             "analysts",
             "consultants"
           ],
-          "core_offer": "Research Analyst Agent: Deep research agent that analyzes topics thoroughly, synthesizes information from multiple sources, and produces comprehensive reports.",
+          "core_offer": "Research Analyst Agent: Produces structured source-backed research packets from approved sources, clearly separating evidence, inference, uncertainty, and unresolved questions.",
           "promised_outputs": [
-            "Multi-source research",
+            "Multi-source research planning",
             "Citation tracking",
-            "Report generation",
+            "Evidence tables",
             "Trend analysis",
             "Competitive intelligence"
           ],
@@ -4606,9 +4611,9 @@
               "consultants"
             ],
             "need_signals": [
-              "Needs help with Multi-source research",
+              "Needs help with Multi-source research planning",
               "Needs help with Citation tracking",
-              "Needs help with Report generation",
+              "Needs help with Evidence tables",
               "Needs help with Trend analysis",
               "Needs help with Competitive intelligence"
             ],
@@ -4621,10 +4626,10 @@
           },
           "discovery": {
             "query_templates": [
-              "Researchers, analysts, consultants requesting Multi-source research",
+              "Researchers, analysts, consultants requesting Multi-source research planning",
               "organizations seeking research support",
               "inbound requests matching Research Analyst Agent",
-              "existing customers who opted in to Multi-source research updates"
+              "existing customers who opted in to Multi-source research planning updates"
             ],
             "authorized_source_types": [
               "owner supplied records",
@@ -4719,10 +4724,10 @@
       },
       "capabilities": [
         {
-          "name": "Multi-source research",
+          "name": "Multi-source research planning",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-846135c5537d28e3c906",
+          "test_id": "capability-test-14d8fa0da38ef0635358",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-analyst"
         },
@@ -4735,10 +4740,10 @@
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-analyst"
         },
         {
-          "name": "Report generation",
+          "name": "Evidence tables",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-88967ca7e31a5b58228f",
+          "test_id": "capability-test-a3471c4fbc2487eba952",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-analyst"
         },
@@ -4759,10 +4764,10 @@
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-analyst"
         },
         {
-          "name": "Academic paper analysis",
+          "name": "Literature review support",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-e543ca70382133cc85ec",
+          "test_id": "capability-test-d43c847e51c4e2166f26",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-analyst"
         },
@@ -4775,10 +4780,10 @@
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-analyst"
         },
         {
-          "name": "Fact verification",
+          "name": "Fact verification workflow",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-e54651230732036ea424",
+          "test_id": "capability-test-1402567d1dd3756e722e",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#research-analyst"
         }
@@ -4831,6 +4836,12 @@
           "name": "Permission-gated lead discovery and follow-up system",
           "status": "sandbox_ready_external_adapters_required",
           "evidence": "server/governed-leads.ts"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
         }
       ],
       "api_candidates": [
@@ -4931,7 +4942,7 @@
         ],
         "runtime_seed_duplicates": 0
       },
-      "sample_test_prompt": "Test every declared capability for Research Analyst Agent in sandbox mode: Multi-source research; Citation tracking; Report generation; Trend analysis; Competitive intelligence; Academic paper analysis; Data synthesis; Fact verification. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+      "sample_test_prompt": "Test every declared capability for Research Analyst Agent in sandbox mode: Multi-source research planning; Citation tracking; Evidence tables; Trend analysis; Competitive intelligence; Literature review support; Data synthesis; Fact verification workflow. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "identity": {
@@ -4956,8 +4967,8 @@
         "accessibility_label": "Buddy Bot logo"
       },
       "prospectus": {
-        "mission": "Buddy is your personal AI companion and master coding assistant — self-teaching, omnichannel, capable of using any app's functionality, and trained across every library, framework, language, and tool in existence.",
-        "target_users": "All DreamCo users, developers",
+        "mission": "Primary DreamCo interface and governed task router. Buddy interprets user goals, selects relevant bots and models, prepares or executes bounded workflows through configured tools, and requires approval for high-impact external actions.",
+        "target_users": "All DreamCo users and developers",
         "catalog_business_model": "Included with Elite tier",
         "catalog_price_range": "$999/mo",
         "pricing_evidence": "catalog_claim_not_verified_revenue",
@@ -4985,18 +4996,18 @@
         "specialization": {
           "division": "CommandCore",
           "category": "system",
-          "mission": "Buddy is your personal AI companion and master coding assistant — self-teaching, omnichannel, capable of using any app's functionality, and trained across every library, framework, language, and tool in existence.",
+          "mission": "Primary DreamCo interface and governed task router. Buddy interprets user goals, selects relevant bots and models, prepares or executes bounded workflows through configured tools, and requires approval for high-impact external actions.",
           "ideal_customer_segments": [
             "All DreamCo users",
             "developers"
           ],
-          "core_offer": "Buddy Bot: Buddy is your personal AI companion and master coding assistant — self-teaching, omnichannel, capable of using any app's functionality, and trained across every library, framework, language, and tool in existence.",
+          "core_offer": "Buddy Bot: Primary DreamCo interface and governed task router. Buddy interprets user goals, selects relevant bots and models, prepares or executes bounded workflows through configured tools, and requires approval for high-impact external actions.",
           "promised_outputs": [
-            "Omnichannel task execution",
-            "Code generation (all languages)",
-            "Library mastery across all stacks",
-            "Tool-building & SDK creation",
-            "App feature replication"
+            "Natural-language task routing",
+            "Cross-bot orchestration",
+            "Model selection planning",
+            "Code and app workflow assistance",
+            "Tool and connector selection"
           ],
           "catalog_revenue_model": "Included with Elite tier",
           "catalog_price_range": "$999/mo",
@@ -5026,11 +5037,11 @@
               "developers"
             ],
             "need_signals": [
-              "Needs help with Omnichannel task execution",
-              "Needs help with Code generation (all languages)",
-              "Needs help with Library mastery across all stacks",
-              "Needs help with Tool-building & SDK creation",
-              "Needs help with App feature replication"
+              "Needs help with Natural-language task routing",
+              "Needs help with Cross-bot orchestration",
+              "Needs help with Model selection planning",
+              "Needs help with Code and app workflow assistance",
+              "Needs help with Tool and connector selection"
             ],
             "exclusion_rules": [
               "no minors",
@@ -5041,10 +5052,10 @@
           },
           "discovery": {
             "query_templates": [
-              "All DreamCo users, developers requesting Omnichannel task execution",
+              "All DreamCo users and developers requesting Natural-language task routing",
               "organizations seeking system support",
               "inbound requests matching Buddy Bot",
-              "existing customers who opted in to Omnichannel task execution updates"
+              "existing customers who opted in to Natural-language task routing updates"
             ],
             "authorized_source_types": [
               "owner supplied records",
@@ -5139,50 +5150,10 @@
       },
       "capabilities": [
         {
-          "name": "Omnichannel task execution",
+          "name": "Natural-language task routing",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-c9ab1fffed5935f1b7a8",
-          "test_status": "reported_by_fleet_e2e",
-          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#buddy-bot"
-        },
-        {
-          "name": "Code generation (all languages)",
-          "source": "App_bots/CommandCore.json",
-          "evidence_level": "catalog_declared",
-          "test_id": "capability-test-72d9b6d3b6d2a5fec5ac",
-          "test_status": "reported_by_fleet_e2e",
-          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#buddy-bot"
-        },
-        {
-          "name": "Library mastery across all stacks",
-          "source": "App_bots/CommandCore.json",
-          "evidence_level": "catalog_declared",
-          "test_id": "capability-test-28e1dce6ea593105293d",
-          "test_status": "reported_by_fleet_e2e",
-          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#buddy-bot"
-        },
-        {
-          "name": "Tool-building & SDK creation",
-          "source": "App_bots/CommandCore.json",
-          "evidence_level": "catalog_declared",
-          "test_id": "capability-test-ce2243a780889eb05090",
-          "test_status": "reported_by_fleet_e2e",
-          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#buddy-bot"
-        },
-        {
-          "name": "App feature replication",
-          "source": "App_bots/CommandCore.json",
-          "evidence_level": "catalog_declared",
-          "test_id": "capability-test-420a07446c320e4964c5",
-          "test_status": "reported_by_fleet_e2e",
-          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#buddy-bot"
-        },
-        {
-          "name": "Self-teaching from documentation",
-          "source": "App_bots/CommandCore.json",
-          "evidence_level": "catalog_declared",
-          "test_id": "capability-test-00d3d4b7a7d9c655d74f",
+          "test_id": "capability-test-0a2f561c8a99e9b76e09",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#buddy-bot"
         },
@@ -5195,10 +5166,50 @@
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#buddy-bot"
         },
         {
-          "name": "Natural language to code pipeline",
+          "name": "Model selection planning",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-a7a41366520f0e83a421",
+          "test_id": "capability-test-1b22ddacd9efffb237a1",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#buddy-bot"
+        },
+        {
+          "name": "Code and app workflow assistance",
+          "source": "App_bots/CommandCore.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-6cf8c83d7b7a96e259f1",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#buddy-bot"
+        },
+        {
+          "name": "Tool and connector selection",
+          "source": "App_bots/CommandCore.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-81f135c0f610d662314e",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#buddy-bot"
+        },
+        {
+          "name": "Evidence-aware task planning",
+          "source": "App_bots/CommandCore.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-53382d7cfed45d174bd6",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#buddy-bot"
+        },
+        {
+          "name": "Approval-aware execution",
+          "source": "App_bots/CommandCore.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-e6b786a90b5cf5cfc8fa",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#buddy-bot"
+        },
+        {
+          "name": "User-job completion tracking",
+          "source": "App_bots/CommandCore.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-169a9586650b98b83f35",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#buddy-bot"
         }
@@ -5261,6 +5272,15 @@
       ],
       "api_candidates": [
         {
+          "name": "Sentry",
+          "category": "errors",
+          "description": "Error tracking",
+          "tier": "pro",
+          "status": "configuration_required",
+          "sandbox_required": true,
+          "secret_policy": "backend_secret_reference_only"
+        },
+        {
           "name": "Datadog",
           "category": "apm",
           "description": "Application performance",
@@ -5288,15 +5308,6 @@
           "secret_policy": "backend_secret_reference_only"
         },
         {
-          "name": "Sentry",
-          "category": "errors",
-          "description": "Error tracking",
-          "tier": "pro",
-          "status": "configuration_required",
-          "sandbox_required": true,
-          "secret_policy": "backend_secret_reference_only"
-        },
-        {
           "name": "Slack",
           "category": "notifications",
           "description": "Alert notifications",
@@ -5319,10 +5330,8 @@
           "sandbox evidence",
           "approval request when required"
         ],
-        "sensitivity": "potentially_sensitive",
-        "sensitive_domains": [
-          "personal"
-        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
         "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
         "retention": "owner-configurable with deletion and revocation support"
       },
@@ -5358,6 +5367,11 @@
         ],
         "api_tests": [
           {
+            "api": "Sentry",
+            "mode": "mock_contract_test",
+            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
+          },
+          {
             "api": "Datadog",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
@@ -5369,11 +5383,6 @@
           },
           {
             "api": "Prometheus",
-            "mode": "mock_contract_test",
-            "live_test_status": "blocked_until_owner_configures_secret_and_approves"
-          },
-          {
-            "api": "Sentry",
             "mode": "mock_contract_test",
             "live_test_status": "blocked_until_owner_configures_secret_and_approves"
           },
@@ -5401,12 +5410,12 @@
         ],
         "runtime_seed_duplicates": 0
       },
-      "sample_test_prompt": "Test every declared capability for Buddy Bot in sandbox mode: Omnichannel task execution; Code generation (all languages); Library mastery across all stacks; Tool-building & SDK creation; App feature replication; Self-teaching from documentation; Cross-bot orchestration; Natural language to code pipeline. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+      "sample_test_prompt": "Test every declared capability for Buddy Bot in sandbox mode: Natural-language task routing; Cross-bot orchestration; Model selection planning; Code and app workflow assistance; Tool and connector selection; Evidence-aware task planning; Approval-aware execution; User-job completion tracking. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "identity": {
         "slug": "god-mode-bot",
-        "display_name": "God Mode AI Orchestrator",
+        "display_name": "Empire Orchestrator",
         "division": "CommandCore",
         "category": "system",
         "tier": "elite",
@@ -5415,7 +5424,7 @@
       "logo": {
         "logo_id": "logo-god-mode-bot",
         "emoji": "🧮",
-        "monogram": "GM",
+        "monogram": "EO",
         "call_sign": "Ready Compass 568248EA",
         "shape": "circle",
         "colors": {
@@ -5423,10 +5432,10 @@
           "accent": "#2D8C7C",
           "surface": "#FFF8EE"
         },
-        "accessibility_label": "God Mode AI Orchestrator logo"
+        "accessibility_label": "Empire Orchestrator logo"
       },
       "prospectus": {
-        "mission": "Operates in God Mode — coordinates ALL bots simultaneously, executes multi-step empire tasks autonomously, and self-heals on failure.",
+        "mission": "High-level orchestrator for complex cross-division workflows. It decomposes goals, coordinates bounded bot teams, enforces budgets and approvals, and stops or escalates when evidence or authority is insufficient.",
         "target_users": "DreamCo Elite subscribers",
         "catalog_business_model": "Included with Elite tier",
         "catalog_price_range": "$999/mo",
@@ -5455,17 +5464,17 @@
         "specialization": {
           "division": "CommandCore",
           "category": "system",
-          "mission": "Operates in God Mode — coordinates ALL bots simultaneously, executes multi-step empire tasks autonomously, and self-heals on failure.",
+          "mission": "High-level orchestrator for complex cross-division workflows. It decomposes goals, coordinates bounded bot teams, enforces budgets and approvals, and stops or escalates when evidence or authority is insufficient.",
           "ideal_customer_segments": [
             "DreamCo Elite subscribers"
           ],
-          "core_offer": "God Mode AI Orchestrator: Operates in God Mode — coordinates ALL bots simultaneously, executes multi-step empire tasks autonomously, and self-heals on failure.",
+          "core_offer": "Empire Orchestrator: High-level orchestrator for complex cross-division workflows. It decomposes goals, coordinates bounded bot teams, enforces budgets and approvals, and stops or escalates when evidence or authority is insufficient.",
           "promised_outputs": [
-            "All-bot simultaneous orchestration",
-            "Multi-step autonomous task chains",
-            "Self-healing on failure",
-            "Cross-division resource balancing",
-            "Priority queue management"
+            "Cross-division orchestration",
+            "Multi-step task decomposition",
+            "Dependency-aware execution planning",
+            "Failure recovery planning",
+            "Resource and budget coordination"
           ],
           "catalog_revenue_model": "Included with Elite tier",
           "catalog_price_range": "$999/mo",
@@ -5494,11 +5503,11 @@
               "DreamCo Elite subscribers"
             ],
             "need_signals": [
-              "Needs help with All-bot simultaneous orchestration",
-              "Needs help with Multi-step autonomous task chains",
-              "Needs help with Self-healing on failure",
-              "Needs help with Cross-division resource balancing",
-              "Needs help with Priority queue management"
+              "Needs help with Cross-division orchestration",
+              "Needs help with Multi-step task decomposition",
+              "Needs help with Dependency-aware execution planning",
+              "Needs help with Failure recovery planning",
+              "Needs help with Resource and budget coordination"
             ],
             "exclusion_rules": [
               "no minors",
@@ -5509,10 +5518,10 @@
           },
           "discovery": {
             "query_templates": [
-              "DreamCo Elite subscribers requesting All-bot simultaneous orchestration",
+              "DreamCo Elite subscribers requesting Cross-division orchestration",
               "organizations seeking system support",
-              "inbound requests matching God Mode AI Orchestrator",
-              "existing customers who opted in to All-bot simultaneous orchestration updates"
+              "inbound requests matching Empire Orchestrator",
+              "existing customers who opted in to Cross-division orchestration updates"
             ],
             "authorized_source_types": [
               "owner supplied records",
@@ -5607,34 +5616,42 @@
       },
       "capabilities": [
         {
-          "name": "All-bot simultaneous orchestration",
+          "name": "Cross-division orchestration",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-23eba3d01916584b98e3",
+          "test_id": "capability-test-f70d285bd94d3461d8fd",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#god-mode-bot"
         },
         {
-          "name": "Multi-step autonomous task chains",
+          "name": "Multi-step task decomposition",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-283240a8a306b26ab199",
+          "test_id": "capability-test-f00cb1cdc042a16fed0b",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#god-mode-bot"
         },
         {
-          "name": "Self-healing on failure",
+          "name": "Dependency-aware execution planning",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-2df9ff2dc5e1543d8c38",
+          "test_id": "capability-test-11479c808c8991e7d380",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#god-mode-bot"
         },
         {
-          "name": "Cross-division resource balancing",
+          "name": "Failure recovery planning",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-34aa225f8b3f44ad4d1c",
+          "test_id": "capability-test-115e4c5593640c4cd980",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#god-mode-bot"
+        },
+        {
+          "name": "Resource and budget coordination",
+          "source": "App_bots/CommandCore.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-a9a8518b167c952a3646",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#god-mode-bot"
         },
@@ -5647,26 +5664,18 @@
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#god-mode-bot"
         },
         {
-          "name": "Real-time empire optimization",
+          "name": "Approval checkpoint enforcement",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-42b66aad75ab8a4e1e46",
+          "test_id": "capability-test-fc80f0e1346ed77813b0",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#god-mode-bot"
         },
         {
-          "name": "Zero-human-intervention mode",
+          "name": "Run-level audit reporting",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-12737d6c33220e9188c0",
-          "test_status": "reported_by_fleet_e2e",
-          "test_evidence": "website/data/bot-capability-tests/CommandCore.json#god-mode-bot"
-        },
-        {
-          "name": "Infinite memory context management",
-          "source": "App_bots/CommandCore.json",
-          "evidence_level": "catalog_declared",
-          "test_id": "capability-test-697d85196dc722d092ce",
+          "test_id": "capability-test-dc1a1087419f82632063",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#god-mode-bot"
         }
@@ -5719,6 +5728,18 @@
           "name": "Permission-gated lead discovery and follow-up system",
           "status": "sandbox_ready_external_adapters_required",
           "evidence": "server/governed-leads.ts"
+        },
+        {
+          "id": "buddy_game_lab",
+          "name": "Buddy Game Lab",
+          "status": "adapter_contract_available",
+          "evidence": "dreamco_platform/games/harness.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
         }
       ],
       "api_candidates": [
@@ -5861,7 +5882,7 @@
         ],
         "runtime_seed_duplicates": 0
       },
-      "sample_test_prompt": "Test every declared capability for God Mode AI Orchestrator in sandbox mode: All-bot simultaneous orchestration; Multi-step autonomous task chains; Self-healing on failure; Cross-division resource balancing; Priority queue management; Real-time empire optimization; Zero-human-intervention mode; Infinite memory context management. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+      "sample_test_prompt": "Test every declared capability for Empire Orchestrator in sandbox mode: Cross-division orchestration; Multi-step task decomposition; Dependency-aware execution planning; Failure recovery planning; Resource and budget coordination; Priority queue management; Approval checkpoint enforcement; Run-level audit reporting. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "identity": {
@@ -5886,7 +5907,7 @@
         "accessibility_label": "Global Bot Network Hub logo"
       },
       "prospectus": {
-        "mission": "Connects all DreamCo bots to external global bot networks, data feeds, and AI services for maximum intelligence amplification.",
+        "mission": "Governed integration hub for approved external AI services, APIs, data feeds, and agent systems. Each connection is scoped, health-checked, benchmarked, and independently revocable.",
         "target_users": "Enterprise DreamCo users",
         "catalog_business_model": "Enterprise license",
         "catalog_price_range": "$499/mo",
@@ -5915,17 +5936,17 @@
         "specialization": {
           "division": "CommandCore",
           "category": "system",
-          "mission": "Connects all DreamCo bots to external global bot networks, data feeds, and AI services for maximum intelligence amplification.",
+          "mission": "Governed integration hub for approved external AI services, APIs, data feeds, and agent systems. Each connection is scoped, health-checked, benchmarked, and independently revocable.",
           "ideal_customer_segments": [
             "Enterprise DreamCo users"
           ],
-          "core_offer": "Global Bot Network Hub: Connects all DreamCo bots to external global bot networks, data feeds, and AI services for maximum intelligence amplification.",
+          "core_offer": "Global Bot Network Hub: Governed integration hub for approved external AI services, APIs, data feeds, and agent systems. Each connection is scoped, health-checked, benchmarked, and independently revocable.",
           "promised_outputs": [
-            "Global data feed integration",
-            "Inter-network bot communication",
-            "External AI service orchestration",
-            "Data marketplace connection",
-            "Cross-platform bot relay"
+            "External AI service cataloging",
+            "Connector health monitoring",
+            "Provider capability mapping",
+            "API gateway planning",
+            "Cross-platform workflow routing"
           ],
           "catalog_revenue_model": "Enterprise license",
           "catalog_price_range": "$499/mo",
@@ -5954,11 +5975,11 @@
               "Enterprise DreamCo users"
             ],
             "need_signals": [
-              "Needs help with Global data feed integration",
-              "Needs help with Inter-network bot communication",
-              "Needs help with External AI service orchestration",
-              "Needs help with Data marketplace connection",
-              "Needs help with Cross-platform bot relay"
+              "Needs help with External AI service cataloging",
+              "Needs help with Connector health monitoring",
+              "Needs help with Provider capability mapping",
+              "Needs help with API gateway planning",
+              "Needs help with Cross-platform workflow routing"
             ],
             "exclusion_rules": [
               "no minors",
@@ -5969,10 +5990,10 @@
           },
           "discovery": {
             "query_templates": [
-              "Enterprise DreamCo users requesting Global data feed integration",
+              "Enterprise DreamCo users requesting External AI service cataloging",
               "organizations seeking system support",
               "inbound requests matching Global Bot Network Hub",
-              "existing customers who opted in to Global data feed integration updates"
+              "existing customers who opted in to External AI service cataloging updates"
             ],
             "authorized_source_types": [
               "owner supplied records",
@@ -6067,66 +6088,66 @@
       },
       "capabilities": [
         {
-          "name": "Global data feed integration",
+          "name": "External AI service cataloging",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-53d37e457bd27b9e6323",
+          "test_id": "capability-test-a48b974bee5fb4c9d72f",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#global-bot-network"
         },
         {
-          "name": "Inter-network bot communication",
+          "name": "Connector health monitoring",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-400184f41977774f5204",
+          "test_id": "capability-test-4969f6331d6139f770bb",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#global-bot-network"
         },
         {
-          "name": "External AI service orchestration",
+          "name": "Provider capability mapping",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-14cbf4bcfc05a6ea7057",
+          "test_id": "capability-test-453f512d835c368c906a",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#global-bot-network"
         },
         {
-          "name": "Data marketplace connection",
+          "name": "API gateway planning",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-c06c04752e0b094e552b",
+          "test_id": "capability-test-99c5851b26fa8e0274bc",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#global-bot-network"
         },
         {
-          "name": "Cross-platform bot relay",
+          "name": "Cross-platform workflow routing",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-40918eaa2b2dba8e5bf1",
+          "test_id": "capability-test-21fc987dc754014d8f66",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#global-bot-network"
         },
         {
-          "name": "Network health monitoring",
+          "name": "Latency and reliability measurement",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-19010174eeb938a26c3b",
+          "test_id": "capability-test-0c8984d3d2b15a026c9a",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#global-bot-network"
         },
         {
-          "name": "Latency optimization",
+          "name": "Permission and secret-reference controls",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-0e12ff6a4c841448cbe3",
+          "test_id": "capability-test-f430d550c277ff59f900",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#global-bot-network"
         },
         {
-          "name": "API gateway management",
+          "name": "Connection audit reporting",
           "source": "App_bots/CommandCore.json",
           "evidence_level": "catalog_declared",
-          "test_id": "capability-test-55d740249969e4820fac",
+          "test_id": "capability-test-b5c57fe55e63ef09b8ad",
           "test_status": "reported_by_fleet_e2e",
           "test_evidence": "website/data/bot-capability-tests/CommandCore.json#global-bot-network"
         }
@@ -6185,6 +6206,12 @@
           "name": "Buddy Connection Broker",
           "status": "backend_broker_available",
           "evidence": "dreamco_platform/connections/broker.py"
+        },
+        {
+          "id": "buddy_code_workspace",
+          "name": "Buddy Code Workspace",
+          "status": "shared_runtime_route",
+          "evidence": "server/seed-buddy-bot.ts"
         }
       ],
       "api_candidates": [
@@ -6329,7 +6356,7 @@
         ],
         "runtime_seed_duplicates": 0
       },
-      "sample_test_prompt": "Test every declared capability for Global Bot Network Hub in sandbox mode: Global data feed integration; Inter-network bot communication; External AI service orchestration; Data marketplace connection; Cross-platform bot relay; Network health monitoring; Latency optimization; API gateway management. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+      "sample_test_prompt": "Test every declared capability for Global Bot Network Hub in sandbox mode: External AI service cataloging; Connector health monitoring; Provider capability mapping; API gateway planning; Cross-platform workflow routing; Latency and reliability measurement; Permission and secret-reference controls; Connection audit reporting. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "identity": {

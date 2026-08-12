@@ -1,10 +1,15 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
+import vm from 'node:vm';
 
 const html = readFileSync('website/search.html', 'utf8');
 const script = readFileSync('website/dream-search.js', 'utf8');
 const css = readFileSync('website/dream-search.css', 'utf8');
+const indexSource = readFileSync('website/data/dreamco-search-index.js', 'utf8');
+const context = { window: {} };
+vm.runInNewContext(indexSource, context);
+const searchIndex = context.window.DREAMCO_SEARCH_DATA;
 
 test('DreamSearch page exposes local, web, filter, and Buddy controls', () => {
   for (const id of [
@@ -24,6 +29,14 @@ test('DreamSearch renders repository records without injecting indexed HTML', ()
   assert.match(script, /evidence_level/);
   assert.match(script, /roadmap/);
   assert.match(script, /reference_catalog/);
+});
+
+test('DreamSearch publishes the current governed repository inventory', () => {
+  assert.equal(searchIndex.schema, 'dreamco.search_index.v1');
+  assert.ok(searchIndex.documents.length >= 2300);
+  assert.equal(searchIndex.summary.counts_by_type.bot, 1051);
+  assert.equal(searchIndex.summary.counts_by_type.model, 500);
+  assert.equal(searchIndex.summary.counts_by_type.division, 45);
 });
 
 test('DreamSearch web mode remains user initiated and privacy gated', () => {

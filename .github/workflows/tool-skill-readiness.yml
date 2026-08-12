@@ -17,29 +17,36 @@ on:
       - docs/BUDDY_TOOL_SKILL_CATALOG.md
       - .github/workflows/tool-skill-readiness.yml
 
+permissions:
+  contents: read
+
+concurrency:
+  group: tool-skill-readiness-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   readiness:
     name: Test Buddy tool and skill catalog
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Validate Buddy tools and skills
         run: node automation-tools/agents/tool-skill-readiness-audit.cjs --strict
 
       - name: Upload readiness report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: buddy-tool-skill-readiness-report
           path: |
             reports/tool-skill-readiness-report.json
             reports/tool-skill-readiness-report.md
+          retention-days: 7

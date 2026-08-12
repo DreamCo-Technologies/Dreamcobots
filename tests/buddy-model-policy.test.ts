@@ -39,6 +39,17 @@ test("approved premium mode still requires a configured provider adapter", () =>
   assert.equal(plan.providerCallExecuted, false);
 });
 
+test("a configured contract-only provider is not mislabeled as an implemented adapter", () => {
+  const plan = resolveBuddyModelPlan({
+    modelMode: "premium",
+    modelConnectorId: "google_gemini",
+    approvePaidModelForThisRequest: true,
+  }, { GEMINI_API_KEY: "configured-for-test" });
+  assert.equal(plan.status, "adapter_implementation_required");
+  assert.equal(plan.connector.implementationStatus, "contract_only");
+  assert.equal(plan.providerCallExecuted, false);
+});
+
 test("Buddy ranks task-fit candidates without calling them or claiming a permanent best", () => {
   const plan = selectBuddyModelsForTask({
     objective: "Debug my repository, repair the TypeScript code, and run tests",
@@ -83,5 +94,19 @@ test("premium candidates remain gated by per-request approval", () => {
   const premium = plan.candidates.filter((candidate) => ["paid", "freemium"].includes(candidate.tier));
   assert.ok(premium.length > 0);
   assert.ok(premium.every((candidate) => candidate.readiness === "paid_approval_required"));
+  assert.ok(plan.candidates.filter((candidate) => !candidate.discoveryTarget).every((candidate) => ["paid", "freemium"].includes(candidate.tier)));
   assert.equal(plan.automaticPaidUpgrade, false);
+});
+
+test("free-first routing excludes paid-only executable targets", () => {
+  const plan = selectBuddyModelsForTask({
+    objective: "Write, test, and explain a small application",
+    requiredCapabilities: ["coding"],
+    preferredTier: "free",
+    maxCandidates: 20,
+    allowDiscovery: false,
+    approvePaidModelForThisRequest: false,
+  }, {});
+  assert.equal(plan.candidates.length, 20);
+  assert.ok(plan.candidates.every((candidate) => ["free", "freemium"].includes(candidate.tier)));
 });

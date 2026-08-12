@@ -3,6 +3,10 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { MODEL_BENCHMARK_TARGETS } from "../shared/model-benchmark-targets";
+import {
+  buildModelConnectionSetupPath,
+  getModelProviderSource,
+} from "../shared/model-provider-sources";
 
 type BenchmarkConfig = {
   schema: string;
@@ -91,6 +95,8 @@ function buildCatalog() {
   }
   const suites = new Set(config.suites.map((suite) => suite.id));
   const targets = MODEL_BENCHMARK_TARGETS.map((model) => {
+    const sourceProfile = getModelProviderSource(model.provider);
+    if (!sourceProfile) throw new Error(`Missing source profile for ${model.provider}`);
     const benchmarkSuites = [...new Set(suiteIdsFor(model.category))];
     const unknownSuite = benchmarkSuites.find((suite) => !suites.has(suite));
     if (unknownSuite) throw new Error(`Unknown suite ${unknownSuite} for ${model.name}`);
@@ -115,6 +121,20 @@ function buildCatalog() {
       exactModelId: model.exactModelId,
       officialCatalog: model.officialCatalog,
       developerRegion: model.developerRegion,
+      sourceConnection: {
+        sourceLinked: true,
+        officialSource: sourceProfile.officialSource,
+        sourceKind: sourceProfile.sourceKind,
+        sourceReviewedOn: sourceProfile.reviewedOn,
+        connectionKind: sourceProfile.connectionKind,
+        connectorId: sourceProfile.connectorId,
+        setupPath: buildModelConnectionSetupPath(sourceProfile),
+        setupPathReady: true,
+        credentialReferenceConfigured: false,
+        liveProviderConnection: false,
+        liveProbePassed: false,
+        status: sourceProfile.connectorId === "buddy_native" ? "local_route_ready" : "setup_available",
+      },
       benchmarkSuites,
       promptLibrary: benchmarkSuites,
       evidenceProfile: buildEvidenceProfile(model),
@@ -155,6 +175,9 @@ function buildCatalog() {
       categories: new Set(targets.map((target) => target.category)).size,
       suites: config.suites.length,
       catalogReady: targets.filter((target) => target.catalogReady).length,
+      sourceLinked: targets.filter((target) => target.sourceConnection.sourceLinked).length,
+      setupPathsReady: targets.filter((target) => target.sourceConnection.setupPathReady).length,
+      liveConnected: targets.filter((target) => target.sourceConnection.liveProviderConnection).length,
       liveBenchmarked: 0,
     },
     suites: config.suites,

@@ -86,7 +86,10 @@ test("rap and singing plans require rights and remain unrendered until a local m
 });
 
 test("commercial owner voice selects an eligible local adapter without rendering", () => {
-  const plan = buildMediaRenderPlan(ownerVoiceRequest({ preferredEngineId: "openvoice-v2-local" }));
+  const request = ownerVoiceRequest({ preferredEngineId: "openvoice-v2-local" });
+  assert.equal(request.personalityTraits.warmth, 0.9);
+  assert.equal(request.personalityTraits.clarity, 1);
+  const plan = buildMediaRenderPlan(request);
   assert.equal(plan.selectedEngine.id, "openvoice-v2-local");
   assert.equal(plan.execution.paidProviderRequired, false);
   assert.equal(plan.execution.renderExecuted, false);

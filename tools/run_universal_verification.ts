@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { VerificationExpectation, UniversalVerificationReport } from "../shared/universal-verification-contract.js";
+import { isVerificationRunSuccessful } from "../shared/universal-verification-policy.js";
 
 const args = new Set(process.argv.slice(2));
 const mode = args.has("--production") ? "production" : args.has("--full") ? "full" : args.has("--quick") ? "quick" : "ci";
@@ -78,6 +79,6 @@ const report: UniversalVerificationReport = { schema: "dreamco.universal_verific
 const outDir = resolve("tmp", "dreamco-verification");
 mkdirSync(outDir, { recursive: true });
 writeFileSync(resolve(outDir, "latest.json"), JSON.stringify(report, null, 2));
-console.log(`\nVerification summary: ${JSON.stringify({ mode, ...totals, mergeReady, productionReady })}`);
-const runPassed = mode === "production" || mode === "full" ? productionReady : mergeReady;
+const runPassed = isVerificationRunSuccessful({ mode, ...totals, mergeReady, productionReady });
+console.log(`\nVerification summary: ${JSON.stringify({ mode, ...totals, mergeReady, productionReady, runPassed })}`);
 process.exit(runPassed ? 0 : 1);

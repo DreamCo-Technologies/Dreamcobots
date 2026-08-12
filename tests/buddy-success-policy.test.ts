@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import test from "node:test";
 
 import { SUCCESS_QUESTIONNAIRE } from "../shared/buddy-success-contract";
@@ -7,6 +9,7 @@ import {
   createIntentResult,
   createOntologyPlan,
   createSuccessProfilePlan,
+  successProfileRequestSchema,
 } from "../server/buddy-success-policy";
 import { buildBuddySuccessProgram } from "../tools/generate_buddy_success_program";
 
@@ -24,6 +27,16 @@ test("success questionnaire is useful, bounded, and avoids secret collection", (
   assert.match(plan.botContext, /Launch a tested service prototype/);
   assert.equal(plan.storedByThisRoute, false);
   assert.equal(plan.boundaries.guaranteedIncomeClaims, false);
+});
+
+test("success profile record inputs preserve named questionnaire answers", () => {
+  const request = successProfileRequestSchema.parse({
+    profileId: "owner-local",
+    answers: { primary_outcome: "Ship a verified prototype" },
+    shareWithBots: false,
+    ownerConfirmsNoSecrets: true,
+  });
+  assert.equal(request.answers.primary_outcome, "Ship a verified prototype");
 });
 
 test("success profiles reject credentials and identifiers", () => {
@@ -106,4 +119,22 @@ test("all 45 divisions receive charters, 100 capabilities, production gates, and
   assert.equal(program.organization_intelligence.static_site_accepts_raw_keys, false);
   assert.equal(program.safe_ai_training.productionSelfModificationAllowed, false);
   assert.equal(program.trust_and_access.raw_credentials_accepted, false);
+});
+
+test("temporary verification evidence cannot make the success catalog stale", () => {
+  const before = buildBuddySuccessProgram();
+  const transientRoot = resolve("tmp", "buddy-success-transient-test");
+  const transientReport = resolve("reports", "BUDDY_SUCCESS_TRANSIENT_TEST.md");
+  const transientEvidenceUrl = ["https:/", "/transient-evidence.invalid"].join("");
+  const transientReportUrl = ["https:/", "/transient-report.invalid"].join("");
+  try {
+    mkdirSync(transientRoot, { recursive: true });
+    writeFileSync(resolve(transientRoot, "provider.txt"), `${transientEvidenceUrl}\n`, "utf8");
+    writeFileSync(transientReport, `${transientReportUrl}\n`, "utf8");
+    const after = buildBuddySuccessProgram();
+    assert.deepEqual(after.resource_inventory, before.resource_inventory);
+  } finally {
+    rmSync(transientRoot, { recursive: true, force: true });
+    rmSync(transientReport, { force: true });
+  }
 });

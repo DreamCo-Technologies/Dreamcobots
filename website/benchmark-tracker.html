@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy Benchmark Tracker | DreamCo</title>
+  <meta name="description" content="Track 500 AI model targets, task councils, benchmark evidence, Buddy Bootcamp paths, and rights-safe dataset packages." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=41" />
+  <link rel="stylesheet" href="benchmark-tracker.css?v=1" />
+</head>
+<body class="benchmark-tracker-page">
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main>
+  <header class="benchmark-hero">
+    <div class="benchmark-hero-copy">
+      <p class="benchmark-eyebrow">Evidence-led model improvement</p>
+      <h1>Buddy Benchmark Tracker</h1>
+      <p>See how 500 model targets are categorized, what each top-20 task council can currently route, what remains unverified, and how Buddy Bootcamp closes measured gaps without hiding cost, rights, or safety gates.</p>
+    </div>
+    <div class="benchmark-hero-actions">
+      <a class="btn btn-primary" href="buddy.html?prompt=Help%20me%20choose%20a%20free-first%20model%20council%20for%20my%20task.%20Show%20the%20current%20evidence%2C%20missing%20adapters%2C%20benchmark%20gaps%2C%20cost%20gates%2C%20and%20the%20shortest%20safe%20path.">Ask Buddy</a>
+      <a class="btn btn-outline" href="models.html">Model lab</a>
+      <button id="export-progress" class="btn btn-outline" type="button">Export catalog</button>
+    </div>
+  </header>
+
+  <section class="benchmark-truth" aria-labelledby="connection-truth-title">
+    <div>
+      <p class="benchmark-eyebrow">Connection truth</p>
+      <h2 id="connection-truth-title">500 targets are mapped, not 500 live company connections</h2>
+    </div>
+    <p id="connection-truth-copy">Loading readiness evidence.</p>
+  </section>
+
+  <section class="benchmark-metrics" aria-label="Model progress summary">
+    <div><span>Model targets</span><strong id="metric-model-targets">500</strong><small id="metric-target-coverage">0 categorized</small></div>
+    <div><span>Provider sources</span><strong id="metric-provider-sources">100</strong><small>official setup routes</small></div>
+    <div><span>Task councils</span><strong id="metric-councils">40</strong><small>20 seats each</small></div>
+    <div><span>Benchmark paths</span><strong id="metric-benchmarks">12</strong><small>live scores remain separate</small></div>
+    <div><span>Dataset templates</span><strong id="metric-datasets">50</strong><small>zero records included</small></div>
+    <div><span>Live benchmarked</span><strong id="metric-live">0</strong><small>evidence required</small></div>
+  </section>
+
+  <section class="readiness-band" aria-labelledby="readiness-title">
+    <header>
+      <div><p class="benchmark-eyebrow">All-target audit</p><h2 id="readiness-title">Completion gates across all 500 targets</h2></div>
+      <a href="connections.html">Open connection center</a>
+    </header>
+    <div id="readiness-gates" class="readiness-gates"></div>
+  </section>
+
+  <section class="council-section" aria-labelledby="council-title">
+    <header class="section-heading">
+      <div>
+        <p class="benchmark-eyebrow">Intelligent routing</p>
+        <h2 id="council-title">Top-20 task council</h2>
+        <p>The current council is a provider-diverse metadata shortlist. Once comparable live evidence exists, measured quality, reliability, latency, privacy, and cost can replace provisional ordering.</p>
+      </div>
+      <div class="council-controls">
+        <label for="council-task">Task category<select id="council-task"></select></label>
+        <div class="mode-segment" role="group" aria-label="Council cost mode">
+          <button class="active" type="button" data-council-mode="free" aria-pressed="true">Free first</button>
+          <button type="button" data-council-mode="premium" aria-pressed="false">Premium</button>
+        </div>
+      </div>
+    </header>
+    <div class="council-summary">
+      <strong id="council-status">Loading council</strong>
+      <span id="council-basis"></span>
+      <a id="council-buddy-link" href="buddy.html">Use this council with Buddy</a>
+    </div>
+    <div class="council-table-wrap" tabindex="0" aria-label="Top 20 council members">
+      <table class="council-table">
+        <thead><tr><th scope="col">Rank</th><th scope="col">Candidate</th><th scope="col">Provider</th><th scope="col">Access</th><th scope="col">Declared fit</th><th scope="col">Readiness</th></tr></thead>
+        <tbody id="council-rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="roadmap-section" aria-labelledby="roadmap-title">
+    <header class="section-heading">
+      <div>
+        <p class="benchmark-eyebrow">Frontier gap tracking</p>
+        <h2 id="roadmap-title">Benchmark roadmaps and estimates</h2>
+        <p>Estimates cover building the evidence path and a first improvement cycle. Reaching a frontier threshold cannot be estimated until exact versions produce a comparable baseline.</p>
+      </div>
+      <a class="btn btn-outline btn-sm" href="open-model-lab.html">Open-source model lab</a>
+    </header>
+    <div id="benchmark-roadmaps" class="benchmark-roadmaps"></div>
+  </section>
+
+  <section class="bootcamp-section" aria-labelledby="bootcamp-title">
+    <header class="section-heading">
+      <div>
+        <p class="benchmark-eyebrow">Measured learning</p>
+        <h2 id="bootcamp-title">Buddy Bootcamp path</h2>
+        <p>Every task category has a curriculum tied to its council and benchmark suites. Local evaluations may repeat on a schedule; production self-modification and automatic release stay off.</p>
+      </div>
+      <a id="bootcamp-buddy-link" class="btn btn-outline btn-sm" href="buddy.html">Prepare a Bootcamp run</a>
+    </header>
+    <div class="bootcamp-layout">
+      <ol id="bootcamp-steps" class="bootcamp-steps"></ol>
+      <aside class="bootcamp-evidence">
+        <span>Selected track</span>
+        <strong id="bootcamp-track-name">Loading</strong>
+        <p id="bootcamp-track-status"></p>
+        <div id="bootcamp-suites" class="suite-chips"></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="workstream-section" aria-labelledby="workstream-title">
+    <header class="section-heading">
+      <div>
+        <p class="benchmark-eyebrow">One operating view</p>
+        <h2 id="workstream-title">Tracked, studied, sandboxed, and tested</h2>
+        <p>Model research, adapters, comparisons, training, dataset packages, and customer opportunity experiments share visible states and stop conditions.</p>
+      </div>
+      <a class="btn btn-outline btn-sm" href="success.html#tracker">Ideas and assets tracker</a>
+    </header>
+    <div id="workstream-list" class="workstream-list"></div>
+    <div class="revenue-boundary">
+      <strong>Opportunity learning, not guaranteed income</strong>
+      <p>Buddy can research problems, prepare offers, test pricing and fulfillment in a sandbox, and track evidence. Outreach, contracts, payments, purchases, and publishing require configured adapters and exact approval.</p>
+      <a href="revenue.html">Open revenue tracker</a>
+    </div>
+  </section>
+
+  <section class="dataset-section" aria-labelledby="dataset-title">
+    <header class="section-heading">
+      <div>
+        <p class="benchmark-eyebrow">Rights-safe model improvement</p>
+        <h2 id="dataset-title">50 dataset package templates</h2>
+        <p>These are empty, testable package blueprints. They do not contain conversations, personal data, provider outputs, or sellable records.</p>
+      </div>
+      <label for="dataset-search">Find a package<input id="dataset-search" type="search" placeholder="Coding, speech, safety, evaluation" autocomplete="off" /></label>
+    </header>
+    <div class="dataset-toolbar">
+      <label for="dataset-task">Task<select id="dataset-task"><option value="all">All task categories</option></select></label>
+      <span id="dataset-count" aria-live="polite">Loading packages</span>
+    </div>
+    <div id="dataset-list" class="dataset-list"></div>
+  </section>
+</main>
+
+<script src="data/buddy-model-progress-center.js?v=2"></script>
+<script src="benchmark-tracker.js?v=1" defer></script>
+</body>
+</html>

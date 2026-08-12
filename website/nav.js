@@ -4,6 +4,7 @@
   const links = [
     { href: 'dashboard.html', label: '📊 Dashboard' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
+    { href: 'actions.html', label: '⚙️ Actions' },
     { href: 'success.html', label: '📈 Success Center' },
     { href: 'search.html', label: '🔎 DreamSearch' },
     { href: 'studio.html', label: '🎮 Creative Studio' },
@@ -30,6 +31,7 @@
     { href: 'government.html', label: '🏛️ Government Resources' },
     { href: 'crypto.html', label: '🔐 Crypto Safety Lab' },
     { href: 'models.html', label: '🤖 AI Models' },
+    { href: 'benchmark-tracker.html', label: '📐 Benchmark Tracker' },
     { href: 'open-model-lab.html', label: '🧪 Open Model Lab' },
     { href: 'leaders.html', label: '🏆 AI Leaders' },
     { href: 'learning.html', label: '📚 Learning' },

@@ -97,12 +97,15 @@ test("paid owner-media comparisons need separate comparison, budget, consent, an
 
 test("the quality lab selects the strongest evidence-backed candidate", () => {
   const weaker = Object.fromEntries(Object.keys(voiceDimensions).map((key) => [key, 0.84]));
-  const evaluation = evaluateMediaCandidates(mediaQualityEvaluationRequestSchema.parse({
+  const request = mediaQualityEvaluationRequestSchema.parse({
     projectId: "quality-eval-1",
     modality: "voice",
     fixtureSetId: "voice-core-v1",
     candidates: [candidate("openvoice-weaker", weaker), candidate("chatterbox-strong")],
-  }));
+  });
+  assert.equal(request.candidates[1].dimensions.identity_similarity, 0.94);
+  assert.equal(request.candidates[1].hardGates.active_consent, true);
+  const evaluation = evaluateMediaCandidates(request);
   assert.equal(evaluation.status, "release_candidate_selected");
   assert.equal(evaluation.winner?.id, "chatterbox-strong");
   assert.ok((evaluation.winner?.score ?? 0) > 0.9);
