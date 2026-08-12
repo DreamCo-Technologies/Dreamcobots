@@ -1,0 +1,62 @@
+{
+  "schema": "dreamco.benchmark_gap_acceleration_policy.v1",
+  "version": "1.0.0",
+  "mission": "Continuously measure, assign, repair and retest every open benchmark gap with the maximum safe non-conflicting parallelism supported by the repository.",
+  "stagnation_policy": {
+    "unmeasured_warning_hours": 6,
+    "unassigned_warning_hours": 2,
+    "assigned_no_progress_warning_hours": 12,
+    "in_progress_no_evidence_warning_hours": 24,
+    "retest_required_warning_hours": 6,
+    "blocked_recheck_hours": 24,
+    "passed_freshness_days": 14,
+    "external_evidence_freshness_days": 7
+  },
+  "parallelism": {
+    "target": "all independent gaps concurrently",
+    "maximum_parallel_lanes": 32,
+    "same_canonical_owner_serialized": true,
+    "maximum_parallel_candidates_per_gap": 5,
+    "priority_preemption": true
+  },
+  "priority_order": [
+    "security/privacy/permission blocker",
+    "broken build/test/deploy",
+    "data-loss/destructive risk",
+    "shared infrastructure",
+    "high-frequency human task",
+    "revenue/customer value",
+    "government/public service",
+    "accessibility",
+    "integration",
+    "performance/cost",
+    "long-horizon research"
+  ],
+  "required_gap_state_machine": [
+    "unknown",
+    "unmeasured",
+    "measured_gap",
+    "assigned",
+    "in_progress",
+    "fix_ready",
+    "retest_required",
+    "blocked",
+    "passed",
+    "regressed",
+    "exception_approved"
+  ],
+  "gap_team": [
+    "domain benchmark bot",
+    "gap analyst bot",
+    "builder bot",
+    "integration bot",
+    "sandbox QA bot",
+    "security/compliance bot",
+    "performance/cost bot",
+    "business-value bot",
+    "human-review bot",
+    "release reviewer"
+  ],
+  "closure_rule": "A gap closes only with target evidence, required sandbox/regression/security checks, rollback evidence where applicable, and current runtime evidence.",
+  "truth_rule": "Maximum parallelism means safe independent concurrency. It never means conflicting edits, bypassed approvals, weakened tests, or invented completion dates."
+}
