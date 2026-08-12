@@ -1,10 +1,8 @@
 name: DreamCo 500-Model Benchmark System
 
-# This workflow owns the model/capability benchmark program.
-# Other repository workflows remain available for Actions-page orchestration,
-# repository health, security, Pages deployment, releases, and other services.
-# No paid model/API calls are initiated by this workflow unless a separately
-# approved adapter is explicitly configured; unavailable evaluations remain blocked.
+# Dedicated single workflow for the complete 500-model benchmark program.
+# Other Actions workflows remain reserved for repository/control operations.
+# No paid model/API calls are initiated unless an explicitly approved adapter is configured.
 
 on:
   workflow_dispatch:
@@ -64,7 +62,7 @@ jobs:
           npm ci
           python3 -m pip install --disable-pip-version-check openpyxl
 
-      - name: Validate benchmark contracts
+      - name: Validate benchmark operating/status contracts
         run: |
           python3 - <<'PY'
           import json
@@ -78,13 +76,16 @@ jobs:
               'config/buddy-reference-benchmark-execution.json',
               'config/public-dashboard-completeness-contract.json',
               'config/buddy-pages-data-pipeline.json',
+              'config/benchmark-status-schema.json',
+              'docs/UNIFIED_500_MODEL_BENCHMARK_OPERATING_PLAN.md',
           ]
           for name in required:
               p=Path(name)
               if not p.exists():
-                  raise SystemExit(f'Missing benchmark contract: {name}')
-              json.loads(p.read_text())
-          print(f'Validated {len(required)} benchmark contracts.')
+                  raise SystemExit(f'Missing benchmark contract/plan: {name}')
+              if p.suffix == '.json':
+                  json.loads(p.read_text())
+          print(f'Validated {len(required)} benchmark contracts/plans.')
           PY
 
       - name: Build/refresh public model catalog
@@ -97,15 +98,13 @@ jobs:
             echo 'No model catalog builder is currently present; existing catalog will be used.'
           fi
 
-      - name: Run the complete 500-model benchmark matrix in one workflow
+      - name: Run the complete 500-model benchmark matrix in this single workflow
         env:
           REQUESTED_MODE: ${{ github.event.inputs.mode || 'standard' }}
         run: |
           if [ -f tools/run_500_model_benchmarks.py ]; then
             python3 tools/run_500_model_benchmarks.py --mode "$REQUESTED_MODE"
           elif [ -f tools/run_everything_now.py ]; then
-            # Existing unified runner is the fallback until the dedicated 500-model
-            # adapter is present. Its evidence is still evaluated by this workflow.
             python3 tools/run_everything_now.py --mode "$REQUESTED_MODE"
           else
             echo 'BLOCKED: no benchmark execution runner is present.'
@@ -126,7 +125,7 @@ jobs:
         run: |
           python3 -m pytest -q --disable-warnings --maxfail=20
 
-      - name: Validate evidence ledger and model coverage
+      - name: Validate evidence ledger and 500-model coverage
         if: always()
         run: |
           python3 - <<'PY'
@@ -141,15 +140,12 @@ jobs:
           if found is None:
               raise SystemExit('BLOCKED: no generated benchmark evidence ledger was produced.')
           data=json.loads(found.read_text())
-          print(f'Evidence source: {found}')
-          print('Top-level keys:', sorted(data)[:30])
-          # Do not convert missing model evaluations into passes.
           count=data.get('model_count') or data.get('catalog_model_count') or data.get('count')
+          print(f'Evidence source: {found}')
           if count is not None:
               print(f'Model count reported by evidence: {count}')
           if count is not None and int(count) < 500:
               print('WARNING: fewer than 500 models are represented; remaining models are not treated as passed.')
-          PY
 
       - name: Validate public/private boundary
         if: always()
@@ -163,8 +159,8 @@ jobs:
           for root in roots:
               if not root.exists(): continue
               for p in root.rglob('*'):
-                  if p.is_file() and p.suffix.lower() in {'.json','.js','.txt','.md'}:
-                      if secret.search(p.read_text(errors='ignore')): bad.append(str(p))
+                  if p.is_file() and p.suffix.lower() in {'.json','.js','.txt','.md'} and secret.search(p.read_text(errors='ignore')):
+                      bad.append(str(p))
           if bad: raise SystemExit('Potential secret material in public/generated data: '+', '.join(bad))
           print('Public/private boundary passed.')
           PY
@@ -181,7 +177,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 21
 
-      - name: Write Actions summary for the Pages/Actions dashboard
+      - name: Write Actions summary for Pages/Actions dashboard
         if: always()
         run: |
           python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
@@ -189,7 +185,7 @@ jobs:
           import json
           print('# DreamCo 500-Model Benchmark System')
           print('')
-          print('**One workflow owns the 500-model benchmark program.**')
+          print('**One workflow owns the entire 500-model benchmark program.**')
           print('')
           for name in ['config/generated/model-benchmark-evidence.json','config/generated/buddy-500-model-benchmark.json','config/generated/universal-capability-benchmark.json']:
               p=Path(name)
