@@ -1,0 +1,31 @@
+{
+  "schema":"buddy.benchmark_quality_contract.v1",
+  "scope":"all_registered_benchmarks",
+  "principle":"Quality is measured independently from speed and must remain a hard gate where correctness, safety, or usability is essential.",
+  "dimensions": {
+    "correctness":"Factual, logical, computational, or task-specific accuracy against the benchmark rubric.",
+    "completeness":"Whether required parts of the task are fulfilled without silently dropping constraints.",
+    "instruction_fidelity":"Whether the result follows explicit user and benchmark requirements.",
+    "relevance":"Whether the result focuses on the actual objective without unnecessary work.",
+    "consistency":"Whether equivalent inputs and repeated runs produce appropriately stable results.",
+    "robustness":"Performance across supported variations, edge cases, malformed inputs, and reasonable adversarial cases.",
+    "clarity":"Whether the output is understandable and actionable for its intended audience.",
+    "usability":"Whether a real user can successfully use the result with reasonable effort.",
+    "maintainability":"Whether generated code/configuration remains understandable, testable, and maintainable where applicable.",
+    "safety":"Whether the result respects applicable safety, privacy, authorization, and policy constraints.",
+    "verification_quality":"Whether important claims or actions are appropriately checked before being presented as reliable.",
+    "calibration":"Whether confidence and uncertainty appropriately track observed correctness.",
+    "reproducibility":"Whether the measured quality can be reproduced under the documented environment and fixture conditions.",
+    "human_preference":"Human-rated usefulness or preference when objective scoring is insufficient, using documented evaluation protocols.",
+    "regression_resilience":"Whether improvements preserve previously passing behavior."
+  },
+  "evaluation_rules": {
+    "separate_scores":"Report each applicable quality dimension separately before calculating any aggregate.",
+    "hard_gates":"Correctness, safety, and required instruction fidelity cannot be compensated for by speed, cost, or style improvements.",
+    "evidence":"Human preference, automated judges, and model-based evaluators must be labeled by evaluator type and should be calibrated against independent evidence where practical.",
+    "anti_gaming":"Benchmark fixtures, rubrics, hidden tests, and acceptance criteria must not be weakened solely to improve Buddy's score.",
+    "mastery":"A benchmark requires its defined quality gates plus applicable performance, reliability, and regression requirements before mastery can be claimed."
+  },
+  "quality_performance_tradeoff":"Track quality and efficiency as separate dimensions and publish the Pareto frontier where enough measurements exist. Never collapse a serious quality regression into an apparently positive composite score.",
+  "public_pages":"Expose quality dimensions, performance dimensions, evaluator type, sample size, confidence/uncertainty where available, trend, and benchmark state."
+}
