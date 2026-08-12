@@ -1,0 +1,30 @@
+{
+  "schema":"buddy.universal_benchmark_scorecard.v1",
+  "scope":"all_registered_benchmarks",
+  "score_dimensions":[
+    "quality",
+    "correctness",
+    "completeness",
+    "instruction_fidelity",
+    "robustness",
+    "safety",
+    "verification_quality",
+    "latency",
+    "time_to_useful_result",
+    "throughput",
+    "resource_efficiency",
+    "tool_efficiency",
+    "model_efficiency",
+    "cost_efficiency",
+    "reliability",
+    "recovery_efficiency",
+    "parallel_efficiency",
+    "regression_resilience",
+    "independence"
+  ],
+  "required_reporting":"Report applicable dimensions independently before any composite score.",
+  "hard_gates":["correctness","safety","required_instruction_fidelity"],
+  "comparison":"When a valid reference exists, compare under documented comparable conditions. Assisted completion must remain visibly labeled and cannot be treated as independent mastery.",
+  "optimization":"Prefer Pareto improvements that increase quality while reducing latency/resource/cost burden. Do not accept speed gains that materially reduce required quality or safety.",
+  "mastery":"Requires benchmark-specific quality acceptance plus applicable performance, reliability, independence, and regression gates."
+}
