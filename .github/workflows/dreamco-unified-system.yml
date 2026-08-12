@@ -28,13 +28,13 @@ permissions:
   contents: read
   actions: read
 
-concurrency:
-  group: dreamco-500-model-benchmark-${{ github.ref }}
-  cancel-in-progress: false
-
 env:
   DREAMCO_DISABLE_AUTO_SYNC: '1'
   PYTHONUNBUFFERED: '1'
+
+concurrency:
+  group: dreamco-500-model-benchmark-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   benchmark-all-500:
@@ -63,7 +63,7 @@ jobs:
           npm ci
           python3 -m pip install --disable-pip-version-check openpyxl
 
-      - name: Validate benchmark operating/status contracts
+      - name: Validate benchmark, learning, and tracking contracts
         run: |
           python3 - <<'PY'
           import json
@@ -78,27 +78,33 @@ jobs:
               'config/public-dashboard-completeness-contract.json',
               'config/buddy-pages-data-pipeline.json',
               'config/benchmark-status-schema.json',
+              'config/daily-benchmark-refresh-policy.json',
+              'config/unified-repository-learning-registry.json',
               'docs/UNIFIED_500_MODEL_BENCHMARK_OPERATING_PLAN.md',
           ]
           for name in required:
               p=Path(name)
-              if not p.exists():
-                  raise SystemExit(f'Missing benchmark contract/plan: {name}')
+              if not p.exists(): raise SystemExit(f'Missing contract/plan: {name}')
               if p.suffix == '.json': json.loads(p.read_text())
-          print(f'Validated {len(required)} benchmark contracts/plans.')
-          PY
+          print(f'Validated {len(required)} contracts/plans.')
 
-      - name: Build/refresh public model catalog
+      - name: Inventory repository, runtime bindings, capabilities, and learning systems
         run: |
-          if [ -f tools/build_model_prospectus_catalog.py ]; then
-            python3 tools/build_model_prospectus_catalog.py
-          elif [ -f tools/build_universal_work_ai_catalog.py ]; then
-            python3 tools/build_universal_work_ai_catalog.py
-          else
-            echo 'No model catalog builder is currently present; existing catalog will be used.'
-          fi
+          mkdir -p config/generated website/data reports
+          if [ -f tools/build_repository_inventory.py ]; then python3 tools/build_repository_inventory.py; fi
+          if [ -f tools/audit_repository_connections.py ]; then python3 tools/audit_repository_connections.py; fi
+          if [ -f tools/build_system_progress_status.py ]; then python3 tools/build_system_progress_status.py; fi
+          if [ -f tools/generate_repository_test_registry.py ]; then python3 tools/generate_repository_test_registry.py; fi
+          if [ -f tools/build_universal_work_ai_catalog.py ]; then python3 tools/build_universal_work_ai_catalog.py; fi
 
-      - name: Run the complete 500-model benchmark matrix in this single workflow
+      - name: Discover all registered benchmark suites and capability leads
+        run: |
+          if [ -f tools/discover_benchmarks.py ]; then python3 tools/discover_benchmarks.py; fi
+          if [ -f tools/build_benchmark_registry.py ]; then python3 tools/build_benchmark_registry.py; fi
+          if [ -f tools/build_capability_registry.py ]; then python3 tools/build_capability_registry.py; fi
+          if [ -f tools/build_model_prospectus_catalog.py ]; then python3 tools/build_model_prospectus_catalog.py; fi
+
+      - name: Run the complete 500-model benchmark and repository learning cycle
         env:
           REQUESTED_MODE: ${{ github.event.inputs.mode || 'standard' }}
         run: |
@@ -111,7 +117,16 @@ jobs:
             exit 2
           fi
 
-      - name: Run benchmark-policy regression tests
+      - name: Execute learning and gap-closure evidence cycle
+        if: always()
+        run: |
+          if [ -f tools/run_learning_loop.py ]; then python3 tools/run_learning_loop.py; fi
+          if [ -f tools/run_adaptive_learning.py ]; then python3 tools/run_adaptive_learning.py; fi
+          if [ -f tools/run_gap_analysis.py ]; then python3 tools/run_gap_analysis.py; fi
+          if [ -f tools/build_forecast_report.py ]; then python3 tools/build_forecast_report.py; fi
+          if [ -f tools/build_capability_leads.py ]; then python3 tools/build_capability_leads.py; fi
+
+      - name: Run benchmark-policy and repository regression tests
         if: always()
         run: |
           python3 -m unittest \
@@ -119,33 +134,29 @@ jobs:
             tests.test_universal_capability_benchmark_policy \
             tests.test_global_government_system \
             tests.test_buddy_government_operating_system
-
-      - name: Run repository tests relevant to benchmark infrastructure
-        if: always()
-        run: |
           python3 -m pytest -q --disable-warnings --maxfail=20
 
-      - name: Validate evidence ledger and 500-model coverage
+      - name: Validate evidence, coverage, and tracked-domain completeness
         if: always()
         run: |
           python3 - <<'PY'
           import json
           from pathlib import Path
-          candidates = [
+          registry=json.loads(Path('config/unified-repository-learning-registry.json').read_text())
+          print('Tracked domains:', len(registry['tracked_domains']))
+          print('Learning stages:', len(registry['learning_lifecycle']))
+          candidates=[
               Path('config/generated/model-benchmark-evidence.json'),
               Path('config/generated/buddy-500-model-benchmark.json'),
-              Path('config/generated/universal-capability-benchmark.json'),
-          ]
+              Path('config/generated/universal-capability-benchmark.json')]
           found=next((p for p in candidates if p.exists()), None)
-          if found is None:
-              raise SystemExit('BLOCKED: no generated benchmark evidence ledger was produced.')
+          if found is None: raise SystemExit('BLOCKED: no generated benchmark evidence ledger was produced.')
           data=json.loads(found.read_text())
           count=data.get('model_count') or data.get('catalog_model_count') or data.get('count')
           print(f'Evidence source: {found}')
           if count is not None:
-              print(f'Model count reported by evidence: {count}')
-          if count is not None and int(count) < 500:
-              print('WARNING: fewer than 500 models are represented; remaining models are not treated as passed.')
+              print(f'Model count: {count}')
+              if int(count) < 500: print('WARNING: fewer than 500 models represented; remainder are not passed.')
 
       - name: Validate public/private boundary
         if: always()
@@ -159,43 +170,40 @@ jobs:
           for root in roots:
               if not root.exists(): continue
               for p in root.rglob('*'):
-                  if p.is_file() and p.suffix.lower() in {'.json','.js','.txt','.md'} and secret.search(p.read_text(errors='ignore')):
-                      bad.append(str(p))
+                  if p.is_file() and p.suffix.lower() in {'.json','.js','.txt','.md'} and secret.search(p.read_text(errors='ignore')): bad.append(str(p))
           if bad: raise SystemExit('Potential secret material in public/generated data: '+', '.join(bad))
           print('Public/private boundary passed.')
           PY
 
-      - name: Write daily freshness summary
+      - name: Write daily unified learning and benchmark summary
         if: always()
         run: |
           python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
           from datetime import datetime, timezone
           from pathlib import Path
           import json
-          print('# DreamCo Daily 500-Model Benchmark Refresh')
-          print(f'- Refresh timestamp (UTC): `{datetime.now(timezone.utc).isoformat()}`')
-          print('- Cadence: **daily at 02:17 UTC**')
-          print('- One workflow owns the complete benchmark program.')
-          print('')
+          r=json.loads(Path('config/unified-repository-learning-registry.json').read_text())
+          print('# DreamCo Daily Unified Benchmark + Learning Refresh')
+          print(f'- UTC: `{datetime.now(timezone.utc).isoformat()}`')
+          print(f'- Tracked domains: **{len(r["tracked_domains"])}**')
+          print(f'- Learning lifecycle stages: **{len(r["learning_lifecycle"])}**')
+          print('- Benchmark dimensions: **quality, correctness, completeness, speed, efficiency, reliability, safety, independence**')
+          print('- Missing/blocked/stale/unverified evidence is never converted to a pass.')
           for name in ['config/generated/model-benchmark-evidence.json','config/generated/buddy-500-model-benchmark.json','config/generated/universal-capability-benchmark.json']:
               p=Path(name)
               if p.exists():
                   try:
-                      d=json.loads(p.read_text())
-                      print(f'- Evidence: `{name}`')
+                      d=json.loads(p.read_text()); print(f'- Evidence: `{name}`')
                       for k in ('model_count','evaluated_count','blocked_count','failed_count','mastered_count','case_count'):
                           if k in d: print(f'- {k}: **{d[k]}**')
-                  except Exception as exc:
-                      print(f'- Evidence file exists but could not be summarized: `{name}` ({exc})')
-          print('')
-          print('Missing, blocked, stale, or unverified models remain visible and are never converted to passes.')
+                  except Exception as exc: print(f'- Evidence summary unavailable: {exc}')
           PY
 
-      - name: Upload one consolidated daily benchmark evidence artifact
+      - name: Upload one consolidated daily repository-learning artifact
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: dreamco-500-model-benchmark-${{ github.run_id }}
+          name: dreamco-500-model-unified-learning-${{ github.run_id }}
           path: |
             config/generated/*.json
             website/data/*.json
