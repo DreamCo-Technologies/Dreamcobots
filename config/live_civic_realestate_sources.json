@@ -1,0 +1,18 @@
+{
+  "system": "Buddy Live Civic + Real Estate Intelligence",
+  "version": 1,
+  "coverage": ["all_us_states", "counties", "cities", "towns", "tribal_governments", "territories"],
+  "sources": [
+    {"name":"Google Maps Platform","capabilities":["geocoding","places","route_matrix","travel_times","nearby_amenities"],"connection":"api_key_or_oauth","status":"CONNECTOR_READY_NOT_LIVE_WITHOUT_CREDENTIALS"},
+    {"name":"U.S. Census Bureau ACS","capabilities":["population","income","poverty","commuting","housing","demographics"],"connection":"public_api","status":"READY_FOR_ADAPTER"},
+    {"name":"HUD USER","capabilities":["fair_market_rents","income_limits","housing_affordability","CHAS"],"connection":"hud_token","status":"READY_FOR_ADAPTER"},
+    {"name":"Data.gov Catalog","capabilities":["federal_state_local_tribal_dataset_discovery","geospatial_dataset_discovery"],"connection":"api_data_gov_key","status":"READY_FOR_ADAPTER"},
+    {"name":"USAGov Benefits","capabilities":["benefit_categories","benefit_finder_reference","application_guidance"],"connection":"public_web_reference","status":"REFERENCE_SOURCE"},
+    {"name":"NCES CIP 2020","capabilities":["college_subject_taxonomy","program_of_study_classification"],"connection":"public_reference","status":"REFERENCE_SOURCE"}
+  ],
+  "vacancy_monitor": {
+    "tracks": ["residential_vacancy", "commercial_vacancy", "retail_storefronts", "office", "industrial", "land", "public_buildings"],
+    "evidence_states": ["VERIFIED", "ESTIMATED", "STALE", "MISSING", "TARGET_ONLY"],
+    "rules": ["do_not_scrape_restricted_sources", "respect_terms_and_licenses", "separate_listing_data_from_public_statistics"]
+  }
+}
