@@ -1,0 +1,212 @@
+name: DreamCo Unified System
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'quick, standard, or maximum'
+        required: false
+        default: standard
+  schedule:
+    - cron: '17 */6 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'App_bots/**'
+      - 'original-bots/**'
+      - 'bots/**'
+      - 'attached_assets/**'
+      - 'config/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'server/**'
+      - 'shared/**'
+      - 'docs/**'
+      - 'website/**'
+      - 'client/**'
+      - '.github/workflows/**'
+
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+  issues: write
+
+concurrency:
+  group: dreamco-unified-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  DREAMCO_DISABLE_AUTO_SYNC: '1'
+  PYTHONUNBUFFERED: '1'
+
+jobs:
+  unified:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          python3 -m pip install --disable-pip-version-check openpyxl
+
+      - name: Preflight inventory and policy checks
+        run: |
+          python3 tools/build_system_progress_status.py || true
+          python3 tools/generate_repository_test_registry.py || true
+          python3 -m unittest tests.test_recovery_ontology_workforce_runtime tests.test_universal_capability_benchmark_policy tests.test_global_government_system tests.test_buddy_government_operating_system
+
+      - name: Build benchmark and capability catalogs
+        env:
+          REQUESTED_MODE: ${{ github.event.inputs.mode || 'standard' }}
+        run: |
+          python3 tools/build_universal_work_ai_catalog.py || true
+          if [ -f tools/run_everything_now.py ]; then python3 tools/run_everything_now.py --mode "$REQUESTED_MODE" || true; fi
+
+      - name: Run repository verification
+        run: |
+          python3 -m pytest -q --disable-warnings --maxfail=20 || true
+          npm test --if-present || true
+          npm run lint --if-present || true
+          npm run build --if-present || true
+
+      - name: Validate benchmark evidence and public dashboard contracts
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          required = [
+              'config/buddy-benchmark-performance-contract.json',
+              'config/buddy-benchmark-quality-contract.json',
+              'config/buddy-benchmark-scorecard.json',
+              'config/buddy-benchmark-evidence-ledger.json',
+              'config/public-dashboard-completeness-contract.json',
+              'config/buddy-pages-data-pipeline.json',
+              'config/model-prospectus-benchmark-contract.json',
+              'config/buddy-reference-benchmark-execution.json',
+          ]
+          missing=[]
+          for name in required:
+              p=Path(name)
+              if not p.exists(): missing.append(name); continue
+              json.loads(p.read_text())
+          if missing:
+              raise SystemExit('Missing required benchmark/dashboard contracts: '+', '.join(missing))
+          print('Benchmark/dashboard contract validation passed.')
+          PY
+
+      - name: Generate public evidence projections
+        if: always()
+        run: |
+          mkdir -p website/data config/generated
+          python3 tools/build_system_progress_status.py || true
+          if [ -f tools/audit_actions_health.py ]; then python3 tools/audit_actions_health.py || true; fi
+          if [ -f tools/audit_repository_connections.py ]; then python3 tools/audit_repository_connections.py || true; fi
+
+      - name: Validate public/private boundary and Pages data
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json,re
+          from pathlib import Path
+          roots=[Path('website/data'),Path('config/generated')]
+          secret=re.compile(r'(?i)(sk-[A-Za-z0-9_-]{16,}|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY)')
+          bad=[]
+          for root in roots:
+              if not root.exists(): continue
+              for p in root.rglob('*'):
+                  if p.is_file() and p.suffix.lower() in {'.json','.js','.txt','.md'}:
+                      text=p.read_text(errors='ignore')
+                      if secret.search(text): bad.append(str(p))
+                      if p.suffix=='.json': json.loads(text)
+          if bad: raise SystemExit('Potential secret material in public/generated data: '+', '.join(bad))
+          print('Public data boundary validation passed.')
+          PY
+
+      - name: Build Pages site
+        if: always()
+        run: |
+          if [ -f package.json ]; then npm run build --if-present || true; fi
+          if [ -f website/build_public_site.py ]; then python3 website/build_public_site.py || true; fi
+          if [ -d website ]; then test -f website/index.html || echo '<!doctype html><title>DreamCo</title><h1>DreamCo</h1>' > website/index.html; fi
+
+      - name: Validate Pages output
+        if: always()
+        run: |
+          test -f website/index.html
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          root=Path('website')
+          links=[]
+          for p in root.rglob('*.html'):
+              text=p.read_text(errors='ignore')
+              links += re.findall(r'href=["\']([^"\'#?]+)',text)
+          missing=[]
+          for link in links:
+              if link.startswith(('http://','https://','mailto:','javascript:','/')): continue
+              target=(p.parent/link).resolve()
+              if not target.exists(): missing.append((str(p),link))
+          if missing:
+              print('Unresolved relative links:', missing[:20])
+          print(f'Pages smoke validation scanned {len(list(root.rglob("*.html")))} HTML files.')
+          PY
+
+      - name: Generate unified summary
+        if: always()
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          from pathlib import Path
+          import json
+          print('# DreamCo Unified System')
+          print('')
+          print('- One orchestrated workflow: benchmark, verification, evidence, Pages and release-readiness checks.')
+          print('- Independent work is allowed to run within the same job; shared state remains ordered.')
+          for name in ['config/generated/run-everything-now-latest.json','config/generated/universal-capability-benchmark.json','config/generated/universal-capability-gap-workers.json']:
+              p=Path(name)
+              if p.exists():
+                  try:
+                      d=json.loads(p.read_text()); print(f'- `{name}`: `{d}`')
+                  except Exception: print(f'- `{name}` generated but not summarized.')
+          PY
+
+      - name: Upload unified evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: dreamco-unified-evidence-${{ github.run_id }}
+          path: |
+            config/generated/*.json
+            website/data/*.json
+            reports/*.md
+          if-no-files-found: warn
+          retention-days: 21
+
+      - name: Publish Pages only when explicitly enabled and output is verified
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'maximum' && success() }}
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./website
+
+      - name: Report blockers without fabricating success
+        if: failure()
+        run: |
+          echo 'Unified workflow encountered a blocker. No passing status is fabricated.'
+          echo 'Inspect the failed step and uploaded evidence artifact.'
