@@ -1,0 +1,12 @@
+{
+  "schema":"dreamco.buddy_downloads.v1",
+  "policy":"Only verified release artifacts are shown as downloadable app packages. A missing artifact is shown as unavailable rather than fabricated.",
+  "release_page":"https://github.com/DreamCo-Technologies/Dreamcobots/releases",
+  "latest_release_api":"https://api.github.com/repos/DreamCo-Technologies/Dreamcobots/releases/latest",
+  "targets":[
+    {"id":"windows","label":"Windows","status":"release_artifact_required","asset_patterns":["*.exe","*.msi"]},
+    {"id":"macos","label":"macOS","status":"release_artifact_required","asset_patterns":["*.dmg","*.pkg","*.zip"]},
+    {"id":"linux","label":"Linux","status":"release_artifact_required","asset_patterns":["*.AppImage","*.deb","*.tar.gz"]},
+    {"id":"pwa","label":"Web / PWA","status":"available_from_pages","url":"../buddy.html"}
+  ]
+}
