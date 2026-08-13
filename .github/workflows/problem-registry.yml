@@ -33,8 +33,12 @@ jobs:
           python-version: '3.12'
       - name: Build problem registry
         run: python3 tools/problem_registry.py
+      - name: Apply bounded auto-repair policy
+        run: python3 tools/auto_repair_policy.py config/generated/problem-registry.json
       - name: Validate registry JSON
         run: python3 -m json.tool config/generated/problem-registry.json >/dev/null
+      - name: Validate public registry JSON
+        run: python3 -m json.tool website/data/problem-registry.json >/dev/null
       - name: Upload evidence
         uses: actions/upload-artifact@v4
         with:
