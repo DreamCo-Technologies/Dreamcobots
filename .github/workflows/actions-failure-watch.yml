@@ -6,6 +6,8 @@ on:
       - Buddy Actions Test Lab
       - DreamCo Control Center
       - Actions Health
+      - Actions Failure Sweep
+      - Actions Failure Watch
       - Repository Test Matrix
       - Deploy Buddy Website
       - Builder Issue Reconciler
@@ -22,6 +24,13 @@ on:
       - Government Transparency Refresh
       - CodeQL Security Scan
       - Dependency Review
+      - DreamCo CI
+      - CI
+      - CI Automation Workflows
+      - DreamCo Build
+      - .github/workflows/dreamcobots_workflows.yml
+      - .github/workflows/observability.yml
+      - All Bot Sandbox Campaign
     types: [completed]
 
 permissions:
@@ -50,7 +59,6 @@ jobs:
     steps:
       - name: Create evidence directory
         run: mkdir -p failure-evidence/job-logs
-
       - name: Collect run and job metadata
         shell: bash
         run: |
@@ -59,7 +67,6 @@ jobs:
           gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID/jobs?per_page=100" > failure-evidence/jobs-pages.json
           jq -s '{jobs: map(.jobs // []) | add}' failure-evidence/jobs-pages.json > failure-evidence/jobs.json
           jq -r '.jobs[] | select(.conclusion != "success" and .conclusion != "skipped" and .conclusion != null) | [.id,.name,.conclusion] | @tsv' failure-evidence/jobs.json > failure-evidence/failed-jobs.tsv || true
-
       - name: Download failed job logs
         shell: bash
         run: |
@@ -70,7 +77,6 @@ jobs:
             gh api -H 'Accept: application/vnd.github+json' "repos/$GITHUB_REPOSITORY/actions/jobs/$job_id/logs" > "failure-evidence/job-logs/${job_id}-${safe_name}.txt" 2>/dev/null
           done < failure-evidence/failed-jobs.tsv
           exit 0
-
       - name: Build failure report
         shell: bash
         run: |
@@ -79,38 +85,27 @@ jobs:
           from pathlib import Path
           jobs=json.loads(Path('failure-evidence/jobs.json').read_text()).get('jobs',[])
           failed=[j for j in jobs if j.get('conclusion') not in (None,'success','skipped')]
-          lines=[
-            '# DreamCo Actions Failure', '',
-            f"Workflow: **{os.environ['WORKFLOW_NAME']}**",
-            f"Run: **#{os.environ['RUN_NUMBER']}**",
-            f"Conclusion: **{os.environ['RUN_CONCLUSION']}**",
-            f"Event: **{os.environ['EVENT_NAME']}**",
-            f"Commit: `{os.environ['HEAD_SHA']}`",
-            f"Run URL: {os.environ['RUN_URL']}", '',
-            '## Failed jobs',
-          ]
+          lines=['# DreamCo Actions Failure','',f"Workflow: **{os.environ['WORKFLOW_NAME']}**",f"Run: **#{os.environ['RUN_NUMBER']}**",f"Conclusion: **{os.environ['RUN_CONCLUSION']}**",f"Event: **{os.environ['EVENT_NAME']}**",f"Commit: `{os.environ['HEAD_SHA']}`",f"Run URL: {os.environ['RUN_URL']}",'','## Failed jobs']
           if not failed: lines.append('- No failed job was returned; inspect run metadata/artifacts.')
           for j in failed:
             lines.append(f"- {j.get('name')} — {j.get('conclusion')} — job {j.get('id')}")
             for step in j.get('steps') or []:
               if step.get('conclusion') not in (None,'success','skipped'):
                 lines.append(f"  - step: {step.get('name')} — {step.get('conclusion')}")
-          lines += ['', '## Repair path', '- Open **Agents → Buddy Debugger**.', '- Give it this run URL.', '- Fix the first root cause, not later cascade errors.', '- Re-run the focused job, then the affected suite.']
+          lines += ['', '## Repair path', '- Inspect the first failing job/step.', '- Fix the smallest reproducible root cause without weakening tests.', '- Re-run the focused job, then the affected dependent suite.', '- Keep blocked or owner-action states visible rather than converting them to success.']
           Path('failure-evidence/report.md').write_text('\n'.join(lines)+'\n')
           PY
           cat failure-evidence/report.md >> "$GITHUB_STEP_SUMMARY"
-
       - name: Open one repair issue for this failed run
         shell: bash
         run: |
           set -euo pipefail
-          existing=$(gh issue list --state open --search "Actions run $RUN_ID in:title" --json number --jq '.[0].number // empty')
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "Actions run $RUN_ID in:title" --json number --jq '.[0].number // empty')
           if [ -z "$existing" ]; then
-            gh issue create --title "Actions run $RUN_ID failed: $WORKFLOW_NAME" --body-file failure-evidence/report.md
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "Actions run $RUN_ID failed: $WORKFLOW_NAME" --body-file failure-evidence/report.md
           else
             echo "Repair issue already exists: #$existing" >> "$GITHUB_STEP_SUMMARY"
           fi
-
       - name: Save failure evidence
         if: always()
         uses: actions/upload-artifact@v6

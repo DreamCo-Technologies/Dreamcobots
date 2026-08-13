@@ -1,0 +1,12 @@
+{
+  "schema":"dreamco.daily_benchmark_refresh_policy.v1",
+  "cadence":"daily",
+  "schedule_utc":"02:17",
+  "owner_workflow":".github/workflows/dreamco-unified-system.yml",
+  "purpose":"Refresh the complete model/capability benchmark evidence daily while preserving one dedicated benchmark workflow.",
+  "freshness":"A successful scheduled run records a new verification timestamp. A failed or blocked run does not overwrite the last known evidence with a pass.",
+  "stale_conditions":["model version changed","benchmark fixture changed","rubric changed","tool permissions changed","material execution environment changed","evidence refresh failed"],
+  "notification_policy":"Surface meaningful failures, regressions, stale evidence, newly closed gaps, and owner-action blockers; avoid success-noise notifications.",
+  "cost_policy":"Do not silently initiate paid model/API calls.",
+  "mastery_policy":"Daily refresh measures current evidence; it does not itself establish mastery without passing benchmark gates."
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "buddy.capability_independence_metrics.v1",
+  "purpose": "Measure whether Buddy is becoming independently capable rather than merely outsourcing successful tasks.",
+  "metrics": {
+    "capability_independence_ratio": "independent_successes / all_successes",
+    "teacher_dependency_rate": "assisted_successes / all_successes",
+    "capability_gap": "reference_score - buddy_score_under_comparable_conditions",
+    "gap_closure_rate": "gap_reduction / elapsed_time",
+    "time_to_first_pass": "elapsed_time_from_registration_to_first_acceptance_pass",
+    "time_to_mastery": "elapsed_time_from_registration_to_mastery_criteria",
+    "regression_rate": "failed_previously_passing_suites / retested_previously_passing_suites",
+    "fallback_rate": "tasks_requiring_fallback / eligible_tasks",
+    "cost_per_success": "measured_execution_cost / successful_tasks",
+    "latency_to_useful_result": "time_to_first_accepted_useful_result"
+  },
+  "states": ["unknown","assisted","learning","independent","mastered","blocked","retired"],
+  "evidence_rules": {
+    "independent": "Requires successful execution without teacher-model completion for the evaluated task and documented environment.",
+    "mastered": "Requires repeated benchmark acceptance plus dependent-suite regression protection.",
+    "gap_closed": "Requires comparable baseline/reference evidence and a passing Buddy retest.",
+    "blocked": "Used when required dependency, permission, environment, or benchmark fixture is unavailable; never counted as pass."
+  },
+  "public_pages": {
+    "show": ["status","scores","gap","trend","independence_ratio","teacher_dependency_rate","time_to_first_pass","time_to_mastery","regression_rate","fallback_rate"],
+    "hide": ["secrets","credentials","private_user_data","raw_sensitive_logs"]
+  }
+}

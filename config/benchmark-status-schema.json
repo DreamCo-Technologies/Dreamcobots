@@ -1,0 +1,11 @@
+{
+  "schema":"dreamco.benchmark_status.v1",
+  "statuses":["catalogued","ready","running","passed","failed","blocked","stale","not_applicable","needs_review"],
+  "independence":["native","tool_assisted","external_model_assisted","unknown"],
+  "score_dimensions":["quality","correctness","completeness","speed","efficiency","reliability","safety"],
+  "required_evidence":["model_id","model_version","benchmark_id","fixture_version","rubric_version","execution_timestamp","status","evidence_reference"],
+  "closure_rule":"Only passing evidence satisfying the applicable quality, correctness, reliability, and safety gates may close a benchmark gap.",
+  "native_mastery_rule":"Only native Buddy results can establish independent Buddy mastery.",
+  "missing_evidence_rule":"Missing, stale, blocked, or unknown evidence is never converted to pass.",
+  "public_rule":"Public dashboard records must omit secrets, private data, restricted endpoints, and privileged controls."
+}

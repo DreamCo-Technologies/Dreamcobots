@@ -10,24 +10,8 @@
   }
 
   function statusBadge(status) {
-    const labels = {
-      ready: "Ready",
-      cataloged: "Cataloged",
-      generated: "Generated",
-      candidate_ready: "Candidate-ready",
-      in_progress: "In progress",
-      prototype: "Prototype",
-      approval_required: "Approval required",
-    };
-    const tones = {
-      ready: "green",
-      cataloged: "primary",
-      generated: "cyan",
-      candidate_ready: "green",
-      in_progress: "amber",
-      prototype: "violet",
-      approval_required: "amber",
-    };
+    const labels = { ready: "Ready", cataloged: "Cataloged", generated: "Generated", candidate_ready: "Candidate-ready", in_progress: "In progress", prototype: "Prototype", approval_required: "Approval required" };
+    const tones = { ready: "green", cataloged: "primary", generated: "cyan", candidate_ready: "green", in_progress: "amber", prototype: "violet", approval_required: "amber" };
     return text("span", labels[status] || status, `badge badge-${tones[status] || "gray"}`);
   }
 
@@ -35,6 +19,31 @@
     document.querySelectorAll("[data-map-stat]").forEach((node) => {
       const value = Number(summary[node.dataset.mapStat] || 0);
       node.textContent = formatter.format(value);
+    });
+  }
+
+  function renderMasterInventory(summary) {
+    const target = document.getElementById("master-map-grid");
+    target.replaceChildren();
+    const entries = [
+      ["Files scanned", summary.files_scanned],
+      ["Actions workflows", summary.workflows],
+      ["Pages assets", summary.pages_assets],
+      ["Test files", summary.test_files],
+      ["Bot sources", summary.bot],
+      ["Backend files", summary.backend],
+      ["Frontend files", summary.frontend],
+      ["Tools", summary.tool],
+      ["Shared contracts", summary.shared_contract],
+      ["Platform modules", summary.platform],
+      ["Configuration files", summary.config],
+      ["Documentation files", summary.documentation],
+    ];
+    entries.forEach(([label, value]) => {
+      const card = document.createElement("article");
+      card.className = "system-status-card";
+      card.append(text("h3", label), text("strong", formatter.format(Number(value || 0))), text("p", "Inventory evidence only; runtime status is tracked separately."));
+      target.append(card);
     });
   }
 
@@ -69,46 +78,42 @@
   function renderDivisions(query) {
     const target = document.getElementById("division-map-grid");
     const normalized = query.trim().toLowerCase();
-    const filtered = divisions.filter((division) =>
-      `${division.name} ${division.mission}`.toLowerCase().includes(normalized)
-    );
+    const filtered = divisions.filter((division) => `${division.name} ${division.mission}`.toLowerCase().includes(normalized));
     target.replaceChildren();
     filtered.forEach((division) => {
       const card = document.createElement("article");
       card.className = "division-map-card";
       const heading = document.createElement("div");
-      heading.append(
-        text("h3", division.name),
-        text("strong", formatter.format(Number(division.registered_bots || 0)))
-      );
-      card.append(
-        heading,
-        text("p", division.mission),
-        text("span", "Money actions require approval", "division-governance")
-      );
+      heading.append(text("h3", division.name), text("strong", formatter.format(Number(division.registered_bots || 0))));
+      card.append(heading, text("p", division.mission), text("span", "Money actions require approval", "division-governance"));
       target.append(card);
     });
     if (!filtered.length) target.append(text("p", "No divisions match this filter.", "map-empty"));
   }
 
   async function init() {
-    const response = await fetch("data/repository-system-map.json", { cache: "no-store" });
-    if (!response.ok) throw new Error(`Repository map request failed: ${response.status}`);
-    const payload = await response.json();
+    const [systemResponse, masterResponse] = await Promise.all([
+      fetch("data/repository-system-map.json", { cache: "no-store" }),
+      fetch("data/repository-master-map.json", { cache: "no-store" }),
+    ]);
+    if (!systemResponse.ok) throw new Error(`Repository map request failed: ${systemResponse.status}`);
+    if (!masterResponse.ok) throw new Error(`Repository master inventory request failed: ${masterResponse.status}`);
+    const payload = await systemResponse.json();
+    const master = await masterResponse.json();
     divisions = Array.isArray(payload.divisions) ? payload.divisions : [];
     renderStats(payload.summary || {});
+    renderMasterInventory(master.summary || {});
     renderSystems(Array.isArray(payload.systems) ? payload.systems : []);
     renderLibraries(Array.isArray(payload.libraries) ? payload.libraries : []);
     renderDivisions("");
     document.getElementById("map-generated").textContent = `Generated ${payload.generated_at || "from the latest scan"}`;
-    document.getElementById("division-search").addEventListener("input", (event) => {
-      renderDivisions(event.target.value || "");
-    });
+    document.getElementById("master-map-generated").textContent = `Inventory scan ${String(master.scan_digest || "").slice(0, 12) || "available"}`;
+    document.getElementById("division-search").addEventListener("input", (event) => renderDivisions(event.target.value || ""));
   }
 
   init().catch((error) => {
     const target = document.getElementById("system-readiness-grid");
-    target.replaceChildren(text("p", "Repository map data could not be loaded. Run the site through a local web server or GitHub Pages.", "map-error"));
+    target.replaceChildren(text("p", "Repository map data could not be loaded. Run the site through GitHub Pages or a local web server.", "map-error"));
     document.documentElement.dataset.systemMap = "offline";
     console.error(error);
   });

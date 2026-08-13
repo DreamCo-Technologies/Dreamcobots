@@ -1,0 +1,20 @@
+{
+  "schema":"dreamco.actions_dashboard_contract.v1",
+  "review_status":"chatgpt-reviewed-design",
+  "review_boundary":"This review is a remediation/design review, not proof of mastery, endorsement, or passing execution. Only repository evidence may change verification status.",
+  "sections":[
+    {"id":"overview","label":"Command Center","tracks":["workflow_count","latest_run_status","critical_errors","warnings","upgrade_count","benchmark_count"],"evidence_sources":["actions-health-report","public GitHub runs"]},
+    {"id":"health","label":"Repository Health","tracks":["CI","tests","lint","types","security","builds","dependencies","runtime bindings"],"evidence_sources":["Actions runs","artifacts","doctor reports"]},
+    {"id":"benchmarks","label":"Benchmark Observatory","tracks":["quality","latency","throughput","efficiency","reliability","reproducibility","capability gaps","500-model comparisons"],"evidence_sources":["registered benchmark suites","benchmark results","before-after records"]},
+    {"id":"learning","label":"Buddy Learning","tracks":["gap diagnosis","training/evaluation plans","repair iterations","regressions","mastery/blockers"],"evidence_sources":["learning reports","benchmark deltas","regression suites"]},
+    {"id":"repairs","label":"Repair Queue","tracks":["root cause","smallest safe repair","rollback/fallback","targeted tests","dependent suites","owner blockers","time estimates"],"evidence_sources":["repair plans","commits","test results"]},
+    {"id":"inventory","label":"Repository Inventory","tracks":["files","bots","tools","workflows","plugins","APIs","routes","models","capabilities","runtime bindings","duplicates"],"evidence_sources":["generated inventory","repository scan","runtime manifests"]},
+    {"id":"pages","label":"Public Pages Evidence","tracks":["generated datasets","schema validation","rendered metrics","stale data","deployment health"],"evidence_sources":["Pages build","smoke tests","generated JSON"]},
+    {"id":"distribution","label":"Device + Releases","tracks":["Windows","macOS","Linux","artifacts","install/launch tests","permissions","version history"],"evidence_sources":["release artifacts","build logs","package smoke tests"]},
+    {"id":"security","label":"Security + Governance","tracks":["secrets","dependencies","CodeQL","permissions","release integrity","policies","owner actions"],"evidence_sources":["security workflows","audit reports","repository settings"]},
+    {"id":"prospectus","label":"Investor + Operator Prospectus","tracks":["purpose","value","upgrade plan","timeframe","evidence","risk","blocker","verified outcome"],"evidence_sources":["prospectus catalog","verified results"]}
+  ],
+  "action_creation_rule":"Create a new Actions control only when a tracked capability cannot be safely inspected, triggered, or explained by an existing control. Every new control must have purpose, permission boundary, evidence source, success criteria, fallback, upgrade plan, timeframe method, and tests.",
+  "result_placement_rule":"Place every result in the section that owns the evidence; link back to source run/artifact/benchmark and show timestamp and commit SHA where available.",
+  "mastery_rule":"Never infer mastery from UI state, prospectus text, a single successful run, or a model-generated assessment. Require repeatable test-backed evidence and dependent-suite regression evidence."
+}

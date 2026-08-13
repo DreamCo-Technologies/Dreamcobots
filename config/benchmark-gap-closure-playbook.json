@@ -1,0 +1,30 @@
+{
+  "schema":"dreamco.benchmark_gap_closure_playbook.v1",
+  "principle":"Close capability gaps with the smallest shared safe repair supported by evidence; never weaken tests or claim mastery without passing evidence.",
+  "strategies":[
+    {"id":"routing","gap":"wrong model/tool route","repair":"repair capability-to-route mapping and add route-selection regression fixtures","measure":"task success, latency, route accuracy"},
+    {"id":"tool_discovery","gap":"tool exists but Buddy cannot find/use it","repair":"normalize registry metadata, permissions, schemas, and discovery tests","measure":"tool discovery rate, valid invocation rate, failure recovery"},
+    {"id":"runtime_binding","gap":"registered capability is not executable","repair":"add runtime binding contract and smoke test","measure":"binding coverage, invocation success"},
+    {"id":"context","gap":"context loss or poor task continuity","repair":"shared context/state fixture with bounded retention and replay tests","measure":"instruction retention, consistency, recovery"},
+    {"id":"planning","gap":"weak multi-step execution","repair":"add plan decomposition, checkpoints, dependency ordering, and recovery fixtures","measure":"completion, unnecessary steps, retries, elapsed time"},
+    {"id":"verification","gap":"answers are not sufficiently checked","repair":"add domain-appropriate verifier and evidence requirements","measure":"correctness, false-positive rate, verification coverage"},
+    {"id":"quality","gap":"correct but lower-quality output","repair":"improve shared rubric, generation constraints, and quality feedback loop","measure":"blind rubric score, completeness, consistency"},
+    {"id":"speed","gap":"task succeeds too slowly","repair":"cache safe deterministic work, reduce redundant calls, batch independent operations","measure":"p50/p95 latency, time-to-useful-result"},
+    {"id":"efficiency","gap":"excessive tool/model/resource use","repair":"budget-aware routing, deduplication, early stopping after sufficient evidence","measure":"calls/task, tokens where available, resource use"},
+    {"id":"reliability","gap":"flaky or intermittent failures","repair":"isolate nondeterminism, add retries only where safe, strengthen fixtures","measure":"pass rate, retry rate, reproducibility"},
+    {"id":"safety","gap":"unsafe or policy-incomplete behavior","repair":"shared policy gate, deny-by-default sensitive actions, safety regression suite","measure":"safety pass rate, blocked unsafe actions"},
+    {"id":"independence","gap":"performance depends on external model","repair":"identify external dependency, create native fallback/skill where feasible, label assisted results","measure":"native success rate"},
+    {"id":"learning","gap":"benchmark failure does not improve future behavior","repair":"persist failure diagnosis, strategy, evidence, and regression fixture in learning store","measure":"repeat-failure rate, regression recurrence"},
+    {"id":"benchmark","gap":"task is not measured reliably","repair":"version fixtures/rubrics, deterministic seeds where appropriate, evidence schema and baseline","measure":"reproducibility, evidence completeness"},
+    {"id":"coverage","gap":"capability is not tested","repair":"generate capability-to-suite coverage map and add smallest representative fixture","measure":"coverage percentage and uncovered critical capabilities"},
+    {"id":"shared_fix","gap":"many bots fail for same reason","repair":"patch shared framework/service once and retest every dependent suite","measure":"number of failures removed per shared change"},
+    {"id":"regression","gap":"new fix breaks another capability","repair":"expand dependency-aware regression set and require before/after comparison","measure":"dependent-suite pass rate"},
+    {"id":"forecast","gap":"next failure is predictable but not prepared for","repair":"rank capability leads by evidence, impact, recurrence, and feasibility","measure":"forecast precision and lead closure rate"},
+    {"id":"documentation","gap":"working capability cannot be discovered by users","repair":"generate public-safe prospectus, examples, limitations, and evidence link","measure":"documentation coverage and link validity"},
+    {"id":"download","gap":"verified system is difficult to obtain/run","repair":"validate release artifacts, startup diagnostics, platform checks, and rollback path","measure":"install/start success and diagnostic clarity"}
+  ],
+  "closure_sequence":["measure_baseline","diagnose_root_cause","select_smallest_shared_safe_repair","define_rollback_or_fallback","apply_only_review_or_sandbox","run_targeted_tests","rerun_benchmark","retest_dependent_suites","compare_before_after","record_evidence","close_gap_only_if_gates_pass","otherwise_mark_blocked_or_needs_review"],
+  "optimization_rule":"Optimize quality first, then speed and efficiency without reducing required evidence or safety gates.",
+  "parallelization_rule":"Independent benchmark cases may be batched or parallelized inside the single workflow; dependent repair/test chains remain ordered.",
+  "mastery_rule":"A gap is mastered only when passing evidence meets its benchmark-specific quality/correctness/reliability/safety gates and remains reproducible."
+}

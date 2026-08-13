@@ -1,0 +1,29 @@
+{
+  "schema":"buddy.benchmark_performance_contract.v1",
+  "scope":"all_registered_benchmarks",
+  "principle":"Capability is multidimensional: correctness alone cannot close a benchmark.",
+  "required_dimensions": {
+    "correctness":"Task acceptance quality under the benchmark's defined rubric.",
+    "latency":"Time from task-ready to accepted result, with separately recorded time-to-first-useful-result when applicable.",
+    "throughput":"Accepted tasks or benchmark units completed per unit of wall-clock time under defined concurrency.",
+    "resource_efficiency":"CPU, memory, storage, network, and accelerator use required for accepted work where measurable.",
+    "model_efficiency":"Quality achieved per model token, inference step, model call, or equivalent measurable unit.",
+    "tool_efficiency":"Useful work per tool invocation and unnecessary-call rate.",
+    "cost_efficiency":"Measured execution cost per accepted task when cost data is available; never invent cost estimates as measured evidence.",
+    "reliability":"Success rate, retry rate, timeout rate, crash rate, and reproducibility across repeated runs.",
+    "parallel_efficiency":"Speedup and utilization relative to a documented serial or baseline execution where parallelism is applicable.",
+    "recovery_efficiency":"Time and resources required to recover from supported failures.",
+    "regression_safety":"Whether speed/resource improvements preserve correctness and dependent-suite results."
+  },
+  "required_measurement_metadata":["hardware_or_runner","software_environment","model_provider_and_version_when_applicable","dataset_or_fixture_version","concurrency","warm_or_cold_start","cache_state","measurement_method","timestamp","baseline_reference"],
+  "scoring":"Report dimension scores separately before any composite score. Composite scores must expose weights and may not hide a critical correctness or safety failure.",
+  "gates": {
+    "correctness_gate":"A faster incorrect result is not a pass.",
+    "safety_gate":"A faster unsafe result is not a pass.",
+    "reproducibility_gate":"Performance claims require repeatable measurement within the benchmark's defined variance policy.",
+    "regression_gate":"A performance optimization that causes a required dependent regression cannot be promoted as an overall improvement."
+  },
+  "comparison_modes":["serial_baseline","current_buddy","optimized_buddy","approved_reference_model_when_available"],
+  "public_pages":"Show correctness, latency, throughput, resource efficiency, reliability, cost where measured, and trend data separately. Clearly label estimates, measurements, assisted execution, and unavailable dimensions.",
+  "mastery":"Mastery requires acceptance on the benchmark's correctness criteria plus its applicable performance/reliability requirements; performance alone cannot compensate for correctness failure."
+}

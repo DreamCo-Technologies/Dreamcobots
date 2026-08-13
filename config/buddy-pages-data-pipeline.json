@@ -1,0 +1,28 @@
+{
+  "schema":"dreamco.pages_data_pipeline.v1",
+  "purpose":"Continuously turn verified repository and Actions evidence into a safe, deterministic public dashboard.",
+  "stages":[
+    "discover_tracked_files",
+    "discover_systems",
+    "collect_test_and_benchmark_registry",
+    "collect_verified_actions_results",
+    "collect_security_and_dependency_status",
+    "collect_verified_build_and_release_artifacts",
+    "normalize_status_and_timestamps",
+    "validate_public_private_boundary",
+    "validate_no_false_pass_claims",
+    "generate_dashboard_data",
+    "validate_generated_pages",
+    "publish_only_after_gate"
+  ],
+  "source_priority":["verified_ci_artifact","test_result","benchmark_result","repository_manifest","explicit_blocker","unknown"],
+  "truth_rule":"A missing or stale source produces unknown/stale status, never an invented success.",
+  "parallelism":"Discovery and independent evidence collection may run concurrently. Generated outputs are merged deterministically and conflicting writes are serialized.",
+  "incremental_mode":"Hash source inputs and regenerate only affected projections while periodically running a complete consistency scan.",
+  "page_validation":["schema_validation","broken_internal_link_scan","asset_existence_check","dashboard_data_consistency","download_artifact_reference_check","secret_pattern_guard","accessibility_smoke_check","mobile_layout_smoke_check"],
+  "download_gate":"A download link is emitted only when the referenced artifact exists, matches the recorded version/commit, and has passed its configured verification checks.",
+  "rollback":"If page generation or validation fails, retain the last verified public dataset and mark the attempted update failed; do not publish partial generated state.",
+  "public_boundary":["no_credentials","no_tokens","no_private_keys","no_private_user_data","no_sensitive_raw_logs","no_live_privileged_controls"],
+  "observability":"Record generation duration, source freshness, changed projections, validation results, and publish outcome as safe CI evidence.",
+  "goal":"Every repository-tracked capability or system that is eligible for public disclosure should have a discoverable dashboard representation or an explicit unmapped/blocked record."
+}

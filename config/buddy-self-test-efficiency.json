@@ -1,0 +1,29 @@
+{
+  "schema":"buddy.self_test_efficiency.v1",
+  "mode":"evidence_driven_fast_path",
+  "goal":"Maximize verification throughput without sacrificing correctness, isolation, reproducibility, or regression protection.",
+  "principles":[
+    "Run the smallest relevant test set first.",
+    "Parallelize independent read-only tests and benchmark cases.",
+    "Serialize conflicting stateful operations.",
+    "Cache immutable dependency/setup work when cache validity is proven.",
+    "Fail fast on deterministic configuration, import, syntax, or contract failures.",
+    "Expand from targeted tests to dependent suites only after the local gate passes.",
+    "Run full regression verification before promotion when shared code changes.",
+    "Never skip a required test solely to improve runtime.",
+    "Never weaken assertions, fixtures, thresholds, or acceptance criteria to obtain a pass.",
+    "Record timing, resource use, retries, flakes, and failures as evidence."
+  ],
+  "test_tiers":[
+    {"name":"preflight","examples":["syntax","imports","configuration","repository_contracts"],"parallel":true,"fail_fast":true},
+    {"name":"targeted","examples":["changed_module_tests","changed_workflow_checks","benchmark_case"],"parallel":true,"fail_fast":true},
+    {"name":"dependent","examples":["downstream_unit_tests","integration_contracts","shared_capability_suites"],"parallel":true,"fail_fast":false},
+    {"name":"full_regression","examples":["full_test_suite","security","build","pages_contract"],"parallel":true,"fail_fast":false},
+    {"name":"release_gate","examples":["clean_build","artifact_verification","reproducibility"],"parallel":false,"fail_fast":true}
+  ],
+  "efficiency_metrics":["test_duration","queue_wait","parallel_utilization","cache_hit_rate","retry_rate","flake_rate","failure_detection_time","time_to_first_failure","time_to_verified_pass","cpu_time","memory_peak"],
+  "adaptive_concurrency":"Increase concurrency only while workers remain independent and runner/resource health stays within configured limits; reduce concurrency on contention, instability, or excessive retries.",
+  "flake_policy":"Retries may diagnose suspected flakes but cannot convert a failure into a pass without a clean required run and documented disposition.",
+  "benchmark_policy":"Benchmark acceleration may parallelize independent cases, but before/after evidence and dependent-suite retesting remain mandatory for shared fixes.",
+  "public_pages":"Expose safe aggregate timing, throughput, pass/fail, retry, flake, and regression metrics; exclude secrets and sensitive raw logs."
+}

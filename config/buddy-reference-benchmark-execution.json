@@ -1,0 +1,15 @@
+{
+  "schema":"buddy.reference_benchmark_execution.v1",
+  "scope":"model_and_capability_reference_evaluations",
+  "goal":"Run comparable quality evaluations across reference models and Buddy while maximizing safe parallelism and preserving reproducibility.",
+  "selection":{"per_task":"Choose strong applicable references by capability and modality rather than using one universal winner.","sets":["frontier_reference","open_weight_reference","open_source_reference_when_applicable","efficiency_reference","buddy"]},
+  "execution":{"matrix":"Use benchmark/task/model matrices where jobs are independent.","parallelism":"Maximize safe concurrency subject to runner, provider, rate, hardware, quota and cost constraints.","serialization":"Serialize shared mutable fixtures, conflicting resources, and stateful dependent tests.","fail_fast":"Use fail-fast for deterministic preflight/configuration failures; retain independent benchmark results when one model/task fails.","sharding":"Shard large suites by model, capability, task family and fixture where reproducibility permits.","resume":"Resume incomplete shards without relabeling missing results as passes."},
+  "measurement":["quality","correctness","completeness","latency","time_to_useful_result","throughput","resource_efficiency","tool_efficiency","model_efficiency","cost_when_measurable","reliability","safety","independence"],
+  "comparability":["same_fixture_version","same_rubric","same_task_constraints","documented_environment","documented_model_version","documented_sampling_or_generation_settings_when_available","documented_tool_permissions","documented_warm_cold_state"],
+  "evidence":"Store raw or appropriately redacted evidence references, aggregate measurements, evaluator type, sample size, and uncertainty where available.",
+  "no_paid_calls":"The execution framework must support no-call/catalog-only and pre-approved evaluation modes. It must not silently initiate paid model/API usage.",
+  "stale_data":"Model/version changes invalidate affected comparisons until the relevant suite is rerun.",
+  "mastery":"Reference-model performance defines a comparison target, not automatic ground truth. Buddy closes a gap only by meeting the benchmark's independent quality and applicable safety/reliability gates.",
+  "pages":"Publish per-model prospectus, per-capability comparison, measured gaps, performance/efficiency metrics, independence state, evidence timestamp and blockers.",
+  "limits":"Respect provider licenses, access controls, rate limits, quotas, terms and benchmark permissions. Never bypass restrictions."
+}

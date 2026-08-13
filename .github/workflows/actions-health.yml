@@ -3,21 +3,26 @@ name: Actions Health
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, codex/master-capability-pages]
     paths:
       - ".github/workflows/**"
       - "tools/audit_actions_health.py"
+      - "tools/audit_actions_live.py"
+      - "tests/test_actions_health.py"
       - "package.json"
   pull_request:
     paths:
       - ".github/workflows/**"
       - "tools/audit_actions_health.py"
+      - "tools/audit_actions_live.py"
+      - "tests/test_actions_health.py"
       - "package.json"
   schedule:
     - cron: "23 12 * * *"
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: actions-health-${{ github.ref }}
@@ -26,24 +31,42 @@ concurrency:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-      - name: Scan every workflow
+      - name: Static audit of every local workflow
         run: python3 tools/audit_actions_health.py
-      - name: Add report to summary
+      - name: Live audit of GitHub Actions state
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 tools/audit_actions_live.py
+      - name: Verify Actions-page contracts
+        run: |
+          python3 -m unittest tests.test_actions_health
+          if [ -f package-lock.json ]; then npm ci --ignore-scripts; fi
+          npm run test:actions-page
+      - name: Add reports to summary
         if: always()
-        run: cat reports/ACTIONS_HEALTH_REPORT.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
-      - name: Save health report
+        run: |
+          for report in reports/ACTIONS_HEALTH_REPORT.md reports/ACTIONS_LIVE_HEALTH.md; do
+            if [ -f "$report" ]; then cat "$report" >> "$GITHUB_STEP_SUMMARY"; printf '\n\n' >> "$GITHUB_STEP_SUMMARY"; fi
+          done
+      - name: Save complete Actions health evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
           name: actions-health-${{ github.run_id }}
           path: |
             reports/ACTIONS_HEALTH_REPORT.md
+            reports/ACTIONS_LIVE_HEALTH.md
             config/generated/actions-health-report.json
+            config/generated/actions-live-health.json
+            website/data/actions-health-report.json
+            website/data/actions-live-health.json
           if-no-files-found: warn
-          retention-days: 7
+          retention-days: 30

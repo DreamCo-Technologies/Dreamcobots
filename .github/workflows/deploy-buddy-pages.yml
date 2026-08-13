@@ -6,20 +6,25 @@ on:
     branches:
       - main
       - buddy-rebuild-v2
+      - codex/master-capability-pages
     paths:
       - "website/**"
       - "tools/build_buddy_public_site.py"
+      - "tools/audit_actions_health.py"
+      - "tools/audit_actions_live.py"
       - "tools/build_manufacturer_marketplace_catalog.py"
       - "tools/check_deployment_cost_policy.py"
       - "tools/generate_buddy_model_router.py"
       - "tools/check_buddy_model_benchmarks.mjs"
       - "tools/generate_buddy_distribution_catalog.py"
       - "tools/generate_repository_test_registry.py"
+      - "tools/generate_dreamco_repository_master_map.py"
       - "config/**"
       - ".github/workflows/deploy-buddy-pages.yml"
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: buddy-github-pages-${{ github.ref }}
@@ -28,23 +33,28 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 55
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-
       - name: Set up Node
         uses: actions/setup-node@v6
         with:
           node-version: 22
-
+      - name: Install dependencies
+        run: npm ci
+      - name: Refresh Actions health data for Pages
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python3 tools/audit_actions_health.py
+          python3 tools/audit_actions_live.py
       - name: Run deployment preflight
         run: |
           python3 tools/check_deployment_cost_policy.py
@@ -53,6 +63,7 @@ jobs:
           node tools/check_buddy_demand_ontology.mjs
           python3 tools/generate_buddy_distribution_catalog.py --check
           python3 tools/generate_repository_test_registry.py
+          python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_buddy_benchmark_index.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
           python3 tools/build_buddy_public_site.py --check
@@ -60,7 +71,9 @@ jobs:
           node --test tests/benchmark-tracker-page.test.mjs tests/service-worker-benchmark-cache.test.mjs
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
-
+          test -s website/data/repository-master-map.json
+          test -s website/data/actions-health-report.json
+          test -s website/data/actions-live-health.json
       - name: Check browser JavaScript syntax
         run: |
           node --check website/buddy.js
@@ -75,15 +88,12 @@ jobs:
           node --check website/page-actions.js
           node --check website/nav.js
           node --check website/service-worker.js
-
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
-
       - name: Upload public website
         uses: actions/upload-pages-artifact@v5
         with:
           path: website
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
