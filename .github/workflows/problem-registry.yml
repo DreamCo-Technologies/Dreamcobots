@@ -1,0 +1,46 @@
+name: Problem Registry Evidence
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_run:
+    workflows:
+      - Actions Health
+      - Actions Failure Sweep
+      - Actions Failure Watch
+      - Buddy Actions Test Lab
+      - Repository Test Matrix
+      - Parallel Benchmark Gap Builders
+      - Full System Certification
+    types: [completed]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: problem-registry-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build problem registry
+        run: python3 tools/problem_registry.py
+      - name: Validate registry JSON
+        run: python3 -m json.tool config/generated/problem-registry.json >/dev/null
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: problem-registry
+          path: |
+            config/generated/problem-registry.json
+            website/data/problem-registry.json
+            reports/PROBLEM_REGISTRY.md
+          retention-days: 14
