@@ -100,8 +100,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          existing=$(gh issue list --state open --search "Actions run $RUN_ID in:title" --json number --jq '.[0].number // empty')
-          if [ -z "$existing" ]; then gh issue create --title "Actions run $RUN_ID failed: $WORKFLOW_NAME" --body-file failure-evidence/report.md; else echo "Repair issue already exists: #$existing" >> "$GITHUB_STEP_SUMMARY"; fi
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "Actions run $RUN_ID in:title" --json number --jq '.[0].number // empty')
+          if [ -z "$existing" ]; then
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "Actions run $RUN_ID failed: $WORKFLOW_NAME" --body-file failure-evidence/report.md
+          else
+            echo "Repair issue already exists: #$existing" >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Save failure evidence
         if: always()
         uses: actions/upload-artifact@v6
