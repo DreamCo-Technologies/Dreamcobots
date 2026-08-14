@@ -58,8 +58,8 @@
         </div>
       </div>
       <div class="nav-cta">
-        <a href="install.html" class="btn btn-outline btn-sm">Install</a>
-        <a href="buddy.html" class="btn btn-primary btn-sm">Open Buddy</a>
+        <a href="install.html" class="btn btn-primary btn-sm" aria-label="Download Buddy">⬇️ Download Buddy</a>
+        <a href="buddy.html" class="btn btn-outline btn-sm">Open Buddy</a>
       </div>
     </div>
   </div>
@@ -112,7 +112,6 @@
   `;
   document.head.appendChild(style);
 
-  // Rebuild V2: add contextual action buttons to the real Codex-built pages.
   if (!document.querySelector('script[data-dreamco-page-actions]')) {
     const pageActions = document.createElement('script');
     pageActions.src = 'page-actions.js?v=1';
