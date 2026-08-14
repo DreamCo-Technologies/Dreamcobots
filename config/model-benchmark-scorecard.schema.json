@@ -1,0 +1,12 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"DreamCo Model Benchmark Scorecard",
+  "type":"object",
+  "required":["schema_version","frontier_baselines","models","benchmarks"],
+  "properties":{
+    "schema_version":{"type":"string"},
+    "frontier_baselines":{"type":"object","description":"Versioned measured reference distributions; never a claim of absolute best-in-world performance."},
+    "models":{"type":"array","items":{"type":"object","required":["model_id","provider","open_source"],"properties":{"model_id":{"type":"string"},"provider":{"type":"string"},"open_source":{"type":"boolean"}}}},
+    "benchmarks":{"type":"array","items":{"type":"object","required":["benchmark_id","category","quality","speed","efficiency","reliability","safety"],"properties":{"benchmark_id":{"type":"string"},"category":{"type":"string"},"quality":{"type":"number","minimum":0,"maximum":100},"speed":{"type":"number","minimum":0,"maximum":100},"efficiency":{"type":"number","minimum":0,"maximum":100},"reliability":{"type":"number","minimum":0,"maximum":100},"safety":{"type":"number","minimum":0,"maximum":100},"frontier_equivalence":{"type":"number","minimum":0,"maximum":100},"mastery":{"type":"boolean"},"evidence":{"type":"array","items":{"type":"string"}}}}}
+  }
+}
