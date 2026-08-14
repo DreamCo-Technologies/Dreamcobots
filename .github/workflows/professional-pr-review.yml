@@ -1,0 +1,57 @@
+name: Professional PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: professional-pr-review-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Repository contract review
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          required=['README.md']
+          missing=[p for p in required if not Path(p).exists()]
+          workflows=list(Path('.github/workflows').glob('*.yml'))+list(Path('.github/workflows').glob('*.yaml'))
+          print(f'workflows={len(workflows)}')
+          print(f'missing_required={missing}')
+          if missing: raise SystemExit(1)
+          suspicious=[]
+          for p in workflows:
+              text=p.read_text(errors='ignore')
+              if re.search(r'(sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,})',text): suspicious.append(str(p))
+          if suspicious:
+              print('Potential credential literal in:', suspicious); raise SystemExit(1)
+          PY
+      - name: Python compile smoke test
+        run: python -m compileall -q tools framework
+      - name: Review evidence summary
+        run: |
+          {
+            echo '## Professional PR Review'
+            echo ''
+            echo '- Repository contract: passed'
+            echo '- Credential literal scan: passed'
+            echo '- Python syntax smoke: passed'
+            echo '- Full product tests remain owned by repository CI workflows.'
+            echo '- This job reports only the commands it actually executed.'
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,23 @@
+name: Merchant Value Engine Check
+
+on:
+  pull_request:
+    paths:
+      - 'money/merchant_value_engine.js'
+      - 'tests/test_merchant_value_engine.js'
+      - 'docs/MERCHANT_VALUE_REVENUE_PLAN.md'
+      - 'website/data/merchant-value-prospectus.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - run: node tests/test_merchant_value_engine.js
