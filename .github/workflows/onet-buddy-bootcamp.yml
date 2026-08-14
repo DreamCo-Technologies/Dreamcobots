@@ -1,0 +1,58 @@
+name: O*NET Buddy Bootcamp
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_cases_per_category:
+        description: 'Maximum generated cases per O*NET category'
+        required: false
+        default: '5000'
+  schedule:
+    - cron: '43 4 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: onet-buddy-bootcamp
+  cancel-in-progress: false
+
+jobs:
+  curriculum:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Download O*NET reference data
+        run: |
+          mkdir -p .onet-data
+          curl --fail --location --retry 3 --retry-delay 2 \
+            "${ONET_DATABASE_URL:-https://www.onetcenter.org/dl_files/database/db_30_3_text.zip}" \
+            --output /tmp/onet.zip
+          unzip -q /tmp/onet.zip -d .onet-data
+          test -n "$(find .onet-data -type f | head -1)"
+        env:
+          ONET_DATABASE_URL: ${{ vars.ONET_DATABASE_URL }}
+      - name: Build O*NET curriculum and sandbox catalog
+        run: python tools/build_onet_buddy_bootcamp.py --root .onet-data --max-cases-per-category "${{ inputs.max_cases_per_category || '5000' }}"
+      - name: Validate curriculum contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('config/generated/onet-buddy-bootcamp.json'); d=json.loads(p.read_text())
+          assert d['counts']['generated'] > 0
+          assert d['mastery_rule']['requires_real_execution'] is True
+          assert len(d['mastery_rule']['metrics']) == 5
+          assert all(c['evidence_required'] and c['mastery'] is False for c in d['cases'])
+          print('O*NET curriculum contract verified:', d['counts'])
+          PY
+      - name: Upload bootcamp evidence
+        uses: actions/upload-artifact@v6
+        with:
+          name: onet-buddy-bootcamp-${{ github.run_id }}
+          path: config/generated/onet-buddy-bootcamp.json
+          if-no-files-found: error
