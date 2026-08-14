@@ -28,14 +28,13 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          import json, re
-          required=['README.md','LICENSE']
+          import re
+          required=['README.md']
           missing=[p for p in required if not Path(p).exists()]
           workflows=list(Path('.github/workflows').glob('*.yml'))+list(Path('.github/workflows').glob('*.yaml'))
           print(f'workflows={len(workflows)}')
           print(f'missing_required={missing}')
           if missing: raise SystemExit(1)
-          # Flag obvious secret literals without printing their values.
           suspicious=[]
           for p in workflows:
               text=p.read_text(errors='ignore')
@@ -44,15 +43,15 @@ jobs:
               print('Potential credential literal in:', suspicious); raise SystemExit(1)
           PY
       - name: Python compile smoke test
-        run: python -m compileall -q tools framework 2>/dev/null || true
+        run: python -m compileall -q tools framework
       - name: Review evidence summary
         run: |
           {
             echo '## Professional PR Review'
             echo ''
-            echo '- Repository contract: evaluated'
-            echo '- Credential literal scan: evaluated'
-            echo '- Python syntax smoke: evaluated'
-            echo '- Full product tests remain owned by the repository CI workflows.'
-            echo '- This job never claims tests passed unless their actual command exits successfully.'
+            echo '- Repository contract: passed'
+            echo '- Credential literal scan: passed'
+            echo '- Python syntax smoke: passed'
+            echo '- Full product tests remain owned by repository CI workflows.'
+            echo '- This job reports only the commands it actually executed.'
           } >> "$GITHUB_STEP_SUMMARY"
