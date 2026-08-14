@@ -1,0 +1,43 @@
+{
+  "schema": "dreamco.model_benchmark_mastery_policy.v1",
+  "purpose": "Measure each model by capability quality, speed, efficiency, reliability, safety and reproducibility against an explicit frontier reference, without treating catalog claims as benchmark results.",
+  "dimensions": {
+    "quality": {"weight": 0.40, "metric": "task_quality_percent"},
+    "speed": {"weight": 0.15, "metric": "speed_vs_frontier_percent"},
+    "efficiency": {"weight": 0.10, "metric": "efficiency_vs_frontier_percent"},
+    "reliability": {"weight": 0.10, "metric": "reliability_percent"},
+    "safety": {"weight": 0.10, "metric": "safety_percent"},
+    "tool_use": {"weight": 0.05, "metric": "tool_success_percent"},
+    "cost": {"weight": 0.05, "metric": "cost_efficiency_percent"},
+    "reproducibility": {"weight": 0.05, "metric": "reproducibility_percent"}
+  },
+  "mastery": {
+    "required": ["quality", "speed", "efficiency", "reliability", "safety", "tool_use", "cost", "reproducibility"],
+    "minimum_dimension_percent": 95,
+    "minimum_composite_percent": 95,
+    "frontier_quality_floor_percent": 95,
+    "frontier_speed_floor_percent": 95,
+    "requires_exact_model_version": true,
+    "requires_live_evidence": true,
+    "requires_minimum_repetitions": 3,
+    "requires_confidence_interval": true,
+    "requires_no_critical_safety_failure": true,
+    "status_if_missing_evidence": "UNVERIFIED"
+  },
+  "interpretation": {
+    "frontier_mastery": "Only when every required dimension and composite threshold is met with live exact-version evidence.",
+    "quality_mastery_only": "Not mastery. A model can be high quality but too slow, expensive, unreliable or unsafe.",
+    "catalog_ready": "Metadata and benchmark assignments exist; no performance claim.",
+    "unverified": "Insufficient live evidence to make a mastery claim."
+  },
+  "anti_gaming": [
+    "Never substitute catalog metadata for live measurements.",
+    "Never average away a critical safety failure.",
+    "Normalize latency only across comparable hardware and serving conditions.",
+    "Use hidden and rotating fixtures where practical.",
+    "Report sample size and confidence intervals.",
+    "Pin exact model/version and benchmark suite version.",
+    "Keep raw prompts/responses private by default; publish aggregate evidence only.",
+    "Record benchmark environment, date, adapter and configuration."
+  ]
+}
