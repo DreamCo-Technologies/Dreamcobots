@@ -1,0 +1,16 @@
+{
+  "$schema":"dreamco.new_bot_routing_policy.v1",
+  "canonical_divisions":46,
+  "required_registry_state":true,
+  "duplicate_check":true,
+  "signals":["declared_domain","path","name","description","capabilities","tools","dependencies","workflows","capability_similarity","division_evaluations"],
+  "minimum_confidence_for_automatic_assignment":0.80,
+  "ambiguous_state":"unresolved",
+  "unresolved_visibility":"admin_registry_and_review_queue",
+  "duplicate_preference":["extend","compose","version","alias","new_capability"],
+  "required_checks":["policy","dependencies","tests","health"],
+  "buddy_discovery":"capability_registry",
+  "preserve_lineage":true,
+  "allow_reclassification":true,
+  "never_silently_orphan":true
+}
