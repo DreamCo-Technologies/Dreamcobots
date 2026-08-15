@@ -1,0 +1,40 @@
+name: Superbot Migration Ledger
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'codex/superbot-consolidation']
+    paths:
+      - 'config/superbot-consolidation-v1.json'
+      - 'config/generated/superbot-repository-inventory.json'
+      - 'config/generated/legacy-bot-recovery-manifest.json'
+      - 'tools/compile_superbot_migration.py'
+      - 'tools/build_division_superbot_manifests.py'
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build legacy recovery evidence
+        run: python tools/recover_legacy_bots.py
+      - name: Build whole-repository inventory
+        run: python tools/build_superbot_repository_inventory.py
+      - name: Compile migration ledger
+        run: python tools/compile_superbot_migration.py
+      - name: Validate migration ledger
+        run: |
+          python -m json.tool config/generated/superbot-migration-ledger.json >/dev/null
+          test -s reports/SUPERBOT_MIGRATION_LEDGER.md
+      - name: Upload migration evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: superbot-migration-ledger
+          path: |
+            config/generated/superbot-migration-ledger.json
+            reports/SUPERBOT_MIGRATION_LEDGER.md
+            config/generated/legacy-bot-recovery-manifest.json
+            reports/LEGACY_BOT_RECOVERY.md
