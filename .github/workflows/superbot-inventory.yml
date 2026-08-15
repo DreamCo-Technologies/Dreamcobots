@@ -1,0 +1,34 @@
+name: Superbot Repository Inventory
+
+on:
+  push:
+    branches: [main, 'codex/superbot-consolidation']
+    paths:
+      - '**'
+      - '.github/workflows/superbot-inventory.yml'
+  pull_request:
+    paths:
+      - '**'
+      - '.github/workflows/superbot-inventory.yml'
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build complete repository inventory
+        run: python tools/build_superbot_repository_inventory.py
+      - name: Validate generated inventory exists
+        run: |
+          test -s config/generated/superbot-repository-inventory.json
+          test -s reports/SUPERBOT_REPOSITORY_INVENTORY.md
+      - name: Upload inventory
+        uses: actions/upload-artifact@v4
+        with:
+          name: superbot-repository-inventory
+          path: |
+            config/generated/superbot-repository-inventory.json
+            reports/SUPERBOT_REPOSITORY_INVENTORY.md
