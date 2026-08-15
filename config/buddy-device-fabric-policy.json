@@ -1,0 +1,11 @@
+{
+  "$schema":"dreamco.buddy_device_fabric.v1",
+  "discovery_transports":["bluetooth_classic","ble","wifi_lan","supported_cast_protocols","os_device_apis"],
+  "capability_classes":["audio_output","audio_input","display","video_output","camera","microphone","game_controller","keyboard","mouse","sensor","storage","other"],
+  "device_classes":["phone","tablet","computer","tv","display","speaker","headphones","microphone","camera","game_controller","game_system","keyboard","mouse","printer","sensor","wearable","smart_home","vehicle","other"],
+  "selection_factors":["capability_match","authorization","user_preference","connection_quality","battery_state","proximity_when_available","privacy_level","task_requirements"],
+  "security_rules":["discoverable_does_not_mean_authorized","pairing_requires_platform_authorization","privileged_media_access_requires_platform_permission","never_bypass_os_security"],
+  "verification":"verify_declared_and_observed_capabilities_after_connection",
+  "fallback":"select_another_authorized_compatible_device",
+  "architecture":"adapter_based"
+}
