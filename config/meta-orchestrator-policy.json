@@ -1,0 +1,9 @@
+{
+  "$schema":"dreamco.meta_orchestrator_policy.v1",
+  "routing":"capability_graph",
+  "planning_modes":["sequential","parallel","hybrid"],
+  "coordination_actions":["delegate","request_verification","request_evidence","merge_plans","resolve_dependencies","escalate_conflict"],
+  "optimization_dimensions":["outcome_quality","latency","cost","reliability","permissions","reversibility","evidence_quality"],
+  "disagreement_protocol":["identify_claim","compare_evidence","targeted_verification","apply_policy","escalate_if_material"],
+  "hard_rules":["orchestrator_cannot_increase_child_permissions","policy_checked_at_side_effect","majority_is_not_proof","successful_strategy_requires_validation"]
+}
