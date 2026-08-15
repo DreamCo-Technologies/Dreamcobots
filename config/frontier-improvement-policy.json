@@ -1,0 +1,16 @@
+{
+  "$schema":"dreamco.frontier_improvement_policy.v1",
+  "idea_intake":"canonical",
+  "standalone_bot_default":false,
+  "builder_cells_per_division":["scout","architect","research","implementation","test","security","performance","revenue","release"],
+  "allowed_autonomous_actions":["research","classify","benchmark","generate_tests","generate_proposal","create_branch","prepare_pull_request","collect_telemetry","update_evidence"],
+  "approval_required_actions":["production_external_write","spending","destructive_migration","policy_change","secret_access","high_impact_release"],
+  "frontier_candidate_gates":["baseline_improvement","reproducible_evaluation","acceptable_cost_latency","security_compliance","operational_reliability","meaningful_outcome","documented_limitations"],
+  "rules":[
+    "Never bypass CI or required approvals.",
+    "Never silently modify production policy.",
+    "Never delete legacy implementation before migration parity.",
+    "Prefer improving an existing capability over creating a new bot.",
+    "Every material change is version-controlled and attributable."
+  ]
+}
