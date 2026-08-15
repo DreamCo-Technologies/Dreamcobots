@@ -1,0 +1,13 @@
+{
+  "$schema":"dreamco.buddy_bot_onboarding.v1",
+  "registry_is_source_of_truth":true,
+  "required_lineage":true,
+  "duplicate_check_before_activation":true,
+  "division_assignment":"automatic_when_confident",
+  "ambiguous_assignment":"review_queue",
+  "lifecycle":["candidate","validated","active","degraded","quarantined","recovered","retired"],
+  "re_evaluate_on":["purpose_change","tool_change","dependency_change","permission_change","interface_change","capability_change"],
+  "buddy_discovery":"registry_only",
+  "trust_rule":"New capabilities require validation before becoming trusted production dependencies.",
+  "consolidation_preference":["extend","compose","alias","new_capability"]
+}
