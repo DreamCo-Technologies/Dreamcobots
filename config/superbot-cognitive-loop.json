@@ -1,0 +1,21 @@
+{
+  "$schema":"dreamco.superbot_cognitive_loop.v1",
+  "steps":[
+    {"id":"perceive","purpose":"collect task and environment signals"},
+    {"id":"understand","purpose":"construct task model and constraints"},
+    {"id":"retrieve","purpose":"retrieve relevant validated knowledge and memory"},
+    {"id":"plan","purpose":"generate candidate plans"},
+    {"id":"decompose","purpose":"split complex work into verifiable subtasks"},
+    {"id":"select_tools","purpose":"choose tools using capability contracts and policy"},
+    {"id":"act","purpose":"execute in the safest permitted mode"},
+    {"id":"observe","purpose":"capture results and operational evidence"},
+    {"id":"verify","purpose":"independently check important outputs"},
+    {"id":"reflect","purpose":"identify errors, uncertainty and improvement opportunities"},
+    {"id":"learn","purpose":"record validated strategy improvements"},
+    {"id":"replan","purpose":"continue, recover or escalate based on evidence"}
+  ],
+  "required_invariants":["policy_before_side_effect","verification_before_high_impact_completion","provenance_for_external_facts","idempotency_for_retriable_actions","audit_for_material_actions"],
+  "failure_modes":["insufficient_context","tool_failure","conflicting_evidence","policy_denial","verification_failure","timeout","external_provider_failure"],
+  "recovery":"retry_or_replan_or_escalate",
+  "learning_rule":"Only validated outcomes may update durable strategy."
+}
