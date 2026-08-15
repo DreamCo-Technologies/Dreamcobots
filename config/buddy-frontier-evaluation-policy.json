@@ -1,10 +1,17 @@
 {
-  "$schema":"dreamco.buddy_frontier_eval.v1",
-  "dimensions":["goal_understanding","planning","tool_selection","capability_routing","execution","verification","recovery","latency","cost","factual_reliability","provenance","permission_correctness","governance","cross_division_transfer","regression_resistance","human_decision_quality","task_outcome"],
-  "test_classes":["unit","integration","sandbox","adversarial","long_horizon","cross_division","device_routing","governance_boundary","shadow","canary"],
+  "$schema":"dreamco.buddy_frontier_eval.v2",
+  "dimensions":["goal_understanding","planning","tool_selection","capability_routing","execution","verification","recovery","latency","cost","factual_reliability","provenance","permission_correctness","governance","cross_division_transfer","regression_resistance","human_decision_quality","task_outcome","business_productivity","personal_productivity","long_horizon_reliability"],
+  "test_classes":["unit","integration","sandbox","adversarial","long_horizon","cross_division","device_routing","governance_boundary","shadow","canary","holdout","rotating"],
   "single_intelligence_score":false,
   "versioned_golden_tasks":true,
+  "hidden_holdout_tests":true,
+  "rotating_tests":true,
+  "do_not_train_directly_on_test_answers":true,
+  "measure_real_task_outcomes":true,
   "regression_gate":true,
   "evidence_linkage_required":true,
-  "promotion_requires_critical_regression_review":true
+  "promotion_requires_critical_regression_review":true,
+  "research_targets_generated_from_measured_gaps":true,
+  "gap_priority":["impact","frequency","dependency","regression_risk"],
+  "scorecard":["current_score","prior_score","delta","critical_gaps","new_capabilities","regressions","first_pass_mastery","final_mastery","productivity_gains","unresolved_gaps","recommended_next_actions"]
 }
