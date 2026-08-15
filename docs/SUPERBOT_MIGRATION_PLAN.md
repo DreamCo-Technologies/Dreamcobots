@@ -1,113 +1,120 @@
 # DreamCo Superbot Migration Plan
 
 ## Decision
-Stop expanding the number of standalone bots. The repository already has **1,051 catalog profiles across 45 divisions**, with 1,051 governed runtime instances and **zero separate standalone processes** according to the repository's fleet prospectus. The E2E certification reports 1,051/1,051 sandbox-certified profiles and 8,408/8,408 capability contracts passing, while live external flows remain intentionally unverified until providers are configured and approved.
+Stop expanding standalone bots. The repository already reports **1,051 catalog profiles across 45 divisions**. The architecture will now make **every division a Superbot** while preserving all specialist bots as capability modules.
 
-That means the next optimization is consolidation, not bot creation.
+This produces **45 canonical Division Superbots**, coordinated by **12 Cluster Superbots**. The 1,051+ existing bot identities are not discarded; they become capabilities, workflows, tools, plans, notes, tests, routes and compatibility aliases owned by one Division Superbot.
 
 ## Target architecture
 
-The target is approximately **12 governed Superbots**. Specialist bots become capability modules, skills, route aliases, test packets, and commercial profiles inside those Superbots.
+```text
+Dream Command / Cluster layer
+        │
+        ├── 12 Cluster Superbots
+        │
+        └── 45 Division Superbots
+                 │
+                 └── all legacy bots → capability modules
+```
 
-### 1. Command Superbot
-Routing, planning, scheduling, analytics, approvals, audit, fleet health, failure escalation.
+### 12 Cluster Superbots
 
-### 2. AI Infrastructure Superbot
-Models, memory, learning, evaluation, model selection, AI infrastructure.
+Command, AI Infrastructure, Engineering, Business, Money, Commerce, Real Assets, Finance & Risk, Sales & Growth, Content & Media, People & Services, Security & Governance.
 
-### 3. Engineering Superbot
-Coding, debugging, testing, software, APIs, architecture, automation, DevOps.
+### 45 Division Superbots
 
-### 4. Business Superbot
-Business launch, consulting, proposals, operations, B2B workflows.
+CommandCore, DreamAdmin, DreamAgents, DreamAIInfra, DreamAutomation, DreamCodeLab, DreamOps, DreamFlow, DreamBizLaunch, DreamEmpire, DreamGlobal, DreamAgriculture, DreamConstruction, DreamMaintenance, DreamRealEstate, DreamTransport, DreamProduction, DreamMarket, DreamRetail, DreamFinance, DreamEntFinance, DreamLoans, DreamPayments, DreamTrade, DreamSalesPro, DreamCustIntel, DreamInfluence, DreamSocial, DreamContent, DreamArts, GameTitan, DreamEducation, DreamHealth, DreamPersonalCare, DreamFood, DreamProServices, DreamLegal, DreamCyber, DreamProtection, DreamMilitary, DreamDecision, DreamData, DreamScience, DreamCrypto, DreamPlanetary.
 
-### 5. Money Superbot
-Money OS, deal discovery, price drops, coupon/receipt matching, settlements, grants, savings, lead monetization, revenue attribution.
+The authoritative mapping is `config/superbot-consolidation-v1.json`.
 
-### 6. Commerce Superbot
-Retail, marketplaces, ecommerce, sourcing, dropshipping, digital products.
+## What happens to existing bots
 
-### 7. Real Assets Superbot
-Real estate, construction, maintenance, transportation, equipment and property intelligence.
+Every old bot, agent, worker, scout, planner, manager, optimizer and duplicate profile is classified as one of:
 
-### 8. Finance & Risk Superbot
-Finance, lending, payments, insurance routing, trading, portfolio analytics and risk controls.
-
-### 9. Sales & Growth Superbot
-Sales, lead generation, CRM, customer intelligence, social growth, influence and referrals.
-
-### 10. Content & Media Superbot
-Content, arts, video, audio, creator workflows, social media and gaming.
-
-### 11. People & Services Superbot
-Education, jobs, health, personal care, food and professional services.
-
-### 12. Security & Governance Superbot
-Cybersecurity, legal workflows, protection, compliance, governance and regulated-domain safeguards.
-
-## Critical preservation rule
-Do **not** simply delete the 1,051 profiles. Preserve every useful capability and route as a module. Old slugs become compatibility aliases that resolve to a Superbot capability.
+- capability module
+- workflow module
+- tool adapter
+- connector adapter
+- compatibility alias
+- test/evidence module
+- supporting documentation/knowledge
+- unique capability awaiting migration
+- invalid/unused artifact requiring review
 
 Example:
 
-`algo-trading` -> `finance_risk.trading.algo`
-`home_buyer_bot` -> `real_assets.real_estate.home_buying`
-`dealBot` -> `money.deals.price_drop`
-`receiptBot` -> `money.receipts.reward_match`
-`couponBot` -> `money.deals.coupon_stack`
-`debugger` -> `engineering.debugging`
+`algo-trading` → `DreamTrade Superbot → trading → algorithmic-trading`
 
-The user still experiences the same capability; internally there is one governed worker instead of a separate worker for every specialist.
+`home_buyer_bot` → `DreamRealEstate Superbot → home-buying`
 
-## Migration sequence
+`dealBot` → `DreamFinance/Money capability → price-drop-deals`
 
-### Phase 0 — Freeze
-- No new standalone bot profiles unless they are explicitly approved as a new capability module.
-- New ideas go into a capability backlog, not `bots/` or `App_bots/` as another worker.
+`receiptBot` → `DreamFinance/Money capability → receipt-reward-match`
 
-### Phase 1 — Inventory
-For every profile/file, extract:
-- slug
-- division
-- capabilities
-- tools
-- connectors
-- dependencies
-- runtime route
-- permissions
-- tests
-- revenue model
-- UI route
-- workflow references
-- duplicate/similar capability signatures
+`couponBot` → `DreamRetail Superbot → coupon-stacking`
 
-### Phase 2 — Cluster
-Group profiles by capability similarity and assign one Superbot owner.
+`debugger` → `DreamCodeLab Superbot → debugging`
 
-### Phase 3 — Contract merge
-Merge capability declarations, dependencies, permissions and tests into the Superbot contract. Use `shared/bot-contract-v2.ts` as the canonical contract; it already supports capability evidence, dependencies, permissions, autonomy ceilings, memory policy, commercial metadata and readiness evaluation.
+The old identifiers remain routable until all consumers are migrated.
 
-### Phase 4 — Runtime merge
-Use the existing governed `FleetRuntimeRegistry` as the execution boundary. The current runtime already performs capability-aware routing and sandbox certification. Extend it so aliases resolve to Superbot + capability rather than spawning another worker.
+## Entire-repository accounting
 
-### Phase 5 — Compatibility
-Keep old URLs, bot slugs and UI identifiers working through aliases until every consumer is migrated.
+This is broader than a bot scan. The new `tools/build_superbot_repository_inventory.py` recursively inventories the repository and records every eligible file's:
 
-### Phase 6 — Delete duplicates
-Only after E2E parity is proven should duplicate runtime/config files be removed. Keep a migration manifest so rollback is possible.
+- path
+- SHA-256 provenance hash
+- division when discoverable
+- proposed Superbot owner
+- assignment method
+- bot identity signal
+- review requirement
+
+It covers application code, bot definitions, legacy sources, configs, workflows, tests, website files, docs, memory, assets, generated artifacts and supporting files, while excluding only dependency/build/cache directories.
+
+The inventory is produced as `config/generated/superbot-repository-inventory.json` and `reports/SUPERBOT_REPOSITORY_INVENTORY.md`.
+
+## Migration gates
+
+No mass deletion is performed simply because two filenames look similar.
+
+A legacy artifact may be removed only after:
+
+1. Complete repository inventory.
+2. Capability parity.
+3. Dependency parity.
+4. Route/API/UI parity.
+5. Permission parity.
+6. Memory-policy parity.
+7. Observability parity.
+8. Revenue-attribution parity.
+9. Sandbox certification.
+10. Full E2E/regression pass.
+11. Code Trust pass.
+12. Duplicate-runtime check.
+13. Rollback manifest recorded.
+
+## Runtime rule
+
+`shared/bot-contract-v2.ts` remains the canonical capability contract. `server/fleet-runtime.ts` remains the governed runtime boundary. Legacy bot slugs resolve to `division_superbot + capability` instead of creating separate worker processes.
+
+Cluster Superbots coordinate Division Superbots; they do not copy or duplicate their capabilities.
+
+## New-bot freeze
+
+A new request does **not** create another bot by default.
+
+It must first be added as a capability to the appropriate Division Superbot. A separate runtime is allowed only when the capability has a proven isolation, security, performance, connector, or lifecycle requirement that cannot be satisfied as a module.
 
 ## Definition of success
-The consolidation is successful when:
 
-- Fewer worker runtimes exist.
-- Every previous user-facing capability remains routable.
+- 45 Division Superbots are canonical.
+- 12 Cluster Superbots coordinate them.
+- All existing bot identities remain accounted for.
+- All useful plans, tools, capabilities, goals and notes have an owner.
+- Existing routes continue working through aliases.
 - Capability tests remain green.
-- Permissions do not broaden during consolidation.
-- Revenue workflows still attribute revenue correctly.
-- Website/API routes continue working.
-- Memory and observability remain intact.
-- No duplicate scheduler or external-write path exists.
-- New capability requests add modules to an existing Superbot instead of new bots.
-
-## Important finding
-The repository already contains the beginnings of this architecture: `shared/bot-contract-v2.ts` defines capability evidence and readiness, `server/fleet-runtime.ts` provides governed capability routing, and `tools/run_bot_fleet_e2e.ts` certifies the fleet. The consolidation should strengthen those existing systems rather than introduce another competing orchestrator.
+- No permissions broaden during consolidation.
+- No duplicate schedulers or external-write paths are introduced.
+- Revenue workflows preserve attribution and reconciliation.
+- The repository becomes smaller in runtime complexity even if historical provenance is retained.
+- Future growth happens through capability modules, not bot proliferation.
