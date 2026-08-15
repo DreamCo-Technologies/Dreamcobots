@@ -1,0 +1,29 @@
+name: Money OS CI
+
+on:
+  push:
+    paths:
+      - 'money_os/**'
+      - '.github/workflows/money-os-ci.yml'
+  pull_request:
+    paths:
+      - 'money_os/**'
+      - '.github/workflows/money-os-ci.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: money_os/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: money_os/backend/package.json
+      - run: npm install --ignore-scripts
+      - run: node --check src/server.js
+      - run: node --check src/runner.js
+      - run: npm test
