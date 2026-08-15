@@ -1,0 +1,21 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"dreamco.capability_registry.v1",
+  "type":"object",
+  "required":["capabilityId","ownerDivision","version","contract","permissions","evidence"],
+  "properties":{
+    "capabilityId":{"type":"string","pattern":"^[a-z0-9]+(\\.[a-z0-9_-]+){2,}$"},
+    "ownerDivision":{"type":"string","minLength":1},
+    "version":{"type":"string","pattern":"^\\d+\\.\\d+\\.\\d+$"},
+    "contract":{"type":"object","required":["inputs","outputs"]},
+    "permissions":{"type":"array","items":{"type":"string"}},
+    "costProfile":{"type":"object"},
+    "latencyProfile":{"type":"object"},
+    "reliability":{"type":"object"},
+    "benchmarkEvidence":{"type":"array","items":{"type":"object"}},
+    "securityClassification":{"type":"string"},
+    "compatibleConsumers":{"type":"array","items":{"type":"string"}},
+    "evidence":{"type":"array","items":{"type":"object"}}
+  },
+  "additionalProperties":false
+}
