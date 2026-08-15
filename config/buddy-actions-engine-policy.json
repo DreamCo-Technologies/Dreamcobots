@@ -1,0 +1,24 @@
+{
+  "$schema":"dreamco.buddy_actions_engine.v1",
+  "state_machine":["draft","planned","simulated","awaiting_approval","executing","verifying","succeeded","partially_succeeded","failed","recovering","cancelled","quarantined"],
+  "execution":{
+    "parallelize_independent_work":true,
+    "respect_dependencies":true,
+    "respect_permissions":true,
+    "respect_rate_limits":true,
+    "bounded_retries":true,
+    "idempotency":true,
+    "checkpoints":true,
+    "cancellation_propagation":true,
+    "circuit_breakers":true,
+    "compensating_actions":true
+  },
+  "verification":{"first_class_state":true,"tool_success_is_not_task_success":true},
+  "human_controls":["pause","resume","cancel","approve","reject","retry","reroute","inspect"],
+  "required_action_fields":["action_id","correlation_id","mission_id","actor","capability","permission_context","status","timestamps"],
+  "governance":"buddy-governance-policy",
+  "device_routing":"buddy-device-capability-contract",
+  "learning":"validated_strategies_only",
+  "duplicate_prevention":true,
+  "money_actions_require_authorization":true
+}
