@@ -1,0 +1,17 @@
+{
+  "$schema":"dreamco.superbot_evaluation_matrix.v1",
+  "dimensions":[
+    {"id":"reasoning","measures":["task_success","constraint_following","multi_step_accuracy"]},
+    {"id":"planning","measures":["plan_quality","dependency_awareness","replanning_success"]},
+    {"id":"memory","measures":["retrieval_precision","provenance_retention","useful_context_reuse"]},
+    {"id":"tool_use","measures":["tool_selection_accuracy","argument_accuracy","recovery_rate"]},
+    {"id":"verification","measures":["error_detection","uncertainty_calibration","independent_check_success"]},
+    {"id":"learning","measures":["post_feedback_improvement","strategy_retention","regression_rate"]},
+    {"id":"adaptation","measures":["changed_environment_success","replan_latency","failure_recovery"]},
+    {"id":"engineering","measures":["test_quality","code_quality","rollback_success","change_safety"]},
+    {"id":"operations","measures":["latency","availability","cost_per_success","incident_rate"]},
+    {"id":"outcomes","measures":["user_success","realized_savings","realized_revenue","retention"]}
+  ],
+  "evidence_rules":["baseline_required","reproducible_tests_required","production_claims_require_production_evidence","self_generated_claims_are_not_sufficient"],
+  "promotion":"weighted_evidence_plus_hard_gates"
+}
