@@ -1,0 +1,16 @@
+{
+  "$schema":"dreamco.buddy_gap_research_24h.v1",
+  "bot_id":"buddy_gap_closure_24h",
+  "display_name":"Buddy 24h Gap Research & Sandbox Engine",
+  "purpose":"Continuously discover learning sources for capability gaps, sandbox each learning job, evaluate measurable gains, and checkpoint results. Production changes require a separate governed promotion step.",
+  "enabled":true,
+  "target_rate":{"sources_per_week":1000},
+  "execution":{"continuous_schedule":true,"checkpoint_every_minutes":10,"max_parallel_learning_jobs":20,"sandbox_required_per_source":true,"resume_from_checkpoint":true},
+  "loop":["inventory_capabilities","detect_gaps","prioritize_gaps","discover_sources","rank_sources","create_learning_jobs","sandbox_each_job","evaluate_gain","cross_validate","update_capability_gap_state","retest_dependents","record_results","repeat"],
+  "stop_conditions":["gap_queue_empty","governance_hold","safety_hold","source_access_failure_threshold","budget_limit","operator_pause"],
+  "source_policy":{"web_content_is_untrusted":true,"prefer_first_party_and_official_sources":true,"provenance_required":true,"cross_source_validation_required":true,"respect_access_controls":true,"respect_robots_and_terms":true,"no_paywall_bypass":true,"no_captcha_bypass":true,"no_credential_collection":true},
+  "sandbox_policy":{"isolate_external_content":true,"no_production_credentials":true,"no_unapproved_side_effects":true,"baseline_before_learning":true,"post_learning_test":true,"adversarial_test":true,"regression_test":true},
+  "promotion":{"requires_measurable_gain":true,"requires_evidence_lineage":true,"requires_regression_pass":true,"production_change_requires_governance":true},
+  "telemetry":["sources_discovered","sources_evaluated","sandbox_pass_rate","capability_gains","gaps_opened","gaps_closed","regressions","failed_sources","queue_depth","worker_utilization","latency","cost_estimate","last_checkpoint"],
+  "ui":{"surface":"actions","card_id":"buddy-gap-closure-24h","controls":["start","pause","resume","run-now","view-gaps","view-learning-jobs","view-evidence","view-gains"]}
+}
