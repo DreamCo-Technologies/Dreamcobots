@@ -1,0 +1,63 @@
+{
+  "schema": "dreamco.mastery_comparison_framework.v1",
+  "purpose": "Compare every canonical capability against O*NET occupational requirements, professional-quality expectations, leading open-source implementations, public benchmarks, and DreamCo's own advancement targets.",
+  "comparison_lanes": [
+    {
+      "id": "onet",
+      "name": "O*NET capability lane",
+      "role": "Translate occupations into knowledge, skills, abilities, work activities, tasks, tools, and work context.",
+      "score": "0-100",
+      "note": "O*NET is an occupational reference and does not itself define AI mastery."
+    },
+    {
+      "id": "professional",
+      "name": "Professional-quality lane",
+      "role": "Measure whether outputs meet practical professional standards for the target occupation or industry.",
+      "score": "0-100"
+    },
+    {
+      "id": "open_source",
+      "name": "Open-source state-of-art lane",
+      "role": "Compare against reproducible, appropriately licensed open implementations and public evaluations.",
+      "score": "0-100"
+    },
+    {
+      "id": "frontier",
+      "name": "Frontier/reference lane",
+      "role": "Compare against current leading systems when reproducible testing is possible.",
+      "score": "0-100",
+      "note": "Reference comparisons must record model/version/date/settings and must not imply universal superiority from one test."
+    },
+    {
+      "id": "dreamco",
+      "name": "DreamCo advancement lane",
+      "role": "Measure DreamCo's own harder tests and research goals after matching existing capability.",
+      "score": "0-100"
+    }
+  ],
+  "mastery_levels": [
+    "discovered",
+    "understood",
+    "implemented",
+    "tested",
+    "professional",
+    "open_source_competitive",
+    "frontier_competitive_on_defined_tasks",
+    "advancing",
+    "validated_under_holdout"
+  ],
+  "path_generation": {
+    "inputs": ["occupation", "capabilities", "tasks", "benchmarks", "reference_implementations", "professional_rubric", "current_scores", "gap_scores"],
+    "outputs": ["learning_path", "sandbox_projects", "benchmark_suite", "toolchain_plan", "improvement_experiments", "promotion_criteria"],
+    "rule": "Never claim mastery from source exposure alone; require executable evidence and benchmark results."
+  },
+  "advancement_rule": "Once Buddy reaches parity on a defined capability, create a harder DreamCo benchmark and attempt measurable improvement in quality, reliability, controllability, efficiency, accessibility, or cost.",
+  "benchmark_integrity": [
+    "Keep external benchmark scores separate from DreamCo scores.",
+    "Use holdout and transfer tests to detect overfitting.",
+    "Track benchmark version and dataset version.",
+    "Preserve failures and regressions.",
+    "Do not copy protected implementation code merely to reproduce a benchmark.",
+    "Respect licenses, attribution, terms, and dataset restrictions."
+  ]
+}
