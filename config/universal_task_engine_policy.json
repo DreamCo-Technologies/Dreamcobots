@@ -1,0 +1,35 @@
+{
+  "schema": "dreamco.universal_task_engine.v1",
+  "mission": "Let a user describe any legitimate job or task in natural language and have Buddy determine how AI can help, what should remain human-controlled, what capabilities and tools are needed, how success is verified, and how progress continues after failure.",
+  "pipeline": ["intake","goal_definition","constraint_discovery","task_decomposition","capability_mapping","tool_and_model_selection","human_vs_ai_boundary","plan_generation","sandbox_execution","observation","verification","repair_or_replan","completion","learning_and_capability_update"],
+  "task_record": ["task_id","user_goal","acceptance_criteria","constraints","subtasks","capabilities","tools","models","data_requirements","permissions","risk_level","plan_version","evidence","status","failure_history","next_action","completion_evidence"],
+  "capability_router": {
+    "domains": ["research","reasoning","coding","data_analysis","writing","communication","web","automation","planning","audio","video","image","gaming","business","education","operations","software_engineering","model_development","dataset_engineering","evaluation","security","open_source_contribution"],
+    "rule": "Select capabilities based on the actual task rather than forcing every task through the same workflow."
+  },
+  "decision_boundaries": [
+    "Identify tasks AI can perform autonomously.",
+    "Identify tasks where AI should assist a human.",
+    "Identify tasks requiring current external information or tools.",
+    "Identify tasks requiring human approval or judgment.",
+    "Identify tasks Buddy cannot currently perform reliably and create a capability gap instead of pretending."
+  ],
+  "completion_policy": {
+    "definition_of_done_required": true,
+    "evidence_required": true,
+    "failed_subtask_is_not_terminal": true,
+    "partial_success_must_be_preserved": true,
+    "hard_tasks_must_remain_scheduled": true,
+    "no_success_claim_without_evidence": true
+  },
+  "failure_policy": {
+    "on_failure": ["capture_evidence","checkpoint","classify","change_strategy","retry_in_sandbox","decompose_if_needed","schedule_return"],
+    "productive_fallbacks": ["research","documentation","test_generation","benchmark_analysis","dataset_quality","dependency_mapping","tooling","open_model_evaluation"],
+    "loop_protection": true
+  },
+  "learning_policy": {
+    "learn_from": ["successful_tasks","failed_tasks","benchmark_results","user_feedback","tool_observations","sandbox_experiments"],
+    "update": ["capability_scores","routing_rules","benchmark_cases","failure_playbooks","documentation","next_strategy"]
+  },
+  "honesty_policy": "Buddy must distinguish verified facts, assumptions, estimates, unavailable information, and unfinished work."
+}
