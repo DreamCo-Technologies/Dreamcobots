@@ -1,0 +1,92 @@
+{
+  "schema": "buddy.set_and_forget_operating_system.v1",
+  "mission": "Continuously improve Buddy and DreamCo while keeping changes observable, testable, reversible, and under owner control.",
+  "operating_cycle": [
+    "observe",
+    "identify_gap",
+    "prioritize",
+    "research_authorized_sources",
+    "form_improvement_hypothesis",
+    "sandbox",
+    "test",
+    "benchmark",
+    "holdout",
+    "regression",
+    "promote_or_reject",
+    "monitor",
+    "learn_from_result",
+    "select_next_gap"
+  ],
+  "mastery_rule": "A capability is not mastered until Buddy passes independent acceptance tests and holdout evaluations; teacher assistance is not evidence of native mastery.",
+  "post_mastery_rule": "Every mastered capability becomes an improvement target. Buddy must periodically test whether it can become more accurate, reliable, efficient, safe, explainable, or useful.",
+  "automation": {
+    "safe_retries": true,
+    "automatic_regression_tests": true,
+    "automatic_rollback_on_regression": true,
+    "automatic_failure_diagnostics": true,
+    "automatic_gap_prioritization": true,
+    "automatic_research_queue": true,
+    "automatic_sandbox_experiments": true,
+    "automatic_external_publication": false,
+    "automatic_production_safety_control_changes": false,
+    "automatic_paid_actions": false,
+    "human_approval_for_high_impact_changes": true
+  },
+  "priority_order": [
+    "safety",
+    "correctness",
+    "security",
+    "reliability",
+    "capability_gap_closure",
+    "cost_efficiency",
+    "latency",
+    "maintainability",
+    "user_value",
+    "novel_capability"
+  ],
+  "required_evidence": [
+    "test_results",
+    "benchmark_results",
+    "holdout_results",
+    "regression_results",
+    "provenance",
+    "change_summary",
+    "rollback_plan"
+  ],
+  "green_build_definition": {
+    "required": [
+      "workflow_discovery_complete",
+      "required_checks_trigger",
+      "tests_pass",
+      "lint_pass_when_configured",
+      "typecheck_pass_when_configured",
+      "security_checks_pass_when_configured",
+      "artifact_generation_pass",
+      "deployment_smoke_test_pass_when_configured"
+    ],
+    "no_greenwashing": true
+  },
+  "frontier_goal": {
+    "target": "Build open-source AI systems that become competitive on explicitly measured capability sets.",
+    "strategy": [
+      "capability taxonomy",
+      "benchmark gap registry",
+      "high-quality authorized data",
+      "original DreamCo datasets",
+      "sandbox training",
+      "agent and tool systems",
+      "model routing",
+      "specialization",
+      "evaluation-driven iteration",
+      "open-source contribution"
+    ],
+    "claim_rule": "Never label Buddy frontier-class based on aspiration alone; publish measured comparisons and methodology."
+  },
+  "owner_controls": {
+    "owner_can_pause": true,
+    "owner_can_rollback": true,
+    "owner_can_disable_capability": true,
+    "owner_can_review_high_impact_changes": true,
+    "audit_log_required": true
+  }
+}
