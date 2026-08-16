@@ -1,0 +1,39 @@
+{
+  "schema": "dreamco.actions_control_tower.v2",
+  "purpose": "Define the Actions page as the evidence-backed control tower for workflows, capabilities, benchmarks, datasets, experiments, recovery, security, and deployment.",
+  "principles": [
+    "Never fabricate green status or benchmark evidence.",
+    "Separate static repository evidence from live GitHub execution evidence.",
+    "Protect stable state from experiment and benchmark failure.",
+    "Every important score must be traceable to evidence.",
+    "Every failure should become a diagnosable gap or recovery event.",
+    "Prefer bounded, reversible operations over opaque automation."
+  ],
+  "control_surfaces": [
+    "system_health",
+    "workflow_graph",
+    "failure_blast_radius",
+    "root_cause",
+    "self_healing_queue",
+    "known_good_versions",
+    "benchmark_center",
+    "capability_matrix",
+    "reality_grounding",
+    "dataset_factory",
+    "sandbox",
+    "experiment_promotion",
+    "resource_budget",
+    "regression_history",
+    "learning_journal",
+    "security_posture",
+    "developer_contributions",
+    "autonomous_operations",
+    "ai_progress_index"
+  ],
+  "evidence_levels": ["static", "live", "artifact", "benchmark", "validated", "production"],
+  "health_model": {
+    "dimensions": ["ci", "tests", "deployment", "security", "benchmarks", "recovery", "data_freshness", "observability"],
+    "score_rule": "Use only available evidence; unknown dimensions remain unverified rather than being treated as healthy."
+  },
+  "promotion_rule": "No experiment, benchmark result, or automated repair may replace stable state without passing its defined regression and reality gates."
+}
