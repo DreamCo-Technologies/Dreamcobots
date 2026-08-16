@@ -1,0 +1,16 @@
+{
+  "schema": "dreamco.benchmark_result.v1",
+  "score_scale": {"min": 0, "max": 100},
+  "required": ["benchmark_id", "capability_id", "score_percent", "timestamp", "dataset_version", "evaluator_version", "status"],
+  "optional": ["baseline_percent", "target_percent", "gap_points", "confidence_percent", "human_score_percent", "automated_score_percent", "holdout_percent", "transfer_percent", "regression_percent", "cost", "latency_ms", "failure_categories", "model_version", "toolchain_version", "evidence_artifact"],
+  "statuses": ["pass", "fail", "partial", "blocked", "not_run"],
+  "rules": [
+    "Percentages must be numeric values from 0 through 100.",
+    "Gap points equal target_percent minus score_percent when both exist.",
+    "Do not convert missing evidence into zero; use not_run or partial.",
+    "Composite scores must be reproducible from recorded dimensions.",
+    "Benchmark history must be append-only or versioned.",
+    "External benchmark results and DreamCo benchmark results must remain distinguishable.",
+    "A benchmark score is evidence of the tested task distribution, not universal mastery."
+  ]
+}
