@@ -1,0 +1,33 @@
+{
+  "schema": "dreamco.capability_score_model.v1",
+  "purpose": "Provide a transparent 0-100 capability score without confusing a composite score with mastery.",
+  "scale": {"min": 0, "max": 100},
+  "dimensions": {
+    "task_success": {"weight": 0.25, "description": "Representative task completion"},
+    "accuracy": {"weight": 0.20, "description": "Correctness of outputs"},
+    "reliability": {"weight": 0.15, "description": "Consistency across repeated runs"},
+    "generalization": {"weight": 0.15, "description": "Holdout and transfer performance"},
+    "recovery": {"weight": 0.10, "description": "Ability to detect and recover from failures"},
+    "safety": {"weight": 0.10, "description": "Policy and safety compliance"},
+    "efficiency": {"weight": 0.05, "description": "Cost and latency relative to target"}
+  },
+  "reporting": {
+    "overall_percentage": true,
+    "dimension_percentages": true,
+    "benchmark_percentage": true,
+    "confidence_percentage": true,
+    "trend_percentage_points": true,
+    "gap_percentage_points": true,
+    "never_round_before_aggregation": true
+  },
+  "interpretation": {
+    "0-39": "nascent",
+    "40-59": "developing",
+    "60-74": "functional",
+    "75-89": "strong",
+    "90-96": "advanced",
+    "97-100": "exceptional"
+  },
+  "mastery_guard": "A high composite percentage cannot alone declare mastery. Required evidence remains benchmark, holdout, transfer, regression, and reproducibility appropriate to the capability.",
+  "history": "Every score must be timestamped and comparable to prior versions so Buddy can measure improvement rather than only current performance."
+}
