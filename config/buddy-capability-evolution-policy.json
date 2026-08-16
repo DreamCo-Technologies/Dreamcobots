@@ -1,14 +1,29 @@
 {
-  "schema": "buddy.capability_evolution_policy.v1",
-  "purpose": "Make every externally assisted capability a candidate for safe, measurable Buddy capability acquisition.",
-  "principle": "If another model or approved tool is needed for a task, Buddy should learn the reusable workflow when authorized, then attempt the task independently and prove improvement with benchmarks.",
+  "schema": "buddy.capability_evolution_policy.v2",
+  "purpose": "Make every externally assisted capability a candidate for safe, measurable Buddy capability acquisition and original DreamCo capability packaging.",
+  "principle": "External sources are research inputs. Buddy creates independently expressed, provenance-tracked capability artifacts and proves them with benchmarks before promotion.",
   "levels": {
     "L0_unknown": "No demonstrated capability.",
-    "L1_assisted": "Another approved model or tool can complete the task for Buddy.",
+    "L1_assisted": "An approved model or tool can complete the task for Buddy.",
     "L2_learned": "Buddy has a reusable strategy and passes basic tests.",
-    "L3_independent": "Buddy completes the task reliably without the teacher for the tested conditions.",
-    "L4_mastered": "Buddy passes the registered benchmark consistently and survives regression testing."
+    "L3_independent": "Buddy completes the task reliably without the teacher for tested conditions.",
+    "L4_mastered": "Buddy passes registered benchmarks consistently and survives regression testing.",
+    "L5_advanced": "Buddy has mastered the capability and has demonstrated a validated improvement beyond its baseline."
   },
+  "source_learning_loop": [
+    "discover_authorized_source",
+    "record_source_provenance",
+    "check_license_or_terms_status",
+    "study_concepts_and_workflows",
+    "create_original_dreamco_artifact",
+    "create_independent_tasks_and_evaluations",
+    "run_sandbox",
+    "run_holdout",
+    "run_transfer_test",
+    "run_regression",
+    "record_rights_review",
+    "publish_only_when_gates_pass"
+  ],
   "evolution_loop": [
     "receive_task",
     "check_native_capability",
@@ -24,7 +39,8 @@
     "retest_dependents",
     "promote_only_if_acceptance_criteria_pass",
     "retain_regression_test",
-    "monitor_for_regression"
+    "monitor_for_regression",
+    "find_next_improvement_after_mastery"
   ],
   "learning_targets": [
     "task_decomposition",
@@ -42,14 +58,18 @@
     "successful_patterns",
     "failure_patterns",
     "when_to_escalate",
-    "when_not_to_escalate"
+    "when_not_to_escalate",
+    "source_provenance",
+    "capability_packaging",
+    "transfer_learning"
   ],
   "truth_rules": {
     "frontier_assistance_does_not_equal_native_mastery": true,
     "successful_teacher_output_does_not_equal_buddy_pass": true,
     "benchmark_pass_required_for_mastery": true,
     "benchmark_plans_do_not_close_gaps": true,
-    "unverified_capabilities_remain_unverified": true
+    "unverified_capabilities_remain_unverified": true,
+    "rewriting_third_party_expression_does_not_automatically_transfer_rights": true
   },
   "safety_gates": {
     "sandbox_first": true,
@@ -61,7 +81,18 @@
     "no_automatic_paid_actions": true,
     "no_automatic_external_writes": true,
     "no_identity_voice_or_image_cloning_without_permission": true,
+    "respect_source_access_controls": true,
+    "respect_source_license_and_terms": true,
+    "no_bulk_third_party_content_redistribution": true,
     "rollback_required_for_promotions": true
+  },
+  "commercial_package_gates": {
+    "source_permissions_recorded": true,
+    "provenance_complete": true,
+    "dreamco_original_artifact_present": true,
+    "independent_evaluation_present": true,
+    "rights_review_recorded": true,
+    "blocked_by_default_until_verified": true
   },
   "metrics": [
     "capability_gap",
@@ -73,7 +104,11 @@
     "teacher_dependency_rate",
     "routing_efficiency",
     "cost_per_successful_task",
-    "fallback_rate"
+    "fallback_rate",
+    "source_coverage",
+    "provenance_completeness",
+    "package_quality_score",
+    "post_mastery_improvement_rate"
   ],
   "promotion": {
     "required": ["targeted_tests_pass", "benchmark_acceptance_pass", "dependent_suites_pass", "rollback_defined", "evidence_recorded"],
