@@ -1,0 +1,77 @@
+{
+  "schema": "dreamco.capability_benchmark_contract.v1",
+  "purpose": "Make benchmarks first-class evidence for every important capability.",
+  "benchmark_types": [
+    "unit",
+    "integration",
+    "task",
+    "workflow",
+    "benchmark",
+    "holdout",
+    "transfer",
+    "regression",
+    "safety",
+    "reliability",
+    "cost",
+    "latency"
+  ],
+  "capability_record_requirements": {
+    "required": [
+      "capability_id",
+      "benchmark_ids",
+      "baseline",
+      "current_result",
+      "last_evaluated",
+      "evidence_refs",
+      "known_limitations"
+    ],
+    "mastery": [
+      "benchmark_pass",
+      "holdout_pass",
+      "transfer_pass",
+      "regression_pass"
+    ]
+  },
+  "benchmark_result": {
+    "benchmark_id": "stable_id",
+    "capability_id": "stable_id",
+    "version": "capability_version",
+    "dataset_version": "dataset_version",
+    "model_or_agent_version": "version",
+    "timestamp": "ISO-8601",
+    "score": 0,
+    "metric": "metric_name",
+    "threshold": 0,
+    "pass": false,
+    "confidence": null,
+    "cost": null,
+    "latency_ms": null,
+    "failure_count": null,
+    "evidence_ref": "artifact_or_log_reference",
+    "notes": ""
+  },
+  "gap_policy": {
+    "below_threshold_creates_gap": true,
+    "gap_becomes_improvement_task": true,
+    "improvement_must_beat_baseline": true,
+    "no_regression_on_unrelated_capabilities": true,
+    "holdout_required_before_mastery": true,
+    "transfer_required_for_general_capabilities": true
+  },
+  "benchmark_loop": [
+    "select_capability",
+    "load_baseline",
+    "run_standard_benchmark",
+    "identify_gap",
+    "create_improvement_task",
+    "sandbox_candidate",
+    "run_benchmark",
+    "run_holdout",
+    "run_transfer",
+    "run_regression_suite",
+    "compare_to_baseline",
+    "promote_if_better",
+    "record_evidence",
+    "schedule_revalidation"
+  ]
+}
