@@ -1,0 +1,19 @@
+{
+  "schema":"dreamco.buddy_capability_lifecycle.v1",
+  "mission":"Continuously turn tasks, learning, failures, benchmarks, and improvements into measurable capabilities that can be reused by Buddy and trained by users.",
+  "lifecycle":["discover","define","learn","prototype","sandbox","benchmark","harden","publish","monitor","improve","retire_or_replace"],
+  "capability_record":["capability_id","name","description","inputs","outputs","prerequisites","tools","models","datasets","benchmarks","professional_standard","current_score","target_score","evidence","known_failures","recovery_playbook","owner","version","last_verified"],
+  "quality_gates":["clear_acceptance_criteria","reproducible_test","benchmark_evidence","reality_check","security_check","regression_check","documentation"],
+  "continuous_improvement":{
+    "enabled":true,
+    "rule":"After a capability reaches its target, create a harder benchmark or more efficient implementation rather than declaring the learning program finished.",
+    "priority":"highest-impact measurable improvement",
+    "preserve_history":true
+  },
+  "user_training":{
+    "mode":"capability_bootcamp",
+    "flow":["choose_capability","diagnose_prerequisites","learn","practice","simulate","benchmark","gap_plan","retest","portfolio"],
+    "mastery_claim":"Only claim mastery when the configured evidence gates pass."
+  },
+  "failure_behavior":"Failures become durable evidence and new work items; they never erase the capability or its previous successful evidence."
+}
