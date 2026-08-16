@@ -1,0 +1,15 @@
+{
+  "schema":"dreamco.buddy.universal_benchmark_scanner.v1",
+  "mission":"Continuously discover, normalize, execute, score, recover, and regress-test benchmarks across Buddy's learning and professional capability graph.",
+  "sources":["github","onet","codecademy","dreamco_internal","authorized_external_sources"],
+  "pipeline":["discover","classify","deduplicate","map_to_capability","map_to_skill","map_to_occupation_task","generate_original_variant","select_executor","sandbox","execute","collect_evidence","score","confidence_check","failure_recovery","regression","promote_or_retrain","publish_report"],
+  "scanner_efficiency":{"incremental":true,"content_hashing":true,"cache":true,"priority_queue":true,"parallel_safe_jobs":true,"resume_after_failure":true,"duplicate_detection":true},
+  "score_contract":{"range":"0-100","dimensions":["knowledge","execution","quality","verification","recovery","transfer","professional_readiness"],"unknown_when_missing_evidence":true},
+  "mastery_gates":["source_task_pass","original_variant_pass","cross_source_transfer_pass","failure_recovery_pass","regression_pass","professional_rubric_pass"],
+  "failure_policy":"A failed benchmark is evidence and becomes a training/recovery candidate; it does not corrupt the benchmark registry or lower unrelated capabilities.",
+  "recovery_policy":["classify_failure","preserve_context","choose_next_strategy","retry_in_sandbox","verify_fix","record_learning","return_to_hard_problem"],
+  "repository_policy":"Analyze and modify only DreamCo-owned or explicitly authorized repositories. Read-only is the default; code changes require configured approval gates.",
+  "source_integrity":"Create original benchmark tasks, rubrics, datasets, and observations from lawful source material rather than copying protected course or site content.",
+  "outputs":["capability_scorecard","mastery_gap_queue","benchmark_history","regression_suite","repository_scan_report","training_plan","evidence_bundle","update_comment"],
+  "north_star":"The scanner exists to make Buddy measurably better at real tasks, not merely better at passing any one source's exercises."
+}
