@@ -1,0 +1,30 @@
+{
+  "schema": "dreamco.resilience_policy.v1",
+  "mission": "A failed request, benchmark, tool, experiment, or dependency must produce evidence and recovery behavior, never corrupt Buddy's core runtime or erase learning.",
+  "failure_principles": [
+    "Fail closed for unsafe or unverified actions.",
+    "Fail soft for noncritical requests and return a useful degraded response when possible.",
+    "Isolate benchmark failures from production capability state.",
+    "Never promote an unvalidated experiment directly into the stable path.",
+    "Never delete prior known-good artifacts because a new experiment failed.",
+    "Record failures as learning evidence rather than treating them as system corruption.",
+    "Use timeouts, retries with backoff, circuit breakers, idempotency, and bounded resource usage.",
+    "Keep stable and experimental versions separately addressable.",
+    "Require regression checks before promotion.",
+    "Make recovery observable through logs, metrics, artifacts, and alerts."
+  ],
+  "failure_classes": ["request_failure", "tool_failure", "benchmark_failure", "timeout", "dependency_failure", "resource_exhaustion", "data_validation_failure", "model_failure", "regression", "deployment_failure"],
+  "recovery_flow": ["classify_failure", "capture_evidence", "contain", "retry_if_safe", "fallback", "restore_last_known_good", "mark_experiment_failed", "queue_repair", "rerun_validation", "promote_only_after_gates"],
+  "state_separation": {
+    "stable": "Production-approved capability and configuration.",
+    "candidate": "Validated enough for controlled evaluation but not production default.",
+    "experiment": "Sandbox-only work that may fail without affecting stable behavior.",
+    "failed": "Retained evidence and diagnostics; never treated as a replacement for stable state."
+  },
+  "benchmark_rule": "A failing benchmark is a measurement result, not permission to break the system. Benchmark failures must be quarantined, recorded, and converted into gap-closure work.",
+  "request_rule": "A failed user request should return a clear error or safe fallback and preserve session/state where possible.",
+  "promotion_gate": ["tests_pass", "benchmark_policy_pass", "reality_policy_pass", "no_critical_regressions", "artifact_recorded"],
+  "backup_expectations": ["versioned_config", "immutable_benchmark_artifacts", "known_good_release_marker", "migration_rollback_plan"],
+  "observability": ["failure_rate", "retry_rate", "fallback_rate", "recovery_time", "regression_count", "benchmark_failure_count", "promotion_count", "rollback_count"],
+  "non_guarantee": "No software system can honestly guarantee zero failures. The design goal is graceful degradation, isolation, automatic recovery where safe, and preservation of known-good state."
+}
