@@ -1,0 +1,24 @@
+{
+  "schema":"dreamco.buddy_universal_task_evaluation.v1",
+  "purpose":"Measure whether Buddy can recognize how AI can help with arbitrary legitimate work and deliver a verified useful outcome.",
+  "evaluation_layers":["goal_understanding","task_decomposition","capability_selection","tool_selection","model_selection","human_boundary","plan_quality","execution","recovery","verification","communication","learning_update"],
+  "score_scale":{"min":0,"max":100},
+  "score_dimensions":{
+    "goal_understanding":0.10,
+    "decomposition":0.10,
+    "capability_routing":0.12,
+    "tool_and_model_selection":0.10,
+    "safety_and_human_boundary":0.10,
+    "plan_quality":0.08,
+    "execution_quality":0.15,
+    "failure_recovery":0.10,
+    "verification":0.10,
+    "communication":0.05
+  },
+  "test_sets":["synthetic_tasks","realistic_workflows","professional_tasks","multi_step_tasks","ambiguous_tasks","tool_use_tasks","failure_injection_tasks","long_running_tasks","cross_domain_tasks"],
+  "benchmark_requirements":["fixed_task_version","documented_inputs","acceptance_criteria","baseline","result_evidence","failure_cases","reproduction_metadata"],
+  "failure_rule":"A failed subtask lowers the relevant score and creates a recovery item; it does not terminate evaluation of the overall task unless a safety or authorization gate requires stopping.",
+  "restart_rule":"On a new session, restore unfinished tasks, checkpoints, failure history, benchmark history, and next strategies before selecting new work.",
+  "mastery_rule":"Do not claim universal task mastery. Publish domain-specific scores, confidence, limitations, and evidence.",
+  "continuous_advancement":"After a task class reaches its target score, generate harder variants, adversarial cases, efficiency targets, and professional-quality comparisons."
+}
