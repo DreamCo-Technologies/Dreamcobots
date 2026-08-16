@@ -1,0 +1,33 @@
+{
+  "schema": "dreamco.build_maturity_scorecard.v1",
+  "purpose": "Separate demonstrated capability from plans, infrastructure, and aspirations so DreamCo progress remains honest and measurable.",
+  "score_scale": {"min": 0, "max": 100},
+  "dimensions": [
+    {"id":"architecture","weight":0.08,"evidence":"working components, tests, integration coverage"},
+    {"id":"capability_coverage","weight":0.10,"evidence":"capability registry mapped to executable tests"},
+    {"id":"onet_mapping","weight":0.08,"evidence":"occupational requirements translated into validated capability tasks"},
+    {"id":"benchmarking","weight":0.10,"evidence":"reproducible benchmark runs and historical results"},
+    {"id":"coding","weight":0.10,"evidence":"real repository tasks and coding benchmark results"},
+    {"id":"agent_tool_use","weight":0.08,"evidence":"successful multi-step tool tasks with recovery"},
+    {"id":"reality_grounding","weight":0.10,"evidence":"factuality, abstention, provenance, freshness and conflict tests"},
+    {"id":"professional_quality","weight":0.10,"evidence":"industry-specific professional rubrics and holdouts"},
+    {"id":"open_source_competitiveness","weight":0.08,"evidence":"comparable tests against reproducible open systems"},
+    {"id":"reliability","weight":0.08,"evidence":"failure isolation, recovery, regression and rollback tests"},
+    {"id":"autonomous_improvement","weight":0.05,"evidence":"closed-loop experiments that produce validated improvements"},
+    {"id":"production_readiness","weight":0.05,"evidence":"deployment, observability, security and operational tests"}
+  ],
+  "evidence_levels": ["planned", "specified", "implemented", "tested", "benchmarked", "validated", "production_proven"],
+  "scoring_rules": [
+    "Plans and documentation do not count as demonstrated capability by themselves.",
+    "Implemented but untested capability cannot exceed the tested threshold.",
+    "A benchmark result must include versioned inputs, evaluator metadata and evidence.",
+    "Failed tests lower the relevant dimension rather than being hidden.",
+    "Missing evidence is not scored as zero; it is marked unverified or not_run.",
+    "A capability score describes the tested task distribution and is not a claim of universal intelligence.",
+    "Overall score must be reproducible from dimension scores and weights."
+  ],
+  "promotion": {
+    "next_level_requires": ["new evidence", "passing regression suite", "benchmark evidence", "no critical reality-grounding regression"],
+    "harder_challenge_after_parity": true
+  }
+}
