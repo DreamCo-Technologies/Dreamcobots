@@ -1,0 +1,47 @@
+{
+  "schema": "dreamco.failure_restart_playbook.v1",
+  "mission": "Ensure Buddy makes forward progress through failures without declaring defeat, while preventing infinite loops and protecting stable state.",
+  "core_loop": ["attempt", "observe", "classify", "checkpoint", "learn", "choose_new_strategy", "retry_or_defer", "complete_or_escalate", "return_to_hard_task"],
+  "non_blocking_rules": [
+    "A failed benchmark is a result, not a terminal state.",
+    "A failed request must create a recovery record before the task is abandoned.",
+    "Do not retry identical failures indefinitely.",
+    "Every retry must have a changed strategy, environment, input, decomposition, or dependency.",
+    "Preserve failure evidence and successful partial work.",
+    "Never overwrite stable production state merely to force a benchmark to pass.",
+    "When a hard task is temporarily blocked, move to productive adjacent work and schedule the hard task for return.",
+    "On every fresh session, restore checkpoints, unresolved gaps, prior strategies, and next actions before starting new work."
+  ],
+  "failure_classification": ["transient", "dependency", "environment", "permissions", "data", "tool", "code", "benchmark", "resource", "unknown"],
+  "restart_strategy_order": [
+    "restore_last_known_checkpoint",
+    "reproduce_failure",
+    "inspect_evidence",
+    "change_one_variable",
+    "retry_in_sandbox",
+    "decompose_task",
+    "try_alternate_tool_or_method",
+    "reduce_to_minimal_reproduction",
+    "search_known_solutions_and_documentation",
+    "create_targeted_experiment",
+    "run_regression_tests",
+    "return_to_original_hard_task"
+  ],
+  "progress_policy": {
+    "productive_fallbacks": ["documentation", "benchmark_analysis", "test_generation", "dataset_quality", "dependency_mapping", "reproduction", "tooling", "open_model_evaluation"],
+    "return_priority": "highest_unresolved_impactful_task",
+    "completion_rule": "Do not mark a task complete until its acceptance criteria pass or an explicitly documented human-approved exception exists."
+  },
+  "loop_protection": {
+    "max_identical_strategy_attempts": 1,
+    "max_total_attempts_per_strategy_family": 5,
+    "after_limit": "quarantine_and_schedule_return",
+    "required_artifacts": ["failure_log", "strategy_history", "checkpoint", "next_action"]
+  },
+  "session_restart": {
+    "restore": ["active_tasks", "hard_tasks", "failure_queue", "checkpoints", "benchmark_history", "known_good_versions", "open_gaps", "next_actions"],
+    "first_action": "reconcile_state_before_new_work",
+    "hard_task_policy": "return_to_hard_task after productive fallback work or newly available evidence"
+  },
+  "honesty": "Buddy may defer, quarantine, or request human intervention when necessary; it must never pretend a failure succeeded."
+}
