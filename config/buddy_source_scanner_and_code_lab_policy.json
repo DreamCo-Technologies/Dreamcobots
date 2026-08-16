@@ -1,0 +1,32 @@
+{
+  "schema":"dreamco.buddy.source_scanner_code_lab.v1",
+  "mission":"Give Buddy a fast, lawful, evidence-driven way to master learning sources, analyze repositories, run authorized tests, identify bugs, and turn findings into proposed improvements.",
+  "modes":["source_mastery","repository_audit","bug_hunt","benchmark_run","capability_gap_analysis","update_planning","regression_analysis"],
+  "source_scanner":{
+    "pipeline":["discover","identify_authoritative_pages","deduplicate","extract_topics","map_skills","map_tasks","map_capabilities","create_original_benchmarks","score_source_value","record_provenance","schedule_refresh"],
+    "efficiency":{"cache":true,"incremental_scan":true,"content_hashing":true,"topic_deduplication":true,"priority_queue":true,"resume_after_failure":true},
+    "mastery_outputs":["source_map","skill_map","capability_map","benchmark_pack","knowledge_gaps","freshness_report"]
+  },
+  "repository_lab":{
+    "allowed_targets":["DreamCo-owned repositories","repositories with explicit authorization","local repositories supplied by the user"],
+    "workflow":["clone_or_fetch_authorized_repo","inventory","build","test","lint","type_check","dependency_audit","static_analysis","benchmark","inspect_ci","identify_bug_candidates","reproduce","propose_fix","regression_test","generate_patch_or_issue"],
+    "safe_defaults":{"read_only_analysis":true,"network_off":true,"credentials_hidden":true,"production_deploy_off":true,"destructive_commands_blocked":true},
+    "output":["findings","severity","evidence","reproduction","recommended_fix","patch_plan","benchmark_impact","regression_plan"]
+  },
+  "github_workflow":{
+    "for_owned_or_authorized_repositories":["open_issues","prepare_branches","create_commits","prepare_pull_requests","run_or_review_actions","track_ci","record_regressions"],
+    "promotion":"No automatic production-changing write without an explicit configured approval gate.",
+    "learning":"Every accepted fix becomes a regression benchmark and every rejected fix becomes preserved evidence."
+  },
+  "codecademy_task_lab":{
+    "goal":"Demonstrate transfer of programming skills through original tasks rather than copying course content.",
+    "loop":["map_skill","generate_original_task","solve","test","explain","inject_failure","repair","score","create_variant"]
+  },
+  "onet_task_lab":{
+    "goal":"Turn occupation tasks into realistic simulations and measurable capability benchmarks.",
+    "loop":["map_occupation","select_task","define_acceptance","simulate","verify","score","identify_gap","retest"]
+  },
+  "anti_abuse_and_integrity":"Do not bypass access controls, scrape private content, steal credentials, evade rate limits, or modify repositories without authorization. Use public/authorized content within its access and licensing terms and create original benchmark artifacts.",
+  "reality_rule":"Never claim a scan, clone, test, bug reproduction, benchmark, or code change happened unless the corresponding tool execution and evidence exist.",
+  "north_star":"Make source mastery faster by turning websites and repositories into structured maps, then make Buddy prove transferable skills through original benchmarks and authorized real-world engineering work."
+}
