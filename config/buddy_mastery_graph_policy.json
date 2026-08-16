@@ -1,0 +1,14 @@
+{
+  "schema": "dreamco.buddy_mastery_graph.v1",
+  "mission": "Connect human behavior, college subjects, professional skills, capabilities, benchmarks, and open-model advancement into one measurable lifelong learning graph.",
+  "graph_nodes": ["subject","concept","skill","capability","task","benchmark","profession","project","failure_mode","tool","model","dataset","standard"],
+  "edges": ["requires","teaches","tests","improves","depends_on","used_by","benchmarked_by","fails_on","repaired_by","applies_to"],
+  "mastery_levels": ["unknown","introduced","practicing","competent","professional","advanced","expert","verified_expert"],
+  "progress_requirements": ["knowledge_evidence","practice_evidence","task_evidence","benchmark_evidence","regression_check","current_source_check_when_needed"],
+  "professional_path": ["foundations","college_level","applied_projects","simulation","professional_standard","benchmark","portfolio","continuous_retraining"],
+  "behavior_path": ["communication","emotion_cues","personality_adaptation","social_context","conflict","negotiation","leadership","human_factors"],
+  "open_model_path": ["evaluate","identify_gap","experiment","reproduce","improve","publish","contribute_upstream","measure_adoption"],
+  "routing_rule": "When a user asks Buddy to perform a task, resolve the task into the mastery graph, identify missing prerequisites, select the smallest useful learning path, execute in a sandbox where appropriate, benchmark the result, and update the graph with evidence.",
+  "never_fake_mastery": true,
+  "restart_rule": "Unfinished hard tasks remain linked to their evidence, failure history, checkpoint, and next strategy so a future session can resume intelligently."
+}
