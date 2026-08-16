@@ -26,22 +26,28 @@ jobs:
       - name: Generate capability discovery report
         run: python tools/capability_discovery_report.py
 
+      - name: Validate and generate canonical Buddy benchmark index
+        run: python tools/generate_buddy_benchmark_index.py
+
       - name: Collect benchmark metadata
         shell: bash
         run: |
           mkdir -p artifacts/benchmark-dashboard
+          cp -f config/generated/buddy_benchmark_index.json artifacts/benchmark-dashboard/ 2>/dev/null || true
+          cp -f reports/BUDDY_BENCHMARK_INDEX.md artifacts/benchmark-dashboard/ 2>/dev/null || true
           python - <<'PY'
           import json
+          import os
           from pathlib import Path
           out = Path('artifacts/benchmark-dashboard/benchmark-run.json')
           out.write_text(json.dumps({
               'schema': 'dreamco.benchmark_run.v1',
               'status': 'generated',
               'score_scale': {'min': 0, 'max': 100},
-              'commit': __import__('os').environ.get('GITHUB_SHA'),
-              'workflow': __import__('os').environ.get('GITHUB_WORKFLOW'),
-              'run_id': __import__('os').environ.get('GITHUB_RUN_ID')
-          }, indent=2))
+              'commit': os.environ.get('GITHUB_SHA'),
+              'workflow': os.environ.get('GITHUB_WORKFLOW'),
+              'run_id': os.environ.get('GITHUB_RUN_ID')
+          }, indent=2) + '\n')
           PY
 
       - name: Upload benchmark dashboard artifacts
