@@ -1,0 +1,53 @@
+{
+  "schema":"dreamco.buddy.github_onet_codecademy_benchmark.v1",
+  "mission":"Use GitHub, O*NET, and Codecademy as complementary benchmark lenses for Buddy's coding, professional-task, and real-world work capabilities.",
+  "source_roles":{
+    "github":"software-development workflow, repository operations, collaboration, CI/CD, version control, project delivery",
+    "onet":"occupation tasks, knowledge, skills, abilities, work activities, work context, and professional role mapping",
+    "codecademy":"hands-on programming curriculum, concepts, projects, languages, data, AI, cybersecurity, and career-oriented learning paths"
+  },
+  "benchmark_layers":["curriculum_knowledge","hands_on_coding","repository_workflow","occupation_task_execution","professional_quality","cross_domain_transfer","failure_recovery","explainability","verification"],
+  "score_model":{
+    "scale":"0-100",
+    "dimensions":{"knowledge":15,"hands_on_execution":20,"github_workflow":15,"onet_task_alignment":15,"professional_quality":15,"verification":10,"recovery":5,"explanation":5},
+    "rule":"Scores are evidence-backed and domain-specific; an overall score is never treated as universal intelligence."
+  },
+  "benchmark_record":["benchmark_id","source_lens","skill","occupation","task","difficulty","inputs","acceptance_criteria","baseline","buddy_result","score","evidence","failure_cases","recovery_strategy","regression_result","timestamp","version"],
+  "mastery_gates":[
+    "Pass source-aligned knowledge checks",
+    "Complete independent hands-on tasks",
+    "Complete realistic repository workflows when applicable",
+    "Demonstrate O*NET-aligned task performance for the selected occupation",
+    "Meet professional-quality acceptance criteria",
+    "Recover from injected failures",
+    "Reproduce the result",
+    "Pass regression testing after improvement"
+  ],
+  "beneficial_examples":[
+    {
+      "task":"Build and maintain a small inventory application",
+      "codecademy_lens":["Python_or_JavaScript","SQL","HTML_CSS","testing"],
+      "github_lens":["branching","pull_request","issues","actions","release"],
+      "onet_lens":["software_developer_tasks","problem_solving","systems_analysis","quality_control"],
+      "professional_output":"working application, tests, documentation, reproducible build, benchmark report"
+    },
+    {
+      "task":"Prepare a professional data-analysis report",
+      "codecademy_lens":["Python","SQL","data_analysis","visualization"],
+      "github_lens":["versioned_analysis","reviewable_changes","automated_validation"],
+      "onet_lens":["data_analysis","information_processing","decision_support","communication"],
+      "professional_output":"validated analysis, charts, assumptions, source provenance, reproducible workflow, executive summary"
+    },
+    {
+      "task":"Debug a failing production-style software workflow",
+      "codecademy_lens":["debugging","command_line","testing","programming_fundamentals"],
+      "github_lens":["CI_failure","logs","pull_request","regression_test"],
+      "onet_lens":["troubleshooting","systems_analysis","quality_control"],
+      "professional_output":"root cause, minimal reproduction, safe fix, regression test, evidence of passing result"
+    }
+  ],
+  "training_loop":["diagnose","select_benchmark","practice","execute","inject_failure","recover","verify","score","teach_back","create_harder_variant","regression_test"],
+  "mastery_rule":"Completion of a course, repository exercise, or occupation description is not mastery by itself. Buddy must demonstrate transferable performance on independently generated tasks.",
+  "data_provenance":"Store source identifiers and derived benchmark metadata. Do not copy proprietary course text or protected website content into benchmark datasets; create original task descriptions, tests, rubrics, and observations.",
+  "north_star":"Turn learning resources into original, measurable, reusable benchmarks that make Buddy better at real work rather than merely better at passing lessons."
+}
