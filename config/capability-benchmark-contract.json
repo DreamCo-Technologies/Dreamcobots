@@ -1,36 +1,12 @@
 {
-  "schema": "dreamco.capability_benchmark_contract.v1",
-  "purpose": "Make benchmarks first-class evidence for every important capability.",
+  "schema": "dreamco.capability_benchmark_contract.v2",
+  "purpose": "Make benchmarks first-class evidence for every important capability and prevent benchmark gaming.",
   "benchmark_types": [
-    "unit",
-    "integration",
-    "task",
-    "workflow",
-    "benchmark",
-    "holdout",
-    "transfer",
-    "regression",
-    "safety",
-    "reliability",
-    "cost",
-    "latency"
+    "unit", "integration", "task", "workflow", "benchmark", "holdout", "transfer", "regression", "safety", "reliability", "cost", "latency"
   ],
   "capability_record_requirements": {
-    "required": [
-      "capability_id",
-      "benchmark_ids",
-      "baseline",
-      "current_result",
-      "last_evaluated",
-      "evidence_refs",
-      "known_limitations"
-    ],
-    "mastery": [
-      "benchmark_pass",
-      "holdout_pass",
-      "transfer_pass",
-      "regression_pass"
-    ]
+    "required": ["capability_id", "benchmark_ids", "baseline", "current_result", "last_evaluated", "evidence_refs", "known_limitations"],
+    "mastery": ["benchmark_pass", "holdout_pass", "transfer_pass", "regression_pass"]
   },
   "benchmark_result": {
     "benchmark_id": "stable_id",
@@ -50,6 +26,15 @@
     "evidence_ref": "artifact_or_log_reference",
     "notes": ""
   },
+  "evaluation_layers": {
+    "unit": "Known-case correctness",
+    "task": "Representative task completion",
+    "holdout": "Unseen-example generalization",
+    "transfer": "Related-context generalization",
+    "regression": "Protection of existing capabilities",
+    "comparative": "Performance against a defined baseline"
+  },
+  "metrics": ["accuracy", "task_success_rate", "completion_rate", "reliability", "latency", "cost", "tool_error_rate", "recovery_rate", "generalization", "safety_compliance"],
   "gap_policy": {
     "below_threshold_creates_gap": true,
     "gap_becomes_improvement_task": true,
@@ -58,20 +43,16 @@
     "holdout_required_before_mastery": true,
     "transfer_required_for_general_capabilities": true
   },
+  "anti_gaming": [
+    "keep hidden holdout data separate from training data",
+    "record benchmark and evaluator versions",
+    "record model, tool, and configuration versions",
+    "preserve failed results",
+    "compare against a baseline",
+    "require regression testing after promotion"
+  ],
   "benchmark_loop": [
-    "select_capability",
-    "load_baseline",
-    "run_standard_benchmark",
-    "identify_gap",
-    "create_improvement_task",
-    "sandbox_candidate",
-    "run_benchmark",
-    "run_holdout",
-    "run_transfer",
-    "run_regression_suite",
-    "compare_to_baseline",
-    "promote_if_better",
-    "record_evidence",
-    "schedule_revalidation"
-  ]
+    "select_capability", "load_baseline", "run_standard_benchmark", "identify_gap", "create_improvement_task", "sandbox_candidate", "run_benchmark", "run_holdout", "run_transfer", "run_regression_suite", "compare_to_baseline", "promote_if_better", "record_evidence", "schedule_revalidation"
+  ],
+  "frontier_claim_rule": "Never label a system frontier-class from benchmark aspiration alone. Claims require reproducible task definitions, baselines, methodology, and results."
 }
