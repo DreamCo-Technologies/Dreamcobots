@@ -1,0 +1,43 @@
+{
+  "schema": "buddy.frontier_readiness_gates.v1",
+  "purpose": "Prevent DreamCo from confusing a large feature set with a genuinely capable AI system.",
+  "gates": [
+    {
+      "id": "G1-foundation",
+      "name": "Reliable engineering foundation",
+      "requires": ["reproducible_build", "passing_core_tests", "observable_runtime", "rollback"]
+    },
+    {
+      "id": "G2-capabilities",
+      "name": "Capability coverage",
+      "requires": ["canonical_capability_registry", "task_suite", "tool_registry", "gap_tracking"]
+    },
+    {
+      "id": "G3-learning",
+      "name": "Learning loop",
+      "requires": ["sandbox", "reattempt_strategy", "holdout", "regression_tracking"]
+    },
+    {
+      "id": "G4-agent",
+      "name": "Agentic execution",
+      "requires": ["planning", "tool_use", "verification", "error_recovery", "long_running_task_support"]
+    },
+    {
+      "id": "G5-model",
+      "name": "Model competence",
+      "requires": ["independent_benchmarks", "transfer_tests", "cost_metrics", "latency_metrics"]
+    },
+    {
+      "id": "G6-open-source",
+      "name": "Reproducible open-source release",
+      "requires": ["documentation", "license", "reproducible_artifacts", "evaluation_methodology"]
+    },
+    {
+      "id": "G7-frontier-comparison",
+      "name": "Measured competitive capability",
+      "requires": ["fair_reference_tasks", "independent_evaluation", "published_methodology", "no_unverified_claims"]
+    }
+  ],
+  "promotion_rule": "A gate is passed only when its evidence exists in the repository or registered evaluation system.",
+  "never_claim_frontier_without_evidence": true
+}
