@@ -1,0 +1,34 @@
+{
+  "schema": "buddy.automation_escalation_policy.v1",
+  "levels": {
+    "automatic": [
+      "read_repository",
+      "run_tests",
+      "run_sandbox_experiments",
+      "analyze_failures",
+      "retry_safe_jobs",
+      "generate_evaluations",
+      "update_metrics",
+      "create_internal_research_tasks",
+      "rollback_failed_experiments"
+    ],
+    "review_required": [
+      "production_configuration_changes",
+      "external_publication",
+      "new_permissions",
+      "paid_services",
+      "destructive_operations",
+      "security_control_changes",
+      "commercial_dataset_release"
+    ],
+    "never_automatic": [
+      "credential_exfiltration",
+      "bypass_access_controls",
+      "evade_rate_limits",
+      "copy_proprietary_model_weights",
+      "disable_safety_controls_to_pass_a_test"
+    ]
+  },
+  "principle": "Maximize autonomous learning and engineering while keeping high-impact, irreversible, commercial, security, and external actions reviewable.",
+  "audit_every_action": true
+}
