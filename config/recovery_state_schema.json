@@ -1,0 +1,28 @@
+{
+  "schema": "dreamco.recovery_state.v1",
+  "purpose": "Make failures recoverable without allowing experiments or failing requests to corrupt stable Buddy state.",
+  "states": ["healthy", "degraded", "recovering", "quarantined", "rolled_back", "needs_review"],
+  "required_fields": ["component_id", "state", "last_known_good_version", "failure_id", "timestamp", "evidence_ref"],
+  "recovery_contract": {
+    "stable_state_immutable_during_experiment": true,
+    "failed_experiment_cannot_promote_itself": true,
+    "rollback_must_be_addressable": true,
+    "recovery_must_be_observable": true,
+    "learning_artifacts_are_preserved": true
+  },
+  "request_handling": {
+    "timeout": "bounded_retry_then_fallback",
+    "rate_limit": "backoff_then_queue",
+    "dependency_unavailable": "fallback_or_degrade",
+    "invalid_input": "validate_and_explain",
+    "unsafe_action": "fail_closed",
+    "unknown_fact": "abstain_or_verify"
+  },
+  "benchmark_handling": {
+    "failed_benchmark": "record_gap_and_continue",
+    "benchmark_infrastructure_failure": "quarantine_run_and_preserve_previous_score",
+    "regression": "block_promotion_and_compare_last_known_good",
+    "missing_evidence": "mark_not_run"
+  },
+  "recovery_objectives": ["preserve_known_good_state", "minimize_downtime", "avoid_data_loss", "retain_failure_evidence", "make_repairs_repeatable"]
+}
