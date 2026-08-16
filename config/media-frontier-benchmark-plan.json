@@ -1,0 +1,36 @@
+{
+  "schema": "dreamco.media_frontier_benchmark_plan.v1",
+  "purpose": "Benchmark Buddy's music and movie/film creation against reproducible public benchmarks and selected current reference systems without making unsupported frontier claims.",
+  "music": {
+    "benchmark_dimensions": ["prompt_alignment", "musical_structure", "melody", "harmony", "rhythm", "arrangement", "vocal_quality", "lyric_alignment", "instrumental_quality", "audio_quality", "style_control", "section_consistency", "editability", "originality", "latency", "cost"],
+    "evaluation_modes": ["text_to_music", "lyrics_to_song", "reference_conditioned", "video_to_music", "stem_editing", "continuation", "multilingual"],
+    "reference_benchmarks": ["MovieGenAudioBench where applicable", "public music-generation evaluations", "DreamCo custom holdouts"],
+    "human_review": true
+  },
+  "film": {
+    "benchmark_dimensions": ["prompt_alignment", "cinematic_language", "composition", "shot_scale", "camera_movement", "viewing_angle", "focus", "lighting", "aesthetics", "character_consistency", "character_motion", "emotion", "physics", "scene_consistency", "object_consistency", "temporal_consistency", "editing", "multi_shot_coherence", "audio_sync", "dialogue", "story_continuity", "reference_fidelity", "latency", "cost"],
+    "evaluation_modes": ["text_to_video", "image_to_video", "multi_shot", "storyboard_to_video", "character_reference", "scene_reference", "video_to_video", "audio_video_generation"],
+    "reference_benchmarks": ["MovieGenVideoBench", "FilmBench", "VGA-Bench", "Video-Bench where applicable", "DreamCo cinematic holdouts"],
+    "human_review": true
+  },
+  "scoring": {
+    "all_scores_0_to_100": true,
+    "report": ["overall_percentage", "dimension_percentages", "benchmark_percentages", "confidence_percentage", "baseline_delta_points", "gap_points", "cost", "latency", "failure_categories"],
+    "no_single_benchmark_is_authoritative": true,
+    "human_and_automated_evaluation_should_be_reported_separately": true
+  },
+  "comparison_policy": {
+    "same_prompt_when_fair": true,
+    "same_or_equivalent_input_assets": true,
+    "record_model_version": true,
+    "record_generation_settings": true,
+    "record_tool_chain": true,
+    "record_date": true,
+    "preserve_raw_outputs": true,
+    "preserve_failures": true,
+    "avoid_cherry_picking": true,
+    "separate_public_benchmark_scores_from_dreamco_scores": true
+  },
+  "improvement_loop": ["baseline", "generate", "score", "categorize_failures", "create_gap", "sandbox_improvement", "retest", "holdout", "transfer", "regression", "compare", "promote_or_reject", "record_evidence"],
+  "claim_policy": "DreamCo may report measured percentage results and benchmark deltas. Frontier-level claims require reproducible methodology and must not be inferred from a single benchmark."
+}
