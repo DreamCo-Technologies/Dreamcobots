@@ -1,0 +1,39 @@
+{
+  "schema": "dreamco.reality_benchmark_suite.v1",
+  "purpose": "Continuously measure Buddy's ability to distinguish verified real-world information from inference, simulation, fiction, and unknown claims.",
+  "test_categories": [
+    "known_fact_retrieval",
+    "unknown_fact_abstention",
+    "false_premise_detection",
+    "stale_fact_detection",
+    "conflicting_source_resolution",
+    "citation_entailment",
+    "source_freshness",
+    "tool_failure_recovery",
+    "ambiguous_entity_resolution",
+    "real_vs_simulated_classification",
+    "calculation_verification",
+    "long_context_consistency",
+    "adversarial_hallucination_resistance",
+    "high_risk_claim_grounding"
+  ],
+  "scores": {
+    "factual_accuracy_percent": null,
+    "abstention_precision_percent": null,
+    "unsupported_claim_rate_percent": null,
+    "citation_accuracy_percent": null,
+    "freshness_percent": null,
+    "conflict_detection_percent": null,
+    "uncertainty_calibration_percent": null,
+    "verification_success_percent": null,
+    "hallucination_rate_percent": null
+  },
+  "gates": {
+    "must_not_claim_unknown_as_verified": true,
+    "must_label_simulation": true,
+    "must_preserve_source_provenance": true,
+    "high_risk_claims_require_verification": true,
+    "regression_required_before_promotion": true
+  },
+  "benchmark_policy": "A benchmark measures the tested distribution only. No score is treated as proof of universal factual reliability."
+}
