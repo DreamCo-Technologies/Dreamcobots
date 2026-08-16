@@ -1,0 +1,100 @@
+name: Actions Page Gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, codex/master-capability-pages]
+    paths:
+      - "website/actions.html"
+      - "website/actions.js"
+      - "website/actions.css"
+      - "website/nav.js"
+      - "website/data/actions-*.json"
+      - "website/data/buddy-benchmark-index.js"
+      - "tests/actions-page.test.mjs"
+      - "tests/test_actions_health.py"
+      - "tools/audit_actions_health.py"
+      - "tools/audit_actions_live.py"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/actions-page-gate.yml"
+  pull_request:
+    paths:
+      - "website/actions.html"
+      - "website/actions.js"
+      - "website/actions.css"
+      - "website/nav.js"
+      - "website/data/actions-*.json"
+      - "website/data/buddy-benchmark-index.js"
+      - "tests/actions-page.test.mjs"
+      - "tests/test_actions_health.py"
+      - "tools/audit_actions_health.py"
+      - "tools/audit_actions_live.py"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/actions-page-gate.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: actions-page-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: Actions Page Contract Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Validate Actions health contract
+        run: python3 -m unittest tests.test_actions_health
+
+      - name: Validate Actions page contract
+        run: npm run test:actions-page
+
+      - name: Validate browser JavaScript syntax
+        run: |
+          node --check website/actions.js
+          node --check website/nav.js
+          node --check website/service-worker.js
+
+      - name: Verify required Actions-page assets
+        run: |
+          test -s website/actions.html
+          test -s website/actions.js
+          test -s website/actions.css
+          test -s website/data/actions-health-report.json
+          test -s website/data/buddy-benchmark-index.js
+
+      - name: Write gate summary
+        if: always()
+        run: |
+          {
+            echo "## Actions Page Gate"
+            echo "- Static health contract: completed"
+            echo "- Actions page contract: completed"
+            echo "- JavaScript syntax: completed"
+            echo "- Required assets: completed"
+            echo "- Live GitHub execution remains separately evidenced by the Actions Health workflow."
+          } >> "$GITHUB_STEP_SUMMARY"
