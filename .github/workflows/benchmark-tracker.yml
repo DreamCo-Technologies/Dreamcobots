@@ -29,12 +29,37 @@ jobs:
       - name: Validate and generate canonical Buddy benchmark index
         run: python tools/generate_buddy_benchmark_index.py
 
+      - name: Run reality benchmark smoke suite
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('config/reality_benchmark_suite.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          required = {
+              'known_fact_retrieval', 'unknown_fact_abstention',
+              'false_premise_detection', 'citation_entailment',
+              'real_vs_simulated_classification', 'adversarial_hallucination_resistance'
+          }
+          actual = set(data.get('test_categories', []))
+          missing = sorted(required - actual)
+          if missing:
+              raise SystemExit(f'Missing reality benchmark categories: {missing}')
+          gates = data.get('gates', {})
+          for gate in ('must_not_claim_unknown_as_verified', 'must_label_simulation', 'must_preserve_source_provenance'):
+              if gates.get(gate) is not True:
+                  raise SystemExit(f'Reality gate is not enabled: {gate}')
+          print('Reality benchmark contract: PASS')
+          PY
+
       - name: Collect benchmark metadata
         shell: bash
         run: |
           mkdir -p artifacts/benchmark-dashboard
           cp -f config/generated/buddy_benchmark_index.json artifacts/benchmark-dashboard/ 2>/dev/null || true
           cp -f reports/BUDDY_BENCHMARK_INDEX.md artifacts/benchmark-dashboard/ 2>/dev/null || true
+          cp -f config/reality_benchmark_suite.json artifacts/benchmark-dashboard/ 2>/dev/null || true
           python - <<'PY'
           import json
           import os
@@ -44,6 +69,7 @@ jobs:
               'schema': 'dreamco.benchmark_run.v1',
               'status': 'generated',
               'score_scale': {'min': 0, 'max': 100},
+              'reality_suite_contract': 'pass',
               'commit': os.environ.get('GITHUB_SHA'),
               'workflow': os.environ.get('GITHUB_WORKFLOW'),
               'run_id': os.environ.get('GITHUB_RUN_ID')
