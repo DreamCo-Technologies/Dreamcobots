@@ -1,0 +1,31 @@
+{
+  "schema":"dreamco.buddy_continuous_learning_scheduler.v1",
+  "purpose":"Keep Buddy advancing across completed jobs, hard problems, capabilities, benchmarks, professional subjects, and open-model improvement without getting trapped in repetitive failures.",
+  "cycle":["restore","reconcile","select","execute","verify","learn","checkpoint","improve","schedule_return"],
+  "queues":["active_jobs","hard_problems","capability_gaps","benchmark_regressions","learning_paths","open_model_opportunities","maintenance","human_review"],
+  "selection_policy":{
+    "factors":["user_impact","safety","dependency_blocking","learning_value","age","confidence","resource_cost"],
+    "rule":"Balance immediate user value with long-term capability advancement; never allow hard problems to disappear because easier tasks are available."
+  },
+  "hard_problem_policy":{
+    "reserve_capacity":true,
+    "minimum_return_per_cycle":1,
+    "required_before_return":["checkpoint_exists","failure_history_loaded","new_strategy_selected"],
+    "completion":"Continue until acceptance criteria pass or an explicit human escalation is recorded."
+  },
+  "learning_policy":{
+    "learn_from":["success","failure","benchmark","user_feedback","tool_results","professional_training","open_model_evaluation"],
+    "never_overwrite_evidence":true,
+    "create_harder_task_after_mastery":true
+  },
+  "failure_policy":{
+    "failed_task":"create_recovery_item",
+    "repeat_strategy":"prohibited",
+    "productive_fallback":true,
+    "quarantine_after_repeated_failure":true,
+    "scheduled_return":true
+  },
+  "session_boot":["load_checkpoints","load_active_jobs","load_hard_problems","load_failures","load_benchmark_history","load_capability_graph","verify_known_good_state","select_next_action"],
+  "honesty":"A task may be deferred or escalated, but never marked complete without its configured evidence gates.",
+  "north_star":"Finish useful work, preserve learning, return intelligently to difficult work, and continuously raise Buddy's measurable capability ceiling."
+}
