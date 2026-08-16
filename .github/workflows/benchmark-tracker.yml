@@ -1,0 +1,60 @@
+name: Benchmark Tracker
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 5 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark-tracker:
+    name: Build Benchmark Dashboard Data
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate capability discovery report
+        run: python tools/capability_discovery_report.py
+
+      - name: Collect benchmark metadata
+        shell: bash
+        run: |
+          mkdir -p artifacts/benchmark-dashboard
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          out = Path('artifacts/benchmark-dashboard/benchmark-run.json')
+          out.write_text(json.dumps({
+              'schema': 'dreamco.benchmark_run.v1',
+              'status': 'generated',
+              'score_scale': {'min': 0, 'max': 100},
+              'commit': __import__('os').environ.get('GITHUB_SHA'),
+              'workflow': __import__('os').environ.get('GITHUB_WORKFLOW'),
+              'run_id': __import__('os').environ.get('GITHUB_RUN_ID')
+          }, indent=2))
+          PY
+
+      - name: Upload benchmark dashboard artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-benchmark-dashboard-${{ github.run_id }}
+          path: artifacts/benchmark-dashboard
+          retention-days: 30
+
+      - name: Upload capability discovery artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-capability-discovery-${{ github.run_id }}
+          path: artifacts/capability_discovery_report.json
+          if-no-files-found: warn
+          retention-days: 30
