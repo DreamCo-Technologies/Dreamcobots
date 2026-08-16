@@ -1,0 +1,35 @@
+{
+  "schema": "dreamco.open_model_advancement_scorecard.v1",
+  "purpose": "Measure whether Buddy is producing evidence-backed improvements for open-source and open-weight AI rather than merely consuming models.",
+  "score_scale": {"min":0,"max":100},
+  "dimensions": [
+    {"id":"reproducible_benchmarks","weight":0.15},
+    {"id":"capability_improvement","weight":0.15},
+    {"id":"efficiency_improvement","weight":0.10},
+    {"id":"reliability_improvement","weight":0.10},
+    {"id":"safety_improvement","weight":0.10},
+    {"id":"tooling_and_evaluation","weight":0.10},
+    {"id":"data_quality_and_rights","weight":0.08},
+    {"id":"reproducibility","weight":0.07},
+    {"id":"developer_experience","weight":0.05},
+    {"id":"community_contribution","weight":0.05},
+    {"id":"upstream_adoption","weight":0.05}
+  ],
+  "evidence_requirements": [
+    "identified model and version",
+    "identified evaluator and benchmark version",
+    "matched baseline and configuration",
+    "before_and_after_results",
+    "failure_cases_preserved",
+    "provenance_and_license_metadata",
+    "reproduction_instructions"
+  ],
+  "promotion_gates": [
+    "no critical regression",
+    "improvement reproduced independently when practical",
+    "claims match measured evidence",
+    "rights_and_license_review_complete"
+  ],
+  "contribution_levels": ["internal_experiment", "public_artifact", "open_source_tool", "benchmark_contribution", "upstream_patch", "community_adopted_improvement"],
+  "rule": "Buddy earns advancement credit for measurable, reproducible improvements and useful public artifacts, not for model count or repository size."
+}
