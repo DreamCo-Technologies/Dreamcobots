@@ -1,0 +1,14 @@
+{
+  "schema":"dreamco.buddy.benchmark_evidence_registry.v1",
+  "purpose":"Turn every benchmark into durable, inspectable evidence that can be compared over time and across capability domains.",
+  "record_fields":["benchmark_id","capability_id","source_lenses","task_class","difficulty","version","baseline","inputs_hash","acceptance_criteria","execution_trace","result_artifacts","score_dimensions","overall_score","confidence","failures","recovery_attempts","regression_status","provenance","review_status","timestamp"],
+  "source_lenses":["github","onet","codecademy"],
+  "evidence_levels":["none","self_reported","automated","reproducible","independently_reviewed"],
+  "score_rules":{"range":"0-100","confidence_required":true,"no_evidence_score":"unknown","no_universal_intelligence_score":true},
+  "comparison_modes":["before_vs_after","version_vs_version","capability_vs_capability","baseline_vs_buddy","buddy_vs_open_source","buddy_vs_professional_rubric"],
+  "regression_policy":"A previously passing benchmark remains in the regression suite after improvement.",
+  "failure_policy":"Preserve failed attempts and recovery strategies; never delete failures merely to improve aggregate scores.",
+  "dashboard_outputs":["capability_scorecards","benchmark_history","regression_alerts","failure_heatmap","mastery_gaps","professional_readiness","open_model_progress"],
+  "integrity":"Benchmark definitions, evaluator versions, inputs, outputs, and provenance must remain versioned so results can be reproduced.",
+  "goal":"Make Buddy's progress measurable enough that developers and users can see exactly what improved, what did not, and what should be trained next."
+}
