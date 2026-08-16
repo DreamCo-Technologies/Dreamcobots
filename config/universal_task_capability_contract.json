@@ -1,0 +1,27 @@
+{
+  "schema":"dreamco.universal_task_capability_contract.v1",
+  "purpose":"Make every Buddy capability usable as a composable, measurable unit inside arbitrary user jobs.",
+  "contract":{
+    "input":"natural_language_job_or_task",
+    "output":"verified_result_or_explicit_unfinished_state",
+    "required_stages":["understand","decompose","map_capabilities","plan","execute","observe","verify","recover","complete","learn"],
+    "required_metadata":["task_id","capability_ids","dependencies","tools","models","data_provenance","acceptance_criteria","benchmark_ids","evidence","status","failure_history","next_action"]
+  },
+  "composition_rules":[
+    "Capabilities may be chained, parallelized, nested, or repeated.",
+    "A capability may call another capability only through a declared contract.",
+    "Each capability must expose inputs, outputs, prerequisites, limitations, tests, and evidence.",
+    "The orchestrator must preserve provenance across composed capabilities.",
+    "One failed capability must not erase successful sibling work.",
+    "The scheduler must continue productive work while retaining unresolved hard tasks."
+  ],
+  "verification":{
+    "result_check":true,
+    "benchmark_check":true,
+    "reality_check":true,
+    "regression_check":true,
+    "human_review_when_required":true
+  },
+  "progress_rule":"After completion, identify the highest-value improvement to the capability or workflow and create a harder follow-up benchmark when appropriate.",
+  "honesty_rule":"No capability, workflow, model, or task may be marked successful without supporting evidence."
+}
