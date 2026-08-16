@@ -1,0 +1,40 @@
+{
+  "schema": "dreamco.dataset_evaluation_scorecard.v1",
+  "purpose": "Give every DreamCo dataset a reproducible quality score before commercial release.",
+  "score_scale": {"min": 0, "max": 100},
+  "dimensions": [
+    {"id":"accuracy","weight":0.15},
+    {"id":"coverage","weight":0.10},
+    {"id":"task_alignment","weight":0.10},
+    {"id":"consistency","weight":0.08},
+    {"id":"diversity","weight":0.07},
+    {"id":"freshness","weight":0.05},
+    {"id":"provenance","weight":0.10},
+    {"id":"license_compliance","weight":0.10},
+    {"id":"privacy_safety","weight":0.08},
+    {"id":"deduplication","weight":0.05},
+    {"id":"contamination_control","weight":0.05},
+    {"id":"documentation_reproducibility","weight":0.07}
+  ],
+  "release_gates": [
+    "no_known_critical_rights_issue",
+    "provenance_manifest_complete",
+    "quality_report_complete",
+    "benchmark_report_complete",
+    "privacy_safety_review_complete",
+    "train_validation_test_separation_checked",
+    "known_limitations_documented"
+  ],
+  "commercial_tiers": [
+    {"tier":"prototype","minimum_score":60,"requirements":["internal_use_or_labeled_preview"]},
+    {"tier":"standard","minimum_score":75,"requirements":["release_gates_pass"]},
+    {"tier":"professional","minimum_score":85,"requirements":["release_gates_pass","human_quality_review","reproducible_benchmark"]},
+    {"tier":"premium","minimum_score":92,"requirements":["professional_requirements","strong_holdout_results","documented_update_process"]}
+  ],
+  "honesty_rules": [
+    "Scores apply to the defined evaluation protocol, not universal dataset quality.",
+    "A high score cannot override unresolved legal, privacy, safety, or provenance issues.",
+    "Customer-facing claims must cite the dataset version and evaluation protocol.",
+    "Do not hide difficult examples solely to increase the score."
+  ]
+}
