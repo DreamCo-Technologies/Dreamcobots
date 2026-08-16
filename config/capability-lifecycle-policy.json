@@ -1,0 +1,55 @@
+{
+  "schema": "dreamco.capability_lifecycle.v1",
+  "principle": "Capabilities are the canonical reusable unit; bots and agents are compositions of capabilities.",
+  "states": [
+    "discovered",
+    "documented",
+    "mapped",
+    "implemented",
+    "tested",
+    "sandboxed",
+    "independent",
+    "mastered",
+    "improving",
+    "deprecated",
+    "retired"
+  ],
+  "required_transitions": {
+    "discovered_to_documented": ["description", "origin", "owner"],
+    "documented_to_mapped": ["capability_id", "related_bots", "tasks"],
+    "mapped_to_implemented": ["implementation_reference"],
+    "implemented_to_tested": ["automated_test"],
+    "tested_to_sandboxed": ["sandbox_task", "observability"],
+    "sandboxed_to_independent": ["independent_task_results", "failure_analysis"],
+    "independent_to_mastered": ["benchmark", "holdout", "transfer", "regression"],
+    "mastered_to_improving": ["baseline_metrics", "improvement_hypothesis"]
+  },
+  "required_record_fields": [
+    "capability_id",
+    "name",
+    "description",
+    "origin_bot_ids",
+    "tasks",
+    "tools",
+    "dependencies",
+    "evidence",
+    "limitations",
+    "provenance",
+    "version",
+    "lifecycle_state"
+  ],
+  "composition_rules": [
+    "One bot may contain many capabilities.",
+    "One capability may belong to many bots or agents.",
+    "A capability can be composed with other capabilities without copying its implementation.",
+    "Bot-level history must remain queryable after capability extraction.",
+    "Do not delete a capability because it appears duplicated; establish a relationship and verify equivalence first."
+  ],
+  "mastery_rules": {
+    "no_claim_without_evidence": true,
+    "teacher_assistance_is_not_mastery": true,
+    "holdout_required": true,
+    "regression_required": true,
+    "periodic_revalidation": true
+  }
+}
