@@ -1,0 +1,49 @@
+name: Model Benchmark Scorecard
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: model-benchmark-scorecard
+  cancel-in-progress: false
+
+jobs:
+  scorecard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Build scorecard
+        run: python tools/build_model_benchmark_scorecard.py
+      - name: Validate scorecard contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('website/data/model-benchmark-scorecard.json')
+          d=json.loads(p.read_text())
+          assert d['schema_version']=='dreamco.model_benchmark_scorecard.v1'
+          assert d['benchmark_count']==len(d['results'])
+          for r in d['results']:
+              assert 0 <= r['overall'] <= 100
+              assert isinstance(r['mastery'], bool)
+              if r['mastery']:
+                  assert r['evidence_count'] > 0
+          print(f"scorecard valid: {d['benchmark_count']} benchmarks")
+          PY
+      - name: Upload scorecard evidence
+        uses: actions/upload-artifact@v6
+        with:
+          name: model-benchmark-scorecard-${{ github.run_id }}
+          path: website/data/model-benchmark-scorecard.json
+          if-no-files-found: error
