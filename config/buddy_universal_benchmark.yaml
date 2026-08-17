@@ -1,4 +1,4 @@
-version: 1
+version: 2
 system: buddy-universal-mastery
 mastery_states: [discovered, learned, practiced, mastered, production_proven]
 free_first:
@@ -10,7 +10,8 @@ source_adapters:
 benchmark:
   lifecycle: [ingest, normalize, package, generate_tasks, sandbox, execute, validate, score, diagnose, remediate, retest, promote]
   metrics: [correctness, completion, reliability, latency, cost, human_interventions, provenance, security, accessibility, reproducibility, satisfaction, productivity_gain]
-  mastery_threshold: configurable
+  mastery_threshold: 0.9
+  repeated_passes_required: 3
 failure_taxonomy: [knowledge_gap, tool_gap, reasoning_gap, coding_gap, data_gap, environment_gap, permission_gap, ambiguity, hallucination, timeout, dependency_failure, model_failure, benchmark_misunderstanding, human_approval_required]
 universal_task:
   benchmark_id: 1000
@@ -29,3 +30,7 @@ repository_policy:
   isolated_execution: true
 simulation:
   pipeline: [knowledge, objects, relationships, rules, behaviors, environment, physics, agents, user_goal, simulation, measurement, feedback, learning]
+execution:
+  deterministic_runner: benchmarks/buddy_benchmark_runner.py
+  smoke_tasks: benchmarks/tasks/universal_1000_smoke.json
+  results_directory: benchmarks/results
