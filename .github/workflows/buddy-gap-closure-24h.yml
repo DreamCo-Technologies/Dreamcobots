@@ -1,0 +1,47 @@
+name: Buddy Gap Closure - 24h Research Loop
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '7 */6 * * *'
+
+concurrency:
+  group: buddy-gap-closure
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  gap-research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run bounded gap-research cycle
+        env:
+          BUDDY_GAP_CONFIG: config/buddy-24h-gap-closure-bot.json
+          BUDDY_MAX_SOURCES: '250'
+          BUDDY_MAX_WORKERS: '20'
+          BUDDY_SANDBOX_ONLY: 'true'
+        run: |
+          python tools/buddy_gap_closure_runner.py
+
+      - name: Upload checkpoint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-gap-closure-checkpoint-${{ github.run_id }}
+          path: |
+            artifacts/buddy-gap-closure/**
+            data/buddy_gap_closure/**
+          if-no-files-found: ignore
+          retention-days: 14

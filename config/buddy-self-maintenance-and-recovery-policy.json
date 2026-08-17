@@ -1,0 +1,11 @@
+{
+  "$schema":"dreamco.buddy_self_maintenance.v1",
+  "purpose":"Allow Buddy to diagnose, repair and improve its own approved software and knowledge systems without uncontrolled self-modification.",
+  "maintenance_cycle":["health_check","detect_drift","classify_issue","snapshot_state","create_repair_plan","sandbox_repair","run_tests","security_scan","regression_test","compare_to_baseline","promote_or_rollback","document_change","schedule_followup"],
+  "issue_classes":["configuration_drift","dependency_failure","integration_failure","test_regression","stale_knowledge","broken_workflow","performance_degradation","resource_exhaustion","duplicate_capability","missing_capability"],
+  "self_repair":{"enabled":true,"sandbox_required":true,"rollback_required":true,"tests_required":true,"security_scan_required":true,"change_budget_required":true,"production_scope_allowlist":true,"high_impact_changes_require_human_approval":true},
+  "self_improvement":{"measure_before_change":true,"hypothesis_required":true,"experiment_required":true,"holdout_validation":true,"regression_gate":true,"retain_negative_results":true},
+  "recovery":{"checkpoint_before_change":true,"automatic_rollback_on_failed_gate":true,"preserve_audit_log":true,"escalate_after_repeated_failure":true,"never_loop_unbounded":true},
+  "resource_governance":{"bounded_runtime":true,"bounded_cost":true,"bounded_concurrency":true,"bounded_external_actions":true,"operator_pause":true},
+  "maintenance_metrics":["uptime","repair_success_rate","rollback_rate","mean_time_to_recovery","regression_rate","duplicate_reduction","stale_capability_rate","cost_per_repair","unresolved_issue_age"]
+}

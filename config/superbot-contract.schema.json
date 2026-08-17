@@ -1,0 +1,26 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://dreamco.example/schemas/superbot-contract.schema.json",
+  "title":"DreamCo Division Superbot Contract",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema","version","identity","mission","userJobs","capabilities","tools","connectors","policies","dependencies","workflows","benchmarks","commercial","migration","status"],
+  "properties":{
+    "schema":{"const":"dreamco.division_superbot.v1"},
+    "version":{"type":"string","pattern":"^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "identity":{"type":"object","additionalProperties":false,"required":["id","displayName","division","cluster"],"properties":{"id":{"type":"string"},"displayName":{"type":"string"},"division":{"type":"string"},"cluster":{"type":"string"}}},
+    "mission":{"type":"string","minLength":10},
+    "userJobs":{"type":"array","items":{"type":"string"}},
+    "capabilities":{"type":"array","items":{"$ref":"#/$defs/capability"}},
+    "tools":{"type":"array","items":{"type":"string"}},
+    "connectors":{"type":"array","items":{"type":"string"}},
+    "policies":{"type":"object","additionalProperties":false,"required":["externalWritesDefault","approvalRequiredForHighImpact","secretPolicy"],"properties":{"externalWritesDefault":{"const":"disabled"},"approvalRequiredForHighImpact":{"const":true},"secretPolicy":{"const":"secrets-never-in-source"}}},
+    "dependencies":{"type":"array","items":{"type":"string"}},
+    "workflows":{"type":"array","items":{"type":"string"}},
+    "benchmarks":{"type":"array","items":{"type":"string"}},
+    "commercial":{"type":"object","additionalProperties":false,"properties":{"revenueModels":{"type":"array","items":{"type":"string"}},"outcomeMetrics":{"type":"array","items":{"type":"string"}}}},
+    "migration":{"type":"object","additionalProperties":false,"required":["legacyProfiles","legacyFiles","aliases","provenanceRequired"],"properties":{"legacyProfiles":{"type":"array","items":{"type":"string"}},"legacyFiles":{"type":"array","items":{"type":"string"}},"aliases":{"type":"array","items":{"type":"string"}},"provenanceRequired":{"const":true}}},
+    "status":{"enum":["planned","cataloged","runtime_ready","sandbox_certified","production_certified","blocked"]}
+  },
+  "$defs":{"capability":{"type":"object","additionalProperties":false,"required":["id","mission","inputs","outputs","evidenceState"],"properties":{"id":{"type":"string"},"mission":{"type":"string"},"inputs":{"type":"array","items":{"type":"string"}},"outputs":{"type":"array","items":{"type":"string"}},"tools":{"type":"array","items":{"type":"string"}},"connectors":{"type":"array","items":{"type":"string"}},"evidenceState":{"enum":["declared","official_verified","adapter_verified","sandbox_tested","live_tested","production_certified","deprecated","blocked"]},"benchmarkIds":{"type":"array","items":{"type":"string"}},"sourceProvenance":{"type":"array","items":{"type":"string"}}}}}
+}

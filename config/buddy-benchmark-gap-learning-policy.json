@@ -1,0 +1,12 @@
+{
+  "$schema":"dreamco.buddy_benchmark_gap_learning.v1",
+  "purpose":"Continuously use permitted web sources and other approved evidence to close measurable benchmark gaps across Buddy capabilities.",
+  "objective":"Do not optimize for number of sites studied; optimize for verified benchmark improvement and closure of capability gaps.",
+  "loop":["run_benchmark_suite","build_gap_vector","rank_gaps_by_impact_and_difficulty","map_gaps_to_required_capabilities","discover_best_source_candidates","rank_sources","build_target_specific_plan","sandbox_learning","run_benchmark_again","cross_validate","record_gain","diagnose_remaining_gap","replan_every_attempt","repeat_until_threshold_or_governance_hold"],
+  "source_policy":{"web_content_is_untrusted":true,"prefer_primary_authoritative_sources":true,"source_diversity_required":true,"provenance_required":true,"respect_terms_and_access_controls":true,"no_paywall_bypass":true,"no_captcha_bypass":true},
+  "benchmark_policy":{"baseline_required":true,"post_learning_test_required":true,"adversarial_test_required":true,"regression_test_required":true,"capability_specific_test_required":true,"benchmark_improvement_must_be_measurable":true,"do_not_declare_gap_closed_from_reading":true},
+  "coverage":{"business_productivity":true,"personal_productivity":true,"software_engineering":true,"research":true,"reasoning":true,"data_analysis":true,"automation":true,"security_awareness":true,"domain_specialists":true},
+  "adaptive_research":{"replan_every_attempt":true,"use_failure_memory":true,"search_for_missing_dependencies":true,"refresh_sources_after_failure":true,"never_repeat_failed_strategy_unchanged":true,"cross_division_capability_reuse":true},
+  "completion":{"target_is_benchmark_threshold_not_site_count":true,"all_critical_gaps_must_be_closed_or_explicitly_governed":true,"unresolved_gaps_remain_visible":true,"evidence_and_test_history_retained":true},
+  "telemetry":["benchmark_score","gap_count","critical_gap_count","gap_age","source_quality","source_diversity","learning_gain","first_pass_gain","final_gain","regression_rate","time_to_close","cost_to_close","unresolved_reasons"]
+}

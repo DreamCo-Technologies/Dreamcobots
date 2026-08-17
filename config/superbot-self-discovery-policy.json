@@ -1,0 +1,10 @@
+{
+  "$schema":"dreamco.superbot_self_discovery_policy.v1",
+  "sources":["user_ideas","feedback","telemetry","failures","benchmarks","manual_work","capability_gaps","approved_tools","market_signals","cross_division_requests","commercial_opportunities"],
+  "required_prechecks":["capability_registry","division_contracts","shared_tools","workflows","legacy_aliases","recent_proposals","existing_integrations"],
+  "default_action":"reuse_extend_or_compose",
+  "new_capability_action":"propose_and_assign",
+  "scoring":["user_value","business_value","frequency","evidence_confidence","effort","cost","risk","differentiation","strategic_fit"],
+  "failure_taxonomy":["missing_knowledge","missing_tool","tool_selection","planning","verification","policy","data_quality","provider_failure","ux"],
+  "forbidden_actions":["self_grant_permissions","bypass_ci","unapproved_deploy","unapproved_spending","silent_policy_change","self_certify_success"]
+}

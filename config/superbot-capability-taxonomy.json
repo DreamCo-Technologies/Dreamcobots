@@ -1,0 +1,22 @@
+{
+  "$schema":"dreamco.superbot_capability_taxonomy.v1",
+  "principles":["one_capability_one_owner","outcome_named_ids","shared_tools_not_duplicate_bots","evidence_required","external_writes_governed"],
+  "capability_domains":{
+    "discover":{"examples":["search","classification","matching","ranking","deduplication","opportunity_detection"]},
+    "analyze":{"examples":["scoring","forecasting","valuation","comparison","risk_analysis","trend_analysis"]},
+    "learn":{"examples":["feedback_learning","benchmarking","retrieval","knowledge_update","model_evaluation"]},
+    "execute":{"examples":["workflow_execution","task_automation","document_generation","submission","notification"]},
+    "communicate":{"examples":["messaging","email","social_publishing","customer_followup","reporting"]},
+    "transact":{"examples":["billing","payout_tracking","checkout","affiliate_attribution","reconciliation"]},
+    "govern":{"examples":["approval","policy_check","audit","identity","permissions","safety_gate"]},
+    "observe":{"examples":["telemetry","health_check","alerting","performance_monitoring","revenue_monitoring"]}
+  },
+  "canonical_id_pattern":"<division>.<domain>.<outcome>",
+  "merge_rules":[
+    "Same outcome + same owner => one canonical capability.",
+    "Same outcome + different owners => resolve ownership before implementation merge.",
+    "Same implementation + multiple names => retain aliases, one implementation.",
+    "Different outcomes sharing a connector => share the adapter, not the capability identity.",
+    "A workflow may compose capabilities but must not silently redefine them."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "$schema":"dreamco.buddy_actions.v1",
+  "execution_model":"mission_plan_graph",
+  "parallelism":"dependency_and_side_effect_aware",
+  "completion":"verification_required",
+  "states":["draft","planned","awaiting_approval","ready","running","verifying","completed","blocked","paused","retrying","degraded","failed","rolled_back","cancelled","quarantined"],
+  "reliability":["idempotency","checkpointing","bounded_retries","backoff","circuit_breakers","dead_letter_quarantine","compensation_or_rollback","audit_events","cost_budgets","time_budgets"],
+  "adaptive_replanning":true,
+  "independent_verification_for_consequential_outcomes":true,
+  "human_control_visibility":true,
+  "durable_learning_requires_validation":true,
+  "governance_gate_required_for_consequential_actions":true,
+  "ui_priority":["mission_status","current_action","user_decision","progress","blockers","evidence","cost_time","verification","recovery","trace"],
+  "success_metric":"verified_goal_outcome"
+}
