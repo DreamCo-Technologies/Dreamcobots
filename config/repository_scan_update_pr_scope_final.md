@@ -1,0 +1,1 @@
+Review bundle: scan update contract + scheduled evidence workflow + status standard. Read-only by default; authorized targets; evidence required.
