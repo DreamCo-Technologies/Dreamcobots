@@ -1,0 +1,21 @@
+name: Money OS Validation
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: money_os/package.json
+      - run: npm install
+        working-directory: money_os
+      - run: node --check core.js && node --check server.js
+        working-directory: money_os
+      - run: npm test
+        working-directory: money_os

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "principles": ["source-attribution","dedupe","eligibility-check","profit-validation","audit-log","human-review-for-legal-submissions"],
+  "schedules": {
+    "deal_scan":"*/15 * * * *",
+    "price_history":"0 * * * *",
+    "receipt_matching":"*/10 * * * *",
+    "legal_settlement_scan":"0 */6 * * *",
+    "grant_contract_scan":"0 */4 * * *",
+    "work_lead_scan":"*/20 * * * *",
+    "real_estate_scan":"0 */2 * * *",
+    "revenue_reconciliation":"0 * * * *"
+  },
+  "pipeline":["discover","normalize","dedupe","verify","score","rank","publish","track_conversion","reconcile_revenue","learn"],
+  "monetization": {"affiliate":true,"subscription":true,"lead_generation":true,"marketplace_fee":true,"sponsored_placements":false},
+  "guardrails": {"no_guaranteed_earnings":true,"no_fake_deals":true,"no_unauthorized_form_submission":true,"respect_source_terms":true,"legal_claims_require_user_confirmation":true}
+}
