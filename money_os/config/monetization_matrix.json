@@ -1,0 +1,20 @@
+{
+  "columns": ["lane","source_required","verification","user_action","monetization","realized_revenue_event"],
+  "default_rules": {
+    "source_required": true,
+    "verification_required": true,
+    "user_action_required": true,
+    "realized_revenue_event_required": true,
+    "estimated_value_never_equals_realized_revenue": true
+  },
+  "monetization": {
+    "affiliate": "commission_confirmed_by_network",
+    "lead_fee": "lead_accepted_or_qualified_by_buyer",
+    "subscription": "successful_billing_event",
+    "service_fee": "invoice_paid",
+    "marketplace_fee": "completed_transaction_minus_refunds",
+    "usage_fee": "metered_usage_billed",
+    "data_license": "licensed_delivery_paid",
+    "savings_share": "contractually verified savings event"
+  }
+}
