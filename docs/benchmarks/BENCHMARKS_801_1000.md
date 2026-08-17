@@ -1,0 +1,207 @@
+# Benchmarks 801–1000 — Creative, Simulation, Engineering and Universal Mastery
+
+These are benchmark/source targets, not claims that every source is already integrated. Each target should become a source adapter, capability package, task set, sandbox and measurable mastery gate.
+
+- **801 Gutenberg** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **802 Internet Archive** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **803 Open Library** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **804 Crossref** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **805 Semantic Scholar** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **806 OpenAlex** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **807 arXiv** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **808 DOAJ** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **809 OpenStax** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **810 MIT OpenCourseWare** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **811 OpenCourseWare assignments** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **812 Khan Academy resources** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **813 CK-12** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **814 PhET** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **815 GeoGebra** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **816 Desmos** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **817 symbolic mathematics systems** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **818 SymPy** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **819 SageMath** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **820 Jupyter** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **821 Manim** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **822 Blender** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **823 Blender benchmarks** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **824 Godot** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **825 Unreal Engine learning resources** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **826 Unity learning resources** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **827 Open 3D Engine** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **828 NVIDIA Omniverse concepts** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **829 NVIDIA Isaac Sim concepts** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **830 NVIDIA Cosmos concepts** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **831 NVIDIA research video corpus** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **832 Habitat** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **833 Habitat 2.0** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **834 AI2-THOR** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **835 ProcTHOR** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **836 MineDojo** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **837 MineRL** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **838 VizDoom** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **839 DeepMind Lab** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **840 ALE/Atari** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **841 OpenAI Gym legacy tasks** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **842 Gymnasium** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **843 PettingZoo** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **844 MuJoCo** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **845 PyBullet** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **846 Isaac Gym concepts** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **847 Webots** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **848 CARLA** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **849 AirSim** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **850 SUMO** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **851 CityFlow** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **852 OpenStreetMap 3D/world data** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **853 Cesium** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **854 OpenDroneMap** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **855 COLMAP** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **856 Nerfstudio** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **857 Gaussian Splatting research** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **858 Open3D** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **859 Three.js** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **860 Babylon.js** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **861 WebGPU** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **862 WebGL** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **863 OpenXR** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **864 OpenVR resources** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **865 Godot XR** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **866 OpenSCAD** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **867 FreeCAD** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **868 Blender architectural workflows** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **869 IFC/OpenBIM** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **870 IfcOpenShell** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **871 OpenBuildingMap concepts** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **872 EnergyPlus** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **873 OpenStudio** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **874 Ladybug Tools** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **875 Radiance** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **876 OpenFOAM** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **877 CalculiX** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **878 Elmer FEM** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **879 FreeCAD FEM** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **880 open-source terrain generation** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **881 procedural-content-generation benchmarks** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **882 Wave Function Collapse** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **883 L-systems** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **884 procedural terrain benchmarks** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **885 A* pathfinding** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **886 navigation-mesh benchmarks** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **887 behavior-tree benchmarks** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **888 GOAP planning** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **889 NPC dialogue benchmarks** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **890 emotion-recognition benchmarks** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **891 personality-model benchmarks** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **892 social-interaction simulation** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **893 crowd simulation** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **894 disaster simulation** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **895 flight simulation concepts** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **896 driving simulation** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **897 construction simulation** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **898 medical-training simulation** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **899 universal learning-game benchmark** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **900 DreamCo World Simulation Mastery** — ingest permitted knowledge → normalize → generate practice tasks → sandbox → validate → score → remediate → retest → record mastery.
+- **901 SWE-bench** — repository-level software engineering.
+- **902 SWE-bench Verified** — verified repository-level software engineering.
+- **903 HumanEval** — code generation.
+- **904 MBPP** — practical programming.
+- **905 CodeContests** — competitive programming.
+- **906 LiveCodeBench** — current coding evaluation.
+- **907 BigCodeBench** — complex code generation.
+- **908 DS-1000** — data-science coding.
+- **909 RepoBench** — repository understanding.
+- **910 CrossCodeEval** — cross-file coding.
+- **911 ToolBench** — tool-use reasoning.
+- **912 API-Bank** — API selection/use.
+- **913 τ-bench** — realistic tool workflows.
+- **914 BrowserGym** — browser agents.
+- **915 WebArena** — website task completion.
+- **916 OSWorld** — computer-use tasks.
+- **917 AndroidWorld** — mobile tasks.
+- **918 AppWorld** — app/tool interaction.
+- **919 AgentBench** — general agent capability.
+- **920 GAIA** — general assistant reasoning.
+- **921 MMLU** — broad academic knowledge.
+- **922 MMLU-Pro** — advanced academic reasoning.
+- **923 GPQA** — expert-level questions.
+- **924 ARC-AGI** — abstract reasoning.
+- **925 BIG-Bench** — broad capability testing.
+- **926 BIG-Bench Hard** — difficult reasoning.
+- **927 HELM** — holistic model evaluation.
+- **928 lm-evaluation-harness** — unified evaluations.
+- **929 EleutherAI evaluation ecosystem** — model testing.
+- **930 RAGAS** — RAG quality.
+- **931 DeepEval** — LLM application testing.
+- **932 Promptfoo** — prompt/model evaluation.
+- **933 OpenAI Evals concepts** — custom evaluations.
+- **934 tracing/observability concepts** — agent observability.
+- **935 OpenTelemetry** — universal telemetry.
+- **936 MLflow** — experiment tracking.
+- **937 DVC** — dataset/version control.
+- **938 Great Expectations** — data quality.
+- **939 Evidently** — ML monitoring.
+- **940 Apache Airflow** — data/workflow orchestration.
+- **941 Prefect** — workflow automation.
+- **942 Dagster** — data pipelines.
+- **943 n8n** — business automation.
+- **944 Temporal** — durable workflows.
+- **945 Docker** — reproducible environments.
+- **946 Kubernetes** — scalable workloads.
+- **947 GitHub Actions** — CI/CD.
+- **948 GitHub API** — repository intelligence.
+- **949 Git** — version control.
+- **950 CodeQL** — code security.
+- **951 Semgrep** — static analysis.
+- **952 Bandit** — Python security.
+- **953 ESLint ecosystem** — JavaScript quality.
+- **954 Ruff** — Python quality.
+- **955 Pytest** — Python testing.
+- **956 Playwright** — browser testing.
+- **957 Selenium** — browser automation.
+- **958 Vitest/Jest concepts** — JavaScript testing.
+- **959 Lighthouse** — web quality.
+- **960 OWASP Web Security Testing** — application security.
+- **961 OWASP Top 10** — web vulnerability knowledge.
+- **962 MITRE ATT&CK** — defensive security knowledge.
+- **963 MITRE D3FEND** — defensive controls.
+- **964 NIST CSF** — cybersecurity governance.
+- **965 SBOM benchmark** — dependency transparency.
+- **966 SLSA** — software supply-chain security.
+- **967 OpenSSF Scorecard** — repository security.
+- **968 OpenSSF best practices** — open-source quality.
+- **969 accessibility benchmark** — inclusive software.
+- **970 WCAG** — web accessibility.
+- **971 privacy engineering benchmark** — privacy by design.
+- **972 AI safety benchmark** — safe AI behavior.
+- **973 hallucination benchmark** — factual reliability.
+- **974 citation benchmark** — evidence quality.
+- **975 uncertainty benchmark** — confidence calibration.
+- **976 human-in-the-loop benchmark** — correct escalation.
+- **977 agent recovery benchmark** — recovery from failed tasks.
+- **978 agent planning benchmark** — long-horizon execution.
+- **979 multi-agent benchmark** — teamwork between Buddy bots.
+- **980 self-reflection benchmark** — learning from mistakes.
+- **981 self-improvement benchmark** — improvement without forgetting.
+- **982 curriculum-learning benchmark** — easiest-to-hardest learning.
+- **983 skill-tree benchmark** — capability organization.
+- **984 knowledge-gap benchmark** — missing-knowledge detection.
+- **985 source-discovery benchmark** — source ranking.
+- **986 similar-repository benchmark** — engineering pattern discovery.
+- **987 fix-transfer benchmark** — applying known fixes to new repos.
+- **988 capability-generation benchmark** — building missing tools.
+- **989 benchmark-generation benchmark** — creating new tests.
+- **990 sandbox-generation benchmark** — creating environments automatically.
+- **991 task-decomposition benchmark** — turning goals into plans.
+- **992 tool-selection benchmark** — selecting the best tool.
+- **993 cost-optimization benchmark** — minimizing cost.
+- **994 model-routing benchmark** — selecting the model for the task.
+- **995 autonomous-business benchmark** — identifying legitimate monetizable problems.
+- **996 product-generation benchmark** — turning problems into software/products.
+- **997 universal-computer-task benchmark** — arbitrary legitimate computer workflows.
+- **998 universal-learning benchmark** — teaching/learning any supported subject.
+- **999 universal-human-productivity benchmark** — improving legitimate workflows.
+- **1000 DreamCo Buddy Universal Mastery Benchmark** — unseen goal → understand → decompose → research → select authorized tools → sandbox → execute → test → recover → measure → explain → learn.
+
+## Mastery rule
+Studied is not mastered. A benchmark becomes mastered only after repeated independent passes against versioned tasks, with recorded evidence, cost, failures, remediation and regression results.
