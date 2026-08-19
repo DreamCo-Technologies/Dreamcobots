@@ -1,6 +1,6 @@
 # DreamCo Chat Context — 2026-08-11
 
-This document captures the actionable engineering, architecture, product, monetization, AI-agent, and repository decisions established in the current DreamCo planning conversation. It is intended to prevent important decisions from being lost between chat, Codex, and GitHub work.
+This document captures the actionable engineering, architecture, product, monetization, AI-agent, and repository decisions established in the current DreamCo planning conversation. It is intended to prevent important decisions from being lost between chat, coding agents, and GitHub work.
 
 ## 1. Repository / Working Model
 
@@ -11,7 +11,7 @@ Preferred development model:
 ```text
 Chat / Architecture Review
         ↓
-Codex or coding agent implementation
+Coding agent implementation
         ↓
 GitHub branch
         ↓
@@ -22,7 +22,7 @@ Pull request
 Review / merge
 ```
 
-This chat is an architecture/CTO planning layer; Codex is an implementation layer. Neither should bypass repository tests, security checks, or governance gates.
+This chat is an architecture/CTO planning layer; coding agents are implementation layers. Neither should bypass repository tests, security checks, or governance gates.
 
 ## 2. Canonical DreamCo Bot Architecture
 
@@ -170,7 +170,7 @@ The roadmap is organized into seven groups:
 Command Tower, naming/tags, workflow map, badges, language matrices, reusable actions, Dream Mode, stale workflow archival, PR selectors, secrets, marketplace, AI workflow generation, version pinning, parallel branch testing.
 
 ### CI/CD & Deployment — 16–30
-Full bot CI, Replit sync, blue/green deployment, Docker, multi-target deployment, semantic release, rollback, zero downtime, dependency graph, benchmarking, security scanning, enterprise policy, visual regression, IoT hooks, feature flags.
+Full bot CI, legacy hosted-IDE sync, blue/green deployment, Docker, multi-target deployment, semantic release, rollback, zero downtime, dependency graph, benchmarking, security scanning, enterprise policy, visual regression, IoT hooks, feature flags.
 
 ### Intelligence & Learning — 31–50
 BuddyAI PR review, self-evolution, predictive health, natural-language triggers, test generation, anomaly detection, conversation analysis, cross-bot learning, milestone generation, autonomous PRs, tier enforcement, global learning sync, contextual code review, adaptive runners, memory tests, revenue simulations, safety controls, multimodal testing, what-if simulation, auto-documentation.
@@ -265,7 +265,7 @@ A Java class was supplied as a starting example for a Kotlin Multiplatform Bot. 
 Important improvements identified for production:
 
 - do not hard-code deprecated/legacy model assumptions without configuration
-- use the repository's approved OpenAI client/API contract
+- use the repository's approved API contract
 - handle HTTP errors and API error payloads
 - validate missing API keys
 - avoid logging secrets
@@ -277,26 +277,26 @@ Important improvements identified for production:
 
 The original code should be treated as a prototype, not as a production security pattern.
 
-## 11. AI Learning / Karpathy Comparison
+## 11. AI Learning / Engineering Comparison
 
-The conversation compared DreamCo's bot ecosystem with Andrej Karpathy-style AI learning paths.
+The conversation compared DreamCo's bot ecosystem with rigorous AI-engineering learning paths.
 
 Key conclusion:
 
-- Karpathy's educational/AI-engineering material is valuable for deep understanding of neural networks, transformers, tokenization, training, optimization, and LLM internals.
+- rigorous educational/AI-engineering material is valuable for deep understanding of neural networks, transformers, tokenization, training, optimization, and LLM internals.
 - DreamCo's goal is broader operational infrastructure: orchestration, bots, learning pipelines, governance, automation, monetization, dashboards, and marketplace systems.
 - The best strategy is complementary: use rigorous AI-engineering principles to strengthen DreamCo rather than treating the two approaches as mutually exclusive.
 
-## 12. Coding-Agent / Codex Workflow
+## 12. Coding-Agent / GitHub Workflow
 
-Chat is intended to act as an architecture and review layer while Codex/coding agents implement changes in GitHub.
+Chat is intended to act as an architecture and review layer while coding agents implement changes in GitHub.
 
 Recommended loop:
 
 ```text
 Requirement
 → architecture design
-→ Codex implementation
+→ coding-agent implementation
 → branch
 → tests/static analysis/security
 → PR
@@ -313,7 +313,7 @@ A GitHub token was shown in the conversation context as having no repository acc
 Never commit:
 
 - GitHub personal access tokens
-- OpenAI API keys
+- API keys
 - exchange secrets
 - passwords
 - private keys
