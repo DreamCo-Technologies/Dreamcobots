@@ -44,7 +44,7 @@ DreamCoBots is intended to become a production-grade bot ecosystem with a common
 ### 16–30 CI/CD & Deployment
 
 16. Full CI for all bots — in progress
-17. Replit → GitHub sync — planned
+17. Legacy hosted-IDE → GitHub sync — planned
 18. Blue/green deployment — planned
 19. Production bot containerization — planned
 20. Multi-target deployment — planned
