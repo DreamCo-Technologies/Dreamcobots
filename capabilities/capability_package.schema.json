@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Buddy Capability Package",
+  "type": "object",
+  "required": ["capability_id", "name", "domain", "sources", "objectives", "tasks", "benchmarks", "mastery"],
+  "properties": {
+    "capability_id": {"type":"string"},
+    "name": {"type":"string"},
+    "domain": {"type":"string"},
+    "sources": {"type":"array","items":{"type":"string"}},
+    "prerequisites": {"type":"array","items":{"type":"string"}},
+    "objectives": {"type":"array","items":{"type":"string"}},
+    "tasks": {"type":"array","items":{"type":"string"}},
+    "benchmarks": {"type":"array","items":{"type":"string"}},
+    "sandbox_profile": {"type":"string"},
+    "mastery": {
+      "type":"object",
+      "required":["threshold","independent_passes","transfer_required","regression_required"],
+      "properties":{
+        "threshold":{"type":"number","minimum":0,"maximum":1},
+        "independent_passes":{"type":"integer","minimum":1},
+        "transfer_required":{"type":"boolean"},
+        "regression_required":{"type":"boolean"}
+      }
+    },
+    "safety_constraints": {"type":"array","items":{"type":"string"}},
+    "automation_opportunities": {"type":"array","items":{"type":"string"}},
+    "monetization_opportunities": {"type":"array","items":{"type":"string"}},
+    "evidence": {"type":"array","items":{"type":"string"}}
+  },
+  "additionalProperties": false
+}
