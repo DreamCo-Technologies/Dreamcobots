@@ -74,6 +74,8 @@ jobs:
           python3 tools/generate_repository_test_registry.py
           python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_buddy_benchmark_index.py
+          node --import tsx tools/generate_dreamco_search_index.ts
+          node --import tsx tools/generate_buddy_success_program.ts
       - name: Full repository verification
         run: npm run test:repository
       - name: Fleet end-to-end verification
