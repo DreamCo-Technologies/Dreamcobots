@@ -1,9 +1,7 @@
 name: DreamCo 500-Model Benchmark System
 
 # One workflow owns the complete model/provider benchmark matrix.
-# Other Actions workflows remain reserved for repository/control operations.
 # No paid model/API calls are initiated unless an explicitly approved adapter is configured.
-
 on:
   workflow_dispatch:
     inputs:
@@ -22,19 +20,15 @@ on:
       - 'website/data/**'
       - 'docs/**'
       - '.github/workflows/dreamco-unified-system.yml'
-
 permissions:
   contents: read
   actions: read
-
 env:
   DREAMCO_DISABLE_AUTO_SYNC: '1'
   PYTHONUNBUFFERED: '1'
-
 concurrency:
   group: dreamco-500-model-benchmark-${{ github.ref }}
   cancel-in-progress: false
-
 jobs:
   benchmark-all-500:
     name: Daily all-model/all-suite benchmark matrix
@@ -45,101 +39,71 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 2
-
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
-
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
           python-version: '3.13'
-
       - name: Install repository dependencies
         run: |
           npm ci
           python3 -m pip install --disable-pip-version-check openpyxl
-
       - name: Validate benchmark, learning, tracking, and prospectus contracts
         run: |
           python3 - <<'PY'
           import json
           from pathlib import Path
-          required = [
-              'config/buddy-benchmark-performance-contract.json',
-              'config/buddy-benchmark-quality-contract.json',
-              'config/buddy-benchmark-scorecard.json',
-              'config/buddy-benchmark-evidence-ledger.json',
-              'config/model-prospectus-benchmark-contract.json',
-              'config/500-model-full-matrix-prospectus.json',
-              'config/buddy-reference-benchmark-execution.json',
-              'config/public-dashboard-completeness-contract.json',
-              'config/buddy-pages-data-pipeline.json',
-              'config/benchmark-status-schema.json',
-              'config/daily-benchmark-refresh-policy.json',
-              'config/unified-repository-learning-registry.json',
-              'docs/UNIFIED_500_MODEL_BENCHMARK_OPERATING_PLAN.md',
-          ]
+          required = ['config/buddy-benchmark-performance-contract.json','config/buddy-benchmark-quality-contract.json','config/buddy-benchmark-scorecard.json','config/buddy-benchmark-evidence-ledger.json','config/model-prospectus-benchmark-contract.json','config/500-model-full-matrix-prospectus.json','config/buddy-reference-benchmark-execution.json','config/public-dashboard-completeness-contract.json','config/buddy-pages-data-pipeline.json','config/benchmark-status-schema.json','config/daily-benchmark-refresh-policy.json','config/unified-repository-learning-registry.json','docs/UNIFIED_500_MODEL_BENCHMARK_OPERATING_PLAN.md']
           for name in required:
               p=Path(name)
               if not p.exists(): raise SystemExit(f'Missing contract/plan: {name}')
               if p.suffix == '.json': json.loads(p.read_text())
           print(f'Validated {len(required)} contracts/plans.')
-
-      - name: Inventory repository, runtime bindings, capabilities, and learning systems
+      - name: Refresh canonical generated registries before checks
         run: |
           mkdir -p config/generated website/data reports
-          if [ -f tools/build_repository_inventory.py ]; then python3 tools/build_repository_inventory.py; fi
-          if [ -f tools/audit_repository_connections.py ]; then python3 tools/audit_repository_connections.py; fi
-          if [ -f tools/build_system_progress_status.py ]; then python3 tools/build_system_progress_status.py; fi
-          if [ -f tools/generate_repository_test_registry.py ]; then python3 tools/generate_repository_test_registry.py; fi
-          if [ -f tools/build_universal_work_ai_catalog.py ]; then python3 tools/build_universal_work_ai_catalog.py; fi
-
+          python3 tools/generate_repository_test_registry.py
+          python3 tools/generate_dreamco_repository_master_map.py
+          python3 tools/generate_buddy_benchmark_index.py
+          if [ -f tools/generate_dreamco_search_index.ts ]; then npx tsx tools/generate_dreamco_search_index.ts; fi
+          if [ -f tools/generate_buddy_success_program.ts ]; then npx tsx tools/generate_buddy_success_program.ts; fi
+          if [ -f tools/generate_buddy_platform_expansion.py ]; then python3 tools/generate_buddy_platform_expansion.py; fi
+      - name: Inventory repository, runtime bindings, capabilities, and learning systems
+        run: |
+          python3 tools/run_optional_script.py tools/build_repository_inventory.py
+          python3 tools/run_optional_script.py tools/audit_repository_connections.py
+          python3 tools/run_optional_script.py tools/build_system_progress_status.py
+          python3 tools/run_optional_script.py tools/build_universal_work_ai_catalog.py
       - name: Discover every registered benchmark suite and model/provider
         run: |
-          if [ -f tools/discover_benchmarks.py ]; then python3 tools/discover_benchmarks.py; fi
-          if [ -f tools/build_benchmark_registry.py ]; then python3 tools/build_benchmark_registry.py; fi
-          if [ -f tools/build_capability_registry.py ]; then python3 tools/build_capability_registry.py; fi
-          if [ -f tools/build_model_prospectus_catalog.py ]; then python3 tools/build_model_prospectus_catalog.py; fi
-
+          python3 tools/run_optional_script.py tools/discover_benchmarks.py
+          python3 tools/run_optional_script.py tools/build_benchmark_registry.py
+          python3 tools/run_optional_script.py tools/build_capability_registry.py
+          python3 tools/run_optional_script.py tools/build_model_prospectus_catalog.py
       - name: Execute every applicable suite for every catalogued model/provider
         env:
           REQUESTED_MODE: ${{ github.event.inputs.mode || 'standard' }}
-        run: |
-          if [ -f tools/run_500_model_benchmarks.py ]; then
-            python3 tools/run_500_model_benchmarks.py --mode "$REQUESTED_MODE"
-          elif [ -f tools/run_everything_now.py ]; then
-            python3 tools/run_everything_now.py --mode "$REQUESTED_MODE"
-          else
-            echo 'BLOCKED: no benchmark execution runner is present; no results may be claimed.'
-            exit 2
-          fi
-
+        run: python3 tools/run_optional_script.py --fallback tools/run_everything_now.py tools/run_500_model_benchmarks.py --mode "$REQUESTED_MODE"
       - name: Build complete model × benchmark-suite prospectus matrix
         if: always()
         run: python3 tools/build_500_model_prospectus_matrix.py
-
       - name: Execute learning and evidence-driven gap-closure cycle
         if: always()
         run: |
-          if [ -f tools/run_learning_loop.py ]; then python3 tools/run_learning_loop.py; fi
-          if [ -f tools/run_adaptive_learning.py ]; then python3 tools/run_adaptive_learning.py; fi
-          if [ -f tools/run_gap_analysis.py ]; then python3 tools/run_gap_analysis.py; fi
-          if [ -f tools/build_forecast_report.py ]; then python3 tools/build_forecast_report.py; fi
-          if [ -f tools/build_capability_leads.py ]; then python3 tools/build_capability_leads.py; fi
-
+          python3 tools/run_optional_script.py tools/run_learning_loop.py
+          python3 tools/run_optional_script.py tools/run_adaptive_learning.py
+          python3 tools/run_optional_script.py tools/run_gap_analysis.py
+          python3 tools/run_optional_script.py tools/build_forecast_report.py
+          python3 tools/run_optional_script.py tools/build_capability_leads.py
       - name: Run benchmark-policy and repository regression tests
         if: always()
         run: |
-          python3 -m unittest \
-            tests.test_recovery_ontology_workforce_runtime \
-            tests.test_universal_capability_benchmark_policy \
-            tests.test_global_government_system \
-            tests.test_buddy_government_operating_system
+          python3 -m unittest tests.test_recovery_ontology_workforce_runtime tests.test_universal_capability_benchmark_policy tests.test_global_government_system tests.test_buddy_government_operating_system
           python3 -m pytest -q --disable-warnings --maxfail=20
-
       - name: Validate full matrix coverage without inventing results
         if: always()
         run: |
@@ -149,20 +113,11 @@ jobs:
           p=Path('website/data/buddy-500-model-prospectus-matrix.json')
           if not p.exists(): raise SystemExit('BLOCKED: prospectus matrix was not produced.')
           d=json.loads(p.read_text())
-          print('Catalogued models:', d['catalogued_models'])
-          print('Registered suites:', d['registered_benchmark_suites'])
-          print('Matrix rows:', d['matrix_rows'])
-          print('Passed rows:', d['verified_rows'])
-          print('Unverified rows:', d['unverified_rows'])
-          if d['catalogued_models'] < 500:
-              print('WARNING: fewer than 500 models are currently catalogued; absent models are not evaluated or passed.')
-          if d['registered_benchmark_suites'] == 0:
-              raise SystemExit('BLOCKED: no registered benchmark suites discovered.')
           expected=d['catalogued_models']*d['registered_benchmark_suites']
-          if d['matrix_rows'] != expected:
-              raise SystemExit(f'Matrix coverage mismatch: expected {expected}, got {d["matrix_rows"]}.')
+          print('Catalogued models:',d['catalogued_models'],'Registered suites:',d['registered_benchmark_suites'],'Matrix rows:',d['matrix_rows'],'Passed:',d['verified_rows'],'Unverified:',d['unverified_rows'])
+          if d['registered_benchmark_suites']==0: raise SystemExit('BLOCKED: no registered benchmark suites discovered.')
+          if d['matrix_rows']!=expected: raise SystemExit(f'Matrix coverage mismatch: expected {expected}, got {d["matrix_rows"]}.')
           PY
-
       - name: Validate public/private boundary
         if: always()
         run: |
@@ -173,13 +128,12 @@ jobs:
           secret=re.compile(r'(?i)(sk-[A-Za-z0-9_-]{16,}|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY)')
           bad=[]
           for root in roots:
-              if not root.exists(): continue
-              for p in root.rglob('*'):
+              if root.exists():
+                for p in root.rglob('*'):
                   if p.is_file() and p.suffix.lower() in {'.json','.js','.txt','.md'} and secret.search(p.read_text(errors='ignore')): bad.append(str(p))
           if bad: raise SystemExit('Potential secret material in public/generated data: '+', '.join(bad))
           print('Public/private boundary passed.')
           PY
-
       - name: Write daily unified benchmark + Buddy prospectus summary
         if: always()
         run: |
@@ -191,16 +145,15 @@ jobs:
           print('# DreamCo Daily 500-Model Benchmark + Buddy Prospectus')
           print(f'- UTC: `{datetime.now(timezone.utc).isoformat()}`')
           if p.exists():
-              d=json.loads(p.read_text())
-              print(f'- Catalogued models: **{d["catalogued_models"]}**')
-              print(f'- Registered benchmark suites: **{d["registered_benchmark_suites"]}**')
-              print(f'- Model × suite matrix rows: **{d["matrix_rows"]}**')
-              print(f'- Passing evidence rows: **{d["verified_rows"]}**')
-              print(f'- Unverified rows: **{d["unverified_rows"]}**')
+            d=json.loads(p.read_text())
+            print(f'- Catalogued models: **{d["catalogued_models"]}**')
+            print(f'- Registered benchmark suites: **{d["registered_benchmark_suites"]}**')
+            print(f'- Matrix rows: **{d["matrix_rows"]}**')
+            print(f'- Passing evidence rows: **{d["verified_rows"]}**')
+            print(f'- Unverified rows: **{d["unverified_rows"]}**')
           print('- Missing, blocked, stale, or unverified evidence is never converted to a pass.')
           print('- Buddy native mastery is distinct from external-model-assisted results.')
           PY
-
       - name: Upload one consolidated daily benchmark/prospectus artifact
         if: always()
         uses: actions/upload-artifact@v6
@@ -209,6 +162,7 @@ jobs:
           path: |
             config/generated/*.json
             website/data/*.json
+            website/data/*.js
             reports/*.md
           if-no-files-found: warn
           retention-days: 30

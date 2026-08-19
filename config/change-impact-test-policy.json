@@ -23,7 +23,7 @@
     "tenant": ["tenant", "isolation", "auth", "security"],
     "delete": ["delete", "data", "storage", "permission"]
   },
-  "skip_markers": [".skip(", ".skip(", "skipTest(", "@unittest.skip", "pytest.mark.skip", "test.skip(", "describe.skip(", "it.skip("],
+  "skip_markers": [".skip(", "skipTest(", "@unittest.skip", "pytest.mark.skip", "test.skip(", "describe.skip(", "it.skip("],
   "shared_core_prefixes": ["server/", "shared/", "tools/", "script/"],
   "generic_source_tokens": ["index", "server", "shared", "client", "tools", "script", "build", "run", "generate", "main", "app"],
   "focused_test_mappings": [
@@ -47,6 +47,10 @@
     {
       "sources": ["website/connections.js"],
       "tests": ["tests/connection-secret-intake-page.test.mjs", "tests/resource-onboarding-page.test.mjs"]
+    },
+    {
+      "sources": ["client/src/main.tsx"],
+      "tests": ["tests/test_buddy_benchmark_runner_main_postcss_vite_audit_actions_health_optional.py"]
     }
   ],
   "evidence_rules": {

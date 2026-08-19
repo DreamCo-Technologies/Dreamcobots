@@ -1,0 +1,126 @@
+@config "../../tailwind.config.ts";
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Manrope:wght@300..800&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+:root {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+  --font-serif: "Fraunces", ui-serif, Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --background: 220 30% 96%;
+  --foreground: 222 60% 10%;
+  --card: 220 25% 99%;
+  --card-foreground: 222 60% 10%;
+  --border: 220 24% 88%;
+  --input: 220 24% 84%;
+  --ring: 217 91% 60%;
+  --muted: 220 25% 93%;
+  --muted-foreground: 215 20% 42%;
+  --secondary: 220 28% 92%;
+  --secondary-foreground: 222 60% 10%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 220 60% 98%;
+  --accent: 210 100% 52%;
+  --accent-foreground: 220 60% 98%;
+  --destructive: 0 84% 56%;
+  --destructive-foreground: 210 40% 98%;
+  --sidebar: 222 50% 12%;
+  --sidebar-foreground: 213 31% 91%;
+  --sidebar-border: 220 40% 18%;
+  --sidebar-primary: 217 91% 60%;
+  --sidebar-primary-foreground: 220 60% 98%;
+  --sidebar-accent: 222 40% 16%;
+  --sidebar-accent-foreground: 213 31% 91%;
+  --sidebar-ring: 217 91% 60%;
+  --radius: 0.9rem;
+  --shadow-ambient: 0 1px 0 hsl(0 0% 0% / 0.03);
+  --shadow-soft: 0 12px 30px hsl(222 47% 11% / 0.06);
+  --shadow-lift: 0 18px 55px hsl(222 47% 11% / 0.10);
+}
+
+.dark {
+  --background: 225 55% 6%;
+  --foreground: 213 31% 91%;
+  --card: 224 50% 9%;
+  --card-foreground: 213 31% 91%;
+  --border: 222 40% 15%;
+  --input: 222 40% 18%;
+  --ring: 217 91% 60%;
+  --muted: 224 45% 11%;
+  --muted-foreground: 215 20% 60%;
+  --secondary: 224 45% 11%;
+  --secondary-foreground: 213 31% 91%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 222 50% 8%;
+  --accent: 210 100% 56%;
+  --accent-foreground: 222 50% 8%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --sidebar: 225 55% 6%;
+  --sidebar-foreground: 213 31% 91%;
+  --sidebar-border: 222 40% 15%;
+  --sidebar-primary: 217 91% 60%;
+  --sidebar-primary-foreground: 222 50% 8%;
+  --sidebar-accent: 224 45% 11%;
+  --sidebar-accent-foreground: 213 31% 91%;
+  --sidebar-ring: 217 91% 60%;
+  --shadow-ambient: 0 1px 0 hsl(0 0% 100% / 0.02);
+  --shadow-soft: 0 16px 50px hsl(0 0% 0% / 0.50);
+  --shadow-lift: 0 24px 80px hsl(0 0% 0% / 0.60);
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { color-scheme: light; }
+  html.dark { color-scheme: dark; }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  .buddy-container { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
+  .buddy-glow {
+    background:
+      radial-gradient(600px 300px at 20% 10%, hsl(var(--primary) / 0.12), transparent 55%),
+      radial-gradient(540px 340px at 85% 10%, hsl(var(--accent) / 0.10), transparent 55%),
+      radial-gradient(760px 520px at 50% 95%, hsl(217 91% 60% / 0.06), transparent 60%);
+  }
+  .buddy-card { @apply rounded-2xl border bg-card text-card-foreground; box-shadow: var(--shadow-ambient), var(--shadow-soft); }
+  .buddy-card-hover { @apply transition-all duration-300 ease-out; }
+  .buddy-card-hover:hover { transform: translateY(-2px); box-shadow: var(--shadow-ambient), var(--shadow-lift); }
+  .buddy-focus-ring { @apply focus:outline-none focus:ring-4 focus:ring-ring/15 focus:border-ring; }
+  .buddy-gradient-border { position: relative; isolation: isolate; }
+  .buddy-gradient-border::before {
+    content: ""; position: absolute; inset: -1px; border-radius: inherit;
+    background: linear-gradient(135deg, hsl(217 91% 60% / 0.50), hsl(210 100% 52% / 0.30), hsl(190 80% 50% / 0.20));
+    z-index: -1; opacity: 0.75;
+  }
+  .buddy-appear { animation: buddy-appear 480ms cubic-bezier(.2,.8,.2,1) both; }
+  .buddy-stagger > * { animation: buddy-appear 520ms cubic-bezier(.2,.8,.2,1) both; }
+  .buddy-stagger > *:nth-child(1) { animation-delay: 40ms; }
+  .buddy-stagger > *:nth-child(2) { animation-delay: 90ms; }
+  .buddy-stagger > *:nth-child(3) { animation-delay: 140ms; }
+  .buddy-stagger > *:nth-child(4) { animation-delay: 190ms; }
+  .buddy-stagger > *:nth-child(5) { animation-delay: 240ms; }
+}
+
+@keyframes buddy-appear { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+@layer utilities {
+  input[type="search"]::-webkit-search-cancel-button { @apply hidden; }
+  [contenteditable][data-placeholder]:empty::before { content: attr(data-placeholder); color: hsl(var(--muted-foreground)); pointer-events: none; }
+  .toggle-elevate::before, .toggle-elevate-2::before { content: ""; pointer-events: none; position: absolute; inset: 0; border-radius: inherit; z-index: -1; }
+  .toggle-elevate.toggle-elevated::before { background-color: hsl(222 20% 10% / 0.08); }
+  .border.toggle-elevate::before { inset: -1px; }
+  .hover-elevate, .active-elevate, .hover-elevate-2, .active-elevate-2 { position: relative; z-index: 0; }
+  .hover-elevate::after, .active-elevate::after, .hover-elevate-2::after, .active-elevate-2::after { content: ""; pointer-events: none; position: absolute; inset: 0; border-radius: inherit; z-index: 999; }
+  .hover-elevate:hover::after, .active-elevate:active::after { background-color: hsl(222 20% 10% / 0.03); }
+  .hover-elevate-2:hover::after, .active-elevate-2:active::after { background-color: hsl(222 20% 10% / 0.08); }
+  .border.hover-elevate::after, .border.active-elevate::after, .border.hover-elevate-2::after, .border.active-elevate-2::after { inset: -1px; }
+}

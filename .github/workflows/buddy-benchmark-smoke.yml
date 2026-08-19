@@ -1,0 +1,27 @@
+name: buddy-benchmark-smoke
+on:
+  pull_request:
+    paths:
+      - 'benchmarks/**'
+      - 'config/buddy_universal_benchmark.yaml'
+      - 'schemas/benchmarks/**'
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run deterministic benchmark
+        run: python3 benchmarks/buddy_benchmark_runner.py benchmarks/tasks/universal_1000_smoke.json --output /tmp/buddy-benchmark.json
+      - name: Validate result shape
+        run: python3 - <<'PY'
+import json
+from pathlib import Path
+p = Path('/tmp/buddy-benchmark.json')
+data = json.loads(p.read_text())
+assert data['benchmark_id'] == 1000
+assert data['free_first'] is True
+assert data['cost_usd'] == 0.0
+assert isinstance(data['results'], list)
+print('Buddy benchmark smoke result is structurally valid.')
+PY

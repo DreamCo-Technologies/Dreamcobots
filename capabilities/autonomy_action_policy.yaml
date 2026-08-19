@@ -1,0 +1,51 @@
+version: 1
+name: buddy-user-autonomy-policy
+purpose: "Keep users in control while allowing useful automation."
+default_mode: observe
+actions:
+  research:
+    default: allow
+    consequential: false
+  draft_content:
+    default: allow
+    consequential: false
+  create_local_sandbox_files:
+    default: allow
+    consequential: false
+  run_sandbox_tests:
+    default: allow
+    consequential: false
+  send_message:
+    default: approval_required
+    consequential: true
+  publish_content:
+    default: approval_required
+    consequential: true
+  create_account:
+    default: approval_required
+    consequential: true
+  purchase:
+    default: approval_required
+    consequential: true
+  move_money:
+    default: approval_required
+    consequential: true
+  sign_contract:
+    default: approval_required
+    consequential: true
+  modify_authorized_repository:
+    default: bounded_autonomy
+    consequential: true
+  deploy_production:
+    default: approval_required
+    consequential: true
+logging:
+  required: true
+  include: [timestamp, user, bot, action, target, authorization_mode, parameters_hash, result, cost]
+controls:
+  pause: immediate
+  revoke: immediate
+  audit_log: user_visible
+  budget_limit: user_defined
+  domain_allowlist: user_defined
+  destination_allowlist: user_defined

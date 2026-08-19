@@ -1,0 +1,36 @@
+version: 2
+system: buddy-universal-mastery
+mastery_states: [discovered, learned, practiced, mastered, production_proven]
+free_first:
+  enabled: true
+  paid_models_require_explicit_user_authorization: true
+  record_cost: true
+source_adapters:
+  required_metadata: [source_id, url_or_api, retrieval_date, version, license_or_terms, provenance, parser, offline_cache_status]
+benchmark:
+  lifecycle: [ingest, normalize, package, generate_tasks, sandbox, execute, validate, score, diagnose, remediate, retest, promote]
+  metrics: [correctness, completion, reliability, latency, cost, human_interventions, provenance, security, accessibility, reproducibility, satisfaction, productivity_gain]
+  mastery_threshold: 0.9
+  repeated_passes_required: 3
+failure_taxonomy: [knowledge_gap, tool_gap, reasoning_gap, coding_gap, data_gap, environment_gap, permission_gap, ambiguity, hallucination, timeout, dependency_failure, model_failure, benchmark_misunderstanding, human_approval_required]
+universal_task:
+  benchmark_id: 1000
+  unseen_task_required: true
+  must_decompose: true
+  must_research: true
+  must_select_authorized_tools: true
+  must_sandbox: true
+  must_validate: true
+  must_recover: true
+  must_report_cost_and_evidence: true
+  must_store_reusable_capability: true
+repository_policy:
+  external_repository_writes_require_authorization: true
+  authorized_repo_scanning: true
+  isolated_execution: true
+simulation:
+  pipeline: [knowledge, objects, relationships, rules, behaviors, environment, physics, agents, user_goal, simulation, measurement, feedback, learning]
+execution:
+  deterministic_runner: benchmarks/buddy_benchmark_runner.py
+  smoke_tasks: benchmarks/tasks/universal_1000_smoke.json
+  results_directory: benchmarks/results

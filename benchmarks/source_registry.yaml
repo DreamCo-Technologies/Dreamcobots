@@ -1,0 +1,126 @@
+version: 1
+name: buddy-1000-source-registry
+purpose: "Canonical registry for the 1000-source learning program. Sources are adapters, not hard runtime dependencies."
+policy:
+  source_count_target: 1000
+  free_first: true
+  paid_requires_explicit_authorization: true
+  offline_cache_preferred: true
+  license_review_required: true
+  provenance_required: true
+  unauthorized_scraping_forbidden: true
+  repository_write_authorization_required: true
+mastery_pipeline:
+  - discover
+  - verify_source
+  - ingest
+  - normalize
+  - provenance
+  - package
+  - generate_tasks
+  - sandbox
+  - execute
+  - validate
+  - remediate
+  - retest
+  - regression
+  - promote
+source_record:
+  required:
+    - source_id
+    - name
+    - url
+    - category
+    - access_method
+    - license_or_terms
+    - retrieval_strategy
+    - parser_strategy
+    - package_strategy
+    - benchmark_strategy
+    - update_strategy
+    - status
+initial_sources:
+  - source_id: SRC-001
+    name: NVIDIA
+    category: ai_gpu_simulation
+    access_method: official_public_material
+    retrieval_strategy: "index permitted documentation, training material, captions/transcripts and public technical resources"
+    parser_strategy: "html/pdf/transcript/code-aware extraction"
+    package_strategy: "concepts -> GPU/AI/simulation capabilities -> practical tasks"
+    benchmark_strategy: "implementation + explanation + transfer + simulation tasks"
+  - source_id: SRC-002
+    name: GitHub
+    category: software_engineering
+    access_method: api_and_authorized_repository_access
+    retrieval_strategy: "API-first repository metadata/files/issues/PRs/actions where authorized"
+    parser_strategy: "repository-aware code and configuration analysis"
+    package_strategy: "repository workflows -> engineering capabilities"
+    benchmark_strategy: "unseen repository tasks, tests, debugging, fixes and CI"
+  - source_id: SRC-003
+    name: Codecademy
+    category: programming_education
+    access_method: public_or_user-authorized_content
+    retrieval_strategy: "use permitted course material and user-provided exports; do not bypass access controls"
+    parser_strategy: "lesson/exercise/concept extraction"
+    package_strategy: "concept -> exercise -> transfer task -> coding capability"
+    benchmark_strategy: "novel coding tasks rather than lesson memorization"
+  - source_id: SRC-004
+    name: O*NET
+    category: workforce_occupations
+    access_method: official_download_or_api
+    retrieval_strategy: "official database/API/download adapter"
+    parser_strategy: "occupation/task/skill/ability/work-activity normalization"
+    package_strategy: "occupation -> tasks -> skills -> capabilities -> workflow simulations"
+    benchmark_strategy: "job-task understanding, workflow planning and productivity improvements"
+  - source_id: SRC-005
+    name: Project Gutenberg
+    category: books_and_humanities
+    access_method: public_catalog_and_permitted_downloads
+    retrieval_strategy: "catalog metadata and permitted public-domain text"
+    parser_strategy: "chapter/concept/entity extraction"
+    package_strategy: "book -> concepts -> examples -> learning tasks"
+    benchmark_strategy: "comprehension, synthesis, comparison and transfer"
+  - source_id: SRC-006
+    name: OpenStax
+    category: education
+    access_method: official_open_resources
+    retrieval_strategy: "official open educational resources"
+    parser_strategy: "chapter/objective/example extraction"
+    package_strategy: "subject -> concepts -> exercises -> simulations"
+    benchmark_strategy: "curriculum-aligned knowledge + application"
+  - source_id: SRC-007
+    name: arXiv
+    category: research
+    access_method: public_metadata_and_permitted_content
+    retrieval_strategy: "metadata/API and permitted paper retrieval"
+    parser_strategy: "paper sections/equations/methods/results extraction"
+    package_strategy: "research claim -> method -> implementation -> limitations"
+    benchmark_strategy: "research understanding and reproduction where permitted"
+  - source_id: SRC-008
+    name: OpenAlex
+    category: research_graph
+    access_method: public_api
+    retrieval_strategy: "API metadata and scholarly graph"
+    parser_strategy: "entity/citation/topic graph"
+    package_strategy: "topic -> literature -> evidence graph"
+    benchmark_strategy: "source discovery and evidence ranking"
+  - source_id: SRC-009
+    name: Semantic Scholar
+    category: research_discovery
+    access_method: public_api_or_permitted_access
+    retrieval_strategy: "paper metadata and citation discovery"
+    parser_strategy: "paper/citation/topic normalization"
+    package_strategy: "research question -> evidence set"
+    benchmark_strategy: "literature review and evidence synthesis"
+  - source_id: SRC-010
+    name: PhET
+    category: interactive_science_simulation
+    access_method: public_educational_resources
+    retrieval_strategy: "official simulation metadata and permitted resources"
+    parser_strategy: "simulation variables/rules/outcomes"
+    package_strategy: "concept -> interactive experiment -> observation -> explanation"
+    benchmark_strategy: "predict, run, measure, explain"
+next_batch_policy:
+  allocation: "add verified non-redundant sources by capability gap"
+  ranking: "authority * uniqueness * capability_gain * accessibility * update_quality"
+  deduplicate_by: [canonical_url, publisher, content_hash, capability_overlap]
