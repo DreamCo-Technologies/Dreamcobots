@@ -91,7 +91,7 @@ jobs:
       - name: Inventory repository, runtime bindings, capabilities, and learning systems
         run: |
           mkdir -p config/generated website/data reports
-          if [ -f tools/build_repository_inventory.py ]; then python3 tools/build_repository_inventory.py; fi
+          if [ -f tools/build_repository_inventory.py ]; then python3 tools/run_optional_script.py tools/build_repository_inventory.py; fi
           if [ -f tools/audit_repository_connections.py ]; then python3 tools/audit_repository_connections.py; fi
           if [ -f tools/build_system_progress_status.py ]; then python3 tools/build_system_progress_status.py; fi
           if [ -f tools/generate_repository_test_registry.py ]; then python3 tools/generate_repository_test_registry.py; fi
@@ -99,23 +99,16 @@ jobs:
 
       - name: Discover every registered benchmark suite and model/provider
         run: |
-          if [ -f tools/discover_benchmarks.py ]; then python3 tools/discover_benchmarks.py; fi
-          if [ -f tools/build_benchmark_registry.py ]; then python3 tools/build_benchmark_registry.py; fi
-          if [ -f tools/build_capability_registry.py ]; then python3 tools/build_capability_registry.py; fi
-          if [ -f tools/build_model_prospectus_catalog.py ]; then python3 tools/build_model_prospectus_catalog.py; fi
+          if [ -f tools/discover_benchmarks.py ]; then python3 tools/run_optional_script.py tools/discover_benchmarks.py; fi
+          if [ -f tools/build_benchmark_registry.py ]; then python3 tools/run_optional_script.py tools/build_benchmark_registry.py; fi
+          if [ -f tools/build_capability_registry.py ]; then python3 tools/run_optional_script.py tools/build_capability_registry.py; fi
+          if [ -f tools/build_model_prospectus_catalog.py ]; then python3 tools/run_optional_script.py tools/build_model_prospectus_catalog.py; fi
 
       - name: Execute every applicable suite for every catalogued model/provider
         env:
           REQUESTED_MODE: ${{ github.event.inputs.mode || 'standard' }}
         run: |
-          if [ -f tools/run_500_model_benchmarks.py ]; then
-            python3 tools/run_500_model_benchmarks.py --mode "$REQUESTED_MODE"
-          elif [ -f tools/run_everything_now.py ]; then
-            python3 tools/run_everything_now.py --mode "$REQUESTED_MODE"
-          else
-            echo 'BLOCKED: no benchmark execution runner is present; no results may be claimed.'
-            exit 2
-          fi
+          python3 tools/run_optional_script.py --fallback tools/run_everything_now.py tools/run_500_model_benchmarks.py --mode "$REQUESTED_MODE"
 
       - name: Build complete model × benchmark-suite prospectus matrix
         if: always()
@@ -124,11 +117,11 @@ jobs:
       - name: Execute learning and evidence-driven gap-closure cycle
         if: always()
         run: |
-          if [ -f tools/run_learning_loop.py ]; then python3 tools/run_learning_loop.py; fi
-          if [ -f tools/run_adaptive_learning.py ]; then python3 tools/run_adaptive_learning.py; fi
-          if [ -f tools/run_gap_analysis.py ]; then python3 tools/run_gap_analysis.py; fi
-          if [ -f tools/build_forecast_report.py ]; then python3 tools/build_forecast_report.py; fi
-          if [ -f tools/build_capability_leads.py ]; then python3 tools/build_capability_leads.py; fi
+          if [ -f tools/run_learning_loop.py ]; then python3 tools/run_optional_script.py tools/run_learning_loop.py; fi
+          if [ -f tools/run_adaptive_learning.py ]; then python3 tools/run_optional_script.py tools/run_adaptive_learning.py; fi
+          if [ -f tools/run_gap_analysis.py ]; then python3 tools/run_optional_script.py tools/run_gap_analysis.py; fi
+          if [ -f tools/build_forecast_report.py ]; then python3 tools/run_optional_script.py tools/build_forecast_report.py; fi
+          if [ -f tools/build_capability_leads.py ]; then python3 tools/run_optional_script.py tools/build_capability_leads.py; fi
 
       - name: Run benchmark-policy and repository regression tests
         if: always()
