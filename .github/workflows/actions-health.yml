@@ -41,11 +41,34 @@ jobs:
           python-version: "3.13"
       - name: Static audit of every local workflow
         run: python3 tools/audit_actions_health.py
+      - name: Static audit diagnostics
+        if: always()
+        run: |
+          if [ -f config/generated/actions-health-report.json ]; then
+            python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('config/generated/actions-health-report.json')
+          d = json.loads(p.read_text())
+          print(f"workflow_count={d.get('workflow_count')}")
+          print(f"critical_error_count={d.get('critical_error_count')}")
+          print(f"warning_count={d.get('warning_count')}")
+          for item in d.get('findings', []):
+              for error in item.get('errors', []):
+                  print(f"ERROR | {item['workflow']} | {error}")
+              for warning in item.get('warnings', []):
+                  print(f"WARNING | {item['workflow']} | {warning}")
+          PY
+          else
+            echo "No static audit report was produced."
+          fi
       - name: Live audit of GitHub Actions state
+        if: always()
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python3 tools/audit_actions_live.py
       - name: Verify Actions-page contracts
+        if: always()
         run: |
           python3 -m unittest tests.test_actions_health
           if [ -f package-lock.json ]; then npm ci --ignore-scripts; fi
