@@ -1,0 +1,25 @@
+name: Buddy Navigation + Frontier Bootcamp
+
+on:
+  pull_request:
+    paths:
+      - 'framework/buddy_navigation_policy.py'
+      - 'tests/test_buddy_navigation_policy.py'
+      - 'docs/BUDDY_FRONTIER_CHILD_GROWTH_PLAN.md'
+      - 'docs/BUDDY_NAVIGATION_PROSPECTUS.md'
+      - 'docs/BUDDY_BOOTCAMP_MODEL_HINT_CATALOG.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -U pytest
+      - run: pytest -q tests/test_buddy_navigation_policy.py
