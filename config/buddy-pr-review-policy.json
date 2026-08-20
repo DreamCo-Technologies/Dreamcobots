@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "system": "buddy-pr-review",
+  "review_phases": ["before_pr", "during_development", "submission", "after_changes", "post_merge_learning"],
+  "default_automation_tier": 1,
+  "promotion_requires_evidence": true,
+  "never_bypass_required_checks": true,
+  "never_expose_secrets": true,
+  "never_merge_without_authorization": true,
+  "finding_severities": ["blocker", "critical", "high", "medium", "low", "suggestion"],
+  "required_evidence": [
+    "exact_location_or_artifact",
+    "reproduction_or_reasoning",
+    "confidence",
+    "impact",
+    "verification_plan"
+  ],
+  "promotion_metrics": {
+    "finding_precision": true,
+    "finding_recall": true,
+    "false_positive_rate": true,
+    "missed_defect_rate": true,
+    "severity_calibration": true,
+    "regression_detection": true,
+    "developer_acceptance": true,
+    "post_merge_incidents": true
+  },
+  "routing": {
+    "strategy": "evidence_driven_multi_agent",
+    "allow_parallel_reviewers": true,
+    "allow_sequential_reviewers": true,
+    "re_evaluate_when_task_changes": true,
+    "prefer_task_specific_benchmark_evidence": true
+  },
+  "reviewer_roles": [
+    "repository_explorer",
+    "requirements_analyst",
+    "architect",
+    "coder",
+    "tester",
+    "debugger",
+    "security_reviewer",
+    "dependency_reviewer",
+    "performance_engineer",
+    "ux_accessibility_reviewer",
+    "data_analyst",
+    "documentation_writer",
+    "release_engineer",
+    "devops_ci_specialist",
+    "integration_specialist",
+    "benchmark_evaluator"
+  ],
+  "automation_tiers": [
+    {"tier":0,"name":"observe","writes":false},
+    {"tier":1,"name":"suggest","writes":false},
+    {"tier":2,"name":"assist","writes":"approval_required"},
+    {"tier":3,"name":"guarded_automation","writes":"policy_scoped"},
+    {"tier":4,"name":"trusted_automation","writes":"explicitly_authorized"},
+    {"tier":5,"name":"scaled_review_service","writes":"repository_authorized"}
+  ]
+}
