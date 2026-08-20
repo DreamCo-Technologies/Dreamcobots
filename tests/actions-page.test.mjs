@@ -7,6 +7,7 @@ const source = readFileSync(new URL('../website/actions.js', import.meta.url), '
 const growthSource = readFileSync(new URL('../website/actions-growth-lab.js', import.meta.url), 'utf8');
 const growthCss = readFileSync(new URL('../website/actions-growth-lab.css', import.meta.url), 'utf8');
 const missionMap = JSON.parse(readFileSync(new URL('../website/data/buddy-repository-mission-map.json', import.meta.url), 'utf8'));
+const ideaIndex = JSON.parse(readFileSync(new URL('../website/data/buddy-actions-idea-index.json', import.meta.url), 'utf8'));
 const missionMapCss = readFileSync(new URL('../website/agi-repository-map.css', import.meta.url), 'utf8');
 const commandCss = readFileSync(new URL('../website/actions-command-center.css', import.meta.url), 'utf8');
 const browserCheck = readFileSync(new URL('../tools/verify_actions_page_browser.mjs', import.meta.url), 'utf8');
@@ -65,7 +66,15 @@ test('Repository mission map contains the accumulated Buddy goal surface', () =>
   assert.equal(missionMap.dashboard_policy.unknown_is_not_success, true);
   assert.equal(missionMap.dashboard_policy.mastered_requires_repeatable_evidence, true);
   assert.match(agiSource, /buddy-repository-mission-map\.json/);
+  assert.match(agiSource, /buddy-actions-idea-index\.json/);
   assert.match(missionMapCss, /agi-repository-category-grid/);
+  assert.match(missionMapCss, /agi-idea-lane-grid/);
+});
+
+test('Idea index preserves the approved build-to-evidence lifecycle', () => {
+  assert.equal(ideaIndex.idea_lanes.length, 7);
+  for (const name of ['Build','Learn','Repair','Prove','Operate','Teach','Govern']) assert.ok(ideaIndex.idea_lanes.some((lane) => lane.name === name));
+  assert.equal(ideaIndex.rules.length, 6);
 });
 
 test('All 16 specialist roles remain represented', () => {
