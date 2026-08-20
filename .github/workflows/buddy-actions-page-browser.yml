@@ -1,0 +1,47 @@
+name: Buddy Actions Page Browser Check
+
+on:
+  pull_request:
+    paths:
+      - 'website/actions.html'
+      - 'website/actions.js'
+      - 'website/actions-command-center.css'
+      - 'website/agi-actions.js'
+      - 'website/agent-workbench.js'
+      - 'website/data/actions-health-report.json'
+      - 'website/data/actions-prospectus.json'
+      - 'tools/verify_actions_page_browser.mjs'
+      - 'tests/actions-page.test.mjs'
+  push:
+    branches: [main]
+    paths:
+      - 'website/actions.html'
+      - 'website/actions.js'
+      - 'website/actions-command-center.css'
+      - 'website/agi-actions.js'
+      - 'website/agent-workbench.js'
+      - 'tools/verify_actions_page_browser.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Start GitHub Pages-style static server
+        run: python3 -m http.server 8765 --directory website > /tmp/actions-page-server.log 2>&1 &
+      - name: Wait for static server
+        run: python3 -c "import time,urllib.request; url='http://127.0.0.1:8765/actions.html'; [urllib.request.urlopen(url) or None for _ in range(1)]"
+      - name: Run Actions page browser smoke test
+        run: node tools/verify_actions_page_browser.mjs http://127.0.0.1:8765/actions.html
+      - name: Run Actions page contract tests
+        run: npm run test:actions-page
