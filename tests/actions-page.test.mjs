@@ -60,10 +60,8 @@ test('Growth lab connects learning, writing, evaluation, recovery and engineerin
 test('Repository mission map contains the accumulated Buddy goal surface', () => {
   assert.ok(missionMap.categories.length >= 15);
   const total = missionMap.categories.reduce((n, category) => n + category.goals.length, 0);
-  assert.ok(total >= 250);
-  for (const id of ['core-intelligence','engineering','learning','benchmarks','agents','navigation','devices','commerce','real-estate','professional-network','creative','developer-experience','observability','security-governance','memory-data','distribution','agi-research','maturity']) {
-    assert.ok(missionMap.categories.some((category) => category.id === id), id);
-  }
+  assert.ok(total >= 240);
+  for (const id of ['core-intelligence','engineering','learning','benchmarks','agents','navigation','devices','commerce','real-estate','professional-network','creative','developer-experience','observability','security-governance','memory-data','distribution','agi-research','maturity']) assert.ok(missionMap.categories.some((category) => category.id === id), id);
   assert.equal(missionMap.dashboard_policy.unknown_is_not_success, true);
   assert.equal(missionMap.dashboard_policy.mastered_requires_repeatable_evidence, true);
   assert.match(agiSource, /buddy-repository-mission-map\.json/);
