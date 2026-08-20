@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "title": "Buddy MIT AI Reading-to-Benchmark Curriculum",
+  "purpose": "Turn high-quality MIT Press and MIT OpenCourseWare resources into discoverable study plans tied to benchmark evidence.",
+  "source_policy": "Prefer official MIT Press and MIT OpenCourseWare metadata. Verify edition, ISBN, availability, licensing and publication date before acquisition or study.",
+  "workflow": ["discover", "verify", "rank", "assign chapters", "practice", "sandbox", "benchmark", "remediate", "retest", "record mastery"],
+  "books": [
+    {"title":"Machine Learning","author":"Ethem Alpaydin","source":"MIT Press","isbn":"9780262542524","tracks":["machine-learning-basics","fairness","explainability","reinforcement-learning","data-reasoning"],"benchmark_types":["conceptual QA","algorithm selection","explanation quality"]},
+    {"title":"Introduction to Machine Learning","author":"Ethem Alpaydin","source":"MIT Press","tracks":["supervised-learning","unsupervised-learning","model-selection"],"benchmark_types":["problem solving","model selection","error analysis"]},
+    {"title":"Deep Learning","author":"Ian Goodfellow, Yoshua Bengio, Aaron Courville","source":"MIT Press","isbn":"9780262035613","tracks":["deep-learning","optimization","representation-learning","sequence-modeling"],"benchmark_types":["theory QA","implementation","debugging","optimization"]},
+    {"title":"Understanding Deep Learning","author":"Simon J. D. Prince","source":"MIT Press","tracks":["deep-learning","neural-networks","transformers"],"benchmark_types":["conceptual QA","architecture comparison","implementation reasoning"]},
+    {"title":"Foundations of Computer Vision","author":"Antonio Torralba, Phillip Isola, William T. Freeman","source":"MIT Press","isbn":"9780262048972","tracks":["computer-vision","representation-learning","transformers"],"benchmark_types":["vision reasoning","model selection","image task planning"]},
+    {"title":"Probabilistic Machine Learning","author":"Kevin P. Murphy","source":"MIT Press","tracks":["probabilistic-reasoning","uncertainty","statistics"],"benchmark_types":["probabilistic reasoning","uncertainty calibration","model comparison"]},
+    {"title":"Learning Theory from First Principles","author":"Francis Bach","source":"MIT Press","tracks":["learning-theory","generalization","optimization"],"benchmark_types":["proof reasoning","generalization analysis","theory QA"]},
+    {"title":"Machine Learning in Production","author":"Christian Kästner","source":"MIT Press","tracks":["mlops","deployment","reliability"],"benchmark_types":["system design","incident response","deployment planning"]},
+    {"title":"Multi-Agent Reinforcement Learning","author":"Stefano V. Albrecht, Filippos Christianos, Lukas Schäfer","source":"MIT Press","tracks":["multi-agent-systems","reinforcement-learning","coordination"],"benchmark_types":["agent coordination","policy reasoning","multi-agent planning"]},
+    {"title":"Veridical Data Science","author":"Bin Yu, Rebecca L. Barter","source":"MIT Press","tracks":["data-science","validation","reproducibility"],"benchmark_types":["data validation","reproducibility","error detection"]},
+    {"title":"Artificial Intelligence: A Systems Approach from Architecture Principles to Deployment","author":"David R. Martinez, Bruke M. Kifle","source":"MIT Press","isbn":"9780262048989","tracks":["ai-systems","architecture","deployment","mlops"],"benchmark_types":["architecture","integration","deployment readiness"]},
+    {"title":"Introduction to Algorithms","author":"Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein","source":"MIT Press","tracks":["algorithms","complexity","software-engineering"],"benchmark_types":["algorithm design","complexity analysis","coding"]},
+    {"title":"Problem Solving with Python","author":"Michael D. Smith","source":"MIT Press","tracks":["python","programming","problem-solving"],"benchmark_types":["coding","debugging","automation"]},
+    {"title":"The Little Learner","author":"Daniel P. Friedman, Anurag Mendhekar, Qingqing Su, Guy L. Steele Jr., Peter Norvig","source":"MIT Press","tracks":["programming","learning-by-building"],"benchmark_types":["functional programming","conceptual reasoning","implementation"]},
+    {"title":"Fundamentals of Probability and Statistics for Machine Learning","author":"Ethem Alpaydin","source":"MIT Press","tracks":["probability","statistics","machine-learning"],"benchmark_types":["quantitative reasoning","statistics","uncertainty"]},
+    {"title":"Fairness and Machine Learning","author":"Solon Barocas, Moritz Hardt, Arvind Narayanan","source":"MIT Press","tracks":["fairness","responsible-ai","evaluation"],"benchmark_types":["fairness analysis","risk identification","evaluation design"]},
+    {"title":"The Deep Learning Revolution","author":"Terrence J. Sejnowski","source":"MIT Press","tracks":["ai-history","deep-learning","research-literacy"],"benchmark_types":["research comprehension","historical reasoning"]},
+    {"title":"Raising AI","author":"De Kai","source":"MIT Press","tracks":["ai-society","human-ai-interaction","responsible-ai"],"benchmark_types":["policy reasoning","human factors","risk analysis"]},
+    {"title":"What Is Intelligence? Lessons from AI About Evolution, Computing, and Minds","author":"Blaise Agüera y Arcas","source":"MIT Press","tracks":["intelligence","cognition","ai-theory"],"benchmark_types":["conceptual reasoning","argument analysis"]},
+    {"title":"Brains Minds Machines: The Mystery of Human Intelligence, the Enigmas of the Artificial","author":"Tomaso Poggio, Marco Magrini","source":"MIT Press","tracks":["intelligence","cognition","ai-theory"],"benchmark_types":["conceptual reasoning","research synthesis"]}
+  ],
+  "open_course_anchor": {
+    "course":"MIT OpenCourseWare 6.7960 Deep Learning",
+    "topics":["MLPs","CNNs","RNNs","graph neural networks","transformers","backpropagation","generalization","generative models","transfer learning","scaling laws","language models","inference"],
+    "grading_reference":"Use problem-set and project-style sandbox tasks as benchmark inputs; do not copy course solutions.",
+    "official_url":"https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/"
+  },
+  "mastery_policy": {
+    "mastery_requires":["independent task completion","repeatable benchmark pass","quality threshold","speed threshold","safety checks","regression protection","explanation of limitations"],
+    "book_completion_is_not_mastery": true,
+    "source_claims_are_not_benchmark_results": true
+  }
+}
