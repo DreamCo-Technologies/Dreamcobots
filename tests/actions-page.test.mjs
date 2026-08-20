@@ -6,6 +6,8 @@ const html = readFileSync(new URL('../website/actions.html', import.meta.url), '
 const source = readFileSync(new URL('../website/actions.js', import.meta.url), 'utf8');
 const growthSource = readFileSync(new URL('../website/actions-growth-lab.js', import.meta.url), 'utf8');
 const growthCss = readFileSync(new URL('../website/actions-growth-lab.css', import.meta.url), 'utf8');
+const missionMap = JSON.parse(readFileSync(new URL('../website/data/buddy-repository-mission-map.json', import.meta.url), 'utf8'));
+const missionMapCss = readFileSync(new URL('../website/agi-repository-map.css', import.meta.url), 'utf8');
 const commandCss = readFileSync(new URL('../website/actions-command-center.css', import.meta.url), 'utf8');
 const browserCheck = readFileSync(new URL('../tools/verify_actions_page_browser.mjs', import.meta.url), 'utf8');
 const agentSource = readFileSync(new URL('../website/agent-workbench.js', import.meta.url), 'utf8');
@@ -20,6 +22,7 @@ test('Actions page exposes mission control, filters, prospectuses and safe GitHu
   assert.match(html, /AGI Mission Control/);
   assert.match(html, /actions-command-center\.css/);
   assert.match(html, /actions-growth-lab\.css/);
+  assert.match(html, /agi-repository-map\.css/);
   assert.match(html, /id="agi-goals-grid"/);
   assert.match(html, /id="agi-mastery-rule"/);
   assert.match(html, /id="workflow-list"/);
@@ -52,6 +55,19 @@ test('Growth lab connects learning, writing, evaluation, recovery and engineerin
   assert.match(growthSource, /buddy-parenting-principles-actions\.json/);
   assert.match(growthSource, /best specialist for each step/);
   assert.match(growthCss, /buddy-growth-groups/);
+});
+
+test('Repository mission map contains the accumulated Buddy goal surface', () => {
+  assert.ok(missionMap.categories.length >= 15);
+  const total = missionMap.categories.reduce((n, category) => n + category.goals.length, 0);
+  assert.ok(total >= 250);
+  for (const id of ['core-intelligence','engineering','learning','benchmarks','agents','navigation','devices','commerce','real-estate','professional-network','creative','developer-experience','observability','security-governance','memory-data','distribution','agi-research','maturity']) {
+    assert.ok(missionMap.categories.some((category) => category.id === id), id);
+  }
+  assert.equal(missionMap.dashboard_policy.unknown_is_not_success, true);
+  assert.equal(missionMap.dashboard_policy.mastered_requires_repeatable_evidence, true);
+  assert.match(agiSource, /buddy-repository-mission-map\.json/);
+  assert.match(missionMapCss, /agi-repository-category-grid/);
 });
 
 test('All 16 specialist roles remain represented', () => {
