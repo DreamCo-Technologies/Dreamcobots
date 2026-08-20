@@ -1,0 +1,115 @@
+name: Buddy PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Review mode
+        required: false
+        default: observe
+        type: choice
+        options: [observe, assist, collaborate, guarded_automation]
+
+permissions:
+  contents: read
+  pull-requests: read
+  checks: read
+  issues: read
+
+concurrency:
+  group: buddy-pr-review-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  review-contract:
+    name: Buddy Review Contract
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify review system configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f docs/BUDDY_PR_REVIEW_SYSTEM.md
+          test -f website/data/buddy-pr-review-system.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('website/data/buddy-pr-review-system.json')
+          data = json.loads(p.read_text())
+          required = {'pre_pr','intake','route','deterministic_checks','semantic_review','adversarial_review','synthesis','revision_watch','merge_readiness','post_merge_learning'}
+          assert required.issubset(set(data['lifecycle']))
+          assert len(data['specialists']) >= 16
+          assert data['promotion_policy']['mastered_requires_repeatable_evidence'] is True
+          assert data['default_rule'].startswith('Never silently')
+          print('Buddy PR review contract: OK')
+          PY
+
+      - name: Review permissions are read-only by default
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '^  pull-requests: read' .github/workflows/buddy-pr-review.yml
+          grep -q '^  contents: read' .github/workflows/buddy-pr-review.yml
+          echo 'Default review permissions: read-only'
+
+      - name: Publish review handoff summary
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number || 'manual' }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          cat <<EOF >> "$GITHUB_STEP_SUMMARY"
+          ## Buddy PR Review
+          - Event: ${EVENT_NAME}
+          - PR: ${PR_NUMBER}
+          - Commit: ${SHA}
+          - Default mode: observe
+          - Review lifecycle: pre-PR → intake → specialist routing → deterministic checks → semantic/adversarial review → synthesis → revision watch → merge readiness → post-merge learning
+          - Safety: no automatic approval, merge, publication or permission escalation is performed by this workflow.
+          EOF
+
+  review-readiness:
+    name: Review Readiness Signals
+    runs-on: ubuntu-latest
+    needs: review-contract
+    if: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - name: Check PR context
+        shell: bash
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+          BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+          test -n "$TITLE"
+          if [ -z "$BODY" ]; then
+            echo 'Notice: PR description is empty; Buddy should flag missing context during intake.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'PR description present.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Record review dimensions
+        run: |
+          cat <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+          ### Review dimensions
+          - Correctness and requirements
+          - Architecture and integration
+          - Security and privacy
+          - Dependencies and supply chain
+          - Performance and reliability
+          - Tests and regression risk
+          - UX and accessibility
+          - Observability and release readiness
+          - Migration and rollback safety
+          - Adversarial edge cases
+          EOF
