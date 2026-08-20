@@ -1,0 +1,34 @@
+name: Buddy Source Learning Validation
+
+on:
+  pull_request:
+    paths:
+      - 'tools/buddy_source_learning_engine.py'
+      - 'tests/test_buddy_source_learning_engine.py'
+      - 'website/data/buddy-source-learning-manifest.json'
+      - 'docs/BUDDY_UNIVERSAL_SOURCE_LEARNING_ARCHITECTURE.md'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/buddy_source_learning_engine.py'
+      - 'tests/test_buddy_source_learning_engine.py'
+      - 'website/data/buddy-source-learning-manifest.json'
+      - 'docs/BUDDY_UNIVERSAL_SOURCE_LEARNING_ARCHITECTURE.md'
+
+permissions:
+  contents: read
+
+jobs:
+  source-learning-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile engine
+        run: python -m py_compile tools/buddy_source_learning_engine.py
+      - name: Run source learning tests
+        run: python -m unittest tests.test_buddy_source_learning_engine
+      - name: Validate manifest JSON
+        run: python -m json.tool website/data/buddy-source-learning-manifest.json >/dev/null
