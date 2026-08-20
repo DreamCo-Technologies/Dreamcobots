@@ -4,6 +4,8 @@ import test from 'node:test';
 
 const html = readFileSync(new URL('../website/actions.html', import.meta.url), 'utf8');
 const source = readFileSync(new URL('../website/actions.js', import.meta.url), 'utf8');
+const growthSource = readFileSync(new URL('../website/actions-growth-lab.js', import.meta.url), 'utf8');
+const growthCss = readFileSync(new URL('../website/actions-growth-lab.css', import.meta.url), 'utf8');
 const commandCss = readFileSync(new URL('../website/actions-command-center.css', import.meta.url), 'utf8');
 const browserCheck = readFileSync(new URL('../tools/verify_actions_page_browser.mjs', import.meta.url), 'utf8');
 const agentSource = readFileSync(new URL('../website/agent-workbench.js', import.meta.url), 'utf8');
@@ -17,11 +19,13 @@ const report = JSON.parse(readFileSync(new URL('../website/data/actions-health-r
 test('Actions page exposes mission control, filters, prospectuses and safe GitHub handoff', () => {
   assert.match(html, /AGI Mission Control/);
   assert.match(html, /actions-command-center\.css/);
+  assert.match(html, /actions-growth-lab\.css/);
   assert.match(html, /id="agi-goals-grid"/);
   assert.match(html, /id="agi-mastery-rule"/);
   assert.match(html, /id="workflow-list"/);
   assert.match(html, /id="agent-workbench"/);
   assert.match(html, /agi-actions\.js/);
+  assert.match(html, /actions-growth-lab\.js/);
   assert.match(source, /api\.github\.com\/repos\/\$\{REPOSITORY\}\/actions\/runs/);
   assert.match(source, /ensureShell\(\)/);
   assert.match(source, /Safe boundary: browser actions do not execute arbitrary shell commands/);
@@ -38,22 +42,28 @@ test('Command center has searchable status and trigger filters plus detail dialo
   assert.match(commandCss, /workflow-detail-dialog/);
 });
 
+test('Growth lab connects learning, writing, evaluation, recovery and engineering controls', () => {
+  assert.match(growthSource, /buddy-original-writing-manifest\.json/);
+  assert.match(growthSource, /buddy-knowledge-synthesis-actions\.json/);
+  assert.match(growthSource, /buddy-adaptive-curriculum-actions\.json/);
+  assert.match(growthSource, /buddy-learning-economics-actions\.json/);
+  assert.match(growthSource, /buddy-learning-memory-actions\.json/);
+  assert.match(growthSource, /buddy-mastery-ledger-actions\.json/);
+  assert.match(growthSource, /buddy-parenting-principles-actions\.json/);
+  assert.match(growthSource, /best specialist for each step/);
+  assert.match(growthCss, /buddy-growth-groups/);
+});
+
 test('All 16 specialist roles remain represented', () => {
   assert.equal(agents.agents.length, 16);
-  for (const agent of agents.agents) {
-    assert.ok(agent.name && agent.purpose && agent.primary_action && agent.success);
-  }
+  for (const agent of agents.agents) assert.ok(agent.name && agent.purpose && agent.primary_action && agent.success);
   assert.match(agentSource, /re-evaluates when the task changes/);
   assert.match(agentSource, /exact-task benchmark evidence/);
 });
 
 test('Mission registry contains broad capability goals and honest mastery policy', () => {
   assert.ok(goals.goals.length >= 20);
-  assert.ok(goals.goals.some((g) => g.id === 'agent-routing'));
-  assert.ok(goals.goals.some((g) => g.id === 'benchmarks'));
-  assert.ok(goals.goals.some((g) => g.id === 'navigation'));
-  assert.ok(goals.goals.some((g) => g.id === 'devices'));
-  assert.ok(goals.goals.some((g) => g.id === 'security'));
+  for (const id of ['agent-routing','benchmarks','navigation','devices','security']) assert.ok(goals.goals.some((g) => g.id === id));
   assert.match(goals.mastery_rule, /not labeled Mastered/i);
   assert.match(agiSource, /exact step/);
 });
@@ -61,10 +71,7 @@ test('Mission registry contains broad capability goals and honest mastery policy
 test('Every workflow has three upgrades and a workflow-specific GitHub URL', () => {
   assert.equal(report.findings.length, report.workflow_count);
   assert.equal(report.critical_error_count, 0);
-  for (const workflow of report.findings) {
-    assert.equal(workflow.upgrades.length, 3, workflow.filename);
-    assert.ok(workflow.github_url.endsWith(workflow.filename));
-  }
+  for (const workflow of report.findings) { assert.equal(workflow.upgrades.length, 3, workflow.filename); assert.ok(workflow.github_url.endsWith(workflow.filename)); }
 });
 
 test('Browser verification matches the current AGI Mission Control contract', () => {
