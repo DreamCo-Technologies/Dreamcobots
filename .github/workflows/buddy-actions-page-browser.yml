@@ -6,10 +6,14 @@ on:
       - 'website/actions.html'
       - 'website/actions.js'
       - 'website/actions-command-center.css'
+      - 'website/actions-growth-lab.js'
+      - 'website/actions-growth-lab.css'
       - 'website/agi-actions.js'
       - 'website/agent-workbench.js'
       - 'website/data/actions-health-report.json'
       - 'website/data/actions-prospectus.json'
+      - 'website/data/buddy-*-actions.json'
+      - 'website/data/buddy-original-writing-manifest.json'
       - 'tools/verify_actions_page_browser.mjs'
       - 'tests/actions-page.test.mjs'
   push:
@@ -18,6 +22,8 @@ on:
       - 'website/actions.html'
       - 'website/actions.js'
       - 'website/actions-command-center.css'
+      - 'website/actions-growth-lab.js'
+      - 'website/actions-growth-lab.css'
       - 'website/agi-actions.js'
       - 'website/agent-workbench.js'
       - 'tools/verify_actions_page_browser.mjs'
@@ -40,7 +46,7 @@ jobs:
       - name: Start GitHub Pages-style static server
         run: python3 -m http.server 8765 --directory website > /tmp/actions-page-server.log 2>&1 &
       - name: Wait for static server
-        run: python3 -c "import time,urllib.request; url='http://127.0.0.1:8765/actions.html'; [urllib.request.urlopen(url) or None for _ in range(1)]"
+        run: python3 -c "import time,urllib.request; url='http://127.0.0.1:8765/actions.html'; [urllib.request.urlopen(url) or None for _ in range(10)]"
       - name: Run Actions page browser smoke test
         run: node tools/verify_actions_page_browser.mjs http://127.0.0.1:8765/actions.html
       - name: Run Actions page contract tests
