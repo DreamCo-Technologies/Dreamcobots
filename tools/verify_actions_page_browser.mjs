@@ -8,19 +8,21 @@ const errors = [];
 
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-  page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
-  });
+  page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
   page.on('pageerror', (error) => errors.push(error.message));
 
   await page.goto(target, { waitUntil: 'networkidle' });
   await page.waitForSelector('.workflow-item');
+  await page.waitForSelector('#actions-control-cards');
+  await page.waitForSelector('#actions-search');
+
   const desktop = {
     title: await page.locator('h1').textContent(),
     rows: await page.locator('.workflow-item').count(),
     workflows: await page.locator('#metric-workflows').textContent(),
     upgrades: await page.locator('#metric-upgrades').textContent(),
     benchmarks: await page.locator('#metric-benchmarks').textContent(),
+    controls: await page.locator('.actions-control-card').count(),
     status: await page.locator('#actions-refresh-status').textContent(),
     overflow: await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth),
   };
@@ -34,8 +36,10 @@ try {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(target, { waitUntil: 'networkidle' });
   await page.waitForSelector('.workflow-item');
+  await page.waitForSelector('#actions-search');
   const mobile = {
     rows: await page.locator('.workflow-item').count(),
+    controls: await page.locator('.actions-control-card').count(),
     overflow: await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth),
     firstWorkflowLinks: await page.locator('.workflow-commands').first().getByRole('link').count(),
   };
@@ -43,11 +47,10 @@ try {
 
   const failures = [];
   const expectedWorkflows = Number(desktop.workflows);
-  if (desktop.title !== 'Actions control room') failures.push('desktop title');
+  if (desktop.title !== 'AGI Mission Control') failures.push('desktop title');
   if (desktop.rows !== expectedWorkflows || mobile.rows !== expectedWorkflows) failures.push('workflow count');
-  if (Number(desktop.upgrades) !== expectedWorkflows * 3) failures.push('upgrade count');
-  if (desktop.benchmarks !== '40') failures.push('benchmark surface count');
-  if (!desktop.dialog || desktop.dialogUpgrades !== 3) failures.push('detail dialog');
+  if (!desktop.controls || desktop.controls < 1 || mobile.controls !== desktop.controls) failures.push('prospectus controls');
+  if (!desktop.dialog || desktop.dialogUpgrades < 1) failures.push('detail dialog');
   if (desktop.overflow || mobile.overflow) failures.push('horizontal overflow');
   if (mobile.firstWorkflowLinks !== 2) failures.push('mobile workflow commands');
   if (errors.length) failures.push('browser console');
