@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "name": "Buddy PR Review System",
+  "mode": "observe",
+  "mission": "Evidence-driven review before, during and after every pull request.",
+  "trust_levels": ["observe","assist","collaborate","guarded_automation","trusted_automation"],
+  "default_rule": "Never silently approve, merge, publish or change permissions without the repository's configured authorization.",
+  "lifecycle": ["pre_pr","intake","route","deterministic_checks","semantic_review","adversarial_review","synthesis","revision_watch","merge_readiness","post_merge_learning"],
+  "review_dimensions": ["correctness","requirements","architecture","security","privacy","dependencies","performance","reliability","tests","accessibility","ux","observability","documentation","release_readiness","migration_safety"],
+  "finding_fields": ["severity","confidence","evidence","path","line","why_it_matters","minimal_fix","validation","blocks_merge","duplicate_of"],
+  "benchmarks": ["precision","recall","false_positive_rate","false_negative_rate","severity_calibration","duplicate_suppression","actionability","regression_detection","security_detection","dependency_detection","performance_detection","accessibility_detection","latency","cost","developer_acceptance","post_merge_correlation"],
+  "specialists": ["Repository Explorer","Requirements Analyst","Architect","Coder","Tester","Debugger","Security Reviewer","Dependency Reviewer","Performance Engineer","UX/Accessibility Reviewer","Data Analyst","Documentation Writer","Release Engineer","DevOps/CI Specialist","Integration Specialist","Benchmark Evaluator"],
+  "actions": [
+    {"id":"review-pr","label":"Review a PR","risk":"read","mode":"assist"},
+    {"id":"pre-pr","label":"Review before PR","risk":"read","mode":"assist"},
+    {"id":"re-review","label":"Re-review latest commit","risk":"read","mode":"assist"},
+    {"id":"security","label":"Security review","risk":"read","mode":"assist"},
+    {"id":"dependencies","label":"Dependency review","risk":"read","mode":"assist"},
+    {"id":"performance","label":"Performance review","risk":"read","mode":"assist"},
+    {"id":"tests","label":"Test-gap review","risk":"read","mode":"assist"},
+    {"id":"adversarial","label":"Adversarial review","risk":"read","mode":"assist"},
+    {"id":"benchmark","label":"Run review benchmark","risk":"read","mode":"observe"},
+    {"id":"merge-readiness","label":"Merge readiness","risk":"read","mode":"assist"},
+    {"id":"post-merge","label":"Post-merge review","risk":"read","mode":"observe"}
+  ],
+  "promotion_policy": {
+    "mastered_requires_repeatable_evidence": true,
+    "requires_task_specific_benchmarks": true,
+    "requires_false_positive_tracking": true,
+    "requires_post_merge_feedback": true,
+    "requires_rollback_plan_for_automation": true
+  }
+}
