@@ -1,0 +1,45 @@
+name: Buddy Value + Actions Gate
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'website/actions.html'
+      - 'website/*value*'
+      - 'website/data/buddy-*-engine.json'
+      - 'docs/BUDDY_*VALUE*.md'
+      - 'docs/BUDDY_WORK_TO_VALUE_ENGINE.md'
+      - 'tools/evaluate_buddy_value_engine.mjs'
+      - 'tools/verify_actions_surface.mjs'
+      - 'tests/continuous-value-engine.test.mjs'
+      - 'tests/benchmark-pr-money-system.test.mjs'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-value-actions-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify Buddy value systems and Actions surface
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify Actions surface
+        run: node tools/verify_actions_surface.mjs
+      - name: Run Buddy value contracts
+        run: node --test tests/continuous-value-engine.test.mjs tests/benchmark-pr-money-system.test.mjs
+      - name: Verify value registry JSON
+        run: node -e "for (const f of ['website/data/buddy-continuous-value-engine.json','website/data/buddy-work-to-value-engine.json','website/data/buddy-money-opportunity-catalog.json']) JSON.parse(require('fs').readFileSync(f,'utf8')); console.log('Value registries valid')"
+      - name: Report truth contract
+        run: |
+          echo 'Buddy value engine verification completed.'
+          echo 'Predicted revenue/profit is never treated as observed revenue/profit.'
+          echo 'Consequential financial actions remain authorization-gated.'
