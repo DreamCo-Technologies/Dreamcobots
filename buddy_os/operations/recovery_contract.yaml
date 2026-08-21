@@ -1,0 +1,35 @@
+version: 1
+name: buddy-recovery-contract
+purpose: standardize safe failure containment and recovery across Buddy-managed systems
+
+stages:
+  - detect
+  - classify
+  - contain
+  - snapshot
+  - rollback_or_repair
+  - verify
+  - restore
+  - monitor
+  - learn
+
+recovery_strategies:
+  transient_failure:
+    actions: [bounded_retry, backoff, health_check]
+  dependency_failure:
+    actions: [isolate_dependency, fallback_if_approved, alert]
+  deployment_regression:
+    actions: [halt_rollout, rollback, health_check]
+  data_migration_failure:
+    actions: [stop_writes_if_required, restore_snapshot, validate_integrity]
+  security_event:
+    actions: [contain, revoke_or_rotate_if_authorized, preserve_evidence, escalate]
+  repeated_failure:
+    actions: [disable_automatic_retry, open_incident, require_debate]
+
+rules:
+  bounded_retries_only: true
+  never_retry_destructive_actions_automatically: true
+  verify_after_recovery: true
+  recovery_requires_audit_record: true
+  repeated_failures_escalate: true
