@@ -1,0 +1,41 @@
+version: 1
+name: buddy-failure-taxonomy
+
+categories:
+  build:
+    examples: [compile, typecheck, bundler, dependency, asset]
+  runtime:
+    examples: [startup, crash, timeout, memory, concurrency]
+  integration:
+    examples: [api, auth, mcp, webhook, provider, rate_limit]
+  data:
+    examples: [schema, migration, corruption, stale_cache, serialization]
+  workflow:
+    examples: [ci, deployment, permissions, artifact, secret]
+  security:
+    examples: [vulnerability, secret_leak, privilege, policy_violation]
+  quality:
+    examples: [test_flake, regression, accessibility, visual, performance]
+  architecture:
+    examples: [duplicate_system, circular_dependency, contract_drift, coupling]
+  product:
+    examples: [broken_user_flow, missing_capability, misleading_status, bad_default]
+
+severity:
+  sev0: emergency_security_or_data_loss
+  sev1: production_outage_or_critical_user_block
+  sev2: major_degraded_capability
+  sev3: limited_bug_or_noncritical_regression
+  sev4: improvement_or_technical_debt
+
+states:
+  - detected
+  - triaged
+  - reproducing
+  - root_cause_found
+  - fix_in_progress
+  - fixed
+  - verified
+  - monitored
+  - closed
+  - reopened
