@@ -1,0 +1,77 @@
+version: 1
+name: buddy-runtime-integration-map
+purpose: connect Buddy OS contracts to existing DreamCo runtime systems without duplicating implementations
+
+existing_runtime:
+  fleet_runtime:
+    path: server/fleet-runtime.ts
+    role: governed_bot_routing_and_sandbox_certification
+  task_runner:
+    path: dreamco_platform/automation/task_runner.py
+    role: bounded_scheduling_and_failure_recovery
+  model_router:
+    path: server/buddy-model-policy.ts
+    role: free_premium_routing_and_model_selection
+  local_bridge:
+    path: tools/buddy_local_bridge.py
+    role: loopback_only_laptop_actions_and_keychain_intake
+  buddy_cli:
+    path: tools/buddy_cli.py
+    role: local_command_center_and_preflight_controls
+  command_center:
+    path: website/buddy-command-center.html
+    role: user_facing_task_planning_and_benchmark_surface
+  command_center_logic:
+    path: website/buddy-command-center.js
+    role: local_task_decomposition_capability_router_and_evidence_journal
+  connector_registry:
+    path: config/buddy-connector-registry.json
+    role: connection_contracts_and_secret_reference_policy
+  connection_catalog:
+    path: website/data/buddy-connection-catalog.json
+    role: public_safe_connection_status_catalog
+  control_center_workflow:
+    path: .github/workflows/dreamco-control-center.yml
+    role: manual_repository_health_and_fleet_test_control
+  buddy_test_lab:
+    path: .github/workflows/buddy-actions-test-lab.yml
+    role: automated_buddy_verification_and_debug_evidence
+  repository_inventory:
+    path: website/data/repository-test-registry.json
+    role: generated_repository_file_and_test_inventory
+
+buddy_os_contracts:
+  task: buddy_os/tasks/task_envelope.schema.json
+  memory: buddy_os/memory/memory_contract.yaml
+  debate: buddy_os/debate/debate_protocol.yaml
+  execution_policy: buddy_os/execution/policy.yaml
+  bot_registry: buddy_os/registry/bot_registry.yaml
+  dashboard_registry: buddy_os/dashboards/dashboard_registry.yaml
+  mcp_registry: buddy_os/registry/mcp_registry.yaml
+  skills: buddy_os/skills/skills.yaml
+  skill_lifecycle: buddy_os/learning/skill_lifecycle.yaml
+
+routing_rules:
+  task_intake: task_envelope
+  model_selection: server/buddy-model-policy.ts
+  bot_selection: server/fleet-runtime.ts
+  recurring_work: dreamco_platform/automation/task_runner.py
+  laptop_actions: tools/buddy_local_bridge.py
+  external_connections: config/buddy-connector-registry.json
+  verification: .github/workflows/buddy-actions-test-lab.yml
+
+truth_boundaries:
+  dashboard_registered_does_not_mean_live: true
+  catalog_ready_does_not_mean_provider_connected: true
+  declared_capability_does_not_mean_benchmark_passed: true
+  sandbox_execution_does_not_mean_live_execution: true
+  approval_required_for_live_external_actions: true
+  provider_calls_must_have_adapter_evidence: true
+
+next_integration_targets:
+  - expose fleet-runtime health and certification in the Buddy command center
+  - map every discovered bot profile into the repository-backed bot registry
+  - map existing dashboard routes into the dashboard registry with health status
+  - connect task envelopes to the existing task runner through a governed adapter
+  - add debate results and skill scores to persistent project memory
+  - add end-to-end contract tests to the Buddy Actions Test Lab
