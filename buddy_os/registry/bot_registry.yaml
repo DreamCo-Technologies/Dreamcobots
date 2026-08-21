@@ -1,0 +1,41 @@
+version: 1
+# Repository-backed bot control registry. Existing bots can be mapped here incrementally.
+controls:
+  - inspect
+  - start
+  - stop
+  - restart
+  - pause
+  - resume
+  - update
+  - train
+  - test
+  - monitor
+  - deploy
+
+bots:
+  buddy:
+    role: master_orchestrator
+    modes: [chat, builder, research, coding, autonomous, governance, security, dreamco]
+    controls: [inspect, start, stop, restart, pause, resume, update, train, test, monitor, deploy]
+  money:
+    role: revenue_orchestrator
+    modes: [research, coding, revenue, governance]
+    controls: [inspect, start, stop, restart, pause, resume, update, train, test, monitor, deploy]
+  debug:
+    role: engineering_reliability
+    modes: [coding, builder, security, governance]
+    controls: [inspect, start, stop, restart, pause, resume, update, train, test, monitor, deploy]
+
+# Discovery policy for the rest of the repository.
+discovery:
+  source: repository
+  matching:
+    - bot
+    - agent
+    - orchestrator
+    - worker
+  default_control_set: [inspect, start, stop, restart, pause, resume, update, train, test, monitor, deploy]
+  require_health_check_before_start: true
+  require_permission_for_deploy: true
+  require_confirmation_for_destructive_actions: true
