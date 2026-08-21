@@ -1,0 +1,106 @@
+version: 1
+name: dreamco-operational-ontology
+purpose: unified digital twin for Buddy Actions across divisions, bots, capabilities, data, logic, actions, models, and security
+
+architecture:
+  pattern: data_logic_action_security
+  inspiration: operational_ontology
+  design_goal: maximize reuse, discoverability, composability, governance, and execution efficiency
+
+object_types:
+  - organization
+  - division
+  - repository
+  - project
+  - goal
+  - plan
+  - task
+  - bot
+  - superbots
+  - capability
+  - skill
+  - benchmark
+  - training_program
+  - document
+  - note
+  - memory
+  - tool
+  - mcp_server
+  - library
+  - generator
+  - workflow
+  - dashboard
+  - model
+  - model_weight
+  - dataset
+  - environment
+  - deployment
+  - incident
+  - action
+  - artifact
+  - evidence
+  - permission
+  - user
+
+link_types:
+  - contains
+  - owns
+  - depends_on
+  - implements
+  - supports_goal
+  - executes
+  - requires
+  - produces
+  - tested_by
+  - trained_by
+  - mastered_by
+  - reads
+  - writes
+  - calls
+  - generated_by
+  - deployed_to
+  - observed_by
+  - blocked_by
+  - recovers_from
+  - governed_by
+  - uses_model
+  - uses_weight
+  - derived_from
+  - related_to
+
+action_types:
+  - inspect
+  - search
+  - plan
+  - debate
+  - route
+  - generate
+  - edit
+  - run
+  - test
+  - benchmark
+  - train
+  - debug
+  - repair
+  - connect
+  - deploy
+  - rollback
+  - monitor
+  - certify
+  - learn
+
+security:
+  every_object_has_access_policy: true
+  every_action_has_risk_policy: true
+  permissions_checked_at_action_time: true
+  secret_values_are_never_indexed_into_general_context: true
+  tenant_and_user_boundaries_are_preserved: true
+
+execution:
+  action_context_is_relevance_ranked: true
+  duplicate_capabilities_should_be_merged_or_linked: true
+  prefer_shared_services_over_duplicate_bots: true
+  prefer_cached_verified_evidence: true
+  prefer_smallest_sufficient_model: true
+  escalate_model_size_when_evidence_requires_it: true
+  benchmark_before_promotion: true
