@@ -1,0 +1,33 @@
+version: 1
+name: buddy-mastery-dashboard-contract
+
+views:
+  executive:
+    show: [overall_mastery, verified_capabilities, regressions, blockers, top_next_actions]
+  capability:
+    show: [skill_tree, benchmark_status, scores, evidence, weaknesses, training_plan]
+  benchmark:
+    show: [baseline, latest, holdout, transfer, regression, reliability, safety, latency, cost]
+  fleet:
+    show: [bots, divisions, capability_coverage, health, sandbox_status, live_provider_status]
+  actions:
+    show: [goal, plan, mode, model, tools, memory, risk, progress, evidence, recovery, next_best_action]
+
+status_rules:
+  green_mastered_requires_evidence: true
+  yellow_candidate_requires_retest: true
+  red_failed_requires_gap_plan: true
+  black_blocked_requires_dependency: true
+  gray_unknown_requires_baseline: true
+
+truth_labels:
+  - repository_verified
+  - sandbox_verified
+  - live_provider_verified
+  - production_verified
+  - not_verified
+
+privacy:
+  public_dashboard_excludes_secrets: true
+  public_dashboard_excludes_private_user_data: true
+  evidence_links_must_be_safe: true
