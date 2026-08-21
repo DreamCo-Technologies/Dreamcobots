@@ -1,0 +1,38 @@
+{
+  "schema": "dreamco.personal_ai_runtime.v1",
+  "status": "mvp-contract",
+  "lifecycle": ["draft", "learning", "tested", "active", "paused", "archived"],
+  "required_identity": ["owner_id", "ai_id", "name", "version"],
+  "knowledge_source": {
+    "required_metadata": ["source_id", "source_type", "owner_permission", "rights_status", "created_at"],
+    "allowed_types": ["document", "licensed_book", "photo", "authorized_video", "audio", "conversation", "approved_web_source", "business_data"]
+  },
+  "memory": {
+    "modes": ["always_learn", "ask_before_learning", "never_learn", "selected_parts_only"],
+    "required_controls": ["view", "edit", "delete", "export", "forget_source"]
+  },
+  "skill": {
+    "required_fields": ["skill_id", "name", "instructions", "examples", "permissions", "tests", "version"],
+    "promotion_states": ["draft", "tested", "promoted", "deprecated"]
+  },
+  "task_evaluation": {
+    "required_fields": ["task_id", "skill_id", "model_route", "result_status", "quality_signal", "cost_estimate", "latency_ms", "timestamp"],
+    "promotion_rule": "Only strategies with repeatable positive evidence may be promoted."
+  },
+  "routing": {
+    "priority_order": ["capability_fit", "quality_evidence", "plan_entitlement", "cost", "latency", "privacy", "availability"],
+    "paid_model_rule": "Never silently upgrade or charge. Require entitlement and explicit authorization when required."
+  },
+  "privacy": {
+    "github_storage": "configuration_and_metadata_only",
+    "customer_content": "authorized_runtime_storage",
+    "required_actions": ["export", "delete", "reset", "rollback"],
+    "training_opt_in_separate_from_memory": true
+  },
+  "beginner_contract": {
+    "technical_terms_hidden_by_default": true,
+    "first_success_before_complex_setup": true,
+    "every_error_has_plain_language_explanation": true,
+    "advanced_details_available": true
+  }
+}
