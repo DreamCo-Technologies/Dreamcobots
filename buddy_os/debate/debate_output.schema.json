@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BuddyDebateDecision",
+  "type": "object",
+  "required": ["task", "purpose", "data", "positions", "dissent", "decision", "risks", "execution_plan", "evidence_requirements"],
+  "properties": {
+    "task": {"type": "string"},
+    "purpose": {"type": "string"},
+    "data": {"type": "array", "items": {"type": "string"}},
+    "positions": {"type": "array", "items": {"type": "object"}},
+    "dissent": {"type": "array", "items": {"type": "string"}},
+    "decision": {"type": "string"},
+    "risks": {"type": "array", "items": {"type": "object"}},
+    "execution_plan": {"type": "array", "items": {"type": "string"}},
+    "evidence_requirements": {"type": "array", "items": {"type": "string"}},
+    "approval_required": {"type": "boolean"}
+  }
+}
