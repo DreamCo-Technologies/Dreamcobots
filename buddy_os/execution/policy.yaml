@@ -1,0 +1,29 @@
+version: 1
+execution_policy:
+  default_mode: supervised
+  allowed_read_actions:
+    - inspect_repository
+    - read_file
+    - run_tests
+    - inspect_logs
+    - inspect_health
+  approval_required:
+    - write_file
+    - create_pull_request
+    - merge_pull_request
+    - deploy
+    - production_command
+    - external_side_effect
+    - destructive_command
+  command_runner:
+    enabled: true
+    environment: isolated_when_possible
+    timeout_seconds: 300
+    capture_stdout: true
+    capture_stderr: true
+    capture_exit_code: true
+  autonomous_mode:
+    enabled: true
+    restricted_to: approved_actions
+    escalation_on_failure: true
+    never_bypass_repository_governance: true
