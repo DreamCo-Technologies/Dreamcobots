@@ -34,6 +34,7 @@ const CostTrackingPage = lazy(() => import("@/pages/CostTrackingPage"));
 const AILeadersPage = lazy(() => import("@/pages/AILeadersPage"));
 const AIModelsPage = lazy(() => import("@/pages/AIModelsPage"));
 const BotBuilderPage = lazy(() => import("@/pages/BotBuilderPage"));
+const PersonalAIBuilderPage = lazy(() => import("@/pages/PersonalAIBuilderPage"));
 const BotActivityPage = lazy(() => import("@/pages/BotActivityPage"));
 const SandboxPage = lazy(() => import("@/pages/SandboxPage"));
 const ActionsPage = lazy(() => import("@/pages/ActionsPage"));
@@ -84,6 +85,7 @@ function Router() {
       <Route path="/ai-leaders" component={wrap(AILeadersPage, "AI Leaders")} />
       <Route path="/ai-models" component={wrap(AIModelsPage, "AI Models")} />
       <Route path="/bot-builder" component={wrap(BotBuilderPage, "Bot Builder")} />
+      <Route path="/build-my-ai" component={wrap(PersonalAIBuilderPage, "Build Your Own AI")} />
       <Route path="/bot-activity" component={wrap(BotActivityPage, "Bot Activity")} />
       <Route path="/sandbox" component={wrap(SandboxPage, "Sandbox Factory")} />
       <Route path="/actions" component={wrap(ActionsPage, "Actions & Agents")} />
@@ -92,12 +94,7 @@ function Router() {
       <Route path="/buddy" component={wrap(BuddyPage, "Buddy Bot")} />
       <Route path="/settings" component={wrap(SettingsPage, "Settings")} />
 
-      {/* Legacy / convenience */}
-      <Route path="/chat">
-        <Redirect to="/" />
-      </Route>
-
-      {/* Fallback */}
+      <Route path="/chat"><Redirect to="/" /></Route>
       <Route component={NotFound} />
     </Switch>
   );
