@@ -1,0 +1,44 @@
+version: 1
+name: buddy-agent-mode-contract
+
+modes:
+  chat:
+    execution: none
+    output: conversational
+  research:
+    execution: read_only
+    output: sourced_analysis
+  builder:
+    execution: sandbox_then_approval
+    output: implementation_plan_and_patch
+  coding:
+    execution: sandbox_then_approval
+    output: code_and_tests
+  debug:
+    execution: diagnose_repair_verify
+    output: incident_record_and_fix
+  benchmark:
+    execution: sandbox_only
+    output: score_evidence_and_gaps
+  revenue:
+    execution: governed
+    output: opportunity_plan_and_evidence
+  autonomous:
+    execution: governed
+    output: decision_execution_record
+  governance:
+    execution: read_only_unless_approved
+    output: policy_and_risk_report
+  security:
+    execution: read_only_unless_approved
+    output: finding_and_remediation_plan
+  dreamco:
+    execution: governed
+    output: full_system_orchestration
+
+switching:
+  explicit_user_switch: true
+  risk_change_requires_reassessment: true
+  preserve_task_context: true
+  preserve_memory_context: true
+  preserve_trace_id: true
