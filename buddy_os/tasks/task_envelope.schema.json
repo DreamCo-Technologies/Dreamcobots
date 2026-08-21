@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BuddyTaskEnvelope",
+  "type": "object",
+  "required": ["task", "purpose", "output_format"],
+  "properties": {
+    "task": {"type": "string"},
+    "purpose": {"type": "string"},
+    "role": {"type": "string"},
+    "formal_requirements": {"type": "array", "items": {"type": "string"}},
+    "data": {"type": "array", "items": {"type": "string"}},
+    "context_refs": {"type": "array", "items": {"type": "string"}},
+    "memory_refs": {"type": "array", "items": {"type": "string"}},
+    "output_format": {"type": "string"},
+    "mode": {"enum": ["chat", "builder", "research", "coding", "revenue", "autonomous", "governance", "security", "dreamco"]},
+    "risk_level": {"enum": ["low", "medium", "high", "critical"]},
+    "requires_approval": {"type": "boolean"}
+  },
+  "additionalProperties": true
+}
