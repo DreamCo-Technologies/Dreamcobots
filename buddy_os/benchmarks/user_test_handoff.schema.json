@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BuddyUserTestResult",
+  "type": "object",
+  "required": ["test_id", "capability", "environment", "goal", "steps", "expected_result", "actual_result", "status", "evidence"],
+  "properties": {
+    "test_id": {"type": "string"},
+    "capability": {"type": "string"},
+    "tester": {"type": "string"},
+    "date": {"type": "string"},
+    "environment": {"type": "string"},
+    "goal": {"type": "string"},
+    "starting_state": {"type": "string"},
+    "steps": {"type": "array", "items": {"type": "string"}},
+    "expected_result": {"type": "string"},
+    "actual_result": {"type": "string"},
+    "status": {"enum": ["NOT_STARTED", "IN_PROGRESS", "PASS", "PASS_WITH_ISSUES", "FAIL", "BLOCKED", "NEEDS_REGRESSION", "NEEDS_LIVE_PROVIDER_TEST", "NEEDS_PRODUCTION_TEST"]},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "ux_issues": {"type": "array", "items": {"type": "string"}},
+    "reliability_issues": {"type": "array", "items": {"type": "string"}},
+    "safety_issues": {"type": "array", "items": {"type": "string"}},
+    "follow_up_issue": {"type": "string"}
+  }
+}
