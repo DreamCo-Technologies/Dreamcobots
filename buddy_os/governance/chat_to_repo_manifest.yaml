@@ -1,0 +1,54 @@
+version: 1
+name: buddy-chat-to-repository-manifest
+purpose: preserve approved product decisions as structured, traceable engineering requirements
+
+capture:
+  conversation_scope: current_approved_buddy_program
+  domains:
+    - input_layer
+    - processing_layer
+    - memory
+    - debate_team
+    - execution
+    - agent_modes
+    - mcp_connections
+    - bot_controls
+    - dashboards
+    - command_execution
+    - skills
+    - sandbox_training
+    - benchmark_evaluation
+    - learning_and_retraining
+    - debugging
+    - predictive_prevention
+    - observability
+    - governance
+
+requirements:
+  every_approved_idea:
+    - canonical_requirement_id
+    - source_context
+    - owner_system
+    - implementation_location
+    - dependencies
+    - acceptance_tests
+    - security_impact
+    - operational_impact
+    - rollback_plan
+    - evidence_status
+  statuses:
+    - proposed
+    - specified
+    - implemented
+    - tested
+    - verified
+    - deployed
+    - blocked
+
+principles:
+  do_not_reduce_chat_to_debugging_only: true
+  preserve_product_and_platform_requirements: true
+  convert_ideas_to_testable_requirements: true
+  never_claim_live_without_evidence: true
+  link_every_requirement_to_code_or_issue: true
+  retain_decision_history: true
