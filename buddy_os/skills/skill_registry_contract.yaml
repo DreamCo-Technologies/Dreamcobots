@@ -1,0 +1,41 @@
+version: 1
+name: buddy-skill-registry-contract
+
+skill:
+  required: [skill_id, name, domain, description, prerequisites, benchmarks, tools, safety_class]
+  lifecycle:
+    - discovered
+    - specified
+    - trainable
+    - training
+    - benchmarked
+    - verified
+    - production
+    - deprecated
+
+scoring:
+  dimensions:
+    - knowledge
+    - reasoning
+    - execution
+    - tool_use
+    - reliability
+    - safety
+    - recovery
+    - speed
+    - cost
+  evidence_required: true
+
+capability_gaps:
+  detect: true
+  prioritize_by_user_goal: true
+  prioritize_by_failure_rate: true
+  generate_training_plan: true
+  generate_sandbox_tests: true
+  generate_regression_tests: true
+
+rules:
+  no_verified_skill_without_benchmark: true
+  no_production_skill_without_safety_review: true
+  failed_skill_can_be_retrained: true
+  skill_versions_are_immutable_records: true
