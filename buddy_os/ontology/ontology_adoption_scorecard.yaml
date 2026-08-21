@@ -1,0 +1,35 @@
+version: 1
+name: dreamco-ontology-adoption-scorecard
+purpose: keep ontology expansion measurable and prevent semantic bloat
+
+scoring:
+  usefulness: 0-5
+  interoperability: 0-5
+  operational_speed: 0-5
+  governance: 0-5
+  evidence_quality: 0-5
+  implementation_cost: 0-5
+  duplication_risk: 0-5
+
+adoption_rules:
+  minimum_usefulness: 4
+  minimum_governance: 4
+  minimum_evidence_quality: 4
+  maximum_duplication_risk: 2
+  benchmark_before_runtime_dependency: true
+
+review_questions:
+  - Does this concept solve a real DreamCo problem?
+  - Does it map cleanly to existing concepts?
+  - Does it improve retrieval or action planning?
+  - Does it improve security or provenance?
+  - Does it reduce duplicated bots or tools?
+  - Can it be represented efficiently in the operational graph?
+  - Can it be validated automatically?
+  - Can it be exported/interoperated without locking the platform to one vendor?
+
+promotion:
+  experimental: catalog_only
+  candidate: tested_in_sandbox
+  adopted: benchmarked_and_approved
+  deprecated: replaced_or_unnecessary
