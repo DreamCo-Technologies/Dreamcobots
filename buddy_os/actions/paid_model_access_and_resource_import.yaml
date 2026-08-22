@@ -1,0 +1,93 @@
+version: 1
+name: buddy-paid-model-access-and-resource-import
+purpose: allow users to bring authorized paid AI services and resources into Buddy while keeping billing, licensing and permissions explicit
+
+paid_model_access:
+  principle: provider_authorized_access_only
+  supported_patterns:
+    - user_supplied_api_key
+    - provider_oauth
+    - official_provider_subscription_integration
+    - marketplace_or_reseller_agreement
+    - organization_managed_billing
+  requirements:
+    - provider_terms_must_allow_intended_use
+    - user_or_organization_must_authorize_access
+    - billing_owner_must_be_explicit
+    - usage_and_cost_must_be_visible
+    - provider_identity_must_be_visible
+    - revocation_must_be_supported
+  unsupported_pattern:
+    - resell_or_repackage_subscription_without_provider_authorization
+
+billing:
+  modes:
+    - user_pays_provider_directly
+    - user_pays_dreamco_for_authorized_resale_or_marketplace_service
+    - organization_billing
+    - prepaid_usage_credits
+  requirements:
+    - itemized_usage
+    - price_source
+    - estimated_cost_before_high_cost_execution
+    - usage_limits
+    - budget_alerts
+    - receipts_or_billing_records
+    - refund_policy_reference
+
+model_access_ui:
+  - connect_provider
+  - connect_subscription
+  - add_api_key
+  - select_billing_owner
+  - set_budget
+  - set_quality_floor
+  - set_latency_ceiling
+  - set_privacy_policy
+  - view_usage
+  - view_cost
+  - disconnect
+
+add_all_resources:
+  button_label: Add All Resources
+  purpose: discover and stage all resources the user is authorized to connect
+  preview_required: true
+  categories:
+    - repositories
+    - projects
+    - documents
+    - markdown_files
+    - notes
+    - memory_sources
+    - bots
+    - divisions
+    - capabilities
+    - skills
+    - tools
+    - mcp_servers
+    - generators
+    - libraries
+    - workflows
+    - models
+    - providers
+    - benchmarks
+    - dashboards
+    - goals
+    - plans
+  workflow:
+    - discover
+    - classify
+    - deduplicate
+    - permission_check
+    - show_preview
+    - user_approval
+    - connect
+    - health_check
+    - index
+    - report
+  safety:
+    secrets_are_never_imported_into_plaintext_ui: true
+    private_resources_require_authorization: true
+    unsupported_resources_are_reported_not_faked: true
+    duplicate_resources_are_linked_not_copied_by_default: true
+    failed_connections_are_visible: true
