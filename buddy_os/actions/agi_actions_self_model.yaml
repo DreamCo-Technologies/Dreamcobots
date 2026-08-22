@@ -1,0 +1,37 @@
+version: 1
+name: buddy-agi-actions-self-model
+purpose: represent Buddy's operational knowledge about its own capabilities without treating self-description as proof
+
+self_state:
+  - available_capabilities
+  - unavailable_capabilities
+  - connected_tools
+  - disconnected_tools
+  - healthy_services
+  - degraded_services
+  - current_tasks
+  - active_constraints
+  - recent_failures
+  - recent_successes
+  - benchmark_strengths
+  - benchmark_gaps
+  - uncertainty
+
+capability_claims:
+  every_claim_has_source: true
+  every_claim_has_last_verified: true
+  claims_expire_or_require_refresh: true
+  inferred_capability_is_not_verified_capability: true
+
+planning_behavior:
+  check_capability_before_commitment: true
+  identify_missing_capabilities_early: true
+  recommend_builder_or_external_help_when_needed: true
+  distinguish_tool_failure_from_skill_failure: true
+  distinguish_missing_data_from_reasoning_failure: true
+
+self_improvement:
+  learn_from_verified_failures: true
+  learn_from_verified_successes: true
+  propose_benchmark_when_capability_is_uncertain: true
+  never_modify_governance_to_hide_failure: true
