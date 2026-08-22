@@ -1,0 +1,50 @@
+version: 1
+name: buddy-agi-actions-goal-graph
+purpose: make long-horizon objectives first-class objects in Actions
+
+node_types:
+  goal: desired_outcome
+  objective: measurable_subgoal
+  task: executable_unit
+  milestone: checkpoint
+  constraint: boundary
+  dependency: required_external_or_internal_state
+  capability: ability_required
+  evidence: proof_of_state
+  risk: possible_failure
+  decision: chosen_strategy
+  outcome: observed_result
+
+relationships:
+  - decomposes_to
+  - depends_on
+  - requires_capability
+  - constrained_by
+  - blocked_by
+  - advances
+  - measured_by
+  - evidenced_by
+  - creates_risk
+  - mitigates
+  - follows
+  - supersedes
+  - learns_from
+
+lifecycle:
+  - desired
+  - clarified
+  - decomposed
+  - planned
+  - executing
+  - partially_complete
+  - verified
+  - blocked
+  - abandoned
+  - completed
+
+behavior:
+  continuously_recalculate_dependencies: true
+  surface_blocking_chain: true
+  surface_goal_regressions: true
+  recommend_next_milestone: true
+  preserve_history: true
