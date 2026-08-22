@@ -1,0 +1,49 @@
+version: 1
+name: buddy-agi-actions-feedback-loop
+purpose: turn user and system feedback into measurable improvement without silently changing behavior
+
+sources:
+  - user_rating
+  - user_correction
+  - explicit_preference
+  - task_success
+  - task_failure
+  - benchmark_result
+  - regression
+  - human_review
+  - tool_result
+  - production_observation
+
+pipeline:
+  - capture
+  - classify
+  - validate
+  - attribute
+  - propose_change
+  - sandbox_change
+  - benchmark
+  - review
+  - promote
+  - monitor
+
+attribution_targets:
+  - prompt
+  - context_selection
+  - memory_retrieval
+  - ontology_mapping
+  - model_routing
+  - agent_selection
+  - tool_selection
+  - plan
+  - implementation
+  - test
+  - environment
+  - external_dependency
+
+rules:
+  feedback_is_not_automatically_truth: true
+  consequential_behavior_changes_require_evidence: true
+  preserve_original_behavior_for_rollback: true
+  user_corrections_are_high_value_signals: true
+  repeated_failures_increase_priority: true
+  improvements_require_regression_checks: true
