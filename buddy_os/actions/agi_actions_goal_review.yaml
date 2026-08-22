@@ -1,0 +1,39 @@
+version: 1
+name: buddy-agi-actions-goal-review
+purpose: prevent long-running goals from drifting silently
+
+review_triggers:
+  - scheduled
+  - milestone_reached
+  - major_failure
+  - dependency_change
+  - benchmark_regression
+  - user_correction
+  - context_staleness
+  - budget_or_deadline_change
+
+review_questions:
+  - Is_the_goal_still_valid?
+  - What_changed_since_last_review?
+  - Are_the_success_criteria_still_correct?
+  - What_evidence_supports_current_progress?
+  - Which_dependencies_are_blocking?
+  - What_capabilities_are_missing?
+  - Did_recent_actions_create_new_risks?
+  - Is_the_current_plan_still_best?
+  - What_should_be_stopped_or_rolled_back?
+  - What_is_the_next_best_action?
+
+outputs:
+  - continue
+  - replan
+  - pause
+  - escalate
+  - rollback
+  - close
+
+rules:
+  never_mark_goal_complete_without_success_evidence: true
+  expose_drift_to_user: true
+  preserve_previous_plan: true
+  record_review_decision: true
