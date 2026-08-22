@@ -1,0 +1,28 @@
+version: 1
+name: buddy-agi-actions-event-bus
+purpose: unify observable state changes across the Actions control plane
+
+events:
+  goal.created: [goal_graph, context, attention]
+  goal.changed: [goal_graph, attention, planner]
+  context.updated: [context, attention, planner]
+  capability.discovered: [registry, router, self_model]
+  capability.verified: [registry, mastery, self_model]
+  action.proposed: [governance, attention, audit]
+  action.approved: [executor, audit]
+  action.started: [execution_console, observability, audit]
+  action.progressed: [execution_console, attention]
+  action.failed: [debugger, recovery, learning, audit]
+  action.verified: [evidence, mastery, goal_graph, learning]
+  benchmark.completed: [mastery, regression_watch, router]
+  connector.degraded: [connector_center, attention, recovery]
+  dependency.changed: [risk, regression_watch, planner]
+  memory.updated: [context, provenance]
+
+requirements:
+  correlation_id_on_every_event: true
+  source_and_timestamp_required: true
+  immutable_audit_reference: true
+  duplicate_events_must_be_idempotent: true
+  secrets_must_not_be_emitted: true
+  failed_consumers_must_not_silently_drop_events: true
