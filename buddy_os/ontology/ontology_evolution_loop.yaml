@@ -1,0 +1,53 @@
+version: 1
+name: buddy-ontology-evolution-loop
+purpose: continuously discover, evaluate, test, adopt, and retire ontology patterns without uncontrolled complexity
+
+loop:
+  - discover_pattern
+  - extract_hint
+  - map_to_existing_concepts
+  - score_candidate
+  - identify_conflicts
+  - prototype
+  - benchmark
+  - sandbox
+  - observe
+  - approve
+  - adopt
+  - monitor
+  - deprecate_if_value_declines
+
+signals:
+  - retrieval_accuracy
+  - action_success_rate
+  - planning_quality
+  - context_relevance
+  - benchmark_performance
+  - user_success
+  - latency
+  - compute_cost
+  - ontology_size
+  - duplicate_concepts
+  - orphan_nodes
+  - broken_edges
+  - security_findings
+
+anti_bloat:
+  max_new_concepts_per_review: 25
+  require_existing_mapping: true
+  require_measured_benefit: true
+  require_owner: true
+  require_deprecation_path: true
+  no_runtime_adoption_from_research_only: true
+
+research_sources:
+  standards: true
+  academic_research: true
+  open_source_projects: true
+  enterprise_architecture_patterns: true
+  DreamCo_internal_evidence: true
+
+promotion_rule:
+  catalog_only: no_runtime_dependency
+  sandbox_candidate: experimental_runtime_allowed
+  approved: production_eligible_after_governance

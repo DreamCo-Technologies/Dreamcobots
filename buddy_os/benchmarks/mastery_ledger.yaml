@@ -1,0 +1,70 @@
+version: 1
+name: buddy-mastery-ledger
+purpose: single source of truth for benchmark state, evidence, mastery, regressions, and next work
+
+states:
+  - unknown
+  - registered
+  - baselined
+  - testing
+  - passed
+  - failed
+  - blocked
+  - repair
+  - retest
+  - mastered_candidate
+  - mastered
+  - regressed
+
+mastery_policy:
+  requires_repeated_acceptance: true
+  requires_evidence: true
+  requires_holdout_when_applicable: true
+  requires_transfer_when_applicable: true
+  requires_regression_when_applicable: true
+  single_pass_is_not_mastery: true
+  model_completion_is_not_mastery: true
+  benchmark_registration_is_not_mastery: true
+
+record:
+  required:
+    - benchmark_id
+    - capability
+    - state
+    - version
+    - latest_run
+    - evidence_refs
+    - score
+    - confidence
+    - weaknesses
+    - next_best_training
+    - regression_history
+
+priority:
+  formula: expected_improvement / time_and_cost
+  factors:
+    - user_goal_alignment
+    - failure_frequency
+    - severity
+    - dependency_blast_radius
+    - learning_value
+    - regression_risk
+
+current_repository_baseline:
+  source: docs/BENCHMARK_EVIDENCE_LIFECYCLE.md
+  live_benchmark_programs_with_live_evidence: 0
+  tracked_benchmark_surfaces: 40
+  bot_fleet_e2e:
+    bots_certified: 1051
+    capability_contracts_certified: 8408
+    divisions: 45
+    failed_bots: 0
+    certification_scope: repository_controlled_sandbox
+    external_provider_execution: not_certified
+
+rules:
+  stale_mastery_must_be_revalidated: true
+  regression_reopens_investigation: true
+  missing_evidence_is_not_passed: true
+  blocked_dependencies_are_visible: true
+  next_work_must_be_machine_actionable: true

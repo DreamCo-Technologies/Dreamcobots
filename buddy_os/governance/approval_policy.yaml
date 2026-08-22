@@ -1,0 +1,42 @@
+version: 1
+name: buddy-approval-policy
+purpose: govern actions by risk, reversibility, blast radius, and external impact
+
+risk_dimensions:
+  - security
+  - privacy
+  - data_loss
+  - financial
+  - production_impact
+  - external_communication
+  - repository_destructiveness
+  - reversibility
+
+levels:
+  read_only:
+    allowed: true
+    approval: none
+  sandbox:
+    allowed: true
+    approval: none
+  repository_write:
+    allowed: governed
+    approval: user_or_repository_policy
+  external_side_effect:
+    allowed: governed
+    approval: explicit
+  destructive:
+    allowed: governed
+    approval: explicit_and_secondary_guard
+  production_deploy:
+    allowed: governed
+    approval: explicit_and_release_gate
+
+rules:
+  least_privilege: true
+  default_to_reversible: true
+  dry_run_before_destructive: true
+  require_evidence_before_promotion: true
+  never_bypass_repository_protection: true
+  never_expose_secrets_to_model_output: true
+  log_decision_and_approval: true

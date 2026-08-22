@@ -1,0 +1,119 @@
+version: 1
+name: buddy-professional-preventive-engineering
+purpose: detect, predict, prevent, contain, diagnose, repair, and learn from failures before they reach users or production
+
+lifecycle:
+  - discover
+  - baseline
+  - predict
+  - prevent
+  - test
+  - detect
+  - contain
+  - diagnose
+  - repair
+  - verify
+  - learn
+  - monitor
+
+preflight:
+  repository:
+    - dependency_drift
+    - runtime_version_mismatch
+    - lockfile_drift
+    - missing_files
+    - duplicate_implementations
+    - circular_dependencies
+    - generated_file_drift
+    - configuration_drift
+    - secret_exposure
+  code:
+    - type_errors
+    - lint_errors
+    - syntax_errors
+    - unsafe_patterns
+    - dead_code
+    - import_failures
+    - api_contract_drift
+    - schema_drift
+  frontend:
+    - build_failure
+    - hydration_failure
+    - routing_failure
+    - asset_failure
+    - accessibility_regression
+    - browser_console_errors
+    - visual_regression
+  backend:
+    - startup_failure
+    - health_check_failure
+    - timeout
+    - retry_storm
+    - queue_backlog
+    - database_connection_failure
+    - migration_failure
+    - memory_pressure
+  integrations:
+    - mcp_connection_failure
+    - auth_failure
+    - expired_credentials
+    - provider_outage
+    - rate_limit
+    - webhook_failure
+    - incompatible_api_version
+  operations:
+    - workflow_failure
+    - deployment_failure
+    - rollback_failure
+    - observability_gap
+    - alert_failure
+    - artifact_failure
+
+predictive_signals:
+  trend_analysis: true
+  flaky_test_detection: true
+  failure_cluster_detection: true
+  dependency_release_risk: true
+  error_rate_anomaly_detection: true
+  latency_anomaly_detection: true
+  resource_anomaly_detection: true
+  repeated_failure_memory: true
+  change_impact_analysis: true
+  blast_radius_estimation: true
+
+root_cause:
+  require_evidence: true
+  rank_hypotheses: true
+  reproduce_before_fix_when_safe: true
+  distinguish_symptom_from_root_cause: true
+  identify_regression_commit: true
+  attach_logs_and_test_evidence: true
+
+repair:
+  smallest_safe_change_first: true
+  preserve_existing_contracts: true
+  add_regression_test: true
+  rerun_affected_tests: true
+  rerun_full_gate_when_required: true
+  rollback_if_verification_fails: true
+
+learning:
+  create_failure_signature: true
+  store_root_cause: true
+  store_prevention_rule: true
+  store_regression_test: true
+  update_risk_score: true
+  update_skill_score: true
+  surface_recurrence: true
+
+release_gate:
+  required:
+    - tests
+    - typecheck
+    - build
+    - security_scan
+    - dependency_audit
+    - workflow_validation
+    - runtime_health
+    - change_impact
+  production_requires_verified_evidence: true

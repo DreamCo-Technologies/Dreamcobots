@@ -1,0 +1,87 @@
+name: Buddy Preventive Engineering
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  security-events: write
+
+concurrency:
+  group: buddy-preventive-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Validate Buddy OS Python contracts
+        run: python3 -m unittest tests.test_buddy_os_contracts
+      - name: Validate repository test inventory
+        run: |
+          if [ -f tools/generate_buddy_connection_catalog.py ]; then
+            python3 tools/generate_buddy_connection_catalog.py --check
+          fi
+      - name: Detect accidental secret-like strings
+        shell: bash
+        run: |
+          set -o pipefail
+          if git grep -nE '(sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,}|BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY)' -- ':!package-lock.json' ':!*.lock'; then
+            echo "Potential secret material detected. Review before merging."
+            exit 1
+          fi
+      - name: Record changed-file risk signals
+        shell: bash
+        run: |
+          echo "Changed files:"
+          git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" 2>/dev/null || git diff --name-only HEAD~1 HEAD || true
+          echo "Buddy preventive engineering policy is active."
+
+  dependency_review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+
+  codeql:
+    name: CodeQL
+    uses: github/codeql-action/.github/workflows/codeql.yml@v4
+    with:
+      languages: javascript,python
+
+  summary:
+    needs: [preflight, dependency_review, codeql]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce preventive gate
+        run: |
+          echo "preflight=${{ needs.preflight.result }}"
+          echo "dependency_review=${{ needs.dependency_review.result }}"
+          echo "codeql=${{ needs.codeql.result }}"
+          if [ "${{ needs.preflight.result }}" != "success" ] || \
+             { [ "${{ github.event_name }}" = "pull_request" ] && [ "${{ needs.dependency_review.result }}" != "success" ]; } || \
+             [ "${{ needs.codeql.result }}" != "success" ]; then
+            echo "Preventive engineering gate failed."
+            exit 1
+          fi

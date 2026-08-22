@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BuddyActionUniverse",
+  "type": "object",
+  "required": ["goal", "assets", "plan", "risk", "evidence", "next_best_action"],
+  "properties": {
+    "goal": {"type": "object"},
+    "assets": {
+      "type": "object",
+      "properties": {
+        "repositories": {"type": "array"},
+        "divisions": {"type": "array"},
+        "bots": {"type": "array"},
+        "capabilities": {"type": "array"},
+        "goals": {"type": "array"},
+        "plans": {"type": "array"},
+        "documents": {"type": "array"},
+        "notes": {"type": "array"},
+        "tools": {"type": "array"},
+        "mcp": {"type": "array"},
+        "libraries": {"type": "array"},
+        "generators": {"type": "array"},
+        "workflows": {"type": "array"},
+        "dashboards": {"type": "array"},
+        "benchmarks": {"type": "array"},
+        "skills": {"type": "array"}
+      }
+    },
+    "plan": {"type": "array"},
+    "risk": {"type": "object"},
+    "evidence": {"type": "array"},
+    "next_best_action": {"type": "object"}
+  }
+}

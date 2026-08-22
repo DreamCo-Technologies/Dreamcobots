@@ -1,0 +1,51 @@
+version: 1
+name: buddy-next-best-action-engine
+purpose: select the safest highest-value next step from the current goal, evidence, state, capabilities and constraints
+
+inputs:
+  - goal
+  - current_action_state
+  - ontology_context
+  - evidence
+  - benchmark_results
+  - capability_matches
+  - available_tools
+  - model_options
+  - permissions
+  - risk
+  - user_preferences
+
+ranking:
+  goal_progress: 0.30
+  evidence_confidence: 0.20
+  expected_value: 0.15
+  safety: 0.15
+  reversibility: 0.08
+  latency: 0.05
+  cost: 0.05
+  learning_value: 0.02
+
+candidate_types:
+  - ask_user
+  - retrieve_context
+  - debate
+  - plan
+  - execute
+  - test
+  - benchmark
+  - repair
+  - rollback
+  - train
+  - connect
+  - wait_for_external_dependency
+
+rules:
+  never_optimize_cost_at_the_expense_of_required_safety: true
+  prefer_reversible_actions: true
+  prefer_verified_capabilities: true
+  prefer_existing_shared_services: true
+  prefer_smallest_sufficient_model: true
+  escalate_when_confidence_is_low: true
+  ask_user_when_ambiguity_changes_outcome_materially: true
+  preserve_dissenting_debate_evidence: true
+  explain_why_selected: true

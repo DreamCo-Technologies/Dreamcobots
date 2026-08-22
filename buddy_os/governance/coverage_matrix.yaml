@@ -1,0 +1,52 @@
+version: 1
+name: buddy-system-coverage-matrix
+purpose: prevent approved DreamCo capabilities from being forgotten while engineering focuses on individual failures
+
+capability_domains:
+  input:
+    requirements: [role_definition, task_specification, formal_requirements]
+  processing:
+    requirements: [context_window, model_selection, extended_thinking, planning]
+  memory:
+    requirements: [projects, documents, instructions, memory_types, storage, provenance]
+  debate:
+    requirements: [task, purpose, data, output_format, independent_review, dissent]
+  execution:
+    requirements: [standard_output, text_response, structured_output, agent_modes, approvals]
+  tools:
+    requirements: [mcp, external_connections, local_tools, api_adapters]
+  bots:
+    requirements: [registry, controls, capabilities, health, sandbox, promotion]
+  dashboards:
+    requirements: [registry, routing, health, backend, data, auth, verification]
+  commands:
+    requirements: [preflight, sandbox, permission, audit, rollback]
+  skills:
+    requirements: [catalog, prerequisites, training, benchmark, score, gap_detection]
+  learning:
+    requirements: [experiments, feedback, failure_memory, strategy_memory, retraining]
+  debugging:
+    requirements: [detect, predict, diagnose, repair, verify, prevent, learn]
+  product:
+    requirements: [user_flows, accessibility, performance, monetization, documentation]
+  operations:
+    requirements: [ci, cd, observability, incidents, disaster_recovery]
+  governance:
+    requirements: [security, privacy, approvals, audit, policy, evidence]
+
+coverage_states:
+  - missing
+  - partial
+  - implemented
+  - tested
+  - verified
+  - production
+  - regressed
+  - blocked
+
+rules:
+  every_domain_must_have_owner: true
+  every_requirement_must_have_test_or_explicit_exception: true
+  missing_and_partial_are_actionable_gaps: true
+  regression_reopens_coverage: true
+  debugging_work_must_not_hide_product_gaps: true

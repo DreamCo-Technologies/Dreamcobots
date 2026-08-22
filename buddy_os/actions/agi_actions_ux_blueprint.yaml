@@ -1,0 +1,68 @@
+version: 1
+name: buddy-agi-actions-ux-blueprint
+purpose: define an advanced Actions experience around goals, world state, agency, learning and governed execution
+
+principles:
+  - goal_first_not_bot_first
+  - show_world_state_before_action
+  - make_reasoning_decisions_observable_without_exposing_private_chain_of_thought
+  - make_uncertainty_and_evidence_visible
+  - separate_simulation_from_real_execution
+  - preserve_user_control
+  - optimize_for_outcomes_not_number_of_agents
+
+experiences:
+  mission_control:
+    widgets: [goal, objective_tree, active_actions, system_health, blockers, next_best_action]
+  world_model:
+    widgets: [ontology_map, entities, relationships, temporal_state, provenance, conflicts]
+  agent_workspace:
+    widgets: [candidate_agents, capabilities, skills, roles, delegation_graph, task_queue]
+  reasoning_lab:
+    widgets: [debate_team, alternatives, evidence_summary, risks, assumptions, acceptance_tests]
+  execution_console:
+    widgets: [preflight, approvals, tool_calls, command_runner, code_runner, sandbox, live_events]
+  learning_center:
+    widgets: [benchmarks, mastery, gaps, training_plan, regressions, experiments]
+  engineering_center:
+    widgets: [repo_health, ci, prs, issues, dependencies, traces, incidents, preventive_repairs]
+  memory_center:
+    widgets: [projects, documents, notes, instructions, memories, provenance, retention_controls]
+  connector_center:
+    widgets: [mcp_servers, providers, auth_state, scopes, latency, failures, reconnect]
+
+interaction_patterns:
+  ask_buddy: natural_language_goal_to_structured_mission
+  build_plan: generate_editable_plan
+  simulate: execute_without_external_side_effects
+  run: governed_execution_with_live_events
+  inspect: drill_into_evidence_and_dependencies
+  compare: compare_models_agents_plans_or_implementations
+  train: launch_capability_specific_training
+  repair: create_preventive_or_reactive_repair
+  learn: record_feedback_and_update_mastery
+  handoff: delegate_to_user_or_external_agent
+
+agi_like_signals:
+  - persistent_goal_state
+  - self_monitoring
+  - capability_discovery
+  - adaptive_planning
+  - tool_selection
+  - model_routing
+  - error_recovery
+  - counterfactual_simulation
+  - evidence_tracking
+  - long_horizon_task_decomposition
+  - cross_division_coordination
+  - continual_evaluation
+  - user_feedback_loop
+
+user_control:
+  pause_all: true
+  stop_current_action: true
+  require_approval_by_risk: true
+  show_external_side_effects_before_execution: true
+  allow_manual_model_selection: true
+  allow_manual_bot_selection: true
+  allow_manual_tool_selection: true

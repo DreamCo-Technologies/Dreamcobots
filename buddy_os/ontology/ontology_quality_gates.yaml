@@ -1,0 +1,31 @@
+version: 1
+name: dreamco-ontology-quality-gates
+purpose: automatically detect ontology drift, duplicate concepts, orphan assets, broken links, and unsafe mappings
+
+gates:
+  stable_identifier: every_core_object_has_stable_id
+  unique_concept: duplicate_semantic_concepts_are_flagged
+  typed_relationship: relationships_have_allowed_types
+  inverse_consistency: inverse_links_are_consistent_when_declared
+  orphan_detection: true
+  broken_reference_detection: true
+  provenance_presence: critical_claims_have_evidence
+  temporal_validity: time_sensitive_claims_have_validity
+  permission_alignment: actions_match_object_permissions
+  lifecycle_validity: states_follow_allowed_transitions
+  schema_validation: true
+  export_compatibility: true
+  secret_isolation: secrets_are_excluded_from_general_indexes
+
+failure_actions:
+  - block_promotion
+  - create_gap
+  - notify_owner
+  - attach_evidence
+  - recommend_repair
+
+severity:
+  critical: [permission_alignment, secret_isolation, broken_reference_detection]
+  high: [provenance_presence, lifecycle_validity, stable_identifier]
+  medium: [duplicate_semantic_concepts, orphan_detection, temporal_validity]
+  low: [export_compatibility]

@@ -1,0 +1,57 @@
+version: 1
+name: buddy-mastery-gap-planner
+purpose: convert benchmark evidence into the smallest highest-value next engineering or training actions
+
+pipeline:
+  - read_mastery_ledger
+  - identify_unknown_failed_blocked_regressed
+  - identify_missing_evidence
+  - map_dependencies
+  - estimate_blast_radius
+  - rank_by_expected_improvement_per_cost
+  - generate_action
+  - assign_owner
+  - create_test_plan
+  - execute_in_sandbox
+  - verify
+  - update_ledger
+
+work_types:
+  - build_capability
+  - repair_bug
+  - add_test
+  - create_benchmark
+  - run_benchmark
+  - build_adapter
+  - configure_integration
+  - train_skill
+  - improve_retrieval
+  - improve_prompting
+  - improve_model_routing
+  - improve_tool_use
+  - improve_observability
+  - improve_security
+  - improve_dashboard
+  - document_gap
+
+priority_rules:
+  critical_regression_first: true
+  security_blockers_first: true
+  production_blockers_before_cosmetic: true
+  shared_infrastructure_before_duplicate_local_fixes: true
+  prefer_reusable_fixes: true
+  never_close_gap_without_evidence: true
+
+output:
+  required:
+    - gap_id
+    - capability
+    - evidence
+    - root_cause_or_unknown
+    - recommended_action
+    - dependencies
+    - risk
+    - acceptance_tests
+    - rollback_plan
+    - expected_improvement
+    - estimated_cost

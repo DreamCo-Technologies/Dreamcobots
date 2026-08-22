@@ -1,0 +1,39 @@
+name: Buddy OS Contract Verification
+
+on:
+  pull_request:
+    paths:
+      - "buddy_os/**"
+      - "tests/test_buddy_os_contracts.py"
+      - "server/fleet-runtime.ts"
+      - "server/buddy-model-policy.ts"
+      - "dreamco_platform/automation/**"
+      - "tools/buddy_*.py"
+      - "website/buddy-command-center.*"
+      - "config/buddy-connector-registry.json"
+      - ".github/workflows/buddy-os-contracts.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy_os/**"
+      - "tests/test_buddy_os_contracts.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Verify Buddy OS contracts
+        run: python3 -m unittest tests.test_buddy_os_contracts
+      - name: Verify existing Buddy connection catalog
+        run: python3 tools/generate_buddy_connection_catalog.py --check

@@ -1,0 +1,45 @@
+version: 1
+name: dreamco-ontology-traversal-efficiency
+purpose: make Buddy's operational graph fast enough for real-time Actions
+
+principles:
+  - retrieve_by_goal_before_retrieving_by_volume
+  - traverse_relationships_before_loading_documents
+  - use typed_indexes_for_hot_queries
+  - cache_verified_evidence
+  - cache_stable_metadata
+  - invalidate_on_mutation
+  - limit traversal_depth_by_task
+  - use parallel retrieval_for_independent_branches
+  - summarize_large_subgraphs_before_model_context
+  - preserve source pointers for evidence
+
+hot_paths:
+  - goal_to_capabilities
+  - capability_to_bots
+  - capability_to_benchmarks
+  - bot_to_tools
+  - tool_to_mcp
+  - repository_to_workflows
+  - incident_to_evidence
+  - failure_to_fix
+  - model_to_benchmark
+  - weight_to_runtime
+  - division_to_capabilities
+  - plan_to_tasks
+
+budgets:
+  max_default_traversal_depth: 4
+  max_context_items_before_compression: 200
+  require_relevance_ranking: true
+  require_evidence_pointer: true
+
+optimization_loop:
+  - measure
+  - identify_hot_path
+  - add_or_adjust_index
+  - benchmark
+  - canary
+  - monitor
+  - retain_if_improved
+  - rollback_if_regressed

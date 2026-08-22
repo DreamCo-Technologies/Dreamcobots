@@ -1,0 +1,45 @@
+version: 1
+name: buddy-action-execution-state
+purpose: common lifecycle contract for every Action initiated from Buddy
+
+states:
+  - proposed
+  - context_ready
+  - debate_ready
+  - awaiting_approval
+  - approved
+  - executing
+  - verification_pending
+  - verified
+  - failed
+  - blocked
+  - rolled_back
+  - completed
+
+required_record:
+  - action_id
+  - goal_id
+  - actor
+  - requested_at
+  - context_snapshot
+  - selected_capabilities
+  - selected_agents
+  - selected_model
+  - selected_tools
+  - permissions
+  - risk_assessment
+  - plan
+  - approvals
+  - execution_events
+  - evidence
+  - verification
+  - final_state
+  - next_best_action
+
+rules:
+  every_state_transition_is_audited: true
+  no_completed_without_verification: true
+  failed_and_blocked_are_distinct: true
+  rollback_is_first_class: true
+  external_side_effects_require_governance: true
+  user_visible_actions_have_human_readable_explanation: true

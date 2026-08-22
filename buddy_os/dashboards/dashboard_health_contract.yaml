@@ -1,0 +1,36 @@
+version: 1
+name: buddy-dashboard-health-contract
+purpose: let Buddy distinguish registered dashboards from actually live and healthy dashboards
+
+required_fields:
+  - dashboard_id
+  - route
+  - frontend_status
+  - backend_status
+  - data_status
+  - auth_status
+  - last_verified_at
+  - verification_ref
+
+states:
+  - registered
+  - building
+  - deployed
+  - healthy
+  - degraded
+  - offline
+  - blocked
+
+verification:
+  browser_load: required
+  console_error_check: required
+  api_health: required_when_backend_exists
+  data_smoke_test: required_when_data_exists
+  authentication_smoke_test: required_when_protected
+  screenshot_evidence: recommended
+
+rules:
+  registered_does_not_equal_healthy: true
+  missing_health_evidence_is_not_healthy: true
+  stale_health_must_be_marked_stale: true
+  failed_backend_blocks_healthy_state: true

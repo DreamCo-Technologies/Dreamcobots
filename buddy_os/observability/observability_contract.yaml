@@ -1,0 +1,50 @@
+version: 1
+name: buddy-observability-contract
+purpose: make every important Buddy action measurable, explainable, traceable, and recoverable
+
+telemetry:
+  task:
+    required: [task_id, status, duration_ms, risk_score, mode]
+  model:
+    required: [provider, model, latency_ms, success, estimated_cost]
+  tool:
+    required: [tool, action, duration_ms, success, approval_state]
+  bot:
+    required: [bot_id, capability, status, duration_ms, evidence_ref]
+  workflow:
+    required: [workflow_id, run_id, status, failure_count]
+  deployment:
+    required: [environment, version, status, health]
+
+correlation:
+  required_ids:
+    - trace_id
+    - task_id
+    - project_id
+  propagate_across:
+    - debate
+    - model_calls
+    - tools
+    - bots
+    - workflows
+    - tests
+    - deployments
+
+health:
+  indicators:
+    - availability
+    - error_rate
+    - latency
+    - queue_depth
+    - test_pass_rate
+    - deployment_health
+    - integration_health
+    - benchmark_health
+  alert_on_anomaly: true
+  alert_on_regression: true
+  alert_on_missing_telemetry: true
+
+privacy:
+  never_log_secrets: true
+  never_log_raw_credentials: true
+  redact_sensitive_fields: true

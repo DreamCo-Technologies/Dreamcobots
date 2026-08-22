@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BuddyIncidentRecord",
+  "type": "object",
+  "required": ["id", "category", "severity", "state", "summary", "evidence", "root_cause", "prevention"],
+  "properties": {
+    "id": {"type": "string"},
+    "category": {"type": "string"},
+    "severity": {"enum": ["sev0", "sev1", "sev2", "sev3", "sev4"]},
+    "state": {"type": "string"},
+    "summary": {"type": "string"},
+    "detected_at": {"type": "string"},
+    "affected_components": {"type": "array", "items": {"type": "string"}},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "root_cause": {"type": "string"},
+    "fix": {"type": "string"},
+    "regression_test": {"type": "string"},
+    "prevention": {"type": "string"},
+    "risk_score": {"type": "number", "minimum": 0, "maximum": 1},
+    "rollback_plan": {"type": "string"},
+    "verification": {"type": "array", "items": {"type": "string"}},
+    "recurrence_count": {"type": "integer", "minimum": 0}
+  }
+}

@@ -1,0 +1,42 @@
+version: 1
+name: buddy-action-evidence-contract
+purpose: make every meaningful Buddy Action explainable, verifiable and auditable
+
+evidence_levels:
+  repository: source_or_static_repository_evidence
+  sandbox: isolated_execution_evidence
+  user: real_user_test_evidence
+  live_provider: authenticated_external_service_evidence
+  production: deployed_and_monitored_evidence
+
+record:
+  required:
+    - evidence_id
+    - action_id
+    - level
+    - source
+    - environment
+    - timestamp
+    - inputs_hash
+    - result
+    - verifier
+    - artifacts
+    - limitations
+  optional:
+    - screenshots
+    - logs
+    - traces
+    - benchmark_scores
+    - human_feedback
+    - rollback_reference
+
+promotion:
+  sandbox_to_user: requires_relevant_sandbox_pass
+  user_to_live_provider: requires_user_success_and_provider_health
+  live_provider_to_production: requires_governance_and_monitoring
+
+truth_rules:
+  generated_output_is_not_evidence_by_itself: true
+  passing_one_test_does_not_prove_general_mastery: true
+  stale_evidence_must_be_flagged: true
+  contradictory_evidence_must_remain_visible: true

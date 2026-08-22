@@ -1,0 +1,40 @@
+version: 1
+name: buddy-requirement-traceability
+purpose: ensure approved product ideas become implementation, tests, evidence, and deployable capabilities
+
+pipeline:
+  - conversation_decision
+  - requirement
+  - architecture
+  - implementation
+  - unit_test
+  - integration_test
+  - e2e_test
+  - security_check
+  - observability_check
+  - deployment_check
+  - production_evidence
+  - learning_record
+
+coverage_dimensions:
+  - feature
+  - user_flow
+  - backend
+  - frontend
+  - data
+  - integrations
+  - security
+  - performance
+  - reliability
+  - accessibility
+  - operations
+  - monetization
+  - learning
+  - governance
+
+rules:
+  uncovered_approved_requirement_is_a_gap: true
+  gap_creates_actionable_work_item: true
+  failed_acceptance_test_blocks_verified_status: true
+  production_status_requires_evidence: true
+  debugging_is_one_dimension_not_the_whole_product: true

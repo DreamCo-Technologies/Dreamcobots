@@ -1,0 +1,93 @@
+version: 1
+name: buddy-ai-operating-system
+
+input_layer:
+  role_definition: required
+  task_specification: required
+  formal_requirements: optional
+  intent_parser: enabled
+  goal_manager: enabled
+  priority_queue: enabled
+  risk_analyzer: enabled
+
+processing_layer:
+  context_window_manager: enabled
+  model_selection: dynamic
+  extended_thinking: configurable
+  planner: enabled
+  multi_agent_coordinator: enabled
+  decision_validation: enabled
+
+memory_layer:
+  project_memory: enabled
+  document_library: enabled
+  instructions: enabled
+  memory_types:
+    - short_term
+    - long_term
+    - semantic
+    - episodic
+    - agent
+    - team
+    - project
+    - repository
+  storage_adapters:
+    - sqlite
+    - postgres
+    - vector
+    - object_storage
+    - github
+
+advanced_reasoning:
+  debate_team:
+    - architect
+    - security
+    - performance
+    - compliance
+    - revenue
+    - qa
+    - buddy_final
+  required_output:
+    - proposal
+    - risks
+    - improvements
+    - consensus_score
+    - recommendation
+    - execution_plan
+
+execution:
+  standard_output:
+    - text
+    - json
+    - markdown
+    - report
+    - pull_request
+  command_runner: permission_gated
+  repository_controls:
+    - inspect
+    - start
+    - stop
+    - restart
+    - pause
+    - resume
+    - update
+    - train
+    - test
+    - monitor
+    - deploy
+  agent_modes:
+    chat: true
+    builder: true
+    research: true
+    coding: true
+    revenue: true
+    autonomous: true
+    governance: true
+    security: true
+    dreamco: true
+  mcp_connections: registry_driven
+
+control_center:
+  dashboard_registry: buddy_os/dashboards/dashboard_registry.yaml
+  bot_registry: buddy_os/registry/bot_registry.yaml
+  skills_registry: buddy_os/skills/skills.yaml

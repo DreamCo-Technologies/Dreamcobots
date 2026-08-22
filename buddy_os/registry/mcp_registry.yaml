@@ -1,0 +1,31 @@
+version: 1
+name: buddy-mcp-registry
+
+# Providers are capability declarations. Credentials stay in environment/secret stores.
+providers:
+  github:
+    capabilities: [repository_read, repository_write, issues, pull_requests, actions]
+    approval: governed
+  web_research:
+    capabilities: [research, documentation_lookup]
+    approval: automatic_for_read_only
+  model_providers:
+    capabilities: [generation, reasoning, classification, embeddings]
+    routing: dynamic
+  cloud:
+    capabilities: [deploy, logs, infrastructure]
+    approval: governed
+  payments:
+    capabilities: [billing, subscriptions, payouts]
+    approval: explicit
+
+routing:
+  select_by:
+    - capability
+    - reliability
+    - latency
+    - cost
+    - policy
+  audit_tool_calls: true
+  store_tool_results_in_memory: true
+  never_store_secrets: true

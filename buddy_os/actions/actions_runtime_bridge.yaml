@@ -1,0 +1,75 @@
+version: 1
+name: buddy-actions-runtime-bridge
+purpose: runtime integration contract for progressively connecting the existing Actions surface to the unified Buddy operating system
+
+entrypoint:
+  ui: client/src/pages/ActionsPage.tsx
+  static_page: website/actions.html
+  operating_system_page: website/buddy-operating-system.html
+
+context_sources:
+  - buddy_os/ontology/dreamco_operational_ontology.yaml
+  - buddy_os/ontology/context_fabric.yaml
+  - buddy_os/benchmarks/mastery_ledger.yaml
+  - buddy_os/benchmarks/mastery_gap_planner.yaml
+  - buddy_os/models/model_weight_registry.yaml
+  - buddy_os/governance/division_efficiency_contract.yaml
+
+asset_connectors:
+  divisions: division_registry
+  bots: bot_registry
+  capabilities: capability_registry
+  goals: goal_registry
+  plans: document_and_plan_index
+  markdown: document_index
+  notes: memory_index
+  tools: tool_registry
+  mcp: mcp_registry
+  libraries: dependency_index
+  generators: generator_registry
+  workflows: workflow_registry
+  dashboards: dashboard_registry
+  benchmarks: mastery_ledger
+  repositories: repository_registry
+
+recommended_ui_panels:
+  - goal_input
+  - ontology_context
+  - division_scope
+  - capability_match
+  - bot_and_superbot_selection
+  - model_and_weight_router
+  - tool_and_mcp_selector
+  - memory_and_documents
+  - debate_team
+  - execution_plan
+  - approvals
+  - live_execution
+  - evidence_timeline
+  - benchmark_result
+  - mastery_state
+  - regression_watch
+  - next_best_action
+
+execution_contract:
+  discovery_before_mutation: true
+  permission_check_before_action: true
+  risk_check_before_external_side_effect: true
+  approval_required_for_destructive_actions: true
+  evidence_required_after_execution: true
+  sandbox_before_production_when_applicable: true
+  rollback_defined_when_mutation_is_reversible: true
+
+progressive_connection_strategy:
+  phase_1: expose_registries_and_read_only_context
+  phase_2: expose_planning_and_debate
+  phase_3: expose_sandbox_actions
+  phase_4: expose_governed_external_tools
+  phase_5: expose_live_provider_actions
+  phase_6: expose_production_operations
+
+truth:
+  connector_presence_does_not_equal_connected_health: true
+  registered_asset_does_not_equal_available_asset: true
+  planned_action_does_not_equal_executed_action: true
+  execution_does_not_equal_success: true
