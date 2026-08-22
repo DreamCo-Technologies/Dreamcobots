@@ -1,0 +1,31 @@
+version: 1
+name: buddy-agi-actions-attention-manager
+purpose: focus finite compute and UI attention on the most relevant state
+
+priority_inputs:
+  - active_goal
+  - blocking_dependencies
+  - current_action
+  - safety_risks
+  - user_attention
+  - recent_failures
+  - stale_critical_state
+  - benchmark_regressions
+  - deadlines
+
+ranking:
+  goal_relevance: 0.30
+  blocking_power: 0.20
+  risk: 0.15
+  freshness: 0.10
+  urgency: 0.10
+  expected_value: 0.10
+  learning_value: 0.05
+
+rules:
+  avoid_attention_fragmentation: true
+  collapse_repetitive_events: true
+  preserve_critical_alerts: true
+  allow_user_pin: true
+  explain_priority: true
+  stale_critical_state_gets_revalidation: true
