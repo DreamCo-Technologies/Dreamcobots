@@ -1,0 +1,12 @@
+{
+  "version": "1",
+  "name": "buddy-actions-page-data-contract",
+  "entities": [
+    "goal","division","bot","superbot","capability","skill","task","plan","memory","document","note","tool","mcp","library","generator","model","model_weight","benchmark","mastery","repository","workflow","issue","pull_request","action","evidence","incident","risk","permission","approval"
+  ],
+  "universal_fields": ["id","name","description","status","owner","source","created_at","updated_at","last_verified","evidence_ids","dependencies"],
+  "action_fields": ["goal_id","context_ids","capability_ids","agent_ids","model_id","weight_id","tool_ids","plan","risk","approval","state","execution_events","evidence_ids","verification","next_best_action"],
+  "status_values": ["unknown","discovered","configured","connected","authorized","healthy","degraded","blocked","sandbox_verified","user_verified","live_verified","production_verified"],
+  "security": {"secrets_visible_in_ui": false, "permission_checks_before_mutation": true, "audit_mutations": true},
+  "evidence": {"required_for_completion": true, "levels": ["repository","sandbox","user","live_provider","production"]}
+}
