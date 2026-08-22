@@ -1,0 +1,50 @@
+version: 1
+name: buddy-model-wrapper-strategy
+purpose: use authorized best-in-class models as temporary capability layers while DreamCo builds differentiated native systems
+
+strategy:
+  initial_phase:
+    use_external_models_as_capability_wrappers: true
+    optimize_for_breadth_and_reliability: true
+    benchmark_every_provider_by_task: true
+    retain_provider_independence: true
+  transition_phase:
+    distill_repeated_workflows_into_dreamco_components: true
+    replace_expensive_calls_when_local_or_smaller_models_match_quality: true
+    build_specialists_for_high_volume_tasks: true
+    retain_external_models_for_frontier_capabilities_when_economically_justified: true
+  mature_phase:
+    hybrid_routing: true
+    native_models_and_agents_for_core_workflows: true
+    external_models_as_fallback_and_frontier_specialists: true
+
+wrapper_layers:
+  - provider_adapter
+  - authentication
+  - billing_meter
+  - capability_adapter
+  - prompt_adapter
+  - context_adapter
+  - tool_adapter
+  - structured_output_adapter
+  - evaluation_adapter
+  - observability
+  - fallback_router
+
+selection:
+  choose_by: [task_capability, benchmark_quality, quality_per_dollar, latency, reliability, privacy, availability]
+  never_assume_one_model_is_best_for_every_task: true
+
+learning_loop:
+  capture_successful_patterns: true
+  identify_repeated_high_cost_tasks: true
+  recommend_distillation_or_specialization: true
+  benchmark_replacements_before_promotion: true
+  preserve_best_external_route_when_native_replacement_is_worse: true
+
+commercial:
+  user_may_bring_own_key: true
+  provider_subscription_support_when_authorized: true
+  authorized_marketplace_resale_only: true
+  transparent_usage_and_cost: true
+  no_credential_sharing_between_users: true
