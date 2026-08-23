@@ -77,34 +77,47 @@ jobs:
             gh api -H 'Accept: application/vnd.github+json' "repos/$GITHUB_REPOSITORY/actions/jobs/$job_id/logs" > "failure-evidence/job-logs/${job_id}-${safe_name}.txt" 2>/dev/null
           done < failure-evidence/failed-jobs.tsv
           exit 0
-      - name: Build failure report
+      - name: Build failure report and root-cause key
         shell: bash
         run: |
           python3 - <<'PY'
-          import json, os
+          import hashlib, json, os, re
           from pathlib import Path
           jobs=json.loads(Path('failure-evidence/jobs.json').read_text()).get('jobs',[])
           failed=[j for j in jobs if j.get('conclusion') not in (None,'success','skipped')]
-          lines=['# DreamCo Actions Failure','',f"Workflow: **{os.environ['WORKFLOW_NAME']}**",f"Run: **#{os.environ['RUN_NUMBER']}**",f"Conclusion: **{os.environ['RUN_CONCLUSION']}**",f"Event: **{os.environ['EVENT_NAME']}**",f"Commit: `{os.environ['HEAD_SHA']}`",f"Run URL: {os.environ['RUN_URL']}",'','## Failed jobs']
+          first_job=failed[0].get('name','unknown') if failed else 'unknown-job'
+          first_step='unknown-step'
+          for job in failed:
+              for step in job.get('steps') or []:
+                  if step.get('conclusion') not in (None,'success','skipped'):
+                      first_job=job.get('name','unknown-job'); first_step=step.get('name','unknown-step'); break
+              if first_step != 'unknown-step': break
+          workflow=os.environ['WORKFLOW_NAME']
+          key=hashlib.sha256(f'{workflow}|{first_job}|{first_step}'.lower().encode()).hexdigest()[:16]
+          Path('failure-evidence/root-cause-key.txt').write_text(key+'\n')
+          lines=['# DreamCo Actions Failure','',f"Workflow: **{workflow}**",f"Run: **#{os.environ['RUN_NUMBER']}**",f"Conclusion: **{os.environ['RUN_CONCLUSION']}**",f"Event: **{os.environ['EVENT_NAME']}**",f"Commit: `{os.environ['HEAD_SHA']}`",f"Run URL: {os.environ['RUN_URL']}",f"Root-cause key: `{key}`",f"First failing job: **{first_job}**",f"First failing step: **{first_step}**",'','## Failed jobs']
           if not failed: lines.append('- No failed job was returned; inspect run metadata/artifacts.')
           for j in failed:
             lines.append(f"- {j.get('name')} — {j.get('conclusion')} — job {j.get('id')}")
             for step in j.get('steps') or []:
               if step.get('conclusion') not in (None,'success','skipped'):
                 lines.append(f"  - step: {step.get('name')} — {step.get('conclusion')}")
-          lines += ['', '## Repair path', '- Inspect the first failing job/step.', '- Fix the smallest reproducible root cause without weakening tests.', '- Re-run the focused job, then the affected dependent suite.', '- Keep blocked or owner-action states visible rather than converting them to success.']
+          lines += ['', '## Repair lifecycle', '- Detected: capture the failing run and first failing step.', '- Reproduced: establish the smallest reproducible root cause.', '- Repairing: make the smallest safe fix without weakening tests.', '- Verification: run the focused test and dependent regression suite.', '- Resolved: close the issue only after successful verification.']
           Path('failure-evidence/report.md').write_text('\n'.join(lines)+'\n')
           PY
           cat failure-evidence/report.md >> "$GITHUB_STEP_SUMMARY"
-      - name: Open one repair issue for this failed run
+      - name: Upsert one root-cause issue
         shell: bash
         run: |
           set -euo pipefail
-          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "Actions run $RUN_ID in:title" --json number --jq '.[0].number // empty')
+          key=$(cat failure-evidence/root-cause-key.txt)
+          title="DreamCo failure root cause [$key]: $WORKFLOW_NAME"
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "[$key] in:title" --json number --jq '.[0].number // empty')
           if [ -z "$existing" ]; then
-            gh issue create --repo "$GITHUB_REPOSITORY" --title "Actions run $RUN_ID failed: $WORKFLOW_NAME" --body-file failure-evidence/report.md
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body-file failure-evidence/report.md
           else
-            echo "Repair issue already exists: #$existing" >> "$GITHUB_STEP_SUMMARY"
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "New evidence for root-cause key \\`$key\\`: run #$RUN_NUMBER — $RUN_URL"
+            echo "Updated root-cause issue #$existing" >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Save failure evidence
         if: always()
@@ -114,3 +127,28 @@ jobs:
           path: failure-evidence/
           if-no-files-found: warn
           retention-days: 14
+
+  close-resolved:
+    if: >-
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+      RUN_URL: ${{ github.event.workflow_run.html_url }}
+    steps:
+      - name: Close matching root-cause issues after successful verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          issues=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "$WORKFLOW_NAME in:title" --json number,title --jq '.[] | [.number,.title] | @tsv')
+          while IFS=$'\t' read -r number title; do
+            [ -z "$number" ] && continue
+            case "$title" in
+              "*DreamCo failure root cause*")
+                gh issue comment "$number" --repo "$GITHUB_REPOSITORY" --body "Verification evidence: workflow **$WORKFLOW_NAME** succeeded. Run: $RUN_URL"
+                gh issue close "$number" --repo "$GITHUB_REPOSITORY" --reason completed
+                ;;
+            esac
+          done <<< "$issues"
