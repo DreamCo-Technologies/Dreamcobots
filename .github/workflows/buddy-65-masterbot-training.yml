@@ -2,6 +2,12 @@ name: Buddy 65 MasterBot Training Lanes
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/buddy-65-masterbot-training.yml'
+      - 'config/masterbot-65-registry.json'
+      - 'tools/buddy_masterbot_training_lane.py'
+      - 'config/buddy-bootcamp-65.json'
   schedule:
     - cron: '17 */6 * * *'
 
@@ -19,8 +25,8 @@ jobs:
     timeout-minutes: 30
     strategy:
       fail-fast: false
-      # GitHub currently limits standard Free-plan concurrency; keep the matrix
-      # at 65 logical lanes and let max-parallel respect that shared capacity.
+      # 65 logical lanes; simultaneous jobs are bounded by GitHub plan
+      # concurrency so the workflow never attempts to bypass platform limits.
       max-parallel: 20
       matrix:
         masterbot:
