@@ -1,0 +1,48 @@
+{
+  "schema": "dreamco.buddy_bootcamp.v1",
+  "name": "Buddy Bootcamp",
+  "masterbot_registry": "config/masterbot-65-registry.json",
+  "purpose": "Train and evaluate Buddy and its MasterBots through measurable, isolated capability development.",
+  "levels": [
+    {"id":1,"name":"Foundation","goal":"Establish baseline capability and identify missing prerequisites."},
+    {"id":2,"name":"Guided Practice","goal":"Complete supervised exercises with explicit success criteria."},
+    {"id":3,"name":"Independent Practice","goal":"Solve representative tasks without solution leakage."},
+    {"id":4,"name":"Adversarial Practice","goal":"Test robustness against difficult, ambiguous and failure-oriented tasks."},
+    {"id":5,"name":"Benchmark Preparation","goal":"Target the exact capabilities responsible for benchmark gaps."},
+    {"id":6,"name":"Benchmark Trial","goal":"Run held-out evaluation tasks and record evidence."},
+    {"id":7,"name":"Mastery Verification","goal":"Require repeat passes and regression-free evidence before declaring mastery."},
+    {"id":8,"name":"Maintenance","goal":"Periodically retest mastered capabilities and reopen training when regression appears."}
+  ],
+  "sandbox_modes": [
+    "training",
+    "practice",
+    "benchmark_simulation",
+    "adversarial",
+    "time_trial",
+    "resource_limited",
+    "tool_limited",
+    "multi_agent",
+    "human_vs_buddy",
+    "buddy_vs_buddy",
+    "masterbot_vs_masterbot"
+  ],
+  "mastery_policy": {
+    "minimum_evidence": ["baseline", "post_training", "repeat_pass"],
+    "regression_check_required": true,
+    "self_report_is_not_evidence": true,
+    "production_side_effects": false,
+    "external_write_requires_existing_governance_gate": true
+  },
+  "daily_loop": [
+    "refresh_gap_inventory",
+    "rank_by_expected_benchmark_gain_per_runner_minute",
+    "allocate_available_capacity",
+    "study_permitted_sources",
+    "practice",
+    "sandbox",
+    "benchmark",
+    "record_evidence",
+    "close_or_requeue_gap",
+    "refresh_dashboard"
+  ]
+}
