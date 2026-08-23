@@ -1,0 +1,31 @@
+{
+  "schema": "dreamco.buddy.capability_graph.v2",
+  "purpose": "Represent every trainable bot capability as evidence-backed states connected to sources, tasks, benchmarks, failures, and transfer tests.",
+  "states": ["unknown", "queued", "learning", "practicing", "needs_remediation", "validated", "mastered", "regressed", "blocked"],
+  "node_types": ["capability", "subskill", "source", "concept", "task", "sandbox", "benchmark", "failure", "study_guide", "bot", "division"],
+  "edge_types": ["requires", "supports", "teaches", "tests", "fails_on", "remediates", "transfers_to", "depends_on", "belongs_to", "regresses_with"],
+  "evidence": {
+    "required_for_mastery": ["independent_success", "novel_transfer_success", "regression_pass", "provenance", "safety_check"],
+    "confidence_range": [0.0, 1.0]
+  },
+  "scoring": {
+    "capability_score": "0.30*independent + 0.20*transfer + 0.15*debug + 0.15*integration + 0.10*long_horizon + 0.10*regression",
+    "priority": "gap_severity * user_value * transfer_value * expected_learning_gain / max(estimated_compute_cost,0.001)"
+  },
+  "promotion": {
+    "validated": {"minimum_score": 0.80, "minimum_independent_attempts": 3},
+    "mastered": {"minimum_score": 0.90, "minimum_independent_attempts": 5, "minimum_transfer_attempts": 3, "minimum_regression_pass_rate": 0.95, "minimum_confidence": 0.85}
+  },
+  "regression": {
+    "trigger_events": ["source_change", "tool_change", "model_change", "dependency_change", "failed_production_simulation", "benchmark_regression"],
+    "response": "downgrade_affected_nodes_only_and_schedule_targeted_retraining"
+  },
+  "customer_mode": {
+    "goal_to_curriculum": true,
+    "capability_gap_scan": true,
+    "personalized_source_ranking": true,
+    "budget_aware_training": true,
+    "private_curriculum_namespace": true,
+    "evidence_export": true
+  }
+}
