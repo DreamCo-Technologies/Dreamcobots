@@ -1,0 +1,10 @@
+{
+  "schema":"dreamco.repository_scan_update_comment.v1",
+  "trigger":"authorized_repository_scan_completed",
+  "purpose":"Leave a concise, evidence-backed update comment after a repository scan so maintainers can see what was inspected and what should happen next.",
+  "required_sections":["scan_summary","scope","findings","verified_changes","pending_items","benchmarks","regression_plan","next_steps","evidence"],
+  "status_vocabulary":["found","proposed","changed","verified","blocked","unknown"],
+  "comment_rules":["Never claim a change was made unless a commit or patch exists.","Never claim a test passed without execution evidence.","Never expose credentials, tokens, private data, or sensitive scan output.","Link to the relevant issue, PR, commit, workflow run, or artifact when available.","Keep historical scan results immutable and append new scan results rather than rewriting history."],
+  "recommended_template":"## Buddy repository scan update\n\n**Scan:** <timestamp>\n**Ref:** <commit/branch>\n**Scope:** <files/components/workflows>\n\n### Findings\n- <severity> <finding> — <evidence>\n\n### Changes\n- **Changed:** <item> — <commit/PR>\n- **Verified:** <item> — <test/workflow evidence>\n- **Pending:** <item> — <next action>\n\n### Benchmarks / regressions\n- <benchmark> — <score/status/evidence>\n\n### Next steps\n- <action>\n\n> Buddy reports only evidence-backed results; unknown or unverified work remains explicitly labeled.",
+  "approval_boundary":"Comment publication may be automatic for authorized repositories; code changes remain approval-gated unless an existing repository policy explicitly permits automation."
+}

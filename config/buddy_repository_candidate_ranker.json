@@ -1,0 +1,12 @@
+{
+  "schema":"dreamco.buddy.repository_candidate_ranker.v1",
+  "mission":"Find strong, authorized public or user-owned repository candidates whose engineering patterns can inform original benchmark training and capability development.",
+  "candidate_signals":["problem_similarity","benchmark_similarity","fix_quality","test_quality","CI_quality","documentation_quality","reproducibility","maintenance_health","activity","license_compatibility","security_posture","novelty","evidence_strength"],
+  "ranking":{"scale":"0-100","minimum_evidence":true,"penalize_duplicates":true,"penalize_stale_or_unmaintained":true,"penalize_unclear_license":true,"boost_reproducible_fixes":true,"boost_strong_regression_tests":true,"boost_multiple_independent_solutions":true},
+  "search_strategies":["similar_issue_text","similar_failure_signature","similar_test_pattern","similar_ci_failure","similar_architecture","similar_benchmark_gap","similar_recovery_strategy","similar_capability_gap"],
+  "candidate_lifecycle":["discover","filter","rank","inspect_metadata","compare_solution_patterns","extract_original_learning","create_local_benchmark_variant","sandbox","evaluate","record_evidence","discard_or_promote"],
+  "learning_boundary":"Buddy may learn engineering patterns and publicly available facts from authorized sources, but should not copy protected code or reproduce another project's proprietary material. Generated benchmarks and implementations should be original.",
+  "training_selection":"Select the smallest high-quality candidate set that maximizes evidence diversity and capability coverage rather than indiscriminately cloning repositories.",
+  "output":["ranked_candidates","why_selected","capability_gaps_covered","benchmark_techniques","fix_patterns","test_patterns","risk_flags","provenance","recommended_original_experiments"],
+  "north_star":"Use the best examples as teachers, then make Buddy independently recreate the underlying capability through original tests and implementations."
+}
