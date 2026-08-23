@@ -1,0 +1,21 @@
+name: Benchmark Gap Planner
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "7 * * * *"
+  push:
+    paths: ["benchmark-scores.json","tools/benchmark_gap_planner.py"]
+permissions:
+  contents: read
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build next-work queue
+        run: python3 tools/benchmark_gap_planner.py --scores benchmark-scores.json --out benchmark-gap-queue.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-gap-queue
+          path: benchmark-gap-queue.json
