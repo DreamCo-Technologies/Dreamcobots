@@ -1,0 +1,63 @@
+version: 1
+name: buddy-code-asset-learning-registry
+purpose: Treat DreamCo's existing vibe-coded simulations, apps, websites, libraries, and code projects as reusable training and benchmark assets without duplicating the source of truth.
+
+asset_classes:
+  - simulation
+  - app
+  - website
+  - coding_library
+  - generator
+  - integration
+  - workflow
+  - benchmark_harness
+  - sandbox
+  - tutorial_project
+  - production_feature
+
+learning_flow:
+  - discover_repository_asset
+  - classify_capabilities
+  - map_to_45_divisions
+  - map_to_benchmark_skills
+  - extract_original_training_patterns
+  - generate_study_guide
+  - generate_practice_tasks
+  - generate_sandbox_variants
+  - run_regression_tests
+  - record_evidence
+  - update_mastery
+
+rules:
+  existing_code_is_training_evidence: true
+  existing_code_is_not_automatically_mastery: true
+  runnable_assets_preferred_for_skill_validation: true
+  reuse_existing_tests_before_creating_duplicates: true
+  generate_novel_variants_for_transfer: true
+  preserve_repository_provenance: true
+  customer_private_code_isolation: true
+  locked_benchmark_answers_never_used_as_training: true
+
+actions_page_bindings:
+  registry: buddy_os/actions/actions_page_manifest.yaml
+  data_contract: buddy_os/actions/actions_page_data_contract.json
+  view_model: buddy_os/actions/actions_page_view_model.yaml
+  capability_graph: config/buddy-capability-graph-v2.json
+  bootcamp_engine: config/buddy-bot-bootcamp-engine-v1.json
+
+execution_policy:
+  default_mode: sandbox
+  production_writes_require_approval: true
+  benchmark_execution_requires_evidence: true
+  every_training_action_emits_audit_event: true
+
+asset_evidence:
+  levels:
+    - source_only
+    - static_analysis
+    - unit_tested
+    - sandbox_verified
+    - benchmark_verified
+    - transfer_verified
+    - production_verified
+  mastery_requires_transfer: true
