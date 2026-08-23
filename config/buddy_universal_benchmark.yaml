@@ -1,17 +1,39 @@
-version: 2
+version: 3
 system: buddy-universal-mastery
-mastery_states: [discovered, learned, practiced, mastered, production_proven]
+mastery_states: [discovered, learned, practiced, validated, mastered, production_proven]
 free_first:
   enabled: true
   paid_models_require_explicit_user_authorization: true
   record_cost: true
+  deterministic_first: true
+  local_open_model_first: true
+  external_model_escalation_only_when_expected_value_justifies_cost: true
 source_adapters:
-  required_metadata: [source_id, url_or_api, retrieval_date, version, license_or_terms, provenance, parser, offline_cache_status]
+  target_count: 1000
+  required_metadata: [source_id, url_or_api, retrieval_date, version, license_or_terms, provenance, parser, offline_cache_status, authority_score, freshness_score, benchmark_relevance, capability_gap_coverage, cost_efficiency]
+  selection_score: "0.30*authority + 0.20*benchmark_relevance + 0.15*freshness + 0.15*capability_gap_coverage + 0.10*transfer_value + 0.10*cost_efficiency"
+  policy_file: config/buddy_1000_source_learning_policy.json
+  respect_robots_and_terms: true
+  never_bypass_access_controls: true
+  differential_fetch_first: true
+  deduplicate_before_learning: true
+  prefer_primary_sources: true
+  avoid_restricted_benchmark_answers: true
+bootcamp:
+  every_useful_source_generates_original_learning_artifacts: true
+  artifacts: [lesson, capability_package, practice_tasks, failure_modes, verification_method, holdout_task, provenance, cost_record]
+  shared_capability_packages: true
+  train_once_validate_then_propagate: true
+  holdout_required_before_mastery: true
+  regression_required_after_promotion: true
+  early_stop_on_mastery: true
+  stop_identical_failure_loops: true
 benchmark:
-  lifecycle: [ingest, normalize, package, generate_tasks, sandbox, execute, validate, score, diagnose, remediate, retest, promote]
-  metrics: [correctness, completion, reliability, latency, cost, human_interventions, provenance, security, accessibility, reproducibility, satisfaction, productivity_gain]
+  lifecycle: [discover, authorize, ingest, normalize, package, generate_tasks, sandbox, execute, validate, score, diagnose, remediate, retest, promote, regression_test]
+  metrics: [correctness, completion, reliability, latency, cost, human_interventions, provenance, security, accessibility, reproducibility, satisfaction, productivity_gain, transfer]
   mastery_threshold: 0.9
   repeated_passes_required: 3
+  independent_holdout_required: true
 failure_taxonomy: [knowledge_gap, tool_gap, reasoning_gap, coding_gap, data_gap, environment_gap, permission_gap, ambiguity, hallucination, timeout, dependency_failure, model_failure, benchmark_misunderstanding, human_approval_required]
 universal_task:
   benchmark_id: 1000
@@ -32,5 +54,15 @@ simulation:
   pipeline: [knowledge, objects, relationships, rules, behaviors, environment, physics, agents, user_goal, simulation, measurement, feedback, learning]
 execution:
   deterministic_runner: benchmarks/buddy_benchmark_runner.py
+  source_selector: tools/buddy_source_selector.py
   smoke_tasks: benchmarks/tasks/universal_1000_smoke.json
   results_directory: benchmarks/results
+daily_learning:
+  source_scan_target: 1000
+  scan_mode: differential_first
+  benchmark_mode: adaptive_sampling
+  continuous_monitoring: true
+  daily_deep_regression: true
+  weekly_long_horizon_regression: true
+  monthly_source_rebalancing: true
+  never_claim_mastery_without_evidence: true
