@@ -1,0 +1,30 @@
+name: Issue Intelligence
+
+on:
+  workflow_run:
+    workflows: ["*"]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+
+concurrency:
+  group: issue-intelligence
+  cancel-in-progress: false
+
+jobs:
+  triage:
+    name: Triage completed workflow
+    if: ${{ github.event.workflow_run.name != 'Issue Intelligence' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run failure triage
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: python3 tools/issue_intelligence.py
