@@ -1,9 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { serveStatic } from "./static";
 import { createServer } from "http";
-import { getUncachableStripeClient } from './stripeClient';
-import { WebhookHandlers } from './webhookHandlers';
-import { seedStripeProducts } from './seed-stripe-products';
 
 const app = express();
 const httpServer = createServer(app);
@@ -22,6 +19,10 @@ async function initStripe() {
   }
 
   try {
+    const [{ getUncachableStripeClient }, { seedStripeProducts }] = await Promise.all([
+      import('./stripeClient'),
+      import('./seed-stripe-products'),
+    ]);
     await getUncachableStripeClient();
     console.log('Stripe client configured.');
 
@@ -56,6 +57,7 @@ app.post(
     }
 
     try {
+      const { WebhookHandlers } = await import('./webhookHandlers');
       const sig = Array.isArray(signature) ? signature[0] : signature;
       if (!Buffer.isBuffer(req.body)) {
         console.error('STRIPE WEBHOOK ERROR: req.body is not a Buffer');
