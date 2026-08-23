@@ -1,0 +1,32 @@
+name: MasterBot Routing Audit
+on:
+  pull_request:
+    paths: ["config/masterbot-65-registry.json","config/masterbot-routing-rules.json","App_bots/**","bots/**","original-bots/**","website/data/bot-fleet/**","tools/masterbot_routing_audit.py"]
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Run routing audit
+        run: python tools/masterbot_routing_audit.py > masterbot-routing-audit.json
+      - name: Publish summary
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('masterbot-routing-audit.json'))
+          print('## MasterBot Routing Audit')
+          for k in ('registry_divisions','files_scanned','routable','review','unclassified'):
+              print(f"- {k}: {d[k]}")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: masterbot-routing-audit
+          path: masterbot-routing-audit.json
