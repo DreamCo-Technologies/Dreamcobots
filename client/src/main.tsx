@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
-import "./index.css";
+import "./index-v4.css";
 
 // In development, unregister any stale service workers to prevent stale cache issues.
 // In production, register the service worker for offline support.

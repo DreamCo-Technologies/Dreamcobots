@@ -85,6 +85,13 @@ jobs:
       - run: npm ci
       - name: Validate guardrails before lane execution
         run: python3 tools/check_guardrails_benchmark_program.py
+      - name: Regenerate canonical generated state
+        run: |
+          python3 tools/generate_repository_test_registry.py
+          python3 tools/generate_dreamco_repository_master_map.py
+          python3 tools/generate_buddy_benchmark_index.py
+          node --import tsx tools/generate_dreamco_search_index.ts
+          node --import tsx tools/generate_buddy_success_program.ts
       - name: Regenerate gap plan
         run: python3 tools/plan_parallel_benchmark_gaps.py
       - name: Run lane-owned suites through universal verification
