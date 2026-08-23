@@ -1,0 +1,110 @@
+version: 1
+name: buddy-action-universe-manifest
+purpose: define the Actions page as the governed operating system over DreamCo's discoverable assets
+
+sources:
+  repositories:
+    scope: connected_and_user_owned
+    discovery: repository_registry
+    permission: read_metadata_then_explicit_action
+  divisions:
+    scope: all_45
+    source: division_registry
+  bots:
+    scope: all_registered
+    source: bot_registry
+  capabilities:
+    scope: all_declared_and_discovered
+    source: capability_registry
+  goals:
+    scope: repository_and_project_goals
+    source: goal_registry_and_document_index
+  plans:
+    scope: plans_roadmaps_specs
+    source: document_index
+  markdown:
+    scope: md_mdx_readme_architecture_notes
+    source: document_index
+  notes:
+    scope: indexed_notes_and_project_context
+    source: memory_index
+  tools:
+    scope: local_and_registered_tools
+    source: tool_registry
+  mcp:
+    scope: connected_servers_and_declared_resources
+    source: mcp_registry
+  libraries:
+    scope: dependency_manifests_and_library_registry
+    source: dependency_index
+  generators:
+    scope: generators_templates_scaffolds
+    source: generator_registry
+  workflows:
+    scope: ci_cd_cron_automation
+    source: workflow_registry
+  dashboards:
+    scope: registered_dashboard_routes
+    source: dashboard_registry
+  benchmarks:
+    scope: benchmark_and_sandbox_catalog
+    source: mastery_ledger
+  skills:
+    scope: skill_registry
+    source: skill_registry
+
+unified_action_context:
+  include:
+    - relevant_assets
+    - dependencies
+    - evidence
+    - permissions
+    - risk
+    - memory
+    - current_state
+    - prior_actions
+    - benchmark_status
+  rank_by:
+    - relevance
+    - user_goal_alignment
+    - evidence_quality
+    - health
+    - capability_match
+    - risk
+
+action_types:
+  - inspect
+  - search
+  - explain
+  - plan
+  - debate
+  - benchmark
+  - train
+  - sandbox
+  - test
+  - debug
+  - repair
+  - generate
+  - edit
+  - run
+  - connect
+  - deploy
+  - monitor
+  - rollback
+  - learn
+  - certify
+
+safety:
+  read_discovery_before_write: true
+  least_privilege: true
+  approval_policy: buddy_os/governance/approval_policy.yaml
+  audit_policy: buddy_os/governance/audit_event.schema.json
+  evidence_required_for_completion: true
+  destructive_actions_require_explicit_approval: true
+  external_side_effects_require_governed_connection: true
+
+truth:
+  registry_presence_does_not_equal_health: true
+  plan_does_not_equal_execution: true
+  execution_requires_evidence: true
+  sandbox_success_does_not_equal_production_success: true

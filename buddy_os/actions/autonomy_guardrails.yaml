@@ -1,0 +1,41 @@
+version: 1
+name: buddy-autonomy-guardrails
+purpose: let Buddy operate proactively while keeping consequential actions governed
+
+autonomy_levels:
+  observe:
+    can: [read_context, analyze, monitor, recommend]
+  prepare:
+    can: [draft_plan, draft_code, draft_pr, prepare_tests, prepare_tool_calls]
+  sandbox:
+    can: [run_isolated_code, run_tests, benchmark, simulate, generate_artifacts]
+  governed_live:
+    can: [execute_approved_external_actions, create_non_destructive_changes]
+  production:
+    can: [operate_preapproved_automations]
+
+hard_stops:
+  - credential_or_secret_exfiltration
+  - unauthorized_access
+  - destructive_action_without_approval
+  - unsafe_external_side_effect
+  - production_change_without_required_evidence
+  - policy_or_permission_violation
+
+preflight:
+  check_goal: true
+  check_context: true
+  check_permissions: true
+  check_dependencies: true
+  check_risk: true
+  check_reversibility: true
+  check_evidence_requirements: true
+  check_rollback: true
+
+proactive_behavior:
+  monitor_for_known_failure_signatures: true
+  predict_regressions_from_history: true
+  open_repair_tasks_when_confidence_is_sufficient: true
+  recommend_preventive_tests: true
+  surface_blockers_before_execution: true
+  never_claim_prevention_is_guaranteed: true

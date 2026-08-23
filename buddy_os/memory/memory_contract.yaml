@@ -1,0 +1,32 @@
+version: 1
+name: buddy-memory-contract
+
+memory_classes:
+  short_term:
+    retention: task
+  episodic:
+    retention: event
+  semantic:
+    retention: durable_knowledge
+  project:
+    retention: project_lifecycle
+  repository:
+    retention: repository_lifecycle
+  instruction:
+    retention: explicit_until_changed
+  document:
+    retention: source_lifecycle
+  team:
+    retention: shared_agent_context
+
+record:
+  required: [id, type, content, source, created_at]
+  optional: [project_id, task_id, agent_id, confidence, tags, embedding_ref, expires_at]
+
+policies:
+  secrets: never_persist
+  credentials: never_persist
+  provenance_required: true
+  user_deletable: true
+  retrieval_must_be_relevant: true
+  stale_context_must_be_flagged: true

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BuddyUserTestResult",
+  "type": "object",
+  "required": ["capability", "environment", "goal", "expected_result", "actual_result", "passed", "evidence"],
+  "properties": {
+    "capability": {"type": "string"},
+    "tester": {"type": "string"},
+    "environment": {"enum": ["sandbox", "local", "staging", "live-provider", "production"]},
+    "goal": {"type": "string"},
+    "starting_state": {"type": "string"},
+    "expected_result": {"type": "string"},
+    "actual_result": {"type": "string"},
+    "passed": {"type": "boolean"},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "failure": {"type": "string"},
+    "recovery_result": {"type": "string"},
+    "latency_ms": {"type": "number", "minimum": 0},
+    "user_experience_score": {"type": "number", "minimum": 0, "maximum": 10},
+    "safety_concerns": {"type": "array", "items": {"type": "string"}},
+    "regression_test_needed": {"type": "boolean"}
+  }
+}

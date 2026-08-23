@@ -1,0 +1,52 @@
+version: 1
+name: buddy-actions-page-implementation-roadmap
+purpose: convert the unified Actions manifest into progressively real UI and runtime connections
+
+priority_order:
+  - command_and_goal_intake
+  - live_read_only_registries
+  - context_and_memory
+  - capability_and_bot_routing
+  - model_and_weight_routing
+  - debate_and_planning
+  - sandbox_execution
+  - evidence_and_benchmarks
+  - debugging_and_prevention
+  - governed_external_actions
+  - production_operations
+
+for_each_capability:
+  ui: show_status_owner_last_verified_and_evidence
+  backend: expose_read_or_action_contract
+  security: enforce_permissions_and_secret_isolation
+  execution: define_preflight_and_rollback
+  testing: define_sandbox_and_user_test
+  learning: record_result_and_mastery_impact
+
+acceptance:
+  no_feature_counts_as_connected_without_health_evidence: true
+  no_action_counts_as_complete_without_verification: true
+  no_mastery_counts_without_repeated_relevant_evidence: true
+  no_production_promotion_without_governance: true
+
+page_behavior:
+  default_view: goal_to_action
+  secondary_views:
+    - all_assets
+    - divisions
+    - bots
+    - capabilities
+    - benchmarks
+    - repositories
+    - memory
+    - tools
+    - models
+    - debugging
+    - governance
+  persistent_side_panel:
+    - current_goal
+    - active_action
+    - context
+    - evidence
+    - risks
+    - next_best_action

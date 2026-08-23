@@ -1,0 +1,40 @@
+version: 1
+name: buddy-counterfactual-simulation-contract
+purpose: let Buddy compare possible plans before committing to an action
+
+inputs:
+  - goal
+  - current_state
+  - candidate_plans
+  - constraints
+  - available_capabilities
+  - evidence
+
+simulation:
+  evaluate:
+    - expected_goal_progress
+    - failure_modes
+    - resource_cost
+    - latency
+    - reversibility
+    - security_risk
+    - dependency_risk
+    - learning_value
+  compare_multiple_plans: true
+  preserve_assumptions: true
+  label_predictions_as_predictions: true
+
+outputs:
+  - ranked_plans
+  - predicted_outcomes
+  - risks
+  - assumptions
+  - required_evidence
+  - recommended_plan
+  - acceptance_tests
+
+rules:
+  simulation_is_not_execution: true
+  predictions_are_not_facts: true
+  external_side_effects_are_disabled_by_default: true
+  high_impact_actions_require_governance_before_real_execution: true

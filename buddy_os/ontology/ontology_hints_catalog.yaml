@@ -1,0 +1,136 @@
+version: 1
+name: dreamco-ontology-hints-catalog
+purpose: synthesize useful patterns from major ontology and knowledge-modeling styles into one governed DreamCo architecture
+
+source_families:
+  - BFO: realism, continuant/occurrent distinctions, disciplined upper ontology
+  - DOLCE: qualities, situations, descriptions, social and cognitive modeling
+  - SUMO: broad upper-level coverage and logical mappings
+  - Cyc: common-sense assertions and rich relationship vocabulary
+  - gist: pragmatic enterprise concepts and lightweight reuse
+  - 4D/BORO: identity through time and temporal parts
+  - CIDOC_CRM: event-centric provenance and cultural knowledge integration
+  - FRBR/LRM: work-expression-manifestation-item information layers
+  - PROV_O: entities, activities, agents and provenance chains
+  - SIOC: people, communities, posts and online interactions
+  - FOAF: people, agents and social identity relationships
+  - schema_org: practical web entity interoperability
+  - SKOS: concepts, labels, taxonomies, mappings and controlled vocabularies
+  - OWL_RDF_RDFS: formal classes, properties, individuals and machine reasoning
+  - SHACL: validation constraints and data quality gates
+  - SOSA_SSNO: observations, sensors, procedures and results
+  - SAREF: devices, functions, services and measurements
+  - FIBO: financial concepts, legal identity and contractual relationships
+  - OBO_Foundry: modular ontology governance and reuse
+  - OPM: process and dependency modeling
+  - BPMN_semantic_patterns: process states, tasks, events and gateways
+  - ArchiMate: enterprise architecture layers and relationships
+  - TOGAF_content_patterns: architecture governance and traceability
+  - Zachman: multi-perspective enterprise classification
+  - UML: explicit structural and behavioral modeling
+  - ER_modeling: entities, attributes, keys and relationships
+  - property_graph: nodes, edges, properties and traversal-first reasoning
+  - RDF_graph: triples and globally addressable relationships
+  - knowledge_graph: entity linking, relation traversal and evidence grounding
+  - digital_twin: real-world asset state, telemetry, simulation and lifecycle
+  - event_sourcing: immutable event history and reconstruction of state
+  - temporal_knowledge_graph: facts with validity intervals and temporal provenance
+  - agent_ontology: goals, beliefs, capabilities, plans, actions and observations
+  - workflow_ontology: tasks, transitions, dependencies, retries and completion criteria
+  - software_ontology: repositories, packages, APIs, modules, tests, deployments and dependencies
+  - cybersecurity_ontology: assets, identities, threats, vulnerabilities, controls and incidents
+  - data_catalog_ontology: datasets, schemas, owners, lineage, quality and access
+  - AI_model_ontology: models, weights, datasets, evaluations, prompts, tools and deployments
+  - MLOps_ontology: experiments, runs, artifacts, registries, environments and promotions
+  - product_ontology: users, needs, features, experiments, releases and outcomes
+  - goal_ontology: goals, constraints, milestones, plans, tasks, outcomes and evidence
+  - organizational_ontology: people, teams, divisions, roles, responsibilities and authorities
+
+hints:
+  identity:
+    - every important object needs a stable id
+    - distinguish identity from mutable state
+    - preserve identity across versions and deployments
+  time:
+    - track created_at, updated_at, valid_from, valid_to where meaningful
+    - distinguish event_time from ingestion_time
+    - retain historical state for audits and regression analysis
+  provenance:
+    - every important claim should point to source evidence
+    - every generated artifact should identify its producing action/model/tool
+    - preserve provenance through transformations
+  context:
+    - represent context as first-class objects rather than hidden prompt text
+    - rank context by relevance, freshness, authority and goal alignment
+    - distinguish instructions, facts, hypotheses, preferences and observations
+  uncertainty:
+    - represent confidence explicitly
+    - distinguish unknown, disputed, inferred and verified
+    - never collapse uncertainty into a binary fact
+  actions:
+    - model actions separately from objects
+    - every action has preconditions, permissions, inputs, outputs and postconditions
+    - actions should be idempotent when practical
+    - destructive actions require explicit governance
+  state:
+    - use explicit lifecycle states
+    - model blocked and waiting states separately from failed
+    - preserve state transitions as events
+  capabilities:
+    - separate capability from implementation
+    - allow many implementations per capability
+    - map capability to benchmarks, skills, tools, models and evidence
+  goals:
+    - goals have measurable outcomes and acceptance criteria
+    - goals decompose into plans, tasks and dependencies
+    - preserve links from outcomes back to original goals
+  evidence:
+    - evidence has source, timestamp, environment and verification level
+    - sandbox, user, live-provider and production evidence remain distinct
+    - expired evidence triggers revalidation
+  models:
+    - model is separate from model weight, deployment and runtime
+    - record license, provenance, hash, hardware needs and benchmark results
+    - route by task fit rather than model popularity
+  learning:
+    - benchmark results become learning signals
+    - failures become training or engineering opportunities
+    - mastered capabilities require repeated evidence and regression protection
+  organization:
+    - represent authority and ownership explicitly
+    - separate organizational membership from permission to act
+    - model division-to-capability and division-to-resource relationships
+  software:
+    - connect repositories to modules, dependencies, workflows, tests, releases and runtime environments
+    - connect bugs to symptoms, traces, commits, tests and fixes
+    - connect generated code to source action and verification evidence
+  interoperability:
+    - use stable identifiers and mapping relationships
+    - support SKOS-style concept mappings for vocabulary alignment
+    - allow RDF/OWL-compatible export without forcing every runtime query through RDF
+    - support property-graph traversal for operational queries
+  efficiency:
+    - prefer shared capabilities over duplicated bots
+    - cache verified facts and artifacts
+    - route work to the cheapest sufficient model/tool
+    - measure ontology traversal cost and context assembly cost
+    - avoid indexing secrets into broad search contexts
+
+DreamCo_design:
+  upper_layer: BFO_inspired_disciplined_categories
+  enterprise_layer: gist_ArchiMate_style_pragmatic_model
+  semantic_layer: RDF_OWL_SKOS_SHACL_compatible
+  operational_layer: property_graph_action_first
+  provenance_layer: PROV_O_event_sourcing_temporal
+  agent_layer: goals_beliefs_capabilities_plans_actions_observations
+  software_layer: repositories_packages_dependencies_tests_deployments
+  AI_layer: models_weights_datasets_evaluations_tools_prompts_runs
+  validation_layer: SHACL_like_constraints_plus_runtime_contracts
+  experience_layer: Buddy_Actions
+
+selection_rule:
+  do_not_copy_any_ontology_wholesale: true
+  prefer_composable_patterns: true
+  benchmark_each_pattern_before_adoption: true
+  preserve_existing_DreamCo_contracts: true
+  avoid_duplicate_concepts: true

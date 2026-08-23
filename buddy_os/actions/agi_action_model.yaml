@@ -1,0 +1,91 @@
+version: 1
+name: buddy-agi-action-model
+purpose: make the Actions experience feel like a capable autonomous operating partner without pretending to be human or sentient
+
+principle: actions_are_reasoned_plans_with_visible_state_not_magic_buttons
+
+experience:
+  command_center:
+    primary_input: "What should Buddy accomplish?"
+    quick_intents:
+      - build
+      - research
+      - debug
+      - improve
+      - test
+      - benchmark
+      - deploy
+      - monitor
+      - learn
+      - find_opportunities
+    contextual_suggestions: true
+    next_best_action: true
+    explain_why: true
+
+  action_card:
+    required:
+      - objective
+      - current_state
+      - plan
+      - selected_mode
+      - selected_model
+      - tools
+      - memory_sources
+      - risk
+      - expected_outcome
+      - evidence_plan
+      - rollback_plan
+      - approval_state
+      - live_status
+    states:
+      - proposed
+      - reasoning
+      - waiting_for_input
+      - waiting_for_approval
+      - executing
+      - verifying
+      - recovering
+      - completed
+      - blocked
+      - failed
+      - learned
+
+  autonomy_signals:
+    show_plan_before_execution: true
+    show_progress: true
+    adapt_plan_on_new_evidence: true
+    surface_blockers: true
+    recommend_next_action: true
+    recover_when_safe: true
+    ask_for_approval_when_required: true
+    summarize_outcome: true
+    record_learning: true
+
+  workspace:
+    live_activity_stream: true
+    task_timeline: true
+    dependency_graph: true
+    evidence_panel: true
+    risk_panel: true
+    memory_panel: true
+    tool_panel: true
+    model_panel: true
+    debate_panel: true
+    rollback_panel: true
+
+  intelligence:
+    goal_decomposition: true
+    dependency_planning: true
+    change_impact_analysis: true
+    capability_gap_detection: true
+    proactive_risk_detection: true
+    alternative_plan_generation: true
+    failure_recovery: true
+    post_action_learning: true
+
+safety:
+  never_claim_sentience: true
+  never_hide_uncertainty: true
+  never_claim_execution_without_evidence: true
+  respect_approval_policy: true
+  destructive_actions_require_explicit_governance: true

@@ -1,0 +1,50 @@
+version: 1
+name: buddy-autonomous-debate-team
+purpose: structured multi-perspective review for complex Buddy decisions
+
+roles:
+  - architect
+  - implementer
+  - tester
+  - security_reviewer
+  - performance_reviewer
+  - reliability_reviewer
+  - user_advocate
+  - skeptic
+  - synthesizer
+
+protocol:
+  input:
+    - task
+    - purpose
+    - data
+    - constraints
+    - current_state
+    - success_criteria
+  stages:
+    - independent_proposals
+    - evidence_check
+    - adversarial_review
+    - failure_mode_analysis
+    - alternative_generation
+    - synthesis
+    - acceptance_test_design
+    - decision
+  output:
+    - recommendation
+    - alternatives_considered
+    - evidence
+    - disagreements
+    - risks
+    - assumptions
+    - acceptance_tests
+    - rollback_plan
+    - confidence
+
+rules:
+  dissent_is_preserved: true
+  unsupported_consensus_is_not_evidence: true
+  security_can_block: true
+  user_goal_remains_authoritative: true
+  decisions_are_retestable: true
+  cheap_decisions_should_not_trigger_excessive_debate: true

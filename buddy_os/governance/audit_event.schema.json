@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BuddyAuditEvent",
+  "type": "object",
+  "required": ["event_id", "timestamp", "actor", "action", "target", "risk", "approval", "result"],
+  "properties": {
+    "event_id": {"type": "string"},
+    "timestamp": {"type": "string"},
+    "trace_id": {"type": "string"},
+    "actor": {"type": "string"},
+    "action": {"type": "string"},
+    "target": {"type": "string"},
+    "risk": {"type": "object"},
+    "approval": {"type": "object"},
+    "result": {"type": "string"},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}},
+    "rollback_ref": {"type": "string"}
+  }
+}

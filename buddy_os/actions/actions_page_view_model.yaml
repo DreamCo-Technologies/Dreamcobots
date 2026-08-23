@@ -1,0 +1,76 @@
+version: 1
+name: buddy-actions-page-view-model
+purpose: define the unified state shown by the Actions page
+
+header:
+  - current_goal
+  - autonomy_level
+  - system_health
+  - active_action
+  - overall_confidence
+
+command_center:
+  - task_input
+  - role_definition
+  - formal_requirements
+  - execute_button
+  - debate_button
+  - sandbox_button
+  - benchmark_button
+
+live_context:
+  - relevant_projects
+  - relevant_documents
+  - memory_items
+  - ontology_subgraph
+  - current_repository_state
+  - active_constraints
+
+routing:
+  - candidate_capabilities
+  - candidate_bots
+  - candidate_superbots
+  - candidate_models
+  - candidate_weights
+  - candidate_tools
+  - candidate_mcp
+  - routing_reason
+
+execution:
+  - plan
+  - approvals
+  - risk
+  - action_state
+  - execution_events
+  - logs
+  - traces
+
+learning:
+  - benchmark_results
+  - evidence_level
+  - mastery_state
+  - capability_gaps
+  - recommended_training
+  - regression_watch
+
+fleet:
+  - division_status
+  - bot_status
+  - capability_status
+  - connector_health
+  - workflow_health
+  - repository_health
+
+next_step:
+  - next_best_action
+  - why
+  - expected_value
+  - risk
+  - required_approval
+
+interaction_rules:
+  destructive_controls_are_explicit: true
+  disabled_controls_show_reason: true
+  stale_data_shows_timestamp: true
+  uncertain_claims_show_confidence: true
+  every_action_has_audit_reference: true

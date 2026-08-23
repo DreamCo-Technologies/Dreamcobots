@@ -1,0 +1,30 @@
+version: 1
+name: buddy-release-readiness
+
+levels:
+  - name: discovered
+    meaning: requirement or change identified
+  - name: implemented
+    meaning: code exists
+  - name: tested
+    meaning: automated tests pass
+  - name: verified
+    meaning: relevant gates and evidence pass
+  - name: canary
+    meaning: limited live exposure with rollback
+  - name: production
+    meaning: approved and monitored in production
+
+required_evidence:
+  implemented: [code_reference]
+  tested: [test_reference, test_result]
+  verified: [test_reference, security_result, build_result, runtime_result]
+  canary: [deployment_reference, health_result, rollback_reference]
+  production: [approval_reference, deployment_reference, health_result, observability_reference]
+
+rules:
+  no_status_jump: true
+  blocked_gate_prevents_verified: true
+  failed_health_prevents_production: true
+  missing_evidence_is_blocked: true
+  rollback_plan_required_for_live_change: true

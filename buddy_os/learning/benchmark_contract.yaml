@@ -1,0 +1,36 @@
+version: 1
+name: buddy-benchmark-contract
+
+benchmark:
+  required: [benchmark_id, capability, task, inputs, expected_behavior, scoring]
+  scoring:
+    dimensions:
+      - correctness
+      - reliability
+      - safety
+      - latency
+      - cost
+      - tool_use
+      - recovery
+      - explainability
+
+training_loop:
+  baseline: required
+  sandbox: required
+  adversarial_cases: required
+  failure_cases: required
+  retry_strategies: required
+  regression_suite: required
+  promotion_threshold: required
+
+learning:
+  retain_successful_strategies: true
+  retain_failure_signatures: true
+  compare_model_and_agent_modes: true
+  detect_capability_gaps: true
+  recommend_next_training_tasks: true
+
+rules:
+  no_benchmark_pass_without_evidence: true
+  no_training_promotion_without_regression_suite: true
+  benchmark_scores_are_versioned: true

@@ -5,6 +5,7 @@
     { href: 'dashboard.html', label: '📊 Dashboard' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'actions.html', label: '⚙️ Actions' },
+    { href: 'buddy-operating-system.html', label: '🧬 Buddy AGI OS' },
     { href: 'success.html', label: '📈 Success Center' },
     { href: 'search.html', label: '🔎 DreamSearch' },
     { href: 'studio.html', label: '🎮 Creative Studio' },
@@ -75,29 +76,17 @@
   if (placeholder) placeholder.outerHTML = navHTML;
 
   if (!document.querySelector('link[rel="icon"]')) {
-    const icon = document.createElement('link');
-    icon.rel = 'icon';
-    icon.href = 'assets/images/favicon.svg';
-    icon.type = 'image/svg+xml';
-    document.head.appendChild(icon);
+    const icon = document.createElement('link'); icon.rel = 'icon'; icon.href = 'assets/images/favicon.svg'; icon.type = 'image/svg+xml'; document.head.appendChild(icon);
   }
   if (!document.querySelector('link[rel="manifest"]')) {
-    const manifest = document.createElement('link');
-    manifest.rel = 'manifest';
-    manifest.href = 'manifest.webmanifest';
-    document.head.appendChild(manifest);
+    const manifest = document.createElement('link'); manifest.rel = 'manifest'; manifest.href = 'manifest.webmanifest'; document.head.appendChild(manifest);
   }
   if (!document.querySelector('link[rel="apple-touch-icon"]')) {
-    const touchIcon = document.createElement('link');
-    touchIcon.rel = 'apple-touch-icon';
-    touchIcon.href = 'assets/images/buddy-icon-192.png';
-    document.head.appendChild(touchIcon);
+    const touchIcon = document.createElement('link'); touchIcon.rel = 'apple-touch-icon'; touchIcon.href = 'assets/images/buddy-icon-192.png'; document.head.appendChild(touchIcon);
   }
 
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('service-worker.js', { scope: './' }).catch(() => {});
-    });
+    window.addEventListener('load', () => { navigator.serviceWorker.register('service-worker.js', { scope: './' }).catch(() => {}); });
   }
 
   const style = document.createElement('style');
@@ -112,10 +101,9 @@
   `;
   document.head.appendChild(style);
 
-  // Rebuild V2: add contextual action buttons to the real Codex-built pages.
   if (!document.querySelector('script[data-dreamco-page-actions]')) {
     const pageActions = document.createElement('script');
-    pageActions.src = 'page-actions.js?v=1';
+    pageActions.src = 'page-actions.js?v=2';
     pageActions.defer = true;
     pageActions.dataset.dreamcoPageActions = 'true';
     document.head.appendChild(pageActions);

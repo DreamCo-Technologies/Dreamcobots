@@ -1,0 +1,44 @@
+version: 1
+name: buddy-agi-actions-operating-modes
+purpose: give the Actions page explicit operating modes for different kinds of work
+
+modes:
+  discover:
+    purpose: understand_goal_and_world_state
+    side_effects: none
+  research:
+    purpose: gather_and_compare_evidence
+    side_effects: none_by_default
+  architect:
+    purpose: design_systems_and_plans
+    side_effects: draft_only
+  build:
+    purpose: create_or_modify_artifacts
+    side_effects: sandbox_or_reviewed_repository
+  debug:
+    purpose: diagnose_and_repair
+    side_effects: sandbox_first
+  benchmark:
+    purpose: measure_capabilities_and_regressions
+    side_effects: isolated_testing
+  train:
+    purpose: improve_user_or_model_capability
+    side_effects: governed_training
+  simulate:
+    purpose: explore_counterfactuals_and_plans
+    side_effects: no_external_side_effects
+  operate:
+    purpose: execute_governed_live_work
+    side_effects: permission_and_risk_checked
+  monitor:
+    purpose: continuously_watch_health_and_goals
+    side_effects: bounded_automation
+  recovery:
+    purpose: restore_service_or_rollback
+    side_effects: governed_reversible_operations
+
+mode_switching:
+  user_can_switch: true
+  buddy_can_recommend: true
+  high_risk_switch_requires_confirmation: true
+  every_switch_is_logged: true

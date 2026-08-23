@@ -1,0 +1,37 @@
+version: 1
+name: buddy-autonomous-debate-protocol
+purpose: force high-impact system decisions through structured independent review before execution
+
+rounds:
+  - name: understand
+    outputs: [task, purpose, data, constraints, success_criteria]
+  - name: propose
+    agents: [architect, performance, revenue, qa]
+  - name: challenge
+    agents: [security, compliance, qa]
+  - name: synthesize
+    agent: buddy_final
+  - name: verify
+    required: true
+
+agent_contract:
+  required_input:
+    - task
+    - purpose
+    - data
+    - output_format
+  required_output:
+    - recommendation
+    - evidence
+    - assumptions
+    - risks
+    - objections
+    - tests
+    - confidence
+
+rules:
+  independent_first_pass: true
+  challenge_without_groupthink: true
+  evidence_over_assertion: true
+  unresolved_high_risk_issue_blocks_autonomous_execution: true
+  final_decision_must_include_execution_plan: true

@@ -1,0 +1,70 @@
+version: 1
+name: buddy-context-fabric
+purpose: turn the DreamCo ontology into a bounded, evidence-grounded context system for Actions
+
+context_types:
+  - user_goal
+  - instruction
+  - preference
+  - project_state
+  - repository_state
+  - capability
+  - task
+  - plan
+  - memory
+  - document
+  - note
+  - tool
+  - model
+  - benchmark
+  - evidence
+  - risk
+  - policy
+  - prior_action
+
+ranking:
+  factors:
+    goal_alignment: 0.30
+    authority: 0.20
+    freshness: 0.15
+    evidence_quality: 0.15
+    task_dependency: 0.10
+    reliability: 0.10
+  rules:
+    - direct_user_instruction_beats_inferred_preference
+    - verified_evidence_beats_unverified_claim
+    - current_state_beats_stale_state
+    - relevant_small_context_beats_irrelevant_large_context
+    - conflicts_must_be_visible
+
+assembly:
+  stages:
+    - understand_goal
+    - retrieve_candidate_subgraph
+    - rank_context
+    - detect_conflicts
+    - compress_large_context
+    - attach_evidence
+    - attach_permissions
+    - attach_risk
+    - build_action_context
+
+memory_rules:
+  instructions_are_not_facts: true
+  preferences_are_not_permissions: true
+  notes_are_not_verified_evidence: true
+  generated_content_is_not_ground_truth: true
+  secrets_are_never_general_context: true
+  stale_context_requires_revalidation: true
+
+budgets:
+  hard_limit: true
+  adaptive_to_model_context: true
+  reserve_space_for_output_and_tool_results: true
+
+failure_modes:
+  missing_context: request_or_retrieve_more
+  conflicting_context: surface_conflict_and_rank_sources
+  stale_context: revalidate
+  excessive_context: compress_and_preserve_source_links
+  untrusted_context: quarantine

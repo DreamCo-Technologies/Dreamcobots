@@ -1,0 +1,73 @@
+version: 1
+name: buddy-model-weight-registry
+purpose: allow governed use of local/open model weights alongside hosted models without coupling Buddy to one provider
+
+model_sources:
+  - local_weights
+  - approved_open_weights
+  - hosted_models
+  - specialized_models
+  - embedding_models
+  - rerankers
+  - vision_models
+  - speech_models
+  - coding_models
+
+weight_record:
+  required:
+    - model_id
+    - source
+    - license
+    - architecture
+    - parameter_count
+    - quantization
+    - context_length
+    - hardware_requirements
+    - benchmark_results
+    - safety_status
+    - provenance
+    - version
+
+routing:
+  objective: best_quality_per_latency_cost_and_resource
+  factors:
+    - task_fit
+    - benchmark_score
+    - latency
+    - memory_requirement
+    - hardware_availability
+    - cost
+    - privacy
+    - reliability
+    - license_constraints
+  policy:
+    simple_tasks_use_smallest_sufficient_model: true
+    escalate_on_low_confidence: true
+    use_specialist_models_when_benchmarks_support_them: true
+    keep_fallback_model: true
+    never_use_unverified_weights_in_production: true
+
+weight_lifecycle:
+  - discovered
+  - license_checked
+  - downloaded
+  - integrity_verified
+  - sandboxed
+  - benchmarked
+  - security_reviewed
+  - approved
+  - deployed
+  - monitored
+  - retired
+
+provenance:
+  require_source: true
+  require_license: true
+  require_hash: true
+  require_version: true
+  require_evaluation_record: true
+
+security:
+  untrusted_weights_run_in_isolated_environment: true
+  no_secret_access_during_weight_validation: true
+  no_production_promotion_without_review: true

@@ -1,0 +1,63 @@
+version: 1
+name: buddy-model-marketplace
+purpose: give Actions a unified model/provider catalog and transparent comparison layer
+
+model_record:
+  required:
+    - model_id
+    - provider
+    - capabilities
+    - modalities
+    - context_window
+    - input_price
+    - output_price
+    - latency_metrics
+    - throughput_metrics
+    - benchmark_results
+    - privacy_policy
+    - retention_policy
+    - region
+    - license
+    - availability
+    - last_verified
+
+comparison_dimensions:
+  - quality
+  - quality_per_dollar
+  - success_per_dollar
+  - latency
+  - throughput
+  - context
+  - tool_call_success
+  - reliability
+  - privacy
+  - availability
+  - hardware_fit
+  - license_fit
+
+routing:
+  user_can_pin_model: true
+  user_can_pin_provider: true
+  user_can_set_budget: true
+  user_can_set_quality_floor: true
+  user_can_set_latency_ceiling: true
+  user_can_set_privacy_policy: true
+  buddy_can_auto_route_within_constraints: true
+  fallback_chain_supported: true
+
+openrouter_compatibility:
+  unified_gateway_pattern: true
+  model_catalog_pattern: true
+  provider_fallback_pattern: true
+  cost_quality_routing_pattern: true
+  no_proprietary_behavior_copied: true
+
+marketplace_ui:
+  - model_browser
+  - model_compare
+  - provider_compare
+  - route_explainer
+  - cost_estimator
+  - benchmark_matrix
+  - privacy_filter
+  - availability_monitor

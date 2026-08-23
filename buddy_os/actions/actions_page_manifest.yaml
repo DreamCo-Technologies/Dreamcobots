@@ -1,0 +1,108 @@
+version: 1
+name: buddy-actions-page-manifest
+purpose: single manifest describing every capability family the Actions page should expose
+
+sections:
+  command:
+    - goal_input
+    - natural_language_task
+    - role_definition
+    - formal_requirements
+  context:
+    - context_fabric
+    - project_state
+    - document_library
+    - markdown_notes
+    - memory
+    - instructions
+    - preferences
+    - evidence
+  intelligence:
+    - 45_divisions
+    - bot_registry
+    - superbot_registry
+    - capability_registry
+    - skills_registry
+    - benchmark_registry
+    - mastery_registry
+  reasoning:
+    - model_router
+    - model_weight_registry
+    - debate_team
+    - planning
+    - next_best_action
+    - uncertainty
+  execution:
+    - action_lifecycle
+    - agent_modes
+    - tool_registry
+    - mcp_registry
+    - code_runner
+    - command_runner
+    - sandbox
+    - workflows
+    - generators
+    - libraries
+  engineering:
+    - repository_map
+    - branches
+    - pull_requests
+    - issues
+    - ci_cd
+    - observability
+    - debugging
+    - dependency_health
+    - regression_detection
+    - preventive_repair
+  learning:
+    - benchmark_center
+    - sandbox_test_catalog
+    - real_user_test_queue
+    - live_provider_test_queue
+    - production_readiness
+    - mastery_gaps
+    - training_recommendations
+    - buddy_bootcamp
+  governance:
+    - permissions
+    - approvals
+    - risk
+    - security
+    - provenance
+    - audit_log
+    - rollback
+  system:
+    - ontology_browser
+    - ontology_quality_gates
+    - ontology_evolution
+    - memory_controls
+    - connector_health
+    - dashboard_registry
+    - next_best_action
+
+ui_behavior:
+  every_section_links_to_underlying_registry: true
+  show_state_and_evidence: true
+  show_owner_and_permissions: true
+  show_last_verified: true
+  show_next_best_action: true
+  allow_goal_scoped_views: true
+  allow_division_scoped_views: true
+  allow_capability_scoped_views: true
+  allow_bot_scoped_views: true
+  allow_benchmark_scoped_views: true
+  allow_repository_scoped_views: true
+
+truth_states:
+  - discovered
+  - configured
+  - connected
+  - authorized
+  - healthy
+  - sandbox_verified
+  - user_verified
+  - live_verified
+  - production_verified
+  - blocked
+  - degraded
+  - unknown

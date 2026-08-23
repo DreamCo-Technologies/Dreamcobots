@@ -1,0 +1,90 @@
+version: 1
+name: dreamco-american-efficient-ai-router
+purpose: build a provider-neutral, cost-aware, benchmark-driven routing layer inspired by efficient global AI systems without copying proprietary implementations
+
+principles:
+  - capability_first
+  - smallest_sufficient_model
+  - quality_per_dollar
+  - latency_aware
+  - reliability_aware
+  - privacy_aware
+  - hardware_aware
+  - cache_aware
+  - failover_ready
+  - evidence_driven
+
+routing_stages:
+  1_request_classifier:
+    classify: [task_type, complexity, modality, tool_need, context_size, risk, latency_target]
+  2_capability_gate:
+    reject_models_missing_required_features: true
+  3_cost_quality_frontier:
+    optimize: [quality, cost, latency, reliability]
+  4_provider_router:
+    consider: [price, throughput, ttft, uptime, region, privacy_policy, capacity]
+  5_execution:
+    retries: bounded
+    fallbacks: true
+  6_evaluation:
+    record: [quality_score, cost, latency, tokens, tool_success, failure]
+  7_learning:
+    update_route_scores_from_verified_results: true
+
+modes:
+  ultra_low_cost:
+    strategy: cheapest_capable
+  balanced:
+    strategy: pareto_quality_cost_latency
+  quality_first:
+    strategy: best_verified_capability
+  private:
+    strategy: policy_constrained
+  local_first:
+    strategy: local_or_self_hosted_before_external
+  resilient:
+    strategy: multi_provider_failover
+
+optimization_methods:
+  - prompt_caching
+  - prefix_reuse
+  - context_compression
+  - retrieval_before_generation
+  - smaller_model_cascade
+  - speculative_decoding_when_supported
+  - quantized_local_models_when_supported
+  - batching_when_latency_allows
+  - asynchronous_execution
+  - early_exit_when_confidence_is_sufficient
+  - output_length_control
+  - semantic_cache
+
+cost_controls:
+  per_request_budget: true
+  per_goal_budget: true
+  per_user_budget: true
+  daily_budget: true
+  monthly_budget: true
+  hard_stop_on_budget: true
+  cost_estimate_before_execution: true
+
+quality_controls:
+  benchmark_by_task_type: true
+  track_quality_per_dollar: true
+  track_success_per_dollar: true
+  track_tool_success_rate: true
+  track_regression: true
+  never_route_on_price_alone: true
+
+provider_policy:
+  support_openrouter_style_unified_gateway: true
+  support_direct_provider_apis: true
+  support_local_inference: true
+  support_self_hosted_inference: true
+  provider_metadata_required: [pricing, capabilities, latency, throughput, uptime, privacy, retention, region]
+
+security:
+  data_policy_filter_before_external_routing: true
+  secrets_never_sent_to_models_unless_explicitly_authorized: true
+  sensitive_tasks_can_be_local_only: true
+  audit_route_decisions: true
