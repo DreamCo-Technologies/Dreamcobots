@@ -81,7 +81,7 @@ jobs:
         shell: bash
         run: |
           python3 - <<'PY'
-          import hashlib, json, os, re
+          import hashlib, json, os
           from pathlib import Path
           jobs=json.loads(Path('failure-evidence/jobs.json').read_text()).get('jobs',[])
           failed=[j for j in jobs if j.get('conclusion') not in (None,'success','skipped')]
@@ -112,11 +112,11 @@ jobs:
           set -euo pipefail
           key=$(cat failure-evidence/root-cause-key.txt)
           title="DreamCo failure root cause [$key]: $WORKFLOW_NAME"
-          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "[$key] in:title" --json number --jq '.[0].number // empty')
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "$key in:title" --json number --jq '.[0].number // empty')
           if [ -z "$existing" ]; then
             gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body-file failure-evidence/report.md
           else
-            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "New evidence for root-cause key \\`$key\\`: run #$RUN_NUMBER — $RUN_URL"
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "New evidence for root-cause key $key: run #$RUN_NUMBER — $RUN_URL"
             echo "Updated root-cause issue #$existing" >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Save failure evidence
@@ -145,10 +145,8 @@ jobs:
           issues=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "$WORKFLOW_NAME in:title" --json number,title --jq '.[] | [.number,.title] | @tsv')
           while IFS=$'\t' read -r number title; do
             [ -z "$number" ] && continue
-            case "$title" in
-              "*DreamCo failure root cause*")
-                gh issue comment "$number" --repo "$GITHUB_REPOSITORY" --body "Verification evidence: workflow **$WORKFLOW_NAME** succeeded. Run: $RUN_URL"
-                gh issue close "$number" --repo "$GITHUB_REPOSITORY" --reason completed
-                ;;
-            esac
+            if [[ "$title" == *"DreamCo failure root cause"* ]]; then
+              gh issue comment "$number" --repo "$GITHUB_REPOSITORY" --body "Verification evidence: workflow **$WORKFLOW_NAME** succeeded. Run: $RUN_URL"
+              gh issue close "$number" --repo "$GITHUB_REPOSITORY" --reason completed
+            fi
           done <<< "$issues"
