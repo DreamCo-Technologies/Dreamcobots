@@ -1,0 +1,20 @@
+name: MasterBot DreamSalesPro
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+permissions:
+  contents: read
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Training lane
+        env:
+          MASTERBOT_NAME: DreamSalesPro
+        run: python tools/buddy_masterbot_training_lane.py
