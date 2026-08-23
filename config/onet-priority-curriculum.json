@@ -1,0 +1,12 @@
+{
+  "$schema":"dreamco.buddy_onet_priority_curriculum.v1",
+  "purpose":"Make O*NET a top-priority structured source for Buddy's occupational capability mapping and benchmark-gap curriculum while preserving source provenance and verification.",
+  "priority":"critical",
+  "source":{"name":"O*NET","role":"occupational_capability_backbone","use_cases":["occupation_mapping","task_mapping","skill_mapping","knowledge_mapping","ability_mapping","work_activity_mapping","technology_mapping","work_context_mapping","career_pathway_mapping"]},
+  "pipeline":["ingest_allowed_data","normalize_occupation_taxonomy","map_tasks_to_capabilities","map_skills_and_knowledge","map_tools_and_technologies","build_practice_tasks","map_to_divisions","identify_benchmark_gaps","generate_curriculum","sandbox_practice","holdout_test","regression_test","record_mastery","refresh_when_source_changes"],
+  "curriculum_priority":{"critical_occupation_gaps":1,"high_impact_skills":2,"cross_division_skills":3,"high_frequency_tasks":4,"productivity_opportunities":5,"breadth_expansion":6},
+  "mastery":{"do_not_count_reading_as_mastery":true,"capability_specific_test_required":true,"unseen_task_required":true,"practical_task_required":true,"regression_test_required":true,"provenance_required":true},
+  "integration":{"capability_graph":true,"benchmark_gap_engine":true,"bootcamp_curriculum":true,"frontier_control_plane":true,"division_router":true,"historical_bot_mapping":true,"productivity_engine":true},
+  "refresh":{"monitor_source_updates":true,"rebenchmark_affected_capabilities":true,"flag_stale_mappings":true},
+  "governance":{"external_source_is_evidence_not_authority":true,"respect_source_terms_and_access_controls":true,"human_approval_for_high_impact_production_changes":true}
+}

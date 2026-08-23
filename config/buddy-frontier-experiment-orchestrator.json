@@ -1,0 +1,11 @@
+{
+  "$schema":"dreamco.buddy_frontier_experiment_orchestrator.v1",
+  "purpose":"Turn measured capability gaps into controlled experiments that maximize learning while minimizing wasted work and unsafe promotion.",
+  "experiment_lifecycle":["select_gap","define_hypothesis","define_success_metric","construct_baseline","select_evidence","design_intervention","sandbox","evaluate","compare","diagnose","replicate","regression_test","record_result","promote_or_reject","generate_next_hypothesis"],
+  "selection":{"prioritize_impact":true,"prioritize_dependencies":true,"prioritize_repeated_failures":true,"prioritize_productivity_gains":true,"avoid_duplicate_experiments":true},
+  "experiment_quality":{"pre_registered_success_criteria":true,"baseline_required":true,"control_or_comparison_required":true,"evidence_lineage_required":true,"replication_required_for_critical_capabilities":true,"negative_results_retained":true},
+  "sandbox":{"required":true,"production_credentials_blocked":true,"external_content_untrusted":true,"side_effects_disabled_by_default":true},
+  "decision_states":["planned","running","passed","failed","inconclusive","needs_replication","governance_hold","promoted","rejected"],
+  "learning_from_results":{"failed_experiments_generate_new_hypotheses":true,"successful_experiments_become_reusable_patterns":true,"inconclusive_experiments_require_more_evidence":true,"never_claim_mastery_from_single_unverified_result":true},
+  "telemetry":["hypothesis","baseline_score","post_score","gain","confidence","replication_result","regression_result","time","cost","failure_reason","next_hypothesis"]
+}

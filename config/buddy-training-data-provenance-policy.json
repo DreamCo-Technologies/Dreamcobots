@@ -1,0 +1,11 @@
+{
+  "$schema":"dreamco.buddy_training_data_provenance.v1",
+  "purpose":"Ensure Buddy records every training asset's ownership, license, provenance and permitted commercial use without falsely claiming third-party material as DreamCo-owned.",
+  "core_rule":"Buddy may label an asset as DreamCo-owned only when DreamCo created it or has documented rights transferring ownership to DreamCo. Third-party sources remain attributed and are not relabeled as owned merely because Buddy learned from them.",
+  "ownership_classes":["dreamco_owned","dreamco_commissioned_with_assignment","licensed_for_use","open_license_with_conditions","public_domain_or_publicly_reusable","third_party_reference_only","synthetic_generated_by_dreamco","user_contributed_with_permission","unknown_do_not_publish"],
+  "required_metadata":["asset_id","title","source","source_version","creator","owner","license","license_url","collection_date","transformation_history","derivation_type","commercial_redistribution_allowed","attribution_required","share_alike_required","restrictions","provenance_hash","review_status"],
+  "training_asset_rules":{"retain_provenance":true,"retain_source_version":true,"track_transformations":true,"separate_reference_from_owned_assets":true,"block_unknown_assets_from_commercial_packages":true,"block_restricted_assets_from_public_distribution":true,"honor_license_conditions":true},
+  "dreamco_generated_data":{"mark_as_dreamco_owned_when_rights_permit":true,"record_generating_system":true,"record_generation_date":true,"record_source_inputs":true,"record_human_review":true,"run_quality_checks":true},
+  "marketplace":{"only_publish_assets_with_verified_distribution_rights":true,"include_attribution_and_license_metadata":true,"maintain_takedown_and_replacement_process":true,"support_versioned_dataset_manifests":true},
+  "buddy_behavior":{"never_claim_third_party_data_is_owned":true,"never_remove_required_attribution":true,"never infer ownership from accessibility":true,"ask_for_rights_review_when_status_is_unknown":true}
+}

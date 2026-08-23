@@ -1,0 +1,13 @@
+{
+  "$schema":"dreamco.buddy_operational_readiness.v1",
+  "purpose":"Move Buddy capabilities from experimentation to dependable operation through staged readiness gates, observability, rollback and disaster recovery.",
+  "readiness_stages":["prototype","sandbox","shadow","canary","limited_production","production","continuously_monitored"],
+  "promotion_gates":["functional_tests","security_tests","permission_tests","benchmark_threshold","holdout_tests","regression_suite","observability_ready","rollback_verified","runbook_complete","cost_budget_defined","owner_assigned"],
+  "reliability":{"health_checks":true,"dependency_checks":true,"circuit_breakers":true,"timeouts":true,"retries_with_backoff":true,"idempotency_required":true,"dead_letter_handling":true,"checkpointing":true,"graceful_degradation":true},
+  "recovery":{"automated_rollback":true,"known_good_checkpoint":true,"disaster_recovery_test":true,"incident_runbook":true,"escalation_policy":true,"post_incident_learning":true},
+  "observability":{"structured_logs":true,"traces":true,"metrics":true,"audit_events":true,"capability_provenance":true,"benchmark_history":true,"cost_tracking":true,"latency_tracking":true},
+  "safety":{"least_privilege":true,"secret_isolation":true,"sandbox_new_behavior":true,"external_content_untrusted":true,"high_impact_human_approval":true,"production_allowlist":true},
+  "capacity":{"bounded_concurrency":true,"queue_backpressure":true,"resource_budgets":true,"priority_queues":true,"graceful_degradation":true},
+  "learning":{"incidents_feed_failure_memory":true,"postmortems_feed_benchmarks":true,"successful_repairs_become_runbooks":true,"repeated_failures_create_gap_targets":true},
+  "success_metrics":["availability","successful_task_rate","mean_time_to_recovery","rollback_success_rate","regression_rate","incident_recurrence","cost_per_success","latency","queue_age","human_escalation_precision"]
+}

@@ -1,0 +1,11 @@
+{
+  "$schema":"dreamco.buddy_gain_promotion.v1",
+  "pipeline":["quality_gate","reproduce","baseline_compare","safety_security_policy","shadow_or_simulation","canary","monitor","promote_or_hold_or_rollback"],
+  "required_evidence":["baseline","candidate","delta","evaluation_results","reproducibility","resource_cost","latency","failure_modes","lineage"],
+  "silent_self_modification":false,
+  "production_change_requires_controls":true,
+  "canary_required_when_applicable":true,
+  "automatic_rollback_when_defined_conditions_trigger":true,
+  "regression_test_required_after_promotion":true,
+  "cross_division_validation_required":true
+}

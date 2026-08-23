@@ -1,0 +1,13 @@
+{
+  "$schema":"dreamco.buddy_capability_graph.v1",
+  "purpose":"Represent what Buddy can do, what evidence proves it, which division owns it, what it depends on, and where the next growth opportunity is.",
+  "node_types":["capability","benchmark","source","experiment","strategy","dependency","division","superbot","historical_bot","workflow","productivity_gain","risk_control"],
+  "edge_types":["requires","tested_by","learned_from","improved_by","owned_by","implemented_by","derived_from","regressed_after","recovered_by","shared_with","measures","blocks","supersedes"],
+  "capability_states":["discovered","learning","practicing","sandbox_validated","holdout_validated","production_candidate","governed_production","regressed","needs_refresh","deprecated"],
+  "required_evidence":["benchmark_result","provenance","test_history","failure_history","dependency_status","governance_status"],
+  "routing":{"prefer_existing_superbot":true,"preserve_historical_bot_links":true,"avoid_duplicate_capabilities":true,"route_new_capabilities_by_domain_and_evidence":true},
+  "gap_generation":{"benchmark_failures":true,"regressions":true,"productivity_opportunities":true,"new_domain_requirements":true,"stale_capabilities":true},
+  "priority_formula":{"impact":0.30,"frequency":0.20,"dependency":0.20,"productivity":0.15,"regression_risk":0.10,"learning_efficiency":0.05},
+  "mastery_requires":["capability_specific_test","holdout_test","regression_pass","provenance_complete","governance_approval_when_required"],
+  "historical_integrity":{"never_delete_learning_history":true,"version_capabilities":true,"retain_original_bot_identity":true,"retain_migration_lineage":true}
+}

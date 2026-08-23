@@ -1,0 +1,24 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"dreamco.legacy_bot_lineage.v1",
+  "type":"object",
+  "required":["legacyBotId","name","originalPath","division","superbot","lifecycle","capabilities"],
+  "properties":{
+    "legacyBotId":{"type":"string"},
+    "name":{"type":"string"},
+    "originalPath":{"type":"string"},
+    "division":{"type":"string"},
+    "divisionConfidence":{"type":"number","minimum":0,"maximum":1},
+    "superbot":{"type":"string"},
+    "lifecycle":{"enum":["active-worker","capability-provider","merged-into-superbot","alias","deprecated","quarantined","unresolved"]},
+    "capabilities":{"type":"array","items":{"type":"string"}},
+    "tools":{"type":"array","items":{"type":"string"}},
+    "workflows":{"type":"array","items":{"type":"string"}},
+    "dependencies":{"type":"array","items":{"type":"string"}},
+    "replacementCapabilityId":{"type":["string","null"]},
+    "migrationEvidence":{"type":"array","items":{"type":"string"}},
+    "lastObservedVersion":{"type":["string","null"]},
+    "notes":{"type":"string"}
+  },
+  "additionalProperties":false
+}

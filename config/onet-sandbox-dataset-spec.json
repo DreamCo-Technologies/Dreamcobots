@@ -1,0 +1,26 @@
+{
+  "$schema":"dreamco.buddy_onet_sandbox_dataset.v1",
+  "source_version":"O*NET 30.3",
+  "purpose":"Turn O*NET's structured occupational data into reproducible sandbox environments, datasets, benchmarks and curriculum units for Buddy.",
+  "source_families":[
+    {"category":"occupations","datasets":["occupation_data","job_titles","sample_reported_titles","related_occupations"],"sandbox":"occupation_navigation"},
+    {"category":"tasks","datasets":["task_statements","task_ratings","task_categories","emerging_tasks"],"sandbox":"task_execution"},
+    {"category":"skills","datasets":["essential_skills","transferable_skills","software_skills","skills"],"sandbox":"skill_practice"},
+    {"category":"knowledge","datasets":["knowledge"],"sandbox":"knowledge_application"},
+    {"category":"abilities","datasets":["abilities","abilities_to_work_activities","abilities_to_work_context"],"sandbox":"ability_evaluation"},
+    {"category":"work_activities","datasets":["work_activities","gwas_to_iwas","gwas_to_iwas_to_dwas","tasks_to_dwas"],"sandbox":"workflow_simulation"},
+    {"category":"work_context","datasets":["work_context","work_context_categories"],"sandbox":"workplace_simulation"},
+    {"category":"work_styles","datasets":["work_styles","work_styles_to_work_activities","work_styles_to_work_context"],"sandbox":"behavioral_workflow_simulation"},
+    {"category":"education_experience_training","datasets":["education","education_categories"],"sandbox":"readiness_planning"},
+    {"category":"career_interests","datasets":["interests_illustrative_activities","interests_illustrative_occupations"],"sandbox":"career_exploration"},
+    {"category":"technology","datasets":["software_skills"],"sandbox":"tool_selection_and_execution"},
+    {"category":"competency_frameworks","datasets":["content_model_reference","knowledge_competencies","abilities_competencies","work_activities_competencies","onet_soc_occupations"],"sandbox":"competency_graph"}
+  ],
+  "dataset_layers":["raw_provenance","normalized_entities","entity_relationships","capability_cards","practice_examples","sandbox_tasks","holdout_tasks","adversarial_tasks","grading_rubrics","mastery_records","regression_cases"],
+  "task_generation":{"derive_from_real_task_statements":true,"vary_difficulty":true,"generate_unseen_holdouts":true,"include_dependencies":true,"include_context":true,"include_tool_requirements":true,"include_failure_cases":true,"human_review_for_high_impact_domains":true},
+  "sandbox_contract":{"inputs_defined":true,"tools_allowlisted":true,"side_effects_bounded":true,"expected_outputs_defined":true,"grader_defined":true,"time_budget_defined":true,"cost_budget_defined":true,"audit_log_required":true},
+  "mastery_contract":{"reading_is_not_mastery":true,"practice_is_not_mastery":true,"successful_sandbox_run_is_not_sufficient":true,"holdout_required":true,"regression_required":true,"provenance_required":true},
+  "division_routing":{"map_occupation_to_superbot":true,"map_capability_to_division":true,"preserve_historical_bot_provenance":true,"avoid_duplicate_capabilities":true},
+  "refresh":{"detect_new_release":true,"diff_source_versions":true,"invalidate_stale_datasets":true,"rerun_affected_benchmarks":true},
+  "governance":{"external_data_is_evidence_not_authority":true,"respect_license_and_access_terms":true,"do_not_invent_occupation_requirements":true,"retain_source_version":true}
+}

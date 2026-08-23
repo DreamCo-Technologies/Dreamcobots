@@ -1,0 +1,18 @@
+{
+  "$schema":"dreamco.buddy_frontier_source_stack.v1",
+  "purpose":"Ensure Buddy's curriculum is as useful as O*NET by combining occupational structure with authoritative knowledge, education, standards, software documentation, research and evaluation sources.",
+  "principle":"No single source is sufficient; each source family fills a different capability gap.",
+  "tiers":[
+    {"tier":0,"name":"occupational_backbone","priority":"critical","examples":["O*NET"],"outputs":["occupations","tasks","skills","knowledge","abilities","work_activities","work_context","work_styles","technology"]},
+    {"tier":1,"name":"government_and_primary_data","priority":"critical","examples":["BLS","Census","Data.gov","NIST","NIH","FDA","SEC","FTC","USGS","NOAA"],"outputs":["official_facts","statistics","standards","regulatory_context","domain_evidence"]},
+    {"tier":2,"name":"education_and_foundations","priority":"high","examples":["MIT OpenCourseWare","OpenStax","public university courseware"],"outputs":["structured_courses","textbooks","assignments","exams","foundational_knowledge"]},
+    {"tier":3,"name":"technical_documentation","priority":"critical","examples":["official language docs","official framework docs","official API docs","standards bodies"],"outputs":["procedures","APIs","interfaces","implementation_constraints","versioned_knowledge"]},
+    {"tier":4,"name":"research_and_peer_review","priority":"high","examples":["PubMed","arXiv","Crossref","government research repositories"],"outputs":["research_evidence","methods","results","limitations","replication_targets"]},
+    {"tier":5,"name":"industry_and_practitioner","priority":"medium","examples":["professional associations","vendor technical guides","reputable practitioner references"],"outputs":["workflows","case studies","best practices","failure_modes"]},
+    {"tier":6,"name":"evaluation_and_benchmarks","priority":"critical","examples":["public benchmark suites","task-specific evaluation datasets","internal holdouts"],"outputs":["tests","rubrics","holdouts","regression_cases"]}
+  ],
+  "source_selection":{"gap_driven":true,"primary_sources_preferred":true,"independent_confirmation_for_critical_claims":true,"provenance_required":true,"version_pinned":true,"access_terms_respected":true,"external_content_untrusted":true},
+  "curriculum_generation":{"combine_source_families":true,"prefer_task_plus_knowledge_plus_evaluation":true,"generate_practice_and_holdout_tasks":true,"map_to_onet_capability_graph":true},
+  "mastery":{"source_reading_never_equals_mastery":true,"practical_demonstration_required":true,"unseen_evaluation_required":true,"regression_required":true,"refresh_required_when_source_changes":true},
+  "anti_gap_policy":{"identify_missing_source_family":true,"search_for_missing_primary_evidence":true,"search_for_missing_practice_data":true,"search_for_missing_evaluation":true,"do_not_overfit_to_single_source":true}
+}

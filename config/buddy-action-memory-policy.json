@@ -1,0 +1,11 @@
+{
+  "$schema":"dreamco.buddy_action_memory.v1",
+  "memory_classes":["ephemeral","mission","authorized_preference","operational","verified_strategy","audit"],
+  "required_metadata":["provenance","scope","timestamp","retention_policy"],
+  "durable_strategy_rule":"verified_evidence_required",
+  "retrieval_factors":["relevance","recency","reliability","provenance","authorization_scope"],
+  "contradiction_handling":"surface_conflict_and_prefer_authoritative_current_evidence_when_appropriate",
+  "learning_pipeline":["observe","verify","evaluate","candidate","simulate_or_replay","promote_if_validated"],
+  "retirement":["stale_operational_context","expired_permissions","obsolete_strategies"],
+  "audit_retention":"governance_policy"
+}
