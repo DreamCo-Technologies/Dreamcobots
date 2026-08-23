@@ -1,0 +1,157 @@
+{
+  "schema": "dreamco.buddy.1000_source_bootcamp.v1",
+  "mission": "Turn up to 1000 verified learning sources into an evidence-backed training ground for Buddy and customer bots without requiring every source to be continuously scanned or every task to use an expensive model.",
+  "source_policy": {
+    "target_count": 1000,
+    "minimum_quality_gate": 0.70,
+    "free_first": true,
+    "authorized_access_only": true,
+    "provenance_required": true,
+    "license_review_required": true,
+    "web_is_untrusted_input": true,
+    "source_never_gets_runtime_authority": true,
+    "no_source_specific_memorization_as_mastery": true
+  },
+  "source_value_score": {
+    "formula": "0.22*authority + 0.18*capability_gap_fit + 0.16*uniqueness + 0.14*task_quality + 0.10*benchmark_relevance + 0.08*freshness + 0.07*accessibility + 0.05*transfer_value - penalties",
+    "penalties": [
+      "duplicate_content",
+      "weak_provenance",
+      "unclear_license",
+      "stale_material",
+      "low_assessment_value",
+      "high_compute_cost_without_incremental_value"
+    ]
+  },
+  "learning_lifecycle": [
+    "discover",
+    "verify",
+    "retrieve_permitted_content",
+    "normalize",
+    "extract_concepts",
+    "map_to_capabilities",
+    "map_to_professional_tasks",
+    "generate_original_study_guide",
+    "generate_original_practice",
+    "generate_sandbox",
+    "attempt",
+    "score",
+    "diagnose_gap",
+    "targeted_reteach",
+    "retest",
+    "transfer_test",
+    "regression_test",
+    "promote_mastery",
+    "schedule_refresh"
+  ],
+  "study_guide_contract": {
+    "required_sections": [
+      "why_it_matters",
+      "prerequisites",
+      "core_concepts",
+      "worked_examples_using_original_examples",
+      "common_failure_modes",
+      "practice_ladder",
+      "sandbox_tasks",
+      "transfer_tasks",
+      "verification_checklist",
+      "mastery_threshold",
+      "next_capability",
+      "source_provenance"
+    ],
+    "anti_copy_rule": "Do not turn source exercises into the final evaluation. Generate novel variants and cross-source transfer tasks."
+  },
+  "training_ladder": [
+    {"level": 0, "name": "recognize", "target": "identify concepts and tools"},
+    {"level": 1, "name": "explain", "target": "explain concepts accurately"},
+    {"level": 2, "name": "guided_apply", "target": "complete scaffolded tasks"},
+    {"level": 3, "name": "independent_apply", "target": "complete novel tasks"},
+    {"level": 4, "name": "debug", "target": "find and repair injected failures"},
+    {"level": 5, "name": "transfer", "target": "apply the capability in an unfamiliar domain"},
+    {"level": 6, "name": "integrate", "target": "combine the capability with other capabilities"},
+    {"level": 7, "name": "long_horizon", "target": "complete multi-step work with recovery and verification"},
+    {"level": 8, "name": "teach", "target": "generate reliable training for another bot"},
+    {"level": 9, "name": "mastered", "target": "repeated high-confidence success plus regression protection"}
+  ],
+  "mastery_gate": {
+    "minimum_score": 0.90,
+    "minimum_independent_attempts": 5,
+    "minimum_transfer_attempts": 3,
+    "minimum_regression_pass_rate": 0.95,
+    "max_consecutive_failures": 2,
+    "confidence_required": 0.85,
+    "must_have_evidence": true
+  },
+  "cost_aware_scheduler": {
+    "principle": "Spend compute where it closes the largest capability gap per unit cost.",
+    "priority_formula": "gap_severity * user_value * transfer_value * expected_learning_gain / estimated_compute_cost",
+    "prefer": [
+      "deterministic checks",
+      "cached knowledge",
+      "retrieval of only changed source sections",
+      "small local models",
+      "parallel sandbox tests",
+      "larger models only for hard reasoning or teacher generation",
+      "retest only failed dimensions",
+      "reuse validated study-guide components"
+    ],
+    "avoid": [
+      "full-corpus rescans when nothing changed",
+      "repeating mastered tests unnecessarily",
+      "sending identical context to multiple expensive models",
+      "training on locked test answers",
+      "using external inference when local execution is sufficient"
+    ],
+    "budgets": {
+      "smoke": "continuous_low_cost",
+      "daily": "adaptive_budget",
+      "weekly": "deep_gap_closure",
+      "monthly": "full_mastery_audit"
+    }
+  },
+  "benchmark_integration": {
+    "external": [
+      "SWE-bench / current successor evaluations",
+      "OSWorld / verified variants",
+      "WebArena / verified variants",
+      "BrowseComp",
+      "GAIA",
+      "METR time-horizon and HCAST-style tasks",
+      "domain-specific public benchmarks"
+    ],
+    "internal": [
+      "DreamCo 1000-source transfer tests",
+      "45-division capability tests",
+      "customer capability sandbox tests",
+      "repository engineering tests",
+      "tool-use and recovery tests",
+      "long-horizon work simulations"
+    ],
+    "integrity": "External benchmark test sets remain locked. Internal tests must separate training, validation, transfer, and regression data."
+  },
+  "customer_bootcamp": {
+    "flow": [
+      "choose_goal",
+      "capability_gap_scan",
+      "recommended_sources",
+      "generated_study_guide",
+      "guided_practice",
+      "sandbox",
+      "benchmark",
+      "remediation",
+      "transfer_test",
+      "certification_of_readiness",
+      "continuous_refresh"
+    ],
+    "customer_control": [
+      "capabilities",
+      "difficulty",
+      "time_budget",
+      "compute_budget",
+      "allowed_models",
+      "allowed_sources",
+      "privacy_mode"
+    ],
+    "credential_boundary": "DreamCo reports evidence-backed readiness and mastery scores; it does not represent them as government, university, employer, or professional certifications unless an authorized third party actually issues that credential."
+  }
+}
