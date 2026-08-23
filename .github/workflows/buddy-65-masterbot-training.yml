@@ -1,0 +1,113 @@
+name: Buddy 65 MasterBot Training Lanes
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+
+concurrency:
+  group: buddy-65-masterbot-training
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  masterbot-training:
+    name: Train ${{ matrix.masterbot }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      # GitHub currently limits standard Free-plan concurrency; keep the matrix
+      # at 65 logical lanes and let max-parallel respect that shared capacity.
+      max-parallel: 20
+      matrix:
+        masterbot:
+          - CommandCore
+          - DreamSalesPro
+          - DreamFinance
+          - DreamRealEstate
+          - DreamAIInfra
+          - DreamRetail
+          - DreamProServices
+          - DreamData
+          - DreamGlobal
+          - DreamAutomation
+          - DreamContent
+          - DreamTrade
+          - DreamFlow
+          - DreamMarket
+          - DreamEmpire
+          - GameTitan
+          - DreamInfluence
+          - DreamDecision
+          - DreamOps
+          - DreamPlanetary
+          - DreamEntFinance
+          - DreamCustIntel
+          - DreamLegal
+          - DreamCyber
+          - DreamHealth
+          - DreamEducation
+          - DreamConstruction
+          - DreamTransport
+          - DreamFood
+          - DreamScience
+          - DreamArts
+          - DreamProtection
+          - DreamAgriculture
+          - DreamMaintenance
+          - DreamProduction
+          - DreamSocial
+          - DreamAdmin
+          - DreamCrypto
+          - DreamPayments
+          - DreamBizLaunch
+          - DreamCodeLab
+          - DreamLoans
+          - DreamPersonalCare
+          - DreamMilitary
+          - DreamAgents
+          - DreamResearch
+          - DreamBenchmark
+          - DreamKnowledge
+          - DreamEvolution
+          - DreamIntegration
+          - DreamReason
+          - DreamWorld
+          - DreamVision
+          - DreamVoice
+          - DreamHuman
+          - DreamSecurity
+          - DreamProduct
+          - DreamOperations
+          - DreamStrategy
+          - DreamExperiment
+          - DreamSimulation
+          - DreamDiscovery
+          - DreamQuality
+          - DreamResource
+          - DreamFuture
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run bounded MasterBot training lane
+        env:
+          MASTERBOT_NAME: ${{ matrix.masterbot }}
+        run: python tools/buddy_masterbot_training_lane.py
+
+      - name: Publish lane checkpoint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: masterbot-checkpoint-${{ matrix.masterbot }}-${{ github.run_id }}
+          path: artifacts/masterbot-training/${{ matrix.masterbot }}/latest-checkpoint.json
+          if-no-files-found: error
+          retention-days: 3
