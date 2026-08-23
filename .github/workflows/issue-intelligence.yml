@@ -21,6 +21,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Ensure issue labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          gh label create ci-failure --color B60205 --description "GitHub Actions failure" --force
+          gh label create severity:high --color D73A4A --description "High severity CI issue" --force
+          gh label create severity:medium --color FBCA04 --description "Medium severity CI issue" --force
+          gh label create severity:low --color 0E8A16 --description "Low severity CI issue" --force
+          gh label create ci:dependency --color 5319E7 --description "Dependency failure" --force
+          gh label create ci:test --color 5319E7 --description "Test failure" --force
+          gh label create ci:lint --color 5319E7 --description "Lint failure" --force
+          gh label create ci:build --color 5319E7 --description "Build failure" --force
+          gh label create ci:configuration --color 5319E7 --description "Configuration failure" --force
+          gh label create ci:permissions --color 5319E7 --description "Permissions failure" --force
+          gh label create ci:timeout --color 5319E7 --description "Timeout failure" --force
+          gh label create ci:workflow --color 5319E7 --description "Workflow failure" --force
       - name: Run failure triage
         env:
           GH_TOKEN: ${{ github.token }}
