@@ -1,0 +1,48 @@
+import { Link } from "wouter";
+import { ArrowRight, Brain, FlaskConical, Globe2, Shield, Sparkles } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import featured from "../../../website/data/masterbot-homepage-featured.json";
+
+const ICONS = [Brain, FlaskConical, Globe2, Sparkles, Shield];
+
+export default function MasterBotHomepageGrid() {
+  return (
+    <section aria-labelledby="new-masterbots-title" className="space-y-4">
+      <div className="flex items-end justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-primary">65 MasterBot architecture</p>
+          <h2 id="new-masterbots-title" className="text-xl font-semibold">New MasterBots</h2>
+          <p className="text-sm text-muted-foreground">20 new division command centers ready for routing and benchmark training.</p>
+        </div>
+        <Link href="/divisions" className="text-xs text-primary hover:underline">All divisions</Link>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        {featured.items.map((item, index) => {
+          const Icon = ICONS[index % ICONS.length];
+          return (
+            <Link key={item.id} href={`/divisions?d=${encodeURIComponent(item.name)}`}>
+              <Card className="h-full hover-elevate transition-transform">
+                <CardContent className="p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border/60 bg-card">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <span className="text-[10px] font-mono text-muted-foreground">#{item.id}</span>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">{item.bot}</h3>
+                    <p className="text-xs text-muted-foreground mt-1">{item.purpose}</p>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Command Center</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
