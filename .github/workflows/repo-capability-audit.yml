@@ -1,0 +1,30 @@
+name: Repository Capability Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "tools/repo_capability_auditor.py"
+      - "docs/REPOSITORY_CAPABILITY_INTEGRATION_MATRIX.md"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit DreamCo repositories
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/repo_capability_auditor.py > repo-capability-report.json
+      - name: Upload capability report
+        uses: actions/upload-artifact@v4
+        with:
+          name: repo-capability-report
+          path: repo-capability-report.json
+          retention-days: 14
