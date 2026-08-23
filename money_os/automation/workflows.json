@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "schedule": {"discovery_minutes": 60, "verification_minutes": 15, "stale_after_minutes": 360},
+  "pipeline": [
+    "collect_authorized_sources",
+    "normalize_opportunities",
+    "deduplicate",
+    "verify_price_eligibility_and_source",
+    "calculate_economics",
+    "rank_by_profit_confidence_effort_freshness",
+    "attach_allowed_monetization",
+    "alert_matching_users",
+    "record_user_action",
+    "record_verified_outcome",
+    "reconcile_revenue"
+  ],
+  "events": {
+    "deal_found": ["verify", "score", "alert"],
+    "receipt_uploaded": ["ocr", "match_offers", "show_user_confirmations", "track_outcome"],
+    "settlement_found": ["verify_official_source", "eligibility_check", "show_claim_deadline", "user_confirm_submission"],
+    "sale_completed": ["record_revenue", "calculate_platform_fee", "reconcile"],
+    "bot_failure": ["retry_with_backoff", "log", "route_to_health_monitor"]
+  }
+}
