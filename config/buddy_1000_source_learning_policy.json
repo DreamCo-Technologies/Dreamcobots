@@ -1,0 +1,98 @@
+{
+  "version": "1.0.0",
+  "mission": "Make every authorized source a study guide for benchmark mastery while minimizing compute and preserving provenance.",
+  "target_source_count": 1000,
+  "source_policy": {
+    "authorized_only": true,
+    "respect_robots_txt": true,
+    "respect_terms_and_access_controls": true,
+    "never_bypass_authentication": true,
+    "store_provenance": true,
+    "store_rights_metadata": true,
+    "prefer_original_sources": true,
+    "prefer_primary_sources": true,
+    "do_not_train_on_restricted_benchmark_answers": true
+  },
+  "source_selection": {
+    "score": "0.30*authority + 0.20*benchmark_relevance + 0.15*freshness + 0.15*coverage_gap + 0.10*transfer_value + 0.10*cost_efficiency",
+    "penalties": [
+      "duplicate_content",
+      "low_authority",
+      "stale_content",
+      "high_fetch_cost_without_new_information",
+      "known_benchmark_contamination",
+      "license_or_rights_uncertainty"
+    ],
+    "exploration_rate": 0.10,
+    "exploitation_rate": 0.90,
+    "revisit_policy": "increase_frequency for sources that changed, predict failures, or close active capability gaps"
+  },
+  "learning_pipeline": [
+    "discover",
+    "authorize",
+    "fetch_differentially",
+    "deduplicate",
+    "extract_claims_and_skills",
+    "map_to_capabilities",
+    "map_to_benchmarks",
+    "generate_original_bootcamp_lessons",
+    "generate_sandbox_tasks",
+    "practice_on_cheap_executor",
+    "evaluate_on_holdout",
+    "promote_only_with_evidence",
+    "regression_test",
+    "record_provenance"
+  ],
+  "bootcamp_artifacts": {
+    "required_per_learning_event": [
+      "source_id",
+      "source_version_or_timestamp",
+      "capability_ids",
+      "benchmark_ids",
+      "original_lesson",
+      "practice_tasks",
+      "failure_modes",
+      "verification_method",
+      "holdout_task",
+      "cost_usd",
+      "model_used",
+      "evidence_uri"
+    ],
+    "promotion_rule": "A lesson becomes mastered knowledge only after independent evaluation and at least one transfer/holdout success."
+  },
+  "compute_policy": {
+    "free_first": true,
+    "deterministic_first": true,
+    "cache_source_hashes": true,
+    "cache_embeddings": true,
+    "reuse_successful_trajectories": true,
+    "batch_similar_tasks": true,
+    "early_stop_on_mastery": true,
+    "early_stop_on_duplicate_failure": true,
+    "route_small_tasks_to_smallest_sufficient_model": true,
+    "escalate_only_on_expected_value_gain": true,
+    "reserve_expensive_models_for": [
+      "hard_long_horizon_tasks",
+      "ambiguous_failures",
+      "high_value_capability_gaps",
+      "final_holdout_evaluation"
+    ],
+    "max_repeated_attempts_without_new_signal": 2
+  },
+  "daily_operations": {
+    "source_scan_target": 1000,
+    "scan_mode": "differential_first",
+    "benchmark_mode": "adaptive_sampling",
+    "full_regression": "daily_sampled_and_weekly_deep",
+    "continuous_learning": true,
+    "never_claim_mastery_without_evidence": true
+  },
+  "mastery_levels": {
+    "discovered": 0,
+    "learned": 1,
+    "practiced": 2,
+    "validated": 3,
+    "mastered": 4,
+    "production_proven": 5
+  }
+}
