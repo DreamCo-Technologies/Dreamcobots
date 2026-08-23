@@ -1,4 +1,4 @@
-version: 1
+version: 2
 name: buddy-actions-page-manifest
 purpose: single manifest describing every capability family the Actions page should expose
 
@@ -19,6 +19,7 @@ sections:
     - evidence
   intelligence:
     - 45_divisions
+    - 65_masterbots
     - bot_registry
     - superbot_registry
     - capability_registry
@@ -63,6 +64,10 @@ sections:
     - mastery_gaps
     - training_recommendations
     - buddy_bootcamp
+    - masterbot_training_lanes
+    - masterbot_prospectus
+    - 24x7_gap_closure_scheduler
+    - github_capacity_dashboard
   governance:
     - permissions
     - approvals
@@ -80,6 +85,34 @@ sections:
     - dashboard_registry
     - next_best_action
 
+masterbot_ui:
+  domain_masterbots: 45
+  platform_masterbots: 20
+  total_masterbots: 65
+  each_masterbot_has:
+    - dashboard
+    - command_center
+    - prospectus
+    - training_queue
+    - sandbox_controls
+    - benchmark_controls
+    - mastery_history
+    - gap_queue
+    - sub_bot_roster
+    - resource_registry
+    - runtime_telemetry
+  training_buttons:
+    - train_now
+    - close_gaps
+    - run_sandbox
+    - run_benchmarks
+    - study_resources
+    - test_sub_bots
+    - compare_strategies
+    - retest_failures
+    - promote_best_strategy
+    - view_mastery
+
 ui_behavior:
   every_section_links_to_underlying_registry: true
   show_state_and_evidence: true
@@ -88,10 +121,12 @@ ui_behavior:
   show_next_best_action: true
   allow_goal_scoped_views: true
   allow_division_scoped_views: true
+  allow_masterbot_scoped_views: true
   allow_capability_scoped_views: true
   allow_bot_scoped_views: true
   allow_benchmark_scoped_views: true
   allow_repository_scoped_views: true
+  show_verified_counts_separately_from_estimates: true
 
 truth_states:
   - discovered
