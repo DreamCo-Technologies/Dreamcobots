@@ -5,6 +5,7 @@ on:
     workflows: ["Benchmark Evidence Loop"]
     types: [completed]
 permissions:
+  actions: read
   contents: read
 jobs:
   queue:
@@ -12,12 +13,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Locate latest evidence artifact
+      - uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'workflow_run' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+          pattern: benchmark-evidence-*
+          path: benchmark-evidence
+          merge-multiple: true
+      - name: Build training queue from measured evidence
         run: |
-          mkdir -p benchmark-evidence
-          echo '{"queue":[]}' > benchmark-evidence/benchmark-gap-queue.json
-      - name: Build training queue
-        run: python3 tools/build_benchmark_training_queue.py --gaps benchmark-evidence/benchmark-gap-queue.json --out benchmark-evidence/benchmark-training-queue.json
+          test -f benchmark-evidence/benchmark-gap-queue.json
+          python3 tools/build_benchmark_training_queue.py \
+            --gaps benchmark-evidence/benchmark-gap-queue.json \
+            --out benchmark-evidence/benchmark-training-queue.json
       - uses: actions/upload-artifact@v4
         with:
           name: benchmark-training-queue-${{ github.run_id }}
