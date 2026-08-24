@@ -1,0 +1,20 @@
+name: Benchmark Manifest Validation
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "tools/build_training_execution_manifest.py"
+      - "tools/validate_training_execution_manifest.py"
+      - "tools/execute_benchmark_training_queue.py"
+      - "tests/training-execution-manifest.test.mjs"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate runner syntax
+        run: python3 -m py_compile tools/build_training_execution_manifest.py tools/validate_training_execution_manifest.py tools/execute_benchmark_training_queue.py
+      - name: Run manifest tests
+        run: node --test tests/training-execution-manifest.test.mjs
