@@ -13,7 +13,7 @@ MAX_MAJOR={'actions/checkout':7,'actions/setup-node':6,'actions/setup-python':6,
 USES_RE=re.compile(r'uses:\s*([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)@v(\d+)')
 NPM_RE=re.compile(r'npm\s+run\s+([A-Za-z0-9:_-]+)')
 PATH_CMD_RE=re.compile(r'(?:python3|python|node|tsx|npx\s+tsx)\s+((?:tools|script|scripts|tests)/[^\s\'\"|&;]+)')
-TRIGGERS=[('manual',r'^\s*workflow_dispatch\s*:'),('push',r'^\s*push\s*:'),('pull request',r'^\s*pull_request(?:_target)?\s*:'),('schedule',r'^\s*schedule\s*:'),('issues',r'^\s*issues\s*:'),('workflow completion',r'^\s*workflow_run\s*:')]
+TRIGGERS=[('manual',r'^\s+workflow_dispatch\s*:'),('push',r'^\s+push\s*:'),('pull request',r'^\s+pull_request(?:_target)?\s*:'),('schedule',r'^\s+schedule\s*:'),('issues',r'^\s+issues\s*:'),('workflow completion',r'^\s+workflow_run\s*:')]
 
 def main()->int:
     workflows=sorted(WORKFLOWS.glob('*.yml'))+sorted(WORKFLOWS.glob('*.yaml'))
@@ -21,6 +21,8 @@ def main()->int:
     for path in workflows:
         text=path.read_text(encoding='utf-8'); filename=path.name
         triggers=[name for name,pat in TRIGGERS if re.search(pat,text,re.M)]
+        if not triggers and re.search(r'^on\s*:\s*$', text, re.M):
+            triggers=['declared']
         errors=[]; warnings=[]
         if 'jobs:' not in text: errors.append('missing jobs section')
         if not triggers: errors.append('no recognizable trigger')

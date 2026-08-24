@@ -1,10 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
-import { getUncachableStripeClient } from './stripeClient';
-import { WebhookHandlers } from './webhookHandlers';
-import { seedStripeProducts } from './seed-stripe-products';
 
 const app = express();
 const httpServer = createServer(app);
@@ -23,6 +19,10 @@ async function initStripe() {
   }
 
   try {
+    const [{ getUncachableStripeClient }, { seedStripeProducts }] = await Promise.all([
+      import('./stripeClient'),
+      import('./seed-stripe-products'),
+    ]);
     await getUncachableStripeClient();
     console.log('Stripe client configured.');
 
@@ -41,6 +41,8 @@ app.get('/api/health', (_req, res) => {
     environment: process.env.NODE_ENV || 'development',
     uptimeSeconds: Math.floor((Date.now() - processStartedAt) / 1000),
     stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY || process.env.STRIPE_LIVE_SECRET_KEY),
+    databaseConfigured: Boolean(process.env.DATABASE_URL),
+    runtimeMode: process.env.DATABASE_URL ? 'full' : 'health-only',
     timestamp: new Date().toISOString(),
   });
 });
@@ -55,6 +57,7 @@ app.post(
     }
 
     try {
+      const { WebhookHandlers } = await import('./webhookHandlers');
       const sig = Array.isArray(signature) ? signature[0] : signature;
       if (!Buffer.isBuffer(req.body)) {
         console.error('STRIPE WEBHOOK ERROR: req.body is not a Buffer');
@@ -119,7 +122,15 @@ app.use((req, res, next) => {
 
 (async () => {
   await initStripe();
-  await registerRoutes(httpServer, app);
+
+  try {
+    const { registerRoutes } = await import("./routes");
+    await registerRoutes(httpServer, app);
+    console.log("DreamCo full route runtime initialized.");
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`DreamCo full route runtime unavailable; health/static mode remains available: ${message}`);
+  }
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
