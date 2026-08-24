@@ -5,7 +5,7 @@ parameter_target: 500000000
 parameter_target_note: 500M is a target, not a claim that this repository currently contains a trained 500M checkpoint.
 architecture:
   type: decoder-only-transformer
-  layers: 20
+  layers: 30
   hidden_size: 1024
   attention_heads: 16
   kv_heads: 8
@@ -18,6 +18,7 @@ architecture:
   bias: false
   dropout: 0.0
   vocab_size: 32768
+  parameter_estimate: 490000000
 tokenizer:
   algorithm: unigram_or_bpe
   preferred_library: sentencepiece
