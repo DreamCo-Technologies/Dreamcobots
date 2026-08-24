@@ -1,0 +1,10 @@
+{
+  "$schema":"dreamco.benchmark_resource_policy.v1",
+  "objective":"maximize useful benchmark progress during available runtime without exceeding provider limits",
+  "scheduler":{"priority_order":["failed_high_value","near_target","regression","unmeasured","discovery","maintenance"],"claim_next_job_immediately":true,"avoid_duplicate_work":true},
+  "parallelism":{"matrix":true,"sharding":true,"max_parallel":"configured_per_workflow_and_provider_capacity","respect_rate_limits":true,"respect_concurrency_limits":true,"respect_minutes_budget":true},
+  "efficiency":{"cache_dependencies":true,"reuse_benchmark_fixtures":true,"reuse_artifacts":true,"batch_compatible_tasks":true,"stop_redundant_runs":true},
+  "measurement":{"record_wall_time":true,"record_compute_time":true,"record_queue_time":true,"record_success":true,"record_score_delta":true,"record_failure_reason":true},
+  "idle_behavior":"If no eligible benchmark gap exists, run regression validation or capability discovery; never manufacture a passing score.",
+  "governance":{"no_limit_bypass":true,"no_false_mastery":true,"preserve_source_lineage":true,"no_silent_deletion":true}
+}

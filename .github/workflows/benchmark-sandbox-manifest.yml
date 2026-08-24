@@ -1,0 +1,38 @@
+name: Benchmark Sandbox Manifest
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Benchmark Training Queue"]
+    types: [completed]
+permissions:
+  actions: read
+  contents: read
+jobs:
+  manifest:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate existing sandbox curriculum
+        run: python3 tools/build_bot_sandbox_curriculum.py
+      - uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'workflow_run' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+          pattern: benchmark-training-queue-*
+          path: training-evidence
+          merge-multiple: true
+      - name: Build executable training manifest
+        run: |
+          test -f training-evidence/benchmark-training-queue.json
+          python3 tools/build_training_execution_manifest.py \
+            --queue training-evidence/benchmark-training-queue.json \
+            --curriculum config/generated/bot-sandbox-curriculum.json \
+            --out training-evidence/training-execution-manifest.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-sandbox-manifest-${{ github.run_id }}
+          path: training-evidence/training-execution-manifest.json
+          retention-days: 14

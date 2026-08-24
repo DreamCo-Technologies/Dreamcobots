@@ -1,0 +1,36 @@
+name: Benchmark Training Execution
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Benchmark Training Queue"]
+    types: [completed]
+permissions:
+  actions: read
+  contents: read
+jobs:
+  execute:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'workflow_run' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+          pattern: benchmark-training-queue-*
+          path: training-evidence
+          merge-multiple: true
+      - name: Execute declared training actions
+        run: |
+          test -f training-evidence/benchmark-training-queue.json
+          python3 tools/execute_benchmark_training_queue.py \
+            --queue training-evidence/benchmark-training-queue.json \
+            --out training-evidence/benchmark-training-execution.json \
+            --limit 20
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-training-execution-${{ github.run_id }}
+          path: training-evidence/benchmark-training-execution.json
+          retention-days: 14

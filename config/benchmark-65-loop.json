@@ -1,0 +1,12 @@
+{
+  "$schema":"dreamco.benchmark_loop.v1",
+  "version":"1.0.0",
+  "objective":"Use every available execution window to produce measurable benchmark progress across all 65 MasterBots.",
+  "cycle":["OBSERVE","DIAGNOSE","TRAIN","SANDBOX","BENCHMARK","ANALYZE_FAILURE","TARGET_GAP","RETEST","RECORD_EVIDENCE","SELECT_NEXT_GAP"],
+  "priority":["failed_benchmark_remediation","near_miss_capabilities","weak_capabilities","new_capability_discovery","regression_testing","maintenance"],
+  "division_contract":{"every_masterbot":true,"required_fields":["benchmark_scorecard","gap_queue","training_queue","sandbox","failure_analyzer","resource_queue","regression_suite","mastery_evidence","runtime_metrics"]},
+  "evidence_policy":{"mastery_requires_repeatable_results":true,"training_activity_is_not_mastery":true,"retain_attempt_history":true,"record_model_version":true,"record_dataset_or_resource":true},
+  "runtime_policy":{"maximize_available_capacity":true,"use_matrix_parallelism":true,"use_sharding":true,"reuse_cached_artifacts":true,"prioritize_high_value_gaps":true,"respect_provider_limits":true,"never_bypass_platform_limits":true},
+  "idle_policy":"A worker that completes a task immediately claims the next highest-value eligible gap; if no gap is eligible, it performs regression or capability discovery and records the result.",
+  "safety_policy":"No autonomous action may weaken repository security, falsify benchmark evidence, evade service limits, or silently delete source lineage."
+}

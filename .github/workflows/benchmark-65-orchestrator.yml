@@ -1,0 +1,45 @@
+name: 65 Division Benchmark Orchestrator
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
+permissions:
+  contents: read
+concurrency:
+  group: dreamco-benchmark-orchestrator
+  cancel-in-progress: false
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - id: matrix
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          print('matrix='+json.dumps({'division':list(range(1,66))}))
+          PY
+  benchmark:
+    needs: plan
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Record benchmark work item
+        env:
+          DIVISION: ${{ matrix.division }}
+        run: |
+          mkdir -p benchmark-results
+          cat > "benchmark-results/division-${DIVISION}.json" <<EOF
+          {"division":${DIVISION},"status":"scheduled","next":"connect-to-real-benchmark-runner","policy":"continuous-gap-closure","evidence":"not-yet-measured"}
+          EOF
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-division-${{ matrix.division }}
+          path: benchmark-results/division-${{ matrix.division }}.json

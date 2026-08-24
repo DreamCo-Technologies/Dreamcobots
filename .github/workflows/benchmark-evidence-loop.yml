@@ -1,0 +1,40 @@
+name: Benchmark Evidence Loop
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "11 * * * *"
+  push:
+    paths:
+      - "tools/run_daily_division_benchmarks.ts"
+      - "tools/convert_daily_division_benchmark.py"
+      - "tools/benchmark_gap_planner.py"
+      - "config/benchmark-65-loop.json"
+permissions:
+  contents: read
+jobs:
+  measure-plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: npm ci
+      - name: Run existing 65-division contract benchmark
+        run: |
+          mkdir -p benchmark-evidence
+          node --import tsx tools/run_daily_division_benchmarks.ts --concurrency=16 > benchmark-evidence/division-benchmark.json || true
+      - name: Convert measured evidence to gap scores
+        run: python3 tools/convert_daily_division_benchmark.py --input benchmark-evidence/division-benchmark.json --output benchmark-evidence/benchmark-scores.json
+      - name: Build next gap queue
+        run: python3 tools/benchmark_gap_planner.py --scores benchmark-evidence/benchmark-scores.json --out benchmark-evidence/benchmark-gap-queue.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-evidence-${{ github.run_id }}
+          path: benchmark-evidence/
+          retention-days: 14

@@ -47,8 +47,21 @@ export async function runDailyDivisionContractBenchmarks({ concurrency = 16 } = 
     };
   });
   const failed = results.filter((result) => !result.passed);
+  const divisionResults = program.divisions.map((division) => {
+    const checksForDivision = results.filter((result) => result.division === division.name);
+    const passedForDivision = checksForDivision.filter((result) => result.passed).length;
+    const score = checksForDivision.length ? (passedForDivision / checksForDivision.length) * 100 : 0;
+    return {
+      division: division.name,
+      passed: passedForDivision,
+      total: checksForDivision.length,
+      score,
+      status: score === 100 ? "pass" : "needs_remediation",
+      failures: checksForDivision.filter((result) => !result.passed).slice(0, 25),
+    };
+  });
   return {
-    schema: "dreamco.daily_division_contract_benchmark.v1",
+    schema: "dreamco.daily_division_contract_benchmark.v2",
     divisions: program.divisions.length,
     capabilitiesChecked: results.length,
     logicalParallelWorkerSlots: program.daily_benchmark_operations.logical_parallel_worker_slots,
@@ -56,6 +69,7 @@ export async function runDailyDivisionContractBenchmarks({ concurrency = 16 } = 
     passed: results.length - failed.length,
     failed: failed.length,
     failures: failed.slice(0, 100),
+    divisionResults,
     externalCompetitorRunsCompleted: 0,
     networkUsed: false,
     paidServicesUsed: false,
