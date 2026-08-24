@@ -1,0 +1,60 @@
+schema: dreamco.local_buddy_model.v1
+name: buddy-local-500m
+purpose: local-first educational and benchmark model configuration
+parameter_target: 500000000
+parameter_target_note: 500M is a target, not a claim that this repository currently contains a trained 500M checkpoint.
+architecture:
+  type: decoder-only-transformer
+  layers: 30
+  hidden_size: 1024
+  attention_heads: 16
+  kv_heads: 8
+  intermediate_size: 4096
+  norm: RMSNorm
+  activation: SwiGLU
+  positional_encoding: RoPE
+  attention: scaled_dot_product_self_attention
+  embeddings: tied_token_input_output
+  bias: false
+  dropout: 0.0
+  vocab_size: 32768
+  parameter_estimate: 490000000
+tokenizer:
+  algorithm: unigram_or_bpe
+  preferred_library: sentencepiece
+  vocab_size: 32768
+  special_tokens: ["<pad>", "<bos>", "<eos>", "<unk>", "<system>", "<user>", "<assistant>"]
+training:
+  objective: causal_language_modeling
+  sft: lightweight_supervised_finetuning
+  chat_format: dreamco_chat_v1
+  precision: bf16
+  gradient_accumulation_steps: 8
+  gradient_checkpointing: true
+  optimizer: AdamW
+  learning_rate: 0.0002
+  weight_decay: 0.1
+  warmup_ratio: 0.03
+  max_sequence_length: 2048
+  train_validation_split: "95/5"
+  seed: 42
+  overfit_controls:
+    early_stopping: true
+    validation_every_steps: 250
+    max_validation_loss_rise: 0.05
+    deduplicate: true
+    holdout_by_source: true
+    heldout_transfer_tasks: true
+local_runtime:
+  required: false
+  modes: ["cpu", "metal", "cuda", "rocm"]
+  quantization: ["none", "int8", "int4"]
+  memory_policy: adaptive
+  distributed_training: false
+  offline_mode: true
+benchmarks:
+  require_baseline: true
+  require_validation: true
+  require_transfer: true
+  require_regression: true
+  mastery_requires_repeat_pass: true

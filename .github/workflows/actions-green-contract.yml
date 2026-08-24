@@ -1,0 +1,36 @@
+name: Actions Green Contract
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "config/actions-page-operating-system.json"
+      - "config/masterbot-65-registry.json"
+      - "tools/validate_actions_page_contract.py"
+      - "tools/generate_division_runtime_contracts.py"
+      - "config/local-buddy-model.yaml"
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Validate Actions operating contract
+        run: python3 tools/validate_actions_page_contract.py
+      - name: Generate 65 division runtime contracts
+        run: |
+          python3 tools/generate_division_runtime_contracts.py \
+            --registry config/masterbot-65-registry.json \
+            --out /tmp/division-runtime-contracts.json
+      - name: Require all 65 divisions to be represented
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/division-runtime-contracts.json'))
+          assert d['count'] == 65, d['count']
+          assert len(d['divisions']) == 65
+          print('65 division contracts present')
+          PY

@@ -1,0 +1,12 @@
+{
+  "schema":"dreamco.actions_page_operating_system.v1",
+  "purpose":"single evidence-first control plane for health, goals, execution, training, benchmarks, divisions, and local Buddy",
+  "status_states":["unknown","queued","running","passed","failed","blocked","stale","not_applicable"],
+  "sections":["command_center","health","goals","execution","training","benchmarks","65_divisions","local_model","data_sources","repairs","security","releases"],
+  "every_job_requires":["owner","purpose","inputs","command_or_workflow","success_criteria","evidence_path","timeout","failure_action"],
+  "daily_completion":{"required":true,"checks":["benchmark_gap_review","training_queue_review","division_health","local_model_health","security_health","regression_review","stale_evidence_review"]},
+  "division_contract":{"count":65,"each_requires":["masterbot_id","purpose","capabilities","entrypoint","tests","benchmark_suite","training_plan","dashboard_route","command_center_route","evidence_contract","dependencies","fallback"]},
+  "monitoring":{"refresh_seconds":60,"stale_after_minutes":30,"show_commit_sha":true,"show_run_id":true,"show_timestamp":true},
+  "truth_rules":["unknown_is_not_pass","planned_is_not_executed","training_is_not_mastery","one_successful_run_is_not_mastery","stale_evidence_is_not_current_health"],
+  "runtime_policy":{"local_first":true,"distributed_training":false,"parallelism":"bounded_by_runner_and_device_capacity","never_fabricate_work":true}
+}
