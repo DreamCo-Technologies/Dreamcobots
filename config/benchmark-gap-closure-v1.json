@@ -1,0 +1,8 @@
+{
+  "schema":"dreamco.benchmark_gap_closure.v1",
+  "loop":["baseline","gap_analysis","priority","curriculum","practice","sandbox","transfer","remediation","retest","regression","evidence"],
+  "truth_rules":["benchmark_test_data_is_held_out","training_runs_are_not_mastery","one_pass_is_not_mastery","missing_evidence_is_not_green"],
+  "required_record":["division_id","benchmark_id","baseline","target","attempt","score","gap","training_plan","evidence","regression_status"],
+  "parallelism":{"policy":"bounded","respect_runner_capacity":true,"no_distributed_training_required":true},
+  "daily_check":{"required":true,"checks":["open_gaps","stale_evidence","regressions","failed_runs","unexecuted_plans"]}
+}
