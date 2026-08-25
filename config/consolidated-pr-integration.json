@@ -1,0 +1,26 @@
+{
+  "schema":"dreamco.consolidated_pr_integration.v1",
+  "base":"main",
+  "source_of_truth":"current main plus evidence-backed unique changes from open PR heads",
+  "pull_requests":[
+    {"number":474,"area":"actions","action":"rebase-and-integrate","reason":"focused Actions truth/behavior fixes"},
+    {"number":469,"area":"platform","action":"selective-integrate","reason":"large overlapping orchestration/model/sandbox expansion"},
+    {"number":3682,"area":"65-masterbots","action":"selective-integrate","reason":"training lanes and Bootcamp assets; canonical registry already exists on main"},
+    {"number":3684,"area":"homepage","action":"selective-integrate","reason":"20-MasterBot homepage/routing assets"},
+    {"number":682,"area":"benchmarks","action":"integrate-unique","reason":"benchmark scorecard contract"},
+    {"number":1961,"area":"learning","action":"selective-integrate","reason":"scanner/video/multimodal evidence assets"},
+    {"number":730,"area":"payments-workforce","action":"selective-integrate","reason":"O*NET/agent routing/DreamPayments assets"},
+    {"number":467,"area":"expansion","action":"selective-integrate","reason":"workforce/business/advertising expansion"},
+    {"number":830,"area":"frontier-growth","action":"selective-integrate","reason":"benchmark and navigation architecture"},
+    {"number":928,"area":"money","action":"selective-integrate","reason":"Money OS assets"},
+    {"number":2999,"area":"laptop-ios","action":"file-by-file-integrate","reason":"personal repository must be compared without overwriting main"},
+    {"number":476,"area":"pages-laptop","action":"selective-integrate","reason":"Pages coverage and laptop bootstrap"},
+    {"number":451,"area":"ci-dependencies","action":"evaluate","reason":"setup-node dependency update"},
+    {"number":450,"area":"ci-dependencies","action":"evaluate","reason":"setup-python dependency update"},
+    {"number":2402,"area":"ci-dependencies","action":"evaluate","reason":"checkout dependency update"},
+    {"number":4222,"area":"frontend-dependencies","action":"evaluate","reason":"Vite/plugin-react update"}
+  ],
+  "truth_rules":["planned_is_not_executed","training_is_not_mastery","stale_evidence_is_not_green","duplicate_ownership_is_not_integration","source_presence_is_not_benchmark_proof"],
+  "canonical_assets":["config/masterbot-65-registry.json","config/actions-page-operating-system.json","config/local-buddy-model.yaml"],
+  "integration_policy":"Preserve unique ideas and evidence; consolidate duplicate implementations; never delete source lineage before accounting for it."
+}

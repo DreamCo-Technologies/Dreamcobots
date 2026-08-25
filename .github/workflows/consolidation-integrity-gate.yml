@@ -1,0 +1,43 @@
+name: Consolidation Integrity Gate
+on:
+  pull_request:
+    paths:
+      - "config/consolidated-pr-integration.json"
+      - "config/masterbot-65-registry.json"
+      - "config/actions-page-operating-system.json"
+      - "config/local-buddy-model.yaml"
+      - "tools/validate_actions_page_contract.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Validate canonical 65 registry
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('config/masterbot-65-registry.json'))
+          assert d['canonical_count'] == 65
+          assert len(d['divisions']) == 65
+          assert len({x['id'] for x in d['divisions']}) == 65
+          assert len({x['name'] for x in d['divisions']}) == 65
+          print('canonical 65 registry: PASS')
+          PY
+      - name: Validate Actions contract
+        run: python3 tools/validate_actions_page_contract.py
+      - name: Validate consolidation map
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('config/consolidated-pr-integration.json'))
+          assert d['base'] == 'main'
+          assert len(d['pull_requests']) >= 10
+          assert len(d['canonical_assets']) == 3
+          print('consolidation map: PASS')
+          PY
