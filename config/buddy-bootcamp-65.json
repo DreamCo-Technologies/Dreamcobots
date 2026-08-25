@@ -1,0 +1,10 @@
+{
+  "schema":"dreamco.buddy_bootcamp.v1",
+  "name":"Buddy Bootcamp",
+  "masterbot_registry":"config/masterbot-65-registry.json",
+  "purpose":"Train and evaluate Buddy and its MasterBots through measurable, isolated capability development.",
+  "levels":[{"id":1,"name":"Foundation"},{"id":2,"name":"Guided Practice"},{"id":3,"name":"Independent Practice"},{"id":4,"name":"Adversarial Practice"},{"id":5,"name":"Benchmark Preparation"},{"id":6,"name":"Benchmark Trial"},{"id":7,"name":"Mastery Verification"},{"id":8,"name":"Maintenance"}],
+  "sandbox_modes":["training","practice","benchmark_simulation","adversarial","time_trial","resource_limited","tool_limited","multi_agent","human_vs_buddy","buddy_vs_buddy","masterbot_vs_masterbot"],
+  "mastery_policy":{"minimum_evidence":["baseline","post_training","repeat_pass"],"regression_check_required":true,"self_report_is_not_evidence":true,"production_side_effects":false},
+  "daily_loop":["refresh_gap_inventory","rank_by_expected_benchmark_gain_per_runner_minute","allocate_available_capacity","study_permitted_sources","practice","sandbox","benchmark","record_evidence","close_or_requeue_gap","refresh_dashboard"]
+}
