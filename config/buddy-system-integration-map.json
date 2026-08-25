@@ -1,0 +1,17 @@
+{
+  "schema":"dreamco.buddy_system_integration_map.v1",
+  "purpose":"Make Buddy Bootcamp consume canonical DreamCo capabilities, VRs, benchmarks, study plans, strategies, divisions and evidence rather than maintaining isolated copies.",
+  "sources":{
+    "capabilities":["config/capabilities*","framework/**","capabilities/**","bots/**"],
+    "vrs":["**/*VR*","**/*vr*","goals/**","plans/**"],
+    "benchmarks":["benchmarks/**","**/*benchmark*","config/benchmark-gap-closure-v1.json"],
+    "study_plans":["plans/**","training/**","bootcamp/**","docs/**"],
+    "strategies":["strategies/**","learning/**","global_learning_system/**","framework/adaptive_learning.py"],
+    "divisions":["config/*division*","divisions/**","masterbots/**"],
+    "evidence":["evidence/**","artifacts/**","reports/**","actions/**"]
+  },
+  "flow":["discover_sources","normalize","deduplicate","map_capabilities","map_vrs","map_benchmarks","map_study_plans","map_strategies","assign_masterbot","build_curriculum","execute_training","evaluate_held_out","record_evidence","update_scorecard","select_next_action"],
+  "actions_page":{"route":"/actions/scorecard","linked_systems":["capabilities","vrs","benchmarks","study_plans","strategies","65_divisions","training","evidence"],"refresh_seconds":60},
+  "truth_policy":{"no_invented_mastery":true,"missing_source_is_visible":true,"duplicate_sources_are_deduplicated":true,"provenance_required":true},
+  "merge_policy":{"canonical_registry_wins":true,"preserve_unique_legacy_capabilities":true,"do_not_duplicate_masterbots":true}
+}
