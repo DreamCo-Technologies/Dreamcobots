@@ -1,0 +1,23 @@
+{
+  "schema":"dreamco.buddy.coding_mastery_gate.v1",
+  "purpose":"Prevent Buddy from entering broad college study as a passive knowledge task; require demonstrated software-engineering competence first.",
+  "mode":"evidence_gated",
+  "required_dimensions":["repository_comprehension","greenfield_build","debugging","testing","refactoring","security","performance","systems","tool_use","reasoning","recovery","communication"],
+  "gate_levels":[
+    {"id":"foundation","minimum_score":0.85,"required":true,"evidence":["deterministic_tests","code_explanations","small_projects"]},
+    {"id":"professional","minimum_score":0.88,"required":true,"evidence":["existing_repo_tasks","API_work","database_work","CI_work","security_fixes"]},
+    {"id":"advanced","minimum_score":0.90,"required":true,"evidence":["architecture","performance","migration","production_like_recovery","agent_tooling"]},
+    {"id":"mastery","minimum_score":0.92,"required":true,"evidence":["mixed_benchmark_exam","novel_problem_solving","regression_repair","teach_back"]}
+  ],
+  "anti_shortcut_rules":[
+    "No graduation from aggregate score alone.",
+    "Every critical security or reliability gate must pass.",
+    "At least three unseen evaluation sets are required.",
+    "At least one existing-repository challenge is required.",
+    "At least one recovery challenge is required.",
+    "At least one teach-back explanation must be judged correct.",
+    "Scores must retain baseline, attempt, evidence, and evaluator metadata."
+  ],
+  "promotion":"Only after all required levels pass may the college curriculum engine unlock unrestricted domain progression.",
+  "truth_rule":"This file defines a gate. It does not prove Buddy has passed the gate; runtime benchmark evidence must be recorded separately."
+}
