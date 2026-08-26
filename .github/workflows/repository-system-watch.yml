@@ -52,6 +52,9 @@ jobs:
       - name: Generate repository master inventory
         run: python3 tools/generate_dreamco_repository_master_map.py
 
+      - name: Reconcile generated repository test registry after all generators
+        run: python3 tools/generate_repository_test_registry.py
+
       - name: Verify repository and Pages contracts
         run: |
           python3 tools/generate_repository_test_registry.py --check
