@@ -1,0 +1,40 @@
+version: 1
+name: buddy-markov-learning-policy
+purpose: probabilistic transition modeling for workflow prediction, anomaly detection, and planning support
+
+model:
+  implementation: buddy_os.learning.markov_engine.MarkovChain
+  order: 1
+  explainable: true
+  dependency_free: true
+  smoothing: 0.1
+
+uses:
+  - predict likely next workflow state from observed transitions
+  - rank candidate routes before planner selection
+  - score unusual state transitions for review
+  - compare workflow traces by transition likelihood
+  - provide compact state-transition features to learning and routing systems
+
+integration:
+  planner: advisory_signal_only
+  reward_learning: feature_source
+  safety_policy: always_authoritative
+  approval_gates: never_bypassed
+  external_actions: require_existing_governance
+
+research_notes:
+  - source: Russian research on Markov-chain machine learning and coupled Markov chains
+    relevance: supports using transition dynamics as an interpretable learning signal
+  - source: Russian research on Markov decision processes and convex optimization
+    relevance: informs future policy optimization and reinforcement-learning integration
+  - source: Russian research on hierarchical multi-agent reinforcement learning in MDPs
+    relevance: informs hierarchical routing across Buddy specialists
+  - source: Russian research on synthetic data generation with binary Markov models
+    relevance: informs bounded synthetic transition-trace generation for testing
+
+limits:
+  - not a language model
+  - not a substitute for causal reasoning
+  - not a guarantee of future behavior
+  - predictions must be benchmarked against simpler baselines
