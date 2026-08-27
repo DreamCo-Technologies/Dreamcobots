@@ -50,73 +50,6 @@ Dreamcobots/
 └── firebase.json      # Firebase Hosting config
 ```
 
-## 🤖 All 1051 Bots by Division
-
-| Division | Bots | Files |
-|----------|------|-------|
-| CommandCore | 13 | [View →](App_bots/CommandCore.json) |
-| DreamSalesPro | 37 | [View →](App_bots/DreamSalesPro.json) |
-| DreamFinance | 25 | [View →](App_bots/DreamFinance.json) |
-| DreamRealEstate | 25 | [View →](App_bots/DreamRealEstate.json) |
-| DreamAIInfra | 25 | [View →](App_bots/DreamAIInfra.json) |
-| DreamRetail | 26 | [View →](App_bots/DreamRetail.json) |
-| DreamProServices | 25 | [View →](App_bots/DreamProServices.json) |
-| DreamData | 16 | [View →](App_bots/DreamData.json) |
-| DreamGlobal | 16 | [View →](App_bots/DreamGlobal.json) |
-| DreamAutomation | 21 | [View →](App_bots/DreamAutomation.json) |
-| DreamContent | 16 | [View →](App_bots/DreamContent.json) |
-| DreamTrade | 12 | [View →](App_bots/DreamTrade.json) |
-| DreamFlow | 5 | [View →](App_bots/DreamFlow.json) |
-| DreamMarket | 5 | [View →](App_bots/DreamMarket.json) |
-| DreamEmpire | 5 | [View →](App_bots/DreamEmpire.json) |
-| GameTitan | 4 | [View →](App_bots/GameTitan.json) |
-| DreamInfluence | 25 | [View →](App_bots/DreamInfluence.json) |
-| DreamDecision | 25 | [View →](App_bots/DreamDecision.json) |
-| DreamOps | 26 | [View →](App_bots/DreamOps.json) |
-| DreamPlanetary | 25 | [View →](App_bots/DreamPlanetary.json) |
-| DreamEntFinance | 25 | [View →](App_bots/DreamEntFinance.json) |
-| DreamCustIntel | 25 | [View →](App_bots/DreamCustIntel.json) |
-| DreamLegal | 25 | [View →](App_bots/DreamLegal.json) |
-| DreamCyber | 25 | [View →](App_bots/DreamCyber.json) |
-| DreamHealth | 20 | [View →](App_bots/DreamHealth.json) |
-| DreamEducation | 20 | [View →](App_bots/DreamEducation.json) |
-| DreamConstruction | 19 | [View →](App_bots/DreamConstruction.json) |
-| DreamTransport | 19 | [View →](App_bots/DreamTransport.json) |
-| DreamFood | 20 | [View →](App_bots/DreamFood.json) |
-| DreamScience | 20 | [View →](App_bots/DreamScience.json) |
-| DreamArts | 18 | [View →](App_bots/DreamArts.json) |
-| DreamProtection | 20 | [View →](App_bots/DreamProtection.json) |
-| DreamAgriculture | 20 | [View →](App_bots/DreamAgriculture.json) |
-| DreamMaintenance | 21 | [View →](App_bots/DreamMaintenance.json) |
-| DreamProduction | 20 | [View →](App_bots/DreamProduction.json) |
-| DreamSocial | 33 | [View →](App_bots/DreamSocial.json) |
-| DreamAdmin | 21 | [View →](App_bots/DreamAdmin.json) |
-| DreamCrypto | 20 | [View →](App_bots/DreamCrypto.json) |
-| DreamPayments | 23 | [View →](App_bots/DreamPayments.json) |
-| DreamBizLaunch | 21 | [View →](App_bots/DreamBizLaunch.json) |
-| DreamCodeLab | 146 | [View →](App_bots/DreamCodeLab.json) |
-| DreamLoans | 23 | [View →](App_bots/DreamLoans.json) |
-| DreamPersonalCare | 30 | [View →](App_bots/DreamPersonalCare.json) |
-| DreamMilitary | 20 | [View →](App_bots/DreamMilitary.json) |
-| DreamAgents | 20 | [View →](App_bots/DreamAgents.json) |
-
-## 🚀 Autonomy Modes
-
-| Mode | Description | Tier Required |
-|------|-------------|---------------|
-| **Guided** | Plan and preview work; approve each external action | Free |
-| **Scheduled** | Run approved read-only checks on a bounded schedule | Configured deployment |
-| **Governed execution** | Use scoped adapters, audit receipts, budgets, and pause controls | Configured deployment |
-
-## 💰 Pricing
-
-| Tier | Bots | Price |
-|------|------|-------|
-| Free | 5 bots | $0/mo |
-| Pro | 50 bots | $299/mo |
-| Enterprise | 150 bots | $999/mo |
-| Elite | All 1051+ bots | Custom |
-
 ## 🧠 Buddy Bot - Governed Task Router
 
 Buddy Bot ([profile](bots/buddy-bot.md)) provides one interface for the repository fleet:
@@ -125,6 +58,14 @@ Buddy Bot ([profile](bots/buddy-bot.md)) provides one interface for the reposito
 - Defaults to free local planning and supports optional approved provider routing
 - Creates previews and approval gates before external side effects
 - Connects to this computer through a loopback-only, short-lived local session
+
+### Probabilistic Workflow Learning
+
+Buddy now includes an explainable first-order **Markov-chain learner** at `buddy_os/learning/markov_engine.py`. It learns transition probabilities from observed workflow traces and can predict likely next states, score trace likelihood, rank candidate routes, and flag unusually surprising transitions. The policy is deliberately advisory: governance, safety controls, approvals, and deterministic rules remain authoritative.
+
+This addition is informed by Russian research covering coupled Markov chains for machine-learning knowledge extraction, Markov Decision Processes and convex optimization, hierarchical multi-agent reinforcement learning in MDPs, and synthetic-data generation with binary Markov models. citeturn0search0turn0search6turn0search8turn0search5
+
+The implementation and tests are dependency-free and can be used as a compact feature layer for Buddy's existing learning, routing, and evaluation systems. Configuration lives in `buddy_os/learning/markov_learning_policy.yaml`.
 
 ## Local Owner Workspace
 
