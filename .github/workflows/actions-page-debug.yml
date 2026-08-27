@@ -1,0 +1,29 @@
+name: Actions Page Debug
+
+on:
+  push:
+    paths:
+      - 'website/actions.html'
+      - 'website/actions.js'
+      - 'tools/validate_actions_page.py'
+      - '.github/workflows/actions-page-debug.yml'
+  pull_request:
+    paths:
+      - 'website/actions.html'
+      - 'website/actions.js'
+      - 'tools/validate_actions_page.py'
+      - '.github/workflows/actions-page-debug.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Actions page contract
+        run: python3 tools/validate_actions_page.py
+      - name: Validate JavaScript syntax
+        run: node --check website/actions.js
