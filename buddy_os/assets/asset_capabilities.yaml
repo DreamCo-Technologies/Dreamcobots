@@ -1,0 +1,51 @@
+version: 1
+name: buddy-digital-asset-capabilities
+
+asset_types:
+  agents: [discover, evaluate, version, route, benchmark]
+  bots: [discover, evaluate, version, route, benchmark]
+  skills: [discover, compose, test, version]
+  tools: [discover, permission_check, benchmark, version]
+  apis: [catalog, health_check, capability_map, version]
+  connectors: [catalog, health_check, permission_check]
+  models: [catalog, benchmark, route, version, cost_track]
+  datasets: [catalog, quality_score, provenance, version, license_check]
+  prompts: [catalog, evaluate, version, test, compare]
+  workflows: [catalog, simulate, version, dependency_map, optimize]
+  code: [index, dependency_map, test, quality_score, provenance]
+  repositories: [index, health_score, dependency_map, change_map]
+  documents: [index, search, summarize, provenance]
+  knowledge: [index, link, freshness_score, contradiction_check]
+  templates: [catalog, instantiate, version, test]
+  schemas: [validate, version, compatibility_check]
+  configurations: [validate, diff, drift_detect]
+  infrastructure: [inventory, dependency_map, drift_detect, cost_estimate]
+  benchmarks: [run, compare, archive]
+  experiments: [plan, run_in_sandbox, compare, reproduce]
+  policies: [validate, version, impact_analyze]
+  media: [metadata, fingerprint, license_check]
+  packages: [dependency_map, vulnerability_scan, version]
+  containers: [image_scan, provenance, version]
+  plugins: [catalog, capability_map, permission_check]
+  reports: [index, provenance, freshness]
+  dashboards: [catalog, health_check]
+  secret_references: [existence_check, scope_check, rotation_metadata]
+
+registry_rules:
+  - every_asset_has_stable_id
+  - every_asset_has_provenance
+  - content_hash_when_content_is_available
+  - versions_are_explicit
+  - dependencies_are_graph_edges
+  - capabilities_are_machine_readable
+  - licenses_are_recorded_when_known
+  - raw_secret_material_never_enters_registry
+
+buddy_integration:
+  ontology: first_class_asset_objects
+  memory: asset_history_and_outcomes
+  markov: asset_workflow_transitions
+  mdp: asset_action_value_estimation
+  decision_engine: asset_quality_cost_risk_evidence_signals
+  verification: pre_execution_asset_checks
+  actions: approval_gated_asset_operations
