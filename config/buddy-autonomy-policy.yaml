@@ -1,0 +1,67 @@
+version: 1
+name: dreamco-buddy-autonomy-policy
+principles:
+  - evidence_before_claims
+  - plan_before_execution
+  - least_privilege
+  - reversible_before_irreversible
+  - human_approval_for_high_impact_actions
+  - explicit_separation_of_simulation_and_live_execution
+
+learning:
+  markov_transition_model: enabled
+  markov_decision_model: enabled
+  reinforcement_learning: advisory_only
+  reward_sources:
+    - task_success
+    - validation_pass
+    - latency
+    - cost
+    - reliability
+    - human_feedback
+  reward_constraints:
+    - never_reward_policy_bypass
+    - never_reward_secret_access
+    - never_reward_destructive_behavior
+    - never_reward_unapproved_external_side_effects
+
+routing:
+  candidate_generation:
+    - capability_match
+    - historical_success
+    - markov_transition_probability
+    - mdp_expected_value
+    - cost
+    - latency
+    - reliability
+    - risk
+  final_authority:
+    - policy
+    - safety
+    - authorization
+    - approval
+
+execution:
+  levels:
+    L0: read_only
+    L1: local_sandbox
+    L2: repository_change_with_review
+    L3: approved_external_action
+    L4: high_impact_action_with_explicit_human_confirmation
+  default_level: L0
+
+observability:
+  every_decision_records:
+    - input_class
+    - candidate_routes
+    - evidence_sources
+    - selected_route
+    - confidence
+    - policy_result
+    - approval_state
+    - outcome
+  never_record:
+    - raw_secrets
+    - passwords
+    - access_tokens
+    - private_key_material
