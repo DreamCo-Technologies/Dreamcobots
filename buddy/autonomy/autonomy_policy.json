@@ -1,0 +1,25 @@
+{
+  "objective": "maximize_buddy_native_capabilities_and_minimize_unnecessary_external_dependencies",
+  "external_models": "teachers_validators_fallbacks",
+  "external_bots": "teachers_specialists_fallbacks",
+  "learning": {
+    "capture_allowed_task_traces": true,
+    "require_client_data_consent_or_policy_authorization": true,
+    "benchmark_before_promotion": true,
+    "minimum_native_trials": 30,
+    "minimum_native_quality": 0.90
+  },
+  "replacement": {
+    "shadow_test_before_retirement": true,
+    "require_regression_free_window": true,
+    "preserve_unique_capabilities": true,
+    "preserve_fallback": true,
+    "human_or_policy_approval_for_production_retirement": true
+  },
+  "security": {
+    "never_train_on_secrets": true,
+    "never_expose_provider_credentials": true,
+    "respect_provider_terms": true,
+    "audit_tool_traces": true
+  }
+}
