@@ -59,8 +59,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run deterministic scan
-        run: python tools/dreamco_daily_scan.py
+      - name: Run selected control-plane audit
+        run: python tools/dreamco_daily_scan.py --action "${{ inputs.action || 'daily-scan' }}"
       - name: Upload scan report
         uses: actions/upload-artifact@v4
         with:
@@ -77,6 +77,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Verify control-plane contracts
         shell: bash
         run: |
@@ -87,6 +91,7 @@ jobs:
           test -f docs/MODEL_LAB_BENCHMARK_SCHEMA.md
           test -f .github/workflows/dreamco-control-plane.yml
           python -m py_compile tools/dreamco_daily_scan.py
+          python tools/dreamco_daily_scan.py --action "${{ inputs.action || 'daily-scan' }}"
           echo "DreamCo control-plane contracts: PASS"
 
   report:
@@ -106,5 +111,5 @@ jobs:
             echo "- Repository scan: ${{ needs.daily-scan.result }}"
             echo "- Contract gate: ${{ needs.control-plane-gate.result }}"
             echo ""
-            echo "The daily scan is evidence-based: it reports gaps rather than claiming unverified production readiness."
+            echo "The control plane is evidence-based: it reports gaps rather than claiming unverified production readiness."
           } >> "$GITHUB_STEP_SUMMARY"
