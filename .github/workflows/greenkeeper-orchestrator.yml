@@ -1,0 +1,46 @@
+name: DreamCo Greenkeeper Orchestrator
+
+on:
+  workflow_run:
+    workflows: ["Keep Green"]
+    types: [completed]
+  schedule:
+    - cron: "31 */6 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: greenkeeper-orchestrator-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  health-plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Collect workflow result
+        env:
+          RESULT: ${{ github.event.workflow_run.conclusion }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          result = os.environ.get('RESULT') or 'scheduled'
+          with open('/tmp/observations.json','w',encoding='utf-8') as f:
+              json.dump([{'source':'Keep Green','result':result}], f)
+          PY
+      - name: Build repair plan
+        run: python3 tools/greenkeeper_orchestrator.py --input /tmp/observations.json
+      - name: Publish repair plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-greenkeeper-${{ github.run_id }}
+          path: artifacts/greenkeeper/repair-plan.json
+          if-no-files-found: error
+          retention-days: 30
