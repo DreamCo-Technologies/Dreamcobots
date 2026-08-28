@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "policy": "evidence-first",
+  "principle": "Declared architecture is not runtime proof. Unknown or stale evidence never counts as green.",
+  "release_blockers": ["critical_security", "missing_build", "missing_required_tests", "missing_runtime_health", "missing_observability", "unreproducible_benchmark_claim", "missing_rollback_plan"],
+  "areas": [
+    {"id":"buddy_orchestration","label":"Buddy orchestration/router","required":["buddy router source","router tests","routing evidence"]},
+    {"id":"benchmark_framework","label":"Benchmark framework","required":["benchmark schema","benchmark tests","reproducibility metadata"]},
+    {"id":"capability_genome","label":"Capability Genome","required":["capability registry","capability validation","integration evidence"]},
+    {"id":"model_research","label":"500-model research system","required":["model registry","official-source provenance","execution adapter evidence"]},
+    {"id":"teacher_model","label":"Teacher-model benchmarking","required":["teacher benchmark contract","baseline evidence","repeat-run evidence"]},
+    {"id":"experiment_engine","label":"Experiment engine","required":["experiment lifecycle","isolated execution","result persistence"]},
+    {"id":"ablation","label":"Ablation testing","required":["ablation matrix","controlled fixtures","automated results"]},
+    {"id":"distillation","label":"Distillation pipeline","required":["teacher/student contract","quality floor","rollback evidence"]},
+    {"id":"free_first","label":"Free-first resource optimizer","required":["resource policy","budget enforcement","fallback tests"]},
+    {"id":"resource_optimization","label":"VRAM/RAM optimization","required":["resource measurements","hardware profile","regression thresholds"]},
+    {"id":"regression","label":"Regression testing","required":["regression suite","failure fixtures","release gate"]},
+    {"id":"security","label":"Security/licensing","required":["secret scan","dependency audit","license/provenance audit"]},
+    {"id":"actions","label":"Actions page integration","required":["stable action IDs","UI tests","source-to-UI evidence"]},
+    {"id":"daily_scan","label":"Daily autonomous scanning","required":["scheduled workflow","evidence artifact","Actions ingestion"]},
+    {"id":"source_ingestion","label":"AI-source ingestion","required":["provenance","freshness","refresh failure handling"]},
+    {"id":"superbot","label":"Superbot/module architecture","required":["module registry","routing tests","conflict serialization"]},
+    {"id":"deployment","label":"Deployment/production infrastructure","required":["production build","health endpoint","rollback procedure"]},
+    {"id":"observability","label":"Observability","required":["correlation IDs","structured telemetry","benchmark/agent traces"]},
+    {"id":"cost_accounting","label":"Cost accounting","required":["usage ledger","provider/model attribution","budget reconciliation"]}
+  ],
+  "status_rules": {
+    "verified":"All required evidence exists, is current for the tested revision, and has a passing result.",
+    "partial":"Some required evidence exists, but one or more gates are missing or incomplete.",
+    "blocked":"A release blocker is present or a required safety/security condition fails.",
+    "unknown":"The repository does not contain enough evidence to determine the state."
+  }
+}
