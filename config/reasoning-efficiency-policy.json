@@ -1,0 +1,35 @@
+{
+  "schema": "dreamco.reasoning_efficiency_policy.v1",
+  "purpose": "Measure and improve capability per token, compute unit, and dollar while preserving verifiable behavior.",
+  "benchmark_pipeline": ["fixture", "generate", "evaluate", "trace_invert", "distill", "retest", "promote"],
+  "trace_inversion": {
+    "enabled": true,
+    "scope": "observable execution evidence and successful strategies",
+    "store_minimal_sufficient_trace": true,
+    "private_hidden_reasoning_rule": "Do not attempt to expose, reconstruct, or store a model's private chain-of-thought. Store only authorized observable actions, evidence, outcomes, and compact strategy abstractions."
+  },
+  "distillation": {
+    "enabled": true,
+    "objective": "retain verified capability while reducing inference and learning token requirements",
+    "artifacts": ["strategy", "skill", "example", "verification_rule", "failure_pattern"],
+    "promotion_rule": "A distilled artifact must match or exceed its configured retention threshold on held-out regression tests before promotion."
+  },
+  "course_learning": {
+    "format": ["course", "module", "concept", "prerequisite", "example", "exercise", "assessment", "mastery"],
+    "deduplicate_concepts": true,
+    "prerequisite_graph": true,
+    "retrieve_minimal_relevant_context": true,
+    "preserve_source_provenance": true,
+    "mastery_requires_assessment": true
+  },
+  "efficiency_metrics": ["accuracy", "tokens", "latency", "cost", "training_compute", "retrieval_tokens", "distillation_retention", "regression_rate"],
+  "reasoning_protection": {
+    "encrypted_artifacts_at_rest": true,
+    "integrity_hashes": true,
+    "secrets_excluded_from_public_prospectus": true,
+    "access_control_required": true
+  },
+  "rl_algorithms": ["grpo", "ppo", "dpo", "rlaif", "rule_based_rl"],
+  "algorithm_selection": "benchmark_evidence_and_resource_budget",
+  "scale_rule": "Never use a fixed model, bot, or module count as an architectural limit; scale according to available resources and verified registry capacity."
+}
