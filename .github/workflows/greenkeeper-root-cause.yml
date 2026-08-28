@@ -1,0 +1,48 @@
+name: DreamCo Greenkeeper Root Cause
+
+on:
+  workflow_run:
+    workflows: ["Keep Green", "DreamCo Greenkeeper Orchestrator"]
+    types: [completed]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: greenkeeper-root-cause-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture observation
+        env:
+          WORKFLOW: ${{ github.event.workflow_run.name || 'manual' }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion || 'manual' }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          with open('/tmp/observations.json','w',encoding='utf-8') as f:
+              json.dump([{
+                  'workflow': os.environ['WORKFLOW'],
+                  'conclusion': os.environ['CONCLUSION'],
+                  'source': 'github_actions'
+              }], f)
+          PY
+      - name: Fingerprint and queue root cause
+        run: python3 tools/greenkeeper_root_cause.py --input /tmp/observations.json
+      - name: Publish root-cause artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-root-cause-${{ github.run_id }}
+          path: artifacts/greenkeeper/root-cause.json
+          if-no-files-found: error
+          retention-days: 30
