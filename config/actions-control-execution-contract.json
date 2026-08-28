@@ -1,0 +1,22 @@
+{
+  "schema": "dreamco.actions_control_execution.v1",
+  "purpose": "Canonical execution contract for the Actions Control Center. A UI control is not verified until its runner returns evidence.",
+  "controls": {
+    "doctor": {"runner":"repository_doctor","mode":"read_only","side_effects":false},
+    "test": {"runner":"test_harness","mode":"sandbox","side_effects":false},
+    "lint": {"runner":"static_quality","mode":"read_only","side_effects":false},
+    "security": {"runner":"security_audit","mode":"read_only","side_effects":false},
+    "benchmark": {"runner":"local_benchmark","mode":"sandbox","side_effects":false},
+    "repair": {"runner":"repair_planner","mode":"plan_only","side_effects":false},
+    "pages": {"runner":"pages_contract","mode":"read_only","side_effects":false},
+    "bundle": {"runner":"device_bundle_check","mode":"sandbox","side_effects":false},
+    "refresh": {"runner":"github_run_refresh","mode":"read_only","side_effects":false},
+    "production_readiness": {"runner":"production_gate","mode":"read_only","side_effects":false}
+  },
+  "result_contract": {
+    "required": ["actionId","runId","status","startedAt","completedAt","evidence","failures"],
+    "status": ["queued","running","passed","failed","blocked"],
+    "evidence_rule": "Never infer success from configuration presence; success requires runner evidence.",
+    "live_action_rule": "No control may perform a live external write without an explicit authenticated approval gate."
+  }
+}

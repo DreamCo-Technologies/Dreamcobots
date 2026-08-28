@@ -38,6 +38,7 @@ const PersonalAIBuilderPage = lazy(() => import("@/pages/PersonalAIBuilderPage")
 const BotActivityPage = lazy(() => import("@/pages/BotActivityPage"));
 const SandboxPage = lazy(() => import("@/pages/SandboxPage"));
 const ActionsPage = lazy(() => import("@/pages/ActionsPage"));
+const ActionsControlPage = lazy(() => import("@/pages/ActionsControlPage"));
 const HarnessPage = lazy(() => import("@/pages/HarnessPage"));
 const GovernancePage = lazy(() => import("@/pages/GovernancePage"));
 const BuddyPage = lazy(() => import("@/pages/BuddyPage"));
@@ -88,7 +89,8 @@ function Router() {
       <Route path="/build-my-ai" component={wrap(PersonalAIBuilderPage, "Build Your Own AI")} />
       <Route path="/bot-activity" component={wrap(BotActivityPage, "Bot Activity")} />
       <Route path="/sandbox" component={wrap(SandboxPage, "Sandbox Factory")} />
-      <Route path="/actions" component={wrap(ActionsPage, "Actions & Agents")} />
+      <Route path="/actions" component={wrap(ActionsControlPage, "Actions Control Center")} />
+      <Route path="/actions-workspace" component={wrap(ActionsPage, "Actions & Agents Workspace")} />
       <Route path="/harness" component={wrap(HarnessPage, "Harness Tester")} />
       <Route path="/governance" component={wrap(GovernancePage, "Governance")} />
       <Route path="/buddy" component={wrap(BuddyPage, "Buddy Bot")} />

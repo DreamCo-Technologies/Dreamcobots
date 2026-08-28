@@ -1,0 +1,18 @@
+{
+  "schema": "dreamco.model_lab_modes.v1",
+  "purpose": "Let each user evaluate eligible AI models with frontier, efficiency, comparison, or hybrid strategies.",
+  "modes": {
+    "frontier": {"name":"U.S. Frontier Mode","strategy":"high-compute search, parallel candidates, RL/RLVR, tool-use and extended test-time compute"},
+    "efficiency": {"name":"Efficiency Mode","strategy":"resource-aware RL, GRPO experiments, selective distillation, adaptive reasoning budgets and compact retrieval"},
+    "compare": {"name":"Compare Mode","strategy":"run both strategies under controlled benchmark conditions and compare evidence"},
+    "hybrid": {"name":"Hybrid Mode","strategy":"select strategies conditionally using benchmark evidence and resource budgets"}
+  },
+  "adapter_families": ["openai_compatible", "anthropic_compatible", "google_compatible", "deepseek_compatible", "local_open_weight", "ollama", "custom_http", "custom_inference"],
+  "tenant_isolation": {"required": true, "private_model_data_cross_tenant_training": false, "private_experiment_cross_tenant_visibility": false},
+  "comparison_metrics": ["accuracy", "tokens", "retrieval_tokens", "latency", "cost", "compute", "memory", "reliability", "distillation_retention", "regression_rate"],
+  "fair_comparison": {"same_benchmark": true, "same_evaluation_rules": true, "resource_budget_recorded": true, "held_out_tests": true, "reproducible_experiment_id": true},
+  "promotion": "Only evidence-backed improvements with acceptable safety and regression results may be promoted.",
+  "licensing": "Respect each model, dataset, and artifact license; do not label restricted materials as open source.",
+  "security": {"credentials_never_in_benchmarks": true, "encryption_keys_never_in_public_artifacts": true, "protected_artifacts_access_controlled": true},
+  "scale": "Model and capability counts are inventory values, never architectural limits."
+}
