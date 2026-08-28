@@ -1,0 +1,13 @@
+{
+  "schema":"dreamco.capability_scorecard.v1",
+  "schedule":{"checks_per_day":5,"timezone":"user_local","recommended_windows":["06:00","10:00","14:00","18:00","22:00"],"tolerance_minutes":30},
+  "inputs":["capabilities","VRs","benchmarks","study_plans","training_runs","benchmark_results","regressions","execution_evidence"],
+  "score":{"range":[0,100],"dimensions":{"capability_coverage":20,"benchmark_mastery":25,"study_plan_completion":15,"training_execution":15,"reliability":10,"regression_control":10,"evidence_quality":5}},
+  "rules":["unknown_is_not_pass","planned_is_not_completed","training_is_not_mastery","stale_evidence_reduces_score","failed_regressions_reduce_score","missing_benchmark_baseline_is_unscored_not_zero"],
+  "outputs":["overall_score","dimension_scores","top_gaps","completed_today","overdue_plans","failed_benchmarks","regressions","next_actions","evidence_freshness","five_check_history"],
+  "vr_policy":{"compare_current_to_target":true,"show_gap":true,"show_trend":true},
+  "benchmark_policy":{"require_baseline":true,"require_held_out_evaluation":true,"require_repeat_pass_for_mastery":true},
+  "study_policy":{"measure_planned_vs_executed":true,"measure_completion_quality":true},
+  "actions_page":{"route":"/actions/scorecard","refresh_seconds":60,"show_last_check":true,"show_next_check":true,"show_history":true},
+  "daily_completion":{"required":true,"minimum_checks":5}
+}
