@@ -1,0 +1,110 @@
+name: DreamCo Control Plane
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Control-plane action"
+        required: true
+        default: "daily-scan"
+        type: choice
+        options:
+          - daily-scan
+          - benchmark-inventory
+          - capability-audit
+          - learning-audit
+          - resource-audit
+          - integration-audit
+          - full-production-audit
+      free_only:
+        description: "Restrict optional learning/benchmark work to free/local resources"
+        required: true
+        default: true
+        type: boolean
+  schedule:
+    - cron: "17 6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "tools/dreamco_daily_scan.py"
+      - ".github/workflows/dreamco-control-plane.yml"
+      - "framework/**"
+      - "global_learning_system/**"
+      - "benchmark*"
+      - "benchmarks/**"
+      - "tools/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-control-plane-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PYTHONUNBUFFERED: "1"
+  DREAMCO_FREE_ONLY: ${{ github.event_name == 'schedule' && 'true' || inputs.free_only }}
+
+jobs:
+  daily-scan:
+    name: Repository + production scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run deterministic scan
+        run: python tools/dreamco_daily_scan.py
+      - name: Upload scan report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-daily-scan-${{ github.run_id }}
+          path: artifacts/daily-scan/
+          if-no-files-found: error
+          retention-days: 30
+
+  control-plane-gate:
+    name: Production control-plane gate
+    needs: daily-scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify control-plane contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f tools/dreamco_daily_scan.py
+          test -f docs/FREE_FIRST_LEARNING_POLICY.md
+          test -f docs/CAPABILITY_GENOME_EXPERIMENT_ENGINE.md
+          test -f docs/MODEL_LAB_BENCHMARK_SCHEMA.md
+          test -f .github/workflows/dreamco-control-plane.yml
+          python -m py_compile tools/dreamco_daily_scan.py
+          echo "DreamCo control-plane contracts: PASS"
+
+  report:
+    name: Publish run summary
+    needs: [daily-scan, control-plane-gate]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Summary
+        run: |
+          {
+            echo "## DreamCo Control Plane"
+            echo ""
+            echo "- Trigger: ${{ github.event_name }}"
+            echo "- Action: ${{ inputs.action || 'daily-scan' }}"
+            echo "- Free-only policy: ${DREAMCO_FREE_ONLY}"
+            echo "- Repository scan: ${{ needs.daily-scan.result }}"
+            echo "- Contract gate: ${{ needs.control-plane-gate.result }}"
+            echo ""
+            echo "The daily scan is evidence-based: it reports gaps rather than claiming unverified production readiness."
+          } >> "$GITHUB_STEP_SUMMARY"
