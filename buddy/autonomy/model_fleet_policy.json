@@ -1,0 +1,31 @@
+{
+  "principle": "complement_not_replace",
+  "existing_dreamco_catalog": {
+    "protected": true,
+    "preserve_all_existing_models": true,
+    "deletion_by_openrouter_integration": false,
+    "source_of_truth": "existing_dreamco_model_registry"
+  },
+  "openrouter": {
+    "role": "additional_gateway",
+    "may_add_models": true,
+    "may_be_used_for_benchmarks": true,
+    "may_supply_fallbacks": true,
+    "may_not_remove_existing_models": true
+  },
+  "buddy_learning": {
+    "objective": "increase_native_capability_and_reduce_unnecessary_dependencies",
+    "learn_from": ["existing_dreamco_models", "openrouter_models", "dreamco_bots", "approved_tool_traces"],
+    "promote_to_native_after_evaluation": true,
+    "retire_dependency_only_after_evidence": true,
+    "retain_unique_capabilities": true,
+    "retain_redundancy_for_resilience": true
+  },
+  "client_access": {
+    "existing_catalog_available": true,
+    "openrouter_available": true,
+    "default_alias": "dreamco/auto",
+    "stable_aliases": ["dreamco/auto", "dreamco/coding", "dreamco/reasoning", "dreamco/fast", "dreamco/vision", "dreamco/budget"],
+    "credentials_server_side": true
+  }
+}
