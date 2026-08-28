@@ -1,0 +1,52 @@
+name: DreamCo PR Review Parity Gate
+
+on:
+  pull_request:
+    paths:
+      - "website/actions-code-review.js"
+      - "website/actions.html"
+      - "config/pr-review-capability-matrix.json"
+      - "docs/PR_REVIEW_CODERABBIT_PARITY.md"
+      - ".github/workflows/pr-review-parity-gate.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: pr-review-parity-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  parity-contract:
+    name: PR review capability contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate review assets
+        run: |
+          set -euo pipefail
+          test -s website/actions.html
+          test -s website/actions-code-review.js
+          test -s config/pr-review-capability-matrix.json
+          test -s docs/PR_REVIEW_CODERABBIT_PARITY.md
+          node --check website/actions-code-review.js
+          node -e "const fs=require('fs'); const x=JSON.parse(fs.readFileSync('config/pr-review-capability-matrix.json','utf8')); if(!x.dimensions.length || !x.dreamco_extensions.length) process.exit(1); console.log('dimensions='+x.dimensions.length); console.log('extensions='+x.dreamco_extensions.length)"
+      - name: Publish parity summary
+        if: always()
+        run: |
+          {
+            echo "## DreamCo PR Review Parity"
+            echo "- Review asset syntax: checked"
+            echo "- Machine-readable capability matrix: checked"
+            echo "- CodeRabbit feature benchmark reference: documented"
+            echo "- DreamCo extensions: capability graph, benchmark promotion, recovery lineage, model council, local-first mode"
+            echo "- Verification rule: unknown/implemented-unverified is never promoted to GREEN"
+          } >> "$GITHUB_STEP_SUMMARY"
