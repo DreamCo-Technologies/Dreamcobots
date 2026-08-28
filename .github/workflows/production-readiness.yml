@@ -1,0 +1,38 @@
+name: Production Readiness Evidence
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-readiness-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evidence-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run evidence inventory
+        run: python3 tools/production_readiness_gate.py | tee production-readiness-report.txt
+      - name: Upload evidence report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-readiness-${{ github.sha }}
+          path: |
+            data/production-readiness-report.json
+            production-readiness-report.txt
+          if-no-files-found: error
