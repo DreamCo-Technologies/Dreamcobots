@@ -1,0 +1,72 @@
+name: DreamCo PR Review Guardian
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  schedule:
+    - cron: "47 7 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+concurrency:
+  group: dreamco-pr-review-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review-guardian:
+    name: PR safety and mergeability review
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout trusted base
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          fetch-depth: 1
+      - name: Build review report
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/pr-review
+          {
+            echo "# DreamCo PR Review Guardian"
+            echo
+            echo "Repository: $REPOSITORY"
+            echo "PR: ${PR_NUMBER:-scheduled repository scan}"
+            echo "Generated: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo
+            if [[ -n "${PR_NUMBER:-}" ]]; then
+              gh pr view "$PR_NUMBER" --repo "$REPOSITORY" --json number,title,state,isDraft,mergeable,mergeStateStatus,headRefName,baseRefName,changedFiles,additions,deletions,author > artifacts/pr-review/pr.json
+              python - <<'PY'
+import json
+from pathlib import Path
+p=json.loads(Path('artifacts/pr-review/pr.json').read_text())
+for k in ('number','title','state','isDraft','mergeable','mergeStateStatus','headRefName','baseRefName','changedFiles','additions','deletions'):
+    print(f'- **{k}**: `{p.get(k)}`')
+PY
+              echo
+              echo "## Decision guidance"
+              echo
+              echo "- Mergeable: validate CI, security, benchmark and regression gates before merge."
+              echo "- Conflicted/blocked: rebuild from current main and transplant only verified unique capabilities."
+              echo "- Duplicate/obsolete: preserve historical evidence and avoid importing duplicate code."
+              echo "- Unknown: keep blocked until evidence is available."
+            else
+              echo "Scheduled guardian run: inspect repository PR backlog through the GitHub UI and configured review workflows."
+            fi
+          } > artifacts/pr-review/report.md
+      - name: Upload review report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-pr-review-${{ github.run_id }}
+          path: artifacts/pr-review/
+          if-no-files-found: error
+          retention-days: 30
