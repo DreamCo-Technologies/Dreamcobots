@@ -1,0 +1,134 @@
+name: DreamCo Daily Research & Benchmark Control
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_training_queue:
+        description: 'Prepare and validate benchmark training work'
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    - cron: '37 6 * * *'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dreamco-daily-research-benchmark
+  cancel-in-progress: false
+
+jobs:
+  daily-control:
+    name: Daily research, benchmark, and health scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Audit Actions health
+        run: python3 tools/audit_actions_health.py
+
+      - name: Audit live Actions state
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 tools/audit_actions_live.py
+
+      - name: Generate capability discovery
+        run: python3 tools/capability_discovery_report.py
+
+      - name: Generate canonical Buddy benchmark index
+        run: python3 tools/generate_buddy_benchmark_index.py
+
+      - name: Run reality benchmark smoke test
+        run: python3 tools/reality_benchmark_smoke.py
+
+      - name: Generate AI organization intelligence
+        run: python3 tools/generate_ai_organization_intelligence.py --check
+
+      - name: Generate model benchmark catalog
+        run: npx tsx tools/generate_buddy_model_benchmarks.ts --check
+
+      - name: Generate model progress report
+        run: npx tsx tools/generate_buddy_model_progress_center.ts --check
+
+      - name: Generate connection catalog
+        run: python3 tools/generate_buddy_connection_catalog.py --check
+
+      - name: Check repository dependencies
+        run: python3 tools/check_repository_dependencies.py
+
+      - name: Run Actions-page and benchmark tests
+        run: npm run test:actions-page
+
+      - name: Optional training queue validation
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_training_queue }}
+        run: |
+          if [ -f tools/execute_benchmark_training_queue.py ]; then
+            echo 'Training queue executor is present; validating inputs without authorizing paid compute.'
+            python3 tools/execute_benchmark_training_queue.py --help
+          else
+            echo 'Training queue executor is not present; skipping.'
+          fi
+
+      - name: Build daily control report
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p artifacts/daily-control
+          cp -f config/generated/buddy_benchmark_index.json artifacts/daily-control/ 2>/dev/null || true
+          cp -f config/generated/actions-health-report.json artifacts/daily-control/ 2>/dev/null || true
+          cp -f config/generated/actions-live-health.json artifacts/daily-control/ 2>/dev/null || true
+          cp -f artifacts/capability_discovery_report.json artifacts/daily-control/ 2>/dev/null || true
+          cat > artifacts/daily-control/daily-control-summary.json <<EOF
+          {
+            "schema": "dreamco.daily_control.v1",
+            "workflow": "DreamCo Daily Research & Benchmark Control",
+            "run_id": "${GITHUB_RUN_ID}",
+            "sha": "${GITHUB_SHA}",
+            "event": "${GITHUB_EVENT_NAME}",
+            "training_queue_requires_explicit_manual_opt_in": true,
+            "paid_compute_is_not_authorized_by_this_workflow": true
+          }
+          EOF
+
+      - name: Publish run summary
+        if: always()
+        run: |
+          echo '## DreamCo Daily Research & Benchmark Control' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Actions health audit executed' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Capability discovery executed' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Buddy benchmark index generated' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Reality benchmark smoke test executed' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Model/organization benchmark catalogs checked' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Repository dependency audit executed' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Actions-page tests executed' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Paid compute is never authorized automatically' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload daily control evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: dreamco-daily-control-${{ github.run_id }}
+          path: artifacts/daily-control
+          if-no-files-found: warn
+          retention-days: 30
