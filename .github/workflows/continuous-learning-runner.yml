@@ -1,0 +1,48 @@
+name: Buddy Continuous Learning Runner
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  learning-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate learning controller
+        working-directory: buddy/learning
+        run: python -m unittest registered_runner_test.py
+      - name: Run registered evidence runner when an event fixture exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          if [ -f buddy/learning/events.json ]; then
+            python buddy/learning/registered_runner.py \
+              --events buddy/learning/events.json \
+              --out artifacts/continuous-learning-evidence.json
+          else
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          Path("artifacts/continuous-learning-evidence.json").write_text(json.dumps({
+              "schema": "dreamco.continuous_learning.evidence.v1",
+              "events_processed": 0,
+              "promotions": 0,
+              "status": "no-event-fixture"
+          }, indent=2) + "\n")
+          PY
+          fi
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-continuous-learning-evidence
+          path: artifacts/continuous-learning-evidence.json
