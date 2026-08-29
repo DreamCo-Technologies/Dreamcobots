@@ -23,11 +23,11 @@ class AssetReputation:
         return self.verified / self.attempts if self.attempts else 0.0
 
     @property
-    risk_rate(self) -> float:
+    def risk_rate(self) -> float:
         return self.incidents / self.attempts if self.attempts else 0.0
 
     @property
-    score(self) -> float:
+    def score(self) -> float:
         # Reputation is advisory; it never grants permission.
         return max(0.0, min(1.0, self.success_rate * .55 + self.verification_rate * .35 - self.risk_rate * .10))
 
