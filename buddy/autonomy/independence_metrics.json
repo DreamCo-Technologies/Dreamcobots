@@ -1,0 +1,16 @@
+{
+  "metrics": {
+    "external_dependency_ratio": "external_model_or_bot_calls / eligible_completed_tasks",
+    "native_capability_coverage": "mastered_native_capabilities / tracked_capabilities",
+    "native_success_rate": "validated_native_successes / validated_native_attempts",
+    "teacher_calls_per_task": "external_teaching_calls / eligible_completed_tasks",
+    "cost_per_successful_task": "total_inference_and_tool_cost / successful_tasks",
+    "regression_rate": "mastered_capabilities_failing_regression / mastered_capabilities_tested",
+    "migration_ready": "capabilities_meeting_native_evidence_threshold"
+  },
+  "optimization": {
+    "primary": "increase_native_capability_coverage",
+    "secondary": "decrease_external_dependency_ratio",
+    "guardrails": ["quality", "reliability", "safety", "privacy", "unique_capability_coverage"]
+  }
+}
