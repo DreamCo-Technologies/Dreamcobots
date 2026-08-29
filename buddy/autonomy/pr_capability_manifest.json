@@ -1,0 +1,18 @@
+{
+  "source_of_truth": "current_main",
+  "migration_mode": "capability_port_not_branch_merge",
+  "protected_assets": ["original_dreamco_model_catalog", "existing_buddy_learning_system", "existing_benchmark_evidence"],
+  "priority_sources": {
+    "65_masterbot_training": {"pr": 3682, "action": "port_after_current_main_validation"},
+    "20_masterbot_homepage": {"pr": 3684, "action": "port_after_current_main_validation"},
+    "repository_scan_reporting": {"pr": 1961, "action": "port_after_current_main_validation"},
+    "model_benchmark_scorecard": {"pr": 682, "action": "port_after_current_main_validation"},
+    "actions_control_center": {"pr": 474, "action": "port_after_current_main_validation"}
+  },
+  "merge_policy": {
+    "force_merge_stale_prs": false,
+    "merge_without_tests": false,
+    "delete_original_500": false,
+    "openrouter_replaces_original_catalog": false
+  }
+}
