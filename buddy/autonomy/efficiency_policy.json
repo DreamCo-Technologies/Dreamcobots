@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "mission": "maximize useful capability per unit of compute, time, cost, and external dependency without sacrificing correctness, safety, reliability, privacy, or coverage",
+  "priority_order": ["correctness", "safety", "reliability", "efficiency", "performance", "cost"],
+  "routing": {
+    "check_native_capability_first": true,
+    "check_verified_memory_before_recompute": true,
+    "reuse_verified_repairs": true,
+    "cluster_common_root_causes": true,
+    "prefer_smallest_sufficient_model": true,
+    "parallelize_independent_work": true,
+    "cache_reusable_results": true,
+    "validate_before_learning": true
+  },
+  "learning": {
+    "convert_repeated_external_solutions_to_native_candidates": true,
+    "require_held_out_validation_before_mastery": true,
+    "retain_regression_tests_for_mastered_capabilities": true
+  },
+  "issue_backlog": {
+    "cluster_before_agent_execution": true,
+    "one_root_cause_can_resolve_many_issues": true,
+    "recheck_issue_state_before_close": true,
+    "preserve_comments_and_user_updates_as_evidence": true
+  },
+  "guardrails": {
+    "never_skip_required_validation_for_speed": true,
+    "never_expose_provider_credentials_to_clients": true,
+    "never_delete_protected_model_catalog": true
+  }
+}
