@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "mission": "move Buddy toward frontier-competitive performance through measured capability growth rather than benchmark gaming",
+  "evaluation_lanes": [
+    "general_reasoning",
+    "coding_and_repository_repair",
+    "long_horizon_agents",
+    "tool_use",
+    "research_and_retrieval",
+    "multimodal_capability",
+    "mathematics_and_science",
+    "DreamCo_real_world_tasks"
+  ],
+  "evaluation_rules": {
+    "use_fresh_or_held_out_tasks": true,
+    "record_baseline_before_optimization": true,
+    "separate_training_tasks_from_evaluation_tasks": true,
+    "report_failures_without_suppressing_them": true,
+    "require_regression_suite": true,
+    "track_external_assistance": true,
+    "track_cost_and_latency": true
+  },
+  "progression": {
+    "stage_1": "reliable_tool_use_and_repository_repair",
+    "stage_2": "strong_native_coding_and_reasoning",
+    "stage_3": "long_horizon_autonomous_execution",
+    "stage_4": "frontier_competitive_on_targeted_domains",
+    "stage_5": "broad_frontier_competition_with_independent_evidence"
+  },
+  "anti_gaming": {
+    "do_not_train_on_held_out_evaluations": true,
+    "do_not_claim_frontier_status_from_catalog_size": true,
+    "do_not_claim_learning_without_before_after_evidence": true,
+    "do_not_trade_safety_for_score": true
+  },
+  "optimization": {
+    "primary": "capability_per_compute",
+    "secondary": "native_capability_growth",
+    "tertiary": "external_dependency_reduction",
+    "guardrails": ["correctness", "safety", "reliability", "privacy"]
+  }
+}
