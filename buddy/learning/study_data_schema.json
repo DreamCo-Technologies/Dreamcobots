@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "record": {
+    "resource_id": "integer",
+    "resource_name": "string",
+    "source_url": "string",
+    "category": "string",
+    "capability_ids": ["string"],
+    "material_type": "documentation|course|video|dataset|research|standard|exercise|reference",
+    "license_or_access_notes": "string",
+    "study_session_id": "string",
+    "concepts": ["string"],
+    "practice_artifacts": ["string"],
+    "benchmark_ids": ["string"],
+    "before_score": "number",
+    "after_score": "number",
+    "passed": "boolean",
+    "regressions": ["string"],
+    "provenance": ["string"],
+    "learner_version": "string",
+    "created_at": "ISO-8601"
+  },
+  "training_buckets": [
+    "concept_knowledge",
+    "worked_examples",
+    "practice_tasks",
+    "benchmark_cases",
+    "failure_cases",
+    "successful_cases",
+    "regression_cases",
+    "tool_use_patterns",
+    "safety_cases"
+  ],
+  "privacy": {
+    "client_data_default": "exclude",
+    "training_reuse": "only_with_authorization_and_applicable_license_or_consent",
+    "secrets": "never_store",
+    "raw_external_content": "do_not_copy_beyond_allowed_rights"
+  }
+}
