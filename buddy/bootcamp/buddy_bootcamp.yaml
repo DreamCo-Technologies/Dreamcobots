@@ -1,0 +1,40 @@
+version: 1
+name: Buddy Mastery Bootcamp
+purpose: Convert benchmark failures into short, evidence-driven study and practice cycles.
+tracks:
+  - foundations
+  - software_engineering
+  - ai_ml
+  - data
+  - cloud_devops
+  - security
+  - agents_tools
+  - web_mobile
+  - math_statistics
+  - occupational_real_world
+stages:
+  - diagnose
+  - select_resource
+  - study
+  - sandbox
+  - targeted_benchmark
+  - holdout
+  - regression
+  - promote
+rules:
+  select_resource: highest_expected_gain_per_minute
+  study_budget_minutes: 30
+  targeted_retest_before_full_suite: true
+  require_holdout_for_mastery: true
+  require_regression_for_mastery: true
+  preserve_original_model_catalog: true
+  client_data_training_default: false
+metrics:
+  - benchmark_score_delta
+  - native_pass_rate
+  - external_model_calls
+  - inference_cost
+  - study_minutes
+  - retries
+  - regression_failures
+  - capability_mastery_count
