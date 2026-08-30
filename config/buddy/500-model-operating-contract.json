@@ -1,0 +1,30 @@
+{
+  "schema": "dreamco.buddy.500_model_contract.v1",
+  "teams": {
+    "monitoring": "Watch repository health, model behavior, regressions, and evidence.",
+    "training": "Train selected capabilities against explicit success criteria.",
+    "evaluation": "Run independent benchmarks, adversarial tests, and calibration checks.",
+    "building": "Propose software improvements and focused pull requests.",
+    "security": "Run authorized defensive security evaluation and remediation verification.",
+    "alignment": "Check mission adherence, uncertainty, instruction hierarchy, and goal drift.",
+    "research": "Study new benchmarks, methods, and failure modes.",
+    "product": "Translate validated capabilities into useful products and examples."
+  },
+  "shared_workflow": [
+    "observe",
+    "hypothesize",
+    "test",
+    "record evidence",
+    "peer-review",
+    "propose",
+    "automated-validate",
+    "human-authorize-when-required",
+    "merge",
+    "regression-test",
+    "learn"
+  ],
+  "repository_scan": {"frequency": "daily", "scope": "entire repository", "write_mode": "proposal_or_pull_request_only"},
+  "leaderboard": {"enabled": true, "dimensions": ["correctness", "safety", "calibration", "security", "usefulness", "test_quality", "pr_quality", "discovery", "regression_avoidance", "alignment"]},
+  "distillation": {"enabled": true, "graduation_requires_repeated_evidence": true, "goal": "Reduce dependence on the ensemble as Buddy independently reproduces validated capabilities."},
+  "governance": {"least_privilege": true, "auditable": true, "interruptible": true, "no_hidden_credentials": true, "no_assumption_of_live_connectivity": true}
+}
