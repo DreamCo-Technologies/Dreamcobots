@@ -1,0 +1,41 @@
+name: Buddy Learning Regression
+
+on:
+  pull_request:
+    paths:
+      - 'buddy/learning/**'
+      - 'tests/test_*learning*.py'
+      - 'tests/test_dependency_reduction_score.py'
+      - 'tools/record_buddy_benchmark_learning.py'
+  push:
+    branches: [main]
+    paths:
+      - 'buddy/learning/**'
+      - 'tests/test_*learning*.py'
+      - 'tests/test_dependency_reduction_score.py'
+      - 'tools/record_buddy_benchmark_learning.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  learning-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Buddy learning regression tests
+        run: |
+          python -m pytest -q \
+            tests/test_buddy_learning_evidence.py \
+            tests/test_benchmark_learning_progress.py \
+            tests/test_learning_history.py \
+            tests/test_dependency_reduction_score.py \
+            tests/test_mastery_decision.py
