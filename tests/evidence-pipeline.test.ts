@@ -1,0 +1,5 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { recordBatch, requiredGateStatus } from '../framework/buddy-platform/evidence-pipeline.js';
+test('evidence pipeline records all required verification gates',()=>{const b=recordBatch('ep1',[{id:'b',kind:'build',status:'pass',summary:'build ok',source:'ci'},{id:'t',kind:'test',status:'pass',summary:'tests ok',source:'ci'},{id:'s',kind:'security',status:'pass',summary:'scan ok',source:'scanner'},{id:'p',kind:'performance',status:'pass',summary:'benchmark ok',source:'benchmark'},{id:'r',kind:'review',status:'pass',summary:'review ok',source:'council'}]);assert.equal(b.overall,'verified');assert.deepEqual(requiredGateStatus(b),{build:true,test:true,security:true,performance:true,review:true});});
+test('blocked verification remains blocked',()=>{const b=recordBatch('ep2',[{id:'t',kind:'test',status:'blocked',summary:'runner unavailable',source:'ci'}]);assert.equal(b.overall,'blocked');assert.equal(requiredGateStatus(b).test,false);});
