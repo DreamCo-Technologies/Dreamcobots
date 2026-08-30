@@ -108,8 +108,8 @@ def main() -> int:
         "4. Review-required paths are never silently reassigned during cleanup.", "",
         "## Owner counts", "",
     ]
-    for owner, count in sorted(by_owner.items()):
-        lines.append(f"- `{owner}`: {count:,} files")
+    for owner, records in sorted(by_owner.items()):
+        lines.append(f"- `{owner}`: {len(records):,} files")
     lines += ["", "## Required release gates", ""] + [f"- [ ] {gate}" for gate in config["migration_gates"]]
     REPORT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(json.dumps({"ok": True, "inventory_files": len(ledger), "review_required": len(review), "divisions": len(divisions), "clusters": len(clusters), "output": str(OUT.relative_to(ROOT))}, indent=2))
