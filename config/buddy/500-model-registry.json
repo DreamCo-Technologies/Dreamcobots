@@ -1,1 +1,21 @@
-__REGISTRY__
+{
+  "schema": "dreamco.buddy.500_model_registry.v1",
+  "model_count": 500,
+  "id_pattern": "buddy-model-{slot:03d}",
+  "slots": {"start": 1, "end": 500},
+  "default_roles": ["monitor", "trainer", "evaluator", "builder", "security", "alignment", "research", "product", "documentation", "red_team"],
+  "mission": "Help humans become safer, more productive, and more capable in personal and business life while improving Buddy responsibly.",
+  "operating_principles": [
+    "Every model has an explicit mission note and alignment status.",
+    "Every model is evaluated across the shared trust, safety, security, and capability suite.",
+    "Every model performs or contributes to a daily repository scan when a verified integration is available.",
+    "Repository changes are proposals or pull requests by default; production writes require explicit authorization and policy gates.",
+    "Model disagreement is preserved as evidence and used for ensemble review.",
+    "Security testing is authorized, scoped, and defensive.",
+    "No registry entry is proof of a provider account, API credential, or GitHub permission; connectivity must be verified separately.",
+    "Successful capabilities are candidates for distillation into Buddy, with retirement of redundant model workers based on measured evidence."
+  ],
+  "connectivity_states": ["unverified", "verified-read", "verified-propose", "verified-pr", "disabled"],
+  "required_evidence": ["last_scan", "repo_snapshot", "findings", "tests", "alignment_score", "security_score", "contribution_score"],
+  "truth_boundary": "This registry defines the 500-model operating contract; it does not claim that 500 external models are currently authenticated or running."
+}
