@@ -1,0 +1,6 @@
+export type EvidenceKind='build'|'test'|'security'|'performance'|'review';
+export interface EvidenceRecord { id:string; kind:EvidenceKind; status:'pass'|'fail'|'blocked'; summary:string; timestamp:string; source:string; }
+export interface EvidenceBundle { projectId:string; records:EvidenceRecord[]; overall:'verified'|'failed'|'blocked'; }
+export function addEvidence(bundle:EvidenceBundle,record:EvidenceRecord):EvidenceBundle { if(bundle.records.some(r=>r.id===record.id)) throw new Error(`Duplicate evidence id: ${record.id}`); const records=[...bundle.records,record]; const overall=records.some(r=>r.status==='fail')?'failed':records.some(r=>r.status==='blocked')?'blocked':'verified'; return {...bundle,records,overall}; }
+export function createEvidenceBundle(projectId:string):EvidenceBundle { if(!projectId.trim()) throw new Error('Project id is required'); return {projectId,records:[],overall:'blocked'}; }
+export function assertPublishable(bundle:EvidenceBundle):void { if(bundle.overall!=='verified') throw new Error(`Project is not publishable: ${bundle.overall}`); const required:EvidenceKind[]=['build','test','security','performance','review']; for(const kind of required) if(!bundle.records.some(r=>r.kind===kind&&r.status==='pass')) throw new Error(`Missing passing ${kind} evidence`); }
