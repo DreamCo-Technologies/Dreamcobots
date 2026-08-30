@@ -1,0 +1,50 @@
+name: Buddy Fleet Health
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 4 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'bots/**'
+      - 'App_bots/**'
+      - 'buddy/**'
+      - 'buddy_os/**'
+      - 'tools/generate_bot_fleet_catalog.ts'
+      - 'tools/run_bot_fleet_e2e.ts'
+      - 'tools/generate_buddy_fleet_quality_program.ts'
+      - 'tests/bot-fleet-catalog.test.ts'
+      - 'tests/fleet-runtime.test.ts'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-fleet-health-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fleet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - run: npm ci --ignore-scripts
+      - name: Validate fleet catalog
+        run: npm run buddy:fleet
+      - name: Validate fleet quality contracts
+        run: npm run buddy:fleet-quality
+      - name: Execute bounded fleet E2E checks
+        run: npm run buddy:fleet:e2e
+      - name: Verify routing/runtime contracts
+        run: node --import tsx --test tests/bot-fleet-catalog.test.ts tests/fleet-runtime.test.ts tests/fleet-quality-program.test.ts
