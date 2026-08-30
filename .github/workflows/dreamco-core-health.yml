@@ -1,0 +1,105 @@
+name: DreamCo Core Health
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'client/**'
+      - 'server/**'
+      - 'buddy/**'
+      - 'buddy_os/**'
+      - 'bots/**'
+      - 'App_bots/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'client/**'
+      - 'server/**'
+      - 'buddy/**'
+      - 'buddy_os/**'
+      - 'bots/**'
+      - 'App_bots/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/**'
+  schedule:
+    - cron: '17 5 * * *'
+
+permissions:
+  contents: read
+  actions: read
+  security-events: write
+
+concurrency:
+  group: dreamco-core-health-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+
+jobs:
+  core:
+    name: Typecheck, tests, build, fleet and security
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Typecheck
+        run: npm run check
+
+      - name: Actions and repository static health
+        run: |
+          python3 tools/audit_actions_health.py
+          python3 tools/generate_repository_test_registry.py --check
+
+      - name: Bot fleet contract
+        run: |
+          npm run buddy:fleet
+          npm run buddy:fleet-quality
+          npm run buddy:fleet:e2e
+
+      - name: Governed regression tests
+        run: npm run test:actions-page
+
+      - name: Build production artifact
+        run: npm run build
+
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+
+      - name: Upload health reports
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: dreamco-core-health-${{ github.run_id }}
+          path: |
+            reports/**
+            config/generated/**
+          if-no-files-found: ignore
+          retention-days: 14
