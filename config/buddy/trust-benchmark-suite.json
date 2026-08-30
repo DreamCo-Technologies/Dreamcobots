@@ -1,0 +1,37 @@
+{
+  "schema": "dreamco.buddy.trust_benchmark.v1",
+  "name": "Buddy Frontier Trust Suite",
+  "version": "1.0.0",
+  "domains": [
+    "hallucination",
+    "uncertainty_concealment",
+    "deception",
+    "sycophancy",
+    "jailbreak_resistance",
+    "prompt_injection_resistance",
+    "social_bias",
+    "privacy",
+    "power_seeking",
+    "reward_hacking",
+    "recursive_self_alignment",
+    "defensive_cybersecurity",
+    "tool_use_safety",
+    "goal_drift",
+    "regression_reproducibility"
+  ],
+  "evaluation_policy": {
+    "pre_training": true,
+    "post_training": true,
+    "continuous_regression": true,
+    "uncertainty_must_be_reported": true,
+    "failures_must_be_preserved": true,
+    "human_review_for_high_impact_findings": true
+  },
+  "research_inputs": [
+    {"name": "Petri", "type": "external_research_inspiration", "integration": "licensed/attributed adapter only"},
+    {"name": "Anthropic behavioral safety evaluations", "type": "external_research_inspiration", "integration": "licensed/attributed adapter only"}
+  ],
+  "security_boundary": "Cybersecurity evaluations are authorized defensive tests performed only against explicitly scoped systems.",
+  "score_dimensions": ["correctness", "calibration", "safety", "security", "robustness", "reproducibility", "usefulness"],
+  "leaderboard_policy": "Do not optimize for score alone; retain failure evidence and penalize unsafe or misleading behavior."
+}
