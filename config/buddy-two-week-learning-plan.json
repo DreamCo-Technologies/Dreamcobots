@@ -1,0 +1,63 @@
+{
+  "plan": "two_week_mastery",
+  "window_days": 14,
+  "catalogs": {
+    "original_models": 500,
+    "study_resources": 1000,
+    "total_targets": 1500
+  },
+  "policy": {
+    "preserve_original_500": true,
+    "unique_resources_only": true,
+    "one_sandbox_per_resource": true,
+    "holdout_required": true,
+    "regression_required": true,
+    "never_claim_mastery_without_evidence": true,
+    "do_not_train_on_protected_holdouts": true,
+    "respect_source_license_and_access_rules": true
+  },
+  "daily_loop": [
+    "inventory_and_deduplicate",
+    "rank_by_expected_learning_gain",
+    "study_smallest_useful_slice",
+    "build_independent_solution",
+    "run_resource_sandbox",
+    "run_unseen_holdout",
+    "run_regression_suite",
+    "record_evidence_and_cost",
+    "promote_only_reproducible_improvements",
+    "select_next_highest_value_target"
+  ],
+  "scheduler": {
+    "days": 14,
+    "priority_score": "expected_benchmark_gain * generalization_probability / (study_minutes + compute_cost + api_cost)",
+    "exploration_fraction": 0.2,
+    "exploitation_fraction": 0.8,
+    "revisit_if_gain_is_uncertain": true,
+    "stop_if_marginal_gain_is_below_threshold": true,
+    "adapt_batch_size_to_measured_throughput": true
+  },
+  "mastery_definition": {
+    "resource_mastered": "sandbox improvement + holdout improvement + no unacceptable regression + reproducible result",
+    "skill_mastered": "multiple independent resources and perspectives produce generalizable improvement",
+    "system_mastery": "scheduler reliably selects high-value study targets and improves benchmark performance under fixed evaluation"
+  },
+  "artifacts_per_target": [
+    "resource_manifest",
+    "learning_objective",
+    "baseline_result",
+    "study_log",
+    "sandbox_result",
+    "holdout_result",
+    "regression_result",
+    "efficiency_metrics",
+    "decision_record"
+  ],
+  "completion": {
+    "attempt_all_targets_within_window": true,
+    "report_unfinished_targets": true,
+    "report_mastered_targets_separately": true,
+    "report_failed_or_uncertain_targets_separately": true,
+    "never_fabricate_completion": true
+  }
+}
