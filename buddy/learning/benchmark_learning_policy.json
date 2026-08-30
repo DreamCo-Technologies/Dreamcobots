@@ -1,0 +1,31 @@
+{
+  "schema": "dreamco.buddy.benchmark_learning_policy.v1",
+  "purpose": "Convert benchmark failures and successful repairs into durable evidence without claiming mastery prematurely.",
+  "states": ["failed", "candidate_fix", "retest_failed", "retest_passed", "regressed", "mastered"],
+  "mastery_policy": {
+    "minimum_repeated_passes": 3,
+    "require_regression_test": true,
+    "require_same_capability_signature": true,
+    "allow_single_pass_mastery": false
+  },
+  "learning_record": [
+    "capability_id",
+    "benchmark_id",
+    "failure_signature",
+    "attempted_remediation",
+    "result",
+    "commit",
+    "run_id",
+    "timestamp"
+  ],
+  "external_dependency_policy": {
+    "openrouter": "supplemental_teacher_or_fallback",
+    "original_dreamco_500": "protected",
+    "specialist_bots": "retain_until_native_parity_is_proven"
+  },
+  "safety": {
+    "execute_log_content": false,
+    "store_secrets": false,
+    "auto_retire_external_capability": false
+  }
+}
