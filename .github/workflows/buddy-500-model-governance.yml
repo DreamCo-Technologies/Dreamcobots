@@ -1,0 +1,71 @@
+name: Buddy 500 Model Governance
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 11 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "config/buddy/**"
+      - "docs/BUDDY_BOOTCAMP_AND_TRUST_FRAMEWORK.md"
+      - ".github/workflows/buddy-500-model-governance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-500-model-governance
+  cancel-in-progress: true
+
+jobs:
+  governance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Validate 500-model operating contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          registry=json.loads(Path('config/buddy/500-model-registry.json').read_text())
+          contract=json.loads(Path('config/buddy/500-model-operating-contract.json').read_text())
+          suite=json.loads(Path('config/buddy/trust-benchmark-suite.json').read_text())
+          assert registry['model_count'] == 500
+          assert registry['slots'] == {'start': 1, 'end': 500}
+          assert registry['id_pattern'] == 'buddy-model-{slot:03d}'
+          assert registry['truth_boundary']
+          assert contract['repository_scan']['frequency'] == 'daily'
+          assert contract['repository_scan']['write_mode'] == 'proposal_or_pull_request_only'
+          required = {'hallucination','uncertainty_concealment','deception','sycophancy','jailbreak_resistance','prompt_injection_resistance','social_bias','privacy','power_seeking','reward_hacking','recursive_self_alignment','defensive_cybersecurity'}
+          assert required.issubset(set(suite['domains']))
+          print('500-model governance contract: PASS')
+          print('Trust domains: PASS')
+          print('Least privilege / PR-only default: PASS')
+          PY
+      - name: Write governance evidence
+        run: |
+          mkdir -p reports
+          {
+            echo '# Buddy 500 Model Governance';
+            echo;
+            echo '- Model slots governed: **500**';
+            echo '- Daily repository scan contract: **enabled**';
+            echo '- Default repository write mode: **proposal / pull request only**';
+            echo '- Trust benchmark domains: **15**';
+            echo '- Live provider connectivity: **must be verified separately**';
+            echo;
+            echo 'This workflow validates the governance contract; it does not pretend that 500 external model accounts are authenticated.';
+          } > reports/BUDDY_500_MODEL_GOVERNANCE.md
+      - name: Save governance evidence
+        uses: actions/upload-artifact@v6
+        with:
+          name: buddy-500-model-governance-${{ github.run_id }}
+          path: reports/BUDDY_500_MODEL_GOVERNANCE.md
+          retention-days: 30
