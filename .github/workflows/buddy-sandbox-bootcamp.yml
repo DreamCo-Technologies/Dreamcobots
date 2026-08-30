@@ -1,0 +1,52 @@
+name: Buddy Sandbox Bootcamp
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'buddy/sandbox/**'
+      - 'buddy/bootcamp/**'
+      - 'buddy/learning/**'
+      - 'config/buddy-study-resources-*.json'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile sandbox and bootcamp modules
+        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning
+      - name: Run safe sandbox smoke test
+        run: |
+          python - <<'PY'
+          from buddy.sandbox.buddy_sandbox import BuddySandbox
+          result = BuddySandbox().run('bootcamp-smoke', lambda: (True, 1.0, []))
+          assert result.passed and result.score == 1.0
+          print(result)
+          PY
+      - name: Validate curriculum JSON
+        run: python - <<'PY'
+          import glob, json
+          files = glob.glob('config/buddy-study-resources-*.json')
+          assert files, 'No study-resource sets found'
+          total = 0
+          ids = set()
+          for path in files:
+              data = json.load(open(path, encoding='utf-8'))
+              for row in data['resources']:
+                  assert len(row) >= 6
+                  assert isinstance(row[0], int)
+                  assert row[3].startswith(('https://','http://'))
+                  ids.add(row[0]); total += 1
+          assert total == len(ids), 'Duplicate study resource IDs'
+          print(f'validated {total} study resources')
+          PY
