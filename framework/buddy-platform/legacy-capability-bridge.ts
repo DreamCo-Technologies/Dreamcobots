@@ -1,0 +1,7 @@
+import { buildLegacyRegistry, type LegacyCapabilitySource } from './legacy-capability-registry.js';
+import { classifyCreation, type CreationKind } from './universal-creation.js';
+export interface CapabilityMatch { sourceId:string; sourcePath:string; name:string; reason:string; }
+const keywords:Record<CreationKind,string[]>={game:['game','simulation','npc'],website:['website','store','portal','marketing'],app:['app','mobile'],software:['software','saas','api','automation'],simulation:['simulation','robot','forecast'],business:['business','franchise','ecommerce','agency'],media:['youtube','video','content','streaming'],course:['course','school','coaching','education'],custom:[]};
+export function matchLegacySources(prompt:string,registry=buildLegacyRegistry()):CapabilityMatch[] { const wanted=classifyCreation(prompt); const terms=keywords[wanted]; return registry.sources.filter(s=>s.name.toLowerCase().includes(wanted)||terms.some(t=>s.name.toLowerCase().includes(t))).map(s=>({sourceId:s.id,sourcePath:s.path,name:s.name,reason:`legacy source matched creation kind ${wanted}`})); }
+export function mergeLegacyIntoPlan(prompt:string,registry=buildLegacyRegistry()){ return {creationKind:classifyCreation(prompt),legacySources:matchLegacySources(prompt,registry),preserved:true,sourceOfTruth:registry.sourceOfTruth}; }
+export function assertSourcePreservation(sources:LegacyCapabilitySource[]):void { if(sources.some(s=>!s.path.startsWith('original-bots/'))) throw new Error('Legacy source escaped original-bots preservation boundary'); }
