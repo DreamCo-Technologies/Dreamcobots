@@ -1,0 +1,6 @@
+export type SandboxPermission='filesystem:workspace'|'network:none'|'process:none'|'secrets:none'|'production:none';
+export interface SandboxPolicy { permissions:SandboxPermission[]; timeoutMs:number; maxOutputBytes:number; }
+export interface SandboxJob { id:string; projectId:string; command:string[]; policy:SandboxPolicy; }
+const DEFAULT_POLICY:SandboxPolicy={permissions:['filesystem:workspace','network:none','process:none','secrets:none','production:none'],timeoutMs:120000,maxOutputBytes:1000000};
+export function createSandboxJob(id:string,projectId:string,command:string[],overrides:Partial<SandboxPolicy>={}):SandboxJob { if(!command.length) throw new Error('Sandbox command is required'); if(command.some(x=>x.includes('..'))) throw new Error('Unsafe path traversal token in command'); return {id,projectId,command,policy:{...DEFAULT_POLICY,...overrides,permissions:overrides.permissions??DEFAULT_POLICY.permissions}}; }
+export function assertSandboxPolicy(job:SandboxJob):void { const required=['network:none','process:none','secrets:none','production:none']; if(required.some(p=>!job.policy.permissions.includes(p as SandboxPermission))) throw new Error('Sandbox policy is insufficient for governed execution'); if(job.policy.timeoutMs<=0||job.policy.maxOutputBytes<=0) throw new Error('Sandbox resource limits must be positive'); }
