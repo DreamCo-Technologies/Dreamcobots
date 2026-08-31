@@ -10,8 +10,14 @@ class ActionsHealthAuditTest(unittest.TestCase):
         self.assertEqual(MAX_MAJOR["actions/upload-pages-artifact"], 5)
 
     def test_all_workflows_pass_the_static_health_gate(self) -> None:
-        self.assertEqual(main(), 0)
+        result = main()
         report = json.loads(OUT_JSON.read_text(encoding="utf-8"))
+        blockers = [
+            f"{item['workflow']}: {error}"
+            for item in report["findings"]
+            for error in item.get("errors", [])
+        ]
+        self.assertEqual(result, 0, "Static Actions blockers:\n" + "\n".join(blockers))
         self.assertEqual(report["critical_error_count"], 0)
         self.assertEqual(report["warning_count"], 0)
         public_report = json.loads(PUBLIC_JSON.read_text(encoding="utf-8"))
