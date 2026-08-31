@@ -11,7 +11,6 @@ on:
 permissions:
   contents: read
   actions: read
-  security-events: write
 
 concurrency:
   group: buddy-preventive-${{ github.ref }}
@@ -27,7 +26,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Validate Buddy OS Python contracts
@@ -63,14 +62,8 @@ jobs:
         with:
           fail-on-severity: high
 
-  codeql:
-    name: CodeQL
-    uses: github/codeql-action/.github/workflows/codeql.yml@v4
-    with:
-      languages: javascript,python
-
   summary:
-    needs: [preflight, dependency_review, codeql]
+    needs: [preflight, dependency_review]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -78,10 +71,9 @@ jobs:
         run: |
           echo "preflight=${{ needs.preflight.result }}"
           echo "dependency_review=${{ needs.dependency_review.result }}"
-          echo "codeql=${{ needs.codeql.result }}"
           if [ "${{ needs.preflight.result }}" != "success" ] || \
-             { [ "${{ github.event_name }}" = "pull_request" ] && [ "${{ needs.dependency_review.result }}" != "success" ]; } || \
-             [ "${{ needs.codeql.result }}" != "success" ]; then
+             { [ "${{ github.event_name }}" = "pull_request" ] && [ "${{ needs.dependency_review.result }}" != "success" ]; }; then
             echo "Preventive engineering gate failed."
             exit 1
           fi
+          echo "Preventive gate passed. CodeQL remains owned by the repository security workflow."
