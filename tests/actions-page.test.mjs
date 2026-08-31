@@ -21,7 +21,8 @@ test('Actions page exposes health, filters, upgrades, safe GitHub handoff, and c
   assert.match(source, /api\.github\.com\/repos\/\$\{REPOSITORY\}\/actions\/runs/);
   assert.match(review, /heuristic review score/);
   assert.match(review, /secret-like token/);
-  assert.match(html, /cannot dispatch a workflow/i);
+  assert.match(html, /cannot execute arbitrary shell commands/i);
+  assert.match(html, /cannot.*deploy production/i);
 });
 
 test('Every workflow has three upgrades and a workflow-specific GitHub URL', () => {
