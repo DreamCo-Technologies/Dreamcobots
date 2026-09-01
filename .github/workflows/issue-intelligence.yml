@@ -2,6 +2,7 @@ name: Issue Intelligence
 
 on:
   workflow_run:
+    workflows: ["Buddy Sandbox Bootcamp", "Actions Page Gate", "Actions Health", "Repository System Watch", "Buddy Preventive Engineering"]
     types: [completed]
 
 permissions:
@@ -16,28 +17,35 @@ concurrency:
 jobs:
   triage:
     name: Triage completed workflow
-    if: ${{ github.event.workflow_run.name != 'Issue Intelligence' }}
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Ensure issue labels
         env:
           GH_TOKEN: ${{ github.token }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
-          gh label create ci-failure --color B60205 --description "GitHub Actions failure" --force
-          gh label create severity:high --color D73A4A --description "High severity CI issue" --force
-          gh label create severity:medium --color FBCA04 --description "Medium severity CI issue" --force
-          gh label create severity:low --color 0E8A16 --description "Low severity CI issue" --force
-          gh label create ci:dependency --color 5319E7 --description "Dependency failure" --force
-          gh label create ci:test --color 5319E7 --description "Test failure" --force
-          gh label create ci:lint --color 5319E7 --description "Lint failure" --force
-          gh label create ci:build --color 5319E7 --description "Build failure" --force
-          gh label create ci:configuration --color 5319E7 --description "Configuration failure" --force
-          gh label create ci:permissions --color 5319E7 --description "Permissions failure" --force
-          gh label create ci:timeout --color 5319E7 --description "Timeout failure" --force
-          gh label create ci:workflow --color 5319E7 --description "Workflow failure" --force
+          set -euo pipefail
+          for spec in \
+            'ci-failure:B60205:GitHub Actions failure' \
+            'severity:high:D73A4A:High severity CI issue' \
+            'severity:medium:FBCA04:Medium severity CI issue' \
+            'severity:low:0E8A16:Low severity CI issue' \
+            'ci:dependency:5319E7:Dependency failure' \
+            'ci:test:5319E7:Test failure' \
+            'ci:lint:5319E7:Lint failure' \
+            'ci:build:5319E7:Build failure' \
+            'ci:configuration:5319E7:Configuration failure' \
+            'ci:permissions:5319E7:Permissions failure' \
+            'ci:timeout:5319E7:Timeout failure' \
+            'ci:workflow:5319E7:Workflow failure'; do
+            IFS=: read -r name color description <<< "$spec"
+            gh label create "$name" --color "$color" --description "$description" --force || true
+          done
       - name: Run failure triage
         env:
           GH_TOKEN: ${{ github.token }}
