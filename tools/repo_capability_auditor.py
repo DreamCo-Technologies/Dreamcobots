@@ -37,16 +37,12 @@ PATTERNS: dict[str, tuple[str, ...]] = {
     "media": ("media", "video", "audio", "image", "transcri"),
     "data": ("database", "schema", "sql", "index", "telemetry", "analytics"),
     "migration": ("migration", "migrate", "safety", "rollback"),
-    "dev_environment": ("devcontainer", ".replit", "codespaces", "vite", "xcodeproj"),
+    "dev_environment": ("devcontainer", "codespaces", "vite", "xcodeproj"),
 }
 
 
 def gh_api(path: str):
-    token = os.environ.get("GH_TOKEN")
-    if token:
-        cmd = ["gh", "api", path]
-    else:
-        cmd = ["gh", "api", path]
+    cmd = ["gh", "api", path]
     p = subprocess.run(cmd, text=True, capture_output=True, check=False)
     if p.returncode:
         raise RuntimeError(p.stderr.strip() or path)
