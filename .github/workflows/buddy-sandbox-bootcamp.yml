@@ -12,17 +12,23 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: buddy-sandbox-bootcamp-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/checkout@v7
         with:
-          python-version: '3.12'
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
       - name: Compile sandbox and bootcamp modules
         run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning
       - name: Run safe sandbox smoke test
@@ -34,19 +40,28 @@ jobs:
           print(result)
           PY
       - name: Validate curriculum JSON
-        run: python - <<'PY'
+        run: |
+          python - <<'PY'
           import glob, json
           files = glob.glob('config/buddy-study-resources-*.json')
           assert files, 'No study-resource sets found'
           total = 0
           ids = set()
+          urls = set()
           for path in files:
-              data = json.load(open(path, encoding='utf-8'))
+              with open(path, encoding='utf-8') as handle:
+                  data = json.load(handle)
+              assert isinstance(data.get('resources'), list), f'Invalid resources list: {path}'
               for row in data['resources']:
                   assert len(row) >= 6
                   assert isinstance(row[0], int)
-                  assert row[3].startswith(('https://','http://'))
-                  ids.add(row[0]); total += 1
-          assert total == len(ids), 'Duplicate study resource IDs'
-          print(f'validated {total} study resources')
+                  assert row[3].startswith(('https://', 'http://'))
+                  assert row[0] not in ids, f'Duplicate study resource ID: {row[0]}'
+                  canonical = row[3].strip().rstrip('/').lower()
+                  assert canonical not in urls, f'Duplicate study resource URL: {row[3]}'
+                  ids.add(row[0])
+                  urls.add(canonical)
+                  total += 1
+          assert total >= 1000, f'Expected at least 1000 unique study resources, found {total}'
+          print(f'validated {total} unique study resources')
           PY
