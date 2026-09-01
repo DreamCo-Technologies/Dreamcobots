@@ -1,11 +1,11 @@
 name: DreamCo PR Review Guardian
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
   schedule:
     - cron: "47 7 * * *"
-  workflow_dispatch: {}
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout trusted base
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.base.sha || github.sha }}
           fetch-depth: 1
@@ -64,7 +64,7 @@ PY
             fi
           } > artifacts/pr-review/report.md
       - name: Upload review report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: dreamco-pr-review-${{ github.run_id }}
           path: artifacts/pr-review/
