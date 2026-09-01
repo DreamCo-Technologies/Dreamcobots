@@ -38,6 +38,10 @@ permissions:
   contents: read
   issues: write
 
+concurrency:
+  group: actions-failure-watch
+  cancel-in-progress: false
+
 jobs:
   capture:
     if: >-
@@ -85,7 +89,7 @@ jobs:
           from pathlib import Path
           jobs=json.loads(Path('failure-evidence/jobs.json').read_text()).get('jobs',[])
           failed=[j for j in jobs if j.get('conclusion') not in (None,'success','skipped')]
-          first_job=failed[0].get('name','unknown') if failed else 'unknown-job'
+          first_job=failed[0].get('name','unknown-job') if failed else 'unknown-job'
           first_step='unknown-step'
           for job in failed:
               for step in job.get('steps') or []:
