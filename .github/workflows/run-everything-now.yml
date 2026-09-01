@@ -32,6 +32,7 @@ jobs:
           node --import tsx tools/generate_dreamco_search_index.ts
           python3 tools/generate_buddy_platform_expansion.py
           node --import tsx tools/generate_buddy_success_program.ts
+          node --import tsx tools/generate_bot_fleet_catalog.ts
       - name: Verify architecture and benchmark policies
         run: python3 -m unittest tests.test_recovery_ontology_workforce_runtime tests.test_universal_capability_benchmark_policy tests.test_global_government_system tests.test_buddy_government_operating_system
       - name: Build O*NET work and AI specialist catalog
