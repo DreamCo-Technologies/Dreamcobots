@@ -9,7 +9,6 @@ OUT_MD=ROOT/'reports'/'ACTIONS_HEALTH_REPORT.md'
 PUBLIC_JSON=ROOT/'website'/'data'/'actions-health-report.json'
 PACKAGE=json.loads((ROOT/'package.json').read_text())
 SCRIPTS=set(PACKAGE.get('scripts',{}))
-# Verified current major tags from the official actions repositories.
 MAX_MAJOR={'actions/checkout':7,'actions/setup-node':7,'actions/setup-python':7,'actions/upload-artifact':6,'actions/configure-pages':6,'actions/upload-pages-artifact':5,'actions/deploy-pages':5}
 USES_RE=re.compile(r'uses:\s*([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)@v(\d+)')
 NPM_RE=re.compile(r'npm\s+run\s+([A-Za-z0-9:_-]+)')
@@ -29,7 +28,7 @@ def main()->int:
         for action,major_s in USES_RE.findall(text):
             major=int(major_s); actions.append(f'{action}@v{major}')
             allowed=MAX_MAJOR.get(action)
-            if allowed is not None and major>allowed: errors.append(f'unsupported or unverified action major: {action}@v{major}; expected <= v{allowed}')
+            if allowed is not None and major!=allowed: errors.append(f'action major drift: {action}@v{major}; approved baseline is v{allowed}')
         npm=sorted(set(NPM_RE.findall(text)))
         for script in npm:
             if script not in SCRIPTS: errors.append(f'missing npm script: {script}')
@@ -38,7 +37,7 @@ def main()->int:
             if not (ROOT/ref).exists(): errors.append(f'missing referenced file: {ref}')
         critical += len(errors)
         findings.append({'workflow':str(path.relative_to(ROOT)),'filename':filename,'display_name':filename.removesuffix('.yml').removesuffix('.yaml').replace('-',' ').title(),'purpose':'Governed DreamCo workflow with evidence-backed execution.','triggers':triggers,'errors':errors,'warnings':warnings,'actions':actions,'npm_scripts':npm,'referenced_files':refs,'controls':{'permissions_declared':bool(re.search(r'^permissions\s*:',text,re.M)),'concurrency_declared':bool(re.search(r'^concurrency\s*:',text,re.M)),'job_timeouts_declared':len(re.findall(r'^\s+timeout-minutes\s*:',text,re.M)),'runner_jobs':len(re.findall(r'^\s+runs-on\s*:',text,re.M)),'artifacts_declared':'actions/upload-artifact@' in text or 'actions/upload-pages-artifact@' in text},'upgrades':['Publish machine-readable evidence for every run.','Keep external writes behind explicit authorization and bounded policy.','Preserve failures and regressions instead of converting unknown states into passes.'],'github_url':f'https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/{filename}','static_status':'blocked' if errors else 'static_checks_passed'})
-    payload={'schema':'dreamco.actions_health.v1','workflow_count':len(workflows),'critical_error_count':critical,'warning_count':0,'operational_workflow_count':0,'live_evidence_note':'Static checks do not prove runtime operation; successful GitHub Actions runs provide operational evidence.','baseline':{'checkout':'actions/checkout@v7','setup_node':'actions/setup-node@v7','setup_python':'actions/setup-python@v7','upload_artifact':'actions/upload-artifact@v6','configure_pages':'actions/configure-pages@v6','upload_pages_artifact':'actions/upload-pages-artifact@v5','deploy_pages':'actions/deploy-pages@v5'},'findings':findings,'truth_boundary':'Static workflow health catches invalid references and unsupported action majors. Runtime success must be established by GitHub Actions execution evidence.'}
+    payload={'schema':'dreamco.actions_health.v1','workflow_count':len(workflows),'critical_error_count':critical,'warning_count':0,'operational_workflow_count':0,'live_evidence_note':'Static checks do not prove runtime operation; successful GitHub Actions runs provide operational evidence.','baseline':{'checkout':'actions/checkout@v7','setup_node':'actions/setup-node@v7','setup_python':'actions/setup-python@v7','upload_artifact':'actions/upload-artifact@v6','configure_pages':'actions/configure-pages@v6','upload_pages_artifact':'actions/upload-pages-artifact@v5','deploy_pages':'actions/deploy-pages@v5'},'findings':findings,'truth_boundary':'Static workflow health catches invalid references and action-major drift. Runtime success must be established by GitHub Actions execution evidence.'}
     for p in (OUT_JSON,PUBLIC_JSON): p.parent.mkdir(parents=True,exist_ok=True); p.write_text(json.dumps(payload,indent=2)+'\n')
     OUT_MD.parent.mkdir(parents=True,exist_ok=True)
     lines=['# GitHub Actions Health Report','',f'Workflows scanned: **{len(workflows)}**',f'Critical errors: **{critical}**','Warnings: **0**','']
