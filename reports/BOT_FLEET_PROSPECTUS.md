@@ -5,7 +5,7 @@ This report is generated from repository evidence. A catalog profile is not coun
 ## Verified Inventory
 
 - Bot profiles: 1051
-- Divisions: 46
+- Divisions: 45
 - Buddy-routed profiles: 1051
 - Executable governed runtime instances: 1051
 - Separate standalone processes: 0
@@ -69,4 +69,3 @@ Every profile now has a health-checkable sandbox runtime instance. Each profile 
 | DreamTrade | 12 | 5 |
 | DreamTransport | 19 | 0 |
 | GameTitan | 4 | 5 |
-| MasterbotProfilesExcluded | 0 | 0 |
