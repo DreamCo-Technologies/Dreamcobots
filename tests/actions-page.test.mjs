@@ -25,11 +25,15 @@ test('Actions page exposes health, filters, upgrades, safe GitHub handoff, and c
   assert.match(html, /cannot.*deploy production/i);
 });
 
-test('Every workflow has three upgrades and a workflow-specific GitHub URL', () => {
+test('Every workflow has at least three upgrades and a workflow-specific GitHub URL', () => {
   assert.equal(report.findings.length, report.workflow_count);
   assert.equal(report.critical_error_count, 0);
   for (const workflow of report.findings) {
-    assert.equal(workflow.upgrades.length, 3, workflow.filename);
+    // The first three upgrades are the stable workflow contract. The health
+    // auditor may append evidence-backed maintenance recommendations (for
+    // example, an action-major upgrade), so the contract must not reject a
+    // useful additional recommendation.
+    assert.ok(workflow.upgrades.length >= 3, workflow.filename);
     assert.ok(workflow.github_url.endsWith(workflow.filename));
   }
 });
