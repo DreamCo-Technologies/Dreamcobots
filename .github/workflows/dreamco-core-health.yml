@@ -76,15 +76,12 @@ jobs:
       - name: Actions and repository static health
         run: |
           python3 tools/audit_actions_health.py
-          # Keep the committed generated registry as a drift contract, but do
-          # not fail before the generator has had a chance to reconcile source
-          # changes introduced by this same run.
           python3 tools/generate_repository_test_registry.py
           python3 tools/generate_repository_test_registry.py --check
 
       - name: Bot fleet contract
         run: |
-          npm run buddy:fleet
+          npx tsx tools/generate_bot_fleet_catalog.ts
           npm run buddy:fleet-quality
           npm run buddy:fleet:e2e
 
