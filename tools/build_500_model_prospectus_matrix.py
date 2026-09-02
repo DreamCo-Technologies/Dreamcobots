@@ -17,11 +17,13 @@ CATALOG_CANDIDATES = [
     ROOT / "config/generated/model-prospectus-catalog.json",
     ROOT / "config/generated/model-catalog.json",
     ROOT / "config/model-catalog.json",
+    ROOT / "config/buddy/500-model-registry.json",
 ]
 SUITE_CANDIDATES = [
     ROOT / "config/generated/benchmark-registry.json",
     ROOT / "config/generated/benchmark-suites.json",
     ROOT / "config/benchmark-registry.json",
+    ROOT / "config/buddy/trust-benchmark-suite.json",
 ]
 EVIDENCE_CANDIDATES = [
     ROOT / "config/generated/model-benchmark-evidence.json",
@@ -41,6 +43,27 @@ def rows(value: Any) -> list[dict[str, Any]]:
     if isinstance(value, list):
         return [x for x in value if isinstance(x, dict)]
     if isinstance(value, dict):
+        if isinstance(value.get("model_count"), int) and isinstance(value.get("id_pattern"), str):
+            start = int(value.get("slots", {}).get("start", 1))
+            end = int(value.get("slots", {}).get("end", value["model_count"]))
+            width = max(3, len(str(end)))
+            return [
+                {
+                    "model_id": value["id_pattern"].format(slot=slot),
+                    "name": f"Buddy Model {slot:0{width}d}",
+                    "provider": "DreamCo Buddy",
+                }
+                for slot in range(start, end + 1)
+            ]
+        if isinstance(value.get("domains"), list):
+            return [
+                {
+                    "benchmark_id": domain,
+                    "name": domain.replace("_", " ").title(),
+                }
+                for domain in value["domains"]
+                if isinstance(domain, str) and domain
+            ]
         for key in ("models", "providers", "suites", "benchmarks", "results", "records", "items"):
             candidate = value.get(key)
             if isinstance(candidate, list):

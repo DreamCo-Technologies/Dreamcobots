@@ -31,6 +31,9 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install Buddy learning test dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements-buddy-learning.txt
+
       - name: Run Buddy learning regression tests
         run: |
           python -m pytest -q \

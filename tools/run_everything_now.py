@@ -13,15 +13,40 @@ MAX_STEPS=[
  ('production_verification',['node','--import','tsx','tools/run_universal_verification.ts','--production']),('fleet_e2e',['npm','run','buddy:fleet:e2e']),('maximum_sandbox_runtime',[sys.executable,'tools/audit_maximum_sandbox_runtime.py']),('speed_accuracy',[sys.executable,'tools/run_system_speed_accuracy_benchmarks.py']),('production_smoke',[sys.executable,'tools/smoke_production_runtime.py']),('full_certification',[sys.executable,'tools/build_full_system_certification.py']),('live_user_readiness',[sys.executable,'tools/build_live_user_testing_readiness.py']),('system_progress',[sys.executable,'tools/build_system_progress_status.py'])]
 def run(name,command):
     started=time.perf_counter(); p=subprocess.run(command,cwd=ROOT,capture_output=True,text=True); return {'name':name,'command':command,'exit_code':p.returncode,'duration_seconds':round(time.perf_counter()-started,3),'stdout_tail':p.stdout[-4000:],'stderr_tail':p.stderr[-4000:]}
+
+def write_snapshot(mode, step_count, results, in_progress):
+    failures=[r for r in results if r['exit_code']!=0]
+    payload={
+        'schema':'dreamco.run_everything_now_result.v16',
+        'generated_at':datetime.now(timezone.utc).isoformat(),
+        'mode':mode,
+        'step_count':len(results),
+        'total_planned_steps':step_count,
+        'completed_steps':len(results),
+        'pending_steps':max(step_count-len(results),0),
+        'in_progress':in_progress,
+        'passed':sum(r['exit_code']==0 for r in results),
+        'failed':len(failures),
+        'results':results,
+        'first_failure':failures[0] if failures else None,
+        'truth_boundary':CFG['truth_rule'],
+    }
+    OUT.parent.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n')
+    lines=['# Run Everything Now','',f"- Mode: **{mode}**",f"- Completed: **{len(results)}/{step_count}**",f"- Passed: **{payload['passed']}/{len(results)}**",f"- Failed: **{len(failures)}**",f"- In progress: **{in_progress}**",'','| Step | Seconds | Result |','| --- | ---: | --- |']
+    for r in results: lines.append(f"| {r['name']} | {r['duration_seconds']} | {'PASS' if r['exit_code']==0 else 'FAIL'} |")
+    if failures: lines += ['','## First root-cause candidate','',f"`{failures[0]['name']}`",'','```text',(failures[0]['stderr_tail'] or failures[0]['stdout_tail'])[-3000:],'```']
+    REPORT.write_text('\n'.join(lines)+'\n')
+    return payload
 def main()->int:
     ap=argparse.ArgumentParser(); ap.add_argument('--mode',choices=['quick','standard','maximum'],default='maximum'); args=ap.parse_args(); steps=MAX_STEPS
     if args.mode=='quick': steps=MAX_STEPS[:23]+MAX_STEPS[-3:]
     elif args.mode=='standard': steps=MAX_STEPS[:36]+MAX_STEPS[-6:]
     results=[]
-    for name,command in steps: print(f'\n[run-everything] {name}: {" ".join(command)}',flush=True); results.append(run(name,command))
-    failures=[r for r in results if r['exit_code']!=0]; payload={'schema':'dreamco.run_everything_now_result.v15','generated_at':datetime.now(timezone.utc).isoformat(),'mode':args.mode,'step_count':len(results),'passed':sum(r['exit_code']==0 for r in results),'failed':len(failures),'results':results,'first_failure':failures[0] if failures else None,'truth_boundary':CFG['truth_rule']}
-    OUT.parent.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n'); lines=['# Run Everything Now','',f"- Mode: **{args.mode}**",f"- Passed: **{payload['passed']}/{len(results)}**",f"- Failed: **{len(failures)}**",'','| Step | Seconds | Result |','| --- | ---: | --- |']
-    for r in results: lines.append(f"| {r['name']} | {r['duration_seconds']} | {'PASS' if r['exit_code']==0 else 'FAIL'} |")
-    if failures: lines += ['','## First root-cause candidate','',f"`{failures[0]['name']}`",'','```text',(failures[0]['stderr_tail'] or failures[0]['stdout_tail'])[-3000:],'```']
-    REPORT.write_text('\n'.join(lines)+'\n'); print(json.dumps({'ok':not failures,'passed':payload['passed'],'failed':len(failures),'first_failure':failures[0]['name'] if failures else None,'output':str(OUT.relative_to(ROOT))},indent=2)); return 0 if not failures else 1
+    write_snapshot(args.mode, len(steps), results, True)
+    for index,(name,command) in enumerate(steps, start=1):
+        print(f'\n[run-everything] {name}: {" ".join(command)}',flush=True)
+        results.append(run(name,command))
+        write_snapshot(args.mode, len(steps), results, index < len(steps))
+    failures=[r for r in results if r['exit_code']!=0]; payload=write_snapshot(args.mode, len(steps), results, False)
+    print(json.dumps({'ok':not failures,'passed':payload['passed'],'failed':len(failures),'first_failure':failures[0]['name'] if failures else None,'output':str(OUT.relative_to(ROOT))},indent=2)); return 0 if not failures else 1
 if __name__=='__main__': raise SystemExit(main())
