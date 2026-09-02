@@ -26,10 +26,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout trusted base
+      - name: Checkout trusted base (PR)
+        if: ${{ github.event_name == 'pull_request' }}
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 1
+      - name: Checkout trusted base (non-PR)
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
           fetch-depth: 1
       - name: Build review report
         env:
