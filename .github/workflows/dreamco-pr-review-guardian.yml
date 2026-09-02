@@ -1,6 +1,10 @@
 name: DreamCo PR Review Guardian
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dreamco-pr-review-guardian.yml'
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
   schedule:
@@ -60,7 +64,7 @@ PY
               echo "- Duplicate/obsolete: preserve historical evidence and avoid importing duplicate code."
               echo "- Unknown: keep blocked until evidence is available."
             else
-              echo "Scheduled guardian run: inspect repository PR backlog through the GitHub UI and configured review workflows."
+              echo "Main-branch guardian run: validate that the PR review workflow itself is executable and available for future PRs."
             fi
           } > artifacts/pr-review/report.md
       - name: Upload review report
