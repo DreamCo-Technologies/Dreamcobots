@@ -23,14 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout trusted base (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.base.sha }}
-          fetch-depth: 1
-      - name: Checkout trusted base (non-PR)
-        if: ${{ github.event_name != 'pull_request' }}
+      - name: Checkout trusted ref
         uses: actions/checkout@v7
         with:
           ref: ${{ github.sha }}
@@ -38,12 +31,26 @@ jobs:
       - name: Build review report
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          EVENT_NAME: ${{ github.event_name }}
           REPOSITORY: ${{ github.repository }}
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p artifacts/pr-review
+          PR_NUMBER=""
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            PR_NUMBER="$(python - <<'PY'
+import json, os
+from pathlib import Path
+payload_path = os.environ.get("GITHUB_EVENT_PATH", "")
+number = ""
+if payload_path:
+    payload = json.loads(Path(payload_path).read_text())
+    number = payload.get("pull_request", {}).get("number", "")
+print(number or "")
+PY
+)"
+          fi
           {
             echo "# DreamCo PR Review Guardian"
             echo
