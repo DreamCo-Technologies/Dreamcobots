@@ -39,17 +39,7 @@ jobs:
           mkdir -p artifacts/pr-review
           PR_NUMBER=""
           if [[ "$EVENT_NAME" == "pull_request" ]]; then
-            PR_NUMBER="$(python - <<'PY'
-            import json, os
-            from pathlib import Path
-            payload_path = os.environ.get("GITHUB_EVENT_PATH", "")
-            number = ""
-            if payload_path:
-                payload = json.loads(Path(payload_path).read_text())
-                number = payload.get("pull_request", {}).get("number", "")
-            print(number or "")
-           PY
-           )"
+            PR_NUMBER="$(python -c "import json, os; from pathlib import Path; p=os.environ.get('GITHUB_EVENT_PATH',''); d=json.loads(Path(p).read_text()) if p else {}; print((d.get('pull_request') or {}).get('number',''))")"
           fi
           {
             echo "# DreamCo PR Review Guardian"
@@ -60,13 +50,7 @@ jobs:
             echo
             if [[ -n "${PR_NUMBER:-}" ]]; then
               gh pr view "$PR_NUMBER" --repo "$REPOSITORY" --json number,title,state,isDraft,mergeable,mergeStateStatus,headRefName,baseRefName,changedFiles,additions,deletions,author > artifacts/pr-review/pr.json
-              python - <<'PY'
-              import json
-              from pathlib import Path
-              p=json.loads(Path('artifacts/pr-review/pr.json').read_text())
-              for k in ('number','title','state','isDraft','mergeable','mergeStateStatus','headRefName','baseRefName','changedFiles','additions','deletions'):
-                  print(f'- **{k}**: `{p.get(k)}`')
-             PY
+              python -c "import json; from pathlib import Path; p=json.loads(Path('artifacts/pr-review/pr.json').read_text()); [print(f'- **{k}**: `{p.get(k)}`') for k in ('number','title','state','isDraft','mergeable','mergeStateStatus','headRefName','baseRefName','changedFiles','additions','deletions')]"
               echo
               echo "## Decision guidance"
               echo
