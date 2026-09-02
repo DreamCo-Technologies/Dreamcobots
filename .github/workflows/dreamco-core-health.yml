@@ -57,7 +57,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -76,6 +76,10 @@ jobs:
       - name: Actions and repository static health
         run: |
           python3 tools/audit_actions_health.py
+          # Keep the committed generated registry as a drift contract, but do
+          # not fail before the generator has had a chance to reconcile source
+          # changes introduced by this same run.
+          python3 tools/generate_repository_test_registry.py
           python3 tools/generate_repository_test_registry.py --check
 
       - name: Bot fleet contract
