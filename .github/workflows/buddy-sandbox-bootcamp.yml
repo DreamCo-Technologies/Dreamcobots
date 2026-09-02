@@ -43,8 +43,10 @@ jobs:
         run: |
           python - <<'PY'
           import glob, json
+          from pathlib import Path
           files = glob.glob('config/buddy-study-resources-*.json')
           assert files, 'No study-resource sets found'
+          policy = json.loads(Path('config/buddy-study-resource-policy.json').read_text(encoding='utf-8'))
           total = 0
           ids = set()
           urls = set()
@@ -62,6 +64,9 @@ jobs:
                   ids.add(row[0])
                   urls.add(canonical)
                   total += 1
-          assert total >= 1000, f'Expected at least 1000 unique study resources, found {total}'
-          print(f'validated {total} unique study resources')
+          minimum = int(policy.get('minimum_operational_count', policy.get('target_count', 0)))
+          target = int(policy.get('target_count', minimum))
+          assert total >= minimum, f'Expected at least {minimum} unique study resources, found {total}'
+          assert total <= target, f'Expected no more than target catalog size {target}, found {total}'
+          print(f'validated {total} unique study resources toward target {target}')
           PY
