@@ -35,6 +35,7 @@ type BotProfile = {
 };
 
 type DivisionFile = {
+  schema?: string;
   division: string;
   total: number;
   bots: BotProfile[];
@@ -460,7 +461,8 @@ export function buildFleetCatalog() {
     .map((name) => ({
       name,
       content: JSON.parse(readFileSync(join(APP_BOTS_DIR, name), "utf8")) as DivisionFile,
-    }));
+    }))
+    .filter(({ content }) => content.schema !== "dreamco.masterbot_profiles.catalog_excluded.v1");
 
   const seen = new Set<string>();
   const bots = divisionFiles.flatMap(({ name, content }) => {

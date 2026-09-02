@@ -14,7 +14,12 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 SKIPPED_ROOTS = {".git", ".vercel", "__pycache__", "dist", "logs", "node_modules", "reports"}
 DEPENDENCY_SECTIONS = ("dependencies", "devDependencies", "optionalDependencies")
-PYTHON_REQUIREMENT_FILES = ("requirements.txt", "requirements-dev.txt", "requirements-tools.txt")
+PYTHON_REQUIREMENT_FILES = (
+    "requirements.txt",
+    "requirements-dev.txt",
+    "requirements-tools.txt",
+    "requirements-buddy-learning.txt",
+)
 
 
 def read_object(path: Path) -> dict[str, Any]:
@@ -35,6 +40,7 @@ def python_files() -> list[Path]:
 def local_python_roots() -> set[str]:
     roots = {path.stem for path in ROOT.glob("*.py")}
     roots.update(path.name for path in ROOT.iterdir() if path.is_dir() and not path.name.startswith("."))
+    roots.update(path.stem for path in python_files())
     return roots
 
 
@@ -48,11 +54,38 @@ def scan_python_imports(files: list[Path]) -> tuple[set[str], list[str]]:
         except SyntaxError as error:
             syntax_errors.append(f"{relative}:{error.lineno}: {error.msg}")
             continue
+        optional_imports: set[str] = set()
         for node in ast.walk(tree):
+            if isinstance(node, ast.Try):
+                handles_optional_import = any(
+                    (
+                        handler.type is None
+                        or (
+                            isinstance(handler.type, ast.Name)
+                            and handler.type.id in {"ImportError", "ModuleNotFoundError"}
+                        )
+                        or (
+                            isinstance(handler.type, ast.Tuple)
+                            and any(
+                                isinstance(element, ast.Name)
+                                and element.id in {"ImportError", "ModuleNotFoundError"}
+                                for element in handler.type.elts
+                            )
+                        )
+                    )
+                    for handler in node.handlers
+                )
+                if handles_optional_import:
+                    for body_node in ast.walk(node):
+                        if isinstance(body_node, ast.Import):
+                            optional_imports.update(alias.name.split(".")[0] for alias in body_node.names)
+                        elif isinstance(body_node, ast.ImportFrom) and body_node.level == 0 and body_node.module:
+                            optional_imports.add(body_node.module.split(".")[0])
             if isinstance(node, ast.Import):
                 imports.update(alias.name.split(".")[0] for alias in node.names)
             elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
                 imports.add(node.module.split(".")[0])
+        imports.difference_update(optional_imports)
     return imports, syntax_errors
 
 

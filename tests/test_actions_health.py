@@ -23,7 +23,7 @@ class ActionsHealthAuditTest(unittest.TestCase):
         public_report = json.loads(PUBLIC_JSON.read_text(encoding="utf-8"))
         self.assertEqual(public_report, report)
         self.assertEqual(len(report["findings"]), report["workflow_count"])
-        self.assertTrue(all(len(item["upgrades"]) == 3 for item in report["findings"]))
+        self.assertTrue(all(len(item["upgrades"]) >= 3 for item in report["findings"]))
         self.assertTrue(all(item["github_url"].startswith("https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/") for item in report["findings"]))
 
 

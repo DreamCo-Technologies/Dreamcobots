@@ -1,10 +1,7 @@
 name: DreamCo PR Review Guardian
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/dreamco-pr-review-guardian.yml'
+  push: {}
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
   schedule:
@@ -17,7 +14,7 @@ permissions:
   issues: read
 
 concurrency:
-  group: dreamco-pr-review-${{ github.event.pull_request.number || github.ref }}
+  group: dreamco-pr-review-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -26,20 +23,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout trusted base
+      - name: Checkout trusted ref
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          ref: ${{ github.sha }}
           fetch-depth: 1
       - name: Build review report
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          EVENT_NAME: ${{ github.event_name }}
           REPOSITORY: ${{ github.repository }}
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p artifacts/pr-review
+          PR_NUMBER=""
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            PR_NUMBER="$(python -c "import json, os; from pathlib import Path; p=os.environ.get('GITHUB_EVENT_PATH',''); d=json.loads(Path(p).read_text()) if p else {}; print((d.get('pull_request') or {}).get('number',''))")"
+          fi
           {
             echo "# DreamCo PR Review Guardian"
             echo
@@ -49,13 +50,7 @@ jobs:
             echo
             if [[ -n "${PR_NUMBER:-}" ]]; then
               gh pr view "$PR_NUMBER" --repo "$REPOSITORY" --json number,title,state,isDraft,mergeable,mergeStateStatus,headRefName,baseRefName,changedFiles,additions,deletions,author > artifacts/pr-review/pr.json
-              python - <<'PY'
-import json
-from pathlib import Path
-p=json.loads(Path('artifacts/pr-review/pr.json').read_text())
-for k in ('number','title','state','isDraft','mergeable','mergeStateStatus','headRefName','baseRefName','changedFiles','additions','deletions'):
-    print(f'- **{k}**: `{p.get(k)}`')
-PY
+              python -c "import json; from pathlib import Path; p=json.loads(Path('artifacts/pr-review/pr.json').read_text()); [print(f'- **{k}**: `{p.get(k)}`') for k in ('number','title','state','isDraft','mergeable','mergeStateStatus','headRefName','baseRefName','changedFiles','additions','deletions')]"
               echo
               echo "## Decision guidance"
               echo
