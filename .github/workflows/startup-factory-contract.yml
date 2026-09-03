@@ -1,0 +1,27 @@
+name: Buddy Startup Factory Contract
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'config/startup_factory/**'
+      - 'tools/validate_startup_factory.py'
+      - 'docs/STARTUP_FACTORY.md'
+      - '.github/workflows/startup-factory-contract.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate startup factory
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Validate contract
+        run: python3 tools/validate_startup_factory.py
