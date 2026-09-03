@@ -1,0 +1,113 @@
+name: DreamCo Actions Command Center
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "11 * * * *"
+  push:
+    branches: [main]
+    paths:
+      - "config/actions-control-prospectus.json"
+      - "tools/build_actions_prospectus.py"
+      - "tools/problem_registry.py"
+      - "website/data/actions-prospectus.json"
+      - "website/actions.html"
+      - ".github/workflows/actions-command-center.yml"
+  workflow_run:
+    workflows:
+      - Actions Health
+      - Actions Failure Sweep
+      - Actions Failure Watch
+      - DreamCo Repository System Watch
+      - Full System Certification
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: dreamco-actions-command-center-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  command-center:
+    name: Build evidence-backed Actions prospectus summary
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Validate prospectus contracts
+        run: |
+          python3 -m json.tool config/actions-control-prospectus.json >/dev/null
+          python3 -m json.tool config/actions-dashboard-contract.json >/dev/null
+          test -s website/data/actions-prospectus.json
+          python3 -m json.tool website/data/actions-prospectus.json >/dev/null
+
+      - name: Build Actions command-center summary
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          from datetime import datetime, timezone
+
+          prospectus = json.loads(Path("website/data/actions-prospectus.json").read_text())
+          controls = prospectus.get("controls", [])
+          workflows = prospectus.get("workflows", [])
+          health = Path("website/data/actions-health-report.json")
+          problems = Path("website/data/problem-registry.json")
+          live = Path("website/data/actions-live-health.json")
+
+          print("# DreamCo Actions Command Center")
+          print("")
+          print(f"**Evidence snapshot:** `{datetime.now(timezone.utc).isoformat()}`")
+          print("")
+          print("This run is the Actions-page command-center summary for the merged control-room architecture. It reports repository evidence; it does not claim mastery, guaranteed uptime, revenue, or bug-free software.")
+          print("")
+          print("## Prospectus")
+          print(f"- Documented controls: **{len(controls)}**")
+          print(f"- Workflows represented in the prospectus: **{len(workflows)}**")
+          print("")
+          print("| Control | Purpose | Progress | Planning horizon |")
+          print("|---|---|---|---|")
+          for control in controls:
+              print(f"| {control.get('name','')} | {control.get('purpose','')} | {control.get('progress','unknown')} | {control.get('planning_horizon','re-estimate from evidence')} |")
+
+          print("")
+          print("## Evidence links")
+          print("- [Actions control prospectus](https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/website/data/actions-prospectus.json)")
+          print("- [Actions dashboard](https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/website/actions.html)")
+          print("- [GitHub Actions](https://github.com/DreamCo-Technologies/Dreamcobots/actions)")
+          if health.exists(): print("- Actions health dataset: **present**")
+          else: print("- Actions health dataset: **not present in checkout; live refresh required**")
+          if live.exists(): print("- Live Actions health dataset: **present**")
+          else: print("- Live Actions health dataset: **not present in checkout; live refresh required**")
+          if problems.exists(): print("- Problem registry dataset: **present**")
+          else: print("- Problem registry dataset: **not present in checkout; live refresh required**")
+
+          print("")
+          print("## Operating rule")
+          print("**Observed → diagnose → smallest safe repair → targeted test → dependent regression → evidence.**")
+          print("Unknown, stale, blocked, and failed states remain visible and are never converted into success.")
+          PY
+
+      - name: Upload command-center evidence
+        uses: actions/upload-artifact@v6
+        with:
+          name: actions-command-center-${{ github.run_id }}
+          path: |
+            website/data/actions-prospectus.json
+            website/data/actions-health-report.json
+            website/data/actions-live-health.json
+            website/data/problem-registry.json
+          if-no-files-found: warn
+          retention-days: 14
