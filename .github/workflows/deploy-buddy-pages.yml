@@ -12,6 +12,9 @@ on:
       - "tools/build_buddy_public_site.py"
       - "tools/audit_actions_health.py"
       - "tools/audit_actions_live.py"
+      - "tools/build_actions_prospectus.py"
+      - "tools/problem_registry.py"
+      - "tools/auto_repair_policy.py"
       - "tools/build_manufacturer_marketplace_catalog.py"
       - "tools/check_deployment_cost_policy.py"
       - "tools/generate_buddy_model_router.py"
@@ -49,12 +52,16 @@ jobs:
           node-version: 22
       - name: Install dependencies
         run: npm ci
-      - name: Refresh Actions health data for Pages
+      - name: Refresh Actions health and prospectus data for Pages
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
+          mkdir -p config/generated reports website/data
           python3 tools/audit_actions_health.py
           python3 tools/audit_actions_live.py
+          python3 tools/problem_registry.py
+          python3 tools/auto_repair_policy.py config/generated/problem-registry.json
+          python3 tools/build_actions_prospectus.py
       - name: Run deployment preflight
         run: |
           python3 tools/check_deployment_cost_policy.py
@@ -74,6 +81,14 @@ jobs:
           test -s website/data/repository-master-map.json
           test -s website/data/actions-health-report.json
           test -s website/data/actions-live-health.json
+          test -s website/data/actions-prospectus.json
+          test -s website/data/problem-registry.json
+      - name: Check generated Actions data contracts
+        run: |
+          python3 -m json.tool website/data/actions-prospectus.json >/dev/null
+          python3 -m json.tool website/data/problem-registry.json >/dev/null
+          python3 -m json.tool website/data/actions-health-report.json >/dev/null
+          python3 -m json.tool website/data/actions-live-health.json >/dev/null
       - name: Check browser JavaScript syntax
         run: |
           node --check website/buddy.js
