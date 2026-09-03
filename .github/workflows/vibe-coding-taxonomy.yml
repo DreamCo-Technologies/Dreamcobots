@@ -1,0 +1,22 @@
+name: Buddy Vibe-Coding Taxonomy
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "config/vibe-coding/capability-taxonomy.json"
+      - "tools/validate_vibe_coding_taxonomy.py"
+      - ".github/workflows/vibe-coding-taxonomy.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate 50-category cross-combine contract
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate taxonomy
+        run: python3 tools/validate_vibe_coding_taxonomy.py
