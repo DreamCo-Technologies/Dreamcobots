@@ -2,6 +2,9 @@ name: Actions Failure Sweep
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/actions-failure-sweep.yml'
   schedule:
     - cron: "11 * * * *"
 
