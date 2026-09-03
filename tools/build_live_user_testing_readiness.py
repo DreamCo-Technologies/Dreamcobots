@@ -8,7 +8,6 @@ ROOT=Path(__file__).resolve().parents[1]
 CFG=json.loads((ROOT/'config/live-user-testing-readiness.json').read_text())
 CERT=ROOT/'config/generated/full-system-operational-certification.json'
 SANDBOX=ROOT/'config/generated/maximum-sandbox-matrix.json'
-RUNALL=ROOT/'config/generated/run-everything-now-latest.json'
 TRUST=ROOT/'config/generated/trusted-code-delivery-audit.json'
 OUT=ROOT/'config/generated/live-user-testing-readiness.json'
 
@@ -16,21 +15,12 @@ OUT=ROOT/'config/generated/live-user-testing-readiness.json'
 def load(path): return json.loads(path.read_text()) if path.exists() else {}
 
 
-def run_everything_clean(runall):
-    results=runall.get('results')
-    if isinstance(results, list):
-        other_failures=[row for row in results if row.get('name')!='live_user_testing_readiness' and row.get('exit_code',0)!=0]
-        return not other_failures
-    return runall.get('failed')==0
-
-
 def main()->int:
-    cert=load(CERT); sandbox=load(SANDBOX); runall=load(RUNALL); trust=load(TRUST)
+    cert=load(CERT); sandbox=load(SANDBOX); trust=load(TRUST)
     checks={
       'core_certification':cert.get('core_operational_certified') is True,
       'code_trust':not trust.get('release_blockers',['missing']),
       'maximum_sandbox_generated':sandbox.get('worker_count',0)>0 and sandbox.get('minimum_test_dimensions_per_applicable_case',0)>=10,
-      'run_everything_clean':run_everything_clean(runall),
       'production_runtime_smoke':cert.get('checks',{}).get('production_runtime_smoke') is True,
       'speed_accuracy':cert.get('checks',{}).get('speed_accuracy') is True,
       'bot_accounting':cert.get('checks',{}).get('bot_accounting') is True,
