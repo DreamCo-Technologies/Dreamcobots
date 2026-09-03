@@ -26,7 +26,24 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p sweep
-          gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs?per_page=100" --jq '.workflow_runs[]' > sweep/run-lines.json
+          created_range="$(date -u -d '24 hours ago' '+%Y-%m-%d')..$(date -u '+%Y-%m-%d')"
+          success=0
+          for attempt in 1 2 3; do
+            : > sweep/run-lines.json
+            if gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs?per_page=100&created=$created_range" --jq '.workflow_runs[]' > sweep/run-lines.json; then
+              success=1
+              break
+            fi
+            echo "GitHub Actions API request failed on attempt $attempt/3; retrying with bounded backoff." >&2
+            case "$attempt" in
+              1) sleep 15 ;;
+              2) sleep 30 ;;
+            esac
+          done
+          if [ "$success" -ne 1 ]; then
+            echo "GitHub Actions API remained unavailable after 3 attempts; preserving failure state." >&2
+            exit 1
+          fi
           jq -s '.' sweep/run-lines.json > sweep/runs.json
           python3 - <<'PY'
           import json
