@@ -1,64 +1,44 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "name": "Buddy Vibe-to-Company Capability Contract",
-  "purpose": "Machine-readable contract for Buddy to turn a natural-language idea into a buildable, testable, deployable, and operable project across the complete DreamCo vibe-coding taxonomy.",
+  "purpose": "Machine-readable contract for Buddy to turn a natural-language idea, image, prototype, or existing business into a buildable, testable, deployable, operable, and scalable project while preserving the DreamCo fleet.",
   "preservation": {
     "preserve_existing_bots": true,
     "preserve_existing_divisions": true,
     "preserve_existing_registries": true,
     "compose_before_replacing": true
   },
-  "pipeline": [
-    "intake",
-    "research",
-    "plan",
-    "design",
-    "generate",
-    "sandbox",
-    "test",
-    "verify",
-    "deploy",
-    "operate",
-    "learn",
-    "improve",
-    "scale",
-    "exit_or_reinvest"
-  ],
+  "pipeline": ["intake", "research", "plan", "design", "generate", "sandbox", "test", "verify", "deploy", "operate", "learn", "improve", "scale", "exit_or_reinvest"],
   "required_project_outputs": [
-    "problem_definition",
-    "customer_profiles",
-    "competitive_analysis",
-    "business_model",
-    "prd",
-    "architecture",
-    "ux_plan",
-    "implementation_plan",
-    "source_code",
-    "tests",
-    "sandbox_demo",
-    "security_review",
-    "compliance_checklist",
-    "deployment_plan",
-    "documentation",
-    "pricing",
-    "go_to_market_plan",
-    "sales_system",
-    "customer_support_system",
-    "kpi_plan",
-    "funding_readiness",
-    "operations_plan",
-    "expansion_plan",
-    "exit_or_reinvestment_plan",
-    "evidence_record"
+    "problem_definition", "customer_profiles", "competitive_analysis", "business_model", "prd", "architecture", "ux_plan", "implementation_plan", "source_code", "tests", "sandbox_demo", "security_review", "compliance_checklist", "deployment_plan", "documentation", "pricing", "go_to_market_plan", "sales_system", "customer_support_system", "kpi_plan", "funding_readiness", "operations_plan", "distribution_plan", "supplier_strategy", "franchise_relationship_model", "manufacturing_plan", "construction_plan", "city_development_plan", "state_development_plan", "country_development_plan", "intellectual_property_plan", "patent_workflow", "copyright_workflow", "camera_research_report", "expansion_plan", "exit_or_reinvestment_plan", "evidence_record"
   ],
   "capability_families": {
     "software": ["web", "mobile", "desktop", "api", "database", "cloud", "devops", "security"],
-    "ai": ["llm", "agents", "multi_agent", "rag", "memory", "tool_calling", "evaluation", "model_routing"],
+    "ai": ["llm", "agents", "multi_agent", "rag", "memory", "tool_calling", "evaluation", "model_routing", "computer_vision"],
     "voice_media": ["tts", "stt", "voice_agents", "audio", "video", "images", "avatars", "multimodal"],
-    "business": ["research", "strategy", "marketing", "sales", "crm", "support", "analytics", "finance", "procurement", "hiring", "partnerships"],
-    "physical_world": ["location_search", "facilities", "hardware", "electronics", "robotics", "manufacturing", "automotive", "supply_chain", "inventory"],
-    "creative": ["games", "film", "music", "creator", "publishing", "education"],
-    "growth": ["funding", "loans", "grants", "investors", "new_markets", "new_locations", "franchise", "acquisition", "internationalization"]
+    "business": ["research", "strategy", "marketing", "advertising", "sales", "crm", "support", "analytics", "finance", "procurement", "hiring", "partnerships", "supplier_discovery", "distribution", "franchising", "manufacturing", "construction"],
+    "physical_world": ["location_search", "facilities", "hardware", "electronics", "robotics", "manufacturing", "construction", "automotive", "supply_chain", "inventory"],
+    "creative": ["games", "film", "music", "creator", "publishing", "education", "content_creation"],
+    "growth": ["funding", "loans", "grants", "investors", "new_markets", "new_locations", "franchise", "acquisition", "internationalization", "city_development", "state_development", "country_development"],
+    "intellectual_property": ["prior_art_research", "patent_landscape", "invention_documentation", "patent_application_workflow", "copyright_registration_workflow", "trademark_workflow", "licensing", "ownership_records"]
+  },
+  "supplier_system": {
+    "actions": ["discover_suppliers", "compare_quotes", "compare_moq", "compare_shipping", "compare_lead_time", "compare_quality", "verify_business_identity", "request_samples", "calculate_landed_cost", "negotiate_with_approval", "monitor_supplier_performance", "maintain_backup_suppliers"],
+    "optimization": ["direct_manufacturer_first", "local_vs_global_sourcing", "volume_breakpoints", "landed_cost", "quality_adjusted_price", "supplier_risk", "payment_terms"],
+    "guardrails": ["fresh_data_required", "source_citations", "fraud_checks", "human_approval_for_purchase_commitments"]
+  },
+  "distribution_system": {
+    "channels": ["direct_to_consumer", "wholesale", "retail", "marketplaces", "distributors", "dealers", "affiliate", "referral", "franchise", "licensing", "subscription", "digital_delivery", "local_delivery", "b2b_sales", "government_procurement"],
+    "actions": ["find_channels", "compare_margin", "compare_customer_acquisition_cost", "forecast_volume", "design_channel_strategy", "recruit_partners", "track_channel_performance", "rebalance_mix"]
+  },
+  "franchise_relationship_system": {
+    "actions": ["franchise_model_design", "territory_analysis", "unit_economics", "fee_model", "royalty_model", "support_model", "training_model", "supplier_model", "brand_standards", "franchisee_lead_generation", "relationship_scorecard"],
+    "guardrails": ["legal_review_required", "jurisdiction_specific_disclosures", "no_guaranteed_returns"]
+  },
+  "development_planning": {
+    "levels": ["project", "site", "neighborhood", "city", "region", "state_or_province", "country", "international"],
+    "domains": ["housing", "commercial", "industrial", "transportation", "utilities", "energy", "water", "waste", "communications", "education", "healthcare", "public_safety", "parks", "workforce", "small_business", "manufacturing", "logistics", "technology"],
+    "outputs": ["needs_assessment", "site_options", "stakeholder_map", "cost_model", "phasing_plan", "economic_impact_model", "risk_register", "funding_map", "regulatory_questions", "implementation_roadmap"]
   },
   "employee_system": {
     "actions": ["define_role", "source_candidates", "screen", "rank", "schedule", "interview_support", "reference_check_workflow", "onboard", "measure"],
@@ -73,6 +53,28 @@
     "modes": ["dreamco_internal", "user_business", "multi_tenant"],
     "guardrails": ["consent_and_contact_rules", "no_spam", "human_handoff", "approved_claims_only", "audit_logs"]
   },
+  "camera_research": {
+    "actions": ["capture_or_upload", "detect_objects", "extract_text", "identify_possible_product_or_part", "search_web_or_image_index", "find_similar_items", "find_suppliers", "find_manuals", "find_prices", "cite_sources", "ask_user_to_confirm_identity", "add_confirmed_examples_to_training_dataset"],
+    "google_lens_compatible_flow": true,
+    "privacy": ["explicit_camera_permission", "user_initiated_capture", "minimize_retention", "do_not_train_on_private_images_without_consent"]
+  },
+  "payments_and_global_transactions": {
+    "architecture": "provider_abstraction_with_compliance_and_routing",
+    "providers": ["Revolut_Business", "bank_transfer", "card_processor", "payment_gateway", "approved_regulated_providers"],
+    "actions": ["accept_payment", "send_payment", "supplier_payment", "payout", "invoice", "refund", "currency_conversion", "fee_comparison", "transaction_status", "reconciliation"],
+    "worldwide_rule": "maximize lawful country_and_currency_coverage; availability, sanctions, licensing, KYC/AML, transaction limits, provider terms, and local regulation must be checked at transaction time; never claim universal coverage",
+    "human_review": ["high_risk_transactions", "new_beneficiary", "unusual_transaction", "regulated_financial_decision"]
+  },
+  "autonomous_cash_system": {
+    "audiences": ["low_income_users", "home_businesses", "content_creators", "freelancers", "startups", "small_businesses", "nonprofits", "established_businesses", "enterprises"],
+    "actions": ["discover_skill_or_asset", "identify_market_demand", "find_low_cost_supply", "create_offer", "build_product_or_service", "create_sales_assets", "create_distribution", "find_customers", "track_revenue", "reduce_costs", "reinvest_with_user_approval"],
+    "principle": "help users create legitimate income opportunities and reduce avoidable costs; never promise guaranteed income"
+  },
+  "middleman_reduction": {
+    "goal": "remove unnecessary intermediaries while preserving required legal, safety, financial, logistics, professional, and regulatory functions",
+    "actions": ["direct_supplier_search", "direct_customer_acquisition", "direct_distribution_comparison", "automated_document_preparation", "self_service_workflows", "fee_comparison", "duplicate_work_detection", "workflow_automation"],
+    "guardrails": ["do_not_bypass_required_regulation", "do_not_impersonate_professionals", "show_total_cost_and_risk", "human_review_when_required"]
+  },
   "funding_and_loan_guidance": {
     "mode": "educational_decision_support",
     "compare": ["eligibility", "documentation", "apr_or_interest", "fees", "term", "estimated_payment", "collateral", "personal_guarantee", "prepayment", "default_risk"],
@@ -81,18 +83,7 @@
     "fresh_data_required": true
   },
   "evidence_lifecycle": ["IDEA", "GENERATED", "EXECUTED", "TESTED", "VERIFIED", "DEPLOYED", "REAL_WORLD_VALIDATED"],
-  "quality_gate": {
-    "require_tests": true,
-    "require_evidence": true,
-    "require_rollback_path": true,
-    "require_security_review": true,
-    "require_human_approval_for_material_external_actions": true
-  },
-  "competitive_benchmark_targets": [
-    "ElevenLabs_voice_and_agent_capabilities",
-    "Flux_voice_multilocation_crm_workflows",
-    "Flux_AI_hardware_engineering",
-    "FluxHQ_durable_agent_workflows",
-    "multi_agent_business_workspaces"
-  ]
+  "quality_gate": {"require_tests": true, "require_evidence": true, "require_rollback_path": true, "require_security_review": true, "require_human_approval_for_material_external_actions": true},
+  "competitive_benchmark_targets": ["ElevenLabs_voice_and_agent_capabilities", "Flux_voice_multilocation_crm_workflows", "Flux_AI_hardware_engineering", "FluxHQ_durable_agent_workflows", "multi_agent_business_workspaces"],
+  "operating_rule": "For every user idea, Buddy should identify the cheapest credible path, fastest credible path, highest-quality path, required human approvals, evidence needed, and next best action before execution."
 }
