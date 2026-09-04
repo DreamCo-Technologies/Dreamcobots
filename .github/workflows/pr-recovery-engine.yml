@@ -1,0 +1,129 @@
+name: PR Recovery Engine
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_prs:
+        description: Maximum open PRs to inspect
+        required: false
+        default: "1000"
+        type: string
+      create_replacements:
+        description: Create replacement PRs for cleanly replayable changes
+        required: false
+        default: true
+        type: boolean
+  schedule:
+    - cron: "17 3,15 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: dreamco-pr-recovery
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Build evidence queue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/pr_recovery_engine.py --repo "$GITHUB_REPOSITORY" --limit "${{ inputs.max_prs || '1000' }}"
+
+      - name: Create or refresh replacement PRs
+        if: ${{ inputs.create_replacements != false }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          queue = json.loads(Path("pr-recovery-queue.json").read_text())
+          report = []
+          Path("recovery-output").mkdir(exist_ok=True)
+
+          def run(cmd, *, input_text=None, check=True):
+              return subprocess.run(cmd, input=input_text, text=True, capture_output=True, check=check)
+
+          for pr in queue.get("candidates", []):
+              number = pr["number"]
+              if pr["status"] != "replayable":
+                  report.append({"pr": number, "status": pr["status"], "reason": pr.get("details", ""), "conflict_check": pr.get("conflict_check")})
+                  continue
+
+              source = pr["source_repo"]
+              head = pr["head_sha"]
+              branch = f"recovery/pr-{number}"
+              # Rebuild the recovery branch from the newest main on every run.
+              run(["git", "fetch", "--no-tags", "origin", "main"])
+              run(["git", "checkout", "-B", branch, "origin/main"])
+              source_fetch = run(["git", "fetch", "--no-tags", f"https://github.com/{source}.git", head], check=False)
+              if source_fetch.returncode != 0:
+                  report.append({"pr": number, "status": "blocked", "reason": "source head unavailable during replay", "source_repo": source, "head_sha": head})
+                  continue
+
+              patch = run(["git", "diff", "--binary", "origin/main..." + head]).stdout
+              if not patch.strip():
+                  report.append({"pr": number, "status": "already_present", "reason": "source diff is empty against current main"})
+                  continue
+
+              applied = run(["git", "apply", "--3way"], input_text=patch, check=False)
+              if applied.returncode != 0:
+                  run(["git", "reset", "--hard", "origin/main"], check=False)
+                  report.append({"pr": number, "status": "blocked_conflict", "reason": "full source diff did not apply cleanly to current main", "source_repo": source, "head_sha": head, "details": (applied.stderr or applied.stdout)[-4000:]})
+                  continue
+
+              run(["git", "config", "user.name", "DreamCo PR Recovery"])
+              run(["git", "config", "user.email", "actions@dreamco.invalid"])
+              run(["git", "add", "-A"])
+              commit = run(["git", "commit", "-m", f"Recover changes from PR #{number}"], check=False)
+              if commit.returncode != 0:
+                  report.append({"pr": number, "status": "already_present", "reason": "replayed diff produced no working-tree changes"})
+                  continue
+
+              run(["git", "push", "--force-with-lease", "origin", f"HEAD:{branch}"])
+              existing = json.loads(run(["gh", "pr", "list", "--repo", queue["repository"], "--head", branch, "--state", "open", "--json", "number,url"]).stdout or "[]")
+              if existing:
+                  replacement = existing[0]["number"]
+              else:
+                  body = (
+                      f"Automated recovery of PR #{number}.\n\n"
+                      f"Source: `{source}@{head}`\n"
+                      f"Original base: `{pr.get('base_branch')}` (`{pr.get('base_sha')}`)\n"
+                      f"Recovery base: `main`\n\n"
+                      "The complete net diff was compared with current main and applied cleanly. "
+                      "Conflicting changes are never silently discarded. Normal CI, review, security, "
+                      "and deployment gates remain required before merge."
+                  )
+                  created = run([
+                      "gh", "pr", "create", "--repo", queue["repository"], "--base", "main", "--head", branch,
+                      "--title", f"Recovery: PR #{number} — {pr['title']}", "--body", body
+                  ])
+                  replacement = created.stdout.strip()
+              report.append({"pr": number, "status": "replacement_pr", "replacement": replacement, "branch": branch})
+
+          Path("recovery-output/report.json").write_text(json.dumps(report, indent=2) + "\n")
+          print(json.dumps({"scanned": queue["summary"]["open_prs_scanned"], "candidates": queue["summary"]["candidates"], "results": len(report)}))
+          PY
+
+      - name: Publish recovery evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-pr-recovery-evidence
+          path: |
+            pr-recovery-queue.json
+            recovery-output/report.json
