@@ -1,0 +1,91 @@
+name: PR Recovery Engine v2
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_prs:
+        description: Maximum number of open PRs to inspect
+        required: false
+        default: "100"
+      create_replacements:
+        description: Create replacement PRs for cleanly replayable changes
+        required: false
+        type: boolean
+        default: true
+  schedule:
+    - cron: "41 */6 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: pr-recovery-engine-v2
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Inventory candidates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/pr_recovery.py --repo "$GITHUB_REPOSITORY" --limit "${{ inputs.max_prs || '100' }}"
+
+      - name: Replay clean candidates and create replacement PRs
+        if: ${{ inputs.create_replacements != false }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+
+          queue = json.loads(Path('pr-recovery-queue.json').read_text())
+          report = []
+          for pr in queue.get('candidates', []):
+              number, title, head_sha = pr['number'], pr['title'], pr['head_sha']
+              source_repo = pr.get('source_repo') or queue['repository']
+              if not head_sha:
+                  report.append({'pr': number, 'status': 'blocked', 'reason': 'missing head SHA'})
+                  continue
+              branch = f"recovery/pr-{number}"
+              subprocess.run(['git', 'checkout', '-B', branch, 'main'], check=True)
+              fetched = subprocess.run(['git', 'fetch', f'https://github.com/{source_repo}.git', head_sha], capture_output=True, text=True)
+              if fetched.returncode != 0:
+                  report.append({'pr': number, 'status': 'blocked', 'reason': 'source head unavailable', 'source_repo': source_repo, 'head_sha': head_sha})
+                  continue
+              replay = subprocess.run(['git', 'cherry-pick', '--no-edit', head_sha], capture_output=True, text=True)
+              if replay.returncode != 0:
+                  subprocess.run(['git', 'cherry-pick', '--abort'], check=False)
+                  report.append({'pr': number, 'status': 'blocked', 'reason': 'conflict on current main; no changes discarded', 'source_repo': source_repo, 'head_sha': head_sha, 'details': (replay.stderr or replay.stdout)[-4000:]})
+                  continue
+              subprocess.run(['git', 'push', '--force-with-lease', 'origin', branch], check=True)
+              existing = subprocess.run(['gh', 'pr', 'list', '--repo', queue['repository'], '--head', branch, '--state', 'open', '--json', 'number'], capture_output=True, text=True, check=True)
+              found = json.loads(existing.stdout or '[]')
+              if found:
+                  replacement = found[0]['number']
+              else:
+                  body = f"Recovered from PR #{number} ({source_repo}@{head_sha}) onto the current main. The head replayed cleanly; no conflict was resolved by discarding changes. Run required CI/review gates before merge."
+                  created = subprocess.run(['gh', 'pr', 'create', '--repo', queue['repository'], '--base', 'main', '--head', branch, '--title', f'Recovery: PR #{number} — {title}', '--body', body], capture_output=True, text=True, check=True)
+                  replacement = created.stdout.strip()
+              report.append({'pr': number, 'status': 'replacement_pr', 'replacement': replacement, 'branch': branch})
+          Path('recovery-output').mkdir(exist_ok=True)
+          Path('recovery-output/report.json').write_text(json.dumps(report, indent=2) + '\n')
+          PY
+
+      - name: Upload recovery evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-recovery-evidence-v2
+          path: |
+            pr-recovery-queue.json
+            recovery-output/report.json
