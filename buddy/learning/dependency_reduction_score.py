@@ -18,7 +18,7 @@ def reduction_score(previous: Cohort, current: Cohort) -> float:
 
 
 def is_improving(previous: Cohort, current: Cohort, tolerance: float = 0.0) -> bool:
-    """Require native quality to hold/improve and external reliance to fall."""
+    """Require native quality to improve while external reliance falls."""
     native_gain = current.native_pass_rate - previous.native_pass_rate
     external_drop = previous.external_assistance_rate - current.external_assistance_rate
-    return native_gain >= -tolerance and external_drop > tolerance
+    return native_gain > tolerance and external_drop > tolerance
