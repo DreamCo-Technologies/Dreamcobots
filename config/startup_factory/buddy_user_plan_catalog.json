@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0.0",
+  "name": "Buddy User Capability Plan Catalog",
+  "purpose": "Let each user or business assemble and pay for the Buddy capabilities they actually need, while preserving a low-cost path for individuals and small businesses.",
+  "principles": [
+    "pay_for_capabilities_used",
+    "transparent_pricing",
+    "no_locked_in_bundle_requirement",
+    "usage_and_cost_visibility",
+    "business_savings_should_be_measurable",
+    "free_or_low_cost_entry_when_possible",
+    "enterprise_custom_controls"
+  ],
+  "plan_model": {
+    "starter": {"audience": "individuals_creators_home_businesses", "billing": "subscription_plus_usage", "capabilities": ["research", "content", "basic_vibe_coding", "basic_sales", "basic_marketing", "camera_lookup"]},
+    "builder": {"audience": "founders_and_small_businesses", "billing": "subscription_plus_usage", "capabilities": ["full_vibe_coding", "business_plan", "supplier_discovery", "distribution", "crm", "sales_agents", "location_research", "funding_readiness", "ip_workflows"]},
+    "operator": {"audience": "growing_businesses", "billing": "subscription_plus_usage", "capabilities": ["multi_agent_operations", "employee_pipeline", "supplier_network", "distribution_management", "advertising", "customer_support", "analytics", "payments_orchestration", "internationalization"]},
+    "enterprise": {"audience": "large_businesses_and_organizations", "billing": "custom", "capabilities": ["custom_agent_fleets", "department_workspaces", "policy_controls", "audit", "private_integrations", "advanced_routing", "custom_models", "large_scale_operations"]},
+    "pay_as_you_go": {"audience": "any_user", "billing": "usage_based", "capabilities": ["individual_capability_purchases", "one_time_projects", "research_runs", "generation_runs", "agent_runs"]}
+  },
+  "capability_metering": ["agent_runs", "model_tokens", "voice_minutes", "media_generation", "web_research_runs", "computer_vision_runs", "workflow_executions", "storage", "third_party_api_costs"],
+  "cost_controls": ["monthly_budget", "per_capability_budget", "approval_threshold", "spend_alerts", "hard_stop", "provider_cost_comparison", "estimated_cost_before_run"],
+  "savings_dashboard": ["hours_saved", "fees_avoided", "supplier_cost_delta", "ad_spend_efficiency", "manual_steps_removed", "middlemen_removed", "revenue_attributed", "total_buddy_cost", "estimated_net_savings"],
+  "payment_architecture": {
+    "provider_abstraction": true,
+    "providers": ["approved_card_processor", "bank_transfer", "Revolut_Business", "approved_regulated_payment_provider"],
+    "rules": ["show_total_price_before_material_charge", "support_refunds_where_applicable", "never store raw payment credentials", "respect_provider_terms", "country_and_currency_availability_checked_at_transaction_time"]
+  },
+  "business_mode": {
+    "workspace": "one_business_one_control_plane",
+    "roles": ["owner", "admin", "finance", "operator", "sales", "marketing", "developer", "viewer"],
+    "controls": ["capability_entitlements", "budgets", "approvals", "audit_logs", "department_limits", "vendor_allowlist"]
+  },
+  "competitive_positioning": {
+    "revolut_target": ["business_finance_efficiency", "global_payment_routing", "spend_controls", "supplier_payments", "cashflow_visibility"],
+    "differentiation": ["Buddy_acts_before_the_payment", "find_supplier_and_channel_options", "build_the_business_system", "compare_total_cost", "coordinate_sales_and_operations", "payment_provider_neutrality", "capability_based_pricing"]
+  },
+  "safety": ["no_guaranteed_income", "regulated_financial_actions_require_appropriate_provider_and_review", "material_external_actions_require_user_approval", "privacy_minimization", "auditability"]
+}
