@@ -1,0 +1,129 @@
+name: PR Recovery Engine
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_prs:
+        description: Maximum number of open PRs to inspect
+        required: false
+        default: "100"
+      create_replacements:
+        description: Create replacement PRs for cleanly replayable changes
+        required: false
+        type: boolean
+        default: true
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: pr-recovery-engine
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Build recovery queue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 tools/pr_recovery.py --repo "$GITHUB_REPOSITORY" --limit "${{ inputs.max_prs || '100' }}"
+
+      - name: Replay safe candidates and open replacement PRs
+        if: ${{ inputs.create_replacements != false }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -u
+          git config user.name "DreamCo PR Recovery"
+          git config user.email "actions@users.noreply.github.com"
+          mkdir -p recovery-output
+          python3 - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+
+          queue = json.loads(Path('pr-recovery-queue.json').read_text())
+          candidates = queue.get('candidates', [])
+          report = []
+
+          for pr in candidates:
+              number = pr['number']
+              title = pr['title']
+              head_sha = pr['head_sha']
+              if not head_sha:
+                  report.append({"pr": number, "status": "blocked", "reason": "missing head SHA"})
+                  continue
+
+              branch = f"recovery/pr-{number}"
+              subprocess.run(['git', 'checkout', '-B', branch, 'main'], check=True)
+              subprocess.run(['git', 'fetch', 'origin', head_sha], check=False)
+              result = subprocess.run(['git', 'cherry-pick', '--no-edit', head_sha])
+
+              if result.returncode != 0:
+                  subprocess.run(['git', 'cherry-pick', '--abort'], check=False)
+                  report.append({
+                      "pr": number,
+                      "status": "blocked",
+                      "reason": "cherry-pick conflict; no changes discarded",
+                      "head_sha": head_sha,
+                  })
+                  continue
+
+              subprocess.run(['git', 'push', '--force-with-lease', 'origin', f'{branch}'], check=True)
+              body = (
+                  f"Automated recovery of PR #{number}.\n\n"
+                  f"Original head: `{head_sha}`\n"
+                  f"Original title: {title}\n\n"
+                  "This replacement targets the current `main` and was created only "
+                  "after the original head replayed cleanly. Existing files were not "
+                  "deleted to resolve conflicts. Please run the normal required CI "
+                  "and review gates before merging."
+              )
+              existing = subprocess.run(
+                  ['gh', 'pr', 'list', '--repo', queue['repository'], '--head', branch, '--state', 'open', '--json', 'number'],
+                  capture_output=True, text=True, check=True
+              )
+              existing_numbers = json.loads(existing.stdout or '[]')
+              if existing_numbers:
+                  replacement = existing_numbers[0]['number']
+              else:
+                  created = subprocess.run(
+                      ['gh', 'pr', 'create', '--repo', queue['repository'], '--base', 'main', '--head', branch,
+                       '--title', f'Recovery: PR #{number} — {title}', '--body', body],
+                      capture_output=True, text=True, check=True
+                  )
+                  replacement = created.stdout.strip()
+              report.append({"pr": number, "status": "replacement_pr", "replacement": replacement, "branch": branch})
+
+          Path('recovery-output/report.json').write_text(json.dumps(report, indent=2) + '\n')
+          PY
+
+      - name: Publish recovery evidence
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test -f recovery-output/report.json || echo '[]' > recovery-output/report.json
+          cat recovery-output/report.json
+          git checkout main
+          git status --short
+
+      - name: Upload recovery queue
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-recovery-evidence
+          path: |
+            pr-recovery-queue.json
+            recovery-output/report.json
