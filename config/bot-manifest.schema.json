@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.tech/schemas/bot.manifest.schema.json",
+  "title": "DreamCo Bot Manifest",
+  "description": "Common manifest contract for additive bot registration across DreamCo surfaces.",
+  "type": "object",
+  "required": ["manifestVersion", "name", "description", "division", "category", "entrypoint", "owner"],
+  "additionalProperties": false,
+  "properties": {
+    "manifestVersion": { "const": "1" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+    "displayName": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "description": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "division": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "tier": { "type": "string", "enum": ["FREE", "PRO", "ENTERPRISE"] },
+    "category": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "capabilities": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "entrypoint": {
+      "type": "object",
+      "required": ["runtime", "command"],
+      "additionalProperties": false,
+      "properties": {
+        "runtime": { "type": "string", "enum": ["python", "node", "bun", "deno", "container", "other"] },
+        "command": { "type": "string", "minLength": 1 },
+        "workdir": { "type": "string" }
+      }
+    },
+    "revenueModel": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string", "enum": ["subscription", "usage", "one_time", "commission", "internal"] },
+        "targetMrr": { "type": "number", "minimum": 0 },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+      }
+    },
+    "dependencies": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "owner": {
+      "type": "object",
+      "required": ["team"],
+      "additionalProperties": false,
+      "properties": {
+        "team": { "type": "string", "minLength": 1 },
+        "githubHandles": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "status": { "type": "string", "enum": ["draft", "active", "paused", "deprecated"] },
+    "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+  }
+}
