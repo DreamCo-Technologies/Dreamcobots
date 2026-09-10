@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 35390)
-Total output lines: 3219
-
 {
   "schema": "dreamco.master_directive_status.v1",
   "source": "docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md",
@@ -1185,7 +1182,487 @@ Total output lines: 3219
       "status": "catalogued",
       "evidence_refs": [],
       "acceptance_excerpt": "Every meaningful failure should become structured learning evidence. Capture: error class environment stack trace affected capability root cause attempted repairs successful repair regression test recurrence Buddy can use historical fixes to choose repair strategies. ",
-      "next_status": …5390 tokens truncated…xt_status": "implemented"
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-111",
+      "section": 111,
+      "title": "MODEL DRIFT",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Track performance changes over time. If provider/model behavior changes: detect benchmark degradation flag drift rerun critical benchmarks adjust routing log evidence ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-112",
+      "section": 112,
+      "title": "PROVIDER OUTAGES",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Design graceful failover. Provider call: primary \u2192 retry \u2192 fallback \u2192 local model when appropriate \u2192 queue/defer User should see degraded state. Do not silently produce lower-quality output without logging provider fallback. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-113",
+      "section": 113,
+      "title": "INTERNET / NETWORK RECOVERY",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Tasks should survive transient connection failures. Use: job persistence retry queues resume tokens/checkpoints idempotency backoff ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-114",
+      "section": 114,
+      "title": "DATABASE RECOVERY",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Implement: migrations backup strategy transactional writes data validation restore testing Customer systems require tenant-safe recovery. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-115",
+      "section": 115,
+      "title": "CUSTOMER SECURITY",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Customer instances require isolation. Do not let: Customer A read: Customer B. Enforce boundaries in: DB filesystem secrets vector store logs task engine provider connections ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-116",
+      "section": 116,
+      "title": "DREAMCO MARKETPLACE",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Long-term marketplace may allow: bots capability packs templates workflows plugins benchmark packs learning packs Each requires: publisher permissions version license security review dependencies compatibility ratings/evidence ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-117",
+      "section": 117,
+      "title": "VERSIONING",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Version: Buddy capability schemas bot manifests plugins API benchmarks datasets Maintain migration compatibility. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-118",
+      "section": 118,
+      "title": "FEATURE FLAGS",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Use feature flags for experimental systems. Do not deploy unfinished experimental capabilities globally. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-119",
+      "section": 119,
+      "title": "ACCESSIBILITY",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "GitHub Pages and apps should support: keyboard navigation semantic HTML labels screen readers contrast focus states Add automated checks where practical. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-120",
+      "section": 120,
+      "title": "PERFORMANCE",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Measure: page load API latency bot startup model response benchmark duration database queries memory CPU Optimize based on profiling. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-121",
+      "section": 121,
+      "title": "TEST PYRAMID",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Use: UNIT TESTS for logic. INTEGRATION TESTS for components. E2E for user workflows. BENCHMARKS for capability quality. PRODUCTION CHECKS for deployed health. Do not substitute one layer for another. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-122",
+      "section": 122,
+      "title": "GITHUB ACTIONS RESOURCE EFFICIENCY",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "The owner wants maximum parallelism but also lower cost. Use: matrix builds where justified concurrency groups cache dependencies skip irrelevant workflows based on paths shard benchmark jobs artifact reuse resumable queues Do not launch 500 simultaneous expensive API jobs blindl",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-123",
+      "section": 123,
+      "title": "24-HOUR CAPABILITY IMPROVEMENT",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "The owner's vision is for every hour of available compute to contribute intelligently. Prioritization: Priority = business impact \u00d7 capability gap \u00d7 benchmark importance \u00d7 probability of improvement \u00f7 compute cost \u00f7 risk Use a real scoring implementation. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-124",
+      "section": 124,
+      "title": "EVIDENCE FILES",
+      "priority": "critical",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Use evidence directories such as: `evidence/` or existing repository conventions. Evidence should be immutable where practical. Record: timestamp git SHA environment command benchmark version model/provider results ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-125",
+      "section": 125,
+      "title": "SOURCE PROVENANCE",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Every automatically learned fact/resource should know where it came from. Store: source URL retrieval date license author/publisher content hash allowed use ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-126",
+      "section": 126,
+      "title": "RAG",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Retrieval should be evidence-aware. Pipeline: QUERY \u2192 ontology \u2192 source selection \u2192 retrieve \u2192 rerank \u2192 verify source \u2192 context \u2192 model \u2192 citations \u2192 confidence ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-127",
+      "section": 127,
+      "title": "BUDDY MEMORY VS RAG",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Do not confuse them. Memory = persistent context learned/stored for authorized workspace use. RAG = retrieval of sources for a current task. Both require provenance. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-128",
+      "section": 128,
+      "title": "COMMAND LINE EXPERIENCE",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Potential commands: `buddy status` `buddy health` `buddy chat` `buddy task` `buddy build` `buddy test` `buddy benchmark` `buddy benchmark list` `buddy benchmark run` `buddy train` `buddy learn` `buddy bots` `buddy divisions` `buddy models` `buddy providers` `buddy repair` `buddy ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-129",
+      "section": 129,
+      "title": "`buddy doctor`",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "This should become a powerful local troubleshooting command. Check: Python Node package managers Git repository remote branch dependencies environment required variables provider configuration frontend build backend tests database GitHub Pages deployments Never display secret val",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-130",
+      "section": 130,
+      "title": "GIT SAFETY",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Before modifying repository: `git status` Confirm repository root. Confirm remote. Confirm branch. Protect uncommitted work. Never discard owner files. If dirty working tree contains unrelated edits: preserve them. Use stash only safely and intentionally. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-131",
+      "section": 131,
+      "title": "CODEX WORKFLOW ON THE OWNER'S MAC",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "When running through Codex with CLI access: 1. locate Dreamcobots 2. run\u00a0`pwd` 3. run\u00a0`git rev-parse --show-toplevel` 4. run\u00a0`git remote -v` 5. run\u00a0`git status` 6. verify remote targets\u00a0`DreamCo-Technologies/Dreamcobots` 7. fetch latest\u00a0`main` 8. inspect repository 9. create feat",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-132",
+      "section": 132,
+      "title": "GITHUB REMOTE SAFETY",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Expected primary remote should resemble: `https://github.com/DreamCo-Technologies/Dreamcobots.git` or equivalent SSH URL. Do not silently rewrite remote unless authorized. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-133",
+      "section": 133,
+      "title": "REPOSITORY COMPARISON",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "When comparing old DreamCo repos with primary: Generate capability diff. For each old feature: source repository source path capability exists in primary? better/worse? conflicts? dependencies? recommended action Actions: already integrated port refactor then port archive reject ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-134",
+      "section": 134,
+      "title": "WEBSITE DEPLOYMENT TARGET",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "GitHub Pages should work even if backend APIs are unavailable. Static sections should still display last generated state. Dynamic actions should show: \"Backend unavailable\" rather than breaking the site. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-135",
+      "section": 135,
+      "title": "OFFLINE BUDDY",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Offline mode should support where possible: local knowledge local models local repository local tasks local benchmarks local file analysis Cloud-only integrations should degrade gracefully. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-136",
+      "section": 136,
+      "title": "AI SAFETY AND HUMAN CONTROL",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Buddy should be highly capable but controllable. Always preserve: explicit permissions stop controls audit logs rollback limited scopes transparent actions Capabilities should expand faster than authority. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-137",
+      "section": 137,
+      "title": "LEGAL / COMPLIANCE",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "DreamCo spans regulated domains. Design capability-specific restrictions for: healthcare legal finance payments employment housing government children personal data Do not give automated agents unrestricted decision-making authority in regulated high-impact areas. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-138",
+      "section": 138,
+      "title": "SECURITY COUNCIL",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Security-critical code should trigger stronger review. Examples: authentication authorization command execution filesystem deployments customer provisioning payment code secrets public APIs Require: security review tests attack scenarios. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-139",
+      "section": 139,
+      "title": "CHAOS / RESILIENCE TESTING",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Eventually test: provider down DB unavailable network timeout invalid model output corrupted cache GitHub API failure deployment failure missing secret stale benchmark task interrupted Verify system recovers safely. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-140",
+      "section": 140,
+      "title": "MODEL RESPONSE VALIDATION",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "AI output must be treated as untrusted. For structured results: schema validate sanitize reject invalid output retry or repair log failure For generated code: static analysis tests sandbox ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-141",
+      "section": 141,
+      "title": "CODE GENERATION PIPELINE",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Prompt \u2192 requirements \u2192 architecture context \u2192 code \u2192 format \u2192 lint \u2192 type check \u2192 test \u2192 security \u2192 benchmark if capability-relevant \u2192 diff review \u2192 PR Never automatically deploy untested generated code. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-142",
+      "section": 142,
+      "title": "USER FILE LEARNING",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Users may provide files for Buddy. Use files for: retrieval analysis workspace learning benchmark training where explicitly authorized Track ownership and consent. Do not automatically add user data to global DreamCo training datasets. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-143",
+      "section": 143,
+      "title": "BUSINESS DATA",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Business customers may connect: CRM analytics documents databases websites payments Use the minimum permissions required. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-144",
+      "section": 144,
+      "title": "CUSTOMER UPDATE SYSTEM",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Base Buddy improvements should propagate safely. Potential: DreamCo Base \u2192 versioned releases \u2192 customer update channel \u2192 migration \u2192 tests \u2192 rollout Never overwrite: customer branding customer secrets customer data custom workflows ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-145",
+      "section": 145,
+      "title": "CUSTOMER REPOSITORY PROVISIONING",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "If using GitHub: create repo only after customer authorization. Prefer GitHub App / OAuth with minimum scopes. Do not use DreamCo owner's personal token for all customers. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-146",
+      "section": 146,
+      "title": "SECRET MANAGEMENT",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Support: environment variables GitHub Actions Secrets cloud secret managers local keychain Never log secret values. Never store\u00a0`.env`\u00a0containing real secrets in Git. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-147",
+      "section": 147,
+      "title": "AUDIT LOG",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Record sensitive actions: command user bot timestamp reason target permission result Allow review. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-148",
+      "section": 148,
+      "title": "OWNER DASHBOARD",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Owner should see: system state costs customers revenue tasks failures security deployments model usage benchmarks branch status Actions ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-149",
+      "section": 149,
+      "title": "CUSTOMER DASHBOARD",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Customer should see only their tenant: Buddy tasks capabilities usage integrations data automations billing settings Never expose DreamCo internal operational dashboards. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-150",
+      "section": 150,
+      "title": "BUDDY BIT / INSTANCE CONCEPT",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Historical idea: Each customer gets their own \"Buddy bit\" or Buddy instance. Maintain the concept through isolated tenant deployments while sharing reusable platform code. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-151",
+      "section": 151,
+      "title": "BUDDY MARKET POSITION",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Buddy's differentiation should come from: orchestration multi-model routing evidence benchmarking capability learning business workflows local/cloud hybrid execution customer ownership bot/division organization automated software building training ground transparent progress Not ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-152",
+      "section": 152,
+      "title": "AGENT REGISTRY",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Every agent/bot should register: ID name division parent capabilities tools models permissions entrypoint health check tests benchmarks status Validate registry in CI. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-153",
+      "section": 153,
+      "title": "DYNAMIC BOT FACTORY",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Earlier work reportedly moved toward dynamic generation/factories for many bots. Inspect current implementation. Use dynamic factories only where they reduce duplicate code while preserving unique bot identity. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-154",
+      "section": 154,
+      "title": "BASE BOT FRAMEWORK",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Potential historical file: `framework/base_bot.py` Verify current implementation. Base bot may provide: ID task handling logging permissions model selection tool usage health evidence memory tests Avoid God classes. Use composition. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-155",
+      "section": 155,
+      "title": "OBSERVABILITY FIELDS",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Every execution should ideally record: task ID bot ID division model provider tools start time end time latency tokens cost outcome error evidence ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-156",
+      "section": 156,
+      "title": "AI COST EXPLOSION PROTECTION",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Prior DreamCo risk reviews identified cost explosion as a major concern. Implement hard safeguards before high-volume autonomous learning. No unlimited API loops. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-157",
+      "section": 157,
+      "title": "MODEL DRIFT PROTECTION",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Previous risk reviews also identified model drift. Schedule periodic critical benchmark reruns. ",
+      "next_status": "implemented"
+    },
+    {
+      "id": "directive-158",
+      "section": 158,
+      "title": "INFINITE LOOP PROTECTION",
+      "priority": "normal",
+      "status": "catalogued",
+      "evidence_refs": [],
+      "acceptance_excerpt": "Prior risk reviews identified infinite loops. Hard execution ceilings are mandatory. ",
+      "next_status": "implemented"
     },
     {
       "id": "directive-159",

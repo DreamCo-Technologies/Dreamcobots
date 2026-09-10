@@ -27,7 +27,7 @@ test('benchmark tracker publishes the complete governed model progress catalog',
 
 test('benchmark tracker is linked and cached for GitHub Pages', () => {
   assert.match(nav, /benchmark-tracker\.html/);
-  assert.match(serviceWorker, /buddy-shell-v53/);
+  assert.match(serviceWorker, /buddy-shell-v54/);
   assert.match(serviceWorker, /\.\/benchmark-tracker\.html/);
   assert.match(serviceWorker, /\.\/data\/buddy-model-progress-center\.js\?v=2/);
 });
