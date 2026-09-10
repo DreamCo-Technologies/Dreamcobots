@@ -22,6 +22,8 @@ on:
       - "tools/generate_buddy_distribution_catalog.py"
       - "tools/generate_repository_test_registry.py"
       - "tools/generate_dreamco_repository_master_map.py"
+      - "tools/generate_master_directive_status.py"
+      - "docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md"
       - "config/**"
       - ".github/workflows/deploy-buddy-pages.yml"
 
@@ -71,6 +73,7 @@ jobs:
           python3 tools/generate_buddy_distribution_catalog.py --check
           python3 tools/generate_repository_test_registry.py
           python3 tools/generate_dreamco_repository_master_map.py
+          python3 tools/generate_master_directive_status.py --check
           python3 tools/generate_buddy_benchmark_index.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
           python3 tools/build_buddy_public_site.py --check
@@ -81,6 +84,7 @@ jobs:
           test -s website/data/repository-master-map.json
           test -s website/data/actions-health-report.json
           test -s website/data/actions-live-health.json
+          test -s website/data/master-directive-status.json
           test -s website/data/actions-prospectus.json
           test -s website/data/problem-registry.json
       - name: Check generated Actions data contracts
@@ -103,6 +107,7 @@ jobs:
           node --check website/page-actions.js
           node --check website/nav.js
           node --check website/service-worker.js
+          node --check website/master-build.js
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
       - name: Upload public website
