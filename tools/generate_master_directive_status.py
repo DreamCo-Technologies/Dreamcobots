@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import re
+import subprocess
 from collections import Counter
 from pathlib import Path
 
@@ -43,12 +44,17 @@ def rel(path: Path) -> str:
     return path.relative_to(ROOT).as_posix()
 
 
+def tracked_files(pattern: str | None = None) -> list[Path]:
+    command = ["git", "ls-files"]
+    if pattern:
+        command.extend(["--", pattern])
+    result = subprocess.run(command, cwd=ROOT, check=True, capture_output=True, text=True)
+    return [ROOT / line for line in result.stdout.splitlines() if line and (ROOT / line).is_file()]
+
+
 def repository_inventory() -> dict[str, object]:
     ignored = {".git", "node_modules", "dist", ".venv", "__pycache__"}
-    files = [
-        p for p in ROOT.rglob("*")
-        if p.is_file() and p != OUT and not ignored.intersection(p.parts)
-    ]
+    files = [p for p in tracked_files() if p != OUT and not ignored.intersection(p.parts)]
     suffixes = Counter(p.suffix.lower() or "[none]" for p in files)
     return {
         "files_scanned": len(files),
@@ -73,8 +79,8 @@ def lane_for(value: str) -> str:
 
 def markdown_plan() -> dict[str, object]:
     records = []
-    for path in sorted(ROOT.rglob("*.md")):
-        if any(part in {".git", "node_modules", "dist"} for part in path.parts):
+    for path in tracked_files("*.md"):
+        if any(part in {".git", "node_modules", "dist", "reports", "tmp"} for part in path.parts):
             continue
         text = path.read_text(encoding="utf-8", errors="replace")
         headings = re.findall(r"^#{1,6}\s+(.+?)\s*$", text, re.MULTILINE)

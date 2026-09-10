@@ -21,6 +21,7 @@ test('master directive tracks every numbered section with honest evidence states
   assert.equal(data.unified_plan.lanes.length,8);
   assert.equal(data.unified_plan.coordination.dependency_aware,true);
   assert.equal(data.unified_plan.coordination.shared_file_locking_required,true);
+  assert.equal(data.unified_plan.sources.some(source=>source.path.startsWith('reports/')),false);
 });
 
 test('master build page renders searchable audit data and is linked in navigation',()=>{
