@@ -39,6 +39,12 @@ existing_runtime:
   repository_inventory:
     path: website/data/repository-test-registry.json
     role: generated_repository_file_and_test_inventory
+  learning_os_connection_graph:
+    path: buddy_os/integration/learning_os_connection_graph.py
+    role: executable_discovery_and_evidence_aware_routing_for_repository_components
+  learning_os_connection_catalog:
+    path: website/data/buddy-learning-os-connections.json
+    role: public_safe_graph_of_agents_models_wrappers_resources_learning_and_runtime_components
 
 buddy_os_contracts:
   task: buddy_os/tasks/task_envelope.schema.json
@@ -59,6 +65,7 @@ routing_rules:
   laptop_actions: tools/buddy_local_bridge.py
   external_connections: config/buddy-connector-registry.json
   verification: .github/workflows/buddy-actions-test-lab.yml
+  component_discovery: buddy_os/integration/learning_os_connection_graph.py
 
 truth_boundaries:
   dashboard_registered_does_not_mean_live: true
