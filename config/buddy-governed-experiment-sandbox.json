@@ -1,0 +1,25 @@
+{
+  "schema": "dreamco.buddy_governed_experiment_sandbox.v1",
+  "purpose": "Safely evaluate Buddy capabilities, datasets, models, agents, tools, benchmarks, and experiments without mutating stable production state.",
+  "state_separation": {
+    "stable": "Read-only rollback target during every experiment.",
+    "experiment": "Ephemeral isolated state with no production credentials.",
+    "quarantine": "Failure artifacts retained while promotion is blocked.",
+    "candidate": "Passed sandbox evidence awaiting controlled release approval."
+  },
+  "default_permissions": {
+    "filesystem": "fixture_read_only",
+    "network": "none",
+    "secrets": "none",
+    "production": "none",
+    "tools": "deny"
+  },
+  "resource_limits": ["timeoutMs", "maxOutputBytes", "maxMemoryMb", "maxCpuMs", "maxArtifacts"],
+  "required_for_model_dataset_benchmark": ["deterministic_seed", "fixture_digest", "baseline_digest", "provenance", "reproducible_evaluation"],
+  "artifact_types": ["input_manifest", "provenance", "stdout", "stderr", "result", "failure", "cleanup"],
+  "promotion_gates": ["sandbox_run_passed", "artifact_integrity", "baseline_compared", "reproducible", "benchmark_passed", "grounding_passed", "dataset_quality_passed", "regression_passed", "owner_approved"],
+  "failure_policy": ["truncate_and_redact_output", "quarantine_failed_run", "preserve_failure_artifacts", "retain_stable_rollback_target", "request_host_cleanup", "do_not_auto_promote"],
+  "observability": ["run_id", "plan_id", "state", "duration", "resource_limit_events", "artifact_hashes", "failure_reason", "rollback_target"],
+  "host_contract": "The core sandbox never executes untrusted code. An approved isolation host provides execution and must enforce the declared limits and boundaries.",
+  "limitations": "This policy and contract reduce risk but cannot guarantee containment. The actual host runtime, operating system, dependency supply chain, and configured network rules determine the final isolation strength."
+}
