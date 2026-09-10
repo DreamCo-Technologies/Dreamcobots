@@ -19,6 +19,7 @@ import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarF
 import { FORMULA_LIBRARY } from "@shared/formula-library";
 import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
+import { getLocalTestEntitlement } from "./local-test-entitlement";
 import { db } from "./db";
 import { batchProcessWithSSE } from "./provider_integrations/batch";
 import { registerAudioRoutes } from "./provider_integrations/audio";
@@ -439,7 +440,31 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express,
 ): Promise<Server> {
-  await ensureSeeded();
+  const localTestEntitlement = getLocalTestEntitlement();
+
+  if (localTestEntitlement) {
+    app.get("/api/local-test/status", (_req, res) => {
+      res.json({
+        ok: true,
+        mode: "local_test",
+        entitlement: localTestEntitlement,
+        databaseConfigured: Boolean(process.env.DATABASE_URL) && process.env.DREAMCO_DATABASE_PLACEHOLDER !== "1",
+        message: "Local test mode is active. This does not prove a paid Stripe subscription.",
+      });
+    });
+
+    app.get("/api/stripe/subscription-status", (_req, res) => {
+      res.json(localTestEntitlement);
+    });
+  }
+
+  try {
+    await ensureSeeded();
+  } catch (error) {
+    if (!localTestEntitlement) throw error;
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`Local test mode started without database seed data: ${message}`);
+  }
 
   // ===== LOCAL-FIRST VOICE AND LIKENESS =====
   app.post("/api/voice/clone", async (req, res) => {
@@ -2300,20 +2325,26 @@ export async function registerRoutes(
   });
 
   // Seed default alert rules if none exist
-  const existingAlerts = await storage.listAlertRules();
-  if (existingAlerts.length === 0) {
-    const defaultAlerts = [
-      { name: "Task Failure Cascade", trigger: "task_fail_consecutive", action: "Restart bot / rollback config", threshold: 5 },
-      { name: "CPU Overload", trigger: "cpu_high", action: "Scale resources / notify engineer", threshold: 85 },
-      { name: "Unauthorized Access", trigger: "unauthorized_access", action: "Lock bot / send security alert", threshold: 1 },
-      { name: "Model Drift", trigger: "model_drift", action: "Queue bot for retraining", threshold: 10 },
-      { name: "High Error Rate", trigger: "high_error_rate", action: "Pause bot / notify for review", threshold: 10 },
-      { name: "Revenue Drop", trigger: "revenue_drop", action: "Alert finance team / investigate", threshold: 20 },
-      { name: "Bot Offline", trigger: "bot_offline", action: "Auto-restart / escalate", threshold: 1 },
-    ];
-    for (const alert of defaultAlerts) {
-      await storage.createAlertRule(alert);
+  try {
+    const existingAlerts = await storage.listAlertRules();
+    if (existingAlerts.length === 0) {
+      const defaultAlerts = [
+        { name: "Task Failure Cascade", trigger: "task_fail_consecutive", action: "Restart bot / rollback config", threshold: 5 },
+        { name: "CPU Overload", trigger: "cpu_high", action: "Scale resources / notify engineer", threshold: 85 },
+        { name: "Unauthorized Access", trigger: "unauthorized_access", action: "Lock bot / send security alert", threshold: 1 },
+        { name: "Model Drift", trigger: "model_drift", action: "Queue bot for retraining", threshold: 10 },
+        { name: "High Error Rate", trigger: "high_error_rate", action: "Pause bot / notify for review", threshold: 10 },
+        { name: "Revenue Drop", trigger: "revenue_drop", action: "Alert finance team / investigate", threshold: 20 },
+        { name: "Bot Offline", trigger: "bot_offline", action: "Auto-restart / escalate", threshold: 1 },
+      ];
+      for (const alert of defaultAlerts) {
+        await storage.createAlertRule(alert);
+      }
     }
+  } catch (error) {
+    if (!localTestEntitlement) throw error;
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`Local test mode skipped default alert seeding: ${message}`);
   }
 
   // ─── Deal Analyzer Routes ──────────────────────────────────────────

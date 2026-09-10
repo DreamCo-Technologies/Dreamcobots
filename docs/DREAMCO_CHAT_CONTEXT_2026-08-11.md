@@ -170,7 +170,7 @@ The roadmap is organized into seven groups:
 Command Tower, naming/tags, workflow map, badges, language matrices, reusable actions, Dream Mode, stale workflow archival, PR selectors, secrets, marketplace, AI workflow generation, version pinning, parallel branch testing.
 
 ### CI/CD & Deployment — 16–30
-Full bot CI, legacy hosted-IDE sync, blue/green deployment, Docker, multi-target deployment, semantic release, rollback, zero downtime, dependency graph, benchmarking, security scanning, enterprise policy, visual regression, IoT hooks, feature flags.
+Full bot CI, external builder sync, blue/green deployment, Docker, multi-target deployment, semantic release, rollback, zero downtime, dependency graph, benchmarking, security scanning, enterprise policy, visual regression, IoT hooks, feature flags.
 
 ### Intelligence & Learning — 31–50
 BuddyAI PR review, self-evolution, predictive health, natural-language triggers, test generation, anomaly detection, conversation analysis, cross-bot learning, milestone generation, autonomous PRs, tier enforcement, global learning sync, contextual code review, adaptive runners, memory tests, revenue simulations, safety controls, multimodal testing, what-if simulation, auto-documentation.
