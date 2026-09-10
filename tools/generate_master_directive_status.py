@@ -27,6 +27,16 @@ HIGH_PRIORITY = {
     4, 5, 6, 7, 8, 9, 10, 55, 56, 57, 60, 61, 124, 245, 246, 248,
     249, 257, 258, 260, 262, 264, 267, 268, 269, 310, 311,
 }
+LANES = {
+    "governance": {"keywords": ("security", "govern", "policy", "legal", "trust"), "depends_on": []},
+    "runtime": {"keywords": ("runtime", "agent", "bot", "orchestration", "execution"), "depends_on": ["governance"]},
+    "quality": {"keywords": ("test", "benchmark", "evidence", "quality", "debug", "repair"), "depends_on": ["runtime"]},
+    "data": {"keywords": ("data", "ontology", "memory", "rag", "registry"), "depends_on": ["governance"]},
+    "experience": {"keywords": ("website", "dashboard", "page", "ui", "app", "creative"), "depends_on": ["runtime", "data"]},
+    "integrations": {"keywords": ("api", "integration", "provider", "connection", "plugin", "device"), "depends_on": ["governance", "runtime"]},
+    "business": {"keywords": ("revenue", "business", "sales", "payment", "market", "customer"), "depends_on": ["quality", "integrations"]},
+    "operations": {"keywords": ("deploy", "production", "release", "actions", "workflow", "observability"), "depends_on": ["quality", "experience"]},
+}
 
 
 def rel(path: Path) -> str:
@@ -51,6 +61,44 @@ def repository_inventory() -> dict[str, object]:
         "test_files": sum(1 for p in files if "tests" in p.parts),
         "public_pages": len(list((ROOT / "website").glob("*.html"))),
         "top_level_directories": sorted(p.name for p in ROOT.iterdir() if p.is_dir() and not p.name.startswith(".")),
+    }
+
+
+def lane_for(value: str) -> str:
+    lower = value.lower()
+    scores = {name: sum(word in lower for word in cfg["keywords"]) for name, cfg in LANES.items()}
+    best = max(scores, key=lambda name: (scores[name], -list(LANES).index(name)))
+    return best if scores[best] else "operations"
+
+
+def markdown_plan() -> dict[str, object]:
+    records = []
+    for path in sorted(ROOT.rglob("*.md")):
+        if any(part in {".git", "node_modules", "dist"} for part in path.parts):
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        headings = re.findall(r"^#{1,6}\s+(.+?)\s*$", text, re.MULTILINE)
+        title = headings[0] if headings else path.stem.replace("_", " ").replace("-", " ")
+        signals = len(re.findall(r"\b(goal|mission|objective|must|should|required|next|todo|plan)\b", text, re.IGNORECASE))
+        lane = lane_for(f"{path.as_posix()} {title}")
+        records.append({
+            "path": rel(path), "title": title[:160], "lane": lane,
+            "heading_count": len(headings), "goal_signal_count": signals, "status": "indexed",
+        })
+    counts = Counter(row["lane"] for row in records)
+    return {
+        "source_count": len(records),
+        "goal_signal_count": sum(row["goal_signal_count"] for row in records),
+        "lanes": [{
+            "id": name, "source_count": counts[name], "depends_on": cfg["depends_on"], "parallel_limit": 2,
+            "rule": "Run independent tasks concurrently; serialize shared-file, dependency, security, release, and production mutations.",
+        } for name, cfg in LANES.items()],
+        "sources": records,
+        "coordination": {
+            "maximum_parallel_tasks": 16, "single_canonical_backlog": True, "dependency_aware": True,
+            "shared_file_locking_required": True, "external_actions_require_approval": True,
+            "merge_rule": "Each task needs focused tests, evidence references, conflict review, and dependency gates before merge.",
+        },
     }
 
 
@@ -94,6 +142,7 @@ def build() -> dict[str, object]:
             "evidence_refs": evidence,
             "acceptance_excerpt": " ".join(line.strip(" -") for line in body.splitlines() if line.strip())[:280],
             "next_status": STATUS_ORDER[STATUS_ORDER.index(status) + 1] if status != STATUS_ORDER[-1] else None,
+            "lane": lane_for(title),
         })
     counts = Counter(item["status"] for item in items)
     return {
@@ -110,6 +159,7 @@ def build() -> dict[str, object]:
             "truth": "Statuses describe only evidence committed in this repository. Catalogued is not implemented; implemented is not runtime, benchmark, regression, or production verification.",
         },
         "repository_audit": repository_inventory(),
+        "unified_plan": markdown_plan(),
         "items": items,
     }
 
