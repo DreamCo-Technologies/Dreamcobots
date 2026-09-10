@@ -362,6 +362,7 @@ def validate_site() -> dict[str, Any]:
         WEBSITE / "data" / "buddy-fleet-quality-program.js",
         WEBSITE / "data" / "buddy-capability-certifications.js",
         WEBSITE / "data" / "buddy-connection-catalog.json",
+        WEBSITE / "data" / "buddy-learning-os-connections.json",
         WEBSITE / "data" / "buddy-specialized-hubs.js",
         WEBSITE / "data" / "bot-calculators.json",
         WEBSITE / "data" / "buddy-distribution-catalog.json",

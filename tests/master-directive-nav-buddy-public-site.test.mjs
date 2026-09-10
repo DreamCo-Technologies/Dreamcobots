@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 const data=JSON.parse(readFileSync(new URL('../website/data/master-directive-status.json',import.meta.url),'utf8'));
+const connectionGraph=JSON.parse(readFileSync(new URL('../website/data/buddy-learning-os-connections.json',import.meta.url),'utf8'));
 const html=readFileSync(new URL('../website/master-build.html',import.meta.url),'utf8');
 const js=readFileSync(new URL('../website/master-build.js',import.meta.url),'utf8');
 const nav=readFileSync(new URL('../website/nav.js',import.meta.url),'utf8');
@@ -35,6 +36,10 @@ test('master build page renders searchable audit data and is linked in navigatio
   assert.match(js,/evidence_refs/);
   assert.match(nav,/master-build\.html/);
   assert.match(worker,/master-build\.html/);
+  assert.match(worker,/buddy-learning-os-connections\.json/);
+  assert.match(html,/Buddy learning OS connections/);
+  assert.match(js,/buddy-learning-os-connections\.json/);
+  assert.equal(connectionGraph.summary.unlinked_node_count,0);
   assert.match(worker,/master-directive-status\.json/);
   assert.match(pagesWorkflow,/python3 tools\/generate_master_directive_status\.py\n/);
 });

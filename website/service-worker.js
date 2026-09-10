@@ -52,6 +52,7 @@ const APP_SHELL = [
   './connections.html',
   './connections.js?v=5',
   './data/buddy-connection-catalog.json?v=2',
+  './data/buddy-learning-os-connections.json',
   './open-model-lab.html',
   './open-model-lab.css',
   './open-model-lab.js',
