@@ -7,6 +7,7 @@ const html=readFileSync(new URL('../website/master-build.html',import.meta.url),
 const js=readFileSync(new URL('../website/master-build.js',import.meta.url),'utf8');
 const nav=readFileSync(new URL('../website/nav.js',import.meta.url),'utf8');
 const worker=readFileSync(new URL('../website/service-worker.js',import.meta.url),'utf8');
+const pagesWorkflow=readFileSync(new URL('../.github/workflows/deploy-buddy-pages.yml',import.meta.url),'utf8');
 
 test('master directive tracks every numbered section with honest evidence states',()=>{
   assert.equal(data.schema,'dreamco.master_directive_status.v1');
@@ -35,4 +36,5 @@ test('master build page renders searchable audit data and is linked in navigatio
   assert.match(nav,/master-build\.html/);
   assert.match(worker,/master-build\.html/);
   assert.match(worker,/master-directive-status\.json/);
+  assert.match(pagesWorkflow,/python3 tools\/generate_master_directive_status\.py\n/);
 });
