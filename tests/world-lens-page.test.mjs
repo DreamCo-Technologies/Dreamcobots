@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import test from 'node:test';
+
+const html = fs.readFileSync('website/world-lens.html', 'utf8');
+const script = fs.readFileSync('website/world-lens.js', 'utf8');
+const nav = fs.readFileSync('website/nav.js', 'utf8');
+const policy = JSON.parse(fs.readFileSync('config/buddy-world-lens-gps.json', 'utf8'));
+
+test('World Lens is reachable and every visible control is wired', () => {
+  assert.match(nav, /world-lens\.html/);
+  const ids = [...html.matchAll(/<button[^>]+id="([^"]+)"/g)].map(match => match[1]);
+  assert.deepEqual(ids.sort(), ['lens-add','lens-buddy','lens-clear','lens-export','lens-locate','lens-stop','lens-watch']);
+  for (const id of ids) assert.match(script, new RegExp(`\\$\\('${id}'\\)\\.addEventListener`), `missing handler for ${id}`);
+});
+
+test('GPS is consent based, stoppable, and not started on load', () => {
+  assert.match(script, /getCurrentPosition\(acceptPosition/);
+  assert.match(script, /watchPosition\(acceptPosition/);
+  assert.match(script, /clearWatch\(watchId\)/);
+  assert.doesNotMatch(script, /^\s*navigator\.geolocation\.(getCurrentPosition|watchPosition)/m);
+  assert.equal(policy.privacy.background_tracking, false);
+  assert.equal(policy.privacy.people_are_not_targets, true);
+});
+
+test('location truth and safety boundaries are visible', () => {
+  assert.match(html, /not turn-by-turn navigation/);
+  assert.match(html, /GPS can be delayed or wrong/);
+  assert.match(script, /accuracyMeters/);
+  assert.match(script, /freshness/);
+  assert.equal(policy.safety.emergency_use, false);
+  assert.equal(policy.safety.surveillance_use, false);
+});
+
+test('coordinates stay local unless the owner exports or prepares a Buddy task', () => {
+  assert.match(script, /localStorage/);
+  assert.doesNotMatch(script, /fetch\s*\(/);
+  assert.doesNotMatch(script, /XMLHttpRequest|WebSocket/);
+  assert.match(script, /spatial_mission_packet/);
+});

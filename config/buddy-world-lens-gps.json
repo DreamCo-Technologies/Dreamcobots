@@ -1,0 +1,33 @@
+{
+  "schema": "dreamco.buddy.world_lens_gps.v1",
+  "name": "Buddy World Lens",
+  "purpose": "Turn owner-approved device GPS into a local-first spatial workspace for personal waypoints and Buddy task packets.",
+  "inspiration": {
+    "project": "God's Eye View by Bilawal Sidhu",
+    "source": "https://github.com/bilawalsidhu/gods-eye-view",
+    "license": "MIT",
+    "adaptation": "Independent DreamCo implementation using its own interface, language, code, and local-first GPS scope. No upstream code or media is included."
+  },
+  "evidence_status": "implemented",
+  "location_modes": ["permission_required", "single_fix", "owner_started_live_watch", "manual_coordinate"],
+  "truth_states": ["permission_required", "requesting", "live", "stale", "manual", "unavailable", "error"],
+  "privacy": {
+    "browser_storage": "Waypoints remain in this browser until the owner clears them.",
+    "network_default": "No external map, geocoder, telemetry, or tracking service is contacted.",
+    "people_are_not_targets": true,
+    "background_tracking": false,
+    "stop_control_required": true
+  },
+  "safety": {
+    "navigation_use": false,
+    "emergency_use": false,
+    "surveillance_use": false,
+    "accuracy_must_be_visible": true,
+    "freshness_must_be_visible": true
+  },
+  "evidence_refs": [
+    "website/world-lens.html",
+    "website/world-lens.js",
+    "tests/world-lens-page.test.mjs"
+  ]
+}
