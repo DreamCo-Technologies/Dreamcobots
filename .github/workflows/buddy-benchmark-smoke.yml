@@ -12,7 +12,7 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Run deterministic benchmark
         run: python3 benchmarks/buddy_benchmark_runner.py benchmarks/tasks/universal_1000_smoke.json --output /tmp/buddy-benchmark.json
       - name: Record Buddy learning evidence
