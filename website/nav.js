@@ -14,6 +14,7 @@
     { href: 'world-source-center.html', label: '📡 World Sources' },
     { href: 'my-buddy.html', label: '🤖 My Buddy' },
     { href: 'independence-center.html', label: '🏠 Independence' },
+    { href: 'buddy-workspace.html', label: '📋 Buddy Workspace' },
     { href: 'opportunity-hub.html', label: '🏡 Opportunity Hub' },
     { href: 'setup-center.html', label: '🔌 Setup Center' },
     { href: 'buddy-operating-system.html', label: '🧬 Buddy AGI OS' },
