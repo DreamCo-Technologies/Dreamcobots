@@ -5,6 +5,8 @@
   let current = null;
   let watchId = null;
   let lastPropertyScan = 0;
+  let propertyRows = [];
+  let voiceRecognition = null;
 
   const readWaypoints = () => {
     try { return JSON.parse(localStorage.getItem(storageKey) || '[]'); } catch { return []; }
@@ -61,13 +63,13 @@
   }
 
   function refreshExternalMap() {
+    const mode = $('lens-map-mode').value;
+    if (mode === 'world_lens') { $('lens-map-frame').hidden = true; setStatus('World Lens local coordinate plot selected.', true); return; }
     if (!$('lens-external-map').checked) { setStatus('Approve external map requests before loading the map.'); return; }
     if (!current) { setStatus('Request a GPS fix before loading the external map.'); return; }
-    const span = 0.012;
-    const bbox = [current.longitude-span,current.latitude-span,current.longitude+span,current.latitude+span].join(',');
-    $('lens-map-frame').src = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${encodeURIComponent(`${current.latitude},${current.longitude}`)}`;
+    $('lens-map-frame').src = `https://www.google.com/maps?q=${encodeURIComponent(`${current.latitude},${current.longitude}`)}&z=16&output=embed`;
     $('lens-map-frame').hidden = false;
-    setStatus('External OpenStreetMap request enabled for this session.', true);
+    setStatus(`${mode === 'combined' ? 'Combined World Lens and Google' : 'Google'} map loaded for this session.`, true);
   }
 
   const safeText = value => escapeHtml(value ?? 'Not supplied');
@@ -86,10 +88,32 @@
       const response = await fetch(url, { headers: { Accept: 'application/json' }, credentials: 'omit' });
       if (!response.ok) throw new Error(`provider returned ${response.status}`);
       const payload = await response.json();
-      const listings = Array.isArray(payload) ? payload : (payload.listings || payload.value || []);
-      $('lens-properties-list').innerHTML = listings.slice(0, 50).map(item => `<article class="lens-item"><strong>${safeText(item.address || item.UnparsedAddress)}</strong><div>${safeText(item.price || item.ListPrice)} · ${safeText(item.bedrooms || item.BedroomsTotal)} beds · ${safeText(item.bathrooms || item.BathroomsTotalInteger)} baths</div><div>${safeText(item.status || item.StandardStatus)} · ${safeText(item.source || 'connected provider')}</div></article>`).join('') || '<p>No nearby listings returned.</p>';
-      $('lens-property-status').textContent = `${listings.length} provider listing${listings.length === 1 ? '' : 's'} returned. Verify before investing.`;
+      propertyRows = Array.isArray(payload) ? payload : (payload.listings || payload.value || []);
+      $('lens-properties-list').innerHTML = propertyRows.slice(0, 50).map((item,index) => `<article class="lens-item"><strong>${safeText(item.address || item.UnparsedAddress)}</strong><div>${safeText(item.price || item.ListPrice)} · ${safeText(item.bedrooms || item.BedroomsTotal)} beds · ${safeText(item.bathrooms || item.BathroomsTotalInteger)} baths</div><div>${safeText(item.status || item.StandardStatus)} · ${safeText(item.source || 'connected provider')}</div><button class="btn btn-outline" data-property-index="${index}">View available history</button></article>`).join('') || '<p>No nearby listings returned.</p>';
+      $('lens-property-status').textContent = `${propertyRows.length} provider listing${propertyRows.length === 1 ? '' : 's'} returned. Verify before investing.`;
     } catch (error) { $('lens-property-status').textContent = `Property request failed: ${error.message}`; }
+  }
+
+  function saveWaypoint(name, note, latitude, longitude, source) {
+    const items = readWaypoints();
+    items.push({ id:`waypoint-${Date.now()}`, name, note, latitude, longitude, source, recordedAt:new Date().toISOString() });
+    localStorage.setItem(storageKey, JSON.stringify(items.slice(-100))); render(); setStatus(`Marked ${name}.`, true);
+  }
+
+  async function handleVoiceCommand(transcript) {
+    $('lens-voice-status').textContent = `Heard: ${transcript}`;
+    const here = transcript.match(/^mark here as (.+?)(?: note (.+))?$/i);
+    const coords = transcript.match(/^mark (-?\d+(?:\.\d+)?)\s*(?:,|longitude)?\s*(-?\d+(?:\.\d+)?) as (.+?)(?: note (.+))?$/i);
+    const named = transcript.match(/^mark (.+?) as (.+?)(?: note (.+))?$/i);
+    if (here && current) { saveWaypoint(here[1], here[2]||'', current.latitude, current.longitude, 'voice_current_gps'); return; }
+    if (coords) { const lat=Number(coords[1]),lon=Number(coords[2]); if(lat>=-90&&lat<=90&&lon>=-180&&lon<=180)saveWaypoint(coords[3],coords[4]||'',lat,lon,'voice_coordinates'); return; }
+    if (named) {
+      const endpoint=$('lens-geocoder-endpoint').value.trim();
+      if(!/^https:\/\//i.test(endpoint)){ $('lens-voice-status').textContent='Named places require a configured HTTPS geocoder backend.'; return; }
+      localStorage.setItem('dreamco.buddy.world-lens.geocoder-endpoint.v1',endpoint);
+      try{const url=new URL(endpoint);url.searchParams.set('q',named[1]);const response=await fetch(url,{headers:{Accept:'application/json'},credentials:'omit'});if(!response.ok)throw Error(`geocoder returned ${response.status}`);const result=await response.json();const place=Array.isArray(result)?result[0]:result.results?.[0]||result;const lat=Number(place.latitude??place.lat),lon=Number(place.longitude??place.lon??place.lng);if(!Number.isFinite(lat)||!Number.isFinite(lon))throw Error('no coordinate result');saveWaypoint(named[2],named[3]||'',lat,lon,`voice_geocoder:${safeText(place.source||new URL(endpoint).hostname)}`);}catch(error){$('lens-voice-status').textContent=`Could not mark place: ${error.message}`;}return;
+    }
+    $('lens-voice-status').textContent='Try “mark here as NAME note NOTE” or “mark PLACE as NAME.”';
   }
 
   function renderPeople() {
@@ -162,7 +186,13 @@
     location.href = `buddy.html?prompt=${encodeURIComponent(prompt)}`;
   });
   $('lens-map-refresh').addEventListener('click', refreshExternalMap);
+  $('lens-map-mode').addEventListener('change', refreshExternalMap);
   $('lens-properties').addEventListener('click', () => void queryProperties());
+  $('lens-properties-list').addEventListener('click', event => {
+    const index=Number(event.target.dataset.propertyIndex);if(!Number.isInteger(index)||!propertyRows[index])return;const item=propertyRows[index];const groups=['saleHistory','taxAssessment','deeds','permits','zoning','parcel','hazards','utilities','schools','inspections','appraisals','repairQuotes','insurance','titleAndLiens','rentalHistory'];$('lens-property-history').innerHTML=`<article class="lens-item"><strong>${safeText(item.address||item.UnparsedAddress)} history</strong>${groups.map(key=>`<div><b>${safeText(key)}:</b> ${item[key]?safeText(typeof item[key]==='string'?item[key]:JSON.stringify(item[key])):'Unavailable from connected source'}</div>`).join('')}<p>Source: ${safeText(item.source)} · Updated: ${safeText(item.updatedAt||item.ModificationTimestamp)}</p></article>`;
+  });
+  $('lens-voice').addEventListener('click',()=>{const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Recognition){$('lens-voice-status').textContent='Voice recognition is unavailable in this browser; use the waypoint form.';return}voiceRecognition=new Recognition();voiceRecognition.lang=navigator.language||'en-US';voiceRecognition.interimResults=false;voiceRecognition.onresult=event=>void handleVoiceCommand(event.results[0][0].transcript.trim());voiceRecognition.onerror=event=>{$('lens-voice-status').textContent=`Voice error: ${event.error}`};voiceRecognition.onend=()=>{$('lens-voice').disabled=false;$('lens-voice-stop').disabled=true};$('lens-voice').disabled=true;$('lens-voice-stop').disabled=false;$('lens-voice-status').textContent='Listening for one map command…';voiceRecognition.start()});
+  $('lens-voice-stop').addEventListener('click',()=>voiceRecognition?.stop());
   $('lens-person-save').addEventListener('click', () => {
     const name = $('lens-person-name').value.trim();
     if (!name || !$('lens-person-consent').checked) { setStatus('A name and the person’s informed consent are required.'); return; }
@@ -180,6 +210,7 @@
   });
   $('lens-person-clear').addEventListener('click', () => { localStorage.removeItem(peopleKey); renderPeople(); setStatus('All locally saved people profiles were revoked and cleared.'); });
   $('lens-property-endpoint').value = localStorage.getItem('dreamco.buddy.world-lens.property-endpoint.v1') || '';
+  $('lens-geocoder-endpoint').value = localStorage.getItem('dreamco.buddy.world-lens.geocoder-endpoint.v1') || '';
   window.addEventListener('pagehide', () => { if (watchId !== null) navigator.geolocation.clearWatch(watchId); });
   render();
   renderPeople();

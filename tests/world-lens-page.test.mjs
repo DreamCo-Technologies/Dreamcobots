@@ -10,7 +10,7 @@ const policy = JSON.parse(fs.readFileSync('config/buddy-world-lens-gps.json', 'u
 test('World Lens is reachable and every visible control is wired', () => {
   assert.match(nav, /world-lens\.html/);
   const ids = [...html.matchAll(/<button[^>]+id="([^"]+)"/g)].map(match => match[1]);
-  assert.deepEqual(ids.sort(), ['lens-add','lens-buddy','lens-clear','lens-export','lens-locate','lens-map-refresh','lens-person-clear','lens-person-save','lens-properties','lens-stop','lens-watch']);
+  assert.deepEqual(ids.sort(), ['lens-add','lens-buddy','lens-clear','lens-export','lens-locate','lens-map-refresh','lens-person-clear','lens-person-save','lens-properties','lens-stop','lens-voice','lens-voice-stop','lens-watch']);
   for (const id of ids) assert.match(script, new RegExp(`\\$\\('${id}'\\)\\.addEventListener`), `missing handler for ${id}`);
 });
 
@@ -47,4 +47,26 @@ test('people profiles require consent and do not use facial recognition', () => 
   assert.equal(policy.people_profiles.consent_required, true);
   assert.equal(policy.safety.facial_identification, false);
   assert.ok(policy.people_profiles.disallowed.includes('biometric templates'));
+});
+
+test('users can select World Lens, Google, or combined maps', () => {
+  for (const mode of ['world_lens','google','combined']) assert.match(html, new RegExp(`value="${mode}"`));
+  assert.match(script, /google\.com\/maps/);
+  assert.deepEqual(policy.map_modes, ['world_lens','google','combined']);
+});
+
+test('voice commands mark current coordinates, explicit coordinates, or geocoded places', () => {
+  assert.match(script, /SpeechRecognition/);
+  assert.match(script, /mark here as/);
+  assert.match(script, /voice_geocoder/);
+  assert.match(script, /saveWaypoint/);
+  assert.ok(policy.voice_commands.length >= 3);
+});
+
+test('property history keeps unavailable fields explicit', () => {
+  assert.match(html, /Homes and property history/);
+  assert.match(script, /Unavailable from connected source/);
+  assert.ok(policy.property_record_groups.includes('sale_history'));
+  assert.ok(policy.property_record_groups.includes('permits'));
+  assert.ok(policy.property_record_groups.includes('title_and_liens'));
 });
