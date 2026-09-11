@@ -14,7 +14,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         if: ${{ github.event_name == 'workflow_run' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
