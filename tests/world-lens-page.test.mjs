@@ -10,8 +10,16 @@ const policy = JSON.parse(fs.readFileSync('config/buddy-world-lens-gps.json', 'u
 test('World Lens is reachable and every visible control is wired', () => {
   assert.match(nav, /world-lens\.html/);
   const ids = [...html.matchAll(/<button[^>]+id="([^"]+)"/g)].map(match => match[1]);
-  assert.deepEqual(ids.sort(), ['lens-add','lens-buddy','lens-clear','lens-export','lens-locate','lens-map-refresh','lens-person-clear','lens-person-save','lens-properties','lens-stop','lens-voice','lens-voice-stop','lens-watch']);
+  assert.deepEqual(ids.sort(), ['lens-add','lens-buddy','lens-clear','lens-export','lens-find','lens-finder-voice','lens-locate','lens-map-refresh','lens-person-clear','lens-person-save','lens-properties','lens-stop','lens-voice','lens-voice-stop','lens-watch']);
   for (const id of ids) assert.match(script, new RegExp(`\\$\\('${id}'\\)\\.addEventListener`), `missing handler for ${id}`);
+});
+
+test('location intent searches rentals, jobs, and services through an authorized provider', () => {
+  for (const kind of ['rentals','property_sale','jobs','food','shelter','healthcare','government','transit']) assert.match(html, new RegExp(`value="${kind}"`));
+  assert.match(script, /radiusKm/);
+  assert.match(script, /credentials:'omit'/);
+  assert.match(script, /Source:/);
+  assert.match(script, /authorized_location_search/);
 });
 
 test('GPS is consent based, stoppable, and not started on load', () => {

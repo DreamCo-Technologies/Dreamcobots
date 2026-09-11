@@ -7,6 +7,7 @@
   let lastPropertyScan = 0;
   let propertyRows = [];
   let voiceRecognition = null;
+  let finderRows = [];
 
   const readWaypoints = () => {
     try { return JSON.parse(localStorage.getItem(storageKey) || '[]'); } catch { return []; }
@@ -92,6 +93,28 @@
       $('lens-properties-list').innerHTML = propertyRows.slice(0, 50).map((item,index) => `<article class="lens-item"><strong>${safeText(item.address || item.UnparsedAddress)}</strong><div>${safeText(item.price || item.ListPrice)} · ${safeText(item.bedrooms || item.BedroomsTotal)} beds · ${safeText(item.bathrooms || item.BathroomsTotalInteger)} baths</div><div>${safeText(item.status || item.StandardStatus)} · ${safeText(item.source || 'connected provider')}</div><button class="btn btn-outline" data-property-index="${index}">View available history</button></article>`).join('') || '<p>No nearby listings returned.</p>';
       $('lens-property-status').textContent = `${propertyRows.length} provider listing${propertyRows.length === 1 ? '' : 's'} returned. Verify before investing.`;
     } catch (error) { $('lens-property-status').textContent = `Property request failed: ${error.message}`; }
+  }
+
+  async function findLocations() {
+    if (!current) { $('lens-finder-status').textContent = 'Use GPS once or start Live GPS first.'; return; }
+    const endpoint = $('lens-finder-endpoint').value.trim();
+    if (!/^https:\/\//i.test(endpoint)) { $('lens-finder-status').textContent = 'Connect an authorized HTTPS location-search endpoint first.'; return; }
+    const url = new URL(endpoint);
+    url.searchParams.set('q', $('lens-finder-query').value.trim());
+    url.searchParams.set('category', $('lens-finder-kind').value);
+    url.searchParams.set('lat', current.latitude);
+    url.searchParams.set('lon', current.longitude);
+    url.searchParams.set('radiusKm', Math.min(100, Math.max(1, Number($('lens-finder-radius').value) || 10)));
+    localStorage.setItem('dreamco.buddy.world-lens.finder-endpoint.v1', endpoint);
+    $('lens-finder-status').textContent = 'Searching the provider you approved…';
+    try {
+      const response = await fetch(url, { headers:{ Accept:'application/json' }, credentials:'omit' });
+      if (!response.ok) throw Error(`provider returned ${response.status}`);
+      const payload = await response.json();
+      finderRows = Array.isArray(payload) ? payload : (payload.results || payload.value || []);
+      $('lens-finder-results').innerHTML = finderRows.slice(0, 50).map((item,index) => `<article class="lens-item"><strong>${safeText(item.name || item.title || item.address)}</strong><div>${safeText(item.address || item.location)} · ${safeText(item.distance || item.distanceKm ? `${item.distanceKm} km` : '')}</div><div>Source: ${safeText(item.source)} · Updated: ${safeText(item.updatedAt)}</div>${item.url && /^https:\/\//i.test(item.url) ? `<a class="btn btn-outline" href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">Open source</a>` : ''}<button class="btn btn-outline" data-finder-index="${index}">Mark on map</button></article>`).join('') || '<p>No matching locations returned.</p>';
+      $('lens-finder-status').textContent = `${finderRows.length} result${finderRows.length === 1 ? '' : 's'} returned. Verify details with the named source.`;
+    } catch (error) { $('lens-finder-status').textContent = `Location search failed: ${error.message}`; }
   }
 
   function saveWaypoint(name, note, latitude, longitude, source) {
@@ -188,6 +211,9 @@
   $('lens-map-refresh').addEventListener('click', refreshExternalMap);
   $('lens-map-mode').addEventListener('change', refreshExternalMap);
   $('lens-properties').addEventListener('click', () => void queryProperties());
+  $('lens-find').addEventListener('click', () => void findLocations());
+  $('lens-finder-results').addEventListener('click', event => { const index=Number(event.target.dataset.finderIndex);const item=finderRows[index];if(!Number.isInteger(index)||!item)return;const lat=Number(item.latitude??item.lat),lon=Number(item.longitude??item.lon??item.lng);if(!Number.isFinite(lat)||!Number.isFinite(lon)){ $('lens-finder-status').textContent='That provider result has no usable coordinates.';return }saveWaypoint(item.name||item.title||item.address||'Search result',`Source: ${item.source||'connected provider'}`,lat,lon,'authorized_location_search'); });
+  $('lens-finder-voice').addEventListener('click',()=>{const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Recognition){$('lens-finder-status').textContent='Voice recognition is unavailable; type your request.';return}const recognition=new Recognition();recognition.lang=navigator.language||'en-US';recognition.onresult=event=>{$('lens-finder-query').value=event.results[0][0].transcript.trim();void findLocations()};recognition.onerror=event=>{$('lens-finder-status').textContent=`Voice error: ${event.error}`};recognition.start()});
   $('lens-properties-list').addEventListener('click', event => {
     const index=Number(event.target.dataset.propertyIndex);if(!Number.isInteger(index)||!propertyRows[index])return;const item=propertyRows[index];const groups=['saleHistory','taxAssessment','deeds','permits','zoning','parcel','hazards','utilities','schools','inspections','appraisals','repairQuotes','insurance','titleAndLiens','rentalHistory'];$('lens-property-history').innerHTML=`<article class="lens-item"><strong>${safeText(item.address||item.UnparsedAddress)} history</strong>${groups.map(key=>`<div><b>${safeText(key)}:</b> ${item[key]?safeText(typeof item[key]==='string'?item[key]:JSON.stringify(item[key])):'Unavailable from connected source'}</div>`).join('')}<p>Source: ${safeText(item.source)} · Updated: ${safeText(item.updatedAt||item.ModificationTimestamp)}</p></article>`;
   });
@@ -211,6 +237,7 @@
   $('lens-person-clear').addEventListener('click', () => { localStorage.removeItem(peopleKey); renderPeople(); setStatus('All locally saved people profiles were revoked and cleared.'); });
   $('lens-property-endpoint').value = localStorage.getItem('dreamco.buddy.world-lens.property-endpoint.v1') || '';
   $('lens-geocoder-endpoint').value = localStorage.getItem('dreamco.buddy.world-lens.geocoder-endpoint.v1') || '';
+  $('lens-finder-endpoint').value = localStorage.getItem('dreamco.buddy.world-lens.finder-endpoint.v1') || '';
   window.addEventListener('pagehide', () => { if (watchId !== null) navigator.geolocation.clearWatch(watchId); });
   render();
   renderPeople();
