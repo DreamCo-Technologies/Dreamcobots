@@ -1,0 +1,27 @@
+{
+  "blockers": [
+    "Live provider, deployment, and production checks are outside this offline generation step.",
+    "Merge-level and strict production-readiness suites must pass in CI before promotion."
+  ],
+  "evidence_refs": [
+    "tools/production_readiness_gate.py",
+    ".github/workflows/command-center-index.yml"
+  ],
+  "evidence_taxonomy": [
+    "catalogued",
+    "implemented",
+    "sandbox_verified",
+    "benchmark_verified",
+    "regression_verified",
+    "production_verified"
+  ],
+  "overall_status": "implemented",
+  "production_ready": false,
+  "required_commands": [
+    "npm run test:command-center",
+    "npm run test:repository",
+    "npm run production:readiness:strict"
+  ],
+  "schema": "dreamco.command_center.release_readiness.v1",
+  "source_sha256": "5c44fb76b7977b6adec113a2ec94e0c51e83e71194334a1b56c41190d6204b1e"
+}

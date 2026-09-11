@@ -6,6 +6,7 @@
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'actions.html', label: '⚙️ Actions' },
     { href: 'master-build.html', label: '🧭 Master Build' },
+    { href: 'buddy-command-center.html', label: '🗂️ Command Center' },
     { href: 'buddy-operating-system.html', label: '🧬 Buddy AGI OS' },
     { href: 'success.html', label: '📈 Success Center' },
     { href: 'search.html', label: '🔎 DreamSearch' },
