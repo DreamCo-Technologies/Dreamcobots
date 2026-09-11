@@ -13,6 +13,7 @@
     { href: 'voice-command-center.html', label: '🎙️ Voice Commands' },
     { href: 'world-source-center.html', label: '📡 World Sources' },
     { href: 'my-buddy.html', label: '🤖 My Buddy' },
+    { href: 'independence-center.html', label: '🏠 Independence' },
     { href: 'opportunity-hub.html', label: '🏡 Opportunity Hub' },
     { href: 'setup-center.html', label: '🔌 Setup Center' },
     { href: 'buddy-operating-system.html', label: '🧬 Buddy AGI OS' },
