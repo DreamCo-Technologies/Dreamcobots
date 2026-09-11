@@ -42,10 +42,10 @@ class BuddyLearningOSConnectionTests(unittest.TestCase):
         self.assertTrue(all(node["status"] == "partial" for node in sources))
 
     def test_referenced_study_and_competitor_sources_are_routed_but_not_activated(self) -> None:
-        references = [node for node in self.payload["nodes"] if node["kind"] == "referenced_external_source"]
-        self.assertGreaterEqual(len(references), 100)
-        self.assertTrue(any(node["role"] == "competitor_or_baseline" for node in references))
-        self.assertTrue(all(node["readiness"] == "terms_and_authorization_required" for node in references))
+        reference_index = self.graph.nodes["referenced-source-index"]
+        self.assertGreaterEqual(reference_index["reference_count"], 100)
+        self.assertGreater(reference_index["competitor_or_baseline_count"], 0)
+        self.assertEqual(reference_index["readiness"], "terms_and_authorization_required")
 
     def test_runtime_router_discovers_and_enforces_live_evidence(self) -> None:
         self.assertIn("learning", self.graph.route("learning")["categories"])

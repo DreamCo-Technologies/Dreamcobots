@@ -61,6 +61,8 @@ def referenced_sources() -> list[dict[str, Any]]:
     references: dict[str, set[str]] = {}
     competitor_urls: set[str] = set()
     for path in tracked_files():
+        if path.startswith(("config/generated/", "website/data/", "reports/", "tmp/")):
+            continue
         absolute = ROOT / path
         if absolute.suffix.lower() not in TEXT_EXTENSIONS or absolute.stat().st_size > 2_000_000:
             continue
@@ -134,16 +136,17 @@ def build_graph() -> dict[str, Any]:
         })
         edges.append({"from": "buddy:learning-os", "to": nid, "type": "trained_by"})
 
-    for source in referenced_sources():
-        nid = node_id("reference", source["url"])
-        categories = ["resources", "learning"] + (["benchmarks"] if source["competitor"] else [])
-        nodes.append({
-            "id": nid, "name": source["url"], "kind": "referenced_external_source", "categories": categories,
-            "status": "partial", "readiness": "terms_and_authorization_required",
-            "source_path": source["source_paths"][0], "source_paths": source["source_paths"], "evidence": [],
-            "role": "competitor_or_baseline" if source["competitor"] else "study_or_reference_candidate",
-        })
-        edges.append({"from": "buddy:learning-os", "to": nid, "type": "trained_by"})
+    references = referenced_sources()
+    competitor_count = sum(1 for source in references if source["competitor"])
+    nodes.append({
+        "id": "referenced-source-index", "name": "Repository study and benchmark source index",
+        "kind": "referenced_source_index", "categories": ["resources", "learning", "benchmarks"],
+        "status": "partial", "readiness": "terms_and_authorization_required",
+        "source_path": "tools/build_buddy_learning_os_connection_graph.py", "evidence": [],
+        "reference_count": len(references), "competitor_or_baseline_count": competitor_count,
+        "resolution": "Rebuild the graph to resolve each individual tracked URL from repository source before use.",
+    })
+    edges.append({"from": "buddy:learning-os", "to": "referenced-source-index", "type": "trained_by"})
 
     category_counts = Counter(category for node in nodes for category in node["categories"])
     status_counts = Counter(node["status"] for node in nodes)
@@ -161,6 +164,8 @@ def build_graph() -> dict[str, Any]:
             "category_counts": dict(sorted(category_counts.items())),
             "status_counts": dict(sorted(status_counts.items())),
             "readiness_counts": dict(sorted(readiness_counts.items())),
+            "external_reference_count": len(references),
+            "competitor_or_baseline_reference_count": competitor_count,
             "unlinked_node_count": 0,
         },
         "nodes": nodes,
