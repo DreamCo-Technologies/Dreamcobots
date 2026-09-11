@@ -23,6 +23,9 @@ test('master directive tracks every numbered section with honest evidence states
   assert.equal(data.unified_plan.lanes.length,8);
   assert.equal(data.unified_plan.coordination.dependency_aware,true);
   assert.equal(data.unified_plan.coordination.shared_file_locking_required,true);
+  assert.ok(data.structured_stage_plan.group_count>0);
+  assert.ok(data.structured_stage_plan.stage_count>0);
+  assert.ok(data.structured_stage_plan.groups.every(group=>group.status==='declared'));
   assert.equal(data.unified_plan.sources.some(source=>source.path.startsWith('reports/')),false);
 });
 
@@ -32,8 +35,11 @@ test('master build page renders searchable audit data and is linked in navigatio
   assert.match(html,/id="audit-grid"/);
   assert.match(html,/id="lane-grid"/);
   assert.match(html,/id="plan-source-list"/);
+  assert.match(html,/Structured build-stage index/);
+  assert.match(html,/id="stage-list"/);
   assert.match(js,/master-directive-status\.json/);
   assert.match(js,/evidence_refs/);
+  assert.match(js,/structured_stage_plan/);
   assert.match(nav,/master-build\.html/);
   assert.match(worker,/master-build\.html/);
   assert.match(worker,/buddy-learning-os-connections\.json/);

@@ -108,6 +108,58 @@ def markdown_plan() -> dict[str, object]:
     }
 
 
+STAGE_KEYS = {"stages", "phase", "phases", "pipeline", "rollout_stages", "gap_stages", "required_stages", "learning_path"}
+STAGE_ROOTS = ("config", "buddy_os", "dreamco_platform")
+
+
+def structured_stage_plan() -> dict[str, object]:
+    """Index staged plans embedded in tracked structured repository contracts.
+
+    This is intentionally an index: it preserves the authoritative source path
+    and stage names without promoting a declared plan to an executed result.
+    """
+    groups = []
+    for path in tracked_files():
+        relative = rel(path)
+        if path.suffix.lower() != ".json" or relative.split("/", 1)[0] not in STAGE_ROOTS:
+            continue
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            continue
+
+        def visit(value: object, trail: list[str]) -> None:
+            if isinstance(value, dict):
+                for key, child in value.items():
+                    next_trail = trail + [str(key)]
+                    if key in STAGE_KEYS and isinstance(child, list):
+                        names = []
+                        for item in child[:80]:
+                            if isinstance(item, str):
+                                names.append(item)
+                            elif isinstance(item, dict):
+                                names.append(str(item.get("id") or item.get("name") or item.get("stage") or "structured stage"))
+                        if names:
+                            groups.append({
+                                "source": rel(path), "field": ".".join(next_trail), "lane": lane_for(f"{path} {key}"),
+                                "stages": names, "status": "declared",
+                            })
+                    visit(child, next_trail)
+            elif isinstance(value, list):
+                for item in value[:200]:
+                    visit(item, trail)
+
+        visit(payload, [])
+    groups.sort(key=lambda row: (row["source"], row["field"]))
+    counts = Counter(stage for group in groups for stage in group["stages"])
+    return {
+        "group_count": len(groups), "stage_count": sum(len(group["stages"]) for group in groups),
+        "lane_counts": dict(sorted(Counter(group["lane"] for group in groups).items())),
+        "groups": groups,
+        "truth": "Stages are indexed from source contracts. A declared stage is not evidence that the stage has executed or passed.",
+    }
+
+
 def evidence_for(section: int) -> list[str]:
     mapping = {
         4: ["tools/generate_master_directive_status.py", "website/data/master-directive-status.json"],
@@ -166,6 +218,7 @@ def build() -> dict[str, object]:
         },
         "repository_audit": repository_inventory(),
         "unified_plan": markdown_plan(),
+        "structured_stage_plan": structured_stage_plan(),
         "items": items,
     }
 

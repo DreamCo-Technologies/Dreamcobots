@@ -26,14 +26,14 @@
     "truth": "Statuses describe only evidence committed in this repository. Catalogued is not implemented; implemented is not runtime, benchmark, regression, or production verification."
   },
   "repository_audit": {
-    "files_scanned": 2070,
-    "python_files": 383,
+    "files_scanned": 2076,
+    "python_files": 386,
     "javascript_files": 91,
     "typescript_files": 304,
     "html_files": 61,
     "markdown_files": 352,
     "workflow_files": 71,
-    "test_files": 177,
+    "test_files": 178,
     "public_pages": 60,
     "top_level_directories": [
       "App_bots",
@@ -2863,6 +2863,4214 @@
       "external_actions_require_approval": true,
       "merge_rule": "Each task needs focused tests, evidence references, conflict review, and dependency gates before merge."
     }
+  },
+  "structured_stage_plan": {
+    "group_count": 239,
+    "stage_count": 2285,
+    "lane_counts": {
+      "governance": 3,
+      "runtime": 236
+    },
+    "groups": [
+      {
+        "source": "config/buddy-bootcamp-curriculum-v1.json",
+        "field": "pipeline",
+        "lane": "runtime",
+        "stages": [
+          "discover",
+          "classify",
+          "rights_check",
+          "extract_concepts",
+          "synthesize",
+          "lesson",
+          "practice",
+          "sandbox",
+          "transfer",
+          "score",
+          "remediate",
+          "regression",
+          "evidence"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy-bot-bootcamp-engine-v1.json",
+        "field": "pipeline",
+        "lane": "runtime",
+        "stages": [
+          "goal_intake",
+          "capability_decomposition",
+          "gap_scan",
+          "source_rank",
+          "knowledge_distill",
+          "study_guide",
+          "micro_lessons",
+          "practice_generation",
+          "sandbox_generation",
+          "benchmark_selection",
+          "adaptive_remediation",
+          "novel_transfer",
+          "mastery_gate",
+          "regression_watch"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy-capability-growth-business-memory-games-program.json",
+        "field": "business_owner_graduation.stages",
+        "lane": "runtime",
+        "stages": [
+          "internal prototype",
+          "internal production tool",
+          "DreamCo service",
+          "marketplace offering",
+          "independent SaaS/product",
+          "enterprise platform"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy-capability-growth-business-memory-games-program.json",
+        "field": "user_learning_and_memory.chatbot_import.pipeline",
+        "lane": "runtime",
+        "stages": [
+          "import",
+          "identify source/model/date",
+          "deduplicate",
+          "thread conversations",
+          "extract projects/preferences/tasks",
+          "create notes",
+          "flag uncertain inferences",
+          "let user review/correct",
+          "index for retrieval"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy-creative-academy.json",
+        "field": "film_standard.phases",
+        "lane": "runtime",
+        "stages": [
+          "development",
+          "writing",
+          "preproduction",
+          "cinematography",
+          "production_design",
+          "production",
+          "editorial",
+          "sound_music",
+          "vfx_animation",
+          "finish",
+          "delivery",
+          "release"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy-fleet-quality-program.json",
+        "field": "learning_path_policy.stages",
+        "lane": "runtime",
+        "stages": [
+          "mission_orientation",
+          "capability_practice",
+          "dependency_adapter_lab",
+          "competitor_discovery",
+          "open_source_parity",
+          "head_to_head_benchmark",
+          "measured_gap_sprint",
+          "owner_release_review",
+          "production_observation"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy-gain-promotion-policy.json",
+        "field": "pipeline",
+        "lane": "governance",
+        "stages": [
+          "quality_gate",
+          "reproduce",
+          "baseline_compare",
+          "safety_security_policy",
+          "shadow_or_simulation",
+          "canary",
+          "monitor",
+          "promote_or_hold_or_rollback"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy-master-scout-opportunity-resource-library-program.json",
+        "field": "train_a_bot_for_every_scout.pipeline",
+        "lane": "runtime",
+        "stages": [
+          "define scout skill",
+          "collect lawful training/reference sources",
+          "build Mastery Data Pack",
+          "train/configure specialist in Buddy Bootcamp",
+          "run held-out tests",
+          "compare against manual/public baselines",
+          "deploy in research/proposal mode",
+          "measure real user outcomes",
+          "retrain/repair gaps"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy-music-career-program.json",
+        "field": "career_system.stages",
+        "lane": "runtime",
+        "stages": [
+          "artist identity",
+          "song creation",
+          "catalog building",
+          "visual brand",
+          "distribution prep",
+          "content calendar",
+          "performance practice",
+          "fan/community plan",
+          "collaboration plan",
+          "press kit",
+          "booking kit",
+          "sponsor kit",
+          "analytics review",
+          "next-release learning"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy-music-career-program.json",
+        "field": "music_video.pipeline",
+        "lane": "runtime",
+        "stages": [
+          "treatment",
+          "lookbook",
+          "storyboard",
+          "shot list",
+          "performance plan",
+          "wardrobe",
+          "locations",
+          "lighting",
+          "camera",
+          "edit map",
+          "VFX",
+          "color",
+          "captions",
+          "thumbnail",
+          "short clips",
+          "release plan"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy-pages-data-pipeline.json",
+        "field": "stages",
+        "lane": "runtime",
+        "stages": [
+          "discover_tracked_files",
+          "discover_systems",
+          "collect_test_and_benchmark_registry",
+          "collect_verified_actions_results",
+          "collect_security_and_dependency_status",
+          "collect_verified_build_and_release_artifacts",
+          "normalize_status_and_timestamps",
+          "validate_public_private_boundary",
+          "validate_no_false_pass_claims",
+          "generate_dashboard_data",
+          "validate_generated_pages",
+          "publish_only_after_gate"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy-personality-acting-program.json",
+        "field": "production_pipeline.stages",
+        "lane": "runtime",
+        "stages": [
+          "concept",
+          "world_building",
+          "character_design",
+          "casting_profile",
+          "outline",
+          "script",
+          "table_read",
+          "rehearsal",
+          "storyboard",
+          "shot_list",
+          "asset_generation",
+          "performance",
+          "voice",
+          "music",
+          "sound",
+          "edit",
+          "VFX",
+          "continuity_review",
+          "quality_review",
+          "rights_review",
+          "captioning",
+          "trailer",
+          "thumbnail",
+          "marketing",
+          "distribution_plan",
+          "publishing_approval",
+          "analytics",
+          "next_episode_learning"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy-simulation-foundry.json",
+        "field": "simulation_to_game.stages",
+        "lane": "runtime",
+        "stages": [
+          "learning or practice objective",
+          "scenario states",
+          "legal actions",
+          "feedback and scoring",
+          "safe failure and reset",
+          "difficulty ladder",
+          "instructor or owner controls",
+          "bot playtest",
+          "accessibility",
+          "package"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy_1000_source_benchmark_and_software_engineer_mastery.json",
+        "field": "beneficial_benchmark_example.stages",
+        "lane": "runtime",
+        "stages": [
+          "requirements_interview",
+          "architecture",
+          "implementation",
+          "database",
+          "API",
+          "UI",
+          "tests",
+          "security_review",
+          "CI",
+          "deployment_simulation",
+          "incident_injection",
+          "recovery",
+          "documentation",
+          "independent_review"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy_capability_package_marketplace.json",
+        "field": "bootcamp.stages",
+        "lane": "runtime",
+        "stages": [
+          "install",
+          "dependency_check",
+          "sandbox_boot",
+          "capability_tests",
+          "benchmark",
+          "security_check",
+          "resource_check",
+          "integration_check",
+          "user_acceptance",
+          "promote"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy_multimedia_learning_registry.json",
+        "field": "pipeline",
+        "lane": "runtime",
+        "stages": [
+          "discover",
+          "authorize",
+          "identify_metadata",
+          "acquire_or_link",
+          "parse",
+          "segment",
+          "index",
+          "extract_claims",
+          "extract_skills",
+          "extract_examples",
+          "cross_reference",
+          "generate_original_tasks",
+          "benchmark",
+          "verify",
+          "store_provenance",
+          "regression"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy_reality_gap_loop.json",
+        "field": "pipeline",
+        "lane": "runtime",
+        "stages": [
+          "generate",
+          "execute",
+          "observe",
+          "compare_to_ground_truth",
+          "score",
+          "identify_gaps",
+          "select_training_candidates",
+          "build_original_fix",
+          "retest",
+          "regression",
+          "promote_capability"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy_source_scanner_and_code_lab_policy.json",
+        "field": "source_scanner.pipeline",
+        "lane": "governance",
+        "stages": [
+          "discover",
+          "identify_authoritative_pages",
+          "deduplicate",
+          "extract_topics",
+          "map_skills",
+          "map_tasks",
+          "map_capabilities",
+          "create_original_benchmarks",
+          "score_source_value",
+          "record_provenance",
+          "schedule_refresh"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy_universal_benchmark_scanner.json",
+        "field": "pipeline",
+        "lane": "runtime",
+        "stages": [
+          "discover",
+          "classify",
+          "deduplicate",
+          "map_to_capability",
+          "map_to_skill",
+          "map_to_occupation_task",
+          "generate_original_variant",
+          "select_executor",
+          "sandbox",
+          "execute",
+          "collect_evidence",
+          "score",
+          "confidence_check",
+          "failure_recovery",
+          "regression",
+          "promote_or_retrain",
+          "publish_report"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy_vibe_game_engine_blueprint.json",
+        "field": "pipeline",
+        "lane": "runtime",
+        "stages": [
+          "idea",
+          "intent_parser",
+          "game_design_spec",
+          "world_model",
+          "mechanics_graph",
+          "asset_plan",
+          "code_plan",
+          "scene_generation",
+          "implementation",
+          "automated_tests",
+          "playtest_simulation",
+          "benchmark",
+          "bug_repair",
+          "regression",
+          "optimization",
+          "package",
+          "publish_or_export"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy_video_intelligence_pipeline.json",
+        "field": "pipeline",
+        "lane": "runtime",
+        "stages": [
+          "probe_metadata",
+          "sample_adaptively",
+          "scene_detect",
+          "shot_cluster",
+          "keyframe_extract",
+          "audio_extract",
+          "speech_transcribe_when_authorized",
+          "ocr_when_needed",
+          "object_track_when_needed",
+          "action_track_when_needed",
+          "caption",
+          "timeline_index",
+          "embed",
+          "retrieve",
+          "reason",
+          "verify",
+          "store_evidence"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/buddy_video_scan_benchmark.json",
+        "field": "stages",
+        "lane": "runtime",
+        "stages": [
+          "inventory",
+          "metadata",
+          "scene_detection",
+          "adaptive_sampling",
+          "speech",
+          "ocr",
+          "visual_events",
+          "embeddings",
+          "deduplication",
+          "quality_filter",
+          "temporal_index",
+          "structured_export"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/capability-learning-path-schema.json",
+        "field": "stages",
+        "lane": "runtime",
+        "stages": [
+          "onet_requirement_mapping",
+          "professional_rubric_mapping",
+          "reference_method_discovery",
+          "license_and_provenance_review",
+          "behavioral_specification",
+          "minimum_viable_implementation",
+          "unit_and_integration_tests",
+          "sandbox_validation",
+          "external_benchmark",
+          "professional_quality_test",
+          "open_source_comparison",
+          "dreamco_holdout",
+          "transfer_test",
+          "gap_analysis",
+          "improvement_experiment",
+          "regression_test",
+          "promotion",
+          "harder_challenge"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/dreamco-studio-benchmark-contract.json",
+        "field": "pipeline",
+        "lane": "runtime",
+        "stages": [
+          "brief",
+          "research",
+          "script_or_song_plan",
+          "storyboard_or_arrangement",
+          "asset_generation",
+          "performance_generation",
+          "editing",
+          "mix_or_sound_design",
+          "master_or_color_grade",
+          "quality_control",
+          "blind_evaluation",
+          "benchmark_comparison",
+          "gap_analysis",
+          "improvement",
+          "regression",
+          "final_export"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "bots.learning_path.stages",
+        "lane": "runtime",
+        "stages": [
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage",
+          "structured stage"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_fleet_quality_program.json",
+        "field": "learning_path_policy.stages",
+        "lane": "runtime",
+        "stages": [
+          "mission_orientation",
+          "capability_practice",
+          "dependency_adapter_lab",
+          "competitor_discovery",
+          "open_source_parity",
+          "head_to_head_benchmark",
+          "measured_gap_sprint",
+          "owner_release_review",
+          "production_observation"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_model_progress_center.json",
+        "field": "opportunityExperimentPolicy.stages",
+        "lane": "runtime",
+        "stages": [
+          "problem discovery",
+          "demand evidence",
+          "offer prototype",
+          "pricing sandbox",
+          "fulfillment test",
+          "owner-approved outreach",
+          "customer outcome measurement",
+          "repeatability review"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_multimodal_studio.json",
+        "field": "simulation_foundry.simulation_to_game.stages",
+        "lane": "runtime",
+        "stages": [
+          "learning or practice objective",
+          "scenario states",
+          "legal actions",
+          "feedback and scoring",
+          "safe failure and reset",
+          "difficulty ladder",
+          "instructor or owner controls",
+          "bot playtest",
+          "accessibility",
+          "package"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_specialized_hubs.json",
+        "field": "creative.film_standard.phases",
+        "lane": "runtime",
+        "stages": [
+          "development",
+          "writing",
+          "preproduction",
+          "cinematography",
+          "production_design",
+          "production",
+          "editorial",
+          "sound_music",
+          "vfx_animation",
+          "finish",
+          "delivery",
+          "release"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/generated/buddy_success_program.json",
+        "field": "safe_ai_training.stages",
+        "lane": "runtime",
+        "stages": [
+          "define the user outcome and prohibited uses",
+          "verify ownership, license, consent, and provenance",
+          "remove secrets and minimize personal data",
+          "create a dataset card and immutable dataset revision",
+          "separate training, validation, red-team, and holdout fixtures",
+          "train only in an isolated, resource-bounded workspace",
+          "evaluate quality, privacy, security, bias, and misuse resistance",
+          "require owner review before promoting a candidate",
+          "deploy behind limits, monitoring, rollback, and a kill switch",
+          "record outcomes and retrain only from approved evidence"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/live-user-testing-readiness.json",
+        "field": "rollout_stages",
+        "lane": "runtime",
+        "stages": [
+          "internal_only",
+          "owner_pilot",
+          "closed_alpha",
+          "closed_beta",
+          "limited_release",
+          "general_release"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/modernization-benchmark-integration.json",
+        "field": "phases",
+        "lane": "runtime",
+        "stages": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/notes-to-code-program.json",
+        "field": "pipeline",
+        "lane": "runtime",
+        "stages": [
+          "discover note files",
+          "extract headings, checkboxes and actionable statements",
+          "classify documentation vs idea vs bug vs capability vs benchmark gap vs architecture decision",
+          "search repository for existing implementation before creating work",
+          "deduplicate against existing issues/config/tests/code",
+          "identify canonical owner and division",
+          "write acceptance criteria",
+          "write sandbox/test requirements",
+          "write security/permission/cost boundaries",
+          "generate code-change candidate or builder issue",
+          "run focused verification",
+          "only mark implemented when executable evidence exists"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/onet-priority-curriculum.json",
+        "field": "pipeline",
+        "lane": "runtime",
+        "stages": [
+          "ingest_allowed_data",
+          "normalize_occupation_taxonomy",
+          "map_tasks_to_capabilities",
+          "map_skills_and_knowledge",
+          "map_tools_and_technologies",
+          "build_practice_tasks",
+          "map_to_divisions",
+          "identify_benchmark_gaps",
+          "generate_curriculum",
+          "sandbox_practice",
+          "holdout_test",
+          "regression_test",
+          "record_mastery",
+          "refresh_when_source_changes"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/startup_factory/buddy_vibe_to_company_contract.json",
+        "field": "pipeline",
+        "lane": "runtime",
+        "stages": [
+          "intake",
+          "research",
+          "plan",
+          "design",
+          "generate",
+          "sandbox",
+          "test",
+          "verify",
+          "deploy",
+          "operate",
+          "learn",
+          "improve",
+          "scale",
+          "exit_or_reinvest"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/startup_factory/startup_factory_contract.json",
+        "field": "stages",
+        "lane": "runtime",
+        "stages": [
+          "DISCOVER",
+          "DEFINE",
+          "PROTOTYPE",
+          "VALIDATE",
+          "BUILD",
+          "LAUNCH",
+          "OPERATE",
+          "SCALE",
+          "FUND"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/startup_factory/startup_lifecycle_contract.json",
+        "field": "stages",
+        "lane": "runtime",
+        "stages": [
+          "discover",
+          "design",
+          "prototype",
+          "validate",
+          "fund",
+          "launch",
+          "operate",
+          "improve",
+          "expand",
+          "scale",
+          "exit_or_reinvest"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/system-progress-gauges.json",
+        "field": "gap_stages",
+        "lane": "runtime",
+        "stages": [
+          "discovered",
+          "deduplicated",
+          "owner_assigned",
+          "acceptance_defined",
+          "sandbox_tests_defined",
+          "baseline_recorded",
+          "implementation_started",
+          "focused_tests_pass",
+          "security_review_pass",
+          "affected_regressions_pass",
+          "rollback_verified",
+          "runtime_evidence_pass"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/universal_task_capability_contract.json",
+        "field": "contract.required_stages",
+        "lane": "runtime",
+        "stages": [
+          "understand",
+          "decompose",
+          "map_capabilities",
+          "plan",
+          "execute",
+          "observe",
+          "verify",
+          "recover",
+          "complete",
+          "learn"
+        ],
+        "status": "declared"
+      },
+      {
+        "source": "config/universal_task_engine_policy.json",
+        "field": "pipeline",
+        "lane": "governance",
+        "stages": [
+          "intake",
+          "goal_definition",
+          "constraint_discovery",
+          "task_decomposition",
+          "capability_mapping",
+          "tool_and_model_selection",
+          "human_vs_ai_boundary",
+          "plan_generation",
+          "sandbox_execution",
+          "observation",
+          "verification",
+          "repair_or_replan",
+          "completion",
+          "learning_and_capability_update"
+        ],
+        "status": "declared"
+      }
+    ],
+    "truth": "Stages are indexed from source contracts. A declared stage is not evidence that the stage has executed or passed."
   },
   "items": [
     {

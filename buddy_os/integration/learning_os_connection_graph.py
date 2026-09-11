@@ -41,10 +41,10 @@ class BuddyConnectionGraph:
             if node_id != self.payload["root_node"] and node_id not in linked:
                 errors.append(f"unlinked node: {node_id}")
             source = node.get("source_path")
-            if self.repository_root and node.get("kind") != "external_resource" and source:
+            if self.repository_root and node.get("kind") not in {"external_resource", "learning_source_adapter", "referenced_external_source"} and source:
                 if not (self.repository_root / source).exists():
                     errors.append(f"missing source: {source}")
-            if node.get("kind") == "external_resource" and node.get("status") == "connected":
+            if node.get("kind") in {"external_resource", "learning_source_adapter", "referenced_external_source"} and node.get("status") == "connected":
                 if node.get("readiness") != "runtime_verified" or not node.get("evidence"):
                     errors.append(f"external connection lacks runtime evidence: {node_id}")
         return errors

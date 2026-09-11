@@ -18,6 +18,8 @@ test('Actions page exposes health, filters, upgrades, safe GitHub handoff, and c
   assert.match(html, /id="metric-benchmarks"/);
   assert.match(html, /id="actions-review-pr"/);
   assert.match(html, /Code Review Council/);
+  assert.match(html, /Repository stages/);
+  assert.match(source, /master-directive-status\.json/);
   assert.match(source, /api\.github\.com\/repos\/\$\{REPOSITORY\}\/actions\/runs/);
   assert.match(review, /heuristic review score/);
   assert.match(review, /secret-like token/);
