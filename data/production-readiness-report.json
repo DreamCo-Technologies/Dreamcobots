@@ -1,0 +1,417 @@
+{
+  "schema_version": 2,
+  "generated_at": "2026-09-11T17:27:10.359110+00:00",
+  "commit": "a29200f2537450adfa4d4975863c43eac7047750",
+  "policy": "evidence-first",
+  "release_status": "external_config_required",
+  "areas": [
+    {
+      "id": "buddy_orchestration",
+      "label": "Buddy orchestration/router",
+      "status": "partial",
+      "repository_evidence": [
+        "buddy_os/**",
+        "tools/*buddy*",
+        "tests/*buddy*"
+      ],
+      "required_evidence": [
+        "buddy router source",
+        "router tests",
+        "routing evidence"
+      ]
+    },
+    {
+      "id": "benchmark_framework",
+      "label": "Benchmark framework",
+      "status": "partial",
+      "repository_evidence": [
+        "docs/*BENCHMARK*",
+        "tools/*benchmark*",
+        "tests/*benchmark*"
+      ],
+      "required_evidence": [
+        "benchmark schema",
+        "benchmark tests",
+        "reproducibility metadata"
+      ]
+    },
+    {
+      "id": "capability_genome",
+      "label": "Capability Genome",
+      "status": "partial",
+      "repository_evidence": [
+        "config/*capability*",
+        "tests/*capability*"
+      ],
+      "required_evidence": [
+        "capability registry",
+        "capability validation",
+        "integration evidence"
+      ]
+    },
+    {
+      "id": "model_research",
+      "label": "500-model research system",
+      "status": "partial",
+      "repository_evidence": [
+        "docs/*MODEL*",
+        "tools/*model*",
+        "config/*model*"
+      ],
+      "required_evidence": [
+        "model registry",
+        "official-source provenance",
+        "execution adapter evidence"
+      ]
+    },
+    {
+      "id": "teacher_model",
+      "label": "Teacher-model benchmarking",
+      "status": "unknown",
+      "repository_evidence": [],
+      "required_evidence": [
+        "teacher benchmark contract",
+        "baseline evidence",
+        "repeat-run evidence"
+      ]
+    },
+    {
+      "id": "experiment_engine",
+      "label": "Experiment engine",
+      "status": "partial",
+      "repository_evidence": [
+        "tests/*experiment*"
+      ],
+      "required_evidence": [
+        "experiment lifecycle",
+        "isolated execution",
+        "result persistence"
+      ]
+    },
+    {
+      "id": "ablation",
+      "label": "Ablation testing",
+      "status": "unknown",
+      "repository_evidence": [],
+      "required_evidence": [
+        "ablation matrix",
+        "controlled fixtures",
+        "automated results"
+      ]
+    },
+    {
+      "id": "distillation",
+      "label": "Distillation pipeline",
+      "status": "unknown",
+      "repository_evidence": [],
+      "required_evidence": [
+        "teacher/student contract",
+        "quality floor",
+        "rollback evidence"
+      ]
+    },
+    {
+      "id": "free_first",
+      "label": "Free-first resource optimizer",
+      "status": "partial",
+      "repository_evidence": [
+        "tools/*resource*",
+        "tests/*resource*"
+      ],
+      "required_evidence": [
+        "resource policy",
+        "budget enforcement",
+        "fallback tests"
+      ]
+    },
+    {
+      "id": "resource_optimization",
+      "label": "VRAM/RAM optimization",
+      "status": "partial",
+      "repository_evidence": [
+        "*ram*",
+        "tools/*resource*"
+      ],
+      "required_evidence": [
+        "resource measurements",
+        "hardware profile",
+        "regression thresholds"
+      ]
+    },
+    {
+      "id": "regression",
+      "label": "Regression testing",
+      "status": "partial",
+      "repository_evidence": [
+        "tests/**",
+        ".github/workflows/**"
+      ],
+      "required_evidence": [
+        "regression suite",
+        "failure fixtures",
+        "release gate"
+      ]
+    },
+    {
+      "id": "security",
+      "label": "Security/licensing",
+      "status": "partial",
+      "repository_evidence": [
+        "SECURITY.md",
+        ".github/workflows/**"
+      ],
+      "required_evidence": [
+        "secret scan",
+        "dependency audit",
+        "license/provenance audit"
+      ]
+    },
+    {
+      "id": "actions",
+      "label": "Actions page integration",
+      "status": "partial",
+      "repository_evidence": [
+        "client/**",
+        "tests/actions*",
+        ".github/workflows/actions*"
+      ],
+      "required_evidence": [
+        "stable action IDs",
+        "UI tests",
+        "source-to-UI evidence"
+      ]
+    },
+    {
+      "id": "daily_scan",
+      "label": "Daily autonomous scanning",
+      "status": "partial",
+      "repository_evidence": [
+        ".github/workflows/*daily*",
+        ".github/workflows/*scan*",
+        "tools/*scan*"
+      ],
+      "required_evidence": [
+        "scheduled workflow",
+        "evidence artifact",
+        "Actions ingestion"
+      ]
+    },
+    {
+      "id": "source_ingestion",
+      "label": "AI-source ingestion",
+      "status": "partial",
+      "repository_evidence": [
+        "tools/*source*"
+      ],
+      "required_evidence": [
+        "provenance",
+        "freshness",
+        "refresh failure handling"
+      ]
+    },
+    {
+      "id": "superbot",
+      "label": "Superbot/module architecture",
+      "status": "partial",
+      "repository_evidence": [
+        "*module*",
+        "tools/*fleet*",
+        "tests/*fleet*"
+      ],
+      "required_evidence": [
+        "module registry",
+        "routing tests",
+        "conflict serialization"
+      ]
+    },
+    {
+      "id": "deployment",
+      "label": "Deployment/production infrastructure",
+      "status": "partial",
+      "repository_evidence": [
+        "app.yaml",
+        "cloudbuild.yaml",
+        "vercel.json",
+        ".github/workflows/*deploy*"
+      ],
+      "required_evidence": [
+        "production build",
+        "health endpoint",
+        "rollback procedure"
+      ]
+    },
+    {
+      "id": "observability",
+      "label": "Observability",
+      "status": "partial",
+      "repository_evidence": [
+        "server/*observability*",
+        "tests/*observability*"
+      ],
+      "required_evidence": [
+        "correlation IDs",
+        "structured telemetry",
+        "benchmark/agent traces"
+      ]
+    },
+    {
+      "id": "cost_accounting",
+      "label": "Cost accounting",
+      "status": "partial",
+      "repository_evidence": [
+        "tools/*cost*"
+      ],
+      "required_evidence": [
+        "usage ledger",
+        "provider/model attribution",
+        "budget reconciliation"
+      ]
+    }
+  ],
+  "runtime_checks": [
+    {
+      "id": "env_database_url_documented",
+      "label": "DATABASE_URL is documented for production Postgres",
+      "status": "pass",
+      "evidence": [
+        ".env.example"
+      ],
+      "release_blocker": true
+    },
+    {
+      "id": "stripe_live_keys_documented",
+      "label": "Stripe live secret and publishable keys are documented",
+      "status": "pass",
+      "evidence": [
+        ".env.example"
+      ],
+      "release_blocker": true
+    },
+    {
+      "id": "stripe_webhook_secret_documented",
+      "label": "Stripe webhook secret is documented and enforced",
+      "status": "pass",
+      "evidence": [
+        ".env.example",
+        "server/webhookHandlers.ts"
+      ],
+      "release_blocker": true
+    },
+    {
+      "id": "stripe_aliases_supported",
+      "label": "Stripe supports deployment-friendly and live-key aliases",
+      "status": "pass",
+      "evidence": [
+        "server/stripeClient.ts"
+      ],
+      "release_blocker": true
+    },
+    {
+      "id": "openai_aliases_supported",
+      "label": "OpenAI provider accepts AI_INTEGRATIONS_OPENAI_API_KEY and OPENAI_API_KEY",
+      "status": "pass",
+      "evidence": [
+        "server/openaiConfig.ts"
+      ],
+      "release_blocker": false
+    },
+    {
+      "id": "health_endpoint_reports_runtime",
+      "label": "Health endpoint reports database and Stripe configuration",
+      "status": "pass",
+      "evidence": [
+        "server/index.ts"
+      ],
+      "release_blocker": true
+    },
+    {
+      "id": "readiness_endpoint_reports_runtime",
+      "label": "Readiness endpoint exposes production dependency status",
+      "status": "pass",
+      "evidence": [
+        "server/index.ts",
+        "server/observability.ts"
+      ],
+      "release_blocker": true
+    },
+    {
+      "id": "structured_request_observability",
+      "label": "API requests emit request IDs and structured logs",
+      "status": "pass",
+      "evidence": [
+        "server/observability.ts"
+      ],
+      "release_blocker": true
+    },
+    {
+      "id": "pages_marked_static",
+      "label": "GitHub/Vercel static site boundary is explicit",
+      "status": "pass",
+      "evidence": [
+        "vercel.json",
+        "docs/DEPLOYMENT_COST_POLICY.md"
+      ],
+      "release_blocker": false
+    },
+    {
+      "id": "required_scripts_exist",
+      "label": "Build, typecheck, local app, Pages, and readiness scripts exist",
+      "status": "pass",
+      "evidence": [
+        "package.json"
+      ],
+      "release_blocker": true
+    },
+    {
+      "id": "secret_files_ignored",
+      "label": "Local secret files are ignored while examples stay committable",
+      "status": "pass",
+      "evidence": [
+        ".gitignore"
+      ],
+      "release_blocker": true
+    },
+    {
+      "id": "release_rule_documented",
+      "label": "Production certification requires executable evidence",
+      "status": "pass",
+      "evidence": [
+        "docs/PRODUCTION_READINESS_MASTER_PLAN.md"
+      ],
+      "release_blocker": false
+    },
+    {
+      "id": "live_environment_configured",
+      "label": "Current runner has live production environment variables",
+      "status": "external_config_required",
+      "evidence": [],
+      "release_blocker": false,
+      "missing_required": [
+        "DATABASE_URL",
+        "STRIPE_WEBHOOK_SECRET"
+      ],
+      "missing_any_of": {
+        "stripe_secret_key": [
+          "STRIPE_SECRET_KEY",
+          "STRIPE_LIVE_SECRET_KEY"
+        ],
+        "stripe_publishable_key": [
+          "STRIPE_PUBLISHABLE_KEY",
+          "STRIPE_LIVE_PK"
+        ],
+        "openai_key": [
+          "AI_INTEGRATIONS_OPENAI_API_KEY",
+          "OPENAI_API_KEY",
+          "OPENAI_ADMIN_KEY"
+        ]
+      },
+      "note": "CI and local scans do not prove customer readiness until deployment secrets are configured in the production host."
+    }
+  ],
+  "blocking_unknowns": [],
+  "blocking_runtime_checks": [],
+  "external_config_required": [
+    "live_environment_configured"
+  ],
+  "note": "Partial/unknown is intentional until executable evidence is attached. This report is not a claim of production certification."
+}
