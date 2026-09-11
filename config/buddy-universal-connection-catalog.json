@@ -1,0 +1,31 @@
+{
+  "schema":"dreamco.buddy.connection_setup_catalog.v1",
+  "truth":"A setup link or configured secret reference is not a verified live connection. Secrets belong in a local keychain, environment file excluded from Git, or managed server vault—not browser storage.",
+  "connections":[
+    {"id":"local-model","name":"Local AI runtime","area":"knowledge","auth":"local_runtime","setup_url":"https://ollama.com/download","secret_ref":null,"required":false,"buddy_surface":"open-model-lab.html","status":"setup_available"},
+    {"id":"openai","name":"OpenAI models","area":"knowledge","auth":"api_key","setup_url":"https://platform.openai.com/api-keys","secret_ref":"OPENAI_API_KEY","required":false,"buddy_surface":"models.html","status":"optional_provider"},
+    {"id":"github","name":"GitHub","area":"development","auth":"oauth_or_app","setup_url":"https://github.com/settings/apps","secret_ref":"GITHUB_TOKEN","required":false,"buddy_surface":"actions.html","status":"adapter_configuration"},
+    {"id":"mcp","name":"MCP server","area":"tools","auth":"mcp_transport","setup_url":"https://modelcontextprotocol.io/docs/getting-started/intro","secret_ref":null,"required":false,"buddy_surface":"connections.html","status":"server_configuration"},
+    {"id":"google-maps","name":"Google Maps","area":"geospatial","auth":"api_key","setup_url":"https://developers.google.com/maps/documentation/javascript/get-api-key","secret_ref":"GOOGLE_MAPS_API_KEY","required":false,"buddy_surface":"world-lens.html","status":"optional_provider"},
+    {"id":"reso-mls","name":"Authorized MLS / RESO provider","area":"property","auth":"oauth_or_api_key","setup_url":"https://www.reso.org/reso-web-api/","secret_ref":"PROPERTY_PROVIDER_TOKEN","required":false,"buddy_surface":"world-lens.html","status":"data_license_required"},
+    {"id":"ffmpeg","name":"FFmpeg local media engine","area":"video_audio","auth":"local_runtime","setup_url":"https://ffmpeg.org/download.html","secret_ref":null,"required":false,"buddy_surface":"studio.html","status":"local_engine_setup"},
+    {"id":"blender","name":"Blender local 3D/VFX engine","area":"video_3d","auth":"local_runtime","setup_url":"https://www.blender.org/download/","secret_ref":null,"required":false,"buddy_surface":"studio.html","status":"local_engine_setup"},
+    {"id":"audacity","name":"Audacity local audio editor","area":"voice_music","auth":"local_runtime","setup_url":"https://www.audacityteam.org/download/","secret_ref":null,"required":false,"buddy_surface":"studio.html","status":"local_engine_setup"},
+    {"id":"musicgen","name":"AudioCraft / MusicGen","area":"music","auth":"local_runtime","setup_url":"https://github.com/facebookresearch/audiocraft","secret_ref":null,"required":false,"buddy_surface":"music-creator.html","status":"license_and_hardware_review"},
+    {"id":"whisper","name":"Whisper speech recognition","area":"voice","auth":"local_runtime","setup_url":"https://github.com/openai/whisper","secret_ref":null,"required":false,"buddy_surface":"studio.html","status":"local_engine_setup"},
+    {"id":"usaspending","name":"USAspending API","area":"government","auth":"public_api","setup_url":"https://api.usaspending.gov/","secret_ref":null,"required":false,"buddy_surface":"government.html","status":"public_adapter"},
+    {"id":"simpler-grants","name":"Simpler.Grants.gov API","area":"government","auth":"api_key","setup_url":"https://simpler.grants.gov/developers","secret_ref":"SIMPLER_GRANTS_API_KEY","required":false,"buddy_surface":"government.html","status":"adapter_configuration"},
+    {"id":"world-bank","name":"World Bank Open Data API","area":"global_government","auth":"public_api","setup_url":"https://datahelpdesk.worldbank.org/knowledgebase/topics/125589-developer-information","secret_ref":null,"required":false,"buddy_surface":"opportunity-hub.html","status":"public_adapter"},
+    {"id":"oecd","name":"OECD Data Explorer","area":"global_government","auth":"public_data","setup_url":"https://data-explorer.oecd.org/","secret_ref":null,"required":false,"buddy_surface":"opportunity-hub.html","status":"source_adapter"},
+    {"id":"un-data","name":"United Nations Data","area":"global_government","auth":"public_data","setup_url":"https://data.un.org/","secret_ref":null,"required":false,"buddy_surface":"opportunity-hub.html","status":"source_adapter"},
+    {"id":"sam","name":"SAM.gov API","area":"contracts_manufacturing","auth":"api_key","setup_url":"https://open.gsa.gov/api/sam-api/","secret_ref":"SAM_GOV_API_KEY","required":false,"buddy_surface":"manufacturer-marketplace.html","status":"adapter_configuration"},
+    {"id":"nist-mep","name":"NIST MEP supplier scouting","area":"manufacturing","auth":"account_handoff","setup_url":"https://www.nist.gov/mep","secret_ref":null,"required":false,"buddy_surface":"manufacturer-marketplace.html","status":"official_handoff"}
+  ],
+  "owned_core":[
+    {"area":"chatbot and knowledge","implementation":"Buddy routing, local memory packets, repository search, evidence and provider abstraction","fallback":"local model or deterministic tools"},
+    {"area":"video and movie editing","implementation":"Buddy Media Core project/timeline/consent/provenance orchestration","fallback":"FFmpeg and Blender adapters"},
+    {"area":"music and voice editing","implementation":"Buddy production plans, track/voice direction, consent and quality scoring","fallback":"Audacity, FFmpeg, Whisper and reviewed local models"},
+    {"area":"government navigation","implementation":"jurisdiction ontology, official-source registry, forms/tasks and evidence gates","fallback":"official web handoff"},
+    {"area":"property and manufacturing","implementation":"World Lens, diligence/RFQ packets, quote comparison and approvals","fallback":"manual verified data import"}
+  ]
+}
