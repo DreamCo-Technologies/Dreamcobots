@@ -13,6 +13,7 @@
     { href: 'voice-command-center.html', label: '🎙️ Voice Commands' },
     { href: 'world-source-center.html', label: '📡 World Sources' },
     { href: 'my-buddy.html', label: '🤖 My Buddy' },
+    { href: 'resource-connection-center.html', label: '🔗 Resource Connections' },
     { href: 'independence-center.html', label: '🏠 Independence' },
     { href: 'buddy-workspace.html', label: '📋 Buddy Workspace' },
     { href: 'opportunity-hub.html', label: '🏡 Opportunity Hub' },

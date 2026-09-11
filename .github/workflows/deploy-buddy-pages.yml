@@ -24,6 +24,7 @@ on:
       - "tools/generate_dreamco_repository_master_map.py"
       - "tools/generate_master_directive_status.py"
       - "tools/generate_command_center_data.py"
+      - "tools/generate_resource_connection_catalog.py"
       - "command-center/data/**"
       - "docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md"
       - "config/**"
@@ -77,6 +78,7 @@ jobs:
           python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_master_directive_status.py
           python3 tools/generate_command_center_data.py --check
+          python3 tools/generate_resource_connection_catalog.py --check
           python3 tools/generate_opportunity_hub.py --check
           python3 tools/generate_setup_center.py --check
           python3 tools/build_buddy_learning_os_connection_graph.py
@@ -124,6 +126,7 @@ jobs:
           node --check website/my-buddy.js
           node --check website/independence-center.js
           node --check website/buddy-workspace.js
+          node --check website/resource-connection-center.js
           node --check website/opportunity-hub.js
           node --check website/setup-center.js
       - name: Configure GitHub Pages
