@@ -13,21 +13,33 @@
   "truth_states": ["permission_required", "requesting", "live", "stale", "manual", "unavailable", "error"],
   "privacy": {
     "browser_storage": "Waypoints remain in this browser until the owner clears them.",
-    "network_default": "No external map, geocoder, telemetry, or tracking service is contacted.",
+    "network_default": "External maps and property searches remain off until the owner enables them and accepts the provider disclosure.",
     "people_are_not_targets": true,
-    "background_tracking": false,
+    "background_tracking": "page_open_only; native-app background service required for closed-app tracking",
     "stop_control_required": true
   },
   "safety": {
     "navigation_use": false,
     "emergency_use": false,
     "surveillance_use": false,
+    "facial_identification": false,
     "accuracy_must_be_visible": true,
     "freshness_must_be_visible": true
   },
-  "evidence_refs": [
+    "evidence_refs": [
     "website/world-lens.html",
     "website/world-lens.js",
     "tests/world-lens-page.test.mjs"
-  ]
+  ],
+  "connections": {
+    "external_map": "owner_enabled OpenStreetMap embed; sends the viewed coordinates to OpenStreetMap",
+    "property_provider": "owner-configured HTTPS endpoint returning authorized listing JSON; RESO-shaped fields are supported",
+    "automatic_property_scan": "runs only while live GPS and the property connection toggle are both enabled"
+  },
+  "people_profiles": {
+    "consent_required": true,
+    "revocable": true,
+    "allowed": ["display name", "relationship", "notes", "user-selected profile photo", "consent timestamp", "shared coordinates"],
+    "disallowed": ["covert tracking", "face recognition", "biometric templates", "identification of unknown people"]
+  }
 }

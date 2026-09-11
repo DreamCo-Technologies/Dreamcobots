@@ -10,7 +10,7 @@ const policy = JSON.parse(fs.readFileSync('config/buddy-world-lens-gps.json', 'u
 test('World Lens is reachable and every visible control is wired', () => {
   assert.match(nav, /world-lens\.html/);
   const ids = [...html.matchAll(/<button[^>]+id="([^"]+)"/g)].map(match => match[1]);
-  assert.deepEqual(ids.sort(), ['lens-add','lens-buddy','lens-clear','lens-export','lens-locate','lens-stop','lens-watch']);
+  assert.deepEqual(ids.sort(), ['lens-add','lens-buddy','lens-clear','lens-export','lens-locate','lens-map-refresh','lens-person-clear','lens-person-save','lens-properties','lens-stop','lens-watch']);
   for (const id of ids) assert.match(script, new RegExp(`\\$\\('${id}'\\)\\.addEventListener`), `missing handler for ${id}`);
 });
 
@@ -19,22 +19,32 @@ test('GPS is consent based, stoppable, and not started on load', () => {
   assert.match(script, /watchPosition\(acceptPosition/);
   assert.match(script, /clearWatch\(watchId\)/);
   assert.doesNotMatch(script, /^\s*navigator\.geolocation\.(getCurrentPosition|watchPosition)/m);
-  assert.equal(policy.privacy.background_tracking, false);
+  assert.match(policy.privacy.background_tracking, /page_open_only/);
   assert.equal(policy.privacy.people_are_not_targets, true);
 });
 
 test('location truth and safety boundaries are visible', () => {
   assert.match(html, /not turn-by-turn navigation/);
-  assert.match(html, /GPS can be delayed or wrong/);
+  assert.match(html, /GPS and listings can be delayed or wrong/);
   assert.match(script, /accuracyMeters/);
   assert.match(script, /freshness/);
   assert.equal(policy.safety.emergency_use, false);
   assert.equal(policy.safety.surveillance_use, false);
 });
 
-test('coordinates stay local unless the owner exports or prepares a Buddy task', () => {
+test('external network requests require an enabled map or configured property provider', () => {
   assert.match(script, /localStorage/);
-  assert.doesNotMatch(script, /fetch\s*\(/);
-  assert.doesNotMatch(script, /XMLHttpRequest|WebSocket/);
+  assert.match(script, /lens-external-map.*checked/);
+  assert.match(script, /https:\\\/\\\//);
+  assert.match(script, /fetch\(url/);
+  assert.doesNotMatch(script, /WebSocket/);
   assert.match(script, /spatial_mission_packet/);
+});
+
+test('people profiles require consent and do not use facial recognition', () => {
+  assert.match(script, /lens-person-consent.*checked/);
+  assert.match(html, /does not perform facial recognition/);
+  assert.equal(policy.people_profiles.consent_required, true);
+  assert.equal(policy.safety.facial_identification, false);
+  assert.ok(policy.people_profiles.disallowed.includes('biometric templates'));
 });

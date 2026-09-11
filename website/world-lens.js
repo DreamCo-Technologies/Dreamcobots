@@ -1,8 +1,10 @@
 (() => {
   const $ = id => document.getElementById(id);
   const storageKey = 'dreamco.buddy.world-lens.waypoints.v1';
+  const peopleKey = 'dreamco.buddy.world-lens.people.v1';
   let current = null;
   let watchId = null;
+  let lastPropertyScan = 0;
 
   const readWaypoints = () => {
     try { return JSON.parse(localStorage.getItem(storageKey) || '[]'); } catch { return []; }
@@ -54,6 +56,46 @@
     $('lens-cross').hidden = false;
     $('lens-readout').textContent = `DEVICE GPS · ${coordinate(current.latitude)}, ${coordinate(current.longitude)} · accuracy ±${Math.round(current.accuracyMeters)}m · ${freshness(current.timestamp)}`;
     setStatus(`GPS fix received with ±${Math.round(current.accuracyMeters)} meter reported accuracy.`, true);
+    if ($('lens-external-map').checked) refreshExternalMap();
+    if (watchId !== null && $('lens-property-auto').checked && Date.now() - lastPropertyScan > 30000) void queryProperties();
+  }
+
+  function refreshExternalMap() {
+    if (!$('lens-external-map').checked) { setStatus('Approve external map requests before loading the map.'); return; }
+    if (!current) { setStatus('Request a GPS fix before loading the external map.'); return; }
+    const span = 0.012;
+    const bbox = [current.longitude-span,current.latitude-span,current.longitude+span,current.latitude+span].join(',');
+    $('lens-map-frame').src = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${encodeURIComponent(`${current.latitude},${current.longitude}`)}`;
+    $('lens-map-frame').hidden = false;
+    setStatus('External OpenStreetMap request enabled for this session.', true);
+  }
+
+  const safeText = value => escapeHtml(value ?? 'Not supplied');
+  async function queryProperties() {
+    if (!current) { $('lens-property-status').textContent = 'Request a GPS fix first.'; return; }
+    const endpoint = $('lens-property-endpoint').value.trim();
+    if (!/^https:\/\//i.test(endpoint)) { $('lens-property-status').textContent = 'Connect an authorized HTTPS listing endpoint first.'; return; }
+    localStorage.setItem('dreamco.buddy.world-lens.property-endpoint.v1', endpoint);
+    const url = new URL(endpoint);
+    url.searchParams.set('lat', current.latitude);
+    url.searchParams.set('lon', current.longitude);
+    url.searchParams.set('radiusMeters', '500');
+    $('lens-property-status').textContent = 'Checking the connected provider…';
+    lastPropertyScan = Date.now();
+    try {
+      const response = await fetch(url, { headers: { Accept: 'application/json' }, credentials: 'omit' });
+      if (!response.ok) throw new Error(`provider returned ${response.status}`);
+      const payload = await response.json();
+      const listings = Array.isArray(payload) ? payload : (payload.listings || payload.value || []);
+      $('lens-properties-list').innerHTML = listings.slice(0, 50).map(item => `<article class="lens-item"><strong>${safeText(item.address || item.UnparsedAddress)}</strong><div>${safeText(item.price || item.ListPrice)} · ${safeText(item.bedrooms || item.BedroomsTotal)} beds · ${safeText(item.bathrooms || item.BathroomsTotalInteger)} baths</div><div>${safeText(item.status || item.StandardStatus)} · ${safeText(item.source || 'connected provider')}</div></article>`).join('') || '<p>No nearby listings returned.</p>';
+      $('lens-property-status').textContent = `${listings.length} provider listing${listings.length === 1 ? '' : 's'} returned. Verify before investing.`;
+    } catch (error) { $('lens-property-status').textContent = `Property request failed: ${error.message}`; }
+  }
+
+  function renderPeople() {
+    let people = [];
+    try { people = JSON.parse(localStorage.getItem(peopleKey) || '[]'); } catch {}
+    $('lens-people').innerHTML = people.length ? people.map(person => `<article class="lens-item">${person.photo ? `<img src="${person.photo}" alt="User-selected profile for ${safeText(person.name)}" style="width:48px;height:48px;object-fit:cover;border-radius:50%;float:left;margin-right:10px">` : ''}<strong>${safeText(person.name)}</strong><div>${safeText(person.relationship)}</div><div>${safeText(person.notes)}</div><div>${safeText(person.sharedLocation || 'No shared location')} · consent recorded ${safeText(person.consentRecordedAt)}</div><div style="clear:both"></div></article>`).join('') : '<p>No consented profiles saved.</p>';
   }
 
   function locationError(error) {
@@ -119,6 +161,26 @@
     const prompt = `${command}\n\nOwner-provided World Lens context: ${JSON.stringify(spatialContext)}\nTreat coordinates as private, possibly inaccurate context. Do not infer or track people. Do not present output as safety-critical navigation.`;
     location.href = `buddy.html?prompt=${encodeURIComponent(prompt)}`;
   });
+  $('lens-map-refresh').addEventListener('click', refreshExternalMap);
+  $('lens-properties').addEventListener('click', () => void queryProperties());
+  $('lens-person-save').addEventListener('click', () => {
+    const name = $('lens-person-name').value.trim();
+    if (!name || !$('lens-person-consent').checked) { setStatus('A name and the person’s informed consent are required.'); return; }
+    const location = $('lens-person-location').value.trim();
+    if (location && !/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(location)) { setStatus('Shared location must use latitude, longitude.'); return; }
+    const save = photo => {
+      let people = []; try { people = JSON.parse(localStorage.getItem(peopleKey) || '[]'); } catch {}
+      people.push({ id:`person-${Date.now()}`, name, relationship:$('lens-person-relationship').value.trim(), notes:$('lens-person-notes').value.trim(), sharedLocation:location, photo, consentRecordedAt:new Date().toISOString(), consent:true });
+      localStorage.setItem(peopleKey, JSON.stringify(people.slice(-50))); renderPeople(); setStatus('Consented profile saved locally. No face recognition was performed.', true);
+    };
+    const file = $('lens-person-photo').files[0];
+    if (!file) { save(''); return; }
+    if (file.size > 1_000_000) { setStatus('Choose a profile photo smaller than 1 MB.'); return; }
+    const reader = new FileReader(); reader.onload = () => save(String(reader.result)); reader.readAsDataURL(file);
+  });
+  $('lens-person-clear').addEventListener('click', () => { localStorage.removeItem(peopleKey); renderPeople(); setStatus('All locally saved people profiles were revoked and cleared.'); });
+  $('lens-property-endpoint').value = localStorage.getItem('dreamco.buddy.world-lens.property-endpoint.v1') || '';
   window.addEventListener('pagehide', () => { if (watchId !== null) navigator.geolocation.clearWatch(watchId); });
   render();
+  renderPeople();
 })();
