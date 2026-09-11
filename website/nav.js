@@ -8,6 +8,7 @@
     { href: 'master-build.html', label: '🧭 Master Build' },
     { href: 'buddy-command-center.html', label: '🗂️ Command Center' },
     { href: 'world-lens.html', label: '🌍 World Lens GPS' },
+    { href: 'opportunity-hub.html', label: '🏡 Opportunity Hub' },
     { href: 'buddy-operating-system.html', label: '🧬 Buddy AGI OS' },
     { href: 'success.html', label: '📈 Success Center' },
     { href: 'search.html', label: '🔎 DreamSearch' },

@@ -77,6 +77,7 @@ jobs:
           python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_master_directive_status.py
           python3 tools/generate_command_center_data.py --check
+          python3 tools/generate_opportunity_hub.py --check
           python3 tools/build_buddy_learning_os_connection_graph.py
           python3 tools/generate_buddy_benchmark_index.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
@@ -115,6 +116,7 @@ jobs:
           node --check website/master-build.js
           node --check website/buddy-command-center.js
           node --check website/world-lens.js
+          node --check website/opportunity-hub.js
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
       - name: Upload public website
