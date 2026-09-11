@@ -46,8 +46,8 @@ if (!process.env.DATABASE_URL) {
   console.log("- DATABASE_URL is not set; using a local placeholder so frontend/test entitlement routes can boot.");
   console.log("- Database-backed API routes still need a real local Postgres DATABASE_URL.");
 }
-if (!process.env.OPENAI_API_KEY && !process.env.OPENAI_ADMIN_KEY) {
-  console.log("- OPENAI_API_KEY is not set; using a local placeholder so provider clients can initialize.");
+if (!process.env.AI_INTEGRATIONS_OPENAI_API_KEY && !process.env.OPENAI_API_KEY && !process.env.OPENAI_ADMIN_KEY) {
+  console.log("- OpenAI key is not set; using a local placeholder so provider clients can initialize.");
   console.log("- Real model, image, audio, and agent calls still need a real approved API key.");
 }
 
@@ -67,7 +67,16 @@ const child = spawn(runner.command, runner.args, {
     HOST: process.env.HOST || "127.0.0.1",
     DATABASE_URL: databaseUrl,
     DREAMCO_DATABASE_PLACEHOLDER: process.env.DATABASE_URL ? "0" : "1",
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY || "sk-local-test-placeholder",
+    AI_INTEGRATIONS_OPENAI_API_KEY:
+      process.env.AI_INTEGRATIONS_OPENAI_API_KEY ||
+      process.env.OPENAI_API_KEY ||
+      process.env.OPENAI_ADMIN_KEY ||
+      "sk-local-test-placeholder",
+    OPENAI_API_KEY:
+      process.env.OPENAI_API_KEY ||
+      process.env.AI_INTEGRATIONS_OPENAI_API_KEY ||
+      process.env.OPENAI_ADMIN_KEY ||
+      "sk-local-test-placeholder",
     PATH: `${resolve(process.execPath, "..")}:${process.env.PATH || ""}`,
     DREAMCO_DISABLE_AUTO_SYNC: process.env.DREAMCO_DISABLE_AUTO_SYNC || "1",
     DREAMCO_ENABLE_LOCAL_TEST_ACCOUNT: "1",

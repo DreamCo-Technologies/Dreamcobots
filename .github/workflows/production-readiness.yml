@@ -27,6 +27,10 @@ jobs:
           python-version: '3.12'
       - name: Run evidence inventory
         run: python3 tools/production_readiness_gate.py | tee production-readiness-report.txt
+      - name: Run static site preflight
+        run: python3 tools/build_buddy_public_site.py --check
+      - name: Run production contract strict gate
+        run: python3 tools/production_readiness_gate.py --strict
       - name: Upload evidence report
         if: always()
         uses: actions/upload-artifact@v4
@@ -34,5 +38,6 @@ jobs:
           name: production-readiness-${{ github.sha }}
           path: |
             data/production-readiness-report.json
+            reports/PRODUCTION_READINESS_REPORT.md
             production-readiness-report.txt
           if-no-files-found: error

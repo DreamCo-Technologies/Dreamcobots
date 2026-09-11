@@ -37,7 +37,7 @@ This does not create, change, or prove a real Stripe payment. It only unlocks th
 
 If `DATABASE_URL` is missing, the launcher supplies a local placeholder so the frontend and local entitlement endpoint can boot. Full database-backed routes still require a real local Postgres database.
 
-If `OPENAI_API_KEY` is missing, the launcher supplies an invalid local placeholder so provider clients can initialize. Real model, image, audio, and agent calls still require a real approved API key.
+If `AI_INTEGRATIONS_OPENAI_API_KEY`, `OPENAI_API_KEY`, and `OPENAI_ADMIN_KEY` are all missing, the launcher supplies an invalid local placeholder so provider clients can initialize. Real model, image, audio, and agent calls still require a real approved API key.
 
 ## Start The GitHub Pages Preview
 

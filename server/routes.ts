@@ -2,7 +2,7 @@ import type { Express, Request, Response } from "express";
 import type { Server } from "http";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import OpenAI from "openai";
+import { createOpenAIProviderClient } from "./openaiConfig";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
@@ -261,10 +261,7 @@ function trimHistory(messages: ChatCompletionMessageParam[], max = MAX_HISTORY_M
   return [messages[0], ...messages.slice(-(max - 1))];
 }
 
-const openai = new OpenAI({
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-});
+const openai = createOpenAIProviderClient();
 
 function zodValidationError(err: z.ZodError) {
   return {

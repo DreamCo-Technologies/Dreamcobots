@@ -46,6 +46,8 @@
     "buddy:laptop:app": "node tools/run_buddy_laptop_app.mjs",
     "buddy:laptop:pages": "node tools/preview_github_pages_local.mjs",
     "buddy:laptop:check": "node --import tsx --test tests/local-test-entitlement.test.ts && python3 tools/build_buddy_public_site.py --check",
+    "production:readiness": "python3 tools/production_readiness_gate.py",
+    "production:readiness:strict": "python3 tools/production_readiness_gate.py --strict",
     "buddy:daily-division-benchmarks": "node --import tsx tools/run_daily_division_benchmarks.ts",
     "buddy:specialized-hubs": "python3 tools/generate_buddy_specialized_hubs.py --check",
     "buddy:cli": "python3 tools/buddy_cli.py",
