@@ -24,6 +24,7 @@ import { db } from "./db";
 import { batchProcessWithSSE } from "./provider_integrations/batch";
 import { registerAudioRoutes } from "./provider_integrations/audio";
 import { registerImageRoutes } from "./provider_integrations/image";
+import { registerOAuthLoginRoutes } from "./oauth-login";
 import {
   connectionPlanRequestSchema,
   connectionStatusUpdateSchema,
@@ -4411,6 +4412,7 @@ Return ONLY valid JSON with this exact shape:
   });
 
   // Register media provider routes after core policies are installed.
+  registerOAuthLoginRoutes(app);
   registerImageRoutes(app);
   registerAudioRoutes(app);
 
