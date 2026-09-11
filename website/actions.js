@@ -5,7 +5,7 @@
   const REPORT_URL = 'data/actions-health-report.json';
   const PROSPECTUS_URL = 'data/actions-prospectus.json';
   const benchmarkIndex = window.BUDDY_BENCHMARK_INDEX || { programs: [], summary: {} };
-  const state = { report: null, prospectus: null, runs: new Map() };
+  const state = { report: null, prospectus: null, masterPlan: null, runs: new Map() };
 
   const byId = (id) => document.getElementById(id);
   const make = (tag, text, className) => {
@@ -91,6 +91,16 @@
       host.append(card);
     });
     byId('prospectus-status').textContent = `${controls.length} Action controls documented with upgrade plans and planning ranges.`;
+  }
+
+  function renderStages() {
+    const plan = state.masterPlan?.structured_stage_plan;
+    if (!plan) return;
+    byId('actions-stage-status').textContent = `${plan.stage_count} declared stages indexed from ${plan.group_count} structured repository plans. Declared stages need execution evidence before they can be treated as passed.`;
+    const summary = byId('actions-stage-summary'); summary.replaceChildren();
+    Object.entries(plan.lane_counts || {}).forEach(([lane, count]) => { const card = make('div'); card.append(make('span', readable(lane)), make('strong', String(count))); summary.append(card); });
+    const list = byId('actions-stage-list'); list.replaceChildren();
+    plan.groups.slice(0, 24).forEach((group) => { const row = make('article', undefined, 'workflow-item'); row.append(make('strong', `${group.source} · ${group.field}`), make('p', group.stages.join(' → '))); list.append(row); });
   }
 
   function showDetail(workflow) {
@@ -282,11 +292,13 @@
 
   async function initialize() {
     try {
-      const [reportResponse, prospectusResponse] = await Promise.all([fetch(REPORT_URL), fetch(PROSPECTUS_URL)]);
+      const [reportResponse, prospectusResponse, masterPlanResponse] = await Promise.all([fetch(REPORT_URL), fetch(PROSPECTUS_URL), fetch('data/master-directive-status.json')]);
       if (!reportResponse.ok) throw new Error(`Actions catalog returned ${reportResponse.status}`);
       state.report = await reportResponse.json();
       if (prospectusResponse.ok) state.prospectus = await prospectusResponse.json();
+      if (masterPlanResponse.ok) state.masterPlan = await masterPlanResponse.json();
       renderProspectusCards();
+      renderStages();
       const triggerFilter = byId('actions-trigger-filter');
       [...new Set(state.report.findings.flatMap((workflow) => workflow.triggers || []))].sort().forEach((trigger) => {
         const option = document.createElement('option');

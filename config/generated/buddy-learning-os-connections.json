@@ -1547,6 +1547,11 @@
     },
     {
       "from": "buddy:learning-os",
+      "to": "repo:2589f83ab22e6839",
+      "type": "routes_to"
+    },
+    {
+      "from": "buddy:learning-os",
       "to": "repo:15090b77eda984f1",
       "type": "routes_to"
     },
@@ -4409,6 +4414,66 @@
       "from": "buddy:learning-os",
       "to": "external:custom_app",
       "type": "depends_on"
+    },
+    {
+      "from": "buddy:learning-os",
+      "to": "learning-source:github",
+      "type": "trained_by"
+    },
+    {
+      "from": "buddy:learning-os",
+      "to": "learning-source:chatgpt_connected_apps",
+      "type": "trained_by"
+    },
+    {
+      "from": "buddy:learning-os",
+      "to": "learning-source:openai_developer",
+      "type": "trained_by"
+    },
+    {
+      "from": "buddy:learning-os",
+      "to": "learning-source:hugging_face",
+      "type": "trained_by"
+    },
+    {
+      "from": "buddy:learning-os",
+      "to": "learning-source:figma",
+      "type": "trained_by"
+    },
+    {
+      "from": "buddy:learning-os",
+      "to": "learning-source:adobe",
+      "type": "trained_by"
+    },
+    {
+      "from": "buddy:learning-os",
+      "to": "learning-source:canva",
+      "type": "trained_by"
+    },
+    {
+      "from": "buddy:learning-os",
+      "to": "learning-source:firecrawl",
+      "type": "trained_by"
+    },
+    {
+      "from": "buddy:learning-os",
+      "to": "learning-source:supabase",
+      "type": "trained_by"
+    },
+    {
+      "from": "buddy:learning-os",
+      "to": "learning-source:vercel_netlify_render_railway",
+      "type": "trained_by"
+    },
+    {
+      "from": "buddy:learning-os",
+      "to": "learning-source:apple_intelligence_video_exports",
+      "type": "trained_by"
+    },
+    {
+      "from": "buddy:learning-os",
+      "to": "referenced-source-index",
+      "type": "trained_by"
     }
   ],
   "nodes": [
@@ -8786,6 +8851,20 @@
       "name": "buddy-guardrails-benchmark-program.json",
       "readiness": "source_verified",
       "source_path": "config/buddy-guardrails-benchmark-program.json",
+      "status": "connected"
+    },
+    {
+      "categories": [
+        "wrappers_adapters"
+      ],
+      "evidence": [
+        "config/buddy-learning-source-adapters.json"
+      ],
+      "id": "repo:2589f83ab22e6839",
+      "kind": "repository_component",
+      "name": "buddy-learning-source-adapters.json",
+      "readiness": "source_verified",
+      "source_path": "config/buddy-learning-source-adapters.json",
       "status": "connected"
     },
     {
@@ -16936,6 +17015,199 @@
       "readiness": "credentials_required",
       "source_path": "website/data/buddy-connection-catalog.json",
       "status": "partial"
+    },
+    {
+      "categories": [
+        "resources",
+        "learning",
+        "wrappers_adapters"
+      ],
+      "evidence": [],
+      "id": "learning-source:github",
+      "kind": "learning_source_adapter",
+      "learning_output": "versioned tasks, tests, failure records and benchmark evidence",
+      "name": "GitHub repository and Actions evidence",
+      "permission": "selected repository scopes",
+      "readiness": "adapter_ready",
+      "source_path": "config/buddy-learning-source-adapters.json",
+      "status": "partial"
+    },
+    {
+      "categories": [
+        "resources",
+        "learning",
+        "wrappers_adapters"
+      ],
+      "evidence": [],
+      "id": "learning-source:chatgpt_connected_apps",
+      "kind": "learning_source_adapter",
+      "learning_output": "source references, task context and user-approved study packets",
+      "name": "Connected ChatGPT apps",
+      "permission": "per-app consent and least-privilege scopes",
+      "readiness": "adapter_ready",
+      "source_path": "config/buddy-learning-source-adapters.json",
+      "status": "partial"
+    },
+    {
+      "categories": [
+        "resources",
+        "learning",
+        "wrappers_adapters"
+      ],
+      "evidence": [],
+      "id": "learning-source:openai_developer",
+      "kind": "learning_source_adapter",
+      "learning_output": "model-selection evidence and reproducible evaluation definitions",
+      "name": "OpenAI developer tools",
+      "permission": "configured developer project and scoped key reference",
+      "readiness": "adapter_ready",
+      "source_path": "config/buddy-learning-source-adapters.json",
+      "status": "partial"
+    },
+    {
+      "categories": [
+        "resources",
+        "learning",
+        "wrappers_adapters"
+      ],
+      "evidence": [],
+      "id": "learning-source:hugging_face",
+      "kind": "learning_source_adapter",
+      "learning_output": "provenance records, benchmark candidates and local-model evaluation tasks",
+      "name": "Hugging Face models, datasets and papers",
+      "permission": "public or owner-authorized Hub access",
+      "readiness": "adapter_ready",
+      "source_path": "config/buddy-learning-source-adapters.json",
+      "status": "partial"
+    },
+    {
+      "categories": [
+        "resources",
+        "learning",
+        "wrappers_adapters"
+      ],
+      "evidence": [],
+      "id": "learning-source:figma",
+      "kind": "learning_source_adapter",
+      "learning_output": "UI requirements, visual regression fixtures and implementation tasks",
+      "name": "Figma designs and design systems",
+      "permission": "selected file or team access",
+      "readiness": "adapter_ready",
+      "source_path": "config/buddy-learning-source-adapters.json",
+      "status": "partial"
+    },
+    {
+      "categories": [
+        "resources",
+        "learning",
+        "wrappers_adapters"
+      ],
+      "evidence": [],
+      "id": "learning-source:adobe",
+      "kind": "learning_source_adapter",
+      "learning_output": "rights-aware media metadata, transformations and quality checks",
+      "name": "Adobe creative and document tools",
+      "permission": "selected assets and explicit edit actions",
+      "readiness": "adapter_ready",
+      "source_path": "config/buddy-learning-source-adapters.json",
+      "status": "partial"
+    },
+    {
+      "categories": [
+        "resources",
+        "learning",
+        "wrappers_adapters"
+      ],
+      "evidence": [],
+      "id": "learning-source:canva",
+      "kind": "learning_source_adapter",
+      "learning_output": "brand constraints and reviewable creative briefs",
+      "name": "Canva brand and design tools",
+      "permission": "selected design or folder access",
+      "readiness": "adapter_ready",
+      "source_path": "config/buddy-learning-source-adapters.json",
+      "status": "partial"
+    },
+    {
+      "categories": [
+        "resources",
+        "learning",
+        "wrappers_adapters"
+      ],
+      "evidence": [],
+      "id": "learning-source:firecrawl",
+      "kind": "learning_source_adapter",
+      "learning_output": "cited research records and benchmark source candidates",
+      "name": "Web research and extraction",
+      "permission": "site terms, robots policy and connector authorization",
+      "readiness": "adapter_ready",
+      "source_path": "config/buddy-learning-source-adapters.json",
+      "status": "partial"
+    },
+    {
+      "categories": [
+        "resources",
+        "learning",
+        "wrappers_adapters"
+      ],
+      "evidence": [],
+      "id": "learning-source:supabase",
+      "kind": "learning_source_adapter",
+      "learning_output": "schema tests, migration plans and data-contract evidence",
+      "name": "Supabase development services",
+      "permission": "selected project with least-privilege database access",
+      "readiness": "adapter_ready",
+      "source_path": "config/buddy-learning-source-adapters.json",
+      "status": "partial"
+    },
+    {
+      "categories": [
+        "resources",
+        "learning",
+        "wrappers_adapters"
+      ],
+      "evidence": [],
+      "id": "learning-source:vercel_netlify_render_railway",
+      "kind": "learning_source_adapter",
+      "learning_output": "deployment checks, incident evidence and recovery tasks",
+      "name": "Deployment platforms",
+      "permission": "selected project and read-first operational scopes",
+      "readiness": "adapter_ready",
+      "source_path": "config/buddy-learning-source-adapters.json",
+      "status": "partial"
+    },
+    {
+      "categories": [
+        "resources",
+        "learning",
+        "wrappers_adapters"
+      ],
+      "evidence": [],
+      "id": "learning-source:apple_intelligence_video_exports",
+      "kind": "learning_source_adapter",
+      "learning_output": "authorized video analysis through the repository video pipeline, timestamped observations and benchmark fixtures",
+      "name": "Apple Intelligence video exports",
+      "permission": "explicit local file selection; no device-wide media access",
+      "readiness": "owner_export_required",
+      "source_path": "config/buddy-learning-source-adapters.json",
+      "status": "partial"
+    },
+    {
+      "categories": [
+        "resources",
+        "learning",
+        "benchmarks"
+      ],
+      "competitor_or_baseline_count": 209,
+      "evidence": [],
+      "id": "referenced-source-index",
+      "kind": "referenced_source_index",
+      "name": "Repository study and benchmark source index",
+      "readiness": "terms_and_authorization_required",
+      "reference_count": 1647,
+      "resolution": "Rebuild the graph to resolve each individual tracked URL from repository source before use.",
+      "source_path": "tools/build_buddy_learning_os_connection_graph.py",
+      "status": "partial"
     }
   ],
   "root_node": "buddy:learning-os",
@@ -16943,27 +17215,32 @@
   "summary": {
     "category_counts": {
       "agents": 5,
-      "benchmarks": 136,
+      "benchmarks": 137,
       "interfaces": 344,
-      "learning": 55,
+      "learning": 67,
       "memory": 4,
       "models": 73,
       "ontology": 15,
-      "resources": 30,
+      "resources": 42,
       "runtime_workflows": 108,
       "tools": 261,
-      "wrappers_adapters": 21
+      "wrappers_adapters": 33
     },
-    "edge_count": 882,
-    "node_count": 883,
+    "competitor_or_baseline_reference_count": 209,
+    "edge_count": 895,
+    "external_reference_count": 1647,
+    "node_count": 896,
     "readiness_counts": {
+      "adapter_ready": 10,
       "credentials_required": 3,
+      "owner_export_required": 1,
       "repository_verified": 1,
-      "source_verified": 879
+      "source_verified": 880,
+      "terms_and_authorization_required": 1
     },
     "status_counts": {
-      "connected": 880,
-      "partial": 3
+      "connected": 881,
+      "partial": 15
     },
     "unlinked_node_count": 0
   },
