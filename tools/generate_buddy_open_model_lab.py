@@ -64,6 +64,25 @@ def validate(payload: dict[str, Any]) -> dict[str, Any]:
     }
     if any(policy.get(key) is not True for key in required_policy):
         raise ValueError("Required comparison and licensing controls must remain enabled.")
+    core = payload.get("buddy_open_core", {})
+    if len(core.get("architecture_profiles", [])) < 5 or len(core.get("release_gates", [])) < 12:
+        raise ValueError("Buddy Open Core needs complete architecture profiles and release gates.")
+    modes = core.get("distribution_modes", [])
+    if [mode.get("id") for mode in modes] != ["code_version", "open_source", "open_weights", "private"]:
+        raise ValueError("Buddy Open Core must preserve the four distinct distribution modes.")
+    learning = core.get("learning_system", {})
+    if len(learning.get("methods", [])) < 8 or len(learning.get("required_cycle", [])) < 9:
+        raise ValueError("Buddy Open Core needs a complete proof-carrying learning lifecycle.")
+    references = learning.get("research_references", [])
+    if len(references) < 2 or any(urlsplit(str(item.get("official_source", ""))).scheme != "https" for item in references):
+        raise ValueError("Buddy learning research references need official HTTPS sources.")
+    if any(item.get("comparison_status") != "design_comparison_only_no_same_task_result" for item in references):
+        raise ValueError("Buddy learning references cannot imply unproven benchmark superiority.")
+    if learning.get("private_data_policy", {}).get("raw_user_data_global_training_default") is not False:
+        raise ValueError("Raw private user data cannot enter global training by default.")
+    truth = core.get("truth", {})
+    if truth.get("trained_weights_exist") is not False or truth.get("frontier_parity_proven") is not False:
+        raise ValueError("Buddy Open Core cannot claim unproven weights or frontier parity.")
     return {
         **payload,
         "summary": {

@@ -1,0 +1,122 @@
+{
+  "schema": "dreamco.buddy.independence_audit.v1",
+  "truth": "Cataloged capability records are not proof that each capability is executable or independent.",
+  "capabilities": {
+    "total": 6162,
+    "by_status": {
+      "catalogued": 6162
+    }
+  },
+  "model_connectors": {
+    "total": 23,
+    "by_implementation_status": {
+      "adapter_implemented": 1,
+      "contract_only": 21,
+      "local_ready": 1
+    }
+  },
+  "local_replacements": [
+    {
+      "id": "local-core",
+      "name": "Buddy Local Core",
+      "status": "implemented",
+      "replacement_for": "basic routing and planning",
+      "fallback": "buddy.local_core.route",
+      "external_required": false
+    },
+    {
+      "id": "notes-waypoints",
+      "name": "Private notes and waypoints",
+      "status": "implemented",
+      "replacement_for": "place notebooks",
+      "fallback": "browser local storage and export packet",
+      "external_required": false
+    },
+    {
+      "id": "need-triage",
+      "name": "Local 211 need triage",
+      "status": "implemented",
+      "replacement_for": "basic service-category routing",
+      "fallback": "local keyword/intent classification",
+      "external_required": false
+    },
+    {
+      "id": "voice-command-parse",
+      "name": "Voice command parsing",
+      "status": "implemented",
+      "replacement_for": "map command interpretation",
+      "fallback": "browser speech API with typed fallback",
+      "external_required": false
+    },
+    {
+      "id": "family-circle-memory",
+      "name": "Family Circle local memory",
+      "status": "implemented",
+      "replacement_for": "profiles, safe places and check-ins",
+      "fallback": "browser storage and export",
+      "external_required": false
+    },
+    {
+      "id": "local-media",
+      "name": "Local media tools",
+      "status": "setup_required",
+      "replacement_for": "basic media conversion and editing",
+      "fallback": "FFmpeg, Blender, Audacity, local models",
+      "external_required": false
+    },
+    {
+      "id": "local-model",
+      "name": "Self-hosted language model",
+      "status": "setup_required",
+      "replacement_for": "hosted chat fallback",
+      "fallback": "Ollama, llama.cpp, MLX, or OpenAI-compatible local server",
+      "external_required": false
+    },
+    {
+      "id": "self-hosted-geocoder",
+      "name": "Self-hosted geocoder",
+      "status": "setup_required",
+      "replacement_for": "commercial place lookup",
+      "fallback": "self-hosted OpenStreetMap/Nominatim-compatible service",
+      "external_required": false
+    },
+    {
+      "id": "self-hosted-map",
+      "name": "Self-hosted map stack",
+      "status": "architecture_required",
+      "replacement_for": "map rendering and tiles",
+      "fallback": "self-hosted tiles with licensed/open map data",
+      "external_required": false
+    },
+    {
+      "id": "property-records",
+      "name": "Property and MLS records",
+      "status": "licensed_data_required",
+      "replacement_for": "current listings and title/permit history",
+      "fallback": "authorized MLS, assessor, and record-provider agreements",
+      "external_required": true
+    },
+    {
+      "id": "government-services",
+      "name": "Government benefit eligibility and submission",
+      "status": "authority_required",
+      "replacement_for": "official determinations and filings",
+      "fallback": "official agency handoff with user approval",
+      "external_required": true
+    },
+    {
+      "id": "payments",
+      "name": "Payments and banking",
+      "status": "regulated_provider_required",
+      "replacement_for": "money movement",
+      "fallback": "regulated payment/bank integration with approval",
+      "external_required": true
+    }
+  ],
+  "summary": {
+    "implemented_local_components": 5,
+    "setup_required_components": 3,
+    "external_authority_or_license_required": 3
+  },
+  "next_rule": "Do not call the repository fully independent until executable tests and deployment evidence exist for each claimed capability."
+}

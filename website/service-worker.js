@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'buddy-shell-v54';
-const RUNTIME_CACHE = 'buddy-runtime-v54';
+const SHELL_CACHE = 'buddy-shell-v57';
+const RUNTIME_CACHE = 'buddy-runtime-v57';
 const APP_SHELL = [
   './',
   './buddy.html',
@@ -7,8 +7,8 @@ const APP_SHELL = [
   './buddy.css?v=29',
   './buddy.js?v=31',
   './actions.html',
-  './actions.css?v=1',
-  './actions.js?v=1',
+  './actions.css?v=4',
+  './actions.js?v=7',
   './data/actions-health-report.json',
   './master-build.html',
   './master-build.css',
@@ -56,6 +56,16 @@ const APP_SHELL = [
   './open-model-lab.html',
   './open-model-lab.css',
   './open-model-lab.js',
+  './buddy-open-core.html',
+  './buddy-open-core.js',
+  './buddy-learning-lab.html',
+  './buddy-learning-lab.js',
+  './buddy-expert-mode.html',
+  './buddy-expert-mode.js',
+  './buddy-invention-lab.html',
+  './buddy-invention-lab.js',
+  './data/buddy-expert-mode.js',
+  './data/buddy-resource-connection-catalog.json',
   './security.html',
   './security.css?v=1',
   './security.js',
@@ -74,6 +84,7 @@ const APP_SHELL = [
   './data/buddy-demand-ontology.js?v=1',
   './data/ai-organization-intelligence.js?v=2',
   './data/buddy-open-model-coding-lab.js',
+  './data/buddy-learning-strategies.js',
   './data/buddy-open-secure-ai-defense.js',
   './data/buddy-success-program.js?v=2',
   './data/repository-test-registry.json?v=4',

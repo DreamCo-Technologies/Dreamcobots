@@ -15,6 +15,248 @@
     "no_automatic_paid_runs": true,
     "live_execution_requires_a_sandbox_adapter": true
   },
+  "buddy_open_core": {
+    "identity": "Buddy Open Core",
+    "ownership": "DreamCo Technologies, United States",
+    "current_status": "release_contract_ready_training_and_weights_required",
+    "compatibility_target": "OpenAI-compatible local and hosted inference APIs",
+    "distribution_modes": [
+      {
+        "id": "code_version",
+        "label": "Code Version",
+        "publishes_code": true,
+        "publishes_weights": false,
+        "purpose": "Release DreamCo runtime, API, evaluation, and orchestration code without model weights."
+      },
+      {
+        "id": "open_source",
+        "label": "Open Source",
+        "publishes_code": true,
+        "publishes_weights": false,
+        "purpose": "Release qualifying source code under an OSI-compatible license; model weights remain a separate decision."
+      },
+      {
+        "id": "open_weights",
+        "label": "Open Weights",
+        "publishes_code": false,
+        "publishes_weights": true,
+        "purpose": "Release exact model weights and model-card terms; this does not automatically mean open-source software."
+      },
+      {
+        "id": "private",
+        "label": "Private",
+        "publishes_code": false,
+        "publishes_weights": false,
+        "purpose": "Keep code, weights, adapters, and training artifacts owner-controlled or organization-scoped."
+      }
+    ],
+    "architecture_profiles": [
+      {
+        "id": "dense_edge",
+        "label": "Dense Edge",
+        "purpose": "Small local, mobile, and private deployments",
+        "requires_expert_routing": false,
+        "requires_mtp": false
+      },
+      {
+        "id": "dense_general",
+        "label": "Dense General",
+        "purpose": "Workstation reasoning, coding, and tool use",
+        "requires_expert_routing": false,
+        "requires_mtp": false
+      },
+      {
+        "id": "sparse_moe",
+        "label": "Sparse Mixture of Experts",
+        "purpose": "Scale total knowledge while activating a bounded expert subset per token",
+        "requires_expert_routing": true,
+        "requires_mtp": false
+      },
+      {
+        "id": "sparse_moe_mtp",
+        "label": "Sparse MoE + Multi-Token Prediction",
+        "purpose": "Research-scale efficient inference with an independently tested prediction module",
+        "requires_expert_routing": true,
+        "requires_mtp": true
+      },
+      {
+        "id": "distilled_specialist",
+        "label": "Distilled Specialist",
+        "purpose": "Task-specific coding, reasoning, civic-service, media, or business models",
+        "requires_expert_routing": false,
+        "requires_mtp": false
+      }
+    ],
+    "api_compatibility": [
+      "/v1/models",
+      "/v1/chat/completions",
+      "/v1/responses",
+      "/v1/embeddings",
+      "streaming_sse",
+      "json_schema_outputs",
+      "tool_calls"
+    ],
+    "weight_formats": [
+      "safetensors",
+      "gguf",
+      "onnx"
+    ],
+    "quantization_targets": [
+      "bf16",
+      "fp16",
+      "fp8_block",
+      "int8",
+      "int4",
+      "gguf_q8",
+      "gguf_q6",
+      "gguf_q5",
+      "gguf_q4"
+    ],
+    "capability_tracks": [
+      "reasoning",
+      "coding",
+      "tool_use",
+      "long_context",
+      "multilingual",
+      "vision",
+      "speech_audio",
+      "embeddings",
+      "reranking",
+      "agent_workflows"
+    ],
+    "learning_system": {
+      "identity": "Buddy Proof-Carrying Learning",
+      "methods": [
+        "cold_start_sft",
+        "reinforcement_learning_verifiable_rewards",
+        "preference_optimization",
+        "teacher_distillation",
+        "lora_adapter",
+        "synthetic_curriculum",
+        "tool_use_learning",
+        "continual_replay"
+      ],
+      "research_references": [
+        {
+          "id": "deepseek-r1",
+          "label": "DeepSeek-R1 published training approach",
+          "official_source": "https://github.com/deepseek-ai/DeepSeek-R1/blob/main/README.md",
+          "published_methods": [
+            "large-scale reinforcement learning",
+            "cold-start data",
+            "supervised fine-tuning",
+            "distillation"
+          ],
+          "buddy_extension": "Require a signed before-and-after learning proof on repeat runs, a separate hidden holdout, retention and safety suites, privacy provenance, and reversible owner-controlled release.",
+          "comparison_status": "design_comparison_only_no_same_task_result"
+        },
+        {
+          "id": "deepseek-v3",
+          "label": "DeepSeek-V3 published architecture approach",
+          "official_source": "https://arxiv.org/abs/2412.19437",
+          "published_methods": [
+            "mixture of experts",
+            "multi-head latent attention",
+            "multi-token prediction",
+            "supervised fine-tuning and reinforcement learning"
+          ],
+          "buddy_extension": "Keep architecture choice independent from the evidence-gated learning lifecycle so dense, sparse, distilled, local, and private Buddy variants use the same proof rules.",
+          "comparison_status": "design_comparison_only_no_same_task_result"
+        }
+      ],
+      "innovation_tracks": [
+        "capability-specific adapters instead of one irreversible global update",
+        "hidden holdout proof for every promoted skill",
+        "continual-learning replay to prevent forgetting",
+        "signed data and reward provenance",
+        "user-private adapters that never become global automatically",
+        "federated evidence summaries without raw private data",
+        "automatic rollback on quality safety or latency regression",
+        "small-model distillation for affordable local hardware",
+        "multilingual and accessibility parity gates",
+        "tool-use learning graded by real sandbox outcomes"
+      ],
+      "required_cycle": [
+        "record a failing baseline",
+        "retrieve only approved sources",
+        "create a bounded proposed change",
+        "train in an isolated sandbox",
+        "grade a separate hidden holdout",
+        "run safety and capability regressions",
+        "repeat at least three times",
+        "preserve hashes costs latency and failures",
+        "require owner approval before release"
+      ],
+      "promotion_thresholds": {
+        "minimum_holdout_score": 0.75,
+        "minimum_absolute_improvement": 0.05,
+        "maximum_regression": 0.02,
+        "minimum_repetitions": 3
+      },
+      "private_data_policy": {
+        "raw_user_data_global_training_default": false,
+        "private_adapter_default": true,
+        "federated_raw_data_transfer": false,
+        "deletion_and_revocation_required": true
+      }
+    },
+    "compute_tiers": [
+      {
+        "id": "laptop",
+        "target": "3B-14B quantized",
+        "runtimes": [
+          "llama-cpp",
+          "mlx",
+          "ollama"
+        ]
+      },
+      {
+        "id": "workstation",
+        "target": "14B-70B quantized",
+        "runtimes": [
+          "llama-cpp",
+          "transformers",
+          "vllm"
+        ]
+      },
+      {
+        "id": "cluster",
+        "target": "70B+ dense or sparse MoE",
+        "runtimes": [
+          "vllm",
+          "transformers"
+        ]
+      },
+      {
+        "id": "research_cluster",
+        "target": "pretraining and architecture research",
+        "runtimes": [
+          "transformers"
+        ]
+      }
+    ],
+    "release_gates": [
+      "immutable source and revision",
+      "license and training-data provenance",
+      "weight-shard checksums",
+      "tokenizer and prompt-template pinning",
+      "sandbox load without remote code",
+      "same-fixture quality benchmark",
+      "latency throughput memory and energy evidence",
+      "tool-use and structured-output tests",
+      "multilingual and accessibility tests",
+      "safety privacy and security red-team",
+      "repeat-run and holdout evaluation",
+      "signed model card and SBOM",
+      "owner-approved reversible release"
+    ],
+    "truth": {
+      "trained_weights_exist": false,
+      "frontier_parity_proven": false,
+      "production_release_exists": false,
+      "api_contract_implemented": true
+    }
+  },
   "model_families": [
     {
       "id": "gpt-oss",

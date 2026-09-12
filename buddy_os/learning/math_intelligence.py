@@ -16,8 +16,9 @@ def normalize(values: Mapping[str, float]) -> Dict[str, float]:
     return {k: (max(0.0, v) / total if total else 0.0) for k, v in values.items()}
 
 
-def entropy(probabilities: Iterable[float]) -> float:
-    return -sum(p * log(p, 2) for p in probabilities if p > 0)
+def entropy(probabilities: Iterable[float] | Mapping[object, float]) -> float:
+    values = probabilities.values() if isinstance(probabilities, Mapping) else probabilities
+    return -sum(p * log(p, 2) for p in values if p > 0)
 
 
 def information_gain(prior: Sequence[float], posterior: Sequence[float]) -> float:

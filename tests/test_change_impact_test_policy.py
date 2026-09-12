@@ -46,6 +46,17 @@ class ChangeImpactTestPolicyTests(unittest.TestCase):
         self.assertIn("client/src/components/ui/calendar.tsx", sources)
         self.assertIn("website/nav.js", sources)
 
+    def test_focused_mappings_cover_non_matching_source_and_test_names(self):
+        by_source = {
+            source: set(mapping["tests"])
+            for mapping in self.policy["focused_test_mappings"]
+            for source in mapping["sources"]
+        }
+        self.assertIn("tests/test_decision_planning.py", by_source["buddy_os/intelligence/planner_arbitration.py"])
+        self.assertIn("tests/test_decision_planning.py", by_source["buddy_os/intelligence/prediction_error.py"])
+        self.assertIn("tests/buddy-expert-mode-page.test.mjs", by_source["server/routes.ts"])
+        self.assertIn("tests/oauth-login-policy.test.mjs", by_source["website/sign-in.js"])
+
     def test_silent_test_bypasses_are_explicit_blockers(self):
         blockers = " ".join(self.policy["release_blockers"]).lower()
         self.assertIn("test file deleted", blockers)

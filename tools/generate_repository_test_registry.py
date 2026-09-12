@@ -19,6 +19,7 @@ PUBLIC = ROOT / "website" / "data" / "repository-test-registry.json"
 
 SKIPPED_ROOTS = {
     ".git",
+    ".pytest_cache",
     ".vercel",
     ".wrangler",
     "__pycache__",
@@ -31,6 +32,7 @@ SKIPPED_ROOTS = {
     "tmp",
 }
 SKIPPED_SUBTREES = {
+    ("command-center", "data"),
     ("config", "generated"),
     ("server", "public"),
     ("website", "data"),
@@ -371,8 +373,29 @@ def scan() -> dict[str, Any]:
     }
 
 
-def serialized(payload: dict[str, Any]) -> str:
-    return json.dumps(payload, indent=2, sort_keys=True) + "\n"
+def public_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """Publish only fields used by Test Center; retain file rows in repository evidence."""
+    keys = (
+        "schema",
+        "scan_id",
+        "summary",
+        "safety_contract",
+        "route_classifications",
+        "duplicate_route_registrations",
+        "suites",
+        "routes",
+    )
+    return {
+        **{key: payload[key] for key in keys},
+        "full_inventory": "config/generated/repository_test_registry.json",
+        "truth_boundary": "The public registry contains test suites and route contracts. File-level evidence remains in the repository audit copy.",
+    }
+
+
+def serialized(payload: dict[str, Any]) -> tuple[str, str]:
+    repository = json.dumps(payload, indent=2, sort_keys=True) + "\n"
+    public = json.dumps(public_payload(payload), separators=(",", ":"), sort_keys=True) + "\n"
+    return repository, public
 
 
 def main() -> int:
@@ -383,15 +406,15 @@ def main() -> int:
     expected = serialized(payload)
 
     if args.check:
-        for path in (GENERATED, PUBLIC):
+        for path, content in zip((GENERATED, PUBLIC), expected):
             if not path.exists():
                 raise SystemExit(f"Missing generated registry: {path.relative_to(ROOT)}")
-            if path.read_text(encoding="utf-8") != expected:
+            if path.read_text(encoding="utf-8") != content:
                 raise SystemExit(f"Generated registry is stale: {path.relative_to(ROOT)}")
     else:
-        for path in (GENERATED, PUBLIC):
+        for path, content in zip((GENERATED, PUBLIC), expected):
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(expected, encoding="utf-8")
+            path.write_text(content, encoding="utf-8")
 
     print(json.dumps({
         "ok": True,

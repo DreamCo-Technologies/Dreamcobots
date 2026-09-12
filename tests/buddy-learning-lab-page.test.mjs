@@ -1,0 +1,41 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import test from 'node:test';
+
+const page=fs.readFileSync('website/buddy-learning-lab.html','utf8');
+const script=fs.readFileSync('website/buddy-learning-lab.js','utf8');
+const nav=fs.readFileSync('website/nav.js','utf8');
+const worker=fs.readFileSync('website/service-worker.js','utf8');
+const routes=fs.readFileSync('server/routes.ts','utf8');
+const catalog=JSON.parse(fs.readFileSync('config/buddy-learning-strategies.json','utf8'));
+
+test('Buddy learning lab requires proof without modifying or releasing weights',()=>{
+  assert.match(page,/Buddy Proof-Carrying Learning/);
+  assert.match(page,/Living learning-strategy catalog/);
+  assert.match(page,/Build a controlled study matrix/);
+  assert.match(page,/Failure controls/);
+  assert.match(page,/separate hidden holdout/);
+  assert.match(page,/does not train, alter, or publish model weights/);
+  assert.match(script,/hidden_holdout_improved/);
+  assert.match(script,/research_references/);
+  assert.match(script,/scheduled_not_executed/);
+  assert.match(script,/automatic_training_started: false/);
+  assert.match(script,/safety_not_regressed/);
+  assert.match(script,/improvement_proven_owner_approval_required/);
+  assert.match(script,/promoted_to_users: false/);
+  assert.match(script,/global_weights_modified: false/);
+  assert.match(nav,/buddy-learning-lab\.html/);
+  assert.match(worker,/buddy-learning-lab\.html/);
+  assert.match(routes,/app\.post\("\/api\/buddy\/open-core\/learning-evidence"/);
+  assert.match(routes,/evaluateBuddyLearningEvidence\(request\)/);
+  assert.match(routes,/\/api\/buddy\/open-core\/learning-strategies/);
+  assert.match(routes,/createBuddyLearningStudy\(request\)/);
+  assert.match(routes,/evaluateBuddyLearningStudy\(request\)/);
+  assert.ok(catalog.techniques.length>=45);
+  assert.ok(new Set(catalog.techniques.map(item=>item.category)).size>=7);
+  assert.ok(catalog.techniques.every(item=>item.status==='catalogued'));
+  assert.equal(catalog.truth.training_adapters_implemented,false);
+  assert.ok(catalog.failure_controls.some(item=>item.id==='endless_repetition'));
+  assert.ok(catalog.failure_controls.some(item=>item.id==='poor_readability'));
+  assert.ok(catalog.failure_controls.some(item=>item.id==='language_mixing'));
+});
