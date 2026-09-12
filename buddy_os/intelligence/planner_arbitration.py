@@ -31,6 +31,9 @@ class PlannerArbitrator:
             return Arbitration(None, 0.0, (), True)
         recommendations = {r.recommendation for r in results}
         agreement = 1.0 if len(recommendations) == 1 else 1.0 / len(recommendations)
-        ranked = sorted(results, key=lambda r: (-r.score * r.confidence, r.planner_id))
+        # The task score is the primary evaluation result. Confidence breaks
+        # score ties; multiplying them can let floating-point noise reverse two
+        # equally weighted candidates and hide the stronger measured plan.
+        ranked = sorted(results, key=lambda r: (-r.score, -r.confidence, r.planner_id))
         disagreement = tuple(sorted(recommendations))
         return Arbitration(ranked[0], agreement, disagreement, len(recommendations) > 1)

@@ -53,7 +53,7 @@ async function waitForServer(url: string, timeoutMs: number): Promise<void> {
 // ---------------------------------------------------------------------------
 
 function startServer(): ChildProcess {
-  const server = spawn("npx", ["tsx", "server/index.ts"], {
+  const server = spawn(process.execPath, ["--import", "tsx", "server/index.ts"], {
     env: { ...process.env, PORT: String(TEST_PORT), NODE_ENV: "test" },
     stdio: ["ignore", "pipe", "pipe"],
   });
@@ -69,6 +69,8 @@ function startServer(): ChildProcess {
 async function runCheckoutTest(): Promise<void> {
   console.log("\nStripe Checkout Integration Test");
   console.log("=================================");
+
+  if (!process.env.DATABASE_URL) skip("DATABASE_URL is required for the live server integration test.");
 
   const stripeConfigured = Boolean(process.env.STRIPE_SECRET_KEY);
   console.log(`  Stripe keys present: ${stripeConfigured ? "yes (live assertions enabled)" : "no (skip-redirect path)"}`);

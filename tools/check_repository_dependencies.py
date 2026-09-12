@@ -96,13 +96,16 @@ def standard_library_roots() -> set[str]:
     stdlib_path = Path(sysconfig.get_path("stdlib"))
     if not stdlib_path.is_dir():
         return roots
-    for path in stdlib_path.iterdir():
-        if path.name in {"__pycache__", "site-packages"}:
+    for directory in (stdlib_path, stdlib_path / "lib-dynload"):
+        if not directory.is_dir():
             continue
-        if path.is_file() and path.suffix in {".py", ".so"}:
-            roots.add(path.stem.split(".")[0])
-        elif path.is_dir() and (path / "__init__.py").exists():
-            roots.add(path.name)
+        for path in directory.iterdir():
+            if path.name in {"__pycache__", "site-packages", "lib-dynload"}:
+                continue
+            if path.is_file() and path.suffix in {".py", ".so"}:
+                roots.add(path.stem.split(".")[0])
+            elif path.is_dir() and (path / "__init__.py").exists():
+                roots.add(path.name)
     return roots
 
 

@@ -371,8 +371,10 @@ def scan() -> dict[str, Any]:
     }
 
 
-def serialized(payload: dict[str, Any]) -> str:
-    return json.dumps(payload, indent=2, sort_keys=True) + "\n"
+def serialized(payload: dict[str, Any]) -> tuple[str, str]:
+    repository = json.dumps(payload, indent=2, sort_keys=True) + "\n"
+    public = json.dumps(payload, separators=(",", ":"), sort_keys=True) + "\n"
+    return repository, public
 
 
 def main() -> int:
@@ -383,15 +385,15 @@ def main() -> int:
     expected = serialized(payload)
 
     if args.check:
-        for path in (GENERATED, PUBLIC):
+        for path, content in zip((GENERATED, PUBLIC), expected):
             if not path.exists():
                 raise SystemExit(f"Missing generated registry: {path.relative_to(ROOT)}")
-            if path.read_text(encoding="utf-8") != expected:
+            if path.read_text(encoding="utf-8") != content:
                 raise SystemExit(f"Generated registry is stale: {path.relative_to(ROOT)}")
     else:
-        for path in (GENERATED, PUBLIC):
+        for path, content in zip((GENERATED, PUBLIC), expected):
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(expected, encoding="utf-8")
+            path.write_text(content, encoding="utf-8")
 
     print(json.dumps({
         "ok": True,
