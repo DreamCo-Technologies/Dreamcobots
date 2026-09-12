@@ -22,6 +22,9 @@ class CommandCenterDataTests(unittest.TestCase):
         second = MODULE.canonical_json(MODULE.build_bundle())
         self.assertEqual(first, second)
 
+    def test_runtime_test_caches_are_not_repository_evidence(self):
+        self.assertIn(".pytest_cache", MODULE.IGNORED_PARTS)
+
     def test_all_statuses_use_evidence_taxonomy(self):
         allowed = set(MODULE.EVIDENCE_TAXONOMY)
         for payload in self.payloads.values():

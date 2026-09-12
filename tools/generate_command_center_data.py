@@ -38,7 +38,7 @@ GENERATED_NAMES = [
     "release-readiness.json",
     "index.json",
 ]
-IGNORED_PARTS = {".git", "node_modules", "dist", ".cache", "__pycache__"}
+IGNORED_PARTS = {".git", ".pytest_cache", "node_modules", "dist", ".cache", "__pycache__"}
 SECRET_NAME = re.compile(r"(^|/)(\.env($|\.)|.*\.(pem|p12|pfx|key)$|id_(rsa|ed25519)$)", re.I)
 
 

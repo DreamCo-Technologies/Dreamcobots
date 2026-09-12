@@ -19,6 +19,7 @@ PUBLIC = ROOT / "website" / "data" / "repository-test-registry.json"
 
 SKIPPED_ROOTS = {
     ".git",
+    ".pytest_cache",
     ".vercel",
     ".wrangler",
     "__pycache__",
@@ -31,6 +32,7 @@ SKIPPED_ROOTS = {
     "tmp",
 }
 SKIPPED_SUBTREES = {
+    ("command-center", "data"),
     ("config", "generated"),
     ("server", "public"),
     ("website", "data"),
@@ -371,9 +373,28 @@ def scan() -> dict[str, Any]:
     }
 
 
+def public_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """Publish only fields used by Test Center; retain file rows in repository evidence."""
+    keys = (
+        "schema",
+        "scan_id",
+        "summary",
+        "safety_contract",
+        "route_classifications",
+        "duplicate_route_registrations",
+        "suites",
+        "routes",
+    )
+    return {
+        **{key: payload[key] for key in keys},
+        "full_inventory": "config/generated/repository_test_registry.json",
+        "truth_boundary": "The public registry contains test suites and route contracts. File-level evidence remains in the repository audit copy.",
+    }
+
+
 def serialized(payload: dict[str, Any]) -> tuple[str, str]:
     repository = json.dumps(payload, indent=2, sort_keys=True) + "\n"
-    public = json.dumps(payload, separators=(",", ":"), sort_keys=True) + "\n"
+    public = json.dumps(public_payload(payload), separators=(",", ":"), sort_keys=True) + "\n"
     return repository, public
 
 
