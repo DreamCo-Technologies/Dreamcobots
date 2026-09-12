@@ -17,9 +17,36 @@
       <p>DreamCo-owned open-weight learning system</p>
       <h1>Buddy Proof-Carrying Learning</h1>
       <p>Buddy may propose a new adapter or checkpoint, but it cannot call that change learned—or release it—until repeat runs improve a separate hidden holdout without unacceptable capability or safety regression.</p>
-      <div class="metrics"><div><strong id="method-count">0</strong><span>learning methods</span></div><div><strong id="track-count">0</strong><span>innovation tracks</span></div><div><strong id="cycle-count">0</strong><span>required lifecycle gates</span></div></div>
+      <div class="metrics"><div><strong id="method-count">0</strong><span>research-backed techniques</span></div><div><strong id="failure-count">0</strong><span>failure controls</span></div><div><strong id="cycle-count">0</strong><span>required lifecycle gates</span></div></div>
     </header>
-    <section><h2>Learning methods</h2><div id="method-grid" class="grid"></div></section>
+    <section>
+      <h2>Living learning-strategy catalog</h2>
+      <p class="muted">Catalogued means Buddy knows how to compare the idea. It does not mean a training adapter or trained checkpoint exists.</p>
+      <div class="actions"><label>Category <select id="category-filter"></select></label><label>Goal <select id="objective-filter"></select></label></div>
+      <div id="method-grid" class="grid"></div>
+    </section>
+    <section><h2>Failure controls</h2><p class="muted">A high reasoning score cannot hide repetition, unreadable answers, unintended language mixing, privacy leakage, contamination, forgetting, or reward hacking.</p><div id="failure-grid" class="grid"></div></section>
+    <section class="card">
+      <h2>Build a controlled study matrix</h2>
+      <p class="muted">Buddy recommends techniques for the goal, runs every selected technique on the same fixtures and seeds, and reserves the hidden holdout for evaluation. Creating this matrix does not start training.</p>
+      <form id="study-form" class="form">
+        <label>Study ID<input id="study-id" value="buddy-study-efficiency-001" required></label>
+        <label>Capability<input id="study-capability" value="reasoning-and-tool-use" required></label>
+        <label>Base release<input id="study-base-release" value="buddy-open-core-0.1" required></label>
+        <label>Learning objective<select id="study-objective"></select></label>
+        <label>Compute ceiling<select id="study-compute"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="very_high">Very high</option></select></label>
+        <label>Maximum techniques<input id="study-technique-count" type="number" min="2" max="12" value="6" required></label>
+        <label>Repeat-run seeds<input id="study-seeds" value="1729, 2718, 31415" required></label>
+        <label>Maximum GPU-hours<input id="study-gpu-hours" type="number" min="0" value="0" step="0.1" required></label>
+        <label>Maximum cost (USD)<input id="study-cost" type="number" min="0" value="0" step="0.01" required></label>
+        <label class="wide">Approved dataset-manifest SHA-256<input id="study-dataset-hash" value="cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" pattern="[a-fA-F0-9]{64}" required></label>
+        <label class="wide">Separate hidden-holdout SHA-256<input id="study-holdout-hash" value="dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd" pattern="[a-fA-F0-9]{64}" required></label>
+        <label class="wide"><input id="study-owner-approval" type="checkbox"> Owner approved sandbox training</label>
+        <div class="wide actions"><button class="btn btn-primary" type="submit">Build study matrix</button><button id="download-study" class="btn btn-outline" type="button" disabled>Download study JSON</button></div>
+      </form>
+      <p id="study-status" class="muted" aria-live="polite">No training study has been created.</p>
+      <div id="study-grid" class="grid"></div>
+    </section>
     <section><h2>What makes Buddy different</h2><div id="innovation-grid" class="grid"></div></section>
     <section><h2>Published research baseline</h2><p class="muted">Buddy builds on published ideas while keeping its comparison status honest until same-task results exist.</p><div id="reference-grid" class="grid"></div></section>
     <section class="card">
@@ -49,6 +76,7 @@
     <section><h2>Required learning lifecycle</h2><div id="cycle-grid" class="grid"></div></section>
   </main>
   <script src="data/buddy-open-model-coding-lab.js"></script>
+  <script src="data/buddy-learning-strategies.js"></script>
   <script src="buddy-learning-lab.js"></script>
 </body>
 </html>

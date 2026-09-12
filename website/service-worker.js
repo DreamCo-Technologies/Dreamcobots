@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'buddy-shell-v55';
-const RUNTIME_CACHE = 'buddy-runtime-v55';
+const SHELL_CACHE = 'buddy-shell-v56';
+const RUNTIME_CACHE = 'buddy-runtime-v56';
 const APP_SHELL = [
   './',
   './buddy.html',
@@ -78,6 +78,7 @@ const APP_SHELL = [
   './data/buddy-demand-ontology.js?v=1',
   './data/ai-organization-intelligence.js?v=2',
   './data/buddy-open-model-coding-lab.js',
+  './data/buddy-learning-strategies.js',
   './data/buddy-open-secure-ai-defense.js',
   './data/buddy-success-program.js?v=2',
   './data/repository-test-registry.json?v=4',

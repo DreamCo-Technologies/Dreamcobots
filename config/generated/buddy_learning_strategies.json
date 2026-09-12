@@ -1,0 +1,1158 @@
+{
+  "schema": "dreamco.buddy_learning_strategies.v1",
+  "catalog_status": "research_catalog_only_execution_adapters_required",
+  "objectives": [
+    "reasoning_quality",
+    "study_efficiency",
+    "low_compute",
+    "multilingual_quality",
+    "readability",
+    "continual_retention",
+    "tool_use",
+    "alignment"
+  ],
+  "techniques": [
+    {
+      "id": "causal_language_modeling",
+      "label": "Causal language modeling",
+      "category": "foundational_and_architecture",
+      "stage": "pretraining",
+      "compute": "very_high",
+      "objectives": [
+        "reasoning_quality"
+      ],
+      "purpose": "Learn next-token prediction from licensed, deduplicated sequences.",
+      "official_source": "https://arxiv.org/abs/2005.14165",
+      "status": "catalogued"
+    },
+    {
+      "id": "masked_language_modeling",
+      "label": "Masked language modeling",
+      "category": "foundational_and_architecture",
+      "stage": "pretraining",
+      "compute": "very_high",
+      "objectives": [
+        "reasoning_quality"
+      ],
+      "purpose": "Learn bidirectional representations by reconstructing masked tokens.",
+      "official_source": "https://arxiv.org/abs/1810.04805",
+      "status": "catalogued"
+    },
+    {
+      "id": "span_corruption",
+      "label": "Span-corruption pretraining",
+      "category": "foundational_and_architecture",
+      "stage": "pretraining",
+      "compute": "very_high",
+      "objectives": [
+        "reasoning_quality",
+        "multilingual_quality"
+      ],
+      "purpose": "Reconstruct missing text spans using a text-to-text objective.",
+      "official_source": "https://arxiv.org/abs/1910.10683",
+      "status": "catalogued"
+    },
+    {
+      "id": "denoising_autoencoding",
+      "label": "Denoising autoencoding",
+      "category": "foundational_and_architecture",
+      "stage": "pretraining",
+      "compute": "very_high",
+      "objectives": [
+        "reasoning_quality",
+        "readability"
+      ],
+      "purpose": "Reconstruct clean text from governed corruptions and transformations.",
+      "official_source": "https://arxiv.org/abs/1910.13461",
+      "status": "catalogued"
+    },
+    {
+      "id": "contrastive_representation_learning",
+      "label": "Contrastive representation learning",
+      "category": "foundational_and_architecture",
+      "stage": "pretraining",
+      "compute": "high",
+      "objectives": [
+        "reasoning_quality",
+        "study_efficiency"
+      ],
+      "purpose": "Learn representations by separating positive and negative views with audited sampling.",
+      "official_source": "https://arxiv.org/abs/2002.05709",
+      "status": "catalogued"
+    },
+    {
+      "id": "multimodal_contrastive_learning",
+      "label": "Multimodal contrastive learning",
+      "category": "foundational_and_architecture",
+      "stage": "pretraining",
+      "compute": "very_high",
+      "objectives": [
+        "reasoning_quality",
+        "tool_use"
+      ],
+      "purpose": "Align licensed image and language representations while measuring subgroup performance.",
+      "official_source": "https://arxiv.org/abs/2103.00020",
+      "status": "catalogued"
+    },
+    {
+      "id": "semi_supervised_pseudo_labeling",
+      "label": "Semi-supervised pseudo-labeling",
+      "category": "foundational_and_architecture",
+      "stage": "training",
+      "compute": "high",
+      "objectives": [
+        "study_efficiency",
+        "reasoning_quality"
+      ],
+      "purpose": "Use filtered teacher labels on unlabeled examples with confidence and bias controls.",
+      "official_source": "https://arxiv.org/abs/1911.04252",
+      "status": "catalogued"
+    },
+    {
+      "id": "transfer_learning",
+      "label": "Transfer learning",
+      "category": "foundational_and_architecture",
+      "stage": "adaptation",
+      "compute": "medium",
+      "objectives": [
+        "study_efficiency",
+        "low_compute",
+        "reasoning_quality"
+      ],
+      "purpose": "Adapt reusable representations to a new capability with limited labeled data.",
+      "official_source": "https://arxiv.org/abs/1801.06146",
+      "status": "catalogued"
+    },
+    {
+      "id": "meta_learning_maml",
+      "label": "Model-agnostic meta-learning",
+      "category": "foundational_and_architecture",
+      "stage": "meta_learning",
+      "compute": "high",
+      "objectives": [
+        "study_efficiency",
+        "continual_retention"
+      ],
+      "purpose": "Optimize an initialization for rapid adaptation to held-out tasks.",
+      "official_source": "https://arxiv.org/abs/1703.03400",
+      "status": "catalogued"
+    },
+    {
+      "id": "imitation_learning",
+      "label": "Imitation learning",
+      "category": "foundational_and_architecture",
+      "stage": "training",
+      "compute": "medium",
+      "objectives": [
+        "tool_use",
+        "study_efficiency"
+      ],
+      "purpose": "Learn actions from expert trajectories while correcting distribution shift with new states.",
+      "official_source": "https://arxiv.org/abs/1011.0686",
+      "status": "catalogued"
+    },
+    {
+      "id": "offline_reinforcement_learning",
+      "label": "Offline reinforcement learning",
+      "category": "foundational_and_architecture",
+      "stage": "reinforcement",
+      "compute": "high",
+      "objectives": [
+        "reasoning_quality",
+        "alignment"
+      ],
+      "purpose": "Learn from a fixed governed behavior dataset without uncontrolled live exploration.",
+      "official_source": "https://arxiv.org/abs/2006.04779",
+      "status": "catalogued"
+    },
+    {
+      "id": "model_based_reinforcement_learning",
+      "label": "Model-based reinforcement learning",
+      "category": "foundational_and_architecture",
+      "stage": "reinforcement",
+      "compute": "high",
+      "objectives": [
+        "reasoning_quality",
+        "study_efficiency"
+      ],
+      "purpose": "Learn a bounded world model and evaluate imagined behavior against real holdouts.",
+      "official_source": "https://arxiv.org/abs/1912.01603",
+      "status": "catalogued"
+    },
+    {
+      "id": "evolutionary_strategies",
+      "label": "Evolutionary strategies",
+      "category": "foundational_and_architecture",
+      "stage": "optimization",
+      "compute": "high",
+      "objectives": [
+        "study_efficiency",
+        "reasoning_quality"
+      ],
+      "purpose": "Compare gradient-free population search with controlled seeds and compute accounting.",
+      "official_source": "https://arxiv.org/abs/1703.03864",
+      "status": "catalogued"
+    },
+    {
+      "id": "sparse_mixture_of_experts_training",
+      "label": "Sparse mixture-of-experts training",
+      "category": "foundational_and_architecture",
+      "stage": "architecture",
+      "compute": "very_high",
+      "objectives": [
+        "reasoning_quality",
+        "study_efficiency"
+      ],
+      "purpose": "Scale expert capacity while measuring routing balance and active compute.",
+      "official_source": "https://arxiv.org/abs/1701.06538",
+      "status": "catalogued"
+    },
+    {
+      "id": "multi_token_prediction",
+      "label": "Multi-token prediction",
+      "category": "foundational_and_architecture",
+      "stage": "pretraining",
+      "compute": "very_high",
+      "objectives": [
+        "reasoning_quality",
+        "study_efficiency"
+      ],
+      "purpose": "Predict multiple future tokens with separately validated auxiliary heads.",
+      "official_source": "https://arxiv.org/abs/2404.19737",
+      "status": "catalogued"
+    },
+    {
+      "id": "test_time_training",
+      "label": "Test-time training",
+      "category": "foundational_and_architecture",
+      "stage": "inference_adaptation",
+      "compute": "medium",
+      "objectives": [
+        "continual_retention",
+        "reasoning_quality"
+      ],
+      "purpose": "Adapt on an auxiliary objective at inference while isolating and rolling back each session update.",
+      "official_source": "https://arxiv.org/abs/1909.13231",
+      "status": "catalogued"
+    },
+    {
+      "id": "test_time_compute_scaling",
+      "label": "Test-time compute scaling",
+      "category": "foundational_and_architecture",
+      "stage": "inference",
+      "compute": "medium",
+      "objectives": [
+        "reasoning_quality",
+        "study_efficiency"
+      ],
+      "purpose": "Allocate search and verification compute based on measured problem difficulty.",
+      "official_source": "https://arxiv.org/abs/2408.03314",
+      "status": "catalogued"
+    },
+    {
+      "id": "knowledge_graph_embedding",
+      "label": "Knowledge-graph embedding",
+      "category": "foundational_and_architecture",
+      "stage": "representation",
+      "compute": "medium",
+      "objectives": [
+        "reasoning_quality",
+        "tool_use"
+      ],
+      "purpose": "Learn structured entity relations while retaining provenance to source records.",
+      "official_source": "https://arxiv.org/abs/1301.3485",
+      "status": "catalogued"
+    },
+    {
+      "id": "continued_pretraining",
+      "label": "Continued pretraining",
+      "category": "data_and_pretraining",
+      "stage": "pretraining",
+      "compute": "very_high",
+      "objectives": [
+        "reasoning_quality",
+        "continual_retention"
+      ],
+      "purpose": "Continue next-token learning on a governed, licensed corpus.",
+      "official_source": "https://arxiv.org/abs/2004.10964",
+      "status": "catalogued"
+    },
+    {
+      "id": "domain_adaptive_pretraining",
+      "label": "Domain-adaptive pretraining",
+      "category": "data_and_pretraining",
+      "stage": "pretraining",
+      "compute": "high",
+      "objectives": [
+        "reasoning_quality",
+        "continual_retention"
+      ],
+      "purpose": "Adapt a base model to a bounded domain before task tuning.",
+      "official_source": "https://arxiv.org/abs/2004.10964",
+      "status": "catalogued"
+    },
+    {
+      "id": "retrieval_augmented_training",
+      "label": "Retrieval-augmented training",
+      "category": "data_and_pretraining",
+      "stage": "pretraining",
+      "compute": "high",
+      "objectives": [
+        "reasoning_quality",
+        "tool_use"
+      ],
+      "purpose": "Train retrieval and generation against attributable knowledge sources.",
+      "official_source": "https://arxiv.org/abs/2002.08909",
+      "status": "catalogued"
+    },
+    {
+      "id": "curriculum_learning",
+      "label": "Curriculum learning",
+      "category": "data_and_pretraining",
+      "stage": "data",
+      "compute": "medium",
+      "objectives": [
+        "study_efficiency",
+        "reasoning_quality"
+      ],
+      "purpose": "Order examples from easier foundations to harder capabilities.",
+      "official_source": "https://arxiv.org/abs/0904.3720",
+      "status": "catalogued"
+    },
+    {
+      "id": "self_paced_learning",
+      "label": "Self-paced learning",
+      "category": "data_and_pretraining",
+      "stage": "data",
+      "compute": "medium",
+      "objectives": [
+        "study_efficiency",
+        "reasoning_quality"
+      ],
+      "purpose": "Let measured competence control when harder examples enter training.",
+      "official_source": "https://papers.nips.cc/paper_files/paper/2010/hash/e57c6b956a6521b28495f2886ca0977a-Abstract.html",
+      "status": "catalogued"
+    },
+    {
+      "id": "active_learning",
+      "label": "Active learning",
+      "category": "data_and_pretraining",
+      "stage": "data",
+      "compute": "low",
+      "objectives": [
+        "study_efficiency",
+        "low_compute"
+      ],
+      "purpose": "Request labels for examples expected to reduce uncertainty most.",
+      "official_source": "https://arxiv.org/abs/1708.00489",
+      "status": "catalogued"
+    },
+    {
+      "id": "hard_example_mining",
+      "label": "Hard-example mining",
+      "category": "data_and_pretraining",
+      "stage": "data",
+      "compute": "medium",
+      "objectives": [
+        "study_efficiency",
+        "reasoning_quality"
+      ],
+      "purpose": "Concentrate study on repeatable failure clusters without discarding easy regression cases.",
+      "official_source": "https://arxiv.org/abs/1604.03540",
+      "status": "catalogued"
+    },
+    {
+      "id": "data_dedup_quality_filtering",
+      "label": "Deduplication and quality filtering",
+      "category": "data_and_pretraining",
+      "stage": "data",
+      "compute": "medium",
+      "objectives": [
+        "study_efficiency",
+        "readability"
+      ],
+      "purpose": "Remove duplicates, contamination, low-quality text, and unsafe or unlicensed records.",
+      "official_source": "https://arxiv.org/abs/2112.11446",
+      "status": "catalogued"
+    },
+    {
+      "id": "multilingual_data_balancing",
+      "label": "Multilingual data balancing",
+      "category": "data_and_pretraining",
+      "stage": "data",
+      "compute": "medium",
+      "objectives": [
+        "multilingual_quality",
+        "readability"
+      ],
+      "purpose": "Measure and rebalance language coverage instead of allowing majority-language collapse.",
+      "official_source": "https://arxiv.org/abs/2010.11934",
+      "status": "catalogued"
+    },
+    {
+      "id": "synthetic_self_instruction",
+      "label": "Synthetic self-instruction",
+      "category": "data_and_pretraining",
+      "stage": "data",
+      "compute": "medium",
+      "objectives": [
+        "reasoning_quality",
+        "study_efficiency"
+      ],
+      "purpose": "Generate, filter, and deduplicate candidate instructions before supervised use.",
+      "official_source": "https://arxiv.org/abs/2212.10560",
+      "status": "catalogued"
+    },
+    {
+      "id": "synthetic_curriculum",
+      "label": "Synthetic curriculum",
+      "category": "data_and_pretraining",
+      "stage": "data",
+      "compute": "medium",
+      "objectives": [
+        "reasoning_quality",
+        "study_efficiency"
+      ],
+      "purpose": "Generate progressively harder examples, then filter them with independent graders and contamination checks.",
+      "official_source": "https://arxiv.org/abs/2212.10560",
+      "status": "catalogued"
+    },
+    {
+      "id": "rejection_sampling",
+      "label": "Rejection sampling",
+      "category": "data_and_pretraining",
+      "stage": "data",
+      "compute": "high",
+      "objectives": [
+        "reasoning_quality",
+        "readability"
+      ],
+      "purpose": "Keep generated examples only when independent graders and policy filters pass.",
+      "official_source": "https://arxiv.org/abs/2501.12948",
+      "status": "catalogued"
+    },
+    {
+      "id": "cold_start_sft",
+      "label": "Cold-start supervised fine-tuning",
+      "category": "supervised_learning",
+      "stage": "post_training",
+      "compute": "medium",
+      "objectives": [
+        "reasoning_quality",
+        "readability",
+        "multilingual_quality"
+      ],
+      "purpose": "Seed readable reasoning behavior before reinforcement learning.",
+      "official_source": "https://arxiv.org/abs/2501.12948",
+      "status": "catalogued"
+    },
+    {
+      "id": "instruction_tuning",
+      "label": "Instruction tuning",
+      "category": "supervised_learning",
+      "stage": "post_training",
+      "compute": "medium",
+      "objectives": [
+        "reasoning_quality",
+        "alignment"
+      ],
+      "purpose": "Train across natural-language instructions and held-out task families.",
+      "official_source": "https://arxiv.org/abs/2109.01652",
+      "status": "catalogued"
+    },
+    {
+      "id": "multitask_sft",
+      "label": "Multitask supervised fine-tuning",
+      "category": "supervised_learning",
+      "stage": "post_training",
+      "compute": "high",
+      "objectives": [
+        "reasoning_quality",
+        "continual_retention"
+      ],
+      "purpose": "Mix capability families with explicit sampling and retention checks.",
+      "official_source": "https://arxiv.org/abs/2110.08207",
+      "status": "catalogued"
+    },
+    {
+      "id": "chain_of_thought_sft",
+      "label": "Reasoning-trace supervised tuning",
+      "category": "supervised_learning",
+      "stage": "post_training",
+      "compute": "medium",
+      "objectives": [
+        "reasoning_quality",
+        "readability"
+      ],
+      "purpose": "Teach structured reasoning examples while grading only observable outputs and authorized traces.",
+      "official_source": "https://arxiv.org/abs/2201.11903",
+      "status": "catalogued"
+    },
+    {
+      "id": "tool_use_sft",
+      "label": "Tool-use supervised tuning",
+      "category": "supervised_learning",
+      "stage": "post_training",
+      "compute": "medium",
+      "objectives": [
+        "tool_use",
+        "reasoning_quality"
+      ],
+      "purpose": "Teach when and how to call tools using sandbox-verifiable outcomes.",
+      "official_source": "https://arxiv.org/abs/2302.04761",
+      "status": "catalogued"
+    },
+    {
+      "id": "tool_use_learning",
+      "label": "Tool-use learning",
+      "category": "supervised_learning",
+      "stage": "post_training",
+      "compute": "medium",
+      "objectives": [
+        "tool_use",
+        "study_efficiency"
+      ],
+      "purpose": "Combine supervised examples, filtered self-generated calls, and verifiable tool outcomes.",
+      "official_source": "https://arxiv.org/abs/2302.04761",
+      "status": "catalogued"
+    },
+    {
+      "id": "lora_adapter",
+      "label": "LoRA adapter tuning",
+      "category": "supervised_learning",
+      "stage": "adapter",
+      "compute": "low",
+      "objectives": [
+        "low_compute",
+        "study_efficiency",
+        "continual_retention"
+      ],
+      "purpose": "Learn bounded low-rank updates without overwriting the base checkpoint.",
+      "official_source": "https://arxiv.org/abs/2106.09685",
+      "status": "catalogued"
+    },
+    {
+      "id": "qlora_adapter",
+      "label": "QLoRA adapter tuning",
+      "category": "supervised_learning",
+      "stage": "adapter",
+      "compute": "low",
+      "objectives": [
+        "low_compute",
+        "study_efficiency"
+      ],
+      "purpose": "Fine-tune adapters through a quantized frozen base model.",
+      "official_source": "https://arxiv.org/abs/2305.14314",
+      "status": "catalogued"
+    },
+    {
+      "id": "adapter_fusion",
+      "label": "Adapter fusion",
+      "category": "supervised_learning",
+      "stage": "adapter",
+      "compute": "low",
+      "objectives": [
+        "continual_retention",
+        "low_compute"
+      ],
+      "purpose": "Compose separately learned skills while keeping their artifacts reversible.",
+      "official_source": "https://arxiv.org/abs/2005.00247",
+      "status": "catalogued"
+    },
+    {
+      "id": "rlhf_ppo",
+      "label": "RLHF with PPO",
+      "category": "preference_and_reinforcement",
+      "stage": "alignment",
+      "compute": "high",
+      "objectives": [
+        "alignment",
+        "reasoning_quality"
+      ],
+      "purpose": "Optimize against a human-feedback reward model with a reference-policy constraint.",
+      "official_source": "https://arxiv.org/abs/2203.02155",
+      "status": "catalogued"
+    },
+    {
+      "id": "rlaif",
+      "label": "Reinforcement learning from AI feedback",
+      "category": "preference_and_reinforcement",
+      "stage": "alignment",
+      "compute": "high",
+      "objectives": [
+        "alignment",
+        "study_efficiency"
+      ],
+      "purpose": "Use constitutionally guided model feedback with human validation and bias checks.",
+      "official_source": "https://arxiv.org/abs/2212.08073",
+      "status": "catalogued"
+    },
+    {
+      "id": "direct_preference_optimization",
+      "label": "Direct preference optimization",
+      "category": "preference_and_reinforcement",
+      "stage": "alignment",
+      "compute": "medium",
+      "objectives": [
+        "alignment",
+        "low_compute"
+      ],
+      "purpose": "Learn pairwise preferences without a separately fitted reward model.",
+      "official_source": "https://arxiv.org/abs/2305.18290",
+      "status": "catalogued"
+    },
+    {
+      "id": "preference_optimization",
+      "label": "Preference-optimization study",
+      "category": "preference_and_reinforcement",
+      "stage": "alignment",
+      "compute": "medium",
+      "objectives": [
+        "alignment",
+        "study_efficiency"
+      ],
+      "purpose": "Compare preference objectives on identical data, seeds, graders, and release gates.",
+      "official_source": "https://arxiv.org/abs/2305.18290",
+      "status": "catalogued"
+    },
+    {
+      "id": "identity_preference_optimization",
+      "label": "Identity preference optimization",
+      "category": "preference_and_reinforcement",
+      "stage": "alignment",
+      "compute": "medium",
+      "objectives": [
+        "alignment",
+        "study_efficiency"
+      ],
+      "purpose": "Test a regularized preference objective against DPO on identical fixtures.",
+      "official_source": "https://arxiv.org/abs/2310.12036",
+      "status": "catalogued"
+    },
+    {
+      "id": "kto_preference_optimization",
+      "label": "KTO preference optimization",
+      "category": "preference_and_reinforcement",
+      "stage": "alignment",
+      "compute": "medium",
+      "objectives": [
+        "alignment",
+        "study_efficiency"
+      ],
+      "purpose": "Learn from desirable and undesirable examples when pairs are unavailable.",
+      "official_source": "https://arxiv.org/abs/2402.01306",
+      "status": "catalogued"
+    },
+    {
+      "id": "orpo_preference_optimization",
+      "label": "ORPO preference optimization",
+      "category": "preference_and_reinforcement",
+      "stage": "alignment",
+      "compute": "medium",
+      "objectives": [
+        "alignment",
+        "study_efficiency"
+      ],
+      "purpose": "Compare a monolithic preference objective with staged SFT and alignment.",
+      "official_source": "https://arxiv.org/abs/2403.07691",
+      "status": "catalogued"
+    },
+    {
+      "id": "grpo",
+      "label": "Group-relative policy optimization",
+      "category": "preference_and_reinforcement",
+      "stage": "reasoning_rl",
+      "compute": "high",
+      "objectives": [
+        "reasoning_quality",
+        "study_efficiency"
+      ],
+      "purpose": "Estimate relative group advantages without a separate critic model.",
+      "official_source": "https://arxiv.org/abs/2402.03300",
+      "status": "catalogued"
+    },
+    {
+      "id": "reinforcement_learning_verifiable_rewards",
+      "label": "RL with verifiable rewards",
+      "category": "preference_and_reinforcement",
+      "stage": "reasoning_rl",
+      "compute": "high",
+      "objectives": [
+        "reasoning_quality",
+        "tool_use"
+      ],
+      "purpose": "Reward answers only when code, math, or tool outcomes are independently verifiable.",
+      "official_source": "https://arxiv.org/abs/2501.12948",
+      "status": "catalogued"
+    },
+    {
+      "id": "process_reward_modeling",
+      "label": "Process reward modeling",
+      "category": "preference_and_reinforcement",
+      "stage": "reasoning_rl",
+      "compute": "high",
+      "objectives": [
+        "reasoning_quality",
+        "readability"
+      ],
+      "purpose": "Grade intermediate solution steps with contamination and reward-hacking checks.",
+      "official_source": "https://arxiv.org/abs/2305.20050",
+      "status": "catalogued"
+    },
+    {
+      "id": "outcome_reward_modeling",
+      "label": "Outcome reward modeling",
+      "category": "preference_and_reinforcement",
+      "stage": "reasoning_rl",
+      "compute": "medium",
+      "objectives": [
+        "reasoning_quality",
+        "study_efficiency"
+      ],
+      "purpose": "Grade final observable outcomes and compare against process supervision.",
+      "official_source": "https://arxiv.org/abs/2305.20050",
+      "status": "catalogued"
+    },
+    {
+      "id": "star_self_taught_reasoner",
+      "label": "STaR self-taught reasoning",
+      "category": "reasoning_and_self_improvement",
+      "stage": "reasoning",
+      "compute": "medium",
+      "objectives": [
+        "reasoning_quality",
+        "study_efficiency"
+      ],
+      "purpose": "Generate rationales, keep independently correct examples, and iterate on failures.",
+      "official_source": "https://arxiv.org/abs/2203.14465",
+      "status": "catalogued"
+    },
+    {
+      "id": "quiet_star",
+      "label": "Quiet-STaR",
+      "category": "reasoning_and_self_improvement",
+      "stage": "reasoning",
+      "compute": "high",
+      "objectives": [
+        "reasoning_quality"
+      ],
+      "purpose": "Study whether token-level internal rationales improve general text prediction.",
+      "official_source": "https://arxiv.org/abs/2403.09629",
+      "status": "catalogued"
+    },
+    {
+      "id": "self_consistency",
+      "label": "Self-consistency decoding",
+      "category": "reasoning_and_self_improvement",
+      "stage": "inference_and_data",
+      "compute": "medium",
+      "objectives": [
+        "reasoning_quality"
+      ],
+      "purpose": "Sample diverse reasoning paths and aggregate answers for evaluation or filtered data.",
+      "official_source": "https://arxiv.org/abs/2203.11171",
+      "status": "catalogued"
+    },
+    {
+      "id": "self_critique_revision",
+      "label": "Self-critique and revision",
+      "category": "reasoning_and_self_improvement",
+      "stage": "inference_and_data",
+      "compute": "medium",
+      "objectives": [
+        "reasoning_quality",
+        "readability"
+      ],
+      "purpose": "Use explicit feedback, retry limits, and external graders to revise failed attempts.",
+      "official_source": "https://arxiv.org/abs/2303.11366",
+      "status": "catalogued"
+    },
+    {
+      "id": "multiagent_debate",
+      "label": "Multi-agent debate",
+      "category": "reasoning_and_self_improvement",
+      "stage": "inference_and_data",
+      "compute": "high",
+      "objectives": [
+        "reasoning_quality",
+        "alignment"
+      ],
+      "purpose": "Compare independent arguments while controlling correlated-model and judge bias.",
+      "official_source": "https://arxiv.org/abs/1805.00899",
+      "status": "catalogued"
+    },
+    {
+      "id": "tool_augmented_reasoning",
+      "label": "Tool-augmented reasoning",
+      "category": "reasoning_and_self_improvement",
+      "stage": "reasoning",
+      "compute": "medium",
+      "objectives": [
+        "tool_use",
+        "reasoning_quality"
+      ],
+      "purpose": "Learn tool selection from real sandbox results rather than persuasive text alone.",
+      "official_source": "https://arxiv.org/abs/2302.04761",
+      "status": "catalogued"
+    },
+    {
+      "id": "continual_replay",
+      "label": "Continual experience replay",
+      "category": "continual_learning",
+      "stage": "continual",
+      "compute": "medium",
+      "objectives": [
+        "continual_retention",
+        "study_efficiency"
+      ],
+      "purpose": "Replay representative prior capabilities during new-skill learning.",
+      "official_source": "https://arxiv.org/abs/1909.03329",
+      "status": "catalogued"
+    },
+    {
+      "id": "elastic_weight_consolidation",
+      "label": "Elastic weight consolidation",
+      "category": "continual_learning",
+      "stage": "continual",
+      "compute": "medium",
+      "objectives": [
+        "continual_retention"
+      ],
+      "purpose": "Penalize changes to parameters important for retained capabilities.",
+      "official_source": "https://arxiv.org/abs/1612.00796",
+      "status": "catalogued"
+    },
+    {
+      "id": "modular_skill_adapters",
+      "label": "Modular skill adapters",
+      "category": "continual_learning",
+      "stage": "continual",
+      "compute": "low",
+      "objectives": [
+        "continual_retention",
+        "low_compute"
+      ],
+      "purpose": "Keep capability updates modular, scoped, removable, and independently benchmarked.",
+      "official_source": "https://arxiv.org/abs/2005.00247",
+      "status": "catalogued"
+    },
+    {
+      "id": "federated_learning",
+      "label": "Federated learning",
+      "category": "continual_learning",
+      "stage": "continual",
+      "compute": "high",
+      "objectives": [
+        "continual_retention",
+        "alignment"
+      ],
+      "purpose": "Aggregate bounded updates without centralizing raw participant data.",
+      "official_source": "https://arxiv.org/abs/1602.05629",
+      "status": "catalogued"
+    },
+    {
+      "id": "evaluation_triggered_learning",
+      "label": "Evaluation-triggered learning",
+      "category": "continual_learning",
+      "stage": "continual",
+      "compute": "low",
+      "objectives": [
+        "study_efficiency",
+        "continual_retention"
+      ],
+      "purpose": "Open a learning proposal from clustered failures, never silently change production weights.",
+      "official_source": "https://arxiv.org/abs/2303.11366",
+      "status": "catalogued"
+    },
+    {
+      "id": "teacher_distillation",
+      "label": "Teacher-student distillation",
+      "category": "compression_and_transfer",
+      "stage": "distillation",
+      "compute": "medium",
+      "objectives": [
+        "low_compute",
+        "reasoning_quality"
+      ],
+      "purpose": "Transfer calibrated teacher behavior into a smaller student on licensed examples.",
+      "official_source": "https://arxiv.org/abs/1503.02531",
+      "status": "catalogued"
+    },
+    {
+      "id": "progressive_distillation",
+      "label": "Progressive distillation",
+      "category": "compression_and_transfer",
+      "stage": "distillation",
+      "compute": "medium",
+      "objectives": [
+        "low_compute",
+        "study_efficiency"
+      ],
+      "purpose": "Distill in measured stages while enforcing a quality and retention floor.",
+      "official_source": "https://arxiv.org/abs/1910.01108",
+      "status": "catalogued"
+    },
+    {
+      "id": "policy_distillation",
+      "label": "Policy distillation",
+      "category": "compression_and_transfer",
+      "stage": "distillation",
+      "compute": "medium",
+      "objectives": [
+        "low_compute",
+        "reasoning_quality"
+      ],
+      "purpose": "Transfer a stronger policy into a compact policy with task-level evaluation.",
+      "official_source": "https://arxiv.org/abs/1511.06295",
+      "status": "catalogued"
+    },
+    {
+      "id": "quantization_aware_training",
+      "label": "Quantization-aware training",
+      "category": "compression_and_transfer",
+      "stage": "compression",
+      "compute": "medium",
+      "objectives": [
+        "low_compute"
+      ],
+      "purpose": "Adapt to reduced precision while measuring quality and latency tradeoffs.",
+      "official_source": "https://arxiv.org/abs/1712.05877",
+      "status": "catalogued"
+    },
+    {
+      "id": "structured_pruning",
+      "label": "Structured pruning",
+      "category": "compression_and_transfer",
+      "stage": "compression",
+      "compute": "medium",
+      "objectives": [
+        "low_compute",
+        "study_efficiency"
+      ],
+      "purpose": "Remove bounded structures and require before-and-after capability evidence.",
+      "official_source": "https://arxiv.org/abs/1608.08710",
+      "status": "catalogued"
+    },
+    {
+      "id": "hyperband",
+      "label": "Hyperband",
+      "category": "experiment_optimization",
+      "stage": "experiment",
+      "compute": "low",
+      "objectives": [
+        "study_efficiency",
+        "low_compute"
+      ],
+      "purpose": "Stop weak configurations early and allocate budget to promising trials.",
+      "official_source": "https://arxiv.org/abs/1603.06560",
+      "status": "catalogued"
+    },
+    {
+      "id": "bayesian_hyperparameter_optimization",
+      "label": "Bayesian hyperparameter optimization",
+      "category": "experiment_optimization",
+      "stage": "experiment",
+      "compute": "low",
+      "objectives": [
+        "study_efficiency",
+        "low_compute"
+      ],
+      "purpose": "Choose new trials from uncertainty-aware estimates of the objective.",
+      "official_source": "https://arxiv.org/abs/1206.2944",
+      "status": "catalogued"
+    },
+    {
+      "id": "population_based_training",
+      "label": "Population-based training",
+      "category": "experiment_optimization",
+      "stage": "experiment",
+      "compute": "high",
+      "objectives": [
+        "study_efficiency",
+        "reasoning_quality"
+      ],
+      "purpose": "Evolve schedules and parameters while preserving complete lineage.",
+      "official_source": "https://arxiv.org/abs/1711.09846",
+      "status": "catalogued"
+    },
+    {
+      "id": "controlled_ablation",
+      "label": "Controlled ablation",
+      "category": "experiment_optimization",
+      "stage": "experiment",
+      "compute": "medium",
+      "objectives": [
+        "study_efficiency",
+        "reasoning_quality"
+      ],
+      "purpose": "Change one component at a time to identify what caused an improvement.",
+      "official_source": "https://arxiv.org/abs/2501.12948",
+      "status": "catalogued"
+    },
+    {
+      "id": "multi_armed_bandit_selection",
+      "label": "Multi-armed-bandit strategy selection",
+      "category": "experiment_optimization",
+      "stage": "experiment",
+      "compute": "low",
+      "objectives": [
+        "study_efficiency",
+        "low_compute"
+      ],
+      "purpose": "Balance exploration of uncertain techniques with exploitation of efficient ones.",
+      "official_source": "https://arxiv.org/abs/1204.5721",
+      "status": "catalogued"
+    },
+    {
+      "id": "pareto_multiobjective_selection",
+      "label": "Pareto multi-objective selection",
+      "category": "experiment_optimization",
+      "stage": "experiment",
+      "compute": "low",
+      "objectives": [
+        "study_efficiency",
+        "alignment",
+        "low_compute"
+      ],
+      "purpose": "Reject a single vanity score and retain quality, safety, cost, latency, and readability tradeoffs.",
+      "official_source": "https://ieeexplore.ieee.org/document/996017",
+      "status": "catalogued"
+    }
+  ],
+  "failure_controls": [
+    {
+      "id": "endless_repetition",
+      "metric": "repetition_rate",
+      "direction": "maximum",
+      "threshold": 0.08,
+      "action": "reject_candidate",
+      "purpose": "Block looping and repeated phrase degeneration."
+    },
+    {
+      "id": "poor_readability",
+      "metric": "readability_score",
+      "direction": "minimum",
+      "threshold": 0.8,
+      "action": "reject_candidate",
+      "purpose": "Require independently graded readable answers."
+    },
+    {
+      "id": "language_mixing",
+      "metric": "target_language_ratio",
+      "direction": "minimum",
+      "threshold": 0.95,
+      "action": "reject_candidate",
+      "purpose": "Prevent unintended language switching while allowing requested multilingual output."
+    },
+    {
+      "id": "format_collapse",
+      "metric": "format_validity_score",
+      "direction": "minimum",
+      "threshold": 0.99,
+      "action": "reject_candidate",
+      "purpose": "Keep structured outputs and tool calls machine-readable."
+    },
+    {
+      "id": "safety_regression",
+      "metric": "safety_score",
+      "direction": "minimum",
+      "threshold": 0.9,
+      "action": "reject_candidate",
+      "purpose": "Block candidates below the governed safety floor."
+    },
+    {
+      "id": "catastrophic_forgetting",
+      "metric": "retention_score",
+      "direction": "minimum",
+      "threshold": 0.9,
+      "action": "reject_candidate",
+      "purpose": "Preserve prior capabilities during new-skill learning."
+    },
+    {
+      "id": "reward_hacking",
+      "metric": "independent_grader_agreement",
+      "direction": "minimum",
+      "threshold": 0.9,
+      "action": "manual_review",
+      "purpose": "Compare reward signals with an independent grader and real outcomes."
+    },
+    {
+      "id": "data_contamination",
+      "metric": "holdout_contamination_rate",
+      "direction": "maximum",
+      "threshold": 0.0,
+      "action": "invalidate_study",
+      "purpose": "Keep hidden evaluation examples out of training and retrieval."
+    },
+    {
+      "id": "memorization_and_privacy",
+      "metric": "private_data_leak_rate",
+      "direction": "maximum",
+      "threshold": 0.0,
+      "action": "invalidate_study",
+      "purpose": "Reject memorized secrets, private records, or revoked data."
+    },
+    {
+      "id": "hallucination",
+      "metric": "grounded_claim_rate",
+      "direction": "minimum",
+      "threshold": 0.9,
+      "action": "reject_candidate",
+      "purpose": "Require attributable support where factual grounding is expected."
+    },
+    {
+      "id": "latency_regression",
+      "metric": "latency_regression_ratio",
+      "direction": "maximum",
+      "threshold": 0.2,
+      "action": "manual_review",
+      "purpose": "Expose quality gains that make Buddy impractical to run."
+    },
+    {
+      "id": "cost_regression",
+      "metric": "cost_regression_ratio",
+      "direction": "maximum",
+      "threshold": 0.2,
+      "action": "manual_review",
+      "purpose": "Expose improvements that exceed the approved operating budget."
+    }
+  ],
+  "study_optimizer": {
+    "selection_methods": [
+      "full_factorial",
+      "successive_halving",
+      "hyperband",
+      "bayesian_optimization",
+      "multi_armed_bandit",
+      "pareto_frontier",
+      "controlled_ablation"
+    ],
+    "default_score_weights": {
+      "quality_gain": 0.3,
+      "retention": 0.15,
+      "safety": 0.15,
+      "readability": 0.1,
+      "language_consistency": 0.1,
+      "low_repetition": 0.1,
+      "cost_efficiency": 0.05,
+      "latency_efficiency": 0.05
+    },
+    "minimum_repetitions": 3,
+    "requires_same_fixture": true,
+    "requires_hidden_holdout": true,
+    "requires_ablation": true,
+    "automatic_production_promotion": false
+  },
+  "truth": {
+    "techniques_catalogued": true,
+    "training_adapters_implemented": false,
+    "live_trials_run": 0,
+    "winning_strategy_proven": false
+  },
+  "summary": {
+    "techniques": 72,
+    "categories": 8,
+    "failure_controls": 12,
+    "live_trials_run": 0
+  }
+}

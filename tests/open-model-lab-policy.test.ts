@@ -2,11 +2,13 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  createBuddyLearningStudy,
   createBuddyOpenCoreManifest,
   createOpenModelComparisonPlan,
   createRepositoryTrackingPlan,
   createOpenSourceSandboxPlan,
   evaluateBuddyLearningEvidence,
+  evaluateBuddyLearningStudy,
 } from "../server/open-model-lab-policy";
 
 const buddyCoreBase = {
@@ -102,6 +104,88 @@ test("proof-carrying learning rejects weak holdout gains and safety regression",
   assert.equal(evidence.gates.hidden_holdout_improved, false);
   assert.equal(evidence.gates.safety_not_regressed, false);
   assert.equal(evidence.promotedToUsers, false);
+});
+
+const learningStudyBase = {
+  studyId: "buddy-study-efficiency-001",
+  baseReleaseId: "buddy-open-core-0.1",
+  capabilityId: "reasoning-and-tool-use",
+  objective: "study_efficiency" as const,
+  techniqueIds: [],
+  maximumCompute: "low" as const,
+  seeds: [1729, 2718, 31415],
+  maximumTechniques: 4,
+  maximumTrials: 12,
+  maximumGpuHours: 0,
+  maximumCostUsd: 0,
+  datasetManifestSha256: "c".repeat(64),
+  hiddenHoldoutManifestSha256: "d".repeat(64),
+  allowExternalNetwork: false,
+  ownerApprovedSandboxTraining: false,
+};
+
+test("learning study recommends multiple low-compute techniques on identical seeds", () => {
+  const study = createBuddyLearningStudy(learningStudyBase);
+  assert.equal(study.techniques.length, 4);
+  assert.equal(study.trialCount, 12);
+  assert.ok(study.techniques.every((item) => item.compute === "low"));
+  assert.deepEqual([...new Set(study.trials.map((item) => item.seed))], learningStudyBase.seeds);
+  assert.equal(study.sameFixturesAcrossTechniques, true);
+  assert.equal(study.automaticTrainingStarted, false);
+  assert.equal(study.status, "owner_training_approval_required");
+});
+
+test("learning study rejects unknown techniques and shared train-holdout manifests", () => {
+  assert.throws(() => createBuddyLearningStudy({ ...learningStudyBase, techniqueIds: ["unknown-technique", "lora_adapter"] }), /Unknown Buddy learning techniques/);
+  assert.throws(() => createBuddyLearningStudy({ ...learningStudyBase, hiddenHoldoutManifestSha256: "c".repeat(64) }), /must be different/);
+});
+
+const resultFor = (techniqueId: string, seed: number, overrides: Record<string, number | boolean> = {}) => ({
+  techniqueId,
+  seed,
+  artifactSha256: (techniqueId === "lora_adapter" ? "e" : "f").repeat(64),
+  sandboxPassed: true,
+  qualityScore: 0.82,
+  retentionScore: 0.96,
+  safetyScore: 0.96,
+  readabilityScore: 0.92,
+  targetLanguageRatio: 0.98,
+  repetitionRate: 0.03,
+  formatValidityScore: 1,
+  independentGraderAgreement: 0.96,
+  holdoutContaminationRate: 0,
+  privateDataLeakRate: 0,
+  groundedClaimRate: 0.94,
+  latencyRegressionRatio: 0.05,
+  costRegressionRatio: 0.05,
+  latencyMs: 120,
+  gpuHours: 1,
+  costUsd: 1,
+  ...overrides,
+});
+
+test("learning study evaluator selects an efficient passing technique and rejects failure modes", () => {
+  const seeds = [1729, 2718, 31415];
+  const evaluation = evaluateBuddyLearningStudy({
+    studyId: "buddy-study-efficiency-001",
+    studyManifestSha256: "1".repeat(64),
+    hiddenHoldoutManifestSha256: "2".repeat(64),
+    baselineQualityScore: 0.60,
+    results: [
+      ...seeds.map((seed) => resultFor("lora_adapter", seed)),
+      ...seeds.map((seed, index) => resultFor("direct_preference_optimization", seed, index === 0 ? { qualityScore: 0.86, repetitionRate: 0.20, targetLanguageRatio: 0.75 } : { qualityScore: 0.86 })),
+    ],
+    ownerReleaseApproved: false,
+  });
+  assert.equal(evaluation.winner?.techniqueId, "lora_adapter");
+  assert.deepEqual(evaluation.paretoFrontier.map((item) => item.techniqueId), ["lora_adapter"]);
+  assert.equal(evaluation.status, "winning_candidate_owner_approval_required");
+  const rejected = evaluation.candidates.find((item) => item.techniqueId === "direct_preference_optimization");
+  assert.equal(rejected?.eligible, false);
+  assert.ok(rejected?.failures.some((item) => item.id === "endless_repetition"));
+  assert.ok(rejected?.failures.some((item) => item.id === "language_mixing"));
+  assert.equal(evaluation.trainingPerformedByThisEvaluation, false);
+  assert.equal(evaluation.releasePerformed, false);
 });
 
 test("global model comparison uses evidence and never scores developer region", () => {

@@ -87,10 +87,15 @@ import {
   matchDemandReasonToModels,
 } from "./demand-model-policy";
 import {
+  BUDDY_LEARNING_STRATEGIES,
   buddyLearningEvidenceRequestSchema,
+  buddyLearningStudyRequestSchema,
+  buddyLearningStudyResultsSchema,
+  createBuddyLearningStudy,
   createOpenModelComparisonPlan,
   createBuddyOpenCoreManifest,
   evaluateBuddyLearningEvidence,
+  evaluateBuddyLearningStudy,
   createRepositoryTrackingPlan,
   createOpenSourceSandboxPlan,
   OPEN_MODEL_CATALOG,
@@ -3430,6 +3435,19 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     res.json(OPEN_MODEL_CATALOG.buddy_open_core);
   });
 
+  app.get("/api/buddy/open-core/learning-strategies", (_req, res) => {
+    res.json({
+      ...BUDDY_LEARNING_STRATEGIES,
+      summary: {
+        techniques: BUDDY_LEARNING_STRATEGIES.techniques.length,
+        categories: new Set(BUDDY_LEARNING_STRATEGIES.techniques.map((item) => item.category)).size,
+        failureControls: BUDDY_LEARNING_STRATEGIES.failure_controls.length,
+        liveTrialsRun: 0,
+      },
+      trainingAdaptersImplemented: false,
+    });
+  });
+
   app.post("/api/buddy/open-core/manifest", (req, res) => {
     try {
       const request = buddyOpenCoreManifestRequestSchema.parse(req.body);
@@ -3447,6 +3465,26 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     } catch (error) {
       if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
       res.status(400).json({ error: error instanceof Error ? error.message : "Buddy learning evidence review failed." });
+    }
+  });
+
+  app.post("/api/buddy/open-core/learning-study", (req, res) => {
+    try {
+      const request = buddyLearningStudyRequestSchema.parse(req.body);
+      res.status(201).json(createBuddyLearningStudy(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy learning study creation failed." });
+    }
+  });
+
+  app.post("/api/buddy/open-core/learning-study/evaluate", (req, res) => {
+    try {
+      const request = buddyLearningStudyResultsSchema.parse(req.body);
+      res.status(200).json(evaluateBuddyLearningStudy(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy learning study evaluation failed." });
     }
   });
 

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import learningStrategies from "../config/buddy-learning-strategies.json";
 import openModelCatalog from "../config/buddy-open-model-coding-lab.json";
 
 type OpenModelCatalog = {
@@ -59,6 +60,38 @@ type OpenModelCatalog = {
 };
 
 export const OPEN_MODEL_CATALOG = openModelCatalog as OpenModelCatalog;
+
+type LearningTechnique = {
+  id: string;
+  label: string;
+  category: string;
+  stage: string;
+  compute: "low" | "medium" | "high" | "very_high";
+  objectives: string[];
+  purpose: string;
+  official_source: string;
+  status: "catalogued";
+};
+
+type LearningStrategyCatalog = {
+  schema: string;
+  catalog_status: string;
+  objectives: string[];
+  techniques: LearningTechnique[];
+  failure_controls: Array<{ id: string; metric: string; direction: "minimum" | "maximum"; threshold: number; action: string; purpose: string }>;
+  study_optimizer: {
+    selection_methods: string[];
+    default_score_weights: Record<string, number>;
+    minimum_repetitions: number;
+    requires_same_fixture: boolean;
+    requires_hidden_holdout: boolean;
+    requires_ablation: boolean;
+    automatic_production_promotion: boolean;
+  };
+  truth: Record<string, boolean | number>;
+};
+
+export const BUDDY_LEARNING_STRATEGIES = learningStrategies as LearningStrategyCatalog;
 
 const sourceKinds = ["repository", "model_weights", "package"] as const;
 const weightFormats = ["safetensors", "gguf", "onnx", "tflite"] as const;
@@ -146,7 +179,7 @@ export const buddyLearningEvidenceRequestSchema = z.object({
   cycleId: z.string().trim().regex(/^[a-z0-9][a-z0-9._-]{2,79}$/),
   baseReleaseId: z.string().trim().min(3).max(120),
   capabilityId: z.string().trim().min(3).max(120),
-  method: z.enum(["cold_start_sft", "reinforcement_learning_verifiable_rewards", "preference_optimization", "teacher_distillation", "lora_adapter", "synthetic_curriculum", "tool_use_learning", "continual_replay"]),
+  method: z.string().trim().min(3).max(120),
   sourceManifestSha256: z.string().regex(/^[a-f0-9]{64}$/i),
   trainingArtifactSha256: z.string().regex(/^[a-f0-9]{64}$/i),
   graderVersion: z.string().trim().min(3).max(120),
@@ -162,15 +195,216 @@ export const buddyLearningEvidenceRequestSchema = z.object({
   privateDataExcludedOrConsented: z.boolean(),
   sandboxTrainingPassed: z.boolean(),
   ownerReleaseApproved: z.boolean().default(false),
+}).strict().superRefine((value, context) => {
+  if (!BUDDY_LEARNING_STRATEGIES.techniques.some((item) => item.id === value.method)) {
+    context.addIssue({ code: z.ZodIssueCode.custom, message: `Unknown Buddy learning technique: ${value.method}` });
+  }
+});
+
+const learningObjectives = ["reasoning_quality", "study_efficiency", "low_compute", "multilingual_quality", "readability", "continual_retention", "tool_use", "alignment"] as const;
+const computeLevels = ["low", "medium", "high", "very_high"] as const;
+
+export const buddyLearningStudyRequestSchema = z.object({
+  studyId: z.string().trim().regex(/^[a-z0-9][a-z0-9._-]{2,79}$/),
+  baseReleaseId: z.string().trim().min(3).max(120),
+  capabilityId: z.string().trim().min(3).max(120),
+  objective: z.enum(learningObjectives),
+  techniqueIds: z.array(z.string().trim().min(3).max(120)).max(12).default([]),
+  maximumCompute: z.enum(computeLevels).default("medium"),
+  seeds: z.array(z.number().int().min(1).max(2_147_483_647)).min(3).max(10).default([1729, 2718, 31415]),
+  maximumTechniques: z.number().int().min(2).max(12).default(6),
+  maximumTrials: z.number().int().min(6).max(120).default(36),
+  maximumGpuHours: z.number().min(0).max(1_000_000).default(0),
+  maximumCostUsd: z.number().min(0).max(10_000_000).default(0),
+  datasetManifestSha256: z.string().regex(/^[a-f0-9]{64}$/i),
+  hiddenHoldoutManifestSha256: z.string().regex(/^[a-f0-9]{64}$/i),
+  allowExternalNetwork: z.boolean().default(false),
+  ownerApprovedSandboxTraining: z.boolean().default(false),
+}).strict().superRefine((value, context) => {
+  if (new Set(value.seeds).size !== value.seeds.length) context.addIssue({ code: z.ZodIssueCode.custom, message: "Study seeds must be unique." });
+  if (new Set(value.techniqueIds).size !== value.techniqueIds.length) context.addIssue({ code: z.ZodIssueCode.custom, message: "Study technique ids must be unique." });
+  if (value.datasetManifestSha256.toLowerCase() === value.hiddenHoldoutManifestSha256.toLowerCase()) context.addIssue({ code: z.ZodIssueCode.custom, message: "Training and hidden-holdout manifests must be different." });
+});
+
+const learningTrialResultSchema = z.object({
+  techniqueId: z.string().trim().min(3).max(120),
+  seed: z.number().int().min(1).max(2_147_483_647),
+  artifactSha256: z.string().regex(/^[a-f0-9]{64}$/i),
+  sandboxPassed: z.boolean(),
+  qualityScore: z.number().min(0).max(1),
+  retentionScore: z.number().min(0).max(1),
+  safetyScore: z.number().min(0).max(1),
+  readabilityScore: z.number().min(0).max(1),
+  targetLanguageRatio: z.number().min(0).max(1),
+  repetitionRate: z.number().min(0).max(1),
+  formatValidityScore: z.number().min(0).max(1),
+  independentGraderAgreement: z.number().min(0).max(1),
+  holdoutContaminationRate: z.number().min(0).max(1),
+  privateDataLeakRate: z.number().min(0).max(1),
+  groundedClaimRate: z.number().min(0).max(1),
+  latencyRegressionRatio: z.number().min(-1).max(100),
+  costRegressionRatio: z.number().min(-1).max(100),
+  latencyMs: z.number().min(0).max(86_400_000),
+  gpuHours: z.number().min(0).max(1_000_000),
+  costUsd: z.number().min(0).max(10_000_000),
 }).strict();
+
+export const buddyLearningStudyResultsSchema = z.object({
+  studyId: z.string().trim().regex(/^[a-z0-9][a-z0-9._-]{2,79}$/),
+  studyManifestSha256: z.string().regex(/^[a-f0-9]{64}$/i),
+  hiddenHoldoutManifestSha256: z.string().regex(/^[a-f0-9]{64}$/i),
+  baselineQualityScore: z.number().min(0).max(1),
+  results: z.array(learningTrialResultSchema).min(6).max(240),
+  ownerReleaseApproved: z.boolean().default(false),
+}).strict().superRefine((value, context) => {
+  const trialKeys = value.results.map((item) => `${item.techniqueId}:${item.seed}`);
+  if (new Set(trialKeys).size !== trialKeys.length) context.addIssue({ code: z.ZodIssueCode.custom, message: "Each technique and seed pair must be unique." });
+  if (value.studyManifestSha256.toLowerCase() === value.hiddenHoldoutManifestSha256.toLowerCase()) context.addIssue({ code: z.ZodIssueCode.custom, message: "Study and hidden-holdout manifests must be different." });
+});
 
 export type OpenModelComparisonRequest = z.infer<typeof openModelComparisonRequestSchema>;
 export type OpenSourceSandboxPlanRequest = z.infer<typeof openSourceSandboxPlanRequestSchema>;
 export type RepositoryTrackingPlanRequest = z.infer<typeof repositoryTrackingPlanRequestSchema>;
 export type BuddyOpenCoreManifestRequest = z.infer<typeof buddyOpenCoreManifestRequestSchema>;
 export type BuddyLearningEvidenceRequest = z.infer<typeof buddyLearningEvidenceRequestSchema>;
+export type BuddyLearningStudyRequest = z.infer<typeof buddyLearningStudyRequestSchema>;
+export type BuddyLearningStudyResults = z.infer<typeof buddyLearningStudyResultsSchema>;
 
 const mean = (scores: number[]) => scores.reduce((sum, score) => sum + score, 0) / scores.length;
+const computeRank = new Map(computeLevels.map((level, index) => [level, index]));
+
+function techniquePriority(technique: LearningTechnique, objective: string) {
+  let score = technique.objectives.includes(objective) ? 10 : 0;
+  if (technique.objectives.includes("study_efficiency")) score += 3;
+  if (technique.compute === "low") score += 3;
+  if (technique.compute === "medium") score += 2;
+  if (technique.category === "experiment_optimization") score -= 1;
+  return score;
+}
+
+export function createBuddyLearningStudy(input: BuddyLearningStudyRequest) {
+  const request = buddyLearningStudyRequestSchema.parse(input);
+  const byId = new Map(BUDDY_LEARNING_STRATEGIES.techniques.map((item) => [item.id, item]));
+  const unknown = request.techniqueIds.filter((id) => !byId.has(id));
+  if (unknown.length) throw new Error(`Unknown Buddy learning techniques: ${unknown.join(", ")}`);
+  const computeCeiling = computeRank.get(request.maximumCompute)!;
+  const eligible = BUDDY_LEARNING_STRATEGIES.techniques.filter((item) => computeRank.get(item.compute)! <= computeCeiling);
+  const requested = request.techniqueIds.length ? request.techniqueIds.map((id) => byId.get(id)!) : eligible
+    .filter((item) => item.objectives.includes(request.objective))
+    .sort((left, right) => techniquePriority(right, request.objective) - techniquePriority(left, request.objective) || left.id.localeCompare(right.id));
+  const blockedByCompute = requested.filter((item) => computeRank.get(item.compute)! > computeCeiling);
+  if (blockedByCompute.length) throw new Error(`Techniques exceed the ${request.maximumCompute} compute ceiling: ${blockedByCompute.map((item) => item.id).join(", ")}`);
+  const maximumByTrials = Math.floor(request.maximumTrials / request.seeds.length);
+  const techniques = requested.slice(0, Math.min(request.maximumTechniques, maximumByTrials));
+  if (techniques.length < 2) throw new Error("The study budget must cover at least two techniques across every seed.");
+  if (request.techniqueIds.length && techniques.length !== request.techniqueIds.length) throw new Error("The trial budget must cover every selected technique across every seed.");
+  const trialCount = techniques.length * request.seeds.length;
+  const trials = techniques.flatMap((technique) => request.seeds.map((seed) => ({
+    trialId: `${request.studyId}-${technique.id}-${seed}`,
+    techniqueId: technique.id,
+    seed,
+    stage: technique.stage,
+    compute: technique.compute,
+    status: "scheduled_not_executed",
+    isolatedSandboxRequired: true,
+    maximumGpuHours: request.maximumGpuHours / trialCount,
+    maximumCostUsd: request.maximumCostUsd / trialCount,
+  })));
+  return {
+    schema: "dreamco.buddy_learning_study.v1",
+    studyId: request.studyId,
+    baseReleaseId: request.baseReleaseId,
+    capabilityId: request.capabilityId,
+    objective: request.objective,
+    status: !request.ownerApprovedSandboxTraining ? "owner_training_approval_required" : request.maximumGpuHours <= 0 ? "execution_resources_required" : "sandbox_execution_adapter_required",
+    datasetManifestSha256: request.datasetManifestSha256,
+    hiddenHoldoutManifestSha256: request.hiddenHoldoutManifestSha256,
+    techniques,
+    trials,
+    trialCount,
+    sameFixturesAcrossTechniques: true,
+    controlledAblationRequired: true,
+    failureControls: BUDDY_LEARNING_STRATEGIES.failure_controls,
+    scoring: BUDDY_LEARNING_STRATEGIES.study_optimizer.default_score_weights,
+    network: request.allowExternalNetwork ? "allowlisted_sources_only" : "off",
+    automaticTrainingStarted: false,
+    productionWeightsModified: false,
+    automaticProductionPromotion: false,
+  } as const;
+}
+
+type LearningTrialResult = z.infer<typeof learningTrialResultSchema>;
+
+export function evaluateBuddyLearningStudy(input: BuddyLearningStudyResults) {
+  const request = buddyLearningStudyResultsSchema.parse(input);
+  const knownIds = new Set(BUDDY_LEARNING_STRATEGIES.techniques.map((item) => item.id));
+  const unknown = [...new Set(request.results.filter((item) => !knownIds.has(item.techniqueId)).map((item) => item.techniqueId))];
+  if (unknown.length) throw new Error(`Unknown Buddy learning techniques: ${unknown.join(", ")}`);
+  const groups = new Map<string, LearningTrialResult[]>();
+  for (const result of request.results) groups.set(result.techniqueId, [...(groups.get(result.techniqueId) ?? []), result]);
+  const minimumRepetitions = BUDDY_LEARNING_STRATEGIES.study_optimizer.minimum_repetitions;
+  const weights = BUDDY_LEARNING_STRATEGIES.study_optimizer.default_score_weights;
+  const candidates = [...groups.entries()].map(([techniqueId, results]) => {
+    const average = (field: keyof LearningTrialResult) => mean(results.map((item) => Number(item[field])));
+    const metrics: Record<string, number> = {
+      quality_score: average("qualityScore"),
+      retention_score: Math.min(...results.map((item) => item.retentionScore)),
+      safety_score: Math.min(...results.map((item) => item.safetyScore)),
+      readability_score: Math.min(...results.map((item) => item.readabilityScore)),
+      target_language_ratio: Math.min(...results.map((item) => item.targetLanguageRatio)),
+      repetition_rate: Math.max(...results.map((item) => item.repetitionRate)),
+      format_validity_score: Math.min(...results.map((item) => item.formatValidityScore)),
+      independent_grader_agreement: Math.min(...results.map((item) => item.independentGraderAgreement)),
+      holdout_contamination_rate: Math.max(...results.map((item) => item.holdoutContaminationRate)),
+      private_data_leak_rate: Math.max(...results.map((item) => item.privateDataLeakRate)),
+      grounded_claim_rate: Math.min(...results.map((item) => item.groundedClaimRate)),
+      latency_regression_ratio: Math.max(...results.map((item) => item.latencyRegressionRatio)),
+      cost_regression_ratio: Math.max(...results.map((item) => item.costRegressionRatio)),
+      latency_ms: average("latencyMs"),
+      gpu_hours: results.reduce((sum, item) => sum + item.gpuHours, 0),
+      cost_usd: results.reduce((sum, item) => sum + item.costUsd, 0),
+    };
+    const failures = BUDDY_LEARNING_STRATEGIES.failure_controls.filter((control) => {
+      const value = metrics[control.metric];
+      return control.direction === "minimum" ? value < control.threshold : value > control.threshold;
+    }).map((control) => ({ id: control.id, action: control.action, measured: metrics[control.metric], threshold: control.threshold }));
+    if (results.some((item) => !item.sandboxPassed)) failures.push({ id: "sandbox_failure", action: "reject_candidate", measured: 0, threshold: 1 });
+    if (new Set(results.map((item) => item.seed)).size < minimumRepetitions) failures.push({ id: "insufficient_repeat_runs", action: "reject_candidate", measured: results.length, threshold: minimumRepetitions });
+    const qualityGain = metrics.quality_score - request.baselineQualityScore;
+    if (qualityGain < OPEN_MODEL_CATALOG.buddy_open_core.learning_system.promotion_thresholds.minimum_absolute_improvement) failures.push({ id: "insufficient_quality_gain", action: "reject_candidate", measured: qualityGain, threshold: OPEN_MODEL_CATALOG.buddy_open_core.learning_system.promotion_thresholds.minimum_absolute_improvement });
+    const efficiencyScore = Math.max(0, qualityGain) * weights.quality_gain
+      + metrics.retention_score * weights.retention
+      + metrics.safety_score * weights.safety
+      + metrics.readability_score * weights.readability
+      + metrics.target_language_ratio * weights.language_consistency
+      + (1 - metrics.repetition_rate) * weights.low_repetition
+      + (1 / (1 + metrics.cost_usd)) * weights.cost_efficiency
+      + (1 / (1 + metrics.latency_ms / 1000)) * weights.latency_efficiency;
+    return { techniqueId, repetitions: results.length, qualityGain, efficiencyScore, metrics, failures, eligible: failures.length === 0 };
+  }).sort((left, right) => Number(right.eligible) - Number(left.eligible) || right.efficiencyScore - left.efficiencyScore || left.techniqueId.localeCompare(right.techniqueId));
+  const eligibleCandidates = candidates.filter((item) => item.eligible);
+  const dominates = (left: typeof candidates[number], right: typeof candidates[number]) => {
+    const leftValues = [left.metrics.quality_score, left.metrics.retention_score, left.metrics.safety_score, left.metrics.readability_score, left.metrics.target_language_ratio, 1 - left.metrics.repetition_rate, -left.metrics.cost_usd, -left.metrics.latency_ms];
+    const rightValues = [right.metrics.quality_score, right.metrics.retention_score, right.metrics.safety_score, right.metrics.readability_score, right.metrics.target_language_ratio, 1 - right.metrics.repetition_rate, -right.metrics.cost_usd, -right.metrics.latency_ms];
+    return leftValues.every((value, index) => value >= rightValues[index]) && leftValues.some((value, index) => value > rightValues[index]);
+  };
+  const paretoFrontier = eligibleCandidates.filter((candidate) => !eligibleCandidates.some((other) => other.techniqueId !== candidate.techniqueId && dominates(other, candidate)));
+  const winner = [...paretoFrontier].sort((left, right) => right.efficiencyScore - left.efficiencyScore || left.techniqueId.localeCompare(right.techniqueId))[0] ?? null;
+  return {
+    schema: "dreamco.buddy_learning_study_evaluation.v1",
+    studyId: request.studyId,
+    status: winner ? (request.ownerReleaseApproved ? "winning_candidate_owner_approved_signed_release_required" : "winning_candidate_owner_approval_required") : "no_candidate_passed",
+    baselineQualityScore: request.baselineQualityScore,
+    candidates,
+    paretoFrontier,
+    winner,
+    studyManifestSha256: request.studyManifestSha256,
+    hiddenHoldoutManifestSha256: request.hiddenHoldoutManifestSha256,
+    trainingPerformedByThisEvaluation: false,
+    productionWeightsModified: false,
+    releasePerformed: false,
+  } as const;
+}
 
 export function evaluateBuddyLearningEvidence(input: BuddyLearningEvidenceRequest) {
   const request = buddyLearningEvidenceRequestSchema.parse(input);
