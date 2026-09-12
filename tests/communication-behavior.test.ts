@@ -73,7 +73,8 @@ test("communication benchmark uses synthetic fixtures and aggregate metrics", ()
 test("catalog covers broad interaction traits without hidden inference", () => {
   const catalog = getCommunicationBehaviorCatalog();
   const traits = catalog.trait_groups.flatMap((group) => group.traits);
-  assert.equal(traits.length, 50);
+  assert.equal(traits.length, 82);
+  assert.ok(catalog.trait_groups.some((group) => group.id === "dreamco_operations"));
   assert.equal(catalog.self_report_dimensions.length, 5);
   assert.equal(catalog.policy.hidden_psychological_inference, false);
   assert.equal(catalog.policy.self_report_only_for_psychology_dimensions, true);
