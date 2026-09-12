@@ -6,6 +6,7 @@ import {
   createOpenModelComparisonPlan,
   createRepositoryTrackingPlan,
   createOpenSourceSandboxPlan,
+  evaluateBuddyLearningEvidence,
 } from "../server/open-model-lab-policy";
 
 const buddyCoreBase = {
@@ -55,6 +56,52 @@ test("Buddy Open Core enforces dense and sparse parameter rules", () => {
   assert.throws(() => createBuddyOpenCoreManifest({ ...buddyCoreBase, architectureProfileId: "sparse_moe", parameterBillions: 64, activeParameterBillions: 64 }), /fewer parameters/);
   const sparse = createBuddyOpenCoreManifest({ ...buddyCoreBase, architectureProfileId: "sparse_moe", parameterBillions: 64, activeParameterBillions: 8 });
   assert.equal(sparse.architecture.requires_expert_routing, true);
+});
+
+const learningEvidenceBase = {
+  cycleId: "buddy-coding-adapter-001",
+  baseReleaseId: "buddy-open-core-0.1",
+  capabilityId: "typescript-bug-repair",
+  method: "lora_adapter" as const,
+  sourceManifestSha256: "a".repeat(64),
+  trainingArtifactSha256: "b".repeat(64),
+  graderVersion: "buddy-grader-1.0.0",
+  baselineScores: [0.55, 0.57, 0.56],
+  hiddenHoldoutBeforeScores: [0.60, 0.61, 0.59],
+  hiddenHoldoutAfterScores: [0.82, 0.81, 0.83],
+  regressionBeforeScores: [0.90, 0.91, 0.89],
+  regressionAfterScores: [0.90, 0.90, 0.89],
+  safetyBeforeScores: [0.93, 0.94, 0.95],
+  safetyAfterScores: [0.95, 0.95, 0.96],
+  approvedSourcesOnly: true,
+  licenseAndProvenanceVerified: true,
+  privateDataExcludedOrConsented: true,
+  sandboxTrainingPassed: true,
+  ownerReleaseApproved: false,
+};
+
+test("proof-carrying learning accepts repeatable holdout gains without auto-release", () => {
+  const evidence = evaluateBuddyLearningEvidence(learningEvidenceBase);
+  assert.equal(evidence.improvementProven, true);
+  assert.equal(evidence.status, "improvement_proven_owner_approval_required");
+  assert.equal(evidence.gates.hidden_holdout_improved, true);
+  assert.equal(evidence.gates.regression_within_limit, true);
+  assert.equal(evidence.promotedToUsers, false);
+  assert.equal(evidence.globalWeightsModified, false);
+  assert.equal(evidence.nextGate, "owner_release_approval");
+});
+
+test("proof-carrying learning rejects weak holdout gains and safety regression", () => {
+  const evidence = evaluateBuddyLearningEvidence({
+    ...learningEvidenceBase,
+    hiddenHoldoutAfterScores: [0.61, 0.62, 0.60],
+    safetyAfterScores: [0.80, 0.81, 0.79],
+  });
+  assert.equal(evidence.improvementProven, false);
+  assert.equal(evidence.status, "learning_evidence_failed");
+  assert.equal(evidence.gates.hidden_holdout_improved, false);
+  assert.equal(evidence.gates.safety_not_regressed, false);
+  assert.equal(evidence.promotedToUsers, false);
 });
 
 test("global model comparison uses evidence and never scores developer region", () => {

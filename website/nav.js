@@ -49,6 +49,7 @@
     { href: 'benchmark-tracker.html', label: '📐 Benchmark Tracker' },
     { href: 'open-model-lab.html', label: '🧪 Open Model Lab' },
     { href: 'buddy-open-core.html', label: '🇺🇸 Buddy Open Core' },
+    { href: 'buddy-learning-lab.html', label: '🧠 Learning Lab' },
     { href: 'leaders.html', label: '🏆 AI Leaders' },
     { href: 'learning.html', label: '📚 Learning' },
     { href: 'timecapsule.html', label: '⏱️ Time Capsule' },

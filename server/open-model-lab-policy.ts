@@ -43,6 +43,15 @@ type OpenModelCatalog = {
     weight_formats: string[];
     quantization_targets: string[];
     capability_tracks: string[];
+    learning_system: {
+      identity: string;
+      methods: string[];
+      research_references: Array<{ id: string; label: string; official_source: string; published_methods: string[]; buddy_extension: string; comparison_status: string }>;
+      innovation_tracks: string[];
+      required_cycle: string[];
+      promotion_thresholds: { minimum_holdout_score: number; minimum_absolute_improvement: number; maximum_regression: number; minimum_repetitions: number };
+      private_data_policy: Record<string, boolean>;
+    };
     compute_tiers: Array<{ id: string; target: string; runtimes: string[] }>;
     release_gates: string[];
     truth: Record<string, boolean>;
@@ -132,10 +141,76 @@ export const buddyOpenCoreManifestRequestSchema = z.object({
   if (!value.architectureProfileId.startsWith("sparse_moe") && value.activeParameterBillions !== value.parameterBillions) context.addIssue({ code: z.ZodIssueCode.custom, message: "Dense and distilled profiles must report equal total and active parameters." });
 });
 
+const learningScoresSchema = z.array(z.number().min(0).max(1)).min(3).max(20);
+export const buddyLearningEvidenceRequestSchema = z.object({
+  cycleId: z.string().trim().regex(/^[a-z0-9][a-z0-9._-]{2,79}$/),
+  baseReleaseId: z.string().trim().min(3).max(120),
+  capabilityId: z.string().trim().min(3).max(120),
+  method: z.enum(["cold_start_sft", "reinforcement_learning_verifiable_rewards", "preference_optimization", "teacher_distillation", "lora_adapter", "synthetic_curriculum", "tool_use_learning", "continual_replay"]),
+  sourceManifestSha256: z.string().regex(/^[a-f0-9]{64}$/i),
+  trainingArtifactSha256: z.string().regex(/^[a-f0-9]{64}$/i),
+  graderVersion: z.string().trim().min(3).max(120),
+  baselineScores: learningScoresSchema,
+  hiddenHoldoutBeforeScores: learningScoresSchema,
+  hiddenHoldoutAfterScores: learningScoresSchema,
+  regressionBeforeScores: learningScoresSchema,
+  regressionAfterScores: learningScoresSchema,
+  safetyBeforeScores: learningScoresSchema,
+  safetyAfterScores: learningScoresSchema,
+  approvedSourcesOnly: z.boolean(),
+  licenseAndProvenanceVerified: z.boolean(),
+  privateDataExcludedOrConsented: z.boolean(),
+  sandboxTrainingPassed: z.boolean(),
+  ownerReleaseApproved: z.boolean().default(false),
+}).strict();
+
 export type OpenModelComparisonRequest = z.infer<typeof openModelComparisonRequestSchema>;
 export type OpenSourceSandboxPlanRequest = z.infer<typeof openSourceSandboxPlanRequestSchema>;
 export type RepositoryTrackingPlanRequest = z.infer<typeof repositoryTrackingPlanRequestSchema>;
 export type BuddyOpenCoreManifestRequest = z.infer<typeof buddyOpenCoreManifestRequestSchema>;
+export type BuddyLearningEvidenceRequest = z.infer<typeof buddyLearningEvidenceRequestSchema>;
+
+const mean = (scores: number[]) => scores.reduce((sum, score) => sum + score, 0) / scores.length;
+
+export function evaluateBuddyLearningEvidence(input: BuddyLearningEvidenceRequest) {
+  const request = buddyLearningEvidenceRequestSchema.parse(input);
+  const thresholds = OPEN_MODEL_CATALOG.buddy_open_core.learning_system.promotion_thresholds;
+  const baseline = mean(request.baselineScores);
+  const holdoutBefore = mean(request.hiddenHoldoutBeforeScores);
+  const holdoutAfter = mean(request.hiddenHoldoutAfterScores);
+  const regressionBefore = mean(request.regressionBeforeScores);
+  const regressionAfter = mean(request.regressionAfterScores);
+  const safetyBefore = mean(request.safetyBeforeScores);
+  const safetyAfter = mean(request.safetyAfterScores);
+  const gates = {
+    failing_baseline_recorded: baseline < thresholds.minimum_holdout_score,
+    approved_sources_only: request.approvedSourcesOnly,
+    license_and_provenance_verified: request.licenseAndProvenanceVerified,
+    private_data_excluded_or_consented: request.privateDataExcludedOrConsented,
+    sandbox_training_passed: request.sandboxTrainingPassed,
+    hidden_holdout_improved: holdoutAfter - holdoutBefore >= thresholds.minimum_absolute_improvement,
+    holdout_threshold_met: holdoutAfter >= thresholds.minimum_holdout_score,
+    regression_within_limit: regressionBefore - regressionAfter <= thresholds.maximum_regression,
+    safety_not_regressed: safetyAfter >= safetyBefore,
+    repeated_runs_present: [request.baselineScores, request.hiddenHoldoutBeforeScores, request.hiddenHoldoutAfterScores, request.regressionBeforeScores, request.regressionAfterScores, request.safetyBeforeScores, request.safetyAfterScores].every((scores) => scores.length >= thresholds.minimum_repetitions),
+  };
+  const improvementProven = Object.values(gates).every(Boolean);
+  return {
+    schema: "dreamco.buddy_learning_evidence.v1",
+    cycleId: request.cycleId,
+    baseReleaseId: request.baseReleaseId,
+    capabilityId: request.capabilityId,
+    method: request.method,
+    status: improvementProven ? (request.ownerReleaseApproved ? "approved_release_candidate" : "improvement_proven_owner_approval_required") : "learning_evidence_failed",
+    scores: { baseline, hiddenHoldoutBefore: holdoutBefore, hiddenHoldoutAfter: holdoutAfter, absoluteImprovement: holdoutAfter - holdoutBefore, regressionBefore, regressionAfter, safetyBefore, safetyAfter },
+    gates,
+    evidence: { sourceManifestSha256: request.sourceManifestSha256, trainingArtifactSha256: request.trainingArtifactSha256, graderVersion: request.graderVersion },
+    improvementProven,
+    promotedToUsers: false,
+    globalWeightsModified: false,
+    nextGate: improvementProven ? (request.ownerReleaseApproved ? "signed_reversible_release" : "owner_release_approval") : Object.entries(gates).find(([, passed]) => !passed)?.[0] ?? "review_failed_evidence",
+  } as const;
+}
 
 export function createBuddyOpenCoreManifest(input: BuddyOpenCoreManifestRequest) {
   const request = buddyOpenCoreManifestRequestSchema.parse(input);

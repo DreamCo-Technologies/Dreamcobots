@@ -83,9 +83,11 @@ jobs:
           python3 tools/generate_setup_center.py --check
           python3 tools/build_buddy_learning_os_connection_graph.py
           python3 tools/generate_buddy_benchmark_index.py --check
+          python3 tools/generate_buddy_open_model_lab.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
           python3 tools/build_buddy_public_site.py --check
           npm run test:actions-page
+          npm run test:buddy-open-core
           node --test tests/benchmark-tracker-page.test.mjs tests/service-worker-benchmark-cache.test.mjs
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
@@ -129,6 +131,7 @@ jobs:
           node --check website/resource-connection-center.js
           node --check website/sign-in.js
           node --check website/buddy-open-core.js
+          node --check website/buddy-learning-lab.js
           node --check website/opportunity-hub.js
           node --check website/setup-center.js
       - name: Configure GitHub Pages

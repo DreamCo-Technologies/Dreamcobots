@@ -87,8 +87,10 @@ import {
   matchDemandReasonToModels,
 } from "./demand-model-policy";
 import {
+  buddyLearningEvidenceRequestSchema,
   createOpenModelComparisonPlan,
   createBuddyOpenCoreManifest,
+  evaluateBuddyLearningEvidence,
   createRepositoryTrackingPlan,
   createOpenSourceSandboxPlan,
   OPEN_MODEL_CATALOG,
@@ -3435,6 +3437,16 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     } catch (error) {
       if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
       res.status(400).json({ error: error instanceof Error ? error.message : "Buddy Open Core manifest failed." });
+    }
+  });
+
+  app.post("/api/buddy/open-core/learning-evidence", (req, res) => {
+    try {
+      const request = buddyLearningEvidenceRequestSchema.parse(req.body);
+      res.status(200).json(evaluateBuddyLearningEvidence(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy learning evidence review failed." });
     }
   });
 
