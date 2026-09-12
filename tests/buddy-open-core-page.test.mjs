@@ -10,4 +10,6 @@ test('Buddy Open Core page builds honest local manifests',()=>{
   assert.match(script,/trained_weights_created:false/);
   assert.match(script,/evidence_gates_remaining/);
   assert.match(script,/Sparse MoE requires active parameters below total/);
+  assert.match(script,/distribution_modes/);
+  assert.match(script,/distribution_mode:distributionMode/);
 });

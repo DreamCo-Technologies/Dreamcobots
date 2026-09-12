@@ -20,6 +20,12 @@
     "ownership": "DreamCo Technologies, United States",
     "current_status": "release_contract_ready_training_and_weights_required",
     "compatibility_target": "OpenAI-compatible local and hosted inference APIs",
+    "distribution_modes": [
+      {"id":"code_version","label":"Code Version","publishes_code":true,"publishes_weights":false,"purpose":"Release DreamCo runtime, API, evaluation, and orchestration code without model weights."},
+      {"id":"open_source","label":"Open Source","publishes_code":true,"publishes_weights":false,"purpose":"Release qualifying source code under an OSI-compatible license; model weights remain a separate decision."},
+      {"id":"open_weights","label":"Open Weights","publishes_code":false,"publishes_weights":true,"purpose":"Release exact model weights and model-card terms; this does not automatically mean open-source software."},
+      {"id":"private","label":"Private","publishes_code":false,"publishes_weights":false,"purpose":"Keep code, weights, adapters, and training artifacts owner-controlled or organization-scoped."}
+    ],
     "architecture_profiles": [
       {"id":"dense_edge","label":"Dense Edge","purpose":"Small local, mobile, and private deployments","requires_expert_routing":false,"requires_mtp":false},
       {"id":"dense_general","label":"Dense General","purpose":"Workstation reasoning, coding, and tool use","requires_expert_routing":false,"requires_mtp":false},

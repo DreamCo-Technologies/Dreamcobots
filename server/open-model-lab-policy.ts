@@ -37,6 +37,7 @@ type OpenModelCatalog = {
     ownership: string;
     current_status: string;
     compatibility_target: string;
+    distribution_modes: Array<{ id: string; label: string; publishes_code: boolean; publishes_weights: boolean; purpose: string }>;
     architecture_profiles: Array<{ id: string; label: string; purpose: string; requires_expert_routing: boolean; requires_mtp: boolean }>;
     api_compatibility: string[];
     weight_formats: string[];
@@ -107,6 +108,7 @@ export const repositoryTrackingPlanRequestSchema = z.object({
 export const buddyOpenCoreManifestRequestSchema = z.object({
   releaseId: z.string().trim().regex(/^[a-z0-9][a-z0-9._-]{2,79}$/),
   modelName: z.string().trim().min(3).max(120),
+  distributionMode: z.enum(["code_version", "open_source", "open_weights", "private"]),
   architectureProfileId: z.enum(["dense_edge", "dense_general", "sparse_moe", "sparse_moe_mtp", "distilled_specialist"]),
   exactSourceUrl: z.string().url().max(2048),
   immutableRevision: z.string().trim().min(7).max(160).regex(/^[A-Za-z0-9][A-Za-z0-9._/+:-]*$/),
@@ -140,6 +142,7 @@ export function createBuddyOpenCoreManifest(input: BuddyOpenCoreManifestRequest)
   const source = validatedSourceUrl(request.exactSourceUrl);
   if (floatingRevisions.has(request.immutableRevision.toLowerCase())) throw new Error("Buddy Open Core requires an immutable model revision.");
   const profile = OPEN_MODEL_CATALOG.buddy_open_core.architecture_profiles.find((item) => item.id === request.architectureProfileId)!;
+  const distribution = OPEN_MODEL_CATALOG.buddy_open_core.distribution_modes.find((item) => item.id === request.distributionMode)!;
   const evidence = {
     source_and_license_reviewed: request.sourceAndLicenseReviewed,
     checksums_verified: request.checksumsVerified,
@@ -153,6 +156,7 @@ export function createBuddyOpenCoreManifest(input: BuddyOpenCoreManifestRequest)
     schema: "dreamco.buddy_open_core_manifest.v1",
     releaseId: request.releaseId,
     modelName: request.modelName,
+    distribution,
     status: passed === Object.keys(evidence).length ? "release_candidate_owner_review_required" : "evidence_gates_remaining",
     architecture: { ...profile, parameterBillions: request.parameterBillions, activeParameterBillions: request.activeParameterBillions, contextTokens: request.contextTokens },
     artifact: { source: source.toString(), revision: request.immutableRevision, declaredLicense: request.declaredLicense, weightFormat: request.weightFormat, quantization: request.quantization },
@@ -163,6 +167,7 @@ export function createBuddyOpenCoreManifest(input: BuddyOpenCoreManifestRequest)
     trainedWeightsCreatedByThisRequest: false,
     inferenceStartedByThisRequest: false,
     productionReleaseCreated: false,
+    publicationPerformed: false,
     nextGate: passed === Object.keys(evidence).length ? "owner_review_and_signed_reversible_release" : OPEN_MODEL_CATALOG.buddy_open_core.release_gates.find((_gate, index) => index >= passed) ?? "complete_remaining_release_gates",
   } as const;
 }

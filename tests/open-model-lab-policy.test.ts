@@ -11,6 +11,7 @@ import {
 const buddyCoreBase = {
   releaseId: "buddy-open-core-0.1",
   modelName: "Buddy Open Core Research",
+  distributionMode: "private" as const,
   architectureProfileId: "dense_edge" as const,
   exactSourceUrl: "https://huggingface.co/DreamCo-Technologies/buddy-open-core",
   immutableRevision: "release-v0.1.0",
@@ -35,8 +36,18 @@ test("Buddy Open Core creates an honest portable manifest without claiming weigh
   assert.equal(manifest.status, "evidence_gates_remaining");
   assert.equal(manifest.trainedWeightsCreatedByThisRequest, false);
   assert.equal(manifest.inferenceStartedByThisRequest, false);
+  assert.equal(manifest.distribution.id, "private");
+  assert.equal(manifest.publicationPerformed, false);
   assert.ok(manifest.apiCompatibility.includes("/v1/chat/completions"));
   assert.equal(manifest.evidence.total, 6);
+});
+
+test("Buddy Open Core keeps code, open-source, open-weight, and private releases distinct", () => {
+  const modes = ["code_version", "open_source", "open_weights", "private"] as const;
+  const manifests = modes.map((distributionMode) => createBuddyOpenCoreManifest({ ...buddyCoreBase, distributionMode }));
+  assert.deepEqual(manifests.map((manifest) => manifest.distribution.id), modes);
+  assert.equal(manifests.find((manifest) => manifest.distribution.id === "open_weights")?.distribution.publishes_weights, true);
+  assert.equal(manifests.find((manifest) => manifest.distribution.id === "open_source")?.distribution.publishes_weights, false);
 });
 
 test("Buddy Open Core enforces dense and sparse parameter rules", () => {

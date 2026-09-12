@@ -67,6 +67,9 @@ def validate(payload: dict[str, Any]) -> dict[str, Any]:
     core = payload.get("buddy_open_core", {})
     if len(core.get("architecture_profiles", [])) < 5 or len(core.get("release_gates", [])) < 12:
         raise ValueError("Buddy Open Core needs complete architecture profiles and release gates.")
+    modes = core.get("distribution_modes", [])
+    if [mode.get("id") for mode in modes] != ["code_version", "open_source", "open_weights", "private"]:
+        raise ValueError("Buddy Open Core must preserve the four distinct distribution modes.")
     truth = core.get("truth", {})
     if truth.get("trained_weights_exist") is not False or truth.get("frontier_parity_proven") is not False:
         raise ValueError("Buddy Open Core cannot claim unproven weights or frontier parity.")
