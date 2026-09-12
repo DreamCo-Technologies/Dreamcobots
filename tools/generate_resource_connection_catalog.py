@@ -33,7 +33,7 @@ def build():
     resources=[{'id':'resource:'+host,'host':host,'primary_url':sorted(data['urls'])[0],'url_count':len(data['urls']),'source_lists':sorted(data['sources']),'connection_status':'connection_request_required'} for host,data in sorted(hosts.items()) if host not in excluded]
     return {'schema':'dreamco.buddy.resource_connection_catalog.v1','truth':'A discovered link is a resource reference, not a live integration or a statement of provider permission. Public-site policy exclusions are omitted.','scan_roots':['config','website/data'],'scanned_json_lists':scanned,'resource_count':len(resources),'excluded_by_public_site_policy':len(excluded),'resources':resources,'connection_methods':['oauth_pkce','oauth_device','api_key','webhook_hmac','passkey_webauthn','browser_session_handoff','oidc_saml','custom_rest','mcp_transport'],'secret_rule':'Public Pages stores only the chosen method and scope; a backend, keychain, or approved MCP server handles credentials.'}
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--check',action='store_true');args=parser.parse_args();payload=json.dumps(build(),indent=2)+'\n'
+    parser=argparse.ArgumentParser();parser.add_argument('--check',action='store_true');args=parser.parse_args();payload=json.dumps(build(),separators=(',',':'))+'\n'
     if args.check:
         if not OUT.exists() or OUT.read_text()!=payload:raise SystemExit('Resource connection catalog is stale; regenerate it.')
         print(json.dumps({'ok':True,'output':str(OUT.relative_to(ROOT))}));return

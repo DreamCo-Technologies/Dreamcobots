@@ -4,6 +4,8 @@
   const links = [
     { href: 'dashboard.html', label: '📊 Dashboard' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
+    { href: 'buddy-expert-mode.html', label: '🎓 Expert Mode' },
+    { href: 'buddy-invention-lab.html', label: '💡 Idea-to-Store' },
     { href: 'actions.html', label: '⚙️ Actions' },
     { href: 'master-build.html', label: '🧭 Master Build' },
     { href: 'buddy-command-center.html', label: '🗂️ Command Center' },

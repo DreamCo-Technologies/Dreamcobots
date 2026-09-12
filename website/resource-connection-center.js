@@ -20,6 +20,8 @@
   ]).then(([resources, connections]) => {
     catalog = resources;
     methods = connections.auth_methods;
+    const requestedResource = new URLSearchParams(location.search).get('resource');
+    if (requestedResource) $('resource-search').value = requestedResource;
     render();
   }).catch((error) => { $('resource-summary').textContent = `Catalog unavailable: ${error.message}`; });
 

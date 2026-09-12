@@ -229,6 +229,15 @@ import {
   salesAcademyRequestSchema,
   voiceSandboxRequestSchema,
 } from "./workforce-engine";
+import {
+  BUDDY_EXPERT_MODE,
+  createBuddyExpertSprint,
+  createBuddyInventionProject,
+  evaluateBuddyExpertSprint,
+  expertSprintEvidenceSchema,
+  expertSprintRequestSchema,
+  inventionProjectRequestSchema,
+} from "./expert-mode-policy";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -3446,6 +3455,40 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
       },
       trainingAdaptersImplemented: false,
     });
+  });
+
+  app.get("/api/buddy/expert-mode/catalog", (_req, res) => {
+    res.json(BUDDY_EXPERT_MODE);
+  });
+
+  app.post("/api/buddy/expert-mode/sprint", (req, res) => {
+    try {
+      const request = expertSprintRequestSchema.parse(req.body);
+      res.status(201).json(createBuddyExpertSprint(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy Expert Mode sprint creation failed." });
+    }
+  });
+
+  app.post("/api/buddy/expert-mode/evaluate", (req, res) => {
+    try {
+      const evidence = expertSprintEvidenceSchema.parse(req.body);
+      res.status(200).json(evaluateBuddyExpertSprint(evidence));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy Expert Mode evidence review failed." });
+    }
+  });
+
+  app.post("/api/buddy/inventions/project", (req, res) => {
+    try {
+      const request = inventionProjectRequestSchema.parse(req.body);
+      res.status(201).json(createBuddyInventionProject(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy invention project creation failed." });
+    }
   });
 
   app.post("/api/buddy/open-core/manifest", (req, res) => {

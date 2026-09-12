@@ -4,7 +4,9 @@
   function route(raw){
     const text=raw.trim();if(!text){$('voice-status').textContent='Say or enter a command first.';return}
     const lower=text.toLowerCase();let target='buddy.html',params={prompt:text};
-    if(/family circle|consented family|safe place|check me in|missing-child/.test(lower)){target='family-circle.html';params={command:text}}
+    if(/expert mode|seven.day sprint|learn.*resources|resource mastery|study.*resources/.test(lower)){target='buddy-expert-mode.html';params={goal:text}}
+    else if(/invention|prototype|prior art|patent|idea to store|manufacturer|build my product/.test(lower)){target='buddy-invention-lab.html';params={idea:text}}
+    else if(/family circle|consented family|safe place|check me in|missing-child/.test(lower)){target='family-circle.html';params={command:text}}
     else if(/food|rent.*help|utility help|childcare|transportation help|mental health|government office/.test(lower)){target='resource-211.html';params={need:text}}
     else if(/map|show|place|mark|note|remember|route|home|property|rental|hiring|jobs|inspector|repair|fire|earthquake|transit|weather|infrastructure|source|fresh|provider|mission/.test(lower)){target='world-lens.html';const category=/rental/.test(lower)?'rentals':/home|property/.test(lower)?'property_sale':/hiring|jobs/.test(lower)?'jobs':/food/.test(lower)?'food':/transit/.test(lower)?'transit':'any';params={q:text,category}}
     $('voice-status').textContent=`Prepared for ${target.replace('.html','').replaceAll('-',' ')}. Opening now…`;location.href=`${target}?${new URLSearchParams(params)}`;

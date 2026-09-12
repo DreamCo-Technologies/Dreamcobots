@@ -35,6 +35,8 @@
     "buddy:dependencies": "python3 tools/check_repository_dependencies.py",
     "buddy:connections": "python3 tools/generate_buddy_connection_catalog.py --check",
     "buddy:resource-connections": "python3 tools/generate_resource_connection_catalog.py --check",
+    "buddy:expert-mode": "python3 tools/generate_buddy_expert_mode.py --check",
+    "test:expert-mode": "python3 tools/generate_resource_connection_catalog.py --check && python3 tools/generate_buddy_expert_mode.py --check && node --import tsx --test tests/expert-mode-policy.test.ts tests/buddy-expert-mode-page.test.mjs && node --check website/buddy-expert-mode.js && node --check website/buddy-invention-lab.js",
     "buddy:learning-os-connections": "python3 tools/build_buddy_learning_os_connection_graph.py && python3 -m unittest tests.test_buddy_learning_os_connections",
     "buddy:models": "python3 tools/generate_buddy_model_router.py --check",
     "buddy:model-benchmarks": "tsx tools/generate_buddy_model_benchmarks.ts --check",

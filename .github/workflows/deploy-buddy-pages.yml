@@ -25,6 +25,7 @@ on:
       - "tools/generate_master_directive_status.py"
       - "tools/generate_command_center_data.py"
       - "tools/generate_resource_connection_catalog.py"
+      - "tools/generate_buddy_expert_mode.py"
       - "command-center/data/**"
       - "docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md"
       - "config/**"
@@ -82,6 +83,7 @@ jobs:
           python3 tools/generate_opportunity_hub.py --check
           python3 tools/generate_setup_center.py --check
           python3 tools/build_buddy_learning_os_connection_graph.py
+          python3 tools/generate_buddy_expert_mode.py
           python3 tools/generate_buddy_benchmark_index.py --check
           python3 tools/generate_buddy_open_model_lab.py --check
           python3 tools/generate_buddy_learning_strategies.py --check
@@ -89,6 +91,7 @@ jobs:
           python3 tools/build_buddy_public_site.py --check
           npm run test:actions-page
           npm run test:buddy-open-core
+          npm run test:expert-mode
           node --test tests/benchmark-tracker-page.test.mjs tests/service-worker-benchmark-cache.test.mjs
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
@@ -97,6 +100,9 @@ jobs:
           test -s website/data/actions-live-health.json
           test -s website/data/master-directive-status.json
           test -s website/data/buddy-learning-os-connections.json
+          test -s website/data/buddy-expert-mode.js
+          test -s website/buddy-expert-mode.html
+          test -s website/buddy-invention-lab.html
           test -s website/data/actions-prospectus.json
           test -s website/data/problem-registry.json
       - name: Check generated Actions data contracts
@@ -133,6 +139,8 @@ jobs:
           node --check website/sign-in.js
           node --check website/buddy-open-core.js
           node --check website/buddy-learning-lab.js
+          node --check website/buddy-expert-mode.js
+          node --check website/buddy-invention-lab.js
           node --check website/opportunity-hub.js
           node --check website/setup-center.js
       - name: Configure GitHub Pages
