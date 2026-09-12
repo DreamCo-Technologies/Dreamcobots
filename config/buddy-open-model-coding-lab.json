@@ -15,6 +15,31 @@
     "no_automatic_paid_runs": true,
     "live_execution_requires_a_sandbox_adapter": true
   },
+  "buddy_open_core": {
+    "identity": "Buddy Open Core",
+    "ownership": "DreamCo Technologies, United States",
+    "current_status": "release_contract_ready_training_and_weights_required",
+    "compatibility_target": "OpenAI-compatible local and hosted inference APIs",
+    "architecture_profiles": [
+      {"id":"dense_edge","label":"Dense Edge","purpose":"Small local, mobile, and private deployments","requires_expert_routing":false,"requires_mtp":false},
+      {"id":"dense_general","label":"Dense General","purpose":"Workstation reasoning, coding, and tool use","requires_expert_routing":false,"requires_mtp":false},
+      {"id":"sparse_moe","label":"Sparse Mixture of Experts","purpose":"Scale total knowledge while activating a bounded expert subset per token","requires_expert_routing":true,"requires_mtp":false},
+      {"id":"sparse_moe_mtp","label":"Sparse MoE + Multi-Token Prediction","purpose":"Research-scale efficient inference with an independently tested prediction module","requires_expert_routing":true,"requires_mtp":true},
+      {"id":"distilled_specialist","label":"Distilled Specialist","purpose":"Task-specific coding, reasoning, civic-service, media, or business models","requires_expert_routing":false,"requires_mtp":false}
+    ],
+    "api_compatibility": ["/v1/models","/v1/chat/completions","/v1/responses","/v1/embeddings","streaming_sse","json_schema_outputs","tool_calls"],
+    "weight_formats": ["safetensors","gguf","onnx"],
+    "quantization_targets": ["bf16","fp16","fp8_block","int8","int4","gguf_q8","gguf_q6","gguf_q5","gguf_q4"],
+    "capability_tracks": ["reasoning","coding","tool_use","long_context","multilingual","vision","speech_audio","embeddings","reranking","agent_workflows"],
+    "compute_tiers": [
+      {"id":"laptop","target":"3B-14B quantized","runtimes":["llama-cpp","mlx","ollama"]},
+      {"id":"workstation","target":"14B-70B quantized","runtimes":["llama-cpp","transformers","vllm"]},
+      {"id":"cluster","target":"70B+ dense or sparse MoE","runtimes":["vllm","transformers"]},
+      {"id":"research_cluster","target":"pretraining and architecture research","runtimes":["transformers"]}
+    ],
+    "release_gates": ["immutable source and revision","license and training-data provenance","weight-shard checksums","tokenizer and prompt-template pinning","sandbox load without remote code","same-fixture quality benchmark","latency throughput memory and energy evidence","tool-use and structured-output tests","multilingual and accessibility tests","safety privacy and security red-team","repeat-run and holdout evaluation","signed model card and SBOM","owner-approved reversible release"],
+    "truth": {"trained_weights_exist":false,"frontier_parity_proven":false,"production_release_exists":false,"api_contract_implemented":true}
+  },
   "model_families": [
     {
       "id": "gpt-oss",

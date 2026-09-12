@@ -64,6 +64,12 @@ def validate(payload: dict[str, Any]) -> dict[str, Any]:
     }
     if any(policy.get(key) is not True for key in required_policy):
         raise ValueError("Required comparison and licensing controls must remain enabled.")
+    core = payload.get("buddy_open_core", {})
+    if len(core.get("architecture_profiles", [])) < 5 or len(core.get("release_gates", [])) < 12:
+        raise ValueError("Buddy Open Core needs complete architecture profiles and release gates.")
+    truth = core.get("truth", {})
+    if truth.get("trained_weights_exist") is not False or truth.get("frontier_parity_proven") is not False:
+        raise ValueError("Buddy Open Core cannot claim unproven weights or frontier parity.")
     return {
         **payload,
         "summary": {

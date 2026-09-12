@@ -32,6 +32,20 @@ type OpenModelCatalog = {
   open_source_sandbox: {
     supported_hosts: string[];
   };
+  buddy_open_core: {
+    identity: string;
+    ownership: string;
+    current_status: string;
+    compatibility_target: string;
+    architecture_profiles: Array<{ id: string; label: string; purpose: string; requires_expert_routing: boolean; requires_mtp: boolean }>;
+    api_compatibility: string[];
+    weight_formats: string[];
+    quantization_targets: string[];
+    capability_tracks: string[];
+    compute_tiers: Array<{ id: string; target: string; runtimes: string[] }>;
+    release_gates: string[];
+    truth: Record<string, boolean>;
+  };
 };
 
 export const OPEN_MODEL_CATALOG = openModelCatalog as OpenModelCatalog;
@@ -90,9 +104,68 @@ export const repositoryTrackingPlanRequestSchema = z.object({
   ownerConfirmsRights: z.boolean(),
 }).strict();
 
+export const buddyOpenCoreManifestRequestSchema = z.object({
+  releaseId: z.string().trim().regex(/^[a-z0-9][a-z0-9._-]{2,79}$/),
+  modelName: z.string().trim().min(3).max(120),
+  architectureProfileId: z.enum(["dense_edge", "dense_general", "sparse_moe", "sparse_moe_mtp", "distilled_specialist"]),
+  exactSourceUrl: z.string().url().max(2048),
+  immutableRevision: z.string().trim().min(7).max(160).regex(/^[A-Za-z0-9][A-Za-z0-9._/+:-]*$/),
+  declaredLicense: z.string().trim().min(2).max(160),
+  parameterBillions: z.number().positive().max(10_000),
+  activeParameterBillions: z.number().positive().max(10_000),
+  contextTokens: z.number().int().min(2_048).max(10_000_000),
+  weightFormat: z.enum(["safetensors", "gguf", "onnx"]),
+  quantization: z.enum(["bf16", "fp16", "fp8_block", "int8", "int4", "gguf_q8", "gguf_q6", "gguf_q5", "gguf_q4"]),
+  runtimeIds: z.array(z.enum(["llama-cpp", "mlx", "transformers", "vllm", "ollama"])).min(1).max(5),
+  capabilityTracks: z.array(z.enum(["reasoning", "coding", "tool_use", "long_context", "multilingual", "vision", "speech_audio", "embeddings", "reranking", "agent_workflows"])).min(1).max(10),
+  sourceAndLicenseReviewed: z.boolean().default(false),
+  checksumsVerified: z.boolean().default(false),
+  sandboxLoadPassed: z.boolean().default(false),
+  sameFixtureBenchmarksPassed: z.boolean().default(false),
+  holdoutPassed: z.boolean().default(false),
+  securityReviewPassed: z.boolean().default(false),
+}).strict().superRefine((value, context) => {
+  if (value.activeParameterBillions > value.parameterBillions) context.addIssue({ code: z.ZodIssueCode.custom, message: "Active parameters cannot exceed total parameters." });
+  if (value.architectureProfileId.startsWith("sparse_moe") && value.activeParameterBillions >= value.parameterBillions) context.addIssue({ code: z.ZodIssueCode.custom, message: "Sparse MoE releases must activate fewer parameters than their total." });
+  if (!value.architectureProfileId.startsWith("sparse_moe") && value.activeParameterBillions !== value.parameterBillions) context.addIssue({ code: z.ZodIssueCode.custom, message: "Dense and distilled profiles must report equal total and active parameters." });
+});
+
 export type OpenModelComparisonRequest = z.infer<typeof openModelComparisonRequestSchema>;
 export type OpenSourceSandboxPlanRequest = z.infer<typeof openSourceSandboxPlanRequestSchema>;
 export type RepositoryTrackingPlanRequest = z.infer<typeof repositoryTrackingPlanRequestSchema>;
+export type BuddyOpenCoreManifestRequest = z.infer<typeof buddyOpenCoreManifestRequestSchema>;
+
+export function createBuddyOpenCoreManifest(input: BuddyOpenCoreManifestRequest) {
+  const request = buddyOpenCoreManifestRequestSchema.parse(input);
+  const source = validatedSourceUrl(request.exactSourceUrl);
+  if (floatingRevisions.has(request.immutableRevision.toLowerCase())) throw new Error("Buddy Open Core requires an immutable model revision.");
+  const profile = OPEN_MODEL_CATALOG.buddy_open_core.architecture_profiles.find((item) => item.id === request.architectureProfileId)!;
+  const evidence = {
+    source_and_license_reviewed: request.sourceAndLicenseReviewed,
+    checksums_verified: request.checksumsVerified,
+    sandbox_load_passed: request.sandboxLoadPassed,
+    same_fixture_benchmarks_passed: request.sameFixtureBenchmarksPassed,
+    hidden_holdout_passed: request.holdoutPassed,
+    security_review_passed: request.securityReviewPassed,
+  };
+  const passed = Object.values(evidence).filter(Boolean).length;
+  return {
+    schema: "dreamco.buddy_open_core_manifest.v1",
+    releaseId: request.releaseId,
+    modelName: request.modelName,
+    status: passed === Object.keys(evidence).length ? "release_candidate_owner_review_required" : "evidence_gates_remaining",
+    architecture: { ...profile, parameterBillions: request.parameterBillions, activeParameterBillions: request.activeParameterBillions, contextTokens: request.contextTokens },
+    artifact: { source: source.toString(), revision: request.immutableRevision, declaredLicense: request.declaredLicense, weightFormat: request.weightFormat, quantization: request.quantization },
+    runtimes: [...new Set(request.runtimeIds)],
+    capabilities: [...new Set(request.capabilityTracks)],
+    apiCompatibility: OPEN_MODEL_CATALOG.buddy_open_core.api_compatibility,
+    evidence: { ...evidence, passed, total: Object.keys(evidence).length },
+    trainedWeightsCreatedByThisRequest: false,
+    inferenceStartedByThisRequest: false,
+    productionReleaseCreated: false,
+    nextGate: passed === Object.keys(evidence).length ? "owner_review_and_signed_reversible_release" : OPEN_MODEL_CATALOG.buddy_open_core.release_gates.find((_gate, index) => index >= passed) ?? "complete_remaining_release_gates",
+  } as const;
+}
 
 function unique<T>(values: T[]) {
   return [...new Set(values)];

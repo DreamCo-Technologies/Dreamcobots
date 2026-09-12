@@ -2,10 +2,49 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  createBuddyOpenCoreManifest,
   createOpenModelComparisonPlan,
   createRepositoryTrackingPlan,
   createOpenSourceSandboxPlan,
 } from "../server/open-model-lab-policy";
+
+const buddyCoreBase = {
+  releaseId: "buddy-open-core-0.1",
+  modelName: "Buddy Open Core Research",
+  architectureProfileId: "dense_edge" as const,
+  exactSourceUrl: "https://huggingface.co/DreamCo-Technologies/buddy-open-core",
+  immutableRevision: "release-v0.1.0",
+  declaredLicense: "Apache-2.0",
+  parameterBillions: 7,
+  activeParameterBillions: 7,
+  contextTokens: 32768,
+  weightFormat: "safetensors" as const,
+  quantization: "bf16" as const,
+  runtimeIds: ["mlx" as const, "llama-cpp" as const],
+  capabilityTracks: ["reasoning" as const, "coding" as const, "tool_use" as const],
+  sourceAndLicenseReviewed: false,
+  checksumsVerified: false,
+  sandboxLoadPassed: false,
+  sameFixtureBenchmarksPassed: false,
+  holdoutPassed: false,
+  securityReviewPassed: false,
+};
+
+test("Buddy Open Core creates an honest portable manifest without claiming weights", () => {
+  const manifest = createBuddyOpenCoreManifest(buddyCoreBase);
+  assert.equal(manifest.status, "evidence_gates_remaining");
+  assert.equal(manifest.trainedWeightsCreatedByThisRequest, false);
+  assert.equal(manifest.inferenceStartedByThisRequest, false);
+  assert.ok(manifest.apiCompatibility.includes("/v1/chat/completions"));
+  assert.equal(manifest.evidence.total, 6);
+});
+
+test("Buddy Open Core enforces dense and sparse parameter rules", () => {
+  assert.throws(() => createBuddyOpenCoreManifest({ ...buddyCoreBase, activeParameterBillions: 3 }), /equal total and active/);
+  assert.throws(() => createBuddyOpenCoreManifest({ ...buddyCoreBase, architectureProfileId: "sparse_moe", parameterBillions: 64, activeParameterBillions: 64 }), /fewer parameters/);
+  const sparse = createBuddyOpenCoreManifest({ ...buddyCoreBase, architectureProfileId: "sparse_moe", parameterBillions: 64, activeParameterBillions: 8 });
+  assert.equal(sparse.architecture.requires_expert_routing, true);
+});
 
 test("global model comparison uses evidence and never scores developer region", () => {
   const plan = createOpenModelComparisonPlan({

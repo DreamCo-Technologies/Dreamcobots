@@ -88,10 +88,12 @@ import {
 } from "./demand-model-policy";
 import {
   createOpenModelComparisonPlan,
+  createBuddyOpenCoreManifest,
   createRepositoryTrackingPlan,
   createOpenSourceSandboxPlan,
   OPEN_MODEL_CATALOG,
   openModelComparisonRequestSchema,
+  buddyOpenCoreManifestRequestSchema,
   openSourceSandboxPlanRequestSchema,
   repositoryTrackingPlanRequestSchema,
 } from "./open-model-lab-policy";
@@ -3420,6 +3422,20 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
       liveModelsCalled: 0,
       sourceProjectsExecuted: 0,
     });
+  });
+
+  app.get("/api/buddy/open-core/catalog", (_req, res) => {
+    res.json(OPEN_MODEL_CATALOG.buddy_open_core);
+  });
+
+  app.post("/api/buddy/open-core/manifest", (req, res) => {
+    try {
+      const request = buddyOpenCoreManifestRequestSchema.parse(req.body);
+      res.status(202).json(createBuddyOpenCoreManifest(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy Open Core manifest failed." });
+    }
   });
 
   app.post("/api/buddy/open-model-lab/comparison-plan", async (req, res) => {
