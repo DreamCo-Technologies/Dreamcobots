@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import re
+import subprocess
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -68,14 +69,29 @@ def source_digest(paths: Iterable[Path]) -> str:
 
 
 def repository_files() -> list[Path]:
-    return [
-        path
-        for path in ROOT.rglob("*")
-        if path.is_file()
-        and not any(part in IGNORED_PARTS for part in path.relative_to(ROOT).parts)
-        and COMMAND_DATA not in path.parents
-        and WEBSITE_DATA not in path.parents
-    ]
+    """Return reproducible evidence files, excluding machine-local ignored data."""
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "-z"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        )
+        candidates = [ROOT / value.decode("utf-8") for value in result.stdout.split(b"\0") if value]
+    except (FileNotFoundError, subprocess.CalledProcessError, UnicodeDecodeError):
+        # Source archives may intentionally omit Git metadata.
+        candidates = list(ROOT.rglob("*"))
+    return sorted(
+        (
+            path
+            for path in candidates
+            if path.is_file()
+            and not any(part in IGNORED_PARTS for part in path.relative_to(ROOT).parts)
+            and COMMAND_DATA not in path.parents
+            and WEBSITE_DATA not in path.parents
+        ),
+        key=lambda path: path.relative_to(ROOT).as_posix(),
+    )
 
 
 def artifact(schema: str, sources: list[Path], **values: Any) -> dict[str, Any]:

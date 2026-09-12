@@ -14,6 +14,10 @@ test('Google and Apple OAuth use backend-only credentials and verified callback 
   assert.match(source, /verifyIdToken/);
   assert.match(source, /Identity-token signature did not verify/);
   assert.match(source, /SameSite=Lax/);
+  assert.match(source, /rateLimit/);
+  assert.match(source, /oauthStartRateLimit/);
+  assert.match(source, /oauthCallbackRateLimit/);
+  assert.match(source, /standardHeaders: "draft-8"/);
   assert.doesNotMatch(page + browser, /type=["'](?:password|hidden)["']|localStorage.*secret|sessionStorage.*secret/i);
 });
 

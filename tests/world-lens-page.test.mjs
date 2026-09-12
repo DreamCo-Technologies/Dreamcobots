@@ -59,7 +59,7 @@ test('people profiles require consent and do not use facial recognition', () => 
 
 test('users can select World Lens, Google, or combined maps', () => {
   for (const mode of ['world_lens','google','combined']) assert.match(html, new RegExp(`value="${mode}"`));
-  assert.match(script, /google\.com\/maps/);
+  assert.ok(script.includes('https://www.google.com/maps'));
   assert.deepEqual(policy.map_modes, ['world_lens','google','combined']);
 });
 

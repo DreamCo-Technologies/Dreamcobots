@@ -53,10 +53,9 @@
       legalAdviceProvided: false,
       storeLaunchPerformed: false,
     };
-    localStorage.setItem('dreamco.buddy.invention-workspace.v1', JSON.stringify(project));
     $('download-project').disabled = false;
     $('ask-buddy').href = `buddy.html?prompt=${encodeURIComponent(`Help me advance ${project.title} through the Idea-to-Store stages. Start privately with the next evidence-backed step. Country: ${project.jurisdiction}. Prototype: ${readable(project.prototypeType)}. Do not file, contact, buy, publish, or claim legal conclusions without my exact approval.`)}`;
-    $('project-status').textContent = `${navigatorCatalog.stages.length} stages prepared. Status: ${readable(project.status)}. Saved only in this browser; no research, filing, outreach, purchase, or production started.`;
+    $('project-status').textContent = `${navigatorCatalog.stages.length} stages prepared. Status: ${readable(project.status)}. Held only in this page's memory and cleared on reload; no research, filing, outreach, purchase, or production started.`;
   };
 
   $('project-form').addEventListener('submit', (event) => { event.preventDefault(); buildProject(); });

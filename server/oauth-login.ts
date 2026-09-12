@@ -1,4 +1,5 @@
 import type { Express, Request, Response } from "express";
+import { rateLimit } from "express-rate-limit";
 import { createHmac, randomBytes, timingSafeEqual, verify } from "node:crypto";
 
 type Provider = "google" | "apple";
@@ -8,6 +9,20 @@ type Jwk = JsonWebKey & { kid?: string };
 const COOKIE_STATE = "buddy_oauth_state";
 const COOKIE_SESSION = "buddy_auth_session";
 const maxSessionSeconds = 8 * 60 * 60;
+const oauthStartRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: { error: "Too many sign-in attempts. Wait before trying again." },
+});
+const oauthCallbackRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 60,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: { error: "Too many sign-in callbacks. Start again after waiting." },
+});
 const providerConfig = {
   google: {
     clientId: () => process.env.GOOGLE_OAUTH_CLIENT_ID,
@@ -72,7 +87,7 @@ async function verifyIdToken(provider: Provider, idToken: string, nonce: string)
 export function registerOAuthLoginRoutes(app: Express) {
   app.get("/api/auth/providers", (_request, response) => response.json({ providers: (Object.keys(providerConfig) as Provider[]).map((provider) => ({ provider, configured: configured(provider), callback_url: redirectBase() ? callback(provider) : null })), truth: "A provider is available only after its server-side credentials and exact callback URL are configured." }));
 
-  app.get("/api/auth/:provider/start", (request, response) => {
+  app.get("/api/auth/:provider/start", oauthStartRateLimit, (request, response) => {
     const provider = request.params.provider as Provider;
     if (!(provider in providerConfig)) return response.status(404).json({ error: "Unknown identity provider." });
     if (!configured(provider)) return response.status(503).json({ error: "This sign-in provider is not configured on the Buddy backend." });
@@ -82,7 +97,7 @@ export function registerOAuthLoginRoutes(app: Express) {
     response.redirect(`${providerConfig[provider].authorize}?${query}`);
   });
 
-  app.get("/api/auth/:provider/callback", async (request, response) => {
+  app.get("/api/auth/:provider/callback", oauthCallbackRateLimit, async (request, response) => {
     const provider = request.params.provider as Provider;
     const state = unseal<{ provider: Provider; state: string; nonce: string; exp: number }>(cookies(request)[COOKIE_STATE]);
     clearCookie(response, COOKIE_STATE);

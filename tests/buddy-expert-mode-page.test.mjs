@@ -46,7 +46,8 @@ test('Idea-to-Store exposes gated stages, resources, approvals, and no fabricate
   assert.match(inventionScript, /filingsSubmitted: false/);
   assert.match(inventionScript, /peopleContacted: false/);
   assert.match(inventionScript, /purchasesMade: false/);
-  assert.match(inventionScript, /localStorage\.setItem/);
+  assert.doesNotMatch(inventionScript, /(?:local|session)Storage\.setItem/);
+  assert.match(inventionScript, /cleared on reload/);
 });
 
 test('Expert and invention experiences are routed, linked, cached, and voice discoverable', () => {

@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -24,6 +25,20 @@ class CommandCenterDataTests(unittest.TestCase):
 
     def test_runtime_test_caches_are_not_repository_evidence(self):
         self.assertIn(".pytest_cache", MODULE.IGNORED_PARTS)
+
+    def test_repository_inventory_uses_only_git_tracked_files(self):
+        tracked = {
+            value.decode("utf-8")
+            for value in subprocess.run(
+                ["git", "ls-files", "-z"], cwd=ROOT, check=True, capture_output=True
+            ).stdout.split(b"\0")
+            if value
+        }
+        actual = {path.relative_to(ROOT).as_posix() for path in MODULE.repository_files()}
+        self.assertTrue(actual)
+        self.assertTrue(actual.issubset(tracked))
+        self.assertNotIn("config/generated/actions-health-report.json", actual)
+        self.assertNotIn("tmp/dreamco-verification/latest.json", actual)
 
     def test_all_statuses_use_evidence_taxonomy(self):
         allowed = set(MODULE.EVIDENCE_TAXONOMY)
