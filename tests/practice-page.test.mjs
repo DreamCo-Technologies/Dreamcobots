@@ -8,6 +8,10 @@ const html = fs.readFileSync('website/practice.html', 'utf8');
 const source = fs.readFileSync('website/practice.js', 'utf8');
 const studioHtml = fs.readFileSync('website/studio.html', 'utf8');
 const studioSource = fs.readFileSync('website/studio.js', 'utf8');
+const buddyPageSource = fs.readFileSync('client/src/pages/BuddyPage.tsx', 'utf8');
+const conversationPageSource = fs.readFileSync('client/src/pages/ConversationPage.tsx', 'utf8');
+const sandboxPageSource = fs.readFileSync('client/src/pages/SandboxPage.tsx', 'utf8');
+const settingsPageSource = fs.readFileSync('client/src/pages/SettingsPage.tsx', 'utf8');
 const fleet = JSON.parse(fs.readFileSync('website/data/bot-fleet-catalog.json', 'utf8'));
 const context = { window: {} };
 vm.runInNewContext(catalogSource, context);
@@ -73,4 +77,15 @@ test('creative studio provides keyless local speech without claiming it is voice
   assert.match(studioSource, /browserSpeechStatus\.dataset\.activity = 'finished'/);
   assert.match(studioSource, /\['interrupted', 'canceled'\]\.includes\(event\.error\)/);
   assert.match(studioSource, /window\.speechSynthesis\.speak\(utterance\)/);
+});
+
+test('Buddy media surfaces distinguish keyless local readiness from provider rendering', () => {
+  assert.match(buddyPageSource, /Local Voice & Cloning/);
+  assert.match(buddyPageSource, /status: "local-setup"/);
+  assert.match(buddyPageSource, /setLocation\("\/studio\.html"\)/);
+  assert.match(conversationPageSource, /Image route contract reachable/);
+  assert.match(conversationPageSource, /successful generated image are still required to prove rendering/);
+  assert.match(sandboxPageSource, /Generation requires a verified local renderer or configured provider/);
+  assert.match(settingsPageSource, /Keyless browser speech and capture ready/);
+  assert.match(settingsPageSource, /install and verify OpenVoice or Chatterbox for local cloning/);
 });
