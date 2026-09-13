@@ -121,7 +121,7 @@
 
   if (!document.querySelector('script[data-dreamco-page-actions]')) {
     const pageActions = document.createElement('script');
-    pageActions.src = 'page-actions.js?v=2';
+    pageActions.src = 'page-actions.js?v=3';
     pageActions.defer = true;
     pageActions.dataset.dreamcoPageActions = 'true';
     document.head.appendChild(pageActions);

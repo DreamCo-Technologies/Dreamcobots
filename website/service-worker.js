@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'buddy-shell-v59';
-const RUNTIME_CACHE = 'buddy-runtime-v59';
+const SHELL_CACHE = 'buddy-shell-v60';
+const RUNTIME_CACHE = 'buddy-runtime-v60';
 const APP_SHELL = [
   './',
   './buddy.html',
@@ -92,6 +92,7 @@ const APP_SHELL = [
   './styles.css?v=41',
   './styles.css?v=42',
   './nav.js',
+  './page-actions.js?v=3',
   './manifest.webmanifest',
   './data/buddy-routing-index.js',
   './data/dreamco-search-index.js',

@@ -115,8 +115,23 @@
     ],
   };
 
-  const actions = actionMaps[page];
-  if (!actions?.length) return;
+  function pageLabel() {
+    return (document.querySelector('h1')?.textContent || document.title || page.replace('.html', '')).trim();
+  }
+
+  function genericActions() {
+    const label = pageLabel();
+    return [
+      ['💬 Ask Buddy', () => route(`buddy.html?prompt=${encodeURIComponent(`Explain the ${label} page, what is implemented, what is only cataloged or planned, and the safest useful next action.`)}`)],
+      ['🔎 Find Sources', () => route(`search.html?q=${encodeURIComponent(label)}`)],
+      ['🗺️ Repository Evidence', () => route('system-map.html')],
+      ['🧪 Test This Area', () => route(`test-center.html?area=${encodeURIComponent(page)}`)],
+      ['🧠 Learning Evidence', () => route(`buddy-learning-lab.html?subject=${encodeURIComponent(label)}`)],
+      ['🔗 Connect Resource', () => route(`resource-connection-center.html?purpose=${encodeURIComponent(label)}`)],
+    ];
+  }
+
+  const actions = actionMaps[page] || genericActions();
 
   const dock = document.createElement('section');
   dock.className = 'buddy-page-actions';
@@ -149,8 +164,18 @@
 
   function route(url) { location.href = url; }
   function emit(name, detail) {
-    window.dispatchEvent(new CustomEvent(name, { detail }));
-    document.dispatchEvent(new CustomEvent(name, { detail }));
+    const event = new CustomEvent(name, { detail, cancelable: true });
+    window.dispatchEvent(event);
+    if (event.defaultPrevented) return;
+    if (name === 'dreamco:connection') {
+      route(`resource-connection-center.html?resource=${encodeURIComponent(detail.kind || 'custom')}`);
+      return;
+    }
+    const task = `${name.replace('dreamco:', '').replaceAll('_', ' ')} ${Object.entries(detail).map(([key, value]) => `${key}: ${value}`).join(', ')}`;
+    const boundary = name === 'dreamco:publish'
+      ? 'Prepare a preview only. Do not publish without exact approval.'
+      : 'Use local repository capabilities first and identify any required connection, evidence, or approval.';
+    route(`buddy.html?prompt=${encodeURIComponent(`On ${pageLabel()}, help me ${task}. ${boundary}`)}`);
   }
   function focusStudio(id) {
     const el = document.getElementById(id);
