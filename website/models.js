@@ -280,6 +280,12 @@
     byId('selected-count').textContent = selected.size.toLocaleString();
   }
 
+  function modelBuddySetupUrl(target) {
+    const official = target.sourceConnection?.setupPath || target.sourceConnection?.officialSource || target.officialCatalog || 'connections.html';
+    const prompt = `Help me configure ${target.name} from ${target.provider}. Official signup or setup source: ${official}. Explain the account, terms, access method, minimum scopes, local secret reference, health check, and exact-model benchmark. The user must personally handle terms, identity checks, CAPTCHA, MFA, payment, and final account creation. Do not ask for or store a password, raw token, API key, recovery code, or payment data. Do not claim the model is live until the exact model probe passes.`;
+    return `buddy.html?prompt=${encodeURIComponent(prompt)}`;
+  }
+
   function renderRows() {
     visible = filteredTargets();
     const body = byId('model-rows');
@@ -290,7 +296,7 @@
         <td>${escapeHtml(target.provider)}</td>
         <td>${escapeHtml(target.category)}</td>
         <td class="model-evidence ${target.sourceConnection?.sourceLinked ? 'ready' : ''}">${target.sourceConnection?.sourceLinked ? 'Linked' : 'Missing'}</td>
-        <td><a class="model-connection-link" href="${escapeHtml(target.sourceConnection?.setupPath || 'connections.html')}">${escapeHtml((target.sourceConnection?.status || 'setup_required').replaceAll('_', ' '))}</a></td>
+        <td><div class="model-target-copy"><a class="model-connection-link" href="${escapeHtml(target.sourceConnection?.setupPath || target.sourceConnection?.officialSource || target.officialCatalog || 'connections.html')}">Sign up / connect</a><a class="model-connection-link" href="${escapeHtml(modelBuddySetupUrl(target))}">Buddy setup</a><span class="model-tier">${escapeHtml((target.sourceConnection?.status || 'setup_required').replaceAll('_', ' '))}</span></div></td>
         <td class="model-evidence">Not run</td>
       </tr>`).join('');
     body.querySelectorAll('[data-select-target]').forEach((input) => input.addEventListener('change', (event) => {
@@ -312,7 +318,7 @@
       <p><strong>Declared task fit:</strong> ${escapeHtml(target.bestFor)}</p>
       <h3>Source connection</h3>
       <p><strong>Status:</strong> ${escapeHtml((target.sourceConnection?.status || 'setup_required').replaceAll('_', ' '))}. A source link or setup route is not proof of a live provider connection.</p>
-      <div class="model-detail-actions"><a class="btn btn-outline btn-sm" href="${escapeHtml(target.sourceConnection?.officialSource || target.officialCatalog || 'connections.html')}" ${String(target.sourceConnection?.officialSource || '').startsWith('http') ? 'target="_blank" rel="noopener"' : ''}>Official source</a><a class="btn btn-outline btn-sm" href="${escapeHtml(target.sourceConnection?.setupPath || 'connections.html')}">Prepare connection</a></div>
+      <div class="model-detail-actions"><a class="btn btn-outline btn-sm" href="${escapeHtml(target.sourceConnection?.officialSource || target.officialCatalog || 'connections.html')}" ${String(target.sourceConnection?.officialSource || '').startsWith('http') ? 'target="_blank" rel="noopener"' : ''}>Official source</a><a class="btn btn-outline btn-sm" href="${escapeHtml(target.sourceConnection?.setupPath || target.sourceConnection?.officialSource || target.officialCatalog || 'connections.html')}">Sign up / connect</a><a class="btn btn-outline btn-sm" href="${escapeHtml(modelBuddySetupUrl(target))}">Let Buddy prepare setup</a></div>
       <h3>Declared capabilities</h3><ul>${target.declaredCapabilities.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
       <h3>Prompt and test library</h3><div class="model-prompt-library">${(target.promptLibrary || target.benchmarkSuites || []).map((suiteId) => data.suites.find((suite) => suite.id === suiteId)).filter(Boolean).map((prompt) => `<article><div><strong>${escapeHtml(prompt.label)}</strong><span>${escapeHtml(prompt.grader)} · ${escapeHtml(prompt.modality)}</span></div><p>${escapeHtml(prompt.prompt_fixture)}</p><button class="btn btn-outline btn-sm" type="button" data-prepare-model-test="${escapeHtml(prompt.id)}">Load test</button></article>`).join('')}</div>
       <h3>Evidence status</h3><p>No live score exists yet. Availability, quality, latency, and cost must be recorded by an authenticated adapter using the exact provider model id.</p>`;

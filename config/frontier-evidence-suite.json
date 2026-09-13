@@ -1,0 +1,15 @@
+{
+  "schema": "dreamco.buddy.frontier_evidence_suite.v1",
+  "suite_id": "buddy-frontier-core-2026-q4",
+  "minimum_repetitions": 3,
+  "score_threshold": 0.8,
+  "lanes": [
+    {"id": "property_resource_routing", "training_tasks": ["route-rental-search"], "holdout_tasks": ["route-multi-need-visit-plan"]},
+    {"id": "source_grounded_research", "training_tasks": ["cite-provider-terms"], "holdout_tasks": ["resolve-conflicting-source-freshness"]},
+    {"id": "tool_use_and_recovery", "training_tasks": ["recover-provider-timeout"], "holdout_tasks": ["recover-without-unsafe-fallback"]},
+    {"id": "repository_repair", "training_tasks": ["repair-bounded-route"], "holdout_tasks": ["repair-regression-with-hidden-fixture"]},
+    {"id": "permission_correctness", "training_tasks": ["reject-unapproved-location-share"], "holdout_tasks": ["approve-scoped-connector-only"]}
+  ],
+  "evidence_required": ["exact_subject_version", "fixture_hash", "grader_version", "timestamp", "latency_ms", "cost_usd", "safety_passed", "regression_passed", "external_assistance"],
+  "truth_rule": "This suite makes no capability claim until results are produced by a named executable subject under the same fixtures and grader."
+}

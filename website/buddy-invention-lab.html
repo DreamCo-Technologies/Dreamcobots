@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Buddy Idea-to-Store Lab | DreamCo</title>
+  <meta name="description" content="Private, evidence-gated invention, prototype, IP, compliance, manufacturing, funding, and launch routing.">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .lab{max-width:1200px;margin:auto;padding:40px 20px 80px}.hero{padding:32px;border:1px solid #334155;border-radius:24px;background:radial-gradient(circle at top right,#3f1d60,#111827 56%)}.metrics,.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card{padding:16px;border:1px solid #334155;border-radius:14px;background:#111827}.metrics strong{display:block;font-size:1.6rem}.muted{color:#a9b4c6}.warning{margin:18px 0;padding:14px;border-left:4px solid #f59e0b;background:#291c0b}.form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.form label{display:grid;gap:6px}.form input,.form select,.form textarea{padding:10px;border:1px solid #475569;border-radius:8px;background:#0b1020;color:#fff}.wide{grid-column:1/-1}.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.stage-number{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#312e81}.tag{display:inline-block;padding:3px 7px;border-radius:999px;background:#172554;color:#bfdbfe;font-size:.75rem}.resource{overflow-wrap:anywhere}.status{color:#fde68a}@media(max-width:820px){.metrics,.grid,.form{grid-template-columns:1fr}.wide{grid-column:auto}}
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div><script src="nav.js"></script>
+  <main class="lab">
+    <header class="hero">
+      <p>DreamCo invention, prototype, and manufacturing navigator</p>
+      <h1>Buddy Idea-to-Store Lab</h1>
+      <p>Turn an idea into a private, staged evidence workspace: customer proof, prior-art research, IP decisions, engineering, hardware and tools, prototype tests, safety and regulatory routing, suppliers, funding, pilot production, and store readiness.</p>
+      <div class="metrics"><div><strong id="metric-stages">0</strong><span>gated stages</span></div><div><strong id="metric-resources">0</strong><span>curated resources</span></div><div><strong id="metric-filings">0</strong><span>live filings made</span></div><div><strong id="metric-contacts">0</strong><span>manufacturers contacted</span></div></div>
+    </header>
+
+    <aside class="warning"><strong>Protect the idea first.</strong> Public disclosure can affect intellectual-property choices. Keep unpublished details private and consult a qualified professional when protection matters. Buddy provides research and preparation, not legal advice, automatic filings, guaranteed patents, or guaranteed store placement.</aside>
+
+    <section class="card">
+      <h2>Create a private invention workspace</h2>
+      <form id="project-form" class="form">
+        <label>Project ID<input id="project-id" value="my-invention-001" pattern="[a-z0-9][a-z0-9._-]{2,79}" required></label>
+        <label>Project name<input id="project-title" value="My new product" required></label>
+        <label class="wide">Idea summary<textarea id="idea-summary" rows="4" placeholder="Keep trade-secret details out unless this is your trusted private device." required>A product concept that solves a specific customer problem and needs evidence, prototyping, safety review, sourcing, and a launch plan.</textarea></label>
+        <label>Target user<input id="target-user" value="A clearly defined customer group" required></label>
+        <label>Country or jurisdiction<input id="country" value="United States" required></label>
+        <label>Prototype type<select id="prototype-type"><option value="software">Software</option><option value="electronics">Electronics</option><option value="mechanical">Mechanical</option><option value="consumer_product">Consumer product</option><option value="medical_device">Medical device</option><option value="child_product">Child product</option><option value="food_or_cosmetic">Food or cosmetic</option><option value="mixed" selected>Mixed</option></select></label>
+        <label>Planning budget (USD)<input id="budget" type="number" min="0" step="1" value="0" required></label>
+        <label>Confidentiality<select id="confidentiality"><option value="private">Private</option><option value="professional_confidential_review">Professional confidential review</option><option value="public_summary_only">Public summary only</option></select></label>
+        <label><input id="public-research" type="checkbox"> Approve public research using only the nonconfidential summary</label>
+        <div class="wide actions"><button class="btn btn-primary" type="submit">Build Idea-to-Store Project</button><button id="download-project" class="btn btn-outline" type="button" disabled>Download project JSON</button><button id="voice-idea" class="btn btn-outline" type="button">🎙️ Describe the idea</button><a class="btn btn-outline" href="manufacturer-marketplace.html">Manufacturer Marketplace</a></div>
+      </form>
+      <p id="project-status" class="status" role="status">No research, filing, outreach, purchase, or production run has started.</p>
+    </section>
+
+    <section><h2>Idea-to-store stages</h2><p class="muted">Each stage produces reviewable outputs. Any filing, contact, quote request, payment, contract, physical build, or publication requires explicit owner approval and a verified adapter.</p><div id="stage-grid" class="grid"></div></section>
+    <section class="card"><h2>Buddy handoffs</h2><div class="actions"><a id="ask-buddy" class="btn btn-primary" href="buddy.html">Discuss this invention with Buddy</a><a class="btn btn-outline" href="buddy-expert-mode.html">Train resource routing</a><a class="btn btn-outline" href="resource-connection-center.html">Connect an approved resource</a><a class="btn btn-outline" href="actions.html">Inspect automation evidence</a></div></section>
+    <section><h2>Official, open, and specialist resources</h2><p class="muted">A resource link is not a live connection. Costs, eligibility, laws, safety requirements, standards, and availability vary by product and location.</p><div id="invention-resource-grid" class="grid"></div></section>
+  </main>
+  <script src="data/buddy-expert-mode.js"></script>
+  <script src="buddy-invention-lab.js"></script>
+</body>
+</html>

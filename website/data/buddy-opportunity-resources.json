@@ -1,0 +1,503 @@
+{
+  "entrepreneur_workflow": [
+    "capture skill or product idea",
+    "validate customer need",
+    "find domestic suppliers",
+    "prepare RFQ",
+    "compare landed cost and evidence",
+    "prototype and inspect",
+    "form a user-approved business plan",
+    "connect SBA/SCORE/DCEO help",
+    "find SAM.gov opportunities where applicable",
+    "require approval before outreach, contracts, orders, or payments"
+  ],
+  "government_service_workflow": [
+    "understand need and jurisdiction",
+    "show official sources",
+    "screen without deciding eligibility",
+    "prepare document checklist",
+    "open official application",
+    "user reviews and submits",
+    "track deadlines locally",
+    "connect job and training options",
+    "preserve benefits-transition questions for a qualified counselor"
+  ],
+  "property_acquisition_workflow": [
+    {
+      "buddy_can": "save GPS, address, photos, notes, and listing-source evidence",
+      "gate": "owner initiates capture",
+      "id": "capture",
+      "name": "Capture a property seen on route"
+    },
+    {
+      "buddy_can": "query an authorized property provider and compare fields",
+      "gate": "licensed data source",
+      "id": "listing",
+      "name": "Verify listing and seller authority"
+    },
+    {
+      "buddy_can": "calculate owner-supplied ARV, rent, repair allowance, financing, cap rate, cash-on-cash return, and uncertainty",
+      "gate": "estimates only",
+      "id": "screen",
+      "name": "Investor screening"
+    },
+    {
+      "buddy_can": "prepare a photo checklist, flag visible concerns, and request qualified inspector quotes",
+      "gate": "not a substitute for a licensed inspection",
+      "id": "inspection",
+      "name": "Inspection"
+    },
+    {
+      "buddy_can": "assemble comparable-property evidence and request appraiser quotes",
+      "gate": "not an appraisal; licensed appraiser signs valuation",
+      "id": "appraisal",
+      "name": "Appraisal"
+    },
+    {
+      "buddy_can": "build standardized RFQs for repairs, insurance, title, survey, financing, utilities, and property management",
+      "gate": "providers return and own quotes",
+      "id": "quotes",
+      "name": "Price quotes"
+    },
+    {
+      "buddy_can": "prepare a review packet, deadlines, contingencies, and document checklist",
+      "gate": "buyer approves; licensed professionals review where required",
+      "id": "offer",
+      "name": "Offer and diligence"
+    },
+    {
+      "buddy_can": "track approvals and evidence",
+      "gate": "never autonomous without explicit transaction approval",
+      "id": "close",
+      "name": "Contract, payment, and closing"
+    }
+  ],
+  "resources": [
+    {
+      "action": "screen_apply_manage",
+      "approval": "user_submits",
+      "authority": "State of Illinois",
+      "category": "illinois_benefits",
+      "id": "il-abe",
+      "name": "Illinois ABE",
+      "services": [
+        "SNAP",
+        "Medicaid",
+        "cash assistance",
+        "Medicare Savings"
+      ],
+      "url": "https://abe.illinois.gov/"
+    },
+    {
+      "action": "search_prepare",
+      "approval": "user_controls_account",
+      "authority": "Illinois Department of Employment Security",
+      "category": "jobs",
+      "id": "il-joblink",
+      "name": "IllinoisJobLink",
+      "services": [
+        "job search",
+        "resume",
+        "employer matching"
+      ],
+      "url": "https://illinoisjoblink.illinois.gov/"
+    },
+    {
+      "action": "search_prepare",
+      "approval": "user_controls_account",
+      "authority": "State of Illinois",
+      "category": "jobs",
+      "id": "il-worknet",
+      "name": "Illinois workNet",
+      "services": [
+        "career planning",
+        "training",
+        "local workforce services"
+      ],
+      "url": "https://www.illinoisworknet.com/"
+    },
+    {
+      "action": "navigate",
+      "approval": "user_submits",
+      "authority": "State of Illinois",
+      "category": "illinois_benefits",
+      "id": "il-dhs",
+      "name": "Illinois Department of Human Services",
+      "services": [
+        "food assistance",
+        "family services",
+        "disability services",
+        "office locator"
+      ],
+      "url": "https://www.dhs.state.il.us/"
+    },
+    {
+      "action": "navigate",
+      "approval": "user_submits",
+      "authority": "State of Illinois",
+      "category": "housing",
+      "id": "il-housing",
+      "name": "Illinois Housing Development Authority",
+      "services": [
+        "rental help",
+        "homeownership",
+        "housing counseling"
+      ],
+      "url": "https://www.ihda.org/"
+    },
+    {
+      "action": "research_prepare",
+      "approval": "user_submits",
+      "authority": "State of Illinois",
+      "category": "entrepreneurship",
+      "id": "il-commerce",
+      "name": "Illinois DCEO",
+      "services": [
+        "business assistance",
+        "workforce",
+        "grants",
+        "community development"
+      ],
+      "url": "https://dceo.illinois.gov/"
+    },
+    {
+      "action": "location_search",
+      "approval": "none",
+      "authority": "University of Illinois Extension partners",
+      "category": "food",
+      "id": "find-food-il",
+      "name": "Find Food Illinois",
+      "services": [
+        "food pantry locator",
+        "meal resources"
+      ],
+      "url": "https://findfoodil.org/"
+    },
+    {
+      "action": "navigate",
+      "approval": "user_submits",
+      "authority": "United States Government",
+      "category": "benefits",
+      "id": "benefits-usa",
+      "name": "USA.gov Benefits",
+      "services": [
+        "federal benefit navigation"
+      ],
+      "url": "https://www.usa.gov/benefits"
+    },
+    {
+      "action": "search_prepare",
+      "approval": "user_controls_account",
+      "authority": "U.S. Department of Labor",
+      "category": "jobs",
+      "id": "career-one-stop",
+      "name": "CareerOneStop",
+      "services": [
+        "job search",
+        "training finder",
+        "career assessment",
+        "local help"
+      ],
+      "url": "https://www.careeronestop.org/"
+    },
+    {
+      "action": "research_prepare",
+      "approval": "licensed_professional_and_user",
+      "authority": "U.S. HUD",
+      "category": "real_estate",
+      "id": "hud-buy",
+      "name": "HUD Homebuying Resources",
+      "services": [
+        "home search",
+        "offer guidance",
+        "inspection guidance",
+        "financing",
+        "closing"
+      ],
+      "url": "https://www.hud.gov/helping-americans/buying-a-home"
+    },
+    {
+      "action": "search",
+      "approval": "broker_and_user_for_offer",
+      "authority": "U.S. HUD",
+      "category": "real_estate",
+      "id": "hud-homes",
+      "name": "HUD Homes for Sale",
+      "services": [
+        "government-owned homes for sale"
+      ],
+      "url": "https://www.hudhomestore.gov/"
+    },
+    {
+      "action": "provider_standard",
+      "approval": "data_license_required",
+      "authority": "Real Estate Standards Organization",
+      "category": "real_estate_data",
+      "id": "reso",
+      "name": "RESO Web API Standards",
+      "services": [
+        "standard listing fields",
+        "authorized MLS transport"
+      ],
+      "url": "https://www.reso.org/reso-web-api/"
+    },
+    {
+      "action": "checklist_referral",
+      "approval": "qualified_tester",
+      "authority": "U.S. EPA",
+      "category": "inspection",
+      "id": "epa-radon",
+      "name": "EPA Radon Resources",
+      "services": [
+        "radon risk",
+        "testing guidance"
+      ],
+      "url": "https://www.epa.gov/radon"
+    },
+    {
+      "action": "research_prepare",
+      "approval": "user_submits",
+      "authority": "United States Government",
+      "category": "entrepreneurship",
+      "id": "sba",
+      "name": "U.S. Small Business Administration",
+      "services": [
+        "business planning",
+        "funding guidance",
+        "local assistance",
+        "government contracting"
+      ],
+      "url": "https://www.sba.gov/"
+    },
+    {
+      "action": "navigate",
+      "approval": "user_schedules",
+      "authority": "SBA resource partner",
+      "category": "entrepreneurship",
+      "id": "score",
+      "name": "SCORE",
+      "services": [
+        "business mentoring",
+        "templates",
+        "workshops"
+      ],
+      "url": "https://www.score.org/"
+    },
+    {
+      "action": "search_prepare",
+      "approval": "user_controls_entity",
+      "authority": "United States Government",
+      "category": "government_contracting",
+      "id": "sam",
+      "name": "SAM.gov",
+      "services": [
+        "entity registration",
+        "contract opportunities",
+        "assistance listings",
+        "award data"
+      ],
+      "url": "https://sam.gov/"
+    },
+    {
+      "action": "navigate",
+      "approval": "user_schedules",
+      "authority": "U.S. Department of Defense program",
+      "category": "government_contracting",
+      "id": "apex",
+      "name": "APEX Accelerators",
+      "services": [
+        "government contracting assistance",
+        "local counseling"
+      ],
+      "url": "https://www.apexaccelerators.us/"
+    },
+    {
+      "action": "source_prepare",
+      "approval": "user_contacts",
+      "authority": "U.S. Department of Commerce",
+      "category": "manufacturing",
+      "id": "nist-mep",
+      "name": "NIST Manufacturing Extension Partnership",
+      "services": [
+        "supplier scouting",
+        "manufacturer assistance",
+        "technology",
+        "workforce",
+        "supply-chain resilience"
+      ],
+      "url": "https://www.nist.gov/mep"
+    },
+    {
+      "action": "research",
+      "approval": "user_contacts",
+      "authority": "U.S. Government network",
+      "category": "manufacturing",
+      "id": "manufacturing-usa",
+      "name": "Manufacturing USA",
+      "services": [
+        "manufacturing institutes",
+        "technology ecosystems",
+        "industry partnerships"
+      ],
+      "url": "https://www.manufacturingusa.com/"
+    },
+    {
+      "action": "search_compare",
+      "approval": "terms_and_outreach_approval",
+      "authority": "Private U.S. supplier directory",
+      "category": "manufacturer_directory",
+      "id": "thomasnet",
+      "name": "Thomasnet",
+      "services": [
+        "supplier discovery",
+        "product sourcing",
+        "company profiles"
+      ],
+      "url": "https://www.thomasnet.com/"
+    },
+    {
+      "action": "search_compare",
+      "approval": "account_and_outreach_approval",
+      "authority": "Private manufacturing platform",
+      "category": "manufacturer_directory",
+      "id": "makers-row",
+      "name": "Maker's Row",
+      "services": [
+        "U.S. factory discovery",
+        "product development"
+      ],
+      "url": "https://makersrow.com/"
+    },
+    {
+      "action": "quote_request",
+      "approval": "user_reviews_and_orders",
+      "authority": "Private manufacturing marketplace",
+      "category": "manufacturer_quotes",
+      "id": "xometry",
+      "name": "Xometry Marketplace",
+      "services": [
+        "manufacturing quotes",
+        "supplier network",
+        "production"
+      ],
+      "url": "https://www.xometry.com/"
+    },
+    {
+      "action": "jurisdiction_start",
+      "approval": "none",
+      "authority": "United Nations",
+      "category": "global_government",
+      "id": "un-member-states",
+      "name": "United Nations Member States",
+      "services": [
+        "country discovery",
+        "official country names"
+      ],
+      "url": "https://www.un.org/en/about-us/member-states"
+    },
+    {
+      "action": "research",
+      "approval": "source_terms",
+      "authority": "United Nations",
+      "category": "global_data",
+      "id": "un-data",
+      "name": "United Nations Data",
+      "services": [
+        "international statistics",
+        "country comparison"
+      ],
+      "url": "https://data.un.org/"
+    },
+    {
+      "action": "research",
+      "approval": "source_terms",
+      "authority": "World Bank",
+      "category": "global_data",
+      "id": "world-bank-data",
+      "name": "World Bank Open Data",
+      "services": [
+        "development indicators",
+        "country and city context"
+      ],
+      "url": "https://data.worldbank.org/"
+    },
+    {
+      "action": "research",
+      "approval": "source_terms",
+      "authority": "OECD",
+      "category": "global_data",
+      "id": "oecd-data",
+      "name": "OECD Data Explorer",
+      "services": [
+        "government",
+        "jobs",
+        "economy",
+        "social indicators"
+      ],
+      "url": "https://data-explorer.oecd.org/"
+    },
+    {
+      "action": "navigate",
+      "approval": "user_submits",
+      "authority": "European Union",
+      "category": "regional_government",
+      "id": "eu-your-europe",
+      "name": "Your Europe",
+      "services": [
+        "citizen services",
+        "business services",
+        "rights and procedures"
+      ],
+      "url": "https://europa.eu/youreurope/"
+    },
+    {
+      "action": "navigate",
+      "approval": "user_submits",
+      "authority": "United Kingdom Government",
+      "category": "country_government",
+      "id": "uk-gov",
+      "name": "GOV.UK",
+      "services": [
+        "benefits",
+        "jobs",
+        "business",
+        "housing",
+        "local services"
+      ],
+      "url": "https://www.gov.uk/"
+    },
+    {
+      "action": "navigate",
+      "approval": "user_submits",
+      "authority": "Government of Canada",
+      "category": "country_government",
+      "id": "canada-services",
+      "name": "Canada.ca Services",
+      "services": [
+        "benefits",
+        "jobs",
+        "immigration",
+        "business",
+        "provincial links"
+      ],
+      "url": "https://www.canada.ca/en/services.html"
+    },
+    {
+      "action": "navigate",
+      "approval": "user_submits",
+      "authority": "Australian Government",
+      "category": "country_government",
+      "id": "australia-services",
+      "name": "Services Australia",
+      "services": [
+        "payments",
+        "health",
+        "employment and family services"
+      ],
+      "url": "https://www.servicesaustralia.gov.au/"
+    }
+  ],
+  "reviewed_on": "2026-09-11",
+  "schema": "dreamco.buddy.opportunity_resources.v1",
+  "truth": "Resources are real links, but inclusion is not eligibility, provider endorsement, listing access, a professional valuation, or evidence that an application was submitted."
+}

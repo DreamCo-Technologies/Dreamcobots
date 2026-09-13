@@ -1,0 +1,42 @@
+name: Command Center Data Contract
+
+on:
+  pull_request:
+    paths:
+      - "App_bots/**"
+      - "original-bots/**"
+      - "config/**"
+      - "tools/generate_command_center_data.py"
+      - "tests/test_command_center_data.py"
+      - "command-center/data/**"
+      - "website/data/command-center/**"
+      - ".github/workflows/**"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deterministic-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Verify generator tests
+        run: python3 -m unittest tests.test_command_center_data
+      - name: Verify generated data is current
+        run: python3 tools/generate_command_center_data.py --check
+      - name: Verify command-center route and controls
+        run: node --test tests/command-center-page.test.mjs
+      - name: Verify JSON syntax
+        run: |
+          for file in command-center/data/*.json website/data/command-center/*.json; do
+            python3 -m json.tool "$file" >/dev/null
+          done

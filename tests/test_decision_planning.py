@@ -9,7 +9,9 @@ def test_expected_utility_and_reversibility():
         PlanStep("a", "try reversible test", probability=.9, utility=10, cost=1, reversible=True),
         PlanStep("b", "follow-up", probability=.5, utility=4, cost=1, reversible=False),
     ))
-    assert planner.expected_utility(plan) == pytest.approx(7.5)
+    # Expected benefits are probability-weighted; the two declared costs are
+    # certain: (0.9 * 10 - 1) + (0.5 * 4 - 1) = 9.
+    assert planner.expected_utility(plan) == pytest.approx(9.0)
     assert planner.reversibility(plan) == pytest.approx(.5)
 
 

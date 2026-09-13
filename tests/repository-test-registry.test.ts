@@ -13,6 +13,9 @@ const registry = JSON.parse(
   routes: Array<{ path: string; suite_id: string }>;
   files: Array<{ path: string; suite_id: string }>;
 };
+const publicRegistry = JSON.parse(
+  readFileSync(new URL("../website/data/repository-test-registry.json", import.meta.url), "utf8"),
+) as RepositoryTestRegistry & { files?: unknown[]; full_inventory: string };
 
 test("repository registry covers files, routes, pages, and test suites", () => {
   assert.equal(registry.schema, "dreamco.repository_test_registry.v1");
@@ -25,12 +28,23 @@ test("repository registry covers files, routes, pages, and test suites", () => {
   assert.equal(registry.safety_contract.browser_executes_repository_commands, false);
   assert.equal(registry.safety_contract.external_writes, "forbidden");
   assert.ok(registry.files.every((file) => !file.path.startsWith("config/generated/")));
+  assert.ok(registry.files.every((file) => !file.path.startsWith("command-center/data/")));
   assert.ok(registry.files.every((file) => !file.path.startsWith("website/data/")));
   assert.ok(registry.files.every((file) => !file.path.startsWith("reports/")));
   assert.ok(registry.files.every((file) => !file.path.startsWith("tmp/")));
+  assert.ok(registry.files.every((file) => !file.path.startsWith(".pytest_cache/")));
   const suiteIds = new Set(registry.suites.map((suite) => suite.id));
   assert.ok(registry.routes.every((route) => suiteIds.has(route.suite_id)));
   assert.ok(registry.files.every((file) => suiteIds.has(file.suite_id)));
+});
+
+test("public repository registry keeps route planning data without duplicating file rows", () => {
+  assert.deepEqual(publicRegistry.summary, registry.summary);
+  assert.equal(publicRegistry.scan_id, registry.scan_id);
+  assert.equal(publicRegistry.routes.length, registry.routes.length);
+  assert.equal(publicRegistry.suites.length, registry.suites.length);
+  assert.equal(publicRegistry.files, undefined);
+  assert.equal(publicRegistry.full_inventory, "config/generated/repository_test_registry.json");
 });
 
 test("repository test planner accepts only catalog suites and executes nothing", () => {

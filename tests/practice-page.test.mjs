@@ -8,6 +8,10 @@ const html = fs.readFileSync('website/practice.html', 'utf8');
 const source = fs.readFileSync('website/practice.js', 'utf8');
 const studioHtml = fs.readFileSync('website/studio.html', 'utf8');
 const studioSource = fs.readFileSync('website/studio.js', 'utf8');
+const buddyPageSource = fs.readFileSync('client/src/pages/BuddyPage.tsx', 'utf8');
+const conversationPageSource = fs.readFileSync('client/src/pages/ConversationPage.tsx', 'utf8');
+const sandboxPageSource = fs.readFileSync('client/src/pages/SandboxPage.tsx', 'utf8');
+const settingsPageSource = fs.readFileSync('client/src/pages/SettingsPage.tsx', 'utf8');
 const fleet = JSON.parse(fs.readFileSync('website/data/bot-fleet-catalog.json', 'utf8'));
 const context = { window: {} };
 vm.runInNewContext(catalogSource, context);
@@ -44,4 +48,64 @@ test('creative studio includes rap, singing, visual production, and bounded mult
   assert.match(studioSource, /content_or_identity_quality_claimed: false/);
   assert.match(studioSource, /raw_audio_embedded: false/);
   assert.match(studioSource, /raw_image_embedded: false/);
+});
+
+test('creative studio wires every static button and exposes an honest permission-free media self-test', () => {
+  const buttonIds = [...studioHtml.matchAll(/<button\b[^>]*\bid="([^"]+)"[^>]*>/g)].map(([, id]) => id);
+  assert.equal(buttonIds.length > 0, true);
+  buttonIds.forEach((id) => {
+    if (id === 'build-prototype') {
+      assert.match(studioSource, /form\.addEventListener\('submit'/);
+      return;
+    }
+    assert.match(studioSource, new RegExp(`getElementById\\('${id}'\\)\\.addEventListener`), `${id} has no direct event handler`);
+  });
+  assert.match(studioHtml, /id="run-media-self-test"/);
+  assert.match(studioHtml, /without requesting camera or microphone access/);
+  assert.match(studioSource, /function runMediaSelfTest\(\)/);
+  assert.match(studioSource, /No device permission was requested and no generation claim was made/);
+  assert.match(studioSource, /local-only mode prohibits outside provider calls/);
+});
+
+test('creative studio provides keyless local speech without claiming it is voice cloning', () => {
+  assert.match(studioHtml, /id="browser-speech-text"/);
+  assert.match(studioHtml, /id="browser-speech-voice"/);
+  assert.match(studioHtml, /No account, cloud upload, or API key is required/);
+  assert.match(studioHtml, /This is speech synthesis, not voice cloning/);
+  assert.match(studioSource, /new SpeechSynthesisUtterance\(text\)/);
+  assert.match(studioSource, /Local Buddy voice preview completed without an ElevenLabs key/);
+  assert.match(studioSource, /browserSpeechStatus\.dataset\.activity = 'finished'/);
+  assert.match(studioSource, /\['interrupted', 'canceled'\]\.includes\(event\.error\)/);
+  assert.match(studioSource, /window\.speechSynthesis\.speak\(utterance\)/);
+});
+
+test('Buddy media surfaces distinguish keyless local readiness from provider rendering', () => {
+  assert.match(buddyPageSource, /Local Voice & Cloning/);
+  assert.match(buddyPageSource, /status: "local-setup"/);
+  assert.match(buddyPageSource, /setLocation\("\/studio\.html"\)/);
+  assert.match(conversationPageSource, /Image route contract reachable/);
+  assert.match(conversationPageSource, /successful generated image are still required to prove rendering/);
+  assert.match(sandboxPageSource, /Generation requires a verified local renderer or configured provider/);
+  assert.match(settingsPageSource, /Keyless browser speech and capture ready/);
+  assert.match(settingsPageSource, /install and verify OpenVoice or Chatterbox for local cloning/);
+});
+
+test('creative studio defaults goals to local-only and records outside-resource boundaries', () => {
+  assert.match(studioHtml, /id="offline-only"[^>]*checked/);
+  assert.match(studioHtml, /id="check-goal-offline"/);
+  assert.match(studioSource, /const OUTSIDE_GOAL_RULES/);
+  assert.match(studioSource, /outside_service_calls_allowed: false/);
+  assert.match(studioSource, /provider_keys_required_for_this_packet: false/);
+  assert.match(studioSource, /Live data, accounts, transactions, publishing, downloads, and physical-world work require separately approved outside resources/);
+  assert.match(studioSource, /Work offline only\. Do not call outside services/);
+});
+
+test('all fourteen music families are selectable local production inputs', () => {
+  const academy = JSON.parse(fs.readFileSync('config/buddy-creative-academy.json', 'utf8'));
+  assert.equal(academy.music_standard.genre_families.length, 14);
+  assert.match(studioSource, /function useMusicFamily\(id\)/);
+  assert.match(studioSource, /dataset\.useMusicFamily/);
+  assert.match(studioSource, /selected_genre_family: selectedMusicFamily/);
+  assert.match(studioSource, /local_generation_default: true/);
+  assert.match(studioSource, /external_publish_taken: false/);
 });

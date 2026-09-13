@@ -137,7 +137,7 @@ const SUPERPOWERS = [
   { name: "Security Scan", icon: Lock, color: "text-red-400", desc: "SAST, OWASP Top 10, secret detection", status: "live" },
   { name: "PR Generator", icon: GitPullRequest, color: "text-violet-400", desc: "Generate full pull requests with diffs", status: "live" },
   { name: "Image Generation", icon: ImageIcon, color: "text-pink-400", desc: "Generate images from code descriptions", status: "needs-key" },
-  { name: "Voice Cloning", icon: Mic, color: "text-orange-400", desc: "Text-to-speech with custom voices", status: "needs-key" },
+  { name: "Local Voice & Cloning", icon: Mic, color: "text-orange-400", desc: "Keyless system speech now; local OpenVoice or Chatterbox setup for consented cloning", status: "local-setup" },
   { name: "Book Study", icon: BookOpen, color: "text-amber-400", desc: "Read and summarize technical books", status: "live" },
   { name: "Agent Pipeline", icon: BrainCircuit, color: "text-cyan-400", desc: "Multi-step autonomous task execution", status: "live" },
   { name: "Deep Debug", icon: Bug, color: "text-red-400", desc: "Root-cause analysis with fix suggestions", status: "live" },
@@ -394,7 +394,7 @@ export default function BuddyPage() {
                     <Card
                       key={sp.name}
                       className={cn("cursor-pointer hover:border-primary/40 transition-all hover:shadow-md", sp.status === "needs-key" && "opacity-70")}
-                      onClick={() => sp.status === "live" && startChat(`Use your ${sp.name} capability to help me with: `)}
+                      onClick={() => sp.status === "live" ? startChat(`Use your ${sp.name} capability to help me with: `) : sp.status === "local-setup" ? setLocation("/studio.html") : undefined}
                       data-testid={`power-card-${sp.name.toLowerCase().replace(/\s+/g, "-")}`}
                     >
                       <CardContent className="p-4 flex items-start gap-3">
@@ -405,7 +405,7 @@ export default function BuddyPage() {
                           <div className="flex items-center gap-2">
                             <p className="text-sm font-medium">{sp.name}</p>
                             <Badge variant={sp.status === "live" ? "secondary" : "outline"} className="text-[10px] py-0 px-1.5 rounded-md ml-auto">
-                              {sp.status === "live" ? "Live" : "Needs Key"}
+                              {sp.status === "live" ? "Live" : sp.status === "local-setup" ? "Keyless + Local Setup" : "Needs Key"}
                             </Badge>
                           </div>
                           <p className="text-xs text-muted-foreground mt-0.5">{sp.desc}</p>

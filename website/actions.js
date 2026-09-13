@@ -48,6 +48,7 @@
     const prompt = [
       `Debug and upgrade ${workflow.workflow}.`,
       `Purpose: ${workflow.purpose}.`,
+      `Goal: ${workflow.goal || 'repository operations'}.`,
       `Evidence: ${runState}.`,
       `Static findings: ${(workflow.errors || []).length} errors, ${(workflow.warnings || []).length} warnings.`,
       `Repository upgrades:\n${upgrades}`,
@@ -90,7 +91,8 @@
       card.append(details);
       host.append(card);
     });
-    byId('prospectus-status').textContent = `${controls.length} Action controls documented with upgrade plans and planning ranges.`;
+    const summary = state.prospectus?.summary || {};
+    byId('prospectus-status').textContent = `${controls.length} controls and ${summary.workflows || 0} workflows documented · ${summary.static_passing_workflows || 0} static passes · ${summary.runtime_unknown_workflows || 0} still need runtime evidence · ${summary.possible_duplicate_groups || 0} possible duplicate groups.`;
   }
 
   function renderStages() {
@@ -127,7 +129,30 @@
       item.append(make('span', label), make('strong', value));
       summary.append(item);
     });
-    body.append(summary, make('h3', 'What this action protects'), make('p', workflow.purpose));
+    body.append(summary, make('h3', 'Goal'), make('p', workflow.goal || 'Repository operations'), make('h3', 'Purpose'), make('p', workflow.purpose));
+
+    body.append(make('h3', 'What happens when it runs'));
+    const runSteps = make('ol');
+    (workflow.what_happens || []).forEach((step) => runSteps.append(make('li', step)));
+    body.append(runSteps, make('h3', 'Expected outputs'));
+    const outputs = make('ul');
+    (workflow.outputs || []).forEach((output) => outputs.append(make('li', output)));
+    body.append(outputs);
+
+    body.append(make('h3', 'Known findings'));
+    const findings = make('ul');
+    const observed = [...(workflow.errors || []).map((item) => `ERROR: ${item}`), ...(workflow.warnings || []).map((item) => `WARNING: ${item}`)];
+    if (!observed.length) observed.push('No static blockers found. Runtime status remains unknown until run evidence is loaded.');
+    observed.forEach((item) => findings.append(make('li', item)));
+    body.append(findings, make('h3', 'Duplication review'));
+    if (workflow.possible_duplicate) {
+      body.append(make('p', `Possible duplicate group ${workflow.duplicate_candidate_group}. Manual review required; nothing is automatically deleted.`));
+      const duplicates = make('ul');
+      (workflow.possible_duplicates || []).forEach((item) => duplicates.append(make('li', item)));
+      body.append(duplicates);
+    } else {
+      body.append(make('p', 'No exact structural duplicate candidate detected by the static fingerprint.'));
+    }
 
     body.append(make('h3', 'Repository upgrade plan'));
     const upgrades = make('ol');
@@ -163,7 +188,14 @@
     } else {
       list.append(make('li', 'Tracked by Actions health; no dedicated benchmark program mapped yet.'));
     }
-    body.append(list);
+    body.append(list, make('h3', 'Declared benchmark commands'));
+    const commands = make('div', undefined, 'detail-code-list');
+    if ((workflow.benchmark_commands || []).length) {
+      workflow.benchmark_commands.forEach((command) => commands.append(make('code', command)));
+    } else {
+      commands.append(make('span', 'No dedicated benchmark command was detected for this workflow.'));
+    }
+    body.append(commands);
     byId('workflow-detail').showModal();
   }
 
@@ -176,7 +208,7 @@
 
     const rows = state.report.findings.map((workflow) => ({ workflow, evidence: latestEvidence(workflow) }));
     const workflows = rows.filter(({ workflow, evidence }) => {
-      const text = [workflow.display_name, workflow.purpose, workflow.workflow, ...(workflow.npm_scripts || []), ...(workflow.upgrades || [])].join(' ').toLowerCase();
+      const text = [workflow.display_name, workflow.goal, workflow.purpose, workflow.workflow, ...(workflow.what_happens || []), ...(workflow.npm_scripts || []), ...(workflow.benchmark_commands || []), ...(workflow.errors || []), ...(workflow.warnings || []), ...(workflow.possible_duplicates || []), ...(workflow.upgrades || [])].join(' ').toLowerCase();
       const matchesQuery = !query || text.includes(query);
       const matchesStatus = status === 'all' || evidence.key === status;
       const matchesTrigger = trigger === 'all' || (workflow.triggers || []).includes(trigger);
@@ -239,6 +271,7 @@
     byId('metric-static').textContent = `${state.report.workflow_count - state.report.critical_error_count}/${state.report.workflow_count}`;
     byId('metric-passing').textContent = String(allEvidence.filter((item) => item.key === 'passing').length);
     byId('metric-attention').textContent = String(allEvidence.filter((item) => item.key === 'attention').length + state.report.critical_error_count);
+    byId('metric-duplicates').textContent = String(state.report.summary?.possible_duplicate_groups || 0);
     byId('metric-upgrades').textContent = String(state.report.findings.reduce((sum, workflow) => sum + (workflow.upgrades || []).length, 0));
     byId('metric-benchmarks').textContent = String(benchmarkIndex.summary?.trackedBenchmarkSurfaces || 0);
     byId('workflow-result-count').textContent = `${workflows.length} of ${state.report.workflow_count} workflows shown`;

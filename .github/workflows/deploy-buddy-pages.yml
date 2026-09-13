@@ -23,6 +23,10 @@ on:
       - "tools/generate_repository_test_registry.py"
       - "tools/generate_dreamco_repository_master_map.py"
       - "tools/generate_master_directive_status.py"
+      - "tools/generate_command_center_data.py"
+      - "tools/generate_resource_connection_catalog.py"
+      - "tools/generate_buddy_expert_mode.py"
+      - "command-center/data/**"
       - "docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md"
       - "config/**"
       - ".github/workflows/deploy-buddy-pages.yml"
@@ -74,11 +78,20 @@ jobs:
           python3 tools/generate_repository_test_registry.py
           python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_master_directive_status.py
+          python3 tools/generate_command_center_data.py --check
+          python3 tools/generate_resource_connection_catalog.py --check
+          python3 tools/generate_opportunity_hub.py --check
+          python3 tools/generate_setup_center.py --check
           python3 tools/build_buddy_learning_os_connection_graph.py
+          python3 tools/generate_buddy_expert_mode.py
           python3 tools/generate_buddy_benchmark_index.py --check
+          python3 tools/generate_buddy_open_model_lab.py --check
+          python3 tools/generate_buddy_learning_strategies.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
           python3 tools/build_buddy_public_site.py --check
           npm run test:actions-page
+          npm run test:buddy-open-core
+          npm run test:expert-mode
           node --test tests/benchmark-tracker-page.test.mjs tests/service-worker-benchmark-cache.test.mjs
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
@@ -87,6 +100,9 @@ jobs:
           test -s website/data/actions-live-health.json
           test -s website/data/master-directive-status.json
           test -s website/data/buddy-learning-os-connections.json
+          test -s website/data/buddy-expert-mode.js
+          test -s website/buddy-expert-mode.html
+          test -s website/buddy-invention-lab.html
           test -s website/data/actions-prospectus.json
           test -s website/data/problem-registry.json
       - name: Check generated Actions data contracts
@@ -110,6 +126,23 @@ jobs:
           node --check website/nav.js
           node --check website/service-worker.js
           node --check website/master-build.js
+          node --check website/buddy-command-center.js
+          node --check website/world-lens.js
+          node --check website/family-circle.js
+          node --check website/resource-211.js
+          node --check website/voice-command-center.js
+          node --check website/world-source-center.js
+          node --check website/my-buddy.js
+          node --check website/independence-center.js
+          node --check website/buddy-workspace.js
+          node --check website/resource-connection-center.js
+          node --check website/sign-in.js
+          node --check website/buddy-open-core.js
+          node --check website/buddy-learning-lab.js
+          node --check website/buddy-expert-mode.js
+          node --check website/buddy-invention-lab.js
+          node --check website/opportunity-hub.js
+          node --check website/setup-center.js
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
       - name: Upload public website

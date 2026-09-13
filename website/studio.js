@@ -43,6 +43,12 @@ const simulationAdditions = document.getElementById('simulation-additions');
 const simulationToGame = document.getElementById('simulation-to-game');
 const mediaQualityMode = document.getElementById('media-quality-mode');
 const mediaQualitySummary = document.getElementById('media-quality-summary');
+const mediaSelfTestResults = document.getElementById('media-self-test-results');
+const browserSpeechText = document.getElementById('browser-speech-text');
+const browserSpeechVoice = document.getElementById('browser-speech-voice');
+const browserSpeechStatus = document.getElementById('browser-speech-status');
+const offlineOnly = document.getElementById('offline-only');
+const goalOfflineStatus = document.getElementById('goal-offline-status');
 
 let mediaRecorder = null;
 let mediaStream = null;
@@ -58,6 +64,7 @@ let voiceTakes = [];
 let latestPacket = null;
 let latestConsentReceipt = null;
 let castRoles = [];
+let selectedMusicFamily = null;
 const academy = window.BUDDY_SPECIALIZED_HUBS?.creative;
 const productionRegistry = window.BUDDY_PRODUCTION_GROUP;
 const hollywoodGroup = productionRegistry?.hollywood_production_group;
@@ -191,15 +198,133 @@ function updateMediaQualitySummary() {
     : `${mode.candidate_count_per_engine} candidates per selected local engine · enable voice or likeness to create a quality plan`;
 }
 
+function runMediaSelfTest() {
+  const canvas = document.createElement('canvas');
+  const checks = [
+    ['Secure local context', window.isSecureContext || ['localhost', '127.0.0.1'].includes(location.hostname), 'Use HTTPS or localhost for camera and microphone capture.'],
+    ['Outbound network policy', offlineOnly.checked, 'Turn on local-only mode to prohibit outside service calls.'],
+    ['Keyless system speech', Boolean(window.speechSynthesis && window.SpeechSynthesisUtterance), 'Browser speech synthesis is unavailable on this device.'],
+    ['Microphone/camera API', Boolean(navigator.mediaDevices?.getUserMedia), 'This browser cannot request local microphone or camera access.'],
+    ['Voice recorder', typeof window.MediaRecorder === 'function', 'MediaRecorder is unavailable; choosing an audio file can still work.'],
+    ['Voice analyzer', Boolean(window.AudioContext || window.webkitAudioContext), 'Local audio decoding and capture metrics are unavailable.'],
+    ['Image preview/capture', Boolean(canvas.getContext?.('2d') && canvas.toBlob), 'Canvas image capture is unavailable.'],
+    ['Local file previews', Boolean(window.Blob && URL.createObjectURL && URL.revokeObjectURL), 'Local voice and image previews are unavailable.'],
+    ['Consent fingerprints', Boolean(window.crypto?.subtle && window.TextEncoder), 'SHA-256 consent fingerprints are unavailable.'],
+    ['Voice engine catalog', Boolean(voiceEngine.options.length), 'No voice adapter records loaded.'],
+    ['Image engine catalog', Boolean(imageEngine.options.length), 'No image or portrait adapter records loaded.'],
+  ];
+  const passed = checks.filter(([, ready]) => ready).length;
+  const captureReady = checks.slice(0, 9).every(([, ready]) => ready);
+  mediaSelfTestResults.innerHTML = checks.map(([label, ready, blockedReason]) => `
+    <div><span>${ready ? 'PASS' : 'BLOCKED'} · ${escapeHtml(label)}</span><strong>${ready ? 'ready' : escapeHtml(blockedReason)}</strong></div>
+  `).join('') + `
+    <div><span>Local renderer</span><strong>SETUP REQUIRED · install and verify the selected model before generation</strong></div>
+    <div><span>Provider rendering</span><strong>${offlineOnly.checked ? 'DISABLED · local-only mode prohibits outside provider calls' : 'NOT TESTED · backend credentials and a live provider test are required'}</strong></div>
+  `;
+  formStatus.textContent = `${passed}/${checks.length} browser and catalog checks passed. ${captureReady ? 'Local capture is ready when you choose to grant device permission.' : 'Review blocked checks before recording.'} No device permission was requested and no generation claim was made.`;
+  return { passed, total: checks.length, captureReady };
+}
+
+const OUTSIDE_GOAL_RULES = [
+  { label: 'current or live data', pattern: /\b(current|today|latest|live|real[- ]?time|weather|traffic|news|listing|property history)\b/i },
+  { label: 'maps or precise location services', pattern: /\b(map|maps|gps|route|directions|nearby|location tracking)\b/i },
+  { label: 'outside account or publishing action', pattern: /\b(publish|post|upload|stream|send|email|social media|youtube|app store)\b/i },
+  { label: 'purchase, booking, or legal transaction', pattern: /\b(buy|purchase|pay|order|book|reserve|apply|file a patent|submit)\b/i },
+  { label: 'new model or software download', pattern: /\b(download|install|fetch|clone a repository|new model weights)\b/i },
+];
+
+function checkGoalOffline() {
+  const objective = document.getElementById('project-objective').value.trim();
+  const dependencies = OUTSIDE_GOAL_RULES.filter(rule => rule.pattern.test(objective)).map(rule => rule.label);
+  if (!offlineOnly.checked) {
+    goalOfflineStatus.textContent = 'Offline-only is off. Buddy may prepare an outside-service handoff, but no outside action is executed by this Studio page.';
+    return { localOnly: false, dependencies };
+  }
+  goalOfflineStatus.textContent = dependencies.length
+    ? `Local work can start, but the full goal mentions ${dependencies.join(', ')}. Buddy will keep those steps blocked and produce a local plan or prototype only.`
+    : 'This goal can proceed as a local plan or prototype with network calls disabled. Finished media still requires an installed local renderer and measured evidence.';
+  return { localOnly: true, dependencies };
+}
+
+document.getElementById('check-goal-offline').addEventListener('click', checkGoalOffline);
+offlineOnly.addEventListener('change', () => {
+  checkGoalOffline();
+  runMediaSelfTest();
+});
+
+function populateBrowserVoices() {
+  const previous = browserSpeechVoice.value;
+  const voices = window.speechSynthesis?.getVoices?.() || [];
+  browserSpeechVoice.replaceChildren();
+  voices.forEach((voice, index) => {
+    const option = document.createElement('option');
+    option.value = voice.voiceURI || `${voice.name}:${voice.lang}:${index}`;
+    option.textContent = `${voice.name} · ${voice.lang}${voice.localService ? ' · local' : ''}`;
+    browserSpeechVoice.append(option);
+  });
+  if (Array.from(browserSpeechVoice.options).some(option => option.value === previous)) browserSpeechVoice.value = previous;
+  if (!browserSpeechStatus.dataset.activity) {
+    browserSpeechStatus.textContent = voices.length
+      ? `${voices.length} installed system voice${voices.length === 1 ? '' : 's'} available. No account, cloud upload, or API key is required. This is speech synthesis, not voice cloning.`
+      : 'No installed system voices were reported. You can still install OpenVoice or Chatterbox locally without an ElevenLabs key.';
+  }
+}
+
+function stopBrowserSpeech(message = 'Local speech stopped.') {
+  window.speechSynthesis?.cancel();
+  document.getElementById('stop-browser-voice').disabled = true;
+  document.getElementById('speak-browser-voice').disabled = false;
+  browserSpeechStatus.dataset.activity = 'finished';
+  browserSpeechStatus.textContent = message;
+}
+
+document.getElementById('speak-browser-voice').addEventListener('click', () => {
+  const text = browserSpeechText.value.trim();
+  if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
+    browserSpeechStatus.textContent = 'Keyless browser speech is not available on this device.';
+    return;
+  }
+  if (!text) {
+    browserSpeechStatus.textContent = 'Enter up to 1,000 characters for the local voice preview.';
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  const voices = window.speechSynthesis.getVoices();
+  const selected = voices.find(voice => voice.voiceURI === browserSpeechVoice.value)
+    || voices[browserSpeechVoice.selectedIndex];
+  if (selected) utterance.voice = selected;
+  utterance.onstart = () => {
+    document.getElementById('speak-browser-voice').disabled = true;
+    document.getElementById('stop-browser-voice').disabled = false;
+    browserSpeechStatus.dataset.activity = 'speaking';
+    browserSpeechStatus.textContent = `Speaking locally with ${selected?.name || 'the default system voice'}...`;
+  };
+  utterance.onend = () => stopBrowserSpeech('Local Buddy voice preview completed without an ElevenLabs key.');
+  utterance.onerror = event => {
+    const stopped = ['interrupted', 'canceled'].includes(event.error);
+    stopBrowserSpeech(stopped ? 'Local speech stopped.' : `Local voice preview failed: ${event.error || 'browser speech error'}.`);
+  };
+  window.speechSynthesis.speak(utterance);
+});
+document.getElementById('stop-browser-voice').addEventListener('click', () => stopBrowserSpeech());
+if (window.speechSynthesis) {
+  populateBrowserVoices();
+  window.speechSynthesis.addEventListener?.('voiceschanged', populateBrowserVoices);
+} else {
+  populateBrowserVoices();
+}
+
 mediaQualityMode.addEventListener('change', updateMediaQualitySummary);
 [voiceEngine, imageEngine, document.getElementById('commercial-media-use')]
   .forEach(control => control.addEventListener('change', updateMediaQualitySummary));
+document.getElementById('run-media-self-test').addEventListener('click', runMediaSelfTest);
 document.querySelectorAll('[data-trait]').forEach(input => input.addEventListener('input', () => {
   const output = document.querySelector(`[data-trait-output="${input.dataset.trait}"]`);
   if (output) output.value = input.value;
 }));
 
-function academyCard(index, label, items, kind) {
+function academyCard(index, label, items, kind, action = null) {
   const card = document.createElement('article');
   card.className = 'studio-academy-card';
   const step = document.createElement('small');
@@ -213,6 +338,16 @@ function academyCard(index, label, items, kind) {
     list.append(row);
   });
   card.append(step, heading, list);
+  if (action) {
+    card.dataset.musicFamily = action.id;
+    if (selectedMusicFamily?.id === action.id) card.classList.add('is-selected');
+    const button = document.createElement('button');
+    button.className = 'btn btn-outline btn-sm';
+    button.type = 'button';
+    button.dataset.useMusicFamily = action.id;
+    button.textContent = selectedMusicFamily?.id === action.id ? 'Selected for project' : `Use ${action.label}`;
+    card.append(button);
+  }
   return card;
 }
 
@@ -230,14 +365,36 @@ function renderAcademy() {
       : `${rows.length} production phases · ${academy.film_standard.quality_gates.length} release gates · delivery specs verified for each target platform`;
   } else if (academyTrack.value === 'music') {
     const rows = academy.music_standard.genre_families;
-    rows.forEach((row, index) => academyGrid.append(academyCard(index, row.label, row.study, 'Family')));
-    academySummary.textContent = `${rows.length} genre families · original composition workflow · composition, recording, sample, performance, sync, voice, and likeness rights gates`;
+    rows.forEach((row, index) => academyGrid.append(academyCard(index, row.label, row.study, 'Family', row)));
+    academySummary.textContent = `${rows.length} selectable genre families · ${selectedMusicFamily ? `${selectedMusicFamily.label} selected · ` : ''}original composition workflow · composition, recording, sample, performance, sync, voice, and likeness rights gates`;
   } else {
     const rows = simulationFoundry?.domains || [];
     rows.forEach((row, index) => academyGrid.append(academyCard(index, row.label, [row.review], 'Domain')));
     academySummary.textContent = `${rows.length} simulation domains · ${simulationFoundry?.model_sources?.length || 0} governed model sources · every simulation can produce a deterministic practice-game plan`;
   }
 }
+
+function useMusicFamily(id) {
+  const family = academy?.music_standard?.genre_families?.find((item) => item.id === id);
+  if (!family) return;
+  selectedMusicFamily = family;
+  academyTrack.value = 'music';
+  const select = document.getElementById('project-type');
+  select.value = 'music_artist';
+  applyPreset('music_artist');
+  document.getElementById('project-title').value = `${family.label} Studio Project`;
+  document.getElementById('project-objective').value = `Create an original ${family.label.toLowerCase()} work that practices ${family.study.join(', ')} with cultural attribution, rights review, local production, and measured listening tests.`;
+  document.getElementById('project-subject').value = `${family.label}: ${family.study.join(', ')}`;
+  renderAcademy();
+  checkGoalOffline();
+  formStatus.textContent = `${family.label} selected. Buddy will build locally from the four study lanes and will not sample, imitate, upload, or publish without rights evidence and separate approval.`;
+  document.getElementById('project-title').focus();
+}
+
+academyGrid.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-use-music-family]');
+  if (button) useMusicFamily(button.dataset.useMusicFamily);
+});
 
 const TYPE_PRESETS = {
   game: {
@@ -1457,6 +1614,13 @@ form.addEventListener('submit', async event => {
       subject: document.getElementById('project-subject').value.trim(),
       audience: document.getElementById('project-audience').value.trim(),
       code: { status: 'local_prototype_ready', network_default: 'off' },
+      execution_policy: {
+        mode: offlineOnly.checked ? 'local_only' : 'local_first_with_explicit_handoffs',
+        outside_service_calls_allowed: false,
+        provider_keys_required_for_this_packet: false,
+        goal_feasibility: checkGoalOffline(),
+        truth_boundary: 'Buddy can complete local computation and installed-model work only. Live data, accounts, transactions, publishing, downloads, and physical-world work require separately approved outside resources.',
+      },
       voice: {
         requested: useVoice.checked,
         status: useVoice.checked ? 'consent_verified_local_model_install_and_benchmark_required' : 'not_requested',
@@ -1537,7 +1701,7 @@ form.addEventListener('submit', async event => {
         : ['feature_film', 'documentary', 'animated_series', 'social_live_show'].includes(type)
         ? { track: 'film', phases: academy?.film_standard?.phases?.map(item => item.id) || [], departments: hollywoodGroup?.departments?.map(item => item.id) || [], quality_gates: hollywoodGroup?.quality_gates || [] }
         : ['music_video', 'music_artist'].includes(type)
-          ? { track: 'music', genre_families: academy?.music_standard?.genre_families?.map(item => item.id) || [], rights_gates: academy?.music_standard?.rights_gates || [] }
+          ? { track: 'music', selected_genre_family: selectedMusicFamily, genre_families: academy?.music_standard?.genre_families?.map(item => item.id) || [], production_stages: academy?.music_standard?.production_stages || [], rights_gates: academy?.music_standard?.rights_gates || [], local_generation_default: true, external_publish_taken: false }
           : SIMULATION_TYPES.has(type)
             ? { track: 'simulation', domains: simulationFoundry?.domains?.map(item => item.id) || [], model_sources: simulationFoundry?.model_sources?.map(item => item.id) || [] }
           : null,
@@ -1591,7 +1755,10 @@ document.getElementById('send-buddy').addEventListener('click', () => {
   const showDetail = latestPacket.creator_show
     ? ` Show: ${latestPacket.creator_show.season_episode_count} ${latestPacket.creator_show.cadence} episodes across ${latestPacket.creator_show.platforms.join(', ')} with ${latestPacket.creator_show.character_library.character_count} reusable characters and ${latestPacket.creator_show.character_library.active_character_ids.length} active in this production unit.`
     : '';
-  const prompt = `Continue building ${latestPacket.title} as a ${latestPacket.project_type}. Goal: ${latestPacket.objective}.${actorDetail}${productionDetail}${mediaDetail}${simulationDetail}${showDetail} Keep rights, evidence, quality, safety, and owner approval gates active.`;
+  const executionDetail = latestPacket.execution_policy.mode === 'local_only'
+    ? ' Work offline only. Do not call outside services. Keep live-data, account, transaction, publishing, download, and physical-world steps blocked and label them as requiring separately approved resources.'
+    : ' Prepare explicit handoffs for outside services, but do not execute them without separate authorization.';
+  const prompt = `Continue building ${latestPacket.title} as a ${latestPacket.project_type}. Goal: ${latestPacket.objective}.${actorDetail}${productionDetail}${mediaDetail}${simulationDetail}${showDetail}${executionDetail} Keep rights, evidence, quality, safety, and owner approval gates active.`;
   location.href = `buddy.html?prompt=${encodeURIComponent(prompt)}`;
 });
 
@@ -1635,6 +1802,7 @@ document.getElementById('clear-media').addEventListener('click', () => {
 
 academyTrack.addEventListener('change', renderAcademy);
 document.getElementById('academy-use').addEventListener('click', () => {
+  selectedMusicFamily = null;
   const select = document.getElementById('project-type');
   select.value = academyTrack.value === 'film'
     ? 'feature_film'
