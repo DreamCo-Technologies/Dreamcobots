@@ -42,6 +42,32 @@ GENERATED_NAMES = [
 IGNORED_PARTS = {".git", ".pytest_cache", "node_modules", "dist", ".cache", "__pycache__"}
 SECRET_NAME = re.compile(r"(^|/)(\.env($|\.)|.*\.(pem|p12|pfx|key)$|id_(rsa|ed25519)$)", re.I)
 
+AREA_RULES = {
+    ".github": ("delivery", "GitHub collaboration, agents, and CI/CD", "workflow and repository maintainers"),
+    "App_bots": ("fleet_catalog", "canonical large bot profile catalog", "fleet registry maintainers"),
+    "original-bots": ("legacy_preserved", "historical bot sources retained for provenance and recovery", "legacy recovery pipeline"),
+    "bots": ("fleet_catalog", "curated human-readable specialist profiles", "fleet registry maintainers"),
+    "buddy": ("orchestration", "Buddy learning, frontier, sandbox, and autonomy packages", "Buddy orchestration maintainers"),
+    "buddy_os": ("runtime", "governed Buddy runtime, contracts, execution, and intelligence", "Buddy runtime maintainers"),
+    "server": ("runtime", "backend services and API routes", "backend maintainers"),
+    "client": ("product_ui", "React product application", "frontend maintainers"),
+    "website": ("public_ui", "static GitHub Pages experience and public-safe generated data", "public web maintainers"),
+    "shared": ("contracts", "cross-runtime types, schemas, and reusable contracts", "platform contract maintainers"),
+    "framework": ("shared_implementation", "reusable learning and orchestration primitives", "platform maintainers"),
+    "dreamco_platform": ("platform", "domain platform modules", "platform maintainers"),
+    "config": ("configuration", "versioned policies, registries, and generated evidence", "registry and policy maintainers"),
+    "tools": ("tooling", "deterministic generators, audits, and validators", "developer tooling maintainers"),
+    "tests": ("verification", "automated regression, policy, integration, and contract evidence", "quality maintainers"),
+    "benchmarks": ("verification", "benchmark fixtures and task definitions", "evaluation maintainers"),
+    "evidence": ("evidence", "preserved benchmark and runtime evidence", "evaluation maintainers"),
+    "docs": ("documentation", "architecture, operations, and contributor guidance", "documentation maintainers"),
+    "command-center": ("generated_evidence", "canonical generated command-center artifacts", "command-center generator"),
+    "attached_assets": ("legacy_preserved", "repository assets retained at their referenced paths", "asset provenance maintainers"),
+    "DreamPayments": ("domain_runtime", "payment-domain implementation with strict approval gates", "payments maintainers"),
+    "money": ("legacy_preserved", "historical money-domain sources", "finance consolidation maintainers"),
+    "money_os": ("domain_runtime", "governed money-domain application", "finance maintainers"),
+}
+
 
 def canonical_json(payload: Any) -> str:
     return json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
@@ -127,8 +153,23 @@ def build_repository_inventory(files: list[Path]) -> dict[str, Any]:
         if SECRET_NAME.search(path.relative_to(ROOT).as_posix()) and path.name != ".env.example"
     )
     sources = [ROOT / "AGENTS.md", ROOT / "package.json"]
+    area_records = []
+    for area, count in sorted(top_level.items()):
+        kind, responsibility, owner = AREA_RULES.get(
+            area,
+            ("supporting", "supporting repository area; inspect local documentation and consumers before changing", "repository maintainers"),
+        )
+        area_records.append({
+            "path": area,
+            "file_count": count,
+            "kind": kind,
+            "responsibility": responsibility,
+            "canonical_owner": owner,
+            "change_rule": "preserve paths and consumers; change the canonical source and regenerate derived artifacts",
+            "preservation": "preserve_in_place",
+        })
     return artifact(
-        "dreamco.command_center.repository_inventory.v1",
+        "dreamco.command_center.repository_inventory.v2",
         sources,
         summary={
             "tracked_and_untracked_files_scanned": len(files),
@@ -137,6 +178,12 @@ def build_repository_inventory(files: list[Path]) -> dict[str, Any]:
         },
         files_by_extension=dict(sorted(extensions.items())),
         files_by_top_level_area=dict(sorted(top_level.items())),
+        organization={
+            "coverage": "all_scanned_files",
+            "destructive_reorganization_allowed": False,
+            "classified_file_count": sum(row["file_count"] for row in area_records),
+            "areas": area_records,
+        },
         security_observations={"secret_named_files": secret_named},
         status="implemented",
         evidence_refs=["tools/generate_command_center_data.py", "tests/test_command_center_data.py"],

@@ -1,6 +1,7 @@
 (function () {
   const formatter = new Intl.NumberFormat("en-US");
   let divisions = [];
+  let ownershipAreas = [];
 
   function text(tag, value, className) {
     const node = document.createElement(tag);
@@ -91,24 +92,46 @@
     if (!filtered.length) target.append(text("p", "No divisions match this filter.", "map-empty"));
   }
 
+  function renderOwnership(query) {
+    const normalized = query.trim().toLowerCase();
+    const rows = ownershipAreas.filter((row) => `${row.path} ${row.kind} ${row.responsibility} ${row.canonical_owner}`.toLowerCase().includes(normalized));
+    const target = document.getElementById("ownership-map-grid");
+    target.replaceChildren();
+    rows.forEach((row) => {
+      const card = document.createElement("article"); card.className = "system-status-card";
+      const heading = document.createElement("div"); heading.className = "system-status-heading";
+      heading.append(text("h3", row.path), text("strong", formatter.format(Number(row.file_count || 0))));
+      card.append(heading, text("p", row.responsibility), text("code", `${row.kind} · ${row.canonical_owner}`), text("span", "Preserve in place", "division-governance"));
+      target.append(card);
+    });
+    if (!rows.length) target.append(text("p", "No repository areas match this filter.", "map-empty"));
+  }
+
   async function init() {
-    const [systemResponse, masterResponse] = await Promise.all([
+    const [systemResponse, masterResponse, ownershipResponse] = await Promise.all([
       fetch("data/repository-system-map.json", { cache: "no-store" }),
       fetch("data/repository-master-map.json", { cache: "no-store" }),
+      fetch("data/command-center/repository-inventory.json", { cache: "no-store" }),
     ]);
     if (!systemResponse.ok) throw new Error(`Repository map request failed: ${systemResponse.status}`);
     if (!masterResponse.ok) throw new Error(`Repository master inventory request failed: ${masterResponse.status}`);
+    if (!ownershipResponse.ok) throw new Error(`Repository organization request failed: ${ownershipResponse.status}`);
     const payload = await systemResponse.json();
     const master = await masterResponse.json();
+    const ownership = await ownershipResponse.json();
     divisions = Array.isArray(payload.divisions) ? payload.divisions : [];
+    ownershipAreas = Array.isArray(ownership.organization?.areas) ? ownership.organization.areas : [];
     renderStats(payload.summary || {});
     renderMasterInventory(master.summary || {});
     renderSystems(Array.isArray(payload.systems) ? payload.systems : []);
     renderLibraries(Array.isArray(payload.libraries) ? payload.libraries : []);
     renderDivisions("");
+    renderOwnership("");
     document.getElementById("map-generated").textContent = `Generated ${payload.generated_at || "from the latest scan"}`;
     document.getElementById("master-map-generated").textContent = `Inventory scan ${String(master.scan_digest || "").slice(0, 12) || "available"}`;
+    document.getElementById("ownership-map-status").textContent = `${formatter.format(Number(ownership.organization?.classified_file_count || 0))} files · ${ownershipAreas.length} areas · no moves`;
     document.getElementById("division-search").addEventListener("input", (event) => renderDivisions(event.target.value || ""));
+    document.getElementById("ownership-search").addEventListener("input", (event) => renderOwnership(event.target.value || ""));
   }
 
   init().catch((error) => {

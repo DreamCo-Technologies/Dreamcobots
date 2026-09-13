@@ -48,6 +48,15 @@
     <div id="system-readiness-grid" class="system-readiness-grid" aria-live="polite"></div>
   </section>
 
+  <section class="system-map-section" aria-labelledby="ownership-map-title">
+    <div class="system-map-title">
+      <div><h2 id="ownership-map-title">Canonical ownership map</h2><p>Every scanned top-level area stays in place. This map identifies its responsibility and maintainer boundary so future work extends the correct owner instead of creating another parallel system.</p></div>
+      <span id="ownership-map-status" class="map-generated">Loading organization map</span>
+    </div>
+    <label class="map-search-label" for="ownership-search"><span>Filter repository areas</span><input id="ownership-search" type="search" placeholder="Runtime, legacy, tests, website..." autocomplete="off" /></label>
+    <div id="ownership-map-grid" class="system-readiness-grid" aria-live="polite"></div>
+  </section>
+
   <section class="system-map-section">
     <div class="system-map-title"><div><h2>Per-Bot Libraries</h2><p>Generated contracts organize each bot's tools, APIs, webhooks, workflows, skills, sandboxes, and resources.</p></div></div>
     <div id="system-library-grid" class="system-library-grid"></div>
@@ -66,6 +75,6 @@
     <p>The live site presents verified repository structure and browser-based prototypes. It does not claim verified revenue, process payments, execute private bots, contact people, or modify accounts. A discovered file or planned capability is never treated as mastery without current tests and benchmark evidence.</p>
   </section>
 </main>
-<script src="system-map.js" defer></script>
+<script src="system-map.js?v=2" defer></script>
 </body>
 </html>

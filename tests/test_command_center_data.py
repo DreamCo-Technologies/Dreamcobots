@@ -58,6 +58,17 @@ class CommandCenterDataTests(unittest.TestCase):
         self.assertEqual(bots["summary"]["preserved_original_bot_files"], len(expected))
         self.assertGreater(bots["summary"]["registered_bots"], 0)
 
+    def test_repository_organization_covers_every_file_without_destructive_moves(self):
+        inventory = self.payloads["repository-inventory.json"]
+        organization = inventory["organization"]
+        self.assertFalse(organization["destructive_reorganization_allowed"])
+        self.assertEqual(organization["coverage"], "all_scanned_files")
+        self.assertEqual(organization["classified_file_count"], inventory["summary"]["tracked_and_untracked_files_scanned"])
+        areas = {row["path"]: row for row in organization["areas"]}
+        self.assertEqual(areas["original-bots"]["preservation"], "preserve_in_place")
+        self.assertEqual(areas["original-bots"]["kind"], "legacy_preserved")
+        self.assertEqual(areas["buddy_os"]["kind"], "runtime")
+
     def test_public_and_canonical_outputs_match(self):
         with tempfile.TemporaryDirectory() as temporary:
             old_command, old_website = MODULE.COMMAND_DATA, MODULE.WEBSITE_DATA
