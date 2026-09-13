@@ -213,7 +213,7 @@ function BuddySuperpowersPanel({ onInjectPrompt }: { onInjectPrompt: (p: string)
     "Image Generation": async () => {
       const r = await fetch("/api/generate-image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: "" }) });
       const d = await r.json() as any;
-      return d.error === "Prompt is required" ? "✅ Image gen route live! (provide a prompt to generate)" : `Status: ${JSON.stringify(d).slice(0, 100)}`;
+      return d.error === "Prompt is required" ? "✅ Image route contract reachable. A configured provider and successful generated image are still required to prove rendering." : `Status: ${JSON.stringify(d).slice(0, 100)}`;
     },
     "Book Study": async () => {
       const r = await fetch("/api/buddy/study-book", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: "Think and Grow Rich", author: "Napoleon Hill" }) });

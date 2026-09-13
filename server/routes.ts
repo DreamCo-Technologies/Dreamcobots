@@ -1716,7 +1716,7 @@ export async function registerRoutes(
     res.json({
       features: [
         { name: "Vibe Coding", route: "POST /api/buddy/vibe-code", status: "live", description: "Generate full projects from description" },
-        { name: "Image Generation", route: "POST /api/generate-image", status: "live", description: "AI image generation via gpt-image-1" },
+        { name: "Image Generation", route: "POST /api/generate-image", status: "provider-credentials-required", description: "Image provider adapter; a configured key and successful live call are required before generation is proven" },
         { name: "Voice and Likeness", route: "POST /api/buddy/media/render-plan", status: "local-adapter-contract-ready", description: "Local-first adult owner or licensed-performer media with consent, provenance, labeling, license review, and measured quality gates" },
         { name: "Media Quality Lab", route: "POST /api/buddy/media/quality/candidate-plan", status: "evaluation-runtime-ready", description: "Generate multiple local candidates, score voice, image, and video evidence, prevent regressions, and allow comparison claims only after blinded statistical proof" },
         { name: "Communication Behavior", route: "POST /api/buddy/behavior/profile", status: "sandbox-ready", description: "DreamCo-owned personality and communication adaptation with professional context overrides, opt-in voice cues, and no hidden psychological or clinical inference" },
@@ -1747,7 +1747,7 @@ export async function registerRoutes(
         { name: "Install and Distribution Catalog", route: "GET /api/buddy/distribution", status: "live", description: "PWA installation plus governed packaging and publishing plans for 26 device and store targets" },
         { name: "Governed Lead Systems", route: "POST /api/buddy/lead-plan", status: "permission-gated", description: "Per-bot lead research, qualification, drafting, one-message approval, suppression, and bounded follow-up planning" },
         { name: "Code Execution", route: "POST /api/buddy/execute-code", status: "live", description: "Run JS/TS natively; simulate Python, Rust, Go, Java" },
-        { name: "Image Analysis", route: "POST /api/buddy/analyze-image", status: "live", description: "GPT-4o vision: screenshots → code, diagrams → schema" },
+        { name: "Image Analysis", route: "POST /api/buddy/analyze-image", status: "provider-credentials-required", description: "Vision provider adapter for screenshots and diagrams; live analysis requires configured credentials" },
         { name: "Agent Pipeline", route: "POST /api/buddy/agent-run", status: "live", description: "Multi-step autonomous Plan → Execute → Ship pipeline" },
         { name: "Security Scan", route: "POST /api/buddy/security-scan", status: "live", description: "SAST-level: OWASP Top 10, CWE Top 25, secret detection" },
         { name: "System Architect", route: "POST /api/buddy/architect", status: "live", description: "C4 architecture design with Mermaid + Docker Compose" },

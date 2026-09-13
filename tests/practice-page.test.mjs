@@ -45,3 +45,32 @@ test('creative studio includes rap, singing, visual production, and bounded mult
   assert.match(studioSource, /raw_audio_embedded: false/);
   assert.match(studioSource, /raw_image_embedded: false/);
 });
+
+test('creative studio wires every static button and exposes an honest permission-free media self-test', () => {
+  const buttonIds = [...studioHtml.matchAll(/<button\b[^>]*\bid="([^"]+)"[^>]*>/g)].map(([, id]) => id);
+  assert.equal(buttonIds.length > 0, true);
+  buttonIds.forEach((id) => {
+    if (id === 'build-prototype') {
+      assert.match(studioSource, /form\.addEventListener\('submit'/);
+      return;
+    }
+    assert.match(studioSource, new RegExp(`getElementById\\('${id}'\\)\\.addEventListener`), `${id} has no direct event handler`);
+  });
+  assert.match(studioHtml, /id="run-media-self-test"/);
+  assert.match(studioHtml, /without requesting camera or microphone access/);
+  assert.match(studioSource, /function runMediaSelfTest\(\)/);
+  assert.match(studioSource, /No device permission was requested and no generation claim was made/);
+  assert.match(studioSource, /Provider rendering<\/span><strong>NOT TESTED/);
+});
+
+test('creative studio provides keyless local speech without claiming it is voice cloning', () => {
+  assert.match(studioHtml, /id="browser-speech-text"/);
+  assert.match(studioHtml, /id="browser-speech-voice"/);
+  assert.match(studioHtml, /No account, cloud upload, or API key is required/);
+  assert.match(studioHtml, /This is speech synthesis, not voice cloning/);
+  assert.match(studioSource, /new SpeechSynthesisUtterance\(text\)/);
+  assert.match(studioSource, /Local Buddy voice preview completed without an ElevenLabs key/);
+  assert.match(studioSource, /browserSpeechStatus\.dataset\.activity = 'finished'/);
+  assert.match(studioSource, /\['interrupted', 'canceled'\]\.includes\(event\.error\)/);
+  assert.match(studioSource, /window\.speechSynthesis\.speak\(utterance\)/);
+});

@@ -43,6 +43,10 @@ const simulationAdditions = document.getElementById('simulation-additions');
 const simulationToGame = document.getElementById('simulation-to-game');
 const mediaQualityMode = document.getElementById('media-quality-mode');
 const mediaQualitySummary = document.getElementById('media-quality-summary');
+const mediaSelfTestResults = document.getElementById('media-self-test-results');
+const browserSpeechText = document.getElementById('browser-speech-text');
+const browserSpeechVoice = document.getElementById('browser-speech-voice');
+const browserSpeechStatus = document.getElementById('browser-speech-status');
 
 let mediaRecorder = null;
 let mediaStream = null;
@@ -191,9 +195,99 @@ function updateMediaQualitySummary() {
     : `${mode.candidate_count_per_engine} candidates per selected local engine · enable voice or likeness to create a quality plan`;
 }
 
+function runMediaSelfTest() {
+  const canvas = document.createElement('canvas');
+  const checks = [
+    ['Secure local context', window.isSecureContext || ['localhost', '127.0.0.1'].includes(location.hostname), 'Use HTTPS or localhost for camera and microphone capture.'],
+    ['Keyless system speech', Boolean(window.speechSynthesis && window.SpeechSynthesisUtterance), 'Browser speech synthesis is unavailable on this device.'],
+    ['Microphone/camera API', Boolean(navigator.mediaDevices?.getUserMedia), 'This browser cannot request local microphone or camera access.'],
+    ['Voice recorder', typeof window.MediaRecorder === 'function', 'MediaRecorder is unavailable; choosing an audio file can still work.'],
+    ['Voice analyzer', Boolean(window.AudioContext || window.webkitAudioContext), 'Local audio decoding and capture metrics are unavailable.'],
+    ['Image preview/capture', Boolean(canvas.getContext?.('2d') && canvas.toBlob), 'Canvas image capture is unavailable.'],
+    ['Local file previews', Boolean(window.Blob && URL.createObjectURL && URL.revokeObjectURL), 'Local voice and image previews are unavailable.'],
+    ['Consent fingerprints', Boolean(window.crypto?.subtle && window.TextEncoder), 'SHA-256 consent fingerprints are unavailable.'],
+    ['Voice engine catalog', Boolean(voiceEngine.options.length), 'No voice adapter records loaded.'],
+    ['Image engine catalog', Boolean(imageEngine.options.length), 'No image or portrait adapter records loaded.'],
+  ];
+  const passed = checks.filter(([, ready]) => ready).length;
+  const captureReady = checks.slice(0, 8).every(([, ready]) => ready);
+  mediaSelfTestResults.innerHTML = checks.map(([label, ready, blockedReason]) => `
+    <div><span>${ready ? 'PASS' : 'BLOCKED'} · ${escapeHtml(label)}</span><strong>${ready ? 'ready' : escapeHtml(blockedReason)}</strong></div>
+  `).join('') + `
+    <div><span>Local renderer</span><strong>SETUP REQUIRED · install and verify the selected model before generation</strong></div>
+    <div><span>Provider rendering</span><strong>NOT TESTED · backend credentials and a live provider test are required</strong></div>
+  `;
+  formStatus.textContent = `${passed}/${checks.length} browser and catalog checks passed. ${captureReady ? 'Local capture is ready when you choose to grant device permission.' : 'Review blocked checks before recording.'} No device permission was requested and no generation claim was made.`;
+  return { passed, total: checks.length, captureReady };
+}
+
+function populateBrowserVoices() {
+  const previous = browserSpeechVoice.value;
+  const voices = window.speechSynthesis?.getVoices?.() || [];
+  browserSpeechVoice.replaceChildren();
+  voices.forEach((voice, index) => {
+    const option = document.createElement('option');
+    option.value = voice.voiceURI || `${voice.name}:${voice.lang}:${index}`;
+    option.textContent = `${voice.name} · ${voice.lang}${voice.localService ? ' · local' : ''}`;
+    browserSpeechVoice.append(option);
+  });
+  if (Array.from(browserSpeechVoice.options).some(option => option.value === previous)) browserSpeechVoice.value = previous;
+  if (!browserSpeechStatus.dataset.activity) {
+    browserSpeechStatus.textContent = voices.length
+      ? `${voices.length} installed system voice${voices.length === 1 ? '' : 's'} available. No account, cloud upload, or API key is required. This is speech synthesis, not voice cloning.`
+      : 'No installed system voices were reported. You can still install OpenVoice or Chatterbox locally without an ElevenLabs key.';
+  }
+}
+
+function stopBrowserSpeech(message = 'Local speech stopped.') {
+  window.speechSynthesis?.cancel();
+  document.getElementById('stop-browser-voice').disabled = true;
+  document.getElementById('speak-browser-voice').disabled = false;
+  browserSpeechStatus.dataset.activity = 'finished';
+  browserSpeechStatus.textContent = message;
+}
+
+document.getElementById('speak-browser-voice').addEventListener('click', () => {
+  const text = browserSpeechText.value.trim();
+  if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
+    browserSpeechStatus.textContent = 'Keyless browser speech is not available on this device.';
+    return;
+  }
+  if (!text) {
+    browserSpeechStatus.textContent = 'Enter up to 1,000 characters for the local voice preview.';
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  const voices = window.speechSynthesis.getVoices();
+  const selected = voices.find(voice => voice.voiceURI === browserSpeechVoice.value)
+    || voices[browserSpeechVoice.selectedIndex];
+  if (selected) utterance.voice = selected;
+  utterance.onstart = () => {
+    document.getElementById('speak-browser-voice').disabled = true;
+    document.getElementById('stop-browser-voice').disabled = false;
+    browserSpeechStatus.dataset.activity = 'speaking';
+    browserSpeechStatus.textContent = `Speaking locally with ${selected?.name || 'the default system voice'}...`;
+  };
+  utterance.onend = () => stopBrowserSpeech('Local Buddy voice preview completed without an ElevenLabs key.');
+  utterance.onerror = event => {
+    const stopped = ['interrupted', 'canceled'].includes(event.error);
+    stopBrowserSpeech(stopped ? 'Local speech stopped.' : `Local voice preview failed: ${event.error || 'browser speech error'}.`);
+  };
+  window.speechSynthesis.speak(utterance);
+});
+document.getElementById('stop-browser-voice').addEventListener('click', () => stopBrowserSpeech());
+if (window.speechSynthesis) {
+  populateBrowserVoices();
+  window.speechSynthesis.addEventListener?.('voiceschanged', populateBrowserVoices);
+} else {
+  populateBrowserVoices();
+}
+
 mediaQualityMode.addEventListener('change', updateMediaQualitySummary);
 [voiceEngine, imageEngine, document.getElementById('commercial-media-use')]
   .forEach(control => control.addEventListener('change', updateMediaQualitySummary));
+document.getElementById('run-media-self-test').addEventListener('click', runMediaSelfTest);
 document.querySelectorAll('[data-trait]').forEach(input => input.addEventListener('input', () => {
   const output = document.querySelector(`[data-trait-output="${input.dataset.trait}"]`);
   if (output) output.value = input.value;
