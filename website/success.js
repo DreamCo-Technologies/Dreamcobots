@@ -276,7 +276,10 @@
     byId('daily-production-ready').textContent = Number(program.summary.production_ready_divisions || 0).toLocaleString();
     const roles = program.divisions[0]?.benchmark_system?.daily_operations?.worker_roles || [];
     const target = byId('daily-worker-roles');
-    roles.forEach((role) => { const chip = document.createElement('span'); chip.textContent = role; target.append(chip); });
+    roles.forEach((role) => {
+      const chip = document.createElement('a'); chip.href = `bots.html?q=${encodeURIComponent(role)}`;
+      chip.textContent = role; chip.title = `Match a registered specialist for ${role}`; target.append(chip);
+    });
   }
 
   function renderAllianceWatch() {
@@ -286,9 +289,15 @@
     const snapshot = alliance.directorySnapshot;
     byId('alliance-summary').textContent = `${alliance.name} reports ${alliance.memberDirectory.reportedSize} members. Buddy's dated directory snapshot contains ${snapshot?.records || 0} records and ${snapshot?.matchedExistingProviders || 0} normalized matches to the existing provider catalog. The lab tracks ${alliance.activeProjectWatch.length} project lanes across ${alliance.benchmarkDimensions.length} dimensions and claims no membership, endorsement, live connection, or completed live comparison.`;
     const projects = byId('alliance-projects');
-    alliance.activeProjectWatch.forEach((name) => { const row = document.createElement('span'); row.textContent = name; projects.append(row); });
+    alliance.activeProjectWatch.forEach((name) => {
+      const row = document.createElement('a'); row.href = `${alliance.officialSources.projects}#${encodeURIComponent(name.toLowerCase().replaceAll(' ', '-'))}`;
+      row.target = '_blank'; row.rel = 'noopener'; row.textContent = name; row.title = `Open the official AI Alliance projects source for ${name}`; projects.append(row);
+    });
     const dimensions = byId('alliance-dimensions');
-    alliance.benchmarkDimensions.forEach((name) => { const row = document.createElement('span'); row.textContent = name; dimensions.append(row); });
+    alliance.benchmarkDimensions.forEach((name) => {
+      const row = document.createElement('a'); row.href = `models.html?dimension=${encodeURIComponent(name)}#benchmark-runner`;
+      row.textContent = name; row.title = `Prepare a ${name} comparison`; dimensions.append(row);
+    });
   }
 
   function renderModels() {
@@ -313,7 +322,11 @@
       const name = document.createElement('strong'); name.textContent = resource.host;
       const state = document.createElement('span'); state.className = 'resource-status'; state.textContent = resource.status.replaceAll('_', ' ');
       const detail = document.createElement('span'); detail.textContent = `${resource.mention_count} repository mentions · ${resource.next_step}`;
-      row.append(name, state, detail); target.append(row);
+      const actions = document.createElement('div'); actions.className = 'resource-row-actions';
+      const connect = document.createElement('a'); connect.className = 'btn btn-outline'; connect.href = `resource-connection-center.html?resource=${encodeURIComponent(resource.host)}`; connect.textContent = 'Open source / connect';
+      const buddy = document.createElement('a'); buddy.className = 'btn btn-outline'; buddy.href = `buddy.html?prompt=${encodeURIComponent(`Research current information from the owner-selected resource ${resource.host}. First open its official source through the Resource Connection Center, cite the source and retrieval time, and do not claim a live connection until a configured adapter health check exists.`)}`; buddy.textContent = 'Research with Buddy';
+      actions.append(connect, buddy);
+      row.append(name, state, detail, actions); target.append(row);
     });
   }
 

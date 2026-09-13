@@ -99,3 +99,13 @@ test('creative studio defaults goals to local-only and records outside-resource 
   assert.match(studioSource, /Live data, accounts, transactions, publishing, downloads, and physical-world work require separately approved outside resources/);
   assert.match(studioSource, /Work offline only\. Do not call outside services/);
 });
+
+test('all fourteen music families are selectable local production inputs', () => {
+  const academy = JSON.parse(fs.readFileSync('config/buddy-creative-academy.json', 'utf8'));
+  assert.equal(academy.music_standard.genre_families.length, 14);
+  assert.match(studioSource, /function useMusicFamily\(id\)/);
+  assert.match(studioSource, /dataset\.useMusicFamily/);
+  assert.match(studioSource, /selected_genre_family: selectedMusicFamily/);
+  assert.match(studioSource, /local_generation_default: true/);
+  assert.match(studioSource, /external_publish_taken: false/);
+});

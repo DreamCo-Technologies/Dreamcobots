@@ -64,6 +64,7 @@ let voiceTakes = [];
 let latestPacket = null;
 let latestConsentReceipt = null;
 let castRoles = [];
+let selectedMusicFamily = null;
 const academy = window.BUDDY_SPECIALIZED_HUBS?.creative;
 const productionRegistry = window.BUDDY_PRODUCTION_GROUP;
 const hollywoodGroup = productionRegistry?.hollywood_production_group;
@@ -323,7 +324,7 @@ document.querySelectorAll('[data-trait]').forEach(input => input.addEventListene
   if (output) output.value = input.value;
 }));
 
-function academyCard(index, label, items, kind) {
+function academyCard(index, label, items, kind, action = null) {
   const card = document.createElement('article');
   card.className = 'studio-academy-card';
   const step = document.createElement('small');
@@ -337,6 +338,16 @@ function academyCard(index, label, items, kind) {
     list.append(row);
   });
   card.append(step, heading, list);
+  if (action) {
+    card.dataset.musicFamily = action.id;
+    if (selectedMusicFamily?.id === action.id) card.classList.add('is-selected');
+    const button = document.createElement('button');
+    button.className = 'btn btn-outline btn-sm';
+    button.type = 'button';
+    button.dataset.useMusicFamily = action.id;
+    button.textContent = selectedMusicFamily?.id === action.id ? 'Selected for project' : `Use ${action.label}`;
+    card.append(button);
+  }
   return card;
 }
 
@@ -354,14 +365,36 @@ function renderAcademy() {
       : `${rows.length} production phases · ${academy.film_standard.quality_gates.length} release gates · delivery specs verified for each target platform`;
   } else if (academyTrack.value === 'music') {
     const rows = academy.music_standard.genre_families;
-    rows.forEach((row, index) => academyGrid.append(academyCard(index, row.label, row.study, 'Family')));
-    academySummary.textContent = `${rows.length} genre families · original composition workflow · composition, recording, sample, performance, sync, voice, and likeness rights gates`;
+    rows.forEach((row, index) => academyGrid.append(academyCard(index, row.label, row.study, 'Family', row)));
+    academySummary.textContent = `${rows.length} selectable genre families · ${selectedMusicFamily ? `${selectedMusicFamily.label} selected · ` : ''}original composition workflow · composition, recording, sample, performance, sync, voice, and likeness rights gates`;
   } else {
     const rows = simulationFoundry?.domains || [];
     rows.forEach((row, index) => academyGrid.append(academyCard(index, row.label, [row.review], 'Domain')));
     academySummary.textContent = `${rows.length} simulation domains · ${simulationFoundry?.model_sources?.length || 0} governed model sources · every simulation can produce a deterministic practice-game plan`;
   }
 }
+
+function useMusicFamily(id) {
+  const family = academy?.music_standard?.genre_families?.find((item) => item.id === id);
+  if (!family) return;
+  selectedMusicFamily = family;
+  academyTrack.value = 'music';
+  const select = document.getElementById('project-type');
+  select.value = 'music_artist';
+  applyPreset('music_artist');
+  document.getElementById('project-title').value = `${family.label} Studio Project`;
+  document.getElementById('project-objective').value = `Create an original ${family.label.toLowerCase()} work that practices ${family.study.join(', ')} with cultural attribution, rights review, local production, and measured listening tests.`;
+  document.getElementById('project-subject').value = `${family.label}: ${family.study.join(', ')}`;
+  renderAcademy();
+  checkGoalOffline();
+  formStatus.textContent = `${family.label} selected. Buddy will build locally from the four study lanes and will not sample, imitate, upload, or publish without rights evidence and separate approval.`;
+  document.getElementById('project-title').focus();
+}
+
+academyGrid.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-use-music-family]');
+  if (button) useMusicFamily(button.dataset.useMusicFamily);
+});
 
 const TYPE_PRESETS = {
   game: {
@@ -1668,7 +1701,7 @@ form.addEventListener('submit', async event => {
         : ['feature_film', 'documentary', 'animated_series', 'social_live_show'].includes(type)
         ? { track: 'film', phases: academy?.film_standard?.phases?.map(item => item.id) || [], departments: hollywoodGroup?.departments?.map(item => item.id) || [], quality_gates: hollywoodGroup?.quality_gates || [] }
         : ['music_video', 'music_artist'].includes(type)
-          ? { track: 'music', genre_families: academy?.music_standard?.genre_families?.map(item => item.id) || [], rights_gates: academy?.music_standard?.rights_gates || [] }
+          ? { track: 'music', selected_genre_family: selectedMusicFamily, genre_families: academy?.music_standard?.genre_families?.map(item => item.id) || [], production_stages: academy?.music_standard?.production_stages || [], rights_gates: academy?.music_standard?.rights_gates || [], local_generation_default: true, external_publish_taken: false }
           : SIMULATION_TYPES.has(type)
             ? { track: 'simulation', domains: simulationFoundry?.domains?.map(item => item.id) || [], model_sources: simulationFoundry?.model_sources?.map(item => item.id) || [] }
           : null,
@@ -1769,6 +1802,7 @@ document.getElementById('clear-media').addEventListener('click', () => {
 
 academyTrack.addEventListener('change', renderAcademy);
 document.getElementById('academy-use').addEventListener('click', () => {
+  selectedMusicFamily = null;
   const select = document.getElementById('project-type');
   select.value = academyTrack.value === 'film'
     ? 'feature_film'

@@ -23,6 +23,14 @@ test('resource connection center offers safe setup choices without collecting se
   assert.match(script, /buddy-connection-catalog\.json/);
   assert.match(script, /pending_backend_review/);
   assert.match(script, /localStorage/);
-  assert.doesNotMatch(page + script, /password|paste.*secret|enter.*api.*key/i);
+  assert.match(page, /id="custom-add"/);
+  assert.match(page, /Post or publish/);
+  assert.match(page, /Research\/current data/);
+  assert.match(script, /exact_approval_required_for_write: true/);
+  assert.match(script, /live_connections_claimed: 0/);
+  assert.match(script, /Open official source/);
+  assert.match(script, /Use with Buddy/);
+  assert.doesNotMatch(page, /type=["']password["']/i);
+  assert.doesNotMatch(page + script, /paste.*secret|enter.*api.*key/i);
   assert.match(nav, /resource-connection-center\.html/);
 });

@@ -1,1 +1,54 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Buddy Resource Connection Center</title><link rel="stylesheet" href="styles.css"><style>.shell{max-width:1180px;margin:auto;padding:36px 20px 70px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px}.wide,.card select{box-sizing:border-box;width:100%;padding:9px;background:#0b0e12;color:#fff;border:1px solid #3b424d;border-radius:7px}.tag{font-size:.68rem;color:#65d3a3;text-transform:uppercase}.status{color:#e5c66f}.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}@media(max-width:850px){.grid{grid-template-columns:1fr}}</style></head><body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="shell"><h1>Buddy Resource Connection Center</h1><p>Every HTTPS resource host found in the repository’s JSON catalogs appears here. Choose a connection method and add a scoped request to your Buddy. Links are not automatically connected; provider terms, accounts, permissions, and a secure backend still apply.</p><input id="resource-search" class="wide" placeholder="Search a host or source list"><p id="resource-summary" class="status">Loading resource catalog…</p><section id="resource-grid" class="grid"></section></main><script src="resource-connection-center.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Buddy Resource Connection Center</title>
+  <meta name="description" content="Search every repository resource, prepare least-privilege account connections, and add approved custom resources to a personal Buddy." />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .shell{max-width:1280px;margin:auto;padding:36px 20px 70px}.panel{margin:18px 0;padding:18px;border:1px solid #303741;border-radius:12px;background:#15191f}.toolbar,.custom-grid{display:grid;grid-template-columns:2fr repeat(2,minmax(170px,1fr));gap:9px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.card{display:flex;min-width:0;flex-direction:column;background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px}.card h2{overflow-wrap:anywhere;font-size:1rem}.card p{color:var(--text2);font-size:.78rem;line-height:1.5}.wide,.card select,.toolbar input,.toolbar select,.custom-grid input,.custom-grid select{box-sizing:border-box;width:100%;min-height:42px;padding:9px;background:#0b0e12;color:#fff;border:1px solid #3b424d;border-radius:7px}.tag{font-size:.68rem;color:#65d3a3;text-transform:uppercase}.status{color:#e5c66f}.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:10px}.controls .btn{font-size:.72rem}.pager{display:flex;align-items:center;justify-content:center;gap:10px;padding:18px}.truth{border-left:3px solid #e5c66f;padding:12px;background:#201d14}.connection-list{display:grid;gap:8px}.connection-row{display:grid;grid-template-columns:1.2fr .8fr 2fr auto;gap:10px;align-items:center;padding:10px;border:1px solid #303741;border-radius:8px}.connection-row span{font-size:.75rem;color:var(--text2)}@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.toolbar,.custom-grid,.connection-row{grid-template-columns:1fr}}@media(max-width:560px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main class="shell">
+  <p class="tag">711+ repository sources · local plans · optional online adapters</p>
+  <h1>Buddy Resource Connection Center</h1>
+  <p>Every HTTPS resource host found in the repository's machine-readable catalogs gets an official-source button, a scoped connection request, and a current-research handoff. Choose a connection method and add accounts for reading, drafting, uploading, or publishing—but no account is called live until its authenticated adapter passes a health check.</p>
+  <p class="truth"><strong>A mention is not a connection.</strong> This page never collects passwords, API keys, tokens, recovery codes, or payment details. OAuth, API, MCP, webhook, passkey, SSO, and custom adapters resolve credentials through a local keychain or backend vault.</p>
+
+  <section class="panel" aria-label="Resource filters">
+    <div class="toolbar">
+      <input id="resource-search" placeholder="Search host or repository source list" />
+      <select id="resource-purpose"><option value="all">Every purpose</option><option value="research">Research/current data</option><option value="account">Connect account</option><option value="draft">Create drafts</option><option value="publish">Post or publish</option></select>
+      <select id="resource-state"><option value="all">All request states</option><option value="available">Not selected</option><option value="planned">Added to My Buddy</option></select>
+    </div>
+    <p id="resource-summary" class="status">Loading resource catalog…</p>
+  </section>
+
+  <section id="resource-grid" class="grid" aria-label="Repository resource connections"></section>
+  <nav class="pager" aria-label="Resource pages"><button id="resource-prev" class="btn btn-outline" type="button">Previous</button><span id="resource-page">Page 1</span><button id="resource-next" class="btn btn-outline" type="button">Next</button></nav>
+
+  <section class="panel" aria-labelledby="custom-resource-title">
+    <h2 id="custom-resource-title">Add a resource that is not listed</h2>
+    <p>Save an HTTPS setup, documentation, or official account URL as a local review request. Buddy will not contact it until a reviewed adapter and approval exist.</p>
+    <div class="custom-grid">
+      <input id="custom-name" placeholder="Resource or account name" />
+      <input id="custom-url" placeholder="https://official.example/setup" />
+      <select id="custom-method"><option value="oauth_pkce">OAuth + PKCE</option><option value="oauth_device">OAuth device code</option><option value="api_key">API key reference</option><option value="mcp_transport">MCP transport</option><option value="webhook_hmac">Signed webhook</option><option value="passkey_webauthn">Passkey / WebAuthn</option><option value="oidc_saml">OIDC / SAML</option><option value="custom_rest">Custom REST adapter</option></select>
+      <select id="custom-purpose"><option value="research">Research/current data</option><option value="account">Connect account</option><option value="draft">Create drafts</option><option value="publish">Post or publish</option></select>
+      <input id="custom-scope" placeholder="Smallest approved scope" />
+      <button id="custom-add" class="btn btn-primary" type="button">Add custom request</button>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="planned-title">
+    <div class="controls"><h2 id="planned-title">My connection and publishing requests</h2><button id="resource-export" class="btn btn-outline" type="button">Export review packet</button><a class="btn btn-outline" href="my-buddy.html">Open My Buddy</a></div>
+    <p>These are local choices, not verified live connections. Publishing always requires a destination adapter, exact content preview, owner approval, and an audit receipt.</p>
+    <div id="connection-list" class="connection-list"></div>
+  </section>
+</main>
+<script src="resource-connection-center.js?v=2"></script>
+</body>
+</html>
