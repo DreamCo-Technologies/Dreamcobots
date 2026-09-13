@@ -22,6 +22,10 @@ test('Actions page exposes health, filters, upgrades, safe GitHub handoff, and c
   assert.match(html, /id="actions-review-pr"/);
   assert.match(html, /Code Review Council/);
   assert.match(html, /Repository stages/);
+  assert.match(html, /id="actions-agents"/);
+  assert.match(html, /bots\.html\?div=DreamAgents/);
+  assert.match(html, /bots\.html\?div=DreamAutomation/);
+  assert.match(html, /issues-panel\.js/);
   assert.match(source, /master-directive-status\.json/);
   assert.match(source, /api\.github\.com\/repos\/\$\{REPOSITORY\}\/actions\/runs/);
   assert.match(review, /heuristic review score/);

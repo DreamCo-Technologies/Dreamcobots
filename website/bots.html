@@ -32,6 +32,18 @@
     <div><span>Capability test failures</span><strong id="fleet-capability-failure-count">...</strong></div>
   </section>
 
+  <section class="specialist-matcher" aria-labelledby="specialist-matcher-title">
+    <div><p class="fleet-call-sign">LOCAL SPECIALIST ROUTER</p><h2 id="specialist-matcher-title">Tell Buddy what you need</h2><p>Buddy scores every registered bot locally against the goal, desired result, and constraints. This is deterministic catalog matching—not proof that a bot completed the work.</p></div>
+    <form id="specialist-matcher-form">
+      <textarea id="specialist-goal" required minlength="5" placeholder="What are you trying to accomplish?"></textarea>
+      <input id="specialist-outcome" placeholder="What should the finished result look like?" />
+      <input id="specialist-constraints" placeholder="Budget, deadline, location, privacy, tools, or other limits" />
+      <select id="specialist-mode"><option value="local_only">Local only</option><option value="hybrid">Local first + approved online handoffs</option></select>
+      <button class="btn btn-primary" type="submit">Match specialists locally</button>
+    </form>
+    <div id="specialist-matches" class="specialist-matches" aria-live="polite"><p>Complete the short questionnaire to rank specialists.</p></div>
+  </section>
+
   <section class="fleet-controls" aria-label="Bot filters">
     <label class="fleet-search">
       <span>Search</span>
@@ -85,6 +97,6 @@
 </dialog>
 
 <script src="robot-avatar.js?v=1"></script>
-<script src="bots.js?v=1"></script>
+<script src="bots.js?v=3"></script>
 </body>
 </html>

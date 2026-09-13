@@ -65,6 +65,30 @@ function calculatorUrl(bot) {
   return `calculator.html?bot=${encodeURIComponent(bot.identity.slug)}`;
 }
 
+function specialistText(bot) {
+  return `${bot.identity.display_name} ${bot.identity.slug} ${bot.identity.division} ${bot.identity.category} ${bot.mission} ${bot.capability_search} ${bot.api_candidate_names.join(' ')}`.toLowerCase();
+}
+
+const SPECIALIST_STOP_WORDS = new Set(['and', 'are', 'build', 'create', 'for', 'from', 'help', 'into', 'local', 'make', 'need', 'original', 'packet', 'please', 'result', 'test', 'that', 'the', 'this', 'use', 'with']);
+const SPECIALIST_SYNONYMS = {
+  music: ['audio', 'song', 'score', 'composition', 'recording', 'vocal', 'mix', 'master'],
+  property: ['real estate', 'home', 'house', 'rental', 'mortgage', 'listing'],
+  government: ['benefits', 'public resource', 'city', 'state', 'federal', 'grant'],
+  business: ['startup', 'company', 'entrepreneur', 'revenue', 'operations'],
+  publishing: ['social', 'post', 'channel', 'video', 'content', 'audience'],
+  software: ['code', 'developer', 'repository', 'application', 'debug'],
+};
+
+function specialistTerms(value) {
+  const base = [...new Set(String(value).toLowerCase().match(/[a-z0-9][a-z0-9+-]{2,}/g) || [])]
+    .filter((term) => !SPECIALIST_STOP_WORDS.has(term));
+  const expanded = [...base];
+  Object.entries(SPECIALIST_SYNONYMS).forEach(([family, terms]) => {
+    if (base.includes(family) || terms.some((term) => base.includes(term))) expanded.push(family, ...terms);
+  });
+  return [...new Set(expanded)];
+}
+
 function renderCard(bot) {
   const apiLabel = bot.api_candidate_count ? `${bot.api_candidate_count} candidates` : 'No API catalog';
   const certification = state.certifications.get(bot.identity.slug);
@@ -88,7 +112,7 @@ function renderCard(bot) {
     </div>
     <div class="fleet-readiness ${certificationReady ? '' : 'is-warning'}"><span></span> ${certificationReady ? 'Every capability contract passed' : 'Capability evidence unavailable or incomplete'}</div>
     <div class="fleet-card-actions">
-      <button class="btn btn-outline btn-sm" type="button" data-action="prospectus" data-slug="${escapeHtml(bot.identity.slug)}">Capabilities</button>
+      <button class="btn btn-outline btn-sm" type="button" data-action="prospectus" data-slug="${escapeHtml(bot.identity.slug)}">Prospectus</button>
       <a class="btn btn-outline btn-sm" href="${calculatorUrl(bot)}">Calculator</a>
       <a class="btn btn-primary btn-sm" href="${testUrl(bot)}">Test with Buddy</a>
     </div>
@@ -102,7 +126,7 @@ function filterCatalog() {
   const tier = document.getElementById('tier-filter').value;
   const readiness = document.getElementById('readiness-filter').value;
   state.filtered = state.catalog.bots.filter((bot) => {
-    const haystack = `${bot.identity.display_name} ${bot.identity.slug} ${bot.identity.division} ${bot.identity.category} ${bot.mission} ${bot.capability_search} ${bot.api_candidate_names.join(' ')}`.toLowerCase();
+    const haystack = specialistText(bot);
     if (query && !haystack.includes(query)) return false;
     if (division !== 'all' && bot.identity.division !== division) return false;
     if (tier !== 'all' && bot.identity.tier !== tier) return false;
@@ -272,12 +296,32 @@ function renderProspectus(bot, certification) {
         ${list(bot.sandbox.checks)}
         <p class="prospectus-note">Release gate: ${escapeHtml(bot.sandbox.release_gate)}. Production gate: ${escapeHtml(bot.readiness.production_gate)}</p>
       </section>
+      <section id="bot-questionnaire-section" class="prospectus-section wide">
+        <h3>Can this specialist help? Questionnaire</h3>
+        <p class="prospectus-note">Describe the result and limits. Buddy will create a scoped local task packet. It will not infer credentials, permission, or live-provider readiness from this form.</p>
+        <form class="bot-questionnaire" data-bot-questionnaire="${escapeHtml(bot.identity.slug)}">
+          <textarea name="goal" required minlength="5" placeholder="What do you need this specialist to help accomplish?"></textarea>
+          <input name="outcome" required placeholder="Required finished result" />
+          <input name="constraints" placeholder="Budget, deadline, privacy, location, or tool limits" />
+          <select name="mode"><option value="local_only">Local-only work</option><option value="hybrid">Local first + separately approved online handoffs</option></select>
+          <div class="questionnaire-actions"><button class="btn btn-outline" type="submit">Prepare specialist task</button><a class="btn btn-primary" data-questionnaire-buddy href="${testUrl(bot)}">Open with Buddy</a></div>
+          <div class="questionnaire-result" aria-live="polite">No task packet prepared yet.</div>
+        </form>
+      </section>
     </div>
     <div class="prospectus-actions">
       <a class="btn btn-outline" href="${testUrl(bot)}">Load test prompt</a>
       <a class="btn btn-outline" href="${calculatorUrl(bot)}">Open calculator</a>
       <a class="btn btn-primary" href="${testUrl(bot)}">Test with Buddy</a>
     </div>`;
+  hydrateRobotAvatars(dialogContent);
+}
+
+function renderOfflineProspectus(bot, reason) {
+  state.activeBot = bot;
+  state.activeCertification = null;
+  const capabilities = String(bot.capability_search || '').split(' | ').filter(Boolean);
+  dialogContent.innerHTML = `<div class="prospectus-hero">${botLogo(bot)}<div><h2>${escapeHtml(bot.identity.display_name)}</h2><p>${escapeHtml(bot.mission)}</p><p class="fleet-call-sign">${escapeHtml(bot.logo.call_sign)} · ${escapeHtml(bot.identity.division)} / ${escapeHtml(bot.identity.category)}</p></div><span class="prospectus-status">Offline catalog prospectus</span></div><div class="prospectus-sections"><section class="prospectus-section wide"><h3>Cached capabilities</h3>${list(capabilities)}<p class="prospectus-note">The compact offline catalog is available, but the detailed division evidence shard was unavailable: ${escapeHtml(reason)}. This fallback does not claim detailed tests were rerun.</p></section><section class="prospectus-section wide"><h3>Cached tools</h3>${list(bot.tool_summary)}</section><section class="prospectus-section wide"><h3>Connection candidates</h3>${list(bot.api_candidate_names.length ? bot.api_candidate_names : ['No API candidate catalog'])}<p class="prospectus-note">Connection candidates are not live accounts. Online use still requires an official authorization flow, minimum scopes, a current health check, and exact approval for writes.</p></section><section id="bot-questionnaire-section" class="prospectus-section wide"><h3>Can this specialist help? Questionnaire</h3><form class="bot-questionnaire" data-bot-questionnaire="${escapeHtml(bot.identity.slug)}"><textarea name="goal" required minlength="5" placeholder="What do you need this specialist to help accomplish?"></textarea><input name="outcome" required placeholder="Required finished result" /><input name="constraints" placeholder="Budget, deadline, privacy, location, or tool limits" /><select name="mode"><option value="local_only">Local-only work</option><option value="hybrid">Local first + separately approved online handoffs</option></select><div class="questionnaire-actions"><button class="btn btn-outline" type="submit">Prepare specialist task</button><a class="btn btn-primary" data-questionnaire-buddy href="${testUrl(bot)}">Open with Buddy</a></div><div class="questionnaire-result" aria-live="polite">No task packet prepared yet.</div></form></section></div>`;
   hydrateRobotAvatars(dialogContent);
 }
 
@@ -314,7 +358,7 @@ function runCapabilityTest(capability) {
   row?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-async function openProspectus(slug) {
+async function openProspectus(slug, focusQuestionnaire = false) {
   const indexBot = state.catalog.bots.find((bot) => bot.identity.slug === slug);
   if (!indexBot) return;
   dialogContent.innerHTML = '<p>Loading repository prospectus...</p>';
@@ -329,8 +373,10 @@ async function openProspectus(slug) {
     if (!bot) throw new Error('Bot prospectus was not found in its division shard.');
     if (!certification) throw new Error('Bot capability certification was not found in its division shard.');
     renderProspectus(bot, certification);
+    if (focusQuestionnaire) document.getElementById('bot-questionnaire-section')?.scrollIntoView({ block: 'start' });
   } catch (error) {
-    dialogContent.innerHTML = `<p class="prospectus-note">${escapeHtml(error.message)}</p>`;
+    renderOfflineProspectus(indexBot, error.message);
+    if (focusQuestionnaire) document.getElementById('bot-questionnaire-section')?.scrollIntoView({ block: 'start' });
   }
 }
 
@@ -358,8 +404,19 @@ async function initialize() {
     const divisionFilter = document.getElementById('division-filter');
     divisionFilter.insertAdjacentHTML('beforeend', state.catalog.divisions.map((division) => `<option value="${escapeHtml(division.name)}">${escapeHtml(division.name)} (${division.profile_count})</option>`).join(''));
     state.filtered = [...state.catalog.bots];
+    const pageParams = new URLSearchParams(location.search);
+    const requestedQuery = pageParams.get('q');
+    if (requestedQuery) {
+      document.getElementById('bot-search').value = requestedQuery;
+      state.filtered = state.catalog.bots.filter((bot) => specialistText(bot).includes(requestedQuery.toLowerCase()));
+    }
+    const requestedDivision = pageParams.get('div');
+    if (requestedDivision && state.catalog.divisions.some((division) => division.name === requestedDivision)) {
+      divisionFilter.value = requestedDivision;
+      state.filtered = state.catalog.bots.filter((bot) => bot.identity.division === requestedDivision);
+    }
     renderPage();
-    const requestedProspectus = new URLSearchParams(location.search).get('prospectus');
+    const requestedProspectus = pageParams.get('prospectus');
     if (requestedProspectus) openProspectus(requestedProspectus);
   } catch (error) {
     results.textContent = `Fleet catalog unavailable: ${error.message}`;
@@ -381,6 +438,34 @@ grid.addEventListener('click', (event) => {
   const button = event.target.closest('[data-action="prospectus"]');
   if (button) openProspectus(button.dataset.slug);
 });
+
+document.getElementById('specialist-matcher-form').addEventListener('submit', (event) => {
+  event.preventDefault();
+  const goal = document.getElementById('specialist-goal').value.trim();
+  const outcome = document.getElementById('specialist-outcome').value.trim();
+  const constraints = document.getElementById('specialist-constraints').value.trim();
+  const mode = document.getElementById('specialist-mode').value;
+  const goalTerms = specialistTerms(goal);
+  const outcomeTerms = specialistTerms(outcome);
+  const constraintTerms = specialistTerms(constraints);
+  const terms = [...new Set([...goalTerms, ...outcomeTerms, ...constraintTerms])];
+  const ranked = state.catalog.bots.map((bot) => {
+    const haystack = specialistText(bot);
+    const matched = terms.filter((term) => haystack.includes(term));
+    const score = matched.reduce((total, term) => total + (goalTerms.includes(term) ? 5 : outcomeTerms.includes(term) ? 2 : 1), 0)
+      + (bot.readiness.buddy_chat_route === 'verified' ? 1 : 0);
+    return { bot, matched, score };
+  }).filter((item) => item.matched.length > 0).sort((a, b) => b.score - a.score || b.matched.length - a.matched.length || a.bot.identity.display_name.localeCompare(b.bot.identity.display_name)).slice(0, 8);
+  const target = document.getElementById('specialist-matches');
+  target.innerHTML = ranked.map(({ bot, matched, score }) => `<article class="specialist-match"><div><strong>${escapeHtml(bot.identity.display_name)}</strong><span>${escapeHtml(bot.identity.division)} · score ${score} · matched ${escapeHtml(matched.slice(0, 6).join(', ') || 'verified route')}</span></div><button class="btn btn-outline btn-sm" type="button" data-match-prospectus="${escapeHtml(bot.identity.slug)}">Questionnaire</button></article>`).join('') || '<p>No confident match. Try capability words such as property, music, marketing, code, government, video, security, or finance.</p>';
+  const packet = { schema: 'dreamco.specialist_match_request.v1', goal, outcome, constraints, mode, ranked_specialists: ranked.map(({ bot, score, matched }) => ({ slug: bot.identity.slug, division: bot.identity.division, score, matched })), live_execution_claimed: false };
+  sessionStorage.setItem('dreamco.latest-specialist-match.v1', JSON.stringify(packet));
+});
+
+document.getElementById('specialist-matches').addEventListener('click', (event) => {
+  const button = event.target.closest('[data-match-prospectus]');
+  if (button) openProspectus(button.dataset.matchProspectus, true);
+});
 pagination.addEventListener('click', (event) => {
   const button = event.target.closest('[data-page]');
   if (!button || button.disabled) return;
@@ -396,6 +481,21 @@ dialogContent.addEventListener('click', (event) => {
   const button = event.target.closest('[data-action="test-capability"]');
   if (!button) return;
   runCapabilityTest(decodeURIComponent(button.dataset.capability));
+});
+dialogContent.addEventListener('submit', (event) => {
+  const form = event.target.closest('[data-bot-questionnaire]');
+  if (!form) return;
+  event.preventDefault();
+  const bot = state.activeBot;
+  const data = new FormData(form);
+  const goal = String(data.get('goal') || '').trim();
+  const outcome = String(data.get('outcome') || '').trim();
+  const constraints = String(data.get('constraints') || '').trim();
+  const mode = String(data.get('mode') || 'local_only');
+  const prompt = `Route this task to ${bot.identity.display_name} (${bot.identity.slug}) in ${bot.identity.division}. Goal: ${goal}. Required result: ${outcome}. Constraints: ${constraints || 'none stated'}. Execution mode: ${mode}. Start with local repository capabilities. For online work, identify the exact official source, adapter, scope, health check, preview, and owner approval required. Do not claim a live connection or completed outside action without evidence.`;
+  const link = form.querySelector('[data-questionnaire-buddy]');
+  link.href = `buddy.html?bot=${encodeURIComponent(bot.identity.slug)}&prompt=${encodeURIComponent(prompt)}`;
+  form.querySelector('.questionnaire-result').textContent = `${bot.identity.display_name} task packet ready. Capability contracts are available; any live account or provider still needs verified connection evidence.`;
 });
 
 initialize();
