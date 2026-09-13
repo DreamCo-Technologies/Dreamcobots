@@ -64,7 +64,7 @@ test('creative studio wires every static button and exposes an honest permission
   assert.match(studioHtml, /without requesting camera or microphone access/);
   assert.match(studioSource, /function runMediaSelfTest\(\)/);
   assert.match(studioSource, /No device permission was requested and no generation claim was made/);
-  assert.match(studioSource, /Provider rendering<\/span><strong>NOT TESTED/);
+  assert.match(studioSource, /local-only mode prohibits outside provider calls/);
 });
 
 test('creative studio provides keyless local speech without claiming it is voice cloning', () => {
@@ -88,4 +88,14 @@ test('Buddy media surfaces distinguish keyless local readiness from provider ren
   assert.match(sandboxPageSource, /Generation requires a verified local renderer or configured provider/);
   assert.match(settingsPageSource, /Keyless browser speech and capture ready/);
   assert.match(settingsPageSource, /install and verify OpenVoice or Chatterbox for local cloning/);
+});
+
+test('creative studio defaults goals to local-only and records outside-resource boundaries', () => {
+  assert.match(studioHtml, /id="offline-only"[^>]*checked/);
+  assert.match(studioHtml, /id="check-goal-offline"/);
+  assert.match(studioSource, /const OUTSIDE_GOAL_RULES/);
+  assert.match(studioSource, /outside_service_calls_allowed: false/);
+  assert.match(studioSource, /provider_keys_required_for_this_packet: false/);
+  assert.match(studioSource, /Live data, accounts, transactions, publishing, downloads, and physical-world work require separately approved outside resources/);
+  assert.match(studioSource, /Work offline only\. Do not call outside services/);
 });

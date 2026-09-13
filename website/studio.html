@@ -58,6 +58,11 @@
         <input class="studio-input" id="project-title" required minlength="3" value="Fraction Quest" />
         <label class="studio-label" for="project-objective">Goal</label>
         <textarea class="studio-input" id="project-objective" required minlength="10">Teach learners to compare fractions through a playable kitchen challenge.</textarea>
+        <label class="studio-check"><input id="offline-only" type="checkbox" checked /> Local-only mode: use installed browser or device tools and do not call outside services.</label>
+        <div class="studio-button-row">
+          <button id="check-goal-offline" class="btn btn-outline btn-sm" type="button">Check goal offline</button>
+        </div>
+        <p id="goal-offline-status" class="studio-status" aria-live="polite">Offline-only is on. Check the goal to separate local work from live data, accounts, purchases, publishing, or downloads.</p>
         <div class="studio-two-col">
           <label>Subject<input class="studio-input" id="project-subject" required value="Fraction comparison" /></label>
           <label>Audience<input class="studio-input" id="project-audience" required value="Ages 9 to 11" /></label>
@@ -364,6 +369,6 @@ Preserves relationships and episode state</textarea>
 <script src="data/buddy-production-group.js?v=22"></script>
 <script src="data/buddy-local-media-engines.js?v=22"></script>
 <script src="data/buddy-media-quality-lab.js?v=22"></script>
-<script src="studio.js?v=26"></script>
+<script src="studio.js?v=27"></script>
 </body>
 </html>

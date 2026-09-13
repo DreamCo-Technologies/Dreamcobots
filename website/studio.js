@@ -47,6 +47,8 @@ const mediaSelfTestResults = document.getElementById('media-self-test-results');
 const browserSpeechText = document.getElementById('browser-speech-text');
 const browserSpeechVoice = document.getElementById('browser-speech-voice');
 const browserSpeechStatus = document.getElementById('browser-speech-status');
+const offlineOnly = document.getElementById('offline-only');
+const goalOfflineStatus = document.getElementById('goal-offline-status');
 
 let mediaRecorder = null;
 let mediaStream = null;
@@ -199,6 +201,7 @@ function runMediaSelfTest() {
   const canvas = document.createElement('canvas');
   const checks = [
     ['Secure local context', window.isSecureContext || ['localhost', '127.0.0.1'].includes(location.hostname), 'Use HTTPS or localhost for camera and microphone capture.'],
+    ['Outbound network policy', offlineOnly.checked, 'Turn on local-only mode to prohibit outside service calls.'],
     ['Keyless system speech', Boolean(window.speechSynthesis && window.SpeechSynthesisUtterance), 'Browser speech synthesis is unavailable on this device.'],
     ['Microphone/camera API', Boolean(navigator.mediaDevices?.getUserMedia), 'This browser cannot request local microphone or camera access.'],
     ['Voice recorder', typeof window.MediaRecorder === 'function', 'MediaRecorder is unavailable; choosing an audio file can still work.'],
@@ -210,16 +213,43 @@ function runMediaSelfTest() {
     ['Image engine catalog', Boolean(imageEngine.options.length), 'No image or portrait adapter records loaded.'],
   ];
   const passed = checks.filter(([, ready]) => ready).length;
-  const captureReady = checks.slice(0, 8).every(([, ready]) => ready);
+  const captureReady = checks.slice(0, 9).every(([, ready]) => ready);
   mediaSelfTestResults.innerHTML = checks.map(([label, ready, blockedReason]) => `
     <div><span>${ready ? 'PASS' : 'BLOCKED'} · ${escapeHtml(label)}</span><strong>${ready ? 'ready' : escapeHtml(blockedReason)}</strong></div>
   `).join('') + `
     <div><span>Local renderer</span><strong>SETUP REQUIRED · install and verify the selected model before generation</strong></div>
-    <div><span>Provider rendering</span><strong>NOT TESTED · backend credentials and a live provider test are required</strong></div>
+    <div><span>Provider rendering</span><strong>${offlineOnly.checked ? 'DISABLED · local-only mode prohibits outside provider calls' : 'NOT TESTED · backend credentials and a live provider test are required'}</strong></div>
   `;
   formStatus.textContent = `${passed}/${checks.length} browser and catalog checks passed. ${captureReady ? 'Local capture is ready when you choose to grant device permission.' : 'Review blocked checks before recording.'} No device permission was requested and no generation claim was made.`;
   return { passed, total: checks.length, captureReady };
 }
+
+const OUTSIDE_GOAL_RULES = [
+  { label: 'current or live data', pattern: /\b(current|today|latest|live|real[- ]?time|weather|traffic|news|listing|property history)\b/i },
+  { label: 'maps or precise location services', pattern: /\b(map|maps|gps|route|directions|nearby|location tracking)\b/i },
+  { label: 'outside account or publishing action', pattern: /\b(publish|post|upload|stream|send|email|social media|youtube|app store)\b/i },
+  { label: 'purchase, booking, or legal transaction', pattern: /\b(buy|purchase|pay|order|book|reserve|apply|file a patent|submit)\b/i },
+  { label: 'new model or software download', pattern: /\b(download|install|fetch|clone a repository|new model weights)\b/i },
+];
+
+function checkGoalOffline() {
+  const objective = document.getElementById('project-objective').value.trim();
+  const dependencies = OUTSIDE_GOAL_RULES.filter(rule => rule.pattern.test(objective)).map(rule => rule.label);
+  if (!offlineOnly.checked) {
+    goalOfflineStatus.textContent = 'Offline-only is off. Buddy may prepare an outside-service handoff, but no outside action is executed by this Studio page.';
+    return { localOnly: false, dependencies };
+  }
+  goalOfflineStatus.textContent = dependencies.length
+    ? `Local work can start, but the full goal mentions ${dependencies.join(', ')}. Buddy will keep those steps blocked and produce a local plan or prototype only.`
+    : 'This goal can proceed as a local plan or prototype with network calls disabled. Finished media still requires an installed local renderer and measured evidence.';
+  return { localOnly: true, dependencies };
+}
+
+document.getElementById('check-goal-offline').addEventListener('click', checkGoalOffline);
+offlineOnly.addEventListener('change', () => {
+  checkGoalOffline();
+  runMediaSelfTest();
+});
 
 function populateBrowserVoices() {
   const previous = browserSpeechVoice.value;
@@ -1551,6 +1581,13 @@ form.addEventListener('submit', async event => {
       subject: document.getElementById('project-subject').value.trim(),
       audience: document.getElementById('project-audience').value.trim(),
       code: { status: 'local_prototype_ready', network_default: 'off' },
+      execution_policy: {
+        mode: offlineOnly.checked ? 'local_only' : 'local_first_with_explicit_handoffs',
+        outside_service_calls_allowed: false,
+        provider_keys_required_for_this_packet: false,
+        goal_feasibility: checkGoalOffline(),
+        truth_boundary: 'Buddy can complete local computation and installed-model work only. Live data, accounts, transactions, publishing, downloads, and physical-world work require separately approved outside resources.',
+      },
       voice: {
         requested: useVoice.checked,
         status: useVoice.checked ? 'consent_verified_local_model_install_and_benchmark_required' : 'not_requested',
@@ -1685,7 +1722,10 @@ document.getElementById('send-buddy').addEventListener('click', () => {
   const showDetail = latestPacket.creator_show
     ? ` Show: ${latestPacket.creator_show.season_episode_count} ${latestPacket.creator_show.cadence} episodes across ${latestPacket.creator_show.platforms.join(', ')} with ${latestPacket.creator_show.character_library.character_count} reusable characters and ${latestPacket.creator_show.character_library.active_character_ids.length} active in this production unit.`
     : '';
-  const prompt = `Continue building ${latestPacket.title} as a ${latestPacket.project_type}. Goal: ${latestPacket.objective}.${actorDetail}${productionDetail}${mediaDetail}${simulationDetail}${showDetail} Keep rights, evidence, quality, safety, and owner approval gates active.`;
+  const executionDetail = latestPacket.execution_policy.mode === 'local_only'
+    ? ' Work offline only. Do not call outside services. Keep live-data, account, transaction, publishing, download, and physical-world steps blocked and label them as requiring separately approved resources.'
+    : ' Prepare explicit handoffs for outside services, but do not execute them without separate authorization.';
+  const prompt = `Continue building ${latestPacket.title} as a ${latestPacket.project_type}. Goal: ${latestPacket.objective}.${actorDetail}${productionDetail}${mediaDetail}${simulationDetail}${showDetail}${executionDetail} Keep rights, evidence, quality, safety, and owner approval gates active.`;
   location.href = `buddy.html?prompt=${encodeURIComponent(prompt)}`;
 });
 
