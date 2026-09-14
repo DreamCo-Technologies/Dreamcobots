@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Generate existing sandbox curriculum
         run: python3 tools/build_bot_sandbox_curriculum.py
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         if: ${{ github.event_name == 'workflow_run' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
