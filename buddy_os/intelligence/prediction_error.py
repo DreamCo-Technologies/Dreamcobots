@@ -33,4 +33,6 @@ class PredictionLedger:
     def mean_absolute_error(self) -> float:
         if not self.records:
             return 0.0
-        return sum(item.absolute_error for item in self.records) / len(self.records)
+        # Round only the reported aggregate so decimal evidence such as 0.15
+        # does not drift to 0.15000000000000002 in saved benchmark records.
+        return round(sum(item.absolute_error for item in self.records) / len(self.records), 12)

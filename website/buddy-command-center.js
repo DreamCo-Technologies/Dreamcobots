@@ -6,7 +6,7 @@
   const caps = $('cc-capabilities');
   const contract = $('cc-contract');
   const historyKey = 'dreamco.buddy.command-center.history.v1';
-  const catalog = [
+  let catalog = [
     ['Task Understanding','Turns natural language into a definition of done.'],
     ['Software Engineering','Design, code, tests, debugging and refactoring.'],
     ['Research','Find, compare and ground information with provenance.'],
@@ -18,6 +18,33 @@
     ['Open Model Engineering','Evaluate and improve locally available open models.'],
     ['Professional Training','Map tasks to skills, subjects and evidence.']
   ];
+
+  async function loadCommandCenterData() {
+    const dataStatus = $('cc-data-status');
+    const metrics = $('cc-metrics');
+    try {
+      const [indexResponse, capabilityResponse] = await Promise.all([
+        fetch('data/command-center/index.json', { cache: 'no-store' }),
+        fetch('data/command-center/capabilities.json', { cache: 'no-store' })
+      ]);
+      if (!indexResponse.ok || !capabilityResponse.ok) throw new Error(`HTTP ${indexResponse.status}/${capabilityResponse.status}`);
+      const index = await indexResponse.json();
+      const capabilityData = await capabilityResponse.json();
+      const summary = index.summary;
+      metrics.innerHTML = [
+        ['Bots', summary.bots], ['Divisions', summary.divisions], ['Capabilities', summary.capabilities],
+        ['Benchmarks', summary.benchmark_programs], ['Workflows', summary.workflows]
+      ].map(([label, value]) => `<article class="cc-metric"><strong>${Number(value).toLocaleString()}</strong><span>${label}</span></article>`).join('');
+      const generatedCapabilities = capabilityData.items.slice(0, 40).map(item => [item.name, `${item.bot_ids.length.toLocaleString()} registered bot route${item.bot_ids.length === 1 ? '' : 's'} · ${item.status.replaceAll('_', ' ')}`]);
+      if (generatedCapabilities.length) catalog = generatedCapabilities;
+      renderCaps();
+      dataStatus.textContent = `Loaded ${index.artifacts.length} hashed artifacts. Production readiness remains evidence-gated.`;
+      dataStatus.className = 'cc-status good';
+    } catch (error) {
+      dataStatus.textContent = `Generated command-center data is unavailable: ${error.message}`;
+      dataStatus.className = 'cc-status warn';
+    }
+  }
 
   function write(line) {
     const stamp = new Date().toLocaleTimeString();
@@ -84,6 +111,7 @@
   });
 
   renderCaps();
+  loadCommandCenterData();
   const prior = JSON.parse(localStorage.getItem(historyKey) || '[]');
   if (prior.length) log.textContent += prior.slice(-20).map(x => `[${x.stamp}] ${x.line}`).join('\n') + '\n';
 })();

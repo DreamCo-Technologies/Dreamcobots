@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="studio.css?v=22" />
+  <link rel="stylesheet" href="studio.css?v=23" />
 </head>
 <body class="buddy-home studio-page">
 <div id="nav-placeholder"></div><script src="nav.js"></script>
@@ -58,6 +58,11 @@
         <input class="studio-input" id="project-title" required minlength="3" value="Fraction Quest" />
         <label class="studio-label" for="project-objective">Goal</label>
         <textarea class="studio-input" id="project-objective" required minlength="10">Teach learners to compare fractions through a playable kitchen challenge.</textarea>
+        <label class="studio-check"><input id="offline-only" type="checkbox" checked /> Local-only mode: use installed browser or device tools and do not call outside services.</label>
+        <div class="studio-button-row">
+          <button id="check-goal-offline" class="btn btn-outline btn-sm" type="button">Check goal offline</button>
+        </div>
+        <p id="goal-offline-status" class="studio-status" aria-live="polite">Offline-only is on. Check the goal to separate local work from live data, accounts, purchases, publishing, or downloads.</p>
         <div class="studio-two-col">
           <label>Subject<input class="studio-input" id="project-subject" required value="Fraction comparison" /></label>
           <label>Audience<input class="studio-input" id="project-audience" required value="Ages 9 to 11" /></label>
@@ -213,6 +218,17 @@ Preserves relationships and episode state</textarea>
 
       <fieldset class="studio-fieldset">
         <legend>Creator media</legend>
+        <div class="studio-media-controls">
+          <label class="studio-label" for="browser-speech-text">Keyless Buddy voice preview</label>
+          <textarea id="browser-speech-text" class="studio-input" maxlength="1000">Hello, I am Buddy. This voice preview runs through your browser without an ElevenLabs key.</textarea>
+          <label class="studio-label" for="browser-speech-voice">Installed system voice</label>
+          <select id="browser-speech-voice" class="studio-input"></select>
+          <div class="studio-button-row">
+            <button id="speak-browser-voice" class="btn btn-outline btn-sm" type="button">Speak locally</button>
+            <button id="stop-browser-voice" class="btn btn-outline btn-sm" type="button" disabled>Stop speech</button>
+          </div>
+          <p id="browser-speech-status" class="studio-status">Uses an installed browser/system voice. No account, cloud upload, or API key is required. This is speech synthesis, not voice cloning.</p>
+        </div>
         <div class="studio-toggle-row">
           <div><strong>Use my voice</strong><small>Adult owner recording</small></div>
           <label class="studio-switch"><input id="use-voice" type="checkbox" aria-label="Use my voice" /><span></span></label>
@@ -273,6 +289,12 @@ Preserves relationships and episode state</textarea>
           <option value="fast_preview">Fast preview</option>
         </select>
         <p id="media-quality-summary" class="studio-status">Buddy will compare several local candidates and keep only an evidence-backed winner.</p>
+        <div class="studio-button-row">
+          <button id="run-media-self-test" class="btn btn-outline btn-sm" type="button">Run media self-test</button>
+        </div>
+        <div id="media-self-test-results" class="studio-analysis" aria-live="polite">
+          <p>Run the self-test to check local browser capture, preview, hashing, engine catalogs, and renderer setup without requesting camera or microphone access.</p>
+        </div>
         <p class="studio-guardrail">A named provider comparison is a benchmark target, not a quality claim. Buddy must pass identical fixtures, blind review, statistical confidence, rights, and regression gates before it can claim an advantage.</p>
       </fieldset>
 
@@ -297,7 +319,7 @@ Preserves relationships and episode state</textarea>
       </fieldset>
 
       <div class="studio-action-row">
-        <button class="btn btn-primary" type="submit">Build prototype</button>
+        <button id="build-prototype" class="btn btn-primary" type="submit">Build prototype</button>
         <button id="download-consent" class="btn btn-outline" type="button" disabled>Save consent receipt</button>
         <button id="clear-media" class="btn btn-outline" type="button">Delete local media</button>
       </div>
@@ -347,6 +369,6 @@ Preserves relationships and episode state</textarea>
 <script src="data/buddy-production-group.js?v=22"></script>
 <script src="data/buddy-local-media-engines.js?v=22"></script>
 <script src="data/buddy-media-quality-lab.js?v=22"></script>
-<script src="studio.js?v=22"></script>
+<script src="studio.js?v=28"></script>
 </body>
 </html>

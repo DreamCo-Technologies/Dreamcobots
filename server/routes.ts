@@ -24,6 +24,7 @@ import { db } from "./db";
 import { batchProcessWithSSE } from "./provider_integrations/batch";
 import { registerAudioRoutes } from "./provider_integrations/audio";
 import { registerImageRoutes } from "./provider_integrations/image";
+import { registerOAuthLoginRoutes } from "./oauth-login";
 import {
   connectionPlanRequestSchema,
   connectionStatusUpdateSchema,
@@ -86,11 +87,20 @@ import {
   matchDemandReasonToModels,
 } from "./demand-model-policy";
 import {
+  BUDDY_LEARNING_STRATEGIES,
+  buddyLearningEvidenceRequestSchema,
+  buddyLearningStudyRequestSchema,
+  buddyLearningStudyResultsSchema,
+  createBuddyLearningStudy,
   createOpenModelComparisonPlan,
+  createBuddyOpenCoreManifest,
+  evaluateBuddyLearningEvidence,
+  evaluateBuddyLearningStudy,
   createRepositoryTrackingPlan,
   createOpenSourceSandboxPlan,
   OPEN_MODEL_CATALOG,
   openModelComparisonRequestSchema,
+  buddyOpenCoreManifestRequestSchema,
   openSourceSandboxPlanRequestSchema,
   repositoryTrackingPlanRequestSchema,
 } from "./open-model-lab-policy";
@@ -219,6 +229,15 @@ import {
   salesAcademyRequestSchema,
   voiceSandboxRequestSchema,
 } from "./workforce-engine";
+import {
+  BUDDY_EXPERT_MODE,
+  createBuddyExpertSprint,
+  createBuddyInventionProject,
+  evaluateBuddyExpertSprint,
+  expertSprintEvidenceSchema,
+  expertSprintRequestSchema,
+  inventionProjectRequestSchema,
+} from "./expert-mode-policy";
 
 const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
@@ -1697,7 +1716,7 @@ export async function registerRoutes(
     res.json({
       features: [
         { name: "Vibe Coding", route: "POST /api/buddy/vibe-code", status: "live", description: "Generate full projects from description" },
-        { name: "Image Generation", route: "POST /api/generate-image", status: "live", description: "AI image generation via gpt-image-1" },
+        { name: "Image Generation", route: "POST /api/generate-image", status: "provider-credentials-required", description: "Image provider adapter; a configured key and successful live call are required before generation is proven" },
         { name: "Voice and Likeness", route: "POST /api/buddy/media/render-plan", status: "local-adapter-contract-ready", description: "Local-first adult owner or licensed-performer media with consent, provenance, labeling, license review, and measured quality gates" },
         { name: "Media Quality Lab", route: "POST /api/buddy/media/quality/candidate-plan", status: "evaluation-runtime-ready", description: "Generate multiple local candidates, score voice, image, and video evidence, prevent regressions, and allow comparison claims only after blinded statistical proof" },
         { name: "Communication Behavior", route: "POST /api/buddy/behavior/profile", status: "sandbox-ready", description: "DreamCo-owned personality and communication adaptation with professional context overrides, opt-in voice cues, and no hidden psychological or clinical inference" },
@@ -1728,7 +1747,7 @@ export async function registerRoutes(
         { name: "Install and Distribution Catalog", route: "GET /api/buddy/distribution", status: "live", description: "PWA installation plus governed packaging and publishing plans for 26 device and store targets" },
         { name: "Governed Lead Systems", route: "POST /api/buddy/lead-plan", status: "permission-gated", description: "Per-bot lead research, qualification, drafting, one-message approval, suppression, and bounded follow-up planning" },
         { name: "Code Execution", route: "POST /api/buddy/execute-code", status: "live", description: "Run JS/TS natively; simulate Python, Rust, Go, Java" },
-        { name: "Image Analysis", route: "POST /api/buddy/analyze-image", status: "live", description: "GPT-4o vision: screenshots → code, diagrams → schema" },
+        { name: "Image Analysis", route: "POST /api/buddy/analyze-image", status: "provider-credentials-required", description: "Vision provider adapter for screenshots and diagrams; live analysis requires configured credentials" },
         { name: "Agent Pipeline", route: "POST /api/buddy/agent-run", status: "live", description: "Multi-step autonomous Plan → Execute → Ship pipeline" },
         { name: "Security Scan", route: "POST /api/buddy/security-scan", status: "live", description: "SAST-level: OWASP Top 10, CWE Top 25, secret detection" },
         { name: "System Architect", route: "POST /api/buddy/architect", status: "live", description: "C4 architecture design with Mermaid + Docker Compose" },
@@ -3421,6 +3440,97 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     });
   });
 
+  app.get("/api/buddy/open-core/catalog", (_req, res) => {
+    res.json(OPEN_MODEL_CATALOG.buddy_open_core);
+  });
+
+  app.get("/api/buddy/open-core/learning-strategies", (_req, res) => {
+    res.json({
+      ...BUDDY_LEARNING_STRATEGIES,
+      summary: {
+        techniques: BUDDY_LEARNING_STRATEGIES.techniques.length,
+        categories: new Set(BUDDY_LEARNING_STRATEGIES.techniques.map((item) => item.category)).size,
+        failureControls: BUDDY_LEARNING_STRATEGIES.failure_controls.length,
+        liveTrialsRun: 0,
+      },
+      trainingAdaptersImplemented: false,
+    });
+  });
+
+  app.get("/api/buddy/expert-mode/catalog", (_req, res) => {
+    res.json(BUDDY_EXPERT_MODE);
+  });
+
+  app.post("/api/buddy/expert-mode/sprint", (req, res) => {
+    try {
+      const request = expertSprintRequestSchema.parse(req.body);
+      res.status(201).json(createBuddyExpertSprint(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy Expert Mode sprint creation failed." });
+    }
+  });
+
+  app.post("/api/buddy/expert-mode/evaluate", (req, res) => {
+    try {
+      const evidence = expertSprintEvidenceSchema.parse(req.body);
+      res.status(200).json(evaluateBuddyExpertSprint(evidence));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy Expert Mode evidence review failed." });
+    }
+  });
+
+  app.post("/api/buddy/inventions/project", (req, res) => {
+    try {
+      const request = inventionProjectRequestSchema.parse(req.body);
+      res.status(201).json(createBuddyInventionProject(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy invention project creation failed." });
+    }
+  });
+
+  app.post("/api/buddy/open-core/manifest", (req, res) => {
+    try {
+      const request = buddyOpenCoreManifestRequestSchema.parse(req.body);
+      res.status(202).json(createBuddyOpenCoreManifest(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy Open Core manifest failed." });
+    }
+  });
+
+  app.post("/api/buddy/open-core/learning-evidence", (req, res) => {
+    try {
+      const request = buddyLearningEvidenceRequestSchema.parse(req.body);
+      res.status(200).json(evaluateBuddyLearningEvidence(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy learning evidence review failed." });
+    }
+  });
+
+  app.post("/api/buddy/open-core/learning-study", (req, res) => {
+    try {
+      const request = buddyLearningStudyRequestSchema.parse(req.body);
+      res.status(201).json(createBuddyLearningStudy(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy learning study creation failed." });
+    }
+  });
+
+  app.post("/api/buddy/open-core/learning-study/evaluate", (req, res) => {
+    try {
+      const request = buddyLearningStudyResultsSchema.parse(req.body);
+      res.status(200).json(evaluateBuddyLearningStudy(request));
+    } catch (error) {
+      if (error instanceof z.ZodError) return res.status(400).json(zodValidationError(error));
+      res.status(400).json({ error: error instanceof Error ? error.message : "Buddy learning study evaluation failed." });
+    }
+  });
+
   app.post("/api/buddy/open-model-lab/comparison-plan", async (req, res) => {
     const killSwitch = await storage.getSetting("kill_switch");
     if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
@@ -4411,6 +4521,7 @@ Return ONLY valid JSON with this exact shape:
   });
 
   // Register media provider routes after core policies are installed.
+  registerOAuthLoginRoutes(app);
   registerImageRoutes(app);
   registerAudioRoutes(app);
 

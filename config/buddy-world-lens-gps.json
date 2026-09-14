@@ -1,0 +1,49 @@
+{
+  "schema": "dreamco.buddy.world_lens_gps.v1",
+  "name": "Buddy World Lens",
+  "purpose": "Turn owner-approved device GPS into a local-first spatial workspace for personal waypoints and Buddy task packets.",
+  "inspiration": {
+    "project": "God's Eye View by Bilawal Sidhu",
+    "source": "https://github.com/bilawalsidhu/gods-eye-view",
+    "license": "MIT",
+    "adaptation": "Independent DreamCo implementation using its own interface, language, code, and local-first GPS scope. No upstream code or media is included."
+  },
+  "evidence_status": "implemented",
+  "location_modes": ["permission_required", "single_fix", "owner_started_live_watch", "manual_coordinate"],
+  "truth_states": ["permission_required", "requesting", "live", "stale", "manual", "unavailable", "error"],
+  "privacy": {
+    "browser_storage": "Waypoints remain in this browser until the owner clears them.",
+    "network_default": "External maps and property searches remain off until the owner enables them and accepts the provider disclosure.",
+    "people_are_not_targets": true,
+    "background_tracking": "page_open_only; native-app background service required for closed-app tracking",
+    "stop_control_required": true
+  },
+  "safety": {
+    "navigation_use": false,
+    "emergency_use": false,
+    "surveillance_use": false,
+    "facial_identification": false,
+    "accuracy_must_be_visible": true,
+    "freshness_must_be_visible": true
+  },
+    "evidence_refs": [
+    "website/world-lens.html",
+    "website/world-lens.js",
+    "tests/world-lens-page.test.mjs"
+  ],
+  "connections": {
+    "external_map": "owner_enabled OpenStreetMap embed; sends the viewed coordinates to OpenStreetMap",
+    "property_provider": "owner-configured HTTPS endpoint returning authorized listing JSON; RESO-shaped fields and source-attributed history are supported",
+    "geocoder": "owner-configured HTTPS backend for resolving voice-requested place names without exposing provider secrets",
+    "automatic_property_scan": "runs only while live GPS and the property connection toggle are both enabled"
+  },
+  "map_modes": ["world_lens", "google", "combined"],
+  "voice_commands": ["mark here as NAME note NOTE", "mark LATITUDE LONGITUDE as NAME note NOTE", "mark PLACE as NAME note NOTE", "stop listening"],
+  "property_record_groups": ["listing", "sale_history", "tax_assessment", "deed", "permits", "zoning", "parcel", "hazards", "utilities", "schools", "inspection", "appraisal", "repair_quotes", "insurance", "title_and_liens", "rental_history"],
+  "people_profiles": {
+    "consent_required": true,
+    "revocable": true,
+    "allowed": ["display name", "relationship", "notes", "user-selected profile photo", "consent timestamp", "shared coordinates"],
+    "disallowed": ["covert tracking", "face recognition", "biometric templates", "identification of unknown people"]
+  }
+}

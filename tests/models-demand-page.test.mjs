@@ -27,3 +27,12 @@ test('static Models page only probes a backend when explicitly configured', () =
   assert.match(script, /get\('backend'\) === '1'/);
   assert.match(script, /if \(!backendBase\) return/);
 });
+
+test('all model rows expose official signup and bounded Buddy setup', () => {
+  assert.match(html, /Signup &amp; Buddy/);
+  assert.match(script, /Sign up \/ connect/);
+  assert.match(script, /Buddy setup/);
+  assert.match(script, /terms, identity checks, CAPTCHA, MFA, payment, and final account creation/);
+  assert.match(script, /Do not ask for or store a password, raw token, API key, recovery code, or payment data/);
+  assert.match(script, /Do not claim the model is live until the exact model probe passes/);
+});

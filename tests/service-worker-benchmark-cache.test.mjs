@@ -5,8 +5,10 @@ import test from 'node:test';
 const source = readFileSync('website/service-worker.js', 'utf8');
 
 test('service worker versions and caches benchmark Pages assets together', () => {
-  assert.match(source, /buddy-shell-v54/);
-  assert.match(source, /buddy-runtime-v54/);
+  const shell = source.match(/buddy-shell-v(\d+)/)?.[1];
+  const runtime = source.match(/buddy-runtime-v(\d+)/)?.[1];
+  assert.ok(shell);
+  assert.equal(runtime, shell);
   assert.match(source, /\.\/actions\.html/);
   assert.match(source, /\.\/data\/actions-health-report\.json/);
   assert.match(source, /\.\/data\/buddy-demand-ontology\.js\?v=1/);

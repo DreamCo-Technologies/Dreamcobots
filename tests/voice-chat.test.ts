@@ -74,8 +74,8 @@ async function waitForServer(url: string, timeoutMs: number): Promise<void> {
 
 function startServer(): ChildProcess {
   const server = spawn(
-    "npx",
-    ["tsx", "server/index.ts"],
+    process.execPath,
+    ["--import", "tsx", "server/index.ts"],
     {
       env: { ...process.env, PORT: String(TEST_PORT), NODE_ENV: "test" },
       stdio: ["ignore", "pipe", "pipe"],
@@ -93,6 +93,11 @@ function startServer(): ChildProcess {
 async function runVoiceChatTest(): Promise<void> {
   console.log("\nVoice Chat Integration Test");
   console.log("===========================");
+
+  if (!process.env.DATABASE_URL || !process.env.AI_INTEGRATIONS_OPENAI_API_KEY) {
+    console.log("\n  ⚠  SKIPPED — DATABASE_URL and AI_INTEGRATIONS_OPENAI_API_KEY are required for the live voice integration test.\n");
+    return;
+  }
 
   let server: ChildProcess | null = null;
   let conversationId: number | null = null;

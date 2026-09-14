@@ -23,6 +23,19 @@ test('Success Center exposes profile, tracker, production, alliance, trust, mode
   }
 });
 
+test('every resource row links to connection setup and a citation-first Buddy research task', () => {
+  assert.match(script, /resource-connection-center\.html\?resource=/);
+  assert.match(script, /Research with Buddy/);
+  assert.match(script, /cite the source and retrieval time/);
+  assert.match(script, /do not claim a live connection/);
+});
+
+test('benchmark roles and Alliance watch items are clickable', () => {
+  assert.match(script, /bots\.html\?q=/);
+  assert.match(script, /alliance\.officialSources\.projects/);
+  assert.match(script, /models\.html\?dimension=/);
+});
+
 test('Success Center renders stored content without HTML injection', () => {
   assert.doesNotMatch(script, /innerHTML\s*=/);
   assert.match(script, /textContent\s*=/);

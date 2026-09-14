@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Buddy Proof-Carrying Learning | DreamCo</title>
+  <meta name="description" content="Verify repeatable Buddy learning improvements before any model release.">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .lab{max-width:1180px;margin:auto;padding:42px 20px 80px}.hero{padding:32px;border:1px solid #334155;border-radius:24px;background:radial-gradient(circle at top right,#3b1f66,#111827 52%)}.metrics,.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{padding:16px;border:1px solid #334155;border-radius:14px;background:#111827}.metrics strong{display:block;font-size:1.5rem}.muted{color:#a9b4c6}.form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.form label{display:grid;gap:6px}.form input,.form select{padding:10px;border:1px solid #475569;border-radius:8px;background:#0b1020;color:#fff}.wide{grid-column:1/-1}.checks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.gate{display:flex;justify-content:space-between;gap:12px}.pass{color:#86efac}.fail{color:#fca5a5}@media(max-width:760px){.metrics,.grid,.form,.checks{grid-template-columns:1fr}.wide{grid-column:auto}}
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div><script src="nav.js"></script>
+  <main class="lab">
+    <header class="hero">
+      <p>DreamCo-owned open-weight learning system</p>
+      <h1>Buddy Proof-Carrying Learning</h1>
+      <p>Buddy may propose a new adapter or checkpoint, but it cannot call that change learned—or release it—until repeat runs improve a separate hidden holdout without unacceptable capability or safety regression.</p>
+      <div class="metrics"><div><strong id="method-count">0</strong><span>research-backed techniques</span></div><div><strong id="failure-count">0</strong><span>failure controls</span></div><div><strong id="cycle-count">0</strong><span>required lifecycle gates</span></div></div>
+    </header>
+    <section>
+      <h2>Living learning-strategy catalog</h2>
+      <p class="muted">Catalogued means Buddy knows how to compare the idea. It does not mean a training adapter or trained checkpoint exists.</p>
+      <div class="actions"><label>Category <select id="category-filter"></select></label><label>Goal <select id="objective-filter"></select></label></div>
+      <div id="method-grid" class="grid"></div>
+    </section>
+    <section><h2>Failure controls</h2><p class="muted">A high reasoning score cannot hide repetition, unreadable answers, unintended language mixing, privacy leakage, contamination, forgetting, or reward hacking.</p><div id="failure-grid" class="grid"></div></section>
+    <section class="card">
+      <h2>Build a controlled study matrix</h2>
+      <p class="muted">Buddy recommends techniques for the goal, runs every selected technique on the same fixtures and seeds, and reserves the hidden holdout for evaluation. Creating this matrix does not start training.</p>
+      <form id="study-form" class="form">
+        <label>Study ID<input id="study-id" value="buddy-study-efficiency-001" required></label>
+        <label>Capability<input id="study-capability" value="reasoning-and-tool-use" required></label>
+        <label>Base release<input id="study-base-release" value="buddy-open-core-0.1" required></label>
+        <label>Learning objective<select id="study-objective"></select></label>
+        <label>Compute ceiling<select id="study-compute"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="very_high">Very high</option></select></label>
+        <label>Maximum techniques<input id="study-technique-count" type="number" min="2" max="12" value="6" required></label>
+        <label>Repeat-run seeds<input id="study-seeds" value="1729, 2718, 31415" required></label>
+        <label>Maximum GPU-hours<input id="study-gpu-hours" type="number" min="0" value="0" step="0.1" required></label>
+        <label>Maximum cost (USD)<input id="study-cost" type="number" min="0" value="0" step="0.01" required></label>
+        <label class="wide">Approved dataset-manifest SHA-256<input id="study-dataset-hash" value="cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" pattern="[a-fA-F0-9]{64}" required></label>
+        <label class="wide">Separate hidden-holdout SHA-256<input id="study-holdout-hash" value="dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd" pattern="[a-fA-F0-9]{64}" required></label>
+        <label class="wide"><input id="study-owner-approval" type="checkbox"> Owner approved sandbox training</label>
+        <div class="wide actions"><button class="btn btn-primary" type="submit">Build study matrix</button><button id="download-study" class="btn btn-outline" type="button" disabled>Download study JSON</button></div>
+      </form>
+      <p id="study-status" class="muted" aria-live="polite">No training study has been created.</p>
+      <div id="study-grid" class="grid"></div>
+    </section>
+    <section><h2>What makes Buddy different</h2><div id="innovation-grid" class="grid"></div></section>
+    <section><h2>Published research baseline</h2><p class="muted">Buddy builds on published ideas while keeping its comparison status honest until same-task results exist.</p><div id="reference-grid" class="grid"></div></section>
+    <section class="card">
+      <h2>Evaluate a learning evidence packet</h2>
+      <p class="muted">Enter at least three normalized 0–1 scores for every field. This local evaluator validates evidence; it does not train, alter, or publish model weights.</p>
+      <form id="learning-form" class="form">
+        <label>Cycle ID<input id="cycle-id" value="buddy-coding-adapter-001" required></label>
+        <label>Base release<input id="base-release" value="buddy-open-core-0.1" required></label>
+        <label>Capability<input id="capability-id" value="typescript-bug-repair" required></label>
+        <label>Method<select id="method"></select></label>
+        <label>Baseline scores<input id="baseline" value="0.55, 0.57, 0.56" required></label>
+        <label>Hidden holdout before<input id="holdout-before" value="0.60, 0.61, 0.59" required></label>
+        <label>Hidden holdout after<input id="holdout-after" value="0.82, 0.81, 0.83" required></label>
+        <label>Regression suite before<input id="regression-before" value="0.90, 0.91, 0.89" required></label>
+        <label>Regression suite after<input id="regression-after" value="0.90, 0.90, 0.89" required></label>
+        <label>Safety suite before<input id="safety-before" value="0.93, 0.94, 0.95" required></label>
+        <label>Safety suite after<input id="safety-after" value="0.95, 0.95, 0.96" required></label>
+        <label>Grader version<input id="grader-version" value="buddy-grader-1.0.0" required></label>
+        <label class="wide">Approved-source manifest SHA-256<input id="source-hash" value="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" pattern="[a-fA-F0-9]{64}" required></label>
+        <label class="wide">Training artifact SHA-256<input id="artifact-hash" value="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" pattern="[a-fA-F0-9]{64}" required></label>
+        <fieldset class="wide"><legend>Required controls</legend><div class="checks"><label><input id="approved-sources" type="checkbox" checked> Approved sources only</label><label><input id="provenance" type="checkbox" checked> License and provenance verified</label><label><input id="privacy" type="checkbox" checked> Private data excluded or consented</label><label><input id="sandbox" type="checkbox" checked> Sandbox training passed</label><label><input id="owner-approval" type="checkbox"> Owner release approval</label></div></fieldset>
+        <div class="wide actions"><button class="btn btn-primary" type="submit">Evaluate evidence</button><button id="download-evidence" class="btn btn-outline" type="button" disabled>Download evidence JSON</button><a class="btn btn-outline" href="buddy-open-core.html">Open release builder</a></div>
+      </form>
+      <p id="learning-status" class="muted" aria-live="polite">No learning claim has been evaluated.</p>
+      <div id="gate-results" class="grid"></div>
+    </section>
+    <section><h2>Required learning lifecycle</h2><div id="cycle-grid" class="grid"></div></section>
+  </main>
+  <script src="data/buddy-open-model-coding-lab.js"></script>
+  <script src="data/buddy-learning-strategies.js"></script>
+  <script src="buddy-learning-lab.js"></script>
+</body>
+</html>

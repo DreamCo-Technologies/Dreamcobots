@@ -1,0 +1,21 @@
+{
+  "schema": "dreamco.buddy.global_location_search.v1",
+  "claim": "Extensible connector catalog; entries are discoverable resources, not proof of an active API connection.",
+  "categories": ["rentals", "property_sale", "jobs", "food", "shelter", "healthcare", "government", "transit", "any"],
+  "adapter_contract": {
+    "request": ["q", "category", "lat", "lon", "radiusKm"],
+    "response": ["name", "address", "latitude", "longitude", "source", "updatedAt", "url"],
+    "requirements": ["authorized HTTPS endpoint", "source attribution", "freshness", "terms and license compliance", "no browser-stored secrets"]
+  },
+  "official_starting_points": [
+    {"id":"eures","name":"EURES","categories":["jobs"],"jurisdiction":"EU/EEA and Switzerland","url":"https://eures.europa.eu/","status":"official_search_link"},
+    {"id":"usajobs","name":"USAJOBS","categories":["jobs"],"jurisdiction":"United States federal","url":"https://www.usajobs.gov/","status":"official_search_link"},
+    {"id":"career_one_stop","name":"CareerOneStop","categories":["jobs"],"jurisdiction":"United States","url":"https://www.careeronestop.org/","status":"official_search_link"},
+    {"id":"usa_housing_help","name":"USAGov Housing Help","categories":["rentals","shelter","government"],"jurisdiction":"United States","url":"https://www.usa.gov/housing-help","status":"official_resource_link"},
+    {"id":"hud_resource_locator","name":"HUD Resource Locator","categories":["rentals","shelter","government"],"jurisdiction":"United States","url":"https://resources.hud.gov/","status":"official_resource_link"},
+    {"id":"findhelp","name":"Findhelp","categories":["food","shelter","healthcare","government"],"jurisdiction":"United States","url":"https://www.findhelp.org/","status":"external_search_link"},
+    {"id":"openstreetmap","name":"OpenStreetMap","categories":["any","transit"],"jurisdiction":"Global","url":"https://www.openstreetmap.org/","status":"community_map_setup_required"},
+    {"id":"reso","name":"Real Estate Standards Organization","categories":["rentals","property_sale"],"jurisdiction":"Standards/global implementations","url":"https://www.reso.org/","status":"standards_and_provider_setup"}
+  ],
+  "privacy": {"unknown_person_search":false,"covert_tracking":false,"consent_required_for_people":true,"external_requests":"only_to_user_configured_endpoint"}
+}
