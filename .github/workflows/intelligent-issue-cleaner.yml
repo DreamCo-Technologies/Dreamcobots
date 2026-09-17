@@ -1,0 +1,52 @@
+name: Intelligent Issue Cleaner
+
+# Processes up to 500 open issues every hour.
+# Closes superseded auto-filed CI failure tickets; keeps newest signal per workflow.
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Set to true to log actions without closing issues"
+        required: false
+        default: "false"
+      batch_size:
+        description: "Max issues to scan this run"
+        required: false
+        default: "500"
+      keep_per_workflow:
+        description: "Newest CI failure issues to keep per workflow"
+        required: false
+        default: "2"
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: intelligent-issue-cleaner
+  cancel-in-progress: false
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_REPOSITORY: ${{ github.repository }}
+      BATCH_SIZE: ${{ github.event.inputs.batch_size || '500' }}
+      KEEP_PER_WORKFLOW: ${{ github.event.inputs.keep_per_workflow || '2' }}
+      DRY_RUN: ${{ github.event.inputs.dry_run == 'true' && '1' || '0' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run intelligent cleaner
+        run: python3 tools/issue_cleaner/clean_issues.py
