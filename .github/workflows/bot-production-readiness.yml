@@ -1,0 +1,66 @@
+name: Bot Production Readiness
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "apply = fill missing fields and markdown; check = audit only"
+        required: false
+        default: "apply"
+  schedule:
+    # Weekly Sunday 06:17 UTC — keep profiles complete
+    - cron: "17 6 * * 0"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bot-production-readiness
+  cancel-in-progress: false
+
+jobs:
+  ensure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run production readiness tool
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event.inputs.mode || 'apply' }}" = "check" ]; then
+            python3 tools/ensure_bots_production_ready.py --check
+          else
+            python3 tools/ensure_bots_production_ready.py
+          fi
+
+      - name: Commit profile updates
+        if: ${{ (github.event.inputs.mode || 'apply') != 'check' }}
+        run: |
+          set -euo pipefail
+          git config user.name "dreamco-bot-readiness"
+          git config user.email "bot-readiness@users.noreply.github.com"
+          git add App_bots bots reports/BOT_PRODUCTION_READINESS.md config/generated/bot-production-readiness.json || true
+          if git diff --staged --quiet; then
+            echo "No profile changes to commit"
+          else
+            git commit -m "chore: ensure bot production profile completeness"
+            git push
+          fi
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bot-production-readiness-${{ github.run_id }}
+          path: |
+            reports/BOT_PRODUCTION_READINESS.md
+            config/generated/bot-production-readiness.json
+          if-no-files-found: warn
+          retention-days: 14
