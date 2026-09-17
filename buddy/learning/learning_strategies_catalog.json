@@ -1,0 +1,207 @@
+{
+  "schema": "dreamco.learning_strategies.v1",
+  "version": "1.0.0",
+  "truth_boundary": "Strategies describe how Buddy and bots improve over time. Promotion still requires regression gates and owner approval.",
+  "strategies": [
+    {
+      "id": "spaced_repetition",
+      "name": "Spaced Repetition",
+      "family": "memory",
+      "summary": "Revisit skills on expanding intervals to retain mastery.",
+      "signals": ["quiz_fail", "long_idle"],
+      "test": "Schedule review items at day 1, 3, 7; mark retained if passed twice.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "active_recall",
+      "name": "Active Recall",
+      "family": "memory",
+      "summary": "Test retrieval instead of re-reading notes.",
+      "signals": ["study_session"],
+      "test": "Hide notes; answer; reveal; score accuracy.",
+      "sell_tier": "free",
+      "status": "catalogued"
+    },
+    {
+      "id": "interleaving",
+      "name": "Interleaving",
+      "family": "practice",
+      "summary": "Mix related skill types in one practice block.",
+      "signals": ["plateau"],
+      "test": "Alternate 3 task types; compare vs blocked practice.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "deliberate_practice",
+      "name": "Deliberate Practice",
+      "family": "practice",
+      "summary": "Target weakest subskill with immediate feedback.",
+      "signals": ["low_benchmark_component"],
+      "test": "Isolate lowest rubric score; run 5 focused drills.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "error_analysis",
+      "name": "Error Analysis",
+      "family": "failure_driven",
+      "summary": "Cluster failures by root cause; fix causes not symptoms.",
+      "signals": ["ci_failure", "user_thumbs_down"],
+      "test": "Bucket 10 failures; name root causes; propose one fix each.",
+      "sell_tier": "free",
+      "status": "catalogued"
+    },
+    {
+      "id": "curriculum_learning",
+      "name": "Curriculum Learning",
+      "family": "sequencing",
+      "summary": "Train from easy → hard examples.",
+      "signals": ["new_capability"],
+      "test": "Order tasks by difficulty; unlock next only after pass.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "contrastive",
+      "name": "Contrastive Learning",
+      "family": "discrimination",
+      "summary": "Learn boundaries by comparing good vs bad examples.",
+      "signals": ["style_drift"],
+      "test": "Present pair good/bad; state rule that separates them.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "meta_learning",
+      "name": "Meta-Learning",
+      "family": "meta",
+      "summary": "Learn which strategy works for which task class.",
+      "signals": ["strategy_mismatch"],
+      "test": "Log strategy used vs outcome; update strategy→task map.",
+      "sell_tier": "elite",
+      "status": "catalogued"
+    },
+    {
+      "id": "reinforcement_from_feedback",
+      "name": "Reinforcement from Feedback",
+      "family": "feedback",
+      "summary": "Increase weight of actions that earn positive outcomes.",
+      "signals": ["user_accept", "benchmark_up"],
+      "test": "Adjust weights only after N≥5 outcomes; require regression gate.",
+      "sell_tier": "elite",
+      "status": "catalogued"
+    },
+    {
+      "id": "imitation_learning",
+      "name": "Imitation Learning",
+      "family": "demonstration",
+      "summary": "Clone expert traces (approved human or golden runs).",
+      "signals": ["golden_trace_added"],
+      "test": "Match expert steps ≥80% on held-out golden set.",
+      "sell_tier": "enterprise",
+      "status": "catalogued"
+    },
+    {
+      "id": "self_play",
+      "name": "Self-Play / Self-Challenge",
+      "family": "adversarial",
+      "summary": "Generate harder variants of tasks you already pass.",
+      "signals": ["mastery"],
+      "test": "Create 3 harder variants; attempt; log new failures.",
+      "sell_tier": "elite",
+      "status": "catalogued"
+    },
+    {
+      "id": "knowledge_distillation",
+      "name": "Knowledge Distillation",
+      "family": "compression",
+      "summary": "Compress long traces into short playbooks and prompts.",
+      "signals": ["verbose_success"],
+      "test": "Reduce successful trace to ≤10 steps without losing outcome.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "human_in_the_loop",
+      "name": "Human-in-the-Loop Correction",
+      "family": "feedback",
+      "summary": "Owner edits become supervised labels for future runs.",
+      "signals": ["owner_edit"],
+      "test": "Store before/after; never auto-promote without gate.",
+      "sell_tier": "enterprise",
+      "status": "catalogued"
+    },
+    {
+      "id": "benchmark_driven",
+      "name": "Benchmark-Driven Improvement",
+      "family": "evaluation",
+      "summary": "Close the lowest failing benchmark dimension first.",
+      "signals": ["benchmark_gap"],
+      "test": "Pick min score dimension; plan; remeasure.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "multi_perspective",
+      "name": "Multi-Perspective Study",
+      "family": "ensemble",
+      "summary": "Study the same problem from code, product, risk, and user views.",
+      "signals": ["complex_change"],
+      "test": "Produce 4 perspective notes; merge conflicts explicitly.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "dependency_reduction",
+      "name": "Dependency Reduction Learning",
+      "family": "autonomy",
+      "summary": "Prefer local/native skills over external paid dependencies.",
+      "signals": ["external_call_heavy"],
+      "test": "Score native vs external ratio; plan reduction steps.",
+      "sell_tier": "elite",
+      "status": "catalogued"
+    },
+    {
+      "id": "failure_memory",
+      "name": "Failure Memory",
+      "family": "failure_driven",
+      "summary": "Persist failure signatures so the same mistake is not repeated.",
+      "signals": ["repeat_incident"],
+      "test": "Lookup similar past failure before proposing fix.",
+      "sell_tier": "free",
+      "status": "catalogued"
+    },
+    {
+      "id": "bootcamp_mastery",
+      "name": "Bootcamp Mastery Gates",
+      "family": "sequencing",
+      "summary": "Progress only after lesson checks pass.",
+      "signals": ["bootcamp_enroll"],
+      "test": "Lesson quiz must pass before next lesson unlock.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "transfer_learning",
+      "name": "Transfer Learning",
+      "family": "transfer",
+      "summary": "Apply skills from one division/bot to a related domain.",
+      "signals": ["new_division_task"],
+      "test": "Map source skills → target task; list gaps.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "continuous_learning_cycle",
+      "name": "Continuous Learning Cycle",
+      "family": "meta",
+      "summary": "Observe → hypothesize → test in sandbox → measure → promote or discard.",
+      "signals": ["scheduled_cycle"],
+      "test": "One cycle produces evidence artifact and pass/fail decision.",
+      "sell_tier": "elite",
+      "status": "catalogued"
+    }
+  ]
+}

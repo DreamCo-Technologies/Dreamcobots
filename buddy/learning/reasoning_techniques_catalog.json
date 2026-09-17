@@ -1,0 +1,207 @@
+{
+  "schema": "dreamco.reasoning_techniques.v1",
+  "version": "1.0.0",
+  "truth_boundary": "Catalog entries describe techniques Buddy can select and test in sandbox. Listing a technique does not prove every bot applies it in production.",
+  "techniques": [
+    {
+      "id": "chain_of_thought",
+      "name": "Chain of Thought",
+      "family": "decomposition",
+      "summary": "Step-by-step intermediate reasoning before the final answer.",
+      "when_to_use": ["multi-step problems", "math", "debugging"],
+      "test_prompt": "Solve with explicit numbered steps, then give the final answer only after steps.",
+      "sell_tier": "free",
+      "status": "catalogued"
+    },
+    {
+      "id": "tree_of_thoughts",
+      "name": "Tree of Thoughts",
+      "family": "search",
+      "summary": "Explore multiple reasoning branches, score them, prune weak paths.",
+      "when_to_use": ["open-ended design", "strategy", "ambiguous goals"],
+      "test_prompt": "Propose 3 branches, score each 1-5 on feasibility, expand the best branch only.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "self_consistency",
+      "name": "Self-Consistency",
+      "family": "ensemble",
+      "summary": "Sample multiple reasoning paths and majority-vote the answer.",
+      "when_to_use": ["high-stakes classification", "noisy prompts"],
+      "test_prompt": "Generate 3 independent solutions; report the majority answer and dissent notes.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "react",
+      "name": "ReAct (Reason + Act)",
+      "family": "tool_use",
+      "summary": "Interleave reasoning with tool actions and observations.",
+      "when_to_use": ["API tools", "repo inspection", "retrieval"],
+      "test_prompt": "Alternate Thought/Action/Observation until evidence is enough; stop before unapproved external side effects.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "plan_and_solve",
+      "name": "Plan-and-Solve",
+      "family": "decomposition",
+      "summary": "Write a plan first, then execute each step.",
+      "when_to_use": ["implementation tasks", "multi-file changes"],
+      "test_prompt": "Output PLAN then EXECUTION; do not mix them.",
+      "sell_tier": "free",
+      "status": "catalogued"
+    },
+    {
+      "id": "least_to_most",
+      "name": "Least-to-Most",
+      "family": "decomposition",
+      "summary": "Solve easier subproblems first, compose upward.",
+      "when_to_use": ["hard problems", "curriculum-style tasks"],
+      "test_prompt": "List subproblems from easiest to hardest; solve in that order.",
+      "sell_tier": "free",
+      "status": "catalogued"
+    },
+    {
+      "id": "self_critique",
+      "name": "Self-Critique / Reflection",
+      "family": "verification",
+      "summary": "Draft, criticize, revise against stated criteria.",
+      "when_to_use": ["writing", "code review", "policy compliance"],
+      "test_prompt": "Draft → Critique (list defects) → Revised final.",
+      "sell_tier": "free",
+      "status": "catalogued"
+    },
+    {
+      "id": "constitutional",
+      "name": "Constitutional / Principle Check",
+      "family": "verification",
+      "summary": "Score output against explicit principles before release.",
+      "when_to_use": ["safety", "brand voice", "legal-sensitive"],
+      "test_prompt": "List applicable principles; score 0-2 each; revise until all ≥1.",
+      "sell_tier": "enterprise",
+      "status": "catalogued"
+    },
+    {
+      "id": "socratic",
+      "name": "Socratic Questioning",
+      "family": "elicitation",
+      "summary": "Clarify goals and constraints by asking high-leverage questions.",
+      "when_to_use": ["underspecified requests", "requirements"],
+      "test_prompt": "Ask at most 5 critical questions; state assumptions if unanswered.",
+      "sell_tier": "free",
+      "status": "catalogued"
+    },
+    {
+      "id": "analogical",
+      "name": "Analogical Reasoning",
+      "family": "transfer",
+      "summary": "Map structure from a known domain onto a new problem.",
+      "when_to_use": ["novel domains", "teaching", "architecture"],
+      "test_prompt": "Name a source analogy, map entities, state transfer limits.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "counterfactual",
+      "name": "Counterfactual Analysis",
+      "family": "causal",
+      "summary": "Ask what would change if a key assumption flipped.",
+      "when_to_use": ["risk", "strategy", "deals"],
+      "test_prompt": "List 3 assumptions; for each, describe outcome if false.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "devil_advocate",
+      "name": "Devil's Advocate",
+      "family": "adversarial",
+      "summary": "Argue the strongest opposing case before deciding.",
+      "when_to_use": ["go/no-go decisions", "investments"],
+      "test_prompt": "Steelman the opposing view; only then recommend.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "evidence_first",
+      "name": "Evidence-First",
+      "family": "verification",
+      "summary": "Separate facts, inferences, and unknowns; cite sources or tests.",
+      "when_to_use": ["research", "CI debugging", "claims"],
+      "test_prompt": "Sections: Evidence | Inference | Unknowns | Next test.",
+      "sell_tier": "free",
+      "status": "catalogued"
+    },
+    {
+      "id": "rubric_scoring",
+      "name": "Rubric Scoring",
+      "family": "evaluation",
+      "summary": "Score options on a fixed multi-criterion rubric.",
+      "when_to_use": ["deal analysis", "vendor choice", "hiring"],
+      "test_prompt": "Define 5 criteria with weights; score each option; rank.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "decomposition_recomposition",
+      "name": "Decomposition → Recomposition",
+      "family": "decomposition",
+      "summary": "Break into modules, solve, recombine with interface checks.",
+      "when_to_use": ["systems design", "large refactors"],
+      "test_prompt": "Modules, interfaces, per-module solution, integration risks.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "bayesian_update",
+      "name": "Bayesian Update (qualitative)",
+      "family": "probabilistic",
+      "summary": "Start with priors; update confidence when new evidence arrives.",
+      "when_to_use": ["forecasts", "incident diagnosis"],
+      "test_prompt": "Prior belief → new evidence → updated belief with confidence.",
+      "sell_tier": "enterprise",
+      "status": "catalogued"
+    },
+    {
+      "id": "red_team",
+      "name": "Red-Team Probe",
+      "family": "adversarial",
+      "summary": "Actively search for failure modes, abuse, and edge cases.",
+      "when_to_use": ["security review", "product launch"],
+      "test_prompt": "List top 10 failure modes ranked by impact × likelihood.",
+      "sell_tier": "enterprise",
+      "status": "catalogued"
+    },
+    {
+      "id": "first_principles",
+      "name": "First Principles",
+      "family": "foundational",
+      "summary": "Strip assumptions; rebuild from irreducible facts.",
+      "when_to_use": ["innovation", "cost reduction", "stuck teams"],
+      "test_prompt": "List assumptions; discard non-fundamental; rebuild plan.",
+      "sell_tier": "pro",
+      "status": "catalogued"
+    },
+    {
+      "id": "metaphor_compression",
+      "name": "Metaphor Compression",
+      "family": "communication",
+      "summary": "Compress a complex system into a faithful metaphor for stakeholders.",
+      "when_to_use": ["executive brief", "teaching"],
+      "test_prompt": "One metaphor, 3 mapping points, 1 limitation.",
+      "sell_tier": "free",
+      "status": "catalogued"
+    },
+    {
+      "id": "workflow_learning",
+      "name": "Workflow Pattern Learning",
+      "family": "meta",
+      "summary": "Extract reusable workflow graphs from successful task traces.",
+      "when_to_use": ["Buddy routing", "ops playbooks"],
+      "test_prompt": "From this success trace, extract steps, branches, and approval gates.",
+      "sell_tier": "elite",
+      "status": "catalogued"
+    }
+  ]
+}
