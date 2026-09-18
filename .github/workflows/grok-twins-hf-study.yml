@@ -1,0 +1,38 @@
+name: Grok Twins and HF Study
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "19 7 * * *"
+  push:
+    paths:
+      - "App_bots/**"
+      - "tools/build_grok_bot_twins.py"
+      - "config/huggingface-two-week-study.json"
+      - "tests/test_build_grok_bot_twins.py"
+      - ".github/workflows/grok-twins-hf-study.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: python3 tools/build_grok_bot_twins.py
+      - run: python3 -m unittest tests.test_build_grok_bot_twins
+      - if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: grok-twins-hf-study-${{ github.run_id }}
+          path: |
+            config/generated/grok-bot-twins.json
+            reports/GROK_BOT_TWINS.md
+            reports/HUGGINGFACE_TWO_WEEK_STUDY.md
+            config/huggingface-two-week-study.json
+          if-no-files-found: warn
