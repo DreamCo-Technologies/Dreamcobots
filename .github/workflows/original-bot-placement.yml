@@ -1,0 +1,40 @@
+name: Original Bot Placement
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "original-bots/**"
+      - "App_bots/**"
+      - "tools/place_original_bots.py"
+      - "tests/test_place_original_bots.py"
+      - ".github/workflows/original-bot-placement.yml"
+  pull_request:
+    paths:
+      - "original-bots/**"
+      - "tools/place_original_bots.py"
+      - "tests/test_place_original_bots.py"
+      - ".github/workflows/original-bot-placement.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  place:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: python3 tools/place_original_bots.py
+      - run: python3 -m unittest tests.test_place_original_bots
+      - if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: original-bot-placement-${{ github.run_id }}
+          path: |
+            config/generated/original-bot-placement.json
+            reports/ORIGINAL_BOT_PLACEMENT.md
+          if-no-files-found: warn
