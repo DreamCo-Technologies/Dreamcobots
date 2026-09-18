@@ -1,0 +1,49 @@
+name: Compile Markdown Bots
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 */12 * * *"
+  push:
+    paths:
+      - "bots/**"
+      - "tools/compile_md_bots.py"
+      - "tests/test_compile_md_bots.py"
+      - ".github/workflows/compile-md-bots.yml"
+  pull_request:
+    paths:
+      - "bots/**"
+      - "tools/compile_md_bots.py"
+      - "tests/test_compile_md_bots.py"
+      - ".github/workflows/compile-md-bots.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: compile-md-bots-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Compile every bots/*.md spec into sandbox runtime
+        run: python3 tools/compile_md_bots.py
+      - name: Test compiled runtime contract
+        run: python3 -m unittest tests.test_compile_md_bots
+      - name: Upload compiled registry
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: compiled-md-bots-${{ github.run_id }}
+          path: |
+            runtime/compiled_bots/registry.json
+            runtime/compiled_bots/*.py
+          if-no-files-found: warn
+          retention-days: 14
