@@ -1,0 +1,36 @@
+name: Buddy Hub Learning Packages
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "27 6 * * *"
+  push:
+    paths:
+      - "config/model-hub-scan-targets.json"
+      - "tools/buddy_scan_hubs.py"
+      - "tests/test_buddy_scan_hubs.py"
+      - "App_bots/**"
+      - ".github/workflows/buddy-hub-learning-packages.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: python3 tools/buddy_scan_hubs.py
+      - run: python3 -m unittest tests.test_buddy_scan_hubs
+      - if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: buddy-hub-learning-packages-${{ github.run_id }}
+          path: |
+            study_packs/bot_learning_packages/**
+            reports/BUDDY_HUB_LEARNING_PACKAGES.md
+          if-no-files-found: warn
