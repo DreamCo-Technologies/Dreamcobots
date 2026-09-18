@@ -1,0 +1,80 @@
+name: Autonomous Systems Builder
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: scan, build, or all
+        required: false
+        default: all
+  schedule:
+    - cron: "17 */8 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "bots/**"
+      - "App_bots/**"
+      - "original-bots/**"
+      - "systems/**"
+      - "tools/build_dream_systems.py"
+      - "tools/scan_bot_fleet.py"
+      - ".github/workflows/autonomous-systems-builder.yml"
+
+permissions:
+  contents: write
+  issues: write
+  actions: read
+  pull-requests: write
+
+concurrency:
+  group: autonomous-systems-builder-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  scan-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Scan every bot catalog and division JSON
+        run: python3 tools/scan_bot_fleet.py --out reports/BOT_FLEET_SCAN.json --md reports/BOT_FLEET_SCAN.md
+      - name: Build or refresh DreamXXX system packages
+        run: python3 tools/build_dream_systems.py --mode "${{ github.event.inputs.mode || 'all' }}"
+      - name: Refresh worklist from scan
+        run: python3 tools/scan_bot_fleet.py --worklist reports/AUTONOMOUS_WORKLIST.md
+      - name: Summarize
+        if: always()
+        run: |
+          {
+            echo "## Autonomous Systems Builder"
+            echo "- Bot scan: reports/BOT_FLEET_SCAN.md"
+            echo "- Systems: systems/"
+            echo "- Worklist: reports/AUTONOMOUS_WORKLIST.md"
+            echo "- Live money, outreach, and production writes stay gated."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: autonomous-systems-builder-${{ github.run_id }}
+          path: |
+            reports/BOT_FLEET_SCAN.json
+            reports/BOT_FLEET_SCAN.md
+            reports/AUTONOMOUS_WORKLIST.md
+            systems/**
+          if-no-files-found: warn
+          retention-days: 21
+      - name: Commit generated system evidence on this branch
+        if: github.ref != 'refs/heads/main'
+        run: |
+          git config user.name "dreamco-actions"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/BOT_FLEET_SCAN.json reports/BOT_FLEET_SCAN.md reports/AUTONOMOUS_WORKLIST.md systems || true
+          git diff --cached --quiet && echo "No generated changes" && exit 0
+          git commit -m "chore: refresh autonomous bot scan and DreamXXX systems"
+          git push
