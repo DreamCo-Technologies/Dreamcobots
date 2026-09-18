@@ -1,0 +1,57 @@
+name: Buddy Learning Proof
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 8 * * *"
+  push:
+    paths:
+      - "buddy/learning/**"
+      - "tools/prove_buddy_learning.py"
+      - "tools/record_buddy_benchmark_learning.py"
+      - "tests/test_prove_buddy_learning.py"
+      - ".github/workflows/buddy-learning-proof.yml"
+  pull_request:
+    paths:
+      - "buddy/learning/**"
+      - "tools/prove_buddy_learning.py"
+      - "tools/record_buddy_benchmark_learning.py"
+      - "tests/test_prove_buddy_learning.py"
+      - ".github/workflows/buddy-learning-proof.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Existing learning regression (when pytest extra present)
+        continue-on-error: true
+        run: |
+          python3 -m pip install --disable-pip-version-check -r requirements-buddy-learning.txt
+          python3 -m pytest -q tests/test_buddy_learning_evidence.py tests/test_benchmark_learning_progress.py tests/test_learning_history.py tests/test_mastery_decision.py
+      - name: Generate fail-to-pass learning proof
+        run: python3 tools/prove_buddy_learning.py
+      - name: Unit test the proof pack
+        run: python3 -m unittest tests.test_prove_buddy_learning
+      - name: Summary
+        if: always()
+        run: |
+          if [ -f reports/BUDDY_LEARNING_PROOF.md ]; then
+            cat reports/BUDDY_LEARNING_PROOF.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: buddy-learning-proof-${{ github.run_id }}
+          path: |
+            reports/BUDDY_LEARNING_PROOF.md
+            config/generated/buddy-learning-proof.json
+            evidence/buddy-learning-history.jsonl
+          if-no-files-found: warn
