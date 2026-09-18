@@ -1,0 +1,42 @@
+name: Grok Team Registry
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "team/grok-team.json"
+      - "tools/register_grok_team.py"
+      - "tests/test_register_grok_team.py"
+      - ".github/agents/grok-*.agent.md"
+      - ".github/workflows/grok-team.yml"
+  pull_request:
+    paths:
+      - "team/grok-team.json"
+      - "tools/register_grok_team.py"
+      - "tests/test_register_grok_team.py"
+      - ".github/agents/grok-*.agent.md"
+      - ".github/workflows/grok-team.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: python3 tools/register_grok_team.py
+      - run: python3 -m unittest tests.test_register_grok_team
+      - if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: grok-team-${{ github.run_id }}
+          path: |
+            team/grok-team.json
+            config/generated/grok-team-registry.json
+            reports/GROK_TEAM.md
+          if-no-files-found: warn
