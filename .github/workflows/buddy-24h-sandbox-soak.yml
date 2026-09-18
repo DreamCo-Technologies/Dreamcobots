@@ -1,0 +1,32 @@
+name: Buddy 24h Sandbox Soak
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "11 * * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  soak:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: python3 tools/build_user_money_map.py
+      - run: python3 tools/run_24h_sandbox_soak.py
+      - run: python3 -m unittest tests.test_build_user_money_map
+      - if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: buddy-24h-soak-${{ github.run_id }}
+          path: |
+            reports/USER_MONEY_MAP.md
+            reports/SANDBOX_24H.md
+            config/generated/user-money-map.json
+            config/generated/sandbox-24h-tick.json
+          if-no-files-found: warn
