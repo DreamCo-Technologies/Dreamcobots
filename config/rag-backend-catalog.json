@@ -1,0 +1,15 @@
+{
+  "schema": "dreamco.rag_backend_catalog.v1",
+  "default_backend": "dreamco-local",
+  "backends": [
+    {"id": "dreamco-local", "kind": "embedded", "managed": false, "us_region_control": true},
+    {"id": "faiss", "kind": "library", "managed": false, "us_region_control": true},
+    {"id": "chroma", "kind": "embedded-or-server", "managed": false, "us_region_control": true},
+    {"id": "qdrant", "kind": "server", "managed": "optional", "us_region_control": true},
+    {"id": "weaviate", "kind": "server", "managed": "optional", "us_region_control": true},
+    {"id": "milvus", "kind": "server", "managed": "optional", "us_region_control": true},
+    {"id": "pgvector", "kind": "postgres", "managed": false, "us_region_control": true},
+    {"id": "pinecone", "kind": "saas", "managed": true, "us_region_control": "configure-region"}
+  ],
+  "required_fields": ["embedding_model", "embedding_revision", "chunker_version", "source_license", "deletion_supported"]
+}
