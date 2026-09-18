@@ -1,0 +1,29 @@
+{
+  "schema": "dreamco.us_weight_system.v1",
+  "name": "DreamCo US Weight System",
+  "ownership": "DreamCo Technologies, United States",
+  "trained_weights_exist": false,
+  "frontier_parity_proven": false,
+  "efficiency": {
+    "pretrain_last": true,
+    "moe": true,
+    "gqa_or_mla": true,
+    "mtp_optional": true,
+    "quantize_for_serve": true,
+    "lora_before_full_ft": true,
+    "rag_before_weights": true
+  },
+  "line": [
+    {"id": "dream-edge", "class": "dense", "params": "3B", "serve": "laptop"},
+    {"id": "dream-work", "class": "dense", "params": "8B-14B", "serve": "workstation"},
+    {"id": "dream-pro", "class": "dense-or-small-moe", "params": "20B-70B", "serve": "multi-gpu"},
+    {"id": "dream-moe", "class": "sparse-moe", "params": "20B-active-class", "serve": "cluster"},
+    {"id": "dream-frontier", "class": "research", "params": "unspecified-until-moe-wins", "serve": "research-cluster"}
+  ],
+  "teacher": "xai/grok-best-available",
+  "legal": {
+    "no_stolen_weights": true,
+    "no_client_data_in_global_mix": true,
+    "license_pin_required": true
+  }
+}
