@@ -1,0 +1,41 @@
+name: Build Updates Now
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "7 */12 * * *"
+  push:
+    paths:
+      - "tools/build_updates_now.py"
+      - "tools/route_grok_twins.py"
+      - "tools/build_grok_bot_twins.py"
+      - ".github/workflows/build-updates-now.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: python3 tools/build_grok_bot_twins.py
+      - run: python3 -m unittest tests.test_route_grok_twins tests.test_build_grok_bot_twins
+      - run: python3 tools/build_updates_now.py
+      - if: always()
+        run: |
+          if [ -f reports/BUILD_UPDATES_NOW.md ]; then cat reports/BUILD_UPDATES_NOW.md >> "$GITHUB_STEP_SUMMARY"; fi
+      - if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: build-updates-now-${{ github.run_id }}
+          path: |
+            reports/*.md
+            config/generated/grok-bot-twins.json
+            config/generated/grok-twin-route.json
+            config/generated/build-updates-now.json
+          if-no-files-found: warn
