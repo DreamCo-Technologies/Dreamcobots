@@ -1,0 +1,78 @@
+{
+  "schema": "dreamco.public_lab_learning_methods.v1",
+  "rule": "Study published methods and papers only. Do not copy private weights or harvest frontier API logs into a public checkpoint.",
+  "labs": [
+    {
+      "id": "deepseek-r1",
+      "org": "DeepSeek",
+      "region": "China",
+      "source": "https://github.com/deepseek-ai/DeepSeek-R1",
+      "methods": ["cold-start SFT", "RL with verifiable rewards", "distill to smaller dense models"],
+      "buddy_use": "Copy the cycle, not the files. Require holdout proof."
+    },
+    {
+      "id": "deepseek-v3",
+      "org": "DeepSeek",
+      "region": "China",
+      "source": "https://arxiv.org/abs/2412.19437",
+      "methods": ["MoE", "latent attention", "multi-token prediction"],
+      "buddy_use": "Efficiency ideas for dream-moe after smaller students work."
+    },
+    {
+      "id": "llama",
+      "org": "Meta",
+      "region": "United States",
+      "source": "https://www.llama.com",
+      "methods": ["pretrain", "instruct SFT", "preference alignment"],
+      "buddy_use": "Legal base for adapters when the community license fits the customer."
+    },
+    {
+      "id": "olmo",
+      "org": "Ai2",
+      "region": "United States",
+      "source": "https://allenai.org/olmo",
+      "methods": ["open data artifacts", "open training logs", "eval-first science"],
+      "buddy_use": "Best template for a truly open US stack."
+    },
+    {
+      "id": "gemma",
+      "org": "Google",
+      "region": "United States",
+      "source": "https://ai.google.dev/gemma",
+      "methods": ["distill from larger Gemini-class teachers", "open weights under Gemma terms"],
+      "buddy_use": "Teacher-student pattern; Grok is our hosted teacher."
+    },
+    {
+      "id": "gpt-oss",
+      "org": "OpenAI",
+      "region": "United States",
+      "source": "https://openai.com/open-models/",
+      "methods": ["open-weight releases", "tool use", "reasoning traces under their policy"],
+      "buddy_use": "US open-weight option; verify exact card."
+    },
+    {
+      "id": "qwen",
+      "org": "Alibaba",
+      "region": "China",
+      "source": "https://github.com/QwenLM/Qwen",
+      "methods": ["strong coder variants", "multilingual SFT"],
+      "buddy_use": "Shortlist student for pack.code when license allows."
+    },
+    {
+      "id": "mistral",
+      "org": "Mistral",
+      "region": "France",
+      "source": "https://docs.mistral.ai/models/",
+      "methods": ["dense and MoE mix", "Apache checkpoints where stated"],
+      "buddy_use": "Compare OSI vs custom cards before shipping to customers."
+    },
+    {
+      "id": "grok-xai",
+      "org": "xAI",
+      "region": "United States",
+      "source": "https://docs.x.ai",
+      "methods": ["frontier hosted teacher", "tool use", "real-time retrieval"],
+      "buddy_use": "Default teacher and hard-job route. Not a weight dump."
+    }
+  ]
+}
