@@ -1,0 +1,55 @@
+name: Build Updates Now
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "7 */12 * * *"
+  push:
+    paths:
+      - "tools/build_updates_now.py"
+      - "tools/scan_bot_fleet.py"
+      - "tools/compile_md_bots.py"
+      - "tools/build_dream_systems.py"
+      - "tools/place_original_bots.py"
+      - "tools/register_grok_team.py"
+      - "tools/prove_buddy_learning.py"
+      - ".github/workflows/build-updates-now.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-updates-now-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: python3 -m unittest tests.test_build_updates_now
+      - run: python3 tools/build_updates_now.py
+      - if: always()
+        run: |
+          if [ -f reports/BUILD_UPDATES_NOW.md ]; then
+            cat reports/BUILD_UPDATES_NOW.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: build-updates-now-${{ github.run_id }}
+          path: |
+            reports/BUILD_UPDATES_NOW.md
+            reports/BOT_FLEET_SCAN.md
+            reports/ORIGINAL_BOT_PLACEMENT.md
+            reports/GROK_TEAM.md
+            reports/BUDDY_LEARNING_PROOF.md
+            config/generated/*.json
+            runtime/compiled_bots/registry.json
+            systems/catalog_index.json
+            evidence/buddy-learning-history.jsonl
+          if-no-files-found: warn
