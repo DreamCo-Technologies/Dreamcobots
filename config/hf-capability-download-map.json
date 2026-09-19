@@ -1,0 +1,36 @@
+{
+  "schema": "dreamco.hf_capability_download_map.v1",
+  "automatic_download_in_ci": false,
+  "max_items_per_pack": 15,
+  "packs": [
+    {"id": "pack.instruct", "hf_model_pipeline": "text-generation", "hf_dataset_task": "text-generation", "capability_ids": ["instruction-fidelity"]},
+    {"id": "pack.code", "hf_model_pipeline": "text-generation", "hf_dataset_task": "text2text-generation", "capability_ids": ["coding"]},
+    {"id": "pack.reason", "hf_model_pipeline": "text-generation", "hf_dataset_task": "question-answering", "capability_ids": ["reasoning"]},
+    {"id": "pack.embed", "hf_model_pipeline": "sentence-similarity", "hf_dataset_task": "sentence-similarity", "capability_ids": ["embeddings", "rag"]},
+    {"id": "pack.rerank", "hf_model_pipeline": "zero-shot-classification", "hf_dataset_task": "text-classification", "capability_ids": ["reranking"]},
+    {"id": "pack.vision", "hf_model_pipeline": "image-text-to-text", "hf_dataset_task": "image-classification", "capability_ids": ["vision"]},
+    {"id": "pack.speech", "hf_model_pipeline": "automatic-speech-recognition", "hf_dataset_task": "automatic-speech-recognition", "capability_ids": ["speech"]},
+    {"id": "pack.translate", "hf_model_pipeline": "translation", "hf_dataset_task": "translation", "capability_ids": ["multilingual"]},
+    {"id": "pack.summarize", "hf_model_pipeline": "summarization", "hf_dataset_task": "summarization", "capability_ids": ["summarization"]},
+    {"id": "pack.safety", "hf_model_pipeline": "text-classification", "hf_dataset_task": "text-classification", "capability_ids": ["safety"]}
+  ],
+  "seed_models": {
+    "pack.instruct": ["meta-llama/Llama-3.1-8B-Instruct", "Qwen/Qwen2.5-7B-Instruct", "google/gemma-2-9b-it"],
+    "pack.code": ["Qwen/Qwen2.5-Coder-7B-Instruct", "bigcode/starcoder2-7b", "deepseek-ai/deepseek-coder-6.7b-instruct"],
+    "pack.embed": ["BAAI/bge-small-en-v1.5", "sentence-transformers/all-MiniLM-L6-v2", "intfloat/e5-base-v2"],
+    "pack.reason": ["Qwen/Qwen2.5-7B-Instruct", "microsoft/phi-4"],
+    "pack.speech": ["openai/whisper-small", "openai/whisper-tiny"],
+    "pack.translate": ["Helsinki-NLP/opus-mt-en-es"],
+    "pack.summarize": ["facebook/bart-large-cnn"],
+    "pack.vision": ["openai/clip-vit-base-patch32"],
+    "pack.rerank": ["BAAI/bge-reranker-base"],
+    "pack.safety": ["meta-llama/Llama-Guard-3-1B"]
+  },
+  "seed_datasets": {
+    "pack.instruct": ["tatsu-lab/alpaca", "HuggingFaceH4/ultrachat_200k"],
+    "pack.code": ["bigcode/the-stack-smol", "openai/openai_humaneval"],
+    "pack.reason": ["gsm8k", "openai/gsm8k"],
+    "pack.embed": ["sentence-transformers/all-nli"],
+    "pack.safety": ["Anthropic/hh-rlhf"]
+  }
+}
