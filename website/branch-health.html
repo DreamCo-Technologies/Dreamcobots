@@ -30,11 +30,59 @@
     <p class="desk-kicker">Once a day, every branch</p>
     <h1>Branch health</h1>
     <p class="desk-note">The review team scores freshness, required Buddy files, mergeability, and safety. The conflict team updates from main or opens a resolution PR. It never force-merges main and it will not auto-edit Stripe or payment branches.</p>
-    <div class="desk-grid" id="metrics"></div>
+    <div class="desk-tabs" role="tablist" aria-label="Health desks">
+      <button type="button" class="desk-tab" role="tab" aria-selected="true" data-tab="report">Report</button>
+      <button type="button" class="desk-tab" role="tab" aria-selected="false" data-tab="review">Review team</button>
+      <button type="button" class="desk-tab" role="tab" aria-selected="false" data-tab="conflict">Conflict team</button>
+    </div>
     <p class="desk-note" id="stamp">Loading the last daily report…</p>
-    <div id="rows"></div>
+    <section id="panel-report">
+      <div class="desk-grid" id="metrics"></div>
+      <div id="rows"></div>
+    </section>
+    <section id="panel-review" hidden>
+      <div class="desk-grid" id="reviewers"></div>
+      <div id="votes"></div>
+    </section>
+    <section id="panel-conflict" hidden>
+      <p class="desk-note">Update-from-main first. If that still conflicts, a <code>dreamco/conflict-resolve/…</code> PR is opened. Original Buddy files stay from main. Money branches stay human-only.</p>
+      <div id="conflicts"></div>
+    </section>
   </main>
   <script>
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+        if (c === "&") return String.fromCharCode(38) + "amp;";
+        if (c === "<") return String.fromCharCode(38) + "lt;";
+        if (c === ">") return String.fromCharCode(38) + "gt;";
+        if (c === '"') return String.fromCharCode(38) + "quot;";
+        return String.fromCharCode(38) + "#39;";
+      });
+    }
+    var REVIEWERS = [
+      ["Freshness", "How far the branch is behind main, and how stale the last commit is."],
+      ["Completeness", "Whether the branch still has the original Buddy site and required contracts from main."],
+      ["Mergeability", "Open PR state: clean, unstable, or conflicted."],
+      ["Safety", "Blocks auto-resolve on money/Stripe/payment PRs and never force-merges main."],
+      ["Scope", "Flags branches that rewrite the original Buddy home without a wiring map."]
+    ];
+    document.getElementById("reviewers").innerHTML = REVIEWERS.map(function (r) {
+      return "<article class=\"desk-card\"><strong>" + esc(r[0]) + "</strong><p>" + esc(r[1]) + "</p></article>";
+    }).join("");
+
+    var tabs = document.querySelectorAll(".desk-tab");
+    var panels = {
+      report: document.getElementById("panel-report"),
+      review: document.getElementById("panel-review"),
+      conflict: document.getElementById("panel-conflict")
+    };
+    tabs.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        tabs.forEach(function (b) { b.setAttribute("aria-selected", b === btn ? "true" : "false"); });
+        Object.keys(panels).forEach(function (key) { panels[key].hidden = key !== btn.getAttribute("data-tab"); });
+      });
+    });
+
     fetch("data/branch-health.json", { cache: "no-store" })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error("No daily report yet")); })
       .then(function (report) {
@@ -47,14 +95,29 @@
           ["Conflicts", report.dirty]
         ];
         document.getElementById("metrics").innerHTML = metrics.map(function (m) {
-          return "<article class=\"desk-card\"><strong>" + m[1] + "</strong><p>" + m[0] + "</p></article>";
+          return "<article class=\"desk-card\"><strong>" + esc(m[1]) + "</strong><p>" + esc(m[0]) + "</p></article>";
         }).join("");
-        var rows = (report.branches || []).slice(0, 40).map(function (b) {
+        var rows = (report.branches || []).slice(0, 60).map(function (b) {
           var miss = (b.missingRequired && b.missingRequired.length) ? b.missingRequired.join(", ") : "required files present";
           var pr = b.prNumber ? ("PR #" + b.prNumber) : "no PR";
-          return "<article class=\"desk-card\"><strong>" + b.name + "</strong><p>" + b.status + " · score " + b.score + " · " + b.ahead + " ahead · " + b.behind + " behind · " + pr + "</p><p>" + miss + "</p></article>";
+          return "<article class=\"desk-card\"><strong>" + esc(b.name) + "</strong><p><span class=\"desk-status " + esc(b.status) + "\">" + esc(b.status) + " · " + esc(b.score) + "</span> · " + esc(b.ahead) + " ahead · " + esc(b.behind) + " behind · " + esc(pr) + "</p><p>" + esc(miss) + "</p></article>";
         }).join("");
         document.getElementById("rows").innerHTML = rows || "<p class=\"desk-note\">No branches in the last report.</p>";
+
+        var worst = (report.branches || []).slice().sort(function (a, b) { return a.score - b.score; }).slice(0, 12);
+        document.getElementById("votes").innerHTML = worst.map(function (b) {
+          var votes = (b.votes || []).map(function (v) {
+            return "<p><span class=\"vote-" + esc(v.vote) + "\">" + esc(v.vote) + "</span> <strong>" + esc(v.reviewer) + "</strong> — " + esc(v.note) + "</p>";
+          }).join("");
+          return "<article class=\"desk-card\"><strong>" + esc(b.name) + "</strong><p class=\"desk-status " + esc(b.status) + "\">" + esc(b.status) + " · " + esc(b.score) + "</p>" + votes + "</article>";
+        }).join("") || "<p class=\"desk-note\">Votes appear after the daily scan.</p>";
+
+        var conflicts = report.conflictActions || [];
+        document.getElementById("conflicts").innerHTML = conflicts.length
+          ? conflicts.map(function (c) {
+              return "<article class=\"desk-card\"><strong>#" + esc(c.prNumber) + " " + esc(c.title) + "</strong><p>" + esc(c.detail) + "</p><p><a href=\"" + esc(c.url) + "\">Open pull request</a></p></article>";
+            }).join("")
+          : "<p class=\"desk-note\">No conflicted pull requests in the last report.</p>";
       })
       .catch(function (err) {
         document.getElementById("stamp").textContent = err.message + ". The Action runs at 6:00 a.m. Central, or use Run workflow.";
