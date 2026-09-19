@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Branch health | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="buddy.html">Chat</a>
+      <a class="buddy-header-link" href="command.html">Command</a>
+      <a class="buddy-header-link" href="wiring.html">Wiring</a>
+      <a class="buddy-header-link" href="branch-health.html">Health</a>
+      <a class="buddy-header-link" href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </header>
+  <main class="desk-page">
+    <p class="desk-kicker">Once a day, every branch</p>
+    <h1>Branch health</h1>
+    <p class="desk-note">The review team scores freshness, required Buddy files, mergeability, and safety. The conflict team updates from main or opens a resolution PR. It never force-merges main and it will not auto-edit Stripe or payment branches.</p>
+    <div class="desk-grid" id="metrics"></div>
+    <p class="desk-note" id="stamp">Loading the last daily report…</p>
+    <div id="rows"></div>
+  </main>
+  <script>
+    fetch("data/branch-health.json", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error("No daily report yet")); })
+      .then(function (report) {
+        document.getElementById("stamp").textContent =
+          "Scanned " + report.scannedAt + ". " + (report.note || "");
+        var metrics = [
+          ["Branches", report.branchCount],
+          ["Open PRs", report.prOpen],
+          ["Healthy", report.healthy],
+          ["Conflicts", report.dirty]
+        ];
+        document.getElementById("metrics").innerHTML = metrics.map(function (m) {
+          return "<article class=\"desk-card\"><strong>" + m[1] + "</strong><p>" + m[0] + "</p></article>";
+        }).join("");
+        var rows = (report.branches || []).slice(0, 40).map(function (b) {
+          var miss = (b.missingRequired && b.missingRequired.length) ? b.missingRequired.join(", ") : "required files present";
+          var pr = b.prNumber ? ("PR #" + b.prNumber) : "no PR";
+          return "<article class=\"desk-card\"><strong>" + b.name + "</strong><p>" + b.status + " · score " + b.score + " · " + b.ahead + " ahead · " + b.behind + " behind · " + pr + "</p><p>" + miss + "</p></article>";
+        }).join("");
+        document.getElementById("rows").innerHTML = rows || "<p class=\"desk-note\">No branches in the last report.</p>";
+      })
+      .catch(function (err) {
+        document.getElementById("stamp").textContent = err.message + ". The Action runs at 6:00 a.m. Central, or use Run workflow.";
+      });
+  </script>
+</body>
+</html>

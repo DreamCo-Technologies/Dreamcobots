@@ -1,0 +1,60 @@
+name: Daily branch health and conflict team
+
+on:
+  schedule:
+    - cron: "0 11 * * *"
+  workflow_dispatch:
+    inputs:
+      resolve:
+        description: "Run conflict team (update-from-main / resolution PRs)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: branch-health-daily
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scan every branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_HEALTH_UPSERT_ISSUE: "1"
+        run: python3 tools/branch_health_daily.py
+      - name: Conflict team
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.resolve }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFLICT_TEAM_LIMIT: "5"
+        run: python3 tools/branch_conflict_team.py
+      - name: Publish report to the original site
+        continue-on-error: true
+        run: |
+          git config user.name "dreamco-branch-health"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/branch-health-daily.json reports/branch-health-daily.md website/data/branch-health.json reports/conflict-team-last.json || true
+          if git diff --cached --quiet; then
+            echo "No report changes"
+            exit 0
+          fi
+          git commit -m "chore: daily branch health report"
+          git push
+      - name: Keep the report even if main is protected
+        uses: actions/upload-artifact@v4
+        with:
+          name: branch-health
+          path: |
+            reports/
+            website/data/branch-health.json
