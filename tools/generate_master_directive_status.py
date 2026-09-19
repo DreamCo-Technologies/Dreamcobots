@@ -160,24 +160,34 @@ def structured_stage_plan() -> dict[str, object]:
     }
 
 
+from master_directive_evidence import EVIDENCE, MONEY_SECTIONS
+
+
 def evidence_for(section: int) -> list[str]:
-    mapping = {
-        4: ["tools/generate_master_directive_status.py", "website/data/master-directive-status.json"],
-        5: ["website/data/master-directive-status.json"],
-        6: ["website/master-build.html", "website/master-build.js"],
-        7: ["website/master-build.html", ".github/workflows/deploy-buddy-pages.yml"],
-        8: ["tests/master-directive-status.test.mjs"],
-        243: ["website/master-build.html"],
-        245: ["tools/generate_master_directive_status.py"],
-        249: ["website/master-build.html", "tests/master-directive-status.test.mjs"],
-        257: ["docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md"],
-        258: ["website/data/master-directive-status.json"],
-        260: ["website/data/master-directive-status.json"],
-        268: ["tools/generate_master_directive_status.py", "tests/master-directive-status.test.mjs"],
-        310: ["website/master-build.html"],
-        311: ["website/master-build.html", "website/data/master-directive-status.json"],
-    }
-    return [item for item in mapping.get(section, []) if (ROOT / item).exists()]
+    return [item for item in EVIDENCE.get(section, []) if (ROOT / item).exists()]
+
+
+def sandbox_evidence(paths: list[str]) -> list[str]:
+    """Isolated execution logs: Python compile or JSON parse of implementation files."""
+    logs = []
+    for rel in paths:
+        path = ROOT / rel
+        if not path.is_file():
+            continue
+        if path.suffix == ".py":
+            import py_compile
+            try:
+                py_compile.compile(str(path), doraise=True)
+                logs.append(f"py_compile:{rel}")
+            except Exception:
+                continue
+        elif path.suffix == ".json":
+            try:
+                json.loads(path.read_text(encoding="utf-8"))
+                logs.append(f"json_parse:{rel}")
+            except Exception:
+                continue
+    return logs
 
 
 def build() -> dict[str, object]:
@@ -190,7 +200,14 @@ def build() -> dict[str, object]:
         body_end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
         body = text[match.end():body_end]
         evidence = evidence_for(section)
-        status = "implemented" if evidence else "catalogued"
+        sandbox = [log for log in sandbox_evidence(evidence) if log.startswith("py_compile:")] if evidence else []
+        if not evidence:
+            status = "catalogued"
+        elif sandbox:
+            # Isolated Python compile of an implementation file. Not a product benchmark.
+            status = "sandbox_verified"
+        else:
+            status = "implemented"
         items.append({
             "id": f"directive-{section:03d}",
             "section": section,
@@ -198,6 +215,10 @@ def build() -> dict[str, object]:
             "priority": "critical" if section in HIGH_PRIORITY else ("high" if section <= 65 else "normal"),
             "status": status,
             "evidence_refs": evidence,
+            "sandbox_logs": sandbox,
+            "money_sensitive": section in MONEY_SECTIONS,
+            "self_build": "python3 tools/buddy_self_build.py",
+            "self_fix": "python3 tools/buddy_self_fix.py" if section not in MONEY_SECTIONS else "safety hold — no auto-edit",
             "acceptance_excerpt": " ".join(line.strip(" -") for line in body.splitlines() if line.strip())[:280],
             "next_status": STATUS_ORDER[STATUS_ORDER.index(status) + 1] if status != STATUS_ORDER[-1] else None,
             "lane": lane_for(title),
@@ -214,7 +235,7 @@ def build() -> dict[str, object]:
             "directive_sections": len(items),
             "status_counts": {status: counts.get(status, 0) for status in STATUS_ORDER},
             "critical_items": sum(item["priority"] == "critical" for item in items),
-            "truth": "Statuses describe only evidence committed in this repository. Catalogued is not implemented; implemented is not runtime, benchmark, regression, or production verification.",
+            "truth": "Implemented means a matching implementation file exists. Sandbox verified means that Python compiled in isolation. Benchmark, regression, and production stay 0 until those named runs exist.",
         },
         "repository_audit": repository_inventory(),
         "unified_plan": markdown_plan(),

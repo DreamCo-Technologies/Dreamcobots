@@ -1,0 +1,52 @@
+name: Buddy self-build and self-fix
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "20 12 * * *"
+  push:
+    paths:
+      - "tools/buddy_self_build.py"
+      - "tools/buddy_self_fix.py"
+      - "tools/generate_master_directive_status.py"
+      - "tools/master_directive_evidence.py"
+      - "website/build.html"
+      - ".github/workflows/buddy-self-build.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: buddy-self-build
+  cancel-in-progress: true
+
+jobs:
+  self-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Self-build every repository part
+        continue-on-error: true
+        run: python3 tools/buddy_self_build.py
+      - name: Self-fix incidents
+        run: python3 tools/buddy_self_fix.py
+      - name: Refresh build-readiness catalog
+        run: python3 tools/generate_master_directive_status.py
+      - name: Publish evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-self-build
+          path: |
+            reports/self-build.json
+            reports/self-fix.json
+            website/data/master-directive-status.json
+            website/data/self-build.json
+            website/data/self-fix.json
+          if-no-files-found: warn
+          retention-days: 14

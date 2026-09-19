@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Build readiness | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <meta name="description" content="311 owner-directive sections. Catalogued is not implemented. Implemented is not production." />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=31" />
+  <link rel="stylesheet" href="desks.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="buddy.html">Chat</a>
+      <a class="buddy-header-link" href="command.html">Command</a>
+      <a class="buddy-header-link" href="recover.html">Recover</a>
+      <a class="buddy-header-link" href="build.html">Build</a>
+      <a class="buddy-header-link" href="master-build.html">Master build</a>
+      <a class="buddy-header-link" href="wiring.html">Wiring</a>
+    </div>
+  </header>
+  <main class="desk-page">
+    <p class="desk-kicker">Owner directive · evidence only</p>
+    <h1>Build readiness</h1>
+    <p class="desk-note" id="truth">Loading the 311-section catalog…</p>
+    <div class="desk-grid" id="metrics"></div>
+    <h2 class="desk-kicker" style="margin-top:28px">Self-build every part</h2>
+    <p class="desk-note">Each repository area has a self-build check and a self-fix lane. Money paths stay gated. Absence is not a pass.</p>
+    <div class="desk-grid" id="parts"></div>
+    <div class="desk-card" style="margin-top:18px">
+      <strong>Filter directive sections</strong>
+      <p>
+        <label>Status
+          <select id="status-filter">
+            <option value="">All</option>
+            <option>catalogued</option>
+            <option>implemented</option>
+            <option>sandbox_verified</option>
+            <option>benchmark_verified</option>
+            <option>regression_verified</option>
+            <option>production_verified</option>
+          </select>
+        </label>
+        <label>Search <input id="search" type="search" placeholder="repair, pages, benchmark…" /></label>
+      </p>
+    </div>
+    <p class="desk-note" id="result-count"></p>
+    <div id="items" class="desk-grid"></div>
+  </main>
+  <script src="build.js"></script>
+</body>
+</html>
