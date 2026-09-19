@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'docs/**'
+      - 'website/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -33,6 +34,10 @@ jobs:
         with:
           source: ./docs
           destination: ./_site
+      - name: Overlay original Buddy website
+        run: |
+          rsync -a website/ _site/
+          touch _site/.nojekyll
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
