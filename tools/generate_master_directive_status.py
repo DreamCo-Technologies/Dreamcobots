@@ -201,10 +201,22 @@ def build() -> dict[str, object]:
         body = text[match.end():body_end]
         evidence = evidence_for(section)
         sandbox = [log for log in sandbox_evidence(evidence) if log.startswith("py_compile:")] if evidence else []
+        kernel_log = ROOT / "website" / "data" / "kernel-fill.json"
+        kernel_hit = False
+        if kernel_log.exists():
+            try:
+                kernel_payload = json.loads(kernel_log.read_text(encoding="utf-8"))
+                for row in kernel_payload.get("items", []):
+                    if row.get("section") == section and row.get("ok"):
+                        sandbox.append(f"kernel_fill:{section}")
+                        kernel_hit = True
+                        break
+            except json.JSONDecodeError:
+                pass
         if not evidence:
             status = "catalogued"
-        elif sandbox:
-            # Isolated Python compile of an implementation file. Not a product benchmark.
+        elif sandbox or kernel_hit:
+            # Isolated Python compile or kernel fill execution. Not a product benchmark.
             status = "sandbox_verified"
         else:
             status = "implemented"

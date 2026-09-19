@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kernel fills | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=31" />
+  <link rel="stylesheet" href="desks.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="build.html">Build</a>
+      <a class="buddy-header-link" href="kernel.html">Kernel</a>
+      <a class="buddy-header-link" href="recover.html">Recover</a>
+    </div>
+  </header>
+  <main class="desk-page">
+    <p class="desk-kicker">Catalogued → running code</p>
+    <h1>Kernel fills</h1>
+    <p class="desk-note" id="truth">Loading execution log…</p>
+    <div class="desk-grid" id="metrics"></div>
+    <div id="items" class="desk-grid"></div>
+  </main>
+  <script>
+    fetch("data/kernel-fill.json", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((payload) => {
+        document.getElementById("truth").textContent = payload.truth;
+        const metrics = document.getElementById("metrics");
+        metrics.innerHTML = "";
+        [["Filled", payload.filled], ["Passed", payload.passed], ["Failed", payload.failed]].forEach(([label, value]) => {
+          const el = document.createElement("article");
+          el.className = "desk-card";
+          el.innerHTML = "<strong>" + value + "</strong><p>" + label + "</p>";
+          metrics.append(el);
+        });
+        const items = document.getElementById("items");
+        payload.items.forEach((item) => {
+          const el = document.createElement("article");
+          el.className = "desk-card";
+          el.innerHTML = "<strong>" + item.section + "</strong><p class='" + (item.ok ? "state-ok" : "state-never") + "'>" + item.status + "</p><p>" + (item.error || JSON.stringify(item.detail).slice(0, 220)) + "</p>";
+          items.append(el);
+        });
+      })
+      .catch((err) => {
+        document.getElementById("truth").textContent = err.message;
+      });
+  </script>
+</body>
+</html>

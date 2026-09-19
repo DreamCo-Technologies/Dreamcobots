@@ -11,6 +11,8 @@ on:
       - "tools/generate_master_directive_status.py"
       - "tools/master_directive_evidence.py"
       - "website/build.html"
+      - "tools/buddy_kernel.py"
+      - "tests/test_buddy_kernel.py"
       - ".github/workflows/buddy-self-build.yml"
 
 permissions:
@@ -35,6 +37,10 @@ jobs:
         run: python3 tools/buddy_self_build.py
       - name: Self-fix incidents
         run: python3 tools/buddy_self_fix.py
+      - name: Fill catalogued kernel sections
+        run: python3 tools/buddy_kernel.py
+      - name: Kernel unit tests
+        run: python3 -m unittest tests.test_buddy_kernel
       - name: Refresh build-readiness catalog
         run: python3 tools/generate_master_directive_status.py
       - name: Publish evidence
@@ -48,5 +54,8 @@ jobs:
             website/data/master-directive-status.json
             website/data/self-build.json
             website/data/self-fix.json
+            website/data/kernel-fill.json
+            website/data/sbom.json
+            reports/kernel-fill.json
           if-no-files-found: warn
           retention-days: 14
