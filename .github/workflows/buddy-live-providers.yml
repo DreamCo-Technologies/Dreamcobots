@@ -1,0 +1,40 @@
+name: Buddy live providers
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "40 12 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-live-providers
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Presence only
+        run: python3 tools/buddy_providers.py
+      - name: Live ping present keys
+        run: python3 tools/buddy_providers.py --live
+      - name: Publish evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-live-providers
+          path: |
+            website/data/live-providers.json
+            reports/live-providers.json
+          if-no-files-found: warn
+          retention-days: 14

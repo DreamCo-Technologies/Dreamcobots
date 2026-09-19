@@ -27,7 +27,8 @@ class KernelFillTests(unittest.TestCase):
 
     def test_openai_does_not_fake_a_pass(self) -> None:
         result = kernel.fill_254()
-        self.assertFalse(result["pass"])
+        self.assertFalse(result["live_called"])
+        self.assertFalse(result["secret_printed"])
 
     def test_run_writes_report(self) -> None:
         report = kernel.run()

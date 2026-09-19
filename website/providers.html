@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live providers | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=31" />
+  <link rel="stylesheet" href="desks.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="build.html">Build</a>
+      <a class="buddy-header-link" href="providers.html">Providers</a>
+    </div>
+  </header>
+  <main class="desk-page">
+    <p class="desk-kicker">OpenAI · Grok · Claude</p>
+    <h1>Live providers</h1>
+    <p class="desk-note">
+      GitHub Actions pings keys that exist as secrets. Pages never holds a key.
+      Missing Claude stays blocked until you add ANTHROPIC_API_KEY.
+    </p>
+    <div class="desk-grid" id="items"></div>
+  </main>
+  <script>
+    fetch("data/live-providers.json", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((payload) => {
+        const root = document.getElementById("items");
+        payload.items.forEach((item) => {
+          const el = document.createElement("article");
+          el.className = "desk-card";
+          el.innerHTML = "<strong>" + item.label + "</strong><p class='" +
+            (item.status === "live" ? "state-ok" : "state-never") + "'>" + item.status +
+            "</p><p>" + (item.error || item.sample || item.env) + "</p>";
+          root.append(el);
+        });
+      })
+      .catch((err) => {
+        document.querySelector(".desk-note").textContent = err.message;
+      });
+  </script>
+</body>
+</html>

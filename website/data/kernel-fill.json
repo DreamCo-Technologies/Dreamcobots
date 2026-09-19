@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.kernel_fill.v1",
-  "generated_at": "2026-09-19T20:12:59.870612+00:00",
+  "generated_at": "2026-09-19T20:22:55.311142+00:00",
   "truth": "A kernel fill pass means the function ran. It is not a product benchmark or production verification.",
   "filled": 55,
   "passed": 55,
@@ -168,9 +168,9 @@
       "ok": true,
       "status": "sandbox_verified",
       "detail": {
-        "providers_pinged": 0,
-        "status": "blocked_without_keys",
-        "note": "Live provider tests require granted keys. No mock pass."
+        "tool": "tools/buddy_providers.py",
+        "auto_on_load": false,
+        "note": "Live pings require --live and a key. Missing keys stay blocked."
       },
       "error": null
     },
@@ -450,9 +450,10 @@
       "ok": true,
       "status": "sandbox_verified",
       "detail": {
-        "status": "blocked_no_key",
-        "pass": false,
-        "honest": true
+        "adapter": "tools/buddy_providers.py",
+        "key_present": false,
+        "live_called": false,
+        "secret_printed": false
       },
       "error": null
     },

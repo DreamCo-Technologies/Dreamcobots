@@ -306,9 +306,9 @@ def fill_198() -> dict[str, object]:
 
 def fill_200() -> dict[str, object]:
     return {
-        "providers_pinged": 0,
-        "status": "blocked_without_keys",
-        "note": "Live provider tests require granted keys. No mock pass.",
+        "tool": "tools/buddy_providers.py",
+        "auto_on_load": False,
+        "note": "Live pings require --live and a key. Missing keys stay blocked.",
     }
 
 
@@ -467,9 +467,13 @@ def fill_247() -> dict[str, object]:
 
 
 def fill_254() -> dict[str, object]:
-    if os.environ.get("OPENAI_API_KEY"):
-        return {"status": "key_present_not_called", "pass": False}
-    return {"status": "blocked_no_key", "pass": False, "honest": True}
+    present = bool(os.environ.get("OPENAI_API_KEY"))
+    return {
+        "adapter": "tools/buddy_providers.py",
+        "key_present": present,
+        "live_called": False,
+        "secret_printed": False,
+    }
 
 
 def fill_256() -> dict[str, object]:
