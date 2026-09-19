@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """Scan every branch and open PR. Write a public-safe daily health report.
 
-Does not merge to main. Does not print secrets.
+Prefers local git (Actions checks out with fetch-depth: 0) so this finishes
+in minutes, not an API compare per branch. Does not merge to main.
+Does not print secrets.
 """
 from __future__ import annotations
 
 import json
 import os
 import re
+import subprocess
 import sys
 import urllib.error
 import urllib.parse
@@ -64,6 +67,61 @@ def gh_pages(path: str) -> list:
         if len(chunk) < 100:
             break
     return out
+
+
+def git(args: list[str], check: bool = True) -> subprocess.CompletedProcess:
+    return subprocess.run(["git", *args], check=check, text=True, capture_output=True)
+
+
+def local_git_ready() -> bool:
+    inside = git(["rev-parse", "--is-inside-work-tree"], check=False)
+    if inside.returncode != 0 or inside.stdout.strip() != "true":
+        return False
+    main_ref = git(["show-ref", "--verify", f"refs/remotes/origin/{DEFAULT}"], check=False)
+    return main_ref.returncode == 0
+
+
+def local_branches() -> list[dict]:
+    out = git(
+        [
+            "for-each-ref",
+            "refs/remotes/origin",
+            "--format=%(refname:short)\t%(objectname)\t%(committerdate:iso-strict)",
+        ]
+    ).stdout
+    rows = []
+    for line in out.splitlines():
+        parts = line.split("\t")
+        if len(parts) < 3:
+            continue
+        short, sha, date = parts[0], parts[1], parts[2]
+        if short.endswith("/HEAD") or short == "origin":
+            continue
+        name = short[7:] if short.startswith("origin/") else short
+        if name == DEFAULT:
+            continue
+        rows.append({"name": name, "sha": sha, "updated": date, "protected": False})
+    return rows
+
+
+def local_ahead_behind(name: str) -> tuple[int, int]:
+    proc = git(["rev-list", "--left-right", "--count", f"origin/{DEFAULT}...origin/{name}"], check=False)
+    if proc.returncode != 0:
+        return 0, 0
+    bits = proc.stdout.strip().split()
+    if len(bits) != 2:
+        return 0, 0
+    behind, ahead = int(bits[0]), int(bits[1])
+    return ahead, behind
+
+
+def local_missing(name: str) -> list[str]:
+    proc = git(
+        ["diff", "--name-only", "--diff-filter=AR", f"origin/{name}...origin/{DEFAULT}"],
+        check=False,
+    )
+    added = {ln.strip() for ln in proc.stdout.splitlines() if ln.strip()}
+    return [p for p in REQUIRED if p in added]
 
 
 def vote_freshness(behind: int) -> tuple[str, str]:
@@ -173,8 +231,34 @@ def upsert_issue(body: str, title: str = "Daily branch health") -> None:
     gh(f"/repos/{OWNER}/{REPO}/issues", method="POST", body={"title": title, "body": body})
 
 
+def api_branches() -> list[dict]:
+    rows = []
+    for br in gh_pages(f"/repos/{OWNER}/{REPO}/branches"):
+        if br.get("name") == DEFAULT:
+            continue
+        rows.append(
+            {
+                "name": br["name"],
+                "sha": (br.get("commit") or {}).get("sha", ""),
+                "updated": None,
+                "protected": bool(br.get("protected")),
+            }
+        )
+    return rows
+
+
+def api_ahead_behind_missing(name: str) -> tuple[int, int, list[str]]:
+    cmp = gh(f"/repos/{OWNER}/{REPO}/compare/{urllib.parse.quote(name, safe='')}...{DEFAULT}")
+    behind = int(cmp.get("ahead_by") or 0)
+    ahead = int(cmp.get("behind_by") or 0)
+    return ahead, behind, missing_from(cmp.get("files") or [])
+
+
 def main() -> int:
-    branches = gh_pages(f"/repos/{OWNER}/{REPO}/branches")
+    use_git = local_git_ready()
+    print(f"scanner: {'local-git' if use_git else 'github-api'}", file=sys.stderr)
+    branches = local_branches() if use_git else api_branches()
+
     prs = gh_pages(f"/repos/{OWNER}/{REPO}/pulls?state=open")
     pr_by_ref = {}
     for pr in prs:
@@ -188,27 +272,24 @@ def main() -> int:
     conflicts = []
     for br in branches:
         name = br["name"]
-        if name == DEFAULT:
-            continue
         pr = pr_by_ref.get(name)
-        ahead = behind = 0
-        missing: list[str] = []
         try:
-            cmp = gh(
-                f"/repos/{OWNER}/{REPO}/compare/{urllib.parse.quote(name, safe='')}...{DEFAULT}"
-            )
-            behind = int(cmp.get("ahead_by") or 0)
-            ahead = int(cmp.get("behind_by") or 0)
-            missing = missing_from(cmp.get("files") or [])
+            if use_git:
+                ahead, behind = local_ahead_behind(name)
+                missing = local_missing(name)
+            else:
+                ahead, behind, missing = api_ahead_behind_missing(name)
         except RuntimeError as exc:
             print(f"compare skip {name}: {exc}", file=sys.stderr)
+            ahead = behind = 0
+            missing = []
 
         votes, score, status = review(behind, missing, pr)
         rec = {
             "name": name,
-            "sha": br.get("commit", {}).get("sha", ""),
+            "sha": br.get("sha", ""),
             "protected": bool(br.get("protected")),
-            "updated": (pr or {}).get("updated_at"),
+            "updated": br.get("updated") or (pr or {}).get("updated_at"),
             "ahead": ahead,
             "behind": behind,
             "missingRequired": missing,
@@ -244,7 +325,7 @@ def main() -> int:
         "owner": OWNER,
         "repo": REPO,
         "defaultBranch": DEFAULT,
-        "branchCount": len(branches),
+        "branchCount": len(branches) + 1,
         "prOpen": len(prs),
         "dirty": len(conflicts),
         "healthy": sum(1 for r in records if r["status"] == "healthy"),
@@ -252,7 +333,7 @@ def main() -> int:
         "blocked": sum(1 for r in records if r["status"] == "blocked"),
         "branches": records,
         "conflictActions": conflicts,
-        "note": "Inventory is not mastery. Auto-merge to main is off.",
+        "note": "Inventory is not mastery. Auto-merge to main is off. Review team votes; conflict team never force-merges main.",
     }
 
     os.makedirs("reports", exist_ok=True)
