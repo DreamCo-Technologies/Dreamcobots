@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Command | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="buddy.html">Chat</a>
+      <a class="buddy-header-link" href="command.html">Command</a>
+      <a class="buddy-header-link" href="ops.html">Ops</a>
+      <a class="buddy-header-link" href="connect-desk.html">Connect</a>
+      <a class="buddy-header-link" href="work.html">Work</a>
+      <a class="buddy-header-link" href="wiring.html">Wiring</a>
+      <a class="buddy-header-link" href="connections.html">Apps</a>
+      <a class="buddy-header-link" href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </header>
+  <main class="desk-page">
+
+    <p class="desk-kicker">500-model desk</p>
+    <h1>How can I help?</h1>
+    <p class="desk-muted">Seven steps, seven different free students. Paid families stay off unless you connect them. Same planner as Command in the hosted app.</p>
+    <div class="desk-card">
+      <p class="desk-muted">Connect paid only if you have an account. Keys never live in this page.</p>
+      <div class="desk-row" id="paid"></div>
+    </div>
+    <div class="desk-card">
+      <textarea id="job" placeholder="Build an inventory app with search, CSV export, tests, and debug."></textarea>
+      <p><button class="buddy-send-button" id="go" type="button">Decompose</button></p>
+      <div id="steps"></div>
+    </div>
+    <script>
+      const FAMILIES = [["dream-student","chat"],["phi","local"],["olmo","plan"],["deepseek","code"],["embed","eval"],["safety","gate"],["qwen","learn"]];
+      ["grok","claude","gpt","gemini"].forEach(f => {
+        const l = document.createElement("label");
+        l.className = "desk-grant";
+        l.innerHTML = "<input type=checkbox> "+f;
+        document.getElementById("paid").appendChild(l);
+      });
+      document.getElementById("go").onclick = function() {
+        const job = document.getElementById("job").value.trim() || "Untitled";
+        const titles = ["Clarify","Route","Plan","Hard","Eval","Gate","Learn"];
+        document.getElementById("steps").innerHTML = titles.map((t,i) => {
+          const fam = FAMILIES[i];
+          return "<article class=desk-card><strong>"+t+"</strong><p class=desk-muted>"+fam[0]+" / "+fam[1]+" / free</p><p>"+job+"</p></article>";
+        }).join("") + "<p class=desk-muted>Unique models: 7 of 7</p>";
+      };
+    </script>
+
+  </main>
+  <p class="buddy-trust-line">Original Buddy website. Live Stripe off. Live Grok teacher is not keyed on GitHub Pages.</p>
+</body>
+</html>
