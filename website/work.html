@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Work | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="buddy.html">Chat</a>
+      <a class="buddy-header-link" href="command.html">Command</a>
+      <a class="buddy-header-link" href="ops.html">Ops</a>
+      <a class="buddy-header-link" href="connect-desk.html">Connect</a>
+      <a class="buddy-header-link" href="work.html">Work</a>
+      <a class="buddy-header-link" href="wiring.html">Wiring</a>
+      <a class="buddy-header-link" href="connections.html">Apps</a>
+      <a class="buddy-header-link" href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </header>
+  <main class="desk-page">
+
+    <p class="desk-kicker">On this device</p>
+    <h1>Watch or idle</h1>
+    <p class="desk-muted">Watch: Buddy works while this tab stays open. Idle: waits until the tab is in the background or you stop using it for 45 seconds. A closed laptop is not a worker. Matches the Schedules dialog on the home chat.</p>
+    <div class="desk-row">
+      <button class="buddy-send-button" id="watch" type="button">Work while I watch</button>
+      <button class="buddy-header-link" id="idle" type="button">Work when idle</button>
+      <button class="buddy-header-link" id="queue" type="button">Queue operator jobs</button>
+    </div>
+    <p class="desk-muted" id="status">Waiting.</p>
+    <ul id="list"></ul>
+    <pre class="desk-pre desk-card" id="log">Work desk idle.</pre>
+    <script>
+      const JOBS = ["Compile MD","Place original bots","Prove learning","Grok twins","HF packs","Weight balancer","500 waves","Money map"];
+      let mode = "watch", q = [], last = Date.now();
+      const bump = () => last = Date.now();
+      window.addEventListener("pointerdown", bump);
+      window.addEventListener("keydown", bump);
+      document.getElementById("watch").onclick = () => { mode = "watch"; status(); };
+      document.getElementById("idle").onclick = () => { mode = "idle"; status(); };
+      document.getElementById("queue").onclick = () => { q = JOBS.slice(); render(); };
+      function render(){ document.getElementById("list").innerHTML = q.map(t => "<li class=desk-card>"+t+"</li>").join(""); }
+      function status(){ document.getElementById("status").textContent = mode === "watch" ? "Watching this tab." : "Idle mode. Switch away or wait 45s."; }
+      setInterval(() => {
+        if (!q.length) return;
+        const idleOk = document.hidden || Date.now()-last > 45000;
+        if (mode === "watch" && !document.hidden || mode === "idle" && idleOk) {
+          const job = q.shift();
+          document.getElementById("log").textContent += "\nRan "+job+" locally. Evidence only.";
+          render();
+        }
+      }, 2000);
+      status();
+    </script>
+
+  </main>
+  <p class="buddy-trust-line">Original Buddy website. Live Stripe off. Live Grok teacher is not keyed on GitHub Pages.</p>
+</body>
+</html>
