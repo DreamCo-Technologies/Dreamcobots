@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connect | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="buddy.html">Chat</a>
+      <a class="buddy-header-link" href="command.html">Command</a>
+      <a class="buddy-header-link" href="ops.html">Ops</a>
+      <a class="buddy-header-link" href="connect-desk.html">Connect</a>
+      <a class="buddy-header-link" href="work.html">Work</a>
+      <a class="buddy-header-link" href="wiring.html">Wiring</a>
+      <a class="buddy-header-link" href="connections.html">Apps</a>
+      <a class="buddy-header-link" href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </header>
+  <main class="desk-page">
+
+    <p class="desk-kicker">Permission first</p>
+    <h1>Connect accounts and apps</h1>
+    <p class="desk-muted">Buddy only touches an app after you grant it. Gmail, Drive, Calendar, Outlook, and Teams go through your Grok account when this site is opened from Grok. Other apps are named here; we do not invent their OAuth. Full broker: <a href="connections.html">App Connections</a>.</p>
+    <div id="apps"></div>
+    <script>
+      const apps = [
+        ["Gmail","gate"],["Google Drive","gate"],["Google Calendar","gate"],
+        ["Outlook","gate"],["Teams","gate"],["This device files","device"],
+        ["Clipboard","device"],["Notifications","device"],["Other app","plan"]
+      ];
+      document.getElementById("apps").innerHTML = apps.map(([n,k]) =>
+        "<article class=desk-card><p class=desk-kicker>"+k+"</p><h2>"+n+"</h2><label class=desk-grant><input type=checkbox> Grant</label></article>"
+      ).join("");
+    </script>
+
+  </main>
+  <p class="buddy-trust-line">Original Buddy website. Live Stripe off. Live Grok teacher is not keyed on GitHub Pages.</p>
+</body>
+</html>
