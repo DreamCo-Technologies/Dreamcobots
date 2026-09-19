@@ -1,0 +1,30 @@
+name: Grok owner systems (Buddy can run the same)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 11 * * *"
+  push:
+    paths:
+      - "tools/buddy_operator_local.py"
+      - ".github/workflows/grok-owner-systems.yml"
+      - "docs/command/**"
+
+permissions:
+  contents: write
+
+jobs:
+  buddy-operator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run Buddy operator locally (no live money)
+        run: python tools/buddy_operator_local.py
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-operator-evidence
+          path: reports/BUDDY_OPERATOR_EVIDENCE.json
