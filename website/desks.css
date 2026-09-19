@@ -1,0 +1,38 @@
+/* Plan desks + wiring — original Buddy chrome */
+.buddy-explore-menu nav.plan-desks {
+  width: min(920px, calc(100vw - 24px));
+  max-height: min(72vh, 640px);
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px 20px;
+  padding: 16px;
+}
+@media (max-width: 820px) {
+  .buddy-explore-menu nav.plan-desks { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .buddy-explore-menu nav.plan-desks { grid-template-columns: 1fr; }
+}
+.plan-desks .desk-group p {
+  margin: 0 0 6px;
+  color: #d6b56d;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.plan-desks a { display: block; padding: 6px 8px; border-radius: 7px; color: #c8ccd4; font-size: .82rem; }
+.plan-desks a:hover { background: #1b1e25; color: #fff; }
+.desk-page { max-width: 1080px; margin: 0 auto; padding: 28px 24px 64px; }
+.desk-page h1 { margin: 8px 0 12px; font-size: 2rem; }
+.desk-kicker { color: #d6b56d; font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.desk-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 18px; }
+.desk-card { border: 1px solid #2a2d35; background: #181b21; border-radius: 14px; padding: 14px 16px; }
+.desk-card strong { display: block; margin-bottom: 6px; }
+.desk-card span, .desk-card p { color: #9298a5; font-size: .9rem; }
+.desk-note { margin-top: 18px; color: #9298a5; font-size: .92rem; line-height: 1.55; }
+.state-ok { color: #3aa977; }
+.state-grant { color: #4d76c9; }
+.state-paid { color: #d6b56d; }
+.state-never { color: #d48a86; }
