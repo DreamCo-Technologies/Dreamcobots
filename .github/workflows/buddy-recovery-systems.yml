@@ -1,0 +1,42 @@
+name: Buddy recovery systems
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "40 11 * * *"
+  push:
+    paths:
+      - "website/recover.html"
+      - "website/recover.js"
+      - "tools/buddy_recovery_systems.py"
+      - ".github/workflows/buddy-recovery-systems.yml"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: buddy-recovery-systems
+  cancel-in-progress: true
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Inventory recovery lanes
+        run: python3 tools/buddy_recovery_systems.py
+      - name: Publish evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-recovery-systems
+          path: |
+            reports/recovery-systems.json
+            website/data/recovery-systems.json
+          if-no-files-found: warn
+          retention-days: 14

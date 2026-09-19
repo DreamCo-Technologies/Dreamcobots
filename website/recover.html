@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recovery systems | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <meta name="description" content="Eight recovery lanes on one incident bus so Dreamcobots works as a system." />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=30" />
+  <link rel="stylesheet" href="desks.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="buddy.html">Chat</a>
+      <a class="buddy-header-link" href="command.html">Command</a>
+      <a class="buddy-header-link" href="ops.html">Ops</a>
+      <a class="buddy-header-link" href="work.html">Work</a>
+      <a class="buddy-header-link" href="wiring.html">Wiring</a>
+      <a class="buddy-header-link" href="branch-health.html">Health</a>
+      <a class="buddy-header-link" href="recover.html">Recover</a>
+      <a class="buddy-header-link" href="actions.html">Actions</a>
+    </div>
+  </header>
+  <main class="desk-page">
+    <p class="desk-kicker">One bus, eight recoveries</p>
+    <h1>Recovery systems</h1>
+    <p class="desk-note">Buddy does not have a “make it green” switch. Failures enter one incident bus and are routed to a specialist lane that already exists in this repository. Old failed Actions stay historical. Missing evidence stays blocked. Money and secrets are never auto-repaired.</p>
+    <div class="desk-grid" id="lane-grid"></div>
+    <section class="desk-card" style="margin-top:18px">
+      <strong>File a problem</strong>
+      <p>Buddy routes the text to a lane. “Make everything green” goes to Detect and will not rewrite history.</p>
+      <label class="sr-only" for="recover-input">Describe the failure</label>
+      <textarea id="recover-input" rows="3" maxlength="500" placeholder="Actions failed, Pages lost buddy.html, PR conflicts, missing 500-bench harness…"></textarea>
+      <p><button id="recover-file" class="buddy-send-button" type="button">Route into the system</button></p>
+    </section>
+    <div id="incident-list" class="desk-grid" style="margin-top:18px"></div>
+    <p class="desk-note">GitHub already runs Actions Failure Sweep, PR Recovery Engine, Keep Green, and Daily Branch Health. This desk is the map that makes them one system. It does not merge to main.</p>
+  </main>
+  <script src="recover.js"></script>
+</body>
+</html>

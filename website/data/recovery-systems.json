@@ -1,0 +1,94 @@
+{
+  "schema": "dreamco.buddy_recovery_systems.v1",
+  "generated_at": "2026-09-19T18:35:20.309621+00:00",
+  "truth": "Presence of a workflow is not a verified repair. History stays immutable.",
+  "lanes": [
+    {
+      "id": "detect",
+      "status": "wired",
+      "required": [
+        ".github/workflows/actions-failure-sweep.yml",
+        ".github/workflows/keep-green.yml"
+      ],
+      "missing": [],
+      "green": false
+    },
+    {
+      "id": "branch",
+      "status": "wired",
+      "required": [
+        ".github/workflows/branch-health-daily.yml",
+        "tools/branch_health_daily.py"
+      ],
+      "missing": [],
+      "green": false
+    },
+    {
+      "id": "pr",
+      "status": "wired",
+      "required": [
+        ".github/workflows/pr-recovery-engine.yml",
+        "tools/pr_recovery_engine.py"
+      ],
+      "missing": [],
+      "green": false
+    },
+    {
+      "id": "actions",
+      "status": "wired",
+      "required": [
+        ".github/workflows/actions-failure-watch.yml",
+        ".github/workflows/actions-green-contract.yml"
+      ],
+      "missing": [],
+      "green": false
+    },
+    {
+      "id": "pages",
+      "status": "wired",
+      "required": [
+        "website/buddy.html",
+        "website/index.html",
+        "website/recover.html",
+        ".github/workflows/pages.yml"
+      ],
+      "missing": [],
+      "green": false
+    },
+    {
+      "id": "runtime",
+      "status": "wired",
+      "required": [
+        "website/buddy.js",
+        "website/command.html"
+      ],
+      "missing": [],
+      "green": false
+    },
+    {
+      "id": "catalog",
+      "status": "wired",
+      "required": [
+        "website/data/buddy-connection-catalog.json",
+        "website/data/buddy-universal-connections.json"
+      ],
+      "missing": [],
+      "green": false
+    },
+    {
+      "id": "safety",
+      "status": "wired",
+      "required": [
+        "SECURITY.md",
+        "website/connections.html"
+      ],
+      "missing": [],
+      "green": false
+    }
+  ],
+  "wired": 8,
+  "blocked_or_partial": 0,
+  "auto_merge_main": false,
+  "live_stripe": false,
+  "history_rewritten": false
+}

@@ -48,6 +48,7 @@
     { href: 'command.html', label: 'Command' },
     { href: 'ops.html', label: 'Ops' },
     { href: 'work.html', label: 'Watch / idle' },
+    { href: 'recover.html', label: 'Recovery systems' },
     { href: 'connect-desk.html', label: 'Connect permission' },
     { href: 'connections.html', label: '🔗 Connections' },
     { href: 'data-control.html', label: '🔒 Data & Memory' },
