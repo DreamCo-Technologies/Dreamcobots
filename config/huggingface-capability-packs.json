@@ -1,0 +1,55 @@
+{
+  "schema": "dreamco.huggingface_capability_packs.v1",
+  "teacher_route": "xai/grok-best-available",
+  "train_in_default_ci": false,
+  "automatic_weight_download": false,
+  "packs": [
+    {
+      "id": "pack.instruct",
+      "capability_ids": ["instruction-fidelity", "buddy-chat"],
+      "train_allowed": false,
+      "min_native_pass_rate": 0.8,
+      "search_hints": ["instruction-tuning", "ultrachat", "tulu"]
+    },
+    {
+      "id": "pack.code",
+      "capability_ids": ["coding", "debugging", "repo-tools"],
+      "train_allowed": false,
+      "min_native_pass_rate": 0.75,
+      "search_hints": ["starcoder", "stack-edu", "humaneval", "swe-bench"]
+    },
+    {
+      "id": "pack.reason",
+      "capability_ids": ["math", "reasoning"],
+      "train_allowed": false,
+      "min_native_pass_rate": 0.7,
+      "search_hints": ["gsm8k", "competition-math"]
+    },
+    {
+      "id": "pack.tools",
+      "capability_ids": ["tool-use", "function-calling"],
+      "train_allowed": false,
+      "min_native_pass_rate": 0.75,
+      "search_hints": ["toolformer", "gorilla", "xlam"]
+    },
+    {
+      "id": "pack.research",
+      "capability_ids": ["research", "citations", "rag"],
+      "train_allowed": false,
+      "min_native_pass_rate": 0.7,
+      "search_hints": ["hotpotqa", "fever", "rag-benchmark"]
+    },
+    {
+      "id": "pack.safety",
+      "capability_ids": ["safety", "refusals", "permission-gates"],
+      "train_allowed": false,
+      "min_native_pass_rate": 0.9,
+      "search_hints": ["safety-eval", "refusals"]
+    }
+  ],
+  "truth": {
+    "frontier_parity_proven": false,
+    "master_everything_on_huggingface": false,
+    "trained_weights_exist_from_this_file": false
+  }
+}
