@@ -1,0 +1,44 @@
+name: Grok Owner Systems
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "13 */8 * * *"
+  push:
+    paths:
+      - "tools/grok_run_owner_systems.py"
+      - "tests/test_grok_run_owner_systems.py"
+      - ".github/workflows/grok-owner-systems.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: grok-owner-systems-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  operate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: python3 -m unittest tests.test_grok_run_owner_systems
+      - run: python3 tools/grok_run_owner_systems.py
+      - if: always()
+        run: |
+          echo "## Buddy feel" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f reports/BUDDY_FEEL.md ]; then cat reports/BUDDY_FEEL.md >> "$GITHUB_STEP_SUMMARY"; fi
+          if [ -f reports/GROK_OWNER_SYSTEMS.md ]; then cat reports/GROK_OWNER_SYSTEMS.md >> "$GITHUB_STEP_SUMMARY"; fi
+      - if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: grok-owner-systems-${{ github.run_id }}
+          path: |
+            reports/GROK_OWNER_SYSTEMS.md
+            reports/BUDDY_FEEL.md
+            config/generated/grok-owner-systems.json
+          if-no-files-found: warn
