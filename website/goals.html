@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Goals | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=31" />
+  <link rel="stylesheet" href="desks.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="goals.html">Goals</a>
+      <a class="buddy-header-link" href="actions.html">Actions</a>
+      <a class="buddy-header-link" href="build.html">Build</a>
+    </div>
+  </header>
+  <main class="desk-page">
+    <p class="desk-kicker">Cut the middlemen</p>
+    <h1>Goals and work</h1>
+    <p class="desk-note">
+      Pages holds the catalog. The hosted Goals desk runs O*NET matching, Hugging Face cards, and live Actions. This page does not pretend Hub downloads or GitHub writes.
+    </p>
+    <label class="desk-note" for="goal">What should be done?</label>
+    <textarea id="goal" rows="3" style="width:100%;min-height:96px;margin:8px 0;padding:12px;border-radius:10px;background:#181b21;color:#f5f6f8;border:1px solid #2a2d35" placeholder="Launch a bakery, ship an app, hire without a recruiter…"></textarea>
+    <p>
+      <button class="btn btn-primary" id="run" type="button">Match occupations</button>
+      <a class="btn btn-outline" href="actions.html">Open Actions</a>
+    </p>
+    <div id="out" class="desk-grid"></div>
+  </main>
+  <script src="data/goal-graph.json"></script>
+  <script>
+    fetch("data/goal-graph.json", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((graph) => {
+        const out = document.getElementById("out");
+        function render(rows) {
+          out.innerHTML = "";
+          rows.slice(0, 8).forEach((occ) => {
+            const el = document.createElement("article");
+            el.className = "desk-card";
+            el.innerHTML = "<strong>" + occ.title + "</strong><p>" + occ.soc + " · " + occ.division + "</p><p>" + occ.dream + "</p><p class='state-ok'>Cut: " + (occ.middlemen || []).join(", ") + "</p>";
+            out.append(el);
+          });
+        }
+        render(graph.occupations || []);
+        document.getElementById("run").onclick = () => {
+          const q = document.getElementById("goal").value.toLowerCase();
+          const rows = (graph.occupations || []).filter((occ) => JSON.stringify(occ).toLowerCase().includes(q) || !q);
+          render(rows);
+        };
+      })
+      .catch((err) => {
+        document.getElementById("out").textContent = err.message;
+      });
+  </script>
+</body>
+</html>

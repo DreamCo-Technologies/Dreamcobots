@@ -45,6 +45,8 @@
     { href: 'debug.html', label: '🛠️ Debug' },
     { href: 'wiring.html', label: 'Wiring map' },
     { href: 'branch-health.html', label: 'Branch health' },
+    { href: 'goals.html', label: 'Goals' },
+    { href: 'actions.html', label: 'Actions' },
     { href: 'command.html', label: 'Command' },
     { href: 'ops.html', label: 'Ops' },
     { href: 'work.html', label: 'Watch / idle' },
