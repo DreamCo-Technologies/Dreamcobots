@@ -1,0 +1,12 @@
+{
+  "schema": "dreamco.lora_recipe_catalog.v1",
+  "train_in_default_ci": false,
+  "recipes": [
+    {"id": "lora-sft", "family": "LoRA", "stage": "sft", "quantization": "bf16", "serve": "single-adapter"},
+    {"id": "qlora-sft", "family": "QLoRA", "stage": "sft", "quantization": "nf4", "serve": "single-adapter"},
+    {"id": "dora-sft", "family": "DoRA", "stage": "sft", "quantization": "bf16", "serve": "single-adapter"},
+    {"id": "adalora-sft", "family": "AdaLoRA", "stage": "sft", "quantization": "bf16", "serve": "single-adapter"},
+    {"id": "qlora-dpo", "family": "QLoRA", "stage": "dpo", "quantization": "nf4", "serve": "single-adapter"},
+    {"id": "multi-lora-serve", "family": "LoRA", "stage": "serve", "quantization": "any", "serve": "many-adapters"}
+  ]
+}
