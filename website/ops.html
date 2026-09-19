@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ops | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="buddy.html">Chat</a>
+      <a class="buddy-header-link" href="command.html">Command</a>
+      <a class="buddy-header-link" href="ops.html">Ops</a>
+      <a class="buddy-header-link" href="connect-desk.html">Connect</a>
+      <a class="buddy-header-link" href="work.html">Work</a>
+      <a class="buddy-header-link" href="wiring.html">Wiring</a>
+      <a class="buddy-header-link" href="connections.html">Apps</a>
+      <a class="buddy-header-link" href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </header>
+  <main class="desk-page">
+
+    <p class="desk-kicker">Buddy, not a sidecar</p>
+    <h1>Operator jobs</h1>
+    <p class="desk-muted">Everything Grok has been doing in your plans — Buddy can run locally as evidence. No live money.</p>
+    <div id="ops"></div>
+    <script>
+      const jobs = [
+        ["Compile MD bots","plan_only"],["Place original bots","200 placed"],["Prove learning","fail-learn-pass"],
+        ["Grok twins","1101 caretakers"],["HF packs","license first"],["Weight balancer","no fake weights"],
+        ["500 waves","native / assisted / blocked"],["Money map","stripe test-mode"],
+        ["Fleet growth","10 divisions"],["Playbook","learn + earn"],["Pages mirror","this website"],["Prod grok-bot","evidence workflow"]
+      ];
+      document.getElementById("ops").innerHTML = jobs.map(([t,r]) =>
+        "<article class=desk-card><h2>"+t+"</h2><p class=desk-muted>Buddy local evidence: "+r+"</p></article>"
+      ).join("");
+    </script>
+
+  </main>
+  <p class="buddy-trust-line">Original Buddy website. Live Stripe off. Live Grok teacher is not keyed on GitHub Pages.</p>
+</body>
+</html>
