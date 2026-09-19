@@ -37,10 +37,13 @@ jobs:
         run: python3 tools/branch_health_daily.py
       - name: Conflict team
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.resolve }}
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CONFLICT_TEAM_LIMIT: "5"
-        run: python3 tools/branch_conflict_team.py
+        run: |
+          git reset --hard HEAD
+          python3 tools/branch_conflict_team.py
       - name: Publish report to the original site
         continue-on-error: true
         run: |
