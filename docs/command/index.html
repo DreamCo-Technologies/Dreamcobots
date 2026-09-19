@@ -1,0 +1,93 @@
+---
+permalink: /command/
+title: Buddy Command
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buddy Command Center</title>
+  <style>
+    :root { --bg:#0a0c10; --fg:#e8ece8; --muted:#8b948c; --line:#1c2320; --mint:#65d3a3; --card:#12151a; }
+    * { box-sizing: border-box; }
+    body { margin:0; font:16px/1.5 ui-sans-serif,system-ui; background:var(--bg); color:var(--fg); }
+    a { color:var(--mint); text-decoration:none; }
+    header, main { max-width: 960px; margin: 0 auto; padding: 16px; }
+    header { display:flex; flex-wrap:wrap; gap:12px; align-items:center; border-bottom:1px solid var(--line); }
+    nav { display:flex; flex-wrap:wrap; gap:10px; }
+    h1 { font-size: 2rem; margin: 8px 0; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; margin:12px 0; }
+    textarea, button, input { font: inherit; }
+    textarea { width:100%; min-height:90px; background:#0a0c10; color:var(--fg); border:1px solid var(--line); border-radius:12px; padding:12px; }
+    button { min-height:44px; padding:0 16px; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--fg); cursor:pointer; }
+    button.primary { background:var(--mint); color:#062016; border:0; }
+    .muted { color:var(--muted); font-size:14px; }
+    label { display:flex; align-items:center; gap:8px; min-height:44px; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>Buddy</strong>
+    <nav>
+      <a href="../">Docs</a>
+      <a href="./">Command</a>
+      <a href="https://github.com/DreamCo-Technologies/Dreamcobots">Repo</a>
+    </nav>
+  </header>
+  <main>
+    <p class="muted">GitHub Pages desk. Local planner. No secret keys. Grok teacher lives on the hosted app.</p>
+    <h1>How can I help?</h1>
+    <div class="card">
+      <p class="muted">Connect paid families only if you have them. Default is free students, unique model per step.</p>
+      <div id="paid"></div>
+    </div>
+    <div class="card">
+      <textarea id="job" placeholder="Build an inventory app with search, CSV export, tests, and debug."></textarea>
+      <p><button class="primary" id="go" type="button">Decompose</button></p>
+      <div id="steps"></div>
+    </div>
+    <div class="card">
+      <h2>Operator jobs Buddy can run itself</h2>
+      <p class="muted">Compile, place, prove, packs, balancer, 500 waves, playbook. Evidence only. No live Stripe.</p>
+      <div id="ops"></div>
+    </div>
+  </main>
+  <script>
+    const FAMILIES = [
+      ["dream-student","chat"],["phi","local"],["olmo","plan"],["deepseek","code"],
+      ["embed","eval"],["safety","gate"],["qwen","math"]
+    ];
+    const paidBox = document.getElementById("paid");
+    ["grok","claude-wrap","gpt-wrap","gemini-wrap"].forEach((f) => {
+      const l = document.createElement("label");
+      l.innerHTML = "<input type=checkbox /> " + f;
+      paidBox.appendChild(l);
+    });
+    document.getElementById("go").onclick = function () {
+      const job = document.getElementById("job").value.trim() || "Untitled";
+      const titles = ["Clarify","Route","Plan","Hard","Eval","Gate","Learn"];
+      const html = titles.map(function (title, i) {
+        const fam = FAMILIES[i % FAMILIES.length];
+        return "<article class=card><strong>"+title+"</strong><p class=muted>"+fam[0]+" / "+fam[1]+" / free</p><p>"+job+"</p></article>";
+      }).join("");
+      document.getElementById("steps").innerHTML = html + "<p class=muted>Unique models: 7 of 7</p>";
+    };
+    const jobs = [
+      ["Compile MD bots","plan_only"],
+      ["Place original bots","200 placed"],
+      ["Prove learning","fail-learn-pass"],
+      ["Grok twins","1101 caretakers"],
+      ["HF packs","license first"],
+      ["Weight balancer","no fake weights"],
+      ["500 waves","native/assisted/blocked"],
+      ["Money map","stripe test-mode"],
+      ["Fleet growth","10 divisions"],
+      ["Playbook","learn+earn on every bot"]
+    ];
+    document.getElementById("ops").innerHTML = jobs.map(function (row) {
+      return "<article class=card><strong>"+row[0]+"</strong><p class=muted>Buddy local evidence: "+row[1]+"</p></article>";
+    }).join("");
+  </script>
+</body>
+</html>
