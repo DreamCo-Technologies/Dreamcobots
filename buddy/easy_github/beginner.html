@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buddy — easy helper</title>
+  <style>
+    :root { font-family: Georgia, serif; color: #102018; background: #f4fff8; }
+    body { max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    textarea { width: 100%; min-height: 80px; font-size: 1rem; padding: .6rem; }
+    button { font-size: 1rem; padding: .5rem 1rem; margin-top: .5rem; }
+    .card { background: #fff; border: 1px solid #cfe6d8; padding: 1rem; margin-top: 1rem; }
+    .muted { color: #456; }
+    code { background: #e8f6ee; padding: 0 .2rem; }
+  </style>
+</head>
+<body>
+  <h1>Buddy talks in normal words</h1>
+  <p class="muted">200 coded skills. Ticket not issue. Change request not pull request. Robot check not CI.</p>
+  <textarea id="q" placeholder="Try: I'm new   save my work   what's broken   permission denied"></textarea>
+  <p>
+    <button type="button" id="go">Ask Buddy</button>
+    <button type="button" id="tour">Ten-minute tour</button>
+  </p>
+  <div id="out" class="card">This page reads <code>beginner_skills.json</code> or the two skill part files.</div>
+  <script>
+    async function loadSkills() {
+      try {
+        const res = await fetch('beginner_skills.json');
+        if (res.ok) return res.json();
+      } catch (e) {}
+      const a = await fetch('skills_part1.json').then(r => r.json());
+      const b = await fetch('skills_part2.json').then(r => r.json());
+      return { skills: [...(a.skills||[]), ...(b.skills||[])] };
+    }
+    function score(skill, text) {
+      const t = text.toLowerCase();
+      let s = 0;
+      if (skill.title && t.includes(String(skill.title).toLowerCase())) s += 5;
+      for (const trig of skill.triggers || []) {
+        if (trig && t.includes(String(trig).toLowerCase())) s += 3;
+      }
+      return s;
+    }
+    function render(skill, text) {
+      if (!skill) return '<p>Try: hi, show the map, save my work, what\'s broken.</p>';
+      const steps = (skill.steps || []).map(x => '<li>' + x + '</li>').join('');
+      const cmd = skill.command ? '<p><code>' + skill.command + '</code></p>' : '';
+      const yes = skill.ask_yes ? '<p><strong>Needs your yes</strong> before anything is sent.</p>' : '';
+      return '<p><strong>' + skill.title + '</strong> (' + skill.id + ')</p><p>' + skill.reply + '</p><ol>' + steps + '</ol>' + cmd + yes + '<p class="muted">You said: ' + text + '</p>';
+    }
+    let catalog;
+    document.getElementById('go').onclick = async () => {
+      catalog = catalog || await loadSkills();
+      const text = document.getElementById('q').value || 'help';
+      const ranked = (catalog.skills || []).map(sk => [score(sk, text), sk]).filter(x => x[0] > 0);
+      ranked.sort((a,b) => b[0]-a[0]);
+      document.getElementById('out').innerHTML = render(ranked[0] && ranked[0][1], text);
+    };
+    document.getElementById('tour').onclick = async () => {
+      catalog = catalog || await loadSkills();
+      const prompts = ["i'm new", 'show the map', 'save my work', "what's broken"];
+      document.getElementById('out').innerHTML = prompts.map(p => {
+        const ranked = (catalog.skills || []).map(sk => [score(sk, p), sk]).filter(x => x[0] > 0);
+        ranked.sort((a,b) => b[0]-a[0]);
+        return render(ranked[0] && ranked[0][1], p);
+      }).join('<hr/>');
+    };
+  </script>
+</body>
+</html>
