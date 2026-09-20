@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy OS | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+  <link rel="stylesheet" href="desks-chat.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <div id="desk-header"></div>
+  <main class="desk-page">
+    <p class="desk-kicker">This device is the control plane</p>
+    <h1>Buddy OS</h1>
+    <p class="desk-note">Same syscalls as Actions: doctor, test, lint, security, benchmark, repair, pages, bundle, datasets, resources, hunt, tasks. GitHub is evidence, not the kernel. Master a resource with evidence, then hunt the next.</p>
+    
+<div class="desk-stats">
+  <div class="desk-stat"><strong id="stat-res">0</strong><span>Resources</span></div>
+  <div class="desk-stat"><strong id="stat-mastered">0</strong><span>Mastered here</span></div>
+  <div class="desk-stat"><strong id="stat-open">0</strong><span>Still open</span></div>
+</div>
+<p><label for="os-evidence">Mastery evidence</label><input id="os-evidence" maxlength="400" placeholder="What you actually did (min 8 chars)" /></p>
+<p><label for="os-kind">Show</label>
+  <select id="os-kind">
+    <option value="all">All</option>
+    <option value="kernel">Kernel</option>
+    <option value="source">Sources</option>
+    <option value="desk">Desks</option>
+    <option value="catalog">Catalogs</option>
+    <option value="path">Paths</option>
+  </select>
+</p>
+<h2>Syscalls</h2>
+<div class="desk-grid" id="os-syscalls"></div>
+<pre class="desk-pre" id="os-out">Run a syscall. No shell-out. No keys.</pre>
+<h2>Resources</h2>
+<div class="desk-grid" id="os-res"></div>
+
+  </main>
+  <script src="chat-data.js"></script>
+  <script src="desk-chrome.js"></script>
+  <script src="os.js"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Desks | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+  <link rel="stylesheet" href="desks-chat.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <div id="desk-header"></div>
+  <main class="desk-page">
+    <p class="desk-kicker">All plan desks</p>
+    <h1>Clickable desks</h1>
+    <p class="desk-note">Every desk from this chat and the original site. Buttons go to real pages with real data. Catalogued is not production.</p>
+    <div id="desk-map" class="desk-list"></div>
+  </main>
+  <script src="chat-data.js"></script>
+  <script src="desk-chrome.js"></script>
+  <script>
+(function(){
+  const C = window.BUDDY_CHAT;
+  const g = {};
+  C.desks.forEach((d) => { (g[d.group] ||= []).push(d); });
+  document.getElementById('desk-map').innerHTML = Object.keys(g).map((name) =>
+    '<h2 class="desk-kicker">' + name + '</h2><div class="desk-grid">' + g[name].map((d) =>
+      '<article class="desk-card"><strong>' + d.label + '</strong><p>' + d.note + '</p><p><a class="desk-btn" href="' + d.href + '">Open</a></p></article>'
+    ).join('') + '</div>'
+  ).join('');
+})();
+</script>
+</body>
+</html>

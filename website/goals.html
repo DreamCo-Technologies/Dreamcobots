@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Goals | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+  <link rel="stylesheet" href="desks-chat.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <div id="desk-header"></div>
+  <main class="desk-page">
+    <p class="desk-kicker">Work first, course second</p>
+    <h1>Complete a goal</h1>
+    <p class="desk-note">Buddy maps a goal to an O*NET occupation, cuts middlemen, and hooks licensed sources. It does not hire a staffing firm for you. Writes stay grant-first. Live Stripe stays off.</p>
+    
+<div class="desk-stats">
+  <div class="desk-stat"><strong id="stat-occ">0</strong><span>Occupations</span></div>
+  <div class="desk-stat"><strong id="stat-saved">0</strong><span>Saved on this device</span></div>
+</div>
+<p><label for="goal-text">Goal</label><textarea id="goal-text" placeholder="ship an app without a staffing firm"></textarea></p>
+<div class="desk-actions">
+  <button type="button" class="primary" id="goal-go">Plan</button>
+  <button type="button" id="goal-hub">Study Hub cards</button>
+  <button type="button" id="goal-task">Queue as a task</button>
+</div>
+<div class="desk-actions" id="goal-alts"></div>
+<div id="goal-out"></div>
+<h2>Saved on this device</h2>
+<div id="goal-saved"></div>
+
+  </main>
+  <script src="chat-data.js"></script>
+  <script src="desk-chrome.js"></script>
+  <script src="goals.js"></script>
+</body>
+</html>

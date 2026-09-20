@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sources | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+  <link rel="stylesheet" href="desks-chat.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <div id="desk-header"></div>
+  <main class="desk-page">
+    <p class="desk-kicker">Connect one by one</p>
+    <h1>Sources Buddy can hook</h1>
+    <p class="desk-note">Register ≠ crawl. Public Hub cards are live. GitHub on Pages is cached JSON. Grok/OpenAI/Claude keys never sit here. Mail is grant then later approve. Stripe stays test-mode docs.</p>
+    <div class="desk-grid" id="src-list"></div>
+  </main>
+  <script src="chat-data.js"></script>
+  <script src="desk-chrome.js"></script>
+  <script>
+(function(){
+  const C = window.BUDDY_CHAT;
+  document.getElementById('src-list').innerHTML = C.sources.map((s) =>
+    '<article class="desk-card"><strong>' + s.name + '</strong><span class="desk-status ' + (s.live ? 'healthy' : s.hook === 'gated' ? 'blocked' : 'watch') + '">' + s.hook + (s.live ? ' · live' : '') + '</span><p>' + s.use + '</p><p>' + s.how + '</p><p><a class="desk-btn" href="' + s.href + '" target="_blank" rel="noopener">Open source</a></p></article>'
+  ).join('');
+})();
+</script>
+</body>
+</html>

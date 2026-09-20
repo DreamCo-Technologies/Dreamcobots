@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hub OS | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+  <link rel="stylesheet" href="desks-chat.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <div id="desk-header"></div>
+  <main class="desk-page">
+    <p class="desk-kicker">Study datasets, not steal them</p>
+    <h1>Hugging Face Hub OS</h1>
+    <p class="desk-note">Live public cards from huggingface.co. License first: allow/pin, study-only, or refuse unspecified. Buddy never bulk-downloads parquet from Pages. Compare Hub to O*NET, GitHub, and our own packages.</p>
+    
+<div class="desk-stats">
+  <div class="desk-stat"><strong id="stat-tasks">52</strong><span>Dataset tasks</span></div>
+  <div class="desk-stat"><strong id="stat-pkg">0</strong><span>Indexed on this device</span></div>
+  <div class="desk-stat"><strong>0</strong><span>Keys on this page</span></div>
+</div>
+<div class="desk-actions" id="hub-canon"></div>
+<p>
+  <label for="hub-q">Search Hub datasets</label>
+  <input id="hub-q" value="squad" maxlength="80" />
+</p>
+<p>
+  <label for="hub-id">Or a dataset id</label>
+  <input id="hub-id" placeholder="rajpurkar/squad" maxlength="160" />
+</p>
+<div class="desk-actions">
+  <button type="button" class="primary" id="hub-search-btn">Search live</button>
+  <button type="button" id="hub-study-btn">Study card</button>
+  <a class="desk-btn" href="learn-hf.html">7-day week</a>
+  <a class="desk-btn" href="work.html">Queue as a task</a>
+</div>
+<pre class="desk-pre" id="hub-out">Public Hub search. No weights.</pre>
+<div class="desk-grid" id="hub-results"></div>
+<h2>Compare sources</h2>
+<div class="desk-grid" id="hub-compare"></div>
+<h2>Packages on this device</h2>
+<pre class="desk-pre" id="hub-pkg"></pre>
+<div id="hub-tasks"></div>
+
+  </main>
+  <script src="chat-data.js"></script>
+  <script src="desk-chrome.js"></script>
+  <script src="hub.js"></script>
+</body>
+</html>
