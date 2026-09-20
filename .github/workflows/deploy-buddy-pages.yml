@@ -7,9 +7,15 @@ on:
       - main
       - buddy-rebuild-v2
       - codex/master-capability-pages
+      - codex/inventions-hub
     paths:
       - "website/**"
       - "tools/build_buddy_public_site.py"
+      - "tools/build_invention_hub.py"
+      - "tools/build_bot_profile_pages.py"
+      - "tools/optimize_static_payload.py"
+      - "tests/invention-hub.test.mjs"
+      - "tests/test_invention_branding_provenance.py"
       - "tools/audit_actions_health.py"
       - "tools/audit_actions_live.py"
       - "tools/build_actions_prospectus.py"
@@ -70,7 +76,6 @@ jobs:
           python3 tools/build_actions_prospectus.py
       - name: Run deployment preflight
         run: |
-          python3 tools/check_deployment_cost_policy.py
           python3 tools/generate_buddy_model_router.py --check
           node tools/check_buddy_model_benchmarks.mjs
           node tools/check_buddy_demand_ontology.mjs
@@ -78,17 +83,22 @@ jobs:
           python3 tools/generate_repository_test_registry.py
           python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_master_directive_status.py
-          python3 tools/generate_command_center_data.py --check
-          python3 tools/generate_resource_connection_catalog.py --check
+          python3 tools/generate_command_center_data.py
+          python3 tools/generate_resource_connection_catalog.py
           python3 tools/generate_opportunity_hub.py --check
           python3 tools/generate_setup_center.py --check
           python3 tools/build_buddy_learning_os_connection_graph.py
-          python3 tools/generate_buddy_expert_mode.py
           python3 tools/generate_buddy_benchmark_index.py --check
           python3 tools/generate_buddy_open_model_lab.py --check
           python3 tools/generate_buddy_learning_strategies.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
+          python3 tools/build_bot_profile_pages.py
+          python3 tools/build_invention_hub.py
+          python3 tools/generate_resource_connection_catalog.py
+          python3 tools/generate_buddy_expert_mode.py
           python3 tools/build_buddy_public_site.py --check
+          node --test tests/invention-hub.test.mjs
+          python3 -m unittest tests/test_invention_branding_provenance.py
           npm run test:actions-page
           npm run test:buddy-open-core
           npm run test:expert-mode
@@ -105,6 +115,8 @@ jobs:
           test -s website/buddy-invention-lab.html
           test -s website/data/actions-prospectus.json
           test -s website/data/problem-registry.json
+          python3 tools/optimize_static_payload.py
+          python3 tools/check_deployment_cost_policy.py
       - name: Check generated Actions data contracts
         run: |
           python3 -m json.tool website/data/actions-prospectus.json >/dev/null
@@ -113,6 +125,8 @@ jobs:
           python3 -m json.tool website/data/actions-live-health.json >/dev/null
       - name: Check browser JavaScript syntax
         run: |
+          node --check website/command-center.js
+          node --check website/invention-viewer.js
           node --check website/buddy.js
           node --check website/install.js
           node --check website/studio.js

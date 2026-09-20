@@ -112,6 +112,7 @@ function renderCard(bot) {
     </div>
     <div class="fleet-readiness ${certificationReady ? '' : 'is-warning'}"><span></span> ${certificationReady ? 'Every capability contract passed' : 'Capability evidence unavailable or incomplete'}</div>
     <div class="fleet-card-actions">
+      <a class="btn btn-primary btn-sm" href="bot-pages/${encodeURIComponent(bot.identity.slug)}.html">My page · 30 questions</a>
       <button class="btn btn-outline btn-sm" type="button" data-action="prospectus" data-slug="${escapeHtml(bot.identity.slug)}">Prospectus</button>
       <a class="btn btn-outline btn-sm" href="${calculatorUrl(bot)}">Calculator</a>
       <a class="btn btn-primary btn-sm" href="${testUrl(bot)}">Test with Buddy</a>

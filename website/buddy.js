@@ -1511,7 +1511,13 @@
     }
   });
 
-  const prompt = params.get('prompt');
+  let prompt = params.get('prompt');
+  if (params.get('intake') === '1') {
+    try {
+      const handoff = JSON.parse(localStorage.getItem('dreamco.buddy.intake-handoff') || 'null');
+      if (handoff && typeof handoff.prompt === 'string' && Date.now() - handoff.createdAt < 1800000) prompt = handoff.prompt.slice(0, 60000);
+    } catch { /* The user can copy the intake brief manually when storage is unavailable. */ }
+  }
   if (prompt) input.value = prompt;
   if (params.get('preferences') === '1') boundaryOpen.click();
   if (index.summary.profiles) {
