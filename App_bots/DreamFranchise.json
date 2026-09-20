@@ -3,10 +3,435 @@
   "total": 5,
   "growth": true,
   "bots": [
-    {"slug": "franchise-packager", "displayName": "Franchise Packager", "tier": "pro", "category": "growth", "description": "Packages franchise docs for human legal review.", "capabilities": ["doc-outline"], "status": "active"},
-    {"slug": "royalty-modeler", "displayName": "Royalty Modeler", "tier": "pro", "category": "growth", "description": "Models royalties in sandbox.", "capabilities": ["royalty-math"], "status": "active"},
-    {"slug": "territory-planner", "displayName": "Territory Planner", "tier": "pro", "category": "growth", "description": "Territory sketches.", "capabilities": ["map-plan"], "status": "active"},
-    {"slug": "franchise-compliance", "displayName": "Franchise Compliance", "tier": "enterprise", "category": "growth", "description": "Checklist only; not legal advice.", "capabilities": ["checklist"], "status": "active"},
-    {"slug": "playbook-writer", "displayName": "Playbook Writer", "tier": "pro", "category": "growth", "description": "Operations playbooks.", "capabilities": ["sop-draft"], "status": "active"}
+    {
+      "slug": "franchise-packager",
+      "displayName": "Franchise Packager",
+      "tier": "pro",
+      "category": "growth",
+      "description": "Packages franchise docs for human legal review.",
+      "capabilities": [
+        "doc-outline"
+      ],
+      "status": "active",
+      "revenueModel": "SaaS subscription",
+      "targetUsers": "DreamFranchise operators and analysts",
+      "priceRange": "$99/mo",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Franchise Packager, a specialized AI bot in the DreamCo Empire OS DreamFranchise division. Packages franchise docs for human legal review. Core capabilities: doc-outline. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Franchise Packager in sandbox mode: doc-outline. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    },
+    {
+      "slug": "royalty-modeler",
+      "displayName": "Royalty Modeler",
+      "tier": "pro",
+      "category": "growth",
+      "description": "Models royalties in sandbox.",
+      "capabilities": [
+        "royalty-math"
+      ],
+      "status": "active",
+      "revenueModel": "SaaS subscription",
+      "targetUsers": "DreamFranchise operators and analysts",
+      "priceRange": "$99/mo",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Royalty Modeler, a specialized AI bot in the DreamCo Empire OS DreamFranchise division. Models royalties in sandbox. Core capabilities: royalty-math. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Royalty Modeler in sandbox mode: royalty-math. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    },
+    {
+      "slug": "territory-planner",
+      "displayName": "Territory Planner",
+      "tier": "pro",
+      "category": "growth",
+      "description": "Territory sketches.",
+      "capabilities": [
+        "map-plan"
+      ],
+      "status": "active",
+      "revenueModel": "SaaS subscription",
+      "targetUsers": "DreamFranchise operators and analysts",
+      "priceRange": "$99/mo",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Territory Planner, a specialized AI bot in the DreamCo Empire OS DreamFranchise division. Territory sketches. Core capabilities: map-plan. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Territory Planner in sandbox mode: map-plan. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    },
+    {
+      "slug": "franchise-compliance",
+      "displayName": "Franchise Compliance",
+      "tier": "enterprise",
+      "category": "growth",
+      "description": "Checklist only; not legal advice.",
+      "capabilities": [
+        "checklist"
+      ],
+      "status": "active",
+      "revenueModel": "SaaS subscription",
+      "targetUsers": "DreamFranchise operators and analysts",
+      "priceRange": "$99/mo",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Franchise Compliance, a specialized AI bot in the DreamCo Empire OS DreamFranchise division. Checklist only; not legal advice. Core capabilities: checklist. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Franchise Compliance in sandbox mode: checklist. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    },
+    {
+      "slug": "playbook-writer",
+      "displayName": "Playbook Writer",
+      "tier": "pro",
+      "category": "growth",
+      "description": "Operations playbooks.",
+      "capabilities": [
+        "sop-draft"
+      ],
+      "status": "active",
+      "revenueModel": "SaaS subscription",
+      "targetUsers": "DreamFranchise operators and analysts",
+      "priceRange": "$99/mo",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Playbook Writer, a specialized AI bot in the DreamCo Empire OS DreamFranchise division. Operations playbooks. Core capabilities: sop-draft. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Playbook Writer in sandbox mode: sop-draft. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    }
   ]
 }

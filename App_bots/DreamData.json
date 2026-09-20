@@ -21,7 +21,79 @@
       "revenueModel": "Usage-based",
       "targetUsers": "Data engineers, analytics teams",
       "priceRange": "$999/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are ETL Pipeline Builder, a specialized AI bot in the DreamCo Empire OS DreamData division. Visual ETL pipeline builder with AI-powered transformation suggestions and monitoring. Core capabilities: Drag-and-drop pipeline builder; Schema inference engine; Incremental load optimization; Error recovery automation; Data lineage tracking; Connector marketplace; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for ETL Pipeline Builder in sandbox mode: Drag-and-drop pipeline builder; Schema inference engine; Incremental load optimization; Error recovery automation; Data lineage tracking; Connector marketplace; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "predictive-modeler",
@@ -42,7 +114,79 @@
       "revenueModel": "Usage-based",
       "targetUsers": "Data scientists, business analysts",
       "priceRange": "$999/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Predictive Modeling Bot, a specialized AI bot in the DreamCo Empire OS DreamData division. Automated ML model building for business predictions without code. Core capabilities: AutoML model selection; Feature engineering automation; Model explainability reports; Prediction API deployment; Accuracy monitoring; Retraining automation; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Predictive Modeling Bot in sandbox mode: AutoML model selection; Feature engineering automation; Model explainability reports; Prediction API deployment; Accuracy monitoring; Retraining automation; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "data-warehouse",
@@ -63,7 +207,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Data engineers, DBA teams",
       "priceRange": "$499/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Data Warehouse Optimizer, a specialized AI bot in the DreamCo Empire OS DreamData division. Optimizes data warehouse performance, cost, and query efficiency. Core capabilities: Query optimization engine; Partition strategy advisor; Materialized view suggestions; Cost anomaly detection; Unused table identification; Advanced analytics dashboard; Priority email support; API access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Data Warehouse Optimizer in sandbox mode: Query optimization engine; Partition strategy advisor; Materialized view suggestions; Cost anomaly detection; Unused table identification; Advanced analytics dashboard; Priority email support; API access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "bi-dashboard",
@@ -84,7 +300,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Business analysts, executives",
       "priceRange": "$499/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are BI Dashboard Creator, a specialized AI bot in the DreamCo Empire OS DreamData division. AI-powered business intelligence dashboard creation from natural language. Core capabilities: Natural language to chart; Auto-insight generation; Dashboard template library; Scheduled report delivery; Embedded analytics API; Advanced analytics dashboard; Priority email support; API access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for BI Dashboard Creator in sandbox mode: Natural language to chart; Auto-insight generation; Dashboard template library; Scheduled report delivery; Embedded analytics API; Advanced analytics dashboard; Priority email support; API access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "data-governance",
@@ -105,7 +393,79 @@
       "revenueModel": "Enterprise license",
       "targetUsers": "Data governance teams, CDOs",
       "priceRange": "$499/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Data Governance Bot, a specialized AI bot in the DreamCo Empire OS DreamData division. Enterprise data governance with catalog, lineage, and policy enforcement. Core capabilities: Data catalog management; Policy enforcement engine; Data steward assignment; Quality rule definitions; Lineage visualization; Advanced analytics dashboard; Priority email support; API access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Data Governance Bot in sandbox mode: Data catalog management; Policy enforcement engine; Data steward assignment; Quality rule definitions; Lineage visualization; Advanced analytics dashboard; Priority email support; API access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "streaming-engine",
@@ -126,7 +486,79 @@
       "revenueModel": "Usage-based",
       "targetUsers": "Data engineers, platform teams",
       "priceRange": "$499/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Real-Time Streaming Bot, a specialized AI bot in the DreamCo Empire OS DreamData division. Manages real-time data streaming pipelines with exactly-once processing. Core capabilities: Stream processing engine; Schema registry management; Dead letter queue handling; Backpressure management; Stream-to-batch bridging; Advanced analytics dashboard; Priority email support; API access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Real-Time Streaming Bot in sandbox mode: Stream processing engine; Schema registry management; Dead letter queue handling; Backpressure management; Stream-to-batch bridging; Advanced analytics dashboard; Priority email support; API access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "privacy-compliance",
@@ -147,7 +579,79 @@
       "revenueModel": "Enterprise license",
       "targetUsers": "Privacy officers, legal teams",
       "priceRange": "$499/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Privacy Compliance Bot, a specialized AI bot in the DreamCo Empire OS DreamData division. Automated GDPR, CCPA, and data privacy compliance scanning and management. Core capabilities: PII detection scanner; Data subject request automation; Consent management; Retention policy enforcement; Privacy impact assessments; Cross-border transfer tracking; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Privacy Compliance Bot in sandbox mode: PII detection scanner; Data subject request automation; Consent management; Retention policy enforcement; Privacy impact assessments; Cross-border transfer tracking; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "data-quality",
@@ -168,7 +672,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Data engineers, analytics teams",
       "priceRange": "$299/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Data Quality Monitor, a specialized AI bot in the DreamCo Empire OS DreamData division. Continuous data quality monitoring with anomaly detection and alerting. Core capabilities: Data profiling automation; Anomaly detection engine; Freshness monitoring; Completeness scoring; Quality trend dashboards; Advanced analytics dashboard; Priority email support; API access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Data Quality Monitor in sandbox mode: Data profiling automation; Anomaly detection engine; Freshness monitoring; Completeness scoring; Quality trend dashboards; Advanced analytics dashboard; Priority email support; API access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "feature-store",
@@ -189,7 +765,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "ML engineers, data scientists",
       "priceRange": "$299/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are ML Feature Store, a specialized AI bot in the DreamCo Empire OS DreamData division. Centralized feature store for ML with versioning and serving infrastructure. Core capabilities: Feature registry; Online/offline serving; Feature versioning; Point-in-time joins; Feature monitoring; Advanced analytics dashboard; Priority email support; API access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for ML Feature Store in sandbox mode: Feature registry; Online/offline serving; Feature versioning; Point-in-time joins; Feature monitoring; Advanced analytics dashboard; Priority email support; API access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "customer-data",
@@ -210,7 +858,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Marketing ops, growth teams",
       "priceRange": "$299/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Customer Data Platform, a specialized AI bot in the DreamCo Empire OS DreamData division. Unifies customer data across touchpoints for segmentation and activation. Core capabilities: Identity resolution engine; Cross-channel unification; Segment builder; Activation integrations; Customer 360 profiles; Advanced analytics dashboard; Priority email support; API access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Customer Data Platform in sandbox mode: Identity resolution engine; Cross-channel unification; Segment builder; Activation integrations; Customer 360 profiles; Advanced analytics dashboard; Priority email support; API access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "data-catalog",
@@ -231,7 +951,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Data teams, analysts",
       "priceRange": "$199/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Data Catalog Bot, a specialized AI bot in the DreamCo Empire OS DreamData division. Automated data catalog with search, documentation, and usage tracking. Core capabilities: Auto-documentation engine; Semantic search; Usage analytics tracking; Owner assignment automation; Tag taxonomy management; Advanced analytics dashboard; Priority email support; API access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Data Catalog Bot in sandbox mode: Auto-documentation engine; Semantic search; Usage analytics tracking; Owner assignment automation; Tag taxonomy management; Advanced analytics dashboard; Priority email support; API access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "data-monetization",
@@ -252,7 +1044,79 @@
       "revenueModel": "Revenue share + SaaS",
       "targetUsers": "Data product managers",
       "priceRange": "$199/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Data Monetization Bot, a specialized AI bot in the DreamCo Empire OS DreamData division. Packages and sells data products with access control and billing. Core capabilities: Data product packaging; Access control management; Usage metering; Data marketplace listing; Revenue attribution; Advanced analytics dashboard; Priority email support; API access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Data Monetization Bot in sandbox mode: Data product packaging; Access control management; Usage metering; Data marketplace listing; Revenue attribution; Advanced analytics dashboard; Priority email support; API access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "geospatial",
@@ -273,7 +1137,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Location analysts, logistics teams",
       "priceRange": "$199/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Geospatial Analytics Bot, a specialized AI bot in the DreamCo Empire OS DreamData division. Location-based analytics with mapping, geocoding, and spatial modeling. Core capabilities: Geocoding engine; Spatial clustering; Trade area analysis; Route optimization; Location intelligence dashboards; Advanced analytics dashboard; Priority email support; API access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Geospatial Analytics Bot in sandbox mode: Geocoding engine; Spatial clustering; Trade area analysis; Route optimization; Location intelligence dashboards; Advanced analytics dashboard; Priority email support; API access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "nlp-analytics",
@@ -294,7 +1230,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Analysts, content teams",
       "priceRange": "$199/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are NLP Text Analytics Bot, a specialized AI bot in the DreamCo Empire OS DreamData division. Extracts insights from unstructured text using NLP and sentiment analysis. Core capabilities: Entity extraction engine; Topic modeling; Sentiment scoring; Document classification; Keyphrase extraction; Advanced analytics dashboard; Priority email support; API access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for NLP Text Analytics Bot in sandbox mode: Entity extraction engine; Topic modeling; Sentiment scoring; Document classification; Keyphrase extraction; Advanced analytics dashboard; Priority email support; API access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "data-lake",
@@ -315,7 +1323,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Data engineers, cloud architects",
       "priceRange": "$199/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Data Lake Manager, a specialized AI bot in the DreamCo Empire OS DreamData division. Manages data lake organization, partitioning, and lifecycle policies. Core capabilities: Schema-on-read management; Partition optimization; Lifecycle policy engine; Cost tiering automation; Lake-to-warehouse bridging; Advanced analytics dashboard; Priority email support; API access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Data Lake Manager in sandbox mode: Schema-on-read management; Partition optimization; Lifecycle policy engine; Cost tiering automation; Lake-to-warehouse bridging; Advanced analytics dashboard; Priority email support; API access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "data-scientist",
@@ -336,7 +1416,79 @@
       "revenueModel": "Enterprise license",
       "targetUsers": "Data teams, business analysts",
       "priceRange": "$399/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Data Science Agent, a specialized AI bot in the DreamCo Empire OS DreamData division. Data science agent that analyzes datasets, builds models, creates visualizations, and provides predictive insights. Core capabilities: Statistical analysis; Model building; Data visualization; Predictive analytics; Feature engineering; A/B test analysis; Anomaly detection; Report automation. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Data Science Agent in sandbox mode: Statistical analysis; Model building; Data visualization; Predictive analytics; Feature engineering; A/B test analysis; Anomaly detection; Report automation. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     }
   ]
 }

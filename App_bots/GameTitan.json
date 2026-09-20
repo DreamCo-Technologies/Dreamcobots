@@ -21,7 +21,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Gamers, esports teams",
       "priceRange": "$99/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Game AI Player Bot, a specialized AI bot in the DreamCo Empire OS GameTitan division. Autonomous game-playing AI that learns strategies across multiple game genres. Core capabilities: Multi-game strategy engine; Real-time decision making; Pattern recognition from replays; Difficulty adaptation; Performance replay analysis; Meta-game optimization; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Game AI Player Bot in sandbox mode: Multi-game strategy engine; Real-time decision making; Pattern recognition from replays; Difficulty adaptation; Performance replay analysis; Meta-game optimization; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "game-coach",
@@ -42,7 +114,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Competitive gamers, coaches",
       "priceRange": "$99/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Game Coaching Bot, a specialized AI bot in the DreamCo Empire OS GameTitan division. AI-powered coaching that analyzes gameplay and provides improvement suggestions. Core capabilities: Gameplay replay analysis; Mistake identification engine; Skill progression tracking; Personalized drill suggestions; Rank prediction model; Pro player strategy comparison; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Game Coaching Bot in sandbox mode: Gameplay replay analysis; Mistake identification engine; Skill progression tracking; Personalized drill suggestions; Rank prediction model; Pro player strategy comparison; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "game-analytics",
@@ -63,7 +207,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Gamers, content creators, esports analysts",
       "priceRange": "$99/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Game Analytics Bot, a specialized AI bot in the DreamCo Empire OS GameTitan division. Deep analytics for game performance, meta tracking, and win-rate optimization. Core capabilities: Win-rate statistical analysis; Meta composition tracking; Champion/hero tier lists; Matchup probability engine; Session performance trends; Optimal build path suggestions; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Game Analytics Bot in sandbox mode: Win-rate statistical analysis; Meta composition tracking; Champion/hero tier lists; Matchup probability engine; Session performance trends; Optimal build path suggestions; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "gaming-titan",
@@ -84,7 +300,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Gamers, game developers, e-sports teams",
       "priceRange": "$149/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Gaming Titan AI, a specialized AI bot in the DreamCo Empire OS GameTitan division. Plays, builds, and trains on any video game or simulator. Can learn game mechanics, develop strategies, build custom games, and create game mods. Full gaming intelligence engine. Core capabilities: Game AI training; Strategy optimization; Game building and modding; Simulator creation; Speedrun analysis; Multiplayer coordination; Game testing automation; Procedural generation. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Gaming Titan AI in sandbox mode: Game AI training; Strategy optimization; Game building and modding; Simulator creation; Speedrun analysis; Multiplayer coordination; Game testing automation; Procedural generation. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     }
   ]
 }

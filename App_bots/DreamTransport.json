@@ -21,7 +21,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Fleet managers, logistics coordinators",
       "priceRange": "$149/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Fleet GPS Tracker, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Tracks fleet vehicles in real-time with route history and driver behavior monitoring. Core capabilities: Real-time GPS tracking; Route history playback; Driver behavior scoring; Geofence alert management; Fuel consumption monitoring; Idle time reporting; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Fleet GPS Tracker in sandbox mode: Real-time GPS tracking; Route history playback; Driver behavior scoring; Geofence alert management; Fuel consumption monitoring; Idle time reporting; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "route-optimizer",
@@ -42,7 +114,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Dispatchers, delivery managers",
       "priceRange": "$199/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Route Optimization Engine, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Optimizes delivery routes with traffic prediction and multi-stop sequencing. Core capabilities: Multi-stop route optimization; Traffic pattern prediction; Time window constraint handling; Vehicle capacity optimization; Real-time rerouting engine; Fuel cost minimization; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Route Optimization Engine in sandbox mode: Multi-stop route optimization; Traffic pattern prediction; Time window constraint handling; Vehicle capacity optimization; Real-time rerouting engine; Fuel cost minimization; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "freight-broker",
@@ -63,7 +207,79 @@
       "revenueModel": "Enterprise license",
       "targetUsers": "Freight brokers, logistics companies",
       "priceRange": "$799/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Freight Brokerage AI, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Automates freight brokerage with carrier matching and rate negotiation. Core capabilities: Carrier matching algorithm; Rate comparison engine; Load board integration; Document management automation; Margin optimization tools; Carrier scorecard system; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Freight Brokerage AI in sandbox mode: Carrier matching algorithm; Rate comparison engine; Load board integration; Document management automation; Margin optimization tools; Carrier scorecard system; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "last-mile-ai",
@@ -84,7 +300,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Delivery companies, e-commerce fulfillment",
       "priceRange": "$179/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Last-Mile Delivery Optimizer, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Optimizes last-mile delivery with dynamic routing and proof of delivery capture. Core capabilities: Dynamic delivery routing; Proof of delivery capture; Customer notification automation; Delivery window management; Driver assignment optimization; Failed delivery workflow; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Last-Mile Delivery Optimizer in sandbox mode: Dynamic delivery routing; Proof of delivery capture; Customer notification automation; Delivery window management; Driver assignment optimization; Failed delivery workflow; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "dispatch-center",
@@ -105,7 +393,79 @@
       "revenueModel": "Enterprise license",
       "targetUsers": "Dispatch managers, transportation directors",
       "priceRange": "$699/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are AI Dispatch Center, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Manages dispatch operations with automated assignment and priority scheduling. Core capabilities: Automated dispatch assignment; Priority-based scheduling; Driver availability tracking; Load consolidation engine; Real-time communication hub; Performance analytics dashboard; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for AI Dispatch Center in sandbox mode: Automated dispatch assignment; Priority-based scheduling; Driver availability tracking; Load consolidation engine; Real-time communication hub; Performance analytics dashboard; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "driver-compliance",
@@ -126,7 +486,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Safety managers, compliance officers",
       "priceRange": "$129/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Driver Compliance Monitor, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Monitors driver compliance with HOS regulations and CDL tracking. Core capabilities: HOS tracking automation; ELD integration engine; CDL expiry monitoring; Drug test scheduling; MVR record tracking; DOT audit preparation tools; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Driver Compliance Monitor in sandbox mode: HOS tracking automation; ELD integration engine; CDL expiry monitoring; Drug test scheduling; MVR record tracking; DOT audit preparation tools; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "tms-integrator",
@@ -147,7 +579,79 @@
       "revenueModel": "Enterprise license",
       "targetUsers": "VP logistics, supply chain directors",
       "priceRange": "$899/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are TMS Integration Platform, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Integrates transportation management systems with unified visibility and analytics. Core capabilities: Multi-TMS data aggregation; Shipment visibility dashboard; Rate management engine; Carrier performance analytics; Exception management automation; Invoice audit tools; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for TMS Integration Platform in sandbox mode: Multi-TMS data aggregation; Shipment visibility dashboard; Rate management engine; Carrier performance analytics; Exception management automation; Invoice audit tools; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "cold-chain-monitor",
@@ -168,7 +672,79 @@
       "revenueModel": "Enterprise license",
       "targetUsers": "Cold chain managers, pharmaceutical logistics",
       "priceRange": "$699/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Cold Chain Monitor, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Monitors cold chain compliance with temperature tracking and alert management. Core capabilities: Temperature sensor integration; Compliance threshold alerting; Chain of custody documentation; Deviation incident reporting; Regulatory audit trail; Equipment calibration tracking; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Cold Chain Monitor in sandbox mode: Temperature sensor integration; Compliance threshold alerting; Chain of custody documentation; Deviation incident reporting; Regulatory audit trail; Equipment calibration tracking; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "fuel-optimizer",
@@ -189,7 +765,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Fleet managers, finance departments",
       "priceRange": "$99/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Fuel Cost Optimizer, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Optimizes fuel costs with station pricing analysis and consumption tracking. Core capabilities: Fuel station price comparison; Consumption trend analysis; Fuel card management; Theft detection algorithms; Carbon emission reporting; Budget forecasting tools; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Fuel Cost Optimizer in sandbox mode: Fuel station price comparison; Consumption trend analysis; Fuel card management; Theft detection algorithms; Carbon emission reporting; Budget forecasting tools; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "trailer-tracker",
@@ -210,7 +858,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Asset managers, fleet coordinators",
       "priceRange": "$99/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Trailer & Asset Tracker, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Tracks trailers and transportation assets with utilization analytics. Core capabilities: Trailer GPS tracking; Utilization rate analytics; Detention time monitoring; Maintenance alert scheduling; Asset lifecycle management; Pool management optimization; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Trailer & Asset Tracker in sandbox mode: Trailer GPS tracking; Utilization rate analytics; Detention time monitoring; Maintenance alert scheduling; Asset lifecycle management; Pool management optimization; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "customs-clearance",
@@ -231,7 +951,79 @@
       "revenueModel": "Enterprise license",
       "targetUsers": "Import/export managers, customs brokers",
       "priceRange": "$599/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Customs Clearance Automator, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Automates customs clearance with document preparation and duty calculation. Core capabilities: HS code classification; Customs document generation; Duty and tax calculation; Trade compliance screening; Broker communication automation; Clearance status tracking; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Customs Clearance Automator in sandbox mode: HS code classification; Customs document generation; Duty and tax calculation; Trade compliance screening; Broker communication automation; Clearance status tracking; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "transport-analytics-elite",
@@ -252,7 +1044,79 @@
       "revenueModel": "Enterprise license",
       "targetUsers": "C-suite logistics, supply chain VPs",
       "priceRange": "$1,999/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Transport Analytics Platform, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Enterprise transportation analytics with network optimization and predictive modeling. Core capabilities: Network flow optimization; Predictive demand modeling; Cost per mile analytics; Service level monitoring; Mode optimization analysis; Executive dashboard suite; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Transport Analytics Platform in sandbox mode: Network flow optimization; Predictive demand modeling; Cost per mile analytics; Service level monitoring; Mode optimization analysis; Executive dashboard suite; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "autonomous-fleet",
@@ -273,7 +1137,79 @@
       "revenueModel": "Enterprise license",
       "targetUsers": "AV fleet operators, technology directors",
       "priceRange": "$2,499/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Autonomous Fleet Command, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Manages autonomous vehicle fleet operations with safety monitoring and integration. Core capabilities: AV fleet coordination; Safety event monitoring; Remote intervention system; Regulatory compliance tracking; Passenger experience management; Operational analytics engine; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Autonomous Fleet Command in sandbox mode: AV fleet coordination; Safety event monitoring; Remote intervention system; Regulatory compliance tracking; Passenger experience management; Operational analytics engine; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "delivery-rating",
@@ -294,7 +1230,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Operations managers, customer service teams",
       "priceRange": "$0",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Delivery Performance Rater, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Rates delivery performance with on-time metrics and customer satisfaction scoring. Core capabilities: On-time delivery tracking; Customer satisfaction surveys; Driver performance scoring; Exception categorization; Trend visualization dashboards; Basic analytics; Email support; Community access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Delivery Performance Rater in sandbox mode: On-time delivery tracking; Customer satisfaction surveys; Driver performance scoring; Exception categorization; Trend visualization dashboards; Basic analytics; Email support; Community access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "load-calculator",
@@ -315,7 +1323,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Drivers, dock workers, load planners",
       "priceRange": "$0",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Load Planning Calculator, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Calculates optimal load configurations with weight distribution and space utilization. Core capabilities: Weight distribution calculator; Space utilization optimizer; Axle weight compliance; Load diagram generation; Commodity compatibility checking; Basic analytics; Email support; Community access. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Load Planning Calculator in sandbox mode: Weight distribution calculator; Space utilization optimizer; Axle weight compliance; Load diagram generation; Commodity compatibility checking; Basic analytics; Email support; Community access. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "shipment-visibility",
@@ -336,7 +1416,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Shippers, customer service teams",
       "priceRange": "$149/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Shipment Visibility Hub, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Provides end-to-end shipment visibility with milestone tracking and ETA prediction. Core capabilities: Multi-carrier tracking; Milestone event logging; ETA prediction engine; Exception alerting automation; Customer portal access; API integration toolkit; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Shipment Visibility Hub in sandbox mode: Multi-carrier tracking; Milestone event logging; ETA prediction engine; Exception alerting automation; Customer portal access; API integration toolkit; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "driver-training-ai",
@@ -357,7 +1509,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Training managers, safety directors",
       "priceRange": "$99/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Driver Training AI, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Provides AI-driven driver training with performance feedback and safety coaching. Core capabilities: Driving behavior analysis; Training module assignment; Safety coaching recommendations; Certification tracking tools; Simulation scenario generation; Progress assessment scoring; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Driver Training AI in sandbox mode: Driving behavior analysis; Training module assignment; Safety coaching recommendations; Certification tracking tools; Simulation scenario generation; Progress assessment scoring; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "vehicle-maintenance",
@@ -378,7 +1602,79 @@
       "revenueModel": "SaaS subscription",
       "targetUsers": "Fleet maintenance managers, mechanics",
       "priceRange": "$129/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Vehicle Maintenance Scheduler, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Schedules vehicle maintenance with predictive analytics and cost tracking. Core capabilities: Predictive maintenance alerts; Service history tracking; Parts inventory management; Vendor management tools; Warranty claim tracking; Total cost of ownership analysis; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Vehicle Maintenance Scheduler in sandbox mode: Predictive maintenance alerts; Service history tracking; Parts inventory management; Vendor management tools; Warranty claim tracking; Total cost of ownership analysis; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     },
     {
       "slug": "intermodal-coordinator",
@@ -399,7 +1695,79 @@
       "revenueModel": "Enterprise license",
       "targetUsers": "Intermodal planners, logistics directors",
       "priceRange": "$699/mo",
-      "status": "active"
+      "status": "active",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Intermodal Coordination AI, a specialized AI bot in the DreamCo Empire OS DreamTransport division. Coordinates intermodal transportation with mode selection and terminal management. Core capabilities: Mode selection optimization; Terminal appointment scheduling; Container tracking integration; Drayage coordination engine; Chassis management tools; Intermodal rate comparison; Advanced analytics dashboard; Priority email support. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Intermodal Coordination AI in sandbox mode: Mode selection optimization; Terminal appointment scheduling; Container tracking integration; Drayage coordination engine; Chassis management tools; Intermodal rate comparison; Advanced analytics dashboard; Priority email support. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
     }
   ]
 }

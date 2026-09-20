@@ -3,10 +3,435 @@
   "total": 5,
   "growth": true,
   "bots": [
-    {"slug": "license-chooser", "displayName": "License Chooser", "tier": "pro", "category": "growth", "description": "Helps pick SPDX/CC style licenses.", "capabilities": ["license"], "status": "active"},
-    {"slug": "royalty-split", "displayName": "Royalty Split", "tier": "pro", "category": "growth", "description": "Royalty splits in sandbox.", "capabilities": ["split"], "status": "active"},
-    {"slug": "takedown-draft", "displayName": "Takedown Draft", "tier": "enterprise", "category": "growth", "description": "Drafts for human counsel.", "capabilities": ["draft"], "status": "active"},
-    {"slug": "sku-rights", "displayName": "SKU Rights", "tier": "pro", "category": "growth", "description": "SKU rights matrix.", "capabilities": ["matrix"], "status": "active"},
-    {"slug": "renewal-calendar", "displayName": "Renewal Calendar", "tier": "free", "category": "growth", "description": "Renewal calendar.", "capabilities": ["calendar"], "status": "active"}
+    {
+      "slug": "license-chooser",
+      "displayName": "License Chooser",
+      "tier": "pro",
+      "category": "growth",
+      "description": "Helps pick SPDX/CC style licenses.",
+      "capabilities": [
+        "license"
+      ],
+      "status": "active",
+      "revenueModel": "SaaS subscription",
+      "targetUsers": "DreamLicensing operators and analysts",
+      "priceRange": "$99/mo",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are License Chooser, a specialized AI bot in the DreamCo Empire OS DreamLicensing division. Helps pick SPDX/CC style licenses. Core capabilities: license. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for License Chooser in sandbox mode: license. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    },
+    {
+      "slug": "royalty-split",
+      "displayName": "Royalty Split",
+      "tier": "pro",
+      "category": "growth",
+      "description": "Royalty splits in sandbox.",
+      "capabilities": [
+        "split"
+      ],
+      "status": "active",
+      "revenueModel": "SaaS subscription",
+      "targetUsers": "DreamLicensing operators and analysts",
+      "priceRange": "$99/mo",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Royalty Split, a specialized AI bot in the DreamCo Empire OS DreamLicensing division. Royalty splits in sandbox. Core capabilities: split. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Royalty Split in sandbox mode: split. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    },
+    {
+      "slug": "takedown-draft",
+      "displayName": "Takedown Draft",
+      "tier": "enterprise",
+      "category": "growth",
+      "description": "Drafts for human counsel.",
+      "capabilities": [
+        "draft"
+      ],
+      "status": "active",
+      "revenueModel": "SaaS subscription",
+      "targetUsers": "DreamLicensing operators and analysts",
+      "priceRange": "$99/mo",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Takedown Draft, a specialized AI bot in the DreamCo Empire OS DreamLicensing division. Drafts for human counsel. Core capabilities: draft. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Takedown Draft in sandbox mode: draft. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    },
+    {
+      "slug": "sku-rights",
+      "displayName": "SKU Rights",
+      "tier": "pro",
+      "category": "growth",
+      "description": "SKU rights matrix.",
+      "capabilities": [
+        "matrix"
+      ],
+      "status": "active",
+      "revenueModel": "SaaS subscription",
+      "targetUsers": "DreamLicensing operators and analysts",
+      "priceRange": "$99/mo",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are SKU Rights, a specialized AI bot in the DreamCo Empire OS DreamLicensing division. SKU rights matrix. Core capabilities: matrix. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for SKU Rights in sandbox mode: matrix. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    },
+    {
+      "slug": "renewal-calendar",
+      "displayName": "Renewal Calendar",
+      "tier": "free",
+      "category": "growth",
+      "description": "Renewal calendar.",
+      "capabilities": [
+        "calendar"
+      ],
+      "status": "active",
+      "revenueModel": "SaaS subscription",
+      "targetUsers": "DreamLicensing operators and analysts",
+      "priceRange": "$99/mo",
+      "toolsNeeded": [
+        "Approved model adapter",
+        "Sandbox test harness",
+        "Owner approval gate for external actions",
+        "Audit / evidence logger"
+      ],
+      "benchmarks": [
+        {
+          "label": "Sandbox capability pass rate",
+          "target": "100% declared caps",
+          "current": "profile-only"
+        },
+        {
+          "label": "Time to first useful packet",
+          "target": "< 60s",
+          "current": "unmeasured"
+        },
+        {
+          "label": "Approval boundary compliance",
+          "target": "100%",
+          "current": "policy-declared"
+        }
+      ],
+      "learningPlan": [
+        "Ingest approved outcome evidence from sandbox runs",
+        "Refine routing keywords and capability tags",
+        "Track which recommendations users accept"
+      ],
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Pass sandbox capability checks",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr2",
+          "title": "Configure required adapters",
+          "status": "todo",
+          "priority": "High"
+        },
+        {
+          "id": "pr3",
+          "title": "Record deployment telemetry evidence",
+          "status": "todo",
+          "priority": "Medium"
+        }
+      ],
+      "production": {
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "configuration_required",
+        "checklist": [
+          "profile_schema_valid",
+          "markdown_profile_present",
+          "sandbox_test_defined",
+          "adapter_configured",
+          "auth_scoped",
+          "telemetry_verified"
+        ],
+        "checklist_status": {
+          "profile_schema_valid": true,
+          "markdown_profile_present": true,
+          "sandbox_test_defined": false,
+          "adapter_configured": false,
+          "auth_scoped": false,
+          "telemetry_verified": false
+        }
+      },
+      "systemPrompt": "You are Renewal Calendar, a specialized AI bot in the DreamCo Empire OS DreamLicensing division. Renewal calendar. Core capabilities: calendar. Operate with precision, provide actionable intelligence, and generate measurable results. Be concise, data-driven, and focused on ROI. Never claim live external actions completed unless evidence and owner approval exist. Prefer sandbox and synthetic data by default.",
+      "sample_test_prompt": "Test every declared capability for Renewal Calendar in sandbox mode: calendar. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    }
   ]
 }
