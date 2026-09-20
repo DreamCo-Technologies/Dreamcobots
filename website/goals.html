@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complete a goal | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="buddy.html">Chat</a>
+      <a class="buddy-header-link" href="goals.html">Goals</a>
+      <a class="buddy-header-link" href="desks.html">Desks</a>
+      <a class="buddy-header-link" href="sources.html">Sources</a>
+      <a class="buddy-header-link" href="connect-desk.html">Connect</a>
+      <a class="buddy-header-link" href="data-control.html">Data</a>
+      <a class="buddy-header-link" href="actions.html">Actions</a>
+    </div>
+  </header>
+  <main class="desk-page">
+    <p class="desk-kicker">Complete a goal</p>
+    <h1>Work first. Cut the middlemen.</h1>
+    <p class="desk-note">Each button opens official O*NET. The live playbook (Hub search, specialists) stays on hosted Buddy. Pages never holds keys.</p>
+    <p class="desk-note">
+      <a class="buddy-header-link" href="bots.html">Specialists</a>
+      <a class="buddy-header-link" href="actions.html">Actions</a>
+      <a class="buddy-header-link" href="sources.html">Sources</a>
+      <a class="buddy-header-link" href="data-control.html">Your data</a>
+    </p>
+    <div class="desk-grid" id="goals-grid"></div>
+  </main>
+  <script>
+    fetch('data/onet-lite.json').then(function(r){return r.json()}).then(function(rows){
+      document.getElementById('goals-grid').innerHTML = rows.map(function(o){
+        return '<a class="desk-card" href="https://www.onetonline.org/link/summary/' + o.soc + '" target="_blank" rel="noopener"><strong>' + o.title + '</strong><p>' + o.soc + ' \u00b7 official O*NET</p></a>';
+      }).join('');
+    }).catch(function(){
+      document.getElementById('goals-grid').innerHTML = '<p class="desk-note">Could not load onet-lite.json. Open <a href="https://www.onetonline.org">O*NET OnLine</a>.</p>';
+    });
+  </script>
+</body>
+</html>
