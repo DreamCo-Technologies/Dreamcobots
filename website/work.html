@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Work | Buddy</title>
+  <title>Tasks | Buddy</title>
   <meta name="theme-color" content="#101218" />
   <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -11,29 +11,39 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="buddy.css?v=29" />
   <link rel="stylesheet" href="desks.css" />
+  <link rel="stylesheet" href="desks-chat.css" />
 </head>
 <body class="buddy-home buddy-simple-home">
-  <header class="buddy-simple-header">
-    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
-      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
-      <span><strong>Buddy</strong><small>by DreamCo</small></span>
-    </a>
-    <div class="buddy-header-actions">
-      <a class="buddy-header-link" href="buddy.html">Chat</a>
-      <a class="buddy-header-link" href="command.html">Command</a>
-      <a class="buddy-header-link" href="ops.html">Ops</a>
-      <a class="buddy-header-link" href="connect-desk.html">Connect</a>
-      <a class="buddy-header-link" href="work.html">Work</a>
-      <a class="buddy-header-link" href="wiring.html">Wiring</a>
-      <a class="buddy-header-link" href="connections.html">Broker</a>
-      <a class="buddy-header-link" href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">GitHub</a>
-    </div>
-  </header>
+  <div id="desk-header"></div>
   <main class="desk-page">
-    <p class="desk-kicker">Watch or idle</p>
-    <h1>When Buddy works</h1>
-    <p class="desk-note">Buddy can work while you watch, or queue jobs until this device is idle (~45s). The device must stay on. A closed laptop is not a worker.</p>
-<div class="desk-grid"><article class="desk-card"><strong>Watch</strong><p>You stay on the desk. Jobs run in view.</p></article><article class="desk-card"><strong>Idle</strong><p>After inactivity, queued operator jobs run locally in the hosted app.</p></article><article class="desk-card"><strong>Schedules</strong><p>Original buddy.js schedules already exist. Forever means until you pause, not unbounded.</p></article><article class="desk-card"><strong>Pages limit</strong><p>Static Pages can only run while this tab is open. Owner local runner needed after close.</p></article></div>    <p class="desk-note">Use the hosted Work desk to toggle watch/idle. This page documents the contract.</p>
+    <p class="desk-kicker">Any job Buddy can actually run</p>
+    <h1>Tasks: device, internet, API, MCP</h1>
+    <p class="desk-note">Buddy can work while you watch, with the screen off, or either — your choice. The device must stay powered and this tab must stay alive. A closed laptop is not a worker. Teacher API is blocked here (no keys on Pages). Hub search is live. GitHub uses cached JSON.</p>
+    
+<div class="desk-stats">
+  <div class="desk-stat"><strong id="stat-queue">0</strong><span>Open</span></div>
+  <div class="desk-stat"><strong id="stat-done">0</strong><span>Done</span></div>
+  <div class="desk-stat"><strong id="stat-tools">0</strong><span>Live tools</span></div>
+</div>
+<p class="desk-status watch" id="mode-now">Watch this tab</p>
+<div class="desk-actions">
+  <button type="button" data-mode="watch">Watch</button>
+  <button type="button" data-mode="off">Screen off</button>
+  <button type="button" data-mode="either">Either</button>
+  <button type="button" id="task-notify">Allow notify</button>
+  <button type="button" id="task-wake">Hold Wake Lock</button>
+</div>
+<p><label for="task-text">Task</label><textarea id="task-text" placeholder="Study squad on Hugging Face and pin the license"></textarea></p>
+<div class="desk-actions"><button type="button" class="primary" id="task-go">Queue and run</button></div>
+<div class="desk-actions" id="task-templates"></div>
+<div id="task-list"></div>
+<h2>MCP tools Buddy has now</h2>
+<div class="desk-grid" id="mcp-list"></div>
+<pre class="desk-pre" id="task-log"></pre>
+
   </main>
+  <script src="chat-data.js"></script>
+  <script src="desk-chrome.js"></script>
+  <script src="tasks.js"></script>
 </body>
 </html>

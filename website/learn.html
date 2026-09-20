@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learn | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+  <link rel="stylesheet" href="desks-chat.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <div id="desk-header"></div>
+  <main class="desk-page">
+    <p class="desk-kicker">How Buddy actually learns</p>
+    <h1>Learn methods and five houses</h1>
+    <p class="desk-note">Sandbox everything. Learn from GitHub, Hugging Face, ChatGPT, Claude, and Grok perspectives. Then build Buddy’s own version. Named plugins are not installed until granted.</p>
+    
+<div class="desk-actions">
+  <a class="desk-btn primary" href="learn-hf.html">7-day Hub week</a>
+  <a class="desk-btn" href="hub.html">Hub OS</a>
+  <a class="desk-btn" href="buddy-learning-lab.html">Learning lab</a>
+</div>
+<div id="learn-methods" class="desk-list"></div>
+<h2>Five-house plugins (named, not installed)</h2>
+<div id="learn-persp" class="desk-grid"></div>
+<h2>Buddy originals</h2>
+<div id="learn-orig" class="desk-grid"></div>
+
+  </main>
+  <script src="chat-data.js"></script>
+  <script src="desk-chrome.js"></script>
+  <script>
+(function(){
+  const C = window.BUDDY_CHAT;
+  const g = {};
+  C.methods.forEach((m) => { (g[m.group] ||= []).push(m); });
+  document.getElementById('learn-methods').innerHTML = Object.keys(g).map((name) =>
+    '<h2 class="desk-kicker">' + name + '</h2><div class="desk-grid">' + g[name].map((m) =>
+      '<article class="desk-card"><strong>' + m.name + '</strong><p>' + m.how + '</p><p>' + m.sandbox + '</p></article>'
+    ).join('') + '</div>'
+  ).join('');
+  document.getElementById('learn-persp').innerHTML = C.perspectives.map((p) =>
+    '<article class="desk-card"><strong>' + p.name + '</strong><p>' + p.house + ' · ' + p.kind + ' · ' + (p.live ? 'live' : 'named') + '</p><p>' + p.teaches + '</p><p>' + p.grant + '</p><p><a href="' + p.href + '" target="_blank" rel="noopener">Docs</a></p></article>'
+  ).join('');
+  document.getElementById('learn-orig').innerHTML = C.originals.map((o) =>
+    '<article class="desk-card"><strong>' + o.name + '</strong><p>' + o.setup + '</p><p>' + o.catalog + '</p></article>'
+  ).join('');
+})();
+</script>
+</body>
+</html>

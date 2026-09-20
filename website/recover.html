@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recovery | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+  <link rel="stylesheet" href="desks-chat.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <div id="desk-header"></div>
+  <main class="desk-page">
+    <p class="desk-kicker">Eight lanes, one bus</p>
+    <h1>Recovery systems</h1>
+    <p class="desk-note">Detect through safety. Auto-repair never force-merges main, never weakens tests, never puts keys on Pages, never fakes green.</p>
+    <div class="desk-grid" id="rec-list"></div><p class="desk-note"><a class="desk-btn" href="branch-health.html">Branch health</a> <a class="desk-btn" href="actions.html">Actions health</a></p>
+  </main>
+  <script src="chat-data.js"></script>
+  <script src="desk-chrome.js"></script>
+  <script>
+(function(){
+  document.getElementById('rec-list').innerHTML = window.BUDDY_CHAT.recovery.map((r) =>
+    '<article class="desk-card"><strong>' + r.name + '</strong><p>' + r.job + '</p><p>Auto: ' + r.auto + '</p><p>Gated: ' + r.gated + '</p><p class="state-never">Forbidden: ' + r.forbidden + '</p></article>'
+  ).join('');
+})();
+</script>
+</body>
+</html>
