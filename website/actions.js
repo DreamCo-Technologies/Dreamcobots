@@ -5,7 +5,7 @@
   const REPORT_URL = 'data/actions-health-report.json';
   const PROSPECTUS_URL = 'data/actions-prospectus.json';
   const benchmarkIndex = window.BUDDY_BENCHMARK_INDEX || { programs: [], summary: {} };
-  const state = { report: null, prospectus: null, masterPlan: null, runs: new Map() };
+  const state = { report: null, prospectus: null, masterPlan: null, runs: new Map(), recent: [], refreshing: false, auto: true, nextPoll: 0, lastSuccess: null };
 
   const byId = (id) => document.getElementById(id);
   const make = (tag, text, className) => {
@@ -277,31 +277,75 @@
     byId('workflow-result-count').textContent = `${workflows.length} of ${state.report.workflow_count} workflows shown`;
   }
 
+  const isRunning = run => ['in_progress', 'queued', 'waiting', 'pending', 'requested'].includes(run.status);
+  const needsAttention = run => ['failure', 'cancelled', 'timed_out', 'action_required', 'startup_failure', 'stale'].includes(run.conclusion);
+  function renderLive() {
+    byId('live-running').textContent = state.recent.filter(isRunning).length;
+    byId('live-success').textContent = state.recent.filter(r => r.conclusion === 'success').length;
+    byId('live-failed').textContent = state.recent.filter(needsAttention).length;
+    byId('live-total').textContent = state.recent.length;
+    const query = byId('live-search').value.trim().toLowerCase(), filter = byId('live-filter').value;
+    const rows = state.recent.filter(r => `${r.name} ${r.head_branch} ${r.head_sha}`.toLowerCase().includes(query) && (filter === 'all' || filter === 'running' && isRunning(r) || filter === 'success' && r.conclusion === 'success' || filter === 'attention' && needsAttention(r)));
+    byId('live-count').textContent = `${rows.length} matching runs · showing ${Math.min(rows.length, 25)}`;
+    const host = byId('live-runs'); host.replaceChildren();
+    if (!rows.length) host.append(make('p', state.lastSuccess ? 'No runs match this filter.' : 'No live run evidence loaded yet.'));
+    rows.slice(0, 25).forEach(run => {
+      const row = make('article', undefined, 'live-run');
+      const badge = make('span', readable(run.conclusion || run.status), 'live-badge ' + (isRunning(run) ? 'running' : run.conclusion === 'success' ? 'success' : needsAttention(run) ? 'attention' : ''));
+      const detail = make('div'); detail.append(make('strong', run.name || 'GitHub workflow'), make('small', `${run.head_branch || 'unknown branch'} · ${String(run.head_sha || '').slice(0, 8)} · ${run.event || 'unknown event'}`));
+      const time = make('time', new Date(run.updated_at).toLocaleString()); time.dateTime = run.updated_at;
+      let url; try { url = new URL(run.html_url); } catch { return; }
+      if (url.origin !== 'https://github.com' || !url.pathname.startsWith('/' + REPOSITORY + '/actions/runs/')) return;
+      const link = make('a', 'Run & logs ↗', 'btn btn-outline'); link.href = url.href; link.target = '_blank'; link.rel = 'noopener';
+      row.append(badge, detail, time, link); host.append(row);
+    });
+  }
   async function refreshRuns() {
-    const button = byId('refresh-actions');
-    button.disabled = true;
-    button.textContent = 'Refreshing...';
-    byId('actions-refresh-status').textContent = 'Reading public GitHub run evidence...';
+    if (state.refreshing) return;
+    state.refreshing = true;
+    const button = byId('refresh-actions'); button.disabled = true; byId('live-refresh').disabled = true;
+    button.textContent = 'Refreshing...'; byId('live-status').textContent = 'Reading public GitHub run evidence…';
+    state.nextPoll = Date.now() + 120000;
     try {
-      const response = await fetch(`https://api.github.com/repos/${REPOSITORY}/actions/runs?per_page=100`, {
-        headers: { Accept: 'application/vnd.github+json' },
-      });
-      if (!response.ok) throw new Error(`GitHub returned ${response.status}`);
+      const response = await fetch(`https://api.github.com/repos/${REPOSITORY}/actions/runs?per_page=100`, { headers: { Accept: 'application/vnd.github+json' }, signal: AbortSignal.timeout(12000) });
+      if (!response.ok) {
+        if (response.status === 403 || response.status === 429) {
+          const reset = Number(response.headers.get('x-ratelimit-reset')) * 1000;
+          const retry = Number(response.headers.get('retry-after')) * 1000;
+          state.nextPoll = Math.max(state.nextPoll, Number.isFinite(reset) ? reset + 1000 : 0, Date.now() + (retry || 300000));
+        }
+        throw new Error(`GitHub returned ${response.status}`);
+      }
       const payload = await response.json();
-      state.runs.clear();
-      (payload.workflow_runs || []).forEach((run) => {
-        if (run.path && !state.runs.has(run.path)) state.runs.set(run.path, run);
-      });
-      const seen = state.report.findings.filter((workflow) => state.runs.has(workflow.workflow)).length;
-      byId('actions-refresh-status').textContent = `Public run evidence loaded for ${seen} workflows. Observed evidence is not a guarantee of future success.`;
+      if (!Array.isArray(payload.workflow_runs)) throw new Error('Unexpected GitHub response');
+      state.recent = payload.workflow_runs; state.runs.clear();
+      state.recent.forEach(run => { if (run.path && !state.runs.has(run.path)) state.runs.set(run.path, run); });
+      state.lastSuccess = Date.now();
+      const seen = (state.report?.findings || []).filter(workflow => state.runs.has(workflow.workflow)).length;
+      byId('actions-refresh-status').textContent = `Public run evidence loaded for ${seen} workflows. Last checked ${new Date(state.lastSuccess).toLocaleTimeString()}.`;
+      byId('live-status').textContent = `Updated ${new Date(state.lastSuccess).toLocaleTimeString()} · public GitHub data`;
+      renderLive();
     } catch (error) {
-      byId('actions-refresh-status').textContent = `Static evidence is available. Public run refresh unavailable: ${error.message}`;
+      const message = `Refresh unavailable: ${error.message}. ` + (state.lastSuccess ? `Showing stale evidence from ${new Date(state.lastSuccess).toLocaleTimeString()}.` : 'No live evidence loaded.');
+      byId('live-status').textContent = message; byId('actions-refresh-status').textContent = message;
     } finally {
-      button.disabled = false;
-      button.textContent = 'Refresh GitHub Runs';
-      render();
+      state.refreshing = false; button.disabled = false; byId('live-refresh').disabled = false;
+      button.textContent = 'Refresh GitHub Runs'; render();
     }
   }
+  byId('live-refresh').addEventListener('click', refreshRuns);
+  byId('live-search').addEventListener('input', renderLive);
+  byId('live-filter').addEventListener('change', renderLive);
+  byId('live-toggle').addEventListener('click', () => {
+    state.auto = !state.auto; byId('live-toggle').setAttribute('aria-pressed', String(state.auto));
+    byId('live-toggle').textContent = state.auto ? 'Pause auto-refresh' : 'Resume auto-refresh';
+  });
+  setInterval(() => {
+    if (!state.auto || document.hidden || !navigator.onLine) { byId('live-countdown').textContent = !state.auto ? 'Automatic refresh paused' : document.hidden ? 'Refresh paused while page is hidden' : 'Offline · waiting for connection'; return; }
+    const remaining = Math.max(0, Math.ceil((state.nextPoll - Date.now()) / 1000));
+    byId('live-countdown').textContent = state.refreshing ? 'Refreshing…' : `Next refresh in ${remaining}s`;
+    if (!remaining && !state.refreshing) refreshRuns();
+  }, 1000);
 
   const LOCAL_COMMANDS = {
     doctor: { label: 'Doctor', description: 'Check repository structure, runtime bindings, dependencies, and common configuration problems.' },

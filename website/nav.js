@@ -2,6 +2,7 @@
 (function() {
   const current = location.pathname.split('/').pop() || 'index.html';
   const links = [
+    { href: 'command-center.html', label: '◇ Inventions Hub' },
     { href: 'dashboard.html', label: '📊 Dashboard' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'buddy-expert-mode.html', label: '🎓 Expert Mode' },
@@ -69,7 +70,7 @@
 <nav>
   <div class="container">
     <div class="nav-inner">
-      <a href="buddy.html" class="nav-brand">
+      <a href="command-center.html" class="nav-brand">
         <div class="nav-logo">⚡</div>
         <span>DreamCo <strong>Empire OS</strong></span>
       </a>

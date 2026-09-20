@@ -22,7 +22,9 @@ def build():
     scanned=0
     for root in SCAN:
         for path in root.rglob('*.json'):
-            if path==OUT:continue
+            # Expert Mode embeds this catalog. Scanning that consumer creates
+            # circular source provenance and makes a fresh catalog immediately stale.
+            if path==OUT or path==ROOT/"config/generated/buddy_expert_mode.json":continue
             try: data=json.loads(path.read_text())
             except (json.JSONDecodeError,UnicodeDecodeError):continue
             scanned+=1;urls=set();walk(data,urls)

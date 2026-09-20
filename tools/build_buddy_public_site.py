@@ -56,6 +56,29 @@ PUBLIC_EXTENSIONS = {
 }
 
 
+def branding_content(path: Path, text: str) -> str:
+    """Keep source-control identifiers distinct from public promotional copy.
+
+    Historical branch names must remain exact for diagnostics. Only the name
+    field of a branch inventory record is excluded; titles, notes and all
+    other content still pass through the branding checks. Secret checks use
+    the original text, including branch names.
+    """
+    relative = path.relative_to(ROOT).as_posix()
+    if relative not in {"reports/branch-health-daily.json", "website/data/branch-health.json"}:
+        return text
+    try:
+        report = json.loads(text)
+        if not isinstance(report, dict) or not isinstance(report.get("branches"), list):
+            return text
+        for branch in report["branches"]:
+            if isinstance(branch, dict) and isinstance(branch.get("sha"), str) and re.fullmatch(r"[0-9a-f]{40}", branch["sha"]):
+                branch.pop("name", None)
+        return json.dumps(report)
+    except (ValueError, TypeError):
+        return text
+
+
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
@@ -387,7 +410,7 @@ def validate_site() -> dict[str, Any]:
             warnings.append(f"Large public file: website/{relative} ({path.stat().st_size:,} bytes)")
         if path.suffix.lower() in {".html", ".js", ".json", ".txt", ".xml", ".webmanifest"}:
             text = path.read_text(encoding="utf-8")
-            if FORBIDDEN_PUBLIC_NAMES.search(text):
+            if FORBIDDEN_PUBLIC_NAMES.search(branding_content(path, text)):
                 errors.append(f"Disallowed outside-builder name detected in website/{relative}")
             for label, pattern in SECRET_VALUE_PATTERNS.items():
                 if pattern.search(text):
@@ -632,7 +655,7 @@ def validate_site() -> dict[str, Any]:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             continue
-        if LEGACY_PROVIDER_NAME.search(text):
+        if LEGACY_PROVIDER_NAME.search(branding_content(path, text)):
             branding_hits.append(relative)
     if branding_hits:
         errors.append("Legacy provider branding remains in project files: " + ", ".join(sorted(set(branding_hits))[:25]))

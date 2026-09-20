@@ -34,6 +34,11 @@ jobs:
         with:
           source: ./docs
           destination: ./_site
+      - name: Build dedicated AI specialist pages
+        run: |
+          python3 tools/build_bot_profile_pages.py
+          python3 tools/build_invention_hub.py
+          python3 tools/optimize_static_payload.py
       - name: Overlay original Buddy website
         run: |
           rsync -a website/ _site/
