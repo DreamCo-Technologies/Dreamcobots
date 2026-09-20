@@ -46,6 +46,7 @@
     { href: 'wiring.html', label: 'Wiring map' },
     { href: 'branch-health.html', label: 'Branch health' },
     { href: 'goals.html', label: 'Goals' },
+    { href: 'learn-hf.html', label: 'Learn' },
     { href: 'actions.html', label: 'Actions' },
     { href: 'command.html', label: 'Command' },
     { href: 'ops.html', label: 'Ops' },

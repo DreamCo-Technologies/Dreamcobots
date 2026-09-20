@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hugging Face month | Buddy</title>
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=31" />
+  <link rel="stylesheet" href="desks.css" />
+</head>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="goals.html">Goals</a>
+      <a class="buddy-header-link" href="learn-hf.html">Learn</a>
+      <a class="buddy-header-link" href="actions.html">Actions</a>
+    </div>
+  </header>
+  <main class="desk-page">
+    <p class="desk-kicker">Official courses, not a certificate</p>
+    <h1>Hugging Face month</h1>
+    <p class="desk-note">
+      Pages holds the catalog. The hosted Learn desk is the 30-day tracker. A check is not a pass. Licenses first. No weight steal.
+    </p>
+    <p><a class="btn btn-primary" href="https://huggingface.co/learn" target="_blank" rel="noopener">huggingface.co/learn</a></p>
+    <div id="out" class="desk-grid"></div>
+  </main>
+  <script>
+    fetch("data/hf-month.json", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((data) => {
+        const out = document.getElementById("out");
+        (data.days || []).forEach((d) => {
+          const el = document.createElement("article");
+          el.className = "desk-card";
+          el.innerHTML = "<strong>Day " + d.day + " · " + d.title + "</strong><p>" + d.study + "</p><p class='state-ok'>Evidence: " + d.evidence + "</p>";
+          out.append(el);
+        });
+      })
+      .catch((err) => { document.getElementById("out").textContent = err.message; });
+  </script>
+</body>
+</html>
