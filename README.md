@@ -6,6 +6,25 @@
 
 DreamCo is a governed AI workbench with 1,051 specialist profiles across 45 divisions. Buddy routes requests, prepares testable task packets, and pauses before external writes, publishing, outreach, account changes, or spending.
 
+## Buddy on GitHub Pages
+
+Original Buddy chrome plus the desks from the latest Grok chat. Static HTML. No API keys. Hugging Face public cards work. Grok teacher stays on the hosted app.
+
+- [Original Buddy chat](website/buddy.html)
+- [This chat → Pages](website/chat-sync.html)
+- [Hub OS](website/hub.html) — study datasets, license first
+- [7-day Hugging Face week](website/learn-hf.html)
+- [Learn methods](website/learn.html)
+- [Tasks](website/work.html) — watch or screen-off; a closed laptop is not a worker
+- [Buddy OS](website/os.html)
+- [Complete a goal](website/goals.html)
+- [Sources](website/sources.html)
+- [Devices](website/devices.html) — pairing only
+- [Recovery](website/recover.html)
+- [Build readiness](website/build.html)
+- [Actions health](website/actions.html)
+
+
 ## 🗂️ Directory Structure
 
 ```
