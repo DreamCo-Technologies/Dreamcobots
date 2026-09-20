@@ -36,12 +36,15 @@ jobs:
           destination: ./_site
       - name: Overlay original Buddy website
         run: |
-          rsync -a website/ _site/
-          touch _site/.nojekyll
+          # jekyll-build-pages writes _site as root; copy to a runner-owned tree first
+          mkdir -p public_site
+          if [ -d _site ]; then cp -a _site/. public_site/; fi
+          rsync -a website/ public_site/
+          touch public_site/.nojekyll
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: ./_site
+          path: ./public_site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
