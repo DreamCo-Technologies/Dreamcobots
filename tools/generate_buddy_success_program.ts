@@ -290,7 +290,7 @@ export function buildBuddySuccessProgram() {
   const upgradeTemplates = improvementTemplates("upgrade");
   const divisionCapabilityTemplates = capabilityTemplates();
   const divisions = divisionPrograms(fleet);
-  if (divisions.length !== 45) throw new Error(`Expected 45 divisions, found ${divisions.length}`);
+  if (divisions.length !== 55) throw new Error(`Expected 55 divisions, found ${divisions.length}`);
   if (mustHaveTemplates.length !== 100 || upgradeTemplates.length !== 100 || divisionCapabilityTemplates.length !== 100
     || divisions.some((division) => division.must_have_updates.count !== 100 || division.upgrades.count !== 100 || division.capabilities.count !== 100)) {
     throw new Error("Every division must have exactly 100 must-have updates, 100 upgrades, and 100 capabilities.");
