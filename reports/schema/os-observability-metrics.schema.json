@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.tech/schemas/os-observability-metrics.json",
+  "title": "DreamCo OS Observability SLO/Soak Metrics",
+  "description": "SET 5: Actions+PR+Issues+Agents tiles. Anti-vanity: yellow≠green; green requires current evidence; soak=repeated acceptance.",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "provenance", "anti_vanity", "surfaces", "aggregate", "metrics"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0.0" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "provenance": {
+      "type": "object",
+      "required": ["repo", "commit", "environment"],
+      "properties": {
+        "repo": { "type": "string" },
+        "commit": { "type": ["string", "null"] },
+        "environment": { "type": "string" },
+        "control_plane_artifact": { "type": ["string", "null"] },
+        "evidence_complete": { "type": "boolean" }
+      }
+    },
+    "anti_vanity": {
+      "type": "object",
+      "required": [
+        "yellow_never_counts_as_green",
+        "green_requires_current_evidence",
+        "historical_failures_immutable",
+        "pct_without_provenance_not_release_evidence",
+        "soak_requires_repeated_acceptance",
+        "soak_default_n",
+        "agents_vanity_green_blocked_must_be_zero"
+      ],
+      "properties": {
+        "yellow_never_counts_as_green": { "type": "boolean", "const": true },
+        "green_requires_current_evidence": { "type": "boolean", "const": true },
+        "historical_failures_immutable": { "type": "boolean", "const": true },
+        "pct_without_provenance_not_release_evidence": { "type": "boolean", "const": true },
+        "soak_requires_repeated_acceptance": { "type": "boolean", "const": true },
+        "soak_default_n": { "type": "integer", "minimum": 2, "default": 3 },
+        "agents_vanity_green_blocked_must_be_zero": { "type": "boolean", "const": true }
+      }
+    },
+    "surfaces": {
+      "type": "object",
+      "required": ["actions", "pr", "issues", "agents"],
+      "properties": {
+        "actions": { "$ref": "#/$defs/surfaceState" },
+        "pr": { "$ref": "#/$defs/surfaceState" },
+        "issues": { "$ref": "#/$defs/surfaceState" },
+        "agents": { "$ref": "#/$defs/surfaceState" }
+      }
+    },
+    "aggregate": {
+      "type": "object",
+      "required": ["os_green_pct", "os_soak_ok", "os_pages_publish_freshness_hours", "counts"],
+      "properties": {
+        "os_green_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "os_soak_ok": { "type": ["boolean", "null"] },
+        "os_pages_publish_freshness_hours": { "type": ["number", "null"] },
+        "counts": {
+          "type": "object",
+          "required": ["green", "red", "yellow"],
+          "properties": {
+            "green": { "type": "integer", "minimum": 0 },
+            "red": { "type": "integer", "minimum": 0 },
+            "yellow": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "minItems": 25,
+      "maxItems": 25,
+      "items": { "$ref": "#/$defs/metric" }
+    }
+  },
+  "$defs": {
+    "tileState": {
+      "type": "string",
+      "enum": ["green", "red", "yellow", "gray"],
+      "description": "green=verified current evidence; red=failed; yellow=incomplete/stale/awaiting; gray=n/a. yellow NEVER folds into green."
+    },
+    "surfaceState": {
+      "type": "object",
+      "required": ["state", "soak_ok"],
+      "properties": {
+        "state": { "$ref": "#/$defs/tileState" },
+        "soak_ok": { "type": ["boolean", "null"] },
+        "note": { "type": "string" }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "required": ["id", "surface", "label", "state", "value", "unit", "evidence"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "enum": [
+            "actions_required_success_rate_7d",
+            "actions_soak_consecutive_green",
+            "actions_open_failure_fingerprints",
+            "actions_evidence_freshness_hours",
+            "actions_flaky_vs_deterministic_ratio",
+            "actions_yellow_incomplete_count",
+            "pr_health_distribution",
+            "pr_required_checks_pass_rate",
+            "pr_age_p50_p95_days",
+            "pr_claims_evidence_rate",
+            "pr_merge_conflict_count",
+            "pr_missing_coverage_on_changed_paths",
+            "issues_p0_open_count",
+            "issues_p0_age_hours_p95",
+            "issues_blocker_with_evidence_count",
+            "issues_fix_linkage_rate",
+            "issues_close_soak",
+            "agents_runtime_production_evidence_rate",
+            "agents_sandbox_soak_pass",
+            "agents_cert_evidence_ok",
+            "agents_last_successful_action_age_hours",
+            "agents_vanity_green_blocked",
+            "os_green_pct",
+            "os_soak_ok",
+            "os_pages_publish_freshness_hours"
+          ]
+        },
+        "surface": { "type": "string", "enum": ["actions", "pr", "issues", "agents", "aggregate"] },
+        "label": { "type": "string" },
+        "state": { "$ref": "#/$defs/tileState" },
+        "value": {},
+        "unit": { "type": "string" },
+        "evidence": {
+          "type": "object",
+          "required": ["present"],
+          "properties": {
+            "present": { "type": "boolean" },
+            "source": { "type": ["string", "null"] },
+            "commit": { "type": ["string", "null"] },
+            "timestamp": { "type": ["string", "null"] }
+          }
+        },
+        "slo": { "type": ["object", "null"] }
+      }
+    }
+  }
+}
