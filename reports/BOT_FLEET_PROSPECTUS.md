@@ -4,17 +4,17 @@ This report is generated from repository evidence. A catalog profile is not coun
 
 ## Verified Inventory
 
-- Bot profiles: 1051
-- Divisions: 45
-- Buddy-routed profiles: 1051
-- Executable governed runtime instances: 1051
+- Bot profiles: 1101
+- Divisions: 55
+- Buddy-routed profiles: 1101
+- Executable governed runtime instances: 1101
 - Separate standalone processes: 0
 - Configured external APIs evidenced: 0
-- Per-bot sandbox blueprints: 1051
-- Per-bot logo identities: 1051
-- Per-bot business blueprints: 1051
-- Permission-gated lead systems: 1051
-- Declared capability slots covered by fleet certification: 8408
+- Per-bot sandbox blueprints: 1101
+- Per-bot logo identities: 1101
+- Per-bot business blueprints: 1101
+- Permission-gated lead systems: 1101
+- Declared capability slots covered by fleet certification: 8460
 
 ## Production Gate
 
@@ -27,6 +27,8 @@ Every profile now has a health-checkable sandbox runtime instance. Each profile 
 | CommandCore | 13 | 5 |
 | DreamAIInfra | 25 | 10 |
 | DreamAdmin | 21 | 0 |
+| DreamAffiliate | 5 | 0 |
+| DreamAgency | 5 | 0 |
 | DreamAgents | 20 | 0 |
 | DreamAgriculture | 20 | 0 |
 | DreamArts | 18 | 0 |
@@ -46,10 +48,14 @@ Every profile now has a health-checkable sandbox runtime instance. Each profile 
 | DreamFinance | 25 | 29 |
 | DreamFlow | 5 | 5 |
 | DreamFood | 20 | 0 |
+| DreamFoundry | 5 | 0 |
+| DreamFranchise | 5 | 0 |
 | DreamGlobal | 16 | 5 |
 | DreamHealth | 20 | 0 |
 | DreamInfluence | 25 | 0 |
+| DreamIntegrations | 5 | 0 |
 | DreamLegal | 25 | 0 |
+| DreamLicensing | 5 | 0 |
 | DreamLoans | 23 | 0 |
 | DreamMaintenance | 21 | 0 |
 | DreamMarket | 5 | 5 |
@@ -63,9 +69,13 @@ Every profile now has a health-checkable sandbox runtime instance. Each profile 
 | DreamProtection | 20 | 0 |
 | DreamRealEstate | 25 | 15 |
 | DreamRetail | 26 | 20 |
+| DreamRobotics | 5 | 0 |
+| DreamSaaS | 5 | 0 |
 | DreamSalesPro | 37 | 100 |
 | DreamScience | 20 | 0 |
 | DreamSocial | 33 | 0 |
+| DreamStreaming | 5 | 0 |
 | DreamTrade | 12 | 5 |
 | DreamTransport | 19 | 0 |
+| DreamTravel | 5 | 0 |
 | GameTitan | 4 | 5 |
