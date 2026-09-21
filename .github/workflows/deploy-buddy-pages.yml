@@ -12,6 +12,7 @@ on:
       - "website/**"
       - "tools/build_buddy_public_site.py"
       - "tools/build_invention_hub.py"
+      - "tools/build_repository_library.py"
       - "tools/build_bot_profile_pages.py"
       - "tools/optimize_static_payload.py"
       - "tests/invention-hub.test.mjs"
@@ -94,11 +95,12 @@ jobs:
           python3 tools/build_manufacturer_marketplace_catalog.py
           python3 tools/build_bot_profile_pages.py
           python3 tools/build_invention_hub.py
+          python3 tools/build_repository_library.py
           python3 tools/generate_resource_connection_catalog.py
           python3 tools/generate_buddy_expert_mode.py
           python3 tools/build_buddy_public_site.py --check
           node --test tests/invention-hub.test.mjs
-          python3 -m unittest tests/test_invention_branding_provenance.py
+          python3 -m unittest tests/test_invention_branding_provenance.py tests/test_repository_library.py
           npm run test:actions-page
           npm run test:buddy-open-core
           npm run test:expert-mode

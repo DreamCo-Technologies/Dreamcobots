@@ -2,12 +2,13 @@
 (function() {
   const current = location.pathname.split('/').pop() || 'index.html';
   const links = [
+    { href: 'repository.html', label: '✦ My project' },
     { href: 'command-center.html', label: '◇ Inventions Hub' },
     { href: 'dashboard.html', label: '📊 Dashboard' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'buddy-expert-mode.html', label: '🎓 Expert Mode' },
     { href: 'buddy-invention-lab.html', label: '💡 Idea-to-Store' },
-    { href: 'actions.html', label: '⚙️ Actions' },
+    { href: 'actions.html', label: '⚙️ Build checks' },
     { href: 'master-build.html', label: '🧭 Master Build' },
     { href: 'buddy-command-center.html', label: '🗂️ Command Center' },
     { href: 'world-lens.html', label: '🌍 World Lens GPS' },

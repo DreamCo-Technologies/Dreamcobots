@@ -1,5 +1,6 @@
 import * as T from './vendor/three/three.module.js';
 import {OrbitControls} from './vendor/three/OrbitControls.js';
+import {detailInvention} from './invention-detail.js';
 import {solveArmTarget} from './invention-kinematics.js';
 export function createInventionViewer(container,onChange) {
  const scene=new T.Scene(), camera=new T.PerspectiveCamera(40,1,.1,150), renderer=new T.WebGLRenderer({antialias:true,alpha:true});
@@ -57,7 +58,7 @@ export function createInventionViewer(container,onChange) {
   const target=mesh(root,new T.TorusGeometry(.2,.025,8,40),new T.MeshBasicMaterial({color:0x8af5cf}),[2,1.4,1],[Math.PI/2,0,0]);robot={yaw,shoulder,elbow,fingers,cube,target,homeParent:cube.parent};pose([2,1.4,1]);
  }
  function pose(v){if(!robot)return false;const angles=solveArmTarget(...v);robot.target.position.set(...v);if(!angles)return false;robot.yaw.rotation.y=angles.yaw;robot.shoulder.rotation.z=-angles.shoulder;robot.elbow.rotation.z=-angles.elbow;return true}
- function setModel(name){if(!['spacecraft','robot','drone','rocket','research'].includes(name))throw new Error('Unknown model');if(root){scene.remove(root);root.traverse(o=>{o.geometry?.dispose();if(o.material)o.material.dispose()})}root=new T.Group();scene.add(root);parts=[];rotors=[];robot=null;robotRun=null;model=name;explode=0;assembly=null;interior=false;isolated=false;wire=false;grid.position.y=-2.15;if(name==='spacecraft')buildSpacecraft();else if(name==='drone')buildDrone();else if(name==='rocket')buildRocket();else if(name==='research')buildResearch();else buildRobot();annotate();selected=parts[0].id;reset();notify()}
+ function setModel(name){if(!['spacecraft','robot','drone','rocket','research'].includes(name))throw new Error('Unknown model');if(root){scene.remove(root);root.traverse(o=>{o.geometry?.dispose();if(o.material){o.material.map?.dispose();o.material.dispose()}})}root=new T.Group();scene.add(root);parts=[];rotors=[];robot=null;robotRun=null;model=name;explode=0;assembly=null;interior=false;isolated=false;wire=false;grid.position.y=-2.15;if(name==='spacecraft')buildSpacecraft();else if(name==='drone')buildDrone();else if(name==='rocket')buildRocket();else if(name==='research')buildResearch();else buildRobot();detailInvention(parts,model);annotate();selected=parts[0].id;reset();notify()}
  function notify(){const p=parts.find(p=>p.id===selected);onChange({model,parts:parts.map(({id,name,description,connection,step})=>({id,name,description,connection,step})),selected,p: p&&{id:p.id,name:p.name,description:p.description,connection:p.connection,step:p.step},explode,interior,isolated,rotating:controls.autoRotate,wire,assembling:!!assembly})}
  function reset(){controls.target.set(0,model==='robot'?.65:0,0);camera.position.set(model==='robot'?7:9,model==='robot'?5:6,model==='robot'?8:-10);controls.update()}
  function select(id){if(!parts.some(p=>p.id===id))return;selected=id;notify()}

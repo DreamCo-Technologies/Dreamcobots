@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'docs/**'
+      - 'tools/build_repository_library.py'
       - 'website/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -38,6 +39,7 @@ jobs:
         run: |
           python3 tools/build_bot_profile_pages.py
           python3 tools/build_invention_hub.py
+          python3 tools/build_repository_library.py
           python3 tools/optimize_static_payload.py
       - name: Overlay original Buddy website
         run: |
