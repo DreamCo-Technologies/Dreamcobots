@@ -1,0 +1,66 @@
+{
+  "schema": "dreamco.memory_places.v1",
+  "version": "1.0.0",
+  "default_place": "this_computer",
+  "places": [
+    {
+      "id": "this_computer",
+      "easy_name": "This computer",
+      "kind": "local_folder",
+      "path": "buddy/memory/vault",
+      "good_for": "Everyday lessons on your machine",
+      "syncs": false,
+      "needs_yes": false
+    },
+    {
+      "id": "chats_folder",
+      "easy_name": "Chats folder",
+      "kind": "local_folder",
+      "path": "chats/buddy_memory",
+      "good_for": "Keep lessons next to conversation exports",
+      "syncs": false,
+      "needs_yes": false
+    },
+    {
+      "id": "project_notes",
+      "easy_name": "Project notes",
+      "kind": "local_folder",
+      "path": "docs/memory",
+      "good_for": "Lessons that live with project docs",
+      "syncs": false,
+      "needs_yes": false
+    },
+    {
+      "id": "browser_only",
+      "easy_name": "This browser only",
+      "kind": "browser",
+      "path": "localStorage:dreamco-memory",
+      "good_for": "Quick notes on the website; not a backup",
+      "syncs": false,
+      "needs_yes": false
+    },
+    {
+      "id": "custom_folder",
+      "easy_name": "A folder I choose",
+      "kind": "custom_folder",
+      "path": "",
+      "good_for": "USB drive, Documents, or another disk",
+      "syncs": false,
+      "needs_yes": true
+    },
+    {
+      "id": "github_export",
+      "easy_name": "GitHub export file",
+      "kind": "export_file",
+      "path": "buddy/memory/export/buddy_memory.jsonl",
+      "good_for": "A file you can send up yourself after you review it",
+      "syncs": false,
+      "needs_yes": true
+    }
+  ],
+  "rules": [
+    "Never store secret keys in memory.",
+    "Teaching notes are yours; Buddy does not auto-promote them to live.",
+    "GitHub export does not send itself. You review, then send up."
+  ]
+}
