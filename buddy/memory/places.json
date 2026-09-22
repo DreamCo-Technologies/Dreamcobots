@@ -1,66 +1,33 @@
 {
   "schema": "dreamco.memory_places.v1",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "default_place": "this_computer",
+  "count": 20,
   "places": [
-    {
-      "id": "this_computer",
-      "easy_name": "This computer",
-      "kind": "local_folder",
-      "path": "buddy/memory/vault",
-      "good_for": "Everyday lessons on your machine",
-      "syncs": false,
-      "needs_yes": false
-    },
-    {
-      "id": "chats_folder",
-      "easy_name": "Chats folder",
-      "kind": "local_folder",
-      "path": "chats/buddy_memory",
-      "good_for": "Keep lessons next to conversation exports",
-      "syncs": false,
-      "needs_yes": false
-    },
-    {
-      "id": "project_notes",
-      "easy_name": "Project notes",
-      "kind": "local_folder",
-      "path": "docs/memory",
-      "good_for": "Lessons that live with project docs",
-      "syncs": false,
-      "needs_yes": false
-    },
-    {
-      "id": "browser_only",
-      "easy_name": "This browser only",
-      "kind": "browser",
-      "path": "localStorage:dreamco-memory",
-      "good_for": "Quick notes on the website; not a backup",
-      "syncs": false,
-      "needs_yes": false
-    },
-    {
-      "id": "custom_folder",
-      "easy_name": "A folder I choose",
-      "kind": "custom_folder",
-      "path": "",
-      "good_for": "USB drive, Documents, or another disk",
-      "syncs": false,
-      "needs_yes": true
-    },
-    {
-      "id": "github_export",
-      "easy_name": "GitHub export file",
-      "kind": "export_file",
-      "path": "buddy/memory/export/buddy_memory.jsonl",
-      "good_for": "A file you can send up yourself after you review it",
-      "syncs": false,
-      "needs_yes": true
-    }
+    {"id": "this_computer", "easy_name": "This computer", "kind": "local_folder", "path": "buddy/memory/vault", "good_for": "Everyday lessons on this machine", "how": "Buddy writes here when you choose it.", "syncs": false, "needs_yes": false},
+    {"id": "chats_folder", "easy_name": "Chats folder", "kind": "local_folder", "path": "chats/buddy_memory", "good_for": "Keep lessons next to conversation exports", "how": "Saved beside your chat files.", "syncs": false, "needs_yes": false},
+    {"id": "project_notes", "easy_name": "Project notes", "kind": "local_folder", "path": "docs/memory", "good_for": "Lessons that live with project docs", "how": "Saved under docs/memory.", "syncs": false, "needs_yes": false},
+    {"id": "browser_only", "easy_name": "This browser only", "kind": "browser", "path": "localStorage:dreamco-memory", "good_for": "Quick website notes", "how": "Stays in this browser until you export.", "syncs": false, "needs_yes": false},
+    {"id": "custom_folder", "easy_name": "A folder I choose", "kind": "custom_folder", "path": "", "good_for": "Documents, Desktop, or any path", "how": "Pass --path when you choose it.", "syncs": false, "needs_yes": true},
+    {"id": "usb_drive", "easy_name": "USB or external drive", "kind": "custom_folder", "path": "", "good_for": "Carry memory on a stick", "how": "Choose the drive path. Good offline backup.", "syncs": false, "needs_yes": true},
+    {"id": "github_export", "easy_name": "GitHub export file", "kind": "export_file", "path": "buddy/memory/export/github/buddy_memory.jsonl", "good_for": "Review, then send up yourself", "how": "Download or copy the export file. Buddy does not push it.", "syncs": false, "needs_yes": true},
+    {"id": "google_drive", "easy_name": "Google Drive", "kind": "cloud_export", "path": "buddy/memory/export/google_drive", "good_for": "Phone + computer sharing", "how": "Save the export, then put it in a Drive folder named Buddy-Memory.", "syncs": true, "needs_yes": true},
+    {"id": "google_cloud_storage", "easy_name": "Google Cloud Storage", "kind": "cloud_export", "path": "buddy/memory/export/google_cloud_storage", "good_for": "Team buckets and backups", "how": "Export first. You upload the file to your bucket. No keys in chat.", "syncs": true, "needs_yes": true},
+    {"id": "icloud_drive", "easy_name": "iCloud Drive", "kind": "cloud_export", "path": "buddy/memory/export/icloud_drive", "good_for": "Apple phones, iPads, and Macs", "how": "Save the export into iCloud Drive / Buddy-Memory.", "syncs": true, "needs_yes": true},
+    {"id": "apple_icloud", "easy_name": "Apple iCloud", "kind": "cloud_export", "path": "buddy/memory/export/apple_icloud", "good_for": "Same Apple ID across devices", "how": "Use iCloud Drive or Files app. Do not put secrets in Notes.", "syncs": true, "needs_yes": true},
+    {"id": "dropbox", "easy_name": "Dropbox", "kind": "cloud_export", "path": "buddy/memory/export/dropbox", "good_for": "Shared family or team folders", "how": "Drop the export into Dropbox / Buddy-Memory.", "syncs": true, "needs_yes": true},
+    {"id": "onedrive", "easy_name": "Microsoft OneDrive", "kind": "cloud_export", "path": "buddy/memory/export/onedrive", "good_for": "Windows and Office users", "how": "Save into OneDrive / Buddy-Memory.", "syncs": true, "needs_yes": true},
+    {"id": "box", "easy_name": "Box", "kind": "cloud_export", "path": "buddy/memory/export/box", "good_for": "Work accounts that already use Box", "how": "Upload the export after you review it.", "syncs": true, "needs_yes": true},
+    {"id": "proton_drive", "easy_name": "Proton Drive", "kind": "cloud_export", "path": "buddy/memory/export/proton_drive", "good_for": "More private cloud notes", "how": "Export, then upload. Still never store secret keys.", "syncs": true, "needs_yes": true},
+    {"id": "amazon_s3", "easy_name": "Amazon S3", "kind": "cloud_export", "path": "buddy/memory/export/amazon_s3", "good_for": "Durable backups", "how": "Export locally, then you upload. Keys stay in your cloud console.", "syncs": true, "needs_yes": true},
+    {"id": "azure_blob", "easy_name": "Azure Blob Storage", "kind": "cloud_export", "path": "buddy/memory/export/azure_blob", "good_for": "Microsoft cloud backups", "how": "Export first. You place the file in your container.", "syncs": true, "needs_yes": true},
+    {"id": "cloudflare_r2", "easy_name": "Cloudflare R2", "kind": "cloud_export", "path": "buddy/memory/export/cloudflare_r2", "good_for": "S3-style storage with your own account", "how": "Export, then upload from your Cloudflare dashboard.", "syncs": true, "needs_yes": true},
+    {"id": "nextcloud", "easy_name": "Nextcloud or NAS", "kind": "cloud_export", "path": "buddy/memory/export/nextcloud", "good_for": "Home server or self-hosted cloud", "how": "Copy the export into your Nextcloud or NAS Buddy-Memory folder.", "syncs": true, "needs_yes": true},
+    {"id": "backblaze_b2", "easy_name": "Backblaze B2", "kind": "cloud_export", "path": "buddy/memory/export/backblaze_b2", "good_for": "Cheap long-term backup", "how": "Export, review, then upload to your B2 bucket.", "syncs": true, "needs_yes": true}
   ],
   "rules": [
     "Never store secret keys in memory.",
-    "Teaching notes are yours; Buddy does not auto-promote them to live.",
-    "GitHub export does not send itself. You review, then send up."
+    "Cloud places get an export file. Buddy does not log into your cloud for you.",
+    "Teaching notes are yours; they are not auto-promoted to live."
   ]
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Choose where Buddy stores learning and teaching memory."""
+"""Choose where Buddy stores learning and teaching memory. 20 places."""
 
 from __future__ import annotations
 
@@ -37,14 +37,15 @@ def get_choice() -> dict[str, Any]:
 def resolve_dir(choice: dict[str, Any] | None = None) -> Path:
     choice = choice or get_choice()
     place = choice.get("place") or next(p for p in list_places() if p["id"] == choice["place_id"])
-    if place["id"] == "custom_folder":
+    kind = place.get("kind")
+    if kind in {"custom_folder"}:
         raw = choice.get("custom_path") or ""
-        if not raw:
-            raise ValueError("Pick a folder path for 'A folder I choose'.")
-        return Path(raw).expanduser()
-    if place["kind"] == "browser":
+        if raw:
+            return Path(raw).expanduser()
+        return HERE / "export" / place["id"]
+    if kind == "browser":
         return HERE / "browser_mirror"
-    rel = place.get("path") or "buddy/memory/vault"
+    rel = place.get("path") or f"buddy/memory/export/{place['id']}"
     path = Path(rel)
     return path if path.is_absolute() else ROOT / path
 
@@ -52,9 +53,8 @@ def resolve_dir(choice: dict[str, Any] | None = None) -> Path:
 def choose(place_id: str, custom_path: str | None = None) -> dict[str, Any]:
     place = next((p for p in list_places() if p["id"] == place_id), None)
     if not place:
-        raise ValueError(f"Unknown place: {place_id}")
-    if place["id"] == "custom_folder" and not custom_path:
-        raise ValueError("custom_folder needs a path")
+        known = ", ".join(p["id"] for p in list_places())
+        raise ValueError(f"Unknown place: {place_id}. Try: {known}")
     payload = {
         "place_id": place_id,
         "custom_path": custom_path,
@@ -73,7 +73,6 @@ def _sanitize(text: str) -> str:
 
 
 def remember(kind: str, text: str, bot: str = "buddy") -> dict[str, Any]:
-    """kind is learn or teach."""
     if kind not in {"learn", "teach"}:
         raise ValueError("kind must be learn or teach")
     body = _sanitize(text)
@@ -88,29 +87,45 @@ def remember(kind: str, text: str, bot: str = "buddy") -> dict[str, Any]:
         "bot": bot,
         "text": body,
         "place_id": choice["place_id"],
+        "how": (choice.get("place") or {}).get("how"),
     }
-    target = folder / "memory.jsonl"
+    target = folder / "memory.jsonl" if folder.suffix != ".jsonl" else folder
+    if target.suffix == ".jsonl":
+        target.parent.mkdir(parents=True, exist_ok=True)
+    else:
+        target = folder / "memory.jsonl"
     with target.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(event, sort_keys=True) + "\n")
-    return {"saved": True, "file": str(target), "event": event, "place": choice["place"]["easy_name"]}
+    return {
+        "saved": True,
+        "file": str(target),
+        "event": event,
+        "place": choice["place"]["easy_name"],
+        "next": choice["place"].get("how"),
+    }
 
 
 def read_memory(limit: int = 50) -> list[dict[str, Any]]:
     folder = resolve_dir()
-    target = folder / "memory.jsonl"
+    target = folder / "memory.jsonl" if folder.suffix != ".jsonl" else folder
+    if folder.suffix == ".jsonl":
+        target = folder
+    elif not target.exists() and folder.exists() and folder.is_file():
+        target = folder
     if not target.exists():
         return []
-    lines = [json.loads(line) for line in target.read_text(encoding="utf-8").splitlines() if line.strip()]
-    return lines[-limit:]
+    return [json.loads(line) for line in target.read_text(encoding="utf-8").splitlines() if line.strip()][-limit:]
 
 
-HELP = """Buddy memory places
+HELP = """Buddy memory places (20)
 
   python3 buddy/memory/memory_places.py places
-  python3 buddy/memory/memory_places.py choose this_computer
+  python3 buddy/memory/memory_places.py choose google_drive
+  python3 buddy/memory/memory_places.py choose icloud_drive
+  python3 buddy/memory/memory_places.py choose google_cloud_storage
   python3 buddy/memory/memory_places.py choose custom_folder --path ~/Documents/buddy-memory
-  python3 buddy/memory/memory_places.py learn "Remember I like short answers" --bot buddy
-  python3 buddy/memory/memory_places.py teach "When scoring deals, ask for downside first" --bot deal
+  python3 buddy/memory/memory_places.py teach "Give short answers" --bot buddy
+  python3 buddy/memory/memory_places.py learn "Ask for downside first" --bot deal
   python3 buddy/memory/memory_places.py show
   python3 buddy/memory/memory_places.py where
 """
@@ -122,7 +137,7 @@ def main(argv: list[str]) -> int:
         return 0
     cmd = argv[0]
     if cmd == "places":
-        print(json.dumps(list_places(), indent=2))
+        print(json.dumps([{"id": p["id"], "easy_name": p["easy_name"], "kind": p["kind"], "how": p.get("how")} for p in list_places()], indent=2))
         return 0
     if cmd == "where":
         choice = get_choice()
@@ -130,9 +145,7 @@ def main(argv: list[str]) -> int:
         return 0
     if cmd == "choose":
         place_id = argv[1] if len(argv) > 1 else "this_computer"
-        custom = None
-        if "--path" in argv:
-            custom = argv[argv.index("--path") + 1]
+        custom = argv[argv.index("--path") + 1] if "--path" in argv else None
         print(json.dumps(choose(place_id, custom), indent=2))
         return 0
     if cmd in {"learn", "teach"}:
@@ -142,8 +155,7 @@ def main(argv: list[str]) -> int:
             i = args.index("--bot")
             bot = args[i + 1]
             args = args[:i] + args[i + 2 :]
-        text = " ".join(args)
-        print(json.dumps(remember(cmd, text, bot=bot), indent=2))
+        print(json.dumps(remember(cmd, " ".join(args), bot=bot), indent=2))
         return 0
     if cmd == "show":
         print(json.dumps(read_memory(), indent=2))
