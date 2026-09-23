@@ -1,0 +1,50 @@
+name: Sync to Hugging Face Hub
+
+on:
+  workflow_dispatch:
+    inputs:
+      huggingface_repo_id:
+        description: Hugging Face repo to create or update (your-name/dreamco-beginner-router)
+        required: true
+        type: string
+      repo_type:
+        description: Where to put it
+        required: true
+        default: space
+        type: choice
+        options:
+          - space
+          - model
+          - dataset
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Stop if the token secret is missing
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          if [ -z "$HF_TOKEN" ]; then
+            echo "Add a write token named HF_TOKEN under Settings, Secrets and variables, Actions."
+            echo "Create the token at https://huggingface.co/settings/tokens"
+            exit 1
+          fi
+
+      - name: Sync the beginner router folder
+        uses: huggingface/hub-sync@v0.3.0
+        with:
+          github_repo_id: ${{ github.repository }}
+          huggingface_repo_id: ${{ inputs.huggingface_repo_id }}
+          hf_token: ${{ secrets.HF_TOKEN }}
+          repo_type: ${{ inputs.repo_type }}
+          space_sdk: gradio
+          subdirectory: huggingface/dreamco-router
+          private: false
+          delete_removed: false
