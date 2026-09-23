@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DreamCo fleet map</title>
+  <style>
+    body { font-family: Georgia, serif; background:#14110d; color:#f4efe6; max-width:720px; margin:2rem auto; padding:0 1rem; }
+    a { color:#d9773a; }
+  </style>
+</head>
+<body>
+  <h1>Fleet map</h1>
+  <p>Both sites should read this file. A profile on a list is not a running bot.</p>
+  <pre id="out">Loading…</pre>
+  <p><a href="./truth-board.html">Truth board</a></p>
+  <script>
+    fetch("./data/fleet-manifest.json").then(r => r.json()).then(d => {
+      document.getElementById("out").textContent = JSON.stringify(d, null, 2);
+    }).catch(e => { document.getElementById("out").textContent = String(e); });
+  </script>
+</body>
+</html>
