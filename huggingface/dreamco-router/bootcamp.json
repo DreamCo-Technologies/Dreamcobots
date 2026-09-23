@@ -1,0 +1,86 @@
+{
+  "course": "Buddy boot camp",
+  "count": 10,
+  "packages": [
+    {
+      "n": 1,
+      "name": "Hugging Face Sync",
+      "source": "https://github.com/marketplace/actions/hugging-face-sync",
+      "view": "Copies a GitHub repo into a Space and adds the Space header so the Hub page can open.",
+      "ours": "We keep the Space header only inside huggingface/dreamco-router/README.md. GitHub pages stay plain.",
+      "wired": false
+    },
+    {
+      "n": 2,
+      "name": "Sync GitHub to Hugging Face Hub",
+      "source": "https://github.com/huggingface/hub-sync",
+      "view": "Official action. Uses the hf tool to upload a folder as a Space, model, or dataset.",
+      "ours": "This is the one workflow we installed. It uploads only the beginner-router folder when you run it.",
+      "wired": true
+    },
+    {
+      "n": 3,
+      "name": "Sync With Hugging Face Space",
+      "source": "https://github.com/marketplace/actions/sync-with-hugging-face-space",
+      "view": "Keeps a separate YAML file and sticks it on the README only on the Space.",
+      "ours": "Same idea, already done by hand in the router README. We do not run this second uploader.",
+      "wired": false
+    },
+    {
+      "n": 4,
+      "name": "Sync With Hugging Face Hub",
+      "source": "https://github.com/nateraw/huggingface-sync-action",
+      "view": "Older community uploader for model, dataset, or Space.",
+      "ours": "Studied. Replaced by the official hub-sync action so we do not keep two uploaders.",
+      "wired": false
+    },
+    {
+      "n": 5,
+      "name": "Hugging Push",
+      "source": "https://github.com/marketplace?type=actions&query=hugging+push",
+      "view": "A push of the current repo into a Space repo.",
+      "ours": "We do not push the whole DreamCo repo. Notes and plans stay on GitHub.",
+      "wired": false
+    },
+    {
+      "n": 6,
+      "name": "Hugging Repo",
+      "source": "https://github.com/marketplace?type=actions&query=hugging+repo",
+      "view": "Same job as Hugging Push: mirror repo files to a Space.",
+      "ours": "Treated as a duplicate lesson. One uploader is enough.",
+      "wired": false
+    },
+    {
+      "n": 7,
+      "name": "Deploy to Spaces, models, or datasets",
+      "source": "https://huggingface.co/docs/hub/repositories-github-actions",
+      "view": "One action can target a Space, a model repo, or a dataset repo.",
+      "ours": "The workflow asks which of the three you want each time you run it.",
+      "wired": true
+    },
+    {
+      "n": 8,
+      "name": "HF Model Inspector",
+      "source": "https://github.com/ParagEkbote/hf-model-inspector",
+      "view": "Reads a public model card and writes a short report about size and use.",
+      "ours": "Our report is the model card plus the 12-prompt check. We do not inspect someone else's weights.",
+      "wired": false
+    },
+    {
+      "n": 9,
+      "name": "MLX Model Doctor",
+      "source": "https://github.com/IonDen/mlx-model-doctor",
+      "view": "Checks a model folder before load: config, tokenizer, shards, memory.",
+      "ours": "We have no MLX weights. The lesson is: do not load a model until a check passes.",
+      "wired": false
+    },
+    {
+      "n": 10,
+      "name": "Auto release with an AI description",
+      "source": "https://huggingface.co/docs/hub/repositories-github-actions",
+      "view": "Writes a release note by sending the change list to a model.",
+      "ours": "Boot camp does not send the repo to an outside model to write release notes.",
+      "wired": false
+    }
+  ]
+}
