@@ -26,6 +26,11 @@ on:
       - "tools/connect_repository_pages.py"
       - "tools/generate_master_directive_status.py"
       - "tools/generate_command_center_data.py"
+      - "tools/normalize_legacy_portfolios.py"
+      - "tools/place_original_bots.py"
+      - "original-bots/**"
+      - "bots/**"
+      - "config/project-feature-coverage.json"
       - "tools/generate_resource_connection_catalog.py"
       - "tools/generate_buddy_expert_mode.py"
       - "command-center/data/**"
@@ -94,7 +99,7 @@ jobs:
           python3 tools/build_manufacturer_marketplace_catalog.py
           python3 tools/connect_repository_pages.py
           python3 tools/connect_repository_pages.py --check
-          python3 -m unittest tests.test_repository_browser
+          python3 -m unittest tests.test_repository_browser tests.test_legacy_portfolios tests.test_branch_health_public_report
           python3 tools/build_buddy_public_site.py --check
           npm run test:actions-page
           npm run test:buddy-open-core
