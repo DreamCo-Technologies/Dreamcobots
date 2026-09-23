@@ -22,6 +22,7 @@ on:
       - "tools/generate_buddy_distribution_catalog.py"
       - "tools/generate_repository_test_registry.py"
       - "tools/generate_dreamco_repository_master_map.py"
+      - "tools/generate_repository_guide.py"
       - "tools/generate_master_directive_status.py"
       - "tools/generate_command_center_data.py"
       - "tools/generate_resource_connection_catalog.py"
@@ -76,6 +77,8 @@ jobs:
           node tools/check_buddy_demand_ontology.mjs
           python3 tools/generate_buddy_distribution_catalog.py --check
           python3 tools/generate_repository_test_registry.py
+          python3 tools/generate_repository_guide.py
+          python3 -m unittest tests.test_repository_guide tests.test_repository_master_map
           python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_master_directive_status.py
           python3 tools/generate_command_center_data.py --check
