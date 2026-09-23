@@ -2,6 +2,7 @@
 (function () {
   const current = (location.pathname.split("/").pop() || "index.html").split("?")[0];
   const links = [
+    { href: "repository-guide.html", label: "Start Here" },
     { href: "buddy.html", label: "Chat" },
     { href: "chat-sync.html", label: "This chat" },
     { href: "goals.html", label: "Goals" },
