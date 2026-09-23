@@ -6,6 +6,8 @@ on:
     paths:
       - 'docs/**'
       - 'website/**'
+      - 'tools/generate_repository_guide.py'
+      - 'tools/generate_dreamco_repository_master_map.py'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -27,6 +29,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Refresh repository owner directory
+        run: |
+          python3 tools/generate_repository_guide.py
+          python3 -m unittest tests.test_repository_guide tests.test_repository_master_map
       - name: Setup Pages
         uses: actions/configure-pages@v6
       - name: Build Jekyll site
