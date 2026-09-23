@@ -31,6 +31,8 @@ EVIDENCE_TAXONOMY = [
 GENERATED_NAMES = [
     "repository-inventory.json",
     "repository-browser.json",
+    "legacy-bots.json",
+    "project-coverage.json",
     "bots.json",
     "divisions.json",
     "capabilities.json",
@@ -342,9 +344,14 @@ def build_bundle() -> dict[str, dict[str, Any]]:
     files = repository_files()
     registry = read_json(REGISTRY)
     bots, divisions, capabilities = build_fleet(registry)
+    sys.path.insert(0, str(ROOT))
+    from tools.normalize_legacy_portfolios import build_legacy_portfolios
+    legacy = build_legacy_portfolios(ROOT, registry)
     payloads = {
         "repository-inventory.json": build_repository_inventory(files),
         "repository-browser.json": build_repository_browser(),
+        "legacy-bots.json": legacy,
+        "project-coverage.json": read_json(ROOT / "config/project-feature-coverage.json"),
         "bots.json": bots,
         "divisions.json": divisions,
         "capabilities.json": capabilities,
