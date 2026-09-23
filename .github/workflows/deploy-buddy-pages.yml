@@ -23,6 +23,7 @@ on:
       - "tools/generate_repository_test_registry.py"
       - "tools/generate_dreamco_repository_master_map.py"
       - "tools/generate_repository_guide.py"
+      - "tools/connect_repository_pages.py"
       - "tools/generate_master_directive_status.py"
       - "tools/generate_command_center_data.py"
       - "tools/generate_resource_connection_catalog.py"
@@ -81,7 +82,7 @@ jobs:
           python3 -m unittest tests.test_repository_guide tests.test_repository_master_map
           python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_master_directive_status.py
-          python3 tools/generate_command_center_data.py --check
+          python3 tools/generate_command_center_data.py
           python3 tools/generate_resource_connection_catalog.py --check
           python3 tools/generate_opportunity_hub.py --check
           python3 tools/generate_setup_center.py --check
@@ -91,6 +92,9 @@ jobs:
           python3 tools/generate_buddy_open_model_lab.py --check
           python3 tools/generate_buddy_learning_strategies.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
+          python3 tools/connect_repository_pages.py
+          python3 tools/connect_repository_pages.py --check
+          python3 -m unittest tests.test_repository_browser
           python3 tools/build_buddy_public_site.py --check
           npm run test:actions-page
           npm run test:buddy-open-core
