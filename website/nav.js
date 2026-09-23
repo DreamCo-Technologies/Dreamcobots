@@ -154,3 +154,12 @@ document.addEventListener('click', function(e) {
   const menu = document.getElementById('nav-more-menu');
   if (menu && !e.target.closest('.nav-more')) menu.classList.remove('open');
 });
+
+// Shared repository controls are loaded once after the page is ready.
+(() => {
+  if (document.querySelector('script[data-repository-actions]')) return;
+  const script = document.createElement('script');
+  script.src = new URL('repository-actions.js', document.currentScript.src).href;
+  script.dataset.repositoryActions = 'true';
+  document.head.appendChild(script);
+})();
