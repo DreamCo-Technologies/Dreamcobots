@@ -8,6 +8,11 @@ on:
       - "config/**"
       - "tools/generate_command_center_data.py"
       - "tests/test_command_center_data.py"
+      - "tests/test_repository_browser.py"
+      - "tools/connect_repository_pages.py"
+      - "website/repository-*.js"
+      - "website/repository-*.css"
+      - "website/*.html"
       - "command-center/data/**"
       - "website/data/command-center/**"
       - ".github/workflows/**"
@@ -30,7 +35,9 @@ jobs:
         with:
           python-version: "3.13"
       - name: Verify generator tests
-        run: python3 -m unittest tests.test_command_center_data
+        run: |
+          python3 -m unittest tests.test_command_center_data tests.test_repository_browser
+          python3 tools/connect_repository_pages.py --check
       - name: Verify generated data is current
         run: python3 tools/generate_command_center_data.py --check
       - name: Verify command-center route and controls
