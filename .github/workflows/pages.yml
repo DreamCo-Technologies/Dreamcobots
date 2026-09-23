@@ -7,6 +7,9 @@ on:
       - 'docs/**'
       - 'website/**'
       - 'tools/generate_repository_guide.py'
+      - 'tools/generate_command_center_data.py'
+      - 'tools/connect_repository_pages.py'
+      - 'config/master_bot_registry.json'
       - 'tools/generate_dreamco_repository_master_map.py'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -32,7 +35,9 @@ jobs:
       - name: Refresh repository owner directory
         run: |
           python3 tools/generate_repository_guide.py
-          python3 -m unittest tests.test_repository_guide tests.test_repository_master_map
+          python3 tools/connect_repository_pages.py
+          python3 tools/generate_command_center_data.py
+          python3 -m unittest tests.test_repository_guide tests.test_repository_master_map tests.test_repository_browser
       - name: Setup Pages
         uses: actions/configure-pages@v6
       - name: Build Jekyll site
