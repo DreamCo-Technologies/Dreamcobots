@@ -5,6 +5,8 @@ on:
     paths:
       - "App_bots/**"
       - "original-bots/**"
+      - "bots/**"
+      - "tools/normalize_legacy_portfolios.py"
       - "config/**"
       - "tools/generate_command_center_data.py"
       - "tests/test_command_center_data.py"
@@ -36,7 +38,7 @@ jobs:
           python-version: "3.13"
       - name: Verify generator tests
         run: |
-          python3 -m unittest tests.test_command_center_data tests.test_repository_browser
+          python3 -m unittest tests.test_command_center_data tests.test_repository_browser tests.test_legacy_portfolios tests.test_branch_health_public_report
           python3 tools/connect_repository_pages.py --check
       - name: Verify generated data is current
         run: python3 tools/generate_command_center_data.py --check
