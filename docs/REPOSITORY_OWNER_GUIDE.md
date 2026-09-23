@@ -68,3 +68,25 @@ The generator reuses `tools/generate_dreamco_repository_master_map.py` for disco
 5. Pick one useful backend-backed feature, configure its service and provider access, and verify it end to end. Record the exact evidence instead of marking the entire fleet live.
 
 GitHub documents Pages as [static site hosting](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages).
+
+## Interactive command center
+
+Open `buddy-command-center.html` or `dashboard.html` to use the repository workbench.
+
+- **All files:** every Git-tracked path, including generated reports, legacy files, and both case-sensitive template names. The count grows as files are added; it is not capped at the original 3,420. Select a file to view its purpose, open GitHub, prepare a plan, or load an editable text preview. Credential-related files have metadata only in the workbench.
+- **All pages:** every tracked website HTML page has a direct page link and file controls. All pages load the same repository navigation through shared scripts or a direct loader.
+- **Bot portfolios:** all 1,051 registered bots resolve to their existing division prospectus. Mission, users, inputs, outputs, capabilities, limitations, readiness, and source evidence are visible. Download the portfolio or attach your own work-sample links in your notes. Source artifacts are not customer results.
+- **My work plans:** save notes and personal progress in this browser and export them. Browser storage is not GitHub synchronization. Clearing browser storage removes these notes unless exported.
+- **Explore info:** each section gets an exploration button. Turn on Explore info mode to click ordinary text, or select text and choose Explore selected text. Buddy receives the selected context only when you choose Explain with Buddy.
+
+### What management means here
+
+Reading the catalog, filtering, viewing portfolios, saving local plans, and downloading drafts work on static Pages. **Edit with GitHub** opens GitHub's authenticated editor, where repository permissions, commits, reviews, and deployment checks apply. File previews read the current public `main`; the deployed index may be older. No browser token is required or stored by this workbench.
+
+This change does not implement an authenticated in-dashboard commit service, execute arbitrary code, run all bots, or make existing demo business features operational. Those require their own backend and verified adapters.
+
+### Updating the connections
+
+Run `python3 tools/connect_repository_pages.py` after generating new HTML, then `python3 tools/generate_command_center_data.py`. Stage new files before generating so Git's tracked-file index includes them. The publisher workflows regenerate these connections. `python3 -m unittest tests.test_repository_browser` verifies complete tracked-path coverage, all page loaders, and every registered bot prospectus.
+
+Browser regression: serve `website/` on `127.0.0.1:8765` and run `node tests/repository-workbench.browser.cjs` with Playwright and Chromium installed. The test uses a mocked source response to verify that loaded code stays inert. It covers file preview/download, saved notes, bot portfolio download, filters, information mode, mobile width, shared page controls, and load-failure recovery.
