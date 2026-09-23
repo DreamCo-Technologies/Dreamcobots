@@ -1,0 +1,31 @@
+const {chromium}=require(process.env.DREAMCO_PLAYWRIGHT_MODULE || 'playwright');
+const assert=require('node:assert/strict');
+(async()=>{
+ const browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_EXECUTABLE_PATH ? {executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH} : {})});
+ const context=await browser.newContext({viewport:{width:1440,height:1100},serviceWorkers:'block'});
+ const page=await context.newPage();let errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const base=process.env.DREAMCO_PREVIEW_URL || 'http://127.0.0.1:8765/';
+ await page.goto(base+'buddy-command-center.html');await page.locator('#rw-results .rw-card').first().waitFor();
+ const summary=await page.locator('.rw-shell > p').first().textContent();assert.match(summary,/tracked files/);
+ await page.locator('#rw-search').fill('README.md');await page.locator('#rw-results button').filter({hasText:/^README.md$/}).click();
+ const d=page.locator('.rw-dialog');await d.getByRole('textbox',{name:'Notes, desired change, or work samples'}).fill('Make the first paragraph easier to understand.');await d.getByRole('button',{name:'Save my plan',exact:true}).click();assert.match(await d.textContent(),/Saved in this browser/);
+ assert.match(await d.getByRole('link',{name:'Edit with GitHub'}).getAttribute('href'),/\/edit\/main\/README.md$/);
+ await page.route('https://raw.githubusercontent.com/**',route=>route.fulfill({status:200,contentType:'text/plain',body:'# Example\n<script>throw new Error("must not execute")</script>'}));
+ await d.getByRole('button',{name:'Load source preview'}).click();await d.locator('.rw-source').waitFor();assert.match(await d.locator('.rw-source').inputValue(),/must not execute/);
+ const downloadPromise=page.waitForEvent('download');await d.getByRole('button',{name:'Download edited file'}).click();await downloadPromise;await d.getByRole('button',{name:'Close',exact:true}).click();
+ await page.reload();await page.locator('#rw-results .rw-card').first().waitFor();await page.locator('[data-view="plans"]').click();assert.match(await page.locator('#rw-results').textContent(),/first paragraph/);
+ await page.locator('[data-view="bots"]').click();await page.locator('#rw-search').fill('dreambot');await page.locator('#rw-results button').filter({hasText:/^DreamBot$/}).click();
+ await page.locator('.rw-dialog').getByRole('button',{name:'Download portfolio',exact:true}).waitFor();assert.match(await page.locator('.rw-dialog').textContent(),/Central governed coordinator/);
+ const botDownload=page.waitForEvent('download');await page.locator('.rw-dialog').getByRole('button',{name:'Download portfolio',exact:true}).click();await botDownload;await page.locator('.rw-dialog').getByRole('button',{name:'Close',exact:true}).click();
+ await page.locator('#rw-search').fill('');await page.locator('[data-view="pages"]').click();assert.match(await page.locator('.rw-shell').textContent(),/\d+ matching pages/);
+ await page.locator('[data-view="files"]').click();await page.locator('#rw-search').fill('nothingmatcheszzzz');assert.match(await page.locator('#rw-results').textContent(),/No matches/);
+ await page.locator('#rw-search').fill('');await page.locator('#rw-area').selectOption('server');const serverRows=await page.locator('#rw-results .rw-card').count();assert(serverRows>0);
+ await page.locator('#rw-area').selectOption('all');await page.locator('.rw-shell').scrollIntoViewIfNeeded();
+ await page.setViewportSize({width:390,height:844});
+ const over=await page.locator('.rw-shell').evaluate(n=>n.scrollWidth>n.clientWidth);assert.equal(over,false,'workbench mobile overflow');
+ await page.locator('.rw-page-dock').getByRole('button',{name:'Explore info mode: off'}).click();await page.locator('#cc-inventory-heading').click();await page.locator('.rw-dialog').waitFor();await page.locator('.rw-dialog').getByRole('button',{name:'Close',exact:true}).click();
+ for(const route of ['dashboard.html','build.html','buddy.html','manufacturer-marketplace.html','404.html']){await page.goto(base+route);await page.locator('.rw-page-dock').waitFor();assert.equal(await page.locator('.rw-page-dock').count(),1,route);if(route==='dashboard.html'){await page.locator('#rw-results .rw-card').first().waitFor();assert.equal(await page.locator('#repository-workbench').evaluate(n=>Boolean(n.closest('nav,.site-preview-notice'))),false,'dashboard workbench must be in page content');}}
+ const broken=await context.newPage();await broken.route('**/repository-browser.json',r=>r.fulfill({status:503,body:'unavailable'}));await broken.goto(base+'buddy-command-center.html');await broken.getByRole('button',{name:'Retry loading'}).waitFor();await broken.close();
+ console.log(JSON.stringify({summary,sourcePreview:true,sourceDownload:true,persistentNotes:true,botPortfolio:true,portfolioDownload:true,searchAndFolderFilter:true,informationMode:true,sharedPagesTested:6,mobileWorkbenchOverflow:over,loadFailureHandled:true,browserErrors:errors}));
+ if(errors.length)throw Error(errors.join('; '));await browser.close();
+})();
