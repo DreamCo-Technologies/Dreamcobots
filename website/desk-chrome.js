@@ -35,3 +35,12 @@
   </header>
   <p class="desk-honest"><strong>GitHub Pages is static.</strong> Hugging Face public cards work here. GitHub live runs use cached JSON (the API is blocked from this origin). Grok teacher stays on the hosted app. No keys in this site. A closed laptop is not a worker.</p>`;
 })();
+
+// Shared repository controls are loaded once after the page is ready.
+(() => {
+  if (document.querySelector('script[data-repository-actions]')) return;
+  const script = document.createElement('script');
+  script.src = new URL('repository-actions.js', document.currentScript.src).href;
+  script.dataset.repositoryActions = 'true';
+  document.head.appendChild(script);
+})();
