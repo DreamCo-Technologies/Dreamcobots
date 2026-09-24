@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Original bots</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Original bots</h1>
+    <p id="old-lead">Loading the original notes.</p>
+    <div id="old-bots"></div>
+  </main>
+  <script>
+    fetch("data/original-bots.json").then(function (response) { return response.json(); }).then(function (data) {
+      document.getElementById("old-lead").textContent = data.count + " original notes. " + data.rule;
+      const box = document.getElementById("old-bots");
+      data.bots.forEach(function (bot) {
+        const article = document.createElement("article");
+        article.className = "card";
+        const link = document.createElement("a");
+        link.href = bot.href;
+        link.textContent = bot.name;
+        const text = document.createElement("p");
+        text.textContent = "Original file " + bot.file + ", last restored " + bot.changed + ". Open it to read the features. It does not run a live action.";
+        article.append(link, text);
+        box.append(article);
+      });
+    });
+  </script>
+</body>
+</html>

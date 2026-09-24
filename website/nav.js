@@ -30,6 +30,7 @@
     { href: 'calculator.html', label: '🧮 Calculator Lab' },
     { href: 'divisions.html', label: '🏛️ Divisions' },
     { href: 'bots.html', label: '🤖 Bot Fleet' },
+    { href: 'original-bots.html', label: 'Original bots' },
     { href: 'test-center.html', label: '🧪 Test Center' },
     { href: 'security.html', label: '🛡️ Defense Center' },
     { href: 'system-map.html', label: '🗺️ Repository Map' },
