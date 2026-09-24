@@ -34,6 +34,7 @@
     { href: 'test-center.html', label: '🧪 Test Center' },
     { href: 'security.html', label: '🛡️ Defense Center' },
     { href: 'system-map.html', label: '🗺️ Repository Map' },
+    { href: 'repo-live.html', label: 'Whole repo' },
     { href: 'chat.html', label: '💬 Chat' },
     { href: 'install.html', label: '📲 Install & Launch' },
     { href: 'leads.html', label: '🎯 Lead Systems' },
