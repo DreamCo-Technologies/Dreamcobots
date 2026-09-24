@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>This chat in the repo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>This chat, in code</h1>
+    <p>Each part of the chat has a page or a file. Buddy does not become Cursor, Copilot, Grok, or CodeRabbit.</p>
+    <div id="chat-map">Loading.</div>
+  </main>
+  <script>
+    fetch("data/this-chat.json").then(function (response) { return response.json(); }).then(function (data) {
+      const box = document.getElementById("chat-map");
+      box.replaceChildren();
+      data.pages.forEach(function (item) {
+        const article = document.createElement("article");
+        article.className = "card";
+        article.innerHTML = "<h2><a href=\"" + item.href + "\">" + item.plain + "</a></h2><p>" + item.holds + "</p>";
+        box.append(article);
+      });
+      const code = document.createElement("article");
+      code.className = "card";
+      code.innerHTML = "<h2>Code in the repository</h2><p>" + data.code.join("<br>") + "</p>";
+      box.append(code);
+    });
+  </script>
+</body>
+</html>

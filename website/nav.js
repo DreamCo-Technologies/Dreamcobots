@@ -55,6 +55,8 @@
     { href: 'model-bench.html', label: 'Test a model' },
     { href: 'weight-hub.html', label: 'Weight control' },
     { href: 'your-model.html', label: 'Their own model' },
+    { href: 'buddy-desk.html', label: 'Buddy desk' },
+    { href: 'this-chat.html', label: 'This chat' },
     { href: 'app-shop.html', label: 'App shop' },
     { href: 'school.html', label: 'Buddy school' },
     { href: 'hf-bootcamp.html', label: 'HF packages' },

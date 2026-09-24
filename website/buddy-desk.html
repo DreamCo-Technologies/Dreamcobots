@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buddy desk</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Buddy desk</h1>
+    <p>One place to open a file, look something up, try a project, or test a model on GitHub or Hugging Face. Buddy is not Cursor, Copilot, Grok, or CodeRabbit. Those stay their own products.</p>
+    <form id="desk-form" class="card">
+      <p><label>What to do
+        <select id="mode">
+          <option value="open">Open</option>
+          <option value="try">Try</option>
+          <option value="test">Test</option>
+          <option value="lookup">Lookup</option>
+        </select>
+      </label></p>
+      <p><label>Where
+        <select id="kind">
+          <option value="github">GitHub</option>
+          <option value="huggingface">Hugging Face</option>
+        </select>
+      </label></p>
+      <p><label>Owner and name <input id="name" required placeholder="DreamCo-Technologies/Dreamcobots"></label></p>
+      <p><label>File path <input id="path" placeholder="README.md"></label></p>
+      <button class="btn btn-primary" type="submit">Go</button>
+      <p id="desk-status">Choose open, try, test, or lookup.</p>
+      <p><a id="open-link" hidden href="https://github.com">Open the page</a></p>
+      <pre id="file-view"></pre>
+    </form>
+    <form id="review-form" class="card">
+      <h2>Plain review</h2>
+      <p>Paste text. Buddy flags a key, an unfinished note, or a claim that a frontier model was trained. It does not replace a human review.</p>
+      <textarea id="review-text" rows="6"></textarea>
+      <button class="btn btn-primary" type="submit">Review</button>
+      <pre id="review-out"></pre>
+    </form>
+    <p><a href="this-chat.html">Everything from this chat</a> · <a href="weight-hub.html">Weight control</a> · <a href="your-model.html">Wrapper or their model</a> · <a href="github-hub.html">GitHub</a> · <a href="hf-hub.html">Hugging Face</a></p>
+  </main>
+  <script src="buddy-desk.js"></script>
+</body>
+</html>
