@@ -35,6 +35,8 @@
     { href: 'security.html', label: '🛡️ Defense Center' },
     { href: 'system-map.html', label: '🗺️ Repository Map' },
     { href: 'github-center.html', label: 'Command center' },
+    { href: 'easy-code.html', label: 'Easy code' },
+    { href: 'guardrails.html', label: 'Guardrails' },
     { href: 'repo-live.html', label: 'Whole repo' },
     { href: 'chat.html', label: '💬 Chat' },
     { href: 'install.html', label: '📲 Install & Launch' },

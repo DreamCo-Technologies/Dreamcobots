@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guardrails</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Guardrails</h1>
+    <p>These checks are public. Anyone can run them, including a government team. They are not a United States certification, and they do not train a model.</p>
+    <form id="guard-form" class="card">
+      <p><label>Text to check <textarea id="guard-text" rows="6" required></textarea></label></p>
+      <button class="btn btn-primary" type="submit">Check</button>
+      <p id="guard-status">Nothing checked yet.</p>
+    </form>
+    <p><a href="easy-code.html">Easy code</a> · <a href="model-bench.html">Test a model</a> · <a href="weight-hub.html">Weight sheet</a></p>
+  </main>
+  <script>
+    (function () {
+      var secret = /ghp_|github_pat_|sk-|hf_|AKIA/;
+      var refused = ["copy gpt", "copy claude", "distill gpt", "distill claude", "mine a coin", "wire the money", "official us certification", "united states certified"];
+      document.getElementById("guard-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        var text = document.getElementById("guard-text").value;
+        var blob = text.toLowerCase().replace(/[-_]/g, " ");
+        var reasons = [];
+        if (secret.test(text)) reasons.push("A key-shaped string is in the text. Remove it.");
+        refused.forEach(function (phrase) { if (blob.indexOf(phrase) !== -1 && !reasons.length) reasons.push("Blocked: " + phrase); });
+        document.getElementById("guard-status").textContent = reasons.length ? reasons[0] : "No blocked phrase and no key-shaped string. This is not a United States certification, and no model was trained.";
+      });
+    })();
+  </script>
+</body>
+</html>
