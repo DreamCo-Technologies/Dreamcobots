@@ -1,0 +1,1641 @@
+{
+  "schema": "dreamco.bot_fleet_division.v2",
+  "division": "DreamAgency",
+  "bots": [
+    {
+      "identity": {
+        "slug": "scope-writer",
+        "display_name": "Scope Writer",
+        "division": "DreamAgency",
+        "category": "growth",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-scope-writer",
+        "emoji": "🔐",
+        "monogram": "SW",
+        "call_sign": "Civic Studio ABE4AB62",
+        "shape": "hex",
+        "colors": {
+          "primary": "#7A2E3A",
+          "accent": "#2D8C7C",
+          "surface": "#FFF8EE"
+        },
+        "accessibility_label": "Scope Writer logo"
+      },
+      "prospectus": {
+        "mission": "Scopes from the old consulting agency system.",
+        "target_users": "DreamAgency operators and analysts",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "business_system": {
+        "business_id": "business-scope-writer",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgency",
+          "category": "growth",
+          "mission": "Scopes from the old consulting agency system.",
+          "ideal_customer_segments": [
+            "DreamAgency operators",
+            "analysts"
+          ],
+          "core_offer": "Scope Writer: Scopes from the old consulting agency system.",
+          "promised_outputs": [
+            "scope"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-scope-writer",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "DreamAgency operators",
+              "analysts"
+            ],
+            "need_signals": [
+              "Needs help with scope"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "DreamAgency operators and analysts requesting scope",
+              "organizations seeking growth support",
+              "inbound requests matching Scope Writer",
+              "existing customers who opted in to scope updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
+      "capabilities": [
+        {
+          "name": "scope",
+          "source": "App_bots/DreamAgency.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-90b68674d206142fdff4",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/DreamAgency.json#scope-writer"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_distribution_service",
+          "name": "Install and multi-platform distribution planner",
+          "status": "web_ready_native_review_required",
+          "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-scope-writer",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2883890018,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgency.json",
+        "runtime_sources": [
+          "App_bots/DreamAgency.json",
+          "server/fleet-runtime.ts"
+        ],
+        "runtime_seed_duplicates": 1
+      },
+      "sample_test_prompt": "Test every declared capability for Scope Writer in sandbox mode: scope. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "retainer-model",
+        "display_name": "Retainer Model",
+        "division": "DreamAgency",
+        "category": "growth",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-retainer-model",
+        "emoji": "🛡️",
+        "monogram": "RM",
+        "call_sign": "Bold Signal F836DE08",
+        "shape": "hex",
+        "colors": {
+          "primary": "#176B5B",
+          "accent": "#D7A73B",
+          "surface": "#F5F7F3"
+        },
+        "accessibility_label": "Retainer Model logo"
+      },
+      "prospectus": {
+        "mission": "Retainer math.",
+        "target_users": "DreamAgency operators and analysts",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "business_system": {
+        "business_id": "business-retainer-model",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgency",
+          "category": "growth",
+          "mission": "Retainer math.",
+          "ideal_customer_segments": [
+            "DreamAgency operators",
+            "analysts"
+          ],
+          "core_offer": "Retainer Model: Retainer math.",
+          "promised_outputs": [
+            "pricing"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-retainer-model",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "DreamAgency operators",
+              "analysts"
+            ],
+            "need_signals": [
+              "Needs help with pricing"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "DreamAgency operators and analysts requesting pricing",
+              "organizations seeking growth support",
+              "inbound requests matching Retainer Model",
+              "existing customers who opted in to pricing updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
+      "capabilities": [
+        {
+          "name": "pricing",
+          "source": "App_bots/DreamAgency.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-9b07dd59e89e03b52b4c",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/DreamAgency.json#retainer-model"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_distribution_service",
+          "name": "Install and multi-platform distribution planner",
+          "status": "web_ready_native_review_required",
+          "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-retainer-model",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 4164345352,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgency.json",
+        "runtime_sources": [
+          "App_bots/DreamAgency.json",
+          "server/fleet-runtime.ts"
+        ],
+        "runtime_seed_duplicates": 1
+      },
+      "sample_test_prompt": "Test every declared capability for Retainer Model in sandbox mode: pricing. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "case-study",
+        "display_name": "Case Study",
+        "division": "DreamAgency",
+        "category": "growth",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-case-study",
+        "emoji": "🧭",
+        "monogram": "CS",
+        "call_sign": "Prime Beacon 967D3266",
+        "shape": "tile",
+        "colors": {
+          "primary": "#3D4C8D",
+          "accent": "#D56638",
+          "surface": "#F4F6FF"
+        },
+        "accessibility_label": "Case Study logo"
+      },
+      "prospectus": {
+        "mission": "Case study drafts.",
+        "target_users": "DreamAgency operators and analysts",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "business_system": {
+        "business_id": "business-case-study",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgency",
+          "category": "growth",
+          "mission": "Case study drafts.",
+          "ideal_customer_segments": [
+            "DreamAgency operators",
+            "analysts"
+          ],
+          "core_offer": "Case Study: Case study drafts.",
+          "promised_outputs": [
+            "writing"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-case-study",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "DreamAgency operators",
+              "analysts"
+            ],
+            "need_signals": [
+              "Needs help with writing"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "DreamAgency operators and analysts requesting writing",
+              "organizations seeking growth support",
+              "inbound requests matching Case Study",
+              "existing customers who opted in to writing updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
+      "capabilities": [
+        {
+          "name": "writing",
+          "source": "App_bots/DreamAgency.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-271c07b79dee25ee1f1f",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/DreamAgency.json#case-study"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_distribution_service",
+          "name": "Install and multi-platform distribution planner",
+          "status": "web_ready_native_review_required",
+          "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-case-study",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2524787302,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgency.json",
+        "runtime_sources": [
+          "App_bots/DreamAgency.json",
+          "server/fleet-runtime.ts"
+        ],
+        "runtime_seed_duplicates": 1
+      },
+      "sample_test_prompt": "Test every declared capability for Case Study in sandbox mode: writing. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "staffing-plan",
+        "display_name": "Staffing Plan",
+        "division": "DreamAgency",
+        "category": "growth",
+        "tier": "pro",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-staffing-plan",
+        "emoji": "🔐",
+        "monogram": "SP",
+        "call_sign": "Royal Forge 8D9F9158",
+        "shape": "hex",
+        "colors": {
+          "primary": "#176B5B",
+          "accent": "#D7A73B",
+          "surface": "#F5F7F3"
+        },
+        "accessibility_label": "Staffing Plan logo"
+      },
+      "prospectus": {
+        "mission": "Staffing plans.",
+        "target_users": "DreamAgency operators and analysts",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "business_system": {
+        "business_id": "business-staffing-plan",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgency",
+          "category": "growth",
+          "mission": "Staffing plans.",
+          "ideal_customer_segments": [
+            "DreamAgency operators",
+            "analysts"
+          ],
+          "core_offer": "Staffing Plan: Staffing plans.",
+          "promised_outputs": [
+            "staffing"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-staffing-plan",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "DreamAgency operators",
+              "analysts"
+            ],
+            "need_signals": [
+              "Needs help with staffing"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "DreamAgency operators and analysts requesting staffing",
+              "organizations seeking growth support",
+              "inbound requests matching Staffing Plan",
+              "existing customers who opted in to staffing updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
+      "capabilities": [
+        {
+          "name": "staffing",
+          "source": "App_bots/DreamAgency.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-1729b722fe8a7808ce3f",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/DreamAgency.json#staffing-plan"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_distribution_service",
+          "name": "Install and multi-platform distribution planner",
+          "status": "web_ready_native_review_required",
+          "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-staffing-plan",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 2376044888,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgency.json",
+        "runtime_sources": [
+          "App_bots/DreamAgency.json",
+          "server/fleet-runtime.ts"
+        ],
+        "runtime_seed_duplicates": 1
+      },
+      "sample_test_prompt": "Test every declared capability for Staffing Plan in sandbox mode: staffing. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    },
+    {
+      "identity": {
+        "slug": "delivery-board",
+        "display_name": "Delivery Board",
+        "division": "DreamAgency",
+        "category": "growth",
+        "tier": "free",
+        "catalog_status": "active"
+      },
+      "logo": {
+        "logo_id": "logo-delivery-board",
+        "emoji": "📚",
+        "monogram": "DB",
+        "call_sign": "Clever Studio 48F13357",
+        "shape": "shield",
+        "colors": {
+          "primary": "#77521F",
+          "accent": "#287878",
+          "surface": "#FFF9ED"
+        },
+        "accessibility_label": "Delivery Board logo"
+      },
+      "prospectus": {
+        "mission": "Delivery board setup.",
+        "target_users": "DreamAgency operators and analysts",
+        "catalog_business_model": "SaaS subscription",
+        "catalog_price_range": "$99/mo",
+        "pricing_evidence": "catalog_claim_not_verified_revenue",
+        "inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "limitations": [
+          "This profile has an executable governed runtime instance backed by shared hardened code, not a separate always-running operating-system process.",
+          "External APIs require owner configuration, provider terms, sandbox tests, and scoped approval.",
+          "Published pricing and revenue models are catalog plans, not evidence of sales or earnings."
+        ]
+      },
+      "business_system": {
+        "business_id": "business-delivery-board",
+        "operating_model": "owner_governed_service_business",
+        "specialization": {
+          "division": "DreamAgency",
+          "category": "growth",
+          "mission": "Delivery board setup.",
+          "ideal_customer_segments": [
+            "DreamAgency operators",
+            "analysts"
+          ],
+          "core_offer": "Delivery Board: Delivery board setup.",
+          "promised_outputs": [
+            "ops"
+          ],
+          "catalog_revenue_model": "SaaS subscription",
+          "catalog_price_range": "$99/mo",
+          "earnings_status": "no_revenue_or_customer_result_guaranteed"
+        },
+        "operating_workflow": [
+          "capture_owner_goal_and_offer",
+          "define_ideal_customer_profile",
+          "select_owner_authorized_sources",
+          "confirm_source_terms_and_collection_scope",
+          "research_and_deduplicate_candidates",
+          "qualify_need_fit_timing_and_permission",
+          "draft_one_relevant_message",
+          "request_exact_owner_approval",
+          "dispatch_through_configured_adapter_only",
+          "wait_for_required_follow_up_interval",
+          "stop_on_reply_opt_out_bounce_or_complaint",
+          "report_outcomes_without_claiming_guaranteed_revenue"
+        ],
+        "lead_system": {
+          "system_id": "lead-system-delivery-board",
+          "engine": "server/governed-leads.ts",
+          "status": "sandbox_ready_external_adapters_required",
+          "ideal_customer_profile": {
+            "segments": [
+              "DreamAgency operators",
+              "analysts"
+            ],
+            "need_signals": [
+              "Needs help with ops"
+            ],
+            "exclusion_rules": [
+              "no minors",
+              "no protected or sensitive trait targeting",
+              "no deceptive identity or impersonation",
+              "no lead without traceable source evidence"
+            ]
+          },
+          "discovery": {
+            "query_templates": [
+              "DreamAgency operators and analysts requesting ops",
+              "organizations seeking growth support",
+              "inbound requests matching Delivery Board",
+              "existing customers who opted in to ops updates"
+            ],
+            "authorized_source_types": [
+              "owner supplied records",
+              "consent based inbound requests",
+              "existing customer records with documented relationship",
+              "public business directories whose terms permit research",
+              "owner authorized provider APIs"
+            ],
+            "forbidden_collection": [
+              "private accounts or access-controlled pages",
+              "terms bypassing scraping",
+              "purchased, stolen, or unverifiable contact lists",
+              "raw credentials or secret tokens",
+              "sensitive personal data"
+            ]
+          },
+          "qualification": {
+            "required_fields": [
+              "source reference",
+              "organization or customer need",
+              "fit to the bot specialization",
+              "contact permission basis and channel scope",
+              "qualification evidence"
+            ],
+            "score_dimensions": {
+              "demonstrated_need": 30,
+              "capability_fit": 25,
+              "decision_readiness": 15,
+              "voluntarily_supplied_timing": 10,
+              "documented_contact_permission": 20
+            },
+            "minimum_score_for_owner_review": 65,
+            "permission_is_mandatory_even_above_threshold": true
+          },
+          "outreach": {
+            "supported_channels": [
+              "email",
+              "sms",
+              "voice_call",
+              "social_dm"
+            ],
+            "recipient_channel_permission_required": true,
+            "raw_contact_details_in_browser_forbidden": true,
+            "exact_owner_approval_per_message": true,
+            "maximum_daily_sends": 20,
+            "adapter_status": "configuration_required_for_live_dispatch"
+          },
+          "follow_up": {
+            "maximum_follow_ups": 2,
+            "minimum_interval_hours": 48,
+            "approval_required_for_each_follow_up": true,
+            "stop_conditions": [
+              "reply",
+              "opt out",
+              "bounce",
+              "complaint",
+              "permission expiry",
+              "owner stop",
+              "sequence complete"
+            ],
+            "suppression_ledger_required": true
+          },
+          "owner_controls": {
+            "default_mode": "research_and_draft_only",
+            "pause_and_kill_switch_required": true,
+            "one_action_approval_expiry_hours": 24,
+            "quiet_hours_supported": true,
+            "export_and_delete_supported": true
+          },
+          "metrics": [
+            "candidates researched",
+            "source evidence coverage",
+            "qualified leads",
+            "recipient permission coverage",
+            "owner approval rate",
+            "reply rate",
+            "positive reply rate",
+            "opt-out rate",
+            "bounce rate",
+            "complaint rate",
+            "conversion evidence"
+          ]
+        },
+        "readiness": {
+          "local_research_plan": "ready",
+          "qualification_and_drafts": "ready",
+          "exact_action_approval_packet": "ready",
+          "live_contact_discovery": "provider_and_terms_configuration_required",
+          "live_message_dispatch": "verified_adapter_recipient_permission_and_owner_approval_required",
+          "independent_production_business": false
+        }
+      },
+      "capabilities": [
+        {
+          "name": "ops",
+          "source": "App_bots/DreamAgency.json",
+          "evidence_level": "catalog_declared",
+          "test_id": "capability-test-4eb8026274e9cc2b8034",
+          "test_status": "reported_by_fleet_e2e",
+          "test_evidence": "website/data/bot-capability-tests/DreamAgency.json#delivery-board"
+        }
+      ],
+      "tools": [
+        {
+          "id": "buddy_fleet_runtime",
+          "name": "Executable fleet runtime",
+          "status": "runtime_instance_ready",
+          "evidence": "server/fleet-runtime.ts"
+        },
+        {
+          "id": "buddy_chat_router",
+          "name": "Buddy shared chat router",
+          "status": "runtime_routed",
+          "evidence": "server/routes.ts"
+        },
+        {
+          "id": "buddy_approval_gateway",
+          "name": "Buddy approval gateway",
+          "status": "policy_available",
+          "evidence": "server/approval-notifications.ts"
+        },
+        {
+          "id": "buddy_bot_sandbox",
+          "name": "Per-bot sandbox blueprint",
+          "status": "generated",
+          "evidence": "config/generated/bots.catalog.json"
+        },
+        {
+          "id": "buddy_platform_registry",
+          "name": "Governed platform capability registry",
+          "status": "runtime_routed",
+          "evidence": "config/generated/buddy_platform_expansion.json"
+        },
+        {
+          "id": "buddy_bot_calculator",
+          "name": "Per-bot planning calculator",
+          "status": "local_interactive_ready",
+          "evidence": "config/generated/bot_calculators.json"
+        },
+        {
+          "id": "buddy_distribution_service",
+          "name": "Install and multi-platform distribution planner",
+          "status": "web_ready_native_review_required",
+          "evidence": "config/generated/buddy_distribution_catalog.json"
+        },
+        {
+          "id": "buddy_governed_lead_system",
+          "name": "Permission-gated lead discovery and follow-up system",
+          "status": "sandbox_ready_external_adapters_required",
+          "evidence": "server/governed-leads.ts"
+        }
+      ],
+      "api_candidates": [],
+      "data_contract": {
+        "accepted_inputs": [
+          "user brief",
+          "user-selected files or records",
+          "approved connector references"
+        ],
+        "produced_outputs": [
+          "draft",
+          "analysis",
+          "task packet",
+          "sandbox evidence",
+          "approval request when required"
+        ],
+        "sensitivity": "standard_business_data",
+        "sensitive_domains": [],
+        "storage_policy": "store useful project artifacts only; raw credentials are forbidden; raw biometric media remains local or in an encrypted owner vault",
+        "retention": "owner-configurable with deletion and revocation support"
+      },
+      "approvals": {
+        "default_mode": "sandbox",
+        "approval_required": true,
+        "high_impact_profile": false,
+        "triggers": [
+          "any live external write or publish action"
+        ],
+        "channels_supported": [
+          "in_app",
+          "email",
+          "sms",
+          "voice_call"
+        ],
+        "contact_requirement": "verified user-owned destination and explicit channel opt-in",
+        "execution_rule": "approval authorizes one scoped action; it never exposes credentials to the bot or browser"
+      },
+      "sandbox": {
+        "sandbox_id": "sandbox-delivery-board",
+        "network_default": "off",
+        "fixture_mode": "synthetic_or_owner_supplied",
+        "seed": 1223766871,
+        "checks": [
+          "profile_schema_valid",
+          "runtime_slug_resolves",
+          "capability_output_matches_brief",
+          "no_secret_in_output",
+          "no_live_external_write",
+          "approval_gate_for_high_impact_action",
+          "failure_and_retry_state_recorded"
+        ],
+        "api_tests": [],
+        "release_gate": "all applicable checks pass and owner approves any live action"
+      },
+      "readiness": {
+        "profile_schema": "verified",
+        "buddy_chat_route": "verified",
+        "executable_runtime_instance": "verified",
+        "standalone_native_runtime": "shared_worker_not_standalone",
+        "external_integrations": "no_division_api_catalog",
+        "production_ready": false,
+        "production_gate": "implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry"
+      },
+      "evidence": {
+        "catalog_source": "App_bots/DreamAgency.json",
+        "runtime_sources": [
+          "App_bots/DreamAgency.json",
+          "server/fleet-runtime.ts"
+        ],
+        "runtime_seed_duplicates": 1
+      },
+      "sample_test_prompt": "Test every declared capability for Delivery Board in sandbox mode: ops. Use synthetic data, record separate evidence for each capability, and stop before any live external action."
+    }
+  ]
+}

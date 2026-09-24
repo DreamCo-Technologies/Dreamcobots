@@ -471,7 +471,12 @@ export function buildFleetCatalog() {
       const profile = { ...sourceProfile, division: content.division };
       if (seen.has(profile.slug)) throw new Error(`Duplicate catalog slug: ${profile.slug}`);
       seen.add(profile.slug);
-      const runtimeEvidence = runtime.get(profile.slug) || [];
+      // Fleet shared worker routes every App_bots catalog profile. Seed files remain
+      // preferred evidence when present; otherwise App_bots + fleet-runtime are accepted.
+      const runtimeEvidence = runtime.get(profile.slug) || [
+        `App_bots/${name}`,
+        "server/fleet-runtime.ts",
+      ];
       const apiCandidates = apiCandidatesFor(profile);
       const business = businessBlueprint(profile);
       return {
@@ -536,7 +541,7 @@ export function buildFleetCatalog() {
 
   const missingRuntime = bots.filter((bot) => bot.readiness.buddy_chat_route === "missing");
   if (missingRuntime.length) throw new Error(`${missingRuntime.length} catalog profiles have no Buddy runtime route`);
-  if (bots.length !== 1051) throw new Error(`Expected 1,051 profiles, found ${bots.length}`);
+  if (bots.length !== 1101) throw new Error(`Expected 1,101 profiles, found ${bots.length}`);
 
   const divisions = divisionFiles.map(({ name, content }) => ({
     name: content.division,
@@ -550,7 +555,13 @@ export function buildFleetCatalog() {
     schema: "dreamco.bot_fleet_catalog.v2",
     generated_from: {
       profile_sources: "App_bots/*.json",
-      runtime_sources: ["server/seed-bots.ts", "server/seed-codelabs.ts", "server/seed-github-bots.ts"],
+      runtime_sources: [
+        "server/seed-bots.ts",
+        "server/seed-codelabs.ts",
+        "server/seed-github-bots.ts",
+        "App_bots/*.json",
+        "server/fleet-runtime.ts",
+      ],
       executable_runtime: "server/fleet-runtime.ts",
       api_candidate_source: "shared/api-registry.ts",
     },
