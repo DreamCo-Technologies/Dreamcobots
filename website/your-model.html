@@ -3,17 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sell their own model</title>
+  <title>Wrapper until their model is ready</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="nav-placeholder"></div>
   <script src="nav.js"></script>
   <main class="container">
-    <h1>Sell each user their own model</h1>
-    <p>The product is a fine-tune the customer owns. It can start from an open-weight model on Hugging Face or GitHub. You are not selling every model on those sites, and you are not selling the starting weights.</p>
-    <p>A closed frontier model, including GPT and Claude weights, is not for sale. This page does not train anything.</p>
+    <h1>Sell a wrapper until their model can do the task</h1>
+    <p>A wrapper is the front door: the words, buttons, and settings in front of an open model. Sell that while the customer's own model is not ready. When their model passes a hidden test for the task, stop selling the wrapper and sell their model instead.</p>
+    <p>The starting weights on Hugging Face or GitHub are never the product. A closed frontier model is not for sale. This page does not run the wrapper or train the model.</p>
     <form id="own-form" class="card">
+      <p><label>Task <input id="task" required placeholder="answer support mail"></label></p>
       <p><label>Base model id <input id="base-id" required placeholder="organization/model-name"></label></p>
       <p><label>Where it lives
         <select id="source">
@@ -23,7 +24,8 @@
       </label></p>
       <p><label><input id="license-ok" type="checkbox"> The license lets the customer keep their fine-tune</label></p>
       <p><label><input id="data-ok" type="checkbox"> The customer owns the training data</label></p>
-      <button class="btn btn-primary" type="submit">Check this offer</button>
+      <p><label><input id="passed" type="checkbox"> Their model passed a hidden test for this task</label></p>
+      <button class="btn btn-primary" type="submit">Check what you are selling</button>
       <p id="own-status">Nothing checked yet.</p>
       <p><a id="base-link" hidden href="https://huggingface.co">Open the base model</a></p>
     </form>
@@ -37,20 +39,26 @@
         event.preventDefault();
         var id = document.getElementById("base-id").value.trim();
         var source = document.getElementById("source").value;
+        var task = document.getElementById("task").value.trim();
         var blob = (id + " " + source).toLowerCase().replace(/[-_\/]/g, " ");
         var status = document.getElementById("own-status");
         var link = document.getElementById("base-link");
         function stop(text) { status.textContent = text; link.hidden = true; }
+        if (!task) return stop("Name the task the wrapper is covering.");
         if (refused.some(function (phrase) { return blob.indexOf(phrase) !== -1; })) return stop("Closed frontier models are not yours to sell.");
         if (!slug.test(id)) return stop("Use a public id like organization/model-name.");
         if (!document.getElementById("license-ok").checked || !document.getElementById("data-ok").checked) {
-          return stop("You can sell the customer's own fine-tune only when the base license allows it and the customer owns the training data.");
+          return stop("You can sell the wrapper or their fine-tune only when the base license allows it and the customer owns the training data.");
         }
         var url = (source === "github" ? "https://github.com/" : "https://huggingface.co/") + id;
-        status.textContent = "Offer accepted as a customer-owned model plan. The base model is not the product, and nothing was trained here.";
         link.hidden = false;
         link.href = url;
         link.textContent = "Open the base model";
+        if (document.getElementById("passed").checked) {
+          status.textContent = "Their model passed the hidden test, so the wrapper is no longer the product. The base weights are still not yours to sell.";
+        } else {
+          status.textContent = "Sell the wrapper for this task. It uses an open base the license allows. Retire the wrapper after their own model passes a hidden test. Nothing ran here.";
+        }
       });
     })();
   </script>

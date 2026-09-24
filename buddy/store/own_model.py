@@ -45,6 +45,43 @@ def sell_own_model(base_id: str, source: str, license_lets_customer_keep: bool, 
     }
 
 
+def sell_wrapper_until_ready(
+    base_id: str,
+    source: str,
+    license_lets_customer_keep: bool,
+    customer_owns_data: bool,
+    task: str,
+    customer_model_passed: bool,
+) -> dict:
+    """Sell a wrapper while their model is not ready. Stop when a hidden test passes."""
+    base = sell_own_model(base_id, source, license_lets_customer_keep, customer_owns_data)
+    if not base["for_sale"]:
+        base["product"] = "none"
+        return base
+    if not (task or "").strip():
+        return {"for_sale": False, "product": "none", "reason": "Name the task the wrapper is covering."}
+    if customer_model_passed:
+        return {
+            "for_sale": True,
+            "product": "customer_model",
+            "wrapper_for_sale": False,
+            "sells_base_weights": False,
+            "trains_here": False,
+            "task": task.strip(),
+            "reason": "Their model passed the hidden test, so the wrapper is no longer the product. The base weights are still not yours to sell.",
+        }
+    return {
+        "for_sale": True,
+        "product": "wrapper",
+        "wrapper_for_sale": True,
+        "sells_base_weights": False,
+        "trains_here": False,
+        "task": task.strip(),
+        "base_url": base["base_url"],
+        "reason": "Sell the wrapper for this task. It uses an open base the license allows. Retire the wrapper after their own model passes a hidden test.",
+    }
+
+
 if __name__ == "__main__":
     closed = sell_own_model("org/distill-claude", "huggingface", True, True)
     assert closed["for_sale"] is False
@@ -55,4 +92,9 @@ if __name__ == "__main__":
     github = sell_own_model("org/open-weights", "github", True, True)
     assert github["base_url"].startswith("https://github.com/")
     assert sell_own_model("org/model", "secret", True, True)["for_sale"] is False
-    print(json.dumps(good))
+    wrapper = sell_wrapper_until_ready("org/open-model", "huggingface", True, True, "answer support mail", False)
+    ready = sell_wrapper_until_ready("org/open-model", "huggingface", True, True, "answer support mail", True)
+    assert wrapper["product"] == "wrapper" and wrapper["sells_base_weights"] is False
+    assert ready["product"] == "customer_model" and ready["wrapper_for_sale"] is False
+    assert sell_wrapper_until_ready("org/open-model", "huggingface", True, True, "  ", False)["for_sale"] is False
+    print(json.dumps(wrapper))
