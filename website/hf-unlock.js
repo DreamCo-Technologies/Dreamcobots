@@ -13,10 +13,29 @@
     if (status) status.textContent = text;
   }
 
+  function visibleActions() {
+    const search = document.getElementById("shop-search");
+    const kind = document.getElementById("shop-kind");
+    const query = search ? search.value.toLowerCase().trim() : "";
+    const wanted = kind ? kind.value : "all";
+    return ACTIONS.filter(function (item) {
+      const blob = (item.name + " " + item.about + " " + (item.category || "") + " " + (item.plain || "")).toLowerCase();
+      const kindOk = wanted === "all" || item.kind === wanted;
+      return kindOk && (!query || blob.indexOf(query) !== -1);
+    });
+  }
+
   function render() {
     if (!list) return;
     list.replaceChildren();
-    ACTIONS.forEach(function (item) {
+    const rows = visibleActions();
+    if (!rows.length) {
+      const empty = document.createElement("p");
+      empty.textContent = "Nothing in DreamCo's shop matches. The rest of the directory is on GitHub Marketplace.";
+      list.append(empty);
+      return;
+    }
+    rows.forEach(function (item) {
       const card = document.createElement("article");
       card.className = "card";
       const title = document.createElement("h2");
@@ -36,7 +55,9 @@
         link.target = "_blank";
         link.rel = "noopener noreferrer";
       }
-      card.append(title, about, link);
+      const kind = document.createElement("p");
+      kind.textContent = item.kind === "lesson" ? "Your package" : "Action";
+      card.append(title, kind, about, link);
       list.append(card);
     });
   }
@@ -164,4 +185,14 @@
     if (cookieNote) cookieNote.hidden = true;
   });
   render();
+  const search = document.getElementById("shop-search");
+  const kindPick = document.getElementById("shop-kind");
+  if (search) search.addEventListener("input", render);
+  if (kindPick) kindPick.addEventListener("change", render);
+  document.querySelectorAll("[data-shop-query]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      if (search) search.value = button.getAttribute("data-shop-query");
+      render();
+    });
+  });
 })();
