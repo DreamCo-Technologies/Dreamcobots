@@ -1,0 +1,85 @@
+{
+  "loop": [
+    "Pin an evaluation and record a baseline.",
+    "Run the smallest check that can pass or fail.",
+    "Save the failure in plain words.",
+    "Group failures that have the same cause.",
+    "Write a small job to fix one cause.",
+    "Apply that fix in code.",
+    "Run the checks that already passed.",
+    "Run a hidden test the fix did not study.",
+    "Keep the fix only if the hidden test and the old checks pass.",
+    "Save the evidence."
+  ],
+  "phases": [
+    {
+      "id": "foundation",
+      "plain": "Checks we can run",
+      "code": "buddy/bench/scorecard.py",
+      "met": true,
+      "because": "The scorecard runs 13 gates and records the result."
+    },
+    {
+      "id": "coding",
+      "plain": "Open and review a repository",
+      "code": "buddy/desk/open_target.py",
+      "met": false,
+      "because": "Buddy can open a text file and flag a key. It does not patch a repository by itself."
+    },
+    {
+      "id": "breadth",
+      "plain": "Science, math, and long plans",
+      "code": "",
+      "met": false,
+      "because": "There is no exam for these, so the phase is not met."
+    },
+    {
+      "id": "native",
+      "plain": "Do the task without another company's model",
+      "code": "buddy/learning/native_capability_score.py",
+      "met": false,
+      "because": "The score function exists. No native model has passed a hidden exam."
+    },
+    {
+      "id": "frontier",
+      "plain": "Evidence against a strong model",
+      "code": "",
+      "met": false,
+      "because": "No frontier weights and no shared exam. Astra is not compared."
+    }
+  ],
+  "guards": [
+    "Do not train on the hidden test.",
+    "Do not hard-code a benchmark answer.",
+    "Do not delete a failing test to raise the score.",
+    "Do not ship a live action from an unverified job.",
+    "Do not put secrets in the evidence.",
+    "Do not delete the original bot notes."
+  ],
+  "documents": [
+    {
+      "path": "docs/DREAMCO_MASTER_ROADMAP_2026.md",
+      "state": "document",
+      "why": "A roadmap. It is not a runner."
+    },
+    {
+      "path": "docs/BUDDY_ACTIONS_MASTER_ROADMAP.md",
+      "state": "document",
+      "why": "A roadmap. The action pages are separate."
+    },
+    {
+      "path": "docs/MEDIA_GAME_CAPABILITY_ROADMAP.md",
+      "state": "document",
+      "why": "The game lab code already validates a brief. The roadmap is not a game."
+    },
+    {
+      "path": "buddy_os/actions/actions_page_implementation_roadmap.yaml",
+      "state": "document",
+      "why": "A list of pages, not a completed build."
+    }
+  ],
+  "phases_met": 1,
+  "phases_total": 5,
+  "frontier_ready": false,
+  "astra_compared": false
+}

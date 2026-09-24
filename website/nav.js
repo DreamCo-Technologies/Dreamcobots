@@ -57,6 +57,7 @@
     { href: 'your-model.html', label: 'Their own model' },
     { href: 'buddy-desk.html', label: 'Buddy desk' },
     { href: 'benchmarks.html', label: 'Benchmarks' },
+    { href: 'plans.html', label: 'Plans as code' },
     { href: 'this-chat.html', label: 'This chat' },
     { href: 'app-shop.html', label: 'App shop' },
     { href: 'school.html', label: 'Buddy school' },

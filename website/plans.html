@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plans that are code</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Plans that are code</h1>
+    <p id="plan-lead">Loading.</p>
+    <div id="plan"></div>
+  </main>
+  <script>
+    fetch("data/plan-status.json").then(function (r) { return r.json(); }).then(function (data) {
+      document.getElementById("plan-lead").textContent = data.phases_met + " of " + data.phases_total + " phases are met. Frontier ready: no. Astra compared: no.";
+      const box = document.getElementById("plan");
+      data.phases.forEach(function (phase) {
+        const article = document.createElement("article");
+        article.className = "card";
+        article.innerHTML = "<h2>" + phase.plain + "</h2><p>" + (phase.met ? "Met. " : "Not met. ") + phase.because + (phase.code ? " Code: " + phase.code : "") + "</p>";
+        box.append(article);
+      });
+      data.documents.forEach(function (doc) {
+        const article = document.createElement("article");
+        article.className = "card";
+        article.innerHTML = "<h2>" + doc.path + "</h2><p>Still a document. " + doc.why + "</p>";
+        box.append(article);
+      });
+    });
+  </script>
+</body>
+</html>
