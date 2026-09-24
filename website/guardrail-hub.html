@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guardrail hub</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Guardrail hub</h1>
+    <p>Put your rules in front of a model you choose to call. The check reads the prompt and the answer. It does not change ChatGPT, Grok, or any other model’s weights.</p>
+    <p>The United States has not hired this project. A contract happens only if a buying office chooses it. Registration starts at <a href="https://sam.gov">SAM.gov</a>. This page is not a bid and not a certification.</p>
+    <form id="gate-form" class="card">
+      <h2>Try the check</h2>
+      <p><label>Prompt <textarea id="gate-prompt" rows="3" required></textarea></label></p>
+      <p><label>Answer <textarea id="gate-answer" rows="3" required></textarea></label></p>
+      <p><label>Your extra phrase <input id="gate-extra" placeholder="no medical advice"></label></p>
+      <button class="btn btn-primary" type="submit">Check both</button>
+      <p id="gate-status">Nothing checked yet.</p>
+    </form>
+    <section class="card">
+      <h2>What a buyer would actually get</h2>
+      <p>A public check, your own phrases, and a record of what was blocked. Not a switch inside someone else’s model. Not a country-wide rule unless that country, or one of its offices, decides to send its own traffic here.</p>
+    </section>
+    <p><a href="my-guardrails.html">Your guardrails</a> · <a href="model-bench.html">Test a model</a> · <a href="guardrails.html">Locked rules</a></p>
+  </main>
+  <script>
+    (function () {
+      var locked = ["copy gpt", "copy claude", "distill gpt", "distill claude", "official us certification", "united states certified"];
+      var secret = /ghp_|github_pat_|sk-|hf_|AKIA/;
+      function clean(text) { return (text || "").toLowerCase().replace(/[-_]/g, " ").replace(/\s+/g, " ").trim(); }
+      document.getElementById("gate-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        var extra = clean(document.getElementById("gate-extra").value);
+        var phrases = locked.concat(extra ? [extra] : []);
+        var reasons = [];
+        ["gate-prompt", "gate-answer"].forEach(function (id) {
+          var raw = document.getElementById(id).value;
+          var blob = clean(raw);
+          if (secret.test(raw)) reasons.push("A key-shaped string is in the text.");
+          phrases.forEach(function (phrase) { if (phrase && blob.indexOf(phrase) !== -1) reasons.push("Blocked: " + phrase); });
+        });
+        document.getElementById("gate-status").textContent = (reasons[0] || "No blocked phrase in the prompt or the answer.") + " No model was changed. The United States is not bound by this check.";
+      });
+    })();
+  </script>
+</body>
+</html>
