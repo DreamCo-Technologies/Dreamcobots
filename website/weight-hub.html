@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Weight control</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Model weight control</h1>
+    <p>The goal is full control of your own weight files. This sheet is the control list. No weight file is stored here, so changing a setting does not change a model.</p>
+    <p id="weight-status">Loading the settings.</p>
+    <p><button id="save-sheet" class="btn btn-primary" type="button">Save this sheet in the browser</button>
+       <a href="model-bench.html">Test bench</a>
+       <a href="hf-hub.html">Hugging Face hub</a></p>
+    <div id="settings"></div>
+    <form id="debug-form" class="card">
+      <h2>Test and debug</h2>
+      <p>Buddy writes the debug steps. It does not open the files or load a model.</p>
+      <p><label>Kind
+        <select id="debug-kind">
+          <option value="repository">Repository</option>
+          <option value="model">AI model</option>
+        </select>
+      </label></p>
+      <p><label>Id <input id="debug-name" required placeholder="owner/name"></label></p>
+      <p><label>What failed <input id="debug-goal" placeholder="config will not load"></label></p>
+      <button class="btn btn-primary" type="submit">Make a debug plan</button>
+      <pre id="debug-out"></pre>
+      <p><a id="debug-link" hidden href="https://huggingface.co">Open</a></p>
+    </form>
+  </main>
+  <script src="weight-hub.js"></script>
+</body>
+</html>

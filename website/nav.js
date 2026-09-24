@@ -53,6 +53,7 @@
     { href: 'github-hub.html', label: 'Easy GitHub' },
     { href: 'hf-hub.html', label: 'Easy Hugging Face' },
     { href: 'model-bench.html', label: 'Test a model' },
+    { href: 'weight-hub.html', label: 'Weight control' },
     { href: 'app-shop.html', label: 'App shop' },
     { href: 'school.html', label: 'Buddy school' },
     { href: 'hf-bootcamp.html', label: 'HF packages' },
