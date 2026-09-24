@@ -39,6 +39,7 @@
     { href: 'guardrails.html', label: 'Guardrails' },
     { href: 'my-guardrails.html', label: 'Your guardrails' },
     { href: 'guardrail-hub.html', label: 'Guardrail hub' },
+    { href: 'open-build.html', label: 'Open build' },
     { href: 'repo-live.html', label: 'Whole repo' },
     { href: 'chat.html', label: '💬 Chat' },
     { href: 'install.html', label: '📲 Install & Launch' },
