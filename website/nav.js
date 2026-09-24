@@ -49,6 +49,7 @@
     { href: 'ops.html', label: 'Ops' },
     { href: 'chat-sync.html', label: 'This chat → Pages' },
     { href: 'frontier-shop.html', label: '20 model packages' },
+    { href: 'hf-unlock.html', label: 'Unlock 10 actions' },
     { href: 'school.html', label: 'Buddy school' },
     { href: 'hf-bootcamp.html', label: 'HF packages' },
     { href: 'hub.html', label: 'Hub OS' },

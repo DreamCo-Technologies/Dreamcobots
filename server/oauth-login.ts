@@ -92,14 +92,15 @@ export function registerOAuthLoginRoutes(app: Express) {
     if (!(provider in providerConfig)) return response.status(404).json({ error: "Unknown identity provider." });
     if (!configured(provider)) return response.status(503).json({ error: "This sign-in provider is not configured on the Buddy backend." });
     const state = base64Url(randomBytes(32)), nonce = base64Url(randomBytes(32));
-    setCookie(response, COOKIE_STATE, seal({ provider, state, nonce, exp: Date.now() + 10 * 60 * 1000 }), 10 * 60);
+    const next = typeof request.query.next === "string" && ["/sign-in.html", "/hf-unlock.html", "/frontier-shop.html"].includes(request.query.next) ? request.query.next : "/sign-in.html";
+    setCookie(response, COOKIE_STATE, seal({ provider, state, nonce, next, exp: Date.now() + 10 * 60 * 1000 }), 10 * 60);
     const query = new URLSearchParams({ client_id: providerConfig[provider].clientId()!, redirect_uri: callback(provider), response_type: "code", response_mode: "query", scope: providerConfig[provider].scope, state, nonce });
     response.redirect(`${providerConfig[provider].authorize}?${query}`);
   });
 
   app.get("/api/auth/:provider/callback", oauthCallbackRateLimit, async (request, response) => {
     const provider = request.params.provider as Provider;
-    const state = unseal<{ provider: Provider; state: string; nonce: string; exp: number }>(cookies(request)[COOKIE_STATE]);
+    const state = unseal<{ provider: Provider; state: string; nonce: string; next?: string; exp: number }>(cookies(request)[COOKIE_STATE]);
     clearCookie(response, COOKIE_STATE);
     if (!(provider in providerConfig) || !configured(provider) || !state || state.provider !== provider || state.state !== request.query.state || state.exp < Date.now() || typeof request.query.code !== "string") return response.status(400).json({ error: "Sign-in could not be verified. Start again from Buddy." });
     try {
@@ -109,8 +110,8 @@ export function registerOAuthLoginRoutes(app: Express) {
       if (!tokenResponse.ok || !tokens.id_token) throw new Error("Provider did not return an identity token.");
       const claims = await verifyIdToken(provider, tokens.id_token, state.nonce);
       setCookie(response, COOKIE_SESSION, seal({ provider, sub: claims.sub, email: claims.email, name: claims.name, exp: Math.floor(Date.now() / 1000) + maxSessionSeconds }), maxSessionSeconds);
-      response.redirect("/sign-in.html?status=success");
-    } catch { response.redirect("/sign-in.html?status=failed"); }
+      response.redirect(`${state.next && ["/sign-in.html", "/hf-unlock.html", "/frontier-shop.html"].includes(state.next) ? state.next : "/sign-in.html"}?status=success`);
+    } catch { response.redirect(`${state.next && ["/sign-in.html", "/hf-unlock.html", "/frontier-shop.html"].includes(state.next) ? state.next : "/sign-in.html"}?status=failed`); }
   });
 
   app.get("/api/auth/session", (request, response) => {
