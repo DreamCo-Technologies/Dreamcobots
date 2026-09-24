@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Model bench</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Test and training bench</h1>
+    <p>You can point this bench at any public Hugging Face model. The weights stay on Hugging Face. This page does not download them and does not train them.</p>
+    <section class="card">
+      <h2>Buddy's own check</h2>
+      <p>This runs against the written replies, not against a downloaded model.</p>
+      <button id="run-local" class="btn btn-primary" type="button">Run the local check</button>
+      <pre id="local-out"></pre>
+    </section>
+    <form id="bench-form" class="card">
+      <h2>Any public model</h2>
+      <p><label>Model id <input id="model-id" required placeholder="organization/model-name"></label></p>
+      <p><label>What you want to practice <input id="goal" required placeholder="practice summaries on our notes"></label></p>
+      <p><label><input id="owns" type="checkbox"> I own the training data</label></p>
+      <p><label><input id="held" type="checkbox"> I will keep a test the model does not study</label></p>
+      <p><label><input id="open-license" type="checkbox"> The license allows this training</label></p>
+      <button class="btn btn-primary" type="submit">Check and plan</button>
+      <p id="bench-status">Nothing checked yet.</p>
+      <p><a id="model-link" hidden href="https://huggingface.co">Open this model on Hugging Face</a></p>
+    </form>
+    <p><a href="hf-hub.html">Hugging Face hub</a></p>
+  </main>
+  <script src="model-bench.js"></script>
+</body>
+</html>

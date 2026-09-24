@@ -51,6 +51,8 @@
     { href: 'frontier-shop.html', label: '20 model packages' },
     { href: 'hf-unlock.html', label: 'Unlock 10 actions' },
     { href: 'github-hub.html', label: 'Easy GitHub' },
+    { href: 'hf-hub.html', label: 'Easy Hugging Face' },
+    { href: 'model-bench.html', label: 'Test a model' },
     { href: 'app-shop.html', label: 'App shop' },
     { href: 'school.html', label: 'Buddy school' },
     { href: 'hf-bootcamp.html', label: 'HF packages' },
