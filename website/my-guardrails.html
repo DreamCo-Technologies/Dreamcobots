@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your guardrails</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Your guardrails</h1>
+    <p>Add the phrases you want blocked. The locked rules stay on and cannot be removed. Paste any model’s answer to test it. This page does not download the model.</p>
+    <section class="card">
+      <h2>Locked</h2>
+      <p>Copying GPT or Claude, distilling those models, and claiming a United States certification stay blocked.</p>
+    </section>
+    <form id="add-rule" class="card">
+      <h2>Add one of yours</h2>
+      <p><label>Block this phrase <input id="rule-text" required placeholder="no medical advice"></label></p>
+      <button class="btn btn-primary" type="submit">Save rule</button>
+      <div id="your-rules"></div>
+    </form>
+    <form id="test-form" class="card">
+      <h2>Test a model answer</h2>
+      <p><label>Public model id <input id="model-id" placeholder="organization/model-name"></label></p>
+      <p><label>Paste the answer <textarea id="answer" rows="6" required></textarea></label></p>
+      <button class="btn btn-primary" type="submit">Test this answer</button>
+      <p id="mine-status">Nothing tested yet.</p>
+      <p><a id="model-link" hidden href="https://huggingface.co">Try this model on Hugging Face</a></p>
+    </form>
+    <p>
+      <a href="model-bench.html">Test plan</a> ·
+      <a href="hf-hub.html">Look up a task</a> ·
+      <a href="buddy-desk.html">Open, try, test, or lookup</a> ·
+      <a href="guardrails.html">Built-in check</a>
+    </p>
+  </main>
+  <script src="my-guardrails.js"></script>
+</body>
+</html>
