@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Study a failed benchmark</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Study one unknown benchmark</h1>
+    <p>Use text, a video, a movie, a reel, or your own notes. Buddy keeps the sentence you write. Buddy does not upload the file, train a weight, or mark the benchmark passed.</p>
+    <form id="study-form" class="card">
+      <p><label>Benchmark <input id="benchmark" required placeholder="benchmark-tracker.yml"></label></p>
+      <p><label>Kind
+        <select id="kind">
+          <option value="text">Text</option>
+          <option value="video">Video</option>
+          <option value="movie">Movie</option>
+          <option value="reel">Reel</option>
+          <option value="notes">Notes</option>
+        </select>
+      </label></p>
+      <p><label>What you learned <textarea id="note" rows="4" required></textarea></label></p>
+      <p><label>A question the note does not answer <input id="hidden" required></label></p>
+      <p><label><input id="rights" type="checkbox"> I have the right to study this</label></p>
+      <button class="btn btn-primary" type="submit">Save the lesson</button>
+      <p id="study-status">Nothing saved yet.</p>
+    </form>
+    <p><a href="learn-failures.html">Unknown benchmarks</a> · <a href="school.html">School</a></p>
+  </main>
+  <script src="study-path.js"></script>
+</body>
+</html>

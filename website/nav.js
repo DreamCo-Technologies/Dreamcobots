@@ -66,6 +66,7 @@
     { href: 'buddy-desk.html', label: 'Buddy desk' },
     { href: 'benchmarks.html', label: 'Benchmarks' },
     { href: 'learn-failures.html', label: 'Failed benchmarks' },
+    { href: 'study-path.html', label: 'Study a benchmark' },
     { href: 'lessons.html', label: 'Lessons' },
     { href: 'plans.html', label: 'Plans as code' },
     { href: 'this-chat.html', label: 'This chat' },
