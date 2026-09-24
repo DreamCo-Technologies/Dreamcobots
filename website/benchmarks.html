@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Our benchmarks</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Our benchmarks</h1>
+    <p id="bench-lead">Loading the score.</p>
+    <div id="bench"></div>
+  </main>
+  <script>
+    fetch("data/benchmarks.json").then(function (response) { return response.json(); }).then(function (data) {
+      document.getElementById("bench-lead").textContent = data.passed + " of " + data.checks + " of our own checks passed. Score " + data.score + ". " + data.what_this_does_not_measure;
+      const box = document.getElementById("bench");
+      data.goals.forEach(function (goal) {
+        const article = document.createElement("article");
+        article.className = "card";
+        article.innerHTML = "<h2>" + goal.goal + "</h2><p>" + (goal.met ? "Met" : "Not met") + "</p>";
+        box.append(article);
+      });
+      const astra = document.createElement("article");
+      astra.className = "card";
+      astra.innerHTML = "<h2>Astra</h2><p>Not compared. " + data.astra.as_close_as_this_code_gets + " Still missing: " + data.astra.still_missing.join(", ") + ".</p>";
+      box.append(astra);
+    });
+  </script>
+</body>
+</html>

@@ -68,7 +68,7 @@
         <h3 style="margin-bottom:20px">🎨 Theme</h3>
         <div class="grid-3" style="gap:12px">
           <div onclick="setTheme('dark',this)" style="cursor:pointer;padding:16px;border-radius:12px;border:2px solid var(--primary);background:rgba(79,142,247,.06);text-align:center"><div style="font-size:1.5rem;margin-bottom:8px">🌙</div><strong>Dark</strong><div style="font-size:.75rem;color:var(--text3)">Current theme</div></div>
-          <div onclick="setTheme('light',this)" style="cursor:pointer;padding:16px;border-radius:12px;border:1px solid var(--border);text-align:center"><div style="font-size:1.5rem;margin-bottom:8px">☀️</div><strong>Light</strong><div style="font-size:.75rem;color:var(--text3)">Coming soon</div></div>
+          <div onclick="setTheme('light',this)" style="cursor:pointer;padding:16px;border-radius:12px;border:1px solid var(--border);text-align:center"><div style="font-size:1.5rem;margin-bottom:8px">☀️</div><strong>Light</strong><div style="font-size:.75rem;color:var(--text3)">On</div></div>
           <div onclick="setTheme('system',this)" style="cursor:pointer;padding:16px;border-radius:12px;border:1px solid var(--border);text-align:center"><div style="font-size:1.5rem;margin-bottom:8px">💻</div><strong>System</strong><div style="font-size:.75rem;color:var(--text3)">Follow OS setting</div></div>
         </div>
       </div>
@@ -169,7 +169,7 @@ function deleteAlert() { if(confirm('This would delete all your Empire OS data. 
 function copyInfo() { navigator.clipboard?.writeText('DreamCo Empire OS v1.0.0 · 1,051 bots · 45 divisions · Guided mode'); }
 function exportData() { exportAlert('all data'); }
 function selectMode(el) { document.querySelectorAll('label[onclick]').forEach(l => { l.style.borderColor='var(--border)'; l.style.background=''; }); el.style.borderColor='var(--green)'; el.style.background='rgba(34,197,94,.06)'; }
-function setTheme(t, el) { document.querySelectorAll('[onclick^="setTheme"]').forEach(c => { c.style.borderColor='var(--border)'; c.style.background=''; c.style.borderWidth='1px'; }); el.style.borderColor='var(--primary)'; el.style.background='rgba(79,142,247,.06)'; el.style.borderWidth='2px'; }
+function setTheme(t, el) { const mode = t === "system" ? (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark") : t; document.documentElement.dataset.theme = mode; localStorage.setItem("dreamco-theme", t); document.querySelectorAll('[onclick^="setTheme"]').forEach(c => { c.style.borderColor='var(--border)'; c.style.background=''; c.style.borderWidth='1px'; }); if (el) { el.style.borderColor='var(--primary)'; el.style.background='rgba(79,142,247,.06)'; el.style.borderWidth='2px'; } }
 function saveApprovalPreferences() {
   const sms = document.getElementById('notify-sms').checked;
   const call = document.getElementById('notify-call').checked;
