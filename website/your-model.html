@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sell their own model</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Sell each user their own model</h1>
+    <p>The product is a fine-tune the customer owns. It can start from an open-weight model on Hugging Face or GitHub. You are not selling every model on those sites, and you are not selling the starting weights.</p>
+    <p>A closed frontier model, including GPT and Claude weights, is not for sale. This page does not train anything.</p>
+    <form id="own-form" class="card">
+      <p><label>Base model id <input id="base-id" required placeholder="organization/model-name"></label></p>
+      <p><label>Where it lives
+        <select id="source">
+          <option value="huggingface">Hugging Face</option>
+          <option value="github">GitHub</option>
+        </select>
+      </label></p>
+      <p><label><input id="license-ok" type="checkbox"> The license lets the customer keep their fine-tune</label></p>
+      <p><label><input id="data-ok" type="checkbox"> The customer owns the training data</label></p>
+      <button class="btn btn-primary" type="submit">Check this offer</button>
+      <p id="own-status">Nothing checked yet.</p>
+      <p><a id="base-link" hidden href="https://huggingface.co">Open the base model</a></p>
+    </form>
+    <p><a href="weight-hub.html">Weight control</a> · <a href="model-bench.html">Test bench</a> · <a href="frontier-shop.html">20 lessons</a></p>
+  </main>
+  <script>
+    (function () {
+      var refused = ["copy gpt", "copy claude", "distill gpt", "distill claude", "proprietary weights", "closed weights", "gpt astra", "claude mythos"];
+      var slug = /^[A-Za-z0-9][A-Za-z0-9._-]{0,80}\/[A-Za-z0-9][A-Za-z0-9._-]{0,80}$/;
+      document.getElementById("own-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        var id = document.getElementById("base-id").value.trim();
+        var source = document.getElementById("source").value;
+        var blob = (id + " " + source).toLowerCase().replace(/[-_\/]/g, " ");
+        var status = document.getElementById("own-status");
+        var link = document.getElementById("base-link");
+        function stop(text) { status.textContent = text; link.hidden = true; }
+        if (refused.some(function (phrase) { return blob.indexOf(phrase) !== -1; })) return stop("Closed frontier models are not yours to sell.");
+        if (!slug.test(id)) return stop("Use a public id like organization/model-name.");
+        if (!document.getElementById("license-ok").checked || !document.getElementById("data-ok").checked) {
+          return stop("You can sell the customer's own fine-tune only when the base license allows it and the customer owns the training data.");
+        }
+        var url = (source === "github" ? "https://github.com/" : "https://huggingface.co/") + id;
+        status.textContent = "Offer accepted as a customer-owned model plan. The base model is not the product, and nothing was trained here.";
+        link.hidden = false;
+        link.href = url;
+        link.textContent = "Open the base model";
+      });
+    })();
+  </script>
+</body>
+</html>
