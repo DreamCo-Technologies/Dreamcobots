@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GitHub command center</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Command center</h1>
+    <p>Every button stays on this site or opens the matching GitHub screen. Buddy is not a GitHub App yet. A static page cannot change the repository by itself.</p>
+    <p id="center-status">Choose a button.</p>
+    <p>
+      <a class="btn btn-primary" href="bots.html">Bot prospectus</a>
+      <a class="btn btn-outline" href="bots.html#original-bot-section">Original bots</a>
+      <a class="btn btn-outline" href="actions.html">Actions</a>
+      <a class="btn btn-outline" href="buddy-command-center.html">Buddy center</a>
+      <a class="btn btn-outline" href="repo-live.html">All files</a>
+      <a class="btn btn-outline" href="benchmarks.html">Benchmarks</a>
+    </p>
+    <section class="card">
+      <h2>Commits and branches</h2>
+      <p>
+        <button id="load-commits" class="btn btn-primary" type="button">Show every commit</button>
+        <button id="load-branches" class="btn btn-outline" type="button">Show every branch</button>
+      </p>
+      <div id="commits"></div>
+      <div id="branches"></div>
+    </section>
+    <form id="bot-form" class="card">
+      <h2>Build a bot through GitHub</h2>
+      <p>Name the bot and the job. This writes a note you save as a file on GitHub. It does not start the bot.</p>
+      <p><label>Name <input id="bot-name" required placeholder="Support mail bot"></label></p>
+      <p><label>Job <input id="bot-job" required placeholder="Sort support mail into plain replies"></label></p>
+      <button class="btn btn-primary" type="submit">Make the file</button>
+      <pre id="bot-draft"></pre>
+      <p><a id="bot-create" class="btn btn-primary" hidden href="https://github.com/DreamCo-Technologies/Dreamcobots">Create this file on GitHub</a></p>
+    </form>
+    <h2>GitHub connections</h2>
+    <p>These are the connections a GitHub App can be given. Installing one is done in GitHub, by you. Start at <a href="https://github.com/settings/apps/new">New GitHub App</a>.</p>
+    <div id="connectors"></div>
+  </main>
+  <script src="github-center.js"></script>
+</body>
+</html>
