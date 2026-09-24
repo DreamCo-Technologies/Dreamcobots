@@ -17,12 +17,21 @@ def shelf(catalog: dict | None = None) -> dict:
     catalog = catalog if catalog is not None else load_packages()
     if catalog.get("frontier_model_trained") is True:
         raise RuntimeError("do not mark a frontier model trained from the catalog")
-    for item in catalog["packages"]:
-        if item["id"] == "weights" and item["for_sale"]:
-            raise RuntimeError("weight package cannot be for sale without a weight file")
-    selling = [item["id"] for item in catalog["packages"] if item["for_sale"]]
-    held = [item["id"] for item in catalog["packages"] if not item["for_sale"]]
-    return {"for_sale": selling, "held": held, "frontier_model_trained": False}
+    packages = catalog["packages"]
+    if len(packages) != 20:
+        raise RuntimeError("the frontier shop sells 20 packages")
+    for item in packages:
+        if item.get("ships_weights"):
+            raise RuntimeError("no package may ship someone else's weights")
+        if not item.get("for_sale"):
+            raise RuntimeError("each of the 20 is a lesson you can sell")
+    return {
+        "for_sale": [item["id"] for item in packages],
+        "held": [],
+        "count": 20,
+        "frontier_model_trained": False,
+        "sales_count_known": False,
+    }
 
 
 def public_read(owner: str, repo: str, path: str) -> dict:
@@ -36,9 +45,9 @@ def public_read(owner: str, repo: str, path: str) -> dict:
 if __name__ == "__main__":
     catalog = load_packages()
     result = shelf(catalog)
-    assert "weights" in result["held"] and "weights" not in result["for_sale"]
-    assert "data" in result["for_sale"]
-    assert result["frontier_model_trained"] is False
+    assert result["count"] == 20 and result["frontier_model_trained"] is False
+    assert result["sales_count_known"] is False
+    assert all(not item.get("ships_weights") for item in catalog["packages"])
     blocked = public_read("DreamCo-Technologies", "Dreamcobots", ".env")
     ok = public_read("DreamCo-Technologies", "Dreamcobots", "README.md")
     assert blocked["allowed"] is False and ok["sends_a_token"] is False and ok["called"] is False

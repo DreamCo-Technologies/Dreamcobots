@@ -1,62 +1,187 @@
 {
-  "rule": "Sell only what DreamCo wrote or the customer owns. Do not sell someone else's model weights. Do not claim a win over GPT or Claude without a published score.",
+  "rule": "These 20 packages are lessons for people building their own model. You set the price. No sales count is invented. No package includes someone else's weights.",
   "frontier_model_trained": false,
+  "sales_count_known": false,
   "packages": [
     {
-      "id": "data",
-      "plain": "Data package",
+      "id": "notes",
+      "plain": "Your own reading notes",
       "for_sale": true,
-      "what": "Buddy's 600 own-version lines and the 10 Hugging Face study notes. The upstream pages are not included.",
-      "not_included": "The original websites, and the 400 catalog rows that are missing."
+      "ships_weights": false,
+      "page": "school.html",
+      "what": "600 lines Buddy wrote after comparing views. The original websites are not in the package.",
+      "not_included": "The missing 400 catalog rows, and any copied page text."
     },
     {
-      "id": "tools",
-      "plain": "Tool package",
+      "id": "ten-views",
+      "plain": "Ten ways to read one source",
       "for_sale": true,
-      "what": "The 200 beginner replies and the plain-language GitHub map.",
-      "not_included": "GitHub itself, Copilot, or a second copy of GitHub's servers."
+      "ships_weights": false,
+      "page": "school.html",
+      "what": "The school rule: teacher, book, subject, beginner, practitioner, critic, measurer, safety, neighbor, and examiner.",
+      "not_included": "A claim that the reading is mastered."
     },
     {
-      "id": "capability",
-      "plain": "Capability package",
-      "for_sale": false,
-      "what": "A skill folder with a license check, an original lesson, and a test.",
-      "not_included": "For sale only after the rights review in the source-learning pipeline says approved."
-    },
-    {
-      "id": "learning",
-      "plain": "Learning package",
+      "id": "plain-github",
+      "plain": "GitHub in plain words",
       "for_sale": true,
-      "what": "The 10-view school rule and the boot camp gate.",
-      "not_included": "A certificate from a school, or a claim that 1,000 resources are mastered."
+      "ships_weights": false,
+      "page": "store.html",
+      "what": "53 GitHub features with a plain name, the GitHub name, and the official doc link.",
+      "not_included": "A second GitHub. GitHub still does the work."
     },
     {
-      "id": "reasoning",
-      "plain": "Reasoning package",
-      "for_sale": false,
-      "what": "Notes about reasoning methods already in buddy/learning.",
-      "not_included": "A model that beats GPT or Claude. There is no score for that."
-    },
-    {
-      "id": "weights",
-      "plain": "Model weight package",
-      "for_sale": false,
-      "what": "Weight files for a model DreamCo trained and has the right to ship.",
-      "not_included": "No weight file exists. GPT and Claude weights are not ours to sell."
-    },
-    {
-      "id": "webhook",
-      "plain": "Ping recipe",
+      "id": "beginner-answers",
+      "plain": "200 beginner answers",
       "for_sale": true,
-      "what": "A starter robot recipe that runs only when you press the button and explains a GitHub ping in plain words.",
-      "not_included": "A live webhook pointed at a private server. You add that yourself."
+      "ships_weights": false,
+      "page": "buddy.html",
+      "what": "The 200 written replies for people new to a project.",
+      "not_included": "A live coding assistant from GitHub."
     },
     {
-      "id": "api",
-      "plain": "Try the API",
+      "id": "held-out-exam",
+      "plain": "An exam you do not study",
       "for_sale": true,
+      "ships_weights": false,
+      "page": "benchmark-tracker.html",
+      "what": "A checklist that keeps a test hidden from the lesson.",
+      "not_included": "A score. No exam has been passed yet."
+    },
+    {
+      "id": "license-check",
+      "plain": "License checklist",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "frontier-shop.html",
+      "what": "Questions to answer before training: who owns the data, and what the license allows.",
+      "not_included": "A lawyer's sign-off."
+    },
+    {
+      "id": "data-intake",
+      "plain": "Customer data form",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "frontier-shop.html",
+      "what": "A form that records that the customer owns the files they want used.",
+      "not_included": "The customer's private files."
+    },
+    {
+      "id": "closed-model-card",
+      "plain": "Do not copy a closed model",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "frontier-shop.html",
+      "what": "The refusal list for jobs that ask to copy or distill GPT or Claude.",
+      "not_included": "Those companies' weights or outputs."
+    },
+    {
+      "id": "try-api",
+      "plain": "Try a public link",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "store.html",
       "what": "A lesson that builds a public read link and does not send a password.",
-      "not_included": "Write access, or a key stored in the project."
+      "not_included": "Write access to GitHub."
+    },
+    {
+      "id": "ping-recipe",
+      "plain": "Button-press robot recipe",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "store.html",
+      "what": "A robot recipe that runs only when someone presses the button and explains a ping.",
+      "not_included": "A webhook pointed at a private server."
+    },
+    {
+      "id": "hf-sync",
+      "plain": "Send one folder to Hugging Face",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "hf-bootcamp.html",
+      "what": "How to run the official hub-sync action on the beginner-router folder only.",
+      "not_included": "Your Hugging Face token. You add that secret yourself."
+    },
+    {
+      "id": "hf-notes",
+      "plain": "Ten Hugging Face tool notes",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "hf-bootcamp.html",
+      "what": "DreamCo's own notes on the 10 Hugging Face actions, with source links.",
+      "not_included": "The action source code, and a second uploader."
+    },
+    {
+      "id": "model-card",
+      "plain": "Honest model card",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "learn-hf.html",
+      "what": "A card that says what the word matcher is and what it is not.",
+      "not_included": "A trained frontier model."
+    },
+    {
+      "id": "word-test",
+      "plain": "Small word-match test",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "test-center.html",
+      "what": "The 12-prompt check for the beginner replies.",
+      "not_included": "A leaderboard rank."
+    },
+    {
+      "id": "memory-places",
+      "plain": "Where to keep memory",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "data-control.html",
+      "what": "The list of 20 places a person can store notes, including Drive and iCloud as export only.",
+      "not_included": "A login to those clouds from this site."
+    },
+    {
+      "id": "repo-check",
+      "plain": "What is actually in the repo",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "system-map.html",
+      "what": "The production gate: which files exist, and the reminder that a file is not a live bot.",
+      "not_included": "A claim that 1,051 bots are running."
+    },
+    {
+      "id": "old-plans",
+      "plain": "Old bot plan index",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "bots.html",
+      "what": "A pointer to the original bot notes that were kept, not rewritten into money programs.",
+      "not_included": "Trading or mining software."
+    },
+    {
+      "id": "chat-vs-repo",
+      "plain": "Chat versus the repo",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "chat-sync.html",
+      "what": "A way to write down what a chat asked for and what the repo actually has.",
+      "not_included": "Private ChatGPT threads. Those are not in the repo."
+    },
+    {
+      "id": "training-order",
+      "plain": "Training order form",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "frontier-shop.html",
+      "what": "An order sheet: owned data, a hidden test, an open model the customer is allowed to run.",
+      "not_included": "The training run. The form does not train a model."
+    },
+    {
+      "id": "score-sheet",
+      "plain": "Fair score sheet",
+      "for_sale": true,
+      "ships_weights": false,
+      "page": "benchmark-tracker.html",
+      "what": "A sheet for publishing a score on a test the model did not study.",
+      "not_included": "A win over GPT or Claude. There is no score yet."
     }
   ]
 }
