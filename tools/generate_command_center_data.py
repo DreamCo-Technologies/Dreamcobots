@@ -30,6 +30,9 @@ EVIDENCE_TAXONOMY = [
 ]
 GENERATED_NAMES = [
     "repository-inventory.json",
+    "repository-browser.json",
+    "legacy-bots.json",
+    "project-coverage.json",
     "bots.json",
     "divisions.json",
     "capabilities.json",
@@ -311,12 +314,44 @@ def build_workflows() -> dict[str, Any]:
     )
 
 
+def build_repository_browser() -> dict[str, Any]:
+    """Index every tracked path, including generated evidence, without copying contents."""
+    try:
+        result = subprocess.run(["git", "ls-files", "-z"], cwd=ROOT, check=True, capture_output=True)
+        paths = sorted(set(value.decode("utf-8") for value in result.stdout.split(b"\0") if value))
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        paths = sorted(path.relative_to(ROOT).as_posix() for path in ROOT.rglob("*")
+                       if path.is_file() and not any(part in IGNORED_PARTS for part in path.relative_to(ROOT).parts))
+    items = []
+    for path in paths:
+        area = path.split("/")[0] if "/" in path else "(root)"
+        protected = bool(SECRET_NAME.search(path))
+        kind, description, _ = AREA_RULES.get(area, ("supporting", "Supporting repository file", "repository maintainers"))
+        items.append({"path": path, "area": area, "kind": kind, "protected": protected})
+    pages = [path[len("website/"):] for path in paths if path.startswith("website/") and path.endswith(".html")]
+    return {
+        "schema": "dreamco.command_center.repository_browser.v1",
+        "scope": "Every Git-tracked path, including generated artifacts. File existence is not execution evidence.",
+        "summary": {"files": len(items), "pages": len(pages), "protected_paths": sum(row["protected"] for row in items)},
+        "areas": [{"id": area, "description": AREA_RULES.get(area, ("supporting", "Supporting repository files", "repository maintainers"))[1]}
+                  for area in sorted({row["area"] for row in items})],
+        "items": items,
+        "pages": pages,
+    }
+
+
 def build_bundle() -> dict[str, dict[str, Any]]:
     files = repository_files()
     registry = read_json(REGISTRY)
     bots, divisions, capabilities = build_fleet(registry)
+    sys.path.insert(0, str(ROOT))
+    from tools.normalize_legacy_portfolios import build_legacy_portfolios
+    legacy = build_legacy_portfolios(ROOT, registry)
     payloads = {
         "repository-inventory.json": build_repository_inventory(files),
+        "repository-browser.json": build_repository_browser(),
+        "legacy-bots.json": legacy,
+        "project-coverage.json": read_json(ROOT / "config/project-feature-coverage.json"),
         "bots.json": bots,
         "divisions.json": divisions,
         "capabilities.json": capabilities,

@@ -6,6 +6,16 @@ on:
     paths:
       - 'docs/**'
       - 'website/**'
+      - 'tools/generate_repository_guide.py'
+      - 'tools/generate_command_center_data.py'
+      - 'tools/normalize_legacy_portfolios.py'
+      - 'tools/place_original_bots.py'
+      - 'original-bots/**'
+      - 'bots/**'
+      - 'config/project-feature-coverage.json'
+      - 'tools/connect_repository_pages.py'
+      - 'config/master_bot_registry.json'
+      - 'tools/generate_dreamco_repository_master_map.py'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -27,6 +37,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Refresh repository owner directory
+        run: |
+          python3 tools/generate_repository_guide.py
+          python3 tools/connect_repository_pages.py
+          python3 tools/generate_command_center_data.py
+          python3 -m unittest tests.test_repository_guide tests.test_repository_master_map tests.test_repository_browser tests.test_legacy_portfolios tests.test_branch_health_public_report
       - name: Setup Pages
         uses: actions/configure-pages@v6
       - name: Build Jekyll site
