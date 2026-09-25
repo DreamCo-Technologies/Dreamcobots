@@ -111,5 +111,40 @@
     return "#" + mix(red) + mix(green) + mix(blue);
   }
 
-  root.DreamGame = { blank: blank, paint: paint, step: step, preset: preset, count: count, project: project, shade: shade };
+  function defaults() {
+    return {
+      sky: "#070b14", floor: "#1b2436", wall: "#33415c", coin: "#f5c542", goal: "#3dd68c",
+      hazard: "#ef6461", player: "#7eb6ff", empty: "#101625", wallHeight: 1.2, light: 1, win: "You won."
+    };
+  }
+
+  function styleOf(level) {
+    const base = defaults();
+    const incoming = (level && level.style) || {};
+    const hex = /^#[0-9a-fA-F]{6}$/;
+    Object.keys(base).forEach(function (key) {
+      if (typeof base[key] === "string" && key !== "win" && hex.test(incoming[key])) base[key] = incoming[key];
+    });
+    if (typeof incoming.win === "string" && incoming.win.trim()) base.win = incoming.win.trim().slice(0, 80);
+    const height = Number(incoming.wallHeight);
+    const light = Number(incoming.light);
+    if (height >= 0.4 && height <= 2.4) base.wallHeight = height;
+    if (light >= 0.4 && light <= 1) base.light = light;
+    return base;
+  }
+
+  function resize(level, cols, rows) {
+    const width = Math.max(8, Math.min(24, cols | 0));
+    const depth = Math.max(6, Math.min(16, rows | 0));
+    const next = blank(width, depth);
+    next.title = level.title;
+    next.style = styleOf(level);
+    for (let y = 0; y < Math.min(depth, level.rows); y += 1) {
+      for (let x = 0; x < Math.min(width, level.cols); x += 1) next.cells[y][x] = level.cells[y][x];
+    }
+    if (inBounds(next, level.player.x, level.player.y)) next.player = { x: level.player.x, y: level.player.y };
+    return next;
+  }
+
+  root.DreamGame = { blank: blank, paint: paint, step: step, preset: preset, count: count, project: project, shade: shade, styleOf: styleOf, resize: resize };
 })(typeof globalThis !== "undefined" ? globalThis : this);

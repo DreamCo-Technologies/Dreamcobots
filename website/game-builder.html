@@ -11,7 +11,21 @@
   <script src="nav.js"></script>
   <main class="container">
     <h1>DreamCo game builder</h1>
-    <p>Paint on the flat grid. The DreamCo engine turns that grid into lit 3D blocks and moves a camera through the room.</p>
+    <p>Change the colors, the wall height, the light, the room size, and the win line. Those choices are saved in the game file.</p>
+    <p>
+      <label>Sky <input id="sky" type="color" value="#070b14"></label>
+      <label>Floor <input id="floor" type="color" value="#1b2436"></label>
+      <label>Wall <input id="wall" type="color" value="#33415c"></label>
+      <label>Coin <input id="coin" type="color" value="#f5c542"></label>
+      <label>Goal <input id="goal" type="color" value="#3dd68c"></label>
+      <label>Hazard <input id="hazard" type="color" value="#ef6461"></label>
+      <label>Player <input id="player" type="color" value="#7eb6ff"></label>
+      <label>Wall height <input id="wall-height" type="range" min="0.4" max="2.4" step="0.2" value="1.2"></label>
+      <label>Light <input id="light" type="range" min="0.4" max="1" step="0.1" value="1"></label>
+      <label>Win line <input id="win-line" value="You won."></label>
+      <label>Width <input id="cols" type="number" min="8" max="24" value="16"></label>
+      <label>Depth <input id="rows" type="number" min="6" max="16" value="10"></label>
+    </p>
     <p>
       <label>Title <input id="title" value="Untitled"></label>
       <button class="btn btn-outline" type="button" data-preset="room">Empty room</button>
