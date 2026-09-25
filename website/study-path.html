@@ -10,8 +10,8 @@
   <div id="nav-placeholder"></div>
   <script src="nav.js"></script>
   <main class="container">
-    <h1>Study one unknown benchmark</h1>
-    <p>Use text, a video, a movie, a reel, or your own notes. Buddy keeps the sentence you write. Buddy does not upload the file, train a weight, or mark the benchmark passed.</p>
+    <h1>What you may train from</h1>
+    <p>You may use text, video, a movie, a reel, or notes when you own them, bought a license that allows training, or the work is public domain or licensed for training. Buying a copy to watch, finding a free copy, or finding it on YouTube is not enough. This page does not download the file.</p>
     <form id="study-form" class="card">
       <p><label>Benchmark <input id="benchmark" required placeholder="benchmark-tracker.yml"></label></p>
       <p><label>Kind
@@ -23,11 +23,23 @@
           <option value="notes">Notes</option>
         </select>
       </label></p>
+      <p><label>Where it came from
+        <select id="source">
+          <option value="owned">I own it</option>
+          <option value="bought-with-training-license">I bought a license that allows training</option>
+          <option value="public-domain">Public domain</option>
+          <option value="license-allows-training">The license allows training</option>
+          <option value="bought-to-watch">I bought it to watch</option>
+          <option value="free-to-watch">I found it free to watch</option>
+          <option value="youtube">I found it on YouTube</option>
+          <option value="found-online">I found the file online</option>
+        </select>
+      </label></p>
       <p><label>What you learned <textarea id="note" rows="4" required></textarea></label></p>
       <p><label>A question the note does not answer <input id="hidden" required></label></p>
-      <p><label><input id="rights" type="checkbox"> I have the right to study this</label></p>
-      <button class="btn btn-primary" type="submit">Save the lesson</button>
-      <p id="study-status">Nothing saved yet.</p>
+      <p><label><input id="rights" type="checkbox"> This source allows training, not only watching</label></p>
+      <button class="btn btn-primary" type="submit">Check this source</button>
+      <p id="study-status">Nothing checked yet.</p>
     </form>
     <p><a href="learn-failures.html">Unknown benchmarks</a> · <a href="school.html">School</a></p>
   </main>
