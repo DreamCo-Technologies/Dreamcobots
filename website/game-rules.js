@@ -91,5 +91,16 @@
     return level;
   }
 
-  root.DreamGame = { blank: blank, paint: paint, step: step, preset: preset, count: count };
+  function project(point, camera) {
+    const dx = point.x - camera.x;
+    const dy = point.y - camera.y;
+    const cos = Math.cos(camera.yaw);
+    const sin = Math.sin(camera.yaw);
+    const right = dx * cos - dy * sin;
+    const forward = dx * sin + dy * cos;
+    if (forward < 0.15) return null;
+    return { x: right / forward, y: (point.z - camera.z) / forward, depth: forward };
+  }
+
+  root.DreamGame = { blank: blank, paint: paint, step: step, preset: preset, count: count, project: project };
 })(typeof globalThis !== "undefined" ? globalThis : this);

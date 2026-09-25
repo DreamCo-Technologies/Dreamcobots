@@ -11,7 +11,7 @@
   <script src="nav.js"></script>
   <main class="container">
     <h1>DreamCo game builder</h1>
-    <p>This is your 2D builder. Paint a room, press Play, and the game runs in this browser. It does not replace Godot, Unity, or Unreal.</p>
+    <p>Paint on the flat grid. The same room is built out of blocks in the 3D view. Play moves a camera through that room. This is not a mesh editor, and it does not replace Godot, Unity, or Unreal.</p>
     <p>
       <label>Title <input id="title" value="Untitled"></label>
       <button class="btn btn-outline" type="button" data-preset="room">Empty room</button>
@@ -31,6 +31,7 @@
       <label class="btn btn-outline">Load <input id="load" type="file" accept="application/json" hidden></label>
     </p>
     <canvas id="board" width="640" height="400"></canvas>
+    <canvas id="view3d" width="640" height="400"></canvas>
     <p id="status">Editing. Arrow keys work after Play.</p>
   </main>
   <script src="game-rules.js"></script>
