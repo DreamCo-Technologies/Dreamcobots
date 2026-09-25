@@ -1,0 +1,449 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-09-21T21:41:27Z",
+  "provenance": {
+    "repo": "DreamCo-Technologies/Dreamcobots",
+    "commit": null,
+    "environment": "pages-stub",
+    "control_plane_artifact": null,
+    "evidence_complete": false
+  },
+  "anti_vanity": {
+    "yellow_never_counts_as_green": true,
+    "green_requires_current_evidence": true,
+    "historical_failures_immutable": true,
+    "pct_without_provenance_not_release_evidence": true,
+    "soak_requires_repeated_acceptance": true,
+    "soak_default_n": 3,
+    "agents_vanity_green_blocked_must_be_zero": true
+  },
+  "surfaces": {
+    "actions": {
+      "state": "yellow",
+      "soak_ok": null,
+      "note": "Awaiting control-plane artifact"
+    },
+    "pr": {
+      "state": "yellow",
+      "soak_ok": null,
+      "note": "Awaiting control-plane artifact"
+    },
+    "issues": {
+      "state": "yellow",
+      "soak_ok": null,
+      "note": "Awaiting control-plane artifact"
+    },
+    "agents": {
+      "state": "yellow",
+      "soak_ok": null,
+      "note": "production_ready remains false until evidence"
+    }
+  },
+  "aggregate": {
+    "os_green_pct": null,
+    "os_soak_ok": null,
+    "os_pages_publish_freshness_hours": null,
+    "counts": {
+      "green": 0,
+      "red": 0,
+      "yellow": 25
+    }
+  },
+  "metrics": [
+    {
+      "id": "actions_required_success_rate_7d",
+      "surface": "actions",
+      "label": "Required success rate (7d)",
+      "state": "yellow",
+      "value": null,
+      "unit": "%",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "actions_soak_consecutive_green",
+      "surface": "actions",
+      "label": "Soak consecutive green",
+      "state": "yellow",
+      "value": null,
+      "unit": "runs",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": {
+        "soak_n": 3
+      }
+    },
+    {
+      "id": "actions_open_failure_fingerprints",
+      "surface": "actions",
+      "label": "Open failure fingerprints",
+      "state": "yellow",
+      "value": null,
+      "unit": "count",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "actions_evidence_freshness_hours",
+      "surface": "actions",
+      "label": "Evidence freshness",
+      "state": "yellow",
+      "value": null,
+      "unit": "hours",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "actions_flaky_vs_deterministic_ratio",
+      "surface": "actions",
+      "label": "Flaky vs deterministic",
+      "state": "yellow",
+      "value": null,
+      "unit": "ratio",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "actions_yellow_incomplete_count",
+      "surface": "actions",
+      "label": "Yellow incomplete",
+      "state": "yellow",
+      "value": null,
+      "unit": "count",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "pr_health_distribution",
+      "surface": "pr",
+      "label": "PR health distribution",
+      "state": "yellow",
+      "value": {
+        "healthy": null,
+        "review": null,
+        "blocked": null,
+        "stale": null,
+        "duplicate_candidate": null
+      },
+      "unit": "map",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "pr_required_checks_pass_rate",
+      "surface": "pr",
+      "label": "Required checks pass rate",
+      "state": "yellow",
+      "value": null,
+      "unit": "%",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "pr_age_p50_p95_days",
+      "surface": "pr",
+      "label": "PR age p50/p95",
+      "state": "yellow",
+      "value": null,
+      "unit": "days",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "pr_claims_evidence_rate",
+      "surface": "pr",
+      "label": "Claims with evidence",
+      "state": "yellow",
+      "value": null,
+      "unit": "%",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "pr_merge_conflict_count",
+      "surface": "pr",
+      "label": "Merge conflicts",
+      "state": "yellow",
+      "value": null,
+      "unit": "count",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "pr_missing_coverage_on_changed_paths",
+      "surface": "pr",
+      "label": "Missing coverage on changes",
+      "state": "yellow",
+      "value": null,
+      "unit": "count",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "issues_p0_open_count",
+      "surface": "issues",
+      "label": "P0 open",
+      "state": "yellow",
+      "value": null,
+      "unit": "count",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "issues_p0_age_hours_p95",
+      "surface": "issues",
+      "label": "P0 age p95",
+      "state": "yellow",
+      "value": null,
+      "unit": "hours",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "issues_blocker_with_evidence_count",
+      "surface": "issues",
+      "label": "Blockers with evidence",
+      "state": "yellow",
+      "value": null,
+      "unit": "count",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "issues_fix_linkage_rate",
+      "surface": "issues",
+      "label": "Issue\u2192fix linkage",
+      "state": "yellow",
+      "value": null,
+      "unit": "%",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "issues_close_soak",
+      "surface": "issues",
+      "label": "Close with verification soak",
+      "state": "yellow",
+      "value": null,
+      "unit": "ratio",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": {
+        "soak_n": 3
+      }
+    },
+    {
+      "id": "agents_runtime_production_evidence_rate",
+      "surface": "agents",
+      "label": "Runtime production evidence",
+      "state": "yellow",
+      "value": null,
+      "unit": "%",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "agents_sandbox_soak_pass",
+      "surface": "agents",
+      "label": "Sandbox soak pass",
+      "state": "yellow",
+      "value": null,
+      "unit": "bool",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": {
+        "soak_n": 3
+      }
+    },
+    {
+      "id": "agents_cert_evidence_ok",
+      "surface": "agents",
+      "label": "Cert evidence OK",
+      "state": "yellow",
+      "value": null,
+      "unit": "bool",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "agents_last_successful_action_age_hours",
+      "surface": "agents",
+      "label": "Last successful action age",
+      "state": "yellow",
+      "value": null,
+      "unit": "hours",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "agents_vanity_green_blocked",
+      "surface": "agents",
+      "label": "Vanity green blocked",
+      "state": "yellow",
+      "value": 0,
+      "unit": "count",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "os_green_pct",
+      "surface": "aggregate",
+      "label": "OS green % (green/(green+red))",
+      "state": "yellow",
+      "value": null,
+      "unit": "%",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    },
+    {
+      "id": "os_soak_ok",
+      "surface": "aggregate",
+      "label": "OS soak OK",
+      "state": "yellow",
+      "value": null,
+      "unit": "bool",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": {
+        "soak_n": 3
+      }
+    },
+    {
+      "id": "os_pages_publish_freshness_hours",
+      "surface": "aggregate",
+      "label": "Pages publish freshness",
+      "state": "yellow",
+      "value": null,
+      "unit": "hours",
+      "evidence": {
+        "present": false,
+        "source": null,
+        "commit": null,
+        "timestamp": null
+      },
+      "slo": null
+    }
+  ],
+  "production_ready": false,
+  "notes": [
+    "Fail-closed stub: no green tiles without control-plane evidence.",
+    "Yellow never counts toward os_green_pct.",
+    "agents_vanity_green_blocked=0; production_ready=false."
+  ]
+}
