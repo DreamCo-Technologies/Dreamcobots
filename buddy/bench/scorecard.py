@@ -37,6 +37,7 @@ def run() -> dict:
     frontier = load("frontier_path", ROOT / "learning" / "frontier_path.py")
     have = load("have", ROOT / "truth" / "have.py")
     notes = load("note_model", ROOT / "learning" / "note_model.py")
+    ideas = load("idea_path", ROOT / "learning" / "idea_path.py")
     rows = [
         check("open a text file", lambda: opened.choose("open", "github", "DreamCo-Technologies/Dreamcobots", "README.md")["reads_file"] or (_ for _ in ()).throw(AssertionError("did not read"))),
         check("do not load weights", lambda: None if opened.choose("open", "huggingface", "org/model", "model.safetensors")["loads_weights"] is False else (_ for _ in ()).throw(AssertionError("loaded"))),
@@ -57,6 +58,7 @@ def run() -> dict:
         check("frontier path does not claim a model", lambda: None if frontier.scan()["can_compete_with_a_frontier_model"] is False and len(frontier.scan()["ready_study_methods"]) == 18 else (_ for _ in ()).throw(AssertionError("frontier"))),
         check("pages do not hide the bot counts", lambda: None if have.scan()["markdown_bots"] > have.scan()["catalog_bots"] and have.scan()["files_moved"] is False else (_ for _ in ()).throw(AssertionError("have"))),
         check("notes train a small model", lambda: None if notes.train(steps=25)["loss_dropped"] is True and notes.train(steps=25)["frontier_model"] is False else (_ for _ in ()).throw(AssertionError("notes"))),
+        check("an idea is a plan", lambda: None if ideas.idea("Build a small sorting game", ["I practiced loops in my own course notes today.", "I wrote a new example that was not in the lesson."])["built"] is False and ideas.idea("copy the course and scrape codecademy lessons now", [])["accepted"] is False else (_ for _ in ()).throw(AssertionError("idea"))),
     ]
     # The two checks above are expected to raise. Flip those results.
     for row in rows:
