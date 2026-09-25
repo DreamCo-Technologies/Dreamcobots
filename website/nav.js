@@ -72,6 +72,7 @@
     { href: 'learn-failures.html', label: 'Failed benchmarks' },
     { href: 'study-path.html', label: 'Study a benchmark' },
     { href: 'lessons.html', label: 'Lessons' },
+    { href: 'what-you-have.html', label: 'What you have' },
     { href: 'plans.html', label: 'Plans as code' },
     { href: 'this-chat.html', label: 'This chat' },
     { href: 'app-shop.html', label: 'App shop' },

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 LOOP = [
     "Pin an evaluation and record a baseline.",
@@ -23,7 +24,7 @@ PHASES = [
         "plain": "Checks we can run",
         "code": "buddy/bench/scorecard.py",
         "met": True,
-        "because": "The scorecard runs 13 gates and records the result.",
+        "because": "Filled from the scorecard file when the status is built.",
     },
     {
         "id": "coding",
@@ -72,14 +73,18 @@ GUARDS = [
 
 
 def status() -> dict:
-    met = [phase for phase in PHASES if phase["met"]]
+    phases = [dict(phase) for phase in PHASES]
+    bench = json.loads((Path(__file__).resolve().parents[2] / "website/data/benchmarks.json").read_text(encoding="utf-8"))
+    phases[0]["met"] = bench["passed"] == bench["checks"] and bench["checks"] > 0
+    phases[0]["because"] = f"The scorecard file records {bench['passed']} of {bench['checks']} gates passing."
+    met = [phase for phase in phases if phase["met"]]
     return {
         "loop": LOOP,
-        "phases": PHASES,
+        "phases": phases,
         "guards": GUARDS,
         "documents": DOCUMENTS,
         "phases_met": len(met),
-        "phases_total": len(PHASES),
+        "phases_total": len(phases),
         "frontier_ready": False,
         "astra_compared": False,
     }
