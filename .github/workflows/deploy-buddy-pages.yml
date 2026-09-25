@@ -48,6 +48,8 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - name: Frontier claim trust gates (block vanity until claimable)
+        run: python3 tools/check_frontier_claim_trust_gates.py
       - name: Set up Python
         uses: actions/setup-python@v7
         with:

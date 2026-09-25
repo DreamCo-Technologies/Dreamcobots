@@ -1,0 +1,44 @@
+{
+  "schema": "dreamco.buddy.frontier_claim_disclosure.v1",
+  "purpose": "Block frontier or sellable claims on Pages/API until provenance, allowlist, sandbox soak, and claimable evidence are green, with required public disclosure.",
+  "required_public_disclosure_fields": [
+    "evidence_suite_id",
+    "evidence_status",
+    "claim_scope",
+    "limitations",
+    "last_verified_at",
+    "independent_learning_proven"
+  ],
+  "ship_rule": "No frontier or sellable capability claim may ship on Pages or public API surfaces unless tools/check_frontier_claim_trust_gates.py reports all_gates_green and claimable:true.",
+  "vanity_claim_phrases": [
+    "frontier-competitive",
+    "beats gpt",
+    "beats chatgpt",
+    "state of the art buddy",
+    "sota buddy",
+    "we achieved frontier",
+    "buddy is frontier",
+    "buddy has reached frontier",
+    "proven frontier status",
+    "sellable frontier package ready"
+  ],
+  "scan_roots": ["website"],
+  "scan_globs": ["*.html", "*.js", "*.json", "*.md"],
+  "allowlist_requirements": {
+    "readiness_gates_path": "config/buddy-frontier-readiness-gates.json",
+    "require_never_claim_frontier_without_evidence": true,
+    "model_contract_path": "config/buddy/500-model-operating-contract.json"
+  },
+  "provenance_requirements": {
+    "policy_path": "config/buddy-training-data-provenance-policy.json",
+    "require_core_rule_present": true,
+    "block_unknown_do_not_publish_for_claims": true
+  },
+  "soak_requirements": {
+    "tick_path": "config/generated/sandbox-24h-tick.json",
+    "report_path": "reports/SANDBOX_24H.md",
+    "required_tick_status": "sandbox_tick_ok"
+  },
+  "claimable_assessment_path": "evidence/frontier/current-status.assessment.json",
+  "notes": "Comparison labels like 'frontier references' are allowed. Vanity achievement claims are not."
+}
