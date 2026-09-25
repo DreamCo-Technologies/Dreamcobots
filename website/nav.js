@@ -64,6 +64,7 @@
     { href: 'weight-hub.html', label: 'Weight control' },
     { href: 'your-model.html', label: 'Their own model' },
     { href: 'buddy-desk.html', label: 'Buddy desk' },
+    { href: 'datasets.html', label: 'Free datasets' },
     { href: 'benchmarks.html', label: 'Benchmarks' },
     { href: 'learn-failures.html', label: 'Failed benchmarks' },
     { href: 'study-path.html', label: 'Study a benchmark' },

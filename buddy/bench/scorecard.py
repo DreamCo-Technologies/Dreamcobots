@@ -31,6 +31,7 @@ def run() -> dict:
     camp = load("bootcamp", ROOT / "learning" / "bootcamp.py")
     bench = load("model_bench", ROOT / "learning" / "model_bench.py")
     school = load("school", ROOT / "learning" / "school.py")
+    datasets = load("free_datasets", ROOT / "learning" / "free_datasets.py")
     rows = [
         check("open a text file", lambda: opened.choose("open", "github", "DreamCo-Technologies/Dreamcobots", "README.md")["reads_file"] or (_ for _ in ()).throw(AssertionError("did not read"))),
         check("do not load weights", lambda: None if opened.choose("open", "huggingface", "org/model", "model.safetensors")["loads_weights"] is False else (_ for _ in ()).throw(AssertionError("loaded"))),
@@ -45,6 +46,7 @@ def run() -> dict:
         check("frontier model not trained", lambda: None if camp.frontier(600)["can_compete_today"] is False else (_ for _ in ()).throw(AssertionError("compete"))),
         check("refuse distilling a closed model", lambda: None if bench.review("org/model", "distill Claude", True, True, True)["trains_here"] is False and bench.review("org/model", "distill Claude", True, True, True)["accepted"] is False else (_ for _ in ()).throw(AssertionError("accepted"))),
         check("ten views required", lambda: school.compare(school.views_for([1, "A", "B", "https://example.com", "r", "t"])[:9])),
+        check("free datasets stay linked", lambda: None if datasets.catalog()["count"] >= 20 and datasets.catalog()["hosted_here"] is False and datasets.catalog()["ready_to_train"] >= 8 else (_ for _ in ()).throw(AssertionError("datasets"))),
     ]
     # The two checks above are expected to raise. Flip those results.
     for row in rows:

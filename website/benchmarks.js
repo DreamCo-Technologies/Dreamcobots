@@ -49,6 +49,7 @@
 
     section("Open these pages");
     [
+      ["datasets.html", "Free datasets"],
       ["benchmark-tracker.html", "Benchmark tracker"],
       ["benchmark-scanner.html", "Benchmark scanner"],
       ["benchmark-candidate-finder.html", "Candidate finder"],
