@@ -11,7 +11,7 @@
   <script src="nav.js"></script>
   <main class="container">
     <h1>3D world map</h1>
-    <p>Shape land, roads, lots, foundations, buildings, and interior walls. The DreamCo engine shows them as 3D blocks. This map is yours. It does not load Google Maps or Google Earth imagery.</p>
+    <p>Shape land, roads, lots, foundations, buildings, and interior walls. The DreamCo engine shows them as 3D blocks. Google stays off unless you check both boxes and choose Find me.</p>
     <p>
       <button class="btn btn-outline" type="button" data-preset="town">Town</button>
       <button class="btn btn-outline" type="button" data-tool="raise">Raise land</button>
@@ -26,6 +26,12 @@
       <button class="btn btn-outline" id="save" type="button">Download</button>
       <label class="btn btn-outline">Load <input id="load" type="file" accept="application/json" hidden></label>
     </p>
+    <p>
+      <label><input id="use-location" type="checkbox"> Use my location</label>
+      <label><input id="use-google" type="checkbox"> Also offer Google Maps for that spot</label>
+      <button class="btn btn-outline" id="locate" type="button">Find me</button>
+    </p>
+    <p id="where">Location stays off until you choose it.</p>
     <canvas id="board" width="640" height="400"></canvas>
     <canvas id="view3d" width="640" height="400"></canvas>
     <p id="status">Click the flat map. The lower view is the same map in 3D.</p>

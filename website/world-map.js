@@ -67,6 +67,34 @@
     });
   }
 
+  document.getElementById("locate").addEventListener("click", function () {
+    const where = document.getElementById("where");
+    where.replaceChildren();
+    if (!document.getElementById("use-location").checked) {
+      where.textContent = "Turn on location first. It stays off until you choose it.";
+      return;
+    }
+    if (!navigator.geolocation) {
+      where.textContent = "This browser has no location. The map still works.";
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      const lat = pos.coords.latitude.toFixed(5);
+      const lng = pos.coords.longitude.toFixed(5);
+      where.textContent = "You are at " + lat + ", " + lng + ". The blocks stay on your map. ";
+      if (document.getElementById("use-google").checked) {
+        const link = document.createElement("a");
+        link.href = "https://www.google.com/maps?q=" + lat + "," + lng;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "Open this spot in Google Maps";
+        where.append(link);
+      }
+    }, function () {
+      where.textContent = "Location was blocked. The map still works without it.";
+    });
+  });
+
   canvas.addEventListener("click", function (event) {
     if (mode !== "edit") return;
     const rect = canvas.getBoundingClientRect();
