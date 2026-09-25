@@ -1,41 +1,38 @@
 (function () {
-  const kinds = ["text", "video", "movie", "reel", "notes"];
-  const allowed = ["owned", "bought-with-training-license", "public-domain", "license-allows-training"];
-  const refused = {
-    youtube: "A YouTube page lets people watch. It does not let you download the video or train on it. This page will not download it.",
-    "free-to-watch": "Free to watch is not free to train.",
-    "bought-to-watch": "Buying a copy you can watch is not a license to train.",
-    "found-online": "Finding a file online is not a training right."
-  };
+  const kinds = ["text", "video", "movie", "reel", "notes", "book"];
+  const study = ["owned", "youtube", "bought-book", "free-to-watch", "public-domain", "license-allows-training"];
+  const stolen = ["distill", "copy the video", "copy the book", "full transcript", "download the video", "paste the page"];
   const status = document.getElementById("study-status");
   document.getElementById("study-form").addEventListener("submit", function (event) {
     event.preventDefault();
-    const benchmark = document.getElementById("benchmark").value.trim();
     const kind = document.getElementById("kind").value;
     const source = document.getElementById("source").value;
-    const note = document.getElementById("note").value.replace(/\s+/g, " ").trim();
-    const hidden = document.getElementById("hidden").value.replace(/\s+/g, " ").trim();
-    const rights = document.getElementById("rights").checked;
-    if (refused[source]) {
-      status.textContent = refused[source];
+    const notes = [];
+    document.getElementById("views").value.split("\n").forEach(function (line) {
+      const clean = line.replace(/\s+/g, " ").trim();
+      if (clean && notes.indexOf(clean) === -1) notes.push(clean);
+    });
+    const own = document.getElementById("own").value.replace(/\s+/g, " ").trim();
+    const blob = notes.concat([own, source]).join(" ").toLowerCase();
+    if (kinds.indexOf(kind) === -1 || study.indexOf(source) === -1) {
+      status.textContent = "Choose a book, a video, or YouTube, then write ten views.";
       return;
     }
-    if (!benchmark || kinds.indexOf(kind) === -1 || allowed.indexOf(source) === -1) {
-      status.textContent = "Use text, video, a movie, a reel, or notes that you own, bought with a training license, or that are public domain or licensed for training.";
+    if (stolen.some(function (phrase) { return blob.indexOf(phrase) !== -1; })) {
+      status.textContent = "Do not distill, download, or copy the source. Write your own view.";
       return;
     }
-    if (!rights) {
-      status.textContent = "Confirm that this source allows training, not only watching.";
+    if (notes.length < 10 || notes.slice(0, 10).some(function (line) { return line.length < 20; })) {
+      status.textContent = "Write 10 different views before your own line. Each view needs a real sentence.";
       return;
     }
-    if (note.length < 20) {
-      status.textContent = "Write what you learned in your own words. The file itself is not uploaded.";
+    if (own.length < 20 || notes.indexOf(own) !== -1) {
+      status.textContent = "Your own line has to be new. It cannot repeat one of the ten views.";
       return;
     }
-    if (hidden.length < 10) {
-      status.textContent = "Keep one question the note does not answer.";
-      return;
-    }
-    status.textContent = "This source can be a lesson. No file was downloaded or uploaded, and no weight was trained here. Training still happens on a machine you control.";
+    const saved = JSON.parse(localStorage.getItem("dreamco-perspectives") || "[]");
+    saved.push({ source: source, kind: kind, benchmark: document.getElementById("benchmark").value.trim() });
+    localStorage.setItem("dreamco-perspectives", JSON.stringify(saved.slice(-40)));
+    status.textContent = "Stored your ten views and your own line. The video or book was not downloaded, and no weight was trained.";
   });
 })();

@@ -3,45 +3,43 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Study a failed benchmark</title>
+  <title>Ten views, then yours</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="nav-placeholder"></div>
   <script src="nav.js"></script>
   <main class="container">
-    <h1>What you may train from</h1>
-    <p>You may use text, video, a movie, a reel, or notes when you own them, bought a license that allows training, or the work is public domain or licensed for training. Buying a copy to watch, finding a free copy, or finding it on YouTube is not enough. This page does not download the file.</p>
+    <h1>Ten views, then your own</h1>
+    <p>YouTube, a book you bought, and a free video can be teachers. Write ten different views, then your own line. The video and the book stay where they are. This page does not download them, copy them, or train a weight.</p>
     <form id="study-form" class="card">
       <p><label>Benchmark <input id="benchmark" required placeholder="benchmark-tracker.yml"></label></p>
       <p><label>Kind
         <select id="kind">
-          <option value="text">Text</option>
           <option value="video">Video</option>
+          <option value="book">Book</option>
           <option value="movie">Movie</option>
           <option value="reel">Reel</option>
+          <option value="text">Text</option>
           <option value="notes">Notes</option>
         </select>
       </label></p>
-      <p><label>Where it came from
+      <p><label>Where you studied
         <select id="source">
-          <option value="owned">I own it</option>
-          <option value="bought-with-training-license">I bought a license that allows training</option>
+          <option value="youtube">YouTube</option>
+          <option value="bought-book">A book I bought</option>
+          <option value="free-to-watch">Free to watch</option>
+          <option value="owned">I made it</option>
           <option value="public-domain">Public domain</option>
-          <option value="license-allows-training">The license allows training</option>
-          <option value="bought-to-watch">I bought it to watch</option>
-          <option value="free-to-watch">I found it free to watch</option>
-          <option value="youtube">I found it on YouTube</option>
-          <option value="found-online">I found the file online</option>
+          <option value="license-allows-training">License allows training</option>
         </select>
       </label></p>
-      <p><label>What you learned <textarea id="note" rows="4" required></textarea></label></p>
-      <p><label>A question the note does not answer <input id="hidden" required></label></p>
-      <p><label><input id="rights" type="checkbox"> This source allows training, not only watching</label></p>
-      <button class="btn btn-primary" type="submit">Check this source</button>
-      <p id="study-status">Nothing checked yet.</p>
+      <p><label>Ten views, one per line <textarea id="views" rows="10" required placeholder="Each line is one perspective."></textarea></label></p>
+      <p><label>Your own perspective <textarea id="own" rows="3" required></textarea></label></p>
+      <button class="btn btn-primary" type="submit">Keep my perspective</button>
+      <p id="study-status">Nothing stored yet.</p>
     </form>
-    <p><a href="learn-failures.html">Unknown benchmarks</a> · <a href="school.html">School</a></p>
+    <p><a href="school.html">School</a> · <a href="learn-failures.html">Unknown benchmarks</a></p>
   </main>
   <script src="study-path.js"></script>
 </body>
