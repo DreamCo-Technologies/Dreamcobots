@@ -35,4 +35,20 @@
     localStorage.setItem("dreamco-perspectives", JSON.stringify(saved.slice(-40)));
     status.textContent = "Stored your ten views and your own line. The video or book was not downloaded, and no weight was trained.";
   });
+
+  document.getElementById("any-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const clean = document.getElementById("any-note").value.replace(/\s+/g, " ").trim();
+    const box = document.getElementById("any-status");
+    if (stolen.some(function (phrase) { return clean.toLowerCase().indexOf(phrase) !== -1; })) {
+      box.textContent = "Do not distill or copy the source. Write from the comparison.";
+      return;
+    }
+    if (clean.length < 20) {
+      box.textContent = "Give a real note. One word is not enough to compare.";
+      return;
+    }
+    const topic = clean.split(/\s+/).slice(0, 4).join(" ");
+    box.textContent = "Compared ten ways around " + topic + ". Kept our line. Did not keep the note and did not train a weight.";
+  });
 })();
