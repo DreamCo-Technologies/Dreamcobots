@@ -117,7 +117,7 @@ const APP_SHELL = [
   './data/buddy-media-quality-lab.js?v=22',
   './data/buddy-practice-lab.js?v=1',
   './data/buddy-connected-life.js?v=1',
-  './data/buddy-communication-behavior.js?v=27',
+  './data/buddy-communication-behavior.js?v=28',
   './data/buddy-workforce-system.js?v=23',
   './data/buddy-setup-catalog.js?v=25',
   './assets/images/favicon.svg',
