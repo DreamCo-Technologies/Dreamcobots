@@ -36,6 +36,7 @@ def run() -> dict:
     study = load("study_methods", ROOT / "learning" / "study_methods.py")
     frontier = load("frontier_path", ROOT / "learning" / "frontier_path.py")
     have = load("have", ROOT / "truth" / "have.py")
+    notes = load("note_model", ROOT / "learning" / "note_model.py")
     rows = [
         check("open a text file", lambda: opened.choose("open", "github", "DreamCo-Technologies/Dreamcobots", "README.md")["reads_file"] or (_ for _ in ()).throw(AssertionError("did not read"))),
         check("do not load weights", lambda: None if opened.choose("open", "huggingface", "org/model", "model.safetensors")["loads_weights"] is False else (_ for _ in ()).throw(AssertionError("loaded"))),
@@ -55,6 +56,7 @@ def run() -> dict:
         check("study procedures are not a trained model", lambda: None if study.report()["training_ready"] == 0 and study.report()["study_ready"] == 18 and study.report()["all_production_ready"] is False else (_ for _ in ()).throw(AssertionError("study"))),
         check("frontier path does not claim a model", lambda: None if frontier.scan()["can_compete_with_a_frontier_model"] is False and len(frontier.scan()["ready_study_methods"]) == 18 else (_ for _ in ()).throw(AssertionError("frontier"))),
         check("pages do not hide the bot counts", lambda: None if have.scan()["markdown_bots"] > have.scan()["catalog_bots"] and have.scan()["files_moved"] is False else (_ for _ in ()).throw(AssertionError("have"))),
+        check("notes train a small model", lambda: None if notes.train(steps=25)["loss_dropped"] is True and notes.train(steps=25)["frontier_model"] is False else (_ for _ in ()).throw(AssertionError("notes"))),
     ]
     # The two checks above are expected to raise. Flip those results.
     for row in rows:

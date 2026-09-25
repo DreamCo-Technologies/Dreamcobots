@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Note model</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Notes that trained a model</h1>
+    <p id="lead">Loading the training result.</p>
+    <p><a href="what-you-have.html">What the files contain</a></p>
+  </main>
+  <script>
+    fetch("data/note-model.json").then(function (response) { return response.json(); }).then(function (data) {
+      document.getElementById("lead").textContent = data.notes + " own-version notes were trained for " + data.steps + " steps. Loss went from " + data.start_loss + " to " + data.end_loss + ". " + data.rule;
+    }).catch(function () {
+      document.getElementById("lead").textContent = "The training result did not load.";
+    });
+  </script>
+</body>
+</html>

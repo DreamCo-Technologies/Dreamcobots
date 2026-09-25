@@ -66,6 +66,7 @@
     { href: 'buddy-desk.html', label: 'Buddy desk' },
     { href: 'frontier-path.html', label: 'Frontier path' },
     { href: 'learning-methods.html', label: 'Learning methods' },
+    { href: 'note-model.html', label: 'Note model' },
     { href: 'train-own.html', label: 'Your training data' },
     { href: 'datasets.html', label: 'Free datasets' },
     { href: 'benchmarks.html', label: 'Benchmarks' },
