@@ -1,14 +1,21 @@
 (function (root) {
-  const KINDS = ["empty", "wall", "coin", "goal", "hazard"];
+  const KINDS = ["empty", "wall", "coin", "goal", "hazard", "road", "parcel", "building", "room", "foundation"];
+  const SOLID = { wall: true, building: true, room: true, foundation: true };
 
   function blank(cols, rows) {
     const cells = [];
+    const heights = [];
     for (let y = 0; y < rows; y += 1) {
       const row = [];
-      for (let x = 0; x < cols; x += 1) row.push("empty");
+      const ground = [];
+      for (let x = 0; x < cols; x += 1) {
+        row.push("empty");
+        ground.push(0);
+      }
       cells.push(row);
+      heights.push(ground);
     }
-    return { title: "Untitled", cols: cols, rows: rows, player: { x: 1, y: 1 }, cells: cells };
+    return { title: "Untitled", cols: cols, rows: rows, player: { x: 1, y: 1 }, cells: cells, heights: heights };
   }
 
   function inBounds(level, x, y) {
@@ -17,7 +24,13 @@
 
   function paint(level, x, y, tool) {
     const next = JSON.parse(JSON.stringify(level));
-    if (!inBounds(next, x, y) || KINDS.indexOf(tool) === -1 && tool !== "player" && tool !== "erase") return next;
+    if (!inBounds(next, x, y) || KINDS.indexOf(tool) === -1 && tool !== "player" && tool !== "erase" && tool !== "raise" && tool !== "lower") return next;
+    if (!next.heights) next.heights = blank(next.cols, next.rows).heights;
+    if (tool === "raise" || tool === "lower") {
+      const current = next.heights[y][x] || 0;
+      next.heights[y][x] = Math.max(0, Math.min(3, current + (tool === "raise" ? 1 : -1)));
+      return next;
+    }
     if (tool === "player") {
       next.player = { x: x, y: y };
       next.cells[y][x] = "empty";
@@ -41,7 +54,7 @@
     const move = { left: [-1, 0], right: [1, 0], up: [0, -1], down: [0, 1] }[dir] || [0, 0];
     const nx = next.player.x + move[0];
     const ny = next.player.y + move[1];
-    if (inBounds(next, nx, ny) && next.cells[ny][nx] !== "wall") {
+    if (inBounds(next, nx, ny) && !SOLID[next.cells[ny][nx]]) {
       next.player = { x: nx, y: ny };
       if (next.cells[ny][nx] === "coin") next.cells[ny][nx] = "empty";
       if (next.cells[ny][nx] === "hazard") return { level: next, status: "lost" };
@@ -65,6 +78,22 @@
   }
 
   function preset(name) {
+    if (name === "town") {
+      const town = blank(16, 10);
+      town.title = "Town";
+      town.player = { x: 2, y: 5 };
+      for (let x = 2; x <= 13; x += 1) town.cells[5][x] = "road";
+      town.cells[3][4] = "building";
+      town.cells[3][5] = "building";
+      town.cells[6][10] = "building";
+      town.cells[7][8] = "room";
+      town.cells[7][9] = "room";
+      town.cells[2][11] = "foundation";
+      town.heights[1][3] = 1;
+      town.heights[2][2] = 1;
+      town.heights[2][3] = 2;
+      return town;
+    }
     const level = blank(16, 10);
     for (let x = 0; x < level.cols; x += 1) {
       level.cells[0][x] = "wall";
@@ -114,7 +143,9 @@
   function defaults() {
     return {
       sky: "#070b14", floor: "#1b2436", wall: "#33415c", coin: "#f5c542", goal: "#3dd68c",
-      hazard: "#ef6461", player: "#7eb6ff", empty: "#101625", wallHeight: 1.2, light: 1, win: "You won."
+      hazard: "#ef6461", player: "#7eb6ff", empty: "#101625", road: "#3d4f73", parcel: "#8d6b43",
+      building: "#c4b7a6", room: "#8d99ae", foundation: "#6b705c", land: "#3f6b4a",
+      wallHeight: 1.2, light: 1, win: "You won."
     };
   }
 
@@ -140,7 +171,10 @@
     next.title = level.title;
     next.style = styleOf(level);
     for (let y = 0; y < Math.min(depth, level.rows); y += 1) {
-      for (let x = 0; x < Math.min(width, level.cols); x += 1) next.cells[y][x] = level.cells[y][x];
+      for (let x = 0; x < Math.min(width, level.cols); x += 1) {
+        next.cells[y][x] = level.cells[y][x];
+        if (level.heights && level.heights[y]) next.heights[y][x] = level.heights[y][x] || 0;
+      }
     }
     if (inBounds(next, level.player.x, level.player.y)) next.player = { x: level.player.x, y: level.player.y };
     return next;

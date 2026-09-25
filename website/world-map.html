@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DreamCo world map</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>3D world map</h1>
+    <p>Shape land, roads, lots, foundations, buildings, and interior walls. The DreamCo engine shows them as 3D blocks. This map is yours. It does not load Google Maps or Google Earth imagery.</p>
+    <p>
+      <button class="btn btn-outline" type="button" data-preset="town">Town</button>
+      <button class="btn btn-outline" type="button" data-tool="raise">Raise land</button>
+      <button class="btn btn-outline" type="button" data-tool="lower">Lower land</button>
+      <button class="btn btn-outline" type="button" data-tool="road">Road</button>
+      <button class="btn btn-outline" type="button" data-tool="parcel">Lot</button>
+      <button class="btn btn-outline" type="button" data-tool="foundation">Foundation</button>
+      <button class="btn btn-outline" type="button" data-tool="building">Building</button>
+      <button class="btn btn-outline" type="button" data-tool="room">Interior wall</button>
+      <button class="btn btn-outline" type="button" data-tool="erase">Erase</button>
+      <button class="btn btn-primary" id="play" type="button">Walk</button>
+      <button class="btn btn-outline" id="save" type="button">Download</button>
+      <label class="btn btn-outline">Load <input id="load" type="file" accept="application/json" hidden></label>
+    </p>
+    <canvas id="board" width="640" height="400"></canvas>
+    <canvas id="view3d" width="640" height="400"></canvas>
+    <p id="status">Click the flat map. The lower view is the same map in 3D.</p>
+  </main>
+  <script src="game-rules.js"></script>
+  <script src="world-map.js"></script>
+</body>
+</html>
