@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your training note</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Your own training data</h1>
+    <p>Break a subject into a part. Compare that part ten ways, from a video, a movie, GitHub, Hugging Face, or any other link. The training note is your line. The source file is not stored, and no weight is trained here.</p>
+    <form id="train-form" class="card">
+      <p><label>Subject <input id="subject" required placeholder="sorting mail"></label></p>
+      <p><label>Part <input id="part" required placeholder="which pile a letter goes in"></label></p>
+      <p><label>Kind
+        <select id="kind">
+          <option value="video">Video</option>
+          <option value="movie">Movie</option>
+          <option value="github">GitHub</option>
+          <option value="huggingface">Hugging Face</option>
+          <option value="text">Text</option>
+          <option value="other">Other</option>
+        </select>
+      </label></p>
+      <p><label>Ten views, one per line: sentence | https link <textarea id="views" rows="10" required></textarea></label></p>
+      <p><label>Your own line for this part <textarea id="own" rows="3" required></textarea></label></p>
+      <p><label>Hide data from these companies, separated by commas <input id="hide" placeholder="example, some-lab"></label></p>
+      <button class="btn btn-primary" type="submit">Make my training note</button>
+      <p id="train-status">Nothing written yet.</p>
+      <ul id="used"></ul>
+    </form>
+    <p><a href="datasets.html">Find other companies' open data</a></p>
+  </main>
+  <script src="train-own.js"></script>
+</body>
+</html>

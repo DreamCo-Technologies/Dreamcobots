@@ -20,9 +20,17 @@
     return article;
   }
 
+  function hidden() {
+    return (document.getElementById("hide").value || "").toLowerCase().split(",").map(function (item) { return item.trim(); }).filter(Boolean);
+  }
+
   function paint() {
     const wanted = category.value;
-    const list = data.filter(function (row) { return wanted === "all" || row.category === wanted; });
+    const blocked = hidden();
+    const list = data.filter(function (row) {
+      const org = (row.name.split("/")[0] || "").toLowerCase();
+      return (wanted === "all" || row.category === wanted) && blocked.indexOf(org) === -1;
+    });
     rows.replaceChildren();
     list.slice(0, shown).forEach(function (row) { rows.append(card(row)); });
     document.getElementById("more").hidden = shown >= list.length;
@@ -33,6 +41,13 @@
     paint();
   });
   category.addEventListener("change", function () {
+    shown = 40;
+    paint();
+  });
+  const hide = document.getElementById("hide");
+  hide.value = localStorage.getItem("dreamco-hide-companies") || "";
+  hide.addEventListener("change", function () {
+    localStorage.setItem("dreamco-hide-companies", hide.value.trim());
     shown = 40;
     paint();
   });
