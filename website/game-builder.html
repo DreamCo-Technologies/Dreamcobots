@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DreamCo game builder</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>DreamCo game builder</h1>
+    <p>This is your 2D builder. Paint a room, press Play, and the game runs in this browser. It does not replace Godot, Unity, or Unreal.</p>
+    <p>
+      <label>Title <input id="title" value="Untitled"></label>
+      <button class="btn btn-outline" type="button" data-preset="room">Empty room</button>
+      <button class="btn btn-outline" type="button" data-preset="collect">Collect</button>
+      <button class="btn btn-outline" type="button" data-preset="dodge">Dodge</button>
+    </p>
+    <p>
+      <button class="btn btn-outline" type="button" data-tool="player">Player</button>
+      <button class="btn btn-outline" type="button" data-tool="wall">Wall</button>
+      <button class="btn btn-outline" type="button" data-tool="coin">Coin</button>
+      <button class="btn btn-outline" type="button" data-tool="goal">Goal</button>
+      <button class="btn btn-outline" type="button" data-tool="hazard">Hazard</button>
+      <button class="btn btn-outline" type="button" data-tool="erase">Erase</button>
+      <button class="btn btn-primary" id="play" type="button">Play</button>
+      <button class="btn btn-outline" id="stop" type="button">Edit</button>
+      <button class="btn btn-outline" id="save" type="button">Download</button>
+      <label class="btn btn-outline">Load <input id="load" type="file" accept="application/json" hidden></label>
+    </p>
+    <canvas id="board" width="640" height="400"></canvas>
+    <p id="status">Editing. Arrow keys work after Play.</p>
+  </main>
+  <script src="game-rules.js"></script>
+  <script src="game-builder.js"></script>
+</body>
+</html>

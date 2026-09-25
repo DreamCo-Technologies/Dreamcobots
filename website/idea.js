@@ -1,8 +1,8 @@
 (function () {
   const stolen = ["copy the course", "download the lessons", "scrape codecademy", "scrape the course"];
   const pages = {
-    game: "vibe-game-builder.html",
-    simulation: "vibe-game-builder.html",
+    game: "game-builder.html",
+    simulation: "game-builder.html",
     music: "music-creator.html",
     video: "studio.html",
     software: "codelab.html",

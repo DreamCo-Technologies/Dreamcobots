@@ -8,8 +8,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 STOLEN = ("copy the course", "download the lessons", "scrape codecademy", "scrape the course")
 KINDS = {
-    "game": "vibe-game-builder.html",
-    "simulation": "vibe-game-builder.html",
+    "game": "game-builder.html",
+    "simulation": "game-builder.html",
     "music": "music-creator.html",
     "video": "studio.html",
     "software": "codelab.html",
