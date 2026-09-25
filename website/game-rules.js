@@ -102,5 +102,14 @@
     return { x: right / forward, y: (point.z - camera.z) / forward, depth: forward };
   }
 
-  root.DreamGame = { blank: blank, paint: paint, step: step, preset: preset, count: count, project: project };
+  function shade(hex, amount) {
+    const value = Math.max(0, Math.min(1, amount));
+    const red = parseInt(hex.slice(1, 3), 16);
+    const green = parseInt(hex.slice(3, 5), 16);
+    const blue = parseInt(hex.slice(5, 7), 16);
+    const mix = function (channel) { return Math.round(channel * value).toString(16).padStart(2, "0"); };
+    return "#" + mix(red) + mix(green) + mix(blue);
+  }
+
+  root.DreamGame = { blank: blank, paint: paint, step: step, preset: preset, count: count, project: project, shade: shade };
 })(typeof globalThis !== "undefined" ? globalThis : this);

@@ -42,8 +42,9 @@
     }
     function block(x, y, size, z0, z1, color) {
       const depth = Math.hypot(x + size / 2 - cam.x, y + size / 2 - cam.y);
-      addFace([{ x: x, y: y, z: z1 }, { x: x + size, y: y, z: z1 }, { x: x + size, y: y + size, z: z1 }, { x: x, y: y + size, z: z1 }], color, depth);
-      addFace([{ x: x, y: y + size, z: z0 }, { x: x + size, y: y + size, z: z0 }, { x: x + size, y: y + size, z: z1 }, { x: x, y: y + size, z: z1 }], color, depth + 0.2);
+      addFace([{ x: x, y: y, z: z1 }, { x: x + size, y: y, z: z1 }, { x: x + size, y: y + size, z: z1 }, { x: x, y: y + size, z: z1 }], DreamGame.shade(color, 1), depth);
+      addFace([{ x: x, y: y + size, z: z0 }, { x: x + size, y: y + size, z: z0 }, { x: x + size, y: y + size, z: z1 }, { x: x, y: y + size, z: z1 }], DreamGame.shade(color, 0.72), depth + 0.2);
+      addFace([{ x: x + size, y: y, z: z0 }, { x: x + size, y: y + size, z: z0 }, { x: x + size, y: y + size, z: z1 }, { x: x + size, y: y, z: z1 }], DreamGame.shade(color, 0.45), depth + 0.3);
     }
     for (let y = 0; y < level.rows; y += 1) {
       for (let x = 0; x < level.cols; x += 1) {
