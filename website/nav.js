@@ -72,6 +72,7 @@
     { href: 'this-chat.html', label: 'This chat' },
     { href: 'app-shop.html', label: 'App shop' },
     { href: 'school.html', label: 'Buddy school' },
+    { href: 'own-bootcamp.html', label: 'Our bootcamp' },
     { href: 'hf-bootcamp.html', label: 'HF packages' },
     { href: 'hub.html', label: 'Hub OS' },
     { href: 'learn-hf.html', label: 'HF week' },
