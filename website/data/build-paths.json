@@ -1,0 +1,70 @@
+{
+  "files_moved": false,
+  "production_ready": false,
+  "stages_met": 2,
+  "stages": [
+    {
+      "id": "use",
+      "plain": "Use what already runs in the browser",
+      "paths": [
+        "website/",
+        "buddy/desk/",
+        "buddy/learning/note_model.py"
+      ],
+      "met": true,
+      "because": "The site, the local task runner, and the small note model are in the repository."
+    },
+    {
+      "id": "checks",
+      "plain": "Local checks",
+      "paths": [
+        "buddy/bench/scorecard.py",
+        "website/data/benchmarks.json"
+      ],
+      "met": true,
+      "because": "The scorecard file records 22 of 22 gates."
+    },
+    {
+      "id": "bots",
+      "plain": "Bot notes are not a live fleet",
+      "paths": [
+        "bots/",
+        "original-bots/",
+        "App_bots/",
+        "website/data/original-bots.json"
+      ],
+      "met": false,
+      "because": "1101 markdown bots and 212 catalog bots. The readiness report marks 0 bots production ready."
+    },
+    {
+      "id": "actions",
+      "plain": "Workflow files are not runtime proof",
+      "paths": [
+        ".github/workflows/",
+        "website/data/actions-health-report.json"
+      ],
+      "met": false,
+      "because": "72 workflows pass a static check. 72 have no runtime result."
+    },
+    {
+      "id": "release",
+      "plain": "The release gate",
+      "paths": [
+        "website/data/command-center/release-readiness.json",
+        "tools/production_readiness_gate.py"
+      ],
+      "met": false,
+      "because": "production_ready is false. Run the three commands named in the release file."
+    },
+    {
+      "id": "frontier",
+      "plain": "A frontier model",
+      "paths": [
+        "buddy/frontier/",
+        "buddy/learning/frontier_path.py"
+      ],
+      "met": false,
+      "because": "No frontier weights and no hidden exam. This stage is not required to publish the site."
+    }
+  ]
+}

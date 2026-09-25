@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Build paths</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Build paths</h1>
+    <p id="lead">Loading the build order. No files were moved.</p>
+    <ol id="stages"></ol>
+  </main>
+  <script>
+    fetch("data/build-paths.json").then(function (response) { return response.json(); }).then(function (data) {
+      document.getElementById("lead").textContent = data.stages_met + " of " + data.stages.length + " stages are met. The repository is not production ready. Files stayed where they are.";
+      const list = document.getElementById("stages");
+      data.stages.forEach(function (stage) {
+        const item = document.createElement("li");
+        item.textContent = (stage.met ? "Met. " : "Not met. ") + stage.plain + " — " + stage.because + " Paths: " + stage.paths.join(", ");
+        list.append(item);
+      });
+    });
+  </script>
+</body>
+</html>
