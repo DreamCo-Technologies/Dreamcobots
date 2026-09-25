@@ -28,10 +28,12 @@
     </p>
     <p>
       <label><input id="use-location" type="checkbox"> Use my location</label>
-      <label><input id="use-google" type="checkbox"> Also offer Google Maps for that spot</label>
+      <label><input id="use-google" type="checkbox"> Send this spot to Google</label>
+      <label>View <select id="google-view"><option value="maps">Google Maps</option><option value="earth">Google Earth</option><option value="both">Maps and Earth</option></select></label>
       <button class="btn btn-outline" id="locate" type="button">Find me</button>
     </p>
     <p id="where">Location stays off until you choose it.</p>
+    <iframe id="google-map" title="Google Maps" hidden style="width:100%;height:320px;border:1px solid #303741;border-radius:8px" referrerpolicy="no-referrer"></iframe>
     <canvas id="board" width="640" height="400"></canvas>
     <canvas id="view3d" width="640" height="400"></canvas>
     <p id="status">Click the flat map. The lower view is the same map in 3D.</p>

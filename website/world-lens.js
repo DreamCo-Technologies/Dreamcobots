@@ -66,9 +66,18 @@
 
   function refreshExternalMap() {
     const mode = $('lens-map-mode').value;
+    const earth = $('lens-earth');
+    if (earth) earth.hidden = true;
     if (mode === 'world_lens') { $('lens-map-frame').hidden = true; setStatus('World Lens local coordinate plot selected.', true); return; }
     if (!$('lens-external-map').checked) { setStatus('Approve external map requests before loading the map.'); return; }
     if (!current) { setStatus('Request a GPS fix before loading the external map.'); return; }
+    if (mode === 'google_earth') {
+      $('lens-map-frame').hidden = true;
+      earth.hidden = false;
+      earth.href = `https://earth.google.com/web/@${current.latitude},${current.longitude},0a,800d,35y,0h,0t,0r`;
+      setStatus('Google Earth is ready. Coordinates are sent only when you open it.', true);
+      return;
+    }
     $('lens-map-frame').src = `https://www.google.com/maps?q=${encodeURIComponent(`${current.latitude},${current.longitude}`)}&z=16&output=embed`;
     $('lens-map-frame').hidden = false;
     setStatus(`${mode === 'combined' ? 'Combined World Lens and Google' : 'Google'} map loaded for this session.`, true);

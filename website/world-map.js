@@ -81,13 +81,22 @@
     navigator.geolocation.getCurrentPosition(function (pos) {
       const lat = pos.coords.latitude.toFixed(5);
       const lng = pos.coords.longitude.toFixed(5);
+      const frame = document.getElementById("google-map");
+      frame.hidden = true;
+      frame.removeAttribute("src");
       where.textContent = "You are at " + lat + ", " + lng + ". The blocks stay on your map. ";
-      if (document.getElementById("use-google").checked) {
+      if (!document.getElementById("use-google").checked) return;
+      const view = document.getElementById("google-view").value;
+      if (view === "maps" || view === "both") {
+        frame.hidden = false;
+        frame.src = "https://www.google.com/maps?q=" + encodeURIComponent(lat + "," + lng) + "&z=16&output=embed";
+      }
+      if (view === "earth" || view === "both") {
         const link = document.createElement("a");
-        link.href = "https://www.google.com/maps?q=" + lat + "," + lng;
+        link.href = "https://earth.google.com/web/@" + lat + "," + lng + ",0a,800d,35y,0h,0t,0r";
         link.target = "_blank";
         link.rel = "noopener noreferrer";
-        link.textContent = "Open this spot in Google Maps";
+        link.textContent = "Open this spot in Google Earth";
         where.append(link);
       }
     }, function () {
