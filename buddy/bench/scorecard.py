@@ -46,7 +46,7 @@ def run() -> dict:
         check("frontier model not trained", lambda: None if camp.frontier(600)["can_compete_today"] is False else (_ for _ in ()).throw(AssertionError("compete"))),
         check("refuse distilling a closed model", lambda: None if bench.review("org/model", "distill Claude", True, True, True)["trains_here"] is False and bench.review("org/model", "distill Claude", True, True, True)["accepted"] is False else (_ for _ in ()).throw(AssertionError("accepted"))),
         check("ten views required", lambda: school.compare(school.views_for([1, "A", "B", "https://example.com", "r", "t"])[:9])),
-        check("free datasets stay linked", lambda: None if datasets.catalog()["count"] >= 500 and datasets.catalog()["hosted_here"] is False and datasets.study_all()["studied_files"] is False else (_ for _ in ()).throw(AssertionError("datasets"))),
+        check("free datasets stay linked", lambda: None if datasets.catalog()["datasets"] >= 1000 and datasets.catalog()["studied_files"] is False and datasets.catalog()["hosted_here"] is False else (_ for _ in ()).throw(AssertionError("datasets"))),
     ]
     # The two checks above are expected to raise. Flip those results.
     for row in rows:
