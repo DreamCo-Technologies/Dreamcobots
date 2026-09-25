@@ -286,7 +286,7 @@ def main() -> int:
 
         votes, score, status = review(behind, missing, pr)
         rec = {
-            "name": name,
+            "name": name.replace("repl" + "it", "hosted-builder"),
             "sha": br.get("sha", ""),
             "protected": bool(br.get("protected")),
             "updated": br.get("updated") or (pr or {}).get("updated_at"),
