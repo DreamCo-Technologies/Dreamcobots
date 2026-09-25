@@ -53,11 +53,11 @@
       status.textContent = "Do not copy or download the source. Write your own line.";
       return;
     }
-    if (notes.length < 10) {
-      status.textContent = "This part needs 10 different views, each with its own https source.";
+    if (notes.length < 2) {
+      status.textContent = "This part needs at least 2 different views, each with its own https source. Add every view you have.";
       return;
     }
-    const hit = notes.slice(0, 10).map(function (item) { return item.company; }).find(function (name) { return restricted.indexOf(name) !== -1; });
+    const hit = notes.map(function (item) { return item.company; }).find(function (name) { return restricted.indexOf(name) !== -1; });
     if (hit) {
       status.textContent = hit + " is restricted. Pick another source or remove the restriction.";
       return;
@@ -69,7 +69,7 @@
     const saved = JSON.parse(localStorage.getItem("dreamco-own-training") || "[]");
     saved.push({ subject: subject, part: part, kind: kind });
     localStorage.setItem("dreamco-own-training", JSON.stringify(saved.slice(-40)));
-    notes.slice(0, 10).forEach(function (item) {
+    notes.forEach(function (item) {
       const row = document.createElement("li");
       row.textContent = item.company + " — ";
       const link = document.createElement("a");

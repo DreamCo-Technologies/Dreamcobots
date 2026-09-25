@@ -52,18 +52,18 @@ def perspectives(source: str, kind: str, views: list[str], own: str) -> dict:
     for phrase in STOLEN:
         if phrase in blob:
             return {**blocked, "reason": "Do not distill, download, or copy the source. Write your own view."}
-    if len(notes) < 10:
-        return {**blocked, "reason": "Write 10 different views before your own line. One view is not enough."}
-    if any(len(line) < 20 for line in notes[:10]):
+    if len(notes) < 2:
+        return {**blocked, "reason": "Write at least 2 different views before your own line. Add every view you have."}
+    if any(len(line) < 20 for line in notes):
         return {**blocked, "reason": "Each view needs a real sentence, not a title."}
     if len(own_line) < 20 or own_line in notes:
-        return {**blocked, "reason": "Your own line has to be new. It cannot repeat one of the ten views."}
+        return {**blocked, "reason": "Your own line has to be new. It cannot repeat a view."}
     return {
         "accepted": True,
         "source": source,
         "kind": kind,
-        "views": 10,
-        "stored": "your ten views and your own line",
+        "views": len(notes),
+        "stored": "your views and your own line",
         "downloaded": False,
         "file_uploaded": False,
         "weights_trained": False,
@@ -76,8 +76,10 @@ if __name__ == "__main__":
     views = [f"View {n} says something different about this lesson." for n in range(1, 11)]
     blocked = perspectives("youtube", "video", views, "download the video and copy the book")
     assert blocked["accepted"] is False and blocked["downloaded"] is False
-    short = perspectives("youtube", "video", views[:3], "My own take is different from those three views.")
+    short = perspectives("youtube", "video", views[:1], "My own take is different from that one view.")
     assert short["accepted"] is False
+    pair = perspectives("youtube", "video", views[:2], "My own take is different from those two views.")
+    assert pair["accepted"] and pair["views"] == 2
     good = perspectives("youtube", "video", views, "My own take is that I would try a new example and not replay the clip.")
     assert good["accepted"] and good["copied"] is False and good["weights_trained"] is False
     book = perspectives("bought-book", "book", views, "After the book, I would explain the idea with my own example.")

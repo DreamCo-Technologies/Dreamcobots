@@ -15,15 +15,15 @@
     const own = document.getElementById("own").value.replace(/\s+/g, " ").trim();
     const blob = notes.concat([own, source]).join(" ").toLowerCase();
     if (kinds.indexOf(kind) === -1 || study.indexOf(source) === -1) {
-      status.textContent = "Choose a book, a video, or YouTube, then write ten views.";
+      status.textContent = "Choose a book, a video, or YouTube, then write at least two views.";
       return;
     }
     if (stolen.some(function (phrase) { return blob.indexOf(phrase) !== -1; })) {
       status.textContent = "Do not distill, download, or copy the source. Write your own view.";
       return;
     }
-    if (notes.length < 10 || notes.slice(0, 10).some(function (line) { return line.length < 20; })) {
-      status.textContent = "Write 10 different views before your own line. Each view needs a real sentence.";
+    if (notes.length < 2 || notes.some(function (line) { return line.length < 20; })) {
+      status.textContent = "Write at least 2 different views before your own line. Add every view you have. Each view needs a real sentence.";
       return;
     }
     if (own.length < 20 || notes.indexOf(own) !== -1) {

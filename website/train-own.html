@@ -11,7 +11,7 @@
   <script src="nav.js"></script>
   <main class="container">
     <h1>Your own training data</h1>
-    <p>Break a subject into a part. Compare that part ten ways, from a video, a movie, GitHub, Hugging Face, or any other link. The training note is your line. The source file is not stored, and no weight is trained here.</p>
+    <p>Break a subject into a part. Add every view you have of that part, from a video, a movie, GitHub, Hugging Face, or any other link. Two is the minimum. Then write your own line. The source file is not stored, and no weight is trained here.</p>
     <form id="train-form" class="card">
       <p><label>Subject <input id="subject" required placeholder="sorting mail"></label></p>
       <p><label>Part <input id="part" required placeholder="which pile a letter goes in"></label></p>
@@ -25,7 +25,7 @@
           <option value="other">Other</option>
         </select>
       </label></p>
-      <p><label>Ten views, one per line: sentence | https link <textarea id="views" rows="10" required></textarea></label></p>
+      <p><label>Views, one per line: sentence | https link. Two or more. <textarea id="views" rows="8" required></textarea></label></p>
       <p><label>Your own line for this part <textarea id="own" rows="3" required></textarea></label></p>
       <p><label>Hide data from these companies, separated by commas <input id="hide" placeholder="example, some-lab"></label></p>
       <button class="btn btn-primary" type="submit">Make my training note</button>

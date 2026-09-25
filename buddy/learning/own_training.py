@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from urllib.parse import urlparse
 
+MINIMUM_VIEWS = 2
 STOLEN = ("distill", "copy the video", "copy the page", "download the video", "full transcript")
 
 
@@ -57,9 +58,9 @@ def own_data(subject: str, parts: list[dict], restricted: list[str]) -> dict:
         blob += " " + name + " " + own + " " + " ".join(item["text"] for item in notes)
         if kind not in {"text", "video", "movie", "github", "huggingface", "other"}:
             return {**refused, "reason": "Use text, video, movie, GitHub, Hugging Face, or other."}
-        if len(notes) < 10:
-            return {**refused, "reason": f"{name or 'A part'} needs 10 different views, each with its own https source."}
-        hit = next((item["company"] for item in notes[:10] if item["company"] in blocked_companies), "")
+        if len(notes) < MINIMUM_VIEWS:
+            return {**refused, "reason": f"{name or 'A part'} needs at least 2 different views, each with its own https source. Add every view you have."}
+        hit = next((item["company"] for item in notes if item["company"] in blocked_companies), "")
         if hit:
             return {**refused, "reason": f"{hit} is restricted. Pick another source or remove the restriction."}
         if len(own) < 20 or own in [item["text"] for item in notes]:
@@ -68,8 +69,9 @@ def own_data(subject: str, parts: list[dict], restricted: list[str]) -> dict:
             "name": name or "part",
             "kind": kind,
             "own": own,
-            "sources": [item["source"] for item in notes[:10]],
-            "companies": sorted({item["company"] for item in notes[:10]}),
+            "views": len(notes),
+            "sources": [item["source"] for item in notes],
+            "companies": sorted({item["company"] for item in notes}),
         })
     if any(phrase in blob.lower() for phrase in STOLEN):
         return {**refused, "reason": "Do not copy or download the source. Write your own line."}
@@ -81,7 +83,7 @@ def own_data(subject: str, parts: list[dict], restricted: list[str]) -> dict:
         "source_files_stored": False,
         "weights_trained": False,
         "restricted": sorted(blocked_companies),
-        "reason": "Each part was compared ten ways. The training note is your line, not the video, movie, or repository.",
+        "reason": "The views you gave were kept. The training note is your line, not the video, movie, or repository.",
     }
 
 
@@ -96,7 +98,14 @@ def sample() -> tuple[dict, dict]:
 
 if __name__ == "__main__":
     good, blocked = sample()
-    assert good["accepted"] and good["weights_trained"] is False and good["source_files_stored"] is False
+    assert good["accepted"] and good["parts"][0]["views"] == 10 and good["weights_trained"] is False
     assert blocked["accepted"] is False
+    two = [
+        {"text": "One view says this part is about sorting the pile.", "source": "https://example.com/a"},
+        {"text": "Another view says this part is about writing the reply.", "source": "https://example.com/b"},
+    ]
+    pair = own_data("mail", [{"name": "sorting", "kind": "text", "views": two, "own": "Our line is to sort a new pile without repeating either view."}], [])
+    assert pair["accepted"] and pair["parts"][0]["views"] == 2
+    assert own_data("mail", [{"name": "sorting", "kind": "text", "views": two[:1], "own": "Our line is long enough to count as our own."}], [])["accepted"] is False
     assert company_of("https://github.com/cli/cli") == "cli"
-    print(json.dumps({"accepted": True, "parts": len(good["parts"]), "weights_trained": False}))
+    print(json.dumps({"accepted": True, "minimum": MINIMUM_VIEWS, "weights_trained": False}))
