@@ -39,6 +39,7 @@ def run() -> dict:
     notes = load("note_model", ROOT / "learning" / "note_model.py")
     ideas = load("idea_path", ROOT / "learning" / "idea_path.py")
     tasks = load("own_task", ROOT / "desk" / "own_task.py")
+    picks = load("pick_wrapper", ROOT / "desk" / "pick_wrapper.py")
     rows = [
         check("open a text file", lambda: opened.choose("open", "github", "DreamCo-Technologies/Dreamcobots", "README.md")["reads_file"] or (_ for _ in ()).throw(AssertionError("did not read"))),
         check("do not load weights", lambda: None if opened.choose("open", "huggingface", "org/model", "model.safetensors")["loads_weights"] is False else (_ for _ in ()).throw(AssertionError("loaded"))),
@@ -61,6 +62,7 @@ def run() -> dict:
         check("notes train a small model", lambda: None if notes.train(steps=25)["loss_dropped"] is True and notes.train(steps=25)["frontier_model"] is False else (_ for _ in ()).throw(AssertionError("notes"))),
         check("an idea is a plan", lambda: None if ideas.idea("Build a small sorting game", ["I practiced loops in my own course notes today.", "I wrote a new example that was not in the lesson."])["built"] is False and ideas.idea("copy the course and scrape codecademy lessons now", [])["accepted"] is False else (_ for _ in ()).throw(AssertionError("idea"))),
         check("a local task needs no wrapper", lambda: None if tasks.run("build a world map")["wrapper_used"] is False and tasks.run("build a world map")["completed"] is True and tasks.run("send the private email")["wrapper_used"] is False else (_ for _ in ()).throw(AssertionError("task"))),
+        check("the best added wrapper is chosen", lambda: None if picks.choose("write code", [{"name": "paid", "source": "frontier", "tasks": ["write code"], "quality": 80, "free": False, "added_by_user": True}, {"name": "open", "source": "huggingface", "tasks": ["write code"], "quality": 90, "free": True, "added_by_user": True}, {"name": "hidden", "source": "github", "tasks": ["write code"], "quality": 99, "free": True, "added_by_user": False}])["picked"] == "open" else (_ for _ in ()).throw(AssertionError("pick"))),
     ]
     # The two checks above are expected to raise. Flip those results.
     for row in rows:

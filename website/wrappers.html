@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your wrappers</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Your wrappers</h1>
+    <p>Add a Hugging Face, GitHub, or frontier wrapper yourself. For each task, Buddy picks the highest quality one you added. A free one wins a tie. Buddy does not call the model.</p>
+    <form id="add-form" class="card">
+      <p><label>Name <input id="name" required></label></p>
+      <p><label>Source <select id="source"><option>huggingface</option><option>github</option><option>frontier</option></select></label></p>
+      <p><label>Task it covers <input id="task" required placeholder="write code"></label></p>
+      <p><label>Quality, 0 to 100 <input id="quality" type="number" min="0" max="100" value="80" required></label></p>
+      <p><label><input id="free" type="checkbox"> Free to run</label></p>
+      <button class="btn btn-primary" type="submit">Add my wrapper</button>
+    </form>
+    <form id="ask-form" class="card">
+      <p><label>Tasks, one per line <textarea id="ask" rows="4" required placeholder="write code&#10;world map"></textarea></label></p>
+      <button class="btn btn-outline" type="submit">Pick the best for each</button>
+      <ul id="picks"></ul>
+    </form>
+    <p><a href="one-shop.html">Tasks Buddy does with its own code</a></p>
+  </main>
+  <script src="wrappers.js"></script>
+</body>
+</html>
