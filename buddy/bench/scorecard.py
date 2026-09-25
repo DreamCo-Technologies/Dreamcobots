@@ -33,6 +33,7 @@ def run() -> dict:
     school = load("school", ROOT / "learning" / "school.py")
     datasets = load("free_datasets", ROOT / "learning" / "free_datasets.py")
     training = load("own_training", ROOT / "learning" / "own_training.py")
+    study = load("study_methods", ROOT / "learning" / "study_methods.py")
     rows = [
         check("open a text file", lambda: opened.choose("open", "github", "DreamCo-Technologies/Dreamcobots", "README.md")["reads_file"] or (_ for _ in ()).throw(AssertionError("did not read"))),
         check("do not load weights", lambda: None if opened.choose("open", "huggingface", "org/model", "model.safetensors")["loads_weights"] is False else (_ for _ in ()).throw(AssertionError("loaded"))),
@@ -49,6 +50,7 @@ def run() -> dict:
         check("ten views required", lambda: school.compare(school.views_for([1, "A", "B", "https://example.com", "r", "t"])[:9])),
         check("free datasets stay linked", lambda: None if datasets.catalog()["datasets"] >= 1000 and datasets.catalog()["studied_files"] is False and datasets.catalog()["hosted_here"] is False else (_ for _ in ()).throw(AssertionError("datasets"))),
         check("own line not the source file", lambda: None if training.sample()[0]["weights_trained"] is False and training.sample()[1]["accepted"] is False else (_ for _ in ()).throw(AssertionError("training"))),
+        check("study procedures are not a trained model", lambda: None if study.report()["training_ready"] == 0 and study.report()["study_ready"] == 18 and study.report()["all_production_ready"] is False else (_ for _ in ()).throw(AssertionError("study"))),
     ]
     # The two checks above are expected to raise. Flip those results.
     for row in rows:

@@ -18,12 +18,13 @@
     return article;
   }
 
-  fetch("data/learning-methods.json")
-    .then(function (response) { return response.json(); })
-    .then(function (data) {
-      const training = data.methods.filter(function (row) { return row.where === "training catalog"; }).length;
-      const study = data.methods.length - training;
-      document.getElementById("lead").textContent = data.methods.length + " methods are already in the repository: " + training + " in the training catalog and " + study + " in the study catalog. None of them were trained on this page. " + data.rule;
+  Promise.all([
+    fetch("data/learning-methods.json").then(function (response) { return response.json(); }),
+    fetch("data/learning-readiness.json").then(function (response) { return response.json(); }),
+  ]).then(function (payload) {
+      const data = payload[0];
+      const ready = payload[1];
+      document.getElementById("lead").textContent = ready.study_ready + " of " + ready.study_total + " study procedures run and finish. " + ready.training_ready + " of " + ready.training_total + " weight-training methods are production ready. " + ready.reason;
       data.methods.forEach(function (row) { document.getElementById("methods").append(card(row)); });
     })
     .catch(function () {
