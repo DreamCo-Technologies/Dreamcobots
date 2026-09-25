@@ -64,6 +64,7 @@
     { href: 'weight-hub.html', label: 'Weight control' },
     { href: 'your-model.html', label: 'Their own model' },
     { href: 'buddy-desk.html', label: 'Buddy desk' },
+    { href: 'frontier-path.html', label: 'Frontier path' },
     { href: 'learning-methods.html', label: 'Learning methods' },
     { href: 'train-own.html', label: 'Your training data' },
     { href: 'datasets.html', label: 'Free datasets' },

@@ -185,6 +185,7 @@ def report() -> dict:
     return {
         "all_production_ready": False,
         "study_ready": len(study["production_ready"]),
+        "study_ready_names": study["production_ready"],
         "study_total": study["procedures"],
         "training_ready": 0,
         "training_total": training["methods"],
