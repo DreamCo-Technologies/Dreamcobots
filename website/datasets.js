@@ -2,10 +2,10 @@
   function card(row) {
     const article = document.createElement("article");
     article.className = "card";
-    const title = document.createElement("h2");
+    const title = document.createElement("h3");
     title.textContent = row.name;
     const text = document.createElement("p");
-    text.textContent = row.license + ". " + row.note + " The file is not stored here.";
+    text.textContent = row.license + ". " + row.note;
     const link = document.createElement("a");
     link.href = row.href;
     link.textContent = "Open the dataset card";
@@ -18,11 +18,21 @@
   fetch("data/free-datasets.json")
     .then(function (response) { return response.json(); })
     .then(function (data) {
-      const ready = data.datasets.filter(function (row) { return row.train; });
-      const hold = data.datasets.filter(function (row) { return !row.train; });
-      document.getElementById("data-lead").textContent = data.datasets.length + " public datasets. " + ready.length + " are marked ready if you follow the license. " + hold.length + " need the card read first. Nothing is downloaded to this site. " + data.rule;
-      ready.forEach(function (row) { document.getElementById("ready").append(card(row)); });
-      hold.forEach(function (row) { document.getElementById("hold").append(card(row)); });
+      const ready = data.datasets.filter(function (row) { return row.train; }).length;
+      document.getElementById("data-lead").textContent = data.datasets.length + " public datasets in categories. " + ready + " can be trained on if you follow the license. Buddy studied the listings, not the files. " + data.rule;
+      const box = document.getElementById("groups");
+      const names = [];
+      data.datasets.forEach(function (row) {
+        if (names.indexOf(row.category) === -1) names.push(row.category);
+      });
+      names.forEach(function (name) {
+        const heading = document.createElement("h2");
+        heading.textContent = name;
+        box.append(heading);
+        data.datasets.filter(function (row) { return row.category === name; }).forEach(function (row) {
+          box.append(card(row));
+        });
+      });
     })
     .catch(function () {
       document.getElementById("data-lead").textContent = "The dataset list did not load.";
