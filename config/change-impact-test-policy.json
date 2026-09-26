@@ -2,30 +2,157 @@
   "schema": "dreamco.change_impact_test_policy.v2",
   "version": "2.0.0",
   "mission": "Ensure changed executable code cannot be labeled release-ready solely because unrelated, deleted, or skipped tests exist.",
-  "executable_extensions": [".py", ".ts", ".tsx", ".js", ".mjs", ".cjs"],
-  "test_paths": ["tests/"],
-  "high_risk_path_keywords": ["stripe", "payment", "billing", "auth", "security", "secret", "privacy", "webhook", "migration", "schema", "database", "deploy", "release", "permission", "tenant", "delete"],
+  "executable_extensions": [
+    ".py",
+    ".ts",
+    ".tsx",
+    ".js",
+    ".mjs",
+    ".cjs"
+  ],
+  "test_paths": [
+    "tests/"
+  ],
+  "high_risk_path_keywords": [
+    "stripe",
+    "payment",
+    "billing",
+    "auth",
+    "security",
+    "secret",
+    "privacy",
+    "webhook",
+    "migration",
+    "schema",
+    "database",
+    "deploy",
+    "release",
+    "permission",
+    "tenant",
+    "delete"
+  ],
   "high_risk_test_aliases": {
-    "stripe": ["stripe", "payment", "revenue", "billing"],
-    "payment": ["payment", "stripe", "billing", "revenue"],
-    "billing": ["billing", "payment", "stripe", "revenue"],
-    "auth": ["auth", "permission", "security", "session", "login"],
-    "security": ["security", "auth", "permission", "secret"],
-    "secret": ["secret", "security", "credential", "connection"],
-    "privacy": ["privacy", "data", "permission"],
-    "webhook": ["webhook", "stripe", "integration"],
-    "migration": ["migration", "schema", "database"],
-    "schema": ["schema", "database", "contract"],
-    "database": ["database", "schema", "storage", "migration"],
-    "deploy": ["deploy", "runtime", "build", "smoke"],
-    "release": ["release", "deploy", "build", "trust"],
-    "permission": ["permission", "auth", "security"],
-    "tenant": ["tenant", "isolation", "auth", "security"],
-    "delete": ["delete", "data", "storage", "permission"]
+    "stripe": [
+      "stripe",
+      "payment",
+      "revenue",
+      "billing"
+    ],
+    "payment": [
+      "payment",
+      "stripe",
+      "billing",
+      "revenue"
+    ],
+    "billing": [
+      "billing",
+      "payment",
+      "stripe",
+      "revenue"
+    ],
+    "auth": [
+      "auth",
+      "permission",
+      "security",
+      "session",
+      "login"
+    ],
+    "security": [
+      "security",
+      "auth",
+      "permission",
+      "secret"
+    ],
+    "secret": [
+      "secret",
+      "security",
+      "credential",
+      "connection"
+    ],
+    "privacy": [
+      "privacy",
+      "data",
+      "permission"
+    ],
+    "webhook": [
+      "webhook",
+      "stripe",
+      "integration"
+    ],
+    "migration": [
+      "migration",
+      "schema",
+      "database"
+    ],
+    "schema": [
+      "schema",
+      "database",
+      "contract"
+    ],
+    "database": [
+      "database",
+      "schema",
+      "storage",
+      "migration"
+    ],
+    "deploy": [
+      "deploy",
+      "runtime",
+      "build",
+      "smoke"
+    ],
+    "release": [
+      "release",
+      "deploy",
+      "build",
+      "trust"
+    ],
+    "permission": [
+      "permission",
+      "auth",
+      "security"
+    ],
+    "tenant": [
+      "tenant",
+      "isolation",
+      "auth",
+      "security"
+    ],
+    "delete": [
+      "delete",
+      "data",
+      "storage",
+      "permission"
+    ]
   },
-  "skip_markers": [".skip(", "skipTest(", "@unittest.skip", "pytest.mark.skip", "test.skip(", "describe.skip(", "it.skip("],
-  "shared_core_prefixes": ["server/", "shared/", "tools/", "script/"],
-  "generic_source_tokens": ["index", "server", "shared", "client", "tools", "script", "build", "run", "generate", "main", "app"],
+  "skip_markers": [
+    ".skip(",
+    "skipTest(",
+    "@unittest.skip",
+    "pytest.mark.skip",
+    "test.skip(",
+    "describe.skip(",
+    "it.skip("
+  ],
+  "shared_core_prefixes": [
+    "server/",
+    "shared/",
+    "tools/",
+    "script/"
+  ],
+  "generic_source_tokens": [
+    "index",
+    "server",
+    "shared",
+    "client",
+    "tools",
+    "script",
+    "build",
+    "run",
+    "generate",
+    "main",
+    "app"
+  ],
   "focused_test_mappings": [
     {
       "sources": [
@@ -38,83 +165,236 @@
         "client/src/pages/ConversationPage.tsx",
         "client/src/pages/SandboxPage.tsx"
       ],
-      "tests": ["tests/ui-library-compatibility.test.mjs", "tests/practice-page.test.mjs"]
+      "tests": [
+        "tests/ui-library-compatibility.test.mjs",
+        "tests/practice-page.test.mjs"
+      ]
     },
     {
-      "sources": ["client/src/pages/ActionsPage.tsx", "website/nav.js"],
-      "tests": ["tests/actions-page.test.mjs"]
+      "sources": [
+        "client/src/pages/ActionsPage.tsx"
+      ],
+      "tests": [
+        "tests/actions-page.test.mjs"
+      ]
     },
     {
-      "sources": ["website/connections.js"],
-      "tests": ["tests/connection-secret-intake-page.test.mjs", "tests/resource-onboarding-page.test.mjs"]
+      "sources": [
+        "website/nav.js",
+        "website/desk-chrome.js"
+      ],
+      "tests": [
+        "tests/actions-page.test.mjs",
+        "tests/shared-repository-controls.test.mjs",
+        "tests/repository-workbench.browser.cjs"
+      ]
     },
     {
-      "sources": ["website/service-worker.js"],
-      "tests": ["tests/master-directive-nav-buddy-public-site.test.mjs"]
+      "sources": [
+        "website/buddy-command-center.js"
+      ],
+      "tests": [
+        "tests/command-center-page.test.mjs",
+        "tests/repository-workbench.browser.cjs"
+      ]
     },
     {
-      "sources": ["client/src/main.tsx"],
-      "tests": ["tests/test_buddy_benchmark_runner_main_postcss_vite_audit_actions_health_optional.py"]
+      "sources": [
+        "website/connections.js"
+      ],
+      "tests": [
+        "tests/connection-secret-intake-page.test.mjs",
+        "tests/resource-onboarding-page.test.mjs"
+      ]
+    },
+    {
+      "sources": [
+        "website/service-worker.js"
+      ],
+      "tests": [
+        "tests/master-directive-nav-buddy-public-site.test.mjs"
+      ]
+    },
+    {
+      "sources": [
+        "client/src/main.tsx"
+      ],
+      "tests": [
+        "tests/test_buddy_benchmark_runner_main_postcss_vite_audit_actions_health_optional.py"
+      ]
     },
     {
       "sources": [
         "buddy_os/intelligence/planner_arbitration.py",
         "buddy_os/intelligence/prediction_error.py"
       ],
-      "tests": ["tests/test_decision_planning.py"]
-    },
-    {
-      "sources": ["server/routes.ts"],
       "tests": [
-        "tests/buddy-expert-mode-page.test.mjs",
-        "tests/buddy-learning-lab-page.test.mjs"
+        "tests/test_decision_planning.py"
       ]
     },
     {
-      "sources": ["website/sign-in.js"],
-      "tests": ["tests/oauth-login-policy.test.mjs"]
+      "sources": [
+        "server/routes.ts"
+      ],
+      "tests": [
+        "tests/buddy-expert-mode-page.test.mjs",
+        "tests/buddy-learning-lab-page.test.mjs",
+        "tests/supplemental-fleet.test.ts",
+        "tests/fleet-runtime.test.ts"
+      ]
+    },
+    {
+      "sources": [
+        "website/sign-in.js"
+      ],
+      "tests": [
+        "tests/oauth-login-policy.test.mjs"
+      ]
     },
     {
       "sources": [
         "client/src/pages/SettingsPage.tsx",
         "website/studio.js"
       ],
-      "tests": ["tests/practice-page.test.mjs"]
+      "tests": [
+        "tests/practice-page.test.mjs"
+      ]
     },
     {
-      "sources": ["website/resource-connection-center.js"],
-      "tests": ["tests/resource-connection-center.test.mjs"]
+      "sources": [
+        "website/resource-connection-center.js"
+      ],
+      "tests": [
+        "tests/resource-connection-center.test.mjs"
+      ]
     },
     {
-      "sources": ["website/bots.js", "website/divisions.js"],
-      "tests": ["tests/specialist-prospectus-page.test.mjs"]
+      "sources": [
+        "website/bots.js",
+        "website/divisions.js"
+      ],
+      "tests": [
+        "tests/specialist-prospectus-page.test.mjs"
+      ]
     },
     {
-      "sources": ["website/success.js"],
-      "tests": ["tests/buddy-success-page.test.mjs"]
+      "sources": [
+        "website/success.js",
+        "website/data/buddy-success-program.js"
+      ],
+      "tests": [
+        "tests/buddy-success-page.test.mjs"
+      ]
     },
     {
-      "sources": ["website/models.js"],
-      "tests": ["tests/models-demand-page.test.mjs"]
+      "sources": [
+        "tools/generate_dreamco_search_index.ts",
+        "website/data/dreamco-search-index.js"
+      ],
+      "tests": [
+        "tests/dreamco-search.test.ts"
+      ]
     },
     {
-      "sources": ["website/system-map.js", "tools/generate_command_center_data.py"],
-      "tests": ["tests/system-map-organization-page.test.mjs", "tests/test_command_center_data.py"]
+      "sources": [
+        "website/data/buddy-routing-index.js",
+        "website/data/buddy-capability-certifications.js"
+      ],
+      "tests": [
+        "tests/supplemental-fleet.test.ts"
+      ]
     },
     {
-      "sources": ["website/page-actions.js"],
-      "tests": ["tests/page-actions-all-pages.test.mjs"]
+      "sources": [
+        "website/models.js"
+      ],
+      "tests": [
+        "tests/models-demand-page.test.mjs"
+      ]
+    },
+    {
+      "sources": [
+        "website/system-map.js",
+        "tools/generate_command_center_data.py"
+      ],
+      "tests": [
+        "tests/system-map-organization-page.test.mjs",
+        "tests/test_command_center_data.py",
+        "tests/test_repository_browser.py"
+      ]
+    },
+    {
+      "sources": [
+        "website/page-actions.js"
+      ],
+      "tests": [
+        "tests/page-actions-all-pages.test.mjs"
+      ]
+    },
+    {
+      "sources": [
+        "website/repositories.js",
+        "website/project-conversations.js",
+        "website/buddy-model-lab.js",
+        "website/buddy-model-worker.js",
+        "tools/generate_connection_indexes.py"
+      ],
+      "tests": [
+        "tests/test_connected_product.py",
+        "tests/connected-product.browser.cjs"
+      ]
+    },
+    {
+      "sources": [
+        "server/seed-supplemental-bots.ts",
+        "tools/generate_bot_fleet_catalog.ts"
+      ],
+      "tests": [
+        "tests/supplemental-fleet.test.ts",
+        "tests/fleet-runtime.test.ts"
+      ]
+    },
+    {
+      "sources": [
+        "tools/compile_md_bots.py"
+      ],
+      "tests": [
+        "tests/test_compile_md_bots.py"
+      ]
     }
   ],
   "evidence_rules": {
-    "normal": ["at least one relevant changed test file or focused verification mapping", "type/syntax check", "affected regression suite"],
-    "high": ["normal evidence", "domain-relevant changed test", "negative/error-path test", "security/privacy/permission review", "integration/contract evidence", "rollback or safe-revert evidence when applicable"],
-    "shared_core": ["dependent-system regression evidence", "broad repository verification"],
-    "anti_bypass": ["changed test files cannot be deleted as the only evidence", "new skip markers are blockers when executable behavior changes", "unrelated changed tests do not satisfy high-risk evidence"]
+    "normal": [
+      "at least one relevant changed test file or focused verification mapping",
+      "type/syntax check",
+      "affected regression suite"
+    ],
+    "high": [
+      "normal evidence",
+      "domain-relevant changed test",
+      "negative/error-path test",
+      "security/privacy/permission review",
+      "integration/contract evidence",
+      "rollback or safe-revert evidence when applicable"
+    ],
+    "shared_core": [
+      "dependent-system regression evidence",
+      "broad repository verification"
+    ],
+    "anti_bypass": [
+      "changed test files cannot be deleted as the only evidence",
+      "new skip markers are blockers when executable behavior changes",
+      "unrelated changed tests do not satisfy high-risk evidence"
+    ]
   },
   "exemptions": {
     "file": "config/change-impact-test-exemptions.json",
-    "required_fields": ["path", "reason", "owner", "expires"],
+    "required_fields": [
+      "path",
+      "reason",
+      "owner",
+      "expires"
+    ],
     "rule": "Exemptions are temporary, explicit, reviewable, and cannot be used for critical payment/auth/security/destructive behavior changes."
   },
   "release_blockers": [

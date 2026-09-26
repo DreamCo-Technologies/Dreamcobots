@@ -1,5 +1,7 @@
 # DreamCo Empire OS - Bot Registry
 
+**Start here:** [Owner guide: what exists and what needs setup](docs/REPOSITORY_OWNER_GUIDE.md) · [Website directory](https://dreamco-technologies.github.io/Dreamcobots/repository-guide.html) · [Repository map](https://dreamco-technologies.github.io/Dreamcobots/system-map.html)
+
 [![Bots](https://img.shields.io/badge/bots-1051+-blue)](App_bots/)
 [![Divisions](https://img.shields.io/badge/divisions-45-purple)](App_bots/)
 [![Autonomy](https://img.shields.io/badge/autonomy-governed-green)](docs/)
@@ -31,7 +33,7 @@ Original Buddy chrome plus the desks from the latest Grok chat. Static HTML. No 
 Dreamcobots/
 ├── App_bots/          # All 1051 bots organized by division (JSON)
 ├── bots/              # Specialty & elite bot profiles (Markdown)
-├── website/           # 26-page standalone HTML/CSS website
+├── website/           # Static website (see generated page directory)
 │   ├── index.html     # Landing page
 │   ├── dashboard.html
 │   ├── bots.html

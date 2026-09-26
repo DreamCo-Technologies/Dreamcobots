@@ -124,9 +124,12 @@ export function buildDreamSearchIndex() {
   const successProgram = readJson<SuccessProgram>(SUCCESS_PROGRAM_PATH);
   const organizationIntelligence = readJson<OrganizationIntelligence>(ORGANIZATION_INTELLIGENCE_PATH);
   const fleet = buildFleetCatalog();
+  const allBots = [...fleet.bots, ...fleet.supplemental_bots];
+  const allDivisions = [...fleet.divisions, ...fleet.supplemental_divisions];
+  const supplementalBotIds = new Set(fleet.supplemental_bots.map((bot) => bot.identity.slug));
   const documents: DreamSearchDocument[] = [];
 
-  for (const bot of fleet.bots) {
+  for (const bot of allBots) {
     documents.push(document({
       id: `bot:${bot.identity.slug}`,
       type: "bot",
@@ -146,22 +149,23 @@ export function buildDreamSearchIndex() {
       ]),
       category: bot.identity.category,
       division: bot.identity.division || "",
-      status: "routed_shared_runtime",
+      status: supplementalBotIds.has(bot.identity.slug) ? "routed_shared_sandbox_planning" : "routed_shared_runtime",
       evidence_level: "repository_catalog",
       evidence: bot.evidence.catalog_source,
     }));
   }
 
-  for (const division of systemMap.divisions) {
+  for (const division of allDivisions) {
+    const mapped = systemMap.divisions.find((item) => item.name === division.name);
     const production = successProgram.divisions.find((item) => item.name === division.name);
     documents.push(document({
-      id: `division:${division.id}`,
+      id: `division:${mapped?.id || slug(division.name)}`,
       type: "division",
       title: division.name,
-      summary: production?.charter.purpose || division.mission,
-      url: `success.html#divisions`,
+      summary: production?.charter.purpose || mapped?.mission || `${division.profile_count} catalog profiles routed through Buddy's shared sandbox planning runtime. Production evidence is required.`,
+      url: production ? "success.html#divisions" : `bots.html?q=${encodeURIComponent(division.name)}`,
       keywords: unique([
-        "division", "specialists", "Buddy", `${division.registered_bots} bots`,
+        "division", "specialists", "Buddy", `${division.profile_count} bots`,
         production ? `${production.capabilities.count} capability contracts` : undefined,
         ...(production?.charter.serves || []),
         ...(production?.capabilities.focuses || []),
@@ -171,7 +175,7 @@ export function buildDreamSearchIndex() {
       division: division.name,
       status: production?.production_readiness.production_ready ? "production_evidence_passed" : "production_evidence_required",
       evidence_level: "repository_catalog",
-      evidence: production ? "config/generated/buddy_success_program.json" : "config/master_bot_registry.json",
+      evidence: production ? "config/generated/buddy_success_program.json" : division.source,
     }));
   }
 
@@ -354,9 +358,16 @@ export function buildDreamSearchIndex() {
     summary: {
       documents: documents.length,
       counts_by_type: countsByType,
-      indexed_bot_profiles: fleet.summary.profiles,
-      searchable_capability_terms: fleet.summary.declared_capability_slots,
-      indexed_divisions: fleet.summary.divisions,
+      indexed_bot_profiles: countsByType.bot || 0,
+      canonical_indexed_bot_profiles: fleet.bots.length,
+      supplemental_indexed_bot_profiles: fleet.supplemental_bots.length,
+      searchable_capability_terms: allBots.reduce((total, bot) => total + bot.capabilities.length, 0),
+      canonical_searchable_capability_terms: fleet.summary.declared_capability_slots,
+      supplemental_searchable_capability_terms: fleet.summary.supplemental_declared_capability_slots,
+      indexed_divisions: countsByType.division || 0,
+      canonical_indexed_divisions: fleet.divisions.length,
+      supplemental_indexed_divisions: fleet.supplemental_divisions.length,
+      production_ready_bot_profiles: allBots.filter((bot) => bot.readiness.production_ready).length,
       indexed_models: MODEL_BENCHMARK_TARGETS.length,
       indexed_organizations: organizationIntelligence.existingProviders.length + organizationIntelligence.allianceMembers.length,
       indexed_providers: AI_PROVIDERS.length,
@@ -384,8 +395,12 @@ function report(index: ReturnType<typeof buildDreamSearchIndex>): string {
     "",
     `- Search documents: ${index.summary.documents.toLocaleString()}`,
     `- Bot profiles: ${index.summary.indexed_bot_profiles.toLocaleString()}`,
+    `- Canonical bot profiles: ${index.summary.canonical_indexed_bot_profiles.toLocaleString()}`,
+    `- Supplemental shared sandbox planning profiles: ${index.summary.supplemental_indexed_bot_profiles.toLocaleString()}`,
     `- Searchable bot capability terms: ${index.summary.searchable_capability_terms.toLocaleString()}`,
     `- Divisions: ${index.summary.indexed_divisions.toLocaleString()}`,
+    `- Canonical / supplemental divisions: ${index.summary.canonical_indexed_divisions} / ${index.summary.supplemental_indexed_divisions}`,
+    `- Production-ready bot profiles: ${index.summary.production_ready_bot_profiles}`,
     `- Model reference records: ${index.summary.indexed_models.toLocaleString()}`,
     `- Organization intelligence records: ${index.summary.indexed_organizations.toLocaleString()}`,
     `- Provider reference records: ${index.summary.indexed_providers.toLocaleString()}`,
