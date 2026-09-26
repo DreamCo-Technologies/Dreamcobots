@@ -12,6 +12,7 @@ import { api } from "@shared/routes";
 import { ALL_BOTS as CORE_BOTS } from "./seed-bots";
 import { GITHUB_BOTS } from "./seed-github-bots";
 import { CODELAB_BOTS } from "./seed-codelabs";
+import { SUPPLEMENTAL_BOTS } from "./seed-supplemental-bots";
 import { BUDDY_BOT } from "./seed-buddy-bot";
 import { DIVISIONS, insertBotMetricSchema, insertBotErrorSchema, insertBotFinancialSchema, insertAlertRuleSchema, insertDealSchema, insertDebugEventSchema, insertAutoFixSchema, insertRevenueLeakSchema, insertSecurityScanSchema, insertFormulaSchema, insertPluginSchema, insertBotMemorySchema, insertSystemSnapshotSchema, insertCostEventSchema } from "@shared/schema";
 import type { BotActivityResponse } from "@shared/schema";
@@ -243,7 +244,10 @@ const CORE_SLUGS = new Set(CORE_BOTS.map(b => b.slug));
 const GITHUB_SLUGS = new Set(GITHUB_BOTS.map(b => b.slug));
 const DEDUPED_GITHUB = GITHUB_BOTS.filter(b => !CORE_SLUGS.has(b.slug));
 const DEDUPED_CODELAB = CODELAB_BOTS.filter(b => !CORE_SLUGS.has(b.slug) && !GITHUB_SLUGS.has(b.slug));
-const ALL_BOTS = [...CORE_BOTS, ...DEDUPED_GITHUB, ...DEDUPED_CODELAB];
+const ALL_BOTS = [...CORE_BOTS, ...DEDUPED_GITHUB, ...DEDUPED_CODELAB, ...SUPPLEMENTAL_BOTS];
+if (new Set(ALL_BOTS.map((bot) => bot.slug)).size !== ALL_BOTS.length) {
+  throw new Error("Bot seeds contain duplicate canonical/supplemental identities");
+}
 
 // ─── COST-CONTROL CONSTANTS ──────────────────────────────────────────────────
 // Keep bills as close to $0 as possible. Every byte saved is a dollar saved.

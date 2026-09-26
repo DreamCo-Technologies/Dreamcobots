@@ -56,6 +56,10 @@ class ChangeImpactTestPolicyTests(unittest.TestCase):
         self.assertIn("tests/test_decision_planning.py", by_source["buddy_os/intelligence/prediction_error.py"])
         self.assertIn("tests/buddy-expert-mode-page.test.mjs", by_source["server/routes.ts"])
         self.assertIn("tests/oauth-login-policy.test.mjs", by_source["website/sign-in.js"])
+        self.assertIn("tests/test_repository_browser.py", by_source["tools/generate_command_center_data.py"])
+        self.assertIn("tests/command-center-page.test.mjs", by_source["website/buddy-command-center.js"])
+        for source in ("website/nav.js", "website/desk-chrome.js"):
+            self.assertIn("tests/shared-repository-controls.test.mjs", by_source[source])
 
     def test_silent_test_bypasses_are_explicit_blockers(self):
         blockers = " ".join(self.policy["release_blockers"]).lower()

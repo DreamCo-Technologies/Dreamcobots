@@ -10,6 +10,26 @@ const dataSource = readFileSync('website/data/buddy-success-program.js', 'utf8')
 const context = { window: {} };
 vm.runInNewContext(dataSource, context);
 const program = context.window.BUDDY_SUCCESS_PROGRAM;
+const canonical = JSON.parse(readFileSync('config/generated/buddy_success_program.json', 'utf8'));
+
+test('published resource inventory matches canonical evidence without promoting references to live connections', () => {
+  assert.deepEqual(JSON.parse(JSON.stringify(program.resource_inventory)), canonical.resource_inventory);
+  const resources = program.resource_inventory.resources;
+  assert.equal(program.summary.referenced_resource_hosts, resources.length);
+  assert.equal(program.summary.referenced_resource_hosts, canonical.summary.referenced_resource_hosts);
+  assert.equal(program.summary.source_files_scanned_for_resources, canonical.summary.source_files_scanned_for_resources);
+  assert.equal(program.summary.verified_live_resource_hosts, 0);
+  assert.equal(new Set(resources.map(resource => resource.host)).size, resources.length);
+  assert.ok(resources.length > 0);
+  for (const resource of resources) {
+    assert.ok(['reference_only', 'configuration_required'].includes(resource.status), resource.host);
+    assert.equal(resource.verified_live, false, resource.host);
+    assert.equal(resource.health_check_evidence, null, resource.host);
+    assert.ok(resource.next_step, resource.host);
+  }
+  assert.equal(program.truth_contract.external_resource_reference_means_connected, false);
+  assert.equal(program.truth_contract.connected_status_requires_credentials_and_health_evidence, true);
+});
 
 test('Success Center exposes profile, tracker, production, alliance, trust, model, and resource controls', () => {
   for (const id of [

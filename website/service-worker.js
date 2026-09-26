@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'buddy-shell-v60';
-const RUNTIME_CACHE = 'buddy-runtime-v60';
+const SHELL_CACHE = 'buddy-shell-v61';
+const RUNTIME_CACHE = 'buddy-runtime-v61';
 const APP_SHELL = [
   './',
   './buddy.html',

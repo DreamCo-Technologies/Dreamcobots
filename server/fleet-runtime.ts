@@ -56,8 +56,9 @@ type CatalogBot = {
 
 type FleetCatalog = {
   schema: string;
-  summary: { profiles: number; divisions: number; declared_capability_slots?: number };
+  summary: { profiles: number; divisions: number; declared_capability_slots?: number; supplemental_profiles?: number };
   bots: CatalogBot[];
+  supplemental_bots?: CatalogBot[];
 };
 
 export type RuntimeState = "ready" | "offline" | "error";
@@ -482,11 +483,16 @@ export class FleetRuntimeRegistry {
     if (catalog.summary.profiles !== catalog.bots.length) {
       throw new Error("Fleet catalog summary does not match the bot records");
     }
-    for (const profile of catalog.bots) {
+    if (catalog.bots.length !== 1051) throw new Error(`Expected 1,051 canonical profiles, found ${catalog.bots.length}`);
+    const supplemental = catalog.supplemental_bots || [];
+    if ((catalog.summary.supplemental_profiles || 0) !== supplemental.length) {
+      throw new Error("Supplemental catalog summary does not match bot records");
+    }
+    for (const profile of [...catalog.bots, ...supplemental]) {
       if (this.runtimes.has(profile.identity.slug)) throw new Error(`Duplicate runtime slug: ${profile.identity.slug}`);
       this.runtimes.set(profile.identity.slug, new BotRuntimeInstance(profile));
     }
-    if (this.runtimes.size !== 1051) throw new Error(`Expected 1,051 runtime instances, found ${this.runtimes.size}`);
+    if (this.runtimes.size !== catalog.bots.length + supplemental.length) throw new Error("Runtime instance count mismatch");
     this.catalogSchema = catalog.schema;
   }
 

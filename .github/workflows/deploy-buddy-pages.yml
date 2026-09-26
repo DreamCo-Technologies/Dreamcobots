@@ -2,6 +2,7 @@ name: Deploy Buddy Website
 
 on:
   workflow_dispatch:
+  workflow_call:
   push:
     branches:
       - main
@@ -9,6 +10,7 @@ on:
       - codex/master-capability-pages
     paths:
       - "website/**"
+      - "docs/**"
       - "tools/build_buddy_public_site.py"
       - "tools/audit_actions_health.py"
       - "tools/audit_actions_live.py"
@@ -22,8 +24,15 @@ on:
       - "tools/generate_buddy_distribution_catalog.py"
       - "tools/generate_repository_test_registry.py"
       - "tools/generate_dreamco_repository_master_map.py"
+      - "tools/generate_repository_guide.py"
+      - "tools/connect_repository_pages.py"
       - "tools/generate_master_directive_status.py"
       - "tools/generate_command_center_data.py"
+      - "tools/normalize_legacy_portfolios.py"
+      - "tools/place_original_bots.py"
+      - "original-bots/**"
+      - "bots/**"
+      - "config/project-feature-coverage.json"
       - "tools/generate_resource_connection_catalog.py"
       - "tools/generate_buddy_expert_mode.py"
       - "command-center/data/**"
@@ -36,7 +45,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: buddy-github-pages-${{ github.ref }}
+  group: dreamco-github-pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -76,10 +85,15 @@ jobs:
           node tools/check_buddy_demand_ontology.mjs
           python3 tools/generate_buddy_distribution_catalog.py --check
           python3 tools/generate_repository_test_registry.py
+          python3 tools/generate_repository_guide.py
+          python3 tools/generate_connection_indexes.py --check
+          python3 -m unittest tests.test_repository_guide tests.test_repository_master_map
           python3 tools/generate_dreamco_repository_master_map.py
           python3 tools/generate_master_directive_status.py
+          python3 tools/generate_command_center_data.py
           python3 tools/generate_command_center_data.py --check
           python3 tools/generate_resource_connection_catalog.py
+          python3 tools/generate_resource_connection_catalog.py --check
           python3 tools/generate_opportunity_hub.py --check
           python3 tools/generate_setup_center.py --check
           python3 tools/build_buddy_learning_os_connection_graph.py
@@ -88,6 +102,9 @@ jobs:
           python3 tools/generate_buddy_open_model_lab.py --check
           python3 tools/generate_buddy_learning_strategies.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
+          python3 tools/connect_repository_pages.py
+          python3 tools/connect_repository_pages.py --check
+          python3 -m unittest tests.test_repository_browser tests.test_legacy_portfolios tests.test_branch_health_public_report
           python3 tools/build_buddy_public_site.py --check
           npm run test:actions-page
           npm run test:buddy-open-core
@@ -134,6 +151,10 @@ jobs:
           node --check website/service-worker.js
           node --check website/master-build.js
           node --check website/buddy-command-center.js
+          node --check website/repositories.js
+          node --check website/project-conversations.js
+          node --check website/buddy-model-lab.js
+          node --check website/buddy-model-worker.js
           node --check website/world-lens.js
           node --check website/family-circle.js
           node --check website/resource-211.js
@@ -152,11 +173,27 @@ jobs:
           node --check website/setup-center.js
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
+      - name: Build rendered documentation
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./docs
+          destination: ./_site
+      - name: Combine documentation and Buddy website
+        run: |
+          mkdir -p public_site
+          cp -a _site/. public_site/
+          rsync -a website/ public_site/
+          touch public_site/.nojekyll
+          test -s public_site/index.html
+          test -s public_site/repositories.html
+          test -s public_site/project-conversations.html
+          test -s public_site/buddy-model-lab.html
       - name: Upload public website
         uses: actions/upload-pages-artifact@v5
         with:
-          path: website
+          path: public_site
   deploy:
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 20

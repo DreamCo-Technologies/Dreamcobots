@@ -5,6 +5,7 @@ This report is generated from repository evidence. A catalog profile is not coun
 ## Verified Inventory
 
 - Bot profiles: 1051
+- Supplemental growth profiles: 50 (separate from the canonical baseline; shared sandbox planning routes only)
 - Divisions: 45
 - Buddy-routed profiles: 1051
 - Executable governed runtime instances: 1051

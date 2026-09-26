@@ -6,12 +6,12 @@ This report executes every registered bot through the repository-controlled Budd
 
 | Gate | Result |
 |---|---:|
-| Profiles tested | 1,051 |
-| Sandbox certified | 1,051 |
+| Profiles tested | 1,101 |
+| Sandbox certified | 1,101 |
 | Failed | 0 |
-| Divisions tested | 45 |
-| Declared capabilities tested | 8,408 |
-| Capability contracts passed | 8,408 |
+| Divisions tested | 55 |
+| Declared capabilities tested | 8,460 |
+| Capability contracts passed | 8,460 |
 | Capability contracts failed | 0 |
 | Every declared capability tested | Yes |
 | Repository-controlled flow complete | Yes |
@@ -27,6 +27,8 @@ Live external provider calls are not simulated as successful. They require an au
 |---|---:|---:|---:|---:|---:|---:|
 | CommandCore | 13 | 13 | 0 | 104 | 104 | 0 |
 | DreamAdmin | 21 | 21 | 0 | 168 | 168 | 0 |
+| DreamAffiliate | 5 | 5 | 0 | 5 | 5 | 0 |
+| DreamAgency | 5 | 5 | 0 | 5 | 5 | 0 |
 | DreamAgents | 20 | 20 | 0 | 160 | 160 | 0 |
 | DreamAgriculture | 20 | 20 | 0 | 160 | 160 | 0 |
 | DreamAIInfra | 25 | 25 | 0 | 200 | 200 | 0 |
@@ -47,10 +49,14 @@ Live external provider calls are not simulated as successful. They require an au
 | DreamFinance | 25 | 25 | 0 | 200 | 200 | 0 |
 | DreamFlow | 5 | 5 | 0 | 40 | 40 | 0 |
 | DreamFood | 20 | 20 | 0 | 160 | 160 | 0 |
+| DreamFoundry | 5 | 5 | 0 | 5 | 5 | 0 |
+| DreamFranchise | 5 | 5 | 0 | 5 | 5 | 0 |
 | DreamGlobal | 16 | 16 | 0 | 128 | 128 | 0 |
 | DreamHealth | 20 | 20 | 0 | 160 | 160 | 0 |
 | DreamInfluence | 25 | 25 | 0 | 200 | 200 | 0 |
+| DreamIntegrations | 5 | 5 | 0 | 5 | 5 | 0 |
 | DreamLegal | 25 | 25 | 0 | 200 | 200 | 0 |
+| DreamLicensing | 5 | 5 | 0 | 5 | 5 | 0 |
 | DreamLoans | 23 | 23 | 0 | 184 | 184 | 0 |
 | DreamMaintenance | 21 | 21 | 0 | 168 | 168 | 0 |
 | DreamMarket | 5 | 5 | 0 | 40 | 40 | 0 |
@@ -64,9 +70,13 @@ Live external provider calls are not simulated as successful. They require an au
 | DreamProtection | 20 | 20 | 0 | 160 | 160 | 0 |
 | DreamRealEstate | 25 | 25 | 0 | 200 | 200 | 0 |
 | DreamRetail | 26 | 26 | 0 | 208 | 208 | 0 |
+| DreamRobotics | 5 | 5 | 0 | 5 | 5 | 0 |
+| DreamSaaS | 5 | 5 | 0 | 7 | 7 | 0 |
 | DreamSalesPro | 37 | 37 | 0 | 296 | 296 | 0 |
 | DreamScience | 20 | 20 | 0 | 160 | 160 | 0 |
 | DreamSocial | 33 | 33 | 0 | 264 | 264 | 0 |
+| DreamStreaming | 5 | 5 | 0 | 5 | 5 | 0 |
 | DreamTrade | 12 | 12 | 0 | 96 | 96 | 0 |
 | DreamTransport | 19 | 19 | 0 | 152 | 152 | 0 |
+| DreamTravel | 5 | 5 | 0 | 5 | 5 | 0 |
 | GameTitan | 4 | 4 | 0 | 32 | 32 | 0 |
