@@ -31,7 +31,7 @@ class SystemOrchestrator:
         return bots if isinstance(bots, list) else []
 
     def run_all(self, task=None):
-        return {
+        return {{
             "status": "success",
             "system": self.catalog.get("system_name", HERE.name),
             "bot_count": len(self.list_bots()),
@@ -87,8 +87,7 @@ def main() -> int:
         (dest / "bots.json").write_text(json.dumps(catalog, indent=2) + "\n", encoding="utf-8")
         (dest / "system_orchestrator.py").write_text(ORCHESTRATOR.format(name=name), encoding="utf-8")
         (dest / "README.md").write_text(README.format(name=name, source=path.relative_to(ROOT)), encoding="utf-8")
-        (dest / "__init__.py").write_text(f"""System package for {name}.\n"""
-, encoding="utf-8")
+        (dest / "__init__.py").write_text(f'"""System package for {name}."""\n', encoding="utf-8")
         built.append(name)
     index = {
         "generated_at": datetime.now(timezone.utc).isoformat(),

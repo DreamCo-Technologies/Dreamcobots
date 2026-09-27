@@ -7,7 +7,7 @@ import hashlib
 import re
 from collections import Counter
 from pathlib import Path
-from tools.place_original_bots import parse_category, parse_system, infer_owner, slugify
+from tools.place_original_bots import parse_category, parse_system, infer_owner
 
 DIVISION_ALIASES = {
     'DreamStreaming':'DreamContent', 'DreamLicensing':'DreamLegal',

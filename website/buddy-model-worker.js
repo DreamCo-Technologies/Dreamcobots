@@ -2,7 +2,12 @@
 const MODEL='HuggingFaceTB/SmolLM2-135M-Instruct';
 const REVISION='12fd25f77366fa6b3b4b768ec3050bf629380bac';
 let generator;
-self.onmessage=async({data})=>{
+self.onmessage=async(event)=>{
+ // Dedicated-worker messages normally have an empty origin. Reject any
+ // explicit foreign origin; this handler is not a window message listener.
+ if(event.origin !== '' && event.origin !== self.location.origin)return;
+ const {data}=event;
+ if(!data || typeof data !== 'object' || !['load','run'].includes(data.type))return;
  try {
   if(data.type==='load'){
    const {pipeline,env}=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/dist/transformers.min.js');
