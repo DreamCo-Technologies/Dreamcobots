@@ -34,6 +34,11 @@ class ProveBuddyLearningTest(unittest.TestCase):
                 self.assertTrue(proof.HISTORY.exists())
                 self.assertEqual(real_history.read_bytes(), before)
 
+    def test_workflow_uploads_only_the_synthetic_proof_history(self):
+        workflow = (ROOT / '.github/workflows/buddy-learning-proof.yml').read_text()
+        self.assertIn('evidence/buddy-learning-proof-history.jsonl', workflow)
+        self.assertNotIn('evidence/buddy-learning-history.jsonl', workflow)
+
     def test_script_imports_with_an_isolated_python_path(self):
         with tempfile.TemporaryDirectory() as temporary:
             result = subprocess.run([sys.executable, '-I', '-c', 'import runpy,sys; runpy.run_path(sys.argv[1],run_name="proof_import_test")', str(ROOT / 'tools' / 'prove_buddy_learning.py')], cwd=temporary, capture_output=True, text=True)

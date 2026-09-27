@@ -50,11 +50,24 @@
   function describe(row) {
     return state.data.areas.find(a=>a.id===row.area)?.description || 'Supporting repository file';
   }
+  function fileProspectus(row) {
+    const path=row.path, basename=path.split('/').pop().replace(/\.[^.]+$/,'');
+    const kind=path.startsWith('.github/workflows/')?'workflow':path.startsWith('tests/')?'test':path.startsWith('website/')?'website':path.startsWith('config/')?'configuration':path.startsWith('tools/')?'tool':'repository file';
+    const candidates=state.data.items.filter(x=>x.path!==path && x.path.includes(basename) && (x.path.startsWith('tests/') || x.path.startsWith('docs/'))).slice(0,12).map(x=>x.path);
+    return {schema:'dreamco.file_prospectus.v1',path,kind,purpose:describe(row),purpose_basis:'Folder inventory; inspect source to confirm exact behavior.',source:gh(path),
+      setup:kind==='workflow'?'Review workflow triggers, permissions, secrets references and runner requirements in GitHub.':kind==='website'?'Open the page, inspect its linked data, and test the browser flow. Server features need a running backend.':'Read the source and repository instructions before running or changing it.',
+      inputs_and_outputs:'Not inferred from filename. Inspect source and its tests.',
+      related_candidates:candidates,related_candidates_verified:false,
+      verification:'Inventory presence only. Current executable behavior is not independently certified by this prospectus.',
+      privacy:row.protected?'Protected path: browser source preview disabled.':'Public repository metadata. Owner notes remain browser-local.',
+      next_steps:['Inspect the source and candidate tests.','Record the intended inputs, outputs, dependencies and failure cases.','Run the relevant checks and attach commit-specific evidence before marking complete.']};
+  }
   function fileDialog(row) {
     const d=openDialog(row.path);notice(d,describe(row));notice(d,'You are viewing a file record from the deployed index. GitHub links and previews use current main, which may be newer.');
     const controls=group(link('View on GitHub',gh(row.path)),link('Edit with GitHub',gh(row.path,'edit')),link('Explain with Buddy',promptLink(`Explain ${row.path} for a beginner. Show its purpose, what depends on it, and one safe small change. Read the actual source before making code claims.`)));
     if(row.path.startsWith('.github/workflows/')) controls.append(link('Workflow runs',`${repo}/actions/workflows/${encodeURIComponent(row.path.split('/').pop())}`));
     if(row.path.startsWith('website/') && row.path.endsWith('.html'))controls.append(link('Open page',site(row.path.slice(8))));
+    const prospectus=fileProspectus(row);const overview=el('details');overview.open=true;overview.append(el('summary','File prospectus'),el('p',prospectus.purpose),el('p',prospectus.purpose_basis,'rw-muted'),el('h3','Setup and use'),el('p',prospectus.setup),el('h3','Inputs and outputs'),el('p',prospectus.inputs_and_outputs),el('h3','Verification'),el('p',prospectus.verification));sourceLinks(overview,prospectus.related_candidates);overview.append(button('Download file prospectus',()=>download(row.path.split('/').pop()+'-prospectus.json',JSON.stringify(prospectus,null,2))));d.append(overview);
     d.append(controls);notesEditor(d,'file:'+row.path,row.path,{path:row.path});
     const textFile=/\.(?:md|txt|json|jsonc|js|mjs|cjs|ts|tsx|jsx|py|html|css|yml|yaml|toml|sh|svg|xml|sql|csv|nix)$/.test(row.path);
     if(row.protected){notice(d,'Credential-related path: browser preview is disabled. Manage this file through GitHub and your normal secret controls.');return;}

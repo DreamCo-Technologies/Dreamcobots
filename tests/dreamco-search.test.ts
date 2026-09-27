@@ -131,3 +131,13 @@ test("web search URLs encode one visible query", () => {
   );
   assert.throws(() => buildDreamSearchWebUrl("https://example.com/?q={query}", ""), /required/);
 });
+
+test("personal setup and measured learning pages are searchable with working source references", () => {
+  for (const url of ["buddy-setup-guide.html", "buddy-learning-evidence.html"]) {
+    const document = index.documents.find(item => item.type === "page" && item.url === url);
+    assert.ok(document, `missing public tool: ${url}`);
+    assert.ok(readFileSync(`website/${url}`, "utf8").includes('<title>'));
+    assert.ok(rankDreamSearchDocuments(index.documents, document.title, searchConfig, { type: "page", limit: 10 }).some(result => result.document.url === url));
+    assert.equal(document.evidence, `website/${url}`);
+  }
+});
