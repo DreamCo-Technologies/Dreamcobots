@@ -19,6 +19,7 @@ PYTHON_REQUIREMENT_FILES = (
     "requirements-dev.txt",
     "requirements-tools.txt",
     "requirements-buddy-learning.txt",
+    "huggingface/dreamco-router/requirements.txt",
 )
 
 
@@ -55,6 +56,7 @@ def scan_python_imports(files: list[Path]) -> tuple[set[str], list[str]]:
             syntax_errors.append(f"{relative}:{error.lineno}: {error.msg}")
             continue
         optional_imports: set[str] = set()
+        file_imports: set[str] = set()
         for node in ast.walk(tree):
             if isinstance(node, ast.Try):
                 handles_optional_import = any(
@@ -82,10 +84,10 @@ def scan_python_imports(files: list[Path]) -> tuple[set[str], list[str]]:
                         elif isinstance(body_node, ast.ImportFrom) and body_node.level == 0 and body_node.module:
                             optional_imports.add(body_node.module.split(".")[0])
             if isinstance(node, ast.Import):
-                imports.update(alias.name.split(".")[0] for alias in node.names)
+                file_imports.update(alias.name.split(".")[0] for alias in node.names)
             elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
-                imports.add(node.module.split(".")[0])
-        imports.difference_update(optional_imports)
+                file_imports.add(node.module.split(".")[0])
+        imports.update(file_imports - optional_imports)
     return imports, syntax_errors
 
 

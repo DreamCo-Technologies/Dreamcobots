@@ -5,11 +5,11 @@ import test from "node:test";
 
 import { FleetRuntimeRegistry, fleetExecutionRequestSchema } from "../server/fleet-runtime";
 
-test("instantiates and health-checks all 1,051 fleet profiles", () => {
+test("instantiates and health-checks all 1,051 canonical and 50 supplemental fleet profiles", () => {
   const registry = FleetRuntimeRegistry.fromFile();
   const summary = registry.summary();
-  assert.equal(summary.instances, 1051);
-  assert.equal(summary.ready, 1051);
+  assert.equal(summary.instances, 1101);
+  assert.equal(summary.ready, 1101);
   assert.equal(registry.healthChecks().every((runtime) => runtime.state === "ready"), true);
 });
 
@@ -46,9 +46,9 @@ test("Buddy chooses the strongest declared specialist for a natural-language tas
   });
   assert.equal(result.selected.slug, "gaming-titan");
   assert.ok(result.matchedCapabilities.includes("Game building and modding"));
-  assert.equal(result.coverage.profilesSearched, 1051);
-  assert.equal(result.coverage.samplePromptContractsSearched, 1051);
-  assert.equal(result.coverage.declaredCapabilitiesSearched, 8408);
+  assert.equal(result.coverage.profilesSearched, 1101);
+  assert.equal(result.coverage.samplePromptContractsSearched, 1101);
+  assert.equal(result.coverage.declaredCapabilitiesSearched, 8460);
   assert.equal(result.interactionMode, "direct_task");
   assert.equal(result.planningControlsOptional, true);
   assert.equal(result.modelPlan.mode, "free");
@@ -170,12 +170,12 @@ test("stops before any requested live external action", () => {
 
 test("certifies the repository-controlled end-to-end flow for every bot", () => {
   const report = FleetRuntimeRegistry.fromFile().certifyAllEndToEnd();
-  assert.equal(report.summary.profilesTested, 1051);
-  assert.equal(report.summary.divisionsTested, 45);
-  assert.equal(report.summary.sandboxCertified, 1051);
+  assert.equal(report.summary.profilesTested, 1101);
+  assert.equal(report.summary.divisionsTested, 55);
+  assert.equal(report.summary.sandboxCertified, 1101);
   assert.equal(report.summary.failed, 0);
-  assert.equal(report.summary.declaredCapabilitiesTested, 8408);
-  assert.equal(report.summary.sandboxCapabilityTestsPassed, 8408);
+  assert.equal(report.summary.declaredCapabilitiesTested, 8460);
+  assert.equal(report.summary.sandboxCapabilityTestsPassed, 8460);
   assert.equal(report.summary.sandboxCapabilityTestsFailed, 0);
   assert.equal(report.summary.allDeclaredCapabilitiesTested, true);
   assert.equal(report.summary.repositoryControlledFlowComplete, true);

@@ -8,19 +8,21 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from buddy.learning.benchmark_progress import BenchmarkResult, mastery_ready, progress
 from buddy.learning.learning_history import append_event, capability_trend, summarize
 from tools.record_buddy_benchmark_learning import main as record_main
-import sys
-
-ROOT = Path(__file__).resolve().parents[1]
 OUT_JSON = ROOT / "config" / "generated" / "buddy-learning-proof.json"
 OUT_MD = ROOT / "reports" / "BUDDY_LEARNING_PROOF.md"
-HISTORY = ROOT / "evidence" / "buddy-learning-history.jsonl"
+HISTORY = ROOT / "evidence" / "buddy-learning-proof-history.jsonl"
 
 
 def _digest(path: Path) -> str:
@@ -131,7 +133,7 @@ def main() -> int:
         "",
         "Artifacts:",
         "- `config/generated/buddy-learning-proof.json`",
-        "- `evidence/buddy-learning-history.jsonl`",
+        "- `evidence/buddy-learning-proof-history.jsonl` (synthetic proof only; real learning history is preserved)",
         "- `reports/BUDDY_LEARNING_PROOF.md`",
     ]
     OUT_MD.write_text("\n".join(lines) + "\n", encoding="utf-8")

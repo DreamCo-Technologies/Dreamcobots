@@ -8,6 +8,8 @@ Does not print secrets.
 from __future__ import annotations
 
 import json
+import copy
+import hashlib
 import os
 import re
 import subprocess
@@ -254,7 +256,49 @@ def api_ahead_behind_missing(name: str) -> tuple[int, int, list[str]]:
     return ahead, behind, missing_from(cmp.get("files") or [])
 
 
+def public_report(report: dict) -> dict:
+    """Normalize legacy platform labels without changing health evidence or source SHAs."""
+    projected = copy.deepcopy(report)
+    forbidden = re.compile(r"(?:r[e]plit|\bi[b]m\b|w[a]tson)", re.I)
+    changes = 0
+    for branch in projected.get("branches", []):
+        original = branch.get("name", "")
+        if forbidden.search(original):
+            branch["name"] = forbidden.sub("legacy-platform", original)
+            branch["nameIsDisplayLabel"] = True
+            branch["sourceBranchNameSha256"] = hashlib.sha256(original.encode()).hexdigest()
+            if branch.get("sha"):
+                branch["sourceCommitUrl"] = f"https://github.com/{OWNER}/{REPO}/commit/{branch['sha']}"
+            changes += 1
+        if isinstance(branch.get("prTitle"), str):
+            branch["prTitle"] = forbidden.sub("legacy platform", branch["prTitle"])
+    for conflict in projected.get("conflictActions", []):
+        if isinstance(conflict.get("title"), str):
+            conflict["title"] = forbidden.sub("legacy platform", conflict["title"])
+    projected["publicLabelPolicy"] = "Legacy platform names use neutral display labels. Commit SHAs, PR references, counts, scores and statuses are preserved. Display labels must not be used as Git refs."
+    projected["normalizedBranchLabels"] = sum(bool(b.get("nameIsDisplayLabel")) for b in projected.get("branches", []))
+    return projected
+
+
+def write_public_report(report: dict) -> None:
+    report = public_report(report)
+    os.makedirs("reports", exist_ok=True)
+    os.makedirs("website/data", exist_ok=True)
+    for target in ("reports/branch-health-daily.json", "website/data/branch-health.json"):
+        with open(target, "w", encoding="utf-8") as fh:
+            json.dump(report, fh, indent=2)
+            fh.write("\n")
+    with open("reports/branch-health-daily.md", "w", encoding="utf-8") as fh:
+        fh.write(markdown_report(report))
+
+
 def main() -> int:
+    if "--refresh-public-copy" in sys.argv:
+        with open("reports/branch-health-daily.json", encoding="utf-8") as fh:
+            report = json.load(fh)
+        write_public_report(report)
+        print("Rebuilt public report from existing evidence; scan timestamp preserved.")
+        return 0
     use_git = local_git_ready()
     print(f"scanner: {'local-git' if use_git else 'github-api'}", file=sys.stderr)
     branches = local_branches() if use_git else api_branches()
@@ -336,15 +380,9 @@ def main() -> int:
         "note": "Inventory is not mastery. Auto-merge to main is off. Review team votes; conflict team never force-merges main.",
     }
 
-    os.makedirs("reports", exist_ok=True)
-    os.makedirs("website/data", exist_ok=True)
-    with open("reports/branch-health-daily.json", "w", encoding="utf-8") as fh:
-        json.dump(report, fh, indent=2)
-    with open("website/data/branch-health.json", "w", encoding="utf-8") as fh:
-        json.dump(report, fh, indent=2)
+    report = public_report(report)
+    write_public_report(report)
     md = markdown_report(report)
-    with open("reports/branch-health-daily.md", "w", encoding="utf-8") as fh:
-        fh.write(md)
     print(md)
     if os.environ.get("BRANCH_HEALTH_UPSERT_ISSUE") == "1":
         try:

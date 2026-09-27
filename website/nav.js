@@ -2,6 +2,7 @@
 (function() {
   const current = location.pathname.split('/').pop() || 'index.html';
   const links = [
+    { href: 'repository-guide.html', label: '📚 Start Here' },
     { href: 'dashboard.html', label: '📊 Dashboard' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'buddy-expert-mode.html', label: '🎓 Expert Mode' },
@@ -198,3 +199,12 @@ document.addEventListener('click', function(e) {
   const menu = document.getElementById('nav-more-menu');
   if (menu && !e.target.closest('.nav-more')) menu.classList.remove('open');
 });
+
+// Shared repository controls are loaded once after the page is ready.
+(() => {
+  if (document.querySelector('script[data-repository-actions]')) return;
+  const script = document.createElement('script');
+  script.src = new URL('repository-actions.js', document.currentScript.src).href;
+  script.dataset.repositoryActions = 'true';
+  document.head.appendChild(script);
+})();
