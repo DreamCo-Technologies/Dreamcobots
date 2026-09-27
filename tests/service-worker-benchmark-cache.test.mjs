@@ -99,14 +99,14 @@ function workerHarness() {
   };
 }
 
-test('v60 visitors upgrade nav and fleet data, retire old caches, and keep the new shell offline', async () => {
+test('v61 visitors upgrade nav and fleet data, retire old caches, and keep the new shell offline', async () => {
   const worker = workerHarness();
   const shellName = source.match(/const SHELL_CACHE = '([^']+)'/)[1];
   const runtimeName = source.match(/const RUNTIME_CACHE = '([^']+)'/)[1];
-  assert.notEqual(shellName, 'buddy-shell-v60', 'release must change the worker and shell cache version');
-  assert.notEqual(runtimeName, 'buddy-runtime-v60', 'release must retire the old runtime cache');
-  const oldShell = await worker.caches.open('buddy-shell-v60');
-  const oldRuntime = await worker.caches.open('buddy-runtime-v60');
+  assert.notEqual(shellName, 'buddy-shell-v61', 'release must change the worker and shell cache version');
+  assert.notEqual(runtimeName, 'buddy-runtime-v61', 'release must retire the old runtime cache');
+  const oldShell = await worker.caches.open('buddy-shell-v61');
+  const oldRuntime = await worker.caches.open('buddy-runtime-v61');
   await oldShell.put('./nav.js', new Response('obsolete navigation'));
   await oldRuntime.put('./data/bot-fleet-catalog.json', new Response('{"fleet":"obsolete"}'));
   // Before installation, this visitor reproduces the stale cache-first result.

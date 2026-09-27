@@ -21,6 +21,15 @@ class RepositoryBrowserTests(unittest.TestCase):
  def test_every_page_has_shared_controls(self):
   for p in (ROOT/'website').rglob('*.html'):self.assertTrue(CONNECT.connected(p.read_text()),p.name)
   for name in ('nav.js','desk-chrome.js'):self.assertIn('data-repository-actions',(ROOT/'website'/name).read_text())
+ def test_every_tracked_source_area_refreshes_the_pages_inventory(self):
+  workflow=(ROOT/'.github/workflows/deploy-buddy-pages.yml').read_text()
+  push=workflow.split('  push:',1)[1].split('permissions:',1)[0]
+  self.assertIn('      - main',push)
+  patterns=[json.loads(line.strip()[2:]) for line in push.split('    paths:',1)[1].splitlines() if line.strip().startswith('- ')]
+  paths=subprocess.check_output(['git','ls-files'],cwd=ROOT,text=True).splitlines()
+  for path in paths:
+   self.assertTrue(any(path==pattern or (pattern.endswith('/**') and path.startswith(pattern[:-2])) for pattern in patterns),path)
+  self.assertIn("github.ref == 'refs/heads/main'",workflow)
  def test_all_registered_bots_have_a_resolvable_prospectus(self):
   registry=json.loads((ROOT/'config/master_bot_registry.json').read_text());cache={};seen=set()
   for bot in registry['bots']:

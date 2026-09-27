@@ -129,6 +129,7 @@
       item.append(make('span', label), make('strong', value));
       summary.append(item);
     });
+    const exportButton=make('button','Download workflow prospectus');exportButton.type='button';exportButton.className='btn btn-outline';exportButton.addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify({schema:'dreamco.workflow_prospectus.v1',workflow,observed_run:evidence,truth:'Static configuration and last loaded run evidence; not certification of all outcomes.'},null,2)],{type:'application/json'}));const a=make('a','');a.href=url;a.download=workflow.workflow.split('/').pop()+'-prospectus.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});body.append(exportButton);
     body.append(summary, make('h3', 'Goal'), make('p', workflow.goal || 'Repository operations'), make('h3', 'Purpose'), make('p', workflow.purpose));
 
     body.append(make('h3', 'What happens when it runs'));

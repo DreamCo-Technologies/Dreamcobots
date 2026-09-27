@@ -13,7 +13,7 @@
     "runtime_unknown_workflows": 86,
     "possible_duplicate_groups": 0,
     "possible_duplicate_workflows": 0,
-    "workflows_with_benchmark_commands": 31,
+    "workflows_with_benchmark_commands": 32,
     "goal_counts": {
       "Buddy automation": 19,
       "benchmarks": 12,
@@ -37,7 +37,7 @@
       "security",
       "verification"
     ],
-    "benchmarked_workflows": 31
+    "benchmarked_workflows": 32
   },
   "controls": [
     {
@@ -460,11 +460,9 @@
       "what_happens": [
         "Create evidence directory",
         "Collect run and job metadata",
-        "Download failed job logs",
         "Build failure report and root-cause key",
-        "Upsert one root-cause issue",
-        "Save failure evidence",
-        "Close matching root-cause issues after successful verification"
+        "Do not open GitHub issues",
+        "Save failure evidence"
       ],
       "outputs": [
         "GitHub Actions run log",
@@ -480,12 +478,12 @@
       "runtime_status": "unknown_until_run_evidence_loaded",
       "errors": [],
       "warnings": [],
-      "runner_jobs": 2,
+      "runner_jobs": 1,
       "controls": {
         "permissions_declared": true,
         "concurrency_declared": true,
-        "job_timeouts_declared": 2,
-        "runner_jobs": 2,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
         "artifacts_declared": true
       },
       "upgrades": [
@@ -1629,6 +1627,7 @@
       "what_happens": [
         "Existing learning regression (when pytest extra present)",
         "Generate fail-to-pass learning proof",
+        "Verify actual local parameter training",
         "Unit test the proof pack",
         "Summary"
       ],
@@ -1636,7 +1635,9 @@
         "GitHub Actions run log",
         "declared downloadable or deployment artifact"
       ],
-      "benchmark_commands": [],
+      "benchmark_commands": [
+        "tools/verify_buddy_parameter_learning.py"
+      ],
       "triggers": [
         "manual",
         "push",

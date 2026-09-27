@@ -1,0 +1,104 @@
+{
+  "schema": "dreamco.parameter_learning_verification.v1",
+  "generated_at": "2026-09-27T19:38:32.874295+00:00",
+  "status": "passed",
+  "verified": true,
+  "summary": "Verified a small local character model: 16,302 parameters changed and training loss fell from 4.3566 to 2.8228. No held-out performance or improvement to Buddy chat has been demonstrated.",
+  "source_commit": "162605ad54bbc3332b40888a9157d32efcf4da5b",
+  "source_hashes": {
+    "buddy/learning/note_model.py": "6babe79b071b68e7c51678b51a6b7931ee3b667b4284efb7e161c699e2d4d909",
+    "buddy/learning/own_versions.jsonl": "02bc4a2c7e87e731e4d3e28ae08604103c1186db0a8e50516575e6cf239c2354",
+    "tools/verify_buddy_parameter_learning.py": "7ec030dcf234c900053cc4c5b3413ce73b66ca9da0849c4311b7e0f601a4f31b"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "numpy": "2.3.5"
+  },
+  "algorithm": {
+    "name": "Character embeddings and linear softmax with minibatch gradient descent",
+    "context_characters": 12,
+    "embedding_width": 16,
+    "vocabulary_characters": 78,
+    "parameter_count": 16302,
+    "batch_size": 96,
+    "learning_rate": 0.5,
+    "steps": 80,
+    "seed": 1
+  },
+  "training_report": {
+    "notes": 600,
+    "characters": 134429,
+    "steps": 80,
+    "start_loss": 4.3566,
+    "end_loss": 2.8228,
+    "loss_dropped": true,
+    "weights_trained": true,
+    "frontier_model": false,
+    "source": "buddy/learning/own_versions.jsonl",
+    "rule": "Trained on the own-version lines only. The source pages were not in the training text. This is not a frontier model."
+  },
+  "parameter_l2_changes": {
+    "embed": 3.26162332379148,
+    "weight": 3.4801048472466887,
+    "bias": 4.275409783175098
+  },
+  "fixed_training_sample": {
+    "sample_count": 256,
+    "before": {
+      "cross_entropy": 4.3566543962626145,
+      "next_character_accuracy": 0.00390625
+    },
+    "after": {
+      "cross_entropy": 2.844898782214472,
+      "next_character_accuracy": 0.2265625
+    },
+    "held_out": false
+  },
+  "checks": {
+    "all_parameter_arrays_changed": true,
+    "fixed_training_loss_decreased": true,
+    "minibatch_training_loss_decreased": true,
+    "checkpoint_roundtrip_equal": true,
+    "protected_files_unchanged": true
+  },
+  "checkpoint_sha256": "a912ed752f58cb9b846a642f8d342236f990ec5fd1adc66e14e4334aed17b439",
+  "temporary_checkpoint_retained": false,
+  "protected_files": [
+    "buddy/learning/note_model.npz",
+    "website/data/note-model.json",
+    "evidence/buddy-learning-history.jsonl",
+    "evidence/buddy-learning-proof-history.jsonl"
+  ],
+  "boundaries": {
+    "input": "Existing template-derived own_version note strings only",
+    "webpages_read_by_this_run": 0,
+    "private_chat_exports_ingested": false,
+    "network_requests": 0,
+    "paid_jobs": 0,
+    "holdout_evaluated": false,
+    "buddy_chat_model_updated": false,
+    "frontier_capability_proven": false
+  },
+  "records": [
+    {
+      "title": "Real parameter updates",
+      "result": "16,302 parameters across embedding, output-weight, and bias arrays; all arrays changed: True.",
+      "limit": "This is a tiny local next-character model, not the model powering Buddy chat."
+    },
+    {
+      "title": "Measured training loss",
+      "result": "4.3566 \u2192 2.8228 over 80 training steps; checkpoint roundtrip equal: True.",
+      "limit": "Training-set loss only. No held-out evaluation, new-task generalization, or leaderboard comparison was performed."
+    },
+    {
+      "title": "Fixed training-sample check",
+      "result": "The same 256 training windows scored 4.3567 \u2192 2.8449 cross-entropy.",
+      "limit": "These examples came from the training corpus and are not an independent test set."
+    },
+    {
+      "title": "Source and preservation",
+      "result": "Used 600 existing template-derived notes; tracked weights and histories unchanged: True.",
+      "limit": "Note count is not a count of webpages read or topics mastered. Temporary training artifacts were removed after verification."
+    }
+  ]
+}

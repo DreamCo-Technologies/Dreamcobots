@@ -36,6 +36,7 @@ def main()->int:
     work=json.loads(WORK.read_text()) if WORK.exists() else {'occupations':[],'tasks':[],'source':{'status':'not_loaded'}}
     workers=[]
     for bot in unified.get('canonical_bots',[]): workers.append({'worker_id':bot['slug'],'worker_type':'canonical_bot','source':bot['source'],'status':bot['status']})
+    for bot in unified.get('supplemental_bots',[]): workers.append({'worker_id':bot['slug'],'worker_type':'supplemental_bot','source':bot['source'],'status':'supplemental_sandbox_only','production_verified':False})
     for bot in unified.get('legacy_candidates',[]): workers.append({'worker_id':bot.get('slug') or bot['source'],'worker_type':'legacy_candidate','source':bot['source'],'status':bot['status']})
     for occ in work.get('occupations',[]): workers.append({'worker_id':occ['worker_slug'],'worker_type':'occupation_specialist','source':'O*NET','status':'sandbox_only'})
     for task in work.get('tasks',[]): workers.append({'worker_id':task['worker_slug'],'worker_type':'task_specialist','source':'O*NET','status':'sandbox_only'})
@@ -43,6 +44,7 @@ def main()->int:
       'schema':'dreamco.maximum_sandbox_matrix.v2',
       'worker_count':len(workers),
       'canonical_workers':sum(w['worker_type']=='canonical_bot' for w in workers),
+      'supplemental_workers':sum(w['worker_type']=='supplemental_bot' for w in workers),
       'legacy_candidate_workers':sum(w['worker_type']=='legacy_candidate' for w in workers),
       'occupation_workers':sum(w['worker_type']=='occupation_specialist' for w in workers),
       'task_workers':sum(w['worker_type']=='task_specialist' for w in workers),

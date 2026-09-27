@@ -18,13 +18,15 @@ def lane(worker_id:str,max_lanes:int)->int:
     return int(hashlib.sha256(worker_id.encode()).hexdigest()[:8],16)%max_lanes
 
 def main()->int:
-    unified=load(UNIFIED,{'canonical_bots':[],'legacy_candidates':[]})
+    unified=load(UNIFIED,{'canonical_bots':[],'supplemental_bots':[],'legacy_candidates':[]})
     work=load(WORK,{'occupations':[],'tasks':[]})
     public=load(PUBLIC,{'roles':[]})
     max_lanes=int(SUP['coordination']['maximum_parallel_lanes'])
     workers=[]
     for bot in unified.get('canonical_bots',[]):
         wid=bot['slug']; workers.append({'worker_id':wid,'worker_type':'canonical_bot','owner_division':bot['division'],'lane':lane(wid,max_lanes),'runtime_state':'eligible_for_supervised_runtime','live_boundary':'approval_gated_for_consequential_actions'})
+    for bot in unified.get('supplemental_bots',[]):
+        wid=bot['slug']; workers.append({'worker_id':wid,'worker_type':'supplemental_bot','owner_division':bot['division'],'lane':lane(wid,max_lanes),'runtime_state':'sandbox_only','live_boundary':'not_live_until_outcome_evidence_and_owner_approval','production_verified':False})
     for row in unified.get('legacy_candidates',[]):
         wid=row.get('slug') or row['source']; workers.append({'worker_id':wid,'worker_type':'legacy_candidate','owner_division':'pending_owner_review','lane':lane(wid,max_lanes),'runtime_state':'sandbox_only','live_boundary':'not_live_until_promotion'})
     for occ in work.get('occupations',[]):
