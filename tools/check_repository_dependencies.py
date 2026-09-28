@@ -19,8 +19,10 @@ PYTHON_REQUIREMENT_FILES = (
     "requirements-dev.txt",
     "requirements-tools.txt",
     "requirements-buddy-learning.txt",
+    "requirements-media.txt",
     "huggingface/dreamco-router/requirements.txt",
 )
+IMPORT_ALIASES = {"pillow": {"pil"}, "chatterbox_tts": {"chatterbox"}}
 
 
 def read_object(path: Path) -> dict[str, Any]:
@@ -129,6 +131,7 @@ def declared_python_roots() -> tuple[set[str], list[str]]:
             root = package.strip().replace("-", "_").lower()
             if root:
                 declared.add(root)
+                declared.update(IMPORT_ALIASES.get(root, ()))
     return declared, manifests
 
 
