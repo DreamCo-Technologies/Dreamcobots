@@ -106,3 +106,17 @@ def test_no_false_positive_on_unmarked():
     img = (np.random.RandomState(0).rand(128, 128, 3) * 255).astype(np.uint8)
     assert not prov.detect_image_watermark(img, "k")[0]
     assert not prov.detect_audio_watermark(prov.watermark_audio(x, "other"), "k")[0]
+
+
+def test_connectors_do_not_download_weights():
+    from buddy.media.connectors import CONNECTORS, ConnectorMissing, KokoroBackend, first_voice_clone, probe
+
+    rows = probe()
+    assert len(rows) == len(CONNECTORS)
+    assert all(row["weights_downloaded"] is False and row["sandbox_verified"] is False for row in rows)
+    kokoro = next(row for row in rows if row["id"] == "kokoro")
+    assert kokoro["clones"] is False
+    with pytest.raises(ConnectorMissing):
+        KokoroBackend().synthesize("hello", "ref.wav")
+    with pytest.raises(ConnectorMissing):
+        first_voice_clone()

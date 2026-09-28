@@ -21,7 +21,8 @@ from PIL.PngImagePlugin import PngInfo
 from . import provenance as prov
 from .consent import ConsentRegistry
 from .memory_guard import ModelSlot
-from .voice import ChatterboxBackend, prepare_reference, synthesize_long
+from .connectors import first_voice_clone, probe
+from .voice import prepare_reference, synthesize_long
 
 
 @dataclass
@@ -55,7 +56,10 @@ class BuddyMedia:
         return kp.read_text().strip()
 
     def _voice_backend(self):
-        self._voice = self._voice or ChatterboxBackend()
+        if self._voice is None:
+            self._voice = first_voice_clone()
+        if getattr(self._voice, "clones", True) is False:
+            raise RuntimeError("This connector does not clone a voice.")
         return self._voice
 
     def _image_backend(self, mode: str):
@@ -133,6 +137,8 @@ class BuddyMedia:
             "voice_clone": {"stage": "implemented", "sandbox_verified": False, "benchmark_verified": False},
             "image_clone": {"stage": "implemented", "sandbox_verified": False, "benchmark_verified": False},
             "loaded_model": getattr(self.slot.loaded, "name", None),
+            "connectors": probe(),
+            "weights_downloaded": False,
         }
 
     def close(self) -> None:
