@@ -1,5 +1,5 @@
 (function () {
-  const local = ["world map", "game", "idea", "dataset", "data set", "study", "notes", "benchmark", "guardrail"];
+  const local = ["world map", "game", "idea", "dataset", "data set", "study", "notes", "benchmark", "guardrail", "content"];
   const middlemen = ["email", "stripe", "openai", "claude", "grok", "charge", "wrapper"];
   const pages = {
     "world map": "world-map.html",
@@ -10,7 +10,8 @@
     study: "learning-methods.html",
     notes: "note-model.html",
     benchmark: "benchmarks.html",
-    guardrail: "guardrails.html"
+    guardrail: "guardrails.html",
+    content: "content-desk.html"
   };
 
   document.getElementById("shop-form").addEventListener("submit", function (event) {

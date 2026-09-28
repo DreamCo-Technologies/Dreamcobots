@@ -13,6 +13,7 @@ LOCAL = {
     "notes": "website/note-model.html",
     "benchmark": "website/benchmarks.html",
     "guardrail": "website/guardrails.html",
+    "content": "website/content-desk.html",
 }
 MIDDLEMEN = ("email", "stripe", "openai", "claude", "grok", "charge", "wrapper")
 
