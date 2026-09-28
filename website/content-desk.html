@@ -28,12 +28,19 @@
       <button class="btn btn-outline" id="poster" type="button">Draw a poster</button></p>
     <canvas id="poster-board" width="640" height="360" hidden></canvas>
     <form id="clone-form" class="card">
-      <p>Voice or image copy</p>
+      <p>Voice or image permission. The owner writes it. Buddy does not call ElevenLabs and does not train a model.</p>
+      <p><label>Owner <input id="clone-owner" required placeholder="Ada"></label></p>
+      <p><label>Who may use it <input id="clone-user" placeholder="Bo, or leave blank for the owner"></label></p>
       <p><label>Kind <select id="clone-kind"><option value="voice">Voice</option><option value="image">Image</option></select></label></p>
-      <p><label><input id="clone-mine" type="checkbox"> This sample is mine</label></p>
-      <p><label><input id="clone-consent" type="checkbox"> I agree it stays a note on this device</label></p>
-      <button class="btn btn-outline" type="submit">Check the copy</button>
-      <p id="clone-status">No copy checked yet.</p>
+      <p><label>Owner's words <input id="clone-words" required placeholder="I Ada allow Bo to use my image"></label></p>
+      <button class="btn btn-outline" type="submit">Record permission</button>
+      <p id="clone-status">No permission recorded yet. No model is trained.</p>
+      <p><label>Original file, optional <input id="clone-file" type="file" accept="audio/*,image/*"></label></p>
+      <p><button class="btn btn-outline" id="clone-play" type="button">Play or show the original</button>
+        <button class="btn btn-outline" id="clone-revoke" type="button">Revoke permission</button></p>
+      <audio id="clone-audio" controls hidden></audio>
+      <img id="clone-photo" alt="" hidden>
+      <ul id="clone-gap"></ul>
     </form>
   </main>
   <script src="content-desk.js"></script>

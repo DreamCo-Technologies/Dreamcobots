@@ -146,13 +146,99 @@
     });
     show({ accepted: true, posted: false, video_generated: false, rows: rows, reason: rows.length + " types written as one line each. None were filmed or posted." });
   });
-  function clone(kind, mine, consent) {
-    const base = { kind: kind, trained: false, charged: false, usd: 0, copied_another_person: false };
+  function grant(owner, other, kind, statement) {
+    const ownerName = String(owner || "").replace(/\s+/g, " ").trim().slice(0, 80);
+    const otherName = String(other || "").replace(/\s+/g, " ").trim().slice(0, 80) || ownerName;
+    const words = String(statement || "").replace(/\s+/g, " ").trim().toLowerCase().slice(0, 80);
+    const base = { kind: kind, trained: false, rendered: false, elevenlabs_called: false, revoked: false };
     if (kind !== "voice" && kind !== "image") return Object.assign({ accepted: false, reason: "Choose voice or image." }, base);
-    if (mine !== true || consent !== true) return Object.assign({ accepted: false, reason: "Buddy will not copy a voice or a face unless it is yours and you agree. It still will not train a clone." }, base);
-    return Object.assign({ accepted: true, reason: "This is a note that the sample is yours. No voice model and no face model is trained." }, base);
+    if (ownerName.length < 2 || words.indexOf(ownerName.toLowerCase()) === -1 || words.indexOf("allow") === -1) {
+      return Object.assign({ accepted: false, reason: "The owner has to write the permission, including their name and the word allow." }, base);
+    }
+    if (words.indexOf(otherName.toLowerCase()) === -1) return Object.assign({ accepted: false, reason: "Name the person who may use it, in the owner's own words." }, base);
+    if (/\b(child|kid|minor|teen)\b/.test(words)) return Object.assign({ accepted: false, reason: "Buddy will not take a child's voice or image." }, base);
+    return Object.assign({ accepted: true, owner: ownerName, user: otherName, reason: "Permission is recorded. No voice model and no image model is in this repository, so nothing is cloned." }, base);
   }
 
+  const grantKey = "dreamco-content-grants";
+  function savedGrants() {
+    try {
+      const rows = JSON.parse(localStorage.getItem(grantKey) || "[]");
+      return Array.isArray(rows) ? rows : [];
+    } catch (error) {
+      return [];
+    }
+  }
+  function useGrant(grants, owner, other, kind) {
+    const ownerName = String(owner || "").replace(/\s+/g, " ").trim().slice(0, 80);
+    const otherName = String(other || "").replace(/\s+/g, " ").trim().slice(0, 80) || ownerName;
+    const match = grants.find(function (item) {
+      return item.accepted && !item.revoked && item.owner === ownerName && item.user === otherName && item.kind === kind;
+    });
+    if (!match) return { accepted: false, trained: false, rendered: false, reason: "That person has not allowed this use." };
+    return { accepted: true, trained: false, rendered: false, elevenlabs_called: false, reason: match.reason };
+  }
+
+  document.getElementById("clone-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const result = grant(document.getElementById("clone-owner").value, document.getElementById("clone-user").value, document.getElementById("clone-kind").value, document.getElementById("clone-words").value);
+    if (result.accepted) {
+      const rows = savedGrants();
+      rows.push(result);
+      localStorage.setItem(grantKey, JSON.stringify(rows));
+    }
+    document.getElementById("clone-status").textContent = result.reason;
+  });
+  document.getElementById("clone-play").addEventListener("click", function () {
+    const kind = document.getElementById("clone-kind").value;
+    const allowed = useGrant(savedGrants(), document.getElementById("clone-owner").value, document.getElementById("clone-user").value, kind);
+    const file = document.getElementById("clone-file").files[0];
+    if (!allowed.accepted) {
+      document.getElementById("clone-status").textContent = allowed.reason;
+      return;
+    }
+    if (!file) {
+      document.getElementById("clone-status").textContent = "Permission is not a clone. Add the owner's original file. Buddy cannot invent the voice or the face.";
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    if (kind === "voice" && file.type.indexOf("audio/") === 0) {
+      const audio = document.getElementById("clone-audio");
+      audio.hidden = false;
+      audio.src = url;
+      audio.play();
+      document.getElementById("clone-status").textContent = "Playing the original recording. It was not cloned.";
+      return;
+    }
+    if (kind === "image" && file.type.indexOf("image/") === 0) {
+      const photo = document.getElementById("clone-photo");
+      photo.hidden = false;
+      photo.src = url;
+      document.getElementById("clone-status").textContent = "Showing the original photo. It was not cloned.";
+      return;
+    }
+    document.getElementById("clone-status").textContent = "That file does not match the kind you chose.";
+  });
+  document.getElementById("clone-revoke").addEventListener("click", function () {
+    const ownerName = document.getElementById("clone-owner").value.replace(/\s+/g, " ").trim().slice(0, 80);
+    const otherName = document.getElementById("clone-user").value.replace(/\s+/g, " ").trim().slice(0, 80) || ownerName;
+    const kind = document.getElementById("clone-kind").value;
+    const rows = savedGrants();
+    let found = false;
+    rows.forEach(function (item) {
+      if (item.owner === ownerName && item.user === otherName && item.kind === kind) {
+        item.revoked = true;
+        found = true;
+      }
+    });
+    localStorage.setItem(grantKey, JSON.stringify(rows));
+    document.getElementById("clone-status").textContent = found ? "Permission revoked." : "No matching permission to revoke.";
+  });
+  ["A voice model file is not in this repository.", "An image model file is not in this repository.", "ElevenLabs is not called.", "The release file says this repository is not production ready.", "Social posts are written here. Buddy does not log into the networks."].forEach(function (line) {
+    const item = document.createElement("li");
+    item.textContent = line;
+    document.getElementById("clone-gap").append(item);
+  });
   document.getElementById("speak").addEventListener("click", function () {
     if (!latest || !latest.script || !window.speechSynthesis) return;
     window.speechSynthesis.cancel();
@@ -170,11 +256,6 @@
     pen.fillText(latest.script[0].slice(0, 42), 32, 160);
     pen.font = "16px sans-serif";
     pen.fillText("Drawn here. Not a person's face. $0.", 32, 210);
-  });
-  document.getElementById("clone-form").addEventListener("submit", function (event) {
-    event.preventDefault();
-    const result = clone(document.getElementById("clone-kind").value, document.getElementById("clone-mine").checked, document.getElementById("clone-consent").checked);
-    document.getElementById("clone-status").textContent = result.reason;
   });
   document.getElementById("save").addEventListener("click", function () {
     if (!latest || !latest.accepted) return;
