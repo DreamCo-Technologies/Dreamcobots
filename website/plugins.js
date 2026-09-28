@@ -23,7 +23,11 @@
       }
       found.forEach(function (row) {
         const item = document.createElement("li");
-        item.textContent = row.kind + ": " + (row.action ? row.action + " / " : "") + row.name + " (" + row.domain + "). Not installed.";
+        item.textContent = row.kind + ": " + (row.action ? row.action + " / " : "") + row.name + " (" + row.domain + "). Not installed. ";
+        const link = document.createElement("a");
+        link.href = "step-models.html?task=" + encodeURIComponent(row.action ? row.action + " " + row.name : row.name);
+        link.textContent = "Steps";
+        item.append(link);
         list.append(item);
       });
     }
