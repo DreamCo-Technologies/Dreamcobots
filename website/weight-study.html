@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Weight study</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Weight study</h1>
+    <p id="lead">Loading open-weight models. Nothing is downloaded here.</p>
+    <table>
+      <thead><tr><th>Model</th><th>Access</th><th>Best dtype on 8GB</th><th>Downloaded</th><th>Benchmarked</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p>Study a file you already have with <code>python3 -m buddy.weights.study</code> on your computer. The page cannot see your disk.</p>
+  </main>
+  <script>
+    fetch("data/weight-study.json").then(function (response) { return response.json(); }).then(function (data) {
+      document.getElementById("lead").textContent = data.models.length + " open-weight models. None are downloaded or benchmarked. A 7B model in 16-bit does not fit in 8GB; 4-bit can. One model at a time.";
+      const body = document.getElementById("rows");
+      data.models.forEach(function (row) {
+        const line = document.createElement("tr");
+        [row.repo, row.access + " · " + row.license, row.efficient_dtype_for_8gb, "no", "no"].forEach(function (text) {
+          const cell = document.createElement("td");
+          cell.textContent = text;
+          line.append(cell);
+        });
+        body.append(line);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -18,6 +18,7 @@ CONNECTORS = (
     {"id": "sd15-ip-adapter", "kind": "image", "clones": True, "module": "diffusers", "model": "stable-diffusion-v1-5 + h94/IP-Adapter", "license": "CreativeML Open RAIL-M"},
     {"id": "instantid", "kind": "image", "clones": True, "module": "diffusers", "model": "InstantX/InstantID", "license": "read the model card; too large for 8GB"},
     {"id": "mflux", "kind": "image", "clones": False, "module": "mflux", "model": "FLUX.1-schnell 4-bit", "license": "FLUX non-commercial terms may apply"},
+    {"id": "huggingface-hub", "kind": "weights", "clones": False, "module": "huggingface_hub", "model": "user-selected open weights", "license": "per model card"},
 )
 
 
