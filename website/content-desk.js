@@ -79,6 +79,7 @@
       shots: ["Three seconds on the problem, tight on the work.", "One step, close enough to copy.", "The result, then the line you want remembered."],
       lines: ["This is " + topic + ", in one step.", "Do this part first.", "That is the whole piece."],
       caption: clip(body, 2200),
+      cost: { usd: 0, charged: false, paid_api: false, voice_clone_trained: false, image_clone_trained: false },
       schedule: schedule,
       link: cleanLink,
       reason: "Buddy wrote a " + chosen.name + " and one draft per network. It did not film, render, or publish it."
@@ -144,6 +145,36 @@
       return { id: item.id, name: item.name, line: beats(item.group, item.name, topic)[0] };
     });
     show({ accepted: true, posted: false, video_generated: false, rows: rows, reason: rows.length + " types written as one line each. None were filmed or posted." });
+  });
+  function clone(kind, mine, consent) {
+    const base = { kind: kind, trained: false, charged: false, usd: 0, copied_another_person: false };
+    if (kind !== "voice" && kind !== "image") return Object.assign({ accepted: false, reason: "Choose voice or image." }, base);
+    if (mine !== true || consent !== true) return Object.assign({ accepted: false, reason: "Buddy will not copy a voice or a face unless it is yours and you agree. It still will not train a clone." }, base);
+    return Object.assign({ accepted: true, reason: "This is a note that the sample is yours. No voice model and no face model is trained." }, base);
+  }
+
+  document.getElementById("speak").addEventListener("click", function () {
+    if (!latest || !latest.script || !window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(new SpeechSynthesisUtterance(latest.script.join(" ")));
+  });
+  document.getElementById("poster").addEventListener("click", function () {
+    if (!latest || !latest.script) return;
+    const board = document.getElementById("poster-board");
+    const pen = board.getContext("2d");
+    board.hidden = false;
+    pen.fillStyle = "#142033";
+    pen.fillRect(0, 0, board.width, board.height);
+    pen.fillStyle = "#f4f7fb";
+    pen.font = "28px sans-serif";
+    pen.fillText(latest.script[0].slice(0, 42), 32, 160);
+    pen.font = "16px sans-serif";
+    pen.fillText("Drawn here. Not a person's face. $0.", 32, 210);
+  });
+  document.getElementById("clone-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const result = clone(document.getElementById("clone-kind").value, document.getElementById("clone-mine").checked, document.getElementById("clone-consent").checked);
+    document.getElementById("clone-status").textContent = result.reason;
   });
   document.getElementById("save").addEventListener("click", function () {
     if (!latest || !latest.accepted) return;

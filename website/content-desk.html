@@ -11,7 +11,7 @@
   <script src="nav.js"></script>
   <main class="container">
     <h1>Content desk</h1>
-    <p>Pick a content type. Buddy writes that script and fits it to 12 networks. The list has 118 types, including reels, commercials, music videos, posts, and poems. Nothing is filmed or posted.</p>
+    <p>The script costs $0 here. Buddy does not bill you. Play uses this browser's voice, not a cloned person. A poster is drawn type, not a copied face.</p>
     <form id="content-form" class="card">
       <p><label>What is it about? <input id="subject" required placeholder="how to frost a cake"></label></p>
       <p><label>Type <select id="kind"></select></label></p>
@@ -23,7 +23,18 @@
     <p id="learned">Loading the format rules.</p>
     <ul id="drafts"></ul>
     <pre id="packet">Nothing made yet.</pre>
-    <p><button class="btn btn-outline" id="save" type="button">Download</button></p>
+    <p><button class="btn btn-outline" id="save" type="button">Download</button>
+      <button class="btn btn-outline" id="speak" type="button">Play in this browser</button>
+      <button class="btn btn-outline" id="poster" type="button">Draw a poster</button></p>
+    <canvas id="poster-board" width="640" height="360" hidden></canvas>
+    <form id="clone-form" class="card">
+      <p>Voice or image copy</p>
+      <p><label>Kind <select id="clone-kind"><option value="voice">Voice</option><option value="image">Image</option></select></label></p>
+      <p><label><input id="clone-mine" type="checkbox"> This sample is mine</label></p>
+      <p><label><input id="clone-consent" type="checkbox"> I agree it stays a note on this device</label></p>
+      <button class="btn btn-outline" type="submit">Check the copy</button>
+      <p id="clone-status">No copy checked yet.</p>
+    </form>
   </main>
   <script src="content-desk.js"></script>
 </body>

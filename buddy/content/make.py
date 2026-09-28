@@ -67,6 +67,26 @@ def beats(group: str, name: str, topic: str) -> list[str]:
     ]
 
 
+def cost() -> dict:
+    return {
+        "usd": 0,
+        "charged": False,
+        "paid_api": False,
+        "voice_clone_trained": False,
+        "image_clone_trained": False,
+        "reason": "Written on this machine. Buddy does not bill you and does not call a paid model.",
+    }
+
+
+def clone(kind: str, mine: bool, consent: bool) -> dict:
+    base = {"kind": kind, "trained": False, "charged": False, "usd": 0, "copied_another_person": False}
+    if kind not in {"voice", "image"}:
+        return {**base, "accepted": False, "reason": "Choose voice or image."}
+    if mine is not True or consent is not True:
+        return {**base, "accepted": False, "reason": "Buddy will not copy a voice or a face unless it is yours and you agree. It still will not train a clone."}
+    return {**base, "accepted": True, "reason": "This is a note that the sample is yours. No voice model and no face model is trained."}
+
+
 def lineup(subject: str) -> dict:
     topic = " ".join((subject or "").split())[:160]
     if len(topic) < 3:
@@ -125,6 +145,7 @@ def packet(subject: str, when: str = "", link: str = "", kind: str = "feed-post"
             "That is the whole piece.",
         ],
         "caption": _clip(body, 2200),
+        "cost": cost(),
         "schedule": schedule,
         "link": clean_link,
         "reason": f"Buddy wrote a {chosen['name']} and one draft per network. It did not film, render, or publish it.",
@@ -143,4 +164,8 @@ if __name__ == "__main__":
     assert poem["accepted"] and "borrowed thread" in poem["script"][-1]
     assert packet("how to frost a cake", kind="nope")["accepted"] is False
     assert packet("no")["accepted"] is False
-    print(json.dumps({"platforms": len(made["platforms"]), "types": board["count"], "posted": False, "video_generated": False}))
+    assert made["cost"]["usd"] == 0 and made["cost"]["charged"] is False and made["cost"]["paid_api"] is False
+    own = clone("voice", True, True)
+    other = clone("image", False, True)
+    assert own["accepted"] and own["trained"] is False and other["accepted"] is False and other["copied_another_person"] is False
+    print(json.dumps({"platforms": len(made["platforms"]), "types": board["count"], "usd": 0, "clone_trained": False}))
