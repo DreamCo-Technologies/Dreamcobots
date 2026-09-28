@@ -25,6 +25,7 @@
     { href: 'buddy-operating-system.html', label: '🧬 Buddy AGI OS' },
     { href: 'success.html', label: '📈 Success Center' },
     { href: 'search.html', label: '🔎 DreamSearch' },
+    { href: 'clone-blueprint.html', label: 'Clone blueprint' },
     { href: 'content-desk.html', label: 'Content desk' },
     { href: 'studio.html', label: '🎮 Creative Studio' },
     { href: 'practice.html', label: '🎤 Practice Lab' },
