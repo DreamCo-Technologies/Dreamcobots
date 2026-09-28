@@ -69,7 +69,7 @@ def download(repo: str, allow: bool = False, folder: Path | None = None) -> dict
     root = Path(__file__).resolve().parents[2]
     if repo not in known:
         return {"downloaded": False, "reason": "That repo is not in the shared open-weight catalog."}
-    if folder is not None and root in Path(folder).resolve().parents or Path(folder).resolve() == root:
+    if folder is not None and (root in Path(folder).resolve().parents or Path(folder).resolve() == root):
         return {"downloaded": False, "reason": "A user's weights stay on that user's computer, not in the shared repository."}
     if not allow:
         return {"downloaded": False, "reason": "Each user passes allow=True on their own computer. This call does not download."}
