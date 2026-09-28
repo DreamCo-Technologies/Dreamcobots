@@ -19,6 +19,7 @@ PYTHON_REQUIREMENT_FILES = (
     "requirements-dev.txt",
     "requirements-tools.txt",
     "requirements-buddy-learning.txt",
+    "requirements-media.txt",
     "huggingface/dreamco-router/requirements.txt",
 )
 
@@ -129,6 +130,7 @@ def declared_python_roots() -> tuple[set[str], list[str]]:
             root = package.strip().replace("-", "_").lower()
             if root:
                 declared.add(root)
+                declared.update({"pillow": {"pil"}, "chatterbox_tts": {"chatterbox"}}.get(root, set()))
     return declared, manifests
 
 

@@ -1,7 +1,7 @@
 # Bot Production Readiness
 
-Generated: `2026-09-27T12:02:15.128035+00:00`
-Mode: **apply**
+Generated: `2026-09-28T12:49:26.365090+00:00`
+Mode: **check**
 
 ## Summary
 
@@ -9,7 +9,7 @@ Mode: **apply**
 - Bots scanned: **1101**
 - Fields filled: **0**
 - Markdown profiles created: **0**
-- Markdown profiles updated: **1101**
+- Markdown profiles updated: **0**
 - Division totals fixed: **0**
 - Bots missing required fields (before fill): **0**
 - Bots marked production_ready=true: **0**

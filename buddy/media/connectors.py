@@ -59,7 +59,7 @@ class F5Backend:
     def load(self) -> None:
         try:
             from f5_tts.api import F5TTS
-        except Exception as exc:
+        except ImportError as exc:
             raise ConnectorMissing("f5-tts is not installed") from exc
         self._m = F5TTS()
 
@@ -85,7 +85,7 @@ class OpenVoiceBackend:
     def load(self) -> None:
         try:
             from openvoice.api import ToneColorConverter
-        except Exception as exc:
+        except ImportError as exc:
             raise ConnectorMissing("openvoice is not installed") from exc
         if not self.checkpoint:
             raise ConnectorMissing("OpenVoice needs a local checkpoint path. This connector does not download one.")
@@ -110,7 +110,7 @@ class KokoroBackend:
     def load(self) -> None:
         try:
             import kokoro  # noqa: F401
-        except Exception as exc:
+        except ImportError as exc:
             raise ConnectorMissing("kokoro is not installed") from exc
 
     def unload(self) -> None:

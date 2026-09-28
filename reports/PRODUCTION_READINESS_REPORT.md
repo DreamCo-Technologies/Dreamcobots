@@ -1,7 +1,7 @@
 # Production Readiness Report
 
-- Commit: `0a496c5b1df05fbbe43614a2209ffd7a0c21bcfa`
-- Generated: `2026-09-28T04:22:39.869925+00:00`
+- Commit: `bbce95083d483afaec205ec1609cbf8716783f09`
+- Generated: `2026-09-28T12:46:42.573650+00:00`
 - Release status: `external_config_required`
 - Runtime checks: external_config_required=1, pass=12
 

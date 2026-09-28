@@ -68,12 +68,20 @@ def assign_tokens(affinities: list[list[float]], top_k: int, capacity_factor: fl
     }
 
 
-def mix_routes(routes: list[RouteSpec], quality_floor: float) -> dict:
+def mix_routes(routes: list[RouteSpec], quality_floor: float, us_preference: float = 1.25) -> dict:
+    """Apply a 25% relative preference to eligible US routes, without bypassing quality.
+
+    The preference multiplies softmax odds, rather than fabricating a higher
+    quality score. Set it to 1 for neutral routing.
+    """
+    if not math.isfinite(us_preference) or us_preference <= 0:
+        raise ValueError("us_preference must be finite and positive")
     eligible = [r for r in routes if r.quality >= quality_floor]
-    if not eligible:
-        eligible = routes[:]
-    scores = [r.quality / max(r.cost, 1e-6) for r in eligible]
-    weights = softmax(scores)
+    scores = [
+        r.quality / max(r.cost, 1e-6) + (math.log(us_preference) if r.us_controlled else 0)
+        for r in eligible
+    ]
+    weights = softmax(scores) if scores else []
     return {
         "quality_floor": quality_floor,
         "mix": [

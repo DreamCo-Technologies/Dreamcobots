@@ -19,20 +19,35 @@ def names_urls(path: Path) -> tuple[set[str], set[str]]:
 
 
 def main() -> int:
-    old_names, old_urls = names_urls(OLD)
+    canonical = {}
+    for path in sorted((ROOT / "config").glob("buddy-study-resources-*.json")):
+        if path == NEW:
+            continue
+        for row in json.loads(path.read_text(encoding="utf-8"))["resources"]:
+            canonical[row[0]] = row
     new = json.loads(NEW.read_text(encoding="utf-8"))
     rows = new["resources"]
-    if len(rows) != 100:
-        raise SystemExit(f"expected 100 resources, got {len(rows)}")
-    ids = [row[0] for row in rows]
-    if ids != list(range(1001, 1101)):
-        raise SystemExit("ids must be 1001-1100")
-    new_names, new_urls = names_urls(NEW)
-    name_hits = sorted(old_names & new_names)
-    url_hits = sorted(old_urls & new_urls)
-    if name_hits or url_hits:
-        raise SystemExit(f"duplicates names={name_hits} urls={url_hits}")
-    print(json.dumps({"ok": True, "added": 100, "name_overlap": 0, "url_overlap": 0}))
+    references = new.get("resource_references", [])
+    if len(rows) + len(references) != 100:
+        raise SystemExit("expected 100 study selections (new sources plus canonical references)")
+    ids = [row[0] for row in rows] + [ref["selection_id"] for ref in references]
+    if sorted(ids) != list(range(1001, 1101)):
+        raise SystemExit("selection ids must be 1001-1100, each exactly once")
+    urls = {row[3].strip().rstrip("/").lower() for row in canonical.values()}
+    for row in rows:
+        if len(row) < 6 or not row[3].startswith(("https://", "http://")):
+            raise SystemExit(f"incomplete resource: {row[0]}")
+        url = row[3].strip().rstrip("/").lower()
+        if url in urls:
+            raise SystemExit(f"duplicate source URL: {url}")
+        urls.add(url)
+    referenced_ids = [ref["resource_id"] for ref in references]
+    if len(referenced_ids) != len(set(referenced_ids)):
+        raise SystemExit("duplicate canonical resource reference")
+    for ref in references:
+        if ref["resource_id"] not in canonical or not ref.get("usage") or not ref.get("adoption_rule"):
+            raise SystemExit(f"invalid canonical reference: {ref['selection_id']}")
+    print(json.dumps({"ok": True, "added": len(rows), "reused": len(references), "selections": 100}))
     return 0
 
 

@@ -19,8 +19,15 @@ def main() -> int:
     created = []
     APP.mkdir(parents=True, exist_ok=True)
     for division, slugs in seed["divisions"].items():
-        bots = []
+        destination = APP / f"{division}.json"
+        doc = json.loads(destination.read_text(encoding="utf-8")) if destination.exists() else {
+            "division": division, "growth": True, "bots": []
+        }
+        bots = doc["bots"]
+        existing_slugs = {bot["slug"] for bot in bots}
         for slug in slugs:
+            if slug in existing_slugs:
+                continue
             bots.append({
                 "slug": slug,
                 "displayName": slug.replace("-", " ").title(),
@@ -31,8 +38,8 @@ def main() -> int:
                 "status": "active",
                 "growth": True,
             })
-        doc = {"division": division, "total": len(bots), "growth": True, "bots": bots}
-        (APP / f"{division}.json").write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
+        doc["total"] = len(bots)
+        destination.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
         created.append({"division": division, "bots": len(bots)})
     play = json.loads(PLAY.read_text(encoding="utf-8"))
     payload = {

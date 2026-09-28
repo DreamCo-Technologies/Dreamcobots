@@ -24,6 +24,15 @@ class RepositoryDependencyAuditTest(unittest.TestCase):
             self.assertIn("missing_dependency", imports)
             self.assertFalse(errors)
 
+    def test_media_manifest_maps_distribution_names_to_imports(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "requirements-media.txt").write_text("pillow>=10,<12\nchatterbox-tts>=0.1.1\nsoundfile>=0.12,<1\n")
+            with patch.object(checker, "ROOT", root):
+                imports, manifests = checker.declared_python_roots()
+            self.assertEqual(manifests, ["requirements-media.txt"])
+            self.assertTrue({"pil", "chatterbox", "soundfile"}.issubset(imports))
+
     def test_standard_library_discovery_supports_older_python(self) -> None:
         roots = standard_library_roots()
         for module in ("argparse", "json", "pathlib", "sysconfig", "unittest"):

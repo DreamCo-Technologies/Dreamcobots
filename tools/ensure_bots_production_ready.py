@@ -324,9 +324,12 @@ def main() -> int:
         "markdown_created": 0,
         "markdown_updated": 0,
         "totals_fixed": 0,
+        "totals_mismatched": 0,
+        "invalid_profiles": 0,
         "missing_required_before": 0,
         "production_ready_true": 0,
     }
+    seen_slugs: set[str] = set()
     per_bot_gaps: list[dict] = []
     division_summaries: list[dict] = []
 
@@ -344,6 +347,15 @@ def main() -> int:
 
         for bot in bots:
             if not isinstance(bot, dict):
+                stats["invalid_profiles"] += 1
+                continue
+            supplied_slug = bot.get("slug")
+            if supplied_slug and (
+                not isinstance(supplied_slug, str)
+                or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", supplied_slug)
+                or supplied_slug in seen_slugs
+            ):
+                stats["invalid_profiles"] += 1
                 continue
             stats["bots"] += 1
 
@@ -370,6 +382,10 @@ def main() -> int:
                 )
 
             slug = bot["slug"]
+            if slug in seen_slugs:
+                stats["invalid_profiles"] += 1
+                continue
+            seen_slugs.add(slug)
             md_path = BOTS_MD / f"{slug}.md"
             md_body = render_markdown(bot, division)
 
@@ -414,6 +430,7 @@ def main() -> int:
 
         # Fix total
         if payload.get("total") != len(bots):
+            stats["totals_mismatched"] += 1
             if apply:
                 payload["total"] = len(bots)
                 changed = True
@@ -486,15 +503,15 @@ def main() -> int:
     lines.append("")
     OUT_MD.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    print(json.dumps({"ok": True, **stats, "report": str(OUT_MD.relative_to(ROOT))}, indent=2))
-
-    if args.check and (
-        stats["missing_required_before"]
+    check_failed = bool(stats["invalid_profiles"] or (args.check and (
+        stats["totals_mismatched"]
+        or stats["fields_filled"]
+        or stats["missing_required_before"]
         or stats["markdown_created"]
         or any("markdown_missing" in g.get("filled", []) for g in per_bot_gaps)
-    ):
-        return 1
-    return 0
+    )))
+    print(json.dumps({"ok": not check_failed, **stats, "report": str(OUT_MD.relative_to(ROOT))}, indent=2))
+    return 1 if check_failed else 0
 
 
 if __name__ == "__main__":

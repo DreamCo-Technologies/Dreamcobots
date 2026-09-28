@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import ast
 import json
 import shutil
 import subprocess
@@ -12,10 +13,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from tools.compile_md_bots import parse_md  # noqa: E402
+from tools.compile_md_bots import parse_md, class_name_from_slug, MODULE_TEMPLATE  # noqa: E402
 
 
 class CompileMdBotsTest(unittest.TestCase):
+    def test_numeric_bot_names_compile_as_python(self):
+        for slug in ("3d-asset-mgr", "5s-audit-tool", "dreambot"):
+            spec = parse_md(ROOT / "bots" / "dreambot.md")
+            spec.update(slug=slug, class_name=class_name_from_slug(slug))
+            self.assertTrue(spec["class_name"].isidentifier())
+            ast.parse(MODULE_TEMPLATE.format(**spec))
+
     def test_parse_known_spec(self):
         path = ROOT / "bots" / "dreambot.md"
         self.assertTrue(path.exists())

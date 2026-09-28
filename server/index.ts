@@ -1,7 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { serveStatic } from "./static";
 import { createServer } from "http";
-import { attachRequestIdToErrors, observeRequests, sendReadiness } from "./observability";
+import { attachRequestIdToErrors, observeRequests, sendReadiness, setRuntimeReadiness, isRuntimeInitialized, requireRuntime } from "./observability";
 
 const app = express();
 const httpServer = createServer(app);
@@ -43,7 +43,7 @@ app.get('/api/health', (_req, res) => {
     uptimeSeconds: Math.floor((Date.now() - processStartedAt) / 1000),
     stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY || process.env.STRIPE_LIVE_SECRET_KEY),
     databaseConfigured: Boolean(process.env.DATABASE_URL),
-    runtimeMode: process.env.DATABASE_URL ? 'full' : 'health-only',
+    runtimeMode: isRuntimeInitialized() ? 'full' : 'health-only',
     timestamp: new Date().toISOString(),
   });
 });
@@ -86,9 +86,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(observeRequests());
 app.use(attachRequestIdToErrors());
 
-app.get('/api/ready', (_req, res) => {
-  sendReadiness(res);
+app.get('/api/ready', async (_req, res) => {
+  await sendReadiness(res);
 });
+
+app.use("/api", requireRuntime());
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -107,11 +109,18 @@ export function log(message: string, source = "express") {
   try {
     const { registerRoutes } = await import("./routes");
     await registerRoutes(httpServer, app);
+    const { pool } = await import("./db");
+    const readinessQuery = { text: "SELECT 1", query_timeout: 1500 };
+    setRuntimeReadiness(() => pool.query(readinessQuery));
     console.log("DreamCo full route runtime initialized.");
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
     console.warn(`DreamCo full route runtime unavailable; health/static mode remains available: ${message}`);
   }
+
+  app.use("/api", (_req, res) => {
+    res.status(404).json({ error: "API route not found" });
+  });
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

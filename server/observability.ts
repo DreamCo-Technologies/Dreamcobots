@@ -61,7 +61,28 @@ export function attachRequestIdToErrors(): RequestHandler {
   };
 }
 
-export function productionReadinessSnapshot() {
+let databaseProbe: (() => Promise<unknown>) | undefined;
+
+// Register only after the complete application routes have initialized.
+export function setRuntimeReadiness(probe?: () => Promise<unknown>) {
+  databaseProbe = probe;
+}
+
+export function isRuntimeInitialized() {
+  return databaseProbe !== undefined;
+}
+
+export function requireRuntime(): RequestHandler {
+  return (_req, res, next) => {
+    if (!isRuntimeInitialized()) {
+      res.status(503).json({ error: "Application runtime is unavailable" });
+      return;
+    }
+    next();
+  };
+}
+
+export function productionReadinessSnapshot(databaseReachable = false) {
   const databaseConfigured = Boolean(process.env.DATABASE_URL);
   const stripeConfigured = Boolean(process.env.STRIPE_SECRET_KEY || process.env.STRIPE_LIVE_SECRET_KEY);
   const stripeWebhookConfigured = Boolean(process.env.STRIPE_WEBHOOK_SECRET);
@@ -71,8 +92,10 @@ export function productionReadinessSnapshot() {
     process.env.OPENAI_ADMIN_KEY,
   );
   return {
-    ready: databaseConfigured && stripeConfigured && stripeWebhookConfigured,
+    ready: isRuntimeInitialized() && databaseReachable && databaseConfigured && stripeConfigured && stripeWebhookConfigured,
     checks: {
+      runtimeInitialized: isRuntimeInitialized(),
+      databaseReachable,
       databaseConfigured,
       stripeConfigured,
       stripeWebhookConfigured,
@@ -82,7 +105,28 @@ export function productionReadinessSnapshot() {
   };
 }
 
-export function sendReadiness(res: Response) {
-  const snapshot = productionReadinessSnapshot();
+export async function checkProductionReadiness() {
+  let databaseReachable = false;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    if (databaseProbe && process.env.DATABASE_URL) {
+      await Promise.race([
+        databaseProbe(),
+        new Promise<never>((_resolve, reject) => {
+          timer = setTimeout(() => reject(new Error("Readiness probe timed out")), 2000);
+        }),
+      ]);
+      databaseReachable = true;
+    }
+  } catch {
+    // Report dependency failure without exposing connection strings or driver errors.
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+  return productionReadinessSnapshot(databaseReachable);
+}
+
+export async function sendReadiness(res: Response) {
+  const snapshot = await checkProductionReadiness();
   res.status(snapshot.ready ? 200 : 503).json(snapshot);
 }

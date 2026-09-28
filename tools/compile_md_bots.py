@@ -156,7 +156,8 @@ def slugify(name: str) -> str:
 
 def class_name_from_slug(slug: str) -> str:
     parts = [p.title() for p in slug.replace("-", "_").split("_") if p]
-    return ("".join(parts) or "Compiled") + "Bot"
+    name = ("".join(parts) or "Compiled") + "Bot"
+    return name if name.isidentifier() else "Compiled" + name
 
 
 def parse_md(path: Path) -> dict[str, Any] | None:

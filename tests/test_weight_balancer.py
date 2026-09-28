@@ -29,6 +29,20 @@ class WeightBalancerTest(unittest.TestCase):
         )
         self.assertGreater(mix["us_share"], 0.4)
 
+    def test_no_route_below_the_quality_floor_is_selected(self):
+        for routes in ([], [RouteSpec("low", 0.1, 0.01, True)]):
+            result = mix_routes(routes, quality_floor=0.7)
+            self.assertEqual(result["mix"], [])
+            self.assertEqual(result["us_share"], 0)
+
+    def test_preference_changes_odds_without_changing_quality(self):
+        routes = [RouteSpec("owned", 0.8, 1, True), RouteSpec("other", 0.8, 1, False)]
+        neutral = mix_routes(routes, 0.7, us_preference=1)
+        preferred = mix_routes(routes, 0.7)
+        self.assertEqual(neutral["us_share"], 0.5)
+        self.assertAlmostEqual(preferred["mix"][0]["weight"] / preferred["mix"][1]["weight"], 1.25)
+        self.assertTrue(all(row["quality"] == 0.8 for row in preferred["mix"]))
+
     def test_report_writes(self):
         self.assertTrue(simulate()["balance"]["experts"] >= 8)
         self.assertEqual(main(), 0)
