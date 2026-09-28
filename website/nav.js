@@ -73,6 +73,7 @@
     { href: 'world-map.html', label: '3D world map' },
     { href: 'game-builder.html', label: 'Game builder' },
     { href: 'wrappers.html', label: 'Your wrappers' },
+    { href: 'bootcamp-wrappers.html', label: 'Step wrappers' },
     { href: 'one-shop.html', label: 'Own shop' },
     { href: 'idea.html', label: 'Your idea' },
     { href: 'note-model.html', label: 'Note model' },

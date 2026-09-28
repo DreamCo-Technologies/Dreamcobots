@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wrapper for each step</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>A model for each bootcamp step</h1>
+    <p>Until your own model finishes training, you can name a Hugging Face, GitHub, or frontier model as a stand-in. Each step can use a different one. Another user keeps their own list. This page does not call a model.</p>
+    <form id="steps"></form>
+    <p><button class="btn btn-primary" id="save" type="button">Save on this browser</button></p>
+    <ul id="plan"></ul>
+    <h2>Your bootcamp notes</h2>
+    <p>A rank uses only a result you record. Buddy did not run the test.</p>
+    <form id="note-form" class="card">
+      <p><label>Step <select id="note-step"></select></label></p>
+      <p><label>Model <input id="note-model" required></label></p>
+      <p><label>Score, 0 to 100 <input id="note-score" type="number" min="0" max="100" required></label></p>
+      <button class="btn btn-outline" type="submit">Record that I ran it</button>
+    </form>
+    <p id="best">No step has a recorded result.</p>
+    <p><a href="wrappers.html">Your wrappers</a></p>
+  </main>
+  <script src="bootcamp-wrappers.js"></script>
+</body>
+</html>
