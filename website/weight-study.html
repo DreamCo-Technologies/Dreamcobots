@@ -11,26 +11,45 @@
   <script src="nav.js"></script>
   <main class="container">
     <h1>Weight study</h1>
-    <p id="lead">Loading open-weight models. Nothing is downloaded here.</p>
+    <p id="lead">Loading the same list for every user. Nothing is downloaded here.</p>
+    <p><label>Memory on this computer, in GB <input id="memory" type="number" min="2" value="8"></label></p>
     <table>
-      <thead><tr><th>Model</th><th>Access</th><th>Best dtype on 8GB</th><th>Downloaded</th><th>Benchmarked</th></tr></thead>
+      <thead><tr><th>Model</th><th>Access</th><th>Best dtype on this computer</th><th>Downloaded</th><th>Benchmarked</th></tr></thead>
       <tbody id="rows"></tbody>
     </table>
-    <p>Study a file you already have with <code>python3 -m buddy.weights.study</code> on your computer. The page cannot see your disk.</p>
+    <p>Every user gets this page. Weights, recordings, and scores stay on the computer that person is using. They are not saved for one owner and they are not uploaded here.</p>
   </main>
   <script>
+    const bytes = { F32: 4, F16: 2, I8: 1, I4: 0.5 };
+    function best(params, memory) {
+      const reserve = memory <= 8 ? 2 : 4;
+      const order = ["F16", "I8", "I4"];
+      for (let i = 0; i < order.length; i += 1) {
+        const run = Math.round(params * bytes[order[i]] / 1e9 * 1.3 * 1000) / 1000;
+        if (run <= memory - reserve) return order[i];
+      }
+      return "does not fit";
+    }
     fetch("data/weight-study.json").then(function (response) { return response.json(); }).then(function (data) {
-      document.getElementById("lead").textContent = data.models.length + " open-weight models. None are downloaded or benchmarked. A 7B model in 16-bit does not fit in 8GB; 4-bit can. One model at a time.";
-      const body = document.getElementById("rows");
-      data.models.forEach(function (row) {
-        const line = document.createElement("tr");
-        [row.repo, row.access + " · " + row.license, row.efficient_dtype_for_8gb, "no", "no"].forEach(function (text) {
-          const cell = document.createElement("td");
-          cell.textContent = text;
-          line.append(cell);
+      const memory = document.getElementById("memory");
+      if (navigator.deviceMemory) memory.value = navigator.deviceMemory;
+      function draw() {
+        const gb = Number(memory.value) || 8;
+        document.getElementById("lead").textContent = data.models.length + " models for every user. This browser is using " + gb + "GB for the fit. Nothing is downloaded or benchmarked on this page.";
+        const body = document.getElementById("rows");
+        body.replaceChildren();
+        data.models.forEach(function (row) {
+          const line = document.createElement("tr");
+          [row.repo, row.access + " · " + row.license, best(row.params, gb), "no", "no"].forEach(function (text) {
+            const cell = document.createElement("td");
+            cell.textContent = text;
+            line.append(cell);
+          });
+          body.append(line);
         });
-        body.append(line);
-      });
+      }
+      memory.addEventListener("input", draw);
+      draw();
     });
   </script>
 </body>

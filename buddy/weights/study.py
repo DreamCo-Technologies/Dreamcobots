@@ -27,12 +27,23 @@ def catalog() -> list[dict]:
 
 
 def plan(params: int, dtype: str, memory_gb: float = 8.0) -> dict:
-    if dtype not in DTYPE_BYTES or params < 1:
-        raise ValueError("Need a known dtype and a parameter count.")
+    if dtype not in DTYPE_BYTES or params < 1 or memory_gb < 2:
+        raise ValueError("Need a known dtype, a parameter count, and at least 2GB.")
     file_gb = params * DTYPE_BYTES[dtype] / 1_000_000_000
     run_gb = round(file_gb * 1.3, 3)
     reserve = 2.0 if memory_gb <= 8 else 4.0
-    return {"file_gb": round(file_gb, 3), "run_gb": run_gb, "fits_8gb": run_gb <= memory_gb - reserve, "one_model_at_a_time": True}
+    fits = run_gb <= memory_gb - reserve
+    return {"file_gb": round(file_gb, 3), "run_gb": run_gb, "fits": fits, "fits_8gb": fits if memory_gb == 8 else run_gb <= 6, "one_model_at_a_time": True}
+
+
+def for_user(memory_gb: float) -> dict:
+    """Same catalog for every user. The fit uses that user's memory, not one owner's laptop."""
+    rows = []
+    for item in CATALOG:
+        fit = {dtype: plan(item["params"], dtype, memory_gb)["fits"] for dtype in ("F16", "I8", "I4")}
+        best = next(dtype for dtype in ("F16", "I8", "I4") if fit[dtype])
+        rows.append({"repo": item["repo"], "efficient_dtype": best, "fits": fit})
+    return {"for_every_user": True, "owner_only": False, "memory_gb": memory_gb, "stored_in_repository": False, "models": rows}
 
 
 def read_header(path: Path) -> dict:
@@ -53,13 +64,16 @@ def read_header(path: Path) -> dict:
     return {"tensors": len(tensors), "stored_bytes": total, "loaded_into_a_model": False}
 
 
-def download(repo: str, allow: bool = False) -> dict:
+def download(repo: str, allow: bool = False, folder: Path | None = None) -> dict:
     known = {item["repo"] for item in CATALOG}
+    root = Path(__file__).resolve().parents[2]
     if repo not in known:
-        return {"downloaded": False, "reason": "That repo is not in the open-weight catalog."}
+        return {"downloaded": False, "reason": "That repo is not in the shared open-weight catalog."}
+    if folder is not None and root in Path(folder).resolve().parents or Path(folder).resolve() == root:
+        return {"downloaded": False, "reason": "A user's weights stay on that user's computer, not in the shared repository."}
     if not allow:
-        return {"downloaded": False, "reason": "On your own computer, pass allow=True. This call does not download."}
-    return {"downloaded": False, "reason": "The download connector is ready, and this process still does not fetch weights."}
+        return {"downloaded": False, "reason": "Each user passes allow=True on their own computer. This call does not download."}
+    return {"downloaded": False, "reason": "The connector is ready for any user, and this process still does not fetch weights."}
 
 
 def benchmark() -> dict:
@@ -72,6 +86,12 @@ if __name__ == "__main__":
     assert plan(7_000_000_000, "F16")["fits_8gb"] is False
     assert plan(7_000_000_000, "I4")["fits_8gb"] is True
     assert download(rows[0]["repo"])["downloaded"] is False
+    assert download(rows[0]["repo"], folder=Path(__file__).resolve().parents[2] / "weights")["downloaded"] is False
+    mine = for_user(8)
+    theirs = for_user(32)
+    assert mine["owner_only"] is False and mine["for_every_user"] is True
+    assert mine["models"][2]["efficient_dtype"] == "F16"
+    assert theirs["memory_gb"] == 32 and theirs["stored_in_repository"] is False
     assert benchmark()["benchmarked"] is False
     header = {"weight": {"dtype": "F32", "shape": [4], "data_offsets": [0, 16]}}
     blob = json.dumps(header).encode()
