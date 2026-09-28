@@ -79,6 +79,7 @@
     { href: 'train-own.html', label: 'Your training data' },
     { href: 'datasets.html', label: 'Free datasets' },
     { href: 'benchmarks.html', label: 'Benchmarks' },
+    { href: 'bench-routes.html', label: 'Benchmark routes' },
     { href: 'learn-failures.html', label: 'Failed benchmarks' },
     { href: 'study-path.html', label: 'Study a benchmark' },
     { href: 'lessons.html', label: 'Lessons' },
