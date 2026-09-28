@@ -26,6 +26,7 @@ def valid_resource(row: list) -> bool:
         return False
     try:
         url = urlsplit(row[3])
+        _ = url.port  # Reject malformed and out-of-range ports.
         return url.scheme in {"http", "https"} and bool(url.hostname)
     except ValueError:
         return False

@@ -19,7 +19,7 @@ class MustHaveStudyTest(unittest.TestCase):
             invalid = row.copy()
             invalid[i] = " "
             self.assertFalse(valid_resource(invalid))
-        for url in ("https://", "https:///docs", "https://[bad", "ftp://example.test"):
+        for url in ("https://", "https:///docs", "https://[bad", "ftp://example.test", "https://example.test:bad", "https://example.test:65536"):
             invalid = row.copy()
             invalid[3] = url
             self.assertFalse(valid_resource(invalid))

@@ -63,11 +63,14 @@ export function attachRequestIdToErrors(): RequestHandler {
 
 type DatabaseProbe = (signal: AbortSignal) => Promise<unknown>;
 let databaseProbe: DatabaseProbe | undefined;
+let readinessGeneration = 0;
 let pendingProbe: { promise: Promise<boolean>; controller: AbortController } | undefined;
 
 // Register only after the complete application routes have initialized.
 export function setRuntimeReadiness(probe?: DatabaseProbe) {
+  readinessGeneration += 1;
   pendingProbe?.controller.abort();
+  pendingProbe = undefined;
   databaseProbe = probe;
 }
 
@@ -110,6 +113,7 @@ export function productionReadinessSnapshot(databaseReachable = false) {
 
 export async function checkProductionReadiness() {
   if (!databaseProbe || !process.env.DATABASE_URL) return productionReadinessSnapshot();
+  const generation = readinessGeneration;
   if (!pendingProbe) {
     const probe = databaseProbe;
     const controller = new AbortController();
@@ -126,12 +130,14 @@ export async function checkProductionReadiness() {
     ]).finally(() => clearTimeout(timer));
     const pending = { promise, controller };
     pendingProbe = pending;
-    // Retain a timed-out operation until its cleanup settles. Even a faulty
-    // adapter that ignores cancellation cannot accumulate more probes.
+    // The production probe owns and destroys its socket on abort. Release the
+    // slot on the response bound as well, so a failed adapter cannot permanently
+    // prevent recovery. Identity protects a replacement probe from old cleanup.
     const release = () => { if (pendingProbe === pending) pendingProbe = undefined; };
-    void operation.then(release, release);
+    void promise.then(release, release);
   }
-  return productionReadinessSnapshot(await pendingProbe.promise);
+  const databaseReachable = await pendingProbe.promise;
+  return productionReadinessSnapshot(generation === readinessGeneration && databaseReachable);
 }
 
 export async function sendReadiness(res: Response) {

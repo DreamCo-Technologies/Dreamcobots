@@ -1,4 +1,5 @@
 import pg from "pg";
+import { Socket } from "node:net";
 
 interface ReadinessClient {
   connect(): Promise<unknown>;
@@ -9,11 +10,26 @@ interface ReadinessClient {
 // A dedicated connection can be closed on timeout without returning an active
 // query to the application pool or terminating another request's connection.
 export function createDatabaseReadinessProbe(
-  createClient: () => ReadinessClient = () => new pg.Client({
-    connectionString: process.env.DATABASE_URL,
-    connectionTimeoutMillis: 1500,
-    query_timeout: 1500,
-  }),
+  createClient: () => ReadinessClient = () => {
+    const socket = new Socket();
+    const client = new pg.Client({
+      connectionString: process.env.DATABASE_URL,
+      connectionTimeoutMillis: 1500,
+      query_timeout: 1500,
+      stream: () => socket,
+    });
+    return {
+      connect: () => client.connect(),
+      query: text => client.query(text),
+      end: async () => {
+        // Mark intentional shutdown before destroying the owned socket. This
+        // also bounds cleanup if the peer never acknowledges a graceful end.
+        const ending = client.end();
+        socket.destroy();
+        await ending;
+      },
+    };
+  },
 ) {
   return async (signal: AbortSignal) => {
     const client = createClient();

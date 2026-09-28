@@ -3,6 +3,7 @@ import test from "node:test";
 import express from "express";
 import { createDatabaseReadinessProbe } from "../server/database-readiness";
 import { once } from "node:events";
+import { createServer as createTcpServer, type Socket } from "node:net";
 
 import { productionReadinessSnapshot, checkProductionReadiness, setRuntimeReadiness, requireRuntime, sendReadiness } from "../server/observability";
 
@@ -150,4 +151,49 @@ test("database readiness closes its connection on success and cancellation", asy
   controller.abort();
   await assert.rejects(operation, /connection closed/);
   assert.equal(closed, 2);
+});
+
+
+test("replacing a pending probe immediately uses the new registration", async () => {
+  await withEnv({ DATABASE_URL: "postgresql://synthetic.invalid/db", STRIPE_SECRET_KEY: "synthetic", STRIPE_WEBHOOK_SECRET: "synthetic" }, async () => {
+    let finishOld: () => void = () => {};
+    setRuntimeReadiness(() => new Promise<void>(resolve => { finishOld = resolve; }));
+    const old = checkProductionReadiness();
+    await Promise.resolve();
+    setRuntimeReadiness(async () => {});
+    assert.equal((await checkProductionReadiness()).ready, true);
+    finishOld();
+    assert.equal((await old).ready, false);
+    assert.equal((await checkProductionReadiness()).ready, true);
+  });
+});
+
+test("real driver releases stalled network connections and readiness can recover", async () => {
+  const sockets = new Set<Socket>();
+  const server = createTcpServer(socket => {
+    sockets.add(socket);
+    socket.on("data", () => {}); // Accept startup bytes without replying as Postgres.
+    socket.on("close", () => sockets.delete(socket));
+  });
+  server.listen(0, "127.0.0.1");
+  await once(server, "listening");
+  const address = server.address();
+  assert.ok(address && typeof address !== "string");
+  try {
+    await withEnv({ DATABASE_URL: `postgresql://fixture@127.0.0.1:${address.port}/fixture`, STRIPE_SECRET_KEY: "synthetic", STRIPE_WEBHOOK_SECRET: "synthetic" }, async () => {
+      setRuntimeReadiness(createDatabaseReadinessProbe());
+      for (let i = 0; i < 2; i += 1) {
+        const result = await checkProductionReadiness();
+        assert.equal(result.ready, false);
+        // Wait for the local peer to observe the socket destruction.
+        await Promise.all([...sockets].map(socket => once(socket, "close")));
+        assert.equal(sockets.size, 0);
+      }
+      setRuntimeReadiness(async () => {});
+      assert.equal((await checkProductionReadiness()).ready, true);
+    });
+  } finally {
+    for (const socket of sockets) socket.destroy();
+    await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
+  }
 });
