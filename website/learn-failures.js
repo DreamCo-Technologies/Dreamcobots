@@ -10,8 +10,17 @@
     box.append(item);
   }
 
-  fetch("data/actions-health-report.json", { cache: "no-store" })
+  fetch("data/all-benchmarks.json", { cache: "no-store" })
     .then(function (response) { return response.json(); })
+    .then(function (report) {
+      add(document.getElementById("all-benchmarks"), report.benchmarks + " benchmarks. " + report.live_results + " live results. Not mastered.");
+      report.lessons.forEach(function (line) { add(document.getElementById("all-benchmarks"), line); });
+    })
+    .catch(function () {
+      add(document.getElementById("all-benchmarks"), "The benchmark lessons did not load.");
+    });
+
+  fetch("data/actions-health-report.json", { cache: "no-store" })
     .then(function (data) {
       const summary = data.summary || {};
       const unknown = summary.runtime_unknown_workflows || 0;
