@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python
         uses: actions/setup-python@v7
@@ -56,14 +56,14 @@ jobs:
           PY
 
       - name: Upload benchmark dashboard artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dreamco-benchmark-dashboard-${{ github.run_id }}
           path: artifacts/benchmark-dashboard
           retention-days: 30
 
       - name: Upload capability discovery artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dreamco-capability-discovery-${{ github.run_id }}
           path: artifacts/capability_discovery_report.json

@@ -96,7 +96,7 @@ jobs:
         run: echo "Issue filing disabled to stop ci-failure spam and CodeRabbit spend."
       - name: Save failure evidence
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: actions-failure-${{ github.event.workflow_run.id }}
           path: failure-evidence/

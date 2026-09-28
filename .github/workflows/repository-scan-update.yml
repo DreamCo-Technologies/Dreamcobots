@@ -60,7 +60,7 @@ jobs:
         run: cat scan-update/comment.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload scan update evidence
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: repository-scan-update-${{ github.run_id }}
           path: scan-update/
