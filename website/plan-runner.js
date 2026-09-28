@@ -60,5 +60,6 @@
       item.textContent = step;
       document.getElementById("loop").append(item);
     });
+    if (window.BuddyAdvice) window.BuddyAdvice.show("plans");
   });
 })();

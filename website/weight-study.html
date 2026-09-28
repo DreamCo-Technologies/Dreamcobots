@@ -18,7 +18,9 @@
       <tbody id="rows"></tbody>
     </table>
     <p>Every user gets this page. Weights, recordings, and scores stay on the computer that person is using. They are not saved for one owner and they are not uploaded here.</p>
+    <p id="advice"></p>
   </main>
+  <script src="advice.js"></script>
   <script>
     const bytes = { F32: 4, F16: 2, I8: 1, I4: 0.5 };
     function best(params, memory) {
@@ -50,6 +52,7 @@
       }
       memory.addEventListener("input", draw);
       draw();
+      if (window.BuddyAdvice) window.BuddyAdvice.show("weights");
     });
   </script>
 </body>

@@ -266,4 +266,5 @@
     link.click();
     URL.revokeObjectURL(link.href);
   });
+  if (window.BuddyAdvice) window.BuddyAdvice.show("content");
 })();

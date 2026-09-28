@@ -11,7 +11,7 @@
     + "This page cannot see a serial number, and it does not receive recordings or photos.";
 
   fetch("data/clone-blueprint.json").then(function (response) { return response.json(); }).then(function (plan) {
-    document.getElementById("lead").textContent = "The live page is this site. It does not train a clone. Training, if it ever runs, runs on your computer. An A18 with 8GB cannot do it. The repository is not production ready.";
+    document.getElementById("lead").textContent = "The live page is this site. It does not train a clone. Training, if it ever runs, runs on the computer of the person who asked. The repository is not production ready.";
     const list = document.getElementById("steps");
     plan.steps.forEach(function (step) {
       const item = document.createElement("li");
@@ -21,4 +21,5 @@
   }).catch(function () {
     document.getElementById("lead").textContent = "The blueprint did not load.";
   });
+  if (window.BuddyAdvice) window.BuddyAdvice.show("clone");
 })();
