@@ -1,0 +1,19 @@
+# accelerate study pack smoke evidence
+date: 2026-09-28T22:44:17Z
+host: Linux 6.12.94+ x86_64, cuda_devices=0
+accelerate==1.15.0
+torch==2.14.0+cpu
+transformers==5.17.0
+
+## smoke_offload.py
+PASS acc.device_map.max_memory devices=['cpu', 'disk'] cpu_bytes=193536 budget=268723
+PASS acc.offload.parity disk_blocks=3/5
+PASS acc.empty_weights.meta param_devices=['meta']
+SKIP acc.multi_gpu.balanced requires_gpu (cuda_devices=0)
+SUMMARY 3/3 CPU tasks passed
+
+## pytest
+....                                                                     [100%]
+4 passed in 4.95s
+
+note: first max_memory run failed due to a bug in the eval (tied lm_head/wte weights double-counted); fixed by deduping params, then passed.
