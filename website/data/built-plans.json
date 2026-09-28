@@ -1,0 +1,269 @@
+{
+  "production_ready": false,
+  "weights_trained": false,
+  "lora": [
+    {
+      "schema": "dreamco.lora_train_plan.v1",
+      "pack_id": "sample",
+      "recipe": {
+        "id": "lora-sft",
+        "family": "LoRA",
+        "stage": "sft",
+        "quantization": "bf16",
+        "serve": "single-adapter"
+      },
+      "base_model": "not-loaded",
+      "launch_in_ci": false,
+      "requires": [
+        "license_ok",
+        "revision_pinned",
+        "eval_baseline",
+        "holdout",
+        "owner_approval"
+      ],
+      "output": "adapters/sample/lora-sft",
+      "truth": "Plan only. No weights are trained by this function."
+    },
+    {
+      "schema": "dreamco.lora_train_plan.v1",
+      "pack_id": "sample",
+      "recipe": {
+        "id": "qlora-sft",
+        "family": "QLoRA",
+        "stage": "sft",
+        "quantization": "nf4",
+        "serve": "single-adapter"
+      },
+      "base_model": "not-loaded",
+      "launch_in_ci": false,
+      "requires": [
+        "license_ok",
+        "revision_pinned",
+        "eval_baseline",
+        "holdout",
+        "owner_approval"
+      ],
+      "output": "adapters/sample/qlora-sft",
+      "truth": "Plan only. No weights are trained by this function."
+    },
+    {
+      "schema": "dreamco.lora_train_plan.v1",
+      "pack_id": "sample",
+      "recipe": {
+        "id": "dora-sft",
+        "family": "DoRA",
+        "stage": "sft",
+        "quantization": "bf16",
+        "serve": "single-adapter"
+      },
+      "base_model": "not-loaded",
+      "launch_in_ci": false,
+      "requires": [
+        "license_ok",
+        "revision_pinned",
+        "eval_baseline",
+        "holdout",
+        "owner_approval"
+      ],
+      "output": "adapters/sample/dora-sft",
+      "truth": "Plan only. No weights are trained by this function."
+    },
+    {
+      "schema": "dreamco.lora_train_plan.v1",
+      "pack_id": "sample",
+      "recipe": {
+        "id": "adalora-sft",
+        "family": "AdaLoRA",
+        "stage": "sft",
+        "quantization": "bf16",
+        "serve": "single-adapter"
+      },
+      "base_model": "not-loaded",
+      "launch_in_ci": false,
+      "requires": [
+        "license_ok",
+        "revision_pinned",
+        "eval_baseline",
+        "holdout",
+        "owner_approval"
+      ],
+      "output": "adapters/sample/adalora-sft",
+      "truth": "Plan only. No weights are trained by this function."
+    },
+    {
+      "schema": "dreamco.lora_train_plan.v1",
+      "pack_id": "sample",
+      "recipe": {
+        "id": "qlora-dpo",
+        "family": "QLoRA",
+        "stage": "dpo",
+        "quantization": "nf4",
+        "serve": "single-adapter"
+      },
+      "base_model": "not-loaded",
+      "launch_in_ci": false,
+      "requires": [
+        "license_ok",
+        "revision_pinned",
+        "eval_baseline",
+        "holdout",
+        "owner_approval"
+      ],
+      "output": "adapters/sample/qlora-dpo",
+      "truth": "Plan only. No weights are trained by this function."
+    },
+    {
+      "schema": "dreamco.lora_train_plan.v1",
+      "pack_id": "sample",
+      "recipe": {
+        "id": "multi-lora-serve",
+        "family": "LoRA",
+        "stage": "serve",
+        "quantization": "any",
+        "serve": "many-adapters"
+      },
+      "base_model": "not-loaded",
+      "launch_in_ci": false,
+      "requires": [
+        "license_ok",
+        "revision_pinned",
+        "eval_baseline",
+        "holdout",
+        "owner_approval"
+      ],
+      "output": "adapters/sample/multi-lora-serve",
+      "truth": "Plan only. No weights are trained by this function."
+    }
+  ],
+  "customers": [
+    {
+      "schema": "dreamco.customer_model_plan.v1",
+      "track": "open_source",
+      "specialty": "coding",
+      "teacher": "xai/grok-best-available",
+      "studied_labs": [
+        "deepseek-r1",
+        "olmo",
+        "llama",
+        "gemma",
+        "gpt-oss",
+        "qwen",
+        "mistral",
+        "grok-xai"
+      ],
+      "publishes_code": true,
+      "publishes_weights": false,
+      "base": "foundry code + RAG + LoRA recipes",
+      "next": [
+        "fork runtime",
+        "attach private RAG",
+        "optional later weights"
+      ],
+      "trained_weights_exist": false,
+      "truth": "Plan for a customer model. Buddy studied public methods only. No ultimate-frontier checkpoint is included."
+    },
+    {
+      "schema": "dreamco.customer_model_plan.v1",
+      "track": "open_weights",
+      "specialty": "coding",
+      "teacher": "xai/grok-best-available",
+      "studied_labs": [
+        "deepseek-r1",
+        "olmo",
+        "llama",
+        "gemma",
+        "gpt-oss",
+        "qwen",
+        "mistral",
+        "grok-xai"
+      ],
+      "publishes_code": false,
+      "publishes_weights": true,
+      "base": "pinned student checkpoint + model card + hashes",
+      "next": [
+        "license review",
+        "QLoRA on owned pack",
+        "signed card"
+      ],
+      "trained_weights_exist": false,
+      "truth": "Plan for a customer model. Buddy studied public methods only. No ultimate-frontier checkpoint is included."
+    },
+    {
+      "schema": "dreamco.customer_model_plan.v1",
+      "track": "frontier",
+      "specialty": "coding",
+      "teacher": "xai/grok-best-available",
+      "studied_labs": [
+        "deepseek-r1",
+        "olmo",
+        "llama",
+        "gemma",
+        "gpt-oss",
+        "qwen",
+        "mistral",
+        "grok-xai"
+      ],
+      "publishes_code": false,
+      "publishes_weights": false,
+      "base": "xai/grok-best-available + private RAG",
+      "next": [
+        "keep Grok as brain",
+        "store only customer index",
+        "student later if eval wins"
+      ],
+      "trained_weights_exist": false,
+      "truth": "Plan for a customer model. Buddy studied public methods only. No ultimate-frontier checkpoint is included."
+    }
+  ],
+  "frontier_loop": [
+    "Pin an evaluation and record a baseline.",
+    "Run the smallest check that can pass or fail.",
+    "Save the failure in plain words.",
+    "Group failures that have the same cause.",
+    "Write a small job to fix one cause.",
+    "Apply that fix in code.",
+    "Run the checks that already passed.",
+    "Run a hidden test the fix did not study.",
+    "Keep the fix only if the hidden test and the old checks pass.",
+    "Save the evidence."
+  ],
+  "bootcamp_example": {
+    "status": "blocked",
+    "missing": [
+      "capability_id",
+      "objective",
+      "benchmark",
+      "provenance"
+    ],
+    "stages": [
+      "lesson",
+      "practice",
+      "sandbox",
+      "transfer",
+      "score",
+      "remediate",
+      "regression",
+      "evidence"
+    ],
+    "trained": false
+  },
+  "verify_example": {
+    "issues": [
+      "Missing assets: consent.txt",
+      "Plan has not completed a simulation preflight"
+    ],
+    "approved": false,
+    "reason": "A check does not grant permission to act."
+  },
+  "utility_example": {
+    "accepted": true,
+    "expected_utility": 1.0,
+    "reversibility": 1.0,
+    "executed": false
+  },
+  "counts": {
+    "lora": 6,
+    "customers": 3,
+    "frontier_steps": 10
+  }
+}

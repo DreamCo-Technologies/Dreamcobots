@@ -81,6 +81,7 @@
     { href: 'learn-failures.html', label: 'Failed benchmarks' },
     { href: 'study-path.html', label: 'Study a benchmark' },
     { href: 'lessons.html', label: 'Lessons' },
+    { href: 'plan-runner.html', label: 'Plan runner' },
     { href: 'folder-plans.html', label: 'Folder plans' },
     { href: 'build-paths.html', label: 'Build paths' },
     { href: 'what-you-have.html', label: 'What you have' },

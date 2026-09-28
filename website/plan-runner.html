@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plan runner</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Plan runner</h1>
+    <p id="lead">Loading the plans that already have code.</p>
+    <section class="card">
+      <h2>Lesson plan</h2>
+      <form id="lesson-form">
+        <p><label>Capability <input id="capability"></label></p>
+        <p><label>Objective <input id="objective"></label></p>
+        <p><label>Benchmark <input id="benchmark"></label></p>
+        <p><label>Where it came from <input id="provenance"></label></p>
+        <button class="btn btn-primary" type="submit">Check the lesson</button>
+      </form>
+      <p id="lesson-status">Not checked.</p>
+    </section>
+    <section class="card">
+      <h2>Can this plan run?</h2>
+      <form id="verify-form">
+        <p><label>Needed, comma separated <input id="needed" value="consent.txt"></label></p>
+        <p><label>Already on hand <input id="known"></label></p>
+        <p><label><input id="simulated" type="checkbox"> A simulation was run</label></p>
+        <button class="btn btn-primary" type="submit">Check</button>
+      </form>
+      <p id="verify-status">A check does not grant permission to act.</p>
+    </section>
+    <section class="card">
+      <h2>Score a step</h2>
+      <form id="score-form">
+        <p><label>Chance, 0 to 1 <input id="chance" value="1"></label></p>
+        <p><label>Value <input id="value" value="1"></label></p>
+        <p><label>Cost <input id="cost" value="0"></label></p>
+        <button class="btn btn-primary" type="submit">Score</button>
+      </form>
+      <p id="score-status">Not scored. Nothing is executed.</p>
+    </section>
+    <h2>LoRA plans</h2>
+    <ul id="lora"></ul>
+    <h2>Customer model plans</h2>
+    <ul id="customers"></ul>
+    <h2>Frontier loop</h2>
+    <ol id="loop"></ol>
+    <p><a href="plans.html">Phase status</a> <a href="folder-plans.html">Folder plans</a> <a href="clone-blueprint.html">Clone blueprint</a></p>
+  </main>
+  <script src="plan-runner.js"></script>
+</body>
+</html>
