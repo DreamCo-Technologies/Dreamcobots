@@ -33,7 +33,7 @@ def ready() -> dict:
     if not on_mac:
         reasons.append("This command is running on Linux, not on the MacBook Neo. An NVIDIA card is the wrong test for that laptop.")
     else:
-        reasons.append("A Mac GPU uses Metal, not NVIDIA. The Neo's A18 Pro has a 5-core GPU and 8GB of memory, which is not enough to train a voice or image clone.")
+        reasons.append("A Mac GPU uses Metal, not NVIDIA. An A18 with 8GB of memory is not enough to train a voice or image clone.")
     reasons.append("No cloning model is downloaded.")
     return {
         "trained": False,
