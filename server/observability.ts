@@ -61,10 +61,13 @@ export function attachRequestIdToErrors(): RequestHandler {
   };
 }
 
-let databaseProbe: (() => Promise<unknown>) | undefined;
+type DatabaseProbe = (signal: AbortSignal) => Promise<unknown>;
+let databaseProbe: DatabaseProbe | undefined;
+let pendingProbe: { promise: Promise<boolean>; controller: AbortController } | undefined;
 
 // Register only after the complete application routes have initialized.
-export function setRuntimeReadiness(probe?: () => Promise<unknown>) {
+export function setRuntimeReadiness(probe?: DatabaseProbe) {
+  pendingProbe?.controller.abort();
   databaseProbe = probe;
 }
 
@@ -106,24 +109,29 @@ export function productionReadinessSnapshot(databaseReachable = false) {
 }
 
 export async function checkProductionReadiness() {
-  let databaseReachable = false;
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  try {
-    if (databaseProbe && process.env.DATABASE_URL) {
-      await Promise.race([
-        databaseProbe(),
-        new Promise<never>((_resolve, reject) => {
-          timer = setTimeout(() => reject(new Error("Readiness probe timed out")), 2000);
-        }),
-      ]);
-      databaseReachable = true;
-    }
-  } catch {
-    // Report dependency failure without exposing connection strings or driver errors.
-  } finally {
-    if (timer) clearTimeout(timer);
+  if (!databaseProbe || !process.env.DATABASE_URL) return productionReadinessSnapshot();
+  if (!pendingProbe) {
+    const probe = databaseProbe;
+    const controller = new AbortController();
+    const operation = Promise.resolve().then(() => probe(controller.signal));
+    let timer: ReturnType<typeof setTimeout>;
+    const promise = Promise.race([
+      operation.then(() => true, () => false),
+      new Promise<boolean>(resolve => {
+        timer = setTimeout(() => {
+          controller.abort();
+          resolve(false);
+        }, 2000);
+      }),
+    ]).finally(() => clearTimeout(timer));
+    const pending = { promise, controller };
+    pendingProbe = pending;
+    // Retain a timed-out operation until its cleanup settles. Even a faulty
+    // adapter that ignores cancellation cannot accumulate more probes.
+    const release = () => { if (pendingProbe === pending) pendingProbe = undefined; };
+    void operation.then(release, release);
   }
-  return productionReadinessSnapshot(databaseReachable);
+  return productionReadinessSnapshot(await pendingProbe.promise);
 }
 
 export async function sendReadiness(res: Response) {

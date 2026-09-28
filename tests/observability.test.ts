@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import express from "express";
+import { createDatabaseReadinessProbe } from "../server/database-readiness";
 import { once } from "node:events";
 
 import { productionReadinessSnapshot, checkProductionReadiness, setRuntimeReadiness, requireRuntime, sendReadiness } from "../server/observability";
@@ -84,8 +85,16 @@ test("a database outage makes configured routes unready without exposing errors"
 
 test("readiness times out a hung database probe", async () => {
   await withEnv({ DATABASE_URL: "postgresql://synthetic.invalid/db", STRIPE_SECRET_KEY: "synthetic", STRIPE_WEBHOOK_SECRET: "synthetic" }, async () => {
-    setRuntimeReadiness(() => new Promise(() => {}));
-    const snapshot = await checkProductionReadiness();
+    let calls = 0;
+    let aborted = false;
+    setRuntimeReadiness(signal => new Promise((_resolve, reject) => {
+      calls += 1;
+      signal.addEventListener("abort", () => { aborted = true; reject(new Error("aborted")); });
+    }));
+    const [snapshot, concurrent] = await Promise.all([checkProductionReadiness(), checkProductionReadiness()]);
+    assert.equal(calls, 1);
+    assert.equal(aborted, true);
+    assert.equal(concurrent.ready, false);
     assert.equal(snapshot.ready, false);
     assert.equal(snapshot.checks.databaseReachable, false);
   });
@@ -114,4 +123,31 @@ test("HTTP readiness and application requests fail closed until runtime initiali
     setRuntimeReadiness();
     await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
   }
+});
+
+
+test("database readiness closes its connection on success and cancellation", async () => {
+  let closed = 0;
+  const success = createDatabaseReadinessProbe(() => ({
+    connect: async () => {},
+    query: async text => { assert.equal(text, "SELECT 1"); },
+    end: async () => { closed += 1; },
+  }));
+  await success(new AbortController().signal);
+  assert.equal(closed, 1);
+
+  const controller = new AbortController();
+  let cancelQuery: (error: Error) => void = () => {};
+  let started: () => void = () => {};
+  const queryStarted = new Promise<void>(resolve => { started = resolve; });
+  const hanging = createDatabaseReadinessProbe(() => ({
+    connect: async () => {},
+    query: () => new Promise((_resolve, reject) => { cancelQuery = reject; started(); }),
+    end: async () => { closed += 1; cancelQuery(new Error("connection closed")); },
+  }));
+  const operation = hanging(controller.signal);
+  await queryStarted;
+  controller.abort();
+  await assert.rejects(operation, /connection closed/);
+  assert.equal(closed, 2);
 });

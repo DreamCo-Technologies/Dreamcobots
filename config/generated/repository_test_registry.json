@@ -2,11 +2,6 @@
   "duplicate_route_registrations": [
     {
       "method": "GET",
-      "path": "/api/ready",
-      "registrations": 2
-    },
-    {
-      "method": "GET",
       "path": "/api/stripe/subscription-status",
       "registrations": 2
     }
@@ -31,7 +26,7 @@
     ".svg": 1,
     ".swift": 1,
     ".toml": 1,
-    ".ts": 218,
+    ".ts": 219,
     ".tsx": 99,
     ".txt": 159,
     ".webmanifest": 1,
@@ -51,7 +46,7 @@
     "project_file": 358,
     "provider_adapter": 17,
     "reference_asset": 153,
-    "server_source": 29,
+    "server_source": 30,
     "shared_contract": 41,
     "test": 242,
     "web_asset": 134,
@@ -15474,6 +15469,12 @@
       "suite_id": "data-rights"
     },
     {
+      "bytes": 1258,
+      "kind": "server_source",
+      "path": "server/database-readiness.ts",
+      "suite_id": "client-build"
+    },
+    {
       "bytes": 431,
       "kind": "server_source",
       "path": "server/db.ts",
@@ -15528,7 +15529,7 @@
       "suite_id": "government"
     },
     {
-      "bytes": 5157,
+      "bytes": 5099,
       "kind": "server_source",
       "path": "server/index.ts",
       "suite_id": "client-build"
@@ -15582,7 +15583,7 @@
       "suite_id": "client-build"
     },
     {
-      "bytes": 3947,
+      "bytes": 4525,
       "kind": "server_source",
       "path": "server/observability.ts",
       "suite_id": "client-build"
@@ -16440,7 +16441,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 4617,
+      "bytes": 6076,
       "kind": "test",
       "path": "tests/observability.test.ts",
       "suite_id": "repository-contracts"
@@ -16710,7 +16711,7 @@
       "suite_id": "bot-fleet"
     },
     {
-      "bytes": 2318,
+      "bytes": 2821,
       "kind": "test",
       "path": "tests/test_bot_profile_readiness.py",
       "suite_id": "bot-fleet"
@@ -16986,7 +16987,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 425,
+      "bytes": 989,
       "kind": "test",
       "path": "tests/test_check_must_have_study_resources.py",
       "suite_id": "repository-contracts"
@@ -17130,7 +17131,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 1696,
+      "bytes": 2103,
       "kind": "test",
       "path": "tests/test_grow_fleet_and_playbook.py",
       "suite_id": "bot-fleet"
@@ -17352,7 +17353,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 2239,
+      "bytes": 3153,
       "kind": "test",
       "path": "tests/test_repository_dependencies.py",
       "suite_id": "repository-contracts"
@@ -18168,7 +18169,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 2309,
+      "bytes": 2701,
       "kind": "generator_or_tool",
       "path": "tools/check_must_have_study_resources.py",
       "suite_id": "repository-contracts"
@@ -18246,7 +18247,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 17973,
+      "bytes": 18016,
       "kind": "generator_or_tool",
       "path": "tools/ensure_bots_production_ready.py",
       "suite_id": "bot-fleet"
@@ -18474,7 +18475,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 17122,
+      "bytes": 17155,
       "kind": "generator_or_tool",
       "path": "tools/generate_repository_test_registry.py",
       "suite_id": "repository-contracts"
@@ -18510,7 +18511,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 3344,
+      "bytes": 3642,
       "kind": "generator_or_tool",
       "path": "tools/grow_fleet_and_playbook.py",
       "suite_id": "bot-fleet"
@@ -20565,7 +20566,7 @@
   "route_classifications": {
     "external_or_destructive_gate": 20,
     "plan_or_readiness": 28,
-    "read_only": 69,
+    "read_only": 67,
     "shared_contract": 22,
     "state_change": 130
   },
@@ -20728,16 +20729,6 @@
       "path": "/api/bots",
       "runtime": "local_contract",
       "source": "shared/routes.ts",
-      "suite_id": "bot-fleet"
-    },
-    {
-      "classification": "read_only",
-      "id": "e53a1d6f6f54684df5f4",
-      "line": 99,
-      "method": "GET",
-      "path": "/api/bots",
-      "runtime": "local_contract",
-      "source": "tests/observability.test.ts",
       "suite_id": "bot-fleet"
     },
     {
@@ -22782,8 +22773,8 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "dc6671d8675fce6cb6ca",
-      "line": 38,
+      "id": "539efd17a2dcd19575be",
+      "line": 39,
       "method": "GET",
       "path": "/api/health",
       "runtime": "local_contract",
@@ -23002,22 +22993,12 @@
     },
     {
       "classification": "read_only",
-      "id": "9a4949f3a15d0f588e5a",
-      "line": 89,
+      "id": "6954a57618d74be841b8",
+      "line": 90,
       "method": "GET",
       "path": "/api/ready",
       "runtime": "local_contract",
       "source": "server/index.ts",
-      "suite_id": "repository-contracts"
-    },
-    {
-      "classification": "read_only",
-      "id": "daab438be39b6068001f",
-      "line": 97,
-      "method": "GET",
-      "path": "/api/ready",
-      "runtime": "local_contract",
-      "source": "tests/observability.test.ts",
       "suite_id": "repository-contracts"
     },
     {
@@ -23142,8 +23123,8 @@
     },
     {
       "classification": "state_change",
-      "id": "17c0093dfe400f472899",
-      "line": 51,
+      "id": "17a47a3f1f8f0c761491",
+      "line": 52,
       "method": "POST",
       "path": "/api/stripe/webhook",
       "runtime": "credentials_required",
@@ -23270,7 +23251,7 @@
     "results_must_distinguish_contract_from_live_e2e": true,
     "test_data": "synthetic_or_owner_authorized"
   },
-  "scan_id": "a403a59303dd456b7d683e7d",
+  "scan_id": "ae0f777147d29c8a479b44a9",
   "schema": "dreamco.repository_test_registry.v1",
   "suites": [
     {
@@ -23897,13 +23878,13 @@
     }
   ],
   "summary": {
-    "api_route_registrations": 269,
+    "api_route_registrations": 267,
     "blocked_suites": 0,
     "bot_sources": 1182,
     "credential_required_suites": 2,
-    "duplicate_route_keys": 2,
-    "files_scanned": 3417,
-    "literal_api_routes": 247,
+    "duplicate_route_keys": 1,
+    "files_scanned": 3418,
+    "literal_api_routes": 245,
     "locally_testable_suites": 25,
     "platform_modules": 31,
     "provider_adapters": 17,

@@ -20,14 +20,18 @@ def main() -> int:
     APP.mkdir(parents=True, exist_ok=True)
     for division, slugs in seed["divisions"].items():
         destination = APP / f"{division}.json"
-        doc = json.loads(destination.read_text(encoding="utf-8")) if destination.exists() else {
+        division_created = not destination.exists()
+        doc = json.loads(destination.read_text(encoding="utf-8")) if not division_created else {
             "division": division, "growth": True, "bots": []
         }
         bots = doc["bots"]
         existing_slugs = {bot["slug"] for bot in bots}
+        added = 0
         for slug in slugs:
             if slug in existing_slugs:
                 continue
+            added += 1
+            existing_slugs.add(slug)
             bots.append({
                 "slug": slug,
                 "displayName": slug.replace("-", " ").title(),
@@ -40,13 +44,14 @@ def main() -> int:
             })
         doc["total"] = len(bots)
         destination.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
-        created.append({"division": division, "bots": len(bots)})
+        created.append({"division": division, "bots": len(bots), "bots_added": added, "division_created": division_created})
     play = json.loads(PLAY.read_text(encoding="utf-8"))
     payload = {
         "schema": "dreamco.fleet_growth_report.v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "divisions_added": created,
-        "new_bot_count": sum(row["bots"] for row in created),
+        "divisions_added": [row for row in created if row["division_created"]],
+        "divisions_processed": created,
+        "new_bot_count": sum(row["bots_added"] for row in created),
         "learn_actions": len(play["learn"]),
         "earn_actions": len(play["earn"]),
         "canonical_count_is_a_cap": False,
@@ -58,7 +63,7 @@ def main() -> int:
     lines = [
         "# Fleet growth and Grok playbook",
         "",
-        f"- New divisions: **{len(created)}**",
+        f"- New divisions: **{len(payload['divisions_added'])}**",
         f"- New bots: **{payload['new_bot_count']}**",
         f"- Learn actions: **{payload['learn_actions']}**",
         f"- Earn actions: **{payload['earn_actions']}**",

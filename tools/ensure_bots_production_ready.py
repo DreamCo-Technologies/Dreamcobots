@@ -142,7 +142,7 @@ def ensure_bot_fields(bot: dict, division: str) -> list[str]:
     """Mutate bot in place; return list of field names that were filled."""
     filled: list[str] = []
 
-    if not bot.get("slug"):
+    if "slug" not in bot or bot["slug"] == "":
         bot["slug"] = slugify(str(bot.get("displayName") or "unnamed-bot"))
         filled.append("slug")
 
@@ -350,7 +350,7 @@ def main() -> int:
                 stats["invalid_profiles"] += 1
                 continue
             supplied_slug = bot.get("slug")
-            if supplied_slug and (
+            if "slug" in bot and supplied_slug != "" and (
                 not isinstance(supplied_slug, str)
                 or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", supplied_slug)
                 or supplied_slug in seen_slugs

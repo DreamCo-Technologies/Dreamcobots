@@ -219,7 +219,7 @@ def scan_routes(files: list[Path]) -> list[dict[str, Any]]:
     routes: list[dict[str, Any]] = []
     for path in files:
         relative = path.relative_to(ROOT).as_posix()
-        if path.suffix not in {".ts", ".tsx"}:
+        if path.suffix not in {".ts", ".tsx"} or path_kind(relative) == "test":
             continue
         try:
             text = path.read_text(encoding="utf-8")

@@ -3,6 +3,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 from tools import check_repository_dependencies as checker
+from tools import generate_repository_test_registry as registry
 
 from tools.check_repository_dependencies import (
     audit_dependencies,
@@ -32,6 +33,21 @@ class RepositoryDependencyAuditTest(unittest.TestCase):
                 imports, manifests = checker.declared_python_roots()
             self.assertEqual(manifests, ["requirements-media.txt"])
             self.assertTrue({"pil", "chatterbox", "soundfile"}.issubset(imports))
+
+    def test_route_inventory_excludes_test_fixtures_but_preserves_real_duplicates(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            files = []
+            for name in ("server/routes.ts", "server/extra.ts", "tests/http.ts", "server/routes.test.ts"):
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text('app.get("/api/bots", handler);\n')
+                files.append(path)
+            with patch.object(registry, "ROOT", root):
+                routes = registry.scan_routes(files)
+            self.assertEqual({row["source"] for row in routes}, {"server/routes.ts", "server/extra.ts"})
+            self.assertEqual(len(routes), 2)
+            self.assertTrue(all(row["path"] == "/api/bots" for row in routes))
 
     def test_standard_library_discovery_supports_older_python(self) -> None:
         roots = standard_library_roots()

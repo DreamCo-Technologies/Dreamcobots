@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 OLD = ROOT / "config" / "buddy-study-resources-001-100.json"
@@ -16,6 +17,18 @@ def names_urls(path: Path) -> tuple[set[str], set[str]]:
         names.add(str(row[1]).strip().lower())
         urls.add(str(row[3]).strip().rstrip("/").lower())
     return names, urls
+
+
+def valid_resource(row: list) -> bool:
+    if len(row) < 6 or not isinstance(row[0], int) or isinstance(row[0], bool):
+        return False
+    if not all(isinstance(value, str) and value.strip() for value in row[1:6]):
+        return False
+    try:
+        url = urlsplit(row[3])
+        return url.scheme in {"http", "https"} and bool(url.hostname)
+    except ValueError:
+        return False
 
 
 def main() -> int:
@@ -35,7 +48,7 @@ def main() -> int:
         raise SystemExit("selection ids must be 1001-1100, each exactly once")
     urls = {row[3].strip().rstrip("/").lower() for row in canonical.values()}
     for row in rows:
-        if len(row) < 6 or not row[3].startswith(("https://", "http://")):
+        if not valid_resource(row):
             raise SystemExit(f"incomplete resource: {row[0]}")
         url = row[3].strip().rstrip("/").lower()
         if url in urls:

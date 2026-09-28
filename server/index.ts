@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { probeDatabaseConnection } from "./database-readiness";
 import { attachRequestIdToErrors, observeRequests, sendReadiness, setRuntimeReadiness, isRuntimeInitialized, requireRuntime } from "./observability";
 
 const app = express();
@@ -109,9 +110,7 @@ export function log(message: string, source = "express") {
   try {
     const { registerRoutes } = await import("./routes");
     await registerRoutes(httpServer, app);
-    const { pool } = await import("./db");
-    const readinessQuery = { text: "SELECT 1", query_timeout: 1500 };
-    setRuntimeReadiness(() => pool.query(readinessQuery));
+    setRuntimeReadiness(probeDatabaseConnection);
     console.log("DreamCo full route runtime initialized.");
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
