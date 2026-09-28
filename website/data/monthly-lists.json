@@ -1,0 +1,102 @@
+{
+  "refreshed_on": "2026-09-28",
+  "cadence": "monthly",
+  "resources": 600,
+  "catalog_rows": 600,
+  "missing_ranges": [
+    "301-400",
+    "601-1000"
+  ],
+  "needs_practice": 7,
+  "failed_routes": [
+    {
+      "task": "send the private email",
+      "plugin": "grok-safety-gate",
+      "kind": "grok",
+      "use": "Stop a task that would send mail, move money, or give medical or legal advice.",
+      "trained": false
+    },
+    {
+      "task": "charge a card",
+      "plugin": "grok-safety-gate",
+      "kind": "grok",
+      "use": "Stop a task that would send mail, move money, or give medical or legal advice.",
+      "trained": false
+    },
+    {
+      "task": "book a flight",
+      "plugin": "grok-safety-gate",
+      "kind": "grok",
+      "use": "Stop a task that would send mail, move money, or give medical or legal advice.",
+      "trained": false
+    },
+    {
+      "task": "diagnose a patient",
+      "plugin": "grok-safety-gate",
+      "kind": "grok",
+      "use": "Stop a task that would send mail, move money, or give medical or legal advice.",
+      "trained": false
+    },
+    {
+      "task": "file a lawsuit",
+      "plugin": "grok-safety-gate",
+      "kind": "grok",
+      "use": "Stop a task that would send mail, move money, or give medical or legal advice.",
+      "trained": false
+    },
+    {
+      "task": "control a robot arm",
+      "plugin": "grok-safety-gate",
+      "kind": "grok",
+      "use": "Stop a task that would send mail, move money, or give medical or legal advice.",
+      "trained": false
+    },
+    {
+      "task": "trade stocks",
+      "plugin": "grok-safety-gate",
+      "kind": "grok",
+      "use": "Stop a task that would send mail, move money, or give medical or legal advice.",
+      "trained": false
+    }
+  ],
+  "plugins": [
+    {
+      "kind": "grok",
+      "name": "grok-research",
+      "path": ".github/agents/grok-research.agent.md",
+      "use": "Study a new task from the files already in the repository."
+    },
+    {
+      "kind": "grok",
+      "name": "grok-safety-gate",
+      "path": ".github/agents/grok-safety-gate.agent.md",
+      "use": "Stop a task that would send mail, move money, or give medical or legal advice."
+    },
+    {
+      "kind": "grok",
+      "name": "grok-repo-scanner",
+      "path": ".github/agents/grok-repo-scanner.agent.md",
+      "use": "Look through the repository for a local way to practice the task."
+    },
+    {
+      "kind": "github",
+      "name": "Benchmark lessons daily",
+      "path": ".github/workflows/benchmark-lessons-daily.yml",
+      "use": "Rerun the lesson for every benchmark. A lesson is not a score."
+    },
+    {
+      "kind": "github",
+      "name": "System scan hourly",
+      "path": ".github/workflows/system-scan-hourly.yml",
+      "use": "Count the routes and the lessons. It does not open an issue."
+    },
+    {
+      "kind": "github",
+      "name": "Buddy learning proof",
+      "path": ".github/workflows/buddy-learning-proof.yml",
+      "use": "Run the learning checks that already exist."
+    }
+  ],
+  "weights_trained": false,
+  "plugins_called": false
+}

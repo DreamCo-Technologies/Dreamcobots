@@ -76,6 +76,7 @@
     { href: 'bootcamp-wrappers.html', label: 'Step wrappers' },
     { href: 'school-proof.html', label: 'School proof' },
     { href: 'school-all.html', label: 'Shared school' },
+    { href: 'my-model.html', label: 'Your model' },
     { href: 'one-shop.html', label: 'Own shop' },
     { href: 'idea.html', label: 'Your idea' },
     { href: 'note-model.html', label: 'Note model' },

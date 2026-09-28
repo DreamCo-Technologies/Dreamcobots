@@ -1,0 +1,29 @@
+name: Monthly list refresh
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 1 * *"
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Rebuild the shared lists
+        run: python3 buddy/learning/monthly_lists.py
+      - name: Commit the refresh when it changed
+        run: |
+          git diff --exit-code website/data/monthly-lists.json && exit 0
+          git config user.name "DreamCo Buddy"
+          git config user.email "buddy@dreamco.local"
+          git add website/data/monthly-lists.json
+          git commit -m "lists: monthly refresh of resources and failed-task routes"
+          git push
