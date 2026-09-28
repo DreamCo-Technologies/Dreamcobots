@@ -68,7 +68,7 @@ def main() -> int:
         "PACK=${HF_PACK:?set HF_PACK to a pack id such as pack.code}\n"
         "DEST=${HF_DEST:-$HOME/dreamco-hf-packages/$PACK}\n"
         "MANIFEST=study_packs/hf_packages/$PACK/package.json\n"
-        "if ! command -v huggingface-cli >/dev/null 2>&1; then\n"
+        "if ! command -v hf >/dev/null 2>&1 && ! command -v huggingface-cli >/dev/null 2>&1; then\n"
         "  echo 'Install huggingface_hub CLI first' >&2\n"
         "  exit 1\nfi\n"
         "mkdir -p \"$DEST\"\n"
@@ -77,7 +77,7 @@ def main() -> int:
         "pack=os.environ['PACK']\n"
         "manifest=json.loads(pathlib.Path(f'study_packs/hf_packages/{pack}/package.json').read_text())\n"
         "print('Would download', len(manifest['models']), 'models and', len(manifest['datasets']), 'datasets to', os.environ.get('HF_DEST'))\n"
-        "print('Pin revisions and confirm licenses before huggingface-cli download')\n"
+        "print('Pin revisions and confirm licenses before hf download')\n"
         "PY\n",
         encoding="utf-8",
     )

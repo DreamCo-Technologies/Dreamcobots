@@ -24,7 +24,7 @@ def board() -> dict:
         "connections": links,
         "apis": [row for row in links if row["api"]],
         "workflows": workflows,
-        "plugins": json.loads((ROOT / "website/data/plugins.json").read_text(encoding="utf-8"))["plugins"],
+        "plugins": json.loads((ROOT / "study_packs/hub/plugin-catalog.json").read_text(encoding="utf-8"))["plugins"],
         "measured_best": None,
         "called": False,
     }

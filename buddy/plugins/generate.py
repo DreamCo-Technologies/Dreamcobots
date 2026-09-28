@@ -61,6 +61,10 @@ def generate() -> dict:
 if __name__ == "__main__":
     made = generate()
     assert made["plugins"] >= 50000 and made["installed"] is False and made["called"] is False
-    out = ROOT / "website/data/plugins.json"
+    out = ROOT / "study_packs/hub/plugin-catalog.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(made, separators=(",", ":")) + "\n", encoding="utf-8")
-    print(json.dumps({"plugins": made["plugins"], "installed": False, "bytes": out.stat().st_size}))
+    summary = {key: made[key] for key in ("sources", "plugins", "installed", "called", "weights_trained", "note")}
+    summary["full_catalog"] = "study_packs/hub/plugin-catalog.json"
+    (ROOT / "website/data/plugins-summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps({"plugins": made["plugins"], "installed": False, "bytes": out.stat().st_size, "served": False}))

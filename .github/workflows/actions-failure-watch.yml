@@ -88,7 +88,7 @@ jobs:
           workflow=os.environ['WORKFLOW_NAME']
           key=hashlib.sha256(f'{workflow}|{first_job}|{first_step}'.lower().encode()).hexdigest()[:16]
           Path('failure-evidence/root-cause-key.txt').write_text(key+'\n')
-          lines=['# DreamCo Actions Failure','',f"Workflow: **{workflow}**",f"Run: **#{os.environ['RUN_NUMBER']}**",f"Conclusion: **{os.environ['RUN_CONCLUSION']}**",f"Event: **{os.environ['EVENT_NAME']}**",f"Commit: `{os.environ['HEAD_SHA']}`",f"Run URL: {os.environ['RUN_URL']}",f"Root-cause key: `{key}`",f"First failing job: **{first_job}**",f"First failing step: **{first_step}**",'','Issue filing is disabled. Use the Actions run and this artifact."]
+          lines=['# DreamCo Actions Failure','',f"Workflow: **{workflow}**",f"Run: **#{os.environ['RUN_NUMBER']}**",f"Conclusion: **{os.environ['RUN_CONCLUSION']}**",f"Event: **{os.environ['EVENT_NAME']}**",f"Commit: `{os.environ['HEAD_SHA']}`",f"Run URL: {os.environ['RUN_URL']}",f"Root-cause key: `{key}`",f"First failing job: **{first_job}**",f"First failing step: **{first_step}**",'','Issue filing is disabled. Use the Actions run and this artifact.']
           Path('failure-evidence/report.md').write_text('\n'.join(lines)+'\n')
           PY
           cat failure-evidence/report.md >> "$GITHUB_STEP_SUMMARY"
