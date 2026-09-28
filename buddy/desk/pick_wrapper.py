@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pick the best wrapper the user added. Do not call a model they did not add."""
+"""Pick the best shared model for a task. Do not call a model."""
 from __future__ import annotations
 
 import json
@@ -38,6 +38,27 @@ def choose(task: str, wrappers: list[dict]) -> dict:
     }
 
 
+def across(task: str, boards: list[dict]) -> dict:
+    """Best shared model for a task, no matter which user published it."""
+    shared = []
+    for board in boards or []:
+        owner = " ".join(str(board.get("user") or "").split()) or "unknown"
+        for item in board.get("models") or []:
+            if item.get("shared") is not True:
+                continue
+            shared.append({**item, "added_by_user": True, "shared_by": owner})
+    picked = choose(task, shared)
+    picked["from_all_shared_users"] = True
+    picked["private_models_seen"] = False
+    if picked["picked"]:
+        owner = next(item["shared_by"] for item in shared if item["name"] == picked["picked"])
+        picked["shared_by"] = owner
+        picked["reason"] = "Highest recorded score among models users marked shared. A private list is not included. Buddy did not call it."
+    else:
+        picked["reason"] = "No shared model covers this task. Buddy uses its own code."
+    return picked
+
+
 def route(tasks: list[str], wrappers: list[dict]) -> list[dict]:
     return [{"task": task, **choose(task, wrappers)} for task in tasks]
 
@@ -55,4 +76,13 @@ if __name__ == "__main__":
     assert world["picked"] == "map-maker"
     missing = choose("send email", wrappers)
     assert missing["used_wrapper"] is False and missing["picked"] is None
-    print(json.dumps({"code": code["picked"], "map": world["picked"], "called": False}))
+    boards = [
+        {"user": "ada", "models": [{"name": "ada-coder", "source": "huggingface", "tasks": ["write code"], "quality": 70, "free": True, "shared": True}]},
+        {"user": "bo", "models": [
+            {"name": "bo-coder", "source": "github", "tasks": ["write code"], "quality": 90, "free": False, "shared": True},
+            {"name": "bo-private", "source": "huggingface", "tasks": ["write code"], "quality": 99, "free": True, "shared": False},
+        ]},
+    ]
+    shared = across("write code", boards)
+    assert shared["picked"] == "bo-coder" and shared["called"] is False and shared["private_models_seen"] is False
+    print(json.dumps({"code": code["picked"], "shared": shared["picked"], "called": False}))
