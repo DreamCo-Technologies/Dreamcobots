@@ -1,4 +1,48 @@
 (function () {
+  function beats(group, name, topic) {
+    if (name === "Poem" || name === "Haiku" || name === "Spoken word" || name === "Original verse") {
+      return [
+        topic + ", kept small and near.",
+        "One step, then the next is clear.",
+        "The hands do what the line has said.",
+        "Stop before a borrowed thread."
+      ];
+    }
+    if (group === "commercial") {
+      return [
+        "Open on the problem in " + topic + ".",
+        "Show one step. Do not invent a price or a review.",
+        "End on the result. This " + name + " is a script, not a finished ad."
+      ];
+    }
+    if (group === "music") {
+      return [
+        name + " for " + topic + ": a picture, then a line you wrote.",
+        "Do not use someone else's recording unless you have the right.",
+        "Cut back to the result. No video file is rendered."
+      ];
+    }
+    if (group === "long") {
+      return [
+        name + ": why " + topic + " matters in the first minute.",
+        "One example a viewer can check.",
+        "Close with what to do next. This is an outline, not a filmed show."
+      ];
+    }
+    if (group === "note") {
+      return [
+        name + ": " + topic + ".",
+        "Say only what you can stand behind.",
+        "Leave the post unpublished until you send it."
+      ];
+    }
+    return [
+      name + ": open on " + topic + ".",
+      "Show one step a viewer can copy.",
+      "Close on the result. Not posted until you post it."
+    ];
+  }
+
   function clip(text, limit) {
     const clean = String(text || "").replace(/\s+/g, " ").trim();
     if (clean.length <= limit) return clean;
@@ -7,13 +51,16 @@
     return (room.join(" ") || clean.slice(0, limit - 1)).replace(/\s+$/, "") + "…";
   }
 
-  function packet(subject, when, link, formats) {
+  function packet(subject, when, link, formats, kind) {
     const topic = String(subject || "").replace(/\s+/g, " ").trim().slice(0, 160);
     const base = { posted: false, video_generated: false, reaches_instagram: false };
     if (topic.length < 3) return Object.assign({ accepted: false, reason: "Name the content." }, base);
+    const chosen = (formats.types || []).find(function (item) { return item.id === kind; });
+    if (!chosen) return Object.assign({ accepted: false, reason: "That content type is not in the list." }, base);
+    const script = beats(chosen.group, chosen.name, topic);
     const schedule = String(when || "").replace(/\s+/g, " ").trim().slice(0, 80) || "Pick a time. Buddy does not know when your audience is online.";
     const cleanLink = String(link || "").replace(/\s+/g, " ").trim().slice(0, 200);
-    let body = topic + ". One step. Not posted until you post it.";
+    let body = script.join(" ");
     if (cleanLink) body += " " + cleanLink;
     const drafts = (formats.platforms || []).map(function (item) {
       const room = item.id === "x" && cleanLink ? Math.max(40, item.limit - 24) : item.limit;
@@ -24,6 +71,8 @@
     });
     return Object.assign({
       accepted: true,
+      kind: chosen.id,
+      script: script,
       platforms: drafts,
       learned: { platforms: drafts.length, weights_trained: false, posted: false, note: formats.note },
       angles: ["Open on the problem in " + topic + ".", "Show one step a viewer can copy.", "Show the result, then how you got there."],
@@ -32,31 +81,69 @@
       caption: clip(body, 2200),
       schedule: schedule,
       link: cleanLink,
-      reason: "Buddy wrote one draft per network from public format rules. It did not train a model, render a video, or publish a post."
+      reason: "Buddy wrote a " + chosen.name + " and one draft per network. It did not film, render, or publish it."
     }, base);
   }
 
   const learned = document.getElementById("learned");
-  let rules = { platforms: [] };
-  fetch("data/social-formats.json").then(function (response) { return response.json(); }).then(function (data) {
-    rules = data;
-    learned.textContent = data.platforms.length + " networks. " + data.note;
+  const kindSelect = document.getElementById("kind");
+  let rules = { platforms: [], types: [] };
+  Promise.all([
+    fetch("data/social-formats.json").then(function (response) { return response.json(); }),
+    fetch("data/social-types.json").then(function (response) { return response.json(); })
+  ]).then(function (pair) {
+    rules = pair[0];
+    rules.types = pair[1].types;
+    pair[1].types.forEach(function (item) {
+      const option = document.createElement("option");
+      option.value = item.id;
+      option.textContent = item.name;
+      kindSelect.append(option);
+    });
+    if (kindSelect.querySelector("[value='feed-post']")) kindSelect.value = "feed-post";
+    learned.textContent = pair[0].platforms.length + " networks and " + pair[1].types.length + " content types. " + pair[1].note;
   }).catch(function () {
     learned.textContent = "The format list did not load.";
   });
 
   let latest = null;
-  document.getElementById("content-form").addEventListener("submit", function (event) {
-    event.preventDefault();
-    latest = packet(document.getElementById("subject").value, document.getElementById("when").value, document.getElementById("link").value, rules);
+  function show(result) {
+    latest = result;
     const list = document.getElementById("drafts");
     list.replaceChildren();
-    (latest.platforms || []).forEach(function (row) {
+    if (result.rows) {
+      result.rows.forEach(function (row) {
+        const item = document.createElement("li");
+        item.textContent = row.name + ": " + row.line;
+        list.append(item);
+      });
+    }
+    (result.platforms || []).forEach(function (row) {
       const item = document.createElement("li");
       item.textContent = row.name + " (" + row.text.length + "/" + row.limit + "): " + (row.title ? row.title + " — " : "") + row.text;
       list.append(item);
     });
-    document.getElementById("packet").textContent = latest.accepted ? latest.reason : latest.reason;
+    if (result.script) {
+      const script = document.createElement("li");
+      script.textContent = "Script: " + result.script.join(" ");
+      list.prepend(script);
+    }
+    document.getElementById("packet").textContent = result.reason || "Nothing made yet.";
+  }
+  document.getElementById("content-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    show(packet(document.getElementById("subject").value, document.getElementById("when").value, document.getElementById("link").value, rules, kindSelect.value));
+  });
+  document.getElementById("lineup").addEventListener("click", function () {
+    const topic = document.getElementById("subject").value.replace(/\s+/g, " ").trim();
+    if (topic.length < 3) {
+      show({ accepted: false, reason: "Name the content." });
+      return;
+    }
+    const rows = rules.types.map(function (item) {
+      return { id: item.id, name: item.name, line: beats(item.group, item.name, topic)[0] };
+    });
+    show({ accepted: true, posted: false, video_generated: false, rows: rows, reason: rows.length + " types written as one line each. None were filmed or posted." });
   });
   document.getElementById("save").addEventListener("click", function () {
     if (!latest || !latest.accepted) return;

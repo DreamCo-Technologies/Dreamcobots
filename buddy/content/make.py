@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 
 FORMATS = json.loads((Path(__file__).resolve().parents[2] / "website/data/social-formats.json").read_text(encoding="utf-8"))
+TYPES = json.loads((Path(__file__).resolve().parents[2] / "website/data/social-types.json").read_text(encoding="utf-8"))
+BY_ID = {item["id"]: item for item in TYPES["types"]}
 
 
 def _clip(text: str, limit: int) -> str:
@@ -19,20 +21,72 @@ def _clip(text: str, limit: int) -> str:
 def formats() -> dict:
     return {
         "platforms": len(FORMATS["platforms"]),
+        "types": len(TYPES["types"]),
         "weights_trained": False,
         "posted": False,
         "note": FORMATS["note"],
     }
 
 
-def packet(subject: str, when: str = "", link: str = "") -> dict:
+def beats(group: str, name: str, topic: str) -> list[str]:
+    if group == "poem" or name in {"Poem", "Haiku", "Spoken word", "Original verse"}:
+        return [
+            f"{topic}, kept small and near.",
+            "One step, then the next is clear.",
+            "The hands do what the line has said.",
+            "Stop before a borrowed thread.",
+        ]
+    if group == "commercial":
+        return [
+            f"Open on the problem in {topic}.",
+            "Show one step. Do not invent a price or a review.",
+            f"End on the result. This {name} is a script, not a finished ad.",
+        ]
+    if group == "music":
+        return [
+            f"{name} for {topic}: a picture, then a line you wrote.",
+            "Do not use someone else's recording unless you have the right.",
+            "Cut back to the result. No video file is rendered.",
+        ]
+    if group == "long":
+        return [
+            f"{name}: why {topic} matters in the first minute.",
+            "One example a viewer can check.",
+            "Close with what to do next. This is an outline, not a filmed show.",
+        ]
+    if group == "note":
+        return [
+            f"{name}: {topic}.",
+            "Say only what you can stand behind.",
+            "Leave the post unpublished until you send it.",
+        ]
+    return [
+        f"{name}: open on {topic}.",
+        "Show one step a viewer can copy.",
+        "Close on the result. Not posted until you post it.",
+    ]
+
+
+def lineup(subject: str) -> dict:
+    topic = " ".join((subject or "").split())[:160]
+    if len(topic) < 3:
+        return {"accepted": False, "posted": False, "video_generated": False, "reason": "Name the content."}
+    rows = [{"id": item["id"], "name": item["name"], "line": beats(item["group"], item["name"], topic)[0]} for item in TYPES["types"]]
+    return {"accepted": True, "posted": False, "video_generated": False, "weights_trained": False, "count": len(rows), "rows": rows}
+
+
+def packet(subject: str, when: str = "", link: str = "", kind: str = "feed-post") -> dict:
     topic = " ".join((subject or "").split())[:160]
     base = {"posted": False, "video_generated": False, "reaches_instagram": False}
     if len(topic) < 3:
         return {**base, "accepted": False, "reason": "Name the content."}
+    chosen = BY_ID.get(kind)
+    if chosen is None:
+        return {**base, "accepted": False, "reason": "That content type is not in the list."}
+    script = beats(chosen["group"], chosen["name"], topic)
     schedule = " ".join((when or "").split())[:80] or "Pick a time. Buddy does not know when your audience is online."
     clean_link = " ".join((link or "").split())[:200]
-    body = f"{topic}. One step. Not posted until you post it."
+    body = " ".join(script)
     if clean_link:
         body = f"{body} {clean_link}"
     drafts = []
@@ -51,6 +105,8 @@ def packet(subject: str, when: str = "", link: str = "") -> dict:
     return {
         **base,
         "accepted": True,
+        "kind": chosen["id"],
+        "script": script,
         "platforms": drafts,
         "learned": formats(),
         "angles": [
@@ -71,14 +127,20 @@ def packet(subject: str, when: str = "", link: str = "") -> dict:
         "caption": _clip(body, 2200),
         "schedule": schedule,
         "link": clean_link,
-        "reason": "Buddy wrote one draft per network from public format rules. It did not train a model, render a video, or publish a post.",
+        "reason": f"Buddy wrote a {chosen['name']} and one draft per network. It did not film, render, or publish it.",
     }
 
 
 if __name__ == "__main__":
     made = packet("how to frost a cake", "Friday 6pm", "https://example.com/recipe")
     assert made["accepted"] and made["posted"] is False and made["video_generated"] is False and made["reaches_instagram"] is False
-    assert made["learned"]["platforms"] == 12 and made["learned"]["weights_trained"] is False
+    assert made["learned"]["platforms"] == 12 and made["learned"]["types"] == 118 and made["learned"]["weights_trained"] is False
     assert all(row["within_limit"] for row in made["platforms"])
+    assert len(made["script"]) == 3
+    board = lineup("how to frost a cake")
+    assert board["count"] == 118 and board["video_generated"] is False
+    poem = packet("how to frost a cake", kind="poem")
+    assert poem["accepted"] and "borrowed thread" in poem["script"][-1]
+    assert packet("how to frost a cake", kind="nope")["accepted"] is False
     assert packet("no")["accepted"] is False
-    print(json.dumps({"platforms": len(made["platforms"]), "posted": False, "weights_trained": False}))
+    print(json.dumps({"platforms": len(made["platforms"]), "types": board["count"], "posted": False, "video_generated": False}))
