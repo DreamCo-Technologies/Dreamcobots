@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Model lab</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Look up a model</h1>
+    <p id="lead">Loading frontier, open-weight, and open-source models.</p>
+    <p><label>Find <input id="query" placeholder="llama, qwen, frontier"></label></p>
+    <ul id="models"></ul>
+    <h2>Your choice</h2>
+    <form id="pick" class="card">
+      <p><label>Task <input id="task" required></label></p>
+      <p><label>Step <input id="step" required placeholder="lesson"></label></p>
+      <p><label>Model id, if you want to choose <input id="choice" placeholder="qwen-coder"></label></p>
+      <button class="btn btn-primary" type="submit">Use my choice</button>
+      <button class="btn btn-outline" id="best" type="button">Use a recorded score</button>
+    </form>
+    <p id="result">No model has a score.</p>
+    <h2>What the folders show</h2>
+    <p id="scan"></p>
+    <h2>Tasks a wrapper was covering</h2>
+    <ul id="lessons"></ul>
+    <p>A wrapper lesson is study work. Nothing was trained. A pull request is not opened from this page.</p>
+    <p><a href="step-models.html">Pick a model for every step</a></p>
+  </main>
+  <script src="model-lab.js"></script>
+</body>
+</html>

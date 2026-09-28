@@ -4,7 +4,7 @@ DreamSearch is a generated, local-first index. It does not claim live internet r
 
 ## Inventory
 
-- Search documents: 2,540
+- Search documents: 2,541
 - Bot profiles: 1,101
 - Canonical bot profiles: 1,051
 - Supplemental shared sandbox planning profiles: 50
@@ -15,7 +15,7 @@ DreamSearch is a generated, local-first index. It does not claim live internet r
 - Model reference records: 500
 - Organization intelligence records: 296
 - Provider reference records: 200
-- Public pages: 155
+- Public pages: 156
 - Live web results claimed: 0
 
 | Result type | Count |
@@ -26,7 +26,7 @@ DreamSearch is a generated, local-first index. It does not claim live internet r
 | library | 6 |
 | model | 500 |
 | organization | 296 |
-| page | 155 |
+| page | 156 |
 | provider | 200 |
 | roadmap | 200 |
 | system | 10 |
