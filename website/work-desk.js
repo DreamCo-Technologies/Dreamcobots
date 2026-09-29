@@ -61,7 +61,10 @@ fetch("data/worker-rules.json").then(function (response) { return response.json(
 document.getElementById("vibe").addEventListener("submit", function (event) {
   event.preventDefault();
   const name = document.getElementById("app").value.trim().replace(/[&<>"]/g, function (char) {
-    return { "&": "&", "<": "<", ">": ">", '"': """ }[char];
+    if (char === "&") return "\u0026amp;";
+    if (char === "<") return "\u0026lt;";
+    if (char === ">") return "\u0026gt;";
+    return "\u0026quot;";
   });
   const kind = document.getElementById("kind").value;
   const body = kind === "form"
