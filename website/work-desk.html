@@ -11,10 +11,12 @@
   <script src="nav.js"></script>
   <main class="container">
     <h1>Assign a worker</h1>
-    <p>Name the job, pick a worker, and save it on this browser. This does not wake another bot and it does not merge a pull request.</p>
+    <p>Name the job. Buddy picks a worker and a personality from the presets already in the repository. You can change both before you save. A preset is a setting. It is not a trained model, and it is not a real person.</p>
     <form id="assign" class="card">
-      <p><label>Job <input id="job" required placeholder="draft a study page"></label></p>
+      <p><label>Job <input id="job" required placeholder="teach a sorting game"></label></p>
       <p><label>Worker <select id="worker"></select></label></p>
+      <p><label>Personality <select id="personality"></select></label></p>
+      <button class="btn btn-outline" id="build" type="button">Build the worker</button>
       <button class="btn btn-primary" type="submit">Assign</button>
     </form>
     <ul id="jobs"></ul>
