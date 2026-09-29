@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Work desk</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Assign a worker</h1>
+    <p>Name the job, pick a worker, and save it on this browser. This does not wake another bot and it does not merge a pull request.</p>
+    <form id="assign" class="card">
+      <p><label>Job <input id="job" required placeholder="draft a study page"></label></p>
+      <p><label>Worker <select id="worker"></select></label></p>
+      <button class="btn btn-primary" type="submit">Assign</button>
+    </form>
+    <ul id="jobs"></ul>
+    <h2>Vibe an app</h2>
+    <p>Type what the app should do. Buddy writes a preview on this page. It does not publish to an app store, and it is not the whole Replit service.</p>
+    <form id="vibe" class="card">
+      <p><label>App <input id="app" required placeholder="a list of practice tasks"></label></p>
+      <p><label>Kind
+        <select id="kind">
+          <option value="list">list</option>
+          <option value="form">form</option>
+          <option value="note">note</option>
+        </select>
+      </label></p>
+      <button class="btn btn-outline" type="submit">Preview</button>
+    </form>
+    <iframe id="preview" title="App preview" sandbox="" style="width:100%;height:220px;border:1px solid #ccc"></iframe>
+    <h2>Plans, builds, plugins, connectors</h2>
+    <p><a class="btn btn-outline" href="plan-runner.html">Plans</a> <a class="btn btn-outline" href="school-proof.html">Builds that ran</a> <a class="btn btn-outline" href="plugins.html">Plugins</a> <a class="btn btn-outline" href="step-models.html">Connectors</a> <a class="btn btn-outline" href="model-lab.html">Models</a></p>
+    <p id="store">The Apple App Store catalog is not copied here. Buddy has study routes for app tasks, not a listing of every store app.</p>
+    <h2>Pull requests</h2>
+    <p>A pull request is safe to merge only when GitHub says it does not conflict and every finished check passed. Open pull requests were still failing checks, so none were merged.</p>
+  </main>
+  <script src="work-desk.js"></script>
+</body>
+</html>
