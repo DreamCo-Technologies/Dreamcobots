@@ -1,12 +1,14 @@
 """Local image likeness or style cloning.
 
 clone_image() requires a consent record for the first reference image.
-The local backend is SDXL plus IP-Adapter. Nothing is downloaded on import.
-A sexual, violent, or defamatory prompt is refused even when consent exists.
+The local backend is SDXL plus IP-Adapter, loaded only from folders already
+on this machine. There is no remote call and no download. A sexual, violent,
+or defamatory prompt is refused even when consent exists.
 """
 from __future__ import annotations
 
 import logging
+import os
 from pathlib import Path
 from typing import Sequence
 
@@ -16,9 +18,6 @@ from .consent_gate import require_consent
 from .watermark import watermark_image
 
 logger = logging.getLogger(__name__)
-_BASE_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
-_IP_ADAPTER_REPO = "h94/IP-Adapter"
-_IP_ADAPTER_WEIGHT = "ip-adapter_sdxl.bin"
 _pipe_singleton = None
 _BLOCKED = ("nude", "naked", "sexual", "porn", "kill", "murder", "defame")
 
@@ -41,16 +40,30 @@ def _refuse_prompt(prompt: str) -> None:
         raise ValueError("refusing a sexual, violent, or defamatory depiction")
 
 
+def _local_image_weights() -> tuple[Path, Path]:
+    folder = Path(os.environ.get("DREAMCO_SDXL_DIR", ""))
+    adapter = Path(os.environ.get("DREAMCO_IP_ADAPTER", ""))
+    if not (folder / "model_index.json").is_file() or not adapter.is_file():
+        raise RuntimeError(
+            "Local image weights are not on this machine. Set DREAMCO_SDXL_DIR to a folder "
+            "that already contains model_index.json and DREAMCO_IP_ADAPTER to the adapter file. "
+            "This package will not download weights and will not send the picture anywhere."
+        )
+    return folder, adapter
+
+
 def _load_pipeline():
     global _pipe_singleton
+    folder, adapter = _local_image_weights()
     if _pipe_singleton is None:
         import torch
         from diffusers import StableDiffusionXLPipeline
 
         device = _device()
         dtype = torch.float16 if device in ("mps", "cuda") else torch.float32
-        pipe = StableDiffusionXLPipeline.from_pretrained(_BASE_MODEL, torch_dtype=dtype)
-        pipe.load_ip_adapter(_IP_ADAPTER_REPO, subfolder="sdxl_models", weight_name=_IP_ADAPTER_WEIGHT)
+        logger.info("loading local SDXL on %s", device)
+        pipe = StableDiffusionXLPipeline.from_pretrained(str(folder), torch_dtype=dtype, local_files_only=True)
+        pipe.load_ip_adapter(str(adapter.parent), subfolder="", weight_name=adapter.name)
         pipe.set_ip_adapter_scale(0.6)
         pipe.to(device)
         if device == "mps":
@@ -70,8 +83,6 @@ def clone_image(
     width: int = 1024,
     height: int = 1024,
     paid: bool = False,
-    use_remote: bool = False,
-    remote_client=None,
 ) -> Path:
     """Generate one watermarked image from reference images and a prompt."""
     if paid:
@@ -84,32 +95,21 @@ def clone_image(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     record = require_consent(reference_image_paths[0], "image_clone", consent_record_path)
     logger.info("consent verified for '%s'", record.subject_name)
-    if use_remote:
-        if remote_client is None:
-            raise ValueError("use_remote=True requires a remote_client callable supplied by the caller")
-        pixels = remote_client(
-            reference_image_paths,
-            prompt,
-            negative_prompt=negative_prompt,
-            width=width,
-            height=height,
-        )
-    else:
-        pipe = _load_pipeline()
-        from PIL import Image
+    _local_image_weights()
+    pipe = _load_pipeline()
+    from PIL import Image
 
-        references = [Image.open(path).convert("RGB") for path in reference_image_paths]
-        result = pipe(
-            prompt=prompt,
-            negative_prompt=negative_prompt,
-            ip_adapter_image=references,
-            num_inference_steps=num_inference_steps,
-            guidance_scale=guidance_scale,
-            width=width,
-            height=height,
-        )
-        pixels = np.array(result.images[0])
-    pixels = watermark_image(np.asarray(pixels), metadata={"subject": record.subject_name})
+    references = [Image.open(path).convert("RGB") for path in reference_image_paths]
+    result = pipe(
+        prompt=prompt,
+        negative_prompt=negative_prompt,
+        ip_adapter_image=references,
+        num_inference_steps=num_inference_steps,
+        guidance_scale=guidance_scale,
+        width=width,
+        height=height,
+    )
+    pixels = watermark_image(np.asarray(result.images[0]), metadata={"subject": record.subject_name})
     from PIL import Image as PILImage
 
     PILImage.fromarray(pixels).save(output_path)
