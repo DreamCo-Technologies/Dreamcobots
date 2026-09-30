@@ -62,13 +62,13 @@ class MediaCloningGateTest(unittest.TestCase):
             reference.write_bytes(b"reference-bytes")
             record = write_consent_record("Ada", reference, "Ada", "voice_clone", Path(folder) / "ok.json", adult_confirmed=True)
             with self.assertRaises(RuntimeError) as voice_error:
-                clone_voice(reference, "hello", record, Path(folder) / "out.wav")
+                clone_voice(reference, "hello", record, Path(folder) / "out.wav", use="business")
             self.assertIn("will not send", str(voice_error.exception))
             picture = Path(folder) / "face.png"
             picture.write_bytes(b"not-a-real-png")
             image_record = write_consent_record("Ada", picture, "Ada", "image_clone", Path(folder) / "image.json", adult_confirmed=True)
             with self.assertRaises(RuntimeError) as image_error:
-                clone_image([picture], "a portrait", image_record, Path(folder) / "out.png")
+                clone_image([picture], "a portrait", image_record, Path(folder) / "out.png", use="social")
             self.assertIn("will not send", str(image_error.exception))
 
     def test_expired_record_is_refused(self) -> None:
