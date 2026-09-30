@@ -1,8 +1,8 @@
 """Voice and image cloning for Buddy.
 
 Every public entry point requires a verified consent record. There is no
-parameter that skips that check. Personal, business, and social clones stay on
-this machine. XTTS-v2 is not used, because its license is non-commercial.
+parameter that skips that check. Speech and pictures are Buddy's own code.
+They stay on this machine. They do not call Chatterbox or Stable Diffusion.
 """
 from .consent_gate import ConsentError, ConsentRecord, require_consent
 from .image_clone import clone_image

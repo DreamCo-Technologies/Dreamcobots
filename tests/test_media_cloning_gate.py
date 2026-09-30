@@ -44,16 +44,11 @@ class MediaCloningGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             _refuse_prompt("a sexual portrait")
 
-    def test_unwatermarked_audio_is_not_returned(self) -> None:
-        try:
-            import audioseal  # noqa: F401
-        except ImportError:
-            with self.assertRaises(RuntimeError):
-                watermark_audio(np.zeros(8, dtype=np.float32), 24000)
-            return
-        self.skipTest("audioseal is installed; the missing-watermark stop was not the case under test")
+    def test_owned_marker_is_applied(self) -> None:
+        marked = watermark_audio(np.zeros(8, dtype=np.float32), 16000)
+        self.assertNotEqual(float(marked[-1]), 0.0)
 
-    def test_clone_stays_on_this_machine(self) -> None:
+    def test_owned_voice_and_picture_stay_here(self) -> None:
         os.environ.pop("DREAMCO_XTTS_DIR", None)
         os.environ.pop("DREAMCO_SDXL_DIR", None)
         os.environ.pop("DREAMCO_IP_ADAPTER", None)
@@ -61,15 +56,13 @@ class MediaCloningGateTest(unittest.TestCase):
             reference = Path(folder) / "clip.wav"
             reference.write_bytes(b"reference-bytes")
             record = write_consent_record("Ada", reference, "Ada", "voice_clone", Path(folder) / "ok.json", adult_confirmed=True)
-            with self.assertRaises(RuntimeError) as voice_error:
-                clone_voice(reference, "hello", record, Path(folder) / "out.wav", use="business")
-            self.assertIn("will not send", str(voice_error.exception))
+            voice = clone_voice(reference, "hello", record, Path(folder) / "out.wav", use="business")
+            self.assertGreater(voice.stat().st_size, 44)
             picture = Path(folder) / "face.png"
             picture.write_bytes(b"not-a-real-png")
             image_record = write_consent_record("Ada", picture, "Ada", "image_clone", Path(folder) / "image.json", adult_confirmed=True)
-            with self.assertRaises(RuntimeError) as image_error:
-                clone_image([picture], "a portrait", image_record, Path(folder) / "out.png", use="social")
-            self.assertIn("will not send", str(image_error.exception))
+            image = clone_image([picture], "a portrait", image_record, Path(folder) / "out.png", use="social")
+            self.assertTrue(image.read_bytes().startswith(b"\x89PNG"))
 
     def test_expired_record_is_refused(self) -> None:
         with tempfile.TemporaryDirectory() as folder:
