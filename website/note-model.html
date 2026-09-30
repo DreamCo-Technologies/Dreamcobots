@@ -16,7 +16,7 @@
   </main>
   <script>
     fetch("data/note-model.json").then(function (response) { return response.json(); }).then(function (data) {
-      document.getElementById("lead").textContent = data.notes + " own-version notes were trained for " + data.steps + " steps. Loss went from " + data.start_loss + " to " + data.end_loss + ". " + data.rule;
+      document.getElementById("lead").textContent = data.notes + " own-version notes were trained for " + data.steps + " steps. Loss went from " + data.start_loss + " to " + data.end_loss + ". " + data.parameters + " parameters. It is a language model. It is not a large language model. " + data.rule;
     }).catch(function () {
       document.getElementById("lead").textContent = "The training result did not load.";
     });

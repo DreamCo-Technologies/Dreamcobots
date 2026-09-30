@@ -72,8 +72,27 @@ def save(report: dict | None = None) -> dict:
     arrays = made.pop("_arrays")
     np.savez_compressed(WEIGHTS, **arrays)
     public = {key: value for key, value in made.items() if not key.startswith("_")}
+    public.update(classify())
     REPORT.write_text(json.dumps(public, indent=2) + "\n", encoding="utf-8")
     return public
+
+
+def classify() -> dict:
+    """A language model predicts the next token. Size decides whether it is large."""
+    if not WEIGHTS.is_file():
+        raise RuntimeError("buddy/learning/note_model.npz is missing")
+    loaded = np.load(WEIGHTS, allow_pickle=False)
+    parameters = int(loaded["embed"].size + loaded["weight"].size + loaded["bias"].size)
+    large = parameters >= 100_000_000
+    return {
+        "language_model": True,
+        "kind": "causal character language model",
+        "parameters": parameters,
+        "context_characters": CONTEXT,
+        "large_language_model": large,
+        "frontier_model": False,
+        "reason": "It predicts the next character from the previous 12, so it is a language model. It is not a large language model.",
+    }
 
 
 def generate(prompt: str, count: int = 40, seed: int = 1) -> str:
@@ -110,5 +129,7 @@ if __name__ == "__main__":
     assert made["end_loss"] < made["start_loss"]
     public = save(train(steps=80))
     sample = generate("Buddy ", count=12)
+    card = classify()
     assert sample and public["loss_dropped"] is True
-    print(json.dumps({"notes": public["notes"], "start_loss": public["start_loss"], "end_loss": public["end_loss"], "sample_characters": len(sample), "frontier_model": False}))
+    assert card["language_model"] is True and card["large_language_model"] is False
+    print(json.dumps({"notes": public["notes"], "parameters": card["parameters"], "language_model": True, "large_language_model": False}))
