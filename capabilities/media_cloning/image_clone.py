@@ -20,6 +20,7 @@ from .watermark import watermark_image
 logger = logging.getLogger(__name__)
 _pipe_singleton = None
 _BLOCKED = ("nude", "naked", "sexual", "porn", "kill", "murder", "defame")
+USES = {"personal", "business", "social"}
 
 
 def _device() -> str:
@@ -82,11 +83,11 @@ def clone_image(
     guidance_scale: float = 6.0,
     width: int = 1024,
     height: int = 1024,
-    paid: bool = False,
+    use: str = "personal",
 ) -> Path:
-    """Generate one watermarked image from reference images and a prompt."""
-    if paid:
-        raise RuntimeError("A paid likeness run is not enabled. Confirm the model license first.")
+    """Generate one watermarked image for personal, business, or social use."""
+    if use not in USES:
+        raise ValueError("use must be personal, business, or social")
     if not reference_image_paths:
         raise ValueError("reference_image_paths must contain at least one image")
     _refuse_prompt(prompt)

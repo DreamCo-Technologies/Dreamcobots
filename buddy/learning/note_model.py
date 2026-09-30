@@ -76,6 +76,32 @@ def save(report: dict | None = None) -> dict:
     return public
 
 
+def generate(prompt: str, count: int = 40, seed: int = 1) -> str:
+    """Continue a prompt with the saved weights. This is a small character model."""
+    if not WEIGHTS.is_file():
+        raise RuntimeError("buddy/learning/note_model.npz is missing")
+    loaded = np.load(WEIGHTS, allow_pickle=False)
+    chars = [str(char) for char in loaded["chars"].tolist()]
+    index = {char: pos for pos, char in enumerate(chars)}
+    embed = loaded["embed"]
+    weight = loaded["weight"]
+    bias = loaded["bias"]
+    rng = np.random.default_rng(seed)
+    text = prompt[-CONTEXT:] if prompt else chars[0]
+    while len(text) < CONTEXT:
+        text = chars[0] + text
+    for _ in range(count):
+        window = np.array([index.get(char, 0) for char in text[-CONTEXT:]], dtype=np.int32)
+        flat = embed[window].reshape(1, -1)
+        logits = flat @ weight + bias
+        logits = logits - logits.max()
+        probs = np.exp(logits[0])
+        probs /= probs.sum()
+        choice = int(rng.choice(len(chars), p=probs))
+        text += chars[choice]
+    return text[-count:]
+
+
 if __name__ == "__main__":
     made = train(steps=30)
     assert made["notes"] == 600
@@ -83,4 +109,6 @@ if __name__ == "__main__":
     assert made["frontier_model"] is False
     assert made["end_loss"] < made["start_loss"]
     public = save(train(steps=80))
-    print(json.dumps({"notes": public["notes"], "start_loss": public["start_loss"], "end_loss": public["end_loss"], "frontier_model": False}))
+    sample = generate("Buddy ", count=12)
+    assert sample and public["loss_dropped"] is True
+    print(json.dumps({"notes": public["notes"], "start_loss": public["start_loss"], "end_loss": public["end_loss"], "sample_characters": len(sample), "frontier_model": False}))

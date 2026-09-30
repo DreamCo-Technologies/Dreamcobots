@@ -1,10 +1,9 @@
-"""Local voice cloning.
+"""Local voice cloning for personal, business, and social use.
 
-clone_voice() requires a consent record. There is no parameter that skips it,
-and there is no remote call. The local backend is Coqui XTTS-v2, which is
-non-commercial. A paid run is refused. Weights are used only from a folder
-already on this machine. Nothing is downloaded when this file is imported
-or when the weights are missing.
+clone_voice() requires an adult consent record. There is no remote call.
+The commercial backend is Chatterbox, which is MIT licensed. XTTS-v2 is not
+used, because its license is non-commercial. Weights are used only from a
+folder already on this machine.
 """
 from __future__ import annotations
 
@@ -18,7 +17,8 @@ from .consent_gate import require_consent
 from .watermark import watermark_audio
 
 logger = logging.getLogger(__name__)
-_tts_singleton = None
+USES = {"personal", "business", "social"}
+_model = None
 
 
 def _device() -> str:
@@ -33,29 +33,30 @@ def _device() -> str:
     return "cpu"
 
 
-def _local_xtts() -> tuple[Path, Path]:
-    folder = Path(os.environ.get("DREAMCO_XTTS_DIR", ""))
-    model = folder / "model.pth"
-    config = folder / "config.json"
-    if not model.is_file() or not config.is_file():
+def _local_chatterbox() -> Path:
+    folder = Path(os.environ.get("DREAMCO_CHATTERBOX_DIR", ""))
+    weights = list(folder.glob("*.safetensors")) + list(folder.glob("*.pt"))
+    if not weights:
         raise RuntimeError(
-            "Local XTTS weights are not on this machine. Set DREAMCO_XTTS_DIR to a folder "
-            "that already contains model.pth and config.json. This package will not download "
-            "weights and will not send the clip anywhere."
+            "Local Chatterbox weights are not on this machine. Set DREAMCO_CHATTERBOX_DIR "
+            "to a folder that already contains the MIT-licensed weight files. This package "
+            "will not download weights and will not send the clip anywhere."
         )
-    return model, config
+    return folder
 
 
 def _load_model():
-    global _tts_singleton
-    model, config = _local_xtts()
-    if _tts_singleton is None:
-        from TTS.api import TTS
+    global _model
+    folder = _local_chatterbox()
+    if _model is None:
+        from chatterbox.tts import ChatterboxTTS
 
-        logger.info("loading local XTTS on %s", _device())
-        _tts_singleton = TTS(model_path=str(model), config_path=str(config))
-        _tts_singleton.to(_device())
-    return _tts_singleton
+        loader = getattr(ChatterboxTTS, "from_local", None)
+        if loader is None:
+            raise RuntimeError("This Chatterbox install cannot load a local folder. This package will not download weights.")
+        logger.info("loading local Chatterbox on %s", _device())
+        _model = loader(str(folder), _device())
+    return _model
 
 
 def clone_voice(
@@ -64,25 +65,22 @@ def clone_voice(
     consent_record_path: str | Path,
     output_path: str | Path,
     language: str = "en",
-    paid: bool = False,
+    use: str = "personal",
 ) -> Path:
-    """Clone the reference voice saying `text`, then watermark the wav."""
-    if paid:
-        raise RuntimeError("XTTS-v2 is non-commercial. This package will not run a paid clone.")
+    """Clone the reference voice for personal, business, or social use."""
+    if use not in USES:
+        raise ValueError("use must be personal, business, or social")
     if not str(text).strip():
         raise ValueError("text is required")
     reference_audio_path = Path(reference_audio_path)
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     record = require_consent(reference_audio_path, "voice_clone", consent_record_path)
-    logger.info("consent verified for '%s'", record.subject_name)
-    _local_xtts()
-    tts = _load_model()
-    samples = np.asarray(
-        tts.tts(text=text, speaker_wav=str(reference_audio_path), language=language),
-        dtype=np.float32,
-    )
-    sample_rate = getattr(tts.synthesizer, "output_sample_rate", 24000)
+    logger.info("consent verified for '%s' (%s)", record.subject_name, use)
+    model = _load_model()
+    wav = model.generate(text, audio_prompt_path=str(reference_audio_path))
+    samples = np.asarray(getattr(wav, "cpu", lambda: wav)().numpy() if hasattr(wav, "cpu") else wav, dtype=np.float32).reshape(-1)
+    sample_rate = int(getattr(model, "sr", 24000))
     samples = watermark_audio(samples, sample_rate)
     import soundfile as sf
 
