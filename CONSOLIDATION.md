@@ -33,6 +33,14 @@ Reduce overlapping GitHub Actions schedules and keep DreamCo's many logical bots
 
 Existing workflows should be retired or converted to manual-only execution **after** their functionality is verified as covered by a consolidated workflow. Do not delete workflow definitions merely to make the count smaller; preserve historical behavior until replacement coverage is proven.
 
+## Schedule demotion pass
+
+On 2026-10-01, colliding schedules were demoted rather than deleted. See `docs/WORKFLOW_SCHEDULE_DEMOTIONS.md`.
+
+Canonical jobs left on the old minute: `keep-green.yml`, `actions-failure-sweep.yml`, `problem-registry.yml`, `production-readiness.yml`, `dreamco-core-health.yml`, and `system-scan-hourly.yml`.
+
+The 65-bot training matrix is manual-only. The 65-division benchmark orchestrator moved from every 30 minutes to every 6 hours, because it still records placeholder evidence.
+
 ## Fleet model
 
 DreamCo can maintain hundreds or thousands of logical specialist profiles without launching one heavyweight process per profile. Buddy should select the required specialists, place work into a queue, and activate a bounded worker pool. The initial production target is approximately 20–50 active services/processes, with horizontal/vertical scaling available later.
