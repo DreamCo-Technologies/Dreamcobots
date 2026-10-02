@@ -2,6 +2,7 @@
 (function() {
   const current = location.pathname.split('/').pop() || 'index.html';
   const links = [
+    { href: 'repository-guide.html', label: '📚 Start Here' },
     { href: 'dashboard.html', label: '📊 Dashboard' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'buddy-expert-mode.html', label: '🎓 Expert Mode' },
@@ -24,15 +25,26 @@
     { href: 'buddy-operating-system.html', label: '🧬 Buddy AGI OS' },
     { href: 'success.html', label: '📈 Success Center' },
     { href: 'search.html', label: '🔎 DreamSearch' },
+    { href: 'weight-study.html', label: 'Weight study' },
+    { href: 'clone-blueprint.html', label: 'Clone blueprint' },
+    { href: 'content-desk.html', label: 'Content desk' },
     { href: 'studio.html', label: '🎮 Creative Studio' },
     { href: 'practice.html', label: '🎤 Practice Lab' },
     { href: 'platform.html', label: '🧩 Platform Registry' },
     { href: 'calculator.html', label: '🧮 Calculator Lab' },
     { href: 'divisions.html', label: '🏛️ Divisions' },
     { href: 'bots.html', label: '🤖 Bot Fleet' },
+    { href: 'original-bots.html', label: 'Original bots' },
     { href: 'test-center.html', label: '🧪 Test Center' },
     { href: 'security.html', label: '🛡️ Defense Center' },
     { href: 'system-map.html', label: '🗺️ Repository Map' },
+    { href: 'github-center.html', label: 'Command center' },
+    { href: 'easy-code.html', label: 'Easy code' },
+    { href: 'guardrails.html', label: 'Guardrails' },
+    { href: 'my-guardrails.html', label: 'Your guardrails' },
+    { href: 'guardrail-hub.html', label: 'Guardrail hub' },
+    { href: 'open-build.html', label: 'Open build' },
+    { href: 'repo-live.html', label: 'Whole repo' },
     { href: 'chat.html', label: '💬 Chat' },
     { href: 'install.html', label: '📲 Install & Launch' },
     { href: 'leads.html', label: '🎯 Lead Systems' },
@@ -48,6 +60,47 @@
     { href: 'command.html', label: 'Command' },
     { href: 'ops.html', label: 'Ops' },
     { href: 'chat-sync.html', label: 'This chat → Pages' },
+    { href: 'frontier-shop.html', label: '20 model packages' },
+    { href: 'hf-unlock.html', label: 'Unlock 10 actions' },
+    { href: 'github-hub.html', label: 'Easy GitHub' },
+    { href: 'hf-hub.html', label: 'Easy Hugging Face' },
+    { href: 'model-bench.html', label: 'Test a model' },
+    { href: 'weight-hub.html', label: 'Weight control' },
+    { href: 'your-model.html', label: 'Their own model' },
+    { href: 'buddy-desk.html', label: 'Buddy desk' },
+    { href: 'frontier-path.html', label: 'Frontier path' },
+    { href: 'learning-methods.html', label: 'Learning methods' },
+    { href: 'world-map.html', label: '3D world map' },
+    { href: 'game-builder.html', label: 'Game builder' },
+    { href: 'wrappers.html', label: 'Your wrappers' },
+    { href: 'bootcamp-wrappers.html', label: 'Step wrappers' },
+    { href: 'school-proof.html', label: 'School proof' },
+    { href: 'school-all.html', label: 'Shared school' },
+    { href: 'my-model.html', label: 'Your model' },
+    { href: 'plugins.html', label: 'Plugins' },
+    { href: 'step-models.html', label: 'Step models' },
+    { href: 'model-lab.html', label: 'Model lab' },
+    { href: 'work-desk.html', label: 'Work desk' },
+    { href: 'one-shop.html', label: 'Own shop' },
+    { href: 'idea.html', label: 'Your idea' },
+    { href: 'note-model.html', label: 'Note model' },
+    { href: 'train-own.html', label: 'Your training data' },
+    { href: 'datasets.html', label: 'Free datasets' },
+    { href: 'benchmarks.html', label: 'Benchmarks' },
+    { href: 'bench-routes.html', label: 'Benchmark routes' },
+    { href: 'learn-failures.html', label: 'Failed benchmarks' },
+    { href: 'study-path.html', label: 'Study a benchmark' },
+    { href: 'lessons.html', label: 'Lessons' },
+    { href: 'plan-runner.html', label: 'Plan runner' },
+    { href: 'folder-plans.html', label: 'Folder plans' },
+    { href: 'build-paths.html', label: 'Build paths' },
+    { href: 'what-you-have.html', label: 'What you have' },
+    { href: 'plans.html', label: 'Plans as code' },
+    { href: 'this-chat.html', label: 'This chat' },
+    { href: 'app-shop.html', label: 'App shop' },
+    { href: 'school.html', label: 'Buddy school' },
+    { href: 'own-bootcamp.html', label: 'Our bootcamp' },
+    { href: 'hf-bootcamp.html', label: 'HF packages' },
     { href: 'hub.html', label: 'Hub OS' },
     { href: 'learn-hf.html', label: 'HF week' },
     { href: 'learn.html', label: 'Learn methods' },
@@ -143,6 +196,12 @@
     pageActions.dataset.dreamcoPageActions = 'true';
     document.head.appendChild(pageActions);
   }
+  if (!document.querySelector('script[data-dreamco-theme]')) {
+    const theme = document.createElement('script');
+    theme.src = 'theme.js';
+    theme.dataset.dreamcoTheme = 'true';
+    document.head.appendChild(theme);
+  }
 })();
 
 function toggleMoreMenu(e) {
@@ -153,3 +212,12 @@ document.addEventListener('click', function(e) {
   const menu = document.getElementById('nav-more-menu');
   if (menu && !e.target.closest('.nav-more')) menu.classList.remove('open');
 });
+
+// Shared repository controls are loaded once after the page is ready.
+(() => {
+  if (document.querySelector('script[data-repository-actions]')) return;
+  const script = document.createElement('script');
+  script.src = new URL('repository-actions.js', document.currentScript.src).href;
+  script.dataset.repositoryActions = 'true';
+  document.head.appendChild(script);
+})();

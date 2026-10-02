@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shared school</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>School for every user</h1>
+    <p id="lead">Loading the resource run and the tasks Buddy cannot do yet.</p>
+    <h2>How a model is chosen</h2>
+    <p>For one task, Buddy looks at every model a user marked shared. The highest recorded score wins. If two scores tie, the free model wins. A private list is not included. The model is not called. Your own model replaces the stand-in after it finishes training.</p>
+    <h2>Resources</h2>
+    <p id="resources"></p>
+    <h2>Tasks that still need practice</h2>
+    <ul id="gaps"></ul>
+    <p><a href="school-proof.html">The 17 lesson checks</a> · <a href="bootcamp-wrappers.html">A model per step</a></p>
+  </main>
+  <script>
+    fetch("data/school-all.json").then(function (response) { return response.json(); }).then(function (data) {
+      const resources = data.resources;
+      document.getElementById("lead").textContent = "Buddy wrote its own version of " + resources.own_versions + " of " + resources.catalog_rows + " catalog rows. Nothing was trained.";
+      document.getElementById("resources").textContent = "Ten views were required for each row. Blocked: " + resources.blocked + ". Still missing ranges " + resources.missing_catalog_ranges.join(" and ") + ". Target is " + resources.target_resources + ". Mastered: no.";
+      const list = document.getElementById("gaps");
+      data.practice.rows.forEach(function (row) {
+        const item = document.createElement("li");
+        item.textContent = row.task + " — " + (row.can_do ? "Buddy can do this. " : "Needs practice. ") + row.lesson;
+        list.append(item);
+      });
+    });
+  </script>
+</body>
+</html>

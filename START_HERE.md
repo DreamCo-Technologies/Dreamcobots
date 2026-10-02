@@ -1,5 +1,7 @@
 # Start here
 
+[What the repository has and what needs setup](docs/REPOSITORY_OWNER_GUIDE.md) · [All website pages](https://dreamco-technologies.github.io/Dreamcobots/repository-guide.html)
+
 **Buddy is the easy way to use this GitHub project.**
 
 You can talk in normal words. Buddy translates.

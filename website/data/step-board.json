@@ -1,0 +1,350 @@
+{
+  "steps": [
+    "receive_task",
+    "check_native_capability",
+    "select_best_approved_model_or_tool_if_needed",
+    "sandbox_execution",
+    "capture_authorized_reusable_evidence",
+    "analyze_workflow_and_failure_modes",
+    "create_candidate_buddy_strategy",
+    "implement_or_adapt_in_review_branch_or_sandbox",
+    "run_targeted_tests",
+    "run_independent_benchmark",
+    "compare_with_baseline_and_reference",
+    "retest_dependents",
+    "promote_only_if_acceptance_criteria_pass",
+    "retain_regression_test",
+    "monitor_for_regression",
+    "find_next_improvement_after_mastery"
+  ],
+  "approved_models": [
+    {
+      "id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+      "license": "Apache-2.0",
+      "approved": true,
+      "called": false
+    },
+    {
+      "id": "Qwen/Qwen2.5-0.5B-Instruct",
+      "license": "Apache-2.0",
+      "approved": true,
+      "called": false
+    },
+    {
+      "id": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+      "license": "Apache-2.0",
+      "approved": true,
+      "called": false
+    },
+    {
+      "id": "openai/whisper-tiny",
+      "license": "MIT",
+      "approved": true,
+      "called": false
+    },
+    {
+      "id": "hexgrad/Kokoro-82M",
+      "license": "Apache-2.0",
+      "approved": true,
+      "called": false
+    }
+  ],
+  "connections": [
+    {
+      "id": "local-model",
+      "name": "Local AI runtime",
+      "status": "setup_available",
+      "setup_url": "https://ollama.com/download",
+      "page": "open-model-lab.html",
+      "api": false
+    },
+    {
+      "id": "openai",
+      "name": "OpenAI models",
+      "status": "optional_provider",
+      "setup_url": "https://platform.openai.com/api-keys",
+      "page": "models.html",
+      "api": true
+    },
+    {
+      "id": "github",
+      "name": "GitHub",
+      "status": "adapter_configuration",
+      "setup_url": "https://github.com/settings/apps",
+      "page": "actions.html",
+      "api": false
+    },
+    {
+      "id": "mcp",
+      "name": "MCP server",
+      "status": "server_configuration",
+      "setup_url": "https://modelcontextprotocol.io/docs/getting-started/intro",
+      "page": "connections.html",
+      "api": false
+    },
+    {
+      "id": "google-maps",
+      "name": "Google Maps",
+      "status": "optional_provider",
+      "setup_url": "https://developers.google.com/maps/documentation/javascript/get-api-key",
+      "page": "world-lens.html",
+      "api": true
+    },
+    {
+      "id": "reso-mls",
+      "name": "Authorized MLS / RESO provider",
+      "status": "data_license_required",
+      "setup_url": "https://www.reso.org/reso-web-api/",
+      "page": "world-lens.html",
+      "api": true
+    },
+    {
+      "id": "ffmpeg",
+      "name": "FFmpeg local media engine",
+      "status": "local_engine_setup",
+      "setup_url": "https://ffmpeg.org/download.html",
+      "page": "studio.html",
+      "api": false
+    },
+    {
+      "id": "blender",
+      "name": "Blender local 3D/VFX engine",
+      "status": "local_engine_setup",
+      "setup_url": "https://www.blender.org/download/",
+      "page": "studio.html",
+      "api": false
+    },
+    {
+      "id": "audacity",
+      "name": "Audacity local audio editor",
+      "status": "local_engine_setup",
+      "setup_url": "https://www.audacityteam.org/download/",
+      "page": "studio.html",
+      "api": false
+    },
+    {
+      "id": "musicgen",
+      "name": "AudioCraft / MusicGen",
+      "status": "license_and_hardware_review",
+      "setup_url": "https://github.com/facebookresearch/audiocraft",
+      "page": "music-creator.html",
+      "api": false
+    },
+    {
+      "id": "whisper",
+      "name": "Whisper speech recognition",
+      "status": "local_engine_setup",
+      "setup_url": "https://github.com/openai/whisper",
+      "page": "studio.html",
+      "api": false
+    },
+    {
+      "id": "usaspending",
+      "name": "USAspending API",
+      "status": "public_adapter",
+      "setup_url": "https://api.usaspending.gov/",
+      "page": "government.html",
+      "api": true
+    },
+    {
+      "id": "simpler-grants",
+      "name": "Simpler.Grants.gov API",
+      "status": "adapter_configuration",
+      "setup_url": "https://simpler.grants.gov/developers",
+      "page": "government.html",
+      "api": true
+    },
+    {
+      "id": "world-bank",
+      "name": "World Bank Open Data API",
+      "status": "public_adapter",
+      "setup_url": "https://datahelpdesk.worldbank.org/knowledgebase/topics/125589-developer-information",
+      "page": "opportunity-hub.html",
+      "api": true
+    },
+    {
+      "id": "oecd",
+      "name": "OECD Data Explorer",
+      "status": "source_adapter",
+      "setup_url": "https://data-explorer.oecd.org/",
+      "page": "opportunity-hub.html",
+      "api": false
+    },
+    {
+      "id": "un-data",
+      "name": "United Nations Data",
+      "status": "source_adapter",
+      "setup_url": "https://data.un.org/",
+      "page": "opportunity-hub.html",
+      "api": false
+    },
+    {
+      "id": "sam",
+      "name": "SAM.gov API",
+      "status": "adapter_configuration",
+      "setup_url": "https://open.gsa.gov/api/sam-api/",
+      "page": "manufacturer-marketplace.html",
+      "api": true
+    },
+    {
+      "id": "nist-mep",
+      "name": "NIST MEP supplier scouting",
+      "status": "official_handoff",
+      "setup_url": "https://www.nist.gov/mep",
+      "page": "manufacturer-marketplace.html",
+      "api": false
+    }
+  ],
+  "apis": [
+    {
+      "id": "openai",
+      "name": "OpenAI models",
+      "status": "optional_provider",
+      "setup_url": "https://platform.openai.com/api-keys",
+      "page": "models.html",
+      "api": true
+    },
+    {
+      "id": "google-maps",
+      "name": "Google Maps",
+      "status": "optional_provider",
+      "setup_url": "https://developers.google.com/maps/documentation/javascript/get-api-key",
+      "page": "world-lens.html",
+      "api": true
+    },
+    {
+      "id": "reso-mls",
+      "name": "Authorized MLS / RESO provider",
+      "status": "data_license_required",
+      "setup_url": "https://www.reso.org/reso-web-api/",
+      "page": "world-lens.html",
+      "api": true
+    },
+    {
+      "id": "usaspending",
+      "name": "USAspending API",
+      "status": "public_adapter",
+      "setup_url": "https://api.usaspending.gov/",
+      "page": "government.html",
+      "api": true
+    },
+    {
+      "id": "simpler-grants",
+      "name": "Simpler.Grants.gov API",
+      "status": "adapter_configuration",
+      "setup_url": "https://simpler.grants.gov/developers",
+      "page": "government.html",
+      "api": true
+    },
+    {
+      "id": "world-bank",
+      "name": "World Bank Open Data API",
+      "status": "public_adapter",
+      "setup_url": "https://datahelpdesk.worldbank.org/knowledgebase/topics/125589-developer-information",
+      "page": "opportunity-hub.html",
+      "api": true
+    },
+    {
+      "id": "sam",
+      "name": "SAM.gov API",
+      "status": "adapter_configuration",
+      "setup_url": "https://open.gsa.gov/api/sam-api/",
+      "page": "manufacturer-marketplace.html",
+      "api": true
+    }
+  ],
+  "workflows": [
+    "actions-command-center.yml",
+    "actions-failure-sweep.yml",
+    "actions-failure-watch.yml",
+    "actions-green-contract.yml",
+    "actions-health.yml",
+    "actions-page-debug.yml",
+    "actions-page-gate.yml",
+    "autonomous-systems-builder.yml",
+    "benchmark-65-orchestrator.yml",
+    "benchmark-evidence-loop.yml",
+    "benchmark-gap-planner.yml",
+    "benchmark-lessons-daily.yml",
+    "benchmark-manifest-validation.yml",
+    "benchmark-sandbox-manifest.yml",
+    "benchmark-tracker.yml",
+    "benchmark-training-execution.yml",
+    "benchmark-training-queue.yml",
+    "bot-production-readiness.yml",
+    "branch-health-daily.yml",
+    "buddy-1000-source-learning.yml",
+    "buddy-24h-sandbox-soak.yml",
+    "buddy-500-model-governance.yml",
+    "buddy-65-masterbot-training.yml",
+    "buddy-actions-test-lab.yml",
+    "buddy-benchmark-smoke.yml",
+    "buddy-fleet-health.yml",
+    "buddy-gap-closure-24h.yml",
+    "buddy-hub-learning-packages.yml",
+    "buddy-learning-proof.yml",
+    "buddy-learning-regression.yml",
+    "buddy-os-contracts.yml",
+    "buddy-preventive-engineering.yml",
+    "buddy-sandbox-bootcamp.yml",
+    "build-updates-now.yml",
+    "builder-issue-reconciler.yml",
+    "business-data-trade-readiness.yml",
+    "code-trust-gate.yml",
+    "codeql.yml",
+    "command-center-index.yml",
+    "compile-md-bots.yml",
+    "consolidation-integrity-gate.yml",
+    "continuous-learning-runner.yml",
+    "dependency-review.yml",
+    "deploy-buddy-pages.yml",
+    "dreamco-control-center.yml",
+    "dreamco-control-plane.yml",
+    "dreamco-core-health.yml",
+    "dreamco-daily-research-benchmark.yml",
+    "dreamco-live-dashboard.yml",
+    "dreamco-platform-evolution.yml",
+    "dreamco-pr-review-guardian.yml",
+    "dreamco-unified-system.yml",
+    "engineering-gap-closure.yml",
+    "full-system-certification.yml",
+    "government-transparency-refresh.yml",
+    "greenkeeper-orchestrator.yml",
+    "greenkeeper-root-cause.yml",
+    "grok-owner-systems.yml",
+    "grok-team.yml",
+    "grok-twins-hf-study.yml",
+    "intelligent-issue-cleaner.yml",
+    "issue-intelligence.yml",
+    "keep-green.yml",
+    "masterbot-routing-audit.yml",
+    "model-progress-center.yml",
+    "money-os-ci.yml",
+    "monthly-lists.yml",
+    "open-source-evolution.yml",
+    "original-bot-placement.yml",
+    "pages.yml",
+    "parallel-benchmark-gap-builders.yml",
+    "pr-recovery-engine.yml",
+    "pr-review-manifest.yml",
+    "pr-review-parity-gate.yml",
+    "problem-registry.yml",
+    "production-readiness.yml",
+    "repo-capability-audit.yml",
+    "repository-scan-update.yml",
+    "repository-system-watch.yml",
+    "repository-test-matrix.yml",
+    "run-everything-now.yml",
+    "self-working-system.yml",
+    "startup-factory-contract.yml",
+    "superbot-inventory.yml",
+    "superbot-migration-ledger.yml",
+    "sync-to-huggingface.yml",
+    "system-scan-hourly.yml",
+    "tool-skill-readiness.yml",
+    "vibe-coding-taxonomy.yml"
+  ],
+  "plugins": 86706,
+  "measured_best": null,
+  "called": false
+}

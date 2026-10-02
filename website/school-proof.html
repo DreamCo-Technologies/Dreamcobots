@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>School proof</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>What the school can prove</h1>
+    <p id="lead">Loading the lesson run.</p>
+    <ul id="rows"></ul>
+    <p>This is not a claim to be the best school in the world. A lesson that passed here means the check ran. It does not mean a public exam was won.</p>
+    <p><a href="bootcamp-wrappers.html">Wrappers until a model is trained</a></p>
+  </main>
+  <script>
+    fetch("data/school-proof.json").then(function (response) { return response.json(); }).then(function (report) {
+      document.getElementById("lead").textContent = report.passed + " of " + report.lessons + " lessons passed. Wrappers used: " + report.wrapper_used + ". Best in the world: no.";
+      const list = document.getElementById("rows");
+      report.rows.forEach(function (row) {
+        const item = document.createElement("li");
+        item.textContent = row.task + " — " + (row.passed ? "passed. " : "failed. ") + row.learned;
+        list.append(item);
+      });
+    });
+  </script>
+</body>
+</html>

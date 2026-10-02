@@ -68,7 +68,9 @@ jobs:
         run: npm ci --ignore-scripts
 
       - name: Run static Actions audit
-        run: python3 tools/audit_actions_health.py
+        run: |
+          python3 tools/audit_actions_health.py
+          python3 tools/build_actions_prospectus.py
 
       - name: Validate Actions health contract
         run: python3 -m unittest tests.test_actions_health

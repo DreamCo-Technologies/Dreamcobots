@@ -1,0 +1,14 @@
+name: Ping lesson
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  explain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Say what a ping is
+        run: echo "A ping is a message sent when something happens. This recipe does not call a private server."

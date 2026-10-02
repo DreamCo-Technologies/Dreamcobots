@@ -1,0 +1,579 @@
+{
+  "goal": "Full control of your own weight files",
+  "weight_files_present": false,
+  "settings": [
+    {
+      "id": "model_id",
+      "group": "Identity",
+      "plain": "Model id",
+      "what": "Public id, like organization/model-name. Empty until you set one.",
+      "default": "",
+      "kind": "text"
+    },
+    {
+      "id": "revision",
+      "group": "Identity",
+      "plain": "Exact version",
+      "what": "A commit or tag. Latest is not a locked version.",
+      "default": "main",
+      "kind": "text"
+    },
+    {
+      "id": "owner_only",
+      "group": "Identity",
+      "plain": "Your files only",
+      "what": "Control applies only to weights you have the right to keep.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "format",
+      "group": "File",
+      "plain": "Weight format",
+      "what": "How the weight file is stored.",
+      "default": "safetensors",
+      "kind": "choice",
+      "choices": [
+        "safetensors",
+        "gguf",
+        "mlx",
+        "onnx",
+        "pytorch"
+      ]
+    },
+    {
+      "id": "shard",
+      "group": "File",
+      "plain": "Split big files",
+      "what": "Allow a large model to be split into pieces.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "checksum",
+      "group": "File",
+      "plain": "Require a checksum",
+      "what": "Do not load a file until its hash is recorded.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "dtype",
+      "group": "Precision",
+      "plain": "Number size",
+      "what": "Smaller numbers use less memory and can lose detail.",
+      "default": "bf16",
+      "kind": "choice",
+      "choices": [
+        "fp32",
+        "fp16",
+        "bf16",
+        "fp8",
+        "int8",
+        "int4"
+      ]
+    },
+    {
+      "id": "quantization",
+      "group": "Precision",
+      "plain": "Compression",
+      "what": "How the weights were squeezed, if at all.",
+      "default": "none",
+      "kind": "choice",
+      "choices": [
+        "none",
+        "bitsandbytes",
+        "gptq",
+        "awq",
+        "gguf"
+      ]
+    },
+    {
+      "id": "device",
+      "group": "Load",
+      "plain": "Where it runs",
+      "what": "The chip you plan to use. This page has no chip loaded.",
+      "default": "cpu",
+      "kind": "choice",
+      "choices": [
+        "cpu",
+        "cuda",
+        "mps"
+      ]
+    },
+    {
+      "id": "trust_remote_code",
+      "group": "Load",
+      "plain": "Run repo code",
+      "what": "Stays off. A model repo must not run its own code from this hub.",
+      "default": false,
+      "kind": "bool"
+    },
+    {
+      "id": "low_memory",
+      "group": "Load",
+      "plain": "Low memory load",
+      "what": "Load in smaller pieces when the machine is tight.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "local_files_only",
+      "group": "Load",
+      "plain": "No surprise download",
+      "what": "Do not fetch new files during a run.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "max_new_tokens",
+      "group": "Inference",
+      "plain": "Reply length",
+      "what": "The most new tokens a reply may add.",
+      "default": 256,
+      "kind": "number"
+    },
+    {
+      "id": "temperature",
+      "group": "Inference",
+      "plain": "Surprise",
+      "what": "Higher means more variety. Zero is the most repeatable.",
+      "default": 0.2,
+      "kind": "number"
+    },
+    {
+      "id": "top_p",
+      "group": "Inference",
+      "plain": "Top chance",
+      "what": "Keep the most likely next words that add up to this chance.",
+      "default": 0.9,
+      "kind": "number"
+    },
+    {
+      "id": "top_k",
+      "group": "Inference",
+      "plain": "Top list",
+      "what": "Look at only this many next words. Zero means the sampler default.",
+      "default": 40,
+      "kind": "number"
+    },
+    {
+      "id": "repetition_penalty",
+      "group": "Inference",
+      "plain": "Repeat brake",
+      "what": "Push back when the model repeats itself.",
+      "default": 1.05,
+      "kind": "number"
+    },
+    {
+      "id": "seed",
+      "group": "Inference",
+      "plain": "Fixed dice",
+      "what": "Same seed, same draw, when the software allows it.",
+      "default": 7,
+      "kind": "number"
+    },
+    {
+      "id": "do_sample",
+      "group": "Inference",
+      "plain": "Draw at random",
+      "what": "Off means the most likely word. On uses the dice.",
+      "default": false,
+      "kind": "bool"
+    },
+    {
+      "id": "train_enabled",
+      "group": "Training",
+      "plain": "Training armed",
+      "what": "Off until you own the data and keep a hidden test.",
+      "default": false,
+      "kind": "bool"
+    },
+    {
+      "id": "learning_rate",
+      "group": "Training",
+      "plain": "Learning speed",
+      "what": "How hard each step nudges the weights.",
+      "default": 0.0002,
+      "kind": "number"
+    },
+    {
+      "id": "batch_size",
+      "group": "Training",
+      "plain": "Batch size",
+      "what": "How many examples are seen together.",
+      "default": 1,
+      "kind": "number"
+    },
+    {
+      "id": "epochs",
+      "group": "Training",
+      "plain": "Passes",
+      "what": "How many times to walk the training notes.",
+      "default": 1,
+      "kind": "number"
+    },
+    {
+      "id": "warmup_steps",
+      "group": "Training",
+      "plain": "Warmup steps",
+      "what": "Steps before the learning speed reaches its target.",
+      "default": 10,
+      "kind": "number"
+    },
+    {
+      "id": "weight_decay",
+      "group": "Training",
+      "plain": "Weight decay",
+      "what": "A small pull that keeps weights from growing without a reason.",
+      "default": 0.0,
+      "kind": "number"
+    },
+    {
+      "id": "grad_checkpoint",
+      "group": "Training",
+      "plain": "Save memory in training",
+      "what": "Recalculate some steps to use less memory.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "mixed_precision",
+      "group": "Training",
+      "plain": "Mixed precision",
+      "what": "Train with smaller numbers where it is safe.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "held_out_required",
+      "group": "Training",
+      "plain": "Hidden test required",
+      "what": "Do not call it trained without a test the model did not study.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "owned_data_required",
+      "group": "Training",
+      "plain": "Owned data required",
+      "what": "Do not train on files you do not own.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "adapter_only",
+      "group": "Adapter",
+      "plain": "Adapter only",
+      "what": "Change a small adapter instead of every weight.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "lora_rank",
+      "group": "Adapter",
+      "plain": "Adapter size",
+      "what": "A bigger rank can learn more and costs more.",
+      "default": 8,
+      "kind": "number"
+    },
+    {
+      "id": "lora_alpha",
+      "group": "Adapter",
+      "plain": "Adapter strength",
+      "what": "Scales the adapter against the frozen weights.",
+      "default": 16,
+      "kind": "number"
+    },
+    {
+      "id": "lora_dropout",
+      "group": "Adapter",
+      "plain": "Adapter dropout",
+      "what": "Drops some adapter paths during training.",
+      "default": 0.05,
+      "kind": "number"
+    },
+    {
+      "id": "freeze_base",
+      "group": "Adapter",
+      "plain": "Freeze the base",
+      "what": "The original weights stay put. Only the adapter moves.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "closed_weights",
+      "group": "Safety",
+      "plain": "Ship closed weights",
+      "what": "Always off. Other companies' weights are not yours.",
+      "default": false,
+      "kind": "bool"
+    },
+    {
+      "id": "license_checked",
+      "group": "Safety",
+      "plain": "License checked",
+      "what": "Must be true before a training plan is accepted.",
+      "default": false,
+      "kind": "bool"
+    },
+    {
+      "id": "secrets_blocked",
+      "group": "Safety",
+      "plain": "Block secrets",
+      "what": "Do not put keys or passwords in the training notes.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "export_requires_review",
+      "group": "Safety",
+      "plain": "Review before export",
+      "what": "A person looks before a weight file leaves the machine.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "record_source",
+      "group": "Provenance",
+      "plain": "Record the source",
+      "what": "Keep the model id and version next to any new file.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "record_data",
+      "group": "Provenance",
+      "plain": "Record the data",
+      "what": "Keep the name of the dataset you were allowed to use.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "record_score",
+      "group": "Provenance",
+      "plain": "Record the score",
+      "what": "Keep the hidden-test result next to the file.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "show_mismatches",
+      "group": "Debug",
+      "plain": "Show mismatches",
+      "what": "Say when a config, tokenizer, or weight name does not line up.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "stop_on_missing_file",
+      "group": "Debug",
+      "plain": "Stop if a file is missing",
+      "what": "Do not guess past a missing piece.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "log_load_errors",
+      "group": "Debug",
+      "plain": "Keep the error",
+      "what": "Write the error in plain words instead of hiding it.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "min_p",
+      "group": "Inference",
+      "plain": "Minimum chance",
+      "what": "Ignore next words below this chance.",
+      "default": 0.0,
+      "kind": "number"
+    },
+    {
+      "id": "presence_penalty",
+      "group": "Inference",
+      "plain": "New-topic push",
+      "what": "Nudges the reply toward words it has not used.",
+      "default": 0.0,
+      "kind": "number"
+    },
+    {
+      "id": "stop",
+      "group": "Inference",
+      "plain": "Stop words",
+      "what": "Text that ends a reply. Empty means no extra stop.",
+      "default": "",
+      "kind": "text"
+    },
+    {
+      "id": "max_memory_gb",
+      "group": "Load",
+      "plain": "Memory cap",
+      "what": "A planned cap in gigabytes. This page cannot enforce it.",
+      "default": 0,
+      "kind": "number"
+    },
+    {
+      "id": "offload",
+      "group": "Load",
+      "plain": "Offload overflow",
+      "what": "Plan to move unused layers out of the fast chip.",
+      "default": false,
+      "kind": "bool"
+    },
+    {
+      "id": "use_safetensors_only",
+      "group": "Load",
+      "plain": "Safetensors only",
+      "what": "Prefer the safer weight format.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "keep_tokenizer",
+      "group": "File",
+      "plain": "Keep the tokenizer",
+      "what": "The word splitter is part of the model, not optional.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "keep_config",
+      "group": "File",
+      "plain": "Keep the config",
+      "what": "The config says the shape. Do not drop it.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "keep_model_card",
+      "group": "File",
+      "plain": "Keep the model card",
+      "what": "The card says what the model is and is not.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "optimizer",
+      "group": "Training",
+      "plain": "Optimizer",
+      "what": "The rule that applies each nudge.",
+      "default": "adamw",
+      "kind": "choice",
+      "choices": [
+        "adamw",
+        "adam",
+        "sgd"
+      ]
+    },
+    {
+      "id": "scheduler",
+      "group": "Training",
+      "plain": "Speed schedule",
+      "what": "How the learning speed changes over the run.",
+      "default": "cosine",
+      "kind": "choice",
+      "choices": [
+        "cosine",
+        "linear",
+        "constant"
+      ]
+    },
+    {
+      "id": "max_steps",
+      "group": "Training",
+      "plain": "Step cap",
+      "what": "Stop at this many steps even if passes remain. Zero means no extra cap.",
+      "default": 0,
+      "kind": "number"
+    },
+    {
+      "id": "save_every",
+      "group": "Training",
+      "plain": "Save every",
+      "what": "Write a checkpoint this often. Zero means only at the end.",
+      "default": 0,
+      "kind": "number"
+    },
+    {
+      "id": "eval_every",
+      "group": "Training",
+      "plain": "Score every",
+      "what": "Run the hidden test this often. Zero means only at the end.",
+      "default": 0,
+      "kind": "number"
+    },
+    {
+      "id": "target_modules",
+      "group": "Adapter",
+      "plain": "Which layers move",
+      "what": "A comma list. Empty means the trainer default.",
+      "default": "",
+      "kind": "text"
+    },
+    {
+      "id": "network_during_load",
+      "group": "Safety",
+      "plain": "Network while loading",
+      "what": "Off keeps a run from fetching more files.",
+      "default": false,
+      "kind": "bool"
+    },
+    {
+      "id": "allow_custom_code",
+      "group": "Safety",
+      "plain": "Custom code",
+      "what": "A second lock. Stays off with remote code.",
+      "default": false,
+      "kind": "bool"
+    },
+    {
+      "id": "parent_model",
+      "group": "Provenance",
+      "plain": "Parent model",
+      "what": "The id this file started from, if it is a fine-tune.",
+      "default": "",
+      "kind": "text"
+    },
+    {
+      "id": "trained_by",
+      "group": "Provenance",
+      "plain": "Trained by",
+      "what": "The person or team who ran the job.",
+      "default": "",
+      "kind": "text"
+    },
+    {
+      "id": "compare_shapes",
+      "group": "Debug",
+      "plain": "Compare shapes",
+      "what": "Check that named layers match the config.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "flag_unknown_keys",
+      "group": "Debug",
+      "plain": "Flag unknown keys",
+      "what": "Say when a file has keys the config did not expect.",
+      "default": true,
+      "kind": "bool"
+    },
+    {
+      "id": "nickname",
+      "group": "Identity",
+      "plain": "Your name for it",
+      "what": "A short name on this sheet. It does not rename the file.",
+      "default": "",
+      "kind": "text"
+    },
+    {
+      "id": "notes",
+      "group": "Identity",
+      "plain": "Notes",
+      "what": "What this control sheet is for.",
+      "default": "",
+      "kind": "text"
+    }
+  ]
+}

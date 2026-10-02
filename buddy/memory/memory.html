@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Where should Buddy remember?</title>
+  <style>
+    body { font-family: Georgia, serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; background: #f4fff8; color: #102018; }
+    label, select, textarea, input, button { display: block; width: 100%; margin: .4rem 0; font-size: 1rem; }
+    .card { background: #fff; border: 1px solid #cfe6d8; padding: 1rem; margin-top: 1rem; }
+    .muted { color: #456; }
+  </style>
+</head>
+<body>
+  <h1>Choose where Buddy stores memory</h1>
+  <p class="muted">Learning = what Buddy should study. Teaching = how you want Buddy to behave. Never paste secret keys.</p>
+  <label for="place">Storage place</label>
+  <select id="place">
+    <option value="this_computer">This computer (buddy/memory/vault)</option>
+    <option value="chats_folder">Chats folder</option>
+    <option value="project_notes">Project notes (docs/memory)</option>
+    <option value="browser_only" selected>This browser only</option>
+    <option value="custom_folder">A folder I choose (use the Python tool for the real folder)</option>
+    <option value="github_export">GitHub export file (you send it up after review)</option>
+  </select>
+  <label for="bot">Which helper</label>
+  <input id="bot" value="buddy" />
+  <label for="note">Note</label>
+  <textarea id="note" rows="3" placeholder="Teach: give short answers. Learn: my city is Austin."></textarea>
+  <button type="button" id="teach">Save as teaching</button>
+  <button type="button" id="learn">Save as learning</button>
+  <button type="button" id="export">Download export file</button>
+  <div id="out" class="card">Notes in this browser stay here unless you export them.</div>
+  <script>
+    const KEY = 'dreamco-memory-notes';
+    const PLACE_KEY = 'dreamco-memory-place';
+    function load() {
+      try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; }
+    }
+    function save(items) { localStorage.setItem(KEY, JSON.stringify(items)); }
+    function add(kind) {
+      const text = document.getElementById('note').value.trim();
+      if (!text) return;
+      if (/api[_-]?key|secret|token|password/i.test(text)) {
+        document.getElementById('out').textContent = 'That looks like a secret key. Not saved.';
+        return;
+      }
+      const place = document.getElementById('place').value;
+      localStorage.setItem(PLACE_KEY, place);
+      const items = load();
+      items.push({ at: new Date().toISOString(), kind, bot: document.getElementById('bot').value || 'buddy', text, place_id: place });
+      save(items);
+      render();
+      document.getElementById('note').value = '';
+    }
+    function render() {
+      const place = localStorage.getItem(PLACE_KEY) || 'browser_only';
+      document.getElementById('place').value = place;
+      const items = load().slice(-20).reverse();
+      document.getElementById('out').innerHTML = '<p>Place: <strong>' + place + '</strong></p>' +
+        (items.map(i => '<p><strong>' + i.kind + '</strong> · ' + i.bot + ' · ' + i.text + '</p>').join('') || '<p>No notes yet.</p>');
+    }
+    document.getElementById('teach').onclick = () => add('teach');
+    document.getElementById('learn').onclick = () => add('learn');
+    document.getElementById('export').onclick = () => {
+      const blob = new Blob([load().map(x => JSON.stringify(x)).join('\n')], { type: 'application/jsonl' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'buddy_memory.jsonl';
+      a.click();
+    };
+    render();
+  </script>
+</body>
+</html>

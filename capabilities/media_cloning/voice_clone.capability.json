@@ -1,0 +1,41 @@
+{
+  "capability_id": "voice_clone.v1",
+  "name": "Voice Cloning",
+  "domain": "media_generation",
+  "sources": [
+    "capabilities/media_cloning/voice_clone.py",
+    "capabilities/media_cloning/consent_gate.py"
+  ],
+  "prerequisites": ["requirements-media.txt"],
+  "objectives": [
+    "Clone a target voice from a short reference sample only after a verified consent record exists",
+    "Produce speech output in the cloned voice from arbitrary input text",
+    "Watermark every generated audio file for provenance"
+  ],
+  "tasks": [
+    "Validate a signed consent record against the reference audio hash before any cloning run",
+    "Refuse a subject who is not confirmed to be an adult",
+    "Run local TTS cloning only when the packages and weights are installed on the user's machine",
+    "Refuse to write audio when the watermark library is missing"
+  ],
+  "benchmarks": [
+    "Speaker similarity score against the reference sample",
+    "Consent gate cannot be bypassed",
+    "Watermark library missing blocks the write"
+  ],
+  "sandbox_profile": "media_cloning_sandbox",
+  "mastery": {
+    "threshold": 0.85,
+    "independent_passes": 3,
+    "transfer_required": true,
+    "regression_required": true,
+    "achieved": false
+  },
+  "safety_constraints": [
+    "Never clone a voice without a verified consent record tied to the exact reference audio",
+    "Never process reference audio of a minor",
+    "Reject a paid run on the non-commercial XTTS backend",
+    "Every output file must carry a provenance watermark before it is written"
+  ],
+  "evidence": []
+}
