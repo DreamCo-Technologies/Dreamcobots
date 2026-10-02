@@ -28,6 +28,14 @@ def sha(p):
     return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
 
 
+import functools
+
+
+@functools.lru_cache(maxsize=1)
+def _pins():
+    return build.load_pins()
+
+
 def sidecar(plan):
     return plan.with_suffix("")
 
@@ -42,8 +50,32 @@ def test_links_exist_in_official_sources():
         assert r["onet_soc_code"] in occ
 
 
-def test_exactly_27_majors():
-    assert len(json.loads((ROOT/"data/majors_selected.json").read_text())) == 27 == len(PLANS)
+def test_major_tiers_and_coverage():
+    """27 authored majors (exactly build.MAJORS) plus generated majors for every included code in data/coverage.csv."""
+    majors = json.loads((ROOT/"data/majors_selected.json").read_text())
+    tiers = {m["cip"]: m["tier"] for m in majors}
+    assert sorted(c for c, t in tiers.items() if t == "authored") == sorted(build.MAJORS) and len(build.MAJORS) == 27
+    assert set(tiers.values()) == {"authored", "generated"}
+    assert len(majors) == len(tiers) == len(PLANS)
+    cov = list(csv.DictReader(open(ROOT/"data/coverage.csv")))
+    assert {r["cip_code"] for r in cov} == set(build.load_crosswalk().cip)  # every crosswalk CIP code is accounted for
+    inc = {r["cip_code"]: r["tier"] for r in cov if r["status"] == "included"}
+    assert inc == tiers
+    assert all(r["reason"] for r in cov)
+    rules = json.loads((ROOT/"authored/coverage_rules.json").read_text())
+    jz = pd.read_csv(ROOT/"raw/job_zones.csv", dtype={"O*NET-SOC Code": str})
+    zones = dict(zip(jz["O*NET-SOC Code"], jz["Job Zone"].astype(int)))
+    for m in majors:
+        cip = m["cip"]
+        assert re.fullmatch(r"\d\d\.\d{4}", cip)
+        assert any(zones.get(o["soc"]) in (4, 5) for o in m["occupations"]), cip
+        if m["tier"] == "generated":
+            assert cip[:2] not in rules["exclude_series"] and not cip.startswith(tuple(rules["exclude_prefixes"]))
+            assert not re.search(rules["exclude_title_regex"]["pattern"], m["title"]), m["title"]
+            assert m["entry_target_review"]["type"] == "rule_only_not_reviewed"
+    for p in PLANS:
+        tier = json.loads((sidecar(p) / "plan.json").read_text())["tier"]
+        assert f"Tier: **{tier}**." in p.read_text(), p.name
 
 
 def test_every_plan_has_provenance():
@@ -86,7 +118,7 @@ def test_provenance_content_and_hashes(plan):
     prov = json.loads((d / "provenance.json").read_text())
     asset = json.loads((d / "asset.json").read_text())
     cand = json.loads((d / "candidate.json").read_text())
-    pins = build.load_pins()
+    pins = _pins()
     assert prov["integrity_hash"] == f"sha256:{sha(plan)}" == asset["integrity_hash"]
     for f in prov["asset_files"]:
         assert sha(ROOT / f["path"]) == f["sha256"], f["path"]
@@ -142,16 +174,24 @@ def test_practice_tasks_reference_real_tasks_of_linked_occupations():
         assert t["onet_task_id"] in task_soc, t["practice_id"]
         assert task_soc[t["onet_task_id"]] == t["onet_soc_code"], t["practice_id"]
         assert t["onet_soc_code"] in linked[t["cip_code"]], t["practice_id"]
-        assert t["label"] == "DreamCo-original practice prompt" and t["prompt"].startswith("DreamCo-original practice prompt")
         assert len(t["rubric"]) == 3 and all(c["criterion"] and len(c["description"]) > 30 and c["points"] == 2 for c in t["rubric"])
-        assert task_text[t["onet_task_id"]] not in t["prompt"]  # O*NET task text is referenced, not reproduced
+        if t["tier"] == "authored":
+            assert t["label"] == "DreamCo-original practice prompt" and t["prompt"].startswith("DreamCo-original practice prompt")
+            assert task_text[t["onet_task_id"]] not in t["prompt"]  # O*NET task text is referenced, not reproduced
+        else:
+            assert t["label"] == build.GENERATED_LABEL and t["prompt"].startswith(build.GENERATED_LABEL)
+            assert t["onet_task_statement"] == task_text[t["onet_task_id"]].strip()  # quoted verbatim, attributed
+            assert "CC BY 4.0" in t["onet_task_statement_note"] and t["authorship"] == build.GENERATED_AUTHORSHIP
     assert set(per) == set(linked)
     for cip, items in per.items():
         assert 5 <= len(items) <= 8, cip
     plans = {p.name.split("_")[0]: p.read_text() for p in PLANS}
     for t in pt:
         assert f"O*NET task {t['onet_task_id']}" in plans[t["cip_code"]]
-        assert task_text[t["onet_task_id"]] not in plans[t["cip_code"]]
+        if t["tier"] == "authored":
+            assert task_text[t["onet_task_id"]] not in plans[t["cip_code"]]
+        else:
+            assert ("> O*NET 31.0 task statement (quoted verbatim, USDOL/ETA, CC BY 4.0): " + t["onet_task_statement"]) in plans[t["cip_code"]]
 
 
 AUTHORSHIP = "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed"
@@ -194,14 +234,23 @@ def test_authored_practice_tasks_are_fully_original(onet_text_grams):
             assert not hit, (t["practice_id"], [" ".join(h) for h in hit])
 
 
+QUOTE_PREFIX = "> O*NET 31.0 task statement (quoted verbatim, USDOL/ETA, CC BY 4.0): "
+
+
 def test_plan_text_has_no_onet_text_runs(onet_text_grams):
-    """Whole plan files, after removing O*NET occupation titles (attributed O*NET data shown as titles), contain no
-    5-word run of O*NET task, Job Zone or occupation-description text."""
-    titles = sorted(pd.read_csv(ROOT/"raw/occupation_data.csv")["Title"], key=len, reverse=True)
+    """Whole plan files, after removing O*NET occupation titles and CIP program titles (attributed source data shown as titles), contain no
+    5-word run of O*NET task, Job Zone or occupation-description text. Generated-tier plans may quote task statements
+    only on attributed quote lines; those lines are removed first, and authored plans have none."""
+    titles = list(pd.read_csv(ROOT/"raw/occupation_data.csv")["Title"])
+    titles += [m["title"] for m in json.loads((ROOT/"data/majors_selected.json").read_text())]  # CIP titles (crosswalk data)
+    title_rx = re.compile("|".join(re.escape(ti) for ti in sorted(set(titles), key=len, reverse=True)))
     for p in PLANS:
         t = p.read_text()
-        for ti in titles:
-            t = t.replace(ti, " | ")
+        tier = json.loads((sidecar(p) / "plan.json").read_text())["tier"]
+        quotes = [l for l in t.splitlines() if l.startswith(QUOTE_PREFIX)]
+        assert (tier == "generated") == bool(quotes), p.name
+        t = "\n".join(l for l in t.splitlines() if not l.startswith(QUOTE_PREFIX))
+        t = title_rx.sub(" | ", re.sub(r"study_plans/\S+", " | ", t))  # file paths carry the CIP-title slug
         hit = _grams(t) & onet_text_grams
         assert not hit, (p.name, [" ".join(h) for h in list(hit)[:5]])
 
@@ -288,7 +337,9 @@ def test_regression_evidence_records_are_real_and_linked():
         assert set(ev) == {"sandbox", "benchmark", "holdout", "regression"}
         assert ev["sandbox"] == ev["benchmark"] == ev["holdout"] == [], "no independent sandbox/benchmark/holdout runs exist"
         assert asset["machine_layer"] is not None and asset["dreamco_analysis"] is not None
-        if asset.get("tier", "authored") == "generated" and not ev["regression"]:
+        tier = json.loads((sidecar(p) / "plan.json").read_text())["tier"]
+        if tier == "generated":
+            assert not ev["regression"]  # new in this release: nothing to regress against
             continue
         assert ev["regression"], p.name
         for eid in ev["regression"]:

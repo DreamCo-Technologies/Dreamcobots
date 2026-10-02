@@ -1,0 +1,134 @@
+{
+  "schema": "dreamco.data_package_license_gate.v1",
+  "gate_version": "0.1.0",
+  "asset_id": "edu-tahe-14.0804",
+  "evaluated_at": "2026-10-02T18:03:38-05:00",
+  "inputs": {
+    "target": "study_plans/14.0804_transportation_and_highway_engineering",
+    "candidate_path": "study_plans/14.0804_transportation_and_highway_engineering/candidate.json",
+    "candidate_sha256": "f598ab4bf57eec00e222cb27bde82aa80bfe589a86fda79486de9663abe2c967",
+    "provenance_path": "study_plans/14.0804_transportation_and_highway_engineering/provenance.json",
+    "provenance_sha256": "47d84cc3eefb0b28ddf0b67c15bc4533798f5f9c3372965b2a6eb7733f6f984d",
+    "asset_record_path": "study_plans/14.0804_transportation_and_highway_engineering/asset.json",
+    "asset_record_sha256": "50d00f57d2433c08bd3931f960cec91518380284ac071e00cb8be3f598daa01b"
+  },
+  "policy_refs": {
+    "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
+    "evidence_provenance": "config/evidence_provenance_schema.json",
+    "hard_failures": "config/data-discovery-bot-program.json#scoring.hard_failures",
+    "scorecard_tiers": "config/dataset_evaluation_scorecard.json#commercial_tiers",
+    "release_artifacts": "config/dataset_product_standard.json#required_release_artifacts",
+    "test_family": "config/data-package-maximal-testing-program.json#test_families.provenance_and_rights",
+    "asset_provenance_schema": "schemas/data_package_asset_provenance.schema.json",
+    "license_gate_schema": "schemas/data_package_license_gate.schema.json",
+    "synthesis_asset_schema": "schemas/data_package_synthesis_asset.schema.json",
+    "package_manifest_schema": "schemas/data_package.manifest.schema.json",
+    "plan": "reports/DATA_PACKAGE_PRODUCT_PLAN.md#5.2"
+  },
+  "outcome": "approved_for_private_use",
+  "rights_ceiling": "approved_for_sale",
+  "checks": [
+    {
+      "id": "provenance_schema_conformance",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "provenance.json conforms to schemas/data_package_asset_provenance.schema.json and evidence_provenance_schema required_fields"
+      ]
+    },
+    {
+      "id": "sources_pinned",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "3 source(s) pinned with url + version + sha256"
+      ]
+    },
+    {
+      "id": "ownership_class_valid",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "asset ownership_class 'open_license_with_conditions'; all sources carry valid ownership_class"
+      ]
+    },
+    {
+      "id": "commercial_and_redistribution_rights",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "commercial_use_allowed and redistribution_allowed are true for the asset and every source"
+      ]
+    },
+    {
+      "id": "attribution_present",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "attribution text satisfies all matched license rules"
+      ]
+    },
+    {
+      "id": "no_blocked_flags_or_categories",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "0 flag(s) checked against data-discovery hard_failures; none blocked"
+      ]
+    },
+    {
+      "id": "asset_file_integrity",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "2 asset file(s) match recorded sha256"
+      ]
+    },
+    {
+      "id": "scorecard_threshold",
+      "status": "fail",
+      "scope": "sale",
+      "outcome_cap": "approved_for_private_use",
+      "reasons": [
+        "no dataset scorecard score; sale requires >= 75 (standard tier)"
+      ]
+    },
+    {
+      "id": "synthesis_asset_record",
+      "status": "fail",
+      "scope": "sale",
+      "outcome_cap": "approved_for_private_use",
+      "reasons": [
+        "no sandbox/benchmark/holdout/regression validation evidence ids"
+      ]
+    },
+    {
+      "id": "owner_approval",
+      "status": "fail",
+      "scope": "sale",
+      "outcome_cap": "approved_for_private_use",
+      "reasons": [
+        "no explicit owner_approval record; truth boundary caps outcome at approved_for_private_use"
+      ]
+    }
+  ],
+  "failed_checks": [
+    "scorecard_threshold",
+    "synthesis_asset_record",
+    "owner_approval"
+  ],
+  "warnings": [],
+  "sale_requirements": {
+    "scorecard_minimum": 75,
+    "scorecard_score": null,
+    "owner_approval_present": false
+  },
+  "truth_boundary": "Gate output is rights/provenance evidence for one asset version. It is not a listing, a price, or a production-ready claim. approved_for_sale additionally requires a complete plan 5.2 synthesis asset record (asset.json), scorecard >= standard tier minimum, and an explicit owner_approval record; without owner approval the maximum outcome is approved_for_private_use."
+}

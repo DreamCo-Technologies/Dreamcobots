@@ -1,0 +1,46 @@
+{
+  "note": "Which CIP 2020 codes get a study plan. DreamCo judgment, written by Grok-Edu-Career-Pathways (AI), not human-reviewed. The crosswalk does not record award level, so bachelor's level is approximated by these exclusions; every excluded code and its reason is listed in data/coverage.csv.",
+  "include_rule": "Every 6-digit CIP 2020 code (NN.NNNN) in Education_CIP_to_ONET_SOC.xlsx that has at least one crosswalk link to an O*NET 31.0 occupation with a Job Zone 4 or 5 rating, minus the exclusions below. The 27 authored majors are always included.",
+  "exclude_series": {
+    "12": "Culinary, personal and entertainment services: certificate and associate programs (cosmetology, culinary arts, etc.).",
+    "28": "Military science and ROTC: commissioning programs taken alongside a degree, not a bachelor's major.",
+    "29": "Military technologies: military training programs, not civilian bachelor's majors.",
+    "32": "Basic skills and developmental/remedial education: non-degree.",
+    "33": "Citizenship activities: non-degree.",
+    "34": "Health-related knowledge and skills: non-degree personal programs.",
+    "35": "Interpersonal and social skills: non-degree.",
+    "36": "Leisure and recreational activities: non-degree.",
+    "37": "Personal awareness and self-improvement: non-degree.",
+    "46": "Construction trades: apprenticeship and certificate programs.",
+    "47": "Mechanic and repair technologies: trade and certificate programs.",
+    "48": "Precision production: trade and certificate programs.",
+    "49": "Transportation and materials moving: pilot, driver and operator training programs.",
+    "53": "High school/secondary diplomas and certificates: not postsecondary.",
+    "60": "Health professions residency/fellowship programs: post-degree clinical training.",
+    "61": "Medical residency/fellowship programs: post-M.D./D.O. training."
+  },
+  "exclude_prefixes": {
+    "51.39": "Practical/vocational nursing and nursing assistant programs: certificate level.",
+    "22.01": "Law (J.D.): graduate professional degree, entered after a bachelor's.",
+    "22.02": "Advanced legal research and LL.M.-type programs: post-J.D.",
+    "51.01": "Chiropractic (D.C.): graduate professional degree.",
+    "51.0204": "Audiology and speech-language pathology: entry requires a master's or Au.D.",
+    "51.04": "Dentistry (D.D.S./D.M.D.): graduate professional degree.",
+    "51.05": "Advanced/graduate dentistry and dental specialties: post-D.D.S.",
+    "51.0912": "Physician assistant: entry-level programs are master's degrees.",
+    "51.12": "Medicine, osteopathic and podiatric medicine (M.D./D.O./D.P.M.): graduate professional degrees.",
+    "51.14": "Medical clinical sciences and graduate medical studies: graduate programs.",
+    "51.17": "Optometry (O.D.): graduate professional degree.",
+    "51.24": "Veterinary medicine (D.V.M.): graduate professional degree.",
+    "51.2306": "Occupational therapy: entry-level programs are master's or doctoral.",
+    "51.2308": "Physical therapy: entry-level programs are D.P.T. doctorates.",
+    "39.0602": "Divinity/ministry (M.Div.): graduate professional degree.",
+    "51.20": "Pharmacy and pharmaceutical sciences (Pharm.D. and graduate pharmaceutical programs): graduate professional or graduate study."
+  },
+  "exclude_title_regex": {
+    "pattern": "Technician|Assistant|Assisting|\\bAides?\\b|Apprentice|Police Science",
+    "reason": "Technician, assistant/assisting, aide, apprentice and police-academy programs are mostly certificate or associate level. Some codes titled 'Technology/Technician' also cover bachelor's engineering-technology programs; they were excluded conservatively."
+  },
+  "authored_exceptions": "The 27 authored majors are kept even if a rule above would exclude them. This applies only to 51.2001 Pharmacy (Pharm.D.), an authored major whose plan states the Job Zone 5 graduate route.",
+  "exclude_if_no_entry_target": "Also excluded: codes whose linked occupations are all Manager, Chief, Postsecondary-faculty or All Other titles (no entry-level target can be named)."
+}
