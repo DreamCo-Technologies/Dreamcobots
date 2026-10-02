@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pick the best shared model for a task. Do not call a model."""
+"""Offer a shared model as an extra. Do not call it, and do not require it."""
 from __future__ import annotations
 
 import json
@@ -22,7 +22,7 @@ def choose(task: str, wrappers: list[dict]) -> dict:
             continue
         usable.append(item)
     if not usable:
-        return {"picked": None, "used_wrapper": False, "called": False, "reason": "No wrapper you added covers this task. Buddy uses its own code."}
+        return {"picked": None, "used_wrapper": False, "wrapper_needed": False, "called": False, "reason": "No wrapper you added covers this task. Buddy uses its own code."}
     best = max(item["quality"] for item in usable)
     tied = [item for item in usable if item["quality"] == best]
     free = [item for item in tied if item.get("free") is True]
@@ -32,10 +32,22 @@ def choose(task: str, wrappers: list[dict]) -> dict:
         "source": winner["source"],
         "free": winner.get("free") is True,
         "quality": best,
-        "used_wrapper": True,
+        "used_wrapper": False,
+        "wrapper_needed": False,
+        "optional": True,
         "called": False,
-        "reason": "This is the best wrapper you added for this task. Buddy did not call it.",
+        "reason": "This wrapper is an extra option. Buddy did not call it and does not need it.",
     }
+
+
+def offer(task: str, wrappers: list[dict] | None = None, use_wrapper: bool = False) -> dict:
+    """Return a wrapper only when the caller opted in. Own code stays the path."""
+    picked = choose(task, wrappers or [])
+    if use_wrapper is not True:
+        picked["picked"] = None
+        picked["used_wrapper"] = False
+        picked["reason"] = "Wrapper not requested. Buddy uses its own code."
+    return picked
 
 
 def across(task: str, boards: list[dict]) -> dict:
@@ -50,10 +62,12 @@ def across(task: str, boards: list[dict]) -> dict:
     picked = choose(task, shared)
     picked["from_all_shared_users"] = True
     picked["private_models_seen"] = False
+    picked["used_wrapper"] = False
+    picked["wrapper_needed"] = False
     if picked["picked"]:
         owner = next(item["shared_by"] for item in shared if item["name"] == picked["picked"])
         picked["shared_by"] = owner
-        picked["reason"] = "Highest recorded score among models users marked shared. A private list is not included. Buddy did not call it."
+        picked["reason"] = "Highest recorded score among models users marked shared. Optional only. Buddy did not call it."
     else:
         picked["reason"] = "No shared model covers this task. Buddy uses its own code."
     return picked
@@ -71,11 +85,13 @@ if __name__ == "__main__":
         {"name": "not-mine", "source": "huggingface", "tasks": ["write code"], "quality": 99, "free": True, "added_by_user": False},
     ]
     code = choose("write code", wrappers)
-    assert code["picked"] == "open-coder" and code["free"] is True and code["called"] is False
+    assert code["picked"] == "open-coder" and code["free"] is True and code["called"] is False and code["used_wrapper"] is False and code["wrapper_needed"] is False
     world = choose("world map", wrappers)
     assert world["picked"] == "map-maker"
     missing = choose("send email", wrappers)
     assert missing["used_wrapper"] is False and missing["picked"] is None
+    skipped = offer("write code", wrappers, use_wrapper=False)
+    assert skipped["picked"] is None and skipped["wrapper_needed"] is False
     boards = [
         {"user": "ada", "models": [{"name": "ada-coder", "source": "huggingface", "tasks": ["write code"], "quality": 70, "free": True, "shared": True}]},
         {"user": "bo", "models": [
@@ -84,5 +100,5 @@ if __name__ == "__main__":
         ]},
     ]
     shared = across("write code", boards)
-    assert shared["picked"] == "bo-coder" and shared["called"] is False and shared["private_models_seen"] is False
-    print(json.dumps({"code": code["picked"], "shared": shared["picked"], "called": False}))
+    assert shared["picked"] == "bo-coder" and shared["called"] is False and shared["used_wrapper"] is False and shared["private_models_seen"] is False
+    print(json.dumps({"code": code["picked"], "shared": shared["picked"], "called": False, "wrapper_needed": False}))
