@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Folder plans</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Folder plans</h1>
+    <p id="lead">Loading one next step for every top-level folder.</p>
+    <table>
+      <thead><tr><th>Folder</th><th>What it is</th><th>Next real step</th><th>Do not claim</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p><a href="build-paths.html">Build stages</a></p>
+  </main>
+  <script>
+    fetch("data/folder-plans.json").then(function (response) { return response.json(); }).then(function (data) {
+      document.getElementById("lead").textContent = data.folders + " folders. Files were not moved. The repository is not production ready.";
+      const body = document.getElementById("rows");
+      data.plans.forEach(function (plan) {
+        const row = document.createElement("tr");
+        [plan.folder, plan.role, plan.next, plan.not].forEach(function (text) {
+          const cell = document.createElement("td");
+          cell.textContent = text;
+          row.append(cell);
+        });
+        body.append(row);
+      });
+    });
+  </script>
+</body>
+</html>

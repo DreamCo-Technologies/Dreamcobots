@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unlock the 10 Hugging Face actions</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container" id="unlock">
+    <h1>10 Hugging Face actions</h1>
+    <p>Open any of them with Google, Apple, a passcode, or face unlock. The passcode and the face check stay in this browser. They are not sent to DreamCo.</p>
+    <p id="unlock-status">Locked. Google and Apple work when this site's Buddy server is configured. Passcode and face work on this device now.</p>
+    <section class="card">
+      <h2>Unlock</h2>
+      <p><a id="google-login" class="btn btn-primary" href="sign-in.html#setup">Google</a>
+         <a id="apple-login" class="btn btn-outline" href="sign-in.html#setup">Apple</a>
+         <a id="face-login" class="btn btn-outline" href="#unlock">Face unlock</a></p>
+      <form id="passcode-form">
+        <label>Passcode <input id="passcode" type="password" minlength="4" autocomplete="current-password" required></label>
+        <button class="btn btn-primary" type="submit">Use passcode</button>
+      </form>
+      <p>The first passcode you enter is saved only in this browser. The next time, it has to match.</p>
+    </section>
+    <div id="action-list"></div>
+    <p id="cookie-note">This page uses essential browser storage for the unlock and your privacy choice. <button id="cookies-essential" type="button">Keep essential only</button></p>
+    <label><input id="do-not-share" type="checkbox" checked> Do not share my personal information. This page does not load ad or tracking scripts.</label>
+  </main>
+  <footer class="container">
+    <p>© 2026 DreamCo. This is not GitHub.</p>
+    <p>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="security.html">Security</a>
+      <a href="status.html">Status</a>
+      <a href="https://github.com/DreamCo-Technologies/Dreamcobots/discussions">Community</a>
+      <a href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/docs">Docs</a>
+      <a href="contact.html">Contact</a>
+      <a href="#cookie-note">Manage cookies</a>
+      <a href="#do-not-share">Do not share my personal information</a>
+    </p>
+  </footer>
+  <script>
+    window.HF_ACTIONS = [
+      {"name":"Hugging Face Sync","about":"Study note. Copies a repo into a Space. DreamCo does not run this second uploader.","href":"https://github.com/marketplace/actions/hugging-face-sync","external":true},
+      {"name":"Sync GitHub to Hugging Face Hub","about":"The official action. DreamCo wired it for the beginner-router folder only.","href":"https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/sync-to-huggingface.yml","external":true},
+      {"name":"Sync With Hugging Face Space","about":"Study note. Puts the Space header on the Space copy of the readme.","href":"https://github.com/marketplace/actions/sync-with-hugging-face-space","external":true},
+      {"name":"Sync With Hugging Face Hub","about":"Older community uploader. Replaced by the official action.","href":"https://github.com/nateraw/huggingface-sync-action","external":true},
+      {"name":"Hugging Push","about":"Study note. DreamCo does not push the whole repository.","href":"https://github.com/marketplace?type=actions&query=hugging+push","external":true},
+      {"name":"Hugging Repo","about":"Same job as Hugging Push. One uploader is enough.","href":"https://github.com/marketplace?type=actions&query=hugging+repo","external":true},
+      {"name":"Deploy to Spaces, models, or datasets","about":"The official action can target a Space, a model, or a dataset. You choose when you run it.","href":"https://huggingface.co/docs/hub/repositories-github-actions","external":true},
+      {"name":"HF Model Inspector","about":"Study note. DreamCo uses its own model card, not someone else's weights.","href":"https://github.com/ParagEkbote/hf-model-inspector","external":true},
+      {"name":"MLX Model Doctor","about":"Study note. There is no MLX weight file to check yet.","href":"https://github.com/IonDen/mlx-model-doctor","external":true},
+      {"name":"Auto release with an AI description","about":"Not used. DreamCo does not send the change list to a model to write a release.","href":"hf-bootcamp.html","external":false}
+    ];
+  </script>
+  <script src="hf-unlock.js"></script>
+</body>
+</html>

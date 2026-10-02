@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Build from open source</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Build from open source</h1>
+    <p>Point at a public GitHub repository or a public Hugging Face model. Buddy checks the plan and can scan a pasted snippet for a key. Buddy does not clone the repository, run the code, or train a frontier model.</p>
+    <form id="build-form" class="card">
+      <p><label>Where
+        <select id="source">
+          <option value="github">GitHub repository</option>
+          <option value="huggingface">Hugging Face model</option>
+        </select>
+      </label></p>
+      <p><label>Owner and name <input id="name" required placeholder="owner/name"></label></p>
+      <p><label>What you want to train <input id="goal" required placeholder="practice summaries on our notes"></label></p>
+      <p><label>Paste a small snippet to scan, not to run <textarea id="sample" rows="5"></textarea></label></p>
+      <p><label><input id="license-ok" type="checkbox"> The license allows this training</label></p>
+      <p><label><input id="owns" type="checkbox"> I own the training data</label></p>
+      <p><label><input id="hidden" type="checkbox"> I will keep a hidden test</label></p>
+      <button class="btn btn-primary" type="submit">Check this starting point</button>
+      <p id="build-status">Nothing checked yet.</p>
+      <p><a id="build-link" hidden href="https://github.com">Open this open-source starting point</a></p>
+    </form>
+    <p><a href="benchmarks.html">Our benchmarks</a> · <a href="model-bench.html">Test a model</a> · <a href="my-guardrails.html">Your guardrails</a> · <a href="this-chat.html">Everything from this chat</a></p>
+  </main>
+  <script src="open-build.js"></script>
+</body>
+</html>

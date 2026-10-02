@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lessons from the checks</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>What the checks still do not prove</h1>
+    <p id="lesson-lead">Loading the actions report.</p>
+    <div id="lessons"></div>
+  </main>
+  <script>
+    fetch("data/failure-lessons.json").then(function (r) { return r.json(); }).then(function (data) {
+      document.getElementById("lesson-lead").textContent = data.failed_benchmarks + " failed benchmark scores in the actions report. " + data.unknown_runs + " workflows have no run evidence. Buddy is not a frontier model, not an AGI, and not on a path that can be called the singularity.";
+      const box = document.getElementById("lessons");
+      function card(title, body) {
+        const article = document.createElement("article");
+        article.className = "card";
+        const h = document.createElement("h2");
+        h.textContent = title;
+        const p = document.createElement("p");
+        p.textContent = body;
+        article.append(h, p);
+        box.append(article);
+      }
+      data.lessons.forEach(function (line) { card("Lesson", line); });
+      data.missing.forEach(function (line) { card("Missing", line); });
+    });
+  </script>
+  <p style="max-width:900px;margin:0 auto 40px;padding:0 20px"><a href="actions.html">Actions</a> · <a href="benchmarks.html">Benchmarks</a></p>
+</body>
+</html>

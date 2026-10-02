@@ -5,22 +5,23 @@
     "website/data/actions-health-report.json"
   ],
   "summary": {
-    "workflows": 72,
-    "static_passing_workflows": 72,
+    "workflows": 86,
+    "static_passing_workflows": 86,
     "static_failing_workflows": 0,
     "runtime_passing_workflows": 0,
     "runtime_failing_workflows": 0,
-    "runtime_unknown_workflows": 72,
+    "runtime_unknown_workflows": 86,
     "possible_duplicate_groups": 0,
     "possible_duplicate_workflows": 0,
     "workflows_with_benchmark_commands": 31,
     "goal_counts": {
-      "Buddy automation": 14,
+      "Buddy automation": 19,
       "benchmarks": 12,
+      "build and release": 3,
       "deployment": 2,
-      "evidence data": 4,
-      "repository health": 5,
-      "repository operations": 29,
+      "evidence data": 6,
+      "repository health": 6,
+      "repository operations": 32,
       "security": 2,
       "verification": 4
     },
@@ -28,6 +29,7 @@
     "declared_goals": [
       "Buddy automation",
       "benchmarks",
+      "build and release",
       "deployment",
       "evidence data",
       "repository health",
@@ -71,7 +73,7 @@
       "success": "All applicable doctor checks pass with evidence.",
       "fallback": "Leave failed checks visible and produce owner-action guidance.",
       "progress": "configured",
-      "workflow_count": 72
+      "workflow_count": 86
     },
     {
       "id": "test",
@@ -106,7 +108,7 @@
       "success": "Applicable tests pass; blocked tests are explicitly reported.",
       "fallback": "Run focused tests and record blocker.",
       "progress": "configured",
-      "workflow_count": 72
+      "workflow_count": 86
     },
     {
       "id": "lint",
@@ -140,7 +142,7 @@
       "success": "Configured quality gates pass.",
       "fallback": "Identify exact files/rules requiring repair.",
       "progress": "configured",
-      "workflow_count": 72
+      "workflow_count": 86
     },
     {
       "id": "security",
@@ -175,7 +177,7 @@
       "success": "No unreviewed blocking findings.",
       "fallback": "Block promotion and create owner-action item.",
       "progress": "configured",
-      "workflow_count": 72
+      "workflow_count": 86
     },
     {
       "id": "benchmark",
@@ -210,7 +212,7 @@
       "success": "Results meet the registered benchmark threshold with repeat evidence.",
       "fallback": "Mark unverified or blocked; never fabricate a score.",
       "progress": "configured",
-      "workflow_count": 72
+      "workflow_count": 86
     },
     {
       "id": "repair",
@@ -246,7 +248,7 @@
       "success": "Repair is verified by evidence and recurrence falls or remains absent.",
       "fallback": "Escalate genuine owner blocker.",
       "progress": "configured",
-      "workflow_count": 72
+      "workflow_count": 86
     },
     {
       "id": "pages",
@@ -281,7 +283,7 @@
       "success": "Required public datasets exist, validate, and render.",
       "fallback": "Keep stale/missing datasets visibly flagged.",
       "progress": "configured",
-      "workflow_count": 72
+      "workflow_count": 86
     },
     {
       "id": "bundle",
@@ -316,7 +318,7 @@
       "success": "Supported package builds and launches under its documented permissions.",
       "fallback": "Publish exact build blocker; do not claim the package is bug-free.",
       "progress": "configured",
-      "workflow_count": 72
+      "workflow_count": 86
     },
     {
       "id": "refresh",
@@ -352,7 +354,7 @@
       "success": "Current public run evidence is loaded and timestamped.",
       "fallback": "Use static evidence and mark live state unavailable.",
       "progress": "configured",
-      "workflow_count": 72
+      "workflow_count": 86
     }
   ],
   "duplicate_candidate_groups": [],
@@ -532,8 +534,7 @@
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v6 -> v7"
+        "upgrade recommendation: actions/checkout@v4 -> v7"
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -690,6 +691,54 @@
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
+      "workflow": ".github/workflows/autonomous-systems-builder.yml",
+      "name": "Autonomous Systems Builder",
+      "goal": "build and release",
+      "purpose": "Produce a reviewable software artifact",
+      "what_happens": [
+        "Scan every bot catalog and division JSON",
+        "Build or refresh DreamXXX system packages",
+        "Refresh worklist from scan",
+        "Summarize",
+        "Upload evidence",
+        "Commit generated system evidence on this branch"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "push",
+        "schedule",
+        "issues"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/autonomous-systems-builder.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
       "workflow": ".github/workflows/benchmark-65-orchestrator.yml",
       "name": "65 Division Benchmark Orchestrator",
       "goal": "benchmarks",
@@ -774,8 +823,6 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-node@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6"
       ],
       "possible_duplicate": false,
@@ -963,7 +1010,6 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6"
       ],
@@ -1064,6 +1110,103 @@
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
+      "workflow": ".github/workflows/bot-production-readiness.yml",
+      "name": "Bot Production Readiness",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
+      "what_happens": [
+        "Checkout",
+        "Setup Python",
+        "Run production readiness tool",
+        "Commit profile updates",
+        "Upload report"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/bot-production-readiness.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-python@v5 -> v7",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/branch-health-daily.yml",
+      "name": "Daily branch health and conflict team",
+      "goal": "repository health",
+      "purpose": "Keep the repository inspectable and maintainable",
+      "what_happens": [
+        "Check out",
+        "Fetch every branch",
+        "Scan every branch",
+        "Conflict team",
+        "Publish report to the original site",
+        "Keep the report even if main is protected"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "schedule",
+        "issues"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/branch-health-daily.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
       "workflow": ".github/workflows/buddy-1000-source-learning.yml",
       "name": "Buddy 1000-Source Learning",
       "goal": "Buddy automation",
@@ -1100,8 +1243,48 @@
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7"
+        "upgrade recommendation: actions/checkout@v4 -> v7"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/buddy-24h-sandbox-soak.yml",
+      "name": "Buddy 24h Sandbox Soak",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
+      "what_happens": [
+        "Runs a bounded Buddy automation with repository permissions and failure visibility."
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-24h-sandbox-soak.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -1190,7 +1373,6 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6"
       ],
       "possible_duplicate": false,
@@ -1343,8 +1525,7 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/setup-node@v6 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -1390,8 +1571,95 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/buddy-hub-learning-packages.yml",
+      "name": "Buddy Hub Learning Packages",
+      "goal": "build and release",
+      "purpose": "Produce a reviewable software artifact",
+      "what_happens": [
+        "Builds or packages a bounded artifact and retains the workflow run as evidence."
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "push",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-hub-learning-packages.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/buddy-learning-proof.yml",
+      "name": "Buddy Learning Proof",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
+      "what_happens": [
+        "Existing learning regression (when pytest extra present)",
+        "Generate fail-to-pass learning proof",
+        "Unit test the proof pack",
+        "Summary"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "push",
+        "pull request",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-learning-proof.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -1436,8 +1704,7 @@
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7"
+        "upgrade recommendation: actions/checkout@v4 -> v7"
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -1481,8 +1748,7 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/setup-python@v6 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -1571,6 +1837,48 @@
         "job_timeouts_declared": 1,
         "runner_jobs": 1,
         "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/build-updates-now.yml",
+      "name": "Build Updates Now",
+      "goal": "build and release",
+      "purpose": "Produce a reviewable software artifact",
+      "what_happens": [
+        "Builds or packages a bounded artifact and retains the workflow run as evidence."
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "push",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/build-updates-now.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
       },
       "upgrades": [
         "Publish machine-readable evidence for every run.",
@@ -1830,6 +2138,51 @@
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
+      "workflow": ".github/workflows/compile-md-bots.yml",
+      "name": "Compile Markdown Bots",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
+      "what_happens": [
+        "Compile every bots/*.md spec into sandbox runtime",
+        "Test compiled runtime contract",
+        "Upload compiled registry"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "push",
+        "pull request",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/compile-md-bots.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
       "workflow": ".github/workflows/consolidation-integrity-gate.yml",
       "name": "Consolidation Integrity Gate",
       "goal": "repository operations",
@@ -1864,8 +2217,7 @@
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v6 -> v7"
+        "upgrade recommendation: actions/checkout@v4 -> v7"
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -1910,7 +2262,6 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6"
       ],
       "possible_duplicate": false,
@@ -1973,6 +2324,8 @@
         "Check generated Actions data contracts",
         "Check browser JavaScript syntax",
         "Configure GitHub Pages",
+        "Build rendered documentation",
+        "Combine documentation and Buddy website",
         "Upload public website",
         "Deploy to GitHub Pages"
       ],
@@ -2116,10 +2469,8 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7"
+        "upgrade recommendation: actions/checkout@v4 -> v7"
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -2247,9 +2598,7 @@
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v6 -> v7",
-        "upgrade recommendation: actions/setup-node@v5 -> v7"
+        "upgrade recommendation: actions/checkout@v4 -> v7"
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -2676,7 +3025,6 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6"
       ],
       "possible_duplicate": false,
@@ -2722,8 +3070,178 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/grok-owner-systems.yml",
+      "name": "Grok Owner Systems",
+      "goal": "repository operations",
+      "purpose": "Operate Grok Owner Systems as a bounded DreamCo repository workflow",
+      "what_happens": [
+        "Executes the named workflow steps and records the GitHub Actions result."
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "push",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/grok-owner-systems.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/grok-team.yml",
+      "name": "Grok Team Registry",
+      "goal": "evidence data",
+      "purpose": "Keep generated registries and dashboards current",
+      "what_happens": [
+        "Regenerates or verifies machine-readable repository evidence used by Buddy and GitHub Pages."
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "push",
+        "pull request"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/grok-team.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/grok-twins-hf-study.yml",
+      "name": "Grok Twins and HF Study",
+      "goal": "repository operations",
+      "purpose": "Operate Grok Twins and HF Study as a bounded DreamCo repository workflow",
+      "what_happens": [
+        "Executes the named workflow steps and records the GitHub Actions result."
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "push",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/grok-twins-hf-study.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/intelligent-issue-cleaner.yml",
+      "name": "Intelligent Issue Cleaner",
+      "goal": "repository operations",
+      "purpose": "Operate Intelligent Issue Cleaner as a bounded DreamCo repository workflow",
+      "what_happens": [
+        "Checkout",
+        "Setup Python",
+        "Run intelligent cleaner"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "schedule",
+        "issues"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/intelligent-issue-cleaner.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-python@v5 -> v7"
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -2816,9 +3334,7 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-node@v4 -> v7"
+        "upgrade recommendation: actions/checkout@v4 -> v7"
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -2865,7 +3381,6 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6"
       ],
       "possible_duplicate": false,
@@ -2955,8 +3470,7 @@
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-node@v4 -> v7"
+        "upgrade recommendation: actions/checkout@v4 -> v7"
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -3015,28 +3529,24 @@
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
-      "workflow": ".github/workflows/pages.yml",
-      "name": "Publish DreamCo AI Research Pages",
-      "goal": "deployment",
-      "purpose": "Publish and verify the public Buddy experience",
+      "workflow": ".github/workflows/original-bot-placement.yml",
+      "name": "Original Bot Placement",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
       "what_happens": [
-        "Checkout",
-        "Setup Pages",
-        "Build Jekyll site",
-        "Upload Pages artifact",
-        "Deploy to GitHub Pages"
+        "Runs a bounded Buddy automation with repository permissions and failure visibility."
       ],
       "outputs": [
         "GitHub Actions run log",
-        "declared downloadable or deployment artifact",
-        "GitHub Pages deployment"
+        "declared downloadable or deployment artifact"
       ],
       "benchmark_commands": [],
       "triggers": [
         "manual",
-        "push"
+        "push",
+        "pull request"
       ],
-      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/pages.yml",
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/original-bot-placement.yml",
       "static_status": "static_checks_passed",
       "runtime_status": "unknown_until_run_evidence_loaded",
       "errors": [],
@@ -3044,19 +3554,54 @@
       "runner_jobs": 1,
       "controls": {
         "permissions_declared": true,
-        "concurrency_declared": true,
-        "job_timeouts_declared": 0,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 1,
         "runner_jobs": 1,
         "artifacts_declared": true
       },
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/configure-pages@v5 -> v6",
-        "upgrade recommendation: actions/upload-pages-artifact@v4 -> v5",
-        "upgrade recommendation: actions/deploy-pages@v4 -> v5"
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/pages.yml",
+      "name": "Publish DreamCo AI Research Pages",
+      "goal": "deployment",
+      "purpose": "Publish and verify the public Buddy experience",
+      "what_happens": [
+        "Builds public assets, checks generated evidence, and prepares a governed deployment."
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/pages.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 0,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 0,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -3202,7 +3747,6 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6"
       ],
       "possible_duplicate": false,
@@ -3245,8 +3789,7 @@
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-node@v4 -> v7"
+        "upgrade recommendation: actions/checkout@v4 -> v7"
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -3343,7 +3886,6 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6"
       ],
       "possible_duplicate": false,
@@ -3696,8 +4238,7 @@
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7"
+        "upgrade recommendation: actions/checkout@v4 -> v7"
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
@@ -3742,7 +4283,6 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6"
       ],
       "possible_duplicate": false,
@@ -3790,8 +4330,49 @@
         "Keep external writes behind explicit authorization and bounded policy.",
         "Preserve failures and regressions instead of converting unknown states into passes.",
         "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
         "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/sync-to-huggingface.yml",
+      "name": "Sync to Hugging Face Hub",
+      "goal": "evidence data",
+      "purpose": "Keep generated registries and dashboards current",
+      "what_happens": [
+        "Checkout",
+        "Stop if the token secret is missing",
+        "Sync the beginner router folder"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/sync-to-huggingface.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/checkout@v4 -> v7"
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,

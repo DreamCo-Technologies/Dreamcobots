@@ -56,7 +56,16 @@
   }
 
   function renderCaps(selected = []) {
-    caps.innerHTML = catalog.map(([name, desc]) => `<div class="cc-card"><strong>${selected.includes(name) ? '✓ ' : ''}${name}</strong><span>${desc}</span></div>`).join('');
+    caps.replaceChildren();
+    catalog.forEach(([name, desc]) => {
+      const card = document.createElement('button'); card.type = 'button'; card.className = 'cc-card';
+      const title = document.createElement('strong'); title.textContent = `${selected.includes(name) ? '✓ ' : ''}${name}`;
+      const detail = document.createElement('span'); detail.textContent = desc;
+      card.append(title, detail); card.addEventListener('click', () => {
+        task.value = `Help me understand ${name} and build one small working example. Explain the files, prepare a change, and list how to test it.`;
+        task.focus(); status.textContent = 'Capability selected. Review the task, then choose Plan Task.';
+      }); caps.append(card);
+    });
   }
 
   function infer(text) {

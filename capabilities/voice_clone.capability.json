@@ -1,0 +1,31 @@
+{
+  "capability_id": "buddy.media.voice_clone",
+  "name": "Consent-gated voice cloning",
+  "domain": "media",
+  "sources": ["buddy/media/voice.py", "buddy/media/core.py"],
+  "prerequisites": ["requirements-media.txt", "buddy.media.consent"],
+  "objectives": [
+    "Synthesize speech in a reference voice from a 10-15 s clip, locally, within 8 GB unified memory",
+    "Refuse any clone without consent bound to the exact reference file"
+  ],
+  "tasks": [
+    "Register consent for a reference clip",
+    "Clone a voice for a short and a multi-paragraph text",
+    "Verify watermark and provenance manifest on the output"
+  ],
+  "benchmarks": [
+    "Peak RSS stays under 6 GB during synthesis",
+    "Unconsented and revoked references are rejected 100% of the time",
+    "Watermark detected on lossless output; false-positive rate measured on unmarked audio"
+  ],
+  "sandbox_profile": "local-apple-silicon-8gb",
+  "mastery": {"threshold": 0.9, "independent_passes": 3, "transfer_required": true, "regression_required": true},
+  "safety_constraints": [
+    "No cloning without a consent record bound to the reference file hash",
+    "Every output carries a watermark, sidecar manifest, and ledger entry",
+    "No impersonation of real people without their consent"
+  ],
+  "automation_opportunities": ["Batch narration for approved subjects"],
+  "monetization_opportunities": ["Licensed voice narration for consenting talent"],
+  "evidence": []
+}

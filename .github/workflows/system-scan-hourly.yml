@@ -1,0 +1,24 @@
+name: System scan hourly
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 * * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Count routes and benchmark lessons
+        run: |
+          python3 buddy/bench/routes.py
+          python3 buddy/learning/all_benchmarks.py
+          echo "Scan only. No issue was opened and no score was written."

@@ -1,0 +1,31 @@
+{
+  "capability_id": "buddy.media.image_clone",
+  "name": "Consent-gated image likeness/style cloning",
+  "domain": "media",
+  "sources": ["buddy/media/image.py", "buddy/media/core.py"],
+  "prerequisites": ["requirements-media.txt", "buddy.media.consent"],
+  "objectives": [
+    "Generate images that carry the style or face of a reference image using IP-Adapter, no training",
+    "Refuse any clone without consent bound to the exact reference file"
+  ],
+  "tasks": [
+    "Register consent for a reference image",
+    "Generate in style mode and face mode",
+    "Verify watermark, PNG metadata, and manifest on the output"
+  ],
+  "benchmarks": [
+    "Peak RSS stays under 6 GB at 512x512",
+    "Unconsented and revoked references are rejected 100% of the time",
+    "Watermark detected on saved PNG; false-positive rate measured on unmarked images"
+  ],
+  "sandbox_profile": "local-apple-silicon-8gb",
+  "mastery": {"threshold": 0.9, "independent_passes": 3, "transfer_required": true, "regression_required": true},
+  "safety_constraints": [
+    "No cloning without a consent record bound to the reference file hash",
+    "Diffusers safety checker stays enabled",
+    "Every output carries a watermark, PNG metadata, sidecar manifest, and ledger entry"
+  ],
+  "automation_opportunities": ["Batch brand-consistent asset generation for approved subjects"],
+  "monetization_opportunities": ["Licensed character and brand imagery for consenting subjects"],
+  "evidence": []
+}

@@ -10,6 +10,7 @@ import { DIVISION_API_REGISTRIES, type ApiIntegration } from "../shared/api-regi
 import { ALL_BOTS } from "../server/seed-bots.ts";
 import { CODELAB_BOTS } from "../server/seed-codelabs.ts";
 import { GITHUB_BOTS } from "../server/seed-github-bots.ts";
+import { SUPPLEMENTAL_BOTS } from "../server/seed-supplemental-bots.ts";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const APP_BOTS_DIR = join(ROOT, "App_bots");
@@ -36,6 +37,7 @@ type BotProfile = {
 
 type DivisionFile = {
   schema?: string;
+  growth?: boolean;
   division: string;
   total: number;
   bots: BotProfile[];
@@ -445,6 +447,7 @@ function runtimeSources() {
     ["server/seed-bots.ts", ALL_BOTS as RuntimeProfile[]],
     ["server/seed-codelabs.ts", CODELAB_BOTS as RuntimeProfile[]],
     ["server/seed-github-bots.ts", GITHUB_BOTS as RuntimeProfile[]],
+    ["server/seed-supplemental-bots.ts", SUPPLEMENTAL_BOTS as RuntimeProfile[]],
   ];
   const bySlug = new Map<string, string[]>();
   for (const [source, profiles] of sources) {
@@ -465,7 +468,7 @@ export function buildFleetCatalog() {
     .filter(({ content }) => content.schema !== "dreamco.masterbot_profiles.catalog_excluded.v1");
 
   const seen = new Set<string>();
-  const bots = divisionFiles.flatMap(({ name, content }) => {
+  const allBots = divisionFiles.flatMap(({ name, content }) => {
     if (content.total !== content.bots.length) throw new Error(`${name}: declared total does not match bot count`);
     return content.bots.map((sourceProfile) => {
       const profile = { ...sourceProfile, division: content.division };
@@ -534,23 +537,28 @@ export function buildFleetCatalog() {
     });
   });
 
-  const missingRuntime = bots.filter((bot) => bot.readiness.buddy_chat_route === "missing");
+  const supplementalSources = new Set(divisionFiles.filter(({ content }) => content.growth === true).map(({ name }) => `App_bots/${name}`));
+  const bots = allBots.filter((bot) => !supplementalSources.has(bot.evidence.catalog_source));
+  const supplementalBots = allBots.filter((bot) => supplementalSources.has(bot.evidence.catalog_source));
+  const missingRuntime = allBots.filter((bot) => bot.readiness.buddy_chat_route === "missing");
   if (missingRuntime.length) throw new Error(`${missingRuntime.length} catalog profiles have no Buddy runtime route`);
   if (bots.length !== 1051) throw new Error(`Expected 1,051 profiles, found ${bots.length}`);
 
-  const divisions = divisionFiles.map(({ name, content }) => ({
+  const allDivisions = divisionFiles.map(({ name, content }) => ({
     name: content.division,
     profile_count: content.bots.length,
     source: `App_bots/${name}`,
     api_candidate_count: (DIVISION_API_REGISTRIES[content.division]?.categories || [])
       .flatMap((category) => category.apis).length,
   }));
+  const divisions = allDivisions.filter((division) => !supplementalSources.has(division.source));
+  const supplementalDivisions = allDivisions.filter((division) => supplementalSources.has(division.source));
   const configuredApiCount = 0;
   return {
     schema: "dreamco.bot_fleet_catalog.v2",
     generated_from: {
       profile_sources: "App_bots/*.json",
-      runtime_sources: ["server/seed-bots.ts", "server/seed-codelabs.ts", "server/seed-github-bots.ts"],
+      runtime_sources: ["server/seed-bots.ts", "server/seed-codelabs.ts", "server/seed-github-bots.ts", "server/seed-supplemental-bots.ts"],
       executable_runtime: "server/fleet-runtime.ts",
       api_candidate_source: "shared/api-registry.ts",
     },
@@ -572,36 +580,57 @@ export function buildFleetCatalog() {
       per_bot_governed_lead_systems: bots.length,
       declared_capability_slots: bots.reduce((total, bot) => total + bot.capabilities.length, 0),
       production_ready_profiles: 0,
+      supplemental_profiles: supplementalBots.length,
+      supplemental_divisions: supplementalDivisions.length,
+      supplemental_declared_capability_slots: supplementalBots.reduce((total, bot) => total + bot.capabilities.length, 0),
+      combined_routable_profiles: allBots.length,
     },
     divisions,
     bots,
+    supplemental_divisions: supplementalDivisions,
+    supplemental_bots: supplementalBots,
   };
 }
 
-function compactCatalog(catalog: ReturnType<typeof buildFleetCatalog>) {
+export function compactCatalog(catalog: ReturnType<typeof buildFleetCatalog>, { includeSupplemental = false } = {}) {
+  const allBots = [...catalog.bots, ...catalog.supplemental_bots];
+  const allDivisions = [...catalog.divisions, ...catalog.supplemental_divisions];
+  const compactBot = (bot: ReturnType<typeof buildFleetCatalog>["bots"][number]) => ({
+    identity: bot.identity,
+    logo: bot.logo,
+    mission: bot.prospectus.mission,
+    capability_count: bot.capabilities.length,
+    capability_search: bot.capabilities.map((capability) => capability.name).join(" | "),
+    tool_summary: bot.tools.map((tool) => ({ id: tool.id, name: tool.name, status: tool.status })),
+    api_candidate_count: bot.api_candidates.length,
+    api_candidate_names: bot.api_candidates.map((api) => api.name),
+    approval_required: bot.approvals.approval_required,
+    readiness: bot.readiness,
+    evidence: { catalog_source: bot.evidence.catalog_source, runtime_source_count: bot.evidence.runtime_sources.length },
+    sample_test_prompt: bot.sample_test_prompt,
+    prospectus_ref: `data/bot-fleet/${bot.identity.division}.json#${bot.identity.slug}`,
+  });
   return {
     schema: catalog.schema,
     truth_policy: catalog.truth_policy,
-    summary: catalog.summary,
-    divisions: catalog.divisions,
-    bots: catalog.bots.map((bot) => ({
-      identity: bot.identity,
-      logo: bot.logo,
-      mission: bot.prospectus.mission,
-      capability_count: bot.capabilities.length,
-      capability_search: bot.capabilities.map((capability) => capability.name).join(" | "),
-      tool_summary: bot.tools.map((tool) => ({ id: tool.id, name: tool.name, status: tool.status })),
-      api_candidate_count: bot.api_candidates.length,
-      api_candidate_names: bot.api_candidates.map((api) => api.name),
-      approval_required: bot.approvals.approval_required,
-      readiness: bot.readiness,
-      evidence: {
-        catalog_source: bot.evidence.catalog_source,
-        runtime_source_count: bot.evidence.runtime_sources.length,
-      },
-      sample_test_prompt: bot.sample_test_prompt,
-      prospectus_ref: `data/bot-fleet/${bot.identity.division}.json#${bot.identity.slug}`,
-    })),
+    summary: includeSupplemental ? {
+      ...catalog.summary,
+      canonical_profiles: catalog.bots.length,
+      canonical_divisions: catalog.divisions.length,
+      profiles: allBots.length,
+      divisions: allDivisions.length,
+      runtime_routed_profiles: allBots.filter((bot) => bot.readiness.buddy_chat_route === 'verified').length,
+      executable_runtime_instances_evidenced: allBots.length,
+      per_bot_sandbox_blueprints: allBots.length,
+      per_bot_logo_identities: allBots.length,
+      per_bot_business_blueprints: allBots.length,
+      per_bot_governed_lead_systems: allBots.length,
+      declared_capability_slots: allBots.reduce((count, bot) => count + bot.capabilities.length, 0),
+    } : catalog.summary,
+    divisions: includeSupplemental ? allDivisions : catalog.divisions,
+    bots: (includeSupplemental ? allBots : catalog.bots).map(compactBot),
+    supplemental_divisions: catalog.supplemental_divisions,
+    supplemental_bots: catalog.supplemental_bots.map(compactBot),
   };
 }
 
@@ -609,11 +638,13 @@ function browserRoutingIndex(catalog: ReturnType<typeof buildFleetCatalog>) {
   return {
     schema: "dreamco.buddy_routing_index.v1",
     summary: {
-      profiles: catalog.summary.profiles,
-      divisions: catalog.summary.divisions,
-      capabilities: catalog.summary.declared_capability_slots,
+      profiles: catalog.summary.combined_routable_profiles,
+      canonical_profiles: catalog.summary.profiles,
+      supplemental_profiles: catalog.summary.supplemental_profiles,
+      divisions: catalog.summary.divisions + catalog.summary.supplemental_divisions,
+      capabilities: catalog.summary.declared_capability_slots + catalog.summary.supplemental_declared_capability_slots,
     },
-    bots: catalog.bots.map((bot) => [
+    bots: [...catalog.bots, ...catalog.supplemental_bots].map((bot) => [
       bot.identity.slug,
       bot.identity.display_name,
       bot.identity.division,
@@ -638,6 +669,7 @@ function buildReport(catalog: ReturnType<typeof buildFleetCatalog>) {
     "## Verified Inventory",
     "",
     `- Bot profiles: ${catalog.summary.profiles}`,
+    `- Supplemental growth profiles: ${catalog.summary.supplemental_profiles} (separate from the canonical baseline; shared sandbox planning routes only)`,
     `- Divisions: ${catalog.summary.divisions}`,
     `- Buddy-routed profiles: ${catalog.summary.runtime_routed_profiles}`,
     `- Executable governed runtime instances: ${catalog.summary.executable_runtime_instances_evidenced}`,
@@ -665,19 +697,20 @@ function buildReport(catalog: ReturnType<typeof buildFleetCatalog>) {
 export function writeFleetCatalog({ check = false } = {}) {
   const catalog = buildFleetCatalog();
   const compact = compactCatalog(catalog);
+  const publicCatalog = compactCatalog(catalog, { includeSupplemental: true });
   const routingIndex = browserRoutingIndex(catalog);
-  const divisionShards = catalog.divisions.map((division) => [
+  const divisionShards = [...catalog.divisions, ...catalog.supplemental_divisions].map((division) => [
     join(WEBSITE_SHARD_DIR, `${division.name}.json`),
-    stableJson({
+    JSON.stringify({
       schema: "dreamco.bot_fleet_division.v2",
       division: division.name,
-      bots: catalog.bots.filter((bot) => bot.identity.division === division.name),
+      bots: [...catalog.bots, ...catalog.supplemental_bots].filter((bot) => bot.identity.division === division.name),
     }),
   ] as const);
   const outputs = [
     [MASTER_PATH, stableJson(catalog)],
     [GENERATED_PATH, stableJson(compact)],
-    [WEBSITE_PATH, stableJson(compact)],
+    [WEBSITE_PATH, JSON.stringify(publicCatalog) + "\n"],
     [WEBSITE_ROUTING_PATH, `window.BUDDY_ROUTING_INDEX=${JSON.stringify(routingIndex)};\n`],
     [REPORT_PATH, buildReport(catalog)],
     ...divisionShards,

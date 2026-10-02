@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Learning methods</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <script src="nav.js"></script>
+  <main class="container">
+    <h1>Learning methods</h1>
+    <p id="lead">Loading the methods already listed in this repository.</p>
+    <section class="card">
+      <h2>Contrastive learning</h2>
+      <p>Contrastive learning pulls two views of the same thing together and pushes a different thing away. That matches the training note: two or more views of one part, then your own line. This page does not run the training.</p>
+      <ul>
+        <li><a href="https://arxiv.org/abs/2002.05709">SimCLR</a> — two changed views of one image are the matching pair. Many other images are the non-matches.</li>
+        <li><a href="https://arxiv.org/abs/1911.05722">MoCo</a> — keeps a queue of older non-matches so the comparison stays large without a huge batch.</li>
+        <li><a href="https://arxiv.org/abs/2103.00020">CLIP</a> — the matching pair is an image and its caption.</li>
+        <li><a href="https://arxiv.org/abs/2104.08821">SimCSE</a> — two passes of the same sentence are the matching pair.</li>
+        <li><a href="https://arxiv.org/abs/2004.11362">Supervised contrastive learning</a> — views with the same label are matches.</li>
+      </ul>
+      <p>Related, but not contrastive, because they do not use non-matches: <a href="https://arxiv.org/abs/2006.07733">BYOL</a>.</p>
+    </section>
+    <section class="card">
+      <h2>Hugging Face sets used for this kind of comparison</h2>
+      <p>These cards exist. Read the license before training. The files are not stored here.</p>
+      <ul>
+        <li><a href="https://huggingface.co/datasets/sentence-transformers/all-nli">all-nli</a> — sentence pairs labeled as the same meaning or not.</li>
+        <li><a href="https://huggingface.co/datasets/sentence-transformers/msmarco-hard-negatives">MS MARCO hard negatives</a> — a question, a useful passage, and passages that only look useful.</li>
+        <li><a href="https://huggingface.co/datasets/nlphuji/flickr30k">Flickr30k</a> — photos with several captions. The card limits how it can be used.</li>
+      </ul>
+    </section>
+    <h2>Already in this repository</h2>
+    <div id="methods"></div>
+    <p><a href="train-own.html">Your training data</a> · <a href="datasets.html">Open datasets</a></p>
+  </main>
+  <script src="learning-methods.js"></script>
+</body>
+</html>

@@ -31,7 +31,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - run: python3 -m unittest tests.test_build_updates_now
+      - run: python3 -m unittest tests.test_build_updates_now tests.test_build_dream_systems tests.test_prove_buddy_learning
       - run: python3 tools/build_updates_now.py
       - if: always()
         run: |
@@ -51,5 +51,5 @@ jobs:
             config/generated/*.json
             runtime/compiled_bots/registry.json
             systems/catalog_index.json
-            evidence/buddy-learning-history.jsonl
+            evidence/buddy-learning-proof-history.jsonl
           if-no-files-found: warn
