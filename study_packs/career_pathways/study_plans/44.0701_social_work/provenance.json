@@ -10,21 +10,21 @@
   "content_version": "O*NET 31.0 (db_31_0_csv); CIP 2020 to O*NET-SOC 2019 crosswalk",
   "license_or_usage_basis": "CC BY 4.0 for the O*NET 31.0 Database and O*NET Crosswalk Files (USDOL/ETA), which allows commercial use and redistribution with attribution; the outline, next steps, and practice prompts are DreamCo-original synthesis (owner approval for sale pending)",
   "transformation": "derived_metric",
-  "evaluator_version": "edu-career-pathways build.py sha256:ceb54a221761a07dfe13375c01fbb484bbe5dc67cc6c49f3fd002e0c2d79ff0a",
-  "integrity_hash": "sha256:2c9ab1bc5c274f8a4e23309f5dfad21d6266e013608b58ce5dd3597ea2a5830f",
+  "evaluator_version": "edu-career-pathways build.py sha256:b54424340488e6e1e8534eb397abbbfea1b540e1d09d82c37306fe86c73f5b3c",
+  "integrity_hash": "sha256:71b31bf2e86c9f43049c4587f934d48921a974b9ede921f036176efa88cb3855",
   "ownership_class": "open_license_with_conditions",
   "creator": "DreamCo (Grok-Edu-Career-Pathways, build.py)",
   "owner": "Mixed: O*NET-derived values, occupation titles, Job Zone names/descriptions, and task IDs are USDOL/ETA content under CC BY 4.0; the outline, next-steps wording, and practice prompts/rubrics are DreamCo-original",
   "asset_files": [
     {
       "path": "study_plans/44.0701_social_work.md",
-      "sha256": "2c9ab1bc5c274f8a4e23309f5dfad21d6266e013608b58ce5dd3597ea2a5830f",
-      "bytes": 11843
+      "sha256": "71b31bf2e86c9f43049c4587f934d48921a974b9ede921f036176efa88cb3855",
+      "bytes": 15553
     },
     {
       "path": "study_plans/44.0701_social_work/plan.json",
-      "sha256": "765b77b787a81167625f74ff6416b7351ef4121a7f248eb7bc6d52ae82e68880",
-      "bytes": 13173
+      "sha256": "4ee2ad299d16a5b2609a4451faca89bc491cf18ccd350fd2ae12c488c08bf5e0",
+      "bytes": 17594
     }
   ],
   "sources": [
@@ -158,28 +158,30 @@
       "component": "entry_targets",
       "ownership_class": "open_license_with_conditions",
       "derivation_type": "derived_metric",
-      "description": "2 entry target(s) chosen by a DreamCo rule: Job Zone 4 first (fallback 3, 5, 1-2), excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director titles, base .00 codes first, then ranked by Pearson correlation of knowledge-importance profiles.",
+      "description": "2 entry target(s) chosen by a DreamCo rule: Job Zone 4 first (fallback 3, 5, 1-2), excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director titles, base .00 codes first, then ranked by Pearson correlation of knowledge-importance profiles; then reviewed for plausibility, with any manual override and its reason recorded in authored/target_overrides.json.",
       "derived_from": [
         "onet_db_31_0",
         "onet_db_31_0_jobzones_tasks",
-        "linked_occupations"
+        "linked_occupations",
+        "authored/target_overrides.json"
       ]
     },
     {
       "component": "four_year_outline",
       "ownership_class": "synthetic_generated_by_dreamco",
       "derivation_type": "synthetic_data",
-      "description": "DreamCo-original synthesis: outline text keyed to this major's top knowledge/skills and entry targets; embeds O*NET element and occupation names, so O*NET attribution still applies.",
+      "description": "DreamCo-original synthesis: per-major course-topic mappings (authored/outline_topics.json, keyed by CIP and O*NET element) for this major's top knowledge/skills and entry targets; embeds O*NET element and occupation names, so O*NET attribution still applies.",
       "derived_from": [
         "knowledge_and_skill_importance",
-        "entry_targets"
+        "entry_targets",
+        "authored/outline_topics.json"
       ]
     },
     {
       "component": "typical_next_steps",
       "ownership_class": "synthetic_generated_by_dreamco",
       "derivation_type": "synthetic_data",
-      "description": "DreamCo-original synthesis summarizing linked occupations by Job Zone; quotes O*NET 31.0 Job Zone names and education descriptions with attribution.",
+      "description": "DreamCo-original synthesis summarizing linked occupations by Job Zone; cites O*NET 31.0 Job Zone numbers only and does not quote O*NET Job Zone names or descriptions.",
       "derived_from": [
         "linked_occupations",
         "onet_db_31_0_jobzones_tasks"
@@ -189,10 +191,11 @@
       "component": "practice_tasks",
       "ownership_class": "synthetic_generated_by_dreamco",
       "derivation_type": "original_evaluation",
-      "description": "6 DreamCo-original practice prompts with 3-criterion rubrics, each tied to an O*NET 31.0 Task ID and O*NET-SOC code of a linked occupation; O*NET task text is not reproduced (only its first verb is used to choose the prompt type).",
+      "description": "6 DreamCo-original occupation-specific scenario prompts (authored/practice_tasks_authored.json), each with an original-wording paraphrase of the cited task's intent, a 3-criterion scenario-specific rubric and a reference answer outline, tied to an O*NET 31.0 Task ID and O*NET-SOC code of a linked occupation. No run of 5 or more words from O*NET task statements is reproduced (tests enforce this). Authorship: DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed.",
       "derived_from": [
         "onet_db_31_0_jobzones_tasks",
-        "entry_targets"
+        "entry_targets",
+        "authored/practice_tasks_authored.json"
       ]
     }
   ],
@@ -208,13 +211,16 @@
       ]
     },
     {
-      "step": "crosswalk join, importance aggregation, Job Zone entry targeting, outline, practice tasks, markdown render",
+      "step": "crosswalk join, importance aggregation, Job Zone entry targeting with documented overrides, authored outline topics and practice tasks, markdown render",
       "tool": "edu-career-pathways/build.py",
-      "tool_version": "sha256:ceb54a221761a07dfe13375c01fbb484bbe5dc67cc6c49f3fd002e0c2d79ff0a",
+      "tool_version": "sha256:b54424340488e6e1e8534eb397abbbfea1b540e1d09d82c37306fe86c73f5b3c",
       "inputs": [
         "onet_db_31_0",
         "onet_db_31_0_jobzones_tasks",
-        "onet_cip_soc_crosswalk"
+        "onet_cip_soc_crosswalk",
+        "authored/practice_tasks_authored.json sha256:da3b2fe8d7dee879853dd7e2f67ca9ff730167094662a7f049e2ea8de5073ea2",
+        "authored/outline_topics.json sha256:4e49d6cf26ec5ce437caffed9690dc9d91b182972d8e9cb931ac24ea7bbbd96d",
+        "authored/target_overrides.json sha256:66681070021137438c63e4f7854eb4f78aa3db1c74564da560c4c266e713aac0"
       ]
     }
   ],
@@ -225,6 +231,7 @@
     "retrieved_at values are dates only because raw/SOURCES.md records only download dates (America/Chicago).",
     "Two O*NET 31.0 source entries exist because the job zone and task files were downloaded on a later date than the others.",
     "O*NET 31.0 split Skills into Essential Skills and Transferable Skills; this asset uses Essential Skills only.",
-    "Owner approval is pending; it is never set by build.py."
+    "Owner approval is pending; it is never set by build.py.",
+    "DreamCo-authored content (practice tasks, outline topics, target overrides) was written by an AI agent (Grok-Edu-Career-Pathways) and has not been human-reviewed."
   ]
 }

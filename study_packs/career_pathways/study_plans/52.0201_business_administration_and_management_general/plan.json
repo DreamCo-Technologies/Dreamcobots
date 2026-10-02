@@ -2,6 +2,7 @@
   "cip": "52.0201",
   "title": "Business Administration and Management, General",
   "asset_id": "edu-baamg-52.0201",
+  "tier": "authored",
   "occupations": [
     {
       "soc": "11-1011.00",
@@ -301,12 +302,26 @@
       "job_zone": 4
     },
     {
-      "soc": "13-1141.00",
-      "title": "Compensation, Benefits, and Job Analysis Specialists",
+      "soc": "13-1071.00",
+      "title": "Human Resources Specialists",
       "job_zone": 4
     }
   ],
-  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (13-1082.00, 13-1111.00, 13-1141.00) to 13-1082.00, 13-1111.00, 13-1071.00",
+  "entry_target_review": {
+    "type": "override",
+    "rule_output": [
+      "13-1082.00",
+      "13-1111.00",
+      "13-1141.00"
+    ],
+    "targets": [
+      "13-1082.00",
+      "13-1111.00",
+      "13-1071.00"
+    ],
+    "reason": "Compensation, Benefits, and Job Analysis Specialists was replaced by the broader Human Resources Specialists role, which hires generalist business graduates far more often; Project Management Specialists and Management Analysts are kept."
+  },
   "practice_task_ids": [
     "52.0201-P1",
     "52.0201-P2",
@@ -316,215 +331,252 @@
     "52.0201-P6"
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
+  "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
   "practice_tasks": [
     {
       "practice_id": "52.0201-P1",
       "cip_code": "52.0201",
+      "tier": "authored",
       "onet_soc_code": "13-1082.00",
       "occupation_title": "Project Management Specialists",
       "onet_task_id": 21462,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-1082.00",
-      "activity_type": "plan",
-      "knowledge_elements": [
-        "English Language",
-        "Administration and Management"
-      ],
-      "skill_element": "Active Listening",
+      "format": "responsibility assignment matrix",
+      "task_intent": "Give project team members their duties and responsibilities.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 21462 for `13-1082.00` (Project Management Specialists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-1082.00). Write a two-week plan for carrying out this theme on a small project: steps, roles, timeline, risks, and how progress is tracked. Apply English Language and Administration and Management.",
+      "prompt": "DreamCo-original practice prompt. You are the project specialist for moving a 60-person insurance office to a new building in eight weeks. The team: facilities coordinator, IT technician, HR generalist, an office manager, two volunteer 'floor captains', and the moving vendor. Build a responsibility assignment (RACI) matrix for the twelve main work packages, explain how you matched duties to people's skills and workloads, how you will confirm each person accepts their assignments, and how you will rebalance if someone becomes overloaded.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 21462 for 13-1082.00 (grader checks against the O*NET task statement).",
+          "criterion": "Complete, clear matrix",
+          "description": "Each work package has exactly one accountable owner, and responsible, consulted and informed roles are sensible.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "English Language and Administration and Management concepts are applied accurately and specifically, not just named.",
+          "criterion": "Thoughtful assignment",
+          "description": "Assignments reflect skills, authority and availability rather than convenience.",
           "points": 2
         },
         {
-          "criterion": "Feasibility",
-          "description": "steps, timeline, and risks are realistic and progress is trackable.",
+          "criterion": "Commitment and rebalancing",
+          "description": "Includes a step for confirming assignments and a concrete method for detecting and fixing overload.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Work packages: floor plan, IT network and phones, furniture, vendor contract, employee communication, packing, security badges, parking, mail forwarding, go-live support.",
+        "IT technician accountable for network cutover; HR for employee communication; facilities for vendor coordination.",
+        "Kickoff meeting where owners confirm scope and capacity.",
+        "Weekly status check of hours and task counts per person.",
+        "Rebalance by shifting tasks to floor captains or adding vendor support."
       ]
     },
     {
       "practice_id": "52.0201-P2",
       "cip_code": "52.0201",
+      "tier": "authored",
       "onet_soc_code": "13-1111.00",
       "occupation_title": "Management Analysts",
       "onet_task_id": 7276,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-1111.00",
-      "activity_type": "perform",
-      "knowledge_elements": [
-        "English Language",
-        "Administration and Management"
-      ],
-      "skill_element": "Active Listening",
+      "format": "information-gathering plan",
+      "task_intent": "Collect information about a business problem or process and organize it so it can be analyzed.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 7276 for `13-1111.00` (Management Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-1111.00). Write a step-by-step procedure for carrying out this theme in a realistic setting, noting safety, quality, or ethical considerations and how you would know it was done well. Apply English Language and Administration and Management.",
+      "prompt": "DreamCo-original practice prompt. A regional hospital's outpatient clinic says patients wait too long for appointments and staff blame 'the scheduling system'. You are the management analyst assigned to find out what is really happening. Write the information-gathering plan: who you will interview and what you will ask, what data you will pull (scheduling records, no-show rates, provider templates), what you will observe in person, and how you will organize the findings (process map, issue log, data summary) so they can be analyzed next week.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 7276 for 13-1111.00 (grader checks against the O*NET task statement).",
+          "criterion": "Multiple sources",
+          "description": "Combines interviews, system data and direct observation and includes front-line staff and patients, not only managers.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "English Language and Administration and Management concepts are applied accurately and specifically, not just named.",
+          "criterion": "Focused questions",
+          "description": "Questions and data requests target the problem (lead time to appointment, template rules, no-shows, cancellations).",
           "points": 2
         },
         {
-          "criterion": "Process quality",
-          "description": "steps are ordered and complete and include safety, quality, or ethics checks.",
+          "criterion": "Organized output",
+          "description": "Specifies the structure for organizing information so it can be analyzed and verified.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Interviews: schedulers, nurses, two providers, clinic manager, a handful of patients.",
+        "Data: days to third-next-available appointment, no-show and late cancel rates, template blocks by provider, call abandonment.",
+        "Observation: shadow the scheduling desk for a morning.",
+        "Organize: current-state process map, issue log tagged by cause, summary tables.",
+        "Validate findings with a short readback session with staff."
       ]
     },
     {
       "practice_id": "52.0201-P3",
       "cip_code": "52.0201",
-      "onet_soc_code": "13-1141.00",
-      "occupation_title": "Compensation, Benefits, and Job Analysis Specialists",
-      "onet_task_id": 3352,
+      "tier": "authored",
+      "onet_soc_code": "13-1071.00",
+      "occupation_title": "Human Resources Specialists",
+      "onet_task_id": 18858,
       "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/13-1141.00",
-      "activity_type": "monitor",
-      "knowledge_elements": [
-        "Personnel and Human Resources",
-        "English Language"
-      ],
-      "skill_element": "Active Listening",
+      "onet_task_url": "https://www.onetonline.org/link/summary/13-1071.00",
+      "format": "recruiting strategy",
+      "task_intent": "Plan and carry out recruiting approaches that meet current and expected staffing needs.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 3352 for `13-1141.00` (Compensation, Benefits, and Job Analysis Specialists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-1141.00). Create a checklist or test plan for this theme: what to check, how often, the pass condition, and what to do when a check fails. Ground it in Personnel and Human Resources and English Language.",
+      "prompt": "DreamCo-original practice prompt. A growing regional logistics company must hire 40 warehouse associates and 6 shift supervisors in the next four months for a new distribution center, in a town with low unemployment. Write the recruiting strategy: the workforce need by role and month, target candidate sources, the employer value proposition you would promote, the selection process with time-to-hire targets, how you ensure fair and lawful hiring, and the metrics you will track weekly.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 3352 for 13-1141.00 (grader checks against the O*NET task statement).",
+          "criterion": "Need-based plan",
+          "description": "Ties sourcing volume to the hiring target using realistic funnel assumptions (applicants per hire).",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Personnel and Human Resources and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Fit to labor market",
+          "description": "Sources and messaging fit a tight local market (referral bonuses, community partners, shift flexibility, internal promotion for supervisors).",
           "points": 2
         },
         {
-          "criterion": "Verifiability",
-          "description": "each check has a measurable pass condition and a defined response to failure.",
+          "criterion": "Fairness and measurement",
+          "description": "Includes consistent structured selection and lawful practices, plus weekly metrics such as time-to-fill and offer acceptance.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Hiring calendar: ramp by month to match the facility opening.",
+        "Funnel: estimated applicants per hire for associates and supervisors.",
+        "Sources: job boards, workforce centers, community colleges, referral bonus, internal postings for supervisors.",
+        "Structured interviews with scored questions; consistent background-check policy.",
+        "Metrics: applicants, interviews, offers, acceptances, 90-day retention."
       ]
     },
     {
       "practice_id": "52.0201-P4",
       "cip_code": "52.0201",
+      "tier": "authored",
       "onet_soc_code": "13-1082.00",
       "occupation_title": "Project Management Specialists",
       "onet_task_id": 21463,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-1082.00",
-      "activity_type": "communicate",
-      "knowledge_elements": [
-        "English Language",
-        "Administration and Management"
-      ],
-      "skill_element": "Active Listening",
+      "format": "stakeholder requirements workshop",
+      "task_intent": "Work with key stakeholders to pin down what a project must deliver and why.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 21463 for `13-1082.00` (Project Management Specialists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-1082.00). Write a 5-minute briefing or role-play script for a conversation with a colleague or client on this theme: key message, two likely questions with answers, and an agreed next step. Use English Language and Administration and Management.",
+      "prompt": "DreamCo-original practice prompt. A city library system wants a project to add self-service laptop lending kiosks at four branches. Stakeholders include branch managers, IT, the finance office, the library board, and patrons. Plan a two-hour requirements workshop and its outputs: the agenda, techniques you will use to draw out needs and conflicts, how you will separate objectives from solutions, a draft project charter section listing objectives with success measures, and how disagreements will be resolved.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 21463 for 13-1082.00 (grader checks against the O*NET task statement).",
+          "criterion": "Inclusive design",
+          "description": "Agenda and techniques give all stakeholder groups a voice, including patron input gathered beforehand.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "English Language and Administration and Management concepts are applied accurately and specifically, not just named.",
+          "criterion": "Measurable objectives",
+          "description": "Objectives are specific and measurable (e.g. availability rate, cost per loan, damage rate), separate from solution features.",
           "points": 2
         },
         {
-          "criterion": "Active Listening",
-          "description": "the message is clear, questions are anticipated, and the next step is concrete.",
+          "criterion": "Conflict handling",
+          "description": "States a clear decision process for conflicting requirements, such as a priority scheme and a sponsor decision.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Pre-work: short patron survey and branch usage data.",
+        "Agenda: purpose, current-state stories, needs brainstorming, prioritization, constraints, next steps.",
+        "Techniques: affinity grouping, MoSCoW prioritization, dot voting.",
+        "Charter: objectives with targets, scope, constraints (budget, privacy), assumptions.",
+        "Escalate unresolved conflicts to the project sponsor with options documented."
       ]
     },
     {
       "practice_id": "52.0201-P5",
       "cip_code": "52.0201",
+      "tier": "authored",
       "onet_soc_code": "13-1111.00",
       "occupation_title": "Management Analysts",
       "onet_task_id": 7277,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-1111.00",
-      "activity_type": "analyze",
-      "knowledge_elements": [
-        "English Language",
-        "Administration and Management"
-      ],
-      "skill_element": "Active Listening",
+      "format": "analysis and options paper",
+      "task_intent": "Make sense of the information collected and propose fixes or other ways forward.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 7277 for `13-1111.00` (Management Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-1111.00). Pick a realistic small case on this theme (public data or a clearly labeled invented scenario) and write a one-page analysis: the question, the evidence used, the method, and a recommendation. Show where English Language and Administration and Management knowledge shaped the reasoning.",
+      "prompt": "DreamCo-original practice prompt. Invented findings from the clinic study: average wait to a new appointment is 34 days; 18 percent of booked slots are no-shows; providers each block 4 hours a week that are often unused; schedulers spend 30 percent of their time on reminder calls; and appointment types have 11 different lengths. Write the analysis and options paper: root causes supported by the data, three alternative solutions (for example, automated reminders, template simplification, overbooking rules or open-access scheduling), the expected impact and cost of each, risks, and the recommended sequence.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 7277 for 13-1111.00 (grader checks against the O*NET task statement).",
+          "criterion": "Data-driven root causes",
+          "description": "Root causes are linked to the evidence and quantified where possible (lost capacity from no-shows and unused blocks).",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "English Language and Administration and Management concepts are applied accurately and specifically, not just named.",
+          "criterion": "Real alternatives",
+          "description": "Options are distinct, with impact estimates, costs and risks.",
           "points": 2
         },
         {
-          "criterion": "Reasoning",
-          "description": "evidence, method, and recommendation connect, and limitations are stated.",
+          "criterion": "Implementable recommendation",
+          "description": "Recommends a sequence with quick wins and a pilot, and how success will be measured.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Lost capacity estimate from no-shows and unused blocked time.",
+        "Option 1: automated text reminders to cut no-shows and free scheduler time.",
+        "Option 2: simplify appointment lengths to three or four types.",
+        "Option 3: release unused blocked time 48 hours ahead; limited overbooking based on no-show prediction.",
+        "Pilot in one clinic for eight weeks, measure wait time and no-show rate."
       ]
     },
     {
       "practice_id": "52.0201-P6",
       "cip_code": "52.0201",
-      "onet_soc_code": "13-1141.00",
-      "occupation_title": "Compensation, Benefits, and Job Analysis Specialists",
-      "onet_task_id": 3353,
+      "tier": "authored",
+      "onet_soc_code": "13-1071.00",
+      "occupation_title": "Human Resources Specialists",
+      "onet_task_id": 18861,
       "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/13-1141.00",
-      "activity_type": "communicate",
-      "knowledge_elements": [
-        "Personnel and Human Resources",
-        "English Language"
-      ],
-      "skill_element": "Active Listening",
+      "onet_task_url": "https://www.onetonline.org/link/summary/13-1071.00",
+      "format": "policy explanation brief and FAQ",
+      "task_intent": "Make HR rules, workplace laws and company procedures understandable to employees and managers.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 3353 for `13-1141.00` (Compensation, Benefits, and Job Analysis Specialists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-1141.00). Write a 5-minute briefing or role-play script for a conversation with a colleague or client on this theme: key message, two likely questions with answers, and an agreed next step. Use Personnel and Human Resources and English Language.",
+      "prompt": "DreamCo-original practice prompt. A 200-employee company is introducing a new paid leave policy because of a new state paid sick leave law, and managers are confused about how it interacts with existing vacation days and with federal family and medical leave. Write a one-page manager brief and a ten-question employee FAQ: what the policy provides, accrual and use rules, documentation that can and cannot be requested, non-retaliation, and where to get help. Note which points you would confirm with legal counsel, and invent no specific statutory numbers without labeling them as placeholders.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 3353 for 13-1141.00 (grader checks against the O*NET task statement).",
+          "criterion": "Accurate and careful",
+          "description": "Explains rules clearly, labels placeholders for state-specific figures, and flags items needing legal confirmation.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Personnel and Human Resources and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Audience fit",
+          "description": "The manager brief focuses on what managers must do; the FAQ uses plain language employees can act on.",
           "points": 2
         },
         {
-          "criterion": "Active Listening",
-          "description": "the message is clear, questions are anticipated, and the next step is concrete.",
+          "criterion": "Compliance safeguards",
+          "description": "Covers non-retaliation, confidentiality of medical information and consistent application.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Brief: what changes, effective date, manager duties (approve, record, never discourage use).",
+        "Accrual rate placeholder, carryover and caps, permitted uses including family care.",
+        "Documentation: limits on asking for medical details; follow the law's thresholds.",
+        "Interaction with vacation and family and medical leave explained with an example.",
+        "FAQ ends with HR contact and a confidential reporting channel."
       ]
     }
   ]

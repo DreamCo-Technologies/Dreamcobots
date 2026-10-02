@@ -2,6 +2,7 @@
   "cip": "14.0801",
   "title": "Civil Engineering, General",
   "asset_id": "edu-ceg-14.0801",
+  "tier": "authored",
   "occupations": [
     {
       "soc": "11-9041.00",
@@ -112,6 +113,10 @@
     }
   ],
   "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+  "entry_target_review": {
+    "type": "reviewed_without_change",
+    "note": "Civil, Transportation and Water/Wastewater Engineers are all direct entry roles."
+  },
   "practice_task_ids": [
     "14.0801-P1",
     "14.0801-P2",
@@ -121,215 +126,252 @@
     "14.0801-P6"
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
+  "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
   "practice_tasks": [
     {
       "practice_id": "14.0801-P1",
       "cip_code": "14.0801",
+      "tier": "authored",
       "onet_soc_code": "17-2051.00",
       "occupation_title": "Civil Engineers",
       "onet_task_id": 147,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/17-2051.00",
-      "activity_type": "perform",
-      "knowledge_elements": [
-        "Design",
-        "Engineering and Technology"
-      ],
-      "skill_element": "Active Listening",
+      "format": "design calculation package",
+      "task_intent": "Work out loads, slopes, flows and stresses in materials so the design requirements can be fixed.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 147 for `17-2051.00` (Civil Engineers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/17-2051.00). Write a step-by-step procedure for carrying out this theme in a realistic setting, noting safety, quality, or ethical considerations and how you would know it was done well. Apply Design and Engineering and Technology.",
+      "prompt": "DreamCo-original practice prompt. A park needs a 6 m long timber footbridge, 1.5 m wide, carrying a pedestrian live load of 4 kPa plus its own dead load. Prepare a calculation package for the two main beams: load takedown, maximum bending moment and shear, required section modulus for a stated allowable bending stress, deflection check against span/360, and a short note on what a full design would also check (lateral stability, connections, durability, local code requirements). Show units throughout.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 147 for 17-2051.00 (grader checks against the O*NET task statement).",
+          "criterion": "Correct loads and statics",
+          "description": "Tributary width, load combination and moment and shear for a simply supported beam are calculated correctly.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Design and Engineering and Technology concepts are applied accurately and specifically, not just named.",
+          "criterion": "Sizing and serviceability",
+          "description": "Section is sized from the section modulus and checked for deflection with a stated modulus of elasticity.",
           "points": 2
         },
         {
-          "criterion": "Process quality",
-          "description": "steps are ordered and complete and include safety, quality, or ethics checks.",
+          "criterion": "Professional completeness",
+          "description": "Identifies the remaining checks and that the design must follow the governing code and be reviewed by a licensed engineer.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Each beam carries half the deck: live load 4 kPa times 0.75 m plus dead load estimate.",
+        "Uniform load w; moment w L squared over 8; shear w L over 2.",
+        "Required section modulus equals moment over allowable stress; select a glulam or sawn size.",
+        "Deflection 5 w L to the fourth over 384 E I compared with 6000/360 mm.",
+        "Other checks: bearing, connections, lateral torsional buckling, vibration, preservative treatment."
       ]
     },
     {
       "practice_id": "14.0801-P2",
       "cip_code": "14.0801",
+      "tier": "authored",
       "onet_soc_code": "17-2051.01",
       "occupation_title": "Transportation Engineers",
       "onet_task_id": 16303,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/17-2051.01",
-      "activity_type": "communicate",
-      "knowledge_elements": [
-        "Engineering and Technology",
-        "Design"
-      ],
-      "skill_element": "Speaking",
+      "format": "public meeting presentation",
+      "task_intent": "Share data, maps and other information at public meetings or hearings about construction projects.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 16303 for `17-2051.01` (Transportation Engineers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/17-2051.01). Write a 5-minute briefing or role-play script for a conversation with a colleague or client on this theme: key message, two likely questions with answers, and an agreed next step. Use Engineering and Technology and Design.",
+      "prompt": "DreamCo-original practice prompt. The city proposes converting a four-lane arterial into two travel lanes, a center turn lane and bike lanes (a 'road diet'). Neighbors are worried about traffic backing up. Prepare a 10-minute presentation outline for the public hearing: the problem the project addresses with crash and volume data (use clearly invented example figures), maps or diagrams you will show, expected effects on travel time, how you will answer the three most likely objections, and how public comments will be recorded and answered.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 16303 for 17-2051.01 (grader checks against the O*NET task statement).",
+          "criterion": "Clear evidence",
+          "description": "Presents crash, speed and volume data in understandable visuals with honest labeling of estimates.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Engineering and Technology and Design concepts are applied accurately and specifically, not just named.",
+          "criterion": "Responsive to concerns",
+          "description": "Anticipates objections (congestion, emergency access, business deliveries) with evidence-based answers.",
           "points": 2
         },
         {
-          "criterion": "Speaking",
-          "description": "the message is clear, questions are anticipated, and the next step is concrete.",
+          "criterion": "Transparent process",
+          "description": "Explains next steps and how comments influence the decision.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Slides: existing cross-section and proposed cross-section diagrams, corridor map with crash locations.",
+        "Data: daily volume within the range where road diets usually work, crash history by type.",
+        "Expected travel-time change at peak hours from a traffic model, with uncertainty.",
+        "Answers on emergency vehicles using the center lane, loading zones, and a monitoring period.",
+        "Comment cards and an online form; responses published before the council vote."
       ]
     },
     {
       "practice_id": "14.0801-P3",
       "cip_code": "14.0801",
+      "tier": "authored",
       "onet_soc_code": "17-2051.02",
       "occupation_title": "Water/Wastewater Engineers",
       "onet_task_id": 16324,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/17-2051.02",
-      "activity_type": "document",
-      "knowledge_elements": [
-        "Engineering and Technology",
-        "Design"
-      ],
-      "skill_element": "Writing",
+      "format": "technical report",
+      "task_intent": "Produce technical reports and articles about developing water supplies or cutting water waste.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 16324 for `17-2051.02` (Water/Wastewater Engineers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/17-2051.02). Draft the work document this theme calls for (report, record, or brief) for a named audience, then add a short note on what you would verify before it is used. Apply Engineering and Technology and Design.",
+      "prompt": "DreamCo-original practice prompt. A small town water utility produces 2.0 million liters per day but bills customers for only 1.5 million. Write a technical report (executive summary and four sections, about two pages) on the water loss: a water balance using the standard categories of real and apparent losses, likely sources in this system (with invented but plausible figures), the field and data work needed to confirm them, the costs and savings of three reduction options, and a recommended plan.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 16324 for 17-2051.02 (grader checks against the O*NET task statement).",
+          "criterion": "Sound water balance",
+          "description": "Breaks non-revenue water into real losses (leaks, main breaks) and apparent losses (meter error, unbilled use) with consistent numbers.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Engineering and Technology and Design concepts are applied accurately and specifically, not just named.",
+          "criterion": "Evidence plan",
+          "description": "Specifies how losses will be confirmed (district metering, acoustic leak detection, meter testing).",
           "points": 2
         },
         {
-          "criterion": "Communication",
-          "description": "accurate, organized, suited to the named audience, with verification needs flagged.",
+          "criterion": "Decision support",
+          "description": "Options have costs, savings and payback, and the recommendation follows from them; the summary is understandable to the town council.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Non-revenue water 0.5 million liters per day, 25 percent of production.",
+        "Split estimate: leakage, customer meter under-registration, unbilled authorized use such as flushing.",
+        "Field work: night flow analysis, acoustic survey, testing a sample of old meters.",
+        "Options: leak detection and repair, meter replacement, pressure management; cost and payback each.",
+        "Recommendation and a monitoring indicator for annual reporting."
       ]
     },
     {
       "practice_id": "14.0801-P4",
       "cip_code": "14.0801",
+      "tier": "authored",
       "onet_soc_code": "17-2051.00",
       "occupation_title": "Civil Engineers",
       "onet_task_id": 148,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/17-2051.00",
-      "activity_type": "monitor",
-      "knowledge_elements": [
-        "Design",
-        "Engineering and Technology"
-      ],
-      "skill_element": "Active Listening",
+      "format": "site inspection checklist",
+      "task_intent": "Visit project sites to track progress and confirm the work matches the design and meets safety and sanitation requirements.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 148 for `17-2051.00` (Civil Engineers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/17-2051.00). Create a checklist or test plan for this theme: what to check, how often, the pass condition, and what to do when a check fails. Ground it in Design and Engineering and Technology.",
+      "prompt": "DreamCo-original practice prompt. You are the owner's field engineer on a two-story school addition, and tomorrow the contractor pours the second-floor concrete slab. Create the pre-pour and during-pour inspection checklist: items to verify against drawings and specifications (rebar size, spacing, cover, embedded items), concrete delivery and testing checks, site safety items, what you photograph and record, and what you do if you find nonconforming work an hour before the pour.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 148 for 17-2051.00 (grader checks against the O*NET task statement).",
+          "criterion": "Spec conformance",
+          "description": "Items reference the design documents and include measurable checks (bar size and spacing, cover, slab thickness, mix ticket).",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Design and Engineering and Technology concepts are applied accurately and specifically, not just named.",
+          "criterion": "Safety and testing",
+          "description": "Includes fall protection, shoring and formwork checks, and field testing of concrete (slump, temperature, cylinders).",
           "points": 2
         },
         {
-          "criterion": "Verifiability",
-          "description": "each check has a measurable pass condition and a defined response to failure.",
+          "criterion": "Handling nonconformance",
+          "description": "Defines a clear authority and procedure for stopping or delaying the pour and documenting the issue.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Rebar per drawings, chairs for cover, laps, openings and embedded conduits in place.",
+        "Formwork and shoring inspected; edge protection; access routes.",
+        "Delivery tickets: mix design, time since batching, water added; slump and air tests; cylinders made per specification.",
+        "Daily report with photos, weather, crew counts.",
+        "If nonconforming: notify the contractor and engineer of record, issue a written notice, re-inspect before pour proceeds."
       ]
     },
     {
       "practice_id": "14.0801-P5",
       "cip_code": "14.0801",
+      "tier": "authored",
       "onet_soc_code": "17-2051.01",
       "occupation_title": "Transportation Engineers",
       "onet_task_id": 16304,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/17-2051.01",
-      "activity_type": "analyze",
-      "knowledge_elements": [
-        "Engineering and Technology",
-        "Design"
-      ],
-      "skill_element": "Critical Thinking",
+      "format": "traffic impact review",
+      "task_intent": "Review development plans to estimate how they will affect traffic.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 16304 for `17-2051.01` (Transportation Engineers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/17-2051.01). Pick a realistic small case on this theme (public data or a clearly labeled invented scenario) and write a one-page analysis: the question, the evidence used, the method, and a recommendation. Show where Engineering and Technology and Design knowledge shaped the reasoning.",
+      "prompt": "DreamCo-original practice prompt. A developer submits plans for a 220-unit apartment complex with one driveway onto a two-lane collector road near an elementary school. Write the city's traffic impact review memo: estimate weekday peak-hour trips using a stated trip-generation rate (cite the source type you would use and label invented rates), distribute trips to the network, identify intersections and pedestrian routes to check, list conditions of approval you might require, and note what you would ask the developer's consultant to revise.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 16304 for 17-2051.01 (grader checks against the O*NET task statement).",
+          "criterion": "Trip estimate",
+          "description": "Uses a stated rate per unit for AM and PM peaks, shows the arithmetic, and distributes trips reasonably.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Engineering and Technology and Design concepts are applied accurately and specifically, not just named.",
+          "criterion": "Safety focus",
+          "description": "Considers school pedestrian routes, sight distance at the driveway and turn-lane needs.",
           "points": 2
         },
         {
-          "criterion": "Reasoning",
-          "description": "evidence, method, and recommendation connect, and limitations are stated.",
+          "criterion": "Actionable conditions",
+          "description": "Proposes specific, justified conditions or study revisions rather than general concerns.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Rate assumption such as about half a trip per unit in each peak hour, giving roughly 110 peak trips.",
+        "Distribution by direction based on the street network and destinations.",
+        "Check the driveway, two adjacent intersections and the school crossing.",
+        "Conditions: left-turn lane if warranted, sidewalk connection, crosswalk improvements, sight-triangle clearance.",
+        "Ask for counts taken when school is in session and a queuing analysis."
       ]
     },
     {
       "practice_id": "14.0801-P6",
       "cip_code": "14.0801",
+      "tier": "authored",
       "onet_soc_code": "17-2051.02",
       "occupation_title": "Water/Wastewater Engineers",
       "onet_task_id": 16329,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/17-2051.02",
-      "activity_type": "design",
-      "knowledge_elements": [
-        "Engineering and Technology",
-        "Design"
-      ],
-      "skill_element": "Critical Thinking",
+      "format": "water efficiency program plan",
+      "task_intent": "Create plans for new water supplies or for programs that make water use more efficient.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 16329 for `17-2051.02` (Water/Wastewater Engineers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/17-2051.02). Produce a short design or build plan for a small deliverable on this theme: requirements, two alternatives considered, the choice and why, and how you would check that it works. Draw on Engineering and Technology and Design.",
+      "prompt": "DreamCo-original practice prompt. A growing town of 30,000 people expects summer demand to exceed its well capacity within six years. Develop a water efficiency program plan as an alternative or complement to drilling a new well: baseline demand by sector (invented but labeled figures), four efficiency measures (for example, irrigation scheduling, fixture rebates, tiered pricing, leak repair), estimated savings and cost per unit of water saved for each, an implementation timeline, and how you would measure actual savings.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 16329 for 17-2051.02 (grader checks against the O*NET task statement).",
+          "criterion": "Baseline and targets",
+          "description": "States baseline demand by sector and a savings target linked to the capacity gap.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Engineering and Technology and Design concepts are applied accurately and specifically, not just named.",
+          "criterion": "Comparable measures",
+          "description": "Each measure has estimated savings and cost per unit saved so they can be compared with the cost of a new well.",
           "points": 2
         },
         {
-          "criterion": "Design quality",
-          "description": "requirements are testable and the choice between alternatives is justified.",
+          "criterion": "Measurement and verification",
+          "description": "Savings are measured against weather-normalized baseline data, not assumed.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Baseline: residential indoor, outdoor irrigation peak, commercial, and losses.",
+        "Measures: smart irrigation controllers, rebates for high-efficiency fixtures, seasonal tiered rates, leak repair program.",
+        "Cost per cubic meter saved for each versus the new well's cost.",
+        "Phased timeline over three years with outreach.",
+        "Monthly billing data compared with a weather-normalized baseline; annual report to council."
       ]
     }
   ]

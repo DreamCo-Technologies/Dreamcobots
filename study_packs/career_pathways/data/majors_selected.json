@@ -3,6 +3,7 @@
     "cip": "11.0701",
     "title": "Computer Science",
     "asset_id": "edu-cs-11.0701",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-3021.00",
@@ -197,6 +198,11 @@
     ],
     "entry_targets": [
       {
+        "soc": "15-1252.00",
+        "title": "Software Developers",
+        "job_zone": 4
+      },
+      {
         "soc": "15-1253.00",
         "title": "Software Quality Assurance Analysts and Testers",
         "job_zone": 4
@@ -205,14 +211,23 @@
         "soc": "15-1212.00",
         "title": "Information Security Analysts",
         "job_zone": 4
-      },
-      {
-        "soc": "15-1243.00",
-        "title": "Database Architects",
-        "job_zone": 4
       }
     ],
-    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (15-1253.00, 15-1212.00, 15-1243.00) to 15-1252.00, 15-1253.00, 15-1212.00",
+    "entry_target_review": {
+      "type": "override",
+      "rule_output": [
+        "15-1253.00",
+        "15-1212.00",
+        "15-1243.00"
+      ],
+      "targets": [
+        "15-1252.00",
+        "15-1253.00",
+        "15-1212.00"
+      ],
+      "reason": "Software Developers is the most common bachelor's-level destination for Computer Science graduates and was missing because the knowledge-profile ranking favored QA, security and database roles. Database Architects was dropped: architect roles typically expect several years of database administration or development experience, so it is a mid-career rather than a new-graduate target. Software QA and Information Security Analysts are kept as realistic Job Zone 4 entry roles."
+    },
     "practice_task_ids": [
       "11.0701-P1",
       "11.0701-P2",
@@ -226,6 +241,7 @@
     "cip": "14.0901",
     "title": "Computer Engineering, General",
     "asset_id": "edu-ceg-14.0901",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9041.00",
@@ -340,22 +356,36 @@
     ],
     "entry_targets": [
       {
+        "soc": "17-2061.00",
+        "title": "Computer Hardware Engineers",
+        "job_zone": 4
+      },
+      {
+        "soc": "15-1252.00",
+        "title": "Software Developers",
+        "job_zone": 4
+      },
+      {
         "soc": "15-1253.00",
         "title": "Software Quality Assurance Analysts and Testers",
         "job_zone": 4
-      },
-      {
-        "soc": "15-1243.00",
-        "title": "Database Architects",
-        "job_zone": 4
-      },
-      {
-        "soc": "15-1241.00",
-        "title": "Computer Network Architects",
-        "job_zone": 4
       }
     ],
-    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (15-1253.00, 15-1243.00, 15-1241.00) to 17-2061.00, 15-1252.00, 15-1253.00",
+    "entry_target_review": {
+      "type": "override",
+      "rule_output": [
+        "15-1253.00",
+        "15-1243.00",
+        "15-1241.00"
+      ],
+      "targets": [
+        "17-2061.00",
+        "15-1252.00",
+        "15-1253.00"
+      ],
+      "reason": "Computer Hardware Engineers is the occupation most specific to a Computer Engineering degree and was not selected by the rule. Database Architects and Computer Network Architects were dropped as mid-career architect roles. Software Developers is added because many computer engineering graduates start in firmware or systems software; Software QA is kept."
+    },
     "practice_task_ids": [
       "14.0901-P1",
       "14.0901-P2",
@@ -369,6 +399,7 @@
     "cip": "11.0401",
     "title": "Information Science/Studies",
     "asset_id": "edu-iss-11.0401",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-3021.00",
@@ -523,11 +554,6 @@
     ],
     "entry_targets": [
       {
-        "soc": "15-1243.00",
-        "title": "Database Architects",
-        "job_zone": 4
-      },
-      {
         "soc": "15-1252.00",
         "title": "Software Developers",
         "job_zone": 4
@@ -536,9 +562,28 @@
         "soc": "15-1255.00",
         "title": "Web and Digital Interface Designers",
         "job_zone": 4
+      },
+      {
+        "soc": "15-1299.03",
+        "title": "Document Management Specialists",
+        "job_zone": 4
       }
     ],
-    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (15-1243.00, 15-1252.00, 15-1255.00) to 15-1252.00, 15-1255.00, 15-1299.03",
+    "entry_target_review": {
+      "type": "override",
+      "rule_output": [
+        "15-1243.00",
+        "15-1252.00",
+        "15-1255.00"
+      ],
+      "targets": [
+        "15-1252.00",
+        "15-1255.00",
+        "15-1299.03"
+      ],
+      "reason": "Database Architects was dropped as a mid-career architect role. Document Management Specialists (Job Zone 4) is added because records, metadata and content-management work is a core information-science destination. Software Developers and Web and Digital Interface Designers are kept."
+    },
     "practice_task_ids": [
       "11.0401-P1",
       "11.0401-P2",
@@ -552,6 +597,7 @@
     "cip": "51.3801",
     "title": "Registered Nursing/Registered Nurse",
     "asset_id": "edu-rnrn-51.3801",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "25-1072.00",
@@ -662,6 +708,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Registered Nurses, Acute Care Nurses and Critical Care Nurses kept. Critical care units often hire experienced RNs, but new-graduate residency programs exist, so it stays as a third target."
+    },
     "practice_task_ids": [
       "51.3801-P1",
       "51.3801-P2",
@@ -675,6 +725,7 @@
     "cip": "42.0101",
     "title": "Psychology, General",
     "asset_id": "edu-pg-42.0101",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9199.00",
@@ -790,6 +841,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Only one bachelor's-level (Job Zone 4) non-manager occupation is linked (Social Science Research Assistants); psychologist roles are Job Zone 5 and appear as graduate paths."
+    },
     "practice_task_ids": [
       "42.0101-P1",
       "42.0101-P2",
@@ -803,6 +858,7 @@
     "cip": "26.0101",
     "title": "Biology/Biological Sciences, General",
     "asset_id": "edu-bbsg-26.0101",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9121.00",
@@ -963,6 +1019,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Biological Technicians, secondary teaching and Clinical Research Coordinators are plausible bachelor's-level roles for biology graduates."
+    },
     "practice_task_ids": [
       "26.0101-P1",
       "26.0101-P2",
@@ -976,6 +1036,7 @@
     "cip": "14.1901",
     "title": "Mechanical Engineering",
     "asset_id": "edu-me-14.1901",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9041.00",
@@ -1080,22 +1141,36 @@
     ],
     "entry_targets": [
       {
-        "soc": "17-2011.00",
-        "title": "Aerospace Engineers",
-        "job_zone": 4
-      },
-      {
         "soc": "17-2141.00",
         "title": "Mechanical Engineers",
         "job_zone": 4
       },
       {
-        "soc": "13-1051.00",
-        "title": "Cost Estimators",
+        "soc": "17-2011.00",
+        "title": "Aerospace Engineers",
+        "job_zone": 4
+      },
+      {
+        "soc": "17-2141.02",
+        "title": "Automotive Engineers",
         "job_zone": 4
       }
     ],
-    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (17-2011.00, 17-2141.00, 13-1051.00) to 17-2141.00, 17-2011.00, 17-2141.02",
+    "entry_target_review": {
+      "type": "override",
+      "rule_output": [
+        "17-2011.00",
+        "17-2141.00",
+        "13-1051.00"
+      ],
+      "targets": [
+        "17-2141.00",
+        "17-2011.00",
+        "17-2141.02"
+      ],
+      "reason": "Mechanical Engineers is placed first as the degree's primary occupation (the rule ranked Aerospace Engineers first). Cost Estimators was replaced by Automotive Engineers, a mechanical-engineering specialty that is a more direct engineering entry role; cost estimating remains a valid alternative."
+    },
     "practice_task_ids": [
       "14.1901-P1",
       "14.1901-P2",
@@ -1109,6 +1184,7 @@
     "cip": "14.0801",
     "title": "Civil Engineering, General",
     "asset_id": "edu-ceg-14.0801",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9041.00",
@@ -1219,6 +1295,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Civil, Transportation and Water/Wastewater Engineers are all direct entry roles."
+    },
     "practice_task_ids": [
       "14.0801-P1",
       "14.0801-P2",
@@ -1232,6 +1312,7 @@
     "cip": "14.1001",
     "title": "Electrical and Electronics Engineering",
     "asset_id": "edu-eaee-14.1001",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9041.00",
@@ -1336,13 +1417,13 @@
     ],
     "entry_targets": [
       {
-        "soc": "17-2072.00",
-        "title": "Electronics Engineers, Except Computer",
+        "soc": "17-2071.00",
+        "title": "Electrical Engineers",
         "job_zone": 4
       },
       {
-        "soc": "17-2071.00",
-        "title": "Electrical Engineers",
+        "soc": "17-2072.00",
+        "title": "Electronics Engineers, Except Computer",
         "job_zone": 4
       },
       {
@@ -1351,7 +1432,21 @@
         "job_zone": 4
       }
     ],
-    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (17-2072.00, 17-2071.00, 17-2061.00) to 17-2071.00, 17-2072.00, 17-2061.00",
+    "entry_target_review": {
+      "type": "override",
+      "rule_output": [
+        "17-2072.00",
+        "17-2071.00",
+        "17-2061.00"
+      ],
+      "targets": [
+        "17-2071.00",
+        "17-2072.00",
+        "17-2061.00"
+      ],
+      "reason": "Order only: Electrical Engineers is placed first as the degree's primary occupation; the set of targets is unchanged."
+    },
     "practice_task_ids": [
       "14.1001-P1",
       "14.1001-P2",
@@ -1365,6 +1460,7 @@
     "cip": "52.0301",
     "title": "Accounting",
     "asset_id": "edu-a-52.0301",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "13-2011.00",
@@ -1474,13 +1570,13 @@
     ],
     "entry_targets": [
       {
-        "soc": "13-2031.00",
-        "title": "Budget Analysts",
+        "soc": "13-2011.00",
+        "title": "Accountants and Auditors",
         "job_zone": 4
       },
       {
-        "soc": "13-2011.00",
-        "title": "Accountants and Auditors",
+        "soc": "13-2031.00",
+        "title": "Budget Analysts",
         "job_zone": 4
       },
       {
@@ -1489,7 +1585,21 @@
         "job_zone": 4
       }
     ],
-    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (13-2031.00, 13-2011.00, 13-2041.00) to 13-2011.00, 13-2031.00, 13-2041.00",
+    "entry_target_review": {
+      "type": "override",
+      "rule_output": [
+        "13-2031.00",
+        "13-2011.00",
+        "13-2041.00"
+      ],
+      "targets": [
+        "13-2011.00",
+        "13-2031.00",
+        "13-2041.00"
+      ],
+      "reason": "Order only: Accountants and Auditors is placed first as the primary occupation for accounting graduates (and the CPA path); the set of targets is unchanged."
+    },
     "practice_task_ids": [
       "52.0301-P1",
       "52.0301-P2",
@@ -1503,6 +1613,7 @@
     "cip": "52.0201",
     "title": "Business Administration and Management, General",
     "asset_id": "edu-baamg-52.0201",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-1011.00",
@@ -1802,12 +1913,26 @@
         "job_zone": 4
       },
       {
-        "soc": "13-1141.00",
-        "title": "Compensation, Benefits, and Job Analysis Specialists",
+        "soc": "13-1071.00",
+        "title": "Human Resources Specialists",
         "job_zone": 4
       }
     ],
-    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (13-1082.00, 13-1111.00, 13-1141.00) to 13-1082.00, 13-1111.00, 13-1071.00",
+    "entry_target_review": {
+      "type": "override",
+      "rule_output": [
+        "13-1082.00",
+        "13-1111.00",
+        "13-1141.00"
+      ],
+      "targets": [
+        "13-1082.00",
+        "13-1111.00",
+        "13-1071.00"
+      ],
+      "reason": "Compensation, Benefits, and Job Analysis Specialists was replaced by the broader Human Resources Specialists role, which hires generalist business graduates far more often; Project Management Specialists and Management Analysts are kept."
+    },
     "practice_task_ids": [
       "52.0201-P1",
       "52.0201-P2",
@@ -1821,6 +1946,7 @@
     "cip": "52.0801",
     "title": "Finance, General",
     "asset_id": "edu-fg-52.0801",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-1011.00",
@@ -1975,8 +2101,8 @@
     ],
     "entry_targets": [
       {
-        "soc": "13-2031.00",
-        "title": "Budget Analysts",
+        "soc": "13-2051.00",
+        "title": "Financial and Investment Analysts",
         "job_zone": 4
       },
       {
@@ -1990,7 +2116,21 @@
         "job_zone": 4
       }
     ],
-    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (13-2031.00, 13-2041.00, 13-2072.00) to 13-2051.00, 13-2041.00, 13-2072.00",
+    "entry_target_review": {
+      "type": "override",
+      "rule_output": [
+        "13-2031.00",
+        "13-2041.00",
+        "13-2072.00"
+      ],
+      "targets": [
+        "13-2051.00",
+        "13-2041.00",
+        "13-2072.00"
+      ],
+      "reason": "Financial and Investment Analysts, the most typical entry role for finance graduates, was missing from the rule output. Budget Analysts was dropped here (it remains a target for Accounting, where budget work is closer to the curriculum). Credit Analysts and Loan Officers are kept."
+    },
     "practice_task_ids": [
       "52.0801-P1",
       "52.0801-P2",
@@ -2004,6 +2144,7 @@
     "cip": "52.1401",
     "title": "Marketing/Marketing Management, General",
     "asset_id": "edu-mmmg-52.1401",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-2011.00",
@@ -2124,6 +2265,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Market Research Analysts and Marketing Specialists, Fundraisers and Search Marketing Strategists are plausible entry roles."
+    },
     "practice_task_ids": [
       "52.1401-P1",
       "52.1401-P2",
@@ -2137,6 +2282,7 @@
     "cip": "45.0601",
     "title": "Economics, General",
     "asset_id": "edu-eg-45.0601",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9199.00",
@@ -2277,6 +2423,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Only two Job Zone 4 non-manager occupations are linked (research assistant and secondary teacher); Economists is Job Zone 5 and shown as a graduate path."
+    },
     "practice_task_ids": [
       "45.0601-P1",
       "45.0601-P2",
@@ -2290,6 +2440,7 @@
     "cip": "45.1001",
     "title": "Political Science and Government, General",
     "asset_id": "edu-psagg-45.1001",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9199.00",
@@ -2415,6 +2566,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Only two Job Zone 4 non-manager occupations are linked; Political Scientists is Job Zone 5 and shown as a graduate path."
+    },
     "practice_task_ids": [
       "45.1001-P1",
       "45.1001-P2",
@@ -2428,6 +2583,7 @@
     "cip": "13.1202",
     "title": "Elementary Education and Teaching",
     "asset_id": "edu-eeat-13.1202",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "25-1081.00",
@@ -2508,6 +2664,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Elementary School Teachers is the direct target (state license required)."
+    },
     "practice_task_ids": [
       "13.1202-P1",
       "13.1202-P2",
@@ -2521,6 +2681,7 @@
     "cip": "40.0501",
     "title": "Chemistry, General",
     "asset_id": "edu-cg-40.0501",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9121.00",
@@ -2646,6 +2807,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Chemists, secondary teaching and Clinical Research Coordinators are plausible; Chemical Technicians (Job Zone 3) is a further option."
+    },
     "practice_task_ids": [
       "40.0501-P1",
       "40.0501-P2",
@@ -2659,6 +2824,7 @@
     "cip": "40.0801",
     "title": "Physics, General",
     "asset_id": "edu-pg-40.0801",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9121.00",
@@ -2761,14 +2927,22 @@
         "soc": "11-9121.02",
         "title": "Water Resource Specialists",
         "job_zone": 4
-      },
-      {
-        "soc": "11-9121.01",
-        "title": "Clinical Research Coordinators",
-        "job_zone": 4
       }
     ],
-    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (25-2031.00, 11-9121.02, 11-9121.01) to 25-2031.00, 11-9121.02",
+    "entry_target_review": {
+      "type": "override",
+      "rule_output": [
+        "25-2031.00",
+        "11-9121.02",
+        "11-9121.01"
+      ],
+      "targets": [
+        "25-2031.00",
+        "11-9121.02"
+      ],
+      "reason": "Clinical Research Coordinators was dropped: coordinating clinical trials draws mainly on biology, regulation and patient contact, not physics. The crosswalk links few bachelor's-level physics roles (Physicists is Job Zone 5), so two targets remain: secondary teaching (with a state license) and Water Resource Specialists, whose modeling work uses physics directly."
+    },
     "practice_task_ids": [
       "40.0801-P1",
       "40.0801-P2",
@@ -2782,6 +2956,7 @@
     "cip": "27.0101",
     "title": "Mathematics, General",
     "asset_id": "edu-mg-27.0101",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9121.00",
@@ -2927,6 +3102,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Data Scientists, secondary teaching and Bioinformatics Technicians are plausible entry roles for mathematics graduates."
+    },
     "practice_task_ids": [
       "27.0101-P1",
       "27.0101-P2",
@@ -2940,6 +3119,7 @@
     "cip": "27.0501",
     "title": "Statistics, General",
     "asset_id": "edu-sg-27.0501",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9121.00",
@@ -3075,6 +3255,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Data Scientists, Actuaries and Business Intelligence Analysts are direct entry roles for statistics graduates."
+    },
     "practice_task_ids": [
       "27.0501-P1",
       "27.0501-P2",
@@ -3088,6 +3272,7 @@
     "cip": "23.0101",
     "title": "English Language and Literature, General",
     "asset_id": "edu-elalg-23.0101",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "25-1123.00",
@@ -3178,6 +3363,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Secondary teaching and Proofreaders are the only linked non-faculty roles."
+    },
     "practice_task_ids": [
       "23.0101-P1",
       "23.0101-P2",
@@ -3191,6 +3380,7 @@
     "cip": "09.0101",
     "title": "Speech Communication and Rhetoric",
     "asset_id": "edu-scar-09.0101",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-2032.00",
@@ -3290,13 +3480,13 @@
     ],
     "entry_targets": [
       {
-        "soc": "27-3043.00",
-        "title": "Writers and Authors",
+        "soc": "27-3031.00",
+        "title": "Public Relations Specialists",
         "job_zone": 4
       },
       {
-        "soc": "27-3031.00",
-        "title": "Public Relations Specialists",
+        "soc": "27-3043.00",
+        "title": "Writers and Authors",
         "job_zone": 4
       },
       {
@@ -3305,7 +3495,21 @@
         "job_zone": 4
       }
     ],
-    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (27-3043.00, 27-3031.00, 27-3011.00) to 27-3031.00, 27-3043.00, 27-3011.00",
+    "entry_target_review": {
+      "type": "override",
+      "rule_output": [
+        "27-3043.00",
+        "27-3031.00",
+        "27-3011.00"
+      ],
+      "targets": [
+        "27-3031.00",
+        "27-3043.00",
+        "27-3011.00"
+      ],
+      "reason": "Order only: Public Relations Specialists is placed first as the most common entry role for communication graduates; the set of targets is unchanged."
+    },
     "practice_task_ids": [
       "09.0101-P1",
       "09.0101-P2",
@@ -3319,6 +3523,7 @@
     "cip": "44.0701",
     "title": "Social Work",
     "asset_id": "edu-sw-44.0701",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9151.00",
@@ -3439,6 +3644,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Child, Family, and School Social Workers and Probation Officers are bachelor's-level (BSW) roles; clinical social work is Job Zone 5."
+    },
     "practice_task_ids": [
       "44.0701-P1",
       "44.0701-P2",
@@ -3452,6 +3661,7 @@
     "cip": "43.0104",
     "title": "Criminal Justice/Safety Studies",
     "asset_id": "edu-cjss-43.0104",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "19-4099.00",
@@ -3542,6 +3752,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 3 linked occupations (excluding Manager/Chief/Postsecondary/All Other titles; no other linked title survives the stricter filter, so first-line supervisor and director titles were allowed), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; no eligible Job Zone 4 occupation is linked to this major, so Job Zone 3 was used",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Kept with a caveat: the crosswalk links only supervisor, faculty and residual codes to this CIP, so the Job Zone 3 correctional-supervisor title is the closest available target. Supervisor roles normally require prior line experience; line-officer occupations are not linked to this CIP in the crosswalk."
+    },
     "practice_task_ids": [
       "43.0104-P1",
       "43.0104-P2",
@@ -3555,6 +3769,7 @@
     "cip": "51.2001",
     "title": "Pharmacy",
     "asset_id": "edu-p-51.2001",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "11-9111.00",
@@ -3640,6 +3855,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 5 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; no eligible Job Zone 4 occupation is linked to this major, so Job Zone 5 was used",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Pharmacists (Job Zone 5) kept: CIP 51.2001 is the professional Pharm.D. program, so a Job Zone 5 target is correct."
+    },
     "practice_task_ids": [
       "51.2001-P1",
       "51.2001-P2",
@@ -3653,6 +3872,7 @@
     "cip": "50.0409",
     "title": "Graphic Design",
     "asset_id": "edu-gd-50.0409",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "15-1255.00",
@@ -3752,11 +3972,6 @@
     ],
     "entry_targets": [
       {
-        "soc": "27-1014.00",
-        "title": "Special Effects Artists and Animators",
-        "job_zone": 4
-      },
-      {
         "soc": "27-1024.00",
         "title": "Graphic Designers",
         "job_zone": 4
@@ -3765,9 +3980,28 @@
         "soc": "15-1255.00",
         "title": "Web and Digital Interface Designers",
         "job_zone": 4
+      },
+      {
+        "soc": "27-1014.00",
+        "title": "Special Effects Artists and Animators",
+        "job_zone": 4
       }
     ],
-    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (27-1014.00, 27-1024.00, 15-1255.00) to 27-1024.00, 15-1255.00, 27-1014.00",
+    "entry_target_review": {
+      "type": "override",
+      "rule_output": [
+        "27-1014.00",
+        "27-1024.00",
+        "15-1255.00"
+      ],
+      "targets": [
+        "27-1024.00",
+        "15-1255.00",
+        "27-1014.00"
+      ],
+      "reason": "Order only: Graphic Designers is placed first as the degree's primary occupation; the set of targets is unchanged."
+    },
     "practice_task_ids": [
       "50.0409-P1",
       "50.0409-P2",
@@ -3781,6 +4015,7 @@
     "cip": "03.0104",
     "title": "Environmental Science",
     "asset_id": "edu-es-03.0104",
+    "tier": "authored",
     "occupations": [
       {
         "soc": "13-1041.00",
@@ -3921,6 +4156,10 @@
       }
     ],
     "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+    "entry_target_review": {
+      "type": "reviewed_without_change",
+      "note": "Environmental Scientists, Environmental Science Technicians and Compliance Officers are plausible entry roles."
+    },
     "practice_task_ids": [
       "03.0104-P1",
       "03.0104-P2",

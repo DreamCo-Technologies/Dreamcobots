@@ -2,6 +2,7 @@
   "cip": "27.0501",
   "title": "Statistics, General",
   "asset_id": "edu-sg-27.0501",
+  "tier": "authored",
   "occupations": [
     {
       "soc": "11-9121.00",
@@ -137,6 +138,10 @@
     }
   ],
   "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+  "entry_target_review": {
+    "type": "reviewed_without_change",
+    "note": "Data Scientists, Actuaries and Business Intelligence Analysts are direct entry roles for statistics graduates."
+  },
   "practice_task_ids": [
     "27.0501-P1",
     "27.0501-P2",
@@ -146,215 +151,252 @@
     "27.0501-P6"
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
+  "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
   "practice_tasks": [
     {
       "practice_id": "27.0501-P1",
       "cip_code": "27.0501",
+      "tier": "authored",
       "onet_soc_code": "15-2051.00",
       "occupation_title": "Data Scientists",
       "onet_task_id": 21823,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-2051.00",
-      "activity_type": "analyze",
-      "knowledge_elements": [
-        "Mathematics",
-        "Computers and Electronics"
-      ],
-      "skill_element": "Mathematics",
+      "format": "public health data analysis",
+      "task_intent": "Analyze and process large datasets with statistical software.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 21823 for `15-2051.00` (Data Scientists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-2051.00). Pick a realistic small case on this theme (public data or a clearly labeled invented scenario) and write a one-page analysis: the question, the evidence used, the method, and a recommendation. Show where Mathematics and Computers and Electronics knowledge shaped the reasoning.",
+      "prompt": "DreamCo-original practice prompt. Using a large public health dataset (for example, the CDC's behavioral risk factor survey with several hundred thousand respondents), analyze the relationship between hours of sleep and self-reported poor mental health days. Write the analysis report: how you load and subset the data, why and how you apply survey weights and design variables, handling of missing and 'don't know' responses, the model used, results presented with confidence intervals, and limitations. Cite the data source and year.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 21823 for 15-2051.00 (grader checks against the O*NET task statement).",
+          "criterion": "Correct survey methods",
+          "description": "Uses survey weights and design variables properly for population estimates and standard errors.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Mathematics and Computers and Electronics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Data handling",
+          "description": "Recodes special response codes and handles missing data transparently.",
           "points": 2
         },
         {
-          "criterion": "Reasoning",
-          "description": "evidence, method, and recommendation connect, and limitations are stated.",
+          "criterion": "Valid interpretation",
+          "description": "Interprets associations without causal claims and notes self-report and cross-sectional limits.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Load the annual file; subset adults with valid sleep and mental health items.",
+        "Recode codes for don't know and refused to missing; define sleep categories.",
+        "Survey-weighted estimates with strata and cluster variables.",
+        "Model: survey-weighted regression with age, sex and other controls.",
+        "Limitations: cross-sectional, self-reported, possible reverse causation."
       ]
     },
     {
       "practice_id": "27.0501-P2",
       "cip_code": "27.0501",
+      "tier": "authored",
       "onet_soc_code": "15-2011.00",
       "occupation_title": "Actuaries",
       "onet_task_id": 3502,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-2011.00",
-      "activity_type": "design",
-      "knowledge_elements": [
-        "Mathematics",
-        "Economics and Accounting"
-      ],
-      "skill_element": "Mathematics",
+      "format": "pricing and soundness exercise",
+      "task_intent": "Design and review insurance, annuity and pension products, checking that they are financially sound and setting premiums.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 3502 for `15-2011.00` (Actuaries); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-2011.00). Produce a short design or build plan for a small deliverable on this theme: requirements, two alternatives considered, the choice and why, and how you would check that it works. Draw on Mathematics and Economics and Accounting.",
+      "prompt": "DreamCo-original practice prompt. A startup wants to sell one-year accident-and-illness pet insurance for dogs with a 250 deductible and 80 percent reimbursement up to 5,000. Using clearly invented claim data (claim frequency and average claim by age band), compute a pure premium per age band, add expense and profit loads to get a gross premium, test sensitivity to a 20 percent rise in claim frequency, and write a memo on whether the plan is financially sound, what data you would need before launch, and what regulatory review applies.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 3502 for 15-2011.00 (grader checks against the O*NET task statement).",
+          "criterion": "Correct premium math",
+          "description": "Pure premium equals frequency times severity after deductible and coinsurance; loads are applied correctly.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Mathematics and Economics and Accounting concepts are applied accurately and specifically, not just named.",
+          "criterion": "Risk and sensitivity",
+          "description": "Sensitivity analysis is computed and its effect on soundness explained, including adverse selection.",
           "points": 2
         },
         {
-          "criterion": "Design quality",
-          "description": "requirements are testable and the choice between alternatives is justified.",
+          "criterion": "Professional judgment",
+          "description": "Memo identifies data gaps and that rates and forms need regulatory filing and actuarial sign-off.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Expected paid claim: frequency times (severity minus deductible) times 0.8, capped.",
+        "Gross premium equals pure premium divided by (1 minus expense and profit ratio).",
+        "Sensitivity: 20 percent frequency increase raises the loss ratio by about the same proportion.",
+        "Risks: older dogs, breed effects, anti-selection, small data.",
+        "Need credible claims data or reinsurance; state filing and qualified actuary review."
       ]
     },
     {
       "practice_id": "27.0501-P3",
       "cip_code": "27.0501",
+      "tier": "authored",
       "onet_soc_code": "15-2051.01",
       "occupation_title": "Business Intelligence Analysts",
       "onet_task_id": 16134,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-2051.01",
-      "activity_type": "perform",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "Mathematics"
-      ],
-      "skill_element": "Reading Comprehension",
+      "format": "dashboard support ticket resolution",
+      "task_intent": "Give technical help for existing reports, dashboards and other analysis tools.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 16134 for `15-2051.01` (Business Intelligence Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-2051.01). Write a step-by-step procedure for carrying out this theme in a realistic setting, noting safety, quality, or ethical considerations and how you would know it was done well. Apply Computers and Electronics and Mathematics.",
+      "prompt": "DreamCo-original practice prompt. Invented ticket: the sales director says the regional revenue dashboard shows 4.2 million for last month while the finance report shows 4.6 million, and she presents to the board tomorrow. Write how you would handle the ticket: the first response to the director, a step-by-step diagnosis (filters, refresh status, definitions such as booked versus invoiced revenue, time zones, currency, returns), how you document the root cause and fix, and how you prevent this kind of mismatch in the future.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 16134 for 15-2051.01 (grader checks against the O*NET task statement).",
+          "criterion": "Responsive communication",
+          "description": "Acknowledges urgency, sets expectations and gives a timeline.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and Mathematics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Systematic diagnosis",
+          "description": "Checks likely causes in a sensible order and reconciles the two numbers to the source.",
           "points": 2
         },
         {
-          "criterion": "Process quality",
-          "description": "steps are ordered and complete and include safety, quality, or ethics checks.",
+          "criterion": "Fix and prevention",
+          "description": "Documents root cause and adds definitions, reconciliation checks or data alerts.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Reply within the hour with a plan and time of next update.",
+        "Check refresh timestamp, filters, date ranges, revenue definition, returns and currency conversion.",
+        "Reconcile both figures to the general ledger; identify the gap's components.",
+        "Fix dashboard logic or add a note; tell the director which number to use for the board and why.",
+        "Prevention: shared metric definitions, automated daily reconciliation, data freshness label."
       ]
     },
     {
       "practice_id": "27.0501-P4",
       "cip_code": "27.0501",
+      "tier": "authored",
       "onet_soc_code": "15-2051.00",
       "occupation_title": "Data Scientists",
       "onet_task_id": 21836,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-2051.00",
-      "activity_type": "communicate",
-      "knowledge_elements": [
-        "Mathematics",
-        "Computers and Electronics"
-      ],
-      "skill_element": "Speaking",
+      "format": "stakeholder recommendation",
+      "task_intent": "Recommend data-based solutions to key stakeholders.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 21836 for `15-2051.00` (Data Scientists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-2051.00). Write a 5-minute briefing or role-play script for a conversation with a colleague or client on this theme: key message, two likely questions with answers, and an agreed next step. Use Mathematics and Computers and Electronics.",
+      "prompt": "DreamCo-original practice prompt. Invented results: an online bookstore ran a three-week A/B test of free shipping over 25 versus over 35. Conversion rose from 3.1 to 3.4 percent (about 120,000 visitors per arm), average order value fell from 41 to 37, and shipping costs per order rose by 0.80. Write a one-page recommendation to the executive team: statistical significance and confidence intervals, the profit impact per 1,000 visitors under stated margin assumptions, risks such as novelty effects, and your recommendation with a follow-up plan.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 21836 for 15-2051.00 (grader checks against the O*NET task statement).",
+          "criterion": "Correct statistics",
+          "description": "Tests the conversion difference and reports uncertainty correctly for the stated sample sizes.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Mathematics and Computers and Electronics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Business translation",
+          "description": "Converts results into profit per visitor with explicit margin assumptions.",
           "points": 2
         },
         {
-          "criterion": "Speaking",
-          "description": "the message is clear, questions are anticipated, and the next step is concrete.",
+          "criterion": "Clear recommendation",
+          "description": "Makes a decision-oriented recommendation that weighs uncertainty and proposes follow-up.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Difference 0.3 points; standard error from both proportions; significant at the stated sample size.",
+        "Revenue per 1,000 visitors: 34 orders times 37 versus 31 orders times 41.",
+        "Profit using a margin assumption minus extra shipping cost.",
+        "Risks: novelty, seasonality, effects on repeat purchases.",
+        "Recommendation depends on profit result; follow-up test of threshold 30."
       ]
     },
     {
       "practice_id": "27.0501-P5",
       "cip_code": "27.0501",
+      "tier": "authored",
       "onet_soc_code": "15-2011.00",
       "occupation_title": "Actuaries",
       "onet_task_id": 3501,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-2011.00",
-      "activity_type": "analyze",
-      "knowledge_elements": [
-        "Mathematics",
-        "Economics and Accounting"
-      ],
-      "skill_element": "Mathematics",
+      "format": "rate estimation exercise",
+      "task_intent": "Estimate rates of death, accidents, illness, disability and retirement from statistical data.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 3501 for `15-2011.00` (Actuaries); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-2011.00). Pick a realistic small case on this theme (public data or a clearly labeled invented scenario) and write a one-page analysis: the question, the evidence used, the method, and a recommendation. Show where Mathematics and Economics and Accounting knowledge shaped the reasoning.",
+      "prompt": "DreamCo-original practice prompt. Invented data: a pension plan observed 2,000 members aged 60 to 64 for three years with total exposure of 5,700 person-years and 34 deaths, and 1,500 members aged 65 to 69 with 4,200 person-years and 52 deaths. Estimate the central death rate for each age band with a confidence interval, compare them with a published national life table (cite which one you would use) via actual-to-expected ratios, explain whether the plan's data are credible enough to use alone, and recommend how to blend plan experience with the standard table.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 3501 for 15-2011.00 (grader checks against the O*NET task statement).",
+          "criterion": "Correct estimates",
+          "description": "Computes rates as deaths over exposure and gives a sensible interval (e.g. Poisson-based).",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Mathematics and Economics and Accounting concepts are applied accurately and specifically, not just named.",
+          "criterion": "Comparison",
+          "description": "Calculates actual-to-expected ratios against a cited standard table correctly.",
           "points": 2
         },
         {
-          "criterion": "Reasoning",
-          "description": "evidence, method, and recommendation connect, and limitations are stated.",
+          "criterion": "Credibility judgment",
+          "description": "Discusses credibility given the small number of deaths and recommends a reasoned blending approach.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Rates about 0.0060 and 0.0124 per person-year.",
+        "Poisson interval: deaths plus or minus about 1.96 times the square root of deaths, divided by exposure.",
+        "Expected deaths from the table's rates times exposure; actual-to-expected ratios.",
+        "Limited credibility with under 100 deaths per band.",
+        "Blend with credibility weighting or apply a scaling factor to the standard table."
       ]
     },
     {
       "practice_id": "27.0501-P6",
       "cip_code": "27.0501",
+      "tier": "authored",
       "onet_soc_code": "15-2051.01",
       "occupation_title": "Business Intelligence Analysts",
       "onet_task_id": 16140,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-2051.01",
-      "activity_type": "plan",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "Mathematics"
-      ],
-      "skill_element": "Reading Comprehension",
+      "format": "data delivery schedule and service levels",
+      "task_intent": "Make sure business-intelligence information reaches its users on time.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 16140 for `15-2051.01` (Business Intelligence Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-2051.01). Write a two-week plan for carrying out this theme on a small project: steps, roles, timeline, risks, and how progress is tracked. Apply Computers and Electronics and Mathematics.",
+      "prompt": "DreamCo-original practice prompt. A regional grocery chain's BI team delivers nightly sales dashboards, a weekly inventory report and monthly finance extracts to 300 users, and data have arrived late four times this month. Write a plan to manage the flow: map the data pipeline steps and dependencies, set delivery times and service levels for each product, define monitoring and alerting for late or failed loads, a communication process when data are late, and a monthly review of reliability metrics.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 16140 for 15-2051.01 (grader checks against the O*NET task statement).",
+          "criterion": "Pipeline understanding",
+          "description": "Maps sources, transformations and dependencies and identifies likely bottlenecks.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and Mathematics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Clear service levels",
+          "description": "Each product has a delivery time, freshness indicator and owner.",
           "points": 2
         },
         {
-          "criterion": "Feasibility",
-          "description": "steps, timeline, and risks are realistic and progress is trackable.",
+          "criterion": "Monitoring and communication",
+          "description": "Includes automated alerts, status notices to users and reliability metrics with review.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Pipeline: point-of-sale export, warehouse load, transformations, dashboard refresh.",
+        "Service levels: dashboards by 6:00, inventory Monday 8:00, finance on business day 2.",
+        "Alerts if a job fails or runs late; on-call rotation.",
+        "User status banner and email when data are late, with estimated time.",
+        "Monthly on-time rate, incidents and root causes reviewed with stakeholders."
       ]
     }
   ]

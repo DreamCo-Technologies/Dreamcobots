@@ -2,6 +2,7 @@
   "cip": "14.0901",
   "title": "Computer Engineering, General",
   "asset_id": "edu-ceg-14.0901",
+  "tier": "authored",
   "occupations": [
     {
       "soc": "11-9041.00",
@@ -116,22 +117,36 @@
   ],
   "entry_targets": [
     {
+      "soc": "17-2061.00",
+      "title": "Computer Hardware Engineers",
+      "job_zone": 4
+    },
+    {
+      "soc": "15-1252.00",
+      "title": "Software Developers",
+      "job_zone": 4
+    },
+    {
       "soc": "15-1253.00",
       "title": "Software Quality Assurance Analysts and Testers",
       "job_zone": 4
-    },
-    {
-      "soc": "15-1243.00",
-      "title": "Database Architects",
-      "job_zone": 4
-    },
-    {
-      "soc": "15-1241.00",
-      "title": "Computer Network Architects",
-      "job_zone": 4
     }
   ],
-  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (15-1253.00, 15-1243.00, 15-1241.00) to 17-2061.00, 15-1252.00, 15-1253.00",
+  "entry_target_review": {
+    "type": "override",
+    "rule_output": [
+      "15-1253.00",
+      "15-1243.00",
+      "15-1241.00"
+    ],
+    "targets": [
+      "17-2061.00",
+      "15-1252.00",
+      "15-1253.00"
+    ],
+    "reason": "Computer Hardware Engineers is the occupation most specific to a Computer Engineering degree and was not selected by the rule. Database Architects and Computer Network Architects were dropped as mid-career architect roles. Software Developers is added because many computer engineering graduates start in firmware or systems software; Software QA is kept."
+  },
   "practice_task_ids": [
     "14.0901-P1",
     "14.0901-P2",
@@ -141,215 +156,252 @@
     "14.0901-P6"
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
+  "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
   "practice_tasks": [
     {
       "practice_id": "14.0901-P1",
       "cip_code": "14.0901",
+      "tier": "authored",
       "onet_soc_code": "15-1253.00",
       "occupation_title": "Software Quality Assurance Analysts and Testers",
       "onet_task_id": 14638,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-1253.00",
-      "activity_type": "design",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "English Language"
-      ],
-      "skill_element": "Reading Comprehension",
+      "format": "hardware-in-the-loop test plan",
+      "task_intent": "Plan how a piece of software will be checked: which scenarios to exercise, which scripts or manual steps to run, and in what order.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 14638 for `15-1253.00` (Software Quality Assurance Analysts and Testers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1253.00). Produce a short design or build plan for a small deliverable on this theme: requirements, two alternatives considered, the choice and why, and how you would check that it works. Draw on Computers and Electronics and English Language.",
+      "prompt": "DreamCo-original practice prompt. Your team is releasing new firmware for a battery-powered soil-moisture sensor that reports over LoRa every 15 minutes and must last two years on two AA cells. Write a test plan for the firmware release: the test scenarios (normal reporting, weak radio signal, battery near cutoff, sensor disconnected, clock drift), which tests run on a simulator versus on real devices in a test rack, how you will measure power draw, and the release criteria.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 14638 for 15-1253.00 (grader checks against the O*NET task statement).",
+          "criterion": "Embedded scenarios",
+          "description": "Scenarios reflect embedded realities: power states, radio retries, brown-out, sensor faults, and long-duration behavior.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Test environment",
+          "description": "Explains what can be simulated versus what needs physical devices and instruments, and why.",
           "points": 2
         },
         {
-          "criterion": "Design quality",
-          "description": "requirements are testable and the choice between alternatives is justified.",
+          "criterion": "Quantified criteria",
+          "description": "Release criteria include numbers (average current in microamps, packet success rate, no watchdog resets over a soak period).",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Scenario list with expected behavior, including retry and back-off on weak signal and safe shutdown at low voltage.",
+        "Simulator for logic and timing; a rack of real sensors with programmable power supplies for power and radio tests.",
+        "Power measured with a current analyzer across sleep and transmit cycles; projected battery life computed.",
+        "72-hour soak test with fault injection.",
+        "Release only if projected battery life is at least two years and no resets occur."
       ]
     },
     {
       "practice_id": "14.0901-P2",
       "cip_code": "14.0901",
-      "onet_soc_code": "15-1243.00",
-      "occupation_title": "Database Architects",
-      "onet_task_id": 16099,
+      "tier": "authored",
+      "onet_soc_code": "17-2061.00",
+      "occupation_title": "Computer Hardware Engineers",
+      "onet_task_id": 7393,
       "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/15-1243.00",
-      "activity_type": "perform",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "Engineering and Technology"
-      ],
-      "skill_element": "Critical Thinking",
+      "onet_task_url": "https://www.onetonline.org/link/summary/17-2061.00",
+      "format": "verification report",
+      "task_intent": "Check that computer hardware and attached devices meet their specifications by running tests and recording and analyzing the results.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 16099 for `15-1243.00` (Database Architects); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1243.00). Write a step-by-step procedure for carrying out this theme in a realistic setting, noting safety, quality, or ethical considerations and how you would know it was done well. Apply Computers and Electronics and Engineering and Technology.",
+      "prompt": "DreamCo-original practice prompt. You received the first ten prototype boards of a USB-C docking station meant to deliver 65 W to a laptop, drive two 4K displays and stay below 45 C on its case. Write a verification plan and a mock results summary: the tests you would run for each specification, the instruments needed, how many boards and repetitions, a results table (use clearly invented example numbers), and how you decide whether a failing spec is a design flaw or a board defect.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 16099 for 15-1243.00 (grader checks against the O*NET task statement).",
+          "criterion": "Spec-to-test mapping",
+          "description": "Every stated specification has at least one test with method and instrument (electronic load, thermal camera, display test patterns).",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and Engineering and Technology concepts are applied accurately and specifically, not just named.",
+          "criterion": "Data discipline",
+          "description": "Sample size, repetitions and recording format are stated; example numbers are labeled as invented.",
           "points": 2
         },
         {
-          "criterion": "Process quality",
-          "description": "steps are ordered and complete and include safety, quality, or ethics checks.",
+          "criterion": "Root-cause reasoning",
+          "description": "Distinguishes a systematic failure across boards from a one-board defect and states the next diagnostic step.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Power delivery: step the load to 65 W and check voltage regulation and USB PD negotiation.",
+        "Display: dual 4K at 60 Hz with pattern tests and cable variations.",
+        "Thermal: case temperature at full load in a 25 C room after one hour, measured with a thermocouple and thermal camera.",
+        "Results table across all ten boards with pass or fail and spread.",
+        "Failure on most boards suggests a design issue (layout, component rating); a failure on a single board points to assembly; confirm by swapping parts."
       ]
     },
     {
       "practice_id": "14.0901-P3",
       "cip_code": "14.0901",
-      "onet_soc_code": "15-1241.00",
-      "occupation_title": "Computer Network Architects",
-      "onet_task_id": 18957,
+      "tier": "authored",
+      "onet_soc_code": "15-1252.00",
+      "occupation_title": "Software Developers",
+      "onet_task_id": 21670,
       "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/15-1241.00",
-      "activity_type": "communicate",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "Engineering and Technology"
-      ],
-      "skill_element": "Active Listening",
+      "onet_task_url": "https://www.onetonline.org/link/summary/15-1252.00",
+      "format": "driver porting plan",
+      "task_intent": "Change existing software to fix defects, keep it working on new platforms or interfaces, and make it faster.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 18957 for `15-1241.00` (Computer Network Architects); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1241.00). Write a 5-minute briefing or role-play script for a conversation with a colleague or client on this theme: key message, two likely questions with answers, and an agreed next step. Use Computers and Electronics and Engineering and Technology.",
+      "prompt": "DreamCo-original practice prompt. A lab's data-acquisition program talks to an analog-to-digital converter through a driver written for an older microcontroller. The board is being redesigned around a newer chip with a different SPI peripheral and DMA support, and users also report that samples are occasionally dropped above 10 kHz. Write a plan to port and improve the driver: what you would isolate behind a hardware-abstraction layer, how DMA could fix the dropped samples, the tests that prove timing and data integrity, and what you would keep unchanged.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 18957 for 15-1241.00 (grader checks against the O*NET task statement).",
+          "criterion": "Hardware-software boundary",
+          "description": "Identifies which code is chip-specific (registers, clocks, interrupts) and proposes a clean abstraction so application code is untouched.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and Engineering and Technology concepts are applied accurately and specifically, not just named.",
+          "criterion": "Performance fix",
+          "description": "Explains the dropped-sample cause plausibly (interrupt latency, buffer overrun) and how DMA with double buffering addresses it.",
           "points": 2
         },
         {
-          "criterion": "Active Listening",
-          "description": "the message is clear, questions are anticipated, and the next step is concrete.",
+          "criterion": "Integrity tests",
+          "description": "Tests include known input signals, sample counting, and timing measurement with a logic analyzer or oscilloscope.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Define an ADC interface (init, start, read buffer) and move register-level code into a chip-specific module.",
+        "Use DMA with ping-pong buffers so the CPU handles full buffers instead of every sample.",
+        "Feed a known sine or ramp signal and check for gaps and correct sample count over long runs.",
+        "Measure SPI clock and chip-select timing with a logic analyzer against the converter's datasheet.",
+        "Keep the file format and user interface unchanged so lab users see no difference."
       ]
     },
     {
       "practice_id": "14.0901-P4",
       "cip_code": "14.0901",
+      "tier": "authored",
       "onet_soc_code": "15-1253.00",
       "occupation_title": "Software Quality Assurance Analysts and Testers",
       "onet_task_id": 14639,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-1253.00",
-      "activity_type": "monitor",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "English Language"
-      ],
-      "skill_element": "Reading Comprehension",
+      "format": "pre-release test checklist",
+      "task_intent": "Check that changes to a system work correctly and do not break anything before they are released.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 14639 for `15-1253.00` (Software Quality Assurance Analysts and Testers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1253.00). Create a checklist or test plan for this theme: what to check, how often, the pass condition, and what to do when a check fails. Ground it in Computers and Electronics and English Language.",
+      "prompt": "DreamCo-original practice prompt. A smart-thermostat company is pushing an over-the-air update that changes the heating control algorithm and the Wi-Fi reconnect logic. Before the update goes to 50,000 homes, write the checklist of tests and rollout gates: functional checks of heating and cooling, behavior when Wi-Fi drops mid-update, rollback if the update fails to boot, a staged rollout plan, and the telemetry signals that would stop the rollout.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 14639 for 15-1253.00 (grader checks against the O*NET task statement).",
+          "criterion": "Change-focused coverage",
+          "description": "Tests target the two changed areas plus the update mechanism itself, including power or network loss during installation.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Staged rollout",
+          "description": "Uses a staged rollout (internal devices, small percentage, larger percentage) with explicit gates between stages.",
           "points": 2
         },
         {
-          "criterion": "Verifiability",
-          "description": "each check has a measurable pass condition and a defined response to failure.",
+          "criterion": "Stop conditions",
+          "description": "Names measurable telemetry thresholds (boot failures, reconnect failures, temperature-overshoot reports) that halt the rollout.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Bench tests of the control loop with simulated temperature profiles; check overshoot and cycling.",
+        "Interrupt Wi-Fi and power at several points during update; the device must boot the previous image.",
+        "A/B firmware slots with automatic rollback on failed health check.",
+        "Stages: employees, 1 percent, 10 percent, everyone, with 48-hour observation each.",
+        "Halt if boot failure exceeds a small set rate or reconnect failures rise above baseline."
       ]
     },
     {
       "practice_id": "14.0901-P5",
       "cip_code": "14.0901",
-      "onet_soc_code": "15-1243.00",
-      "occupation_title": "Database Architects",
-      "onet_task_id": 16101,
+      "tier": "authored",
+      "onet_soc_code": "17-2061.00",
+      "occupation_title": "Computer Hardware Engineers",
+      "onet_task_id": 7403,
       "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/15-1243.00",
-      "activity_type": "analyze",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "Engineering and Technology"
-      ],
-      "skill_element": "Critical Thinking",
+      "onet_task_url": "https://www.onetonline.org/link/summary/17-2061.00",
+      "format": "power budget",
+      "task_intent": "Decide what the power supply must provide and how it is arranged, based on how the system must perform and on its design specifications.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 16101 for `15-1243.00` (Database Architects); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1243.00). Pick a realistic small case on this theme (public data or a clearly labeled invented scenario) and write a one-page analysis: the question, the evidence used, the method, and a recommendation. Show where Computers and Electronics and Engineering and Technology knowledge shaped the reasoning.",
+      "prompt": "DreamCo-original practice prompt. You are designing the power system for a single-board computer used in a museum kiosk: a quad-core processor, 4 GB of RAM, a 10-inch touchscreen, Wi-Fi, and two USB ports that visitors may use to charge phones. Produce a power budget and supply specification: list each load with typical and peak current per voltage rail, choose the input supply rating with margin, decide which rails need switching regulators versus linear regulators, and explain how you protect the board if a visitor plugs in a faulty device.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 16101 for 15-1243.00 (grader checks against the O*NET task statement).",
+          "criterion": "Complete budget",
+          "description": "All loads are listed per rail with typical and peak values from plausible datasheet-style figures, and totals are computed correctly.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and Engineering and Technology concepts are applied accurately and specifically, not just named.",
+          "criterion": "Justified supply choices",
+          "description": "Input rating includes margin, and regulator choices are justified by efficiency, heat and noise.",
           "points": 2
         },
         {
-          "criterion": "Reasoning",
-          "description": "evidence, method, and recommendation connect, and limitations are stated.",
+          "criterion": "Protection",
+          "description": "Includes current limiting or electronic fuses on USB ports, reverse-polarity and overvoltage protection.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Rails such as 5 V for USB and display, 3.3 V for I/O and Wi-Fi, and around 1 V for the processor core.",
+        "Peak budget includes simultaneous USB charging at the port limit; supply sized about 25 to 30 percent above peak.",
+        "Buck converters for high-current rails; low-dropout regulator for the noise-sensitive radio or analog parts.",
+        "Per-port current-limit switches with fault flag; TVS diode and fuse on input.",
+        "Thermal check on regulators at peak load inside the kiosk enclosure."
       ]
     },
     {
       "practice_id": "14.0901-P6",
       "cip_code": "14.0901",
-      "onet_soc_code": "15-1241.00",
-      "occupation_title": "Computer Network Architects",
-      "onet_task_id": 18959,
+      "tier": "authored",
+      "onet_soc_code": "15-1252.00",
+      "occupation_title": "Software Developers",
+      "onet_task_id": 21668,
       "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/15-1241.00",
-      "activity_type": "plan",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "Engineering and Technology"
-      ],
-      "skill_element": "Critical Thinking",
+      "onet_task_url": "https://www.onetonline.org/link/summary/15-1252.00",
+      "format": "performance requirements specification",
+      "task_intent": "Set the performance standards a system has to meet.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 18959 for `15-1241.00` (Computer Network Architects); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1241.00). Write a two-week plan for carrying out this theme on a small project: steps, roles, timeline, risks, and how progress is tracked. Apply Computers and Electronics and Engineering and Technology.",
+      "prompt": "DreamCo-original practice prompt. A city transit agency is commissioning onboard software that shows next-stop announcements and real-time arrival predictions on bus screens, using GPS and a cellular link. Write the performance requirements section of the specification: latency from GPS fix to on-screen update, prediction accuracy, behavior during cellular outages, startup time, and resource limits on the onboard computer. For each requirement give a number, how it will be measured, and why that value matters to riders.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 18959 for 15-1241.00 (grader checks against the O*NET task statement).",
+          "criterion": "Quantified requirements",
+          "description": "Each requirement has a specific value and unit rather than vague words like 'fast'.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and Engineering and Technology concepts are applied accurately and specifically, not just named.",
+          "criterion": "Measurability",
+          "description": "Each has a test method (logged timestamps, field trials on set routes, induced outages).",
           "points": 2
         },
         {
-          "criterion": "Feasibility",
-          "description": "steps, timeline, and risks are realistic and progress is trackable.",
+          "criterion": "Rider-centered rationale",
+          "description": "Values are justified by rider experience or safety, such as announcing a stop before the bus reaches it.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Stop announcement at least a set number of seconds before arrival at typical speeds.",
+        "Screen update within about 2 seconds of a GPS fix; prediction error within a stated band for most trips.",
+        "During outages, fall back to schedule-based predictions and label them; resume within a stated time after reconnect.",
+        "Boot to usable display within a stated time after ignition.",
+        "CPU and memory ceilings leave headroom on the onboard computer; measured during field trials on named routes."
       ]
     }
   ]

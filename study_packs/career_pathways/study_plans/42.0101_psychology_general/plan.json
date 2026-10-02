@@ -2,6 +2,7 @@
   "cip": "42.0101",
   "title": "Psychology, General",
   "asset_id": "edu-pg-42.0101",
+  "tier": "authored",
   "occupations": [
     {
       "soc": "11-9199.00",
@@ -117,6 +118,10 @@
     }
   ],
   "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+  "entry_target_review": {
+    "type": "reviewed_without_change",
+    "note": "Only one bachelor's-level (Job Zone 4) non-manager occupation is linked (Social Science Research Assistants); psychologist roles are Job Zone 5 and appear as graduate paths."
+  },
   "practice_task_ids": [
     "42.0101-P1",
     "42.0101-P2",
@@ -126,215 +131,252 @@
     "42.0101-P6"
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
+  "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
   "practice_tasks": [
     {
       "practice_id": "42.0101-P1",
       "cip_code": "42.0101",
+      "tier": "authored",
       "onet_soc_code": "19-4061.00",
       "occupation_title": "Social Science Research Assistants",
       "onet_task_id": 12952,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/19-4061.00",
-      "activity_type": "document",
-      "knowledge_elements": [
-        "English Language",
-        "Computers and Electronics"
-      ],
-      "skill_element": "Writing",
+      "format": "data management plan",
+      "task_intent": "Build, clean, transform and look after large research datasets.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 12952 for `19-4061.00` (Social Science Research Assistants); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/19-4061.00). Draft the work document this theme calls for (report, record, or brief) for a named audience, then add a short note on what you would verify before it is used. Apply English Language and Computers and Electronics.",
+      "prompt": "DreamCo-original practice prompt. A psychology lab ran an online survey on sleep and stress with 2,400 student responses exported from the survey platform: wide format, item names like Q14_3, some reverse-scored items, attention-check questions, and a free-text 'major' field. Write a data management plan for turning this into an analysis-ready dataset: a codebook template, the cleaning steps in order (including attention-check exclusions and reverse scoring), how you compute scale scores, how you keep the raw file untouched and record every change, and how identifying information is protected.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 12952 for 19-4061.00 (grader checks against the O*NET task statement).",
+          "criterion": "Reproducible pipeline",
+          "description": "Raw data stays read-only and all transformations are scripted or logged so another person could rebuild the dataset.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "English Language and Computers and Electronics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Correct psychometric steps",
+          "description": "Reverse-scoring, scale scoring and handling of missing items are described correctly, and exclusion rules are stated before looking at outcomes.",
           "points": 2
         },
         {
-          "criterion": "Communication",
-          "description": "accurate, organized, suited to the named audience, with verification needs flagged.",
+          "criterion": "Data protection",
+          "description": "Identifiers are separated or removed, storage and access are controlled, and the plan follows the study's consent and ethics approval.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Codebook: variable name, label, item wording reference, response scale, reverse-scored flag, missing codes.",
+        "Order: import, rename, flag failed attention checks, recode reverse items, compute scales, recode free-text majors into categories.",
+        "Scale scores as mean of items with a stated minimum number answered.",
+        "Raw export kept read-only; analysis script under version control; change log.",
+        "Remove emails and IP addresses into a separate locked file; access limited to approved staff."
       ]
     },
     {
       "practice_id": "42.0101-P2",
       "cip_code": "42.0101",
+      "tier": "authored",
       "onet_soc_code": "19-3039.02",
       "occupation_title": "Neuropsychologists",
       "onet_task_id": 22193,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/19-3039.02",
-      "activity_type": "perform",
-      "knowledge_elements": [
-        "Psychology",
-        "Therapy and Counseling"
-      ],
-      "skill_element": "Active Listening",
+      "format": "assessment session plan (graduate-path practice)",
+      "task_intent": "Carry out neuropsychological evaluations covering abilities such as intelligence, attention, language, learning and memory.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 22193 for `19-3039.02` (Neuropsychologists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/19-3039.02). Write a step-by-step procedure for carrying out this theme in a realistic setting, noting safety, quality, or ethical considerations and how you would know it was done well. Apply Psychology and Therapy and Counseling.",
+      "prompt": "DreamCo-original practice prompt. Graduate-path practice: neuropsychological testing is administered and interpreted by licensed psychologists or trained psychometrists under supervision. Imagine you are a research assistant helping a supervising neuropsychologist plan a four-hour outpatient evaluation for a 66-year-old retired teacher whose family reports forgetfulness. Draft the session plan: the cognitive domains to cover and why, examples of the kinds of standardized measures used for each domain, the order of testing and breaks, how fatigue, hearing or vision problems and language background affect validity, and what information you would collect before the visit.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 22193 for 19-3039.02 (grader checks against the O*NET task statement).",
+          "criterion": "Domain coverage",
+          "description": "Covers the relevant domains (memory, attention, processing speed, language, visuospatial, executive function, mood screening) and justifies each for a memory complaint.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Psychology and Therapy and Counseling concepts are applied accurately and specifically, not just named.",
+          "criterion": "Validity awareness",
+          "description": "Addresses performance validity, sensory limits, fatigue, education and language effects on norms.",
           "points": 2
         },
         {
-          "criterion": "Process quality",
-          "description": "steps are ordered and complete and include safety, quality, or ethics checks.",
+          "criterion": "Scope and ethics",
+          "description": "Correctly keeps administration and interpretation with qualified staff and includes consent and confidentiality.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Pre-visit: referral question, medical history, medications, education, primary language, collateral report from family.",
+        "Domains with example measure types, such as list-learning memory tests and timed attention tasks, plus a depression screen.",
+        "Order: harder memory tasks early with delayed recall intervals planned; breaks every hour.",
+        "Check hearing aids and glasses; choose norms appropriate to age and education; include validity indicators.",
+        "Assistant's role limited to scheduling, setup and supervised tasks; results reported by the neuropsychologist."
       ]
     },
     {
       "practice_id": "42.0101-P3",
       "cip_code": "42.0101",
+      "tier": "authored",
       "onet_soc_code": "19-3039.03",
       "occupation_title": "Clinical Neuropsychologists",
       "onet_task_id": 22207,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/19-3039.03",
-      "activity_type": "analyze",
-      "knowledge_elements": [
-        "Psychology",
-        "Therapy and Counseling"
-      ],
-      "skill_element": "Active Listening",
+      "format": "pre-post change analysis",
+      "task_intent": "Compare how patients are doing before and after a medication, surgery or behavioral treatment.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 22207 for `19-3039.03` (Clinical Neuropsychologists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/19-3039.03). Pick a realistic small case on this theme (public data or a clearly labeled invented scenario) and write a one-page analysis: the question, the evidence used, the method, and a recommendation. Show where Psychology and Therapy and Counseling knowledge shaped the reasoning.",
+      "prompt": "DreamCo-original practice prompt. Invented data: a clinic tested 12 patients with epilepsy on a verbal memory test before and six months after surgery. Scores (standard scores, mean 100, SD 15): before 92, 88, 101, 85, 97, 90, 105, 83, 94, 99, 87, 91; after 86, 90, 95, 78, 98, 85, 100, 84, 89, 97, 80, 92. The test's test-retest reliability is 0.85. Write a one-page analysis: the group-level change, a reliable change index for individuals, how many patients show reliable decline, what practice effects and regression to the mean mean for interpretation, and how you would present the findings to the surgical team.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 22207 for 19-3039.03 (grader checks against the O*NET task statement).",
+          "criterion": "Correct calculations",
+          "description": "Computes mean change and a reliable change index correctly from the stated reliability and SD, showing the formula.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Psychology and Therapy and Counseling concepts are applied accurately and specifically, not just named.",
+          "criterion": "Interpretation",
+          "description": "Discusses practice effects, regression to the mean, small sample size and the lack of a control group.",
           "points": 2
         },
         {
-          "criterion": "Reasoning",
-          "description": "evidence, method, and recommendation connect, and limitations are stated.",
+          "criterion": "Useful communication",
+          "description": "Presents results clearly to clinicians, separating group trends from individual cases and stating limits.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Mean before about 92.7, after about 89.5; change about minus 3 points.",
+        "Standard error of difference from SD times the square root of 2 times (1 minus reliability); about 8.2, so the RCI threshold is roughly 16 points at 95 percent.",
+        "Few or no patients pass the strict threshold; some show declines of 5 to 7 points worth monitoring.",
+        "Practice effects could hide true decline; repeat testing would ideally use practice-adjusted RCI and a comparison group.",
+        "Report a table per patient and a short summary noting uncertainty."
       ]
     },
     {
       "practice_id": "42.0101-P4",
       "cip_code": "42.0101",
+      "tier": "authored",
       "onet_soc_code": "19-4061.00",
       "occupation_title": "Social Science Research Assistants",
       "onet_task_id": 12956,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/19-4061.00",
-      "activity_type": "monitor",
-      "knowledge_elements": [
-        "English Language",
-        "Computers and Electronics"
-      ],
-      "skill_element": "Reading Comprehension",
+      "format": "data verification audit",
+      "task_intent": "Check that data entered into research databases are accurate and valid, and fix the errors found.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 12956 for `19-4061.00` (Social Science Research Assistants); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/19-4061.00). Create a checklist or test plan for this theme: what to check, how often, the pass condition, and what to do when a check fails. Ground it in English Language and Computers and Electronics.",
+      "prompt": "DreamCo-original practice prompt. Paper questionnaires from 300 participants in a parenting-stress study were typed into a database by four student assistants. Design and run (on paper) a verification audit: how you will select records for double entry, the range and logic checks you will script (for example, a child's age older than the parent's, a 1 to 5 item coded 6), how you will decide what is a correctable error versus missing data, how every correction is recorded, and the error-rate threshold that would trigger re-entering a whole batch.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 12956 for 19-4061.00 (grader checks against the O*NET task statement).",
+          "criterion": "Sound sampling and checks",
+          "description": "Uses a defensible sample (random or full double entry for key fields) and lists specific range, consistency and duplicate checks.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "English Language and Computers and Electronics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Correction rules",
+          "description": "Corrections are made only against the source document, with clear rules for unresolvable values.",
           "points": 2
         },
         {
-          "criterion": "Verifiability",
-          "description": "each check has a measurable pass condition and a defined response to failure.",
+          "criterion": "Audit trail and threshold",
+          "description": "Every change is logged (who, when, old and new value), and an explicit error-rate threshold triggers re-entry or retraining.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Double-enter a random 10 to 20 percent of forms plus all primary outcome items.",
+        "Scripted checks: out-of-range codes, impossible combinations, duplicate participant IDs, skipped pages.",
+        "Look up each flagged value on the paper form; if illegible, code as missing with a reason code.",
+        "Change log stored with the dataset; original entries preserved.",
+        "If a batch error rate exceeds about 1 percent of fields, re-enter that batch and retrain that assistant."
       ]
     },
     {
       "practice_id": "42.0101-P5",
       "cip_code": "42.0101",
+      "tier": "authored",
       "onet_soc_code": "19-3039.02",
       "occupation_title": "Neuropsychologists",
       "onet_task_id": 22195,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/19-3039.02",
-      "activity_type": "communicate",
-      "knowledge_elements": [
-        "Psychology",
-        "Therapy and Counseling"
-      ],
-      "skill_element": "Active Listening",
+      "format": "consultation note (graduate-path practice)",
+      "task_intent": "Discuss patients' neurological conditions with other professionals.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 22195 for `19-3039.02` (Neuropsychologists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/19-3039.02). Write a 5-minute briefing or role-play script for a conversation with a colleague or client on this theme: key message, two likely questions with answers, and an agreed next step. Use Psychology and Therapy and Counseling.",
+      "prompt": "DreamCo-original practice prompt. Graduate-path practice. Invented case: a 16-year-old athlete had a concussion five weeks ago and still reports headaches and trouble concentrating; testing by the supervising neuropsychologist found slowed processing speed but normal memory. Draft the consultation materials the neuropsychologist could use: (1) a short consult note to the treating neurologist, and (2) talking points for a meeting with the school counselor about temporary academic accommodations. Keep medical decisions with the physician and share only information the family has authorized.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 22195 for 19-3039.02 (grader checks against the O*NET task statement).",
+          "criterion": "Audience-appropriate content",
+          "description": "The note to the neurologist is concise and technical; the school talking points are plain-language and focus on function and accommodations.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Psychology and Therapy and Counseling concepts are applied accurately and specifically, not just named.",
+          "criterion": "Accurate scope",
+          "description": "Does not make medical decisions such as clearance to play; defers return-to-sport to the physician and follows concussion protocols.",
           "points": 2
         },
         {
-          "criterion": "Active Listening",
-          "description": "the message is clear, questions are anticipated, and the next step is concrete.",
+          "criterion": "Privacy",
+          "description": "Shares only what the family has authorized and avoids unnecessary diagnostic detail with the school.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Neurologist note: referral question, key findings (processing speed below expectation, memory within normal limits), impressions, recommendation to re-evaluate in a set number of weeks.",
+        "School points: extra time on tests, rest breaks, reduced screen load, gradual return to full workload.",
+        "Defer return-to-play to the physician's graduated protocol.",
+        "Confirm signed release of information before school contact.",
+        "Plan follow-up contact to review whether accommodations can be reduced."
       ]
     },
     {
       "practice_id": "42.0101-P6",
       "cip_code": "42.0101",
+      "tier": "authored",
       "onet_soc_code": "19-3039.03",
       "occupation_title": "Clinical Neuropsychologists",
       "onet_task_id": 22210,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/19-3039.03",
-      "activity_type": "design",
-      "knowledge_elements": [
-        "Psychology",
-        "Therapy and Counseling"
-      ],
-      "skill_element": "Active Listening",
+      "format": "cognitive rehabilitation plan (graduate-path practice)",
+      "task_intent": "Design or deliver plans that help people recover or work around impaired thinking skills.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 22210 for `19-3039.03` (Clinical Neuropsychologists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/19-3039.03). Produce a short design or build plan for a small deliverable on this theme: requirements, two alternatives considered, the choice and why, and how you would check that it works. Draw on Psychology and Therapy and Counseling.",
+      "prompt": "DreamCo-original practice prompt. Graduate-path practice. Invented case: a 52-year-old office manager had a stroke four months ago and has trouble remembering appointments, tracking multi-step tasks and staying focused in a noisy office. She wants to return to work part-time in two months. Draft a cognitive rehabilitation plan the supervising clinician could review: goals written in measurable terms, compensatory strategies and tools, any restorative practice, how the employer and family are involved, and how progress is measured every two weeks.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 22210 for 19-3039.03 (grader checks against the O*NET task statement).",
+          "criterion": "Measurable goals",
+          "description": "Goals are specific and functional, e.g. uses a calendar system to keep a stated share of appointments without reminders.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Psychology and Therapy and Counseling concepts are applied accurately and specifically, not just named.",
+          "criterion": "Evidence-informed strategies",
+          "description": "Prioritizes compensatory strategies (external memory aids, checklists, environmental changes) and explains any restorative exercises realistically.",
           "points": 2
         },
         {
-          "criterion": "Design quality",
-          "description": "requirements are testable and the choice between alternatives is justified.",
+          "criterion": "Monitoring and collaboration",
+          "description": "Tracks progress with defined measures and includes the patient, family and employer in planning with consent.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Goals for calendar use, completing multi-step tasks with checklists, and sustained work in 30-minute blocks.",
+        "Tools: smartphone calendar with alarms, written task templates, noise-reducing headphones, quieter workstation.",
+        "Strategy training using goal-setting and self-monitoring routines; practice with real work tasks.",
+        "Workplace plan with graded hours and agreed accommodations.",
+        "Biweekly review of goal attainment and a brief rating scale; adjust plan."
       ]
     }
   ]

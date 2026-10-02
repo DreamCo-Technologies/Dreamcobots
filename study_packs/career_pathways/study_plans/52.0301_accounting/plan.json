@@ -2,6 +2,7 @@
   "cip": "52.0301",
   "title": "Accounting",
   "asset_id": "edu-a-52.0301",
+  "tier": "authored",
   "occupations": [
     {
       "soc": "13-2011.00",
@@ -111,13 +112,13 @@
   ],
   "entry_targets": [
     {
-      "soc": "13-2031.00",
-      "title": "Budget Analysts",
+      "soc": "13-2011.00",
+      "title": "Accountants and Auditors",
       "job_zone": 4
     },
     {
-      "soc": "13-2011.00",
-      "title": "Accountants and Auditors",
+      "soc": "13-2031.00",
+      "title": "Budget Analysts",
       "job_zone": 4
     },
     {
@@ -126,7 +127,21 @@
       "job_zone": 4
     }
   ],
-  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (13-2031.00, 13-2011.00, 13-2041.00) to 13-2011.00, 13-2031.00, 13-2041.00",
+  "entry_target_review": {
+    "type": "override",
+    "rule_output": [
+      "13-2031.00",
+      "13-2011.00",
+      "13-2041.00"
+    ],
+    "targets": [
+      "13-2011.00",
+      "13-2031.00",
+      "13-2041.00"
+    ],
+    "reason": "Order only: Accountants and Auditors is placed first as the primary occupation for accounting graduates (and the CPA path); the set of targets is unchanged."
+  },
   "practice_task_ids": [
     "52.0301-P1",
     "52.0301-P2",
@@ -136,215 +151,252 @@
     "52.0301-P6"
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
+  "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
   "practice_tasks": [
     {
       "practice_id": "52.0301-P1",
       "cip_code": "52.0301",
+      "tier": "authored",
       "onet_soc_code": "13-2031.00",
       "occupation_title": "Budget Analysts",
       "onet_task_id": 3394,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-2031.00",
-      "activity_type": "analyze",
-      "knowledge_elements": [
-        "Economics and Accounting",
-        "Mathematics"
-      ],
-      "skill_element": "Critical Thinking",
+      "format": "budget variance analysis",
+      "task_intent": "Review a department's monthly budget and accounting reports to keep spending under control.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 3394 for `13-2031.00` (Budget Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-2031.00). Pick a realistic small case on this theme (public data or a clearly labeled invented scenario) and write a one-page analysis: the question, the evidence used, the method, and a recommendation. Show where Economics and Accounting and Mathematics knowledge shaped the reasoning.",
+      "prompt": "DreamCo-original practice prompt. Invented data: a county parks department's year-to-date report at the end of month 7 (of 12) shows: personnel 4.1 of 7.2 million budgeted, seasonal staff 0.62 of 0.80 million, utilities 0.55 of 0.84 million, equipment repair 0.31 of 0.36 million, and program revenue 0.95 of 2.0 million expected. Write a variance analysis memo for the parks director: compute expected spending at this point (straight-line and, where it applies, seasonal), identify which lines are on track or at risk, explain likely causes and questions to ask, project year-end results, and recommend controls.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 3394 for 13-2031.00 (grader checks against the O*NET task statement).",
+          "criterion": "Correct variance math",
+          "description": "Calculates percentage used versus elapsed time correctly and adjusts for seasonality where it obviously applies (seasonal staff, summer program revenue).",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Economics and Accounting and Mathematics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Insightful diagnosis",
+          "description": "Separates timing differences from real overruns and names plausible causes and follow-up questions.",
           "points": 2
         },
         {
-          "criterion": "Reasoning",
-          "description": "evidence, method, and recommendation connect, and limitations are stated.",
+          "criterion": "Actionable controls",
+          "description": "Recommends specific controls (hiring freeze on certain lines, purchase approvals, revenue review) and a year-end projection.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Elapsed time about 58 percent; personnel at 57 percent is on track.",
+        "Seasonal staff at 78 percent may be normal after summer but must be checked against the season calendar.",
+        "Equipment repair at 86 percent is a real overrun risk; ask about aging mowers or one-time repairs.",
+        "Program revenue at 48 percent with peak season over suggests a shortfall; project year-end.",
+        "Controls: pre-approval for repairs above a threshold, monthly revenue review, possible mid-year budget amendment."
       ]
     },
     {
       "practice_id": "52.0301-P2",
       "cip_code": "52.0301",
+      "tier": "authored",
       "onet_soc_code": "13-2011.00",
       "occupation_title": "Accountants and Auditors",
       "onet_task_id": 21505,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-2011.00",
-      "activity_type": "document",
-      "knowledge_elements": [
-        "Economics and Accounting",
-        "English Language"
-      ],
-      "skill_element": "Writing",
+      "format": "audit findings report",
+      "task_intent": "Write thorough reports on what an audit found.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 21505 for `13-2011.00` (Accountants and Auditors); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-2011.00). Draft the work document this theme calls for (report, record, or brief) for a named audience, then add a short note on what you would verify before it is used. Apply Economics and Accounting and English Language.",
+      "prompt": "DreamCo-original practice prompt. Invented engagement: an internal audit of a university's purchasing cards (500 cardholders) tested 60 transactions and found 7 without receipts, 3 split purchases that avoided the bid threshold, 2 personal purchases later repaid, and approvers who signed off on their own statements in one department. Write the audit findings report: an executive summary, each finding written as condition, criteria, cause, effect and recommendation, a risk rating for each, management's response section (with placeholders), and the follow-up timeline.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 21505 for 13-2011.00 (grader checks against the O*NET task statement).",
+          "criterion": "Standard finding structure",
+          "description": "Each finding states condition, criteria (the policy breached), cause, effect and recommendation clearly.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Economics and Accounting and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Risk judgment",
+          "description": "Ratings reflect severity and pervasiveness; self-approval and split purchases are treated as control failures, not paperwork issues.",
           "points": 2
         },
         {
-          "criterion": "Communication",
-          "description": "accurate, organized, suited to the named audience, with verification needs flagged.",
+          "criterion": "Professional tone and follow-up",
+          "description": "Factual, non-accusatory language, room for management responses, and dates for follow-up testing.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Executive summary with overall conclusion and the top two risks.",
+        "Missing receipts: 7 of 60 (about 12 percent) against the receipt policy; cause and recommendation.",
+        "Split purchases avoiding bid rules: high risk; recommend analytics to detect splitting.",
+        "Self-approval: segregation-of-duties failure; recommend system-enforced approver hierarchy.",
+        "Personal use repaid: policy violation; recommend training and card suspension rules; follow-up in six months."
       ]
     },
     {
       "practice_id": "52.0301-P3",
       "cip_code": "52.0301",
+      "tier": "authored",
       "onet_soc_code": "13-2041.00",
       "occupation_title": "Credit Analysts",
       "onet_task_id": 1254,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-2041.00",
-      "activity_type": "perform",
-      "knowledge_elements": [
-        "Economics and Accounting",
-        "English Language"
-      ],
-      "skill_element": "Critical Thinking",
+      "format": "credit memo for loan committee",
+      "task_intent": "Put together loan applications, including the credit analysis and a summary of the request, and forward them for the loan committee's decision.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 1254 for `13-2041.00` (Credit Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-2041.00). Write a step-by-step procedure for carrying out this theme in a realistic setting, noting safety, quality, or ethical considerations and how you would know it was done well. Apply Economics and Accounting and English Language.",
+      "prompt": "DreamCo-original practice prompt. Invented case: a family-owned bakery with three years of tax returns (revenue 820k, 910k, 1.04 million; net income 41k, 55k, 72k), existing debt payments of 3,000 per month, and a request for 180,000 over seven years to buy a second oven line. Write the credit memo you would submit to the loan committee: the request summary, analysis of profitability, cash flow and debt service coverage (show the calculation), collateral and guarantees, key risks and mitigants, and your recommendation with any conditions.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 1254 for 13-2041.00 (grader checks against the O*NET task statement).",
+          "criterion": "Sound financial analysis",
+          "description": "Calculates a debt service coverage ratio from cash available for debt service and new plus existing payments, with assumptions stated.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Economics and Accounting and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Risk assessment",
+          "description": "Identifies business-specific risks (owner dependence, ingredient costs, single location) and mitigants.",
           "points": 2
         },
         {
-          "criterion": "Process quality",
-          "description": "steps are ordered and complete and include safety, quality, or ethics checks.",
+          "criterion": "Committee-ready recommendation",
+          "description": "Clear recommendation with conditions, such as covenants or a personal guarantee, consistent with the analysis.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Summary: borrower, purpose, amount, term, rate assumption, repayment source.",
+        "Trend: revenue up about 27 percent over two years; margins improving.",
+        "Debt service: estimate the new monthly payment; coverage equals cash flow (net income plus depreciation and interest) over total annual debt payments; compare with a typical minimum near 1.25.",
+        "Collateral: equipment lien; personal guarantee from owners.",
+        "Recommend approval with a coverage covenant and annual financial statements if coverage is adequate."
       ]
     },
     {
       "practice_id": "52.0301-P4",
       "cip_code": "52.0301",
+      "tier": "authored",
       "onet_soc_code": "13-2031.00",
       "occupation_title": "Budget Analysts",
       "onet_task_id": 3395,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-2031.00",
-      "activity_type": "plan",
-      "knowledge_elements": [
-        "Economics and Accounting",
-        "Mathematics"
-      ],
-      "skill_element": "Critical Thinking",
+      "format": "budget reporting workplan",
+      "task_intent": "Lead the preparation of routine and special-purpose budget reports.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 3395 for `13-2031.00` (Budget Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-2031.00). Write a two-week plan for carrying out this theme on a small project: steps, roles, timeline, risks, and how progress is tracked. Apply Economics and Accounting and Mathematics.",
+      "prompt": "DreamCo-original practice prompt. You are the budget analyst who must deliver two products for a mid-size nonprofit: the regular quarterly budget-to-actual report for the board finance committee, and a special report on the cost of opening a new after-school site. Write the workplan: the data you need and from whom, the report templates and key tables for each, a timeline working back from the committee meeting date, review and sign-off steps, and how you will explain the numbers to board members without finance backgrounds.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 3395 for 13-2031.00 (grader checks against the O*NET task statement).",
+          "criterion": "Clear workplan",
+          "description": "Tasks, owners, data sources and deadlines are specific and work back from the meeting date.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Economics and Accounting and Mathematics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Fit-for-purpose content",
+          "description": "The quarterly report and the special report have different, appropriate structures (variance tables versus a cost model with assumptions).",
           "points": 2
         },
         {
-          "criterion": "Feasibility",
-          "description": "steps, timeline, and risks are realistic and progress is trackable.",
+          "criterion": "Quality and communication",
+          "description": "Includes reconciliation and review steps and a plain-language narrative for non-finance readers.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Data: general ledger close, payroll, program enrollment, grant restrictions; owners in accounting and programs.",
+        "Quarterly: budget versus actual by program, variance explanations above a threshold, cash position.",
+        "Special: start-up and annual operating costs, staffing ratios, funding sources, break-even enrollment, sensitivity table.",
+        "Timeline: close plus five days, draft, director review, CFO sign-off, packet sent one week before meeting.",
+        "Narrative: three key messages and a one-page summary chart."
       ]
     },
     {
       "practice_id": "52.0301-P5",
       "cip_code": "52.0301",
+      "tier": "authored",
       "onet_soc_code": "13-2011.00",
       "occupation_title": "Accountants and Auditors",
       "onet_task_id": 21508,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-2011.00",
-      "activity_type": "monitor",
-      "knowledge_elements": [
-        "Economics and Accounting",
-        "English Language"
-      ],
-      "skill_element": "Reading Comprehension",
+      "format": "accounting system review checklist",
+      "task_intent": "Examine the books and accounting systems to judge whether transactions are recorded efficiently, effectively and according to accepted accounting practice.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 21508 for `13-2011.00` (Accountants and Auditors); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-2011.00). Create a checklist or test plan for this theme: what to check, how often, the pass condition, and what to do when a check fails. Ground it in Economics and Accounting and English Language.",
+      "prompt": "DreamCo-original practice prompt. You are reviewing the accounting system of a 25-employee landscaping company before its first external review engagement. The owner keeps the books in a small-business accounting package, the office manager both writes checks and reconciles the bank account, and revenue is recorded when cash comes in. Create the review checklist and a short findings memo: items covering revenue recognition, accrual versus cash basis, segregation of duties, bank reconciliations, fixed assets and depreciation, payroll, and system access; then summarize the top three issues with recommendations sized for a small company.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 21508 for 13-2011.00 (grader checks against the O*NET task statement).",
+          "criterion": "Relevant checks",
+          "description": "Checklist covers recognition policies, reconciliations, cutoff, asset records, payroll and access controls with what evidence to inspect.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Economics and Accounting and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Accounting judgment",
+          "description": "Correctly identifies cash-basis revenue as an issue if accrual-basis statements are needed, and the duty overlap as a control weakness.",
           "points": 2
         },
         {
-          "criterion": "Verifiability",
-          "description": "each check has a measurable pass condition and a defined response to failure.",
+          "criterion": "Practical recommendations",
+          "description": "Recommendations are realistic for a small business, such as owner review of reconciliations and bank statements, instead of hiring more staff.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Revenue: when work is completed versus when paid; unbilled and deferred amounts at year-end.",
+        "Reconciliations: monthly, reviewed and signed by the owner; check the most recent three.",
+        "Fixed assets: trucks and mowers on a schedule with depreciation method.",
+        "Payroll: tax filings timely, seasonal worker classification.",
+        "Top issues: cash-basis revenue, duty overlap, no access controls; compensating controls suggested."
       ]
     },
     {
       "practice_id": "52.0301-P6",
       "cip_code": "52.0301",
+      "tier": "authored",
       "onet_soc_code": "13-2041.00",
       "occupation_title": "Credit Analysts",
       "onet_task_id": 1258,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-2041.00",
-      "activity_type": "communicate",
-      "knowledge_elements": [
-        "Economics and Accounting",
-        "English Language"
-      ],
-      "skill_element": "Speaking",
+      "format": "customer call script and resolution note",
+      "task_intent": "Talk with customers to settle complaints and confirm credit and financial transactions.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 1258 for `13-2041.00` (Credit Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-2041.00). Write a 5-minute briefing or role-play script for a conversation with a colleague or client on this theme: key message, two likely questions with answers, and an agreed next step. Use Economics and Accounting and English Language.",
+      "prompt": "DreamCo-original practice prompt. Invented case: a small-business customer of a credit union calls angry that her line-of-credit application was declined and that a payment she made last month is shown as late on her statement. Write the call script you would follow as the credit analyst: how you verify her identity, how you investigate the late-payment record, what you can and cannot explain about the credit decision (including adverse action notice rules), how you de-escalate, and the written resolution note for the file.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 1258 for 13-2041.00 (grader checks against the O*NET task statement).",
+          "criterion": "Verification and investigation",
+          "description": "Verifies identity before discussing details and traces the payment through records (posting date, method, cutoff time).",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Economics and Accounting and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Compliant explanation",
+          "description": "Explains the decline using the actual reasons in the adverse action notice, without promising outcomes or sharing other customers' data.",
           "points": 2
         },
         {
-          "criterion": "Speaking",
-          "description": "the message is clear, questions are anticipated, and the next step is concrete.",
+          "criterion": "Resolution and documentation",
+          "description": "De-escalates professionally, offers concrete next steps (correction if posting error, reapplication guidance) and documents the outcome.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Identity check using the institution's procedure.",
+        "Look up the payment: if received before the due-date cutoff, correct the record and the credit-bureau report if it was reported.",
+        "Decline reasons from the notice, such as debt-to-income or time in business; how to request the credit report used.",
+        "Acknowledge frustration, summarize, agree on a follow-up date.",
+        "File note: issue, findings, corrections, commitments, date and analyst name."
       ]
     }
   ]

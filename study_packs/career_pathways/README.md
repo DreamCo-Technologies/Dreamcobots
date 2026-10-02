@@ -1,22 +1,33 @@
 # Edu Career Pathways: majors to O*NET study plans
 
-Maps 27 common bachelor's majors (2020 CIP codes) to O*NET-SOC occupations using the official O*NET CIP crosswalk, then writes one study plan per major: linked occupations with O*NET 31.0 Job Zones, the highest-importance O*NET knowledge areas and Essential Skills, 1 to 3 Job Zone-based entry-level targets, a 4-year outline, typical next steps, and 6 practice tasks with rubrics. The outline, next steps, and practice prompts are DreamCo-derived guidance, not O*NET data.
+Maps bachelor's majors (2020 CIP codes) to O*NET-SOC occupations using the official O*NET CIP crosswalk, then writes one study plan per major: linked occupations with O*NET 31.0 Job Zones, the highest-importance O*NET knowledge areas and Essential Skills, 1 to 3 Job Zone-based entry-level targets, a 4-year outline, typical next steps, and 6 practice tasks with rubrics. The outline, next steps, and practice tasks are DreamCo-derived guidance, not O*NET data.
 
 Fetch pinned sources: `python fetch_sources.py` (verifies sha256). Rebuild: `python build.py` (needs pandas, openpyxl; set `DREAMCO_GATE_TOOL` to `tools/license_provenance_gate.py` if it is not found automatically). Test: `pytest tests` (needs jsonschema for schema checks).
 
+Inputs:
+- `raw/` pinned official files (hashes in `raw/SOURCES.md`; raw data files are not committed).
+- `authored/` checked-in DreamCo-authored sources that build.py reads, so builds are reproducible:
+  - `practice_tasks_authored.json`: 162 practice tasks for the 27 authored majors. Each cites an O*NET 31.0 Task ID and O*NET-SOC code and has an original-wording paraphrase of the task's intent, an occupation-specific scenario prompt, a 3-criterion rubric for that scenario, and a reference answer outline.
+  - `outline_topics.json`: per-major course-topic and practice mappings, keyed by CIP and O*NET element, for every element each authored outline uses.
+  - `target_overrides.json`: manual entry-target overrides with reasons, plus review notes for majors kept as computed.
+  - Authorship of all three: DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed.
+
 Outputs:
-- `data/major_to_onet.csv`, `data/majors_selected.json` (incl. Job Zones and entry targets), `data/practice_tasks.json`.
+- `data/major_to_onet.csv`, `data/majors_selected.json` (incl. Job Zones, entry targets and target review), `data/practice_tasks.json`.
 - `study_plans/<cip>_<slug>.md` (human layer) and sidecar folder `study_plans/<cip>_<slug>/` with `plan.json` (machine layer), `provenance.json`, `asset.json`, `candidate.json`, and `license_gate.json` (output of the DreamCo license/provenance gate).
 - Sources and hashes: `raw/SOURCES.md`. Test schemas snapshot: `tests/schemas/` (used when the live DreamCo schemas are not present).
 
 Method notes:
-- Entry targets: linked occupations in O*NET Job Zone 4 (typical bachelor's level), excluding titles containing Manager, Chief, Postsecondary, or All Other (and Supervisor, Director, or Treasurers and Controllers unless nothing else is linked). Base `.00` codes first, then ranked by correlation with the eligible occupations' average knowledge profile. Fallback order is Job Zone 3, then 5, then 1-2. Exceptions: Pharmacy uses Job Zone 5 (Pharmacists), and Criminal Justice uses Job Zone 3, because its only crosswalk links are supervisors, faculty, and an All Other code.
-- Practice tasks reference an O*NET 31.0 Task ID and O*NET-SOC code only. The task text is not reproduced; its first verb picks the prompt type. Prompts and rubrics are labeled "DreamCo-original practice prompt".
+- Entry targets: a rule first picks linked occupations in O*NET Job Zone 4 (typical bachelor's level), excluding titles containing Manager, Chief, Postsecondary, or All Other (and Supervisor, Director, or Treasurers and Controllers unless nothing else is linked), base `.00` codes first, ranked by correlation with the eligible occupations' average knowledge profile; fallback Job Zone 3, then 5, then 1-2. Every authored major's result was then reviewed for plausibility: 11 majors have a documented override in `authored/target_overrides.json` (for example, Computer Science now targets Software Developers, Software QA Analysts and Information Security Analysts instead of Database Architects), and the other 16 have a review note. Pharmacy uses Job Zone 5 (Pharm.D.), and Criminal Justice uses a Job Zone 3 supervisor title with a caveat, because its only crosswalk links are supervisors, faculty, and an All Other code.
+- Practice tasks reference an O*NET 31.0 Task ID and O*NET-SOC code. O*NET task text is not reproduced: tests check that no run of 5 or more words from any O*NET 31.0 task statement, Job Zone reference text, or occupation description appears in the authored fields or in the plan files (occupation titles excepted).
+- Typical next steps cite O*NET Job Zone numbers only; Job Zone names and descriptions are not quoted.
 
 ## Status and open items
 
 - O*NET 31.0 is pinned for this pack (DP-ONET): every O*NET file comes from `db_31_0_csv` and is sha256-pinned. The fleet O*NET ingest is still pinned to 30.3, and aligning the two is an open decision. O*NET 31.0 split Skills into Essential Skills and Transferable Skills; this pack uses Essential Skills.
-- License gate (tools/license_provenance_gate.py, 0.1.0): all 27 plans pass every rights check (rights ceiling approved_for_sale) with no attribution warnings. The outcome is approved_for_private_use, capped by three sale-scope checks: no dataset scorecard score, no validation evidence ids in asset.json, and no owner approval.
+- Merchant review of the previous release (8cc1ce1): CS sample scored 66.0 (quality_review); 75 is needed for sale. This rebuild addresses the reviewer's points: templated practice tasks replaced by authored scenarios, stock outline phrases replaced by per-major topics, entry targets reviewed, and Job Zone text no longer quoted. It has not been re-scored.
+- License gate (tools/license_provenance_gate.py): all 27 plans pass every rights check (rights ceiling approved_for_sale) with no warnings. The outcome is approved_for_private_use, capped by three sale-scope checks: no dataset scorecard score, no validation evidence ids in asset.json, and no owner approval.
+- All authored content was written by an AI agent and has not been human-reviewed or piloted with learners.
 - Owner approval is pending. build.py never sets it.
-- The Data-Package Merchant still needs to re-score the triage dimensions. The figure in `evidence/scorer_cs.txt` is a builder self-assessment.
+- `evidence/scorer_cs.txt` and `evidence/scorer_input_cs_selfassessed.json` are the historical builder self-assessment of the 8cc1ce1 CS plan (66.75), superseded by the merchant's 66.0; they were not updated for this rebuild.
 - Raw source files are not committed. `fetch_sources.py` downloads them and checks their hashes.

@@ -1,0 +1,67 @@
+{
+  "note": "Manual entry-target overrides applied by build.py after the rule-based ranking (rank_entry_targets). Every override lists the rule output it replaces and a reason. Majors under reviewed_without_change were checked and kept as computed. Authored by Grok-Edu-Career-Pathways (AI) on 2026-10-02 as a plausibility review; not human-reviewed. Every override code must be a crosswalk-linked occupation of that CIP with an O*NET 31.0 Job Zone (build.py and tests enforce this).",
+  "overrides": {
+    "11.0701": {
+      "targets": ["15-1252.00", "15-1253.00", "15-1212.00"],
+      "reason": "Software Developers is the most common bachelor's-level destination for Computer Science graduates and was missing because the knowledge-profile ranking favored QA, security and database roles. Database Architects was dropped: architect roles typically expect several years of database administration or development experience, so it is a mid-career rather than a new-graduate target. Software QA and Information Security Analysts are kept as realistic Job Zone 4 entry roles."
+    },
+    "14.0901": {
+      "targets": ["17-2061.00", "15-1252.00", "15-1253.00"],
+      "reason": "Computer Hardware Engineers is the occupation most specific to a Computer Engineering degree and was not selected by the rule. Database Architects and Computer Network Architects were dropped as mid-career architect roles. Software Developers is added because many computer engineering graduates start in firmware or systems software; Software QA is kept."
+    },
+    "11.0401": {
+      "targets": ["15-1252.00", "15-1255.00", "15-1299.03"],
+      "reason": "Database Architects was dropped as a mid-career architect role. Document Management Specialists (Job Zone 4) is added because records, metadata and content-management work is a core information-science destination. Software Developers and Web and Digital Interface Designers are kept."
+    },
+    "14.1901": {
+      "targets": ["17-2141.00", "17-2011.00", "17-2141.02"],
+      "reason": "Mechanical Engineers is placed first as the degree's primary occupation (the rule ranked Aerospace Engineers first). Cost Estimators was replaced by Automotive Engineers, a mechanical-engineering specialty that is a more direct engineering entry role; cost estimating remains a valid alternative."
+    },
+    "14.1001": {
+      "targets": ["17-2071.00", "17-2072.00", "17-2061.00"],
+      "reason": "Order only: Electrical Engineers is placed first as the degree's primary occupation; the set of targets is unchanged."
+    },
+    "52.0301": {
+      "targets": ["13-2011.00", "13-2031.00", "13-2041.00"],
+      "reason": "Order only: Accountants and Auditors is placed first as the primary occupation for accounting graduates (and the CPA path); the set of targets is unchanged."
+    },
+    "52.0201": {
+      "targets": ["13-1082.00", "13-1111.00", "13-1071.00"],
+      "reason": "Compensation, Benefits, and Job Analysis Specialists was replaced by the broader Human Resources Specialists role, which hires generalist business graduates far more often; Project Management Specialists and Management Analysts are kept."
+    },
+    "52.0801": {
+      "targets": ["13-2051.00", "13-2041.00", "13-2072.00"],
+      "reason": "Financial and Investment Analysts, the most typical entry role for finance graduates, was missing from the rule output. Budget Analysts was dropped here (it remains a target for Accounting, where budget work is closer to the curriculum). Credit Analysts and Loan Officers are kept."
+    },
+    "40.0801": {
+      "targets": ["25-2031.00", "11-9121.02"],
+      "reason": "Clinical Research Coordinators was dropped: coordinating clinical trials draws mainly on biology, regulation and patient contact, not physics. The crosswalk links few bachelor's-level physics roles (Physicists is Job Zone 5), so two targets remain: secondary teaching (with a state license) and Water Resource Specialists, whose modeling work uses physics directly."
+    },
+    "50.0409": {
+      "targets": ["27-1024.00", "15-1255.00", "27-1014.00"],
+      "reason": "Order only: Graphic Designers is placed first as the degree's primary occupation; the set of targets is unchanged."
+    },
+    "09.0101": {
+      "targets": ["27-3031.00", "27-3043.00", "27-3011.00"],
+      "reason": "Order only: Public Relations Specialists is placed first as the most common entry role for communication graduates; the set of targets is unchanged."
+    }
+  },
+  "reviewed_without_change": {
+    "51.3801": "Registered Nurses, Acute Care Nurses and Critical Care Nurses kept. Critical care units often hire experienced RNs, but new-graduate residency programs exist, so it stays as a third target.",
+    "42.0101": "Only one bachelor's-level (Job Zone 4) non-manager occupation is linked (Social Science Research Assistants); psychologist roles are Job Zone 5 and appear as graduate paths.",
+    "26.0101": "Biological Technicians, secondary teaching and Clinical Research Coordinators are plausible bachelor's-level roles for biology graduates.",
+    "14.0801": "Civil, Transportation and Water/Wastewater Engineers are all direct entry roles.",
+    "52.1401": "Market Research Analysts and Marketing Specialists, Fundraisers and Search Marketing Strategists are plausible entry roles.",
+    "45.0601": "Only two Job Zone 4 non-manager occupations are linked (research assistant and secondary teacher); Economists is Job Zone 5 and shown as a graduate path.",
+    "45.1001": "Only two Job Zone 4 non-manager occupations are linked; Political Scientists is Job Zone 5 and shown as a graduate path.",
+    "13.1202": "Elementary School Teachers is the direct target (state license required).",
+    "40.0501": "Chemists, secondary teaching and Clinical Research Coordinators are plausible; Chemical Technicians (Job Zone 3) is a further option.",
+    "27.0101": "Data Scientists, secondary teaching and Bioinformatics Technicians are plausible entry roles for mathematics graduates.",
+    "27.0501": "Data Scientists, Actuaries and Business Intelligence Analysts are direct entry roles for statistics graduates.",
+    "23.0101": "Secondary teaching and Proofreaders are the only linked non-faculty roles.",
+    "44.0701": "Child, Family, and School Social Workers and Probation Officers are bachelor's-level (BSW) roles; clinical social work is Job Zone 5.",
+    "43.0104": "Kept with a caveat: the crosswalk links only supervisor, faculty and residual codes to this CIP, so the Job Zone 3 correctional-supervisor title is the closest available target. Supervisor roles normally require prior line experience; line-officer occupations are not linked to this CIP in the crosswalk.",
+    "51.2001": "Pharmacists (Job Zone 5) kept: CIP 51.2001 is the professional Pharm.D. program, so a Job Zone 5 target is correct.",
+    "03.0104": "Environmental Scientists, Environmental Science Technicians and Compliance Officers are plausible entry roles."
+  }
+}

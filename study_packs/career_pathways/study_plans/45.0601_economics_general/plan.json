@@ -2,6 +2,7 @@
   "cip": "45.0601",
   "title": "Economics, General",
   "asset_id": "edu-eg-45.0601",
+  "tier": "authored",
   "occupations": [
     {
       "soc": "11-9199.00",
@@ -142,6 +143,10 @@
     }
   ],
   "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+  "entry_target_review": {
+    "type": "reviewed_without_change",
+    "note": "Only two Job Zone 4 non-manager occupations are linked (research assistant and secondary teacher); Economists is Job Zone 5 and shown as a graduate path."
+  },
   "practice_task_ids": [
     "45.0601-P1",
     "45.0601-P2",
@@ -151,215 +156,252 @@
     "45.0601-P6"
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
+  "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
   "practice_tasks": [
     {
       "practice_id": "45.0601-P1",
       "cip_code": "45.0601",
+      "tier": "authored",
       "onet_soc_code": "19-4061.00",
       "occupation_title": "Social Science Research Assistants",
       "onet_task_id": 12952,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/19-4061.00",
-      "activity_type": "document",
-      "knowledge_elements": [
-        "English Language",
-        "Computers and Electronics"
-      ],
-      "skill_element": "Writing",
+      "format": "panel dataset build",
+      "task_intent": "Build, clean, transform and look after large research datasets.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 12952 for `19-4061.00` (Social Science Research Assistants); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/19-4061.00). Draft the work document this theme calls for (report, record, or brief) for a named audience, then add a short note on what you would verify before it is used. Apply English Language and Computers and Electronics.",
+      "prompt": "DreamCo-original practice prompt. An economics professor needs a county-by-month panel for 2015 to 2024 combining unemployment rates from the Bureau of Labor Statistics local area statistics, county population from the Census Bureau, and a list of counties that raised local minimum wages (with effective dates). Write the data-build plan: where each file comes from, the merge keys (county FIPS codes and dates) and pitfalls such as changed county definitions, how you handle missing and revised values, the structure of the final panel, and how the build is scripted and documented for replication.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 12952 for 19-4061.00 (grader checks against the O*NET task statement).",
+          "criterion": "Correct sources and keys",
+          "description": "Names real public sources and merges on FIPS codes and time correctly, noting county boundary changes and annual versus monthly frequency.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "English Language and Computers and Electronics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Data handling",
+          "description": "Handles revisions, missing values and the event-date variable sensibly and transparently.",
           "points": 2
         },
         {
-          "criterion": "Communication",
-          "description": "accurate, organized, suited to the named audience, with verification needs flagged.",
+          "criterion": "Reproducibility",
+          "description": "Build is fully scripted with a codebook and version notes so others can rebuild it.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Download files with retrieval dates; store raw copies unchanged.",
+        "Standardize FIPS as five-digit strings; crosswalk changed counties such as recent Connecticut changes.",
+        "Interpolate annual population to months or keep annual and merge by year, documented.",
+        "Minimum-wage treatment indicator switches on at the effective month.",
+        "Script in R or Python, codebook, README and checksums."
       ]
     },
     {
       "practice_id": "45.0601-P2",
       "cip_code": "45.0601",
+      "tier": "authored",
       "onet_soc_code": "25-2031.00",
       "occupation_title": "Secondary School Teachers, Except Special and Career/Technical Education",
       "onet_task_id": 6639,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/25-2031.00",
-      "activity_type": "design",
-      "knowledge_elements": [
-        "Education and Training",
-        "English Language"
-      ],
-      "skill_element": "Active Listening",
+      "format": "classroom routines plan (economics simulation)",
+      "task_intent": "Set and consistently apply rules and routines that keep a classroom orderly.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 6639 for `25-2031.00` (Secondary School Teachers, Except Special and Career/Technical Education); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/25-2031.00). Produce a short design or build plan for a small deliverable on this theme: requirements, two alternatives considered, the choice and why, and how you would check that it works. Draw on Education and Training and English Language.",
+      "prompt": "DreamCo-original practice prompt. You teach high school economics and plan a lively in-class market simulation where students act as buyers and sellers trading cards for play money. Write the routines and rules that keep it productive: how roles and materials are assigned, signals to start and stop trading, how trades are recorded, rules about respectful bargaining and no side deals, what happens if a student disrupts or cheats, and how you debrief so the activity stays focused on learning.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 6639 for 25-2031.00 (grader checks against the O*NET task statement).",
+          "criterion": "Clear structure",
+          "description": "Roles, materials, signals and recording procedures are specific enough for 30 students to follow.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Education and Training and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Behavior expectations",
+          "description": "Rules are stated positively, fit a competitive activity, and consequences are proportionate and consistent.",
           "points": 2
         },
         {
-          "criterion": "Design quality",
-          "description": "requirements are testable and the choice between alternatives is justified.",
+          "criterion": "Learning focus",
+          "description": "Routines protect time for data collection and debrief that connects to economic concepts.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Assign buyer and seller cards with private values and costs; trade-recording slips.",
+        "Start and stop signal, timed rounds, trades reported to a recorder.",
+        "Rules: honest reporting, polite bargaining, stay in the trading area.",
+        "Consequences: warning, become a recorder for a round, follow-up conversation.",
+        "Debrief: plot recorded prices to see convergence toward equilibrium."
       ]
     },
     {
       "practice_id": "45.0601-P3",
       "cip_code": "45.0601",
+      "tier": "authored",
       "onet_soc_code": "19-3011.00",
       "occupation_title": "Economists",
       "onet_task_id": 7536,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/19-3011.00",
-      "activity_type": "analyze",
-      "knowledge_elements": [
-        "Mathematics",
-        "Economics and Accounting"
-      ],
-      "skill_element": "Critical Thinking",
+      "format": "applied data analysis",
+      "task_intent": "Dig into economic and statistical evidence within a specialty such as labor, finance or agriculture.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 7536 for `19-3011.00` (Economists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/19-3011.00). Pick a realistic small case on this theme (public data or a clearly labeled invented scenario) and write a one-page analysis: the question, the evidence used, the method, and a recommendation. Show where Mathematics and Economics and Accounting knowledge shaped the reasoning.",
+      "prompt": "DreamCo-original practice prompt. Using public data (for example, state minimum wages and teen employment from government statistics), write a short applied analysis on whether recent minimum-wage increases in a few states coincided with changes in employment of 16 to 19 year olds. State the question, the data and time period, a simple comparison method (difference-in-differences with comparison states, or an event study), the results you found or would expect to check, threats to causal interpretation, and what the analysis cannot conclude. Cite all data sources.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 7536 for 19-3011.00 (grader checks against the O*NET task statement).",
+          "criterion": "Clear question and data",
+          "description": "Question is specific and the data sources, variables and period are clearly identified.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Mathematics and Economics and Accounting concepts are applied accurately and specifically, not just named.",
+          "criterion": "Appropriate method",
+          "description": "Uses a comparison method suited to policy evaluation and explains its key assumption (parallel trends).",
           "points": 2
         },
         {
-          "criterion": "Reasoning",
-          "description": "evidence, method, and recommendation connect, and limitations are stated.",
+          "criterion": "Careful interpretation",
+          "description": "Discusses confounders, small samples and the difference between correlation and causation, and ties conclusions to the evidence.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Question: did teen employment fall relative to comparison states after increases?",
+        "Data: state minimum wage histories, employment survey estimates for teens, with sources.",
+        "Method: difference-in-differences with pre-trend check.",
+        "Threats: regional shocks, sampling error in small groups, policy anticipation.",
+        "Conclusion stated with uncertainty and links to the published literature."
       ]
     },
     {
       "practice_id": "45.0601-P4",
       "cip_code": "45.0601",
+      "tier": "authored",
       "onet_soc_code": "19-4061.00",
       "occupation_title": "Social Science Research Assistants",
       "onet_task_id": 12953,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/19-4061.00",
-      "activity_type": "perform",
-      "knowledge_elements": [
-        "English Language",
-        "Computers and Electronics"
-      ],
-      "skill_element": "Reading Comprehension",
+      "format": "tables, figures and replication package",
+      "task_intent": "Help prepare reports, manuscripts and presentations for research projects.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 12953 for `19-4061.00` (Social Science Research Assistants); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/19-4061.00). Write a step-by-step procedure for carrying out this theme in a realistic setting, noting safety, quality, or ethical considerations and how you would know it was done well. Apply English Language and Computers and Electronics.",
+      "prompt": "DreamCo-original practice prompt. The professor's working paper on minimum wages is due to a conference in ten days and asks you to produce the descriptive-statistics table, two figures (an event-study plot and a map), and the slides' data appendix. Write your production plan: the specifications for each table and figure (variables, labels, notes, units), the style conventions you will follow, how every number is generated by code from the final dataset, how you check the figures against the regression output, and what goes in the replication package.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 12953 for 19-4061.00 (grader checks against the O*NET task statement).",
+          "criterion": "Publication-ready specs",
+          "description": "Tables and figures have clear titles, labeled axes and units, source notes and consistent formatting.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "English Language and Computers and Electronics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Accuracy controls",
+          "description": "Every number comes from code, and there is a cross-check between tables, figures and text.",
           "points": 2
         },
         {
-          "criterion": "Process quality",
-          "description": "steps are ordered and complete and include safety, quality, or ethics checks.",
+          "criterion": "Replication",
+          "description": "Package includes data or access instructions, code, a README and versioned outputs.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Table 1: means and standard deviations by treated and comparison counties, before and after.",
+        "Figure 1: event-study coefficients with 95 percent confidence intervals; Figure 2: map of treatment timing.",
+        "Export tables and figures directly from scripts; no hand-typed numbers.",
+        "Cross-check sample sizes and coefficient values in text against output logs.",
+        "Replication folder with raw data links, cleaning and analysis scripts, README and software versions."
       ]
     },
     {
       "practice_id": "45.0601-P5",
       "cip_code": "45.0601",
+      "tier": "authored",
       "onet_soc_code": "25-2031.00",
       "occupation_title": "Secondary School Teachers, Except Special and Career/Technical Education",
       "onet_task_id": 6640,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/25-2031.00",
-      "activity_type": "communicate",
-      "knowledge_elements": [
-        "Education and Training",
-        "English Language"
-      ],
-      "skill_element": "Active Listening",
+      "format": "lesson plan",
+      "task_intent": "Teach a subject through explanation, discussion and demonstration.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 6640 for `25-2031.00` (Secondary School Teachers, Except Special and Career/Technical Education); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/25-2031.00). Write a 5-minute briefing or role-play script for a conversation with a colleague or client on this theme: key message, two likely questions with answers, and an agreed next step. Use Education and Training and English Language.",
+      "prompt": "DreamCo-original practice prompt. Plan a 50-minute high school lesson on how supply and demand set prices. Include a short explanation with a hand-drawn graph, a classroom demonstration (for example, an auction of a limited item or the trading simulation), a discussion that applies the model to a current real-world price change students care about (such as concert tickets or gasoline), and an exit question. Show how you check understanding during the lesson and how you support students who find graphs difficult.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 6640 for 25-2031.00 (grader checks against the O*NET task statement).",
+          "criterion": "Economic accuracy",
+          "description": "Correctly distinguishes changes in quantity demanded from shifts in demand and explains equilibrium.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Education and Training and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Engaging demonstration",
+          "description": "The demonstration generates evidence students use in the discussion and fits the time.",
           "points": 2
         },
         {
-          "criterion": "Active Listening",
-          "description": "the message is clear, questions are anticipated, and the next step is concrete.",
+          "criterion": "Checks and supports",
+          "description": "Includes checks for understanding during the lesson and specific scaffolds for graph reading.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Hook: why do concert ticket prices jump when a tour is announced?",
+        "Explain curves, equilibrium, and shifts with one example drawn step by step.",
+        "Demonstration: auction with limited supply; record bids to build a demand schedule.",
+        "Discussion: apply to a current price change; identify which curve shifted.",
+        "Exit question and scaffolds such as a labeled graph template and think-pair-share."
       ]
     },
     {
       "practice_id": "45.0601-P6",
       "cip_code": "45.0601",
+      "tier": "authored",
       "onet_soc_code": "19-3011.00",
       "occupation_title": "Economists",
       "onet_task_id": 7542,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/19-3011.00",
-      "activity_type": "plan",
-      "knowledge_elements": [
-        "Mathematics",
-        "Economics and Accounting"
-      ],
-      "skill_element": "Critical Thinking",
+      "format": "student research team supervision plan (graduate-path practice)",
+      "task_intent": "Oversee research projects, including projects carried out by students.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 7542 for `19-3011.00` (Economists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/19-3011.00). Write a two-week plan for carrying out this theme on a small project: steps, roles, timeline, risks, and how progress is tracked. Apply Mathematics and Economics and Accounting.",
+      "prompt": "DreamCo-original practice prompt. Graduate-path practice: imagine you are a senior research assistant asked to run a semester-long project with three undergraduate economics students who will code local housing-permit data for a faculty study. Write the supervision plan: the project's goals and milestones, how you train students and check their work quality, weekly meeting structure, how tasks are divided fairly, how you give feedback, and how students get credit and learning from the experience.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 7542 for 19-3011.00 (grader checks against the O*NET task statement).",
+          "criterion": "Clear milestones",
+          "description": "Goals and milestones are concrete with deliverables and dates.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Mathematics and Economics and Accounting concepts are applied accurately and specifically, not just named.",
+          "criterion": "Quality control",
+          "description": "Includes training, a coding manual, double-coding samples and agreement checks.",
           "points": 2
         },
         {
-          "criterion": "Feasibility",
-          "description": "steps, timeline, and risks are realistic and progress is trackable.",
+          "criterion": "Supportive supervision",
+          "description": "Describes fair workload, regular feedback, mentoring and appropriate credit.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Milestones: training in week 2, pilot coding by week 4, full coding by week 10, write-up by week 14.",
+        "Coding manual with examples; 10 percent double-coded; resolve disagreements weekly.",
+        "Weekly 45-minute meeting: progress, problems, one skill session.",
+        "Feedback: written notes on coding accuracy and a mid-semester check-in.",
+        "Credit: acknowledgment in the paper, a short research presentation, recommendation letters."
       ]
     }
   ]

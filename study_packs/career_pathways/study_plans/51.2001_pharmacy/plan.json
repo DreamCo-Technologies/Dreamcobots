@@ -2,6 +2,7 @@
   "cip": "51.2001",
   "title": "Pharmacy",
   "asset_id": "edu-p-51.2001",
+  "tier": "authored",
   "occupations": [
     {
       "soc": "11-9111.00",
@@ -87,6 +88,10 @@
     }
   ],
   "entry_target_basis": "Job Zone 5 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; no eligible Job Zone 4 occupation is linked to this major, so Job Zone 5 was used",
+  "entry_target_review": {
+    "type": "reviewed_without_change",
+    "note": "Pharmacists (Job Zone 5) kept: CIP 51.2001 is the professional Pharm.D. program, so a Job Zone 5 target is correct."
+  },
   "practice_task_ids": [
     "51.2001-P1",
     "51.2001-P2",
@@ -96,215 +101,252 @@
     "51.2001-P6"
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
+  "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
   "practice_tasks": [
     {
       "practice_id": "51.2001-P1",
       "cip_code": "51.2001",
+      "tier": "authored",
       "onet_soc_code": "29-1051.00",
       "occupation_title": "Pharmacists",
       "onet_task_id": 1808,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/29-1051.00",
-      "activity_type": "analyze",
-      "knowledge_elements": [
-        "Medicine and Dentistry",
-        "English Language"
-      ],
-      "skill_element": "Active Listening",
+      "format": "prescription verification exercise",
+      "task_intent": "Check prescriptions for correctness, work out what is needed to fill them, and judge whether they are appropriate for the patient.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 1808 for `29-1051.00` (Pharmacists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/29-1051.00). Pick a realistic small case on this theme (public data or a clearly labeled invented scenario) and write a one-page analysis: the question, the evidence used, the method, and a recommendation. Show where Medicine and Dentistry and English Language knowledge shaped the reasoning.",
+      "prompt": "DreamCo-original practice prompt. Invented case for practice under pharmacist supervision: a prescription arrives for an 82-year-old woman (weight 52 kg, recent serum creatinine 1.6 mg/dL) for an antibiotic at the full adult dose usually used with normal kidney function, plus a new prescription for an NSAID; her profile shows an ACE inhibitor and a diuretic. Write the verification you would perform: the checks for completeness and legality, estimating kidney function (show a Cockcroft-Gault calculation), dose appropriateness, the interaction concern, what you would recommend to the prescriber, and how you document the intervention.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 1808 for 29-1051.00 (grader checks against the O*NET task statement).",
+          "criterion": "Systematic verification",
+          "description": "Checks patient identifiers, prescriber details, drug, dose, route, frequency, quantity and legality before clinical review.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Medicine and Dentistry and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Clinical reasoning",
+          "description": "Calculates creatinine clearance correctly, recognizes the need for renal dose adjustment and the NSAID plus ACE inhibitor plus diuretic kidney risk.",
           "points": 2
         },
         {
-          "criterion": "Reasoning",
-          "description": "evidence, method, and recommendation connect, and limitations are stated.",
+          "criterion": "Professional intervention",
+          "description": "Recommends specific alternatives to the prescriber and documents the call and outcome.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Completeness: patient name, date of birth, drug strength, directions, prescriber signature and identifiers.",
+        "Cockcroft-Gault: (140 minus age) times weight divided by (72 times creatinine), times 0.85 for women; about 25 mL/min.",
+        "Check the antibiotic's labeled renal dosing and suggest an adjusted dose or interval.",
+        "NSAID with ACE inhibitor and diuretic raises acute kidney injury risk; suggest acetaminophen or topical alternative.",
+        "Document recommendation, prescriber response and final action in the profile."
       ]
     },
     {
       "practice_id": "51.2001-P2",
       "cip_code": "51.2001",
+      "tier": "authored",
       "onet_soc_code": "29-1051.00",
       "occupation_title": "Pharmacists",
       "onet_task_id": 1809,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/29-1051.00",
-      "activity_type": "perform",
-      "knowledge_elements": [
-        "Medicine and Dentistry",
-        "English Language"
-      ],
-      "skill_element": "Active Listening",
+      "format": "patient counseling script",
+      "task_intent": "Advise patients about how a drug interacts with others, its side effects, how much to take and how to store it.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 1809 for `29-1051.00` (Pharmacists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/29-1051.00). Write a step-by-step procedure for carrying out this theme in a realistic setting, noting safety, quality, or ethical considerations and how you would know it was done well. Apply Medicine and Dentistry and English Language.",
+      "prompt": "DreamCo-original practice prompt. Invented case: a 67-year-old man is starting an oral anticoagulant after a diagnosis of atrial fibrillation; he takes an over-the-counter pain reliever several times a week, uses a fish-oil supplement and sometimes forgets evening doses of other medicines. Write the counseling script: opening and teach-back, how to take the medicine and what to do about a missed dose (per the product labeling), bleeding warning signs, interactions with his OTC products, storage, and when to call the pharmacist or doctor or seek emergency care.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 1809 for 29-1051.00 (grader checks against the O*NET task statement).",
+          "criterion": "Accurate, individualized content",
+          "description": "Advice reflects the drug's labeling and addresses his OTC pain reliever and supplement use.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Medicine and Dentistry and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Safety emphasis",
+          "description": "Clearly explains bleeding signs and emergency situations.",
           "points": 2
         },
         {
-          "criterion": "Process quality",
-          "description": "steps are ordered and complete and include safety, quality, or ethics checks.",
+          "criterion": "Effective communication",
+          "description": "Uses plain language, teach-back and adherence aids for forgetfulness.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Open with purpose and ask what he already knows.",
+        "Dosing and missed-dose instructions from the labeling; pill organizer or phone alarm.",
+        "Bleeding signs: black stools, blood in urine, unusual bruising, severe headache; seek urgent care for serious signs.",
+        "Avoid routine NSAID use; discuss fish oil with the prescriber; acetaminophen as a usual alternative within limits.",
+        "Teach-back: he explains how and when he takes it and what he watches for."
       ]
     },
     {
       "practice_id": "51.2001-P3",
       "cip_code": "51.2001",
+      "tier": "authored",
       "onet_soc_code": "29-1051.00",
       "occupation_title": "Pharmacists",
       "onet_task_id": 1812,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/29-1051.00",
-      "activity_type": "document",
-      "knowledge_elements": [
-        "Medicine and Dentistry",
-        "English Language"
-      ],
-      "skill_element": "Writing",
+      "format": "controlled substance reconciliation",
+      "task_intent": "Keep pharmacy records such as patient profiles, inventories and controlled-drug logs.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 1812 for `29-1051.00` (Pharmacists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/29-1051.00). Draft the work document this theme calls for (report, record, or brief) for a named audience, then add a short note on what you would verify before it is used. Apply Medicine and Dentistry and English Language.",
+      "prompt": "DreamCo-original practice prompt. Invented case: during the monthly count of a Schedule II opioid at a community pharmacy, the physical count is 40 tablets short of the perpetual inventory. Write the reconciliation and records procedure: how you recount and review dispensing records, receiving invoices and transfer documents, common clerical causes to check, when a loss must be reported to the regulator and the board of pharmacy (refer to the applicable rules without inventing numbers), how you secure records, and what process changes you would make.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 1812 for 29-1051.00 (grader checks against the O*NET task statement).",
+          "criterion": "Thorough reconciliation",
+          "description": "Reviews every relevant record type and checks for clerical errors before concluding loss.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Medicine and Dentistry and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Regulatory awareness",
+          "description": "States that significant losses or thefts must be reported to the appropriate authorities on the required form and timeline.",
           "points": 2
         },
         {
-          "criterion": "Communication",
-          "description": "accurate, organized, suited to the named audience, with verification needs flagged.",
+          "criterion": "Prevention",
+          "description": "Proposes concrete controls such as more frequent counts, access restrictions and camera review.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Recount with a second person; compare with perpetual log.",
+        "Review prescriptions filled, partial fills, returns to stock, invoices, transfer forms.",
+        "Clerical checks: wrong package size entered, unposted returns.",
+        "If unresolved, report theft or significant loss per federal and state rules.",
+        "Controls: daily counts for high-risk items, restricted safe access, audit trail."
       ]
     },
     {
       "practice_id": "51.2001-P4",
       "cip_code": "51.2001",
+      "tier": "authored",
       "onet_soc_code": "29-1051.00",
       "occupation_title": "Pharmacists",
       "onet_task_id": 1814,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/29-1051.00",
-      "activity_type": "communicate",
-      "knowledge_elements": [
-        "Medicine and Dentistry",
-        "English Language"
-      ],
-      "skill_element": "Active Listening",
+      "format": "OTC and device selection consult",
+      "task_intent": "Help customers choose among medicine brands, medical equipment and health supplies.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 1814 for `29-1051.00` (Pharmacists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/29-1051.00). Write a 5-minute briefing or role-play script for a conversation with a colleague or client on this theme: key message, two likely questions with answers, and an agreed next step. Use Medicine and Dentistry and English Language.",
+      "prompt": "DreamCo-original practice prompt. Invented case: a parent asks for help choosing a cough and cold product for a 4-year-old, and her own father wants a home blood-pressure monitor. Write both consultations: the questions you ask first, the reasons you would not recommend certain products for young children, safe options for the child, how you explain dosing by weight and measuring devices, criteria for choosing a validated, correctly sized blood-pressure cuff, and when you refer to a physician.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 1814 for 29-1051.00 (grader checks against the O*NET task statement).",
+          "criterion": "Assessment first",
+          "description": "Asks about symptoms, age, weight, other conditions and medicines before recommending.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Medicine and Dentistry and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Safe recommendations",
+          "description": "Avoids inappropriate OTC cough and cold products for young children and suggests safe measures; dosing guidance is accurate.",
           "points": 2
         },
         {
-          "criterion": "Active Listening",
-          "description": "the message is clear, questions are anticipated, and the next step is concrete.",
+          "criterion": "Device guidance and referral",
+          "description": "Explains validated monitors, cuff sizing and technique, and gives clear referral criteria.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Questions: fever, breathing difficulty, duration, chronic conditions, other medicines.",
+        "Many cough and cold combinations are not advised for young children; suggest saline, fluids, humidified air, honey only for children over one year.",
+        "Weight-based acetaminophen or ibuprofen if fever, with the correct measuring device.",
+        "Monitor: upper-arm, validated, cuff fitted to arm circumference; measurement technique.",
+        "Refer for breathing problems, high fever, symptoms beyond about 10 days, or very high readings."
       ]
     },
     {
       "practice_id": "51.2001-P5",
       "cip_code": "51.2001",
+      "tier": "authored",
       "onet_soc_code": "29-1051.00",
       "occupation_title": "Pharmacists",
       "onet_task_id": 1820,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/29-1051.00",
-      "activity_type": "plan",
-      "knowledge_elements": [
-        "Medicine and Dentistry",
-        "English Language"
-      ],
-      "skill_element": "Active Listening",
+      "format": "compounding and disposal procedure",
+      "task_intent": "Plan, carry out or maintain procedures for compounding, packaging or labeling medicines according to policy and law, covering quality, security and disposal.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 1820 for `29-1051.00` (Pharmacists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/29-1051.00). Write a two-week plan for carrying out this theme on a small project: steps, roles, timeline, risks, and how progress is tracked. Apply Medicine and Dentistry and English Language.",
+      "prompt": "DreamCo-original practice prompt. Your community pharmacy will start preparing a non-sterile oral suspension for children from tablets. Write the standard operating procedure: master formulation record and compounding record contents, beyond-use dating source, equipment and cleaning, ingredient verification and calculations double-checked, labeling contents, storage and security, quality checks before release, and how waste and expired compounds are disposed of. Reference the type of standard (such as the national compendial chapter for non-sterile compounding) rather than inventing specific requirements.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 1820 for 29-1051.00 (grader checks against the O*NET task statement).",
+          "criterion": "Standards-based process",
+          "description": "Procedure follows recognized non-sterile compounding standards and pharmacy law.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Medicine and Dentistry and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Quality and safety checks",
+          "description": "Includes independent verification of calculations, ingredients and final product.",
           "points": 2
         },
         {
-          "criterion": "Feasibility",
-          "description": "steps, timeline, and risks are realistic and progress is trackable.",
+          "criterion": "Labeling, storage and disposal",
+          "description": "Specifies label contents, storage conditions, beyond-use date and proper disposal of waste.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Master formulation record with ingredients, quantities, method, beyond-use date source.",
+        "Compounding record: lot numbers, operator, checker, date.",
+        "Calibrated balance, clean area and equipment cleaning log.",
+        "Label: name, strength, directions, beyond-use date, 'shake well', storage.",
+        "Disposal of waste and expired product per environmental and pharmacy rules."
       ]
     },
     {
       "practice_id": "51.2001-P6",
       "cip_code": "51.2001",
+      "tier": "authored",
       "onet_soc_code": "29-1051.00",
       "occupation_title": "Pharmacists",
       "onet_task_id": 1810,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/29-1051.00",
-      "activity_type": "analyze",
-      "knowledge_elements": [
-        "Medicine and Dentistry",
-        "English Language"
-      ],
-      "skill_element": "Active Listening",
+      "format": "prescribing trend analysis",
+      "task_intent": "Look for patterns in prescriptions to track whether patients take medicines as directed and to prevent overuse or dangerous combinations.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 1810 for `29-1051.00` (Pharmacists); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/29-1051.00). Pick a realistic small case on this theme (public data or a clearly labeled invented scenario) and write a one-page analysis: the question, the evidence used, the method, and a recommendation. Show where Medicine and Dentistry and English Language knowledge shaped the reasoning.",
+      "prompt": "DreamCo-original practice prompt. Invented data: in your pharmacy's records for the last six months, 38 patients filled both an opioid and a benzodiazepine, 12 of them from different prescribers, and adherence to statins among 400 patients averaged a proportion of days covered of 0.68. Write the analysis and action plan: how you compute and interpret proportion of days covered, how you identify high-risk combinations and early refills (including use of the state prescription monitoring program), which patients you prioritize, and the interventions with prescribers and patients, while respecting privacy.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 1810 for 29-1051.00 (grader checks against the O*NET task statement).",
+          "criterion": "Correct metrics",
+          "description": "Explains proportion of days covered and adherence thresholds correctly.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Medicine and Dentistry and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Risk identification",
+          "description": "Identifies high-risk opioid plus benzodiazepine use, multiple prescribers and early refills using appropriate tools.",
           "points": 2
         },
         {
-          "criterion": "Reasoning",
-          "description": "evidence, method, and recommendation connect, and limitations are stated.",
+          "criterion": "Targeted interventions",
+          "description": "Plans prioritized, respectful interventions such as prescriber outreach, naloxone offers and adherence counseling.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "PDC: days covered divided by days in period; common adherence threshold near 0.80.",
+        "Flag patients with overlapping opioid and benzodiazepine fills and multiple prescribers; check monitoring program.",
+        "Prioritize high doses, multiple prescribers, recent overdose history.",
+        "Interventions: prescriber calls, naloxone, counseling; adherence packaging and refill synchronization for statins.",
+        "Use minimum necessary data; document interventions."
       ]
     }
   ]

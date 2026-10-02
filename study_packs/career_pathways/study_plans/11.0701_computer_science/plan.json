@@ -2,6 +2,7 @@
   "cip": "11.0701",
   "title": "Computer Science",
   "asset_id": "edu-cs-11.0701",
+  "tier": "authored",
   "occupations": [
     {
       "soc": "11-3021.00",
@@ -196,6 +197,11 @@
   ],
   "entry_targets": [
     {
+      "soc": "15-1252.00",
+      "title": "Software Developers",
+      "job_zone": 4
+    },
+    {
       "soc": "15-1253.00",
       "title": "Software Quality Assurance Analysts and Testers",
       "job_zone": 4
@@ -204,14 +210,23 @@
       "soc": "15-1212.00",
       "title": "Information Security Analysts",
       "job_zone": 4
-    },
-    {
-      "soc": "15-1243.00",
-      "title": "Database Architects",
-      "job_zone": 4
     }
   ],
-  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (15-1253.00, 15-1212.00, 15-1243.00) to 15-1252.00, 15-1253.00, 15-1212.00",
+  "entry_target_review": {
+    "type": "override",
+    "rule_output": [
+      "15-1253.00",
+      "15-1212.00",
+      "15-1243.00"
+    ],
+    "targets": [
+      "15-1252.00",
+      "15-1253.00",
+      "15-1212.00"
+    ],
+    "reason": "Software Developers is the most common bachelor's-level destination for Computer Science graduates and was missing because the knowledge-profile ranking favored QA, security and database roles. Database Architects was dropped: architect roles typically expect several years of database administration or development experience, so it is a mid-career rather than a new-graduate target. Software QA and Information Security Analysts are kept as realistic Job Zone 4 entry roles."
+  },
   "practice_task_ids": [
     "11.0701-P1",
     "11.0701-P2",
@@ -221,215 +236,252 @@
     "11.0701-P6"
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
+  "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
   "practice_tasks": [
     {
       "practice_id": "11.0701-P1",
       "cip_code": "11.0701",
+      "tier": "authored",
       "onet_soc_code": "15-1253.00",
       "occupation_title": "Software Quality Assurance Analysts and Testers",
       "onet_task_id": 14638,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-1253.00",
-      "activity_type": "design",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "English Language"
-      ],
-      "skill_element": "Reading Comprehension",
+      "format": "test plan",
+      "task_intent": "Plan how a piece of software will be checked: which scenarios to exercise, which scripts or manual steps to run, and in what order.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 14638 for `15-1253.00` (Software Quality Assurance Analysts and Testers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1253.00). Produce a short design or build plan for a small deliverable on this theme: requirements, two alternatives considered, the choice and why, and how you would check that it works. Draw on Computers and Electronics and English Language.",
+      "prompt": "DreamCo-original practice prompt. A student-run campus food-ordering app is about to ship a 'split the bill' feature that lets up to six friends share one order, each paying by card or meal-plan credit. Write the test plan for this feature: scope and out-of-scope items, at least eight named test scenarios (include rounding of odd cents, one payer's card being declined, and a friend leaving the group mid-checkout), which scenarios you would automate versus run by hand, test data you need, and the exit criteria for release.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 14638 for 15-1253.00 (grader checks against the O*NET task statement).",
+          "criterion": "Scenario coverage",
+          "description": "Scenarios cover the normal path, boundary values (1 and 6 payers, odd-cent totals) and failure paths (declined card, timeout, member leaving), not only happy paths.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Automation judgment",
+          "description": "The split between automated and manual tests is justified by repeatability, risk and cost, and the test data needed is stated concretely.",
           "points": 2
         },
         {
-          "criterion": "Design quality",
-          "description": "requirements are testable and the choice between alternatives is justified.",
+          "criterion": "Release criteria",
+          "description": "Exit criteria are measurable (e.g. zero open severity-1 defects, all payment-path tests passing) and say who signs off.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Scope statement naming the split-bill flow, payment providers and meal-plan ledger; excludes unrelated menu features.",
+        "Scenario table with ID, preconditions, steps and expected result; includes the cent-rounding rule (who absorbs the leftover cent).",
+        "Automates calculation and API-level payment tests; keeps exploratory and multi-device UX checks manual.",
+        "Lists test accounts, sandbox cards that decline, and a meal-plan balance near zero.",
+        "Exit criteria with severity thresholds and a named approver."
       ]
     },
     {
       "practice_id": "11.0701-P2",
       "cip_code": "11.0701",
+      "tier": "authored",
       "onet_soc_code": "15-1212.00",
       "occupation_title": "Information Security Analysts",
       "onet_task_id": 5313,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-1212.00",
-      "activity_type": "communicate",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "English Language"
-      ],
-      "skill_element": "Active Listening",
+      "format": "training session plan",
+      "task_intent": "Teach staff safe computing habits and build a culture of security awareness so the organization's systems stay protected and run smoothly.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 5313 for `15-1212.00` (Information Security Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1212.00). Write a 5-minute briefing or role-play script for a conversation with a colleague or client on this theme: key message, two likely questions with answers, and an agreed next step. Use Computers and Electronics and English Language.",
+      "prompt": "DreamCo-original practice prompt. A 40-person food-bank nonprofit just had a volunteer coordinator's email account taken over through a fake 'shared document' link, and the attacker emailed donors asking for gift cards. Design a 30-minute security-awareness session for staff and regular volunteers: three learning objectives, the agenda minute by minute, one realistic hands-on exercise built from this incident (no real victim names), and how you will measure whether behavior changed 60 days later.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 5313 for 15-1212.00 (grader checks against the O*NET task statement).",
+          "criterion": "Audience fit",
+          "description": "Content suits non-technical staff and volunteers, uses the real incident pattern, and avoids jargon or blame.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Actionable habits",
+          "description": "Objectives translate into specific behaviors (checking sender domains, reporting suspicious mail, using MFA) that the exercise actually practices.",
           "points": 2
         },
         {
-          "criterion": "Active Listening",
-          "description": "the message is clear, questions are anticipated, and the next step is concrete.",
+          "criterion": "Measured follow-up",
+          "description": "The 60-day measure is concrete, such as a simulated phishing click rate or report rate compared with a baseline.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Objectives: recognize credential-phishing cues, report quickly through one named channel, turn on MFA.",
+        "Agenda: 5 min story of the incident, 10 min cue spotting, 10 min hands-on inbox triage exercise, 5 min MFA setup check.",
+        "Exercise uses three sanitized sample emails, one legitimate and two malicious.",
+        "Follow-up: simulated phish at day 45 to 60, compare click and report rates with a pre-session baseline.",
+        "Notes privacy: individual results are not used for discipline."
       ]
     },
     {
       "practice_id": "11.0701-P3",
       "cip_code": "11.0701",
-      "onet_soc_code": "15-1243.00",
-      "occupation_title": "Database Architects",
-      "onet_task_id": 16099,
+      "tier": "authored",
+      "onet_soc_code": "15-1252.00",
+      "occupation_title": "Software Developers",
+      "onet_task_id": 21670,
       "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/15-1243.00",
-      "activity_type": "perform",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "Engineering and Technology"
-      ],
-      "skill_element": "Critical Thinking",
+      "onet_task_url": "https://www.onetonline.org/link/summary/15-1252.00",
+      "format": "change proposal",
+      "task_intent": "Change existing software to fix defects, keep it working on new platforms or interfaces, and make it faster.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 16099 for `15-1243.00` (Database Architects); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1243.00). Write a step-by-step procedure for carrying out this theme in a realistic setting, noting safety, quality, or ethical considerations and how you would know it was done well. Apply Computers and Electronics and Engineering and Technology.",
+      "prompt": "DreamCo-original practice prompt. Your registrar's office runs a five-year-old Python script that exports course enrollments to a CSV for the state reporting portal. Since enrollment doubled it takes 40 minutes and times out, it crashes on student names with accented characters, and the portal is moving from CSV upload to a JSON API next term. Write a change proposal: diagnose the likely causes of each problem, the code changes you would make, how you will prove the new version produces the same records as the old one, and a rollback plan.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 16099 for 15-1243.00 (grader checks against the O*NET task statement).",
+          "criterion": "Diagnosis",
+          "description": "Each symptom gets a plausible technical cause (e.g. row-by-row queries, wrong text encoding) and a way to confirm it, such as profiling or a failing test case.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and Engineering and Technology concepts are applied accurately and specifically, not just named.",
+          "criterion": "Sound modification",
+          "description": "Changes are scoped and safe: performance fix, UTF-8 handling, and an output layer that supports both CSV and the new API without rewriting everything.",
           "points": 2
         },
         {
-          "criterion": "Process quality",
-          "description": "steps are ordered and complete and include safety, quality, or ethics checks.",
+          "criterion": "Verification and rollback",
+          "description": "Equivalence is proven with a record-level comparison on real-sized data, and rollback is concrete.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Profile first; likely N+1 database queries or loading everything into memory; fix with batched queries or a single join.",
+        "Encoding crash: read and write explicitly as UTF-8; add test names with accents and non-Latin scripts.",
+        "Separate data extraction from output formatting so a JSON API client can be added beside the CSV writer.",
+        "Verification: run old and new on the same snapshot and diff record counts and field values.",
+        "Rollback: keep the old script deployable and switch back with one configuration flag."
       ]
     },
     {
       "practice_id": "11.0701-P4",
       "cip_code": "11.0701",
+      "tier": "authored",
       "onet_soc_code": "15-1253.00",
       "occupation_title": "Software Quality Assurance Analysts and Testers",
       "onet_task_id": 14639,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-1253.00",
-      "activity_type": "monitor",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "English Language"
-      ],
-      "skill_element": "Reading Comprehension",
+      "format": "regression test checklist",
+      "task_intent": "Check that changes to a system work correctly and do not break anything before they are released.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 14639 for `15-1253.00` (Software Quality Assurance Analysts and Testers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1253.00). Create a checklist or test plan for this theme: what to check, how often, the pass condition, and what to do when a check fails. Ground it in Computers and Electronics and English Language.",
+      "prompt": "DreamCo-original practice prompt. A web app used by 3,000 club members is replacing its password-hashing library (from an old salted SHA-1 scheme to bcrypt) and will rehash each password when that user next logs in. Before deployment, write the regression checklist you would run: what must still work, the specific edge cases for users who have not logged in since the change, the security checks, the performance check on the login endpoint, and the go/no-go rule.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 14639 for 15-1253.00 (grader checks against the O*NET task statement).",
+          "criterion": "Change-specific risks",
+          "description": "Covers migration edge cases: old-hash users, users mid-reset, accounts with very long or Unicode passwords, and the first login after deploy.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Measurable checks",
+          "description": "Each item has a pass condition, such as login latency under a stated threshold or no plaintext passwords in logs.",
           "points": 2
         },
         {
-          "criterion": "Verifiability",
-          "description": "each check has a measurable pass condition and a defined response to failure.",
+          "criterion": "Decision rule",
+          "description": "A clear go/no-go rule with what happens if a check fails, including a rollback path that does not lock users out.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Core regressions: login, logout, password reset, account creation, session expiry.",
+        "Migration cases: legacy-hash user logs in and is rehashed; reset link issued before deploy still works or fails safely.",
+        "Security: confirm the bcrypt cost factor, no hashes or passwords in logs, rate limiting still on.",
+        "Performance: measure p95 login latency before and after; bcrypt cost tuned to stay within target.",
+        "Go/no-go: all severity-1 checks pass; rollback keeps both hash verifiers so no user is locked out."
       ]
     },
     {
       "practice_id": "11.0701-P5",
       "cip_code": "11.0701",
+      "tier": "authored",
       "onet_soc_code": "15-1212.00",
       "occupation_title": "Information Security Analysts",
       "onet_task_id": 5318,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-1212.00",
-      "activity_type": "plan",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "English Language"
-      ],
-      "skill_element": "Reading Comprehension",
+      "format": "implementation coordination plan",
+      "task_intent": "Coordinate how a computer-security plan is put into place, working with the organization's own staff and with outside vendors.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 5318 for `15-1212.00` (Information Security Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1212.00). Write a two-week plan for carrying out this theme on a small project: steps, roles, timeline, risks, and how progress is tracked. Apply Computers and Electronics and English Language.",
+      "prompt": "DreamCo-original practice prompt. A three-office dental practice has bought two things: multi-factor authentication for its practice-management software, and a managed endpoint-protection service from an outside vendor. You are the security analyst coordinating the rollout over four weeks without disrupting patient scheduling. Write the coordination plan: who does what (practice staff, office managers, the MFA vendor, the endpoint vendor), the week-by-week schedule, how you will communicate with front-desk staff, and the three biggest rollout risks with mitigations.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 5318 for 15-1212.00 (grader checks against the O*NET task statement).",
+          "criterion": "Roles and handoffs",
+          "description": "Responsibilities of internal staff and each vendor are explicit, including who approves changes and who provides support at each office.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Low-disruption schedule",
+          "description": "Sequencing protects clinic operations: pilot first, after-hours installs, and no MFA enforcement on a full patient day without fallback.",
           "points": 2
         },
         {
-          "criterion": "Feasibility",
-          "description": "steps, timeline, and risks are realistic and progress is trackable.",
+          "criterion": "Risk handling",
+          "description": "Risks are specific (lost phones, legacy imaging PCs, vendor delays) and each has a workable mitigation.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "RACI-style table: analyst coordinates, office managers schedule staff, vendors install and support.",
+        "Week 1 pilot at one office; weeks 2 and 3 roll out to the others; week 4 enforce MFA and review.",
+        "Front desk gets a one-page guide and a named on-call contact during the first enforced day.",
+        "Risks: shared front-desk logins, old imaging workstations unsupported by the agent, phones unavailable; mitigations include hardware tokens and exceptions logged with an expiry date.",
+        "Success measures: percentage of accounts enrolled and endpoint agents reporting."
       ]
     },
     {
       "practice_id": "11.0701-P6",
       "cip_code": "11.0701",
-      "onet_soc_code": "15-1243.00",
-      "occupation_title": "Database Architects",
-      "onet_task_id": 16101,
+      "tier": "authored",
+      "onet_soc_code": "15-1252.00",
+      "occupation_title": "Software Developers",
+      "onet_task_id": 21662,
       "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/15-1243.00",
-      "activity_type": "analyze",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "Engineering and Technology"
-      ],
-      "skill_element": "Critical Thinking",
+      "onet_task_url": "https://www.onetonline.org/link/summary/15-1252.00",
+      "format": "feasibility memo",
+      "task_intent": "Study what users need and what the software must do, then judge whether a design can be delivered within the available time and budget.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 16101 for `15-1243.00` (Database Architects); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1243.00). Pick a realistic small case on this theme (public data or a clearly labeled invented scenario) and write a one-page analysis: the question, the evidence used, the method, and a recommendation. Show where Computers and Electronics and Engineering and Technology knowledge shaped the reasoning.",
+      "prompt": "DreamCo-original practice prompt. The university library asks for a study-room booking app: students reserve rooms from their phones, staff can block rooms for events, no-shows are released after 15 minutes, and it must work with campus single sign-on. You have two part-time student developers for eight weeks and no budget for paid services beyond existing campus hosting. Write a one-page feasibility memo: the requirements you would confirm with users, a rough effort estimate per feature, what fits in eight weeks, what you would cut or defer, and your recommendation.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 16101 for 15-1243.00 (grader checks against the O*NET task statement).",
+          "criterion": "Requirements analysis",
+          "description": "Distinguishes must-have from nice-to-have requirements and names open questions to confirm with students and staff.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and Engineering and Technology concepts are applied accurately and specifically, not just named.",
+          "criterion": "Credible estimate",
+          "description": "Effort estimates are broken down by feature, include testing and SSO integration risk, and add up within the stated capacity.",
           "points": 2
         },
         {
-          "criterion": "Reasoning",
-          "description": "evidence, method, and recommendation connect, and limitations are stated.",
+          "criterion": "Clear recommendation",
+          "description": "Recommends a specific scope (build, reduce, or buy/adapt existing tool) with the trade-offs stated.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Must-haves: SSO login, view availability, book and cancel, staff block-out; nice-to-have: notifications, analytics.",
+        "Open questions: booking limits per student, accessibility needs, room check-in method for no-show release.",
+        "Estimate in developer-weeks per feature, with SSO and testing called out; total compared with about 16 part-time developer-weeks.",
+        "Defer push notifications and analytics; consider an existing open-source booking system if SSO support exists.",
+        "Recommendation with a scope, a timeline and the main risk."
       ]
     }
   ]

@@ -2,6 +2,7 @@
   "cip": "52.0801",
   "title": "Finance, General",
   "asset_id": "edu-fg-52.0801",
+  "tier": "authored",
   "occupations": [
     {
       "soc": "11-1011.00",
@@ -156,8 +157,8 @@
   ],
   "entry_targets": [
     {
-      "soc": "13-2031.00",
-      "title": "Budget Analysts",
+      "soc": "13-2051.00",
+      "title": "Financial and Investment Analysts",
       "job_zone": 4
     },
     {
@@ -171,7 +172,21 @@
       "job_zone": 4
     }
   ],
-  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (13-2031.00, 13-2041.00, 13-2072.00) to 13-2051.00, 13-2041.00, 13-2072.00",
+  "entry_target_review": {
+    "type": "override",
+    "rule_output": [
+      "13-2031.00",
+      "13-2041.00",
+      "13-2072.00"
+    ],
+    "targets": [
+      "13-2051.00",
+      "13-2041.00",
+      "13-2072.00"
+    ],
+    "reason": "Financial and Investment Analysts, the most typical entry role for finance graduates, was missing from the rule output. Budget Analysts was dropped here (it remains a target for Accounting, where budget work is closer to the curriculum). Credit Analysts and Loan Officers are kept."
+  },
   "practice_task_ids": [
     "52.0801-P1",
     "52.0801-P2",
@@ -181,215 +196,252 @@
     "52.0801-P6"
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
+  "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
   "practice_tasks": [
     {
       "practice_id": "52.0801-P1",
       "cip_code": "52.0801",
-      "onet_soc_code": "13-2031.00",
-      "occupation_title": "Budget Analysts",
-      "onet_task_id": 3394,
-      "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/13-2031.00",
-      "activity_type": "analyze",
-      "knowledge_elements": [
-        "Economics and Accounting",
-        "Mathematics"
-      ],
-      "skill_element": "Critical Thinking",
+      "tier": "authored",
+      "onet_soc_code": "13-2051.00",
+      "occupation_title": "Financial and Investment Analysts",
+      "onet_task_id": 21590,
+      "onet_task_type": null,
+      "onet_task_url": "https://www.onetonline.org/link/summary/13-2051.00",
+      "format": "financial model and memo",
+      "task_intent": "Use financial models to solve financial problems or to judge how a transaction would affect finances or capital.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 3394 for `13-2031.00` (Budget Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-2031.00). Pick a realistic small case on this theme (public data or a clearly labeled invented scenario) and write a one-page analysis: the question, the evidence used, the method, and a recommendation. Show where Economics and Accounting and Mathematics knowledge shaped the reasoning.",
+      "prompt": "DreamCo-original practice prompt. A regional coffee-roasting company (invented figures: revenue 12 million, EBITDA 1.8 million, debt 3 million) is deciding whether to buy a competitor for 6 million funded by a new term loan, expecting 400,000 in yearly cost savings after year one. Build a simple model (describe its structure and show key numbers): pro forma revenue and EBITDA, debt and leverage ratios, interest coverage, and a five-year discounted cash flow or payback view of the deal. Write a memo with your conclusion and a sensitivity table for savings and interest rate.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 3394 for 13-2031.00 (grader checks against the O*NET task statement).",
+          "criterion": "Model structure",
+          "description": "Model has clear inputs, calculations and outputs, with assumptions stated and kept separate.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Economics and Accounting and Mathematics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Correct finance",
+          "description": "Leverage, coverage and valuation figures are computed correctly and consistently.",
           "points": 2
         },
         {
-          "criterion": "Reasoning",
-          "description": "evidence, method, and recommendation connect, and limitations are stated.",
+          "criterion": "Decision-useful conclusion",
+          "description": "Sensitivity analysis shows how the conclusion changes under plausible downside cases.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Inputs tab: prices, growth, savings ramp, loan rate and term.",
+        "Pro forma EBITDA combined plus synergies; leverage equals total debt over EBITDA.",
+        "Interest coverage equals EBITDA over interest; compare with lender comfort ranges.",
+        "Net present value of incremental cash flows minus price; payback years.",
+        "Sensitivity grid of savings achieved versus interest rate; recommendation with conditions."
       ]
     },
     {
       "practice_id": "52.0801-P2",
       "cip_code": "52.0801",
+      "tier": "authored",
       "onet_soc_code": "13-2041.00",
       "occupation_title": "Credit Analysts",
       "onet_task_id": 1251,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-2041.00",
-      "activity_type": "document",
-      "knowledge_elements": [
-        "Economics and Accounting",
-        "English Language"
-      ],
-      "skill_element": "Writing",
+      "format": "credit risk report",
+      "task_intent": "Write reports that assess how risky it is to extend credit or lend money.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 1251 for `13-2041.00` (Credit Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-2041.00). Draft the work document this theme calls for (report, record, or brief) for a named audience, then add a short note on what you would verify before it is used. Apply Economics and Accounting and English Language.",
+      "prompt": "DreamCo-original practice prompt. Invented case: a regional bank is asked for a 2 million working-capital line by an auto-parts distributor whose largest customer accounts for 35 percent of sales, whose inventory has grown faster than sales, and whose current ratio fell from 1.8 to 1.3 in two years. Write the credit risk report: business and industry overview, financial ratio analysis (liquidity, leverage, efficiency), qualitative risks, a risk rating on a stated scale with justification, and the structure and covenants that would make the risk acceptable.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 1251 for 13-2041.00 (grader checks against the O*NET task statement).",
+          "criterion": "Ratio analysis",
+          "description": "Uses relevant ratios (current ratio, inventory days, debt to equity, coverage) and interprets trends, not just levels.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Economics and Accounting and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Risk identification",
+          "description": "Recognizes customer concentration and inventory build-up as key risks and assesses their potential impact.",
           "points": 2
         },
         {
-          "criterion": "Communication",
-          "description": "accurate, organized, suited to the named audience, with verification needs flagged.",
+          "criterion": "Structuring",
+          "description": "Proposes structure (borrowing base, covenants, reporting) that directly addresses the identified risks.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Overview: products, customers, supplier terms, cyclical auto sector.",
+        "Ratios: declining liquidity, rising inventory days, leverage trend.",
+        "Concentration risk: impact if the top customer leaves.",
+        "Rating with rationale on the bank's scale.",
+        "Structure: borrowing base tied to receivables and inventory with advance rates, minimum coverage covenant, monthly aging reports."
       ]
     },
     {
       "practice_id": "52.0801-P3",
       "cip_code": "52.0801",
+      "tier": "authored",
       "onet_soc_code": "13-2072.00",
       "occupation_title": "Loan Officers",
       "onet_task_id": 3407,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-2072.00",
-      "activity_type": "perform",
-      "knowledge_elements": [
-        "Customer and Personal Service",
-        "Economics and Accounting"
-      ],
-      "skill_element": "Active Listening",
+      "format": "loan decision memo",
+      "task_intent": "Approve loans that fall within one's lending authority and send those above it to management.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 3407 for `13-2072.00` (Loan Officers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-2072.00). Write a step-by-step procedure for carrying out this theme in a realistic setting, noting safety, quality, or ethical considerations and how you would know it was done well. Apply Customer and Personal Service and Economics and Accounting.",
+      "prompt": "DreamCo-original practice prompt. You are a loan officer with authority to approve consumer auto loans up to 40,000 with debt-to-income up to 43 percent and credit scores of 660 and above. Three invented applications arrive: (A) 28,000, DTI 38 percent, score 702; (B) 45,000, DTI 31 percent, score 760; (C) 22,000, DTI 46 percent, score 690 with a recent job change. Write a decision memo for each: approve, decline, or refer, with reasons tied to policy, any conditions, and how the referral to your manager is documented. Add a note on fair lending consistency.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 3407 for 13-2072.00 (grader checks against the O*NET task statement).",
+          "criterion": "Correct use of authority",
+          "description": "Approves only within limits, refers B for amount, and handles C's DTI exception properly (refer or decline per policy).",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Customer and Personal Service and Economics and Accounting concepts are applied accurately and specifically, not just named.",
+          "criterion": "Reasoned decisions",
+          "description": "Each decision cites the specific policy criteria and any compensating factors.",
           "points": 2
         },
         {
-          "criterion": "Process quality",
-          "description": "steps are ordered and complete and include safety, quality, or ethics checks.",
+          "criterion": "Fair and documented",
+          "description": "Applies criteria consistently regardless of protected characteristics and documents referrals and exceptions.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "A: within all limits; approve with standard verification of income and insurance.",
+        "B: strong credit but over the 40,000 limit; refer to the manager with a recommendation.",
+        "C: DTI above policy; refer as an exception with compensating factors or decline with an adverse action notice.",
+        "Referral memo: summary, policy exception, recommendation.",
+        "Fair lending: same criteria and documentation for every applicant."
       ]
     },
     {
       "practice_id": "52.0801-P4",
       "cip_code": "52.0801",
-      "onet_soc_code": "13-2031.00",
-      "occupation_title": "Budget Analysts",
-      "onet_task_id": 3395,
-      "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/13-2031.00",
-      "activity_type": "plan",
-      "knowledge_elements": [
-        "Economics and Accounting",
-        "Mathematics"
-      ],
-      "skill_element": "Critical Thinking",
+      "tier": "authored",
+      "onet_soc_code": "13-2051.00",
+      "occupation_title": "Financial and Investment Analysts",
+      "onet_task_id": 21600,
+      "onet_task_type": null,
+      "onet_task_url": "https://www.onetonline.org/link/summary/13-2051.00",
+      "format": "industry briefing",
+      "task_intent": "Report orally or in writing on economic trends, particular companies and whole industries.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 3395 for `13-2031.00` (Budget Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-2031.00). Write a two-week plan for carrying out this theme on a small project: steps, roles, timeline, risks, and how progress is tracked. Apply Economics and Accounting and Mathematics.",
+      "prompt": "DreamCo-original practice prompt. Prepare a 10-minute investment-committee briefing on one publicly traded industry you choose (for example, regional airlines, or solar equipment). Using public sources (annual reports, government statistics, industry data), cover: current industry drivers, two companies compared on growth, margins and leverage, key risks over the next two years, and your view. Deliver it as slide titles with key points plus a one-page written summary, with every figure cited.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 3395 for 13-2031.00 (grader checks against the O*NET task statement).",
+          "criterion": "Evidence quality",
+          "description": "Uses cited, current public data and distinguishes facts from forecasts and opinions.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Economics and Accounting and Mathematics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Comparative analysis",
+          "description": "Company comparison uses consistent metrics and explains differences.",
           "points": 2
         },
         {
-          "criterion": "Feasibility",
-          "description": "steps, timeline, and risks are realistic and progress is trackable.",
+          "criterion": "Clear view",
+          "description": "Ends with a defensible view, key risks, and what evidence would change the view.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Industry drivers such as fuel costs, demand trends, regulation or interest rates.",
+        "Comparison table: revenue growth, operating margin, debt to EBITDA, free cash flow.",
+        "Risks: cyclical demand, input costs, policy changes.",
+        "View: overweight, neutral or underweight with reasoning.",
+        "Sources listed with dates."
       ]
     },
     {
       "practice_id": "52.0801-P5",
       "cip_code": "52.0801",
+      "tier": "authored",
       "onet_soc_code": "13-2041.00",
       "occupation_title": "Credit Analysts",
       "onet_task_id": 1258,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-2041.00",
-      "activity_type": "communicate",
-      "knowledge_elements": [
-        "Economics and Accounting",
-        "English Language"
-      ],
-      "skill_element": "Speaking",
+      "format": "dispute resolution procedure",
+      "task_intent": "Talk with customers to settle complaints and confirm credit and financial transactions.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 1258 for `13-2041.00` (Credit Analysts); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-2041.00). Write a 5-minute briefing or role-play script for a conversation with a colleague or client on this theme: key message, two likely questions with answers, and an agreed next step. Use Economics and Accounting and English Language.",
+      "prompt": "DreamCo-original practice prompt. Invented case: a commercial customer of a bank says three wire transfers totaling 18,000 on its statement were never authorized, and also disputes a fee for exceeding its credit-line limit. As the credit analyst on the relationship team, write the procedure you would follow: immediate steps to protect the account, how you verify each transaction (authorization logs, callbacks, IP or device records), how the over-limit fee is reviewed, communication with the customer at each stage, and the final resolution letter.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 1258 for 13-2041.00 (grader checks against the O*NET task statement).",
+          "criterion": "Protective first steps",
+          "description": "Secures the account promptly (block, credential reset) and escalates potential fraud to the right team.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Economics and Accounting and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Verification rigor",
+          "description": "Checks authorization evidence for each transfer and reviews the fee against the credit agreement and actual balances.",
           "points": 2
         },
         {
-          "criterion": "Speaking",
-          "description": "the message is clear, questions are anticipated, and the next step is concrete.",
+          "criterion": "Clear communication",
+          "description": "Gives the customer timelines and a professional, specific resolution letter.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Freeze online wire capability; refer to the fraud team; preserve records.",
+        "Pull wire authorization logs, approval user IDs, callback records, device data.",
+        "Fee review: compare balances with the line limit and agreement terms; reverse if posted in error.",
+        "Update the customer within set timeframes.",
+        "Letter stating findings, any credits, and security recommendations such as dual approval."
       ]
     },
     {
       "practice_id": "52.0801-P6",
       "cip_code": "52.0801",
+      "tier": "authored",
       "onet_soc_code": "13-2072.00",
       "occupation_title": "Loan Officers",
       "onet_task_id": 3408,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/13-2072.00",
-      "activity_type": "communicate",
-      "knowledge_elements": [
-        "Customer and Personal Service",
-        "Economics and Accounting"
-      ],
-      "skill_element": "Active Listening",
+      "format": "applicant interview guide",
+      "task_intent": "Meet loan applicants to collect information for their applications and respond to their questions on how lending works.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 3408 for `13-2072.00` (Loan Officers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/13-2072.00). Write a 5-minute briefing or role-play script for a conversation with a colleague or client on this theme: key message, two likely questions with answers, and an agreed next step. Use Customer and Personal Service and Economics and Accounting.",
+      "prompt": "DreamCo-original practice prompt. A first-time home buyer couple, both in their twenties with one gig-economy income and one salaried income, books a meeting to apply for a mortgage. Write your interview guide: the information and documents you need (and why for each), how you explain the steps from application to closing, the questions they are likely to ask (down payment, rate locks, credit checks) with plain-language answers, how you handle variable gig income, and the follow-up checklist you hand them.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 3408 for 13-2072.00 (grader checks against the O*NET task statement).",
+          "criterion": "Complete information needs",
+          "description": "Lists the documents and data needed and explains why, including how variable income is documented.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Customer and Personal Service and Economics and Accounting concepts are applied accurately and specifically, not just named.",
+          "criterion": "Clear process explanation",
+          "description": "Explains the stages and timelines accurately in plain language.",
           "points": 2
         },
         {
-          "criterion": "Active Listening",
-          "description": "the message is clear, questions are anticipated, and the next step is concrete.",
+          "criterion": "Fair and helpful",
+          "description": "Answers questions without steering or promising approval, and gives a clear follow-up checklist.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Documents: ID, pay stubs, W-2s or tax returns, two years of 1099 and bank statements for gig income, asset statements.",
+        "Process: application, disclosures, appraisal, underwriting, conditions, closing.",
+        "Explain rate locks, down payment options, and credit inquiry effects.",
+        "Gig income: typically averaged over two years; explain why.",
+        "Checklist with dates and contact information."
       ]
     }
   ]

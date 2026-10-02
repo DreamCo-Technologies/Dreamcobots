@@ -2,6 +2,7 @@
   "cip": "11.0401",
   "title": "Information Science/Studies",
   "asset_id": "edu-iss-11.0401",
+  "tier": "authored",
   "occupations": [
     {
       "soc": "11-3021.00",
@@ -156,11 +157,6 @@
   ],
   "entry_targets": [
     {
-      "soc": "15-1243.00",
-      "title": "Database Architects",
-      "job_zone": 4
-    },
-    {
       "soc": "15-1252.00",
       "title": "Software Developers",
       "job_zone": 4
@@ -169,9 +165,28 @@
       "soc": "15-1255.00",
       "title": "Web and Digital Interface Designers",
       "job_zone": 4
+    },
+    {
+      "soc": "15-1299.03",
+      "title": "Document Management Specialists",
+      "job_zone": 4
     }
   ],
-  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then a documented DreamCo manual override (authored/target_overrides.json) changed the rule output (15-1243.00, 15-1252.00, 15-1255.00) to 15-1252.00, 15-1255.00, 15-1299.03",
+  "entry_target_review": {
+    "type": "override",
+    "rule_output": [
+      "15-1243.00",
+      "15-1252.00",
+      "15-1255.00"
+    ],
+    "targets": [
+      "15-1252.00",
+      "15-1255.00",
+      "15-1299.03"
+    ],
+    "reason": "Database Architects was dropped as a mid-career architect role. Document Management Specialists (Job Zone 4) is added because records, metadata and content-management work is a core information-science destination. Software Developers and Web and Digital Interface Designers are kept."
+  },
   "practice_task_ids": [
     "11.0401-P1",
     "11.0401-P2",
@@ -181,215 +196,252 @@
     "11.0401-P6"
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
+  "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
   "practice_tasks": [
     {
       "practice_id": "11.0401-P1",
       "cip_code": "11.0401",
-      "onet_soc_code": "15-1243.00",
-      "occupation_title": "Database Architects",
-      "onet_task_id": 16099,
+      "tier": "authored",
+      "onet_soc_code": "15-1299.03",
+      "occupation_title": "Document Management Specialists",
+      "onet_task_id": 16232,
       "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/15-1243.00",
-      "activity_type": "perform",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "Engineering and Technology"
-      ],
-      "skill_element": "Critical Thinking",
+      "onet_task_url": "https://www.onetonline.org/link/summary/15-1299.03",
+      "format": "classification taxonomy draft",
+      "task_intent": "Help build a scheme for classifying documents and content so information is easy to capture, search and retrieve.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 16099 for `15-1243.00` (Database Architects); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1243.00). Write a step-by-step procedure for carrying out this theme in a realistic setting, noting safety, quality, or ethical considerations and how you would know it was done well. Apply Computers and Electronics and Engineering and Technology.",
+      "prompt": "DreamCo-original practice prompt. A mid-sized city's planning department has 120,000 scanned and born-digital files (permits, site plans, council memos, public comments, inspection photos) sitting in shared drives with inconsistent folder names. Draft a classification taxonomy and metadata scheme for a new content-management system: top-level categories and two levels below, five to eight required metadata fields with controlled values, how retention and public-records status are captured, and how you would test the scheme with real staff searches.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 16099 for 15-1243.00 (grader checks against the O*NET task statement).",
+          "criterion": "Usable structure",
+          "description": "Categories are mutually exclusive enough to file consistently and reflect how planning staff actually look things up (by parcel, project, document type).",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and Engineering and Technology concepts are applied accurately and specifically, not just named.",
+          "criterion": "Metadata quality",
+          "description": "Required fields use controlled vocabularies or formats (parcel ID pattern, dates), and public-records and retention status are captured.",
           "points": 2
         },
         {
-          "criterion": "Process quality",
-          "description": "steps are ordered and complete and include safety, quality, or ethics checks.",
+          "criterion": "User testing",
+          "description": "Proposes testing with real tasks, such as staff filing samples or finding items, and measuring agreement or time to find.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Top level by function (permits, plans, meetings, enforcement, public input), then project or parcel, then document type.",
+        "Required metadata: parcel ID, project number, document type, date, author unit, public-records flag, retention category.",
+        "Controlled lists for document type; validation pattern for parcel IDs.",
+        "Card-sort or tree-test with about ten staff; measure filing agreement and search success.",
+        "Plan for migrating legacy folders with automated suggestions plus manual review."
       ]
     },
     {
       "practice_id": "11.0401-P2",
       "cip_code": "11.0401",
+      "tier": "authored",
       "onet_soc_code": "15-1252.00",
       "occupation_title": "Software Developers",
       "onet_task_id": 21661,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-1252.00",
-      "activity_type": "analyze",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "Mathematics"
-      ],
-      "skill_element": "Critical Thinking",
+      "format": "system recommendation memo",
+      "task_intent": "Study the available information to decide whether to install a new system or change an existing one, then recommend and plan that work.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 21661 for `15-1252.00` (Software Developers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1252.00). Pick a realistic small case on this theme (public data or a clearly labeled invented scenario) and write a one-page analysis: the question, the evidence used, the method, and a recommendation. Show where Computers and Electronics and Mathematics knowledge shaped the reasoning.",
+      "prompt": "DreamCo-original practice prompt. A regional food co-op tracks member volunteer hours in a spreadsheet shared by five coordinators; hours are lost, duplicate member records exist, and the board wants monthly reports. Gather what you would need to know and write a recommendation memo: current-state problems, three options (fix the spreadsheet with structure and validation, adopt an off-the-shelf volunteer tool, or build a small web app), a comparison on cost, effort, data quality and maintenance, your recommendation, and a rollout plan for the chosen option.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 21661 for 15-1252.00 (grader checks against the O*NET task statement).",
+          "criterion": "Current-state analysis",
+          "description": "Problems are traced to causes (no unique member ID, free-text entry, concurrent editing) using evidence the student says they would collect.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and Mathematics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Fair option comparison",
+          "description": "Options are compared on consistent criteria including who maintains the solution after the student leaves.",
           "points": 2
         },
         {
-          "criterion": "Reasoning",
-          "description": "evidence, method, and recommendation connect, and limitations are stated.",
+          "criterion": "Actionable plan",
+          "description": "The recommendation includes data cleanup, migration, training and a check that reports match after cutover.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Interview coordinators and sample the sheet to count duplicates and gaps.",
+        "Option table: cost, setup time, data validation, reporting, maintenance burden, privacy.",
+        "Likely recommendation: an off-the-shelf tool or structured form plus database, since a custom build has no long-term maintainer.",
+        "Migration: deduplicate members on name plus email, import historical hours, reconcile totals.",
+        "Train coordinators; run the old and new systems in parallel for one month."
       ]
     },
     {
       "practice_id": "11.0401-P3",
       "cip_code": "11.0401",
+      "tier": "authored",
       "onet_soc_code": "15-1255.00",
       "occupation_title": "Web and Digital Interface Designers",
       "onet_task_id": 21686,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-1255.00",
-      "activity_type": "communicate",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "English Language"
-      ],
-      "skill_element": "Active Listening",
+      "format": "handoff and collaboration plan",
+      "task_intent": "Work with front-end and back-end developers so a website project is delivered completely.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 21686 for `15-1255.00` (Web and Digital Interface Designers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1255.00). Write a 5-minute briefing or role-play script for a conversation with a colleague or client on this theme: key message, two likely questions with answers, and an agreed next step. Use Computers and Electronics and English Language.",
+      "prompt": "DreamCo-original practice prompt. You designed the new course-catalog website for a community college: search with filters, course detail pages, and a 'plan my semester' view. Two front-end developers and one back-end developer start building next week. Write the collaboration plan: what you hand off (components, states, responsive breakpoints, accessibility notes), which decisions you need from the back-end developer (search API fields, response times), how design questions get answered during the build, and how you review the built pages against the design.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 21686 for 15-1255.00 (grader checks against the O*NET task statement).",
+          "criterion": "Complete handoff",
+          "description": "Handoff covers interaction states (empty, loading, error), responsive behavior and accessibility, not just static mockups.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Cross-role dependencies",
+          "description": "Identifies what design needs from the back end (data fields, filter values, pagination) and flags design choices that affect performance.",
           "points": 2
         },
         {
-          "criterion": "Active Listening",
-          "description": "the message is clear, questions are anticipated, and the next step is concrete.",
+          "criterion": "Review loop",
+          "description": "Defines a regular review routine with acceptance criteria for design fidelity and accessibility.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Component inventory with states and tokens (colors, spacing, type) in a shared design file.",
+        "Breakpoints for phone, tablet and desktop; keyboard and screen-reader notes for filters.",
+        "Questions for back end: which fields are searchable, filter counts, latency target, handling of sections with no seats.",
+        "Twice-weekly design check-ins and a shared question log with owners.",
+        "Review each page against acceptance criteria, including WCAG contrast and focus order."
       ]
     },
     {
       "practice_id": "11.0401-P4",
       "cip_code": "11.0401",
-      "onet_soc_code": "15-1243.00",
-      "occupation_title": "Database Architects",
-      "onet_task_id": 16102,
+      "tier": "authored",
+      "onet_soc_code": "15-1299.03",
+      "occupation_title": "Document Management Specialists",
+      "onet_task_id": 16231,
       "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/15-1243.00",
-      "activity_type": "plan",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "Engineering and Technology"
-      ],
-      "skill_element": "Critical Thinking",
+      "onet_task_url": "https://www.onetonline.org/link/summary/15-1299.03",
+      "format": "needs assessment plan",
+      "task_intent": "Find out what document-management capabilities a department or its users actually need.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 16102 for `15-1243.00` (Database Architects); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1243.00). Write a two-week plan for carrying out this theme on a small project: steps, roles, timeline, risks, and how progress is tracked. Apply Computers and Electronics and Engineering and Technology.",
+      "prompt": "DreamCo-original practice prompt. A hospital's research office wants a document-management system for study protocols, consent-form versions, and regulatory correspondence; three research teams currently use email attachments and personal drives. Write a needs-assessment plan and a sample findings summary: who you will talk to, the questions you will ask, which existing documents you will inventory, how you will capture compliance needs (version control, audit trail, retention), and a prioritized list of requirements written as clearly invented example findings.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 16102 for 15-1243.00 (grader checks against the O*NET task statement).",
+          "criterion": "Right stakeholders",
+          "description": "Includes coordinators, investigators, regulatory staff, IT and records management, not only managers.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and Engineering and Technology concepts are applied accurately and specifically, not just named.",
+          "criterion": "Method",
+          "description": "Combines interviews, a document inventory, and observation of a real workflow such as a consent-form amendment.",
           "points": 2
         },
         {
-          "criterion": "Feasibility",
-          "description": "steps, timeline, and risks are realistic and progress is trackable.",
+          "criterion": "Prioritized requirements",
+          "description": "Findings are written as testable requirements and ranked by risk and frequency; example findings are labeled as invented.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Stakeholder list and a 30-minute interview guide on current workflow, pain points and must-not-lose items.",
+        "Inventory of document types, volume, and where the authoritative version lives.",
+        "Compliance needs: version history, approval trail, controlled access, retention schedule.",
+        "Requirements such as: only the current approved consent version can be downloaded for enrollment.",
+        "Ranked by risk (regulatory findings) and frequency of use."
       ]
     },
     {
       "practice_id": "11.0401-P5",
       "cip_code": "11.0401",
+      "tier": "authored",
       "onet_soc_code": "15-1252.00",
       "occupation_title": "Software Developers",
       "onet_task_id": 21667,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-1252.00",
-      "activity_type": "design",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "Mathematics"
-      ],
-      "skill_element": "Critical Thinking",
+      "format": "design document with model",
+      "task_intent": "Design, build and change software systems, relying on quantitative models and analysis to forecast how a design will behave.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 21667 for `15-1252.00` (Software Developers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1252.00). Produce a short design or build plan for a small deliverable on this theme: requirements, two alternatives considered, the choice and why, and how you would check that it works. Draw on Computers and Electronics and Mathematics.",
+      "prompt": "DreamCo-original practice prompt. A university wants a notification service that texts students when a seat opens in a full course section. Write a short design document: the components (enrollment feed, waitlist store, notifier, rate limiter), a simple queueing or load model that estimates peak messages per minute during registration week from stated assumptions, how that estimate drives design choices, and how you would measure in production whether the model was right.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 21667 for 15-1252.00 (grader checks against the O*NET task statement).",
+          "criterion": "Coherent design",
+          "description": "Components and data flow are clear, including how duplicate or stale notifications are prevented.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and Mathematics concepts are applied accurately and specifically, not just named.",
+          "criterion": "Quantitative model",
+          "description": "The load estimate uses stated assumptions (students, sections, open-seat events per hour) and the arithmetic is shown and plausible.",
           "points": 2
         },
         {
-          "criterion": "Design quality",
-          "description": "requirements are testable and the choice between alternatives is justified.",
+          "criterion": "Model validation",
+          "description": "Plans to compare predicted and observed load and adjust capacity or design if they diverge.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Event-driven design: enrollment change triggers a check of the waitlist and queues notifications.",
+        "Assumptions such as 20,000 students and 3,000 full sections, with a peak of seat changes in the first hour; computes messages per minute.",
+        "Result drives queue size, SMS provider rate limit and batching.",
+        "Idempotency key per student and section to avoid duplicate texts; expiry if the seat is taken.",
+        "Dashboards on queue depth and send rate; compare with the model after the first registration day."
       ]
     },
     {
       "practice_id": "11.0401-P6",
       "cip_code": "11.0401",
+      "tier": "authored",
       "onet_soc_code": "15-1255.00",
       "occupation_title": "Web and Digital Interface Designers",
       "onet_task_id": 21713,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/15-1255.00",
-      "activity_type": "document",
-      "knowledge_elements": [
-        "Computers and Electronics",
-        "English Language"
-      ],
-      "skill_element": "Writing",
+      "format": "user guide and test protocol",
+      "task_intent": "Write and edit technical documents for digital interface designs, such as user guides, test protocols and reports.",
+      "task_intent_note": "DreamCo paraphrase of the cited O*NET task's purpose, in original wording; not O*NET text.",
       "label": "DreamCo-original practice prompt",
+      "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
-      "prompt": "DreamCo-original practice prompt. Theme: O*NET task 21713 for `15-1255.00` (Web and Digital Interface Designers); read the task statement on O*NET OnLine (https://www.onetonline.org/link/summary/15-1255.00). Draft the work document this theme calls for (report, record, or brief) for a named audience, then add a short note on what you would verify before it is used. Apply Computers and Electronics and English Language.",
+      "prompt": "DreamCo-original practice prompt. Your team redesigned the online form residents use to request a bulky-trash pickup from the city. Write two short documents: (1) a one-page help guide for residents, written at about an eighth-grade reading level and available in plain language for translation, and (2) a usability-test protocol for five participants that names the tasks, what you will observe, success criteria and how findings will be reported to the development team.",
       "rubric": [
         {
-          "criterion": "Task alignment",
-          "description": "The response addresses the work activity of O*NET task 21713 for 15-1255.00 (grader checks against the O*NET task statement).",
+          "criterion": "Plain, accurate guide",
+          "description": "The help guide matches the form's steps, uses plain language and short sentences, and covers common errors.",
           "points": 2
         },
         {
-          "criterion": "Knowledge use",
-          "description": "Computers and Electronics and English Language concepts are applied accurately and specifically, not just named.",
+          "criterion": "Usable test protocol",
+          "description": "Tasks are realistic, success criteria are observable, and the protocol includes consent and a think-aloud script.",
           "points": 2
         },
         {
-          "criterion": "Communication",
-          "description": "accurate, organized, suited to the named audience, with verification needs flagged.",
+          "criterion": "Reporting",
+          "description": "Explains how findings are ranked by severity and turned into specific fixes for developers.",
           "points": 2
         }
+      ],
+      "reference_answer_outline": [
+        "Guide: what items qualify, step-by-step with screenshots placeholders, what happens after submitting, how to change a request.",
+        "Readability check with a standard formula; avoid idioms to ease translation.",
+        "Test tasks: request pickup for a couch, change the date, find out why a mattress is rejected.",
+        "Measures: task completion, time, errors, and post-task ease rating.",
+        "Report: severity-ranked issues, each with evidence and a recommended change."
       ]
     }
   ]

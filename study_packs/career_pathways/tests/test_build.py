@@ -143,7 +143,7 @@ def test_practice_tasks_reference_real_tasks_of_linked_occupations():
         assert task_soc[t["onet_task_id"]] == t["onet_soc_code"], t["practice_id"]
         assert t["onet_soc_code"] in linked[t["cip_code"]], t["practice_id"]
         assert t["label"] == "DreamCo-original practice prompt" and t["prompt"].startswith("DreamCo-original practice prompt")
-        assert len(t["rubric"]) == 3
+        assert len(t["rubric"]) == 3 and all(c["criterion"] and len(c["description"]) > 30 and c["points"] == 2 for c in t["rubric"])
         assert task_text[t["onet_task_id"]] not in t["prompt"]  # O*NET task text is referenced, not reproduced
     assert set(per) == set(linked)
     for cip, items in per.items():
@@ -152,3 +152,120 @@ def test_practice_tasks_reference_real_tasks_of_linked_occupations():
     for t in pt:
         assert f"O*NET task {t['onet_task_id']}" in plans[t["cip_code"]]
         assert task_text[t["onet_task_id"]] not in plans[t["cip_code"]]
+
+
+AUTHORSHIP = "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed"
+
+
+def _tok(s):
+    return re.findall(r"[a-z0-9]+", str(s).lower())
+
+
+def _grams(s, n=5):
+    w = _tok(s)
+    return {tuple(w[i:i + n]) for i in range(len(w) - n + 1)}
+
+
+@pytest.fixture(scope="module")
+def onet_text_grams():
+    """Every 5-word run in any O*NET 31.0 task statement, Job Zone reference text, or occupation description."""
+    g = set()
+    for t in pd.read_csv(ROOT/"raw/task_statements.csv")["Task"]:
+        g |= _grams(t)
+    jz = pd.read_csv(ROOT/"raw/job_zone_reference.csv")
+    for c in ["Name", "Experience", "Education", "Job Training", "Examples"]:
+        for t in jz[c]:
+            g |= _grams(t)
+    for t in pd.read_csv(ROOT/"raw/occupation_data.csv")["Description"]:
+        g |= _grams(t)
+    return g
+
+
+def test_authored_practice_tasks_are_fully_original(onet_text_grams):
+    """No run of 5+ words from any O*NET task statement, Job Zone text or occupation description in authored fields."""
+    pt = json.loads((ROOT/"data/practice_tasks.json").read_text())["tasks"]
+    authored = [t for t in pt if t.get("tier") == "authored"]
+    assert authored
+    for t in authored:
+        fields = [t["task_intent"], t["prompt"], *t["reference_answer_outline"]]
+        fields += [c["criterion"] + " " + c["description"] for c in t["rubric"]]
+        for f in fields:
+            hit = _grams(f) & onet_text_grams
+            assert not hit, (t["practice_id"], [" ".join(h) for h in hit])
+
+
+def test_plan_text_has_no_onet_text_runs(onet_text_grams):
+    """Whole plan files, after removing O*NET occupation titles (attributed O*NET data shown as titles), contain no
+    5-word run of O*NET task, Job Zone or occupation-description text."""
+    titles = sorted(pd.read_csv(ROOT/"raw/occupation_data.csv")["Title"], key=len, reverse=True)
+    for p in PLANS:
+        t = p.read_text()
+        for ti in titles:
+            t = t.replace(ti, " | ")
+        hit = _grams(t) & onet_text_grams
+        assert not hit, (p.name, [" ".join(h) for h in list(hit)[:5]])
+
+
+def test_authored_sources_match_outputs():
+    src = json.loads((ROOT/"authored/practice_tasks_authored.json").read_text())
+    assert src["authorship"] == AUTHORSHIP
+    by_id = {t["practice_id"]: t for t in src["tasks"]}
+    pt = json.loads((ROOT/"data/practice_tasks.json").read_text())["tasks"]
+    authored = [t for t in pt if t.get("tier") == "authored"]
+    assert len(authored) == len(by_id) == 162
+    for t in authored:
+        a = by_id[t["practice_id"]]
+        assert (a["onet_soc_code"], a["onet_task_id"]) == (t["onet_soc_code"], t["onet_task_id"])
+        assert t["prompt"] == "DreamCo-original practice prompt. " + a["prompt"]
+        assert t["rubric"] == a["rubric"] and t["reference_answer_outline"] == a["reference_answer_outline"]
+        assert t["authorship"] == AUTHORSHIP and len(t["reference_answer_outline"]) >= 3
+    prompts = [t["prompt"] for t in authored]
+    assert len(set(prompts)) == len(prompts)  # no shared template text between tasks
+
+
+def test_target_overrides_are_documented_and_applied():
+    tov = json.loads((ROOT/"authored/target_overrides.json").read_text())
+    majors = {m["cip"]: m for m in json.loads((ROOT/"data/majors_selected.json").read_text())}
+    authored = {c for c, m in majors.items() if m.get("tier") == "authored"}
+    assert authored == set(tov["overrides"]) | set(tov["reviewed_without_change"])  # every authored major reviewed
+    assert not set(tov["overrides"]) & set(tov["reviewed_without_change"])
+    for cip, o in tov["overrides"].items():
+        assert len(o["reason"]) > 40
+        m = majors[cip]
+        assert [t["soc"] for t in m["entry_targets"]] == o["targets"]
+        assert all(t["job_zone"] for t in m["entry_targets"])
+        assert m["entry_target_review"]["type"] == "override" and m["entry_target_review"]["reason"] == o["reason"]
+    cs = [t["soc"] for t in majors["11.0701"]["entry_targets"]]
+    assert "15-1252.00" in cs and "15-1243.00" not in cs  # Software Developers in, Database Architects out
+    cs_plan = (ROOT/"study_plans/11.0701_computer_science.md").read_text()
+    y4 = next(l for l in cs_plan.splitlines() if l.startswith("4. Year 4"))
+    assert "Software Developers" in y4 and "Database Architects" not in y4
+
+
+def test_outline_topics_are_per_major_authored():
+    topics = json.loads((ROOT/"authored/outline_topics.json").read_text())["majors"]
+    generic = set(build.KNOWLEDGE_STUDY.values()) | set(build.SKILL_PRACTICE.values())
+    for m in json.loads((ROOT/"data/majors_selected.json").read_text()):
+        if m.get("tier") != "authored":
+            continue
+        plan = next(p for p in PLANS if p.name.startswith(m["cip"] + "_")).read_text()
+        outline = plan.split("## 4-year outline", 1)[1].split("## Typical next steps", 1)[0]
+        for g in generic:
+            assert g not in outline, (m["cip"], g)
+        for kind in ("knowledge", "skills"):
+            for e, phrase in topics[m["cip"]][kind].items():
+                if f"{e} (" in outline:
+                    assert f"{e} ({phrase})" in outline, (m["cip"], e)
+    cs = topics["11.0701"]["knowledge"]
+    assert "CAD" not in " ".join(cs.values())
+
+
+def test_next_steps_cite_job_zone_numbers_without_quoting():
+    jz = pd.read_csv(ROOT/"raw/job_zone_reference.csv")
+    for p in PLANS:
+        t = p.read_text()
+        for c in ["Name", "Education", "Experience"]:
+            for txt in jz[c]:
+                assert txt not in t, (p.name, txt)
+        ns = t.split("## Typical next steps", 1)[1].split("## Practice tasks", 1)[0]
+        assert re.search(r"Job Zone (1-2|[345])", ns) and "O*NET describes" not in ns
