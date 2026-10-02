@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One wrapper per bootcamp step, until that user's own model is trained."""
+"""Bootcamp steps run on Buddy's own code. A wrapper is an extra option."""
 from __future__ import annotations
 
 import json
@@ -13,15 +13,16 @@ def assign(choices: dict, own_ready: dict | None = None) -> dict:
     rows = []
     for step in STEPS:
         if ready.get(step) is True:
-            rows.append({"step": step, "model": "your model", "wrapper": False, "called": False})
+            rows.append({"step": step, "model": "your model", "wrapper": False, "wrapper_needed": False, "called": False})
             continue
         choice = choices.get(step) or {}
         name = " ".join(str(choice.get("name") or "").split())
-        if choice.get("added_by_user") is True and choice.get("source") in SOURCES and name:
-            rows.append({"step": step, "model": name, "source": choice["source"], "wrapper": True, "called": False})
+        opted_in = choice.get("use_wrapper") is True and choice.get("added_by_user") is True and choice.get("source") in SOURCES and name
+        if opted_in:
+            rows.append({"step": step, "model": name, "source": choice["source"], "wrapper": True, "wrapper_needed": False, "called": False})
         else:
-            rows.append({"step": step, "model": "Buddy's own code", "wrapper": False, "called": False})
-    return {"steps": rows, "trained": False, "tested": False, "same_for_every_user": False}
+            rows.append({"step": step, "model": "Buddy's own code", "wrapper": False, "wrapper_needed": False, "called": False})
+    return {"steps": rows, "trained": False, "tested": False, "same_for_every_user": False, "wrapper_needed": False}
 
 
 def rank(step: str, notes: list[dict]) -> dict:
@@ -37,15 +38,17 @@ def rank(step: str, notes: list[dict]) -> dict:
 
 if __name__ == "__main__":
     made = assign({
-        "lesson": {"name": "open-teacher", "source": "huggingface", "added_by_user": True},
+        "lesson": {"name": "open-teacher", "source": "huggingface", "added_by_user": True, "use_wrapper": True},
         "score": {"name": "not-added", "source": "github", "added_by_user": False},
     }, {"practice": True})
     by_step = {row["step"]: row for row in made["steps"]}
-    assert by_step["lesson"]["model"] == "open-teacher" and by_step["lesson"]["called"] is False
+    assert by_step["lesson"]["model"] == "open-teacher" and by_step["lesson"]["called"] is False and by_step["lesson"]["wrapper_needed"] is False
     assert by_step["practice"]["model"] == "your model"
     assert by_step["score"]["model"] == "Buddy's own code"
-    assert by_step["sandbox"]["model"] != by_step["lesson"]["model"]
-    assert made["trained"] is False and made["tested"] is False
+    assert by_step["sandbox"]["model"] == "Buddy's own code"
+    assert made["trained"] is False and made["tested"] is False and made["wrapper_needed"] is False
+    plain = assign({"lesson": {"name": "open-teacher", "source": "huggingface", "added_by_user": True}})
+    assert plain["steps"][0]["model"] == "Buddy's own code" and plain["steps"][0]["wrapper"] is False
     assert rank("lesson", [])["best"] is None
     assert rank("lesson", [{"name": "open-teacher", "score": 80, "ran": True}])["best"] == "open-teacher"
-    print(json.dumps({"steps": len(made["steps"]), "tested": False}))
+    print(json.dumps({"steps": len(made["steps"]), "tested": False, "wrapper_needed": False}))
