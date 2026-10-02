@@ -84,6 +84,15 @@ async function verifyIdToken(provider: Provider, idToken: string, nonce: string)
   return claims;
 }
 
+export type BuddyAuthSession = { provider: Provider; sub: string; email?: string; name?: string; exp: number };
+
+/** Verified, unexpired Buddy sign-in session from the sealed HttpOnly cookie, or undefined. */
+export function readBuddyAuthSession(request: Request): BuddyAuthSession | undefined {
+  const session = unseal<BuddyAuthSession>(cookies(request)[COOKIE_SESSION]);
+  if (!session || !session.sub || !session.exp || session.exp <= Math.floor(Date.now() / 1000)) return undefined;
+  return session;
+}
+
 export function registerOAuthLoginRoutes(app: Express) {
   app.get("/api/auth/providers", (_request, response) => response.json({ providers: (Object.keys(providerConfig) as Provider[]).map((provider) => ({ provider, configured: configured(provider), callback_url: redirectBase() ? callback(provider) : null })), truth: "A provider is available only after its server-side credentials and exact callback URL are configured." }));
 
@@ -115,8 +124,8 @@ export function registerOAuthLoginRoutes(app: Express) {
   });
 
   app.get("/api/auth/session", (request, response) => {
-    const session = unseal<{ provider: Provider; sub: string; email?: string; name?: string; exp: number }>(cookies(request)[COOKIE_SESSION]);
-    if (!session || session.exp <= Math.floor(Date.now() / 1000)) return response.json({ authenticated: false });
+    const session = readBuddyAuthSession(request);
+    if (!session) return response.json({ authenticated: false });
     response.json({ authenticated: true, provider: session.provider, profile: { subject: session.sub, email: session.email, name: session.name } });
   });
   app.post("/api/auth/sign-out", (_request, response) => { clearCookie(response, COOKIE_SESSION); response.status(204).end(); });

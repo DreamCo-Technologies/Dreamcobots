@@ -26,6 +26,7 @@ import { batchProcessWithSSE } from "./provider_integrations/batch";
 import { registerAudioRoutes } from "./provider_integrations/audio";
 import { registerImageRoutes } from "./provider_integrations/image";
 import { registerOAuthLoginRoutes } from "./oauth-login";
+import { buddyModelAccessFrom, buddyModelRouteGate } from "./buddy-model-route-gate";
 import {
   connectionPlanRequestSchema,
   connectionStatusUpdateSchema,
@@ -66,6 +67,7 @@ import {
   runModelCatalogAudit,
 } from "./model-benchmark-policy";
 import {
+  BuddyModelAccessError,
   buddyModelSelectionRequestSchema,
   selectBuddyModelsForTask,
 } from "./buddy-model-policy";
@@ -806,7 +808,7 @@ export async function registerRoutes(
   });
 
   // ===== EXECUTABLE BOT FLEET =====
-  app.post("/api/buddy/route-capability", (req, res) => {
+  app.post("/api/buddy/route-capability", buddyModelRouteGate("plan"), (req, res) => {
     try {
       const request = buddyCapabilityRouteRequestSchema.parse(req.body);
       const result = getFleetRuntimeRegistry().routeCapability(request);
@@ -3332,15 +3334,15 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     res.status(201).json(createDeviceActionPlan(parsed.data));
   });
 
-  app.get("/api/buddy/model-benchmarks/catalog-audit", (_req, res) => {
+  app.get("/api/buddy/model-benchmarks/catalog-audit", buddyModelRouteGate("catalog"), (_req, res) => {
     res.json(runModelCatalogAudit());
   });
 
-  app.get("/api/buddy/models/encyclopedia", (_req, res) => {
+  app.get("/api/buddy/models/encyclopedia", buddyModelRouteGate("catalog"), (_req, res) => {
     res.json(getModelBenchmarkEncyclopedia());
   });
 
-  app.get("/api/buddy/models/connections", (_req, res) => {
+  app.get("/api/buddy/models/connections", buddyModelRouteGate("catalog"), (_req, res) => {
     res.json(getModelSourceConnectionAudit());
   });
 
@@ -3362,11 +3364,11 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     }
   });
 
-  app.get("/api/buddy/models/progress", (_req, res) => {
+  app.get("/api/buddy/models/progress", buddyModelRouteGate("catalog"), (_req, res) => {
     res.json(getModelProgressCenter());
   });
 
-  app.get("/api/buddy/models/council", (req, res) => {
+  app.get("/api/buddy/models/council", buddyModelRouteGate("selection"), (req, res) => {
     const parsed = modelCouncilRequestSchema.safeParse({
       taskCategory: req.query.taskCategory,
       mode: req.query.mode || "free",
@@ -3380,11 +3382,11 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     }
   });
 
-  app.get("/api/buddy/models/demand-ontology", (_req, res) => {
+  app.get("/api/buddy/models/demand-ontology", buddyModelRouteGate("catalog"), (_req, res) => {
     res.json(getDemandOntology());
   });
 
-  app.post("/api/buddy/models/demand-match", async (req, res) => {
+  app.post("/api/buddy/models/demand-match", buddyModelRouteGate("selection"), async (req, res) => {
     const killSwitch = await storage.getSetting("kill_switch");
     if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
       return res.status(423).json({ message: "Demand matching is locked by the kill switch" });
@@ -3392,23 +3394,28 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     const parsed = demandModelMatchRequestSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
     try {
-      return res.status(201).json(matchDemandReasonToModels(parsed.data));
+      return res.status(201).json(matchDemandReasonToModels(parsed.data, process.env, buddyModelAccessFrom(res)));
     } catch (error) {
       return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid demand match" });
     }
   });
 
-  app.post("/api/buddy/models/select", async (req, res) => {
+  app.post("/api/buddy/models/select", buddyModelRouteGate("selection"), async (req, res) => {
     const killSwitch = await storage.getSetting("kill_switch");
     if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
       return res.status(423).json({ message: "Model selection planning is locked by the kill switch" });
     }
     const parsed = buddyModelSelectionRequestSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
-    return res.status(201).json(selectBuddyModelsForTask(parsed.data));
+    try {
+      return res.status(201).json(selectBuddyModelsForTask(parsed.data, process.env, buddyModelAccessFrom(res)));
+    } catch (error) {
+      if (error instanceof BuddyModelAccessError) return res.status(403).json({ error: error.message, code: error.code });
+      throw error;
+    }
   });
 
-  app.post("/api/buddy/model-benchmarks/plan", async (req, res) => {
+  app.post("/api/buddy/model-benchmarks/plan", buddyModelRouteGate("plan"), async (req, res) => {
     const killSwitch = await storage.getSetting("kill_switch");
     if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
       return res.status(423).json({ message: "Model benchmark planning is locked by the kill switch" });
@@ -3422,7 +3429,7 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     }
   });
 
-  app.post("/api/buddy/models/improvement-plan", async (req, res) => {
+  app.post("/api/buddy/models/improvement-plan", buddyModelRouteGate("plan"), async (req, res) => {
     const killSwitch = await storage.getSetting("kill_switch");
     if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
       return res.status(423).json({ message: "Model improvement planning is locked by the kill switch" });
@@ -3436,7 +3443,7 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     }
   });
 
-  app.get("/api/buddy/open-model-lab/catalog", (_req, res) => {
+  app.get("/api/buddy/open-model-lab/catalog", buddyModelRouteGate("catalog"), (_req, res) => {
     res.json({
       ...OPEN_MODEL_CATALOG,
       liveModelsCalled: 0,
@@ -3535,7 +3542,7 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     }
   });
 
-  app.post("/api/buddy/open-model-lab/comparison-plan", async (req, res) => {
+  app.post("/api/buddy/open-model-lab/comparison-plan", buddyModelRouteGate("plan"), async (req, res) => {
     const killSwitch = await storage.getSetting("kill_switch");
     if ((killSwitch?.value as { enabled?: boolean } | undefined)?.enabled) {
       return res.status(423).json({ message: "Open-model comparison planning is locked by the kill switch" });
@@ -3627,7 +3634,7 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     }
   });
 
-  app.post("/api/buddy/open-secure-ai-defense/model-discovery-plan", async (req, res) => {
+  app.post("/api/buddy/open-secure-ai-defense/model-discovery-plan", buddyModelRouteGate("discovery_plan"), async (req, res) => {
     const parsed = modelDiscoveryPlanRequestSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
     try {
