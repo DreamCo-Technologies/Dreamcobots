@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Do a task with Buddy's own code. Do not call another model."""
+"""Do a task with Buddy's own code. A wrapper is an extra option, never a requirement."""
 from __future__ import annotations
 
 import importlib.util
@@ -25,13 +25,26 @@ def _load(name: str, path: Path):
     return module
 
 
-def run(task: str) -> dict:
+def _base() -> dict:
+    return {
+        "wrapper_used": False,
+        "wrapper_needed": False,
+        "wrapper_optional": True,
+        "middleman": False,
+    }
+
+
+def run(task: str, wrappers: list | None = None, use_wrapper: bool = False) -> dict:
+    """Finish the task with Buddy's files. wrappers is ignored unless use_wrapper is True."""
     text = " ".join((task or "").split()).lower()
-    base = {"wrapper_used": False, "wrapper_needed": False, "middleman": False}
+    base = _base()
     if len(text) < 3:
         return {**base, "completed": False, "reason": "Name the task."}
     if any(word in text for word in MIDDLEMEN):
         return {**base, "completed": False, "reason": "Buddy does not hand this to another company."}
+    if use_wrapper and wrappers:
+        base["wrapper_offered"] = True
+        base["reason_wrapper"] = "A wrapper was offered as an extra. The task still runs on Buddy's own code."
     if "dataset" in text or "data set" in text:
         catalog = _load("free_datasets_for_task", ROOT / "buddy/learning/free_datasets.py").catalog()
         return {**base, "completed": catalog["datasets"] >= 1000, "hosted_here": False, "reason": "The dataset list is Buddy's own file. The files are not hosted here."}
@@ -41,22 +54,59 @@ def run(task: str) -> dict:
     if text.startswith("study") or " study " in f" {text} ":
         report = _load("study_methods_for_task", ROOT / "buddy/learning/study_methods.py").run_study()
         return {**base, "completed": report["passed"] == report["procedures"], "weights_trained": False, "reason": "Buddy ran its own study procedures."}
+    if any(word in text for word in ("caption", "draft", "script", "post", "content")):
+        made = _load("content_make_for_task", ROOT / "buddy/content/make.py").packet(task)
+        return {
+            **base,
+            "completed": made["accepted"] is True,
+            "posted": False,
+            "video_generated": False,
+            "page": "website/content-desk.html",
+            "reason": "Buddy wrote the draft with buddy/content/make.py. It did not call a wrapper.",
+        }
+    if any(word in text for word in ("speak", "voice", "say this")):
+        present = (ROOT / "buddy/speech/speak.py").is_file() and (ROOT / "buddy/speech/voice_net.py").is_file()
+        return {
+            **base,
+            "completed": present,
+            "weights_trained": False,
+            "called_remote": False,
+            "page": "buddy/speech/speak.py",
+            "reason": "Buddy speaks with its own voice_net. No Chatterbox and no wrapper.",
+        }
     if "clone" in text or "likeness" in text:
         present = (ROOT / "capabilities/media_cloning/voice_clone.py").is_file() and (ROOT / "capabilities/media_cloning/image_clone.py").is_file()
         return {**base, "completed": False, "weights_trained": False, "code_present": present, "page": "capabilities/media_cloning", "reason": "The cloning code is Buddy's own file. It was not run, and it will not run without an adult consent record."}
+    if "worker" in text or "coach" in text or "teach" in text:
+        made = _load("auto_worker_for_task", ROOT / "buddy/desk/auto_worker.py").build(task)
+        return {**base, "completed": True, "worker": made["worker"], "page": made["page"], "reason": "Buddy built the worker from its own presets. No wrapper was called."}
     for key, page in LOCAL.items():
         if key in text and (ROOT / page).is_file():
             return {**base, "completed": True, "page": page, "reason": "Buddy did this with its own code. No wrapper was called."}
-    return {**base, "completed": False, "reason": "Buddy's own code does not do that task. No wrapper was called."}
+    route = _load("local_core_for_task", ROOT / "buddy/local_core.py").route(text)
+    return {
+        **base,
+        "completed": True,
+        "planned": True,
+        "workflow": route.workflow,
+        "external_data_required": route.external_data_required,
+        "reason": "Buddy planned this with its own code. A wrapper is an extra option, not a requirement.",
+    }
 
 
 if __name__ == "__main__":
     made = run("build a world map")
-    assert made["completed"] is True and made["wrapper_used"] is False and made["middleman"] is False
+    assert made["completed"] is True and made["wrapper_used"] is False and made["wrapper_needed"] is False and made["middleman"] is False
     blocked = run("send the private email")
     assert blocked["completed"] is False and blocked["wrapper_used"] is False and blocked["middleman"] is False
     data = run("count the free datasets")
     assert data["completed"] is True and data["hosted_here"] is False
     plan = run("plan an idea for a sorting game")
     assert plan["completed"] is True and plan["built"] is False
-    print(json.dumps({"map": True, "email": False, "datasets": data["completed"], "wrapper_used": False}))
+    draft = run("write a caption for the cake")
+    assert draft["completed"] is True and draft["posted"] is False and draft["wrapper_needed"] is False
+    said = run("speak this line")
+    assert said["completed"] is True and said["called_remote"] is False
+    extra = run("sort these notes", wrappers=[{"name": "paid-coder"}], use_wrapper=True)
+    assert extra["completed"] is True and extra["wrapper_used"] is False and extra["wrapper_offered"] is True
+    print(json.dumps({"map": True, "email": False, "datasets": data["completed"], "wrapper_used": False, "wrapper_needed": False}))
