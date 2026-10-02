@@ -1,4 +1,6 @@
 name: Buddy 65 MasterBot Training Lanes
+# Schedule removed: 65-wide matrix collided with keep-green at 17 */6.
+# Run via workflow_dispatch until a daily lane is proven.
 on:
   workflow_dispatch:
   pull_request:
@@ -6,8 +8,6 @@ on:
       - '.github/workflows/buddy-65-masterbot-training.yml'
       - 'config/masterbot-65-registry.json'
       - 'tools/buddy_masterbot_training_lane.py'
-  schedule:
-    - cron: '17 */6 * * *'
 concurrency:
   group: buddy-65-masterbot-training
   cancel-in-progress: false
