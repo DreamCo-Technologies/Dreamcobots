@@ -1,10 +1,10 @@
 name: MasterBot Routing Audit
+# Schedule removed: collided with keep-green at 17 */6.
+# Path pull_request and workflow_dispatch still run this audit.
 on:
   pull_request:
     paths: ["config/masterbot-65-registry.json","config/masterbot-routing-rules.json","App_bots/**","bots/**","original-bots/**","website/data/bot-fleet/**","tools/masterbot_routing_audit.py"]
   workflow_dispatch:
-  schedule:
-    - cron: "17 */6 * * *"
 permissions:
   contents: read
 jobs:
