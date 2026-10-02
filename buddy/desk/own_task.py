@@ -41,7 +41,7 @@ def run(task: str, wrappers: list | None = None, use_wrapper: bool = False) -> d
     if len(text) < 3:
         return {**base, "completed": False, "reason": "Name the task."}
     if any(word in text for word in MIDDLEMEN):
-        return {**base, "completed": False, "reason": "Buddy does not hand this to another company."}
+        return {**base, "completed": False, "refused": True, "reason": "Buddy does not hand this to another company."}
     if use_wrapper and wrappers:
         base["wrapper_offered"] = True
         base["reason_wrapper"] = "A wrapper was offered as an extra. The task still runs on Buddy's own code."
@@ -76,7 +76,7 @@ def run(task: str, wrappers: list | None = None, use_wrapper: bool = False) -> d
         }
     if "clone" in text or "likeness" in text:
         present = (ROOT / "capabilities/media_cloning/voice_clone.py").is_file() and (ROOT / "capabilities/media_cloning/image_clone.py").is_file()
-        return {**base, "completed": False, "weights_trained": False, "code_present": present, "page": "capabilities/media_cloning", "reason": "The cloning code is Buddy's own file. It was not run, and it will not run without an adult consent record."}
+        return {**base, "completed": False, "needs_practice": True, "weights_trained": False, "code_present": present, "page": "capabilities/media_cloning", "reason": "The cloning code is Buddy's own file. It was not run, and it will not run without an adult consent record."}
     if "worker" in text or "coach" in text or "teach" in text:
         made = _load("auto_worker_for_task", ROOT / "buddy/desk/auto_worker.py").build(task)
         return {**base, "completed": True, "worker": made["worker"], "page": made["page"], "reason": "Buddy built the worker from its own presets. No wrapper was called."}
@@ -86,11 +86,12 @@ def run(task: str, wrappers: list | None = None, use_wrapper: bool = False) -> d
     route = _load("local_core_for_task", ROOT / "buddy/local_core.py").route(text)
     return {
         **base,
-        "completed": True,
+        "completed": False,
         "planned": True,
+        "needs_practice": True,
         "workflow": route.workflow,
         "external_data_required": route.external_data_required,
-        "reason": "Buddy planned this with its own code. A wrapper is an extra option, not a requirement.",
+        "reason": "Buddy can plan this, but it cannot do it yet. A wrapper is an extra option, not a requirement.",
     }
 
 
@@ -109,4 +110,6 @@ if __name__ == "__main__":
     assert said["completed"] is True and said["called_remote"] is False
     extra = run("sort these notes", wrappers=[{"name": "paid-coder"}], use_wrapper=True)
     assert extra["completed"] is True and extra["wrapper_used"] is False and extra["wrapper_offered"] is True
-    print(json.dumps({"map": True, "email": False, "datasets": data["completed"], "wrapper_used": False, "wrapper_needed": False}))
+    unknown = run("book a flight")
+    assert unknown["completed"] is False and unknown["needs_practice"] is True and unknown["wrapper_needed"] is False
+    print(json.dumps({"map": True, "email": False, "datasets": data["completed"], "unknown": unknown["needs_practice"], "wrapper_needed": False}))
