@@ -1,8 +1,9 @@
 name: 65 Division Benchmark Orchestrator
+# Cadence slowed from */30. The job only records a placeholder until a real runner is connected.
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "47 */6 * * *"
 permissions:
   contents: read
 concurrency:
