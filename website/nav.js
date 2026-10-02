@@ -1,6 +1,10 @@
 // DreamCo Empire OS — Shared Navigation
 (function() {
   const current = location.pathname.split('/').pop() || 'index.html';
+  // Absolute links: resolve every page against this script's own folder (/Dreamcobots/website/),
+  // so the nav works from the site root, from /website/*, and after a Pages-source switch.
+  const NAV_BASE = new URL('.', (document.currentScript && document.currentScript.src) || location.href).href;
+  const abs = (h) => /^(#|[a-z]+:|\/)/i.test(h) ? h : new URL(h, NAV_BASE).href;
   const links = [
     { href: 'repository-guide.html', label: '📚 Start Here' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
@@ -73,6 +77,10 @@
     { href: 'your-model.html', label: 'Their own model' },
     { href: 'buddy-desk.html', label: 'Buddy desk' },
     { href: 'frontier-path.html', label: 'Frontier path' },
+    { href: 'buddy-model-lab.html', label: '🧪 Local Model Lab' },
+    { href: 'truth-board.html', label: '✅ Truth Board' },
+    { href: 'benchmark-scanner.html', label: '📏 Benchmark Scanner' },
+    { href: 'benchmark-candidate-finder.html', label: '🔍 Benchmark Candidates' },
     { href: 'learning-methods.html', label: 'Learning methods' },
     { href: 'world-map.html', label: '3D world map' },
     { href: 'game-builder.html', label: 'Game builder' },
@@ -133,22 +141,22 @@
 <nav>
   <div class="container">
     <div class="nav-inner">
-      <a href="buddy.html" class="nav-brand">
+      <a href="${abs('buddy.html')}" class="nav-brand">
         <div class="nav-logo">⚡</div>
         <span>DreamCo <strong>Empire OS</strong></span>
       </a>
       <div class="nav-links" id="nav-links-desktop">
-        ${links.slice(0,9).map(l=>`<a href="${l.href}" class="${current===l.href?'nav-active':''}">${l.label}</a>`).join('')}
+        ${links.slice(0,9).map(l=>`<a href="${abs(l.href)}" class="${current===l.href?'nav-active':''}">${l.label}</a>`).join('')}
         <div class="nav-more">
           <a href="#" class="nav-more-btn" onclick="toggleMoreMenu(event)">More ▾</a>
           <div class="nav-more-menu" id="nav-more-menu">
-            ${links.slice(9).map(l=>`<a href="${l.href}" class="${current===l.href?'nav-active':''}">${l.label}</a>`).join('')}
+            ${links.slice(9).map(l=>`<a href="${abs(l.href)}" class="${current===l.href?'nav-active':''}">${l.label}</a>`).join('')}
           </div>
         </div>
       </div>
       <div class="nav-cta">
-        <a href="install.html" class="btn btn-outline btn-sm">Install</a>
-        <a href="buddy.html" class="btn btn-primary btn-sm">Open Buddy</a>
+        <a href="${abs('install.html')}" class="btn btn-outline btn-sm">Install</a>
+        <a href="${abs('buddy.html')}" class="btn btn-primary btn-sm">Open Buddy</a>
       </div>
     </div>
   </div>
@@ -157,24 +165,24 @@
   <div class="container">
     <strong>Repository preview</strong>
     <span>Generated inventory is real repository data. Revenue, payment, task, and autonomy screens are demos unless connected to an approved backend.</span>
-    <a href="system-map.html">View verified status</a>
+    <a href="${abs('system-map.html')}">View verified status</a>
   </div>
 </div>`;
   const placeholder = document.getElementById('nav-placeholder');
   if (placeholder) placeholder.outerHTML = navHTML;
 
   if (!document.querySelector('link[rel="icon"]')) {
-    const icon = document.createElement('link'); icon.rel = 'icon'; icon.href = 'assets/images/favicon.svg'; icon.type = 'image/svg+xml'; document.head.appendChild(icon);
+    const icon = document.createElement('link'); icon.rel = 'icon'; icon.href = abs('assets/images/favicon.svg'); icon.type = 'image/svg+xml'; document.head.appendChild(icon);
   }
   if (!document.querySelector('link[rel="manifest"]')) {
-    const manifest = document.createElement('link'); manifest.rel = 'manifest'; manifest.href = 'manifest.webmanifest'; document.head.appendChild(manifest);
+    const manifest = document.createElement('link'); manifest.rel = 'manifest'; manifest.href = abs('manifest.webmanifest'); document.head.appendChild(manifest);
   }
   if (!document.querySelector('link[rel="apple-touch-icon"]')) {
-    const touchIcon = document.createElement('link'); touchIcon.rel = 'apple-touch-icon'; touchIcon.href = 'assets/images/buddy-icon-192.png'; document.head.appendChild(touchIcon);
+    const touchIcon = document.createElement('link'); touchIcon.rel = 'apple-touch-icon'; touchIcon.href = abs('assets/images/buddy-icon-192.png'); document.head.appendChild(touchIcon);
   }
 
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    window.addEventListener('load', () => { navigator.serviceWorker.register('service-worker.js', { scope: './' }).catch(() => {}); });
+    window.addEventListener('load', () => { navigator.serviceWorker.register(abs('service-worker.js'), { scope: NAV_BASE }).catch(() => {}); });
   }
 
   const style = document.createElement('style');

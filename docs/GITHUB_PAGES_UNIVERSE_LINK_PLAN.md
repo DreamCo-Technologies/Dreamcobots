@@ -44,3 +44,12 @@ Each P0 product appears in: `website/nav.js` visible bar (first 9 links), `READM
 - `node --check website/nav.js`
 - every sitemap URL returns 200
 - no secrets or tokens in any Pages file
+
+## Update 2026-10-02: absolute nav and alignment with #9575 / #9576
+
+- `website/nav.js` now resolves every link, icon, manifest and service-worker path against the script's own folder, so links are absolute (`https://dreamco-technologies.github.io/Dreamcobots/website/<page>.html`) from the site root, from `/website/*`, and after any Pages-source switch.
+- Previously orphaned product pages are now in nav and sitemap: `buddy-model-lab.html`, `truth-board.html`, `benchmark-scanner.html`, `benchmark-candidate-finder.html` (all return 200 live).
+- #9575 (frontier claim trust gates) edits `deploy-buddy-pages.yml`, which does not publish the live site while Pages is legacy `main` `/`. Its gate only takes effect after the owner switches the source to GitHub Actions and keeps one publisher.
+- #9576 (OS observability tiles) edits `website/os.html` and `website/actions.html`. Both are already in nav, so nothing is orphaned and there is no file overlap with this PR.
+
+Still missing: a packages index page (Packages currently points at `hf-bootcamp.html`) and one gates page (Gates currently points at `autonomy.html`; `truth-board.html` and the #9575 frontier gate are separate).
