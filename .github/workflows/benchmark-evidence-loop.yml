@@ -1,8 +1,8 @@
 name: Benchmark Evidence Loop
+# Schedule removed: collided with Actions Failure Sweep at 11 * * * *.
+# Run via workflow_dispatch or the path push below.
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "11 * * * *"
   push:
     paths:
       - "tools/run_daily_division_benchmarks.ts"
