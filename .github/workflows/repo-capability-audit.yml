@@ -1,9 +1,9 @@
 name: Repository Capability Audit
 
+# Schedule removed: collided with keep-green at 17 */6.
+# Run via workflow_dispatch or the path push below.
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "17 */6 * * *"
   push:
     branches: [main]
     paths:
