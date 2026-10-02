@@ -14,12 +14,15 @@ on:
       - "tools/build_universal_api_task_sandbox.py"
       - "tools/run_safe_self_repair.py"
       - "tests/test_offline_generator_universal_sandbox.py"
+      - "tools/build_fleet_status.py"
       - ".github/workflows/self-working-system.yml"
   schedule:
     - cron: "29 9 * * *"
 
 permissions:
   contents: read
+  pull-requests: read
+  actions: read
 
 concurrency:
   group: self-working-system-${{ github.ref }}
@@ -54,6 +57,19 @@ jobs:
         run: python3 tools/run_safe_self_repair.py
       - name: Run local-first health check
         run: python3 tools/buddy_local_repository.py check
+      - name: Generate fleet status report
+        if: always()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if [ -f tools/build_fleet_status.py ]; then
+            python3 tools/build_fleet_status.py
+            cat reports/FLEET_STATUS.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::notice::tools/build_fleet_status.py not present; skipping FLEET_STATUS.md"
+          fi
       - name: Save local-equivalent evidence
         if: always()
         uses: actions/upload-artifact@v6
@@ -65,5 +81,6 @@ jobs:
             config/generated/full-potential-sandbox-catalog.json
             config/generated/bot-sandbox-curriculum.json
             config/generated/council-bot-career-paths.json
+            reports/FLEET_STATUS.md
           if-no-files-found: warn
           retention-days: 7
