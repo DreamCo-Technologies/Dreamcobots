@@ -20,6 +20,13 @@ def names_urls(path: Path) -> tuple[set[str], set[str]]:
 
 def main() -> int:
     old_names, old_urls = names_urls(OLD)
+    # Compare against every other study-resource set, not only 001-100.
+    for other in sorted((ROOT / "config").glob("buddy-study-resources-*.json")):
+        if other == NEW:
+            continue
+        n, u = names_urls(other)
+        old_names |= n
+        old_urls |= u
     new = json.loads(NEW.read_text(encoding="utf-8"))
     rows = new["resources"]
     if len(rows) != 100:
@@ -27,6 +34,9 @@ def main() -> int:
     ids = [row[0] for row in rows]
     if ids != list(range(1001, 1101)):
         raise SystemExit("ids must be 1001-1100")
+    short = [row[0] for row in rows if len(row) < 6]
+    if short:
+        raise SystemExit(f"rows missing practice_method (need 6 fields): {short}")
     new_names, new_urls = names_urls(NEW)
     name_hits = sorted(old_names & new_names)
     url_hits = sorted(old_urls & new_urls)
