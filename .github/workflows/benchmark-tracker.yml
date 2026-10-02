@@ -1,11 +1,11 @@
 name: Benchmark Tracker
 
+# Schedule removed: collided with dreamco-core-health at 17 5 * * *.
+# Push, pull_request, and workflow_dispatch still run this tracker.
 on:
   push:
   pull_request:
   workflow_dispatch:
-  schedule:
-    - cron: '17 5 * * *'
 
 permissions:
   contents: read
