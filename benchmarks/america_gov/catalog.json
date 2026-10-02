@@ -17,7 +17,8 @@
     "chat_retention": "Conversations are not stored. Answers may be cached up to two hours.",
     "executive_order": "https://www.whitehouse.gov/presidential-actions/2026/09/streamlining-access-to-government-services-through-america-gov/",
     "covered_services": "Public-facing federal services used by more than 100,000 people in 12 months that can be accessed online.",
-    "exclusions": ["IRS tax filing", "Department of War", "Intelligence Community"]
+    "exclusions": [],
+    "personal_bot": "Citizen-facing IRS, Department of War, and Intelligence Community services are offered here as public guidance. America.gov still excludes them. Classified and operational requests are refused."
   },
   "resources": [
     {
@@ -178,9 +179,27 @@
       "name": "Internal Revenue Service",
       "url": "https://www.irs.gov",
       "owner": "Internal Revenue Service",
-      "kind": "excluded_agency",
+      "kind": "agency",
       "live_actions": false,
-      "note": "Tax filing is excluded from America.gov covered services."
+      "note": "Public citizen tax help. America.gov excludes filing. This personal bot gives official guidance and does not submit a return."
+    },
+    {
+      "id": "department_of_war_public",
+      "name": "Department of War public citizen services",
+      "url": "https://www.war.gov",
+      "owner": "Department of War",
+      "kind": "agency",
+      "live_actions": false,
+      "note": "Public records, benefits, and recruiting only. Not operational or classified."
+    },
+    {
+      "id": "intelligence_community_public",
+      "name": "Intelligence Community public citizen services",
+      "url": "https://www.intelligence.gov",
+      "owner": "Office of the Director of National Intelligence",
+      "kind": "agency",
+      "live_actions": false,
+      "note": "Public careers, reports, and FOIA only. Not classified access."
     }
   ],
   "services": [
@@ -388,41 +407,43 @@
     },
     {
       "id": "irs_tax_filing",
-      "name": "IRS tax filing",
-      "phase": "excluded",
-      "status": "excluded",
+      "name": "IRS tax filing help",
+      "phase": "phase_1_info",
+      "status": "information",
       "sandbox": true,
-      "probe": "File my taxes",
-      "exclusion_reason": "The America.gov order excludes IRS tax-filing services.",
-      "citations": ["https://www.whitehouse.gov/presidential-actions/2026/09/streamlining-access-to-government-services-through-america-gov/", "https://www.irs.gov"],
+      "probe": "How do I file my taxes?",
+      "audience": "all_citizens",
+      "citations": ["https://www.irs.gov/filing", "https://www.irs.gov/filing/free-file-do-your-federal-taxes-for-free"],
       "guidance": {
-        "en": "Tax filing is excluded. Use IRS.gov or an authorized tax provider. This sandbox will not file a return."
+        "en": "Citizens file on IRS.gov, through IRS Free File when eligible, or with an authorized provider. This personal bot explains the public steps and does not submit a return or store a Social Security number.",
+        "es": "Los ciudadanos presentan en IRS.gov, por IRS Free File si califican, o con un proveedor autorizado. Este bot personal no envia la declaracion.",
+        "fr": "Les citoyens declarent sur IRS.gov, via IRS Free File si eligible, ou avec un prestataire autorise. Ce bot personnel n'envoie pas la declaration."
       }
     },
     {
       "id": "department_of_war",
-      "name": "Department of War services",
-      "phase": "excluded",
-      "status": "excluded",
+      "name": "Department of War public services",
+      "phase": "phase_1_info",
+      "status": "information",
       "sandbox": true,
-      "probe": "Access Department of War services",
-      "exclusion_reason": "The order excludes Department of War services.",
-      "citations": ["https://www.whitehouse.gov/presidential-actions/2026/09/streamlining-access-to-government-services-through-america-gov/"],
+      "probe": "How do I get my military records?",
+      "audience": "all_citizens",
+      "citations": ["https://www.archives.gov/veterans/military-service-records", "https://www.war.gov"],
       "guidance": {
-        "en": "Department of War services are excluded from America.gov. This sandbox will not route them."
+        "en": "Citizens can request military service records from the National Archives and read public benefits or recruiting pages. This bot does not access operational systems or classified material."
       }
     },
     {
       "id": "intelligence_community",
-      "name": "Intelligence Community services",
-      "phase": "excluded",
-      "status": "excluded",
+      "name": "Intelligence Community public services",
+      "phase": "phase_1_info",
+      "status": "information",
       "sandbox": true,
-      "probe": "Access intelligence community services",
-      "exclusion_reason": "The order excludes Intelligence Community services.",
-      "citations": ["https://www.whitehouse.gov/presidential-actions/2026/09/streamlining-access-to-government-services-through-america-gov/"],
+      "probe": "How do I find public intelligence careers and reports?",
+      "audience": "all_citizens",
+      "citations": ["https://www.intelligence.gov", "https://www.intelligencecareers.gov"],
       "guidance": {
-        "en": "Intelligence Community services are excluded from America.gov. This sandbox will not route them."
+        "en": "Citizens can use public career pages, unclassified reports, and FOIA or privacy offices. This bot does not provide classified access, operational plans, or surveillance."
       }
     },
     {

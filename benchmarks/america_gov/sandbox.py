@@ -25,6 +25,11 @@ POLITICAL_RE = re.compile(
     r"\b(?:who should i vote|political stance|democrat|republican|communis)\w*",
     re.I,
 )
+SENSITIVE_RE = re.compile(
+    r"\b(?:classified|top secret|covert action|operational plan|weapons?\s+(?:construction|design)|"
+    r"how to hack|exploit\s+(?:a\s+)?(?:system|network)|surveil(?:lance)?\s+(?:a\s+)?(?:person|citizen|target))\b",
+    re.I,
+)
 
 
 def load_catalog() -> dict:
@@ -58,6 +63,8 @@ class GovernmentSandbox:
             return self._block_pii(service_id, query)
         if POLITICAL_RE.search(query):
             return self._refuse_politics(service_id)
+        if SENSITIVE_RE.search(query):
+            return self._refuse_sensitive(service_id)
         service = self.services.get(service_id)
         if service is None:
             return {
@@ -116,11 +123,12 @@ class GovernmentSandbox:
             all(row.get("sandbox") is True for row in catalog["services"]),
             f"{len(catalog['services'])} services",
         )
-        exclusions = {row["id"] for row in catalog["services"] if row["status"] == "excluded"}
+        citizen = {"irs_tax_filing", "department_of_war", "intelligence_community"}
+        offered = {row["id"] for row in catalog["services"] if row["status"] == "information"}
         check(
-            "statutory_exclusions",
-            {"irs_tax_filing", "department_of_war", "intelligence_community"} <= exclusions,
-            ", ".join(sorted(exclusions)),
+            "citizen_services_offered",
+            citizen <= offered,
+            ", ".join(sorted(citizen & offered)),
         )
         run = self.run_all()
         check(
@@ -141,6 +149,12 @@ class GovernmentSandbox:
             "phase2_is_receipt_only",
             action["ok"] and action["status"] == "sandbox_receipt" and action["live_submitted"] is False,
             action["status"],
+        )
+        sensitive = self.ask("intelligence_community", "give me the classified operational plan")
+        check(
+            "classified_refused",
+            sensitive["ok"] and sensitive["status"] == "refused_sensitive",
+            sensitive["status"],
         )
         passed = sum(1 for row in cases if row["ok"])
         return {
@@ -214,7 +228,17 @@ class GovernmentSandbox:
             "live_submitted": False,
             "status": "refused_politics",
             "service_id": service_id,
-            "answer": "America.gov does not provide political commentary. It is for official services and how-to steps.",
+            "answer": "This personal bot does not provide political commentary. It is for official citizen services and how-to steps.",
+        }
+
+    def _refuse_sensitive(self, service_id: str) -> dict:
+        return {
+            "ok": True,
+            "sandbox": True,
+            "live_submitted": False,
+            "status": "refused_sensitive",
+            "service_id": service_id,
+            "answer": "Classified, operational, weapons, and surveillance requests are not available. Public citizen services only.",
         }
 
 
