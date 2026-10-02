@@ -1,11 +1,11 @@
 name: Buddy Preventive Engineering
 
+# Schedule removed: collided with keep-green at 17 */6.
+# Pull requests, pushes to main, and workflow_dispatch still run this gate.
 on:
   pull_request:
   push:
     branches: [main]
-  schedule:
-    - cron: "17 */6 * * *"
   workflow_dispatch:
 
 permissions:
