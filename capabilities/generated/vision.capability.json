@@ -1,0 +1,16 @@
+{
+  "capability_id": "vision.v1",
+  "name": "Vision",
+  "domain": "model_parity",
+  "sources": ["config/model-prospectus-benchmark-contract.json", "capabilities/generated/vision.capability.json"],
+  "prerequisites": [],
+  "objectives": ["Cover the vision dimension used to compare Buddy with other models", "Record a same-fixture result before calling the gap closed"],
+  "tasks": ["Run a vision fixture with Buddy's own code", "Score every user-approved model on the same fixture", "Keep the highest score without calling an untested model a winner"],
+  "benchmarks": ["Same fixture and rubric as the reference models", "Independent pass without a frontier model writing the answer", "Regression on the previous fixture"],
+  "sandbox_profile": "capability_parity_sandbox",
+  "mastery": {"threshold": 0.85, "independent_passes": 3, "transfer_required": true, "regression_required": true},
+  "safety_constraints": ["Do not mark this mastered without current passing evidence", "Do not copy a closed model's weights or output as the answer key", "A catalog entry is not a capability Buddy can already do"],
+  "automation_opportunities": [],
+  "monetization_opportunities": [],
+  "evidence": []
+}
