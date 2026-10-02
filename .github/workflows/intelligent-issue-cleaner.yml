@@ -1,11 +1,10 @@
 name: Intelligent Issue Cleaner
 
-# Processes up to 500 open issues every hour.
+# Schedule removed: collided with problem-registry at 17 * * * *.
 # Closes superseded auto-filed CI failure tickets; keeps newest signal per workflow.
+# Run via workflow_dispatch.
 
 on:
-  schedule:
-    - cron: "17 * * * *"
   workflow_dispatch:
     inputs:
       dry_run:
