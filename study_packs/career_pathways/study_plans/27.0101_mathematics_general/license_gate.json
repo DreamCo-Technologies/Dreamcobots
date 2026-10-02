@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-mg-27.0101",
-  "evaluated_at": "2026-10-02T17:46:53-05:00",
+  "evaluated_at": "2026-10-02T17:51:34-05:00",
   "inputs": {
     "target": "study_plans/27.0101_mathematics_general",
     "candidate_path": "study_plans/27.0101_mathematics_general/candidate.json",
     "candidate_sha256": "49840d63866df027a30eecc1c98c9b762046885157cefeb69387eae1a0a24e99",
     "provenance_path": "study_plans/27.0101_mathematics_general/provenance.json",
-    "provenance_sha256": "119720b44c84c20ca0fc31edf68d07d8563bb2674dab7c9a7b2291b4c1c30ba7",
+    "provenance_sha256": "3b0ee74f572aac824894e5b85fbd604f26e8e1b3a5f29647d970464108a92ddc",
     "asset_record_path": "study_plans/27.0101_mathematics_general/asset.json",
-    "asset_record_sha256": "481752d1fd762b3901941d0da52a289bf1e52ae7d9fad99da37e45ce0b00472f"
+    "asset_record_sha256": "92f8a40d33b8a31f463d1f66036bf695669b904ec29f8f9ee4dc66ed69c03301"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

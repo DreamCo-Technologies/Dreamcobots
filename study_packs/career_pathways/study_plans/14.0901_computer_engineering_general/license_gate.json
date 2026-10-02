@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-ceg-14.0901",
-  "evaluated_at": "2026-10-02T17:46:52-05:00",
+  "evaluated_at": "2026-10-02T17:51:34-05:00",
   "inputs": {
     "target": "study_plans/14.0901_computer_engineering_general",
     "candidate_path": "study_plans/14.0901_computer_engineering_general/candidate.json",
     "candidate_sha256": "d075d72b253fa6f2b8042c0ef581205c3d61dbd0373d0f9cd0dd8d92b574ca5c",
     "provenance_path": "study_plans/14.0901_computer_engineering_general/provenance.json",
-    "provenance_sha256": "f22a58cd35d9dd2b12a948feb1ceb0347b6490c02487f94eb7ccc2e9aad57a89",
+    "provenance_sha256": "541d5592d4618e3968ae1371d37e421aa861afa286f5e069e8355fb0503bfe9c",
     "asset_record_path": "study_plans/14.0901_computer_engineering_general/asset.json",
-    "asset_record_sha256": "17db1bd43201f544e8239aa8ba7cd84e7bf416103ae9f9422ae5f46f4b469513"
+    "asset_record_sha256": "a2a6ebe8999df2af5ed14dfe96eb59b01f6cda531dcd7d9ad085a04e0d1c1c65"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

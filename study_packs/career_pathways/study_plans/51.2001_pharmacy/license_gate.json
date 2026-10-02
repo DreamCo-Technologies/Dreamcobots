@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-p-51.2001",
-  "evaluated_at": "2026-10-02T17:46:53-05:00",
+  "evaluated_at": "2026-10-02T17:51:35-05:00",
   "inputs": {
     "target": "study_plans/51.2001_pharmacy",
     "candidate_path": "study_plans/51.2001_pharmacy/candidate.json",
     "candidate_sha256": "74e83d06ad3c28b84997b350eda54f0581f6b161ee3d908a54569896d5844d65",
     "provenance_path": "study_plans/51.2001_pharmacy/provenance.json",
-    "provenance_sha256": "495c8b223f6eecb8ff3c283c366965c9e1f15bdc83faa9055e133e3eaf58c3de",
+    "provenance_sha256": "7e07a353e9adffb786b2c17c3887876094a6f109de83d76926d3c93782a54450",
     "asset_record_path": "study_plans/51.2001_pharmacy/asset.json",
-    "asset_record_sha256": "18f45d94421e3044e57523db9cbec44697398299d40e1d3d3f08c1dfc979ef71"
+    "asset_record_sha256": "03316406dc278be74e4e21e782f05fc425a1fd999bda5d2ce28e26dacdd56485"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-pg-40.0801",
-  "evaluated_at": "2026-10-02T17:46:53-05:00",
+  "evaluated_at": "2026-10-02T17:51:34-05:00",
   "inputs": {
     "target": "study_plans/40.0801_physics_general",
     "candidate_path": "study_plans/40.0801_physics_general/candidate.json",
     "candidate_sha256": "2a48f5e034986177263475fc3c97e3c803277ced9e657a54922fc4e7261b310a",
     "provenance_path": "study_plans/40.0801_physics_general/provenance.json",
-    "provenance_sha256": "f047fdd33cd7a8a09fbfb7546954686c70a37aa04a9323ce899c761997038e81",
+    "provenance_sha256": "bb67f5262ebaa3565c0edcf2e0686466b603338a87ef662c48f0f47e3f637178",
     "asset_record_path": "study_plans/40.0801_physics_general/asset.json",
-    "asset_record_sha256": "d52239ca7e8ca8f437c8b3af910fe41c3f092f2fc68419ac9f8f1e8fbc9d8d69"
+    "asset_record_sha256": "92aeacef6594df11a3af007adcae7df4dd158040795eefb1c350799753762323"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

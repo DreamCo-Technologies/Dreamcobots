@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-me-14.1901",
-  "evaluated_at": "2026-10-02T17:46:53-05:00",
+  "evaluated_at": "2026-10-02T17:51:34-05:00",
   "inputs": {
     "target": "study_plans/14.1901_mechanical_engineering",
     "candidate_path": "study_plans/14.1901_mechanical_engineering/candidate.json",
     "candidate_sha256": "25d121579e57e0caf92fe26e54f6c7a6ce36a1c1eb9ff1047c00d07e2defbc95",
     "provenance_path": "study_plans/14.1901_mechanical_engineering/provenance.json",
-    "provenance_sha256": "9016b5f8dd2ef9b7f0102a9685e572cea5f812ae65b822cf713835d7abf4287e",
+    "provenance_sha256": "27418b8733851e9873f9aee38714156eae5257ad96e60c99a8e384c446036244",
     "asset_record_path": "study_plans/14.1901_mechanical_engineering/asset.json",
-    "asset_record_sha256": "5d72b0cf86916064ade6e6d551533d9c88656a3620ef080c9a9d248e6c180065"
+    "asset_record_sha256": "1b4efd19c2542a3014ccd686c4362ac15aef94805ee450ed32f5feb6be15cd76"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

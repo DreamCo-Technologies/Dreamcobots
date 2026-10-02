@@ -546,7 +546,8 @@ def asset_record(cip, title, stem, prov, entry, n_occs, excluded, review, eviden
 
 def linked_evidence(aid, integrity_hash):
     """Evidence records under data/dreamco_knowledge/evidence/<kind>/<asset_id>/ whose source_reference is this build's
-    integrity_hash (stale records from older builds are not linked)."""
+    integrity_hash, whose integrity_hash matches the sha256 of the sibling .results.json, and which passed
+    (stale, tampered or failing records are not linked)."""
     ev = {"sandbox": [], "benchmark": [], "holdout": [], "regression": []}
     for kind in ev:
         d = EVIDENCE / kind / aid
@@ -554,7 +555,10 @@ def linked_evidence(aid, integrity_hash):
             if f.name.endswith(".results.json"):
                 continue
             r = json.loads(f.read_text())
-            if r.get("source_reference") == integrity_hash and r.get("evidence_id") == f"{kind}:{aid}:{f.stem}":
+            res = f.with_name(f.stem + ".results.json")
+            res_ok = res.is_file() and r.get("integrity_hash") == "sha256:" + hashlib.sha256(res.read_bytes()).hexdigest()
+            if (r.get("source_reference") == integrity_hash and r.get("evidence_id") == f"{kind}:{aid}:{f.stem}"
+                    and res_ok and r.get("passed") is True):
                 ev[kind].append(r["evidence_id"])
     return ev
 

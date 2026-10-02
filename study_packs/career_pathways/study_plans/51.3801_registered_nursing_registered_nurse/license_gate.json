@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-rnrn-51.3801",
-  "evaluated_at": "2026-10-02T17:46:52-05:00",
+  "evaluated_at": "2026-10-02T17:51:34-05:00",
   "inputs": {
     "target": "study_plans/51.3801_registered_nursing_registered_nurse",
     "candidate_path": "study_plans/51.3801_registered_nursing_registered_nurse/candidate.json",
     "candidate_sha256": "6d304043baf605121807161e64bcc25f4ff96f8bc581400a4526ae59cef03136",
     "provenance_path": "study_plans/51.3801_registered_nursing_registered_nurse/provenance.json",
-    "provenance_sha256": "e48e6a7e96900a3df248c3b83f49abd97f6d9eefa08ff872d21aaa730c0824ab",
+    "provenance_sha256": "84cf07227fd4ef7055fae1efc7d9e3404089dcd464d011680ab5924cc6a329a3",
     "asset_record_path": "study_plans/51.3801_registered_nursing_registered_nurse/asset.json",
-    "asset_record_sha256": "d8a0320677fc6bc39e9522910ba0ff6310305dad35dddcd691bd8ea0a2be21a3"
+    "asset_record_sha256": "3ed3b3ae4ba245bc1032b8e7816846977e3926cfc73722f92a83a1203383ad2d"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

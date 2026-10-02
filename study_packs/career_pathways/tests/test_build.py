@@ -269,3 +269,70 @@ def test_next_steps_cite_job_zone_numbers_without_quoting():
                 assert txt not in t, (p.name, txt)
         ns = t.split("## Typical next steps", 1)[1].split("## Practice tasks", 1)[0]
         assert re.search(r"Job Zone (1-2|[345])", ns) and "O*NET describes" not in ns
+
+
+def evidence_schema():
+    for d in [ROOT.parents[1] / "config", pathlib.Path("/workspace/dp-merchant/config"), ROOT / "tests" / "schemas"]:
+        if (d / "evidence_provenance_schema.json").is_file():
+            return json.loads((d / "evidence_provenance_schema.json").read_text())
+
+
+def test_regression_evidence_records_are_real_and_linked():
+    """asset.json validation_evidence_ids has exactly sandbox/benchmark/holdout/regression; only regression is populated;
+    every regression id resolves to a record with the evidence-provenance fields whose integrity_hash is the sha256 of
+    its results file, whose source_reference is this asset's integrity_hash, and whose score is recomputable."""
+    sch = evidence_schema()
+    for p in PLANS:
+        asset = json.loads((sidecar(p) / "asset.json").read_text())
+        ev = asset["validation_evidence_ids"]
+        assert set(ev) == {"sandbox", "benchmark", "holdout", "regression"}
+        assert ev["sandbox"] == ev["benchmark"] == ev["holdout"] == [], "no independent sandbox/benchmark/holdout runs exist"
+        assert asset["machine_layer"] is not None and asset["dreamco_analysis"] is not None
+        if asset.get("tier", "authored") == "generated" and not ev["regression"]:
+            continue
+        assert ev["regression"], p.name
+        for eid in ev["regression"]:
+            kind, aid, run = eid.split(":")
+            assert kind == "regression" and aid == asset["asset_id"] and re.fullmatch(r"\d{8}-\d{2}", run)
+            rec_p = ROOT / "data/dreamco_knowledge/evidence" / kind / aid / f"{run}.json"
+            rec = json.loads(rec_p.read_text())
+            for f in sch["required_fields"] + ["split", "n_items", "metric", "score", "threshold", "passed"]:
+                assert rec.get(f) not in (None, ""), (eid, f)
+            assert rec["evidence_id"] == eid
+            assert rec["source_type"] in sch["source_types"] and rec["source_type"] == "dreamco_experiment"
+            assert rec["transformation"] in sch["transformation_types"] and rec["transformation"] == "original_evaluation"
+            assert rec["source_reference"] == asset["integrity_hash"]
+            res_p = rec_p.with_name(f"{run}.results.json")
+            assert rec["integrity_hash"] == "sha256:" + sha(res_p)
+            res = json.loads(res_p.read_text())
+            ok = sum(i["status"] in ("preserved", "changed_with_reason", "improved") for i in res["items"])
+            assert rec["n_items"] == len(res["items"]) and rec["score"] == round(ok / len(res["items"]), 4)
+            assert rec["passed"] is True and rec["score"] >= rec["threshold"] == 1.0
+            assert all(i.get("reason") for i in res["items"] if i["status"] == "changed_with_reason")
+
+
+def test_regression_comparator_flags_unexplained_changes():
+    """The comparator is not a rubber stamp: a dropped link, an unexplained target, a changed score, a swapped task
+    citation, a gate regression and O*NET text in the plan must all be caught."""
+    import regression
+    sel = json.loads((ROOT / "data/majors_selected.json").read_text())
+    new = next(m for m in sel if m["cip"] == "40.0501")
+    tasks = [t for t in json.loads((ROOT / "data/practice_tasks.json").read_text())["tasks"] if t["cip_code"] == "40.0501"]
+    stem = next((ROOT / "study_plans").glob("40.0501_*.md")).stem
+    gate = json.loads((ROOT / "study_plans" / stem / "license_gate.json").read_text())
+    md = (ROOT / "study_plans" / f"{stem}.md").read_text()
+    ts = pd.read_csv(ROOT / "raw/task_statements.csv", dtype={"O*NET-SOC Code": str})
+    ctx = {"overrides": {}, "release_changes": {}, "task_index": set(zip(ts["O*NET-SOC Code"], ts["Task ID"].astype(int))),
+           "grams": regression._grams(ts["Task"].iloc[0]), "titles": []}
+    items, leaks = regression.compare_asset(new, new, tasks, tasks, gate, gate, md, md, ctx)
+    assert all(i["status"] == "preserved" for i in items) and leaks == 0
+    import copy
+    cur = copy.deepcopy(new); cur["occupations"] = cur["occupations"][1:]
+    cur["entry_targets"] = cur["entry_targets"][::-1] + [{"soc": "99-9999.00", "title": "x", "job_zone": 4}]
+    cur["top_knowledge"][0] = [cur["top_knowledge"][0][0], cur["top_knowledge"][0][1] - 0.5]
+    ctasks = copy.deepcopy(tasks); ctasks[0]["onet_task_id"] = int(ctasks[0]["onet_task_id"]) + 1
+    cgate = copy.deepcopy(gate); cgate["checks"][0]["status"] = "fail"
+    items, leaks = regression.compare_asset(new, cur, tasks, ctasks, gate, cgate, md + " " + ts["Task"].iloc[0], md, ctx)
+    bad = {i["kind"] for i in items if i["status"] not in ("preserved", "changed_with_reason", "improved")}
+    assert {"linked_occupation", "entry_target", "knowledge_value", "practice_citation", "gate_check",
+            "onet_text_leakage"} <= bad and leaks > 0

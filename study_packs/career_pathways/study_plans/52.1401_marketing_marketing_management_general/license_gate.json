@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-mmmg-52.1401",
-  "evaluated_at": "2026-10-02T17:46:53-05:00",
+  "evaluated_at": "2026-10-02T17:51:34-05:00",
   "inputs": {
     "target": "study_plans/52.1401_marketing_marketing_management_general",
     "candidate_path": "study_plans/52.1401_marketing_marketing_management_general/candidate.json",
     "candidate_sha256": "45e417ccb960f64f4becec8912a7df0d2a1fa2907d3fd5f0346ffac89680693d",
     "provenance_path": "study_plans/52.1401_marketing_marketing_management_general/provenance.json",
-    "provenance_sha256": "fd00eb1fcb4dc4b52508026dfa010b694b77b912fe74551da1a445aea9c12a21",
+    "provenance_sha256": "7d413d7112de1cfa24e7caf16fabc026f1312bb23bb04a44e7590cd6ecd60542",
     "asset_record_path": "study_plans/52.1401_marketing_marketing_management_general/asset.json",
-    "asset_record_sha256": "207565d62552efcf98d032a6fc0303855ce373d6a7c88a4360a95bfc8dfa8d80"
+    "asset_record_sha256": "e7059fcd802fe6b2bb5a864790ff2cedd534fa74ceaaed82c16afe9782763baa"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

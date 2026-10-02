@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-cjss-43.0104",
-  "evaluated_at": "2026-10-02T17:46:53-05:00",
+  "evaluated_at": "2026-10-02T17:51:35-05:00",
   "inputs": {
     "target": "study_plans/43.0104_criminal_justice_safety_studies",
     "candidate_path": "study_plans/43.0104_criminal_justice_safety_studies/candidate.json",
     "candidate_sha256": "888253ae43750f291f632994345fa3dc212aec08eddfef8e0f5f654bcfbca795",
     "provenance_path": "study_plans/43.0104_criminal_justice_safety_studies/provenance.json",
-    "provenance_sha256": "44edb6876b777c6b89e3a7fff391155da87243a983004f5651f4f9f6082da844",
+    "provenance_sha256": "99961d9e882095f3e9b9ac9f2549b1c0ae4999134e17b8e1850d73f9bdeed9d1",
     "asset_record_path": "study_plans/43.0104_criminal_justice_safety_studies/asset.json",
-    "asset_record_sha256": "7383aa624e7640845206a66b85e5b84f498dd05920713a2deb046f61a1748155"
+    "asset_record_sha256": "14198d51093f06bbce9d71557845675cf7a24b990d54fb3b98293498a29d4047"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

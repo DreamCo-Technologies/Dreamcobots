@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-eaee-14.1001",
-  "evaluated_at": "2026-10-02T17:46:53-05:00",
+  "evaluated_at": "2026-10-02T17:51:34-05:00",
   "inputs": {
     "target": "study_plans/14.1001_electrical_and_electronics_engineering",
     "candidate_path": "study_plans/14.1001_electrical_and_electronics_engineering/candidate.json",
     "candidate_sha256": "3292cefcde588dcadeb714f14a8067fccd9e16e4e1baf8a7bcdf7ad941e1cb42",
     "provenance_path": "study_plans/14.1001_electrical_and_electronics_engineering/provenance.json",
-    "provenance_sha256": "86fc22f618babb6550ca22a15ef6ca6afa60521592b4d33fe30ed55cf21f80e9",
+    "provenance_sha256": "5243622cb4b7a84074fd0399dbf16e5992d3f8c720fe3f546db4e34aa5d75e28",
     "asset_record_path": "study_plans/14.1001_electrical_and_electronics_engineering/asset.json",
-    "asset_record_sha256": "246bba2e0f8ede8e7c5dc20d5d5d421e23272048ac12ab93b327a56a5990dece"
+    "asset_record_sha256": "cf72e70623aadbe3c7b4302f2bdb7f85ccfd109078463b217d0f6acc9a5d060c"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-sw-44.0701",
-  "evaluated_at": "2026-10-02T17:46:53-05:00",
+  "evaluated_at": "2026-10-02T17:51:35-05:00",
   "inputs": {
     "target": "study_plans/44.0701_social_work",
     "candidate_path": "study_plans/44.0701_social_work/candidate.json",
     "candidate_sha256": "81988a20297cf1e57492c9385b00967d6d7782f75aa5d1454e40cd47752fbebc",
     "provenance_path": "study_plans/44.0701_social_work/provenance.json",
-    "provenance_sha256": "2317565a560ac583175e6e0a421bb69122720b7b92664bd823cabfe4b7cbd130",
+    "provenance_sha256": "dc1bbaf5cfbca41d7f51114e766e5235e8a4c823cc372040aea80974f8224ce2",
     "asset_record_path": "study_plans/44.0701_social_work/asset.json",
-    "asset_record_sha256": "bbeb0a692ff6fd4d2ccd231f39b7706f9b5a0378ffdc84584d7f6fdb1b5f2c5b"
+    "asset_record_sha256": "134b1662655f9b5f73a2cb15b8f0829e66b3b6c43fc8c344673af06f5ad12174"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

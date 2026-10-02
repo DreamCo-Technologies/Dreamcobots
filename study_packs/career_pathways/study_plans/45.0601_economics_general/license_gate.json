@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-eg-45.0601",
-  "evaluated_at": "2026-10-02T17:46:53-05:00",
+  "evaluated_at": "2026-10-02T17:51:34-05:00",
   "inputs": {
     "target": "study_plans/45.0601_economics_general",
     "candidate_path": "study_plans/45.0601_economics_general/candidate.json",
     "candidate_sha256": "fd3dbd6ab5beb22f0436520d372a7a03653b38a3117c63a3461899a2a06346d4",
     "provenance_path": "study_plans/45.0601_economics_general/provenance.json",
-    "provenance_sha256": "cd1099452161803e77a6b02d458d4a36ea8815f81c66376cb8e9870674974a6e",
+    "provenance_sha256": "13bd31ca17d58d7c9f377140faa83f14138baaae6973e42ecab1a48e275d77d8",
     "asset_record_path": "study_plans/45.0601_economics_general/asset.json",
-    "asset_record_sha256": "0a334fa478604d503c563c56753833f956991bd2284486e473b8ce83413a8c5a"
+    "asset_record_sha256": "6cb72a19a659047fb0b7cec6151cf1e6f9fb8c4986e5fdf1362943e6725fe5d3"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

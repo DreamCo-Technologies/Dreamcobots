@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-scar-09.0101",
-  "evaluated_at": "2026-10-02T17:46:53-05:00",
+  "evaluated_at": "2026-10-02T17:51:34-05:00",
   "inputs": {
     "target": "study_plans/09.0101_speech_communication_and_rhetoric",
     "candidate_path": "study_plans/09.0101_speech_communication_and_rhetoric/candidate.json",
     "candidate_sha256": "6f229762dd8aa090c6fb293d74a8d80a5915fa76dc6baec2ca98d9b1978b846e",
     "provenance_path": "study_plans/09.0101_speech_communication_and_rhetoric/provenance.json",
-    "provenance_sha256": "2db42eb1ee38fb32e269fc1c4e95da06063f5a77472f0e30df5f7f29ccd60565",
+    "provenance_sha256": "0a5456ae5865c397b40cb926314e33bb82a867f3ab6682a73a29f5448697a4fc",
     "asset_record_path": "study_plans/09.0101_speech_communication_and_rhetoric/asset.json",
-    "asset_record_sha256": "15f9fe0fa86c5478f65776e9a5f7686893f049504e0d0bc37b2e3a5b2abb7c11"
+    "asset_record_sha256": "b241806b6966304ee4216c006f27be35edb0d4612d5d5ac46fa9eea55cf60085"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

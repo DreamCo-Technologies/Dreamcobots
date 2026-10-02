@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-cs-11.0701",
-  "evaluated_at": "2026-10-02T17:46:52-05:00",
+  "evaluated_at": "2026-10-02T17:51:34-05:00",
   "inputs": {
     "target": "study_plans/11.0701_computer_science",
     "candidate_path": "study_plans/11.0701_computer_science/candidate.json",
     "candidate_sha256": "fdfa419f8edc115d964bef6d10752e035c245777362ab86b62b89f79376b3dd3",
     "provenance_path": "study_plans/11.0701_computer_science/provenance.json",
-    "provenance_sha256": "7f04c10fe620c2ec6fcb544e2004d3c4a87eb6ab30e31843dd9effd837d7ec75",
+    "provenance_sha256": "50ef64d845522a801bada6144a17557242029f66e5d1e683eb9d6e30a9884d76",
     "asset_record_path": "study_plans/11.0701_computer_science/asset.json",
-    "asset_record_sha256": "9e8d293c01b4b8104cbdddac3f95df5609a00be420b9a14fad95150499bdab97"
+    "asset_record_sha256": "3d2ddb136e5c517619068be34a471941fb270ad6ec21bf47313445b21dd569b2"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

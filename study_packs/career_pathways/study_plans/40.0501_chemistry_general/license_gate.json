@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-cg-40.0501",
-  "evaluated_at": "2026-10-02T17:46:53-05:00",
+  "evaluated_at": "2026-10-02T17:51:34-05:00",
   "inputs": {
     "target": "study_plans/40.0501_chemistry_general",
     "candidate_path": "study_plans/40.0501_chemistry_general/candidate.json",
     "candidate_sha256": "72ba313990d7579edd88eae29d9ce27ed0c9b24c104dfe3384e9cd5bd9d04d98",
     "provenance_path": "study_plans/40.0501_chemistry_general/provenance.json",
-    "provenance_sha256": "ecb102c490a5118619802e5dfb1c7877ffa67f661050717446bcebb6f5bcc359",
+    "provenance_sha256": "d16dacaa2d43ee1140560ace294e37ec202c096ed8ecb56c3fa87c678b1a0b6a",
     "asset_record_path": "study_plans/40.0501_chemistry_general/asset.json",
-    "asset_record_sha256": "8b485c133c7417a7bd21e797f4a75611a5b5120b7cd8b96c328e98732dbedfff"
+    "asset_record_sha256": "5e0e35159829d5b3edc4ffd5065421d5d219630d8172733490a639abad4e614f"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "no sandbox/benchmark/holdout/regression validation evidence ids"
+        "only 1 perspective(s) used; multi-view synthesis expects several"
       ]
     },
     {
@@ -121,10 +121,11 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,
