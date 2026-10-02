@@ -1,0 +1,40 @@
+{
+  "capability_id": "image_clone.v1",
+  "name": "Image / Likeness Cloning",
+  "domain": "media_generation",
+  "sources": [
+    "capabilities/media_cloning/image_clone.py",
+    "capabilities/media_cloning/consent_gate.py"
+  ],
+  "prerequisites": ["requirements-media.txt"],
+  "objectives": [
+    "Reproduce a subject's likeness or visual style from reference images only after a verified consent record exists",
+    "Generate new images conditioned on the reference identity or style",
+    "Watermark every generated image for provenance"
+  ],
+  "tasks": [
+    "Validate a signed consent record against the reference image hash before any generation run",
+    "Refuse a subject who is not confirmed to be an adult",
+    "Refuse a sexual, violent, or defamatory prompt",
+    "Run local generation only when the packages and weights are installed on the user's machine"
+  ],
+  "benchmarks": [
+    "Consent gate cannot be bypassed",
+    "Blocked prompts are refused",
+    "A watermark bit is present on the saved image"
+  ],
+  "sandbox_profile": "media_cloning_sandbox",
+  "mastery": {
+    "threshold": 0.85,
+    "independent_passes": 3,
+    "transfer_required": true,
+    "regression_required": true,
+    "achieved": false
+  },
+  "safety_constraints": [
+    "Never clone a likeness without a verified consent record tied to the exact reference image",
+    "Never process reference images of a minor",
+    "Reject requests for sexual, violent, or defamatory depictions of a real person regardless of consent status"
+  ],
+  "evidence": []
+}

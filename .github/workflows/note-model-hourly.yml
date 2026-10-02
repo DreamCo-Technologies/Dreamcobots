@@ -1,0 +1,23 @@
+name: Note model hourly proof
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 * * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  prove-loss-drops:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install the small model dependency
+        run: python -m pip install --disable-pip-version-check "numpy>=1.26,<3"
+      - name: Prove this run's loss drops
+        run: python buddy/learning/note_model.py

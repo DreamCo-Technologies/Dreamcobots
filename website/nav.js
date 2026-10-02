@@ -84,6 +84,7 @@
     { href: 'plugins.html', label: 'Plugins' },
     { href: 'step-models.html', label: 'Step models' },
     { href: 'model-lab.html', label: 'Model lab' },
+    { href: 'work-desk.html', label: 'Work desk' },
     { href: 'one-shop.html', label: 'Own shop' },
     { href: 'idea.html', label: 'Your idea' },
     { href: 'note-model.html', label: 'Note model' },

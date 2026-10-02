@@ -41,6 +41,9 @@ def run(task: str) -> dict:
     if text.startswith("study") or " study " in f" {text} ":
         report = _load("study_methods_for_task", ROOT / "buddy/learning/study_methods.py").run_study()
         return {**base, "completed": report["passed"] == report["procedures"], "weights_trained": False, "reason": "Buddy ran its own study procedures."}
+    if "clone" in text or "likeness" in text:
+        present = (ROOT / "capabilities/media_cloning/voice_clone.py").is_file() and (ROOT / "capabilities/media_cloning/image_clone.py").is_file()
+        return {**base, "completed": False, "weights_trained": False, "code_present": present, "page": "capabilities/media_cloning", "reason": "The cloning code is Buddy's own file. It was not run, and it will not run without an adult consent record."}
     for key, page in LOCAL.items():
         if key in text and (ROOT / page).is_file():
             return {**base, "completed": True, "page": page, "reason": "Buddy did this with its own code. No wrapper was called."}
