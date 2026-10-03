@@ -72,7 +72,7 @@ def mix_routes(routes: list[RouteSpec], quality_floor: float) -> dict:
     eligible = [r for r in routes if r.quality >= quality_floor]
     if not eligible:
         eligible = routes[:]
-    scores = [r.quality / max(r.cost, 1e-6) for r in eligible]
+    scores = [r.quality / max(r.cost, 1e-6) + (0.2 if r.us_controlled else 0.0) for r in eligible]
     weights = softmax(scores)
     return {
         "quality_floor": quality_floor,
