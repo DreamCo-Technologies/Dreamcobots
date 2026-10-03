@@ -241,6 +241,7 @@ document.addEventListener('click', function(e) {
     ["https://github.com/DreamCo-Technologies/Dreamcobots/settings/pages", "Pages source"],
     ["https://dashboard.stripe.com/apikeys", "Stripe keys"],
     ["actions.html", "Task buttons"],
+    ["chat-buttons.html", "This chat"],
     ["buddy.html", "Ask Buddy"]
   ];
   links.forEach(([href, label]) => {
