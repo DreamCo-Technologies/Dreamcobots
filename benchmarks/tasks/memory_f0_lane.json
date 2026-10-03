@@ -1,0 +1,140 @@
+{
+  "benchmark_id": 601,
+  "name": "Buddy F0 Memory Lane: pinned fixtures",
+  "lane": "long_context_and_memory",
+  "floor": "F0",
+  "pin_version": "memory-f0-2026-09-21",
+  "mastery_threshold": 0.8,
+  "claim_rule": "Fixtures only. Empty evidence bundle fails closed. No frontier or production_ready claim from this file alone.",
+  "provenance": [
+    "derived_from:buddy/frontier/evaluation_matrix.md#6",
+    "policy:config/buddy-frontier-memory-and-knowledge-policy.json",
+    "ownership:dreamco_owned_fixture_design"
+  ],
+  "tasks": [
+    {
+      "task_id": "memory-f0-needle-train-001",
+      "benchmark_id": 601,
+      "family": "needle_retrieval",
+      "phase": "training",
+      "mastery_threshold": 0.8,
+      "baseline_score": 0.0,
+      "goal": "Retrieve a planted fact (needle) from a long synthetic context at a pinned length tier.",
+      "context_length_tokens": [
+        4096,
+        16384,
+        65536
+      ],
+      "required_capabilities": [
+        "needle_retrieval",
+        "instruction_persistence"
+      ],
+      "metrics": [
+        "exact_match",
+        "position_robustness"
+      ],
+      "grader": "exact_or_normalized_string_match",
+      "human_approval_required_for": []
+    },
+    {
+      "task_id": "memory-f0-needle-holdout-001",
+      "benchmark_id": 601,
+      "family": "needle_retrieval",
+      "phase": "holdout",
+      "mastery_threshold": 0.8,
+      "baseline_score": 0.0,
+      "goal": "Retrieve a held-out needle (different fact and placement) at the same length tiers.",
+      "context_length_tokens": [
+        4096,
+        16384,
+        65536
+      ],
+      "required_capabilities": [
+        "needle_retrieval"
+      ],
+      "metrics": [
+        "exact_match"
+      ],
+      "grader": "exact_or_normalized_string_match",
+      "human_approval_required_for": []
+    },
+    {
+      "task_id": "memory-f0-precision-recall-train-001",
+      "benchmark_id": 601,
+      "family": "memory_retrieval_precision_recall",
+      "phase": "training",
+      "mastery_threshold": 0.8,
+      "baseline_score": 0.0,
+      "goal": "From a multi-document memory store, retrieve relevant items for a query; score precision and recall against a pinned gold set.",
+      "required_capabilities": [
+        "memory_retrieval",
+        "multi_document_synthesis"
+      ],
+      "metrics": [
+        "precision",
+        "recall",
+        "f1"
+      ],
+      "grader": "set_overlap_vs_gold",
+      "human_approval_required_for": []
+    },
+    {
+      "task_id": "memory-f0-precision-recall-holdout-001",
+      "benchmark_id": 601,
+      "family": "memory_retrieval_precision_recall",
+      "phase": "holdout",
+      "mastery_threshold": 0.8,
+      "baseline_score": 0.0,
+      "goal": "Held-out queries over a disjoint document set; precision/recall vs gold.",
+      "required_capabilities": [
+        "memory_retrieval"
+      ],
+      "metrics": [
+        "precision",
+        "recall",
+        "f1"
+      ],
+      "grader": "set_overlap_vs_gold",
+      "human_approval_required_for": []
+    },
+    {
+      "task_id": "memory-f0-stale-memory-train-001",
+      "benchmark_id": 601,
+      "family": "stale_memory_forgetting",
+      "phase": "training",
+      "mastery_threshold": 0.8,
+      "baseline_score": 0.0,
+      "goal": "Prefer fresh facts over superseded memory; refuse or flag stale answers when timestamps conflict.",
+      "required_capabilities": [
+        "forgetting",
+        "stale_memory_handling",
+        "contradiction_detection"
+      ],
+      "metrics": [
+        "fresh_preference_accuracy",
+        "stale_refusal_rate"
+      ],
+      "grader": "labeled_preference_and_refusal",
+      "human_approval_required_for": []
+    },
+    {
+      "task_id": "memory-f0-stale-memory-holdout-001",
+      "benchmark_id": 601,
+      "family": "stale_memory_forgetting",
+      "phase": "holdout",
+      "mastery_threshold": 0.8,
+      "baseline_score": 0.0,
+      "goal": "Held-out stale/fresh conflict set; same grader, unseen facts.",
+      "required_capabilities": [
+        "forgetting",
+        "stale_memory_handling"
+      ],
+      "metrics": [
+        "fresh_preference_accuracy",
+        "stale_refusal_rate"
+      ],
+      "grader": "labeled_preference_and_refusal",
+      "human_approval_required_for": []
+    }
+  ]
+}
