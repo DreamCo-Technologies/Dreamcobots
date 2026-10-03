@@ -1,0 +1,69 @@
+{
+  "schema": "dreamco.data_package_manifest.v1",
+  "sku_id": "DP-ONET-OCC-SYN",
+  "version": "0.0.1",
+  "title": "DreamCo O*NET Occupation Synthesis (skeleton)",
+  "summary": "Skeleton for a DreamCo-authored synthesis layer (study plans, task/skill groupings, evaluation prompts) built on top of attributed O*NET database content. No data assets are included yet; this version exists to exercise the license/provenance gate and release-artifact checks.",
+  "package_type": "domain-knowledge-pack",
+  "owner": "DreamCo (Irean Jordan)",
+  "created_at": "2026-10-02T17:00:00-05:00",
+  "contents_digest": "sha256:044daf4d2a850a53a157d4e973795c7ca0d2474d8bbdbb56804665fa1f874e72",
+  "source_versions": {
+    "onet_database": "31.0 (db_31_0_excel.zip sha256 c63ad00a8e45f3d3ef8e1529fcf8864d2279f2dfcb98737436818f5664781b04; db_31_0_csv.zip sha256 55033fc68b4c13ec23e7f74dc6378660f6e854e75d55d6e333ae0a761d3987cd; see provenance_manifest.json)",
+    "cip_onet_soc_crosswalk": "CIP 2020 to O*NET-SOC 2019 (Education_CIP_to_ONET_SOC.xlsx sha256 4802101afb1dfa83acde5d125bc55170410686c6d379a8d893c74447361ea6e8; see provenance_manifest.json)"
+  },
+  "included_asset_ids": [],
+  "excluded_reference_only_sources": [],
+  "license_gate_status": "pending",
+  "scorecard_score": null,
+  "scorecard_protocol": null,
+  "commercial_tier": null,
+  "release_level": "discovered",
+  "sales_channel": "none",
+  "stripe_price_id": null,
+  "release_artifacts": {
+    "dataset_card": "dataset_card.md",
+    "data_dictionary": "data_dictionary.md",
+    "provenance_manifest": "provenance_manifest.json",
+    "license_manifest": "license_manifest.json",
+    "quality_report": "quality_report.json",
+    "benchmark_report": "benchmark_report.json",
+    "known_limitations": "manifest.json#known_limitations",
+    "version_identifier": "manifest.json#version",
+    "change_log": "manifest.json#change_log",
+    "sample_or_preview": "sample/"
+  },
+  "known_limitations": [
+    "Skeleton only: no data assets, no sample records, no quality or benchmark evidence.",
+    "license_gate_status is pending (pre-gate): no included assets, so no asset gate results exist to roll up to pass | fail | reference_only_bundle.",
+    "No dataset scorecard has been run (scorecard_score null); not eligible for any commercial tier.",
+    "No owner approval recorded; package is not for sale and has no sales channel or price.",
+    "O*NET pinned to 31.0 for this package version. The fleet catalog tool (tools/build_universal_work_ai_catalog.py) still defaults to 30.3; DP-ONET builds override it with --onet-zip-url pointing at db_31_0_excel.zip. 31.0 splits Skills into Essential Skills and Transferable Skills; there is no single Skills file.",
+    "O*NET content is third-party (USDOL/ETA, CC BY 4.0); only the DreamCo synthesis layer can be DreamCo-owned, and attribution plus the USDOL/ETA non-endorsement notice must ship with every derivative.",
+    "US occupational taxonomy only (O*NET-SOC 2019); not validated for other labor markets."
+  ],
+  "change_log": [
+    {
+      "version": "0.0.1",
+      "date": "2026-10-02",
+      "changes": [
+        "Initial skeleton: manifest, license, dataset card, provenance/license manifests, not_run quality and benchmark stubs, empty sample/."
+      ]
+    },
+    {
+      "version": "0.0.1",
+      "date": "2026-10-02",
+      "changes": [
+        "Manifest aligned to plan section 5.2: sku_id, version, contents_digest, included_asset_ids, excluded_reference_only_sources, license_gate_status (pending | pass | fail | reference_only_bundle); stripe_price_id optional and unset."
+      ]
+    },
+    {
+      "version": "0.0.1",
+      "date": "2026-10-03",
+      "changes": [
+        "Pinned O*NET 31.0 (download URLs + sha256 in provenance_manifest.json); recorded the 31.0 Essential/Transferable Skills split and the 30.3 tool-default override. Still no assets, gate pending, no price."
+      ]
+    }
+  ],
+  "truth_boundary": "Skeleton package. Not production ready, not for sale, and no quality, benchmark, or rights claims are made beyond what the attached reports show (all not_run or pending)."
+}

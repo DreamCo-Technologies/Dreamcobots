@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -33,11 +34,25 @@ JOBS = [
 ]
 
 
+def child_env(base: dict[str, str] | None = None) -> dict[str, str]:
+    """Environment for owner-system children: repo root first on PYTHONPATH.
+
+    Children run as ``python tools/x.py`` get ``tools/`` as ``sys.path[0]``, so repo-root
+    packages such as ``foundry`` are not importable without this. Existing entries are kept.
+    """
+    env = dict(os.environ if base is None else base)
+    existing = env.get("PYTHONPATH")
+    env["PYTHONPATH"] = str(ROOT) + (os.pathsep + existing if existing else "")
+    return env
+
+
 def run_job(rel: str) -> dict:
     path = ROOT / rel
     if not path.exists():
         return {"job": rel, "state": "missing", "ok": True, "note": "not on this branch yet"}
-    result = subprocess.run([sys.executable, rel], cwd=ROOT, capture_output=True, text=True, timeout=180, check=False)
+    result = subprocess.run(
+        [sys.executable, rel], cwd=ROOT, env=child_env(), capture_output=True, text=True, timeout=180, check=False
+    )
     return {
         "job": rel,
         "state": "passed" if result.returncode == 0 else "failed",

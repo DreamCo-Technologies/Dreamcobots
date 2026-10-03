@@ -1,0 +1,88 @@
+{
+  "schema": "dreamco.evaluate_bench_map.v1",
+  "note": "Maps Buddy bench families to Hugging Face evaluate metrics. repo_paths are checked by tests; status=missing means no in-repo harness exists yet. No scores live here.",
+  "benches": [
+    {
+      "id": "f0.knowledge_reasoning",
+      "matrix_section": "1. General knowledge and reasoning",
+      "hf_metrics": ["exact_match", "accuracy"],
+      "extra_metrics": ["calibration (not in HF evaluate; custom)"],
+      "repo_paths": ["buddy/frontier/evaluation_matrix.md", "buddy/learning/model_bench.py"],
+      "status": "spec_only"
+    },
+    {
+      "id": "f0.math",
+      "matrix_section": "2. Mathematics",
+      "hf_metrics": ["exact_match"],
+      "extra_metrics": [],
+      "repo_paths": ["buddy/frontier/evaluation_matrix.md"],
+      "status": "spec_only"
+    },
+    {
+      "id": "f0.code",
+      "matrix_section": "4. Software engineering",
+      "hf_metrics": ["code_eval"],
+      "extra_metrics": ["pass@k via local unbiased estimator"],
+      "hf_metric_notes": {"code_eval": "Executes model code. Requires HF_ALLOW_CODE_EVAL=1 and must only run inside the universal sandbox, never in default CI."},
+      "repo_paths": ["buddy/frontier/evaluation_matrix.md", "benchmarks/buddy_benchmark_runner.py"],
+      "status": "spec_only"
+    },
+    {
+      "id": "f0.summarize_research",
+      "matrix_section": "3. Science and research",
+      "hf_metrics": ["rouge", "bertscore"],
+      "extra_metrics": ["citation correctness (custom grader)"],
+      "repo_paths": ["buddy/frontier/evaluation_matrix.md"],
+      "status": "spec_only"
+    },
+    {
+      "id": "f0.translate",
+      "matrix_section": "11. Human and professional work",
+      "hf_metrics": ["sacrebleu", "chrf"],
+      "extra_metrics": [],
+      "repo_paths": ["buddy/frontier/evaluation_matrix.md"],
+      "status": "spec_only"
+    },
+    {
+      "id": "f0.reliability",
+      "matrix_section": "10. Reliability and agent quality",
+      "hf_metrics": [],
+      "extra_metrics": ["pass@1", "pass@k", "trial variance", "latency", "cost"],
+      "repo_paths": ["buddy/frontier/evaluation_matrix.md", "docs/BUDDY_FRONTIER_EVALUATION_HARNESS.md"],
+      "status": "spec_only"
+    },
+    {
+      "id": "buddy.own_gates",
+      "matrix_section": null,
+      "hf_metrics": ["accuracy"],
+      "extra_metrics": ["gate pass rate"],
+      "repo_paths": ["buddy/bench/scorecard.py"],
+      "status": "harness_exists_not_hf_wired"
+    },
+    {
+      "id": "edu.first_four_mastery",
+      "matrix_section": null,
+      "hf_metrics": ["exact_match", "accuracy", "f1"],
+      "extra_metrics": ["explain_back rubric (custom grader)"],
+      "repo_paths": ["benchmarks/tasks/first_four_mastery.json", "benchmarks/buddy_benchmark_runner.py"],
+      "status": "harness_exists_not_hf_wired"
+    },
+    {
+      "id": "edu.bootcamp_lessons",
+      "matrix_section": null,
+      "hf_metrics": ["exact_match", "accuracy"],
+      "extra_metrics": [],
+      "repo_paths": ["buddy/learning/bootcamp.py", "buddy/learning/school.py"],
+      "status": "harness_exists_not_hf_wired"
+    },
+    {
+      "id": "edu.course_mastery_floors",
+      "matrix_section": null,
+      "hf_metrics": ["accuracy", "f1"],
+      "extra_metrics": ["holdout anti-cheat"],
+      "repo_paths": [],
+      "status": "missing",
+      "missing_note": "Course mastery floors and holdout policy exist only as an unmerged draft outside the repo; no in-repo harness yet."
+    }
+  ]
+}

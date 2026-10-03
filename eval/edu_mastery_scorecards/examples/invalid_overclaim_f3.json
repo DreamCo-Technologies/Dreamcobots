@@ -1,0 +1,134 @@
+{
+  "_example": true,
+  "card_id": "EXAMPLE-INVALID-OVERCLAIM-F3",
+  "course_id": "EXAMPLE-k12-algebra-1",
+  "course_title": "EXAMPLE Algebra I",
+  "track": "k12",
+  "version": "1.0.0",
+  "learner": {
+    "id": "EXAMPLE-buddy-adapter-v0",
+    "type": "buddy_adapter"
+  },
+  "floors": {
+    "F0": {
+      "name": "baseline diagnostic",
+      "required_benches": [
+        "diag"
+      ],
+      "min_score": 0.0,
+      "holdout_required": false
+    },
+    "F1": {
+      "name": "practice",
+      "required_benches": [
+        "practice"
+      ],
+      "min_score": 0.7,
+      "holdout_required": false
+    },
+    "F2": {
+      "name": "held-out",
+      "required_benches": [
+        "holdout"
+      ],
+      "min_score": 0.8,
+      "holdout_required": true
+    },
+    "F3": {
+      "name": "novel transfer + remediation retest",
+      "required_benches": [
+        "transfer",
+        "retest"
+      ],
+      "min_score": 0.8,
+      "holdout_required": true
+    },
+    "F4": {
+      "name": "regression retest + independent evaluator",
+      "required_benches": [
+        "regression"
+      ],
+      "min_score": 0.8,
+      "holdout_required": true,
+      "min_days_since_prior_floor": 30,
+      "independent_evaluator_required": true
+    }
+  },
+  "bench_results": [
+    {
+      "bench_id": "diag",
+      "suite": "EXAMPLE-diag",
+      "holdout": false,
+      "leakage_check": {
+        "passed": true,
+        "method": "EXAMPLE n-gram overlap vs train"
+      },
+      "score": 40,
+      "max_score": 100,
+      "run_id": "EXAMPLE-run-diag",
+      "run_timestamp": "2026-09-01T12:00:00Z",
+      "artifact_uri": "file:///EXAMPLE/artifacts/diag.json",
+      "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evaluator": "example-evaluator"
+    },
+    {
+      "bench_id": "practice",
+      "suite": "EXAMPLE-practice",
+      "holdout": false,
+      "leakage_check": {
+        "passed": true,
+        "method": "EXAMPLE n-gram overlap vs train"
+      },
+      "score": 78,
+      "max_score": 100,
+      "run_id": "EXAMPLE-run-practice",
+      "run_timestamp": "2026-09-01T12:00:00Z",
+      "artifact_uri": "file:///EXAMPLE/artifacts/practice.json",
+      "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evaluator": "example-evaluator"
+    },
+    {
+      "bench_id": "holdout",
+      "suite": "EXAMPLE-holdout",
+      "holdout": true,
+      "leakage_check": {
+        "passed": true,
+        "method": "EXAMPLE n-gram overlap vs train"
+      },
+      "score": 85,
+      "max_score": 100,
+      "run_id": "EXAMPLE-run-holdout",
+      "run_timestamp": "2026-09-01T12:00:00Z",
+      "artifact_uri": "file:///EXAMPLE/artifacts/holdout.json",
+      "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evaluator": "example-evaluator"
+    }
+  ],
+  "provenance": {
+    "sources": [
+      {
+        "uri": "EXAMPLE://openstax-algebra",
+        "license": "CC-BY-4.0",
+        "consent": true
+      }
+    ]
+  },
+  "floor_attained": "F3",
+  "status": "certified",
+  "certificate": {
+    "cert_id": "EXAMPLE-CERT-1",
+    "floor": "F3",
+    "issued_at": "2026-09-02T00:00:00Z",
+    "issued_by": "grok-edu-mastery-scorecards",
+    "evidence_bench_ids": [
+      "diag",
+      "practice",
+      "holdout"
+    ],
+    "evidence_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "regression_watch": {
+    "last_retest_at": null,
+    "drift_flag": false
+  }
+}

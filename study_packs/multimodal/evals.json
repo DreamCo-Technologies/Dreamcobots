@@ -1,0 +1,12 @@
+{
+  "schema": "dreamco.study_pack_evals.v1",
+  "pack": "pack.multimodal",
+  "min_native_pass_rate": 0.7,
+  "drills": [
+    {"id": "mm.clip_zero_shot_shapes", "task": "zero-shot-image-classification", "model": "openai/clip-vit-base-patch32", "input": "PIL-drawn red circle / blue square / green triangle", "pass": "top-1 label matches drawn shape for >=2/3"},
+    {"id": "mm.vit_imagenet_smoke", "task": "image-classification", "model": "google/vit-base-patch16-224", "input": "PIL-drawn image", "pass": "returns 5 labels with scores summing <= 1.0 (smoke only, no accuracy claim)"},
+    {"id": "mm.tts_generate", "task": "text-to-speech", "model": "facebook/mms-tts-eng", "input": "fixed sentence", "pass": "waveform >0.5s at reported sampling_rate"},
+    {"id": "mm.asr_roundtrip", "task": "automatic-speech-recognition", "model": "openai/whisper-tiny", "input": "TTS clip from mm.tts_generate", "pass": "word error rate <= 0.5 vs source sentence"},
+    {"id": "mm.audio_cls_smoke", "task": "audio-classification", "model": "MIT/ast-finetuned-speech-commands-v2", "input": "TTS clip of the word 'yes'", "pass": "returns labels; records whether top-1 == 'yes' (informational)"}
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "schema": "dreamco.study_pack.run_log.v1",
+  "pack_id": "pack.transformers-core",
+  "ran_at": "2026-09-28T17:52:52-05:00",
+  "host": "Linux-6.12.94+-x86_64-with-glibc2.41",
+  "python": "3.13.5",
+  "torch": "2.14.0+cpu",
+  "transformers": "5.17.0",
+  "device": "cpu",
+  "torch_num_threads": 1,
+  "model": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+    "license": "apache-2.0"
+  },
+  "passed": 4,
+  "total": 4,
+  "results": [
+    {
+      "id": "tc.pipeline.pinned_textgen",
+      "passed": true,
+      "detail": {
+        "outputs": [
+          " Paris. Paris is the largest city in",
+          " 10.\n\nNow,"
+        ]
+      }
+    },
+    {
+      "id": "tc.auto.load_pinned",
+      "passed": true,
+      "detail": {
+        "model_type": "llama",
+        "vocab_size": 49152,
+        "params": 134515008,
+        "logits_shape": [
+          2,
+          4,
+          49152
+        ]
+      }
+    },
+    {
+      "id": "tc.generate.controls",
+      "passed": true,
+      "detail": {
+        "greedy": ", I was a young man, a young woman, and",
+        "sampled_seed7": ", I had the privilege of serving on a number of projects",
+        "genconfig_5tok": ", I was working as"
+      }
+    },
+    {
+      "id": "tc.chat_template.render",
+      "passed": true,
+      "detail": {
+        "generation_header": "<|im_start|>assistant\n",
+        "reply": "The primary color is typically considered to be the primary color, which is the color"
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "schema": "dreamco.nlp_task_zoo.v1",
+  "teacher": "xai/grok-best-available",
+  "automatic_weight_download": false,
+  "train_allowed": false,
+  "tasks": [
+    {
+      "task": "classification",
+      "pipeline": "text-classification",
+      "metric": "accuracy",
+      "floor": 0.85,
+      "drills": 6,
+      "card": "classification/CARD.md"
+    },
+    {
+      "task": "ner",
+      "pipeline": "token-classification",
+      "metric": "entity_f1",
+      "floor": 0.8,
+      "drills": 5,
+      "card": "ner/CARD.md"
+    },
+    {
+      "task": "qa",
+      "pipeline": "question-answering",
+      "metric": "squad_em_f1",
+      "floor": 0.75,
+      "drills": 5,
+      "card": "qa/CARD.md"
+    },
+    {
+      "task": "summarization",
+      "pipeline": "summarization",
+      "metric": "rougeL_lite",
+      "floor": 0.35,
+      "drills": 3,
+      "card": "summarization/CARD.md"
+    },
+    {
+      "task": "translation",
+      "pipeline": "translation",
+      "metric": "chrf_lite",
+      "floor": 0.5,
+      "drills": 5,
+      "card": "translation/CARD.md"
+    }
+  ]
+}

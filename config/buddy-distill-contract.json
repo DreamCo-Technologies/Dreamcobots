@@ -1,0 +1,55 @@
+{
+  "schema": "dreamco.buddy_distill_contract.v1",
+  "status": "contract_draft_no_runs",
+  "owner_lane": "buddy-distill",
+  "source_policies": [
+    "config/buddy-learning-strategies.json#teacher_distillation",
+    "config/buddy-open-model-coding-lab.json#buddy_open_core.learning_system"
+  ],
+  "teacher": {
+    "provider": "xAI",
+    "access": "hosted_api",
+    "exact_model_id_required_at_run": true,
+    "teacher_terms_check_required": true,
+    "note": "Distilling from hosted model outputs must be permitted by the provider terms for the exact model and use. Record the check; never assume it."
+  },
+  "student": {
+    "adapter_methods": ["lora_adapter", "qlora_adapter"],
+    "base_model_pin": "exact_revision_required",
+    "base_model_license_check_required": true,
+    "allowed_weight_formats": ["safetensors", "gguf"],
+    "blocked_weight_formats": ["pickle", "pytorch_bin", "pt", "pth", "ckpt", "remote_code"],
+    "private_adapter_default": true
+  },
+  "required_cycle": [
+    "baseline_eval_on_hidden_holdout",
+    "approved_sources_only",
+    "bounded_proposed_change",
+    "train_in_isolated_sandbox",
+    "grade_separate_hidden_holdout",
+    "safety_and_capability_regressions",
+    "repeat_at_least_three_times",
+    "preserve_hashes_costs_latency_failures",
+    "owner_approval_before_allowlist"
+  ],
+  "thresholds": {
+    "minimum_holdout_score": 0.75,
+    "minimum_absolute_improvement": 0.05,
+    "maximum_regression": 0.02,
+    "minimum_repetitions": 3,
+    "threshold_source": "config/buddy-open-model-coding-lab.json#promotion_thresholds"
+  },
+  "ci_policy": {
+    "default_ci_downloads_weights": false,
+    "default_ci_trains": false,
+    "default_ci_uploads_weights": false,
+    "weight_file_extensions": [".safetensors", ".gguf", ".bin", ".pt", ".pth", ".ckpt", ".onnx"],
+    "weight_file_allow_paths": []
+  },
+  "adapters": [],
+  "truth": {
+    "distill_runs_exist": false,
+    "trained_weights_exist": false,
+    "allowlisted_adapters": []
+  }
+}

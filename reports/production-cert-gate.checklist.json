@@ -1,0 +1,75 @@
+{
+  "schema": "dreamco.production_cert_gate.checklist.v1",
+  "owner": "Grok-Prod-Cert-Gate",
+  "set": 6,
+  "hard_rule": "Block production_ready unless connectivity AND ledger AND soak are green with linked evidence on the SAME git SHA. Vanity greens do not count.",
+  "same_sha_required": true,
+  "aligned_with": ["Grok-PRC-Certifier", "Frontier-Trust PR #9575", "Grok-Prod-Evidence-Ledger schema v0.1"],
+  "pillars": {
+    "connectivity": {
+      "required": true,
+      "evidence_paths": [
+        "config/full-system-operational-certification.json",
+        "config/buddy/500-model-operating-contract.json",
+        "config/buddy-frontier-readiness-gates.json"
+      ],
+      "rules": [
+        "connection_rule: runtime probe required for runtime_verified",
+        "never_claim_frontier_without_evidence must be true"
+      ],
+      "maps_to_pr_9575": ["allowlist", "model_contract"]
+    },
+    "ledger": {
+      "required": true,
+      "evidence_paths": [
+        "config/production-readiness-contract.json",
+        "data/production-readiness-report.json",
+        "reports/PRODUCTION_READINESS_REPORT.md",
+        "config/generated/bot-production-readiness.json",
+        "reports/BOT_PRODUCTION_READINESS.md",
+        "config/full-system-operational-certification.json",
+        "evidence/frontier/current-status.assessment.json",
+        "config/buddy-training-data-provenance-policy.json",
+        "config/buddy-frontier-claim-disclosure.json"
+      ],
+      "evidence_ledger_schema": "Grok-Prod-Evidence-Ledger schema v0.1",
+      "evidence_ledger_shape": "claim→artifact→SHA→soak + CI + runtime on SAME git SHA",
+      "required_assessment": {
+        "claimable": true,
+        "status": "claimable"
+      },
+      "maps_to_pr_9575": ["provenance", "disclosure_claimable"],
+      "prc_docs": [
+        "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+        "docs/BOT_PRODUCTION_READINESS.md"
+      ]
+    },
+    "soak": {
+      "required": true,
+      "workflows": [".github/workflows/buddy-24h-sandbox-soak.yml"],
+      "tools": ["tools/run_24h_sandbox_soak.py"],
+      "evidence_paths": [
+        "config/generated/sandbox-24h-tick.json",
+        "reports/SANDBOX_24H.md"
+      ],
+      "required_tick_status": "sandbox_tick_ok",
+      "maps_to_pr_9575": ["sandbox_soak"]
+    }
+  },
+  "vanity_blockers": [
+    "tools/check_frontier_claim_trust_gates.py",
+    "profile-only greens from tools/ensure_bots_production_ready.py",
+    "Empire HQ GROK_CERTIFIED.md",
+    "CI keep-green without pillar evidence"
+  ],
+  "aligned_pr": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/9575",
+  "certify_allowed_only_if": ["connectivity", "ledger", "soak"],
+  "current_posture": {
+    "connectivity": "partial",
+    "ledger": "red_for_ship",
+    "soak": "missing_artifacts_on_main",
+    "decision": "DO_NOT_CERTIFY",
+    "fleet_production_ready_true": 0,
+    "fleet_bots": 1101
+  }
+}

@@ -1,0 +1,90 @@
+version: 1
+name: buddy-os-shell-command-surface-ipc
+status: draft  # contract only; no surface is "connected" until health evidence exists
+purpose: >
+  One command surface and one IPC envelope for five Buddy OS surfaces
+  (actions, prs, issues, agents, pages). Additive: reuses existing runtimes
+  listed in buddy_os/integration/runtime_map.yaml; creates no parallel stack.
+
+links:
+  parent_contract: buddy_os/contracts/buddy_contracts.yaml
+  runtime_map: buddy_os/integration/runtime_map.yaml
+  agent_modes: buddy_os/agents/agent_mode_contract.yaml
+  approval_policy: buddy_os/governance/approval_policy.yaml
+  task_envelope: buddy_os/tasks/task_envelope.schema.json
+
+envelope:            # every shell message, request or event, uses this shape
+  required: [ipc_version, trace_id, surface, verb, actor, mode, risk, payload, issued_at]
+  fields:
+    ipc_version: {type: integer, const: 1}
+    trace_id: {type: string, note: "preserved across surfaces, same as agent_mode_contract preserve_trace_id"}
+    surface: {enum: [actions, prs, issues, agents, pages]}
+    verb: {type: string, note: "must be listed under surfaces.<surface>.verbs"}
+    actor: {type: object, required: [kind, id], kind_enum: [owner, agent, workflow, local_cli]}
+    mode: {enum: [chat, research, builder, coding, debug, benchmark, revenue, autonomous, governance, security, dreamco]}
+    risk: {enum: [read, sandbox, repo_write, external, destructive]}
+    payload: {type: object}
+    approval_ref: {type: string, required_when: "risk in [repo_write, external, destructive]"}
+    parent_trace_id: {type: string, optional: true}
+
+reply:
+  required: [trace_id, status, evidence]
+  status_enum: [unknown, queued, running, passed, failed, blocked, stale, not_applicable]  # mirrors config/actions-page-operating-system.json
+  evidence:
+    required_one_of: [run_id, commit_sha, pr_number, issue_number, artifact_path, url]
+    rule: "no status of passed without at least one evidence field"
+
+events:            # published on the shell bus; any surface may subscribe
+  - actions.run.completed      # -> issues may open/update repair item, prs may annotate
+  - actions.run.failed
+  - prs.opened
+  - prs.checks.settled
+  - prs.merged
+  - issues.opened
+  - issues.stage.changed       # Detected | Reproduced / triage | Repairing | Verification | Resolved (website/issues-panel.js)
+  - agents.mode.switched
+  - agents.handoff
+  - pages.deploy.completed
+  - pages.check.failed
+
+surfaces:
+  actions:
+    existing: [website/actions.html, website/actions.js, client/src/pages/ActionsPage.tsx, buddy_os/actions/actions_runtime_bridge.yaml, .github/workflows/buddy-actions-test-lab.yml]
+    verbs: {list: read, inspect: read, rerun: repo_write, dispatch: repo_write, cancel: repo_write}
+  prs:
+    existing: [.github/pull_request_template.md]
+    gap: "no page/data contract yet; only a subsection in actions_page_manifest.yaml engineering.pull_requests"
+    verbs: {list: read, inspect: read, checks: read, open: repo_write, comment: external, merge: destructive}
+  issues:
+    existing: [website/issues-panel.js]
+    gap: "UI only, mounted inside .actions-shell; no buddy_os contract"
+    verbs: {list: read, inspect: read, triage: repo_write, open: repo_write, comment: external, close: repo_write}
+  agents:
+    existing: [buddy_os/agents/agent_mode_contract.yaml]
+    verbs: {list: read, status: read, switch_mode: sandbox, handoff: sandbox, stop: repo_write}
+  pages:
+    existing: [website/os.html, website/os.js, website/buddy-operating-system.html, tools/preview_github_pages_local.mjs, docs/PUBLIC_GITHUB_PAGES_MASTER_DASHBOARD.md]
+    verbs: {list: read, check: read, preview: sandbox, deploy: external}
+
+cli:               # single entrypoint; extends tools/buddy_cli.py rather than replacing it
+  entrypoint: tools/buddy_cli.py
+  form: "buddy <surface> <verb> [--json] [--trace <id>]"
+  output: "reply envelope as JSON when --json"
+
+routing:
+  - read verbs: "execute directly, return evidence"
+  - sandbox verbs: "execute in sandbox, never reported as live"
+  - repo_write|external: "require approval_ref per governance/approval_policy.yaml"
+  - destructive: "require explicit owner approval; never autonomous"
+
+truth:
+  contract_exists_does_not_mean_surface_connected: true
+  verb_listed_does_not_mean_verb_implemented: true
+  queued_is_not_executed: true
+  sandbox_is_not_live: true
+  unknown_is_not_pass: true
+
+next:
+  - add tests/test_buddy_os_shell_ipc.py: validate envelope schema + every `existing` path resolves
+  - reference this file from buddy_contracts.yaml and runtime_map.yaml buddy_os_contracts
+  - add prs/pages data contracts to close the two peer gaps

@@ -143,6 +143,78 @@ def select_for_task(task_text: str) -> dict[str, Any]:
     }
 
 
+LP_FAMILY_STRATEGIES = "LP-STRATEGIES"
+LP_MANIFEST_SCHEMA = "dreamco.lp.manifest.v1"
+# Three distinct gates. Never collapse these in exports.
+GATE_BOOTCAMP_GRADUATION = "bootcamp_graduation"
+GATE_MARKETPLACE_LISTING = "marketplace_listing"
+GATE_PATH_D_ALLOWLIST = "path_d_allowlist"
+
+
+def learning_catalog_meta() -> dict[str, Any]:
+    """Return catalog version + truth boundary from learning_strategies_catalog.json."""
+    data = _load(LEARNING_PATH)
+    return {
+        "schema": data.get("schema", "dreamco.learning_strategies.v1"),
+        "version": data.get("version", "0.0.0"),
+        "truth_boundary": data.get("truth_boundary", ""),
+    }
+
+
+def export_lp_strategies_manifest(*, write_path: Path | None = None) -> dict[str, Any]:
+    """Emit versioned LP-STRATEGIES catalog manifest (catalog_sku only).
+
+    Bootcamp graduation != marketplace listing != Path D allowlist approval.
+    This export flips none of those gates and makes no sellable/live claim.
+    """
+    meta = learning_catalog_meta()
+    strategy_ids = [i.id for i in load_learning()]
+    version = str(meta["version"])
+    manifest: dict[str, Any] = {
+        "schema": LP_MANIFEST_SCHEMA,
+        "sku": f"{LP_FAMILY_STRATEGIES}-v{version}",
+        "family": LP_FAMILY_STRATEGIES,
+        "version": version,
+        "title": "Buddy Learning Strategies Package",
+        "source_refs": [
+            "buddy/learning/learning_strategies_catalog.json",
+            "buddy/bootcamp/buddy_bootcamp.yaml",
+            "buddy/learning/reasoning_and_learning_registry.py",
+        ],
+        "strategy_ids": strategy_ids,
+        "strategy_count": len(strategy_ids),
+        "bootcamp_tracks": [],
+        "truth_boundary": meta.get("truth_boundary") or None,
+        "marketplace_status": "catalog_sku",
+        "gates": {
+            GATE_BOOTCAMP_GRADUATION: False,
+            GATE_MARKETPLACE_LISTING: False,
+            GATE_PATH_D_ALLOWLIST: False,
+            "note": "Three distinct gates; this export flips none of them",
+        },
+        "graduation_evidence": {
+            "native_passes": 0,
+            "holdout_passed": False,
+            "regression_passed": False,
+            "repeated_signature_stable": False,
+            "eligible_for_mastery": False,
+            "structure_tests": "required",
+            "note": "Catalog export only; not Bootcamp-graduated, not listed, not allowlisted",
+        },
+        "claims": {
+            "sellable": False,
+            "live": False,
+            "production_mastery": False,
+            "path_d_allowlist_write": False,
+        },
+    }
+    if write_path is not None:
+        write_path = Path(write_path)
+        write_path.parent.mkdir(parents=True, exist_ok=True)
+        write_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    return manifest
+
+
 def marketplace_packs() -> list[dict[str, Any]]:
     """Group catalog items into sellable packs (honest catalog SKUs)."""
     reasoning = load_reasoning()
@@ -242,6 +314,18 @@ def run_structure_tests() -> list[str]:
     if len(packs) < 5:
         failures.append("marketplace packs incomplete")
 
+    lp = export_lp_strategies_manifest()
+    if lp.get("sku") != f"{LP_FAMILY_STRATEGIES}-v{learning_catalog_meta()['version']}":
+        failures.append("LP sku mismatch")
+    if lp.get("marketplace_status") != "catalog_sku":
+        failures.append("LP marketplace_status must remain catalog_sku")
+    if any(lp["claims"].get(k) for k in ("sellable", "live", "path_d_allowlist_write")):
+        failures.append("LP export must not claim sellable/live/Path D")
+    if any(lp["gates"].get(g) for g in (GATE_BOOTCAMP_GRADUATION, GATE_MARKETPLACE_LISTING, GATE_PATH_D_ALLOWLIST)):
+        failures.append("LP export must leave all three gates false")
+    if lp.get("strategy_ids") != l_ids:
+        failures.append("LP strategy_ids must match learning catalog")
+
     return failures
 
 
@@ -273,6 +357,15 @@ def main() -> int:
         print(json.dumps(marketplace_packs(), indent=2))
         return 0
 
+    if len(sys.argv) > 1 and sys.argv[1] == "lp-export":
+        if len(sys.argv) > 2 and sys.argv[2] == "--write":
+            dest = Path(sys.argv[3]) if len(sys.argv) > 3 else HERE / "exports" / "LP-STRATEGIES.manifest.json"
+            manifest = export_lp_strategies_manifest(write_path=dest)
+            print(json.dumps({"wrote": str(dest), "sku": manifest["sku"]}, indent=2))
+            return 0
+        print(json.dumps(export_lp_strategies_manifest(), indent=2))
+        return 0
+
     # default: test
     failures = run_structure_tests()
     if failures:
@@ -284,6 +377,7 @@ def main() -> int:
         "reasoning": len(data["reasoning"]),
         "learning": len(data["learning"]),
         "packs": len(marketplace_packs()),
+        "lp_sku": export_lp_strategies_manifest()["sku"],
     }, indent=2))
     return 0
 
