@@ -100,6 +100,123 @@
       3.33
     ]
   ],
+  "top_knowledge_entry_weighted": [
+    [
+      "Computers and Electronics",
+      4.4
+    ],
+    [
+      "Design",
+      3.95
+    ],
+    [
+      "English Language",
+      3.9
+    ],
+    [
+      "Communications and Media",
+      3.57
+    ],
+    [
+      "Customer and Personal Service",
+      3.43
+    ],
+    [
+      "Sales and Marketing",
+      3.27
+    ],
+    [
+      "Administration and Management",
+      2.95
+    ],
+    [
+      "Fine Arts",
+      2.79
+    ]
+  ],
+  "top_skills_entry_weighted": [
+    [
+      "Active Listening",
+      3.7
+    ],
+    [
+      "Reading Comprehension",
+      3.57
+    ],
+    [
+      "Critical Thinking",
+      3.54
+    ],
+    [
+      "Active Learning",
+      3.29
+    ],
+    [
+      "Speaking",
+      3.23
+    ],
+    [
+      "Writing",
+      3.18
+    ]
+  ],
+  "knowledge_weighting": {
+    "method": "entry-weighted mean of O*NET 31.0 importance (Scale IM): entry targets weight 2; other linked occupations in Job Zone 4 or 5 (or the entry targets' Job Zone) weight 1; Manager, Chief, Postsecondary-faculty, All Other, Supervisor, Director and Treasurers and Controllers titles, and non-target occupations in other Job Zones, weight 0",
+    "weights": {
+      "15-1255.00": 2,
+      "15-1255.01": 1,
+      "27-1014.00": 2,
+      "27-1024.00": 2
+    },
+    "note": "top_knowledge/top_skills are the unweighted mean over all linked occupations (kept for comparison); the outline uses the entry-weighted lists."
+  },
+  "outline_elements": {
+    "year1_knowledge": [
+      "English Language"
+    ],
+    "year1_skills": [
+      "Active Listening",
+      "Reading Comprehension",
+      "Critical Thinking"
+    ],
+    "year2_knowledge": [
+      "Computers and Electronics",
+      "Design",
+      "Communications and Media"
+    ],
+    "year3_knowledge": [
+      "Sales and Marketing",
+      "Fine Arts"
+    ],
+    "year3_knowledge_added_from_targets": [],
+    "year3_skills": [
+      "Active Learning",
+      "Speaking",
+      "Writing"
+    ],
+    "skipped_knowledge": [
+      {
+        "element": "Customer and Personal Service",
+        "reason": "service and client-relations knowledge; the outline leaves it to internships, part-time work and the practice tasks rather than a course slot"
+      },
+      {
+        "element": "Administration and Management",
+        "reason": "management and planning knowledge matters most after several years of experience, so the outline gives it no course slot (a management elective is optional)"
+      }
+    ],
+    "rule": "English Language is placed in Year 1 general education; workplace and management elements (Customer and Personal Service, Administrative, Clerical, Administration and Management, Personnel and Human Resources, Education and Training) get no course slot unless the major's CIP series is about them; the next three elements go to Year 2 and up to three more (ordered by importance to the entry targets) to Year 3; if fewer than two remain for Year 3, knowledge rated at least 2.5 for the entry targets fills it"
+  },
+  "quality_flags": {
+    "method": {
+      "supervisory_tasks": "task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and supervise); 'under supervision' does not count"
+    },
+    "note": "Authored tier: entry targets and practice tasks were chosen and reviewed per major, so the generated-tier plausibility flags are not applied. Informational only: cited tasks whose O*NET statement is supervisory are listed; their authored scenarios say when they are practice for a later or graduate role.",
+    "flag_count": 0,
+    "flags": [],
+    "informational": {
+      "supervisory_task_cited": []
+    }
+  },
   "entry_targets": [
     {
       "soc": "27-1024.00",
@@ -142,6 +259,51 @@
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
   "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+  "license": {
+    "summary": "Mixed: O*NET-derived data under CC BY 4.0, plus DreamCo-original authored text",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+    "required_notices": [
+      "This page includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license.",
+      "O*NET\u00ae is a trademark of USDOL/ETA.",
+      "DreamCo has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+      "Crosswalk Files by USDOL/ETA, licensed under CC BY 4.0."
+    ],
+    "dreamco_commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+    "components": [
+      {
+        "fields": [
+          "occupations",
+          "top_knowledge",
+          "top_skills",
+          "top_knowledge_entry_weighted",
+          "top_skills_entry_weighted",
+          "entry_targets",
+          "knowledge_weighting"
+        ],
+        "content_class": "O*NET 31.0 and crosswalk data, filtered, averaged and ranked by DreamCo",
+        "ownership_class": "open_license_with_conditions",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "fields": [
+          "practice_tasks[].task_intent",
+          "practice_tasks[].prompt",
+          "practice_tasks[].rubric",
+          "practice_tasks[].reference_answer_outline",
+          "outline_elements",
+          "entry_target_review"
+        ],
+        "content_class": "DreamCo-original authored text (tier authored)",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "license": "DreamCo-original; commercial terms pending owner decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed"
+      }
+    ],
+    "per_item_licensing": "each practice_tasks[] item carries its own license block"
+  },
+  "created_at": "2026-10-02T18:30:00-05:00",
   "practice_tasks": [
     {
       "practice_id": "50.0409-P1",
@@ -158,6 +320,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. A city transit agency wants a 20-second silent animated explainer, for station screens, showing how to tap a contactless card or phone to pay. Write the production plan and creative rationale: a short storyboard (six to eight frames with timing), the visual style and color palette tied to the agency's brand and accessibility, how motion guides attention without text, the software and file formats you will use, and how you will test that riders understand it without sound.",
       "rubric": [
         {
@@ -199,6 +382,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Design a poster (24 by 36 inches) for a free community jazz festival with a headline, date and location, five performer names, a sponsor logo strip and a QR code. Write the layout and typography specification: grid and margins, the visual hierarchy (what is read first, second, third), typeface choices and sizes in points with reasons, image placement and scale, color and contrast, and how the design adapts to a 1080 by 1920 pixel social media version.",
       "rubric": [
         {
@@ -240,6 +444,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. You designed an online exhibit for a local history museum with scroll-triggered animations, an interactive timeline and an image zoom viewer, to be built by one front-end and one back-end developer. Write the collaboration plan: how you specify animations (timing, easing, reduced-motion alternatives), the content model the back end must support (timeline entries, image sets, captions, credits), performance budgets for images and scripts, how you pair with developers during build, and acceptance testing.",
       "rubric": [
         {
@@ -281,6 +506,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. A kitchenware company needs a photorealistic 3D render of a glass-and-steel kettle for its website, matching studio product photography. Write the lighting, materials and rendering plan: the light setup (key, fill, rim, environment map), physically based material settings for brushed steel, clear glass with water inside and a rubber handle, how you handle reflections, caustics and shadows, the render settings, and how you compare the result with reference photos.",
       "rubric": [
         {
@@ -322,6 +568,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. A neighborhood bakery wants a new logo and storefront sign. Describe your concept phase: how you gather the brief (values, audience, competitors), six thumbnail directions in words, how you narrow to three rough sketches, how you present them to the owners and capture feedback, and how you revise without losing the concept. Include the questions you ask when feedback is vague (such as 'make it pop').",
       "rubric": [
         {
@@ -363,6 +630,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. A food-rescue nonprofit hires you to redesign its website to recruit volunteers and donors. Write the pre-production plan: discovery activities, two mood boards described in words with the reasoning behind each, a storyboard of the volunteer sign-up journey from home page to confirmation, content and asset inventory, roles and approvals, and a six-week timeline with milestones and review points.",
       "rubric": [
         {

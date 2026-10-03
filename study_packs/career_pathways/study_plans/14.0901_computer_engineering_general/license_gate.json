@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-ceg-14.0901",
-  "evaluated_at": "2026-10-02T18:03:27-05:00",
+  "evaluated_at": "2026-10-02T18:59:32-05:00",
   "inputs": {
     "target": "study_plans/14.0901_computer_engineering_general",
     "candidate_path": "study_plans/14.0901_computer_engineering_general/candidate.json",
-    "candidate_sha256": "e09726cc21f11c4ad91bb91c9509afc90494fdf8724af0bde6006176d0b79779",
+    "candidate_sha256": "eb98e7707240e79ac6c032870d7478b37d0b253feac0d05e38eba6ed8abec94d",
     "provenance_path": "study_plans/14.0901_computer_engineering_general/provenance.json",
-    "provenance_sha256": "8b69a665501da46d103c75f6c203b8e8bf8f62896f621817d361841ecc3ec773",
+    "provenance_sha256": "8e4907435c4363fd37528c90f1ecea3055db5da7419bb9ca5ad3cc3374cfb40a",
     "asset_record_path": "study_plans/14.0901_computer_engineering_general/asset.json",
-    "asset_record_sha256": "9aca24f05e7da5c144b6802d55000c49ae4c48fd951ed41bcdd01a1e65752b0b"
+    "asset_record_sha256": "9dfb467a4c85170c27f1f32b8c61025c41550c6d6e8a85b2bbc70bdb90aaf464"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

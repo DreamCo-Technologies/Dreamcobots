@@ -17,8 +17,9 @@ ROOT = pathlib.Path(__file__).resolve().parent
 RAW, DATA, PLANS, AUTH = ROOT / "raw", ROOT / "data", ROOT / "study_plans", ROOT / "authored"
 AUTHORED_FILES = ["practice_tasks_authored.json", "outline_topics.json", "target_overrides.json", "coverage_rules.json"]
 EVIDENCE = DATA / "dreamco_knowledge" / "evidence"
-# Fixed build date so rebuilds are reproducible (override with DREAMCO_BUILD_DATE).
-BUILD_DATE = os.environ.get("DREAMCO_BUILD_DATE", "2026-10-02")
+# Fixed release timestamp (ISO 8601 with offset) so rebuilds are reproducible (override with DREAMCO_BUILD_TIMESTAMP).
+BUILD_TIMESTAMP = os.environ.get("DREAMCO_BUILD_TIMESTAMP", "2026-10-02T18:30:00-05:00")
+EVIDENCE_ROOT = "study_packs/career_pathways/data/dreamco_knowledge/evidence"
 AUTHORSHIP = "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed"
 ONET_VERSION = "31.0"
 DB_URL = "https://www.onetcenter.org/dl_files/database/db_31_0_csv/"
@@ -265,6 +266,7 @@ def practice_tasks(cip, occs, tasks, authored):
             "label": PRACTICE_LABEL,
             "authorship": AUTHORSHIP,
             "ownership_class": "synthetic_generated_by_dreamco",
+            "license": item_license("authored"),
             "prompt": f"{PRACTICE_LABEL}. {a['prompt']}",
             "rubric": a["rubric"],
             "reference_answer_outline": a["reference_answer_outline"],
@@ -290,45 +292,7 @@ def zl(z):
     return "1-2" if z == 2 else str(z)
 
 
-def plan_md(cip, title, stem, occs, zones, know, skills, targets, tzone, basis, tasks_for_plan, tknow, topics, review):
-    zlabel = lambda z: f"Job Zone {zl(z)}" if z else "no Job Zone rating"
-    L = [f"# Study plan: {title} (CIP {cip})", "",
-         "Tier: **authored**. The outline course topics, entry-target review, next-steps wording, and practice tasks for this "
-         f"major were written for it specifically ({AUTHORSHIP}).", "",
-         "## Linked O*NET occupations (with O*NET 31.0 Job Zone)", ""]
-    L += [f"- `{s}` {t} ({zlabel(zones.get(s))})" for s, t in occs]
-    L += ["", "## Most important knowledge areas (O*NET importance, 1 to 5, averaged over linked occupations)", ""]
-    L += [f"- {k} ({v})" for k, v in know] or ["- No O*NET knowledge ratings for these occupations."]
-    L += ["", "## Most important foundational skills (O*NET 31.0 Essential Skills importance, 1 to 5)", ""]
-    L += [f"- {k} ({v})" for k, v in skills] or ["- No O*NET skill ratings for these occupations."]
-    L += ["", "## Entry-level targets (DreamCo selection from O*NET 31.0 Job Zones)", ""]
-    L += [f"- `{s}` {t} ({zlabel(zones.get(s))})" for s, t in targets]
-    L += ["", f"Selection rule: {basis}."]
-    if review and review["type"] == "override":
-        L += ["", f"Manual override reason (DreamCo review): {review['reason']}"]
-    elif review:
-        L += ["", f"DreamCo target review (no change): {review['note']}"]
-    k = [x[0] for x in know]; s = [x[0] for x in skills]
-    year3 = [e for e in tknow if e not in k[:3]][:3] or k[3:6]
-    def topic(kind, e):
-        try:
-            return topics[kind][e]
-        except KeyError:
-            raise SystemExit(f"authored/outline_topics.json has no {kind} mapping for CIP {cip} element '{e}'")
-    study = lambda e: f"{e} ({topic('knowledge', e)})"
-    practice = lambda e: f"{e} ({topic('skills', e)})"
-    tnames = "; ".join(t for _, t in targets) or "a linked occupation"
-    L += ["", "## 4-year outline (DreamCo-derived guidance, not O*NET data)", "",
-          f"1. Year 1, foundations. General education plus deliberate practice in the top-rated skills: "
-          f"{'; '.join(practice(e) for e in s[:3]) or 'core skills'}.",
-          f"2. Year 2, core knowledge. Build the highest-rated knowledge areas for this major: "
-          f"{'; '.join(study(e) for e in k[:3]) or 'the major core'}.",
-          f"3. Year 3, depth toward the entry targets. Prioritize knowledge rated highest for {tnames}: "
-          f"{'; '.join(study(e) for e in year3) or 'major electives'}. Keep building "
-          f"{'; '.join(practice(e) for e in s[3:5]) or 'applied skills'} through project work.",
-          f"4. Year 4, launch. Internship or capstone aimed at {tnames}; build a portfolio from the practice tasks below "
-          f"that shows {', '.join(k[:2]) or 'major knowledge'}.",
-          ""]
+def next_steps_lines(L, occs, zones, targets, lead_line=True):
     counts = {}
     for so, _ in occs:
         counts[zones.get(so)] = counts.get(zones.get(so), 0) + 1
@@ -344,9 +308,49 @@ def plan_md(cip, title, stem, occs, zones, know, skills, targets, tzone, basis, 
         L += [f"- Entry targets in Job Zone {zl(z)}: {ZONE_GUIDANCE[z]}"]
     if grad:
         L += [f"- Graduate or professional paths (Job Zone 5): " + "; ".join(f"`{so}` {t}" for so, t in grad) + "."]
-    if lead:
+    if lead and lead_line:
         L += [f"- Leadership titles such as {'; '.join(lead)} are linked to this major but are not treated as entry targets here; "
               "they usually follow several years of experience."]
+
+
+def plan_md(cip, title, stem, occs, zones, ctx, targets, basis, tasks_for_plan, topics, review):
+    zlabel = lambda z: f"Job Zone {zl(z)}" if z else "no Job Zone rating"
+    L = [f"# Study plan: {title} (CIP {cip})", "",
+         "Tier: **authored**. The outline course topics, entry-target review, next-steps wording, and practice tasks for this "
+         f"major were written for it specifically ({AUTHORSHIP}).", "",
+         "## Linked O*NET occupations (with O*NET 31.0 Job Zone)", ""]
+    L += [f"- `{s}` {t} ({zlabel(zones.get(s))})" for s, t in occs]
+    knowledge_lines(L, ctx["know_w"], ctx["skills_w"], ctx["know"], ctx["skills"], len(ctx["weights"]), len(occs))
+    L += ["", "## Entry-level targets (DreamCo selection from O*NET 31.0 Job Zones)", ""]
+    L += [f"- `{s}` {t} ({zlabel(zones.get(s))})" for s, t in targets]
+    L += ["", f"Selection rule: {basis}."]
+    if review and review["type"] == "override":
+        L += ["", f"Manual override reason (DreamCo review): {review['reason']}"]
+    elif review:
+        L += ["", f"DreamCo target review (no change): {review['note']}"]
+    op = ctx["outline"]
+    def topic(kind, e):
+        try:
+            return topics[kind][e]
+        except KeyError:
+            raise SystemExit(f"authored/outline_topics.json has no {kind} mapping for CIP {cip} element '{e}'")
+    study = lambda e: f"{e} ({topic('knowledge', e)})"
+    practice = lambda e: f"{e} ({topic('skills', e)})"
+    tnames = "; ".join(t for _, t in targets) or "a linked occupation"
+    gened = f"General education, including {study(op['year1_knowledge'][0])}, plus" if op["year1_knowledge"] else "General education plus"
+    L += ["", "## 4-year outline (DreamCo-derived guidance, not O*NET data)", "",
+          f"1. Year 1, foundations. {gened} deliberate practice in the top-rated skills: "
+          f"{'; '.join(practice(e) for e in op['year1_skills']) or 'core skills'}.",
+          f"2. Year 2, core knowledge. Build the highest-rated knowledge areas for this major: "
+          f"{'; '.join(study(e) for e in op['year2_knowledge']) or 'the major core'}.",
+          f"3. Year 3, depth toward the entry targets ({tnames}): "
+          f"{'; '.join(study(e) for e in op['year3_knowledge']) or 'major electives'}. Keep building "
+          f"{'; '.join(practice(e) for e in op['year3_skills']) or 'applied skills'} through project work.",
+          f"4. Year 4, launch. Internship or capstone aimed at {tnames}; build a portfolio from the practice tasks below "
+          f"that shows {', '.join(op['year2_knowledge'][:2]) or 'major knowledge'}.",
+          ""]
+    skipped_lines(L, op, ctx["know_w"])
+    next_steps_lines(L, occs, zones, targets)
     L += [f"- Before choosing Year 3 electives, compare the task lists of the entry targets on O*NET OnLine "
           f"({', '.join(ONLINE + so for so, _ in targets)})."]
     L += ["", "## Practice tasks (DreamCo-original scenario prompts tied to O*NET 31.0 task IDs)", "",
@@ -365,7 +369,6 @@ def plan_md(cip, title, stem, occs, zones, know, skills, targets, tzone, basis, 
     L += [f"Machine-readable provenance and license gate: `study_plans/{stem}/provenance.json`, `study_plans/{stem}/license_gate.json`.",
           "", PROVENANCE]
     return "\n".join(L)
-
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -420,106 +423,111 @@ def select_majors(cw, valid, zones, rules):
 
 def generated_practice_tasks(cip, targets, eligible, sim, tasks, kim, know):
     """Six template exercises: up to 3 occupations (entry targets, then the most similar eligible linked occupations),
-    Core tasks first in Task ID order, round robin. The O*NET task statement is quoted verbatim with attribution."""
+    Core tasks first in Task ID order, round robin, skipping supervisory/managerial task statements (is_supervisory)
+    unless too few others exist. The O*NET task statement is quoted verbatim with attribution.
+    Returns (tasks, dropped_supervisory_task_ids)."""
     pool = list(targets)
     for o in sorted([o for o in eligible if o not in pool], key=lambda o: -sim(o[0])):
         if len(pool) >= 3:
             break
         pool.append(o)
-    queues = {}
+    recs = {}
     for s, _ in pool:
         t = tasks[tasks["O*NET-SOC Code"] == s]
         core = t[t["Task Type"] == "Core"]
-        queues[s] = (core if not core.empty else t).sort_values("Task ID").to_dict("records")
-    picked, used = [], set()
-    while len(picked) < PRACTICE_PER_MAJOR and any(queues.values()):
-        for s, title in pool:
-            if len(picked) >= PRACTICE_PER_MAJOR or not queues[s]:
-                continue
-            r = queues[s].pop(0)
-            if int(r["Task ID"]) in used:
-                continue
-            used.add(int(r["Task ID"]))
-            k = [e for e, _ in top_elements(kim, [s], 2)] or [e for e, _ in know[:2]]
-            k = (k + ["the field's core knowledge"] * 2)[:2]
-            n = len(picked) + 1
-            picked.append({
-                "practice_id": f"{cip}-P{n}",
-                "cip_code": cip,
-                "tier": "generated",
-                "onet_soc_code": s,
-                "occupation_title": title,
-                "onet_task_id": int(r["Task ID"]),
-                "onet_task_type": r["Task Type"] if isinstance(r["Task Type"], str) else None,
-                "onet_task_url": ONLINE + s,
-                "onet_task_statement": str(r["Task"]).strip(),
-                "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
-                "format": "applied exercise",
-                "label": GENERATED_LABEL,
-                "authorship": GENERATED_AUTHORSHIP,
-                "ownership_class": "synthetic_generated_by_dreamco",
-                "prompt": (f"{GENERATED_LABEL}. Assume you are in your first year in the occupation \"{title}\" and have been asked to carry out "
-                           "the O*NET task quoted above for a small, realistic case that you define in two or three sentences. "
-                           f"In about one page, explain what information you need first, the steps and methods you would use "
-                           f"(apply {k[0]} and {k[1]}), and how you would check the result and report it."),
-                "rubric": [
-                    {"criterion": "Task fit", "description": "The response performs the work in the quoted O*NET task statement for a concrete case with stated assumptions.", "points": 2},
-                    {"criterion": "Method", "description": f"The steps are specific and ordered, and they apply {k[0]} and {k[1]} correctly rather than only naming them.", "points": 2},
-                    {"criterion": "Check and report", "description": "The response says how the result would be verified (criteria, review or test) and how and to whom it would be reported.", "points": 2},
-                ],
-                "reference_answer_outline": [
-                    "A short, concrete case with its assumptions stated.",
-                    "The information or inputs needed before starting, and where they come from.",
-                    f"Ordered steps that use the occupation's actual methods or tools, drawing on {k[0]} and {k[1]}.",
-                    "A check of the result and a plan for communicating it to the right people.",
-                ],
-            })
-    return picked
+        recs[s] = (core if not core.empty else t).sort_values("Task ID").to_dict("records")
+
+    def pick(queues):
+        out, used = [], set()
+        while len(out) < PRACTICE_PER_MAJOR and any(queues.values()):
+            for s, title in pool:
+                if len(out) >= PRACTICE_PER_MAJOR or not queues[s]:
+                    continue
+                r = queues[s].pop(0)
+                if int(r["Task ID"]) not in used:
+                    used.add(int(r["Task ID"]))
+                    out.append((s, title, r))
+        return out
+    unfiltered = pick({s: list(v) for s, v in recs.items()})
+    filtered = {s: [r for r in v if not is_supervisory(r["Task"])] for s, v in recs.items()}
+    if sum(len(v) for v in filtered.values()) < PRACTICE_PER_MAJOR:
+        # not enough non-supervisory tasks: append supervisory ones after them (each item is flagged)
+        filtered = {s: filtered[s] + [r for r in v if is_supervisory(r["Task"])] for s, v in recs.items()}
+    chosen = pick(filtered)
+    picked_ids = {int(r["Task ID"]) for _, _, r in chosen}
+    dropped = [int(r["Task ID"]) for _, _, r in unfiltered if is_supervisory(r["Task"]) and int(r["Task ID"]) not in picked_ids]
+    picked = []
+    for s, title, r in chosen:
+        k = [e for e, _ in top_elements(kim, [s], 2)] or [e for e, _ in know[:2]]
+        k = (k + ["the field's core knowledge"] * 2)[:2]
+        n = len(picked) + 1
+        picked.append({
+            "practice_id": f"{cip}-P{n}",
+            "cip_code": cip,
+            "tier": "generated",
+            "onet_soc_code": s,
+            "occupation_title": title,
+            "onet_task_id": int(r["Task ID"]),
+            "onet_task_type": r["Task Type"] if isinstance(r["Task Type"], str) else None,
+            "onet_task_url": ONLINE + s,
+            "onet_task_statement": str(r["Task"]).strip(),
+            "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+            "supervisory_task": is_supervisory(r["Task"]),
+            "format": "applied exercise",
+            "label": GENERATED_LABEL,
+            "authorship": GENERATED_AUTHORSHIP,
+            "ownership_class": "open_license_with_conditions",
+            "license": item_license("generated"),
+            "prompt": (f"{GENERATED_LABEL}. Assume you are in your first year in the occupation \"{title}\" and have been asked to carry out "
+                       "the O*NET task quoted above for a small, realistic case that you define in two or three sentences. "
+                       f"In about one page, explain what information you need first, the steps and methods you would use "
+                       f"(apply {k[0]} and {k[1]}), and how you would check the result and report it."),
+            "rubric": [
+                {"criterion": "Task fit", "description": "The response performs the work in the quoted O*NET task statement for a concrete case with stated assumptions.", "points": 2},
+                {"criterion": "Method", "description": f"The steps are specific and ordered, and they apply {k[0]} and {k[1]} correctly rather than only naming them.", "points": 2},
+                {"criterion": "Check and report", "description": "The response says how the result would be verified (criteria, review or test) and how and to whom it would be reported.", "points": 2},
+            ],
+            "reference_answer_outline": [
+                "A short, concrete case with its assumptions stated.",
+                "The information or inputs needed before starting, and where they come from.",
+                f"Ordered steps that use the occupation's actual methods or tools, drawing on {k[0]} and {k[1]}.",
+                "A check of the result and a plan for communicating it to the right people.",
+            ],
+        })
+    return picked, dropped
 
 
-def plan_md_generated(cip, title, stem, occs, zones, know, skills, targets, tzone, basis, ptasks):
+def plan_md_generated(cip, title, stem, occs, zones, ctx, targets, basis, ptasks, qf):
     zlabel = lambda z: f"Job Zone {zl(z)}" if z else "no Job Zone rating"
     L = [f"# Study plan: {title} (CIP {cip})", "",
          "Tier: **generated**. This plan was produced automatically by build.py from O*NET 31.0 data and fixed templates. "
          "Unlike the 27 authored plans, its outline topics, entry targets and practice exercises were not individually written "
          "or reviewed: the outline uses element names only, the entry targets are the unreviewed rule output, and the practice "
-         "exercises are templates around quoted O*NET task statements.", "",
-         "## Linked O*NET occupations (with O*NET 31.0 Job Zone)", ""]
+         "exercises are templates around quoted O*NET task statements.", ""]
+    quality_lines(L, qf)
+    L += ["## Linked O*NET occupations (with O*NET 31.0 Job Zone)", ""]
     L += [f"- `{s}` {t} ({zlabel(zones.get(s))})" for s, t in occs]
-    L += ["", "## Most important knowledge areas (O*NET importance, 1 to 5, averaged over linked occupations)", ""]
-    L += [f"- {k} ({v})" for k, v in know] or ["- No O*NET knowledge ratings for these occupations."]
-    L += ["", "## Most important foundational skills (O*NET 31.0 Essential Skills importance, 1 to 5)", ""]
-    L += [f"- {k} ({v})" for k, v in skills] or ["- No O*NET skill ratings for these occupations."]
+    knowledge_lines(L, ctx["know_w"], ctx["skills_w"], ctx["know"], ctx["skills"], len(ctx["weights"]), len(occs))
     L += ["", "## Entry-level targets (DreamCo rule output from O*NET 31.0 Job Zones; not manually reviewed)", ""]
     L += [f"- `{s}` {t} ({zlabel(zones.get(s))})" for s, t in targets]
     L += ["", f"Selection rule: {basis}. These targets have not been checked for plausibility by a reviewer."]
-    k = [x[0] for x in know]; s = [x[0] for x in skills]
+    op = ctx["outline"]
     tnames = "; ".join(t for _, t in targets) or "a linked occupation"
+    gened = "General education, including English Language, plus" if op["year1_knowledge"] else "General education plus"
     L += ["", "## 4-year outline (DreamCo-generated template, not O*NET data; element names only, no per-major course mapping)", "",
-          f"1. Year 1, foundations. General education plus deliberate practice in the top-rated skills: {', '.join(s[:3]) or 'core skills'}.",
-          f"2. Year 2, core knowledge. Courses in the major that build the highest-rated knowledge areas: {', '.join(k[:3]) or 'the major core'}.",
-          f"3. Year 3, depth. Electives aimed at {tnames}, with further work in {', '.join(k[3:6]) or 'major electives'} "
-          f"and applied practice in {', '.join(s[3:5]) or 'applied skills'}.",
+          f"1. Year 1, foundations. {gened} deliberate practice in the top-rated skills: {', '.join(op['year1_skills']) or 'core skills'}.",
+          f"2. Year 2, core knowledge. Courses in the major that build the highest-rated knowledge areas: {', '.join(op['year2_knowledge']) or 'the major core'}.",
+          f"3. Year 3, depth. Electives aimed at {tnames}, with further work in {', '.join(op['year3_knowledge']) or 'major electives'} "
+          f"and applied practice in {', '.join(op['year3_skills']) or 'applied skills'}.",
           f"4. Year 4, launch. Internship or capstone aimed at {tnames}, with a portfolio drawn from the practice exercises below.",
           ""]
-    counts = {}
-    for so, _ in occs:
-        counts[zones.get(so)] = counts.get(zones.get(so), 0) + 1
-    dist = ", ".join(f"{counts[z]} in Job Zone {zl(z)}" for z in sorted([z for z in counts if z], reverse=True))
-    if counts.get(None):
-        dist += f", {counts[None]} with no Job Zone rating"
-    grad = [(so, t) for so, t in occs if zones.get(so) == 5 and "All Other" not in t and (so, t) not in targets][:3]
-    tz = sorted({zones[so] for so, _ in targets if so in zones}, reverse=True)
-    L += ["## Typical next steps (DreamCo guidance; cites O*NET 31.0 Job Zone numbers only)", "",
-          f"- Linked occupations by O*NET Job Zone: {dist}."]
-    for z in tz:
-        L += [f"- Entry targets in Job Zone {zl(z)}: {ZONE_GUIDANCE[z]}"]
-    if grad:
-        L += ["- Graduate or professional paths (Job Zone 5): " + "; ".join(f"`{so}` {t}" for so, t in grad) + "."]
+    skipped_lines(L, op, ctx["know_w"])
+    next_steps_lines(L, occs, zones, targets, lead_line=False)
     L += [f"- Compare the task lists of the entry targets on O*NET OnLine ({', '.join(ONLINE + so for so, _ in targets)})."]
     L += ["", "## Practice exercises (generated template; quoted O*NET 31.0 task statements)", "",
           f"Authorship: {GENERATED_AUTHORSHIP}. Each exercise quotes one O*NET 31.0 task statement (USDOL/ETA, CC BY 4.0) and "
-          "wraps it in the same DreamCo template prompt and rubric. Machine-readable copy: `data/practice_tasks.json`.", ""]
+          "wraps it in the same DreamCo template prompt and rubric. Supervisory or managerial tasks are skipped where other "
+          "tasks exist (see Quality flags). Machine-readable copy: `data/practice_tasks.json`.", ""]
     for p in ptasks:
         L += [f"### {p['practice_id']}. `{p['onet_soc_code']}` {p['occupation_title']}, O*NET task {p['onet_task_id']}", "",
               f"> O*NET 31.0 task statement (quoted verbatim, USDOL/ETA, CC BY 4.0): {p['onet_task_statement']}", "",
@@ -531,6 +539,246 @@ def plan_md_generated(cip, title, stem, occs, zones, know, skills, targets, tzon
     L += [f"Machine-readable provenance and license gate: `study_plans/{stem}/provenance.json`, `study_plans/{stem}/license_gate.json`.",
           "", "---\n" + GENERATED_FOOTER + PROVENANCE[len("---\n"):]]
     return "\n".join(L)
+
+# ---------------------------------------------------------------------------------------------------------------
+# Entry-weighted knowledge/skill means (v4). The unweighted mean over all linked occupations is kept for comparison.
+WEIGHTING_METHOD = ("entry-weighted mean of O*NET 31.0 importance (Scale IM): entry targets weight 2; other linked "
+                    "occupations in Job Zone 4 or 5 (or the entry targets' Job Zone) weight 1; Manager, Chief, "
+                    "Postsecondary-faculty, All Other, Supervisor, Director and Treasurers and Controllers titles, and "
+                    "non-target occupations in other Job Zones, weight 0")
+
+
+def entry_weights(occs, targets, zones):
+    tset = {s for s, _ in targets}
+    tz = {zones.get(s) for s in tset if zones.get(s)}
+    w = {}
+    for s, t in occs:
+        if s in tset:
+            w[s] = 2
+        elif EXCLUDE_STRICT.search(t) or EXCLUDE_SOFT.search(t):
+            continue
+        elif zones.get(s) in ({4, 5} | tz):
+            w[s] = 1
+    return w
+
+
+def weighted_top(im, weights, n):
+    df = im[im["O*NET-SOC Code"].isin(weights)].copy()
+    if df.empty:
+        return []
+    df["w"] = df["O*NET-SOC Code"].map(weights)
+    df["wv"] = df["w"] * df["Data Value"]
+    g = df.groupby("Element Name")[["wv", "w"]].sum()
+    r = (g["wv"] / g["w"]).sort_values(ascending=False, kind="stable").head(n)
+    return [(k, round(float(v), 2)) for k, v in r.items()]
+
+
+# Outline element plan (v4). English Language goes to Year 1 general education; workplace/management elements get no
+# course slot unless the major's CIP series is about them; at most 3 core elements in Year 2 and 3 in Year 3.
+CROSS_CUTTING = {
+    "Customer and Personal Service": "service and client-relations knowledge; the outline leaves it to internships, part-time work and the practice tasks rather than a course slot",
+    "Administrative": "office procedures and records handling; usually learned on the job, so it gets no course slot",
+    "Clerical": "office procedures and records handling; usually learned on the job, so it gets no course slot",
+    "Administration and Management": "management and planning knowledge matters most after several years of experience, so the outline gives it no course slot (a management elective is optional)",
+    "Personnel and Human Resources": "staffing and HR knowledge matters mainly for supervisory roles later in a career, so it gets no course slot",
+    "Education and Training": "teaching and training others is built through presenting, tutoring and peer teaching in projects rather than a dedicated course",
+}
+CORE_BY_SERIES = {"52": {"Administration and Management", "Administrative", "Customer and Personal Service", "Personnel and Human Resources"},
+                  "13": {"Education and Training"}, "44": {"Administration and Management"}}
+CAPACITY_REASON = ("ranked below the knowledge areas the outline already covers (the outline gives at most six course "
+                   "slots to knowledge); worth an elective if a target role needs it")
+
+
+def outline_plan(cip, know_w, skills_w, target_imp, overrides=None):
+    """Which weighted top elements go where in the outline, and which are skipped (with reason)."""
+    overrides = overrides or {}
+    keep = CORE_BY_SERIES.get(cip[:2], set()) | set(overrides.get("core_keep", []))
+    names = [e for e, _ in know_w]
+    y1k = [e for e in names if e == "English Language"]
+    core = [e for e in names if e != "English Language" and (e not in CROSS_CUTTING or e in keep)]
+    y2 = core[:3]
+    rest = sorted(core[3:], key=lambda e: -target_imp.get(e, 0.0))
+    y3 = rest[:3]
+    # Few core elements in the top list: add knowledge rated highest for the entry targets (outside the top list).
+    extra = [e for e, _ in sorted(target_imp.items(), key=lambda kv: -kv[1])
+             if e not in names and e != "English Language" and (e not in CROSS_CUTTING or e in keep) and target_imp[e] >= 2.5]
+    y3_from_targets = extra[:max(0, 2 - len(y3))]
+    y3 = y3 + y3_from_targets
+    reasons = overrides.get("skip_reasons", {})
+    skipped = [{"element": e, "reason": reasons.get(e, CROSS_CUTTING[e])} for e in names if e in CROSS_CUTTING and e not in keep]
+    skipped += [{"element": e, "reason": reasons.get(e, CAPACITY_REASON)} for e in rest[3:]]
+    s = [e for e, _ in skills_w]
+    return {"year1_knowledge": y1k, "year1_skills": s[:3], "year2_knowledge": y2, "year3_knowledge": y3,
+            "year3_knowledge_added_from_targets": y3_from_targets,
+            "year3_skills": s[3:6], "skipped_knowledge": skipped,
+            "rule": ("English Language is placed in Year 1 general education; workplace and management elements "
+                     "(Customer and Personal Service, Administrative, Clerical, Administration and Management, Personnel and "
+                     "Human Resources, Education and Training) get no course slot unless the major's CIP series is about them; "
+                     "the next three elements go to Year 2 and up to three more (ordered by importance to the entry targets) "
+                     "to Year 3; if fewer than two remain for Year 3, knowledge rated at least 2.5 for the entry targets fills it")}
+
+
+def knowledge_lines(L, know_w, skills_w, know_all, skills_all, n_w, n_all):
+    L += ["", f"## Most important knowledge areas (O*NET importance, 1 to 5, entry-weighted over {n_w} linked occupations; used for the outline)", ""]
+    L += [f"- {k} ({v})" for k, v in know_w] or ["- No O*NET knowledge ratings for these occupations."]
+    L += ["", f"Weighting: {WEIGHTING_METHOD}. For comparison, the unweighted mean over all {n_all} linked occupations ranks: "
+          + ("; ".join(f"{k} ({v})" for k, v in know_all) or "no ratings") + "."]
+    L += ["", f"## Most important foundational skills (O*NET 31.0 Essential Skills importance, 1 to 5, entry-weighted)", ""]
+    L += [f"- {k} ({v})" for k, v in skills_w] or ["- No O*NET skill ratings for these occupations."]
+    L += ["", "Unweighted mean over all linked occupations: " + ("; ".join(f"{k} ({v})" for k, v in skills_all) or "no ratings") + "."]
+
+
+def skipped_lines(L, op, know_w):
+    vals = dict(know_w)
+    L += ["Knowledge areas from the top list that the outline deliberately does not cover:", ""]
+    L += [f"- {x['element']} ({vals.get(x['element'])}): {x['reason']}." for x in op["skipped_knowledge"]] or \
+         ["- None: every top knowledge area has a place in the outline."]
+    L += [""]
+
+
+# Plausibility checks for the generated tier (v4): supervisory tasks and topical overlap of targets.
+SUPERVISORY = re.compile(r"\b(supervis(e|es|ing)\b|provides? supervision|direct(s|ing)? and coordinate|direct(s|ing)? "
+                         r"(the )?(work|activities|staff|operations) of|manag(e|es|ing) (staff|personnel|employees|workers|teams?)\b|"
+                         r"oversee(s|ing)? (the )?(work|activities|staff|personnel|workers|employees)|\bhir(e|es|ing)\b|"
+                         r"subordinates|assign(s|ing)? (work|duties|tasks) to|evaluat\w+ (the )?(work|performance) of|"
+                         r"train(s|ing)? and supervise)", re.I)
+UNDER_SUPERVISION = re.compile(r"under (the )?(direct |general )?supervision", re.I)
+SUPERVISORY_RULE = ("task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and "
+                    "coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee "
+                    "the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and "
+                    "supervise); 'under supervision' does not count")
+
+
+def is_supervisory(text):
+    return bool(SUPERVISORY.search(UNDER_SUPERVISION.sub("", str(text))))
+
+
+OVERLAP_STOP = set("""a an and or of the for in on to with by as at from other general all specialists specialist studies study
+science sciences technology technologies technologist technologists management managers manager services service systems system
+operations professionals professional workers worker related programs program engineering engineers engineer arts art applied
+administration administrative administrators analysts analyst teachers teacher education occupations occupation except""".split())
+OVERLAP_RULE = ("a target is flagged low_title_overlap (severity high if its O*NET description also shares no stem, else medium) when its O*NET occupation title shares no content-word stem with the "
+                "CIP program title (lower-cased words of 3+ letters; generic words such as science, studies, technology, "
+                "engineering, management, services, general and other ignored; crude suffix stripping; stems of 5+ letters "
+                "also match when one contains the other). The detail says whether the occupation's O*NET description shares "
+                "a stem. This is a crude lexical heuristic: it misses implausible pairs that share a word and flags "
+                "plausible pairs that use different words")
+
+
+def _stem(w):
+    for suf in ("ization", "ations", "ation", "ists", "ist", "ings", "ing", "ers", "er", "ical", "ics", "ic", "ies", "al", "es", "s", "y"):
+        if len(w) - len(suf) >= 4 and w.endswith(suf):
+            return w[:-len(suf)]
+    return w
+
+
+def _stems(t):
+    return {_stem(w) for w in re.findall(r"[a-z]+", str(t).lower()) if w not in OVERLAP_STOP and len(w) > 2}
+
+
+def _overlap(a, b):
+    return any(x == y or (min(len(x), len(y)) >= 5 and (x in y or y in x)) for x in a for y in b)
+
+
+def quality_flags(cip, title, targets, zones, descriptions, ptasks, dropped, basis):
+    flags = []
+    cs = _stems(title)
+    for s, t in targets:
+        if not _overlap(cs, _stems(t)):
+            d = _overlap(cs, _stems(descriptions.get(s, "")))
+            flags.append({"flag": "low_title_overlap", "severity": "medium" if d else "high", "onet_soc_code": s, "occupation_title": t,
+                          "detail": ("description shares a stem with the CIP title" if d
+                                     else "description shares no stem with the CIP title either")})
+    if dropped:
+        flags.append({"flag": "supervisory_tasks_dropped", "count": len(dropped), "onet_task_ids": dropped,
+                      "detail": "supervisory/managerial tasks of the entry targets were skipped when picking practice tasks"})
+    kept = [p["practice_id"] for p in ptasks if p.get("supervisory_task")]
+    if kept:
+        flags.append({"flag": "supervisory_task_kept", "count": len(kept), "practice_ids": kept,
+                      "detail": "not enough non-supervisory tasks were available, so these supervisory tasks remain"})
+    tz = sorted({zones.get(s) for s, _ in targets if zones.get(s)})
+    if tz and 4 not in tz:
+        flags.append({"flag": "entry_target_not_job_zone_4", "job_zones": tz,
+                      "detail": "no eligible Job Zone 4 occupation is linked, so the entry targets come from another Job Zone"})
+    if "first crosswalk link used" in basis or "no Job Zone rating" in basis:
+        flags.append({"flag": "entry_target_fallback", "detail": basis})
+    return {"method": {"supervisory_tasks": SUPERVISORY_RULE, "topical_overlap": OVERLAP_RULE},
+            "flag_count": len(flags), "flags": flags}
+
+
+def quality_lines(L, qf):
+    L += ["## Quality flags (automatic plausibility checks; generated tier)", ""]
+    if not qf["flags"]:
+        L += ["- None raised by the automatic checks (this does not mean the plan was reviewed)."]
+    for f in qf["flags"]:
+        if f["flag"] == "low_title_overlap":
+            L += [f"- low_title_overlap ({f['severity']}): entry target `{f['onet_soc_code']}` {f['occupation_title']} shares no title word with the program title ({f['detail']}); check that it fits this major."]
+        elif f["flag"] == "supervisory_tasks_dropped":
+            L += [f"- supervisory_tasks_dropped: {f['count']} supervisory or managerial task(s) of the entry targets were skipped as unsuitable for a new graduate (O*NET task IDs {', '.join(map(str, f['onet_task_ids']))})."]
+        elif f["flag"] == "supervisory_task_kept":
+            L += [f"- supervisory_task_kept: {', '.join(f['practice_ids'])} cite a supervisory task because too few other tasks exist; treat as practice for a later role."]
+        elif f["flag"] == "entry_target_not_job_zone_4":
+            L += [f"- entry_target_not_job_zone_4: the entry targets are in Job Zone {', '.join(zl(z) for z in f['job_zones'])}, not the usual bachelor's-level Job Zone 4."]
+        else:
+            L += [f"- {f['flag']}: {f['detail']}."]
+    L += ["", "Method: supervisory check = " + SUPERVISORY_RULE + ". Topical overlap = " + OVERLAP_RULE + ".", ""]
+
+
+# Licensing blocks for the machine layer (v4).
+DB_NOTICES = [
+    "This page includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license.",
+    "O*NET\u00ae is a trademark of USDOL/ETA.",
+    "DreamCo has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications."]
+CROSSWALK_NOTICE = "Crosswalk Files by USDOL/ETA, licensed under CC BY 4.0."
+ONET_ATTRIBUTION = ("Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of "
+                    "Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (" + CC_BY + ").")
+DREAMCO_TERMS = "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+
+
+def item_license(tier):
+    if tier == "generated":
+        return {"content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+                "ownership_class": "open_license_with_conditions", "contains_third_party_text": True,
+                "license": "CC BY 4.0", "license_url": CC_BY, "attribution": ONET_ATTRIBUTION,
+                "modification_notice": ("DreamCo has modified all or some of this information: it added a template prompt, rubric "
+                                        "and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has "
+                                        "not approved, endorsed, or tested these modifications."),
+                "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+                "dreamco_layer": {"fields": ["prompt", "rubric", "reference_answer_outline"], "authorship": GENERATED_AUTHORSHIP,
+                                  "commercial_terms": DREAMCO_TERMS}}
+    return {"content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+            "ownership_class": "synthetic_generated_by_dreamco", "contains_third_party_text": False,
+            "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+            "commercial_terms": DREAMCO_TERMS, "authorship": AUTHORSHIP,
+            "third_party_references": {"fields": ["onet_soc_code", "occupation_title", "onet_task_id", "onet_task_type", "onet_task_url"],
+                                       "license": "CC BY 4.0", "license_url": CC_BY, "attribution": ONET_ATTRIBUTION,
+                                       "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."}}
+
+
+def plan_license(tier):
+    gen = tier == "generated"
+    comps = [{"fields": ["occupations", "top_knowledge", "top_skills", "top_knowledge_entry_weighted", "top_skills_entry_weighted",
+                         "entry_targets", "knowledge_weighting"],
+              "content_class": "O*NET 31.0 and crosswalk data, filtered, averaged and ranked by DreamCo",
+              "ownership_class": "open_license_with_conditions", "license": "CC BY 4.0", "license_url": CC_BY}]
+    if gen:
+        comps.append({"fields": ["practice_tasks[].onet_task_statement"], "content_class": "O*NET 31.0 task statements quoted verbatim",
+                      "ownership_class": "open_license_with_conditions", "license": "CC BY 4.0", "license_url": CC_BY})
+        comps.append({"fields": ["practice_tasks[].prompt", "practice_tasks[].rubric", "practice_tasks[].reference_answer_outline",
+                                 "outline_elements", "quality_flags", "entry_target_review"],
+                      "content_class": "DreamCo template output (tier generated)", "ownership_class": "synthetic_generated_by_dreamco",
+                      "license": "DreamCo; commercial terms pending owner decision", "authorship": GENERATED_AUTHORSHIP})
+    else:
+        comps.append({"fields": ["practice_tasks[].task_intent", "practice_tasks[].prompt", "practice_tasks[].rubric",
+                                 "practice_tasks[].reference_answer_outline", "outline_elements", "entry_target_review"],
+                      "content_class": "DreamCo-original authored text (tier authored)", "ownership_class": "synthetic_generated_by_dreamco",
+                      "license": "DreamCo-original; commercial terms pending owner decision", "authorship": AUTHORSHIP})
+    return {"summary": ("Mixed: O*NET-derived data and quoted O*NET task statements under CC BY 4.0, plus a DreamCo template layer"
+                        if gen else "Mixed: O*NET-derived data under CC BY 4.0, plus DreamCo-original authored text"),
+            "license_url": CC_BY, "attribution": ONET_ATTRIBUTION,
+            "required_notices": DB_NOTICES + [CROSSWALK_NOTICE],
+            "dreamco_commercial_terms": DREAMCO_TERMS, "components": comps,
+            "per_item_licensing": "each practice_tasks[] item carries its own license block"}
 
 
 def provenance_record(cip, title, stem, plan_path, json_path, pins, n_occs, targets, n_tasks, tier="authored"):
@@ -594,7 +842,7 @@ def provenance_record(cip, title, stem, plan_path, json_path, pins, n_occs, targ
              "description": f"{n_occs} O*NET-SOC codes/titles linked to CIP {cip} in the crosswalk, filtered to codes in O*NET 31.0 occupation_data.csv, with each code's O*NET 31.0 Job Zone.",
              "derived_from": ["onet_cip_soc_crosswalk", "onet_db_31_0", "onet_db_31_0_jobzones_tasks"]},
             {"component": "knowledge_and_skill_importance", "ownership_class": o, "derivation_type": "derived_metric",
-             "description": "Top-8 knowledge and top-6 Essential Skills by unweighted mean O*NET 31.0 importance (Scale IM) across linked occupations.",
+             "description": "Top-8 knowledge and top-6 Essential Skills by O*NET 31.0 importance (Scale IM): the unweighted mean across all linked occupations (top_knowledge/top_skills, for comparison) and the " + WEIGHTING_METHOD + " (top_*_entry_weighted, used for the outline).",
              "derived_from": ["onet_db_31_0"]},
             {"component": "entry_targets", "ownership_class": o, "derivation_type": "derived_metric",
              "description": f"{len(targets)} entry target(s) chosen by a DreamCo rule: Job Zone 4 first (fallback 3, 5, 1-2), excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director titles, base .00 codes first, then ranked by Pearson correlation of knowledge-importance profiles; "
@@ -609,8 +857,8 @@ def provenance_record(cip, title, stem, plan_path, json_path, pins, n_occs, targ
             {"component": "typical_next_steps", "ownership_class": d, "derivation_type": "synthetic_data",
              "description": "DreamCo-original synthesis summarizing linked occupations by Job Zone; cites O*NET 31.0 Job Zone numbers only and does not quote O*NET Job Zone names or descriptions.",
              "derived_from": ["linked_occupations", "onet_db_31_0_jobzones_tasks"]},
-            {"component": "practice_tasks", "ownership_class": d, "derivation_type": "synthetic_data",
-             "description": f"Generated tier: {n_tasks} DreamCo template exercises, each quoting one O*NET 31.0 task statement verbatim with attribution (USDOL/ETA, CC BY 4.0; the quote is O*NET content) and adding a fixed template prompt, 3-criterion rubric and reference outline. Authorship: " + GENERATED_AUTHORSHIP + ".",
+            {"component": "practice_tasks", "ownership_class": o, "derivation_type": "synthetic_data",
+             "description": f"Generated tier (mixed content, so ownership_class open_license_with_conditions; per-item license blocks in plan.json and data/practice_tasks.json): {n_tasks} DreamCo template exercises, each quoting one O*NET 31.0 task statement verbatim with attribution (USDOL/ETA, CC BY 4.0; the quote is O*NET content) and adding a fixed template prompt, 3-criterion rubric and reference outline. Authorship: " + GENERATED_AUTHORSHIP + ".",
              "derived_from": ["onet_db_31_0_jobzones_tasks", "entry_targets"]} if gen else
             {"component": "practice_tasks", "ownership_class": d, "derivation_type": "original_evaluation",
              "description": f"{n_tasks} DreamCo-original occupation-specific scenario prompts (authored/practice_tasks_authored.json), each with an original-wording paraphrase of the cited task's intent, a 3-criterion scenario-specific rubric and a reference answer outline, tied to an O*NET 31.0 Task ID and O*NET-SOC code of a linked occupation. No run of 5 or more words from O*NET task statements is reproduced (tests enforce this). Authorship: " + AUTHORSHIP + ".",
@@ -645,13 +893,15 @@ def candidate_record(cip, title, n_occs, n_tasks, tier="authored"):
         "asset_id": asset_id(cip, title),
         "title": f"Study plan: {title} (CIP {cip}) mapped to O*NET occupations",
         "description": (f"One markdown study plan: {n_occs} linked O*NET-SOC occupations with Job Zones, top knowledge and "
-                        f"Essential Skills by mean O*NET 31.0 importance, 1-3 Job Zone-based entry targets, a DreamCo 4-year "
+                        f"Essential Skills by entry-weighted mean O*NET 31.0 importance (unweighted means also shown), 1-3 Job Zone-based entry targets, a DreamCo 4-year "
                         f"outline and next steps, and {n_tasks} "
                         + ("DreamCo template practice exercises quoting O*NET task statements (tier generated: not individually authored or reviewed)."
                            if gen else "DreamCo-original practice prompts tied to O*NET task IDs (tier authored).")),
         "category": "education/career-pathways",
         "data_types": ["markdown"],
-        "rights_basis": "CC BY 4.0 (O*NET 31.0 Database + O*NET Crosswalk Files, USDOL/ETA); DreamCo-original outline and practice prompts",
+        "rights_basis": ("CC BY 4.0 (O*NET 31.0 Database + O*NET Crosswalk Files, USDOL/ETA), including O*NET task statements quoted in "
+                        "the practice exercises; DreamCo template outline, prompts and rubrics" if gen else
+                        "CC BY 4.0 (O*NET 31.0 Database + O*NET Crosswalk Files, USDOL/ETA); DreamCo-original outline and practice prompts"),
         "ownership_class": "open_license_with_conditions",
         "commercial_use_allowed": True,
         "redistribution_allowed": True,
@@ -718,14 +968,15 @@ def asset_record(cip, title, stem, prov, entry, n_occs, excluded, review, eviden
         "dreamco_analysis": {
             "agree": agree,
             "reject": [f"Not used as entry targets (leadership, faculty, or residual titles): {'; '.join(excluded)}."] if excluded else [],
-            "improve": ["Knowledge and skill importance is an unweighted mean over all linked occupations, so leadership and faculty roles still shape the top-knowledge list.",
+            "improve": ["Knowledge and skill importance used for the outline is an entry-weighted mean (targets weight 2, other Job Zone-appropriate non-leadership linked roles weight 1); the weights are a DreamCo heuristic, not an O*NET method, and the unweighted all-linked list is shown for comparison.",
                         ("Generated tier: the outline lists O*NET element names without course topics, and practice exercises share one template; authoring this major would replace both."
                          if gen else "Course topics in the outline are typical US undergraduate topics written per major, not a specific institution's curriculum.")],
             "still_need_test": still,
         },
         "validation_evidence_ids": ev,
         "integrity_hash": prov["integrity_hash"],
-        "created_at": BUILD_DATE,
+        "created_at": BUILD_TIMESTAMP,
+        "evidence_root": EVIDENCE_ROOT,
         "generator_version": prov["evaluator_version"],
         "notes": [
             "dreamco_analysis is generated by build.py from build facts and the authored review files; it is not a human review.",
@@ -775,6 +1026,8 @@ def main():
     jz = pd.read_csv(RAW / "job_zones.csv", dtype={"O*NET-SOC Code": str})
     zones = dict(zip(jz["O*NET-SOC Code"], jz["Job Zone"].astype(int)))
     tasks = pd.read_csv(RAW / "task_statements.csv", dtype={"O*NET-SOC Code": str})
+    task_text = dict(zip(tasks["Task ID"].astype(int), tasks["Task"]))
+    descriptions = dict(zip(occ["O*NET-SOC Code"], occ["Description"]))
     authored, topics, tov = load_authored()
     selected, coverage = select_majors(cw, valid, zones, load_coverage_rules())
     gate = find_gate_tool()
@@ -791,36 +1044,55 @@ def main():
         know = top_elements(kim, socs, 8)
         skills = top_elements(sim_, socs, 6)
         targets, tzone, basis, eligible, sim = rank_entry_targets(occs, zones, kim)
+        dropped = []
         if gen:
             review = {"type": "rule_only_not_reviewed",
                       "note": "Generated tier: rule output used as is; not reviewed for plausibility."}
-            ptasks = generated_practice_tasks(cip, targets, eligible, sim, tasks, kim, know)
         else:
             targets, basis, review = apply_target_override(cip, occs, zones, targets, basis, tov)
-            tknow = [e for e, _ in top_elements(kim, [s for s, _ in targets], 6)]
+        weights = entry_weights(occs, targets, zones)
+        know_w, skills_w = weighted_top(kim, weights, 8), weighted_top(sim_, weights, 6)
+        target_imp = dict(top_elements(kim, [s for s, _ in targets], 40))
+        outline = outline_plan(cip, know_w, skills_w, target_imp, None if gen else topics[cip])
+        ctx = {"know": know, "skills": skills, "know_w": know_w, "skills_w": skills_w, "weights": weights, "outline": outline}
+        if gen:
+            ptasks, dropped = generated_practice_tasks(cip, targets, eligible, sim, tasks, kim, know_w)
+            qf = quality_flags(cip, title, targets, zones, descriptions, ptasks, dropped, basis)
+        else:
             ptasks = practice_tasks(cip, occs, tasks, authored)
+            sup = [p["practice_id"] for p in ptasks if is_supervisory(task_text[p["onet_task_id"]])]
+            qf = {"method": {"supervisory_tasks": SUPERVISORY_RULE},
+                  "note": ("Authored tier: entry targets and practice tasks were chosen and reviewed per major, so the generated-tier "
+                           "plausibility flags are not applied. Informational only: cited tasks whose O*NET statement is supervisory "
+                           "are listed; their authored scenarios say when they are practice for a later or graduate role."),
+                  "flag_count": 0, "flags": [], "informational": {"supervisory_task_cited": sup}}
         all_tasks += ptasks
         for s, t in occs:
             rows.append([cip, title, s, t])
         sel.append({"cip": cip, "title": title, "asset_id": asset_id(cip, title), "tier": tier,
                     "occupations": [{"soc": s, "title": t, "job_zone": zones.get(s)} for s, t in occs],
                     "top_knowledge": know, "top_skills": skills,
+                    "top_knowledge_entry_weighted": know_w, "top_skills_entry_weighted": skills_w,
+                    "knowledge_weighting": {"method": WEIGHTING_METHOD, "weights": weights,
+                                            "note": "top_knowledge/top_skills are the unweighted mean over all linked occupations (kept for comparison); the outline uses the entry-weighted lists."},
+                    "outline_elements": outline,
+                    "quality_flags": qf,
                     "entry_targets": [{"soc": s, "title": t, "job_zone": zones.get(s)} for s, t in targets],
                     "entry_target_basis": basis,
                     "entry_target_review": review,
                     "practice_task_ids": [p["practice_id"] for p in ptasks]})
         plan = PLANS / f"{stem}.md"
         if gen:
-            plan.write_text(plan_md_generated(cip, title, stem, occs, zones, know, skills, targets, tzone, basis, ptasks))
+            plan.write_text(plan_md_generated(cip, title, stem, occs, zones, ctx, targets, basis, ptasks, qf))
         else:
-            plan.write_text(plan_md(cip, title, stem, occs, zones, know, skills, targets, tzone, basis, ptasks, tknow,
-                                    topics[cip], review))
+            plan.write_text(plan_md(cip, title, stem, occs, zones, ctx, targets, basis, ptasks, topics[cip], review))
         side = PLANS / stem
         side.mkdir(exist_ok=True)
         pj = side / "plan.json"
         pj.write_text(json.dumps({**sel[-1], "label": ("O*NET 31.0-derived fields plus DreamCo template practice exercises (tier generated)"
                                                        if gen else "O*NET 31.0-derived fields plus DreamCo-original practice tasks"),
-                                  "authorship": GENERATED_AUTHORSHIP if gen else AUTHORSHIP, "practice_tasks": ptasks}, indent=2) + "\n")
+                                  "authorship": GENERATED_AUTHORSHIP if gen else AUTHORSHIP, "license": plan_license(tier),
+                                  "created_at": BUILD_TIMESTAMP, "practice_tasks": ptasks}, indent=2) + "\n")
         prov = provenance_record(cip, title, stem, plan, pj, pins, len(occs), targets, len(ptasks), tier)
         (side / "provenance.json").write_text(json.dumps(prov, indent=2, ensure_ascii=False) + "\n")
         excluded = [t for s_, t in occs if (EXCLUDE_STRICT.search(t) or EXCLUDE_SOFT.search(t)) and (s_, t) not in targets]
@@ -834,9 +1106,15 @@ def main():
     with open(DATA / "coverage.csv", "w", newline="") as f:
         w = csv.writer(f); w.writerow(["cip_code", "cip_title", "tier", "status", "reason"]); w.writerows(coverage)
     (DATA / "practice_tasks.json").write_text(json.dumps({
-        "label": PRACTICE_LABEL,
-        "ownership_class": "synthetic_generated_by_dreamco",
-        "authorship": AUTHORSHIP,
+        "label": "DreamCo career-pathway practice items, mixed licensing per item (see tasks[].license)",
+        "label_note": ("Tier authored items are labeled '" + PRACTICE_LABEL + "' and are DreamCo-original text; tier generated items "
+                       "are labeled '" + GENERATED_LABEL + "' and contain a quoted O*NET 31.0 task statement (third-party, CC BY 4.0)."),
+        "ownership_class": "mixed_per_item",
+        "ownership_classes": {"authored": "synthetic_generated_by_dreamco", "generated": "open_license_with_conditions"},
+        "authorship": {"authored": AUTHORSHIP, "generated": GENERATED_AUTHORSHIP},
+        "license": {"third_party": "CC BY 4.0", "license_url": CC_BY, "attribution": ONET_ATTRIBUTION,
+                    "required_notices": DB_NOTICES + [CROSSWALK_NOTICE], "dreamco_commercial_terms": DREAMCO_TERMS},
+        "created_at": BUILD_TIMESTAMP,
         "onet_version": ONET_VERSION,
         "note": ("Tier authored: scenario prompts, task-intent paraphrases, rubrics and reference answer outlines are DreamCo-original "
                  "(source: authored/practice_tasks_authored.json); each item references an O*NET 31.0 Task ID and O*NET-SOC code "

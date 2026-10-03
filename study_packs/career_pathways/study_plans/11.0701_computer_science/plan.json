@@ -195,6 +195,144 @@
       3.4
     ]
   ],
+  "top_knowledge_entry_weighted": [
+    [
+      "Computers and Electronics",
+      4.43
+    ],
+    [
+      "English Language",
+      3.59
+    ],
+    [
+      "Engineering and Technology",
+      3.26
+    ],
+    [
+      "Mathematics",
+      3.24
+    ],
+    [
+      "Customer and Personal Service",
+      3.02
+    ],
+    [
+      "Administration and Management",
+      2.89
+    ],
+    [
+      "Design",
+      2.82
+    ],
+    [
+      "Education and Training",
+      2.76
+    ]
+  ],
+  "top_skills_entry_weighted": [
+    [
+      "Critical Thinking",
+      3.85
+    ],
+    [
+      "Reading Comprehension",
+      3.83
+    ],
+    [
+      "Active Listening",
+      3.67
+    ],
+    [
+      "Writing",
+      3.43
+    ],
+    [
+      "Speaking",
+      3.41
+    ],
+    [
+      "Active Learning",
+      3.34
+    ]
+  ],
+  "knowledge_weighting": {
+    "method": "entry-weighted mean of O*NET 31.0 importance (Scale IM): entry targets weight 2; other linked occupations in Job Zone 4 or 5 (or the entry targets' Job Zone) weight 1; Manager, Chief, Postsecondary-faculty, All Other, Supervisor, Director and Treasurers and Controllers titles, and non-target occupations in other Job Zones, weight 0",
+    "weights": {
+      "15-1212.00": 2,
+      "15-1221.00": 1,
+      "15-1231.00": 1,
+      "15-1243.00": 1,
+      "15-1243.01": 1,
+      "15-1251.00": 1,
+      "15-1252.00": 2,
+      "15-1253.00": 2,
+      "15-1255.00": 1,
+      "15-1255.01": 1,
+      "15-1299.01": 1,
+      "15-1299.02": 1,
+      "15-1299.03": 1,
+      "15-1299.04": 1,
+      "15-1299.05": 1,
+      "15-1299.06": 1,
+      "15-1299.07": 1,
+      "15-2051.00": 1,
+      "15-2051.01": 1
+    },
+    "note": "top_knowledge/top_skills are the unweighted mean over all linked occupations (kept for comparison); the outline uses the entry-weighted lists."
+  },
+  "outline_elements": {
+    "year1_knowledge": [
+      "English Language"
+    ],
+    "year1_skills": [
+      "Critical Thinking",
+      "Reading Comprehension",
+      "Active Listening"
+    ],
+    "year2_knowledge": [
+      "Computers and Electronics",
+      "Engineering and Technology",
+      "Mathematics"
+    ],
+    "year3_knowledge": [
+      "Design",
+      "Telecommunications"
+    ],
+    "year3_knowledge_added_from_targets": [
+      "Telecommunications"
+    ],
+    "year3_skills": [
+      "Writing",
+      "Speaking",
+      "Active Learning"
+    ],
+    "skipped_knowledge": [
+      {
+        "element": "Customer and Personal Service",
+        "reason": "service and client-relations knowledge; the outline leaves it to internships, part-time work and the practice tasks rather than a course slot"
+      },
+      {
+        "element": "Administration and Management",
+        "reason": "management and planning knowledge matters most after several years of experience, so the outline gives it no course slot (a management elective is optional)"
+      },
+      {
+        "element": "Education and Training",
+        "reason": "teaching and training others is built through presenting, tutoring and peer teaching in projects rather than a dedicated course"
+      }
+    ],
+    "rule": "English Language is placed in Year 1 general education; workplace and management elements (Customer and Personal Service, Administrative, Clerical, Administration and Management, Personnel and Human Resources, Education and Training) get no course slot unless the major's CIP series is about them; the next three elements go to Year 2 and up to three more (ordered by importance to the entry targets) to Year 3; if fewer than two remain for Year 3, knowledge rated at least 2.5 for the entry targets fills it"
+  },
+  "quality_flags": {
+    "method": {
+      "supervisory_tasks": "task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and supervise); 'under supervision' does not count"
+    },
+    "note": "Authored tier: entry targets and practice tasks were chosen and reviewed per major, so the generated-tier plausibility flags are not applied. Informational only: cited tasks whose O*NET statement is supervisory are listed; their authored scenarios say when they are practice for a later or graduate role.",
+    "flag_count": 0,
+    "flags": [],
+    "informational": {
+      "supervisory_task_cited": []
+    }
+  },
   "entry_targets": [
     {
       "soc": "15-1252.00",
@@ -237,6 +375,51 @@
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
   "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+  "license": {
+    "summary": "Mixed: O*NET-derived data under CC BY 4.0, plus DreamCo-original authored text",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+    "required_notices": [
+      "This page includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license.",
+      "O*NET\u00ae is a trademark of USDOL/ETA.",
+      "DreamCo has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+      "Crosswalk Files by USDOL/ETA, licensed under CC BY 4.0."
+    ],
+    "dreamco_commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+    "components": [
+      {
+        "fields": [
+          "occupations",
+          "top_knowledge",
+          "top_skills",
+          "top_knowledge_entry_weighted",
+          "top_skills_entry_weighted",
+          "entry_targets",
+          "knowledge_weighting"
+        ],
+        "content_class": "O*NET 31.0 and crosswalk data, filtered, averaged and ranked by DreamCo",
+        "ownership_class": "open_license_with_conditions",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "fields": [
+          "practice_tasks[].task_intent",
+          "practice_tasks[].prompt",
+          "practice_tasks[].rubric",
+          "practice_tasks[].reference_answer_outline",
+          "outline_elements",
+          "entry_target_review"
+        ],
+        "content_class": "DreamCo-original authored text (tier authored)",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "license": "DreamCo-original; commercial terms pending owner decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed"
+      }
+    ],
+    "per_item_licensing": "each practice_tasks[] item carries its own license block"
+  },
+  "created_at": "2026-10-02T18:30:00-05:00",
   "practice_tasks": [
     {
       "practice_id": "11.0701-P1",
@@ -253,6 +436,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. A student-run campus food-ordering app is about to ship a 'split the bill' feature that lets up to six friends share one order, each paying by card or meal-plan credit. Write the test plan for this feature: scope and out-of-scope items, at least eight named test scenarios (include rounding of odd cents, one payer's card being declined, and a friend leaving the group mid-checkout), which scenarios you would automate versus run by hand, test data you need, and the exit criteria for release.",
       "rubric": [
         {
@@ -294,6 +498,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. A 40-person food-bank nonprofit just had a volunteer coordinator's email account taken over through a fake 'shared document' link, and the attacker emailed donors asking for gift cards. Design a 30-minute security-awareness session for staff and regular volunteers: three learning objectives, the agenda minute by minute, one realistic hands-on exercise built from this incident (no real victim names), and how you will measure whether behavior changed 60 days later.",
       "rubric": [
         {
@@ -335,6 +560,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Your registrar's office runs a five-year-old Python script that exports course enrollments to a CSV for the state reporting portal. Since enrollment doubled it takes 40 minutes and times out, it crashes on student names with accented characters, and the portal is moving from CSV upload to a JSON API next term. Write a change proposal: diagnose the likely causes of each problem, the code changes you would make, how you will prove the new version produces the same records as the old one, and a rollback plan.",
       "rubric": [
         {
@@ -376,6 +622,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. A web app used by 3,000 club members is replacing its password-hashing library (from an old salted SHA-1 scheme to bcrypt) and will rehash each password when that user next logs in. Before deployment, write the regression checklist you would run: what must still work, the specific edge cases for users who have not logged in since the change, the security checks, the performance check on the login endpoint, and the go/no-go rule.",
       "rubric": [
         {
@@ -417,6 +684,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. A three-office dental practice has bought two things: multi-factor authentication for its practice-management software, and a managed endpoint-protection service from an outside vendor. You are the security analyst coordinating the rollout over four weeks without disrupting patient scheduling. Write the coordination plan: who does what (practice staff, office managers, the MFA vendor, the endpoint vendor), the week-by-week schedule, how you will communicate with front-desk staff, and the three biggest rollout risks with mitigations.",
       "rubric": [
         {
@@ -458,6 +746,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. The university library asks for a study-room booking app: students reserve rooms from their phones, staff can block rooms for events, no-shows are released after 15 minutes, and it must work with campus single sign-on. You have two part-time student developers for eight weeks and no budget for paid services beyond existing campus hosting. Write a one-page feasibility memo: the requirements you would confirm with users, a rough effort estimate per feature, what fits in eight weeks, what you would cut or defer, and your recommendation.",
       "rubric": [
         {

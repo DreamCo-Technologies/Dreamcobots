@@ -105,6 +105,121 @@
       3.75
     ]
   ],
+  "top_knowledge_entry_weighted": [
+    [
+      "Engineering and Technology",
+      4.47
+    ],
+    [
+      "Design",
+      4.14
+    ],
+    [
+      "Mathematics",
+      4.12
+    ],
+    [
+      "Mechanical",
+      3.96
+    ],
+    [
+      "Physics",
+      3.75
+    ],
+    [
+      "Computers and Electronics",
+      3.75
+    ],
+    [
+      "English Language",
+      3.67
+    ],
+    [
+      "Production and Processing",
+      3.59
+    ]
+  ],
+  "top_skills_entry_weighted": [
+    [
+      "Reading Comprehension",
+      4.0
+    ],
+    [
+      "Critical Thinking",
+      4.0
+    ],
+    [
+      "Mathematics",
+      3.84
+    ],
+    [
+      "Active Listening",
+      3.8
+    ],
+    [
+      "Speaking",
+      3.74
+    ],
+    [
+      "Writing",
+      3.72
+    ]
+  ],
+  "knowledge_weighting": {
+    "method": "entry-weighted mean of O*NET 31.0 importance (Scale IM): entry targets weight 2; other linked occupations in Job Zone 4 or 5 (or the entry targets' Job Zone) weight 1; Manager, Chief, Postsecondary-faculty, All Other, Supervisor, Director and Treasurers and Controllers titles, and non-target occupations in other Job Zones, weight 0",
+    "weights": {
+      "13-1051.00": 1,
+      "17-2011.00": 2,
+      "17-2141.00": 2,
+      "17-2141.01": 1,
+      "17-2141.02": 2
+    },
+    "note": "top_knowledge/top_skills are the unweighted mean over all linked occupations (kept for comparison); the outline uses the entry-weighted lists."
+  },
+  "outline_elements": {
+    "year1_knowledge": [
+      "English Language"
+    ],
+    "year1_skills": [
+      "Reading Comprehension",
+      "Critical Thinking",
+      "Mathematics"
+    ],
+    "year2_knowledge": [
+      "Engineering and Technology",
+      "Design",
+      "Mathematics"
+    ],
+    "year3_knowledge": [
+      "Mechanical",
+      "Physics",
+      "Computers and Electronics"
+    ],
+    "year3_knowledge_added_from_targets": [],
+    "year3_skills": [
+      "Active Listening",
+      "Speaking",
+      "Writing"
+    ],
+    "skipped_knowledge": [
+      {
+        "element": "Production and Processing",
+        "reason": "ranked below the knowledge areas the outline already covers (the outline gives at most six course slots to knowledge); worth an elective if a target role needs it"
+      }
+    ],
+    "rule": "English Language is placed in Year 1 general education; workplace and management elements (Customer and Personal Service, Administrative, Clerical, Administration and Management, Personnel and Human Resources, Education and Training) get no course slot unless the major's CIP series is about them; the next three elements go to Year 2 and up to three more (ordered by importance to the entry targets) to Year 3; if fewer than two remain for Year 3, knowledge rated at least 2.5 for the entry targets fills it"
+  },
+  "quality_flags": {
+    "method": {
+      "supervisory_tasks": "task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and supervise); 'under supervision' does not count"
+    },
+    "note": "Authored tier: entry targets and practice tasks were chosen and reviewed per major, so the generated-tier plausibility flags are not applied. Informational only: cited tasks whose O*NET statement is supervisory are listed; their authored scenarios say when they are practice for a later or graduate role.",
+    "flag_count": 0,
+    "flags": [],
+    "informational": {
+      "supervisory_task_cited": []
+    }
+  },
   "entry_targets": [
     {
       "soc": "17-2141.00",
@@ -147,6 +262,51 @@
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
   "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+  "license": {
+    "summary": "Mixed: O*NET-derived data under CC BY 4.0, plus DreamCo-original authored text",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+    "required_notices": [
+      "This page includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license.",
+      "O*NET\u00ae is a trademark of USDOL/ETA.",
+      "DreamCo has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+      "Crosswalk Files by USDOL/ETA, licensed under CC BY 4.0."
+    ],
+    "dreamco_commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+    "components": [
+      {
+        "fields": [
+          "occupations",
+          "top_knowledge",
+          "top_skills",
+          "top_knowledge_entry_weighted",
+          "top_skills_entry_weighted",
+          "entry_targets",
+          "knowledge_weighting"
+        ],
+        "content_class": "O*NET 31.0 and crosswalk data, filtered, averaged and ranked by DreamCo",
+        "ownership_class": "open_license_with_conditions",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "fields": [
+          "practice_tasks[].task_intent",
+          "practice_tasks[].prompt",
+          "practice_tasks[].rubric",
+          "practice_tasks[].reference_answer_outline",
+          "outline_elements",
+          "entry_target_review"
+        ],
+        "content_class": "DreamCo-original authored text (tier authored)",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "license": "DreamCo-original; commercial terms pending owner decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed"
+      }
+    ],
+    "per_item_licensing": "each practice_tasks[] item carries its own license block"
+  },
+  "created_at": "2026-10-02T18:30:00-05:00",
   "practice_tasks": [
     {
       "practice_id": "14.1901-P1",
@@ -163,6 +323,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. You are the junior engineer leading a five-person team (two design engineers, a composites technician, a test technician and an instrumentation intern) through a static load test of a new carbon-fiber wing spar for a small uncrewed aircraft. The test must show the spar carries 1.5 times the limit load without failure. Write the coordination plan for the three-week campaign: who does what, the sequence from specimen fabrication to test report, the safety controls for loading to failure, the instrumentation plan, and how you handle a schedule slip if the first specimen has a manufacturing flaw.",
       "rubric": [
         {
@@ -204,6 +385,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Use a publicly available mechanical drawing of a machined bracket or shaft (or sketch an invented one with at least one hole pattern, a tolerance block, a surface-finish note and two geometric tolerances such as position and flatness). Write a review memo for the machine shop: explain in plain words what each critical dimension and geometric tolerance requires, identify the datum features and how the part would be fixtured for inspection, flag any ambiguity or missing information, and list questions you would ask the designer before release.",
       "rubric": [
         {
@@ -245,6 +447,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Invented case: warranty data show a compact car's rear wheel bearings failing at about 30,000 km in one region, three times the normal rate, starting with vehicles built after a supplier change in March. Write a root-cause analysis using a structured method (such as 8D, fishbone and five whys): the problem statement, containment actions, the candidate causes across material, process, design and usage, the data and teardown tests you would request to confirm or rule out each, and how you will verify the permanent fix.",
       "rubric": [
         {
@@ -286,6 +509,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. A customer needs a quadcopter arm made of an aluminum tube that is 250 mm long, carries a 1.2 kg motor thrust at the tip, and must deflect less than 3 mm with a safety factor of 2 on yield. Build a simple analytical model (cantilever beam) to size the tube's outer diameter and wall thickness, show the equations and numbers, compare two candidate tube sizes, then explain how you would check the hand calculation with finite-element analysis and what extra effects (vibration, fatigue, joint stiffness) the simple model misses.",
       "rubric": [
         {
@@ -327,6 +571,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Invented case: a hospital's chilled-water system keeps tripping one of two chillers on low refrigerant pressure during hot afternoons, and the operating rooms are drifting above their temperature limit. You are the mechanical engineer meeting the facilities supervisor and the chiller service technician. Write a meeting script and follow-up note: what information you ask for (trend logs, alarm history, condenser water temperatures), likely causes you will discuss, the interim operating procedure to protect the operating rooms, and the agreed next steps.",
       "rubric": [
         {
@@ -368,6 +633,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Your team is considering replacing a stamped-steel battery-tray bracket in an electric vehicle with a die-cast aluminum version to save mass. Write a short engineering specification for the new bracket (loads, crash and vibration requirements, corrosion protection, mass target, interface dimensions) and a rough per-unit cost estimate for both designs at 100,000 vehicles per year, including material, processing, tooling amortization and joining. State your assumptions and recommend whether to proceed.",
       "rubric": [
         {

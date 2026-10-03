@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-cjss-43.0104",
-  "evaluated_at": "2026-10-02T18:03:28-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/43.0104_criminal_justice_safety_studies",
     "candidate_path": "study_plans/43.0104_criminal_justice_safety_studies/candidate.json",
-    "candidate_sha256": "3928fadb27146004f41aaa3533a39b451a2acfc50658d37e6f5c61c54a528cdd",
+    "candidate_sha256": "e05d2e300fa56edc4fbd36cbcad3f79ef67102767211953095cee7edf4b081d0",
     "provenance_path": "study_plans/43.0104_criminal_justice_safety_studies/provenance.json",
-    "provenance_sha256": "05f1e3d27ca2927980aece3e5ce23527b3d6e8e007719491ec3acc08a2897839",
+    "provenance_sha256": "964f6464c6e4155629ebc9838baca78570b681c829a3e23f3c73ca309aa7b750",
     "asset_record_path": "study_plans/43.0104_criminal_justice_safety_studies/asset.json",
-    "asset_record_sha256": "a94aaee820df212404a9b7e610a134202aa891cdba7f2a77a4694c2c75e98abb"
+    "asset_record_sha256": "5c47b3c8792ec5c681be8ea166ed131ea03698737342beb63308e17a2c677b77"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

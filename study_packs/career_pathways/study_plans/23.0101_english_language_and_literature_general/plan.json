@@ -80,6 +80,126 @@
       3.46
     ]
   ],
+  "top_knowledge_entry_weighted": [
+    [
+      "English Language",
+      4.65
+    ],
+    [
+      "Education and Training",
+      3.32
+    ],
+    [
+      "Computers and Electronics",
+      3.3
+    ],
+    [
+      "Communications and Media",
+      3.17
+    ],
+    [
+      "Customer and Personal Service",
+      3.08
+    ],
+    [
+      "Administrative",
+      2.72
+    ],
+    [
+      "Psychology",
+      2.55
+    ],
+    [
+      "Administration and Management",
+      2.54
+    ]
+  ],
+  "top_skills_entry_weighted": [
+    [
+      "Reading Comprehension",
+      4.12
+    ],
+    [
+      "Speaking",
+      3.62
+    ],
+    [
+      "Writing",
+      3.62
+    ],
+    [
+      "Active Listening",
+      3.56
+    ],
+    [
+      "Critical Thinking",
+      3.44
+    ],
+    [
+      "Monitoring",
+      3.38
+    ]
+  ],
+  "knowledge_weighting": {
+    "method": "entry-weighted mean of O*NET 31.0 importance (Scale IM): entry targets weight 2; other linked occupations in Job Zone 4 or 5 (or the entry targets' Job Zone) weight 1; Manager, Chief, Postsecondary-faculty, All Other, Supervisor, Director and Treasurers and Controllers titles, and non-target occupations in other Job Zones, weight 0",
+    "weights": {
+      "25-2031.00": 2,
+      "43-9081.00": 2
+    },
+    "note": "top_knowledge/top_skills are the unweighted mean over all linked occupations (kept for comparison); the outline uses the entry-weighted lists."
+  },
+  "outline_elements": {
+    "year1_knowledge": [
+      "English Language"
+    ],
+    "year1_skills": [
+      "Reading Comprehension",
+      "Speaking",
+      "Writing"
+    ],
+    "year2_knowledge": [
+      "Computers and Electronics",
+      "Communications and Media",
+      "Psychology"
+    ],
+    "year3_knowledge": [],
+    "year3_knowledge_added_from_targets": [],
+    "year3_skills": [
+      "Active Listening",
+      "Critical Thinking",
+      "Monitoring"
+    ],
+    "skipped_knowledge": [
+      {
+        "element": "Education and Training",
+        "reason": "teaching and training others is built through presenting, tutoring and peer teaching in projects rather than a dedicated course"
+      },
+      {
+        "element": "Customer and Personal Service",
+        "reason": "service and client-relations knowledge; the outline leaves it to internships, part-time work and the practice tasks rather than a course slot"
+      },
+      {
+        "element": "Administrative",
+        "reason": "office procedures and records handling; usually learned on the job, so it gets no course slot"
+      },
+      {
+        "element": "Administration and Management",
+        "reason": "management and planning knowledge matters most after several years of experience, so the outline gives it no course slot (a management elective is optional)"
+      }
+    ],
+    "rule": "English Language is placed in Year 1 general education; workplace and management elements (Customer and Personal Service, Administrative, Clerical, Administration and Management, Personnel and Human Resources, Education and Training) get no course slot unless the major's CIP series is about them; the next three elements go to Year 2 and up to three more (ordered by importance to the entry targets) to Year 3; if fewer than two remain for Year 3, knowledge rated at least 2.5 for the entry targets fills it"
+  },
+  "quality_flags": {
+    "method": {
+      "supervisory_tasks": "task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and supervise); 'under supervision' does not count"
+    },
+    "note": "Authored tier: entry targets and practice tasks were chosen and reviewed per major, so the generated-tier plausibility flags are not applied. Informational only: cited tasks whose O*NET statement is supervisory are listed; their authored scenarios say when they are practice for a later or graduate role.",
+    "flag_count": 0,
+    "flags": [],
+    "informational": {
+      "supervisory_task_cited": []
+    }
+  },
   "entry_targets": [
     {
       "soc": "25-2031.00",
@@ -107,6 +227,51 @@
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
   "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+  "license": {
+    "summary": "Mixed: O*NET-derived data under CC BY 4.0, plus DreamCo-original authored text",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+    "required_notices": [
+      "This page includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license.",
+      "O*NET\u00ae is a trademark of USDOL/ETA.",
+      "DreamCo has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+      "Crosswalk Files by USDOL/ETA, licensed under CC BY 4.0."
+    ],
+    "dreamco_commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+    "components": [
+      {
+        "fields": [
+          "occupations",
+          "top_knowledge",
+          "top_skills",
+          "top_knowledge_entry_weighted",
+          "top_skills_entry_weighted",
+          "entry_targets",
+          "knowledge_weighting"
+        ],
+        "content_class": "O*NET 31.0 and crosswalk data, filtered, averaged and ranked by DreamCo",
+        "ownership_class": "open_license_with_conditions",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "fields": [
+          "practice_tasks[].task_intent",
+          "practice_tasks[].prompt",
+          "practice_tasks[].rubric",
+          "practice_tasks[].reference_answer_outline",
+          "outline_elements",
+          "entry_target_review"
+        ],
+        "content_class": "DreamCo-original authored text (tier authored)",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "license": "DreamCo-original; commercial terms pending owner decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed"
+      }
+    ],
+    "per_item_licensing": "each practice_tasks[] item carries its own license block"
+  },
+  "created_at": "2026-10-02T18:30:00-05:00",
   "practice_tasks": [
     {
       "practice_id": "23.0101-P1",
@@ -123,6 +288,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. You teach 10th-grade English with daily independent reading, small-group literature circles and a writing workshop with peer feedback. Write the classroom routines and expectations plan: the start-of-class routine, expectations for literature circle roles and discussion, how peer feedback stays kind and specific, phone and device expectations, what happens when expectations are not met, and how you teach the routines in the first two weeks.",
       "rubric": [
         {
@@ -164,6 +350,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Proofread this invented 120-word press release excerpt and produce an error log: \"Riverside Community College are proud to announce it's new nursing lab, which open on Sept. 3rd, 2026. The lab, funded by a $1.2M grant from the Hartwell foundation, include 12 simulation beds, and a debriefing room. 'Our students deserve the best,' said Dean Maria Lopez. Dr. Lopez, who joined Riverside in 2019 will lead a ribbon-cutting on September 5. Tours are offered 10am-2pm and registration is required, visit riverside.edu/nursinglab.\" For each issue, record the location, the error type (grammar, punctuation, consistency, fact to verify), your correction, and whether it needs an author query.",
       "rubric": [
         {
@@ -205,6 +412,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Plan a 50-minute 11th-grade lesson on a short poem of your choice that is in the public domain (for example, by Emily Dickinson or Langston Hughes, if public-domain status is confirmed). Include a brief explanation of one literary concept (such as tone shift or extended metaphor), a teacher think-aloud demonstrating close reading of two lines, a structured small-group discussion, and a short written response. Explain how students move from your model to independent analysis.",
       "rubric": [
         {
@@ -246,6 +474,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. A nonprofit's annual report has a typeset table of program results that must match the finance office's spreadsheet and the program staff's original text. Describe your verification procedure: how you compare figures (reading aloud with a partner, column totals, cross-footing), how you check names and titles against an authoritative list, what you do when the typeset text and the source disagree, and how you record and return corrections. Then create a short invented example with three discrepancies and show how each is logged.",
       "rubric": [
         {
@@ -287,6 +536,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Design the summative assessment for a four-week 9th-grade unit on argument writing: the prompt (with a choice of two debatable topics and a short source set), the analytic rubric with four criteria and performance levels, accommodations for students with IEPs and English learners, how you will grade consistently across 120 essays (anchor papers, calibration), and how students receive feedback they can use in the next unit.",
       "rubric": [
         {
@@ -328,6 +598,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Using standard proofreaders' marks (as in a major style manual), mark up this invented proof line by line and explain each mark: (1) \"teh committee will meet on monday\"; (2) \"The results were suprising , and the team celebrated.\"; (3) a heading set in bold that should be italic; (4) a paragraph that should start on a new line; (5) two words that should be transposed: \"the final report draft first\". Provide both the margin mark and the in-text mark for each and note any house-style decisions you assumed.",
       "rubric": [
         {

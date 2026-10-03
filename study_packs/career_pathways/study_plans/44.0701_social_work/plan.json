@@ -110,6 +110,126 @@
       3.77
     ]
   ],
+  "top_knowledge_entry_weighted": [
+    [
+      "Psychology",
+      4.41
+    ],
+    [
+      "Therapy and Counseling",
+      4.38
+    ],
+    [
+      "English Language",
+      4.01
+    ],
+    [
+      "Customer and Personal Service",
+      3.81
+    ],
+    [
+      "Sociology and Anthropology",
+      3.72
+    ],
+    [
+      "Law and Government",
+      3.4
+    ],
+    [
+      "Education and Training",
+      3.36
+    ],
+    [
+      "Administrative",
+      3.32
+    ]
+  ],
+  "top_skills_entry_weighted": [
+    [
+      "Active Listening",
+      4.38
+    ],
+    [
+      "Speaking",
+      4.21
+    ],
+    [
+      "Critical Thinking",
+      3.98
+    ],
+    [
+      "Reading Comprehension",
+      3.97
+    ],
+    [
+      "Writing",
+      3.79
+    ],
+    [
+      "Monitoring",
+      3.77
+    ]
+  ],
+  "knowledge_weighting": {
+    "method": "entry-weighted mean of O*NET 31.0 importance (Scale IM): entry targets weight 2; other linked occupations in Job Zone 4 or 5 (or the entry targets' Job Zone) weight 1; Manager, Chief, Postsecondary-faculty, All Other, Supervisor, Director and Treasurers and Controllers titles, and non-target occupations in other Job Zones, weight 0",
+    "weights": {
+      "21-1013.00": 1,
+      "21-1021.00": 2,
+      "21-1022.00": 1,
+      "21-1023.00": 1,
+      "21-1092.00": 2
+    },
+    "note": "top_knowledge/top_skills are the unweighted mean over all linked occupations (kept for comparison); the outline uses the entry-weighted lists."
+  },
+  "outline_elements": {
+    "year1_knowledge": [
+      "English Language"
+    ],
+    "year1_skills": [
+      "Active Listening",
+      "Speaking",
+      "Critical Thinking"
+    ],
+    "year2_knowledge": [
+      "Psychology",
+      "Therapy and Counseling",
+      "Customer and Personal Service"
+    ],
+    "year3_knowledge": [
+      "Law and Government",
+      "Sociology and Anthropology"
+    ],
+    "year3_knowledge_added_from_targets": [],
+    "year3_skills": [
+      "Reading Comprehension",
+      "Writing",
+      "Monitoring"
+    ],
+    "skipped_knowledge": [
+      {
+        "element": "Education and Training",
+        "reason": "teaching and training others is built through presenting, tutoring and peer teaching in projects rather than a dedicated course"
+      },
+      {
+        "element": "Administrative",
+        "reason": "office procedures and records handling; usually learned on the job, so it gets no course slot"
+      }
+    ],
+    "rule": "English Language is placed in Year 1 general education; workplace and management elements (Customer and Personal Service, Administrative, Clerical, Administration and Management, Personnel and Human Resources, Education and Training) get no course slot unless the major's CIP series is about them; the next three elements go to Year 2 and up to three more (ordered by importance to the entry targets) to Year 3; if fewer than two remain for Year 3, knowledge rated at least 2.5 for the entry targets fills it"
+  },
+  "quality_flags": {
+    "method": {
+      "supervisory_tasks": "task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and supervise); 'under supervision' does not count"
+    },
+    "note": "Authored tier: entry targets and practice tasks were chosen and reviewed per major, so the generated-tier plausibility flags are not applied. Informational only: cited tasks whose O*NET statement is supervisory are listed; their authored scenarios say when they are practice for a later or graduate role.",
+    "flag_count": 0,
+    "flags": [],
+    "informational": {
+      "supervisory_task_cited": [
+        "44.0701-P6"
+      ]
+    }
+  },
   "entry_targets": [
     {
       "soc": "21-1021.00",
@@ -137,6 +257,51 @@
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo-original practice tasks",
   "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+  "license": {
+    "summary": "Mixed: O*NET-derived data under CC BY 4.0, plus DreamCo-original authored text",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+    "required_notices": [
+      "This page includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license.",
+      "O*NET\u00ae is a trademark of USDOL/ETA.",
+      "DreamCo has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+      "Crosswalk Files by USDOL/ETA, licensed under CC BY 4.0."
+    ],
+    "dreamco_commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+    "components": [
+      {
+        "fields": [
+          "occupations",
+          "top_knowledge",
+          "top_skills",
+          "top_knowledge_entry_weighted",
+          "top_skills_entry_weighted",
+          "entry_targets",
+          "knowledge_weighting"
+        ],
+        "content_class": "O*NET 31.0 and crosswalk data, filtered, averaged and ranked by DreamCo",
+        "ownership_class": "open_license_with_conditions",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "fields": [
+          "practice_tasks[].task_intent",
+          "practice_tasks[].prompt",
+          "practice_tasks[].rubric",
+          "practice_tasks[].reference_answer_outline",
+          "outline_elements",
+          "entry_target_review"
+        ],
+        "content_class": "DreamCo-original authored text (tier authored)",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "license": "DreamCo-original; commercial terms pending owner decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed"
+      }
+    ],
+    "per_item_licensing": "each practice_tasks[] item carries its own license block"
+  },
+  "created_at": "2026-10-02T18:30:00-05:00",
   "practice_tasks": [
     {
       "practice_id": "44.0701-P1",
@@ -153,6 +318,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Invented case: a school refers a family because a 9-year-old has missed 22 days this semester; the mother works night shifts and the family recently moved in with relatives. Write the intake interview guide for a home visit: how you open and explain your role and confidentiality limits, strengths-based and open questions for the parent and age-appropriate questions for the child, how you assess safety, the information you need to decide on services, cultural humility considerations, and how you close and agree on next steps.",
       "rubric": [
         {
@@ -194,6 +380,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. You have been assigned a caseload of 60 people on probation. Design the case file structure and maintenance routine: the sections every file must have (court orders and conditions, risk and needs assessment, supervision plan, contacts, drug test results, treatment reports, violations, correspondence), naming and dating conventions, what must be updated after each contact and within what time, privacy and record-access rules, and a monthly self-audit checklist.",
       "rubric": [
         {
@@ -235,6 +442,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Graduate-path practice (clinical social work is typically a master's-level, licensed role). Invented case: a 34-year-old client in outpatient treatment for alcohol use and depression has goals of reducing drinking days and returning to work. Design the progress-monitoring plan: measurable indicators for each goal, standardized measures you would use and how often, how the client participates in reviewing data, how you write progress notes, and what changes in the data would lead you to adjust the plan with the supervisor.",
       "rubric": [
         {
@@ -276,6 +504,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Continuing the school-attendance case, write a 90-day service plan developed with the mother: two or three family-chosen goals written in measurable terms, the services and who provides them, the family's own action steps, how and when you follow up to check whether services actually happened and helped, and how the plan will be revised. Write it in plain language the family can keep.",
       "rubric": [
         {
@@ -317,6 +566,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. A judge orders a presentence investigation for a 23-year-old convicted of a first-time felony theft. Write the information-gathering plan: whom you will interview (the person, family, employer, victim), the records you will request (criminal history, school, employment, treatment), how you verify claims and handle conflicting accounts, how you protect sensitive information, and the structure of the report to the court.",
       "rubric": [
         {
@@ -358,6 +628,27 @@
       "label": "DreamCo-original practice prompt",
       "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
       "ownership_class": "synthetic_generated_by_dreamco",
+      "license": {
+        "content_class": "DreamCo-original text that references O*NET 31.0 identifiers",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "contains_third_party_text": false,
+        "license": "DreamCo-original (no third-party text); commercial terms pending owner decision",
+        "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+        "authorship": "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed",
+        "third_party_references": {
+          "fields": [
+            "onet_soc_code",
+            "occupation_title",
+            "onet_task_id",
+            "onet_task_type",
+            "onet_task_url"
+          ],
+          "license": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+          "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA."
+        }
+      },
       "prompt": "DreamCo-original practice prompt. Graduate-path practice: imagine you are a licensed clinical social worker supervising three bachelor's-level case aides at a community mental-health clinic. Write the supervision plan: weekly structure (individual and group), how you review case notes and caseload safety, training priorities, how you support aides after a difficult client crisis, how you evaluate performance, and the ethical limits on what aides may do.",
       "rubric": [
         {

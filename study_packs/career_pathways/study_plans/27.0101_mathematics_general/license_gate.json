@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-mg-27.0101",
-  "evaluated_at": "2026-10-02T18:03:28-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/27.0101_mathematics_general",
     "candidate_path": "study_plans/27.0101_mathematics_general/candidate.json",
-    "candidate_sha256": "3e98030dfade9b4f001913968ad493869a1e789301d845a0da365b93733f5c8a",
+    "candidate_sha256": "fd558e4218ac5dab55c2cc0db2d5e1c85091619b27caa540927bf4eed6d7252a",
     "provenance_path": "study_plans/27.0101_mathematics_general/provenance.json",
-    "provenance_sha256": "10d2c71c36797433965ff912e098ca4b780a92f5e87b282c9fd905a9f56d7f66",
+    "provenance_sha256": "fe4bea69c28e2c24677c6ab764fe13c89dac9559f6468957815fa2b50cff8d12",
     "asset_record_path": "study_plans/27.0101_mathematics_general/asset.json",
-    "asset_record_sha256": "c57ce2f4578a21f680d5f971c4486b49422a525f44ab7853c1722628c2c64c95"
+    "asset_record_sha256": "3a5ee122ef2966bd7e411ddb25a5a1d1e345d81af97f65c7d972ae40dc1ec8a2"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

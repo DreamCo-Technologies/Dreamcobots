@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-gd-50.0409",
-  "evaluated_at": "2026-10-02T18:03:28-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/50.0409_graphic_design",
     "candidate_path": "study_plans/50.0409_graphic_design/candidate.json",
-    "candidate_sha256": "0bbee6a2393789f08d94464c82bfa6aad2592d4a9c7115d7ba5584647a0ec96d",
+    "candidate_sha256": "2393147a33bbb12d978092e8ededb6231739afcf68c79dcb39006ceb007cc059",
     "provenance_path": "study_plans/50.0409_graphic_design/provenance.json",
-    "provenance_sha256": "f4ca3f8f0e4de3d2f13ecf157c8b242927755e1653ca0a7881abd6d78680dcfe",
+    "provenance_sha256": "f7d159ad5bd01ef163a0bc96576f8b7afa8ab62e980bddd2ae877634fd0f4f92",
     "asset_record_path": "study_plans/50.0409_graphic_design/asset.json",
-    "asset_record_sha256": "2a189a1ce494209b329dbbaf129263b2aa27c58793ac4533d3bee54bbaec4f5f"
+    "asset_record_sha256": "9e8c11a3ca863ebff3241eb0e1842e08ada4b2564a73bd6b4fca7ccb413c5da5"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

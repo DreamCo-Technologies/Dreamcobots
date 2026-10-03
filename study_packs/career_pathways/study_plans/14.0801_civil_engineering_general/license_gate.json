@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-ceg-14.0801",
-  "evaluated_at": "2026-10-02T18:03:28-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/14.0801_civil_engineering_general",
     "candidate_path": "study_plans/14.0801_civil_engineering_general/candidate.json",
-    "candidate_sha256": "909e5719faca4c161f6218f6e3e161d431790c97dee0abb7ff58366d6ff32d6a",
+    "candidate_sha256": "5e813b94fad5e38cc3bf5a3ac47c1809cffca893f7bc842d87454bf7d26c0923",
     "provenance_path": "study_plans/14.0801_civil_engineering_general/provenance.json",
-    "provenance_sha256": "da4dbf628f80b1e3048f4cc00f38cc684c270143e735b67ddd5c0f6bd2ee29b3",
+    "provenance_sha256": "c86ca1263b9001d16fc2847b30de8ad502db3e07b51905cc5cf39975a32a4d8f",
     "asset_record_path": "study_plans/14.0801_civil_engineering_general/asset.json",
-    "asset_record_sha256": "2b7d4f64a2611ed58ab8a8668fe3d536d3d9caf22cdcba7909ecaf4e7743dbb0"
+    "asset_record_sha256": "3a4caeeeb2f24e7a41aecf9383c0b42298660371eea74d68a5085a2cdc4f63fd"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-eeat-13.1202",
-  "evaluated_at": "2026-10-02T18:03:28-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/13.1202_elementary_education_and_teaching",
     "candidate_path": "study_plans/13.1202_elementary_education_and_teaching/candidate.json",
-    "candidate_sha256": "e9ddc4d8640b1cabc287d2f1f319da71094917b920b8ddbe471137c1ded36586",
+    "candidate_sha256": "19b375adc8fdc32a80418e2adea9060729711c4c0ae532174f9bbdd191ab85f7",
     "provenance_path": "study_plans/13.1202_elementary_education_and_teaching/provenance.json",
-    "provenance_sha256": "9a0db7c95842f18de0fe105b0758b65a0d37df2a947aea044490c6995639d8f2",
+    "provenance_sha256": "9614b8fbe13965a15b221757ba0268185a3e5e4a93491a552a281e0e0a978795",
     "asset_record_path": "study_plans/13.1202_elementary_education_and_teaching/asset.json",
-    "asset_record_sha256": "5c4c60e0ca0274a6b30d2e78aa77f7c06d1673f452d1da1bab810f208b1e009f"
+    "asset_record_sha256": "008a250c3cad6658b446b2d35321db919b2fac9976ef887f1d68a97afc297a5b"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-cs-11.0701",
-  "evaluated_at": "2026-10-02T18:03:27-05:00",
+  "evaluated_at": "2026-10-02T18:59:32-05:00",
   "inputs": {
     "target": "study_plans/11.0701_computer_science",
     "candidate_path": "study_plans/11.0701_computer_science/candidate.json",
-    "candidate_sha256": "360411f32d0c241d58a68f7fd435fcc1e855c5987eb07aab724ef359b3ac40a7",
+    "candidate_sha256": "d1e914ad481ca6a1d2976faa81a9ba5ce6531ee0677a5b168c20d9b100366043",
     "provenance_path": "study_plans/11.0701_computer_science/provenance.json",
-    "provenance_sha256": "a8bd05868e9b042c4dcf7c102edd86397465d987a7330a05984dae4a9ba2cd33",
+    "provenance_sha256": "eac64ea6bc67054f6291b55837566ad026513cecb90d7886037c6104b2d05b8e",
     "asset_record_path": "study_plans/11.0701_computer_science/asset.json",
-    "asset_record_sha256": "d688d4bc49cc1dcf5ad3377edc8af549fbdf116a733a98df6bc78dce54ff335b"
+    "asset_record_sha256": "5c003d6ae270de2758a7a57b7214617feedeef953bbdac0037c8d16b91c20cad"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

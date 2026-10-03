@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-p-51.2001",
-  "evaluated_at": "2026-10-02T18:03:28-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/51.2001_pharmacy",
     "candidate_path": "study_plans/51.2001_pharmacy/candidate.json",
-    "candidate_sha256": "4961a165dde8024f2573173720cf0be50a770fe82bb9acfc8a24ae7f3ad4db0c",
+    "candidate_sha256": "c0b5a7373027f436786217f381d51081acd106fe56015149a28e705504209656",
     "provenance_path": "study_plans/51.2001_pharmacy/provenance.json",
-    "provenance_sha256": "42bc2383e9e3f7925b87b3797e3285e72460b1960f5a42c376acd1ff58981efe",
+    "provenance_sha256": "9b81f5a702ead3c561e2dedcbe3d26c2a4b3b5555989f315eeedbce796b45327",
     "asset_record_path": "study_plans/51.2001_pharmacy/asset.json",
-    "asset_record_sha256": "250abf9c60e578ab32690549ff28a067672d8dbb5a529081de86e0c2d05c5f08"
+    "asset_record_sha256": "a3f36e1abdb923ec0c8d6b39a93e3b8307285505f22b2c7ea6d5352b71fc3421"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

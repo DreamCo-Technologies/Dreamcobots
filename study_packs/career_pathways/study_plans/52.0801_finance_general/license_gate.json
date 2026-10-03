@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-fg-52.0801",
-  "evaluated_at": "2026-10-02T18:03:28-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/52.0801_finance_general",
     "candidate_path": "study_plans/52.0801_finance_general/candidate.json",
-    "candidate_sha256": "bda1cd382302c4e50174d7418a490836ac2ee19fd2e79e9c7c8c5b474c667553",
+    "candidate_sha256": "8661b12903cc6c5dc789768b5ff8ca67c9d06bcab0f94b04bb150538828780e0",
     "provenance_path": "study_plans/52.0801_finance_general/provenance.json",
-    "provenance_sha256": "37321375c71cb97c688ad79a2aaad66d51797e15b2db601a86b2b50bac63f7df",
+    "provenance_sha256": "859984d1e97fe22f2b40a6c667e659f00c964081fc48977481a01659083f6df3",
     "asset_record_path": "study_plans/52.0801_finance_general/asset.json",
-    "asset_record_sha256": "ff7a0ea27064f0cc8154033ab644692cd9582356c8f4ad9771bca9d894e5c9ef"
+    "asset_record_sha256": "7b641576eda1ba8ca82fa9ec870942b382e56f43d72153e9a1d5a9f35ce246a8"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

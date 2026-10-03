@@ -105,6 +105,149 @@
       3.75
     ]
   ],
+  "top_knowledge_entry_weighted": [
+    [
+      "Mathematics",
+      4.51
+    ],
+    [
+      "Computers and Electronics",
+      3.93
+    ],
+    [
+      "English Language",
+      3.43
+    ],
+    [
+      "Administration and Management",
+      2.66
+    ],
+    [
+      "Economics and Accounting",
+      2.62
+    ],
+    [
+      "Education and Training",
+      2.5
+    ],
+    [
+      "Customer and Personal Service",
+      2.4
+    ],
+    [
+      "Administrative",
+      2.33
+    ]
+  ],
+  "top_skills_entry_weighted": [
+    [
+      "Mathematics",
+      4.34
+    ],
+    [
+      "Critical Thinking",
+      4.04
+    ],
+    [
+      "Reading Comprehension",
+      4.0
+    ],
+    [
+      "Active Listening",
+      3.77
+    ],
+    [
+      "Speaking",
+      3.77
+    ],
+    [
+      "Active Learning",
+      3.72
+    ]
+  ],
+  "knowledge_weighting": {
+    "method": "entry-weighted mean of O*NET 31.0 importance (Scale IM): entry targets weight 2; other linked occupations in Job Zone 4 or 5 (or the entry targets' Job Zone) weight 1; Manager, Chief, Postsecondary-faculty, All Other, Supervisor, Director and Treasurers and Controllers titles, and non-target occupations in other Job Zones, weight 0",
+    "weights": {
+      "15-2011.00": 2,
+      "15-2021.00": 1,
+      "15-2041.00": 1,
+      "15-2041.01": 1,
+      "15-2051.00": 2,
+      "15-2051.01": 2
+    },
+    "note": "top_knowledge/top_skills are the unweighted mean over all linked occupations (kept for comparison); the outline uses the entry-weighted lists."
+  },
+  "outline_elements": {
+    "year1_knowledge": [
+      "English Language"
+    ],
+    "year1_skills": [
+      "Mathematics",
+      "Critical Thinking",
+      "Reading Comprehension"
+    ],
+    "year2_knowledge": [
+      "Mathematics",
+      "Computers and Electronics",
+      "Economics and Accounting"
+    ],
+    "year3_knowledge": [],
+    "year3_knowledge_added_from_targets": [],
+    "year3_skills": [
+      "Active Listening",
+      "Speaking",
+      "Active Learning"
+    ],
+    "skipped_knowledge": [
+      {
+        "element": "Administration and Management",
+        "reason": "management and planning knowledge matters most after several years of experience, so the outline gives it no course slot (a management elective is optional)"
+      },
+      {
+        "element": "Education and Training",
+        "reason": "teaching and training others is built through presenting, tutoring and peer teaching in projects rather than a dedicated course"
+      },
+      {
+        "element": "Customer and Personal Service",
+        "reason": "service and client-relations knowledge; the outline leaves it to internships, part-time work and the practice tasks rather than a course slot"
+      },
+      {
+        "element": "Administrative",
+        "reason": "office procedures and records handling; usually learned on the job, so it gets no course slot"
+      }
+    ],
+    "rule": "English Language is placed in Year 1 general education; workplace and management elements (Customer and Personal Service, Administrative, Clerical, Administration and Management, Personnel and Human Resources, Education and Training) get no course slot unless the major's CIP series is about them; the next three elements go to Year 2 and up to three more (ordered by importance to the entry targets) to Year 3; if fewer than two remain for Year 3, knowledge rated at least 2.5 for the entry targets fills it"
+  },
+  "quality_flags": {
+    "method": {
+      "supervisory_tasks": "task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and supervise); 'under supervision' does not count",
+      "topical_overlap": "a target is flagged low_title_overlap (severity high if its O*NET description also shares no stem, else medium) when its O*NET occupation title shares no content-word stem with the CIP program title (lower-cased words of 3+ letters; generic words such as science, studies, technology, engineering, management, services, general and other ignored; crude suffix stripping; stems of 5+ letters also match when one contains the other). The detail says whether the occupation's O*NET description shares a stem. This is a crude lexical heuristic: it misses implausible pairs that share a word and flags plausible pairs that use different words"
+    },
+    "flag_count": 3,
+    "flags": [
+      {
+        "flag": "low_title_overlap",
+        "severity": "high",
+        "onet_soc_code": "15-2051.00",
+        "occupation_title": "Data Scientists",
+        "detail": "description shares no stem with the CIP title either"
+      },
+      {
+        "flag": "low_title_overlap",
+        "severity": "medium",
+        "onet_soc_code": "15-2011.00",
+        "occupation_title": "Actuaries",
+        "detail": "description shares a stem with the CIP title"
+      },
+      {
+        "flag": "low_title_overlap",
+        "severity": "high",
+        "onet_soc_code": "15-2051.01",
+        "occupation_title": "Business Intelligence Analysts",
+        "detail": "description shares no stem with the CIP title either"
+      }
+    ]
+  },
   "entry_targets": [
     {
       "soc": "15-2051.00",
@@ -137,6 +280,60 @@
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo template practice exercises (tier generated)",
   "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+  "license": {
+    "summary": "Mixed: O*NET-derived data and quoted O*NET task statements under CC BY 4.0, plus a DreamCo template layer",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+    "required_notices": [
+      "This page includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license.",
+      "O*NET\u00ae is a trademark of USDOL/ETA.",
+      "DreamCo has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+      "Crosswalk Files by USDOL/ETA, licensed under CC BY 4.0."
+    ],
+    "dreamco_commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+    "components": [
+      {
+        "fields": [
+          "occupations",
+          "top_knowledge",
+          "top_skills",
+          "top_knowledge_entry_weighted",
+          "top_skills_entry_weighted",
+          "entry_targets",
+          "knowledge_weighting"
+        ],
+        "content_class": "O*NET 31.0 and crosswalk data, filtered, averaged and ranked by DreamCo",
+        "ownership_class": "open_license_with_conditions",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "fields": [
+          "practice_tasks[].onet_task_statement"
+        ],
+        "content_class": "O*NET 31.0 task statements quoted verbatim",
+        "ownership_class": "open_license_with_conditions",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "fields": [
+          "practice_tasks[].prompt",
+          "practice_tasks[].rubric",
+          "practice_tasks[].reference_answer_outline",
+          "outline_elements",
+          "quality_flags",
+          "entry_target_review"
+        ],
+        "content_class": "DreamCo template output (tier generated)",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "license": "DreamCo; commercial terms pending owner decision",
+        "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author"
+      }
+    ],
+    "per_item_licensing": "each practice_tasks[] item carries its own license block"
+  },
+  "created_at": "2026-10-02T18:30:00-05:00",
   "practice_tasks": [
     {
       "practice_id": "27.0502-P1",
@@ -149,10 +346,30 @@
       "onet_task_url": "https://www.onetonline.org/link/summary/15-2051.00",
       "onet_task_statement": "Analyze, manipulate, or process large sets of data using statistical software.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Data Scientists\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Mathematics and Computers and Electronics), and how you would check the result and report it.",
       "rubric": [
         {
@@ -189,10 +406,30 @@
       "onet_task_url": "https://www.onetonline.org/link/summary/15-2011.00",
       "onet_task_statement": "Analyze statistical information to estimate mortality, accident, sickness, disability, and retirement rates.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Actuaries\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Mathematics and Economics and Accounting), and how you would check the result and report it.",
       "rubric": [
         {
@@ -229,10 +466,30 @@
       "onet_task_url": "https://www.onetonline.org/link/summary/15-2051.01",
       "onet_task_statement": "Provide technical support for existing reports, dashboards, or other tools.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Business Intelligence Analysts\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Computers and Electronics and Mathematics), and how you would check the result and report it.",
       "rubric": [
         {
@@ -269,10 +526,30 @@
       "onet_task_url": "https://www.onetonline.org/link/summary/15-2051.00",
       "onet_task_statement": "Apply feature selection algorithms to models predicting outcomes of interest, such as sales, attrition, and healthcare use.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Data Scientists\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Mathematics and Computers and Electronics), and how you would check the result and report it.",
       "rubric": [
         {
@@ -309,10 +586,30 @@
       "onet_task_url": "https://www.onetonline.org/link/summary/15-2011.00",
       "onet_task_statement": "Design, review, and help administer insurance, annuity and pension plans, determining financial soundness and calculating premiums.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Actuaries\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Mathematics and Economics and Accounting), and how you would check the result and report it.",
       "rubric": [
         {
@@ -349,10 +646,30 @@
       "onet_task_url": "https://www.onetonline.org/link/summary/15-2051.01",
       "onet_task_statement": "Maintain library of model documents, templates, or other reusable knowledge assets.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Business Intelligence Analysts\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Computers and Electronics and Mathematics), and how you would check the result and report it.",
       "rubric": [
         {

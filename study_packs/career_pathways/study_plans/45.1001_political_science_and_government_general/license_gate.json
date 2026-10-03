@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-psagg-45.1001",
-  "evaluated_at": "2026-10-02T18:03:28-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/45.1001_political_science_and_government_general",
     "candidate_path": "study_plans/45.1001_political_science_and_government_general/candidate.json",
-    "candidate_sha256": "62f2d83fe46b8ed3a28d1fbbc82a620608a5c3a0962fe5966d6512075caf9a6d",
+    "candidate_sha256": "7bd417236ebcedc3bcc329d292c65093279fd7fef92cbd9efbcd062c493ab90c",
     "provenance_path": "study_plans/45.1001_political_science_and_government_general/provenance.json",
-    "provenance_sha256": "e48a19a16c09bf202eda6772e909336d9ff5834fd72193586f062f04bc51ce98",
+    "provenance_sha256": "949223cb1f853e5557308466aac57147b443e96799159f62ee738d815871ce8c",
     "asset_record_path": "study_plans/45.1001_political_science_and_government_general/asset.json",
-    "asset_record_sha256": "e6e113d99ac0441531a876c675570c0985390d1fb9dc3d8a6e8bf7a31f8ba88e"
+    "asset_record_sha256": "37f1859041b6d4c08d8ed83190ab2f52400bc3106d35034c39eabdaf594b30e2"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-me-14.1901",
-  "evaluated_at": "2026-10-02T18:03:27-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/14.1901_mechanical_engineering",
     "candidate_path": "study_plans/14.1901_mechanical_engineering/candidate.json",
-    "candidate_sha256": "d49b5938f2a4bfdf2f23401778856a8f6a4453e131d7dbc0c7694ce04fe022a3",
+    "candidate_sha256": "f19e08f5dcfd7509ef06b19ce95f2cefd0a57ee6da97258e037ee9114ce1d109",
     "provenance_path": "study_plans/14.1901_mechanical_engineering/provenance.json",
-    "provenance_sha256": "489da09aca201454ed0ffa39c835b64c866f54b8a8b5f0705217a27ee7927426",
+    "provenance_sha256": "fc70ce42e9902bd4df1b321bddf56bf4e04fa8b5079010ab443547e18cd72317",
     "asset_record_path": "study_plans/14.1901_mechanical_engineering/asset.json",
-    "asset_record_sha256": "38e62b55e486111b26bc4b9ee3be28f1c81396180eecb4278c9c77d4b74eee87"
+    "asset_record_sha256": "529c1f204ffac3f63ff4758a282f59217737aae8930990f79d1148370a9599a5"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

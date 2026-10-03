@@ -80,6 +80,140 @@
       3.56
     ]
   ],
+  "top_knowledge_entry_weighted": [
+    [
+      "Medicine and Dentistry",
+      4.74
+    ],
+    [
+      "Biology",
+      4.33
+    ],
+    [
+      "Customer and Personal Service",
+      4.22
+    ],
+    [
+      "English Language",
+      4.08
+    ],
+    [
+      "Psychology",
+      3.97
+    ],
+    [
+      "Therapy and Counseling",
+      3.75
+    ],
+    [
+      "Education and Training",
+      3.41
+    ],
+    [
+      "Mathematics",
+      3.05
+    ]
+  ],
+  "top_skills_entry_weighted": [
+    [
+      "Reading Comprehension",
+      4.12
+    ],
+    [
+      "Active Listening",
+      4.06
+    ],
+    [
+      "Critical Thinking",
+      4.0
+    ],
+    [
+      "Speaking",
+      4.0
+    ],
+    [
+      "Writing",
+      3.88
+    ],
+    [
+      "Active Learning",
+      3.56
+    ]
+  ],
+  "knowledge_weighting": {
+    "method": "entry-weighted mean of O*NET 31.0 importance (Scale IM): entry targets weight 2; other linked occupations in Job Zone 4 or 5 (or the entry targets' Job Zone) weight 1; Manager, Chief, Postsecondary-faculty, All Other, Supervisor, Director and Treasurers and Controllers titles, and non-target occupations in other Job Zones, weight 0",
+    "weights": {
+      "29-1299.01": 2,
+      "29-1299.02": 2
+    },
+    "note": "top_knowledge/top_skills are the unweighted mean over all linked occupations (kept for comparison); the outline uses the entry-weighted lists."
+  },
+  "outline_elements": {
+    "year1_knowledge": [
+      "English Language"
+    ],
+    "year1_skills": [
+      "Reading Comprehension",
+      "Active Listening",
+      "Critical Thinking"
+    ],
+    "year2_knowledge": [
+      "Medicine and Dentistry",
+      "Biology",
+      "Psychology"
+    ],
+    "year3_knowledge": [
+      "Therapy and Counseling",
+      "Mathematics"
+    ],
+    "year3_knowledge_added_from_targets": [],
+    "year3_skills": [
+      "Speaking",
+      "Writing",
+      "Active Learning"
+    ],
+    "skipped_knowledge": [
+      {
+        "element": "Customer and Personal Service",
+        "reason": "service and client-relations knowledge; the outline leaves it to internships, part-time work and the practice tasks rather than a course slot"
+      },
+      {
+        "element": "Education and Training",
+        "reason": "teaching and training others is built through presenting, tutoring and peer teaching in projects rather than a dedicated course"
+      }
+    ],
+    "rule": "English Language is placed in Year 1 general education; workplace and management elements (Customer and Personal Service, Administrative, Clerical, Administration and Management, Personnel and Human Resources, Education and Training) get no course slot unless the major's CIP series is about them; the next three elements go to Year 2 and up to three more (ordered by importance to the entry targets) to Year 3; if fewer than two remain for Year 3, knowledge rated at least 2.5 for the entry targets fills it"
+  },
+  "quality_flags": {
+    "method": {
+      "supervisory_tasks": "task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and supervise); 'under supervision' does not count",
+      "topical_overlap": "a target is flagged low_title_overlap (severity high if its O*NET description also shares no stem, else medium) when its O*NET occupation title shares no content-word stem with the CIP program title (lower-cased words of 3+ letters; generic words such as science, studies, technology, engineering, management, services, general and other ignored; crude suffix stripping; stems of 5+ letters also match when one contains the other). The detail says whether the occupation's O*NET description shares a stem. This is a crude lexical heuristic: it misses implausible pairs that share a word and flags plausible pairs that use different words"
+    },
+    "flag_count": 3,
+    "flags": [
+      {
+        "flag": "low_title_overlap",
+        "severity": "medium",
+        "onet_soc_code": "29-1299.01",
+        "occupation_title": "Naturopathic Physicians",
+        "detail": "description shares a stem with the CIP title"
+      },
+      {
+        "flag": "low_title_overlap",
+        "severity": "high",
+        "onet_soc_code": "29-1299.02",
+        "occupation_title": "Orthoptists",
+        "detail": "description shares no stem with the CIP title either"
+      },
+      {
+        "flag": "entry_target_not_job_zone_4",
+        "job_zones": [
+          5
+        ],
+        "detail": "no eligible Job Zone 4 occupation is linked, so the entry targets come from another Job Zone"
+      }
+    ]
+  },
   "entry_targets": [
     {
       "soc": "29-1299.01",
@@ -107,6 +241,60 @@
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo template practice exercises (tier generated)",
   "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+  "license": {
+    "summary": "Mixed: O*NET-derived data and quoted O*NET task statements under CC BY 4.0, plus a DreamCo template layer",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+    "required_notices": [
+      "This page includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license.",
+      "O*NET\u00ae is a trademark of USDOL/ETA.",
+      "DreamCo has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+      "Crosswalk Files by USDOL/ETA, licensed under CC BY 4.0."
+    ],
+    "dreamco_commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+    "components": [
+      {
+        "fields": [
+          "occupations",
+          "top_knowledge",
+          "top_skills",
+          "top_knowledge_entry_weighted",
+          "top_skills_entry_weighted",
+          "entry_targets",
+          "knowledge_weighting"
+        ],
+        "content_class": "O*NET 31.0 and crosswalk data, filtered, averaged and ranked by DreamCo",
+        "ownership_class": "open_license_with_conditions",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "fields": [
+          "practice_tasks[].onet_task_statement"
+        ],
+        "content_class": "O*NET 31.0 task statements quoted verbatim",
+        "ownership_class": "open_license_with_conditions",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "fields": [
+          "practice_tasks[].prompt",
+          "practice_tasks[].rubric",
+          "practice_tasks[].reference_answer_outline",
+          "outline_elements",
+          "quality_flags",
+          "entry_target_review"
+        ],
+        "content_class": "DreamCo template output (tier generated)",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "license": "DreamCo; commercial terms pending owner decision",
+        "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author"
+      }
+    ],
+    "per_item_licensing": "each practice_tasks[] item carries its own license block"
+  },
+  "created_at": "2026-10-02T18:30:00-05:00",
   "practice_tasks": [
     {
       "practice_id": "51.3305-P1",
@@ -119,10 +307,30 @@
       "onet_task_url": "https://www.onetonline.org/link/summary/29-1299.01",
       "onet_task_statement": "Perform mobilizations and high-velocity adjustments to joints or soft tissues, using principles of massage, stretching, or resistance.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Naturopathic Physicians\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Medicine and Dentistry and Biology), and how you would check the result and report it.",
       "rubric": [
         {
@@ -159,10 +367,30 @@
       "onet_task_url": "https://www.onetonline.org/link/summary/29-1299.02",
       "onet_task_statement": "Assist ophthalmologists in diagnostic ophthalmic procedures, such as ultrasonography, fundus photography, and tonometry.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Orthoptists\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Medicine and Dentistry and Customer and Personal Service), and how you would check the result and report it.",
       "rubric": [
         {
@@ -199,10 +427,30 @@
       "onet_task_url": "https://www.onetonline.org/link/summary/29-1299.01",
       "onet_task_statement": "Maintain professional development through activities such as postgraduate education, continuing education, preceptorships, and residency programs.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Naturopathic Physicians\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Medicine and Dentistry and Biology), and how you would check the result and report it.",
       "rubric": [
         {
@@ -239,10 +487,30 @@
       "onet_task_url": "https://www.onetonline.org/link/summary/29-1299.02",
       "onet_task_statement": "Provide nonsurgical interventions, including corrective lenses, patches, drops, fusion exercises, or stereograms, to treat conditions such as strabismus, heterophoria, and convergence insufficiency.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Orthoptists\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Medicine and Dentistry and Customer and Personal Service), and how you would check the result and report it.",
       "rubric": [
         {
@@ -279,10 +547,30 @@
       "onet_task_url": "https://www.onetonline.org/link/summary/29-1299.01",
       "onet_task_statement": "Order diagnostic imaging procedures such as radiographs (x-rays), ultrasounds, mammograms, and bone densitometry tests, or refer patients to other health professionals for these procedures.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Naturopathic Physicians\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Medicine and Dentistry and Biology), and how you would check the result and report it.",
       "rubric": [
         {
@@ -319,10 +607,30 @@
       "onet_task_url": "https://www.onetonline.org/link/summary/29-1299.02",
       "onet_task_statement": "Develop nonsurgical treatment plans for patients with conditions such as strabismus, nystagmus, and other visual disorders.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Orthoptists\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Medicine and Dentistry and Customer and Personal Service), and how you would check the result and report it.",
       "rubric": [
         {

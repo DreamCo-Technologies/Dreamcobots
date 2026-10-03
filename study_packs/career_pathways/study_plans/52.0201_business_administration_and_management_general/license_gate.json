@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-baamg-52.0201",
-  "evaluated_at": "2026-10-02T18:03:28-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/52.0201_business_administration_and_management_general",
     "candidate_path": "study_plans/52.0201_business_administration_and_management_general/candidate.json",
-    "candidate_sha256": "df61f71f2ee6e6249e7f25926d552896b903e61d8599df5abbc3f85759f8c030",
+    "candidate_sha256": "d5a87b15eb5c25c5c413173c0af4fe8b02080d351cf0e3b3cfa93a8bca12c8e6",
     "provenance_path": "study_plans/52.0201_business_administration_and_management_general/provenance.json",
-    "provenance_sha256": "b374ac75f07acdea9eff35ad5e99a5e809d86b7775ec07a260c3fab801ebb9fe",
+    "provenance_sha256": "4ae555fee0607b72676224cb6192cda92f7d0a26a8f83399d4dd64fa1d2c6d57",
     "asset_record_path": "study_plans/52.0201_business_administration_and_management_general/asset.json",
-    "asset_record_sha256": "1a4d85f5b34530afc40c60ab82609a8de79872372f629ba1fb4d8b6dcbc336cc"
+    "asset_record_sha256": "74df47f8e64456fed3c7296c5447506966558bf47ebefd4869a1e5a86b5bae6a"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

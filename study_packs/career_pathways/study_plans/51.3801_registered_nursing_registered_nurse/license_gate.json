@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-rnrn-51.3801",
-  "evaluated_at": "2026-10-02T18:03:27-05:00",
+  "evaluated_at": "2026-10-02T18:59:32-05:00",
   "inputs": {
     "target": "study_plans/51.3801_registered_nursing_registered_nurse",
     "candidate_path": "study_plans/51.3801_registered_nursing_registered_nurse/candidate.json",
-    "candidate_sha256": "49c580703af5997908d93c5180d4b176dc5a714f146cea193ec632626364101d",
+    "candidate_sha256": "e02535c600e65fee9aa3a2933ded9d29354d4083b4e122af4cbc339d9694af7c",
     "provenance_path": "study_plans/51.3801_registered_nursing_registered_nurse/provenance.json",
-    "provenance_sha256": "9fba2a7288bf778d610f9f8cd306fcac259056a691afe217ddf8e45c47f43b24",
+    "provenance_sha256": "3daf00e40013c499664e283c07373fed86a6806cfaa92e6ea479e7db930744fd",
     "asset_record_path": "study_plans/51.3801_registered_nursing_registered_nurse/asset.json",
-    "asset_record_sha256": "c087ecc03fefd8a7d62c10f6d4e3945a81552721fcc4207998bbf079214f6e61"
+    "asset_record_sha256": "9d33cfed603ddf752cd448612f249997ea60e24975e68d0428d2787d2d6d262d"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

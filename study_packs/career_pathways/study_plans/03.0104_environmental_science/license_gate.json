@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-es-03.0104",
-  "evaluated_at": "2026-10-02T18:03:28-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/03.0104_environmental_science",
     "candidate_path": "study_plans/03.0104_environmental_science/candidate.json",
-    "candidate_sha256": "5fef46c95b92ccfb87711401b7134ffaa2023c3b39fd93699de8dadbfff93b6a",
+    "candidate_sha256": "860b20af0a531fedea23860fe9ba2ec48a77f749aef2e44b8c78a9d5a7345eda",
     "provenance_path": "study_plans/03.0104_environmental_science/provenance.json",
-    "provenance_sha256": "7e03089ac0409603ca534be3b9b7daee3a45e4c80b29ce6e04260c15f2075f0e",
+    "provenance_sha256": "a119e3cf053f2cbd4d6cd7efe599f30261d2d869a902bb61346667ead1c17acd",
     "asset_record_path": "study_plans/03.0104_environmental_science/asset.json",
-    "asset_record_sha256": "a60b789c9fee5609a6a2e37ddd8d0e2bf167751ecd78e4b239927e58db212c7a"
+    "asset_record_sha256": "dcdb18c35adbd567c6f5aa63b0e44e77b053c38fa211afd095e1efb86f72d6f7"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

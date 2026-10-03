@@ -95,6 +95,141 @@
       3.83
     ]
   ],
+  "top_knowledge_entry_weighted": [
+    [
+      "Public Safety and Security",
+      4.66
+    ],
+    [
+      "Law and Government",
+      4.55
+    ],
+    [
+      "Customer and Personal Service",
+      4.42
+    ],
+    [
+      "Administration and Management",
+      3.96
+    ],
+    [
+      "English Language",
+      3.82
+    ],
+    [
+      "Psychology",
+      3.81
+    ],
+    [
+      "Sociology and Anthropology",
+      3.26
+    ],
+    [
+      "Therapy and Counseling",
+      3.19
+    ]
+  ],
+  "top_skills_entry_weighted": [
+    [
+      "Active Listening",
+      4.0
+    ],
+    [
+      "Critical Thinking",
+      4.0
+    ],
+    [
+      "Monitoring",
+      4.0
+    ],
+    [
+      "Reading Comprehension",
+      4.0
+    ],
+    [
+      "Speaking",
+      4.0
+    ],
+    [
+      "Active Learning",
+      3.88
+    ]
+  ],
+  "knowledge_weighting": {
+    "method": "entry-weighted mean of O*NET 31.0 importance (Scale IM): entry targets weight 2; other linked occupations in Job Zone 4 or 5 (or the entry targets' Job Zone) weight 1; Manager, Chief, Postsecondary-faculty, All Other, Supervisor, Director and Treasurers and Controllers titles, and non-target occupations in other Job Zones, weight 0",
+    "weights": {
+      "33-1012.00": 2
+    },
+    "note": "top_knowledge/top_skills are the unweighted mean over all linked occupations (kept for comparison); the outline uses the entry-weighted lists."
+  },
+  "outline_elements": {
+    "year1_knowledge": [
+      "English Language"
+    ],
+    "year1_skills": [
+      "Active Listening",
+      "Critical Thinking",
+      "Monitoring"
+    ],
+    "year2_knowledge": [
+      "Public Safety and Security",
+      "Law and Government",
+      "Psychology"
+    ],
+    "year3_knowledge": [
+      "Sociology and Anthropology",
+      "Therapy and Counseling"
+    ],
+    "year3_knowledge_added_from_targets": [],
+    "year3_skills": [
+      "Reading Comprehension",
+      "Speaking",
+      "Active Learning"
+    ],
+    "skipped_knowledge": [
+      {
+        "element": "Customer and Personal Service",
+        "reason": "service and client-relations knowledge; the outline leaves it to internships, part-time work and the practice tasks rather than a course slot"
+      },
+      {
+        "element": "Administration and Management",
+        "reason": "management and planning knowledge matters most after several years of experience, so the outline gives it no course slot (a management elective is optional)"
+      }
+    ],
+    "rule": "English Language is placed in Year 1 general education; workplace and management elements (Customer and Personal Service, Administrative, Clerical, Administration and Management, Personnel and Human Resources, Education and Training) get no course slot unless the major's CIP series is about them; the next three elements go to Year 2 and up to three more (ordered by importance to the entry targets) to Year 3; if fewer than two remain for Year 3, knowledge rated at least 2.5 for the entry targets fills it"
+  },
+  "quality_flags": {
+    "method": {
+      "supervisory_tasks": "task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and supervise); 'under supervision' does not count",
+      "topical_overlap": "a target is flagged low_title_overlap (severity high if its O*NET description also shares no stem, else medium) when its O*NET occupation title shares no content-word stem with the CIP program title (lower-cased words of 3+ letters; generic words such as science, studies, technology, engineering, management, services, general and other ignored; crude suffix stripping; stems of 5+ letters also match when one contains the other). The detail says whether the occupation's O*NET description shares a stem. This is a crude lexical heuristic: it misses implausible pairs that share a word and flags plausible pairs that use different words"
+    },
+    "flag_count": 3,
+    "flags": [
+      {
+        "flag": "low_title_overlap",
+        "severity": "medium",
+        "onet_soc_code": "33-1012.00",
+        "occupation_title": "First-Line Supervisors of Police and Detectives",
+        "detail": "description shares a stem with the CIP title"
+      },
+      {
+        "flag": "supervisory_tasks_dropped",
+        "count": 2,
+        "onet_task_ids": [
+          564,
+          566
+        ],
+        "detail": "supervisory/managerial tasks of the entry targets were skipped when picking practice tasks"
+      },
+      {
+        "flag": "entry_target_not_job_zone_4",
+        "job_zones": [
+          2
+        ],
+        "detail": "no eligible Job Zone 4 occupation is linked, so the entry targets come from another Job Zone"
+      }
+    ]
+  },
   "entry_targets": [
     {
       "soc": "33-1012.00",
@@ -117,6 +252,60 @@
   ],
   "label": "O*NET 31.0-derived fields plus DreamCo template practice exercises (tier generated)",
   "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+  "license": {
+    "summary": "Mixed: O*NET-derived data and quoted O*NET task statements under CC BY 4.0, plus a DreamCo template layer",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+    "required_notices": [
+      "This page includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license.",
+      "O*NET\u00ae is a trademark of USDOL/ETA.",
+      "DreamCo has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+      "Crosswalk Files by USDOL/ETA, licensed under CC BY 4.0."
+    ],
+    "dreamco_commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+    "components": [
+      {
+        "fields": [
+          "occupations",
+          "top_knowledge",
+          "top_skills",
+          "top_knowledge_entry_weighted",
+          "top_skills_entry_weighted",
+          "entry_targets",
+          "knowledge_weighting"
+        ],
+        "content_class": "O*NET 31.0 and crosswalk data, filtered, averaged and ranked by DreamCo",
+        "ownership_class": "open_license_with_conditions",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "fields": [
+          "practice_tasks[].onet_task_statement"
+        ],
+        "content_class": "O*NET 31.0 task statements quoted verbatim",
+        "ownership_class": "open_license_with_conditions",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "fields": [
+          "practice_tasks[].prompt",
+          "practice_tasks[].rubric",
+          "practice_tasks[].reference_answer_outline",
+          "outline_elements",
+          "quality_flags",
+          "entry_target_review"
+        ],
+        "content_class": "DreamCo template output (tier generated)",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "license": "DreamCo; commercial terms pending owner decision",
+        "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author"
+      }
+    ],
+    "per_item_licensing": "each practice_tasks[] item carries its own license block"
+  },
+  "created_at": "2026-10-02T18:30:00-05:00",
   "practice_tasks": [
     {
       "practice_id": "43.0103-P1",
@@ -124,15 +313,35 @@
       "tier": "generated",
       "onet_soc_code": "33-1012.00",
       "occupation_title": "First-Line Supervisors of Police and Detectives",
-      "onet_task_id": 564,
+      "onet_task_id": 565,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/33-1012.00",
-      "onet_task_statement": "Explain police operations to subordinates to assist them in performing their job duties.",
+      "onet_task_statement": "Inform personnel of changes in regulations and policies, implications of new or amended laws, and new techniques of police work.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"First-Line Supervisors of Police and Detectives\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Public Safety and Security and Law and Government), and how you would check the result and report it.",
       "rubric": [
         {
@@ -164,15 +373,35 @@
       "tier": "generated",
       "onet_soc_code": "33-1012.00",
       "occupation_title": "First-Line Supervisors of Police and Detectives",
-      "onet_task_id": 565,
+      "onet_task_id": 567,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/33-1012.00",
-      "onet_task_statement": "Inform personnel of changes in regulations and policies, implications of new or amended laws, and new techniques of police work.",
+      "onet_task_statement": "Investigate and resolve personnel problems within organization and charges of misconduct against staff.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"First-Line Supervisors of Police and Detectives\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Public Safety and Security and Law and Government), and how you would check the result and report it.",
       "rubric": [
         {
@@ -204,15 +433,35 @@
       "tier": "generated",
       "onet_soc_code": "33-1012.00",
       "occupation_title": "First-Line Supervisors of Police and Detectives",
-      "onet_task_id": 566,
+      "onet_task_id": 568,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/33-1012.00",
-      "onet_task_statement": "Supervise and coordinate the investigation of criminal cases, offering guidance and expertise to investigators, and ensuring that procedures are conducted in accordance with laws and regulations.",
+      "onet_task_statement": "Train staff in proper police work procedures.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"First-Line Supervisors of Police and Detectives\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Public Safety and Security and Law and Government), and how you would check the result and report it.",
       "rubric": [
         {
@@ -244,15 +493,35 @@
       "tier": "generated",
       "onet_soc_code": "33-1012.00",
       "occupation_title": "First-Line Supervisors of Police and Detectives",
-      "onet_task_id": 567,
+      "onet_task_id": 569,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/33-1012.00",
-      "onet_task_statement": "Investigate and resolve personnel problems within organization and charges of misconduct against staff.",
+      "onet_task_statement": "Maintain logs, prepare reports, and direct the preparation, handling, and maintenance of departmental records.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"First-Line Supervisors of Police and Detectives\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Public Safety and Security and Law and Government), and how you would check the result and report it.",
       "rubric": [
         {
@@ -284,15 +553,35 @@
       "tier": "generated",
       "onet_soc_code": "33-1012.00",
       "occupation_title": "First-Line Supervisors of Police and Detectives",
-      "onet_task_id": 568,
+      "onet_task_id": 571,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/33-1012.00",
-      "onet_task_statement": "Train staff in proper police work procedures.",
+      "onet_task_statement": "Direct collection, preparation, and handling of evidence and personal property of prisoners.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"First-Line Supervisors of Police and Detectives\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Public Safety and Security and Law and Government), and how you would check the result and report it.",
       "rubric": [
         {
@@ -324,15 +613,35 @@
       "tier": "generated",
       "onet_soc_code": "33-1012.00",
       "occupation_title": "First-Line Supervisors of Police and Detectives",
-      "onet_task_id": 569,
+      "onet_task_id": 573,
       "onet_task_type": "Core",
       "onet_task_url": "https://www.onetonline.org/link/summary/33-1012.00",
-      "onet_task_statement": "Maintain logs, prepare reports, and direct the preparation, handling, and maintenance of departmental records.",
+      "onet_task_statement": "Conduct raids and order detention of witnesses and suspects for questioning.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
       "format": "applied exercise",
       "label": "DreamCo-generated practice exercise (template)",
       "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "synthetic_generated_by_dreamco",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
       "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"First-Line Supervisors of Police and Detectives\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Public Safety and Security and Law and Government), and how you would check the result and report it.",
       "rubric": [
         {

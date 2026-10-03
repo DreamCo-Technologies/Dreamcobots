@@ -38,6 +38,19 @@ def sha_bytes(b):
     return hashlib.sha256(b).hexdigest()
 
 
+GATE_VOLATILE = ("evaluated_at",)
+SELF_REFERENTIAL_CHECKS = ("synthesis_asset_record",)
+
+
+def gate_digest(gate_bytes):
+    """sha256 of the gate file as canonical JSON (sorted keys) without its volatile evaluated_at timestamp, so the
+    hash is stable across gate reruns that change nothing else."""
+    g = json.loads(gate_bytes)
+    for k in GATE_VOLATILE:
+        g.pop(k, None)
+    return sha_bytes(json.dumps(g, sort_keys=True, separators=(",", ":")).encode())
+
+
 def git_show(repo, ref, path):
     r = subprocess.run(["git", "-C", str(repo), "show", f"{ref}:{REPO_PREFIX}{path}"], capture_output=True)
     if r.returncode != 0:
@@ -147,8 +160,9 @@ def compare_asset(old, new, old_tasks, new_tasks, old_gate, new_gate, new_md, ol
              "task_belongs_to_occupation": (soc, tid) in ctx["task_index"]})
 
     # gate checks
-    og = {c["id"]: c["status"] for c in old_gate["checks"]}
-    ng = {c["id"]: c["status"] for c in new_gate["checks"]}
+    # synthesis_asset_record is not compared: its status depends on whether validation evidence (this record) is linked.
+    og = {c["id"]: c["status"] for c in old_gate["checks"] if c["id"] not in SELF_REFERENTIAL_CHECKS}
+    ng = {c["id"]: c["status"] for c in new_gate["checks"] if c["id"] not in SELF_REFERENTIAL_CHECKS}
     rank = {"fail": 0, "warn": 1, "pass": 2}
     for cid in sorted(set(og) | set(ng)):
         a, b = og.get(cid), ng.get(cid)
@@ -226,22 +240,29 @@ def main():
         passed = score >= a.threshold and leaks == 0
         results = {
             "schema": "dreamco.edu_career_pathways.regression_results.v1",
-            "asset_id": aid, "cip": cip, "run_id": run_id, "run_at": now.isoformat(timespec="seconds"),
+            "asset_id": aid, "cip": cip, "run_id": run_id,
             "baseline": {"git_ref": full_ref, "repo_path": REPO_PREFIX,
                          "files": {"majors_selected.json": sha_bytes(git_show(a.repo, full_ref, "data/majors_selected.json")),
                                    "practice_tasks.json": sha_bytes(git_show(a.repo, full_ref, "data/practice_tasks.json")),
-                                   f"{stem}.md": sha_bytes(old_md_b), f"{stem}/license_gate.json": sha_bytes(old_gate_b)}},
+                                   f"{stem}.md": sha_bytes(old_md_b),
+                                   f"{stem}/license_gate.json#canonical_without_evaluated_at": gate_digest(old_gate_b)}},
             "current": {"asset_integrity_hash": new_asset["integrity_hash"],
                         "files": {"majors_selected.json": sha_bytes((DATA / "majors_selected.json").read_bytes()),
                                   "practice_tasks.json": sha_bytes((DATA / "practice_tasks.json").read_bytes()),
                                   f"{stem}.md": sha_bytes(new_md_p.read_bytes()),
-                                  f"{stem}/license_gate.json": sha_bytes(new_gate_p.read_bytes())}},
+                                  f"{stem}/license_gate.json#canonical_without_evaluated_at": gate_digest(new_gate_p.read_bytes())}},
             "evaluator_version": evaluator, "metric": METRIC, "threshold": a.threshold,
             "n_items": len(items), "n_ok": n_ok, "score": score, "current_onet_5gram_hits": leaks, "passed": passed,
             "counts_by_kind_and_status": counts, "items": items,
-            "not_compared": ("Practice prompt, rubric and outline wording are intentionally rewritten in this release "
+            "not_compared": ["Practice prompt, rubric and outline wording are intentionally rewritten "
                              "(authored/release_changes.json#global_changes) and are not diffed word by word; their "
-                             "originality is covered by the onet_text_leakage item.")}
+                             "originality is covered by the onet_text_leakage item.",
+                             "Fields added after the baseline (entry-weighted knowledge, outline_elements, quality_flags, "
+                             "license blocks) have no baseline counterpart and are not compared.",
+                             "The gate check synthesis_asset_record is not compared: it depends on whether this evidence is linked."],
+            "determinism": ("This file has no run timestamp, and the gate file is hashed as canonical JSON without "
+                            "evaluated_at, so rerunning regression.py on an unchanged build reproduces it byte for byte. "
+                            "The run time is in the evidence record's retrieved_at.")}
         out = EVIDENCE / aid
         out.mkdir(parents=True, exist_ok=True)
         rp = out / f"{run_id}.results.json"
@@ -260,6 +281,7 @@ def main():
             "evaluator_version": evaluator,
             "integrity_hash": "sha256:" + sha_bytes(rp.read_bytes()),
             "results_path": str(rp.relative_to(ROOT)),
+            "evidence_root": "study_packs/career_pathways/data/dreamco_knowledge/evidence",
             "split": "full_release_all_items",
             "n_items": len(items),
             "metric": METRIC,

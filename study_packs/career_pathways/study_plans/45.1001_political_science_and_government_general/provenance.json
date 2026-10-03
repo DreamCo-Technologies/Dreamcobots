@@ -10,21 +10,21 @@
   "content_version": "O*NET 31.0 (db_31_0_csv); CIP 2020 to O*NET-SOC 2019 crosswalk",
   "license_or_usage_basis": "CC BY 4.0 for the O*NET 31.0 Database and O*NET Crosswalk Files (USDOL/ETA), which allows commercial use and redistribution with attribution; the outline, next steps, and practice prompts are DreamCo-original synthesis (owner approval for sale pending)",
   "transformation": "derived_metric",
-  "evaluator_version": "edu-career-pathways build.py sha256:0e5a0d40bce913e6b56eb3b8424e006e70eb867c0cbd28cc9d2ade579c6abc7e",
-  "integrity_hash": "sha256:ccb540a961fda13037926ee3a823203a1fe38b49af2f28703d76fb536b4d8221",
+  "evaluator_version": "edu-career-pathways build.py sha256:2a01ee18444b4b66ba05821c646979920630bc06b950254b256682521e76b0a9",
+  "integrity_hash": "sha256:be60522e373944546f0d6317af7503f63ab7385906ad6e77a1bff2f27744f0bd",
   "ownership_class": "open_license_with_conditions",
   "creator": "DreamCo (Grok-Edu-Career-Pathways, build.py)",
   "owner": "Mixed: O*NET-derived values, occupation titles, Job Zone names/descriptions, and task IDs are USDOL/ETA content under CC BY 4.0; the outline, next-steps wording, and practice prompts/rubrics are DreamCo-original",
   "asset_files": [
     {
       "path": "study_plans/45.1001_political_science_and_government_general.md",
-      "sha256": "ccb540a961fda13037926ee3a823203a1fe38b49af2f28703d76fb536b4d8221",
-      "bytes": 16763
+      "sha256": "be60522e373944546f0d6317af7503f63ab7385906ad6e77a1bff2f27744f0bd",
+      "bytes": 18284
     },
     {
       "path": "study_plans/45.1001_political_science_and_government_general/plan.json",
-      "sha256": "bc7d9639b95f7de582de51d5f0d04bb56fc928988e9cf9ccf69699d350765c36",
-      "bytes": 18788
+      "sha256": "9ffaa288a98b8f6fc187c7e45e50afc7bdcbacd152e2936a9e921a2704963e48",
+      "bytes": 32477
     }
   ],
   "sources": [
@@ -149,7 +149,7 @@
       "component": "knowledge_and_skill_importance",
       "ownership_class": "open_license_with_conditions",
       "derivation_type": "derived_metric",
-      "description": "Top-8 knowledge and top-6 Essential Skills by unweighted mean O*NET 31.0 importance (Scale IM) across linked occupations.",
+      "description": "Top-8 knowledge and top-6 Essential Skills by O*NET 31.0 importance (Scale IM): the unweighted mean across all linked occupations (top_knowledge/top_skills, for comparison) and the entry-weighted mean of O*NET 31.0 importance (Scale IM): entry targets weight 2; other linked occupations in Job Zone 4 or 5 (or the entry targets' Job Zone) weight 1; Manager, Chief, Postsecondary-faculty, All Other, Supervisor, Director and Treasurers and Controllers titles, and non-target occupations in other Job Zones, weight 0 (top_*_entry_weighted, used for the outline).",
       "derived_from": [
         "onet_db_31_0"
       ]
@@ -213,13 +213,13 @@
     {
       "step": "crosswalk join, importance aggregation, Job Zone entry targeting with documented overrides, authored outline topics and practice tasks, markdown render",
       "tool": "edu-career-pathways/build.py",
-      "tool_version": "sha256:0e5a0d40bce913e6b56eb3b8424e006e70eb867c0cbd28cc9d2ade579c6abc7e",
+      "tool_version": "sha256:2a01ee18444b4b66ba05821c646979920630bc06b950254b256682521e76b0a9",
       "inputs": [
         "onet_db_31_0",
         "onet_db_31_0_jobzones_tasks",
         "onet_cip_soc_crosswalk",
         "authored/practice_tasks_authored.json sha256:da3b2fe8d7dee879853dd7e2f67ca9ff730167094662a7f049e2ea8de5073ea2",
-        "authored/outline_topics.json sha256:4e49d6cf26ec5ce437caffed9690dc9d91b182972d8e9cb931ac24ea7bbbd96d",
+        "authored/outline_topics.json sha256:d66049b97a764c852a8943cf2c5819c72e7ba66b95ccf27509949d0817a86297",
         "authored/target_overrides.json sha256:66681070021137438c63e4f7854eb4f78aa3db1c74564da560c4c266e713aac0",
         "authored/coverage_rules.json sha256:d7f1dd3883aa4ee4e1a70573e8e8cf0457eef44cae60689ba2029ad99235740d"
       ]

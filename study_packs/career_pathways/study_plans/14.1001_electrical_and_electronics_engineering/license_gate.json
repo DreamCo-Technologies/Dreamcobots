@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-eaee-14.1001",
-  "evaluated_at": "2026-10-02T18:03:28-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/14.1001_electrical_and_electronics_engineering",
     "candidate_path": "study_plans/14.1001_electrical_and_electronics_engineering/candidate.json",
-    "candidate_sha256": "7bc2f1a51b917cb550343c7318a801a2081cafbdd7434d3981d603ba44f96b80",
+    "candidate_sha256": "fa84218b6ffd256e483d85023fc8709a8edfc41e5affc9712a97aa499b63bdd5",
     "provenance_path": "study_plans/14.1001_electrical_and_electronics_engineering/provenance.json",
-    "provenance_sha256": "9c5bec30010b870ed5046f3f150bc5d768b31ec0370c15978fa4cb3321e10fba",
+    "provenance_sha256": "e4ab5308964a9ee41b8ebea9364d9e4bc9652063863c6062354ebb267c8de062",
     "asset_record_path": "study_plans/14.1001_electrical_and_electronics_engineering/asset.json",
-    "asset_record_sha256": "16edfbf267d266f1e43b104bebf7a3d79d867a27105bc6c3961407075539e3ad"
+    "asset_record_sha256": "cc54ee1a4484cccf39bd67f27eca6d1372ea43d14805a14238b5cc91153a6777"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

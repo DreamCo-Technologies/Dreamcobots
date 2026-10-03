@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-cg-40.0501",
-  "evaluated_at": "2026-10-02T18:03:28-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/40.0501_chemistry_general",
     "candidate_path": "study_plans/40.0501_chemistry_general/candidate.json",
-    "candidate_sha256": "c75a6a0f92101dbdbc73c661ac1377aaf74c9eb7de6b525059c0efc1b788a856",
+    "candidate_sha256": "8aaa79c9ea940db304c8bc446cb59b67c82c74dd76a76ca63eee61da1d69ddc2",
     "provenance_path": "study_plans/40.0501_chemistry_general/provenance.json",
-    "provenance_sha256": "5436ddb16f9f19f42025ec1a70c40e6cffd72b564032efa3149b0a69b074a8a5",
+    "provenance_sha256": "0c8cb4f97d8fceb39f1c59f81b417bc1bd2f7fc90b05fb8d88986970c93fc80b",
     "asset_record_path": "study_plans/40.0501_chemistry_general/asset.json",
-    "asset_record_sha256": "fb2d17e2500d2192a0a46ebffdd30b83cdcb9c7c03b4ef96a71e90614ceceba2"
+    "asset_record_sha256": "a232808829f95ab4f21eb1c335f896f2a722348c40c0c11c4d9b6dd6149d6324"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

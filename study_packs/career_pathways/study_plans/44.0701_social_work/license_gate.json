@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-sw-44.0701",
-  "evaluated_at": "2026-10-02T18:03:28-05:00",
+  "evaluated_at": "2026-10-02T18:59:33-05:00",
   "inputs": {
     "target": "study_plans/44.0701_social_work",
     "candidate_path": "study_plans/44.0701_social_work/candidate.json",
-    "candidate_sha256": "9b5359e172d904aedbec1b63eecdf4667ab3aa82bf954b69ada687ea701fc06c",
+    "candidate_sha256": "ccb3fb2b58d7f943bbda7e48707e74b6ca1d480e13cfc8c955fda97e012d3a07",
     "provenance_path": "study_plans/44.0701_social_work/provenance.json",
-    "provenance_sha256": "918fdd125f4be401f387b65b2ed07fc92ea7665be6d7239ab6f7d121873e542e",
+    "provenance_sha256": "838ffb4983c22068216577786820057cdf3cf61d8a648ba65b46fee303e80c7e",
     "asset_record_path": "study_plans/44.0701_social_work/asset.json",
-    "asset_record_sha256": "32987b0a5858c387a723ee33e4316d6b927dccfb092f89c4169e6e88d4d94af5"
+    "asset_record_sha256": "502013bce0637b26808ff258f1431c1cc48dcc0d90ee69d0630efca894b521c3"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

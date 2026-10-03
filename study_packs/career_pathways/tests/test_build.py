@@ -108,7 +108,12 @@ def test_gate_files_exist_and_validate(plan):
     for f in ["provenance.json", "license_gate.json", "asset.json", "candidate.json", "plan.json"]:
         assert (d / f).is_file(), f"{d.name}/{f} missing"
     for kind, f in [("provenance", "provenance.json"), ("license_gate", "license_gate.json"), ("asset", "asset.json")]:
-        errs = sorted(validator(kind).iter_errors(json.loads((d / f).read_text())), key=str)
+        doc = json.loads((d / f).read_text())
+        if kind == "asset":
+            # evidence_root is new in v4; the merchant has said the gate will support it, but the current
+            # synthesis-asset schema has additionalProperties false. Validate everything else against the schema.
+            assert doc.pop("evidence_root") == build.EVIDENCE_ROOT
+        errs = sorted(validator(kind).iter_errors(doc), key=str)
         assert not errs, f"{d.name}/{f}: {[e.message for e in errs][:5]}"
 
 
@@ -135,7 +140,9 @@ def test_provenance_content_and_hashes(plan):
             assert s["version"] == "31.0"
     comps = {c["component"]: c for c in prov["derived_components"]}
     assert comps["four_year_outline"]["ownership_class"] == "synthetic_generated_by_dreamco"
-    assert comps["practice_tasks"]["ownership_class"] == "synthetic_generated_by_dreamco"
+    tier = json.loads((d / "plan.json").read_text())["tier"]
+    assert comps["practice_tasks"]["ownership_class"] == ("open_license_with_conditions" if tier == "generated"
+                                                          else "synthetic_generated_by_dreamco")
     # owner approval is never set by the build
     assert cand["owner_approval"] is None and cand["scorecard_score"] is None
     gate = json.loads((d / "license_gate.json").read_text())
@@ -178,10 +185,16 @@ def test_practice_tasks_reference_real_tasks_of_linked_occupations():
         if t["tier"] == "authored":
             assert t["label"] == "DreamCo-original practice prompt" and t["prompt"].startswith("DreamCo-original practice prompt")
             assert task_text[t["onet_task_id"]] not in t["prompt"]  # O*NET task text is referenced, not reproduced
+            assert t["license"] == build.item_license("authored") and t["license"]["contains_third_party_text"] is False
+            assert t["ownership_class"] == t["license"]["ownership_class"] == "synthetic_generated_by_dreamco"
         else:
             assert t["label"] == build.GENERATED_LABEL and t["prompt"].startswith(build.GENERATED_LABEL)
             assert t["onet_task_statement"] == task_text[t["onet_task_id"]].strip()  # quoted verbatim, attributed
             assert "CC BY 4.0" in t["onet_task_statement_note"] and t["authorship"] == build.GENERATED_AUTHORSHIP
+            lic = t["license"]
+            assert t["ownership_class"] == lic["ownership_class"] == "open_license_with_conditions"
+            assert lic["license"] == "CC BY 4.0" and lic["license_url"] == build.CC_BY and lic["contains_third_party_text"] is True
+            assert "USDOL/ETA" in lic["attribution"] and "has modified" in lic["modification_notice"] and lic["trademark_notice"]
     assert set(per) == set(linked)
     for cip, items in per.items():
         assert 5 <= len(items) <= 8, cip
@@ -299,6 +312,7 @@ def test_outline_topics_are_per_major_authored():
             continue
         plan = next(p for p in PLANS if p.name.startswith(m["cip"] + "_")).read_text()
         outline = plan.split("## 4-year outline", 1)[1].split("## Typical next steps", 1)[0]
+        outline = outline.split("Knowledge areas from the top list that the outline deliberately does not cover:", 1)[0]
         for g in generic:
             assert g not in outline, (m["cip"], g)
         for kind in ("knowledge", "skills"):
@@ -330,9 +344,11 @@ def test_regression_evidence_records_are_real_and_linked():
     """asset.json validation_evidence_ids has exactly sandbox/benchmark/holdout/regression; only regression is populated;
     every regression id resolves to a record with the evidence-provenance fields whose integrity_hash is the sha256 of
     its results file, whose source_reference is this asset's integrity_hash, and whose score is recomputable."""
+    import regression
     sch = evidence_schema()
     for p in PLANS:
         asset = json.loads((sidecar(p) / "asset.json").read_text())
+        assert asset["evidence_root"] == build.EVIDENCE_ROOT
         ev = asset["validation_evidence_ids"]
         assert set(ev) == {"sandbox", "benchmark", "holdout", "regression"}
         assert ev["sandbox"] == ev["benchmark"] == ev["holdout"] == [], "no independent sandbox/benchmark/holdout runs exist"
@@ -360,6 +376,16 @@ def test_regression_evidence_records_are_real_and_linked():
             assert rec["n_items"] == len(res["items"]) and rec["score"] == round(ok / len(res["items"]), 4)
             assert rec["passed"] is True and rec["score"] >= rec["threshold"] == 1.0
             assert all(i.get("reason") for i in res["items"] if i["status"] == "changed_with_reason")
+            # the results describe the files on disk now (regression.py ran after the final build)
+            assert res["current"]["asset_integrity_hash"] == asset["integrity_hash"]
+            assert "run_at" not in res and "evaluated_at" not in res
+            stem = sidecar(p).name
+            disk = {"majors_selected.json": sha(ROOT / "data/majors_selected.json"),
+                    "practice_tasks.json": sha(ROOT / "data/practice_tasks.json"),
+                    f"{stem}.md": sha(p),
+                    f"{stem}/license_gate.json#canonical_without_evaluated_at":
+                        regression.gate_digest((sidecar(p) / "license_gate.json").read_bytes())}
+            assert res["current"]["files"] == disk, (eid, res["current"]["files"], disk)
 
 
 def test_regression_comparator_flags_unexplained_changes():
@@ -387,3 +413,237 @@ def test_regression_comparator_flags_unexplained_changes():
     bad = {i["kind"] for i in items if i["status"] not in ("preserved", "changed_with_reason", "improved")}
     assert {"linked_occupation", "entry_target", "knowledge_value", "practice_citation", "gate_check",
             "onet_text_leakage"} <= bad and leaks > 0
+
+
+EVIDENCE_DIR = ROOT / "data/dreamco_knowledge/evidence"
+
+
+def test_every_evidence_record_integrity_hash_matches_its_results_file():
+    """Every evidence record on disk (any kind) points at a results file whose sha256 is its integrity_hash, and its id
+    resolves under evidence_root as <kind>/<asset_id>/<run>.json."""
+    recs = [r for r in sorted(EVIDENCE_DIR.rglob("*.json")) if not r.name.endswith(".results.json")]
+    assert recs
+    for r in recs:
+        rec = json.loads(r.read_text())
+        kind, aid, run = rec["evidence_id"].split(":")
+        assert r == EVIDENCE_DIR / kind / aid / f"{run}.json", r
+        assert rec["evidence_root"] == build.EVIDENCE_ROOT
+        res = ROOT / rec["results_path"]
+        assert res.is_file() and res == r.with_name(f"{run}.results.json")
+        assert rec["integrity_hash"] == "sha256:" + sha(res), r
+    results = sorted(EVIDENCE_DIR.rglob("*.results.json"))
+    assert len(results) == len(recs)  # no orphan results files
+
+
+def test_regression_results_are_deterministic():
+    """Rerunning regression.py's hashing on unchanged inputs gives the same digest: the gate digest ignores evaluated_at."""
+    import regression
+    g = (next(sidecar(p) for p in PLANS) / "license_gate.json").read_bytes()
+    d = json.loads(g); d["evaluated_at"] = "1999-01-01T00:00:00+00:00"
+    assert regression.gate_digest(g) == regression.gate_digest(json.dumps(d).encode())
+
+
+ISO_OFFSET = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?([+-]\d{2}:\d{2}|Z)$")
+
+
+def _walk_keys(x, key, out):
+    if isinstance(x, dict):
+        for k, v in x.items():
+            if k == key:
+                out.append(v)
+            _walk_keys(v, key, out)
+    elif isinstance(x, list):
+        for v in x:
+            _walk_keys(v, key, out)
+
+
+def test_created_at_is_full_iso8601_with_offset():
+    files = [ROOT / "data/practice_tasks.json", ROOT / "evidence/holdout_kit/items.json", ROOT / "evidence/holdout_kit/_key.json"]
+    for p in PLANS:
+        files += [sidecar(p) / "asset.json", sidecar(p) / "plan.json"]
+    n = 0
+    for f in files:
+        vals = []
+        _walk_keys(json.loads(f.read_text()), "created_at", vals)
+        assert vals, f
+        for v in vals:
+            assert ISO_OFFSET.match(v), (f, v)
+            n += 1
+    assert n >= 2 * len(PLANS)
+
+
+def test_license_blocks_per_item_and_per_plan():
+    pt = json.loads((ROOT / "data/practice_tasks.json").read_text())
+    assert pt["ownership_class"] == "mixed_per_item" and pt["note"]  # file-level label no longer claims all items
+    assert pt["license"]["license_url"] == build.CC_BY and "USDOL/ETA" in pt["license"]["attribution"]
+    for n in build.DB_NOTICES:
+        assert n in pt["license"]["required_notices"]
+    for t in pt["tasks"]:
+        lic = t["license"]
+        third = "onet_task_statement" in t
+        assert lic["contains_third_party_text"] is third and (t["tier"] == "generated") is third
+        assert lic["license"] == ("CC BY 4.0" if third else build.item_license("authored")["license"])
+    for p in PLANS:
+        pj = json.loads((sidecar(p) / "plan.json").read_text())
+        lic = pj["license"]
+        assert lic == build.plan_license(pj["tier"])
+        assert lic["license_url"] == build.CC_BY and "USDOL/ETA" in lic["attribution"]
+        assert all(n in lic["required_notices"] for n in build.DB_NOTICES)
+        assert all(t["license"] == build.item_license(pj["tier"]) for t in pj["practice_tasks"])
+        t = p.read_text()  # existing notices are kept in the plan text
+        assert "O*NET\u00ae is a trademark of USDOL/ETA." in t and "used under the CC BY 4.0 license" in t
+
+
+def test_weighted_knowledge_and_skipped_elements_are_documented():
+    for p in PLANS:
+        pj = json.loads((sidecar(p) / "plan.json").read_text())
+        w = pj["knowledge_weighting"]
+        assert w["method"] == build.WEIGHTING_METHOD
+        targets = {t["soc"] for t in pj["entry_targets"]}
+        assert all(w["weights"][s] == 2 for s in targets)
+        assert set(w["weights"]) <= {o["soc"] for o in pj["occupations"]}  # weight-0 occupations are omitted
+        assert set(w["weights"].values()) <= {1, 2}
+        for o in pj["occupations"]:
+            if re.search(r"Manager|Chief|Postsecondary|All Other", o["title"]) and o["soc"] not in targets:
+                assert o["soc"] not in w["weights"], (p.name, o["title"])
+        t = p.read_text()
+        assert "entry-weighted" in t and "unweighted mean" in t
+        assert "Knowledge areas from the top list that the outline deliberately does not cover:" in t
+        oe = pj["outline_elements"]
+        placed = set(oe["year1_knowledge"]) | set(oe["year2_knowledge"]) | set(oe["year3_knowledge"])
+        for x in oe["skipped_knowledge"]:
+            assert x["element"] not in placed and len(x["reason"]) > 20
+            assert f"- {x['element']} (" in t and x["reason"] in t
+        assert {k for k, _ in pj["top_knowledge_entry_weighted"]} <= placed | {x["element"] for x in oe["skipped_knowledge"]}, p.name
+    cs = json.loads((ROOT / "study_plans/11.0701_computer_science/plan.json").read_text())
+    skipped = {x["element"] for x in cs["outline_elements"]["skipped_knowledge"]}
+    placed = set(cs["outline_elements"]["year3_knowledge"]) | set(cs["outline_elements"]["year2_knowledge"])
+    assert "Administration and Management" in skipped and "Design" in placed  # merchant note on v3
+
+
+def test_generated_quality_flags_and_supervisory_filter():
+    sup = 0
+    for p in PLANS:
+        pj = json.loads((sidecar(p) / "plan.json").read_text())
+        qf = pj["quality_flags"]
+        assert qf["flag_count"] == len(qf["flags"])
+        t = p.read_text()
+        if pj["tier"] != "generated":
+            assert not qf["flags"]
+            continue
+        assert "## Quality flags (automatic plausibility checks; generated tier)" in t
+        for f in qf["flags"]:
+            assert f"- {f['flag']}" in t
+        kept = {i for f in qf["flags"] if f["flag"] == "supervisory_task_kept" for i in f["practice_ids"]}
+        for x in pj["practice_tasks"]:
+            assert x["supervisory_task"] is build.is_supervisory(x["onet_task_statement"])
+            if x["supervisory_task"]:
+                assert x["practice_id"] in kept, x["practice_id"]
+            sup += x["supervisory_task"]
+        targets = {e["soc"] for e in pj["entry_targets"]}
+        for f in qf["flags"]:
+            if f["flag"] == "low_title_overlap":
+                assert f["onet_soc_code"] in targets and f["severity"] in ("high", "medium")
+                assert not build._overlap(build._stems(pj["title"]), build._stems(f["occupation_title"]))
+    assert sup >= 0
+    ppe = json.loads(next((ROOT / "study_plans").glob("14.4802_*/plan.json")).read_text())  # merchant example (v3 review)
+    hi = {f["occupation_title"] for f in ppe["quality_flags"]["flags"] if f["flag"] == "low_title_overlap"}
+    assert {"Robotics Engineers", "Photonics Engineers", "Wind Energy Engineers"} <= hi
+    assert build.is_supervisory("Supervise and coordinate the work of technicians.")
+    assert build.is_supervisory("Direct and coordinate activities of staff.")
+    assert not build.is_supervisory("Perform analyses under supervision of a senior engineer.")
+
+
+def test_holdout_kit_is_blind_and_ungraded():
+    kit = ROOT / "evidence/holdout_kit"
+    items = json.loads((kit / "items.json").read_text())
+    key = json.loads((kit / "_key.json").read_text())
+    assert "must not open" in key["WARNING"] and key["never_used_in_tuning"]
+    assert items["n_items"] == len(items["items"]) == len(key["items"]) == 12
+    blob = json.dumps(items)
+    for word in ("weaken", "reference_outline", "expected_scores", "candidate_type", "practice_id", "11.0701-P", "seed"):
+        assert word not in blob  # nothing in the grader's file reveals the key or the source item
+    authored = {t["practice_id"]: t for t in json.loads((ROOT / "authored/practice_tasks_authored.json").read_text())["tasks"]}
+    import score_holdout
+    kinds = [k["candidate_type"] for k in key["items"].values()]
+    assert kinds.count("weakened") == 6 and kinds.count("reference_outline") == 6
+    by_id = {i["item_id"]: i for i in items["items"]}
+    for hid, k in key["items"].items():
+        a = authored[k["practice_id"]]
+        assert score_holdout.content_hash(a) == k["authored_item_sha256"]
+        cand = by_id[hid]["candidate_answer"]
+        assert hashlib.sha256(cand.encode()).hexdigest() == k["candidate_answer_sha256"]
+        assert by_id[hid]["rubric"] == a["rubric"]
+        if k["candidate_type"] == "reference_outline":
+            assert cand == "\n".join(f"- {x}" for x in a["reference_answer_outline"]) and k["expected_scores"] == [2, 2, 2]
+        else:
+            assert cand != "\n".join(f"- {x}" for x in a["reference_answer_outline"]) and k["expected_scores"][k["weakened_criterion"] - 1] == 0
+    rows = list(csv.DictReader(open(kit / "grading_sheet.csv")))
+    assert [r["item_id"] for r in rows] == sorted(key["items"])
+    assert all(not r[c] for r in rows for c in ("score_1", "score_2", "score_3", "factually_correct", "grader", "graded_at", "comments"))
+    assert not (EVIDENCE_DIR / "holdout").exists()  # no holdout evidence until a human grades the kit
+    for p in PLANS:
+        assert json.loads((sidecar(p) / "asset.json").read_text())["validation_evidence_ids"]["holdout"] == []
+    readme = (kit / "README.md").read_text()
+    assert "_key.json" in readme and "Do not open" in readme
+
+
+def test_score_holdout_on_synthetic_sheet(tmp_path):
+    """score_holdout.py turns a (synthetic, test-only) filled sheet into schema-shaped records; nothing is written to the pack."""
+    import subprocess, shutil
+    kit = ROOT / "evidence/holdout_kit"
+    key = json.loads((kit / "_key.json").read_text())
+    rows = list(csv.DictReader(open(kit / "grading_sheet.csv")))
+    for r in rows:
+        exp = key["items"][r["item_id"]]["expected_scores"]
+        r.update({"score_1": exp[0], "score_2": exp[1], "score_3": exp[2], "factually_correct": "yes",
+                  "grader": "pytest-synthetic", "graded_at": "2026-10-02T12:00:00-05:00"})
+    sheet = tmp_path / "sheet.csv"
+    with open(sheet, "w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
+    root = tmp_path / "pack"
+    for d in ("authored", "data", "study_plans"):
+        (root / d).mkdir(parents=True)
+    shutil.copy(ROOT / "authored/practice_tasks_authored.json", root / "authored")
+    shutil.copy(ROOT / "data/majors_selected.json", root / "data")
+    for aid in {k["cip"] for k in key["items"].values()}:
+        src = next((ROOT / "study_plans").glob(f"{aid}_*.md"))
+        shutil.copy(src, root / "study_plans")
+        shutil.copytree(sidecar(src), root / "study_plans" / src.stem)
+    py = sys.executable
+    blank = subprocess.run([py, ROOT / "score_holdout.py", "--sheet", kit / "grading_sheet.csv", "--root", root], capture_output=True, text=True)
+    assert blank.returncode != 0 and "incomplete" in (blank.stdout + blank.stderr)
+    out = subprocess.run([py, ROOT / "score_holdout.py", "--sheet", sheet, "--root", root, "--write", "--run-id", "20261002-99"],
+                         capture_output=True, text=True)
+    assert out.returncode == 0, out.stderr
+    recs = sorted((root / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-99.json"))
+    assert len(recs) == len({k["asset_id"] for k in key["items"].values()})
+    sch = evidence_schema()
+    for r in recs:
+        rec = json.loads(r.read_text())
+        for f in sch["required_fields"] + ["split", "n_items", "metric", "score", "threshold", "passed"]:
+            assert rec.get(f) not in (None, ""), f
+        assert rec["source_type"] == "human_evaluation" and rec["transformation"] == "original_evaluation"
+        assert rec["integrity_hash"] == "sha256:" + sha(root / rec["results_path"])
+        assert rec["score"] == 1.0 and rec["passed"] is True
+    assert not (EVIDENCE_DIR / "holdout").exists()
+
+
+def test_data_dictionary_covers_every_output_field():
+    sys.path.insert(0, str(ROOT / "docs"))
+    import _paths
+    dd = json.loads((ROOT / "docs/data_dictionary.json").read_text())
+    assert set(_paths.FILES) <= set(dd["files"])
+    for pat in _paths.FILES:
+        documented = set(dd["files"][pat]["fields"])
+        found = _paths.paths(pat)
+        assert found, pat
+        assert not found - documented, (pat, sorted(found - documented))
+        stale = {f for f in documented - found if not dd["files"][pat]["fields"][f].startswith("Optional")}
+        assert not stale, (pat, sorted(stale))  # no stale entries
+        assert all(len(v.strip()) >= 5 for v in dd["files"][pat]["fields"].values())
+    md = (ROOT / "docs/DATA_DICTIONARY.md").read_text()
+    for pat, spec in dd["files"].items():
+        assert f"## `{pat}`" in md
+        for f in spec["fields"]:
+            assert f"`{f}`" in md, (pat, f)

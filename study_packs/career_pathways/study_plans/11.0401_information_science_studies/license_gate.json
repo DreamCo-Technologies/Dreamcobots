@@ -2,15 +2,15 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-iss-11.0401",
-  "evaluated_at": "2026-10-02T18:03:27-05:00",
+  "evaluated_at": "2026-10-02T18:59:32-05:00",
   "inputs": {
     "target": "study_plans/11.0401_information_science_studies",
     "candidate_path": "study_plans/11.0401_information_science_studies/candidate.json",
-    "candidate_sha256": "32ec3c7a7d208811e04661631e6c54fa73f12370a314e4a19a906da2ec414978",
+    "candidate_sha256": "bbab58b4666c5eaef4ce8362b06dd2c7f39e0edaba9bd879da2b7d5b0687bc97",
     "provenance_path": "study_plans/11.0401_information_science_studies/provenance.json",
-    "provenance_sha256": "5c7728e90ec3032bbc64a0fea72d377101e881e25adc1dd9ce1539d86a8f8df1",
+    "provenance_sha256": "601c9c5400011a3fceb9603c394582722e38fa470864d6cc412c34413eb9f377",
     "asset_record_path": "study_plans/11.0401_information_science_studies/asset.json",
-    "asset_record_sha256": "189a99ba04395b131f35f65cc52e976a8c99706d939146b12ecc98234295cf0e"
+    "asset_record_sha256": "38054dcc042d0fe6125ee48c91545a593d65ee68aac02ee127b58b2be0c383ed"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +102,11 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "warn",
+      "status": "fail",
       "scope": "sale",
-      "outcome_cap": null,
+      "outcome_cap": "approved_for_private_use",
       "reasons": [
-        "only 1 perspective(s) used; multi-view synthesis expects several"
+        "schema: $: additional property 'evidence_root' not allowed"
       ]
     },
     {
@@ -121,11 +121,10 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
+    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [
-    "only 1 perspective(s) used; multi-view synthesis expects several"
-  ],
+  "warnings": [],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,
