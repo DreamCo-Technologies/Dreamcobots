@@ -5,7 +5,14 @@
 <main>
 <h1>Production checklist</h1>
 <p>Paste values on the host page. Do not paste them into chat.</p>
-<p><a class="btn btn-primary" href="https://github.com/DreamCo-Technologies/Dreamcobots/settings/secrets/actions">Paste the values here</a></p>
+<p><a href="https://github.com/DreamCo-Technologies/Dreamcobots/settings/secrets/actions">Paste the values here</a></p>
+<h2>Run locally</h2>
+<pre>git clone https://github.com/DreamCo-Technologies/Dreamcobots.git
+cd Dreamcobots
+python3 tools/production_readiness_gate.py --strict</pre>
+<h2>Run on GitHub</h2>
+<p><a href="https://github.com/DreamCo-Technologies/Dreamcobots/actions">Open Actions and run Daily health balancer</a></p>
+<p><a href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/BUILD_LIST.md">Open the build list</a></p>
 <ol>
 <li>Set DATABASE_URL.</li>
 <li>Set STRIPE_LIVE_SECRET_KEY. <a href="https://dashboard.stripe.com/apikeys">Stripe keys</a></li>
