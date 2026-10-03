@@ -235,13 +235,13 @@ document.addEventListener('click', function(e) {
   const bar = document.createElement("nav");
   bar.setAttribute("aria-label", "Personal and business tasks");
   const links = [
-    ["buddy.html", "Ask Buddy"],
-    ["actions.html", "Do a task"],
-    ["bots.html", "Business bots"],
-    ["dashboard.html", "Check today's work"],
-    ["https://github.com/DreamCo-Technologies/Dreamcobots/issues/new", "Write down a task"],
-    ["https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/DAILY_PRODUCTION_SCAN.md", "See what is blocked"],
-    ["https://github.com/DreamCo-Technologies/Dreamcobots/settings/secrets/actions", "Add host secrets"]
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/settings/secrets/actions", "Add host secrets"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/.env.example", "Secret names"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/DAILY_PRODUCTION_SCAN.md", "Production scan"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/settings/pages", "Pages source"],
+    ["https://dashboard.stripe.com/apikeys", "Stripe keys"],
+    ["actions.html", "Task buttons"],
+    ["buddy.html", "Ask Buddy"]
   ];
   links.forEach(([href, label]) => {
     const link = document.createElement("a");
