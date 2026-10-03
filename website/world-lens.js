@@ -167,11 +167,7 @@
   }
 
   $('lens-locate').addEventListener('click', () => requireGeolocation(() => navigator.geolocation.getCurrentPosition(acceptPosition, (error) => {
-    if (error.code === 2 || error.code === 3) {
-      setStatus('High-accuracy GPS failed. Retrying with the browser location…');
-      navigator.geolocation.getCurrentPosition(acceptPosition, locationError, { enableHighAccuracy: false, timeout: 20000, maximumAge: 60000 });
-      return;
-    }
+    if (error.code === 2 || error.code === 3) { setStatus('High-accuracy GPS failed. Retrying with the browser location…'); navigator.geolocation.getCurrentPosition(acceptPosition, locationError, { enableHighAccuracy: false, timeout: 20000, maximumAge: 60000 }); return; }
     locationError(error);
   }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 })));
   $('lens-watch').addEventListener('click', () => requireGeolocation(() => {
