@@ -1,0 +1,26 @@
+pack_id: TRL-SFT-001
+method: sft
+status: plan_only
+trained_weights_exist: false
+trl_version_target: "1.14.0"
+base_model: Qwen/Qwen2.5-0.5B-Instruct   # placeholder; Apache-2.0; license gate must confirm
+dataset:
+  id: PLACEHOLDER/dataset-id            # must pass license gate
+  split: train
+  schema: 'conversational "messages": list of {role, content}'
+lora:
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: all-linear
+  task_type: CAUSAL_LM
+trainer_args:                           # SFTConfig fields
+  output_dir: outputs/sft
+  num_train_epochs: 1
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 8
+  learning_rate: 2.0e-4
+  max_length: 1024
+  logging_steps: 10
+  save_strategy: epoch
+  bf16: true
