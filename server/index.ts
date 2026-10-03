@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import { attachRequestIdToErrors, observeRequests, sendReadiness } from "./observability";
+import { requireApiAuth } from "./api-auth";
 
 const app = express();
 const httpServer = createServer(app);
@@ -85,6 +86,10 @@ app.use(
 app.use(express.urlencoded({ extended: false }));
 app.use(observeRequests());
 app.use(attachRequestIdToErrors());
+
+// Every /api route registered after this point requires a signed-in session or the owner token.
+// /api/health and /api/stripe/webhook are registered above; the public allowlist lives in ./api-auth.
+app.use("/api", requireApiAuth());
 
 app.get('/api/ready', (_req, res) => {
   sendReadiness(res);
