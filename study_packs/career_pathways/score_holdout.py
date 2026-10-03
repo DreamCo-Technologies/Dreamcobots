@@ -387,6 +387,10 @@ def _committed_inputs(kit, out_dir, run_id, test_reasons, require_signer=None):
                 ok_sig, detail = g.check_signer(commit, require_signer)
                 if not ok_sig:
                     raise SystemExit(f"grading commit {commit[:12]} is not signed by the registered key: {detail}")
+                ok_decl, detail = g.declaration_check(commit)
+                if not ok_decl:
+                    raise SystemExit(f"with --require-signer, the signed grading commit must add GRADING_FINAL.txt and "
+                                     f"change grading_sheet.csv itself: {detail}")
             data = {n: g.show(commit, f"{KIT_REL}/{n}") for n in names}
             if data["KEY_COMMITMENT.txt"] is not None:
                 hist = g.finalizations(parse_commitment(data["KEY_COMMITMENT.txt"]).get("key_sha256", "?"))

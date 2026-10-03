@@ -1575,9 +1575,10 @@ def _forge_passing(s, gc, run=_RUN, branch="main"):
     fin.write_text(re.sub(r"^grading_commit: .*$", f"grading_commit: {gc}", fin.read_text(), flags=re.M))
 
 
-def _case(base, order, sign_with=None):
+def _case(base, order, sign_with=None, pre=None, reveal_rm=()):
     """A temp repo whose history follows `order`; returns (s, path of the CS record). Orders: honest, reveal_first,
-    reveal_with_grading, sheet_changed_between."""
+    reveal_with_grading, sheet_changed_between. `pre(s)` runs just before the grading commit (honest orders);
+    `reveal_rm` paths are deleted in the reveal commit."""
     s = _synthetic_kit(base)
     _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s))
     _declare(s)
@@ -1590,6 +1591,8 @@ def _case(base, order, sign_with=None):
     elif order == "reveal_with_grading":
         gc = _commit_paths(s, grading + rev, "grading and key together")
     else:
+        if pre:
+            pre(s)
         if sign_with:
             _git(s["repo"], "add", "--", *grading)
             _git(s["repo"], "-c", "gpg.format=ssh", "-c", f"gpg.ssh.program=/usr/bin/ssh-keygen", "-c",
@@ -1607,6 +1610,8 @@ def _case(base, order, sign_with=None):
             _commit_paths(s, grading, "put it back")
         rest = rest + rev
     _forge_passing(s, gc)
+    for p in reveal_rm:
+        _git(s["repo"], "rm", "-q", "--", p)
     _commit_paths(s, rest, "evidence")
     cs = next(p for p, r in _records(s, _RUN).items() if r["n_items"] == 4)
     return s, cs
@@ -1788,6 +1793,115 @@ def test_finalize_refuses_a_reveal_before_grading_or_a_later_sheet_change_on_the
     r = _run_score("--finalize", "--run-id", "20261002-53", s=s)
     assert r.returncode != 0 and "changes on the remote after the grading commit" in r.stderr
     assert _no_evidence(s)
+
+
+_PR_BRANCH = "edu-career-pathways/majors-onet-study-plans"
+
+
+def test_verify_rejects_the_key_on_the_other_allowed_branch_before_grading(ktmp):
+    import shutil, verify_holdout
+
+    def key_on_pr_branch(s):
+        other = s["repo"].parent / "other-clone"
+        _git(s["repo"].parent, "clone", "-q", "-b", "main", str(s["remote"]), str(other))
+        dst = other / s["kit_rel"] / "REVEALED_KEY.json"
+        shutil.copy(s["kit"] / "REVEALED_KEY.json", dst)
+        _git(other, "add", "--", str(dst.relative_to(other))); _git(other, "commit", "-q", "-m", "key on the PR branch")
+        _git(other, "push", "-q", "origin", f"HEAD:refs/heads/{_PR_BRANCH}")
+
+    s, cs = _case(ktmp, "honest", pre=key_on_pr_branch)
+    r = verify_holdout.verify(cs, _test_remote=str(s["remote"]))
+    assert not r["ok"] and r["checks"]["reveal_touched_once_across_allowed_branches"] is False, r["errors"]
+    assert r["checks"]["reveal_absent_at_and_before_grading"] is True  # the record's own branch alone looks clean
+
+
+def test_verify_rejects_the_key_under_another_name_or_its_content_under_another_path(ktmp):
+    import verify_holdout
+    note = lambda s: f"{s['kit_rel']}/notes.json"
+
+    def key_as_notes(s):
+        (s["repo"] / note(s)).write_bytes((s["kit"] / "REVEALED_KEY.json").read_bytes())
+        _commit_paths(s, [note(s)], "notes")
+
+    # committed under another filename before grading, then renamed at the reveal
+    s, cs = _case(ktmp / "renamed", "honest", pre=key_as_notes, reveal_rm=[f"{PACK_REL}/evidence/holdout_kit/notes.json"])
+    assert "R100" in _git(s["repo"], "show", "-M", "--name-status", "--format=", "HEAD")  # git sees a rename at the reveal
+    r = verify_holdout.verify(cs, _test_remote=str(s["remote"]))
+    assert not r["ok"] and r["checks"]["key_blob_only_in_reveal_and_descendants"] is False, r["errors"]
+    assert r["checks"]["reveal_touched_once_across_allowed_branches"] is True  # the path checks alone pass
+
+    # the key's content (re-serialized, so a different blob) under another path anywhere before the reveal
+    def key_content_elsewhere(s):
+        p = s["repo"] / "docs" / "scratch.txt"
+        p.parent.mkdir(exist_ok=True)
+        p.write_text("draft\n" + json.dumps(json.loads((s["kit"] / "REVEALED_KEY.json").read_text()), indent=4) + "\n")
+        _commit_paths(s, ["docs"], "scratch notes")
+
+    s, cs = _case(ktmp / "content", "honest", pre=key_content_elsewhere)
+    r = verify_holdout.verify(cs, _test_remote=str(s["remote"]))
+    assert not r["ok"] and r["checks"]["key_nonce_only_in_reveal_and_descendants"] is False, r["errors"]
+    assert r["checks"]["key_blob_only_in_reveal_and_descendants"] is True  # only the content search finds it
+
+
+def _signed_commit(s, paths, msg, key):
+    _git(s["repo"], "add", "-A", "--", *paths)
+    _git(s["repo"], "-c", "gpg.format=ssh", "-c", "gpg.ssh.program=/usr/bin/ssh-keygen", "-c", f"user.signingkey={key}",
+         "commit", "-q", "-S", "-m", msg)
+    _git(s["repo"], "push", "-q", str(s["remote"]), "main")
+    return _git(s["repo"], "rev-parse", "HEAD")
+
+
+def test_require_signer_needs_the_signed_commit_to_be_the_declaration(ktmp):
+    import verify_holdout
+    keys = ktmp / "keys"; keys.mkdir()
+    owner, owner_allowed, _ = _ssh_key(keys, "owner")
+    K, EV = None, f"{PACK_REL}/data/dreamco_knowledge/evidence/holdout"
+
+    def finish(s, gc):
+        _forge_passing(s, gc)
+        _commit_paths(s, [EV, f"{s['kit_rel']}/REVEALED_KEY.json", f"{s['kit_rel']}/FINALIZED.txt"], "evidence")
+        return next(p for p, r in _records(s, _RUN).items() if r["n_items"] == 4)
+
+    # an unsigned forged sheet + GRADING_FINAL, then a later commit signed by the grader that touches something else
+    s = _synthetic_kit(ktmp / "later"); K = s["kit_rel"]
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s)); _declare(s); _skip_finalize(s)
+    _commit_paths(s, [f"{K}/grading_sheet.csv", f"{K}/GRADING_FINAL.txt"], "unsigned sheet and declaration")
+    (s["root"] / "NOTE.txt").write_text("looks good\n")
+    gc = _signed_commit(s, [f"{PACK_REL}/NOTE.txt"], "signed, later", owner)
+    cs = finish(s, gc)
+    r = verify_holdout.verify(cs, require_signer=owner_allowed, _test_remote=str(s["remote"]))
+    assert r["checks"]["grading_commit_signed_by_registered_key"] is True
+    assert not r["ok"] and r["checks"]["grading_commit_adds_grading_final_and_last_changes_sheet"] is False, r["errors"]
+    assert verify_holdout.verify(cs, _test_remote=str(s["remote"]))["ok"]  # without --require-signer this is not checked
+
+    # grading_commit re-declares (changes the sheet and GRADING_FINAL) but is not the commit that added GRADING_FINAL
+    s = _synthetic_kit(ktmp / "redeclared"); K = s["kit_rel"]
+    sheet = s["kit"] / "grading_sheet.csv"
+    _write_sheet(sheet, s["items"], _perfect(s)); perfect = sheet.read_bytes()
+    sheet.write_bytes(perfect + b"\n"); _declare(s)
+    _commit_paths(s, [f"{K}/grading_sheet.csv", f"{K}/GRADING_FINAL.txt"], "unsigned sheet and declaration")
+    sheet.write_bytes(perfect); (s["kit"] / "GRADING_FINAL.txt").unlink(); _declare(s); _skip_finalize(s)
+    gc = _signed_commit(s, [f"{K}/grading_sheet.csv", f"{K}/GRADING_FINAL.txt"], "signed re-declaration", owner)
+    cs = finish(s, gc)
+    r = verify_holdout.verify(cs, require_signer=owner_allowed, _test_remote=str(s["remote"]))
+    assert r["checks"]["grading_commit_signed_by_registered_key"] is True
+    assert not r["ok"] and r["checks"]["grading_commit_adds_grading_final_and_last_changes_sheet"] is False, r["errors"]
+    # the scorer refuses the same history under --require-signer
+    _git(s["repo"], "reset", "-q", "--hard", gc); _git(s["repo"], "push", "-q", "-f", str(s["remote"]), "main")
+    r = _run_score("--finalize", "--run-id", "20261002-54", "--require-signer", owner_allowed, s=s)
+    assert r.returncode != 0 and "must add GRADING_FINAL.txt" in r.stderr, r.stderr
+
+    # the honest signed flow passes both, and the honest unsigned flow passes without --require-signer
+    s, cs = _case(ktmp / "honest-signed", "honest", sign_with=owner)
+    r = verify_holdout.verify(cs, require_signer=owner_allowed, _test_remote=str(s["remote"]))
+    assert r["ok"] and r["checks"]["grading_commit_adds_grading_final_and_last_changes_sheet"], r["errors"]
+    s, cs = _case(ktmp / "honest-unsigned", "honest")
+    assert verify_holdout.verify(cs, _test_remote=str(s["remote"]))["ok"]
+    s = _synthetic_kit(ktmp / "scorer-signed"); K = s["kit_rel"]
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s)); _declare(s)
+    _signed_commit(s, [f"{K}/grading_sheet.csv", f"{K}/GRADING_FINAL.txt"], "signed grading", owner)
+    r = _run_score("--finalize", "--run-id", "20261002-55", "--require-signer", owner_allowed, s=s)
+    assert r.returncode == 0, r.stderr
 
 
 def test_verifier_rule_matches_the_scorer_on_random_keys_and_sheets():

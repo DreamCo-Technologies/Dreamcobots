@@ -111,7 +111,8 @@ def git_binary():
 class GitSession:
     """Runs /usr/bin/git with a minimal environment: no inherited variables at all (so no GIT_*, proxy or PATH
     overrides), HOME and XDG_* in an empty temporary directory, GIT_CONFIG_NOSYSTEM=1 and GIT_CONFIG_GLOBAL=/dev/null.
-    `mirror` is a fresh bare repository that receives the real remote's branches (blobless) and is deleted on exit."""
+    `mirror` is a fresh bare repository that receives a full copy of the real remote's allowed branches (blobs
+    included, so content searches such as `git log -S` run locally) and is deleted on exit."""
 
     def __init__(self, fetch_url):
         self.url = fetch_url
@@ -158,20 +159,17 @@ class GitSession:
         return tips
 
     def fetch(self, tips):
-        """Fetch the given branches (blobless; blobs are fetched lazily) into the fresh mirror and check that each tip
-        equals what ls-remote reported."""
+        """Fetch the given branches (full history with blobs) into the fresh mirror and check that each tip equals what
+        ls-remote reported."""
         if not tips:
             raise VerifyError("none of the allowed branches exists on the remote")
         for args in (("init", "-q", "--bare", str(self.mirror)),):
             r = self.run(self.tmp, *args)
             if r.returncode:
                 raise VerifyError(f"git init failed: {r.stderr.strip()}")
-        for k, v in (("remote.origin.url", self.url), ("remote.origin.promisor", "true"),
-                     ("remote.origin.partialclonefilter", "blob:none"), ("core.repositoryformatversion", "1"),
-                     ("extensions.partialClone", "origin")):
-            self.m("config", k, v)
+        self.m("config", "remote.origin.url", self.url)
         specs = [f"+refs/heads/{b}:refs/heads/{b}" for b in tips]
-        r = self.m("fetch", "-q", "--no-tags", "--filter=blob:none", "origin", *specs)
+        r = self.m("fetch", "-q", "--no-tags", "origin", *specs)
         if r.returncode:
             raise VerifyError(f"git fetch from the remote failed: {r.stderr.strip()[:300]}")
         for b, t in tips.items():
@@ -227,6 +225,34 @@ class GitSession:
         if r.returncode:
             raise VerifyError(f"git rev-list failed: {r.stderr.strip()[:300]}")
         return r.stdout.split()
+
+    def log_commits(self, *args):
+        """Unique commit ids printed by `git log --format=%H <args>` (merges listed once even with -m)."""
+        r = self.m("log", "--format=%H", *args)
+        if r.returncode:
+            raise VerifyError(f"git log failed: {r.stderr.strip()[:300]}")
+        return list(dict.fromkeys(r.stdout.split()))
+
+    def parents(self, commit):
+        return self.rev_list("--parents", "-n1", commit)[1:]
+
+    def declaration_check(self, gc, after=None):
+        """(ok, detail) for --require-signer: grading_commit must itself add GRADING_FINAL.txt (its first appearance
+        across all allowed tips; no other commit touches it, except descendants of `after`, the reveal) and must itself
+        change grading_sheet.csv, so a signed grading_commit cannot vouch for an unsigned earlier sheet or declaration."""
+        sheet_p, final_p = f"{KIT_REL}/grading_sheet.csv", f"{KIT_REL}/GRADING_FINAL.txt"
+        touches = [c for c in self.rev_list("--full-history", "--no-merges", *self.tips.values(), "--", final_p)
+                   if not (after and self.is_ancestor(after, c))]
+        if touches != [gc]:
+            return False, ("GRADING_FINAL.txt must be added by grading_commit and by no other commit on the allowed branches "
+                           f"(touched by {[c[:12] for c in touches][:5]})")
+        parents = self.parents(gc)
+        if any(self.blob_id(p, final_p) for p in parents):
+            return False, "GRADING_FINAL.txt already existed before grading_commit"
+        sb = self.blob_id(gc, sheet_p)
+        if not sb or any(self.blob_id(p, sheet_p) == sb for p in parents):
+            return False, "grading_commit does not itself change grading_sheet.csv (the graded sheet was committed earlier)"
+        return True, "grading_commit adds GRADING_FINAL.txt and last changed grading_sheet.csv"
 
     def cat_blob(self, blob):
         r = self.m("cat-file", "blob", blob, text=False)
@@ -502,7 +528,8 @@ def verify(record, repo_url=CANONICAL_FETCH_URL, *, reveal_commit=None, results=
 
     expect_shas: SHAs recorded earlier (see parse_expected_shas); grading_commit and reveal_commit must be identical and
     a recorded remote_tip_sha must still be reachable from the remote tip, so a force-push that rewrote history fails.
-    require_signer: grading_commit must carry a valid signature from this registered key (see parse_signer)."""
+    require_signer: grading_commit must carry a valid signature from this registered key (see parse_signer), and must
+    itself add GRADING_FINAL.txt (first appearance across the allowed branches) and change grading_sheet.csv."""
     errors, checks = [], {}
 
     def need(name, cond, msg):
@@ -563,6 +590,35 @@ def verify(record, repo_url=CANONICAL_FETCH_URL, *, reveal_commit=None, results=
                     need("reveal_commit_matches", given == reveal, f"--reveal-commit {str(reveal_commit)[:12]} is not the "
                          f"commit that added REVEALED_KEY.json ({reveal[:12]})")
                 out["shas"]["reveal_commit"] = reveal
+            all_tips = list(tips.values())
+            if reveal and not errors:
+                # 1b. across ALL allowed branches: the reveal is the only (non-merge) commit that touches the path, and
+                # merges touching it only carry the reveal's key
+                rblob = g.blob_id(reveal, rev_p)
+                touch_all = g.rev_list("--full-history", "--no-merges", *all_tips, "--", rev_p)
+                bad_m = [mc[:12] for mc in g.rev_list("--full-history", "--merges", *all_tips, "--", rev_p)
+                         if not ((g.blob_id(mc, rev_p) == rblob and g.is_ancestor(reveal, mc))
+                                 or (g.blob_id(mc, rev_p) is None and not any(g.blob_id(p, rev_p) for p in g.parents(mc))))]
+                need("reveal_touched_once_across_allowed_branches", touch_all == [reveal] and not bad_m,
+                     f"on {list(tips)}, REVEALED_KEY.json is touched by {[c[:12] for c in touch_all][:5]} (merges {bad_m[:3]}); "
+                     "only the reveal commit may touch it")
+                # 2. the key's bytes and its nonce, under any path: introduced only by the reveal or its descendants
+                intro = g.log_commits("-m", "--no-renames", f"--find-object={rblob}", *all_tips)
+                early = [c[:12] for c in intro if not g.is_ancestor(reveal, c)]
+                need("key_blob_only_in_reveal_and_descendants", reveal in intro and not early,
+                     f"the revealed key's blob appears outside the reveal and its descendants (in {early[:5]}), e.g. "
+                     "committed under another name before grading")
+                try:
+                    nonce = json.loads(g.show(reveal, rev_p) or b"{}").get("nonce")
+                except (ValueError, AttributeError):
+                    nonce = None
+                if need("key_has_nonce", isinstance(nonce, str) and re.fullmatch(r"[0-9a-f]{32,}", nonce),
+                        "REVEALED_KEY.json has no hex nonce to search history for"):
+                    hits = g.log_commits("-m", "--no-renames", f"-S{nonce}", *all_tips)
+                    early = [c[:12] for c in hits if not g.is_ancestor(reveal, c)]
+                    need("key_nonce_only_in_reveal_and_descendants", reveal in hits and not early,
+                         f"the key's nonce appears in commits outside the reveal and its descendants ({early[:5]}): the "
+                         "key's content was committed under another path before the reveal")
             if errors:
                 return out
             # 2. the sheet and GRADING_FINAL.txt are identical at grading_commit, at reveal and at every commit between
@@ -587,6 +643,8 @@ def verify(record, repo_url=CANONICAL_FETCH_URL, *, reveal_commit=None, results=
             if require_signer is not None:
                 ok_sig, detail = g.check_signer(gc, require_signer)
                 need("grading_commit_signed_by_registered_key", ok_sig, detail)
+                ok_decl, detail = g.declaration_check(gc, after=reveal)
+                need("grading_commit_adds_grading_final_and_last_changes_sheet", ok_decl, detail)
             sheet_b = g.show(gc, sheet_p)
             final_b = g.show(gc, final_p)
             items_b = g.show(gc, f"{KIT_REL}/items.json")
