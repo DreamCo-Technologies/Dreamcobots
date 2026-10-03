@@ -1,0 +1,665 @@
+{
+  "cip": "40.0299",
+  "title": "Astronomy and Astrophysics, Other",
+  "asset_id": "edu-aaao-40.0299",
+  "tier": "generated",
+  "occupations": [
+    {
+      "soc": "11-9121.00",
+      "title": "Natural Sciences Managers",
+      "job_zone": 5
+    },
+    {
+      "soc": "19-2011.00",
+      "title": "Astronomers",
+      "job_zone": 5
+    },
+    {
+      "soc": "25-1051.00",
+      "title": "Atmospheric, Earth, Marine, and Space Sciences Teachers, Postsecondary",
+      "job_zone": 5
+    },
+    {
+      "soc": "25-1054.00",
+      "title": "Physics Teachers, Postsecondary",
+      "job_zone": 5
+    }
+  ],
+  "top_knowledge": [
+    [
+      "Mathematics",
+      4.38
+    ],
+    [
+      "English Language",
+      4.18
+    ],
+    [
+      "Physics",
+      3.87
+    ],
+    [
+      "Education and Training",
+      3.82
+    ],
+    [
+      "Computers and Electronics",
+      3.82
+    ],
+    [
+      "Chemistry",
+      3.41
+    ],
+    [
+      "Engineering and Technology",
+      3.0
+    ],
+    [
+      "Biology",
+      2.88
+    ]
+  ],
+  "top_skills": [
+    [
+      "Speaking",
+      4.19
+    ],
+    [
+      "Science",
+      4.12
+    ],
+    [
+      "Reading Comprehension",
+      4.09
+    ],
+    [
+      "Critical Thinking",
+      4.03
+    ],
+    [
+      "Active Listening",
+      4.0
+    ],
+    [
+      "Writing",
+      4.0
+    ]
+  ],
+  "top_knowledge_entry_weighted": [
+    [
+      "Physics",
+      4.96
+    ],
+    [
+      "Mathematics",
+      4.91
+    ],
+    [
+      "Computers and Electronics",
+      4.17
+    ],
+    [
+      "English Language",
+      4.04
+    ],
+    [
+      "Education and Training",
+      3.35
+    ],
+    [
+      "Engineering and Technology",
+      3.22
+    ],
+    [
+      "Chemistry",
+      3.0
+    ],
+    [
+      "Communications and Media",
+      2.43
+    ]
+  ],
+  "top_skills_entry_weighted": [
+    [
+      "Reading Comprehension",
+      4.25
+    ],
+    [
+      "Science",
+      4.25
+    ],
+    [
+      "Critical Thinking",
+      4.12
+    ],
+    [
+      "Mathematics",
+      4.12
+    ],
+    [
+      "Writing",
+      4.12
+    ],
+    [
+      "Active Learning",
+      4.0
+    ]
+  ],
+  "knowledge_weighting": {
+    "method": "entry-weighted mean of O*NET 31.0 importance (Scale IM): entry targets weight 2; other linked occupations in Job Zone 4 or 5 (or the entry targets' Job Zone) weight 1; Manager, Chief, Postsecondary-faculty, All Other, Supervisor, Director and Treasurers and Controllers titles, and non-target occupations in other Job Zones, weight 0",
+    "weights": {
+      "19-2011.00": 2
+    },
+    "note": "top_knowledge/top_skills are the unweighted mean over all linked occupations (kept for comparison); the outline uses the entry-weighted lists."
+  },
+  "outline_elements": {
+    "year1_knowledge": [
+      "English Language"
+    ],
+    "year1_skills": [
+      "Reading Comprehension",
+      "Science",
+      "Critical Thinking"
+    ],
+    "year2_knowledge": [
+      "Physics",
+      "Mathematics",
+      "Computers and Electronics"
+    ],
+    "year3_knowledge": [
+      "Engineering and Technology",
+      "Chemistry",
+      "Communications and Media"
+    ],
+    "year3_knowledge_added_from_targets": [],
+    "year3_skills": [
+      "Mathematics",
+      "Writing",
+      "Active Learning"
+    ],
+    "skipped_knowledge": [
+      {
+        "element": "Education and Training",
+        "reason": "teaching and training others is built through presenting, tutoring and peer teaching in projects rather than a dedicated course"
+      }
+    ],
+    "rule": "English Language is placed in Year 1 general education; workplace and management elements (Customer and Personal Service, Administrative, Clerical, Administration and Management, Personnel and Human Resources, Education and Training) get no course slot unless the major's CIP series is about them; the next three elements go to Year 2 and up to three more (ordered by importance to the entry targets) to Year 3; if fewer than two remain for Year 3, knowledge rated at least 2.5 for the entry targets fills it"
+  },
+  "quality_flags": {
+    "method": {
+      "field_fit": "field fit = cosine similarity between the CIP program title's field terms and the occupation's O*NET 31.0 text (title, description and all task statements). Words are Snowball-stemmed, generic words (science, studies, technology, engineering, management, education, general, other, ...) are ignored, and terms are weighted by log term frequency times inverse document frequency over all O*NET occupations. Compound title words are also split into the O*NET vocabulary stems of 5+ letters they contain (electromechanical -> electr, mechan; telecommunications -> commun), so a compound does not count as a mismatch. CIP definitions are not in the pinned crosswalk file, so the CIP title is the field description. A rule target is dropped as clearly implausible when (1) its fit is 0, meaning no field term of the program title occurs anywhere in its O*NET title, description or tasks; (2) some eligible linked occupation in the same Job Zone tier has fit >= 0.02, so the crosswalk does offer a field match; (3) it is an O*NET detailed specialty code (not .00), whose link is typically inherited from a broad SOC code such as Engineers, All Other; (4) its base .00 occupation also has fit 0; and (5) its fit with the titles of all CIP codes in the program's 4-digit CIP series (the field family) is below 0.12, so it is not a close neighbour of the field either (e.g. a genetics program keeps Molecular and Cellular Biologists). The thresholds were set by inspecting the candidate drops of this release; they are not validated. Dropped targets are replaced from the same ranked tier with the next occupations whose fit is above 0; if none remain, the plan keeps fewer targets. A base (.00) target with fit 0 is kept but flagged better_field_match_available when a non-target occupation in the same tier has fit >= 0.1",
+      "supervisory_tasks": "task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and supervise); 'under supervision' does not count"
+    },
+    "flag_count": 0,
+    "flags": [],
+    "actions": [],
+    "notes": [
+      {
+        "note": "entry_target_not_job_zone_4",
+        "job_zones": [
+          5
+        ],
+        "detail": "no eligible Job Zone 4 occupation is linked, so the entry targets come from another Job Zone"
+      }
+    ],
+    "retired_checks": "v4 low_title_overlap (lexical title overlap) was retired in v5: it flagged 1,273 targets in 756 of 1,017 plans, mostly plausible pairs that use different words, and changed nothing"
+  },
+  "target_plausibility": {
+    "method": "field fit = cosine similarity between the CIP program title's field terms and the occupation's O*NET 31.0 text (title, description and all task statements). Words are Snowball-stemmed, generic words (science, studies, technology, engineering, management, education, general, other, ...) are ignored, and terms are weighted by log term frequency times inverse document frequency over all O*NET occupations. Compound title words are also split into the O*NET vocabulary stems of 5+ letters they contain (electromechanical -> electr, mechan; telecommunications -> commun), so a compound does not count as a mismatch. CIP definitions are not in the pinned crosswalk file, so the CIP title is the field description. A rule target is dropped as clearly implausible when (1) its fit is 0, meaning no field term of the program title occurs anywhere in its O*NET title, description or tasks; (2) some eligible linked occupation in the same Job Zone tier has fit >= 0.02, so the crosswalk does offer a field match; (3) it is an O*NET detailed specialty code (not .00), whose link is typically inherited from a broad SOC code such as Engineers, All Other; (4) its base .00 occupation also has fit 0; and (5) its fit with the titles of all CIP codes in the program's 4-digit CIP series (the field family) is below 0.12, so it is not a close neighbour of the field either (e.g. a genetics program keeps Molecular and Cellular Biologists). The thresholds were set by inspecting the candidate drops of this release; they are not validated. Dropped targets are replaced from the same ranked tier with the next occupations whose fit is above 0; if none remain, the plan keeps fewer targets. A base (.00) target with fit 0 is kept but flagged better_field_match_available when a non-target occupation in the same tier has fit >= 0.1",
+    "cip_field_terms": [
+      "astronom",
+      "astronomi",
+      "astrophys"
+    ],
+    "rule_targets": [
+      "19-2011.00"
+    ],
+    "final_targets": [
+      "19-2011.00"
+    ],
+    "fit": {
+      "19-2011.00": 0.5511
+    },
+    "dropped": [],
+    "added": [],
+    "flags": []
+  },
+  "entry_targets": [
+    {
+      "soc": "19-2011.00",
+      "title": "Astronomers",
+      "job_zone": 5
+    }
+  ],
+  "entry_target_basis": "Job Zone 5 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; no eligible Job Zone 4 occupation is linked to this major, so Job Zone 5 was used",
+  "entry_target_review": {
+    "type": "rule_only_not_reviewed",
+    "note": "Generated tier: rule output after the automatic field-fit check; not reviewed by a person."
+  },
+  "practice_task_ids": [
+    "40.0299-P1",
+    "40.0299-P2",
+    "40.0299-P3",
+    "40.0299-P4",
+    "40.0299-P5",
+    "40.0299-P6"
+  ],
+  "label": "O*NET 31.0-derived fields plus DreamCo template practice exercises (tier generated)",
+  "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+  "license": {
+    "summary": "Mixed: O*NET-derived data and quoted O*NET task statements under CC BY 4.0, plus a DreamCo template layer",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+    "required_notices": [
+      "This page includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license.",
+      "O*NET\u00ae is a trademark of USDOL/ETA.",
+      "DreamCo has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+      "Crosswalk Files by USDOL/ETA, licensed under CC BY 4.0."
+    ],
+    "dreamco_commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision",
+    "components": [
+      {
+        "fields": [
+          "occupations",
+          "top_knowledge",
+          "top_skills",
+          "top_knowledge_entry_weighted",
+          "top_skills_entry_weighted",
+          "entry_targets",
+          "knowledge_weighting"
+        ],
+        "content_class": "O*NET 31.0 and crosswalk data, filtered, averaged and ranked by DreamCo",
+        "ownership_class": "open_license_with_conditions",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "fields": [
+          "practice_tasks[].onet_task_statement"
+        ],
+        "content_class": "O*NET 31.0 task statements quoted verbatim",
+        "ownership_class": "open_license_with_conditions",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "fields": [
+          "practice_tasks[].prompt",
+          "practice_tasks[].rubric",
+          "practice_tasks[].reference_answer_outline",
+          "outline_elements",
+          "quality_flags",
+          "entry_target_review"
+        ],
+        "content_class": "DreamCo template output (tier generated)",
+        "ownership_class": "synthetic_generated_by_dreamco",
+        "license": "DreamCo; commercial terms pending owner decision",
+        "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author"
+      }
+    ],
+    "per_item_licensing": "each practice_tasks[] item carries its own license block"
+  },
+  "created_at": "2026-10-02T18:30:00-05:00",
+  "practice_tasks": [
+    {
+      "practice_id": "40.0299-P1",
+      "cip_code": "40.0299",
+      "tier": "generated",
+      "onet_soc_code": "19-2011.00",
+      "occupation_title": "Astronomers",
+      "onet_task_id": 7524,
+      "onet_task_type": "Core",
+      "onet_task_url": "https://www.onetonline.org/link/summary/19-2011.00",
+      "onet_task_statement": "Study celestial phenomena, using a variety of ground-based and space-borne telescopes and scientific instruments.",
+      "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
+      "format": "applied exercise",
+      "label": "DreamCo-generated practice exercise (template)",
+      "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
+      "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Astronomers\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Physics and Mathematics), and how you would check the result and report it.",
+      "rubric": [
+        {
+          "criterion": "Task fit",
+          "description": "The response performs the work in the quoted O*NET task statement for a concrete case with stated assumptions.",
+          "points": 2
+        },
+        {
+          "criterion": "Method",
+          "description": "The steps are specific and ordered, and they apply Physics and Mathematics correctly rather than only naming them.",
+          "points": 2
+        },
+        {
+          "criterion": "Check and report",
+          "description": "The response says how the result would be verified (criteria, review or test) and how and to whom it would be reported.",
+          "points": 2
+        }
+      ],
+      "reference_answer_outline": [
+        "A short, concrete case with its assumptions stated.",
+        "The information or inputs needed before starting, and where they come from.",
+        "Ordered steps that use the occupation's actual methods or tools, drawing on Physics and Mathematics.",
+        "A check of the result and a plan for communicating it to the right people."
+      ]
+    },
+    {
+      "practice_id": "40.0299-P2",
+      "cip_code": "40.0299",
+      "tier": "generated",
+      "onet_soc_code": "19-2011.00",
+      "occupation_title": "Astronomers",
+      "onet_task_id": 7525,
+      "onet_task_type": "Core",
+      "onet_task_url": "https://www.onetonline.org/link/summary/19-2011.00",
+      "onet_task_statement": "Analyze research data to determine its significance, using computers.",
+      "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
+      "format": "applied exercise",
+      "label": "DreamCo-generated practice exercise (template)",
+      "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
+      "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Astronomers\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Physics and Mathematics), and how you would check the result and report it.",
+      "rubric": [
+        {
+          "criterion": "Task fit",
+          "description": "The response performs the work in the quoted O*NET task statement for a concrete case with stated assumptions.",
+          "points": 2
+        },
+        {
+          "criterion": "Method",
+          "description": "The steps are specific and ordered, and they apply Physics and Mathematics correctly rather than only naming them.",
+          "points": 2
+        },
+        {
+          "criterion": "Check and report",
+          "description": "The response says how the result would be verified (criteria, review or test) and how and to whom it would be reported.",
+          "points": 2
+        }
+      ],
+      "reference_answer_outline": [
+        "A short, concrete case with its assumptions stated.",
+        "The information or inputs needed before starting, and where they come from.",
+        "Ordered steps that use the occupation's actual methods or tools, drawing on Physics and Mathematics.",
+        "A check of the result and a plan for communicating it to the right people."
+      ]
+    },
+    {
+      "practice_id": "40.0299-P3",
+      "cip_code": "40.0299",
+      "tier": "generated",
+      "onet_soc_code": "19-2011.00",
+      "occupation_title": "Astronomers",
+      "onet_task_id": 7526,
+      "onet_task_type": "Core",
+      "onet_task_url": "https://www.onetonline.org/link/summary/19-2011.00",
+      "onet_task_statement": "Present research findings at scientific conferences and in papers written for scientific journals.",
+      "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
+      "format": "applied exercise",
+      "label": "DreamCo-generated practice exercise (template)",
+      "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
+      "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Astronomers\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Physics and Mathematics), and how you would check the result and report it.",
+      "rubric": [
+        {
+          "criterion": "Task fit",
+          "description": "The response performs the work in the quoted O*NET task statement for a concrete case with stated assumptions.",
+          "points": 2
+        },
+        {
+          "criterion": "Method",
+          "description": "The steps are specific and ordered, and they apply Physics and Mathematics correctly rather than only naming them.",
+          "points": 2
+        },
+        {
+          "criterion": "Check and report",
+          "description": "The response says how the result would be verified (criteria, review or test) and how and to whom it would be reported.",
+          "points": 2
+        }
+      ],
+      "reference_answer_outline": [
+        "A short, concrete case with its assumptions stated.",
+        "The information or inputs needed before starting, and where they come from.",
+        "Ordered steps that use the occupation's actual methods or tools, drawing on Physics and Mathematics.",
+        "A check of the result and a plan for communicating it to the right people."
+      ]
+    },
+    {
+      "practice_id": "40.0299-P4",
+      "cip_code": "40.0299",
+      "tier": "generated",
+      "onet_soc_code": "19-2011.00",
+      "occupation_title": "Astronomers",
+      "onet_task_id": 7527,
+      "onet_task_type": "Core",
+      "onet_task_url": "https://www.onetonline.org/link/summary/19-2011.00",
+      "onet_task_statement": "Measure radio, infrared, gamma, and x-ray emissions from extraterrestrial sources.",
+      "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
+      "format": "applied exercise",
+      "label": "DreamCo-generated practice exercise (template)",
+      "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
+      "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Astronomers\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Physics and Mathematics), and how you would check the result and report it.",
+      "rubric": [
+        {
+          "criterion": "Task fit",
+          "description": "The response performs the work in the quoted O*NET task statement for a concrete case with stated assumptions.",
+          "points": 2
+        },
+        {
+          "criterion": "Method",
+          "description": "The steps are specific and ordered, and they apply Physics and Mathematics correctly rather than only naming them.",
+          "points": 2
+        },
+        {
+          "criterion": "Check and report",
+          "description": "The response says how the result would be verified (criteria, review or test) and how and to whom it would be reported.",
+          "points": 2
+        }
+      ],
+      "reference_answer_outline": [
+        "A short, concrete case with its assumptions stated.",
+        "The information or inputs needed before starting, and where they come from.",
+        "Ordered steps that use the occupation's actual methods or tools, drawing on Physics and Mathematics.",
+        "A check of the result and a plan for communicating it to the right people."
+      ]
+    },
+    {
+      "practice_id": "40.0299-P5",
+      "cip_code": "40.0299",
+      "tier": "generated",
+      "onet_soc_code": "19-2011.00",
+      "occupation_title": "Astronomers",
+      "onet_task_id": 7528,
+      "onet_task_type": "Core",
+      "onet_task_url": "https://www.onetonline.org/link/summary/19-2011.00",
+      "onet_task_statement": "Develop theories based on personal observations or on observations and theories of other astronomers.",
+      "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
+      "format": "applied exercise",
+      "label": "DreamCo-generated practice exercise (template)",
+      "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
+      "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Astronomers\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Physics and Mathematics), and how you would check the result and report it.",
+      "rubric": [
+        {
+          "criterion": "Task fit",
+          "description": "The response performs the work in the quoted O*NET task statement for a concrete case with stated assumptions.",
+          "points": 2
+        },
+        {
+          "criterion": "Method",
+          "description": "The steps are specific and ordered, and they apply Physics and Mathematics correctly rather than only naming them.",
+          "points": 2
+        },
+        {
+          "criterion": "Check and report",
+          "description": "The response says how the result would be verified (criteria, review or test) and how and to whom it would be reported.",
+          "points": 2
+        }
+      ],
+      "reference_answer_outline": [
+        "A short, concrete case with its assumptions stated.",
+        "The information or inputs needed before starting, and where they come from.",
+        "Ordered steps that use the occupation's actual methods or tools, drawing on Physics and Mathematics.",
+        "A check of the result and a plan for communicating it to the right people."
+      ]
+    },
+    {
+      "practice_id": "40.0299-P6",
+      "cip_code": "40.0299",
+      "tier": "generated",
+      "onet_soc_code": "19-2011.00",
+      "occupation_title": "Astronomers",
+      "onet_task_id": 7529,
+      "onet_task_type": "Core",
+      "onet_task_url": "https://www.onetonline.org/link/summary/19-2011.00",
+      "onet_task_statement": "Raise funds for scientific research.",
+      "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
+      "format": "applied exercise",
+      "label": "DreamCo-generated practice exercise (template)",
+      "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
+      "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Astronomers\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Physics and Mathematics), and how you would check the result and report it.",
+      "rubric": [
+        {
+          "criterion": "Task fit",
+          "description": "The response performs the work in the quoted O*NET task statement for a concrete case with stated assumptions.",
+          "points": 2
+        },
+        {
+          "criterion": "Method",
+          "description": "The steps are specific and ordered, and they apply Physics and Mathematics correctly rather than only naming them.",
+          "points": 2
+        },
+        {
+          "criterion": "Check and report",
+          "description": "The response says how the result would be verified (criteria, review or test) and how and to whom it would be reported.",
+          "points": 2
+        }
+      ],
+      "reference_answer_outline": [
+        "A short, concrete case with its assumptions stated.",
+        "The information or inputs needed before starting, and where they come from.",
+        "Ordered steps that use the occupation's actual methods or tools, drawing on Physics and Mathematics.",
+        "A check of the result and a plan for communicating it to the right people."
+      ]
+    }
+  ]
+}

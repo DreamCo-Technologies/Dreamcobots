@@ -1,0 +1,135 @@
+{
+  "schema": "dreamco.data_package_license_gate.v1",
+  "gate_version": "0.1.0",
+  "asset_id": "edu-alhap-01.0302",
+  "evaluated_at": "2026-10-02T19:55:52-05:00",
+  "inputs": {
+    "target": "study_plans/01.0302_animal_livestock_husbandry_and_production",
+    "repo_root": "../..",
+    "candidate_path": "study_plans/01.0302_animal_livestock_husbandry_and_production/candidate.json",
+    "candidate_sha256": "3ab6eb72a7d05df6fd6dc69cb4362125b344aed6ea137dccf854297807beed69",
+    "provenance_path": "study_plans/01.0302_animal_livestock_husbandry_and_production/provenance.json",
+    "provenance_sha256": "90484ce9857e11791b5540e5c0481bde3f3110da639c991dbbb34affcb917f90",
+    "asset_record_path": "study_plans/01.0302_animal_livestock_husbandry_and_production/asset.json",
+    "asset_record_sha256": "66d15f3684f735d047afb12a9e9b0dcdf8ddb8a9a060fe084efc753035d30aaf"
+  },
+  "policy_refs": {
+    "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
+    "evidence_provenance": "config/evidence_provenance_schema.json",
+    "hard_failures": "config/data-discovery-bot-program.json#scoring.hard_failures",
+    "scorecard_tiers": "config/dataset_evaluation_scorecard.json#commercial_tiers",
+    "release_artifacts": "config/dataset_product_standard.json#required_release_artifacts",
+    "test_family": "config/data-package-maximal-testing-program.json#test_families.provenance_and_rights",
+    "asset_provenance_schema": "schemas/data_package_asset_provenance.schema.json",
+    "license_gate_schema": "schemas/data_package_license_gate.schema.json",
+    "synthesis_asset_schema": "schemas/data_package_synthesis_asset.schema.json",
+    "package_manifest_schema": "schemas/data_package.manifest.schema.json",
+    "plan": "reports/DATA_PACKAGE_PRODUCT_PLAN.md#5.2"
+  },
+  "outcome": "approved_for_private_use",
+  "rights_ceiling": "approved_for_sale",
+  "checks": [
+    {
+      "id": "provenance_schema_conformance",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "provenance.json conforms to schemas/data_package_asset_provenance.schema.json and evidence_provenance_schema required_fields"
+      ]
+    },
+    {
+      "id": "sources_pinned",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "3 source(s) pinned with url + version + sha256"
+      ]
+    },
+    {
+      "id": "ownership_class_valid",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "asset ownership_class 'open_license_with_conditions'; all sources carry valid ownership_class"
+      ]
+    },
+    {
+      "id": "commercial_and_redistribution_rights",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "commercial_use_allowed and redistribution_allowed are true for the asset and every source"
+      ]
+    },
+    {
+      "id": "attribution_present",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "attribution text satisfies all matched license rules"
+      ]
+    },
+    {
+      "id": "no_blocked_flags_or_categories",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "0 flag(s) checked against data-discovery hard_failures; none blocked"
+      ]
+    },
+    {
+      "id": "asset_file_integrity",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "2 asset file(s) match recorded sha256"
+      ]
+    },
+    {
+      "id": "scorecard_threshold",
+      "status": "fail",
+      "scope": "sale",
+      "outcome_cap": "approved_for_private_use",
+      "reasons": [
+        "no dataset scorecard score; sale requires >= 75 (standard tier)"
+      ]
+    },
+    {
+      "id": "synthesis_asset_record",
+      "status": "fail",
+      "scope": "sale",
+      "outcome_cap": "approved_for_private_use",
+      "reasons": [
+        "no sandbox/benchmark/holdout/regression validation evidence ids"
+      ]
+    },
+    {
+      "id": "owner_approval",
+      "status": "fail",
+      "scope": "sale",
+      "outcome_cap": "approved_for_private_use",
+      "reasons": [
+        "no explicit owner_approval record; truth boundary caps outcome at approved_for_private_use"
+      ]
+    }
+  ],
+  "failed_checks": [
+    "scorecard_threshold",
+    "synthesis_asset_record",
+    "owner_approval"
+  ],
+  "warnings": [],
+  "sale_requirements": {
+    "scorecard_minimum": 75,
+    "scorecard_score": null,
+    "owner_approval_present": false
+  },
+  "truth_boundary": "Gate output is rights/provenance evidence for one asset version. It is not a listing, a price, or a production-ready claim. approved_for_sale additionally requires a complete plan 5.2 synthesis asset record (asset.json), scorecard >= standard tier minimum, and an explicit owner_approval record; without owner approval the maximum outcome is approved_for_private_use."
+}

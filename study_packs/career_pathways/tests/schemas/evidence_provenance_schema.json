@@ -1,0 +1,15 @@
+{
+  "schema": "dreamco.evidence_provenance.v1",
+  "purpose": "Track where benchmark and capability evidence came from so Buddy's scores remain auditable and reproducible.",
+  "required_fields": ["evidence_id", "capability_id", "source_type", "source_reference", "retrieved_at", "content_version", "license_or_usage_basis", "transformation", "evaluator_version", "integrity_hash"],
+  "source_types": ["onet", "official_documentation", "public_dataset", "open_source_repository", "paper", "benchmark", "professional_rubric", "dreamco_generated", "dreamco_experiment", "tool_observation", "human_evaluation"],
+  "transformation_types": ["none", "summary", "structured_extraction", "derived_metric", "original_implementation", "original_evaluation", "synthetic_data", "human_rewrite"],
+  "rules": [
+    "Do not represent a source's material as DreamCo-owned merely because Buddy observed it.",
+    "Record applicable license, terms, attribution, and usage basis before redistribution.",
+    "Keep source evidence distinct from DreamCo-created derivatives.",
+    "Preserve enough metadata to reproduce a benchmark result.",
+    "Do not use provenance metadata to make unsupported ownership claims."
+  ],
+  "audit_goal": "Every material benchmark claim should be traceable to its evidence and transformation history."
+}

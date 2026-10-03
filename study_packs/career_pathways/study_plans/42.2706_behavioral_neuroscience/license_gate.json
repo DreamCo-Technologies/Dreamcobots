@@ -1,0 +1,135 @@
+{
+  "schema": "dreamco.data_package_license_gate.v1",
+  "gate_version": "0.1.0",
+  "asset_id": "edu-bn-42.2706",
+  "evaluated_at": "2026-10-02T19:56:20-05:00",
+  "inputs": {
+    "target": "study_plans/42.2706_behavioral_neuroscience",
+    "repo_root": "../..",
+    "candidate_path": "study_plans/42.2706_behavioral_neuroscience/candidate.json",
+    "candidate_sha256": "3a04b7e191a899f59aa9ac3b2b5cfff546f3fe0cb9ddd683ce5319296681526a",
+    "provenance_path": "study_plans/42.2706_behavioral_neuroscience/provenance.json",
+    "provenance_sha256": "82e2d35127a0b92184e635e4d2f0bc8251534e63a5ec1b0e6e270622cd0ba330",
+    "asset_record_path": "study_plans/42.2706_behavioral_neuroscience/asset.json",
+    "asset_record_sha256": "eeb40f64d5c973b94f515d51883b2d6a08a463f9daa312db6b62b8f8d202c524"
+  },
+  "policy_refs": {
+    "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
+    "evidence_provenance": "config/evidence_provenance_schema.json",
+    "hard_failures": "config/data-discovery-bot-program.json#scoring.hard_failures",
+    "scorecard_tiers": "config/dataset_evaluation_scorecard.json#commercial_tiers",
+    "release_artifacts": "config/dataset_product_standard.json#required_release_artifacts",
+    "test_family": "config/data-package-maximal-testing-program.json#test_families.provenance_and_rights",
+    "asset_provenance_schema": "schemas/data_package_asset_provenance.schema.json",
+    "license_gate_schema": "schemas/data_package_license_gate.schema.json",
+    "synthesis_asset_schema": "schemas/data_package_synthesis_asset.schema.json",
+    "package_manifest_schema": "schemas/data_package.manifest.schema.json",
+    "plan": "reports/DATA_PACKAGE_PRODUCT_PLAN.md#5.2"
+  },
+  "outcome": "approved_for_private_use",
+  "rights_ceiling": "approved_for_sale",
+  "checks": [
+    {
+      "id": "provenance_schema_conformance",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "provenance.json conforms to schemas/data_package_asset_provenance.schema.json and evidence_provenance_schema required_fields"
+      ]
+    },
+    {
+      "id": "sources_pinned",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "3 source(s) pinned with url + version + sha256"
+      ]
+    },
+    {
+      "id": "ownership_class_valid",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "asset ownership_class 'open_license_with_conditions'; all sources carry valid ownership_class"
+      ]
+    },
+    {
+      "id": "commercial_and_redistribution_rights",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "commercial_use_allowed and redistribution_allowed are true for the asset and every source"
+      ]
+    },
+    {
+      "id": "attribution_present",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "attribution text satisfies all matched license rules"
+      ]
+    },
+    {
+      "id": "no_blocked_flags_or_categories",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "0 flag(s) checked against data-discovery hard_failures; none blocked"
+      ]
+    },
+    {
+      "id": "asset_file_integrity",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "2 asset file(s) match recorded sha256"
+      ]
+    },
+    {
+      "id": "scorecard_threshold",
+      "status": "fail",
+      "scope": "sale",
+      "outcome_cap": "approved_for_private_use",
+      "reasons": [
+        "no dataset scorecard score; sale requires >= 75 (standard tier)"
+      ]
+    },
+    {
+      "id": "synthesis_asset_record",
+      "status": "fail",
+      "scope": "sale",
+      "outcome_cap": "approved_for_private_use",
+      "reasons": [
+        "no sandbox/benchmark/holdout/regression validation evidence ids"
+      ]
+    },
+    {
+      "id": "owner_approval",
+      "status": "fail",
+      "scope": "sale",
+      "outcome_cap": "approved_for_private_use",
+      "reasons": [
+        "no explicit owner_approval record; truth boundary caps outcome at approved_for_private_use"
+      ]
+    }
+  ],
+  "failed_checks": [
+    "scorecard_threshold",
+    "synthesis_asset_record",
+    "owner_approval"
+  ],
+  "warnings": [],
+  "sale_requirements": {
+    "scorecard_minimum": 75,
+    "scorecard_score": null,
+    "owner_approval_present": false
+  },
+  "truth_boundary": "Gate output is rights/provenance evidence for one asset version. It is not a listing, a price, or a production-ready claim. approved_for_sale additionally requires a complete plan 5.2 synthesis asset record (asset.json), scorecard >= standard tier minimum, and an explicit owner_approval record; without owner approval the maximum outcome is approved_for_private_use."
+}
