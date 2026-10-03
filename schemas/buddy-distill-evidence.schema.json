@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dreamco.buddy_distill_evidence.v1",
+  "title": "Buddy distill evidence packet",
+  "type": "object",
+  "required": ["schema", "adapter_id", "teacher", "student", "baseline", "runs", "safety_suite", "provenance", "owner_approval", "allowlist_eligible"],
+  "properties": {
+    "schema": {"const": "dreamco.buddy_distill_evidence.v1"},
+    "adapter_id": {"type": "string", "minLength": 1},
+    "synthetic_fixture": {"type": "boolean"},
+    "teacher": {
+      "type": "object",
+      "required": ["model_id", "teacher_terms_check"],
+      "properties": {
+        "model_id": {"type": "string", "minLength": 1},
+        "teacher_terms_check": {
+          "type": "object",
+          "required": ["permitted", "reviewed_by", "reviewed_at_utc", "terms_url"],
+          "properties": {"permitted": {"type": "boolean"}, "reviewed_by": {"type": "string"}, "reviewed_at_utc": {"type": "string"}, "terms_url": {"type": "string"}}
+        }
+      }
+    },
+    "student": {
+      "type": "object",
+      "required": ["method", "base_model", "base_model_revision", "base_model_license_ok", "weight_format"],
+      "properties": {
+        "method": {"enum": ["lora_adapter", "qlora_adapter"]},
+        "base_model": {"type": "string"},
+        "base_model_revision": {"type": "string", "minLength": 7},
+        "base_model_license_ok": {"type": "boolean"},
+        "weight_format": {"enum": ["safetensors", "gguf"]}
+      }
+    },
+    "baseline": {
+      "type": "object",
+      "required": ["holdout_score", "holdout_fixture_sha256", "evaluated_at_utc"],
+      "properties": {"holdout_score": {"type": "number"}, "holdout_fixture_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "evaluated_at_utc": {"type": "string"}}
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["train_started_at_utc", "holdout_score", "regression", "adapter_sha256", "sandbox_image_digest"],
+        "properties": {
+          "train_started_at_utc": {"type": "string"},
+          "holdout_score": {"type": "number"},
+          "regression": {"type": "number"},
+          "adapter_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "sandbox_image_digest": {"type": "string"},
+          "cost_usd": {"type": "number"},
+          "latency_ms_p50": {"type": "number"}
+        }
+      }
+    },
+    "safety_suite": {"type": "object", "required": ["passed", "suite_version"], "properties": {"passed": {"type": "boolean"}, "suite_version": {"type": "string"}}},
+    "provenance": {"type": "object", "required": ["training_data_sha256", "sources_approved"], "properties": {"training_data_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "sources_approved": {"type": "boolean"}}},
+    "owner_approval": {"type": "object", "required": ["approved", "approved_by", "approved_at_utc"], "properties": {"approved": {"type": "boolean"}, "approved_by": {"type": "string"}, "approved_at_utc": {"type": "string"}}},
+    "allowlist_eligible": {"type": "boolean"}
+  }
+}
