@@ -20,15 +20,30 @@ def register(name: str, source: str, task: str, quality: float, efficiency: floa
         raise ValueError("approval must come from the owner or the user")
     if not 0 <= quality <= 1 or not 0 <= efficiency <= 1:
         raise ValueError("scores must be measured between 0 and 1")
-    return {"name": name, "source": source, "task": task, "quality": quality, "efficiency": efficiency, "approved_by": approved_by, "free": free, "weights_downloaded": False}
+    return {"name": name, "source": source, "task": task, "quality": quality, "efficiency": efficiency, "approved_by": approved_by, "free": free, "provider": source, "weights_downloaded": False}
 
 
-def route(task: str, models: list[dict], free_only: bool = False) -> dict:
-    eligible = [row for row in models if row["task"] == task and row.get("approved_by") in {"owner", "user"} and (row.get("free") if free_only else True)]
+def connect_account(provider: str, paid: bool) -> dict:
+    if not provider:
+        raise ValueError("a provider name is required")
+    return {"provider": provider, "paid": paid, "connected": True, "secret_stored": False}
+
+
+def route(task: str, models: list[dict], free_only: bool = False, accounts: list[dict] | None = None) -> dict:
+    connected = {row["provider"] for row in accounts or [] if row.get("connected") and row.get("paid")}
+    eligible = []
+    for row in models:
+        if row["task"] != task or row.get("approved_by") not in {"owner", "user"}:
+            continue
+        if free_only and not row.get("free"):
+            continue
+        if not row.get("free") and row.get("provider") not in connected:
+            continue
+        eligible.append(row)
     if not eligible:
-        return {"task": task, "model": None, "free_only": free_only, "reason": "no approved measured score for this task"}
+        return {"task": task, "model": None, "free_only": free_only, "reason": "no approved measured score for a connected account"}
     winner = max(eligible, key=lambda row: (row["quality"], row["efficiency"], row["name"]))
-    return {"task": task, "model": winner["name"], "source": winner["source"], "quality": winner["quality"], "efficiency": winner["efficiency"], "free_only": free_only, "guessed": False}
+    return {"task": task, "model": winner["name"], "source": winner["source"], "provider": winner.get("provider"), "quality": winner["quality"], "efficiency": winner["efficiency"], "free_only": free_only, "guessed": False}
 
 
 def main() -> int:
