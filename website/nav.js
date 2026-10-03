@@ -233,15 +233,15 @@ document.addEventListener('click', function(e) {
 
 (() => {
   const bar = document.createElement("nav");
-  bar.setAttribute("aria-label", "Source buttons");
+  bar.setAttribute("aria-label", "Personal and business tasks");
   const links = [
-    ["actions.html", "Actions"],
-    ["buddy.html", "Buddy"],
-    ["https://github.com/DreamCo-Technologies/Dreamcobots", "GitHub repo"],
-    ["https://github.com/DreamCo-Technologies/Dreamcobots/actions", "Workflow runs"],
-    ["https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/DAILY_PRODUCTION_SCAN.md", "Production scan"],
-    ["https://github.com/DreamCo-Technologies/Dreamcobots/settings/pages", "Pages setting"],
-    ["https://huggingface.co/models", "Hugging Face models"]
+    ["buddy.html", "Ask Buddy"],
+    ["actions.html", "Do a task"],
+    ["bots.html", "Business bots"],
+    ["dashboard.html", "Check today's work"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/issues/new", "Write down a task"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/DAILY_PRODUCTION_SCAN.md", "See what is blocked"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/settings/secrets/actions", "Add host secrets"]
   ];
   links.forEach(([href, label]) => {
     const link = document.createElement("a");
