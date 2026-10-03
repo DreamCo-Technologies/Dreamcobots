@@ -18,22 +18,13 @@ fetch("data/expert-scan.json").then((response) => response.json()).then((scan) =
   node.textContent = `Sections ${scan.sections}. Duplicate names ${scan.duplicate_names}. Bootcamp courses ${cycle.bootcamp_courses}. Train ${cycle.train}. Expert approved ${scan.expert_approved}. Green ${cycle.green}.`;
 })).catch(() => { document.getElementById("scan-evidence").textContent = "Scan data is not loaded."; });
 </script>
-<section class="actions-review" aria-labelledby="own-skills-heading"><div><p class="actions-kicker">Own tools</p><h2 id="own-skills-heading">Buddy skills</h2></div><p>These buttons run Buddy's own sandbox skills. They do not call the other plugins.</p><div id="own-skill-buttons">Loading skills…</div><p id="own-skill-status"></p></section>
+<section class="actions-review" aria-labelledby="own-skills-heading"><div><p class="actions-kicker">Own tools</p><h2 id="own-skills-heading">Buddy skills</h2></div><p>These buttons run Buddy's own sandbox skills. They do not call the other plugins.</p><div id="own-skill-buttons"><button class="btn btn-outline" type="button">draft a prompt</button><button class="btn btn-outline" type="button">summarize a note</button><button class="btn btn-outline" type="button">compare two answers</button><button class="btn btn-outline" type="button">open an issue</button><button class="btn btn-outline" type="button">read a public repo</button><button class="btn btn-outline" type="button">run a free workflow</button><button class="btn btn-outline" type="button">publish Pages</button><button class="btn btn-outline" type="button">scan a repo</button><button class="btn btn-outline" type="button">write a report</button><button class="btn btn-outline" type="button">rank a model list</button><button class="btn btn-outline" type="button">review a diff</button><button class="btn btn-outline" type="button">explain an error</button><button class="btn btn-outline" type="button">draft a test</button><button class="btn btn-outline" type="button">study a free lesson with permission</button><button class="btn btn-outline" type="button">save the user's own note</button></div><p id="own-skill-status"></p></section>
 <script>
-fetch("data/own-skills.json").then((response) => response.json()).then((data) => {
-  const box = document.getElementById("own-skill-buttons");
-  box.textContent = "";
-  data.skills.forEach((skill) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "btn btn-outline";
-    button.textContent = skill;
-    button.addEventListener("click", () => {
-      document.getElementById("own-skill-status").textContent = skill + " ran locally. No third party called.";
-    });
-    box.appendChild(button);
+document.querySelectorAll("#own-skill-buttons button").forEach((button) => {
+  button.addEventListener("click", () => {
+    document.getElementById("own-skill-status").textContent = button.textContent + " ran locally. No third party called.";
   });
-}).catch(() => { document.getElementById("own-skill-buttons").textContent = "Skills are not loaded."; });
+});
 </script>
 <section class="actions-review" aria-labelledby="connect-account-heading"><div><p class="actions-kicker">Paid models</p><h2 id="connect-account-heading">Connect an account you already pay for</h2></div><p>The button stores the provider name in this browser. It does not take a key.</p><label for="account-provider">Provider<select id="account-provider"><option>frontier</option><option>github</option><option>hugging-face</option><option>open-weight</option></select></label><button class="btn btn-primary" id="connect-account" type="button">Connect account</button><p id="connect-account-status">No account connected in this browser.</p></section>
 <script>
