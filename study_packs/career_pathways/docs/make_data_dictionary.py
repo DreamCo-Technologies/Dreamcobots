@@ -335,44 +335,61 @@ FILES["data/dreamco_knowledge/evidence/regression/<asset_id>/<run>.results.json"
                "not_compared": "What is deliberately not compared, and why.", "determinism": "Why the file is reproducible byte for byte.",
                "run_at": "Optional: run time; only in the 20261002-01/-02 results files, written before results were made deterministic (kept unchanged; evidence is append-only)."}}
 FILES["evidence/holdout_kit/items.json"] = {
-    "format": "JSON object (grader-facing; reveals nothing about the key)", "description": "The 16 blind holdout items (kit v2, rubric discrimination).",
-    "fields": {"kit": "Kit name and version.", "created_at": "When the kit was drawn, ISO 8601 with offset.", "n_items": "Number of items (16).",
-               "items": "Items in Q01-Q16 order (shuffled at draw time).", "items[].item_id": "Blind id Q01-Q16.",
+    "format": "JSON object (grader-facing; reveals nothing about the key)", "description": "The 18 blind holdout items (kit v3, rubric discrimination).",
+    "fields": {"kit": "Kit name and version.", "created_at": "When the kit was drawn, ISO 8601 with offset.", "n_items": "Number of items (18).",
+               "items": "Items in Q01-Q18 order (shuffled at draw time).", "items[].item_id": "Blind id Q01-Q18.",
                "items[].major": "Major title and CIP code.", "items[].prompt": "Scenario prompt written for the kit only.",
                "items[].candidate_answer": "Candidate answer to grade: five labelled points.", "items[].rubric": "3 criteria.",
                "items[].rubric[].criterion": "Criterion name.", "items[].rubric[].description": "What full marks require.", "items[].rubric[].points": "Maximum points (2)."}}
 FILES["evidence/holdout_kit/grading_sheet.csv"] = {
     "format": "CSV with header; blank until the grader fills it in", "description": "Grading sheet, one row per item.",
-    "fields": {"item_id": "Blind id Q01-Q16 (do not edit).", "major": "Major of the item (do not edit).",
+    "fields": {"item_id": "Blind id Q01-Q18 (do not edit).", "major": "Major of the item (do not edit).",
                "criterion_1": "Name of criterion 1 (do not edit).", "score_1": "Grader score 0-2.",
                "criterion_2": "Name of criterion 2.", "score_2": "Grader score 0-2.", "criterion_3": "Name of criterion 3.", "score_3": "Grader score 0-2.",
-               "factually_correct": "yes, no or unsure.", "comments": "Free-text comments.", "grader": "Grader name.",
+               "factually_correct": "yes, no or unsure.", "comments": "Free-text comments.", "grader": "Grader name (the same single name on every row).",
                "graded_at": "When graded, ISO 8601 with offset."}}
 # Not produced yet (no human grades exist): documented for score_holdout.py --finalize output.
 FILES["data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.json"] = {
     "format": "JSON object (config/evidence_provenance_schema.json fields); NOT PRODUCED YET", "description": "Holdout evidence record written by score_holdout.py --finalize after the grader declares grading final.",
-    "fields": {**REC_COMMON, "source_type": "human_evaluation.", "split": "blind_holdout_v2_rubric_discrimination.", "grader": "Human grader name(s) from the sheet."}}
+    "fields": {**REC_COMMON, "source_type": "human_evaluation.", "split": "holdout.",
+               "results_path": "Results file path relative to the repository root, the same root as evidence_root (study_packs/career_pathways/data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.results.json).",
+               "evidence_root": "Repo-relative evidence root (study_packs/career_pathways/data/dreamco_knowledge/evidence).",
+               "paths_relative_to": "Root that evidence_root and results_path are both relative to (the repository root).",
+               "baseline_score": "Highest expected agreement of a grader who cannot tell the answer types apart (uniform random, all 2s, or the best-case shortcut grader), computed exactly from the key for this asset's items.",
+               "baseline_definition": "Definition of baseline_score.",
+               "passed": "Kit discrimination passed (detection >= 0.8, false alarms <= 0.2, gap >= 1.0) AND the asset has >= 4 items with both types AND agreement >= 0.8 AND no full-strength item judged factually incorrect.",
+               "limitations": "Limits of this evidence, built from the grader named on the sheet and in GRADING_FINAL.txt.",
+               "grader": "The single human grader named on every sheet row and in GRADING_FINAL.txt."}}
 FILES["data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.results.json"] = {
     "format": "JSON object; NOT PRODUCED YET", "description": "Holdout results for one asset.",
     "fields": {"schema": "Schema id.", "asset_id": "Asset id.", "run_id": "Run id.", "kit": "Kit name.", "kit_created_at": "When the kit was drawn.",
                "key_sha256": "sha256 of the private key (matches KEY_COMMITMENT.txt).", "items_json_sha256": "sha256 of items.json (matches KEY_COMMITMENT.txt).",
-               "grading_sheet_sha256": "sha256 of the filled-in sheet.", "graders": "Grader names.",
-               "declared_final": "Grader and time from GRADING_FINAL.txt.", "asset_integrity_hash": "integrity_hash of the asset graded.",
+               "grading_sheet_sha256": "sha256 of the filled-in sheet (equals declared_final.sheet_sha256).", "graders": "The single grader name on the sheet (must match declared_final.grader).",
+               "declared_final": "Grader, time and sheet_sha256 from GRADING_FINAL.txt.", "declared_final.grader": "Declared grader.",
+               "declared_final.declared_at": "Declaration time, ISO 8601 with offset.", "declared_final.sheet_sha256": "sha256 of the sheet when grading was declared final; --finalize refuses a different sheet.",
+               "asset_integrity_hash": "integrity_hash of the asset graded.", "split": "holdout.",
+               "baseline_score": "max of baselines (see baseline_definition).", "baselines": "Expected agreement of each reference grader.",
+               "baselines.uniform_random": "Uniform random scores.", "baselines.all_2s": "Every criterion scored 2.",
+               "baselines.shortcut_one_criterion_0": "One criterion 0 and two 2s on every item, best case (true weakened criterion on weakened items).",
+               "baseline_definition": "Definition of baseline_score.",
+               "per_asset_eligibility": "min_items (4), n_items, n_full_strength, n_weakened, eligible, reason: an asset needs >= 4 items with both types to pass.",
                "metric": "Metric definition.", "threshold": "Agreement threshold (0.8).", "n_items": "Items of this asset in the kit.",
                "score": "Per-asset agreement: fraction of criterion scores inside the accepted band.",
-               "passed": "Kit discrimination passed AND agreement >= 0.8 AND no full-strength item judged factually incorrect.",
-               "kit_discrimination": "Kit-level pass rule: detection rate >= 0.8 and mean gap >= 1.0 (all-equal scores fail).",
+               "passed": "Kit discrimination passed AND per_asset_eligibility.eligible AND agreement >= 0.8 AND no full-strength item judged factually incorrect.",
+               "kit_discrimination": "Kit-level pass rule: detection rate >= 0.8, false-alarm rate <= 0.2 and mean gap >= 1.0 (all-equal scores and the one-criterion-0 shortcut fail).",
                "full_strength_judged_incorrect": "Full-strength items of this asset the grader judged factually incorrect.",
                "items[]": "Per-item type, human scores, expected scores, agreement and comments (revealed only after grading is final).",
-               "limitations": "Limits of this evidence (single owner-grader, few items, builder-written answers)."}}
+               "limitations": "Limits of this evidence, built from the actual grader (owner or not), item counts and eligibility."}}
 OTHER = {
     "study_plans/<stem>.md": "Human layer: the markdown study plan (sections listed in asset.json human_layer.elements; generated plans include a Quality flags section).",
     "evidence/pytest.txt": "Verbatim pytest -v output of the release build.",
     "evidence/gate_summary.txt": "Gate outcome counts over all plans.",
     "evidence/MANIFEST.txt": "sha256 of the pack's files at release.",
     "evidence/holdout_kit/items.md": "Same items as items.json, formatted for reading.",
-    "evidence/holdout_kit/README.md": "Grader instructions, pass rule, and the note on replacing the v1 kit.",
-    "evidence/holdout_kit/KEY_COMMITMENT.txt": "sha256 of the private answer key (which contains a 256-bit nonce) and of items.json; the key itself is kept outside the repository.",
+    "evidence/holdout_kit/README.md": "Grader instructions, pass rule, threat model of the encrypted key, and the notes on replacing the v1 kit and the v2 draw.",
+    "evidence/holdout_kit/KEY_COMMITMENT.txt": "sha256 of the plaintext private answer key (which contains a 256-bit nonce) and of items.json; the key itself is kept outside the repository, encrypted (AES-256-GCM).",
+    "evidence/holdout_kit/GRADING_FINAL.txt": "NOT PRODUCED YET. Written by the grader (score_holdout.py --declare-final): FINAL: grader=<name>; declared_at=<ISO>; sheet_sha256=<sha256 of grading_sheet.csv>.",
+    "evidence/holdout_kit/FINALIZED.txt": "NOT PRODUCED YET. Written by score_holdout.py --finalize: the key commitment and run id that were scored; a second --finalize of the same commitment is refused.",
 }
 
 

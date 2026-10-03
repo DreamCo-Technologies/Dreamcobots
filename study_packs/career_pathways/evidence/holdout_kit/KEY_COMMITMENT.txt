@@ -1,6 +1,7 @@
-kit: edu-career-pathways blind holdout v2 (rubric discrimination)
-created_at: 2026-10-02T19:42:30-05:00
-key_sha256: 8d6f2833663047ec6aeb2e390daeb95904781c64ca51461ebd15ba497d0f8663
-items_json_sha256: 9be037cf941dc865aec2eadd3e6c2d73c3fc825f3923755442eff3ed9f5eb100
-algorithm: sha256 over the exact bytes of the private key file holdout_key.json
-note: the key file is kept outside the repository by the builder and is not available to the grader. It contains a 256-bit random nonce, so this hash cannot be matched by guessing which answers are weakened. score_holdout.py --finalize refuses a key whose sha256 differs from key_sha256, or items.json whose sha256 differs from items_json_sha256.
+kit: edu-career-pathways blind holdout v3 (rubric discrimination)
+created_at: 2026-10-02T20:32:46-05:00
+key_sha256: 3e38aabfde793545c983bb9f0b88f85f61a2c66d0e859536cd303878675823bf
+items_json_sha256: bf803bb5e004638116cefc3fc0071fbff140f36b74932d24d366ce886c96086b
+algorithm: sha256 over the exact plaintext bytes of the private answer key (JSON)
+key_storage: holdout_key.json.enc outside the repository, AES-256-GCM with a scrypt-derived key; the passphrase is stored outside /workspace and outside the repository. score_holdout.py --finalize decrypts it in memory.
+note: the key is kept by the builder and is not available to the grader. It contains a 256-bit random nonce, so this hash cannot be matched by guessing which answers are weakened. score_holdout.py --finalize refuses a key whose sha256 differs from key_sha256, or items.json whose sha256 differs from items_json_sha256, and scores a given key_sha256 only once.

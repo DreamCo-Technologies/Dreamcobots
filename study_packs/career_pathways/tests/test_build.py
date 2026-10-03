@@ -475,7 +475,10 @@ def test_every_evidence_record_integrity_hash_matches_its_results_file():
         kind, aid, run = rec["evidence_id"].split(":")
         assert r == EVIDENCE_DIR / kind / aid / f"{run}.json", r
         assert rec.get("evidence_root", build.EVIDENCE_ROOT) == build.EVIDENCE_ROOT  # absent in pre-v4 records
-        res = ROOT / rec["results_path"]
+        rp = rec["results_path"]
+        # v6+ records (holdout) give results_path relative to the same repository root as evidence_root; older
+        # records (regression -01..-04, append-only) give it relative to the pack root.
+        res = ROOT / (rp[len("study_packs/career_pathways/"):] if rp.startswith(build.EVIDENCE_ROOT + "/") else rp)
         assert res.is_file() and res == r.with_name(f"{run}.results.json")
         assert rec["integrity_hash"] == "sha256:" + sha(res), r
     results = sorted(EVIDENCE_DIR.rglob("*.results.json"))
@@ -626,18 +629,21 @@ def test_generated_target_plausibility_and_quality_flags():
 
 
 KIT = ROOT / "evidence/holdout_kit"
+CS_CIP = "11.0701"
 
 
 def _kit_items():
     return json.loads((KIT / "items.json").read_text())
 
 
-def test_holdout_kit_v2_is_blind_shape_normalized_and_ungraded():
+def test_holdout_kit_v3_is_blind_shape_normalized_and_ungraded():
     items = _kit_items()
     its = items["items"]
-    assert items["n_items"] == len(its) and 14 <= len(its) <= 20
+    assert items["n_items"] == len(its) and 16 <= len(its) <= 24
     majors = [re.search(r"CIP (\d\d\.\d{4})\)$", i["major"]).group(1) for i in its]
-    assert majors.count("11.0701") >= 3 and set(majors) <= set(build.MAJORS) and len(set(majors)) >= 8
+    import score_holdout
+    assert majors.count(CS_CIP) >= score_holdout.MIN_ITEMS_PER_MAJOR  # CS can produce a per-major record
+    assert set(majors) <= set(build.MAJORS) and len(set(majors)) >= 8
     blob = json.dumps(items).lower()
     for word in ("weaken", "full_strength", "expected_scores", "candidate_type", "seed", "nonce", "practice_id", "11.0701-p"):
         assert word not in blob  # nothing in the grader's file reveals the key
@@ -649,42 +655,216 @@ def test_holdout_kit_v2_is_blind_shape_normalized_and_ungraded():
         words.append(len(_tok(i["candidate_answer"])))
     assert max(words) <= 1.35 * min(words), words  # one length band; length gives nothing away
     # no key file anywhere in the kit, and the commitment is present
-    assert not [f.name for f in KIT.iterdir() if "key" in f.name.lower() and f.suffix == ".json"]
+    assert not [f.name for f in KIT.iterdir() if "key" in f.name.lower() and f.suffix in (".json", ".enc")]
     assert not (KIT / "_key.json").exists()
     commit = dict(l.split(": ", 1) for l in (KIT / "KEY_COMMITMENT.txt").read_text().splitlines() if ": " in l)
     assert re.fullmatch(r"[0-9a-f]{64}", commit["key_sha256"])
     assert commit["items_json_sha256"] == sha(KIT / "items.json")
+    assert "AES-256-GCM" in commit["key_storage"] and commit["kit"] == items["kit"]
     rows = list(csv.DictReader(open(KIT / "grading_sheet.csv")))
     assert [r["item_id"] for r in rows] == [i["item_id"] for i in its]
     assert all(not r[c] for r in rows for c in ("score_1", "score_2", "score_3", "factually_correct", "grader", "graded_at", "comments"))
-    assert not (KIT / "GRADING_FINAL.txt").exists()
+    assert not (KIT / "GRADING_FINAL.txt").exists() and not (KIT / "FINALIZED.txt").exists()
     assert not (EVIDENCE_DIR / "holdout").exists()  # no holdout evidence until a human grades the kit
     readme = (KIT / "README.md").read_text()
-    assert "Pass rule" in readme and "all 2s" in readme and "v1 kit" in readme and "KEY_COMMITMENT.txt" in readme
+    for s in ("Pass rule", "all 2s", "v1 kit", "KEY_COMMITMENT.txt", "False-alarm rate", "sheet_sha256", "at least 4",
+              "Threat model", "baseline_score", "scored once"):
+        assert s in readme, s
+    # the number of weakened answers is secret: no README states it
+    for doc in (readme, (ROOT / "README.md").read_text(), (ROOT / "docs/DATA_DICTIONARY.md").read_text()):
+        assert not re.search(r"\b[Hh]alf (of )?the (answers|items)|\b\d+ (of the \d+ )?(answers|items) are (subtly )?weakened|"
+                             r"exactly (half|\d+) (are )?weakened", doc)
 
 
-def test_holdout_kit_shares_no_5_word_run_with_published_content():
-    """Kit prompts, answers and rubrics are new: no 5-word run appears in any published plan, practice_tasks.json or
-    authored file used by the build."""
+def test_holdout_kit_shares_no_5_word_run_with_published_content(onet_text_grams):
+    """Kit prompts, answers and rubrics are new: no 5-word run appears in any published plan, practice_tasks.json,
+    authored file, README or doc of the pack, the O*NET text (task statements, Job Zone text, occupation descriptions),
+    or any earlier kit in git history (v1 and the public v2 draw: reusing a v2 item would let anyone compare its two
+    answer versions if the shown version changed)."""
     kg = {}
     for i in _kit_items()["items"]:
         for f in [i["prompt"], i["candidate_answer"]] + [c["criterion"] + " " + c["description"] for c in i["rubric"]]:
             for g in _grams(f):
                 kg.setdefault(g, i["item_id"])
-    files = PLANS + [ROOT / "data/practice_tasks.json"] + sorted((ROOT / "authored").glob("*.json"))
+    assert not set(kg) & onet_text_grams
+    files = PLANS + [ROOT / "data/practice_tasks.json", ROOT / "README.md", KIT / "README.md", ROOT / "raw/SOURCES.md"]
+    files += sorted((ROOT / "authored").glob("*.json")) + sorted((ROOT / "docs").glob("*.md"))
+    texts = [(f.name, f.read_text()) for f in files]
+    found = _git_history_repo()
+    if found:
+        import subprocess
+        repo, pack = found
+        current = (KIT / "items.json").read_bytes()
+        n_old = 0
+        for c in subprocess.run(["git", "-C", str(repo), "log", "--all", "--format=%H", "--", f"{pack}/evidence/holdout_kit/items.json"],
+                                capture_output=True, text=True).stdout.split():
+            r = subprocess.run(["git", "-C", str(repo), "show", f"{c}:{pack}/evidence/holdout_kit/items.json"], capture_output=True)
+            if r.returncode or r.stdout == current:
+                continue  # deleted in that commit, or it is this kit
+            n_old += 1
+            for name in ("items.json", "_key.json", "items.md"):
+                r = subprocess.run(["git", "-C", str(repo), "show", f"{c}:{pack}/evidence/holdout_kit/{name}"], capture_output=True, text=True)
+                if r.returncode == 0:
+                    texts.append((f"earlier kit {c[:7]}:{name}", r.stdout))
+        assert n_old >= 2  # v1 (1cda014) and v2 (def1d2d)
     hits = []
-    for f in files:
-        w = _tok(f.read_text())
-        hits += [(" ".join(w[k:k + 5]), kg[tuple(w[k:k + 5])], f.name) for k in range(len(w) - 4) if tuple(w[k:k + 5]) in kg]
+    for name, t in texts:
+        w = _tok(t)
+        hits += [(" ".join(w[k:k + 5]), kg[tuple(w[k:k + 5])], name) for k in range(len(w) - 4) if tuple(w[k:k + 5]) in kg]
     assert not hits, hits[:10]
 
 
-def _synthetic_kit(tmp_path):
-    """A tiny synthetic kit + key + commitment in tmp (never the real private key)."""
+# ---------- draw rule and pass rule on made-up keys (never the real key) ----------
+_OTHER_CIPS = ["14.0901", "51.3801", "42.0101", "26.0101", "14.1901", "14.0801", "52.0301", "52.1401", "13.1202", "40.0501",
+               "27.0501", "44.0701"]
+
+
+def _fake_source(n_cs):
+    return ([{"source_id": f"cs-{k}", "cip": CS_CIP} for k in range(n_cs)]
+            + [{"source_id": f"other-{k}", "cip": c} for k, c in enumerate(_OTHER_CIPS)])
+
+
+def _fake_key(seed, n_cs=6):
+    import random, make_holdout_kit
+    rng = random.Random(seed)
+    src = _fake_source(n_cs)
+    weak = make_holdout_kit.draw_weak(rng, src)
+    items = {}
+    for n, it in enumerate(src, 1):
+        w = it["source_id"] in weak
+        wc = rng.randint(1, 3) if w else None
+        items[f"Q{n:02d}"] = {"cip": it["cip"], "asset_id": it["cip"], "candidate_type": "weakened" if w else "full_strength",
+                              "weakened_criterion": wc,
+                              "accepted_scores": [[0, 1] if c == wc else [1, 2] for c in (1, 2, 3)]}
+    return {"items": items}
+
+
+def _grades(scores):
+    return {h: {"scores": s} for h, s in scores.items()}
+
+
+def test_weakened_count_is_drawn_secretly_within_the_documented_ranges():
+    import random, make_holdout_kit
+    src = (ROOT / "make_holdout_kit.py").read_text()
+    assert "n // 2" not in src and "exactly half" not in src.lower()
+    for n_cs in (4, 6):
+        totals, cs_counts = set(), set()
+        for seed in range(3000):
+            weak = make_holdout_kit.draw_weak(random.Random(seed), _fake_source(n_cs))
+            n_cs_weak = sum(w.startswith("cs-") for w in weak)
+            assert 6 <= len(weak) <= 10 and 1 <= n_cs_weak <= 3 and n_cs_weak < n_cs  # CS always has both types
+            totals.add(len(weak)); cs_counts.add(n_cs_weak)
+        assert totals == set(range(6, 11)) and cs_counts == {1, 2, 3}  # the count varies; it is not a constant
+    with pytest.raises(SystemExit):
+        make_holdout_kit.draw_weak(random.Random(0), _fake_source(3))  # too few CS items for a per-major record
+
+
+def test_shortcut_grader_never_passes_and_perfect_grader_always_passes():
+    """Shortcut grader: scores one criterion 0 and the other two 2 on EVERY item. Even in its best case (it always picks
+    the true weakened criterion on weakened items) it passes the old detection+gap rule but never the rule with the
+    false-alarm limit. A perfect grader always passes."""
+    import random, score_holdout
+    rng = random.Random(12441)
+    n, old_pass, new_pass, perfect_pass, rnd_crit_pass = 2000, 0, 0, 0, 0
+    for seed in range(n):
+        key = _fake_key(seed, n_cs=6 if seed % 2 else 4)
+        sc, sc_rnd, perfect = {}, {}, {}
+        for h, k in key["items"].items():
+            c = k["weakened_criterion"] - 1 if k["candidate_type"] == "weakened" else rng.randrange(3)
+            sc[h] = [0 if i == c else 2 for i in range(3)]
+            c2 = rng.randrange(3)
+            sc_rnd[h] = [0 if i == c2 else 2 for i in range(3)]
+            perfect[h] = [0 if k["weakened_criterion"] == i + 1 else 2 for i in range(3)]
+        d = score_holdout.discrimination(key, _grades(sc))
+        old_pass += d["detection_rate"] >= 0.8 and d["mean_gap"] >= 1.0
+        new_pass += d["passed"]
+        assert d["false_alarm_rate"] == 1.0
+        rnd_crit_pass += score_holdout.discrimination(key, _grades(sc_rnd))["passed"]
+        p = score_holdout.discrimination(key, _grades(perfect))
+        perfect_pass += p["passed"]
+        assert p["detection_rate"] == 1.0 and p["false_alarm_rate"] == 0 and p["mean_gap"] == 2.0
+    assert old_pass == n  # the gap the merchant found: the old rule let the shortcut through
+    assert new_pass == 0 and rnd_crit_pass == 0
+    assert perfect_pass == n
+
+
+def test_random_flagging_grader_rarely_passes():
+    """A grader who cannot tell the types apart but flags a random subset of items (picking the right criterion on
+    weakened ones, its best case) passes the kit rule in under 3% of draws for every subset size."""
+    import random, score_holdout
+    rng = random.Random(7)
+    for n_flag in range(1, 19):
+        wins = 0
+        for seed in range(1500):
+            key = _fake_key(10_000 + seed)
+            ids = list(key["items"]); flagged = set(rng.sample(ids, n_flag))
+            sc = {}
+            for h, k in key["items"].items():
+                c = k["weakened_criterion"] - 1 if k["candidate_type"] == "weakened" else rng.randrange(3)
+                sc[h] = [0 if (i == c and h in flagged) else 2 for i in range(3)]
+            wins += score_holdout.discrimination(key, _grades(sc))["passed"]
+        assert wins / 1500 < 0.03, (n_flag, wins)
+
+
+def test_baseline_scores_are_exact_expected_agreements():
+    import score_holdout
+    full = {"candidate_type": "full_strength", "weakened_criterion": None, "accepted_scores": [[1, 2]] * 3}
+    weak = {"candidate_type": "weakened", "weakened_criterion": 2, "accepted_scores": [[1, 2], [0, 1], [1, 2]]}
+    best, b = score_holdout.baselines([full, full, full, weak])
+    assert b["uniform_random"] == round(2 / 3, 4)
+    assert b["all_2s"] == round((3 + 3 + 3 + 2) / 12, 4)
+    assert b["shortcut_one_criterion_0"] == round((2 / 3 * 3 + 1) / 4, 4)
+    assert best == max(b.values())
+    assert "baseline_score" in score_holdout.BASELINE_DEFINITION
+
+
+def test_holdout_crypto_round_trip_and_tamper_detection(tmp_path):
+    import holdout_crypto
+    pf = holdout_crypto.init_passphrase(tmp_path / "pp" / "passphrase")
+    assert oct(pf.stat().st_mode & 0o777) == "0o600" and oct(pf.parent.stat().st_mode & 0o777) == "0o700"
+    pw = holdout_crypto.read_passphrase(pf)
+    data = b'{"made_up": "pytest key"}\n'
+    p = tmp_path / "k.json.enc"
+    holdout_crypto.write_encrypted(p, data, pw, "holdout_key")
+    blob = p.read_bytes()
+    assert b"made_up" not in blob and oct(p.stat().st_mode & 0o777) == "0o600"
+    assert holdout_crypto.decrypt_bytes(blob, pw, "holdout_key") == data
+    with pytest.raises(SystemExit):
+        holdout_crypto.decrypt_bytes(blob, b"x" * 40, "holdout_key")  # wrong passphrase
+    with pytest.raises(SystemExit):
+        holdout_crypto.decrypt_bytes(blob, pw, "holdout_source")  # role is authenticated
+    env = json.loads(blob); ct = bytearray(__import__("base64").b64decode(env["ciphertext"])); ct[0] ^= 1
+    env["ciphertext"] = __import__("base64").b64encode(bytes(ct)).decode()
+    with pytest.raises(SystemExit):
+        holdout_crypto.decrypt_bytes(json.dumps(env).encode(), pw, "holdout_key")  # modified ciphertext
+
+
+def test_private_holdout_files_are_encrypted_at_rest():
+    """On a box that has the private directory: no plaintext key or source is left in it, the encrypted files are
+    envelopes, and the passphrase is kept outside /workspace and outside the repo."""
+    import holdout_crypto, make_holdout_kit
+    pp = pathlib.Path(holdout_crypto.DEFAULT_PASSPHRASE_FILE)
+    assert not str(pp).startswith("/workspace/") and ROOT.resolve() not in pp.parents
+    assert make_holdout_kit.PRIVATE.resolve() not in pp.parents
+    priv = make_holdout_kit.PRIVATE
+    if not priv.is_dir():
+        pytest.skip("private holdout directory not on this machine")
+    assert not (priv / "holdout_key.json").exists() and not (priv / "holdout_source.json").exists()
+    for name, role in (("holdout_key.json.enc", "holdout_key"), ("holdout_source.json.enc", "holdout_source")):
+        env = json.loads((priv / name).read_text())
+        assert env["format"] == holdout_crypto.FORMAT and env["role"] == role and set(env) == {"format", "role", "kdf", "nonce", "ciphertext"}
+
+
+SYNTH_SPEC = [(CS_CIP, "full_strength", None), (CS_CIP, "weakened", 2), (CS_CIP, "full_strength", None), (CS_CIP, "weakened", 3),
+              ("40.0501", "weakened", 1), ("52.0301", "full_strength", None), ("14.0801", "full_strength", None)]
+
+
+def _synthetic_kit(tmp_path, spec=SYNTH_SPEC):
+    """A small synthetic kit + ENCRYPTED made-up key + commitment in tmp (never the real private key)."""
+    import holdout_crypto
+    tmp_path.mkdir(parents=True, exist_ok=True)
     kit = tmp_path / "kit"; kit.mkdir()
     plans = {m["cip"]: m for m in json.loads((ROOT / "data/majors_selected.json").read_text())}
-    spec = [("11.0701", "full_strength", None), ("11.0701", "weakened", 2), ("11.0701", "full_strength", None),
-            ("40.0501", "weakened", 1), ("40.0501", "full_strength", None), ("40.0501", "weakened", 3)]
     items, key_items = [], {}
     for n, (cip, kind, wc) in enumerate(spec, 1):
         qid = f"Q{n:02d}"
@@ -698,7 +878,10 @@ def _synthetic_kit(tmp_path):
     items_b = (json.dumps({"kit": "synthetic", "created_at": "2026-10-02T12:00:00-05:00", "n_items": len(items), "items": items}) + "\n").encode()
     (kit / "items.json").write_bytes(items_b)
     key_b = json.dumps({"kit": "synthetic", "created_at": "2026-10-02T12:00:00-05:00", "nonce": os.urandom(32).hex(), "items": key_items}).encode()
-    keyp = tmp_path / "private" / "holdout_key.json"; keyp.parent.mkdir(); keyp.write_bytes(key_b)
+    priv = tmp_path / "private"; priv.mkdir()
+    pf = holdout_crypto.init_passphrase(tmp_path / "secret" / "passphrase")
+    keyp = priv / "holdout_key.json.enc"
+    holdout_crypto.write_encrypted(keyp, key_b, holdout_crypto.read_passphrase(pf), "holdout_key")
     (kit / "KEY_COMMITMENT.txt").write_text(f"key_sha256: {hashlib.sha256(key_b).hexdigest()}\n"
                                            f"items_json_sha256: {hashlib.sha256(items_b).hexdigest()}\n")
     root = tmp_path / "pack"
@@ -710,69 +893,184 @@ def _synthetic_kit(tmp_path):
         (root / "study_plans" / src.stem).mkdir()
         shutil.copy(sidecar(src) / "asset.json", root / "study_plans" / src.stem)
         (root / "study_plans" / src.name).write_text("synthetic")
-    return kit, keyp, root, items, key_items
+    return {"kit": kit, "key": keyp, "key_b": key_b, "pf": pf, "root": root, "items": items, "key_items": key_items, "priv": priv}
 
 
-def _write_sheet(path, items, scores):
+def _write_sheet(path, items, scores, grader="pytest-synthetic"):
     with open(path, "w", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(["item_id", "major", "criterion_1", "score_1", "criterion_2", "score_2", "criterion_3", "score_3",
                     "factually_correct", "comments", "grader", "graded_at"])
-        for i in items:
+        for n, i in enumerate(items):
             s = scores[i["item_id"]]
-            w.writerow([i["item_id"], i["major"], "C1", s[0], "C2", s[1], "C3", s[2], "yes", "", "pytest-synthetic",
-                        "2026-10-02T12:00:00-05:00"])
+            g = grader[n % len(grader)] if isinstance(grader, list) else grader
+            w.writerow([i["item_id"], i["major"], "C1", s[0], "C2", s[1], "C3", s[2], "yes", "", g, "2026-10-02T12:00:00-05:00"])
 
 
-def _run_score(*args, private):
+def _run_score(*args, s):
     import subprocess
-    env = dict(os.environ, DREAMCO_HOLDOUT_PRIVATE_DIR=str(private))
-    return subprocess.run([sys.executable, str(ROOT / "score_holdout.py"), *map(str, args)], capture_output=True, text=True, env=env)
+    env = dict(os.environ, DREAMCO_HOLDOUT_PRIVATE_DIR=str(s["priv"]), DREAMCO_HOLDOUT_PASSPHRASE_FILE=str(s["pf"]))
+    return subprocess.run([sys.executable, str(ROOT / "score_holdout.py"), "--kit-dir", s["kit"], "--key", s["key"],
+                           "--root", s["root"], *map(str, args)], capture_output=True, text=True, env=env)
 
 
-def test_score_holdout_dry_run_shows_no_scores_and_all_2s_fails(tmp_path):
-    kit, keyp, root, items, key_items = _synthetic_kit(tmp_path)
-    priv = keyp.parent
-    blank = _run_score("--kit-dir", kit, "--sheet", KIT / "grading_sheet.csv", "--root", root, private=priv)
-    assert blank.returncode != 0
-    perfect = {h: k["expected_scores"] for h, k in key_items.items()}
-    _write_sheet(kit / "grading_sheet.csv", items, perfect)
-    dry = _run_score("--kit-dir", kit, "--key", keyp, "--root", root, private=priv)
-    out = dry.stdout + dry.stderr
-    assert dry.returncode == 0 and "No scores were computed" in out
-    assert not re.search(r"score=|passed=|agreement|detection|\d\.\d", out) and not (root / "data/dreamco_knowledge").exists()
-    # --finalize refuses until grading is declared final
-    nofinal = _run_score("--kit-dir", kit, "--key", keyp, "--root", root, "--finalize", "--run-id", "20261002-91", private=priv)
-    assert nofinal.returncode != 0 and not (root / "data/dreamco_knowledge").exists()
-    (kit / "GRADING_FINAL.txt").write_text("FINAL: grader=pytest-synthetic; declared_at=2026-10-02T13:00:00-05:00\n")
-    # a tampered key is refused
-    bad = tmp_path / "bad_key.json"; bad.write_bytes(keyp.read_bytes() + b" ")
-    r = _run_score("--kit-dir", kit, "--key", bad, "--root", root, "--finalize", "--run-id", "20261002-92", private=priv)
-    assert r.returncode != 0 and "KEY_COMMITMENT" in (r.stdout + r.stderr)
-    # all 2s: nothing detected, every record fails
-    _write_sheet(kit / "grading_sheet.csv", items, {h: [2, 2, 2] for h in key_items})
-    r = _run_score("--kit-dir", kit, "--key", keyp, "--root", root, "--finalize", "--run-id", "20261002-93", private=priv)
+def _declare(s, grader="pytest-synthetic"):
+    r = _run_score("--declare-final", "--grader", grader, s=s)
     assert r.returncode == 0, r.stderr
-    recs = sorted((root / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-93.json"))
-    assert len(recs) == 2
-    sch = evidence_schema()
+    return r
+
+
+def _resolve_results(root, rec):
+    """results_path is relative to the same root as evidence_root (the repository root); map it into a pack root."""
+    assert rec["results_path"].startswith(rec["evidence_root"] + "/") and rec["evidence_root"] == build.EVIDENCE_ROOT
+    return root / rec["results_path"][len("study_packs/career_pathways/"):]
+
+
+def _perfect(s):
+    return {h: k["expected_scores"] for h, k in s["key_items"].items()}
+
+
+def test_score_holdout_dry_run_never_opens_the_key_and_is_identical_across_sheets(tmp_path):
+    s = _synthetic_kit(tmp_path)
+    blank = _run_score("--sheet", KIT / "grading_sheet.csv", s=s)
+    assert blank.returncode != 0
+    import random
+    rng = random.Random(3)
+    sheets = [_perfect(s), {h: [2, 2, 2] for h in s["key_items"]}, {h: [0, 0, 0] for h in s["key_items"]},
+              {h: [rng.randrange(3) for _ in range(3)] for h in s["key_items"]}]
+    # the key and passphrase do not exist for these runs: the dry run must not need them
+    nokey = dict(s, key=tmp_path / "absent.enc", pf=tmp_path / "absent-passphrase")
+    outs = set()
+    for n, sc in enumerate(sheets):
+        _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], sc)
+        r = _run_score(s=nokey)
+        outs.add((r.returncode, r.stdout, r.stderr))
+        assert r.returncode == 0 and "No scores were computed" in r.stdout
+        assert not re.search(r"score=|passed=|agreement|detection|\d\.\d", r.stdout + r.stderr)
+    assert len(outs) == 1  # same output and exit code whatever the scores
+    assert not (s["root"] / "data/dreamco_knowledge").exists() and not (s["kit"] / "GRADING_FINAL.txt").exists()
+    src = (ROOT / "score_holdout.py").read_text()
+    dry = src.split("if not a.finalize:", 1)[1].split("finalize(a, kit", 1)[0]
+    assert "key" not in dry and "decrypt" not in dry  # the dry-run branch has no key access
+
+
+def test_finalize_requires_a_locked_sheet_and_one_matching_grader(tmp_path):
+    s = _synthetic_kit(tmp_path)
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s))
+    r = _run_score("--finalize", "--run-id", "20261002-91", s=s)
+    assert r.returncode != 0 and "GRADING_FINAL.txt" in r.stderr  # not declared final yet
+    (s["kit"] / "GRADING_FINAL.txt").write_text("FINAL: grader=pytest-synthetic; declared_at=2026-10-02T13:00:00-05:00\n")
+    r = _run_score("--finalize", "--run-id", "20261002-91", s=s)
+    assert r.returncode != 0 and "sheet_sha256" in r.stderr  # the old line without the sheet hash is not enough
+    (s["kit"] / "GRADING_FINAL.txt").unlink()
+    r = _run_score("--declare-final", "--grader", "someone-else", s=s)
+    assert r.returncode != 0 and not (s["kit"] / "GRADING_FINAL.txt").exists()
+    _declare(s)
+    final = (s["kit"] / "GRADING_FINAL.txt").read_text()
+    assert f"sheet_sha256={sha(s['kit'] / 'grading_sheet.csv')}" in final
+    assert _run_score("--declare-final", "--grader", "pytest-synthetic", s=s).returncode != 0  # declared once
+    # the sheet is locked: any change after the declaration is refused
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], {h: [2, 2, 2] for h in s["key_items"]})
+    r = _run_score("--finalize", "--run-id", "20261002-92", s=s)
+    assert r.returncode != 0 and "sheet_sha256" in r.stderr and not (s["root"] / "data/dreamco_knowledge").exists()
+    # two graders on the sheet, or a grader other than the declared one, is refused
+    for g in (["pytest-synthetic", "second-grader"], "someone-else"):
+        _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s), grader=g)
+        (s["kit"] / "GRADING_FINAL.txt").write_text("FINAL: grader=pytest-synthetic; declared_at=2026-10-02T13:00:00-05:00; "
+                                                    f"sheet_sha256={sha(s['kit'] / 'grading_sheet.csv')}\n")
+        r = _run_score("--finalize", "--run-id", "20261002-93", s=s)
+        assert r.returncode != 0 and "exactly one grader" in r.stderr
+    assert not (s["root"] / "data/dreamco_knowledge").exists()
+
+
+def test_finalize_verifies_the_encrypted_key_against_the_commitment(tmp_path):
+    import holdout_crypto
+    s = _synthetic_kit(tmp_path)
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s))
+    _declare(s)
+    pw = holdout_crypto.read_passphrase(s["pf"])
+    bad = tmp_path / "bad_key.json.enc"
+    holdout_crypto.write_encrypted(bad, s["key_b"] + b" ", pw, "holdout_key")  # a different key, validly encrypted
+    r = _run_score("--finalize", "--run-id", "20261002-92", s=dict(s, key=bad))
+    assert r.returncode != 0 and "KEY_COMMITMENT" in r.stderr
+    wrong_pf = tmp_path / "wrong" / "passphrase"; holdout_crypto.init_passphrase(wrong_pf)
+    r = _run_score("--finalize", "--run-id", "20261002-92", s=dict(s, pf=wrong_pf))
+    assert r.returncode != 0 and "cannot decrypt" in r.stderr
+    assert not (s["root"] / "data/dreamco_knowledge").exists() and not (s["kit"] / "FINALIZED.txt").exists()
+
+
+def test_all_2s_fails_and_a_key_commitment_is_finalized_only_once(tmp_path):
+    s = _synthetic_kit(tmp_path)
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], {h: [2, 2, 2] for h in s["key_items"]})
+    _declare(s)
+    r = _run_score("--finalize", "--run-id", "20261002-93", s=s)
+    assert r.returncode == 0, r.stderr
+    recs = sorted((s["root"] / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-93.json"))
+    assert len(recs) == 4
     for rp in recs:
         rec = json.loads(rp.read_text())
-        for f in sch["required_fields"] + ["split", "n_items", "metric", "score", "threshold", "passed"]:
-            assert rec.get(f) not in (None, ""), f
-        assert rec["passed"] is False and rec["integrity_hash"] == "sha256:" + sha(root / rec["results_path"])
-        res = json.loads((root / rec["results_path"]).read_text())
+        assert rec["passed"] is False and rec["integrity_hash"] == "sha256:" + sha(_resolve_results(s["root"], rec))
+        res = json.loads(_resolve_results(s["root"], rec).read_text())
         assert res["kit_discrimination"]["passed"] is False and res["kit_discrimination"]["detection_rate"] == 0
-    # the expected scores pass
-    _write_sheet(kit / "grading_sheet.csv", items, perfect)
-    r = _run_score("--kit-dir", kit, "--key", keyp, "--root", root, "--finalize", "--run-id", "20261002-94", private=priv)
+    assert "20261002-93" in (s["kit"] / "FINALIZED.txt").read_text()
+    # a second finalize of the same key commitment is refused, under a new run id too, even with a new sheet
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s))
+    (s["kit"] / "GRADING_FINAL.txt").unlink(); _declare(s)
+    for run in ("20261002-94", "20261003-01", "20261002-93"):
+        r = _run_score("--finalize", "--run-id", run, s=s)
+        assert r.returncode != 0 and "already finalized" in r.stderr
+    (s["kit"] / "FINALIZED.txt").unlink()  # the results files alone also block it
+    r = _run_score("--finalize", "--run-id", "20261002-95", s=s)
+    assert r.returncode != 0 and "already finalized" in r.stderr
+    assert not list((s["root"] / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-9[45].json"))
+
+
+def test_perfect_grading_passes_only_eligible_assets_with_honest_record_fields(tmp_path):
+    s = _synthetic_kit(tmp_path)
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s), grader="Irean")
+    _declare(s, "Irean")
+    r = _run_score("--finalize", "--run-id", "20261002-94", s=s)
     assert r.returncode == 0, r.stderr
-    recs = sorted((root / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-94.json"))
-    assert len(recs) == 2 and all(json.loads(x.read_text())["passed"] is True for x in recs)
-    # append-only: an existing run id is refused
-    r = _run_score("--kit-dir", kit, "--key", keyp, "--root", root, "--finalize", "--run-id", "20261002-94", private=priv)
-    assert r.returncode != 0
-    assert not (EVIDENCE_DIR / "holdout").exists()
+    sch = evidence_schema()
+    recs = {json.loads(p.read_text())["evidence_id"].split(":")[1]: json.loads(p.read_text())
+            for p in (s["root"] / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-94.json")}
+    plans = {m["cip"]: m["asset_id"] for m in json.loads((ROOT / "data/majors_selected.json").read_text())}
+    assert set(recs) == {plans[c] for c, _, _ in SYNTH_SPEC}
+    for aid, rec in recs.items():
+        for f in sch["required_fields"] + ["split", "n_items", "metric", "score", "threshold", "passed", "baseline_score"]:
+            assert rec.get(f) not in (None, ""), f
+        assert rec["split"] == "holdout" and rec["grader"] == "Irean"
+        res_p = _resolve_results(s["root"], rec)
+        assert rec["integrity_hash"] == "sha256:" + sha(res_p)
+        res = json.loads(res_p.read_text())
+        assert res["split"] == "holdout" and res["graders"] == ["Irean"] and res["declared_final"]["grader"] == "Irean"
+        assert res["grading_sheet_sha256"] == res["declared_final"]["sheet_sha256"] == sha(s["kit"] / "grading_sheet.csv")
+        assert 0 < rec["baseline_score"] == res["baseline_score"] == max(res["baselines"].values()) <= 1
+        assert rec["baseline_definition"] == res["baseline_definition"]
+        assert "Irean" in rec["limitations"] and "owner" in rec["limitations"] and rec["limitations"] == res["limitations"]
+        assert "single human grader who is also the owner" not in rec["limitations"]  # built from the sheet, not hard-coded
+        assert res["kit_discrimination"]["passed"] is True and rec["score"] == 1.0
+        elig = res["per_asset_eligibility"]
+        if aid == plans[CS_CIP]:
+            assert elig["eligible"] and elig["n_items"] == 4 and rec["passed"] is True
+        else:  # single-item majors only count toward the kit-level check
+            assert not elig["eligible"] and elig["n_items"] == 1 and rec["passed"] is False and elig["reason"]
+
+
+def test_shortcut_sheet_fails_finalize_on_false_alarms(tmp_path):
+    s = _synthetic_kit(tmp_path)
+    sc = {h: ([0 if c == k["weakened_criterion"] else 2 for c in (1, 2, 3)] if k["candidate_type"] == "weakened" else [2, 0, 2])
+          for h, k in s["key_items"].items()}
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], sc)
+    _declare(s)
+    r = _run_score("--finalize", "--run-id", "20261002-95", s=s)
+    assert r.returncode == 0, r.stderr
+    for p in (s["root"] / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-95.json"):
+        rec = json.loads(p.read_text())
+        res = json.loads(_resolve_results(s["root"], rec).read_text())
+        d = res["kit_discrimination"]
+        assert d["detection_rate"] == 1.0 and d["mean_gap"] >= 1.0 and d["false_alarm_rate"] == 1.0
+        assert d["passed"] is False and rec["passed"] is False
 
 
 def test_make_holdout_kit_cannot_regenerate_the_key_from_committed_inputs(tmp_path):
@@ -784,10 +1082,9 @@ def test_make_holdout_kit_cannot_regenerate_the_key_from_committed_inputs(tmp_pa
     assert {f.name: f.read_bytes() for f in KIT.iterdir()} == before
     src = (ROOT / "make_holdout_kit.py").read_text()
     assert "secrets.randbits" in src and not re.search(r"random\.(seed|Random)\(\s*\d", src)
-    assert not list(ROOT.rglob("holdout_source.json")) and not list(ROOT.rglob("holdout_key.json"))
-
-
-
+    assert "n_weakened" not in src.split("print(", 1)[-1]  # the drawn count is never printed
+    for pat in ("holdout_source.json*", "holdout_key.json*", "write_source.py*", "passphrase"):
+        assert not list(ROOT.rglob(pat)), pat
 
 
 def test_data_dictionary_covers_every_output_field():

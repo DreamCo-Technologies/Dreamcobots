@@ -1,291 +1,327 @@
-# Blind holdout items (edu-career-pathways blind holdout v2 (rubric discrimination))
+# Blind holdout items (edu-career-pathways blind holdout v3 (rubric discrimination))
 
-Drawn 2026-10-02T19:42:30-05:00. 16 items. Read `README.md` first. Score each candidate answer against its own rubric, 0 to 2 per criterion, in `grading_sheet.csv`.
+Drawn 2026-10-02T20:32:46-05:00. 18 items. Read `README.md` first. Score each candidate answer against its own rubric, 0 to 2 per criterion, in `grading_sheet.csv`.
 
 ## Q01. Computer Science (CIP 11.0701)
 
-**Scenario prompt.** A team's continuous-integration pipeline fails about one run in eight, and engineers have started re-running jobs until they go green. You have just joined as a developer and are asked to propose how to find and fix the flaky tests within two weeks without freezing feature work. Write a short plan.
+**Scenario prompt.** Your team owns a public REST API that about forty partner companies call. The order total is returned as a whole number of cents, and it must become a decimal string so that currencies with three decimal places can be supported. You are asked how to make the change without breaking partners. Write a short plan.
 
 **Candidate answer.**
 
-- **Data:** Export the last 60 days of CI results and compute each test's failure rate on commits where the same test passed on retry with no code change.
-- **Ranking:** Sort tests by failure rate times how often they run, so the ten that waste the most developer time get fixed first.
-- **Reproduction:** Run each suspect 200 times in a loop and again in randomized order, to separate timing problems from order dependence or shared fixtures.
-- **Typical fixes:** Replace fixed sleeps with waits on explicit conditions, reset global state between tests, and stub the external payment sandbox the suite calls.
-- **Guardrails:** Quarantine a test only with a named owner and a ten-day deadline, list quarantined tests on the team dashboard, and block merges that add a test failing a 50-run check.
+- **Amount field:** Change total_cents from a number to a decimal string in place, because most client libraries parse JSON values loosely and should adapt.
+- **Versioning:** Keep the current version number, since the field name does not change, and describe the new string format in the changelog for this release.
+- **Partner notice:** Email every partner the change, sample responses and a removal date six months out, and keep a list of partners who confirm they have switched.
+- **Testing:** Replay a day of recorded partner requests against the new build and run the contract tests from the partner client libraries before release.
+- **Rollout:** Turn on the new field for five percent of traffic first, watch error rates per partner, and keep a switch that can turn it off within minutes.
 
 **Rubric (0 to 2 points each).**
 
-1. Measurement: Quantifies flakiness from CI history (per-test failure rates on unchanged code, retries that pass) and prioritizes by cost, rather than relying on anecdotes.
-2. Root-cause approach: Reproduces failures deliberately (many repeated or reordered runs) and targets real causes such as timing waits, shared state, order dependence or live external services.
-3. Process safeguards: Quarantines only with an owner and deadline, keeps quarantined tests visible, and stops new flaky tests from merging without hiding real failures.
+1. Backward compatibility: Keeps existing clients working by adding a new field or a new API version alongside the old one, instead of changing the type or meaning of the field they already read.
+2. Partner communication: Tells partners early with a clear deprecation date, migration notes and example responses, and tracks which partners have not yet moved to the new field.
+3. Rollout safety: Tests the change against real client usage (contract tests or recorded traffic), releases it gradually while watching errors, and keeps a quick way to switch it off.
 
-## Q02. Registered Nursing/Registered Nurse (CIP 51.3801)
+## Q02. Computer Science (CIP 11.0701)
 
-**Scenario prompt.** On a surgical ward, a patient one day after bowel surgery has a heart rate that rose from 88 to 118 over four hours, a 38.4 °C fever and new confusion. The night shift is busy. Describe your assessment, escalation and handover.
+**Scenario prompt.** A scheduling app sends appointment reminders an hour early or late for some users twice a year, and a few reminders go out twice. The team suspects time zone handling. You are asked to find the bug and fix it properly. Write a short plan.
 
 **Candidate answer.**
 
-- **Assess:** Recheck blood pressure, breathing rate, oxygen saturation and pain, work out the early warning score, and examine the abdomen and wound.
-- **Fluids and output:** Review the fluid balance and hourly urine output, since falling output with a rising heart rate can signal sepsis or a leak.
-- **Escalate:** Note the changes for the morning ward round, and page the surgical doctor if the heart rate is still above 120 at the next check.
-- **Sepsis steps:** Give the charted paracetamol for the fever and encourage oral fluids, then decide later in the shift whether further tests are needed.
-- **Record:** Document times and findings, repeat observations at least every half hour, and hand over the plan and pending results face to face.
+- **Pattern:** Pull the reminders that went out early or late and confirm they cluster on the weekends when clocks change, mostly for users outside the server's own zone.
+- **Bug location:** Trace the code that saves appointments and find that it stores a fixed UTC offset taken at booking time instead of the user's named time zone.
+- **Fix:** Store each appointment as local time plus a zone name such as America/Chicago, and compute the UTC send time from the zone rules when each reminder is scheduled.
+- **Edge hours:** Define what happens for times in the skipped spring hour and the repeated autumn hour, and keep a sent flag so a reminder can never go out twice.
+- **Tests:** Ask the team to check reminders by hand on the next two clock-change weekends, and add a line to the release checklist reminding everyone about time zones.
 
 **Rubric (0 to 2 points each).**
 
-1. Assessment: Completes a focused assessment (blood pressure, breathing rate, oxygen saturation, early warning score, urine output, abdomen and wound) and recognises possible sepsis or an anastomotic leak.
-2. Escalation: Escalates promptly to the responsible doctor or rapid response team using a structured format and prepares for time-critical sepsis care as ordered.
-3. Documentation and handover: Records times and findings, sets frequent reassessment, and hands over the plan and pending results clearly.
+1. Diagnosis: Links the errors to daylight saving changes by checking which users and dates were affected, and finds where times are stored or converted without a proper time zone.
+2. Correct design: Stores appointment times with the user's named time zone (not a fixed offset), converts at send time, and handles the skipped and repeated hour explicitly.
+3. Testing: Adds automated tests for the daylight saving transitions in several zones, including the repeated hour, and uses a controllable clock so the tests do not depend on the real date.
 
-## Q03. Marketing/Marketing Management, General (CIP 52.1401)
+## Q03. Computer Science (CIP 11.0701)
 
-**Scenario prompt.** An online store planned a two-week test of a new checkout button but stopped it on day six, when variant B was converting at 4.1% against 3.8% for the current design. The head of marketing wants to roll out B to all customers. Write your advice.
+**Scenario prompt.** Customers of an online store are occasionally charged twice for one order. Logs show that the mobile app retries the payment request when the network times out, and the server processes both requests. You are asked to fix this and make sure it cannot quietly happen again. Write a short plan.
 
 **Candidate answer.**
 
-- **Early stop:** Stopping on the day B pulled ahead raises the chance of a false win, because repeated looks at the data make chance gaps look real.
-- **Evidence needed:** A 0.3-point gap needs a sample size fixed in advance and a confidence interval, run over full weeks to cover weekday patterns.
-- **Right metric:** Compare revenue per visitor and not conversion alone, since a button can lift orders while lowering the average basket.
-- **Segments:** Check mobile and desktop separately, because checkout buttons often behave differently on small screens.
-- **Advice:** Restart the test for the full planned two weeks, agree the decision rule now, and roll out B only if it still wins.
+- **Confirm cause:** Match payment logs by order and card over the last ninety days to count duplicate charges, and confirm each pair came from an app retry after a timeout.
+- **Retry key:** Have the app create a unique idempotency key for each checkout attempt and send that same key on every retry of the payment request.
+- **Server check:** Store each key with the payment result in the same transaction, and when a key repeats, return the stored result instead of calling the card processor again.
+- **Customers:** Refund every confirmed duplicate automatically, email the affected customers with an apology, and give the support team a list of the cases.
+- **Guardrails:** Add a nightly reconciliation that flags two charges for one order, plus an automated test that cuts the network mid-payment and expects a single charge.
 
 **Rubric (0 to 2 points each).**
 
-1. Statistical validity: Explains that stopping when a variant pulls ahead inflates false positives, and that a pre-set sample size, a confidence interval and full weekly cycles are needed.
-2. Business framing: Looks beyond conversion to revenue per visitor or order value, and checks segments such as mobile and desktop.
-3. Recommendation: Gives a clear next step with an agreed decision rule before any full rollout.
+1. Diagnosis: Confirms the cause from logs or traces by matching retried requests to duplicate charges, and estimates how many customers were affected and since when.
+2. Idempotent design: Makes the payment endpoint safe to retry, for example with a client-generated idempotency key stored with the result, so a repeated request returns the first outcome instead of charging again.
+3. Remediation and monitoring: Refunds affected customers, adds an alert or reconciliation check that would catch duplicates, and tests the retry path on purpose.
 
-## Q04. Psychology, General (CIP 42.0101)
+## Q04. Computer Science (CIP 11.0701)
 
-**Scenario prompt.** A student club wants to show that students who use a free study app earn higher grades. They plan to email a survey to app users only, asking for their grade average and their hours of app use. Your job is to strengthen the study before it launches.
+**Scenario prompt.** A web service's memory use climbs steadily for about two days after every deploy until the platform kills the container, and users see slow pages just before each restart. You are asked to find the cause and propose a fix. Write a short plan.
 
 **Candidate answer.**
 
-- **Main flaw:** Surveying only app users gives no comparison group, and motivated students may both use the app and earn higher grades for other reasons.
-- **Self-report:** Grade averages typed into a survey tend to drift upward, so use registrar records released with each student's written consent.
-- **Design:** Offer the app free to a random half of the volunteers for one term, and compare their change in grades with the other half.
-- **Measures:** Record prior grades, course load and weekly study hours for both groups, so the analysis can adjust for differences at the start.
-- **Ethics and size:** Get ethics board approval, store data without names, and recruit about 200 volunteers so a modest effect can be detected.
+- **Confirm pattern:** Plot resident memory across the last five deploys to confirm steady growth that resets only on restart, not spikes tied to traffic peaks.
+- **Heap comparison:** Take heap snapshots one hour and twelve hours after a restart on one instance, then diff object counts to see which types keep growing.
+- **Likely suspects:** Look first at the in-process response cache and the listeners added per request, since both can grow without bound; reproduce locally with a load script.
+- **Fix:** Give the cache a size limit with least-recently-used eviction and remove each listener when its request finishes, rather than scheduling restarts to hide the growth.
+- **Verify:** Add a one-hour soak test to the pipeline that fails if heap use grows past a set margin, and watch the memory graph for a week after release.
 
 **Rubric (0 to 2 points each).**
 
-1. Bias: Identifies that surveying only users gives no comparison group, that motivated students may self-select into using the app (confounding), and that self-reported grades are unreliable.
-2. Design: Proposes a comparison, ideally random assignment, and measures baseline differences such as prior grades and course load.
-3. Ethics and practicalities: Addresses consent, privacy of grade data, ethics approval and a sample large enough to detect a realistic effect.
+1. Evidence gathering: Confirms the pattern from metrics across several deploys and compares heap snapshots or allocation profiles taken at two points in time, instead of guessing from reading the code.
+2. Cause isolation: Narrows the growth to specific objects or code paths (caches with no size limit, listeners that are never removed, unbounded queues) and confirms the suspect with a small reproduction.
+3. Fix and verification: Fixes the cause instead of relying on restarts, adds a limit or an automated check that would catch the problem coming back, and confirms memory stays flat after release.
 
-## Q05. Statistics, General (CIP 27.0501)
+## Q05. Computer Science (CIP 11.0701)
 
-**Scenario prompt.** A health survey of 1,200 adults has 18% of income values missing, and respondents with missing income also report poorer health more often. A colleague plans to delete those rows and fit a regression of health on income. Write your advice.
+**Scenario prompt.** A security advisory says that a logging library used by your company's main web service has a flaw that lets attackers run code through crafted input. The fixed version renames some configuration options. You are asked to handle it today. Write a short plan.
 
 **Candidate answer.**
 
-- **Problem:** Because missing income goes with poorer health, the data are not missing completely at random, and deleting those rows can bias the income effect.
-- **Cost:** Deleting 18% of rows also throws away their health and age data and widens every confidence interval.
-- **Method:** Use multiple imputation with variables such as education, age, employment and the health outcome itself, creating about twenty imputed datasets.
-- **Pooling:** Fit the regression in each dataset and combine the estimates with Rubin's rules, so the extra uncertainty from imputation is kept.
-- **Sensitivity:** Report the missing-data pattern, compare with the complete-case result, and test how results change if non-response depends on income itself.
+- **Find usage:** Search the dependency lock files of every repository, including indirect dependencies, to list each service and build image that pulls in an affected version.
+- **Reachability:** Check whether user-supplied text such as headers or form fields reaches the logger in each service, and rank the internet-facing services first.
+- **Upgrade:** Move the main web service to the fixed release today and update its renamed configuration options, leaving the internal services for the next scheduled release cycle.
+- **Confirm:** Verify the running version in each deployment after release, and search the last month of logs for the crafted input patterns described in the advisory.
+- **Next time:** Turn on automatic dependency alerts for all repositories, and agree that every critical advisory is assigned an owner and handled on the same day.
 
 **Rubric (0 to 2 points each).**
 
-1. Missingness: Recognises that the data are not missing completely at random, so deleting rows can bias the estimate and also wastes information.
-2. Method: Recommends a principled method such as multiple imputation with auxiliary variables and the outcome, pooled with Rubin's rules (not single mean imputation).
-3. Sensitivity and reporting: Reports the missing-data pattern, compares with complete-case results and tests sensitivity to data missing not at random.
+1. Exposure assessment: Finds every service and build that includes an affected version, including indirect dependencies, and checks whether the vulnerable feature is reachable from untrusted input.
+2. Remediation: Upgrades every affected service to the fixed version (or applies the documented mitigation until it can), adjusts the renamed configuration, and redeploys rather than patching only the main service.
+3. Verification and follow-up: Confirms the fix is live in each deployment, looks for signs of past exploitation in the logs, and improves dependency alerts so the next advisory is caught sooner.
 
-## Q06. Computer Science (CIP 11.0701)
+## Q06. Mechanical Engineering (CIP 14.1901)
 
-**Scenario prompt.** A small startup stores user passwords as unsalted SHA-256 hashes in its main database. You are asked to recommend how to move to a safer scheme without forcing every user to reset their password on the same day. Write a short recommendation.
+**Scenario prompt.** A centrifugal pump in a factory cooling loop has vibrated noticeably since its motor was replaced last month, and the new motor bearings already run hot. Production wants it fixed during the next weekend shutdown. You are asked to plan the investigation and repair. Write a short plan.
 
 **Candidate answer.**
 
-- **Algorithm:** Move to Argon2id with a unique random salt per user, tuning memory and iterations so one hash takes about 250 ms on the login servers.
-- **Why change:** Unsalted SHA-256 is fast and identical passwords share hashes, so a leaked table can be cracked with precomputed lists in hours.
-- **Migration:** Right away, wrap every stored value as Argon2id of the old SHA-256 hash; at each later login, rehash the typed password directly and drop the wrapper.
-- **Old accounts:** Accounts that never log in again keep only the wrapped form, so no bare SHA-256 value remains, and nothing is ever stored or logged in plaintext.
-- **Risk steps:** Check the logs for past database exports, add login rate limits, and require resets only for accounts that appear in known breach lists.
+- **Measure:** Record vibration spectra in horizontal, vertical and axial directions at both motor and pump bearings, and log bearing temperatures under normal load.
+- **Compare:** Check the readings against the pump's records from before the motor change and against the vibration limits the site uses for this class of machine.
+- **Diagnose:** Since the vibration started with the new motor, treat it as a bearing defect in that motor and ask the supplier whether this model has known bearing faults.
+- **Repair:** During the shutdown, correct soft foot with shims, align the shafts with a laser alignment tool, and torque the base bolts to the specified values.
+- **Confirm:** Restart under load, repeat the same vibration and temperature measurements, and take weekly readings for a month to check that the bearings settle.
 
 **Rubric (0 to 2 points each).**
 
-1. Algorithm choice: Recommends a slow, salted password-hashing function (Argon2id, scrypt or bcrypt) with tuned cost settings and explains why fast unsalted hashes are unsafe.
-2. Migration path: Protects every stored credential right away (for example by wrapping the old hash in the new function) and upgrades at login, with no plaintext and no weak hashes left behind for inactive users.
-3. Risk handling: Considers whether the old hashes were already exposed, adds login rate limits or monitoring, and targets resets at accounts that are actually at risk.
+1. Data collection: Measures vibration (amplitude and frequency spectrum) and bearing temperature at defined points, and compares them with readings from before the replacement or a recognized limit.
+2. Diagnosis: Uses the vibration frequencies to separate likely causes such as shaft misalignment, imbalance, soft foot or looseness, and checks the motor installation, since the problem began with the replacement.
+3. Repair and check: Corrects the cause found (for example precision alignment with laser or dial tools), restarts under load, and confirms vibration and temperature are back within limits.
 
-## Q07. Biology/Biological Sciences, General (CIP 26.0101)
+## Q07. Computer Engineering, General (CIP 14.0901)
 
-**Scenario prompt.** In a teaching lab, three of eight bacterial plates streaked from the same stock show two colony types, and students suspect contamination. The practical exam uses this stock next week. Describe how you would confirm the problem and keep it from happening again.
+**Scenario prompt.** A battery-powered sensor board built around a microcontroller drains its battery in three weeks instead of the one year the design promised. The firmware and the circuit were both designed in-house. You are asked to find where the power goes and fix it. Write a short plan.
 
 **Candidate answer.**
 
-- **Confirm:** Re-streak each colony type for isolation and Gram stain both, comparing them with the expected organism's cell shape and colony appearance.
-- **Find the source:** Incubate uninoculated plates from the same media batch and streak the stock fresh with a sterile loop, to separate stock problems from technique.
-- **Recover:** If the stock is mixed, revive the frozen master vial or order a new culture, and pick one well-isolated colony for the working stock.
-- **Verify:** Streak the new working stock on two plates and confirm purity, including a Gram stain, before the exam, keeping one plate as a reference.
-- **Prevent:** Split stocks into single-use vials, label them with dates, log media batches, and run a short aseptic technique refresher for the students.
+- **Measure:** Log the board's current with a power analyzer across a full hour of normal operation, separating the sleep, sensing and radio transmit states.
+- **Firmware:** Check that the microcontroller really enters deep sleep between readings, that timers wake it only as often as needed, and that unused peripherals are switched off.
+- **Hardware:** Measure the sleep current of each supply rail, looking for leakage through pull-up resistors on idle lines and a regulator whose quiescent current is too high.
+- **Fix:** Correct the sleep entry in firmware, raise the pull-up resistor values, and swap in a low quiescent current regulator if the measurements show it matters.
+- **Confirm:** Once the fixes are in, leave one board running on the bench and check after a few days that its battery indicator still shows a full charge.
 
 **Rubric (0 to 2 points each).**
 
-1. Diagnosis: Isolates and characterises both colony types (streak for isolation, Gram stain, colony appearance) and uses media controls to tell a mixed stock from poor technique.
-2. Corrective action: Recovers a verified pure culture from a trusted source (frozen master or new purchase), starts from a single isolated colony and confirms purity before the exam.
-3. Prevention: Prevents recurrence with single-use stock vials, labelling, media batch records and aseptic technique practice.
+1. Measurement: Measures current over time with suitable equipment (a power analyzer, or a shunt with an oscilloscope) in each operating state, instead of estimating from datasheets.
+2. Cause finding: Checks both firmware (sleep modes not entered, wake-ups too frequent, peripherals left on) and hardware (leakage through pull-ups, regulators with high quiescent current).
+3. Fix and confirmation: Fixes the specific causes found, re-measures the full duty cycle, and recalculates expected battery life with margin for temperature and battery aging.
 
-## Q08. Computer Science (CIP 11.0701)
+## Q08. Biology/Biological Sciences, General (CIP 26.0101)
 
-**Scenario prompt.** A pull request adds a report endpoint that builds its SQL query by joining strings taken from URL parameters, including a sort column chosen by the user. You are the reviewer. Write the review comments you would leave.
+**Scenario prompt.** In a teaching lab, PCR reactions meant to detect a gene in plant samples show a band of the expected size in the no-template control on three days in a row. Students are about to start a two-week project with the same assay. You are asked what to do. Write a short plan.
 
 **Candidate answer.**
 
-- **Blocking issue:** The date and region values go straight into the SQL text, so a crafted URL can read or change any table this account can reach.
-- **Sort column:** Column names cannot be bound as parameters, so the user's sort choice stays an injection point even after the values are fixed.
-- **Fix:** Escape every quote character in the values before joining them, and strip spaces and semicolons from the sort option so it cannot carry a second statement.
-- **Account:** Keep the report on the application's existing database account for now, and revisit permissions when the reporting module grows.
-- **Tests and tone:** Please add tests that send quotes and semicolons in each parameter; the endpoint is useful and close to ready once this is fixed.
+- **Read control:** A product in the no-template control means something added DNA, so mark every result from those three days as invalid and tell the students why.
+- **Test sources:** Run fresh no-template controls that swap in new water, new primer dilutions and a new master mix one at a time to find the contaminated reagent.
+- **Equipment:** Wipe benches and pipettes with dilute bleach followed by water, and check whether the contamination follows one particular set of pipettes.
+- **Separate areas:** Set up reactions on a clean bench away from where gels are run, with its own pipettes and filter tips, and never bring amplified product back.
+- **Routine:** Split reagents into small single-use aliquots for each student group, and keep a no-template control in every run for the whole project.
 
 **Rubric (0 to 2 points each).**
 
-1. Vulnerability: Identifies SQL injection through the values and notes that the user-chosen sort column is a separate injection point because identifiers cannot be bound as parameters.
-2. Fix: Requires bound parameters for all values, an allow-list mapping for the sort column and direction, and a least-privilege database role.
-3. Review quality: Is specific and constructive, marks what blocks the merge, and asks for tests with hostile input.
+1. Interpreting the control: Recognizes that a band in the no-template control means contamination, so results from those runs cannot be trusted, and does not explain the band away.
+2. Finding the source: Tests the likely sources one at a time (water, primers, master mix, pipettes, bench) by swapping in fresh aliquots and running new controls.
+3. Prevention: Separates pre- and post-PCR work areas and equipment, uses filter tips and small single-use aliquots, and keeps a no-template control in every run.
 
-## Q09. Mechanical Engineering (CIP 14.1901)
+## Q09. Civil Engineering, General (CIP 14.0801)
 
-**Scenario prompt.** A steel mounting bracket on a packaging machine cracked after eight months, near a sharp inside corner. The supplier offers a thicker bracket of the same shape as the fix. Write your recommendation.
+**Scenario prompt.** A two-metre concrete block retaining wall beside a school car park has started to lean outward, and a crack has opened in the asphalt behind it after heavy rain. You are asked to assess the situation and recommend next steps. Write a short plan.
 
 **Candidate answer.**
 
-- **Cause:** Eight months of cycling and a crack at a sharp inside corner point to fatigue starting at a stress concentration, not a single overload.
-- **Evidence:** Check the fracture surface for beach marks and measure the machine's vibration at the bracket to learn the real load cycle.
-- **Design change:** Accept the thicker bracket and weld a gusset plate across the inside corner, stiffening the bracket exactly where the crack started.
-- **On thickness:** A thicker copy lowers the average stress in the bracket, so the crack should not return as long as the bolts stay properly tightened.
-- **Verify:** Estimate the peak stress with finite element analysis against the steel's fatigue limit, then confirm with strain gauges on a test bracket.
+- **Make safe:** Put a warning sign on the wall and ask drivers to take care when parking, keeping the spaces open so that the car park can still be used.
+- **Monitor:** Take photos of the lean and the crack today and compare them with new photos at the end of term to see whether anything has changed.
+- **Drainage:** Inspect the weep holes and the drain behind the wall, which may be blocked, and check whether water is building up in the soil after rain.
+- **Loads and design:** Find out whether cars now park closer to the wall than intended, and look for the original drawings, foundation details and any soil report.
+- **Remedy:** Have a chartered geotechnical engineer design the repair, such as restoring drainage, moving the parking back or rebuilding the wall with proper reinforcement.
 
 **Rubric (0 to 2 points each).**
 
-1. Failure analysis: Recognises fatigue cracking from cyclic loading at a stress concentration and gathers evidence (fracture surface marks, measured vibration or load cycles).
-2. Design change: Removes the stress concentration (generous fillet, smoother load path, welds kept away from the notch) and explains why extra thickness alone may not solve it.
-3. Verification: Checks the new design against the fatigue limit with analysis and tests it on the machine (for example with strain gauges).
+1. Safety first: Restricts access in front of and behind the wall straight away, and arranges regular monitoring of movement until the risk is understood.
+2. Investigation: Checks drainage (weep holes, blocked drains, water behind the wall), extra loads near the top of the wall, and the wall's original design and foundation.
+3. Remedy: Proposes a remedy matched to the cause, such as restoring drainage, removing the extra load or rebuilding to a proper design, prepared or reviewed by a qualified engineer.
 
-## Q10. Computer Engineering, General (CIP 14.0901)
+## Q10. Statistics, General (CIP 27.0501)
 
-**Scenario prompt.** A battery-powered soil sensor with a microcontroller and a radio resets at random in the field, mostly when it transmits on cold mornings. Bench tests at room temperature never reproduce it. Describe how you would find and fix the cause.
+**Scenario prompt.** A hospital reports that the average emergency department waiting time fell from 95 to 80 minutes after a new triage system started in March. The board wants to announce that the system cut waits by 15 minutes. You are the statistician asked to review the claim. Write a short response.
 
 **Candidate answer.**
 
-- **Likely cause:** Cold raises the battery's internal resistance, so the radio's current burst can pull the supply below the brown-out threshold.
-- **First clue:** Read the reset-cause register at every boot and send it with the next report, to confirm brown-out rather than watchdog or software faults.
-- **Measurement:** Put a unit in a freezer at minus 10 °C and capture the supply rail on an oscilloscope triggered by the transmit-enable pin.
-- **Load profile:** Measure the burst current with a current probe and compare the size of the dip with the brown-out level in the datasheet.
-- **Fix and check:** Add bulk capacitance next to the radio and soften the transmit start, then run 20 units for a week between minus 15 and 25 °C.
+- **Other changes:** Check whether March also brought extra staff, fewer patients or milder cases, since the winter months usually have the longest waits.
+- **Same measure:** Confirm that waiting time is still measured from arrival to first assessment, and that the new triage did not change when the clock starts.
+- **Analysis:** Fit an interrupted time series to two years of weekly waits, allowing for seasonal patterns, and compare with two hospitals that kept the old system.
+- **Uncertainty:** Report the estimated change with a confidence interval rather than a single figure, and check how much the estimate moves when a few weeks are left out.
+- **Message:** Suggest the board announce that the new triage system cut waits by 15 minutes, since a short and simple message is easier for the public to remember.
 
 **Rubric (0 to 2 points each).**
 
-1. Hypothesis: Connects the resets to supply droop during radio current bursts when cold raises battery resistance, and uses the reset-cause register to tell brown-out from watchdog or software faults.
-2. Measurement: Captures the transient supply dip during transmission under cold conditions (oscilloscope, current probe, cold chamber or freezer), not averages at room temperature.
-3. Fix and verification: Proposes a supply fix (bulk capacitance, softer transmit start, brown-out threshold) and verifies it on several units across the temperature range.
+1. Data and confounding: Checks for other changes over the same period (seasonal patterns, staffing, patient volume, case mix) and whether waiting time was measured the same way before and after.
+2. Analysis: Uses a method suited to before-and-after data with trends, such as an interrupted time series or a comparison with similar hospitals, and reports uncertainty.
+3. Communication: Gives the board a clear and honest statement of what the data support, with the uncertainty and caveats, and avoids overstating causation.
 
-## Q11. Chemistry, General (CIP 40.0501)
+## Q11. Marketing/Marketing Management, General (CIP 52.1401)
 
-**Scenario prompt.** A student measuring iron in water samples by UV-visible spectroscopy gets a calibration line with an R² of 0.999, but a check standard at 2.0 mg/L reads 2.4 mg/L. The sample results are due tomorrow. Describe what you would check and how you would report.
+**Scenario prompt.** A regional coffee chain launched a loyalty app three months ago. Sign-ups are high, but the owners cannot tell whether the app brings in extra visits or simply rewards customers who would have come anyway. You are asked how to find out. Write a short plan.
 
 **Candidate answer.**
 
-- **Why R² misleads:** A high R² shows the standards fit a straight line, not that they are correct, so a 20% bias in the check is a real problem.
-- **Check first:** Confirm the blank, the wavelength setting, cuvette cleanliness and path length, and that the standards were diluted from an in-date stock.
-- **Independent check:** Prepare the check standard from a second stock source, since agreement with it would point to an error in the calibration standards.
-- **Matrix:** Spike one sample with a known amount of iron and confirm recovery between 90 and 110% before trusting any sample results.
-- **Report:** Report the sample results on time after multiplying each by 2.0/2.4 to cancel the bias, and note that correction in the lab notebook.
+- **Holdout test:** For new sign-ups over the next two months, randomly keep ten percent on an app version without rewards, so their visits show what happens without the offer.
+- **Store comparison:** Also compare stores that promoted the app heavily with similar stores that did not, using the same weeks of last year as a baseline.
+- **Metrics:** Track visits per customer per month, average spend and the share still visiting after eight weeks, adjusting for the summer dip and other promotions.
+- **Decision rule:** Look at the results when they come in and decide then whether the app seems worth keeping, based on how customers and staff feel about it.
+- **Report:** Present the sign-up count and the strongest store result to the owners as the headline, since one clear message helps them back the app.
 
 **Rubric (0 to 2 points each).**
 
-1. Troubleshooting: Explains that a high R² does not prove accuracy and checks the blank, wavelength, cuvette, standard preparation and stock age.
-2. Corrective action: Uses an independent check standard and a spike recovery to locate the error, and recalibrates before measuring samples.
-3. Reporting and quality control: Withholds or clearly flags results until quality control passes against stated limits, documents the steps and communicates any delay; does not adjust data to hide the bias.
+1. Measurement design: Proposes a comparison that can show a causal effect, such as a randomized holdout group, a staggered rollout by store, or a matched comparison with behavior before launch.
+2. Metrics: Defines visit frequency, spend and retention per customer, compares them with a baseline, and accounts for seasonality and other promotions.
+3. Decision use: States in advance what result would justify keeping, changing or ending the app, including the cost of rewards, and reports uncertainty honestly.
 
-## Q12. Elementary Education and Teaching (CIP 13.1202)
+## Q12. Registered Nursing/Registered Nurse (CIP 51.3801)
 
-**Scenario prompt.** In a third-grade class, six students read aloud slowly and guess at unfamiliar words, while the rest read at grade level. You have 20 minutes a day for small-group work over six weeks. Describe your plan.
+**Scenario prompt.** On a medical ward, a patient with type 2 diabetes is found sweaty and confused at 06:00. The bedside glucose reading is 3.1 mmol/L (56 mg/dL), and the patient can still swallow. You are the nurse assigned to the patient. Describe what you do next.
 
 **Candidate answer.**
 
-- **Diagnose:** Give each of the six a short phonics screener and a one-minute oral reading check, since slow reading can come from different gaps.
-- **Group by need:** Group students who miss the same patterns, such as vowel teams or long words, rather than treating all six alike.
-- **Teach decoding:** Encourage students to use the picture and the first letter to predict each unfamiliar word, then ask whether their guess makes sense.
-- **Build fluency:** Give students a free choice of library books each week and quiet time for independent reading, to build their confidence and motivation.
-- **Monitor:** Repeat the one-minute check every two weeks, chart words correct per minute, regroup as students progress, and share the charts with families.
+- **Act now:** Stay with the patient, call a colleague, and give 15 to 20 grams of glucose gel or juice by mouth while the patient can still swallow safely.
+- **If worse:** If the patient becomes drowsy or cannot swallow, stop anything by mouth and follow the hypoglycemia protocol for IV glucose or IM glucagon.
+- **Recheck:** Repeat the glucose reading after 15 minutes, treat again if it is still below 4 mmol/L (70 mg/dL), then give a sandwich or the breakfast tray.
+- **Escalate:** Inform the doctor, and check the chart for the evening insulin or sulfonylurea dose and for whether the patient ate a full dinner.
+- **Prevent:** Document the event and treatment, ask for the diabetes medicines to be reviewed, and increase overnight glucose checks for the next two nights.
 
 **Rubric (0 to 2 points each).**
 
-1. Diagnosis: Uses quick assessments (phonics or decoding screener, timed oral reading) to find each student's specific gap instead of assuming one shared need.
-2. Instruction: Teaches the missing decoding patterns explicitly and builds fluency through modelled, repeated reading with feedback, and discourages guessing from pictures or first letters.
-3. Progress monitoring: Checks progress regularly with brief fluency measures, regroups students and keeps families informed.
+1. Immediate treatment: Gives 15 to 20 g of fast-acting carbohydrate by mouth while the patient can swallow safely, and is ready to use IV glucose or glucagon if the patient can no longer swallow.
+2. Reassessment: Rechecks glucose about 15 minutes later, repeats treatment if it is still low, then gives a longer-acting carbohydrate snack or meal and keeps monitoring.
+3. Escalation and prevention: Informs the prescriber, looks for the cause (insulin or sulfonylurea dose, missed meals), documents the event and adjusts the plan to prevent another episode.
 
-## Q13. Social Work (CIP 44.0701)
+## Q13. Chemistry, General (CIP 40.0501)
 
-**Scenario prompt.** During a first home visit to support an older adult after hospital discharge, you notice spoiled food and unopened medication packs, and the adult's son, who is the main carer, seems exhausted. The adult says everything is fine. Describe your response.
+**Scenario prompt.** A quality-control lab measures the acid content of vinegar by titration with sodium hydroxide. Over the past month, results have crept upward by about 3 percent, although the production process has not changed. You are the analyst asked to investigate. Write a short plan.
 
 **Candidate answer.**
 
-- **Talk privately:** Speak with the adult alone about meals, medicines and how care at home is going, and record their wishes in their own words.
-- **Gauge risk:** Check which medicines were missed since discharge and whether there is safe food, and note any signs of injury or fear.
-- **Procedure:** Discuss the visit with your supervisor the same day and follow the agency's adult safeguarding procedure, recording facts rather than opinions.
-- **Consent:** Respect the adult's choices if they have capacity, but share information without consent where policy requires it to prevent serious harm.
-- **Support:** Offer a carer's assessment to the son, ask the pharmacy for weekly packs, arrange meal support, and book a follow-up visit within a week.
+- **Confirm drift:** Plot the last two months of results on a control chart, and retest a retained sample from before the drift to show the change is in the measurement.
+- **Titrant:** Check the label on the sodium hydroxide bottle, which shows it was made up to the correct concentration from a certified solid when the quarter began.
+- **Equipment:** Ask the analysts to judge the colour change more carefully, since the drift is probably due to different people reading the endpoint differently.
+- **Correct:** Standardize fresh titrant against dried potassium hydrogen phthalate, rerun recent samples, and tell the supervisor which reported results may be affected.
+- **Prevent:** Standardize the titrant every week and run a check standard with each batch, plotted on a chart with a limit that triggers an investigation.
 
 **Rubric (0 to 2 points each).**
 
-1. Assessment: Speaks with the adult privately, respects their wishes, and assesses the specific risks (missed medicines, food, injury) and the carer's strain.
-2. Safeguarding duties: Consults a supervisor promptly and follows the agency's adult safeguarding procedure, recording facts, and understands when information must be shared to prevent serious harm.
-3. Support plan: Offers practical support (carer assessment, medication packs, meals) and sets a near follow-up date.
+1. Confirming the drift: Reviews the records and a control chart to date when the drift began, and confirms it is in the measurement, for example by retesting a retained or reference sample.
+2. Likely causes: Considers the titrant concentration (sodium hydroxide absorbs carbon dioxide and needs regular standardization), burette and pipette calibration, and endpoint judgment.
+3. Correct and prevent: Restandardizes or replaces the titrant, recalibrates equipment, reports possibly affected results, and adds a regular check standard or standardization schedule.
 
-## Q14. Computer Science (CIP 11.0701)
+## Q14. Psychology, General (CIP 42.0101)
 
-**Scenario prompt.** A search box must suggest up to ten product names as the user types, drawn from a catalog of 2 million names that changes a few hundred times per day. Suggestions must appear in under 50 ms. Propose a design and justify it.
+**Scenario prompt.** A university wellbeing society is asking whether a weekly mindfulness session reduces exam stress. Its organizers plan to compare the stress scores of members who chose to attend with those of members who did not. You are asked to advise them on a better study design. Write a short recommendation.
 
 **Candidate answer.**
 
-- **Index:** Keep names sorted in memory and find the prefix range by binary search, which costs about 21 comparisons per keystroke for 2 million entries.
-- **Ranking:** Store a precomputed top-ten list for every prefix of up to four characters, ranked by sales, so popular prefixes need no scan.
-- **Updates:** Apply the day's few hundred edits to a small delta list merged at query time, and rebuild the full index nightly into a fresh copy.
-- **Swap:** Switch readers to the rebuilt copy with a single atomic pointer change, so no query ever waits for a rebuild to finish.
-- **Checks:** Before launch, time a dozen sample prefixes on a laptop to confirm the average reply is under 50 ms, and review memory use once traffic arrives.
+- **Problem:** Students who choose to attend may already differ in stress or motivation, so comparing attenders with non-attenders cannot show what the sessions themselves do.
+- **Design:** Randomly assign volunteers to start the sessions now or after exams, and measure stress in both groups before the sessions begin and again in exam week.
+- **Measure:** Use a validated questionnaire such as the Perceived Stress Scale, given online at the same points for everyone, and record who stops taking part.
+- **Ethics:** Get informed consent, make clear that anyone can withdraw at any time, and offer the waitlist group the full set of sessions straight after exams.
+- **Claims:** Report the difference between groups with its uncertainty, and describe the result as one small study at one university rather than as proof.
 
 **Rubric (0 to 2 points each).**
 
-1. Data structure: Chooses a prefix-capable index (trie, or sorted list with binary search) with ranking for top suggestions, and justifies its cost per keystroke.
-2. Updates: Handles daily changes without blocking queries, for example a small delta plus a periodic rebuild swapped in atomically.
-3. Validation: Plans to verify tail latency (p95 or p99) with realistic keystroke traffic before launch, checks memory, and tests edge cases such as accents and letter case.
+1. Design: Recommends random assignment (for example a waitlist control) to remove self-selection, with stress measured before and after the sessions in both groups.
+2. Measurement: Uses a validated stress questionnaire, measures at comparable points relative to exams, and plans for dropouts and missing responses.
+3. Ethics and interpretation: Covers informed consent and the right to withdraw, offers the sessions to the control group later, and avoids claiming more than the study can show.
 
-## Q15. Accounting (CIP 52.0301)
+## Q15. Computer Science (CIP 11.0701)
 
-**Scenario prompt.** At year end, a retailer's physical stock count comes in 6% below the inventory ledger, about $180,000. Management wants to book the difference to cost of goods sold and close the books by Friday. As a junior accountant, write your response.
+**Scenario prompt.** A news site caches its home page for five minutes. Each time the cached copy expires during busy hours, hundreds of requests rebuild the page at once and the database slows to a crawl for about thirty seconds. You are asked to stop these slowdowns. Write a short plan.
 
 **Candidate answer.**
 
-- **Before booking:** Check cut-off for goods received or shipped near year end, stock in transit, and consigned goods held on behalf of others.
-- **Recount:** Recount the twenty highest-value items and compare unit costs in the ledger with recent invoices, to find pricing errors.
-- **Treatment:** Book the full $180,000 to cost of goods sold now to meet Friday, and reverse whatever part the investigation explains in the new year.
-- **Materiality:** Spread the entry over the last three months, so no single month shows an unusual margin, and note it in the close file.
-- **Follow-up:** Document every reconciling item and propose cycle counts by location, so a gap this large is caught during the year.
+- **Timing check:** Line up the slow periods with cache expiry times in the logs, and confirm that each slowdown begins the moment the home page entry expires.
+- **Root cause:** Count how many requests rebuild the page in the first second after expiry, which shows hundreds of identical database queries running at the same moment.
+- **Single rebuild:** Let the first request after expiry take a short lock and rebuild the page, while every other request keeps receiving the slightly stale copy.
+- **Spread expiry:** Add a small random offset to each cache lifetime, and refresh the home page in the background shortly before it expires during busy hours.
+- **Validate:** Replay a busy-hour burst in a load test before and after the change, then watch database load and page latency at expiry times for a week.
 
 **Rubric (0 to 2 points each).**
 
-1. Investigation: Checks cut-off, goods in transit, consignment stock, count accuracy and unit costs before accepting the difference.
-2. Accounting treatment: Adjusts inventory to the verified count in the correct period, records unexplained shrinkage with support, and treats materiality and disclosure with the controller and auditors.
-3. Controls and communication: Documents reconciling items, escalates appropriately and proposes controls such as cycle counts.
+1. Problem analysis: Connects the slowdowns to many simultaneous rebuilds right after expiry (a cache stampede) using timing evidence, rather than treating them as a general need for a bigger database.
+2. Mitigation: Ensures only one request rebuilds an expired entry (a lock or request coalescing) while others get the stale copy, and spreads expiry times so entries do not all expire together.
+3. Validation: Reproduces the burst in a load test before and after the change, and monitors database load and page latency around expiry times in production.
 
-## Q16. Civil Engineering, General (CIP 14.0801)
+## Q16. Social Work (CIP 44.0701)
 
-**Scenario prompt.** A new single-storey warehouse floor slab has developed cracks and a 25 mm dip near one corner within six months. Records show that corner was built on fill placed over a former drainage ditch. Outline your investigation and repair approach.
+**Scenario prompt.** A 14-year-old has missed about half of school days this term, and the school refers the family to you as a child and family social worker. Her mother works overnight at a warehouse, and the student looks after two younger siblings in the mornings. Describe how you would approach the case.
 
 **Candidate answer.**
 
-- **Monitor:** Survey slab levels on a grid now and then monthly, to learn whether the dip is still moving before a repair is chosen.
-- **Ground:** Dig test pits or drill boreholes at the corner and in a sound area, and compare the fill with the original compaction records.
-- **Cause:** Soft or poorly compacted fill over the old ditch is probably still consolidating, possibly wetted by water that still follows the ditch line.
-- **Water:** Look for leaking downpipes or a buried drain near that corner, since added water speeds up the settlement of loose fill.
-- **Repair:** Inject epoxy into the cracks and grind the raised edges flat, then pour a self-levelling topping over the dip so the floor reads level again.
+- **Meet family:** Visit at a time that suits the mother's shifts, speak with her and the student together and separately, and explain what you can keep private.
+- **Listen:** Ask the student how mornings work at home and how they feel about school, and record their views in their own words.
+- **Assess:** Look at the whole picture, including money, housing, the mother's health, who watches the younger children and whether they are safe, and how school is going.
+- **Young carer:** Arrange a young carer's assessment, and explore breakfast clubs, nursery places or relatives who could cover the morning school run.
+- **Plan:** Agree a written plan with the family and school, with named tasks such as a phased return timetable, and set a review meeting in four weeks.
 
 **Rubric (0 to 2 points each).**
 
-1. Investigation: Monitors levels over time and investigates the ground (test pits or boreholes, compaction records, water sources) before deciding.
-2. Cause: Explains settlement of soft or poorly compacted fill over the old ditch, possibly worsened by water, as distinct from ordinary shrinkage cracking.
-3. Repair: Stabilises the ground or supports the slab first (for example compaction grouting, piles or slab lifting) once movement is understood, then repairs the surface.
+1. Engagement: Meets the student and parent respectfully, together and separately, listens to their account, and explains the social worker's role and the limits of confidentiality.
+2. Assessment: Assesses the whole situation (caring load, money, housing, health, safety of the younger children, school factors) rather than treating it only as an attendance problem.
+3. Plan and coordination: Agrees a practical plan with the family and school, such as a young carer's assessment and morning childcare support, with named actions and a review date.
+
+## Q17. Accounting (CIP 52.0301)
+
+**Scenario prompt.** During the year-end audit of a furniture retailer, you notice that sales invoiced on the last three days of the year are much higher than in any other week, and several large orders were delivered in January. You are on the audit team. Describe how you would follow this up.
+
+**Candidate answer.**
+
+- **Risk:** Invoices raised just before year end for goods delivered in January may record revenue too early, which would overstate this year's sales and profit.
+- **Sample:** Ask the sales manager to confirm in writing that every December invoice relates to a December sale, and file that confirmation with the working papers.
+- **Control transfer:** Check when the customer took control under each contract, for example on delivery, and whether any bill-and-hold arrangements meet the required conditions.
+- **After year end:** Check that total sales for January look similar to last January, which would suggest that no December sales were brought forward.
+- **Conclude:** Total the errors found, project them to the population, compare with materiality and ask management to adjust, escalating to the partner if they refuse.
+
+**Rubric (0 to 2 points each).**
+
+1. Risk recognition: Identifies a revenue cut-off risk (revenue recorded before delivery or transfer of control) and explains why it matters for the reported results of the year.
+2. Audit procedures: Tests a sample of sales on both sides of year end against delivery records and contract terms, and reviews credit notes and returns issued after year end.
+3. Conclusion and reporting: Quantifies any misstatement, compares it with materiality, proposes adjustments to management and escalates if management refuses to adjust.
+
+## Q18. Elementary Education and Teaching (CIP 13.1202)
+
+**Scenario prompt.** In your fourth-grade class, a quiz shows that about a third of the students think 1/3 is larger than 1/2 because 3 is larger than 2. The unit test is in two weeks. You are the class teacher. Describe how you would respond.
+
+**Candidate answer.**
+
+- **Find reasoning:** Look at the wrong answers and talk briefly with a few students to confirm that they are treating the bottom number like a whole number.
+- **Check all:** Give a short task asking every student to compare pairs such as 1/4 and 1/6 and explain why, so each student's reasoning becomes visible.
+- **Model:** Have students fold paper strips into halves, thirds and quarters and compare the pieces, then place the same fractions on a number line.
+- **Connect:** Link the strips to symbols by asking why more equal parts make each part smaller, and have students explain the idea to a partner in their own words.
+- **Monitor:** Use two-minute exit tickets every few days, regroup students who still struggle for small-group work, and share progress with families.
+
+**Rubric (0 to 2 points each).**
+
+1. Diagnosing the misconception: Identifies the whole-number reasoning behind the error and checks each student's thinking (short interviews or a targeted task) rather than relying on the quiz score alone.
+2. Instruction: Uses concrete and visual models (fraction strips, number lines, fair-sharing tasks) to build the meaning of the denominator, then connects the models to symbols.
+3. Monitoring progress: Checks understanding with short follow-up tasks during the two weeks, and adjusts grouping or support for students who still struggle.
