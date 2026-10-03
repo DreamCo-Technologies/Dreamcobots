@@ -1,0 +1,226 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dreamco.edu.course_packet.v0.1",
+  "title": "DreamCo Course Packet (SET7 thin skeleton)",
+  "description": "Unit of certification per SET7_COURSE_MASTERY_FLOORS_AND_HOLDOUT_POLICY.md sec 2. Draft. Policy rules beyond structure are enforced by validate.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "course_id", "version", "title", "track", "objectives", "modules", "practice_bank", "holdout_bank", "grader_contract", "floors", "evidence_state", "evidence", "provenance", "open_gaps"],
+  "properties": {
+    "schema": {"const": "dreamco.edu.course_packet.v0.1"},
+    "course_id": {"type": "string", "pattern": "^(BC|SC|F)[A-Za-z0-9_.-]*$"},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$"},
+    "title": {"type": "string", "minLength": 1},
+    "track": {"enum": ["bootcamp", "school_college", "frontier_f_tier"]},
+    "is_example": {"type": "boolean", "description": "true = packet content is illustrative; cannot certify anything."},
+    "objectives": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/objective"}},
+    "modules": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/module"}},
+    "practice_bank": {"$ref": "#/$defs/practice_bank"},
+    "holdout_bank": {"$ref": "#/$defs/holdout_bank"},
+    "grader_contract": {"$ref": "#/$defs/grader_contract"},
+    "floors": {"$ref": "#/$defs/floors"},
+    "evidence_state": {"$ref": "#/$defs/evidence_state"},
+    "evidence": {"$ref": "#/$defs/evidence"},
+    "provenance": {"$ref": "#/$defs/provenance"},
+    "repo_references": {"type": "array", "description": "Observed repo facts quoted for context. NON-BINDING: never read as floors.", "items": {"$ref": "#/$defs/repo_reference"}},
+    "open_gaps": {"type": "array", "items": {"$ref": "#/$defs/gap"}}
+  },
+  "$defs": {
+    "evidence_state": {"enum": ["unknown", "registered", "baselined", "testing", "passed", "failed", "blocked", "repair", "retest", "mastered_candidate", "mastered"]},
+    "nullable_fraction": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "objective": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "statement", "observable"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "statement": {"type": "string", "minLength": 1},
+        "observable": {"const": true},
+        "is_example": {"type": "boolean"}
+      }
+    },
+    "concept": {
+      "type": "object", "additionalProperties": false,
+      "required": ["concept_id", "name", "prereqs"],
+      "properties": {
+        "concept_id": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "minLength": 1},
+        "prereqs": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "module": {
+      "type": "object", "additionalProperties": false,
+      "required": ["module_id", "title", "required", "prereqs", "concepts", "objective_ids"],
+      "properties": {
+        "module_id": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "minLength": 1},
+        "required": {"type": "boolean"},
+        "prereqs": {"type": "array", "items": {"type": "string"}},
+        "concepts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/concept"}},
+        "objective_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "practice_item_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "practice_item": {
+      "type": "object", "additionalProperties": false,
+      "required": ["item_id", "module_id", "kind", "prompt", "is_example"],
+      "properties": {
+        "item_id": {"type": "string", "minLength": 1},
+        "module_id": {"type": "string"},
+        "kind": {"enum": ["exercise", "novel_variant", "transfer", "adversarial", "retention"]},
+        "prompt": {"type": "string", "minLength": 1},
+        "expected_check": {"type": "string"},
+        "is_example": {"type": "boolean"},
+        "source_ref": {"type": "string"}
+      }
+    },
+    "practice_bank": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bank_id", "visibility", "ref", "allowed_uses", "items"],
+      "properties": {
+        "bank_id": {"type": "string", "minLength": 1},
+        "visibility": {"const": "practice"},
+        "ref": {"type": "string", "minLength": 1, "description": "Path/URI of the practice bank (may be public)."},
+        "allowed_uses": {"type": "array", "items": {"enum": ["train", "fine_tune", "rag", "lessons", "drills", "adaptive_samples"]}},
+        "items": {"type": "array", "items": {"$ref": "#/$defs/practice_item"}}
+      }
+    },
+    "holdout_bank": {
+      "type": "object", "additionalProperties": false,
+      "description": "Reference ONLY. Holdout stems/answers are never inlined in a packet.",
+      "required": ["bank_id", "sealed", "private_store_path", "store_status", "item_count", "forbidden_uses", "dual_control_required", "rotation", "public_disclosure"],
+      "properties": {
+        "bank_id": {"type": "string", "minLength": 1},
+        "sealed": {"const": true},
+        "private_store_path": {"type": "string", "minLength": 1, "description": "PLACEHOLDER until Dreamcobots standardizes a private eval store."},
+        "store_status": {"enum": ["placeholder_not_provisioned", "provisioned_empty", "active"]},
+        "item_count": {"type": ["integer", "null"], "minimum": 0},
+        "public_task_ids": {"type": "array", "items": {"type": "string"}, "description": "IDs only (no stems) already public in repo config."},
+        "forbidden_uses": {"type": "array", "minItems": 1, "items": {"enum": ["train", "fine_tune", "rag", "lessons", "prompts", "practice"]}},
+        "dual_control_required": {"const": true},
+        "rotation": {
+          "type": "object", "additionalProperties": false,
+          "required": ["cadence", "burned_item_policy", "isomorphism_screen"],
+          "properties": {
+            "cadence": {"enum": ["weekly"]},
+            "burned_item_policy": {"const": "retire_and_replace_before_any_claim"},
+            "isomorphism_screen": {"const": "fail_closed"},
+            "burned_item_ids": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "public_disclosure": {"const": "aggregate_scores_and_evidence_refs_only"}
+      }
+    },
+    "grader_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["grader_id", "grader_version", "type", "score_range", "timeout_s", "assistance_policy", "comparability_keys"],
+      "properties": {
+        "grader_id": {"type": "string", "minLength": 1},
+        "grader_version": {"type": ["string", "null"]},
+        "type": {"enum": ["deterministic", "rubric_human", "judge_panel_decorrelated", "hybrid"]},
+        "score_range": {"type": "array", "minItems": 2, "items": {"type": "number"}},
+        "timeout_s": {"type": ["number", "null"], "minimum": 0},
+        "assistance_policy": {"enum": ["none", "tools_only", "declared_external_assistance"]},
+        "judge_policy_disclosed": {"type": "boolean"},
+        "comparability_keys": {"type": "array", "minItems": 1, "items": {"enum": ["fixture_hash", "grader_version", "subject_version", "timeout_s", "assistance_policy"]}},
+        "entrypoint": {"type": ["string", "null"]},
+        "notes": {"type": "string"}
+      }
+    },
+    "approved_lowering": {
+      "type": "object", "additionalProperties": false,
+      "required": ["floor", "from", "to", "approved_by_human", "rationale", "approved_at"],
+      "properties": {
+        "floor": {"type": "string"},
+        "from": {"type": "number"},
+        "to": {"type": "number"},
+        "approved_by_human": {"type": "string", "minLength": 1},
+        "rationale": {"type": "string", "minLength": 10},
+        "approved_at": {"type": "string", "minLength": 10}
+      }
+    },
+    "floors": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fail_closed", "unit_practice_min", "course_exit_mean_min", "no_unit_below", "holdout_min", "transfer_tasks_min", "min_comparable_runs", "retention_retest_days", "critical_regressions_max", "basis", "approved_lowering"],
+      "properties": {
+        "fail_closed": {"const": true},
+        "unit_practice_min": {"$ref": "#/$defs/nullable_fraction"},
+        "course_exit_mean_min": {"$ref": "#/$defs/nullable_fraction"},
+        "no_unit_below": {"$ref": "#/$defs/nullable_fraction"},
+        "holdout_min": {"$ref": "#/$defs/nullable_fraction"},
+        "transfer_tasks_min": {"type": ["integer", "null"], "minimum": 0},
+        "min_comparable_runs": {"type": ["integer", "null"], "minimum": 0},
+        "retention_retest_days": {"type": ["integer", "null"], "minimum": 0},
+        "critical_regressions_max": {"type": ["integer", "null"], "minimum": 0},
+        "efficiency_envelope": {"type": ["object", "null"]},
+        "trust_suite_required": {"type": ["boolean", "null"]},
+        "basis": {"type": "string", "minLength": 1},
+        "todo": {
+          "type": "object", "additionalProperties": false,
+          "required": ["owners", "reason"],
+          "properties": {"owners": {"type": "array", "minItems": 1, "items": {"type": "string"}}, "reason": {"type": "string"}}
+        },
+        "approved_lowering": {"type": "array", "items": {"$ref": "#/$defs/approved_lowering"}}
+      }
+    },
+    "run": {
+      "type": "object", "additionalProperties": false,
+      "required": ["run_id", "bank", "rep_index", "fixture_hash", "grader_version", "subject_version", "started_at", "ended_at", "cost_usd", "latency_ms", "score", "unit_scores", "external_assistance", "safety_passed", "regression_passed", "simulated"],
+      "properties": {
+        "run_id": {"type": "string", "minLength": 1},
+        "bank": {"enum": ["baseline", "practice", "holdout", "transfer", "remediation_retest", "retention"], "description": "baseline + remediation_retest added v0.1.1 for scorecard_bridge F0/F3 mapping; they never count as holdout reps."},
+        "rep_index": {"type": "integer", "minimum": 1},
+        "fixture_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "grader_version": {"type": "string", "minLength": 1},
+        "subject_version": {"type": "string", "minLength": 1},
+        "started_at": {"type": "string", "minLength": 10},
+        "ended_at": {"type": "string", "minLength": 10},
+        "cost_usd": {"type": "number", "minimum": 0},
+        "latency_ms": {"type": "number", "minimum": 0},
+        "score": {"type": "number", "minimum": 0, "maximum": 1},
+        "unit_scores": {"type": "object"},
+        "critical_regressions": {"type": "integer", "minimum": 0},
+        "external_assistance": {"type": "boolean"},
+        "safety_passed": {"type": "boolean"},
+        "regression_passed": {"type": "boolean"},
+        "simulated": {"type": "boolean"},
+        "trace_ref": {"type": "string"},
+        "artifact_uri": {"type": "string", "minLength": 1, "description": "Optional. Scored-output artifact (not the fixture). Needed by the edu-mastery-scorecards cert gate."},
+        "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$", "description": "Optional. sha256 of the artifact_uri content (bare hex, as the scorecards schema requires). Never copied from fixture_hash."},
+        "evaluator": {"type": "string", "minLength": 1, "description": "Optional. Who graded the run (scorecards F4 needs an evaluator independent of the cert issuer)."},
+        "leakage_check": {"type": "object", "additionalProperties": false, "required": ["passed", "method"], "properties": {"passed": {"type": "boolean"}, "method": {"type": "string", "minLength": 1}}, "description": "Optional. Contamination/isomorphism check for this run (SET7 sec 4.3). The bridge treats a missing check as NOT passed."}
+      }
+    },
+    "evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["required_run_fields", "runs"],
+      "properties": {
+        "required_run_fields": {"type": "array", "items": {"type": "string"}},
+        "bundle_ref": {"type": ["string", "null"]},
+        "runs": {"type": "array", "items": {"$ref": "#/$defs/run"}}
+      }
+    },
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sources", "rights_note"],
+      "properties": {
+        "sources": {"type": "array", "items": {
+          "type": "object", "additionalProperties": false,
+          "required": ["repo", "path", "commit", "sha256"],
+          "properties": {"repo": {"type": "string"}, "path": {"type": "string"}, "commit": {"type": "string"}, "sha256": {"type": "string"}, "retrieved_at": {"type": "string"}}
+        }},
+        "rights_note": {"type": "string", "minLength": 1},
+        "license": {"type": ["string", "null"]}
+      }
+    },
+    "repo_reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "key", "value", "binding"],
+      "properties": {"path": {"type": "string"}, "key": {"type": "string"}, "value": {}, "binding": {"const": false}, "note": {"type": "string"}}
+    },
+    "gap": {
+      "type": "object", "additionalProperties": false,
+      "required": ["gap", "owner"],
+      "properties": {"gap": {"type": "string"}, "owner": {"type": "string"}, "blocking_states": {"type": "array", "items": {"$ref": "#/$defs/evidence_state"}}}
+    }
+  }
+}
