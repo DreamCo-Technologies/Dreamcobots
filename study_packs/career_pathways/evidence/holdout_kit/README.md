@@ -37,7 +37,7 @@ Kits are not evidence, so replacing them does not affect the append-only evidenc
    This writes `GRADING_FINAL.txt` in this folder with one line:
    `FINAL: grader=<your name>; declared_at=<ISO date-time with offset>; sheet_sha256=<sha256 of grading_sheet.csv>`
    (You can also write that line yourself; `sha256sum grading_sheet.csv` gives the hash.) After that, do not change the sheet: scoring refuses a sheet whose sha256 differs from `sheet_sha256`.
-9. Commit `grading_sheet.csv` and `GRADING_FINAL.txt` in git and push the commit. Push to the pull-request branch `edu-career-pathways/majors-onet-study-plans` (or `main`) of github.com/DreamCo-Technologies/Dreamcobots. Scoring refuses a sheet or declaration that is not committed, has uncommitted changes, or whose commit is not on one of those branches on GitHub.
+9. Commit `grading_sheet.csv` and `GRADING_FINAL.txt` in git and push the commit (recommended: as a signed commit from your own computer; see "Signed grading commit" below). Push to the pull-request branch `edu-career-pathways/majors-onet-study-plans` (or `main`) of github.com/DreamCo-Technologies/Dreamcobots. Scoring refuses a sheet or declaration that is not committed, has uncommitted changes, or whose commit is not on one of those branches on GitHub.
 
 Do not run `score_holdout.py --finalize` yourself, and do not look at its output before you have declared grading final.
 
@@ -46,18 +46,24 @@ Do not run `score_holdout.py --finalize` yourself, and do not look at its output
 Run this from a git clone of github.com/DreamCo-Technologies/Dreamcobots (such as `/workspace/dc-ecp`), on the branch the grading commit was pushed to, with network access to GitHub:
 
 ```
-python score_holdout.py --finalize --run-id <YYYYMMDD>-<NN>
+python score_holdout.py --finalize --run-id <YYYYMMDD>-<NN> [--require-signer <key>]
 git add data/dreamco_knowledge/evidence/holdout evidence/holdout_kit/REVEALED_KEY.json evidence/holdout_kit/FINALIZED.txt
-git commit -m "holdout evidence" && git push        # then: python build.py, and ask someone else to run verify_holdout.py
+git commit -m "holdout evidence" && git push        # ONE reveal commit: evidence, REVEALED_KEY.json and FINALIZED.txt together
+python score_holdout.py --record-shas --run-id <YYYYMMDD>-<NN>
+git add evidence/holdout_kit/VERIFIED_SHAS.json && git commit -m "holdout verified SHAs" && git push
+# then: python build.py, and ask someone else to run verify_holdout.py (and keep their own copy of VERIFIED_SHAS.json)
 ```
+
+The reveal must be its own later commit: `REVEALED_KEY.json` is added exactly once, after the grading commit, in the same commit as the evidence and `FINALIZED.txt`, and is never changed afterward. `--record-shas` runs `verify_holdout.verify()` on every record of the run and writes `VERIFIED_SHAS.json` with `grading_commit`, `reveal_commit`, `remote_branch` and `remote_tip_sha` (refusing unless every record verifies with the same SHAs).
 
 `--finalize` takes these steps. Every git call uses `/usr/bin/git` by absolute path (checked to be a root-owned executable; `git` is never looked up on `PATH`) with a minimal environment built from scratch: no inherited `GIT_*`, proxy or other variables, `HOME` and `XDG_*` in an empty temporary directory, `GIT_CONFIG_NOSYSTEM=1`, `GIT_CONFIG_GLOBAL=/dev/null`, and overrides for repository settings that could run commands (`core.fsmonitor`, hooks).
 1. Local clone: the kit directory must be exactly `<repo root>/study_packs/career_pathways/evidence/holdout_kit` and the output directory `<repo root>/study_packs/career_pathways/data/dreamco_knowledge/evidence/holdout`; `--sheet`, if given, must be the canonical `grading_sheet.csv`; the branch must be `edu-career-pathways/majors-onet-study-plans` or `main`; its remote URL must normalize to `github.com/DreamCo-Technologies/Dreamcobots` under a strict parse (https with no userinfo, port, query or fragment; `ssh://git@github.com/...`; or `git@github.com:...`; host exactly github.com; owner and repo in any case, with or without `.git`); no `url.*.insteadOf` rewriting; the sheet and `GRADING_FINAL.txt` tracked and clean. Their last commit is `grading_commit`.
 2. Real remote: `git ls-remote https://github.com/DreamCo-Technologies/Dreamcobots.git` for the allowed branches, then a fresh blobless fetch of them into a new temporary repository (the tips must match what ls-remote reported). `grading_commit` must equal or be an ancestor of the branch tip. Local `refs/remotes/...` are never used, and an unreachable remote is a refusal.
-3. A kit is scored once, enforced by history: it refuses if any commit reachable from the remote tips already contains `FINALIZED.txt`, `REVEALED_KEY.json` or a holdout results file for this key commitment, and also if any of those exists in the working tree.
-4. Inputs read once: `grading_sheet.csv`, `GRADING_FINAL.txt`, `items.json` and `KEY_COMMITMENT.txt` are read exactly once each, with `git show <grading_commit>:study_packs/career_pathways/evidence/holdout_kit/<file>`. Those exact bytes are hashed and graded; the working-tree files are never used for scoring, so swapping the sheet after the commit changes nothing. The sheet's sha256 must equal `sheet_sha256`, and the sheet must name exactly one grader, the one declared.
-5. Key: it decrypts the private key in memory, refuses unless its sha256 equals `key_sha256` in `KEY_COMMITMENT.txt`, and checks `items.json` against the commitment.
-6. Output: one record per asset with kit items, `holdout:<asset_id>:<run>` under `data/dreamco_knowledge/evidence/holdout/<asset_id>/`, plus its results file; then `REVEALED_KEY.json` (the exact plaintext key, including its nonce and draw seed) and `FINALIZED.txt` here. Each record has source_type human_evaluation, transformation original_evaluation, split `holdout`, `grading_commit`, `remote_url`, `remote_branch`, `remote_tip_sha`, `test_only`, integrity_hash = sha256 of its results file, and `results_path` relative to the same repository root as `evidence_root` (`study_packs/career_pathways/data/dreamco_knowledge/evidence`).
+3. Reveal order and a frozen sheet: it refuses if `REVEALED_KEY.json` exists at `grading_commit` or in any of its ancestors, or if the sheet or `GRADING_FINAL.txt` changes on the remote after `grading_commit` (on any commit between it and the tip, or at the tip). With `--require-signer`, `grading_commit` must also carry a valid signature from that key (same check as the verifier).
+4. A kit is scored once, enforced by history: it refuses if any commit reachable from the remote tips already contains `FINALIZED.txt`, `REVEALED_KEY.json` or a holdout results file for this key commitment, and also if any of those exists in the working tree.
+5. Inputs read once: `grading_sheet.csv`, `GRADING_FINAL.txt`, `items.json` and `KEY_COMMITMENT.txt` are read exactly once each, with `git show <grading_commit>:study_packs/career_pathways/evidence/holdout_kit/<file>`. Those exact bytes are hashed and graded; the working-tree files are never used for scoring, so swapping the sheet after the commit changes nothing. The sheet's sha256 must equal `sheet_sha256`, and the sheet must name exactly one grader, the one declared.
+6. Key: it decrypts the private key in memory, refuses unless its sha256 equals `key_sha256` in `KEY_COMMITMENT.txt`, and checks `items.json` against the commitment.
+7. Output: one record per asset with kit items, `holdout:<asset_id>:<run>` under `data/dreamco_knowledge/evidence/holdout/<asset_id>/`, plus its results file; then `REVEALED_KEY.json` (the exact plaintext key, including its nonce and draw seed) and `FINALIZED.txt` here. Each record has source_type human_evaluation, transformation original_evaluation, split `holdout`, `grading_commit`, `remote_url`, `remote_branch`, `remote_tip_sha`, `test_only`, integrity_hash = sha256 of its results file, and `results_path` relative to the same repository root as `evidence_root` (`study_packs/career_pathways/data/dreamco_knowledge/evidence`).
 
 **Publishing the reveal.** Once the evidence, `REVEALED_KEY.json` and `FINALIZED.txt` are committed and pushed, anyone can recompute the commitment (sha256 of `REVEALED_KEY.json` must equal `key_sha256`) and every score from the committed sheet. The key is revealed only after grading is final and scored; until then it stays encrypted outside the repo.
 
@@ -69,25 +75,53 @@ The scorer runs on a shared box, so it cannot prove its own push or its own arit
 
 CLI:
 ```
-python verify_holdout.py data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.json [--repo-url URL] [--reveal-commit SHA] [--results RESULTS.json] [--json]
+python verify_holdout.py data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.json [--repo-url URL] [--reveal-commit SHA] [--results RESULTS.json]
+        [--expect-shas VERIFIED_SHAS.json | --expect-shas grading_commit=SHA,reveal_commit=SHA,remote_tip_sha=SHA]
+        [--require-signer SHA256:<ssh fingerprint> | --require-signer allowed_signers | --require-signer owner-gpg-key.asc] [--json]
 ```
-Exit code 0 means accepted, 1 rejected (the reasons are printed), 2 a usage error. `--repo-url` must normalize to the canonical repository (default `https://github.com/DreamCo-Technologies/Dreamcobots.git`); git always contacts the canonical https URL. `--reveal-commit` picks the commit that holds `REVEALED_KEY.json` and the results; it defaults to the tip of the allowed branch that contains the grading commit.
+Exit code 0 means accepted, 1 rejected (the reasons are printed), 2 a usage error. `--repo-url` must normalize to the canonical repository (default `https://github.com/DreamCo-Technologies/Dreamcobots.git`); git always contacts the canonical https URL. The reveal commit is the single commit that added `REVEALED_KEY.json`; `--reveal-commit`, if given, must equal it. It always prints the verified SHAs (`grading_commit`, `reveal_commit`, `remote_branch`, `remote_tip_sha`).
+
+`--expect-shas` compares against SHAs recorded earlier: `VERIFIED_SHAS.json`, a saved `--json` result (its `shas`), or `key=value` pairs. It rejects unless `grading_commit` and `reveal_commit` are equal to the recorded ones and the recorded `remote_tip_sha` is still reachable from an allowed tip. Keep your own copy of the file: a copy inside the repo can be rewritten by the same force-push it is meant to catch.
+
+`--require-signer` (optional; the owner decides whether to make it mandatory) requires `grading_commit` to carry a valid signature from a registered key: an SSH fingerprint `SHA256:...` or an SSH `allowed_signers` file (checked with `/usr/bin/git verify-commit` and `gpg.ssh.allowedSignersFile`, using `/usr/bin/ssh-keygen`), or an ASCII-armored GPG public key file (imported into a temporary `GNUPGHOME` that holds only that key, checked with `verify-commit` and `/usr/bin/gpg`; the signing key's fingerprint must belong to the file). A bare GPG fingerprint is refused, since verifying it needs the key itself. All of this runs in the same sanitized environment as the other git calls.
 
 API (importable by a gate):
 ```python
 import verify_holdout
-r = verify_holdout.verify("…/<run>.json")      # or a dict; optional repo_url=, reveal_commit=, results=
+r = verify_holdout.verify("…/<run>.json")      # or a dict; optional repo_url=, reveal_commit=, results=,
+                                                # expect_shas= (dict, path or "k=v,..."), require_signer= (as the CLI)
 r["accepted"]   # True only if every check passed and nothing is test-only
 r["ok"], r["errors"], r["checks"], r["recomputed"]
+r["shas"]       # {"grading_commit", "reveal_commit", "remote_branch", "remote_tip_sha"}: store these
 ```
 
 What it checks:
 1. `git ls-remote` of the canonical repository for `edu-career-pathways/majors-onet-study-plans` and `main`, a fresh blobless fetch of them into a temporary repository, and that `grading_commit` and `remote_tip_sha` are reachable from one of those tips.
-2. With `git show`: the sheet, `GRADING_FINAL.txt`, `items.json` and `KEY_COMMITMENT.txt` at `grading_commit`, and `REVEALED_KEY.json`, the results file and the record at the reveal commit (the record must equal the committed record, and the results file must hash to `integrity_hash`).
-3. `sheet_sha256`, the key commitment (sha256 of `REVEALED_KEY.json`), the items hash, that key and items agree, and that the sheet names only the declared grader.
-4. It recomputes every score, baseline, pass check and the pass decision with its own implementation of the pass rule (a test checks it agrees exactly with `score_holdout.py` on thousands of random keys and sheets), and requires the record and results file to match exactly.
+2. Reveal order: `REVEALED_KEY.json` is absent at `grading_commit` and in all of its ancestors; it is added exactly once in the history of the allowed tip (never modified, removed or re-added), in a `reveal_commit` that descends from `grading_commit`; and it is unchanged at the tip.
+3. The sheet and `GRADING_FINAL.txt` are byte-identical at `grading_commit`, at `reveal_commit` and at every commit on the path between them. The record and results file are unchanged from `reveal_commit` to the tip.
+4. Every results file, holdout record and `FINALIZED.txt` for this key commitment, anywhere in the history reachable from the allowed tips, names the same `grading_commit`.
+5. With `git show`: the sheet, `GRADING_FINAL.txt`, `items.json` and `KEY_COMMITMENT.txt` at `grading_commit`, and `REVEALED_KEY.json`, the results file and the record at `reveal_commit` (the record must equal the committed record, and the results file must hash to `integrity_hash`).
+6. `sheet_sha256`, the key commitment (sha256 of `REVEALED_KEY.json`), the items hash, that key and items agree, and that the sheet names only the declared grader.
+7. Optional: `--expect-shas` and `--require-signer`, as above.
+8. It recomputes every score, baseline, pass check and the pass decision with its own implementation of the pass rule (a test checks it agrees exactly with `score_holdout.py` on thousands of random keys and sheets), and requires the record and results file to match exactly.
 
 A test-only record (or a verification against a non-canonical remote, which only the test suite can do through the private `_test_remote` argument) can be consistent (`ok`) but is never `accepted`.
+
+**Force-push after the reveal.** None of the checks above can stop someone with push access from rewriting the branch later (for example, re-grading and building a new history that looks honest). Two things guard against that: branch protection on GitHub that blocks force-pushes and deletions on `edu-career-pathways/majors-onet-study-plans` and `main`, and the recorded SHAs (`VERIFIED_SHAS.json`, or a verifier's own saved result) checked with `--expect-shas`. Branch protection needs repository admin rights, so only the owner can turn it on; this pack does not change repository settings.
+
+## Signed grading commit (recommended)
+
+Every agent on the shared box pushes as `ireanjordan24`, so an unsigned grading commit does not show that Irean made it: any agent could commit a sheet and `GRADING_FINAL.txt` in his name. A commit signed on Irean's own computer, with a key that never touches the box, does. Signing is optional in code for now; the owner decides whether `--require-signer` becomes mandatory.
+
+On your own computer (git 2.34 or newer, with OpenSSH):
+1. Once: `ssh-keygen -t ed25519 -f ~/.ssh/dreamco_signing` (choose a passphrase).
+2. Once, in your clone: `git config gpg.format ssh` and `git config user.signingkey ~/.ssh/dreamco_signing.pub`.
+3. Once: register the public key. Send the owner and verifier the line `ireanjordan24 namespaces="git" ` followed by the contents of `~/.ssh/dreamco_signing.pub` (that line is an `allowed_signers` file), or its fingerprint from `ssh-keygen -lf ~/.ssh/dreamco_signing.pub`.
+4. After grading and `--declare-final`: `git checkout edu-career-pathways/majors-onet-study-plans`, `git pull`, then `git add study_packs/career_pathways/evidence/holdout_kit/grading_sheet.csv study_packs/career_pathways/evidence/holdout_kit/GRADING_FINAL.txt` and `git commit -S -m "holdout grading final"`.
+5. `git push origin edu-career-pathways/majors-onet-study-plans`.
+6. Optional check: with `git config gpg.ssh.allowedSignersFile <the allowed_signers file>`, `git log --show-signature -1` shows "Good "git" signature".
+
+Then scoring uses `--require-signer <allowed_signers file or fingerprint>`, and verifiers pass the same value to `verify_holdout.py`. GPG works too (`git commit -S` with a GPG key); register the ASCII-armored public key (`gpg --armor --export <key id>`).
 
 ## Pass rule
 

@@ -355,7 +355,7 @@ def declare_final(a, kit, grades, sheet_bytes):
           "GRADING_FINAL.txt.")
 
 
-def _committed_inputs(kit, out_dir, run_id, test_reasons):
+def _committed_inputs(kit, out_dir, run_id, test_reasons, require_signer=None):
     """Everything --finalize scores, read exactly once. Outside the test-only bypass the bytes come from `git show
     <grading_commit>:<path>` in a fresh mirror of the real remote, never from the working tree."""
     names = ("grading_sheet.csv", "GRADING_FINAL.txt", "items.json", "KEY_COMMITMENT.txt")
@@ -375,6 +375,18 @@ def _committed_inputs(kit, out_dir, run_id, test_reasons):
             if not g.is_ancestor(commit, tip):
                 raise SystemExit(f"grading commit {commit[:12]} is not contained in the real remote tip {tip[:12]} of "
                                  f"{remote_branch} (git ls-remote); push it to that branch first")
+            rev_p = f"{KIT_REL}/REVEALED_KEY.json"
+            if g.blob_id(commit, rev_p) or g.rev_list("--full-history", commit, "--", rev_p):
+                raise SystemExit("REVEALED_KEY.json exists at the grading commit or before it; refusing to score")
+            want = [g.blob_id(commit, p) for p in rel]
+            later = [c[:12] for c in g.rev_list("--ancestry-path", f"{commit}..{tip}") if [g.blob_id(c, p) for p in rel] != want]
+            if [g.blob_id(tip, p) for p in rel] != want or later:
+                raise SystemExit(f"grading_sheet.csv or GRADING_FINAL.txt changes on the remote after the grading commit "
+                                 f"({later[:3]}); pull, and commit the final sheet and declaration once")
+            if require_signer is not None:
+                ok_sig, detail = g.check_signer(commit, require_signer)
+                if not ok_sig:
+                    raise SystemExit(f"grading commit {commit[:12]} is not signed by the registered key: {detail}")
             data = {n: g.show(commit, f"{KIT_REL}/{n}") for n in names}
             if data["KEY_COMMITMENT.txt"] is not None:
                 hist = g.finalizations(parse_commitment(data["KEY_COMMITMENT.txt"]).get("key_sha256", "?"))
@@ -407,7 +419,7 @@ def finalize(a, kit):
         test_reasons.append(f"TEST ONLY: REMOTE_FETCH_URL was overridden to {REMOTE_FETCH_URL!r}, so the push was not "
                             "checked against the canonical remote")
     test_only = bool(test_reasons)
-    data, git_info = _committed_inputs(kit, out_base, run_id, test_reasons)
+    data, git_info = _committed_inputs(kit, out_base, run_id, test_reasons, a.require_signer)
     sheet_bytes, final_b, items_b, commit_b = (data[n] for n in ("grading_sheet.csv", "GRADING_FINAL.txt", "items.json",
                                                                  "KEY_COMMITMENT.txt"))
     if sheet_bytes is None or items_b is None or commit_b is None:
@@ -514,8 +526,41 @@ def finalize(a, kit):
                                        f"finalized_at: {now.isoformat(timespec='seconds')}\n"
                                        "note: this key commitment has been scored; score_holdout.py refuses to finalize it again.\n")
     print("kit discrimination:", json.dumps({k: v for k, v in disc.items() if k != "per_major_with_both_types"}))
-    print("Next: commit and push data/dreamco_knowledge/evidence/holdout/, evidence/holdout_kit/REVEALED_KEY.json and "
-          "evidence/holdout_kit/FINALIZED.txt, then have someone other than the scorer run verify_holdout.py on each record.")
+    print("Next: commit data/dreamco_knowledge/evidence/holdout/, evidence/holdout_kit/REVEALED_KEY.json and "
+          "evidence/holdout_kit/FINALIZED.txt together in ONE commit (the reveal commit) on top of the grading commit, push it, "
+          f"run `python score_holdout.py --record-shas --run-id {run_id}` and commit VERIFIED_SHAS.json, then have someone other "
+          "than the scorer run verify_holdout.py on each record.")
+
+
+def record_shas(a, kit):
+    """After the reveal commit is pushed: verify every record of the run (verify_holdout.verify against the remote) and
+    write evidence/holdout_kit/VERIFIED_SHAS.json with grading_commit, reveal_commit and the remote tip, so that a later
+    force-push that rewrites history is detectable (verify_holdout --expect-shas)."""
+    if not a.run_id or not re.fullmatch(r"\d{8}-\d{2}", a.run_id):
+        raise SystemExit("--record-shas needs --run-id YYYYMMDD-NN")
+    recs = sorted(pathlib.Path(a.root).glob(f"data/dreamco_knowledge/evidence/holdout/*/{a.run_id}.json"))
+    if not recs:
+        raise SystemExit(f"no holdout records for run {a.run_id}")
+    test_remote = None if REMOTE_FETCH_URL == vh.CANONICAL_FETCH_URL else REMOTE_FETCH_URL
+    shas, results = set(), []
+    for p in recs:
+        r = vh.verify(p, require_signer=a.require_signer, _test_remote=test_remote)
+        if not r["ok"]:
+            raise SystemExit(f"{p.name} ({p.parent.name}) does not verify: " + "; ".join(r["errors"][:5]))
+        shas.add((r["shas"]["grading_commit"], r["shas"]["reveal_commit"], r["shas"]["remote_branch"], r["shas"]["remote_tip_sha"]))
+        results.append(r)
+    if len(shas) != 1:
+        raise SystemExit(f"the records of run {a.run_id} verify against different commits: {sorted(shas)}")
+    gc, reveal, branch, tip = shas.pop()
+    out = {"run_id": a.run_id, "grading_commit": gc, "reveal_commit": reveal, "remote_branch": branch, "remote_tip_sha": tip,
+           "remote_url": CANONICAL_REMOTE_URL if test_remote is None else test_remote, "test_only": test_remote is not None
+           or any(r["record_test_only"] for r in results), "records": [p.parent.name for p in recs],
+           "recorded_at": datetime.datetime.now().astimezone().isoformat(timespec="seconds"),
+           "verifier": f"verify_holdout.py sha256:{vh.sha((ROOT / 'verify_holdout.py').read_bytes())}",
+           "check_with": "python verify_holdout.py <record> --expect-shas evidence/holdout_kit/VERIFIED_SHAS.json"}
+    (kit / "VERIFIED_SHAS.json").write_text(json.dumps(out, indent=2) + "\n")
+    print(f"wrote {kit / 'VERIFIED_SHAS.json'}: grading_commit={gc} reveal_commit={reveal} remote_tip_sha={tip}. "
+          "Commit and push it; keep a copy outside the repository too (a force-push could rewrite it).")
 
 
 def main():
@@ -530,6 +575,10 @@ def main():
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--finalize", action="store_true", help="score and write evidence (after GRADING_FINAL.txt is committed and pushed)")
     g.add_argument("--declare-final", action="store_true", help="grader: lock the sheet by writing GRADING_FINAL.txt")
+    g.add_argument("--record-shas", action="store_true", help="after the reveal commit is pushed: verify the run and write "
+                   "VERIFIED_SHAS.json (grading_commit, reveal_commit, remote tip)")
+    ap.add_argument("--require-signer", default=None, help="optional: grading_commit must be signed by this key (SSH "
+                    "fingerprint SHA256:..., allowed_signers file, or armored GPG public key file)")
     ap.add_argument("--grader", default=None, help="with --declare-final: your name, as written on every sheet row")
     ap.add_argument("--run-id", default=None)
     a = ap.parse_args()
@@ -538,6 +587,8 @@ def main():
     if a.sheet and (a.finalize or a.declare_final) and pathlib.Path(a.sheet).resolve() != canonical_sheet.resolve():
         raise SystemExit(f"--sheet must be the canonical {canonical_sheet} for --declare-final and --finalize (non-canonical "
                          f"--sheet {a.sheet} refused)")
+    if a.record_shas:
+        return record_shas(a, kit)
     if a.finalize:
         return finalize(a, kit)  # reads every scoring input itself, once, from the grading commit
     sheet_bytes = pathlib.Path(a.sheet or canonical_sheet).read_bytes()

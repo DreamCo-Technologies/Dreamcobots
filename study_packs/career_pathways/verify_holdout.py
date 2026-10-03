@@ -133,10 +133,10 @@ class GitSession:
     def __exit__(self, *exc):
         shutil.rmtree(self.tmp, ignore_errors=True)
 
-    def run(self, cwd, *args, text=True, timeout=TIMEOUT_S):
+    def run(self, cwd, *args, text=True, timeout=TIMEOUT_S, extra_env=None):
         try:
             return subprocess.run([self.git, "-C", str(cwd), *SAFE_CONFIG, *args], capture_output=True, text=text,
-                                  env=self.env, timeout=timeout, stdin=subprocess.DEVNULL)
+                                  env={**self.env, **(extra_env or {})}, timeout=timeout, stdin=subprocess.DEVNULL)
         except subprocess.TimeoutExpired as e:
             return subprocess.CompletedProcess(e.cmd, 124, "" if text else b"", f"timeout after {timeout}s")
 
@@ -215,6 +215,110 @@ class GitSession:
                     except ValueError:
                         pass
         return sorted(set(hits))
+
+
+    def blob_id(self, commit, path):
+        """Blob id of path at commit (None if absent); needs no blob download."""
+        r = self.m("rev-parse", "--verify", "-q", f"{commit}:{path}")
+        return r.stdout.strip() if r.returncode == 0 and r.stdout.strip() else None
+
+    def rev_list(self, *args):
+        r = self.m("rev-list", *args)
+        if r.returncode:
+            raise VerifyError(f"git rev-list failed: {r.stderr.strip()[:300]}")
+        return r.stdout.split()
+
+    def cat_blob(self, blob):
+        r = self.m("cat-file", "blob", blob, text=False)
+        return r.stdout if r.returncode == 0 else None
+
+    def evidence_grading_commits(self, key_sha, kit_tag, tips=None):
+        """{grading_commit named: [where]} over every results file, evidence record and FINALIZED.txt for this key
+        commitment in any commit reachable from the tips. A record counts when its results file (same commit) has this
+        key_sha256 or its content_version names this kit draw."""
+        tips = list((tips or self.tips).values())
+        fin = f"{KIT_REL}/FINALIZED.txt"
+        named, cache = {}, {}
+
+        def blob_json(b):
+            if b not in cache:
+                raw = self.cat_blob(b)
+                try:
+                    cache[b] = json.loads(raw) if raw else None
+                except ValueError:
+                    cache[b] = None
+            return cache[b]
+
+        for c in self.rev_list("--full-history", *tips, "--", OUT_REL, fin):
+            entries = {}
+            for line in self.m("ls-tree", "-r", c, "--", OUT_REL, fin).stdout.splitlines():
+                meta, _, p = line.partition("\t")
+                if meta.split()[1:2] == ["blob"]:
+                    entries[p] = meta.split()[2]
+            for p, b in entries.items():
+                if p == fin:
+                    t = (self.cat_blob(b) or b"").decode("utf-8", "replace")
+                    if f"key_sha256: {key_sha}" in t:
+                        m_ = re.search(r"^grading_commit: (\S+)", t, re.M)
+                        named.setdefault(m_[1] if m_ else None, []).append(f"{c[:12]}:{p}")
+                elif p.endswith(".results.json"):
+                    d = blob_json(b)
+                    if isinstance(d, dict) and d.get("key_sha256") == key_sha:
+                        named.setdefault(d.get("grading_commit"), []).append(f"{c[:12]}:{p}")
+                elif p.endswith(".json"):
+                    d = blob_json(b)
+                    if not isinstance(d, dict):
+                        continue
+                    rp = d.get("results_path")
+                    res = blob_json(entries[rp]) if rp in entries else None
+                    if (isinstance(res, dict) and res.get("key_sha256") == key_sha) or \
+                            str(d.get("content_version", "")).endswith(kit_tag):
+                        named.setdefault(d.get("grading_commit"), []).append(f"{c[:12]}:{p}")
+        return named
+
+    def check_signer(self, commit, require_signer):
+        """(ok, detail): commit carries a valid signature from the registered key. require_signer is an SSH key
+        fingerprint 'SHA256:...', an SSH allowed_signers file, or an armored GPG public key file."""
+        kind, spec = parse_signer(require_signer)
+        raw = self.m("cat-file", "commit", commit, text=False).stdout.decode("utf-8", "replace")
+        sig = _commit_signature(raw)
+        if not sig:
+            return False, "grading_commit is not signed"
+        work = self.tmp / f"signer-{commit[:12]}"
+        work.mkdir(exist_ok=True)
+        if kind in ("ssh-fingerprint", "ssh-allowed-signers"):
+            if "BEGIN SSH SIGNATURE" not in sig:
+                return False, "grading_commit is not SSH-signed"
+            if kind == "ssh-fingerprint":
+                key_type, key_b64, fpr = _ssh_signature_key(sig)
+                if fpr != spec:
+                    return False, f"signed by {fpr}, not the registered {spec}"
+                allowed = work / "allowed_signers"
+                allowed.write_text(f'registered-signer namespaces="git" {key_type} {key_b64}\n')
+            else:
+                allowed = pathlib.Path(spec).resolve()
+            r = self.m("-c", f"gpg.ssh.allowedSignersFile={allowed}", "-c", f"gpg.ssh.program={SSH_KEYGEN}",
+                       "verify-commit", "--raw", commit)
+            ok = r.returncode == 0 and "Good \"git\" signature" in (r.stdout + r.stderr)
+            return ok, (r.stdout + r.stderr).strip()[:300]
+        if "BEGIN PGP SIGNATURE" not in sig:
+            return False, "grading_commit is not GPG-signed"
+        home = work / "gnupg"
+        home.mkdir(mode=0o700)
+        env = {"GNUPGHOME": str(home)}
+        imp = subprocess.run([GPG, "--batch", "--quiet", "--import", str(spec)], capture_output=True, text=True,
+                             env={**self.env, **env}, stdin=subprocess.DEVNULL, timeout=TIMEOUT_S)
+        lst = subprocess.run([GPG, "--batch", "--with-colons", "--fingerprint", "--list-keys"], capture_output=True,
+                             text=True, env={**self.env, **env}, stdin=subprocess.DEVNULL, timeout=TIMEOUT_S)
+        fprs = {l.split(":")[9] for l in lst.stdout.splitlines() if l.startswith("fpr:")}
+        if imp.returncode or not fprs:
+            return False, "could not import the registered GPG key"
+        r = self.run(self.mirror, "-c", f"gpg.program={GPG}", "verify-commit", "--raw", commit, extra_env=env)
+        subprocess.run(["/usr/bin/gpgconf", "--homedir", str(home), "--kill", "all"], capture_output=True,
+                       env={**self.env, **env}, stdin=subprocess.DEVNULL, timeout=60) if os.path.exists("/usr/bin/gpgconf") else None
+        valid = [l.split() for l in r.stderr.splitlines() if l.startswith("[GNUPG:] VALIDSIG ")]
+        ok = r.returncode == 0 and any(set(v[2:]) & fprs for v in valid)
+        return ok, ("good signature from the registered GPG key" if ok else r.stderr.strip()[:300])
 
 
 # ---------- the pass rule, implemented independently of score_holdout.py ----------
@@ -322,11 +426,83 @@ def _load(x):
     return json.loads(pathlib.Path(x).read_bytes())
 
 
+# ---------- signatures ----------
+SSH_KEYGEN = "/usr/bin/ssh-keygen"
+GPG = "/usr/bin/gpg"
+
+
+def parse_signer(spec):
+    """('ssh-fingerprint', 'SHA256:...') | ('ssh-allowed-signers', path) | ('gpg-key', path)."""
+    s_ = str(spec)
+    if re.fullmatch(r"SHA256:[A-Za-z0-9+/]{43}", s_):
+        return "ssh-fingerprint", s_
+    p = pathlib.Path(s_)
+    if p.is_file():
+        head = p.read_text("utf-8", "replace")
+        return ("gpg-key", str(p.resolve())) if "BEGIN PGP PUBLIC KEY BLOCK" in head else ("ssh-allowed-signers", str(p.resolve()))
+    if re.fullmatch(r"(0x)?[0-9A-Fa-f]{40}", s_):
+        raise VerifyError("a GPG fingerprint alone cannot be checked: pass the exported public key file "
+                          "(gpg --export --armor <fingerprint> > owner.asc)")
+    raise VerifyError("require_signer must be an SSH key fingerprint (SHA256:...), an SSH allowed_signers file, or an "
+                      "armored GPG public key file")
+
+
+def _commit_signature(raw_commit):
+    """The gpgsig header (armored signature) of a raw commit object, or None."""
+    lines, sig, inside = raw_commit.split("\n"), [], False
+    for line in lines:
+        if line == "":
+            break
+        if line.startswith("gpgsig ") or line.startswith("gpgsig-sha256 "):
+            inside = True
+            sig.append(line.split(" ", 1)[1])
+        elif inside and line.startswith(" "):
+            sig.append(line[1:])
+        else:
+            inside = False
+    return "\n".join(sig) or None
+
+
+def _ssh_signature_key(armored):
+    """(key type, base64 public key, 'SHA256:...' fingerprint) of the public key embedded in an SSHSIG signature."""
+    import base64, struct
+    body = "".join(l for l in armored.splitlines() if l and not l.startswith("-----"))
+    blob = base64.b64decode(body)
+    if blob[:6] != b"SSHSIG":
+        raise VerifyError("not an SSH signature")
+    (n,) = struct.unpack(">I", blob[10:14])
+    pub = blob[14:14 + n]
+    (t,) = struct.unpack(">I", pub[:4])
+    fpr = "SHA256:" + base64.b64encode(hashlib.sha256(pub).digest()).decode().rstrip("=")
+    return pub[4:4 + t].decode(), base64.b64encode(pub).decode(), fpr
+
+
+def parse_expected_shas(spec):
+    """Expected SHAs from a dict, a JSON file (VERIFIED_SHAS.json or a saved verify() result with a 'shas' key), or a
+    'grading_commit=<sha>,reveal_commit=<sha>[,remote_tip_sha=<sha>]' string."""
+    if isinstance(spec, dict):
+        d = spec
+    elif pathlib.Path(str(spec)).is_file():
+        d = json.loads(pathlib.Path(str(spec)).read_bytes())
+    else:
+        d = dict(kv.split("=", 1) for kv in str(spec).split(",") if "=" in kv)
+    d = d.get("shas", d)
+    out = {k: d[k] for k in ("grading_commit", "reveal_commit", "remote_tip_sha") if d.get(k)}
+    if not out or not all(_SHA_RX.match(v) for v in out.values()):
+        raise VerifyError("expect_shas needs grading_commit, reveal_commit and/or remote_tip_sha as full SHAs")
+    return out
+
+
+# ---------- verification ----------
 def verify(record, repo_url=CANONICAL_FETCH_URL, *, reveal_commit=None, results=None, allowed_branches=ALLOWED_BRANCHES,
-           _test_remote=None):
+           expect_shas=None, require_signer=None, _test_remote=None):
     """Verify one holdout evidence record against the real remote. Returns a dict with ok, accepted, test_only, errors,
-    checks and recomputed. `_test_remote` (a local repository path) is for this pack's test suite only: it marks the
-    verification test_only, so it can never be accepted."""
+    checks, shas (grading_commit, reveal_commit, remote_branch, remote_tip_sha) and recomputed. `_test_remote` (a local
+    repository path) is for this pack's test suite only: it marks the verification test_only, so it is never accepted.
+
+    expect_shas: SHAs recorded earlier (see parse_expected_shas); grading_commit and reveal_commit must be identical and
+    a recorded remote_tip_sha must still be reachable from the remote tip, so a force-push that rewrote history fails.
+    require_signer: grading_commit must carry a valid signature from this registered key (see parse_signer)."""
     errors, checks = [], {}
 
     def need(name, cond, msg):
@@ -336,9 +512,12 @@ def verify(record, repo_url=CANONICAL_FETCH_URL, *, reveal_commit=None, results=
         return bool(cond)
 
     out = {"ok": False, "accepted": False, "test_only": _test_remote is not None, "errors": errors, "checks": checks,
-           "recomputed": None}
+           "shas": {}, "recomputed": None}
     try:
         rec = _load(record)
+        expected = parse_expected_shas(expect_shas) if expect_shas is not None else None
+        if require_signer is not None:
+            parse_signer(require_signer)
         rec_test_only = bool(rec.get("test_only")) or rec.get("grading_commit") is None
         out["record_test_only"] = rec_test_only
         if not need("repo_url_canonical", normalize_remote(repo_url) == CANONICAL_REPO, f"{repo_url!r} is not {CANONICAL_REMOTE_URL}"):
@@ -349,6 +528,8 @@ def verify(record, repo_url=CANONICAL_FETCH_URL, *, reveal_commit=None, results=
         if not need("record_shape", m and _SHA_RX.match(gc), "evidence_id or grading_commit malformed"):
             return out
         aid, run = m["aid"], m["run"]
+        rec_path, res_path = f"{OUT_REL}/{aid}/{run}.json", rec.get("results_path", "")
+        sheet_p, final_p, rev_p = f"{KIT_REL}/grading_sheet.csv", f"{KIT_REL}/GRADING_FINAL.txt", f"{KIT_REL}/REVEALED_KEY.json"
         need("remote_branch_allowed", rec.get("remote_branch") in ALLOWED_BRANCHES, f"remote_branch {rec.get('remote_branch')!r}")
         if not rec_test_only:
             need("remote_url_recorded", rec.get("remote_url") == CANONICAL_REMOTE_URL, f"remote_url {rec.get('remote_url')!r}")
@@ -358,26 +539,77 @@ def verify(record, repo_url=CANONICAL_FETCH_URL, *, reveal_commit=None, results=
             on = g.branches_containing(gc)
             if not need("grading_commit_on_allowed_branch", on, f"{gc[:12]} is not reachable from {list(tips)} on the remote"):
                 return out
+            branch = rec.get("remote_branch") if rec.get("remote_branch") in on else on[0]
+            tip = tips[branch]
+            out["shas"] = {"grading_commit": gc, "remote_branch": branch, "remote_tip_sha": tip}
             need("remote_tip_sha_on_remote", g.branches_containing(tip_rec) and g.is_ancestor(gc, tip_rec),
                  "remote_tip_sha is not on an allowed branch or does not contain grading_commit")
-            if reveal_commit is None:
-                b = rec.get("remote_branch") if rec.get("remote_branch") in on else on[0]
-                reveal_commit = tips[b]
-            if not need("reveal_commit_on_allowed_branch", g.branches_containing(reveal_commit) and g.is_ancestor(gc, reveal_commit),
-                        f"reveal commit {str(reveal_commit)[:12]} is not on an allowed branch after grading_commit"):
+            # 1. the reveal: absent at grading_commit and before it; added exactly once, later; never changed after
+            need("reveal_absent_at_and_before_grading", g.blob_id(gc, rev_p) is None and not g.rev_list("--full-history", gc, "--", rev_p),
+                 "REVEALED_KEY.json exists at grading_commit or in one of its ancestors (key revealed before grading)")
+            touches = g.rev_list("--full-history", "--no-merges", tip, "--", rev_p)
+            reveal = touches[0] if len(touches) == 1 else None
+            need("reveal_added_exactly_once", reveal and g.blob_id(reveal, rev_p) and not any(
+                g.blob_id(p, rev_p) for p in g.rev_list("--parents", "-n1", reveal)[1:]),
+                f"REVEALED_KEY.json must be added in exactly one commit and never modified, removed or re-added "
+                f"({len(touches)} commits touch it)")
+            if reveal:
+                need("reveal_after_grading", reveal != gc and g.is_ancestor(gc, reveal),
+                     "the reveal commit is grading_commit itself or does not descend from it")
+                need("reveal_unchanged_at_tip", g.blob_id(tip, rev_p) == g.blob_id(reveal, rev_p),
+                     "REVEALED_KEY.json at the remote tip differs from the reveal commit")
+                if reveal_commit is not None:
+                    given = g.m("rev-parse", "--verify", "-q", f"{reveal_commit}^{{commit}}").stdout.strip()
+                    need("reveal_commit_matches", given == reveal, f"--reveal-commit {str(reveal_commit)[:12]} is not the "
+                         f"commit that added REVEALED_KEY.json ({reveal[:12]})")
+                out["shas"]["reveal_commit"] = reveal
+            if errors:
                 return out
-            sheet_b = g.show(gc, f"{KIT_REL}/grading_sheet.csv")
-            final_b = g.show(gc, f"{KIT_REL}/GRADING_FINAL.txt")
+            # 2. the sheet and GRADING_FINAL.txt are identical at grading_commit, at reveal and at every commit between
+            want = (g.blob_id(gc, sheet_p), g.blob_id(gc, final_p))
+            path = g.rev_list("--ancestry-path", f"{gc}..{reveal}")
+            changed = [c[:12] for c in path if (g.blob_id(c, sheet_p), g.blob_id(c, final_p)) != want]
+            need("sheet_unchanged_from_grading_to_reveal", all(want) and not changed,
+                 f"grading_sheet.csv or GRADING_FINAL.txt differs between grading_commit and the reveal (at {changed[:5]})")
+            # evidence is frozen once revealed
+            frozen = [p for p in (rec_path, res_path) if g.blob_id(tip, p) != g.blob_id(reveal, p)
+                      or g.rev_list("--full-history", "--no-merges", f"{reveal}..{tip}", "--", p)]
+            need("evidence_unchanged_after_reveal", not frozen, f"changed or missing after the reveal commit: {frozen}")
+            # 4. recorded SHAs
+            if expected:
+                for k in ("grading_commit", "reveal_commit"):
+                    if k in expected:
+                        need(f"expected_{k}", expected[k] == out["shas"].get(k), f"{k} {out['shas'].get(k)} != expected {expected[k]}")
+                if "remote_tip_sha" in expected:
+                    need("expected_remote_tip_still_reachable", g.is_ancestor(expected["remote_tip_sha"], tip),
+                         "the recorded remote tip is no longer reachable from the branch (history was rewritten)")
+            # 5. signature
+            if require_signer is not None:
+                ok_sig, detail = g.check_signer(gc, require_signer)
+                need("grading_commit_signed_by_registered_key", ok_sig, detail)
+            sheet_b = g.show(gc, sheet_p)
+            final_b = g.show(gc, final_p)
             items_b = g.show(gc, f"{KIT_REL}/items.json")
             commit_b = g.show(gc, f"{KIT_REL}/KEY_COMMITMENT.txt")
-            key_b = g.show(reveal_commit, f"{KIT_REL}/REVEALED_KEY.json")
-            results_b = g.show(reveal_commit, rec.get("results_path", ""))
-            rec_b = g.show(reveal_commit, f"{OUT_REL}/{aid}/{run}.json")
-        files = {"grading_sheet.csv": sheet_b, "GRADING_FINAL.txt": final_b, "items.json": items_b,
-                 "KEY_COMMITMENT.txt": commit_b, "REVEALED_KEY.json": key_b, "results file": results_b, "record file": rec_b}
-        if not need("committed_files_present", all(v is not None for v in files.values()),
-                    "missing at the committed SHAs: " + ", ".join(k for k, v in files.items() if v is None)):
-            return out
+            key_b = g.show(reveal, rev_p)
+            results_b = g.show(reveal, res_path)
+            rec_b = g.show(reveal, rec_path)
+            files = {"grading_sheet.csv": sheet_b, "GRADING_FINAL.txt": final_b, "items.json": items_b,
+                     "KEY_COMMITMENT.txt": commit_b, "REVEALED_KEY.json": key_b, "results file": results_b, "record file": rec_b}
+            if not need("committed_files_present", all(v is not None for v in files.values()),
+                        "missing at the committed SHAs: " + ", ".join(k for k, v in files.items() if v is None)):
+                return out
+            commitment = dict(l.split(": ", 1) for l in commit_b.decode().splitlines() if ": " in l)
+            # 3. every results file, record and FINALIZED.txt for this key commitment names the same grading_commit
+            try:
+                kj = json.loads(key_b)
+                kit_tag = f"{kj.get('kit')} drawn {kj.get('created_at')}"
+            except ValueError:
+                kit_tag = "\x00"
+            named = g.evidence_grading_commits(commitment.get("key_sha256", "?"), kit_tag)
+            need("all_evidence_names_this_grading_commit", set(named) <= {gc},
+                 "evidence for this key commitment names other grading commits: "
+                 + "; ".join(f"{str(k)[:12]} in {v[:3]}" for k, v in named.items() if k != gc))
         need("record_matches_committed_record", json.loads(rec_b) == rec, "the record differs from the committed record")
         need("results_integrity_hash", rec.get("integrity_hash") == "sha256:" + sha(results_b), "integrity_hash != sha256(results file)")
         if results is not None:
@@ -387,7 +619,6 @@ def verify(record, repo_url=CANONICAL_FETCH_URL, *, reveal_commit=None, results=
         if not need("grading_final_parses", fm, "GRADING_FINAL.txt has no FINAL line with sheet_sha256"):
             return out
         need("sheet_sha256", sha(sheet_b) == fm["sheet"], "sha256(grading_sheet.csv) != sheet_sha256 in GRADING_FINAL.txt")
-        commitment = dict(l.split(": ", 1) for l in commit_b.decode().splitlines() if ": " in l)
         need("key_commitment", sha(key_b) == commitment.get("key_sha256"), "sha256(REVEALED_KEY.json) != KEY_COMMITMENT key_sha256")
         need("items_commitment", sha(items_b) == commitment.get("items_json_sha256"), "sha256(items.json) != KEY_COMMITMENT")
         if errors:
@@ -437,15 +668,22 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description="Verify a holdout evidence record against the canonical remote.")
     ap.add_argument("record", help="path to data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.json")
     ap.add_argument("--repo-url", default=CANONICAL_FETCH_URL, help="must normalize to github.com/DreamCo-Technologies/Dreamcobots")
-    ap.add_argument("--reveal-commit", default=None, help="commit with REVEALED_KEY.json and the results (default: allowed branch tip)")
+    ap.add_argument("--reveal-commit", default=None, help="optional: must equal the commit that added REVEALED_KEY.json")
     ap.add_argument("--results", default=None, help="optional results file to compare with the committed one")
+    ap.add_argument("--expect-shas", default=None, help="VERIFIED_SHAS.json, a saved --json result, or "
+                    "grading_commit=<sha>,reveal_commit=<sha>[,remote_tip_sha=<sha>]")
+    ap.add_argument("--require-signer", default=None, help="SSH key fingerprint (SHA256:...), SSH allowed_signers file, or "
+                    "armored GPG public key file; grading_commit must be signed by it")
     ap.add_argument("--json", action="store_true", help="print the full result as JSON")
     a = ap.parse_args(argv)
-    r = verify(a.record, a.repo_url, reveal_commit=a.reveal_commit, results=a.results)
+    r = verify(a.record, a.repo_url, reveal_commit=a.reveal_commit, results=a.results, expect_shas=a.expect_shas,
+               require_signer=a.require_signer)
     if a.json:
         print(json.dumps(r, indent=2, default=str))
     else:
         print(("ACCEPTED" if r["accepted"] else "REJECTED") + f": {a.record}")
+        for k, v in r.get("shas", {}).items():
+            print(f"  {k}: {v}")
         for e in r["errors"]:
             print("  -", e)
         if r["ok"] and not r["accepted"]:
