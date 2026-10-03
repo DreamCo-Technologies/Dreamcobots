@@ -56,7 +56,7 @@ jobs:
         run: python3 tools/buddy_local_repository.py check
       - name: Save local-equivalent evidence
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: self-working-system-${{ github.run_id }}
           path: |

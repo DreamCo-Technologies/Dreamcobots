@@ -64,7 +64,7 @@ jobs:
             echo 'This workflow validates the governance contract; it does not pretend that 500 external model accounts are authenticated.';
           } > reports/BUDDY_500_MODEL_GOVERNANCE.md
       - name: Save governance evidence
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: buddy-500-model-governance-${{ github.run_id }}
           path: reports/BUDDY_500_MODEL_GOVERNANCE.md

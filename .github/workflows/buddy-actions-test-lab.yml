@@ -238,7 +238,7 @@ jobs:
           git diff > tmp/buddy-actions/generated-diff.patch || true
       - name: Upload Buddy debug evidence
         if: always() && (inputs.keep_debug_artifacts == true || github.event_name != 'workflow_dispatch')
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: buddy-debug-${{ github.run_id }}-${{ github.run_attempt }}
           path: tmp/buddy-actions/

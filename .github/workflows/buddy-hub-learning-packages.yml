@@ -27,7 +27,7 @@ jobs:
       - run: python3 tools/buddy_scan_hubs.py
       - run: python3 -m unittest tests.test_buddy_scan_hubs
       - if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: buddy-hub-learning-packages-${{ github.run_id }}
           path: |

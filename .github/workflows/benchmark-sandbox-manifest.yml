@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Generate existing sandbox curriculum
         run: python3 tools/build_bot_sandbox_curriculum.py
       - uses: actions/download-artifact@v8
@@ -31,7 +31,7 @@ jobs:
             --queue training-evidence/benchmark-training-queue.json \
             --curriculum config/generated/bot-sandbox-curriculum.json \
             --out training-evidence/training-execution-manifest.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: benchmark-sandbox-manifest-${{ github.run_id }}
           path: training-evidence/training-execution-manifest.json

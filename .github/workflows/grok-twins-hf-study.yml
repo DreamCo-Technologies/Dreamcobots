@@ -27,7 +27,7 @@ jobs:
       - run: python3 tools/build_grok_bot_twins.py
       - run: python3 -m unittest tests.test_build_grok_bot_twins
       - if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: grok-twins-hf-study-${{ github.run_id }}
           path: |

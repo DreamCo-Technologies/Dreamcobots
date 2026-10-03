@@ -34,7 +34,7 @@ jobs:
           if [ -f reports/BUDDY_FEEL.md ]; then cat reports/BUDDY_FEEL.md >> "$GITHUB_STEP_SUMMARY"; fi
           if [ -f reports/GROK_OWNER_SYSTEMS.md ]; then cat reports/GROK_OWNER_SYSTEMS.md >> "$GITHUB_STEP_SUMMARY"; fi
       - if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: grok-owner-systems-${{ github.run_id }}
           path: |

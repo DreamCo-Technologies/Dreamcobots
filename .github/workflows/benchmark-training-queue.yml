@@ -12,7 +12,7 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/download-artifact@v8
         if: ${{ github.event_name == 'workflow_run' }}
         with:
@@ -27,7 +27,7 @@ jobs:
           python3 tools/build_benchmark_training_queue.py \
             --gaps benchmark-evidence/benchmark-gap-queue.json \
             --out benchmark-evidence/benchmark-training-queue.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: benchmark-training-queue-${{ github.run_id }}
           path: benchmark-evidence/benchmark-training-queue.json
