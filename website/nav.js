@@ -57,6 +57,7 @@
     { href: 'debug.html', label: '🛠️ Debug' },
     { href: 'wiring.html', label: 'Wiring map' },
     { href: 'branch-health.html', label: 'Branch health' },
+    { href: 'buddy-control.html', label: '🎛️ Buddy Control' },
     { href: 'command.html', label: 'Command' },
     { href: 'ops.html', label: 'Ops' },
     { href: 'chat-sync.html', label: 'This chat → Pages' },
