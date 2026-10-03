@@ -12,19 +12,25 @@ evidence/holdout_kit/GRADING_FINAL.txt with the line
     FINAL: grader=<name>; declared_at=<ISO 8601 date-time with offset>; sheet_sha256=<sha256 of grading_sheet.csv>
 It never reads the key. After that the sheet is locked: --finalize refuses a sheet whose sha256 differs.
 
---finalize: requires GRADING_FINAL.txt (with sheet_sha256) and a sheet matching it, both committed in git with no
-uncommitted changes, in a clone of github.com/DreamCo-Technologies/Dreamcobots (the branch's remote URL must normalize to
-it), with the kit at <repo root>/study_packs/career_pathways/evidence/holdout_kit and the output inside that pack. The
-grading commit must be pushed: it must equal or be an ancestor of the branch tip that `git ls-remote` reports for the
-REAL remote (fetched if not local); local refs/remotes are never trusted, and an unreachable remote is a refusal. Only
-then does it decrypt the PRIVATE key in memory (outside the repo, see holdout_crypto.py), verify its sha256 against KEY_COMMITMENT.txt and the items.json hash,
-and write, per asset with kit items:
+--finalize: all git work uses /usr/bin/git (never PATH) with a minimal sanitized environment (see
+verify_holdout.GitSession). It requires, in a clone of github.com/DreamCo-Technologies/Dreamcobots (strict URL check) on
+an allowed branch (edu-career-pathways/majors-onet-study-plans or main), with the kit at
+<repo root>/study_packs/career_pathways/evidence/holdout_kit and the output in that pack: grading_sheet.csv and
+GRADING_FINAL.txt tracked and clean; their last commit (grading_commit) contained in the real remote branch tip from
+`git ls-remote`, checked in a fresh fetch of the remote (local refs are never used; an unreachable remote is a refusal);
+and no commit reachable from the remote tips that already holds FINALIZED.txt, REVEALED_KEY.json or a results file for
+this key commitment. The sheet, GRADING_FINAL.txt, items.json and KEY_COMMITMENT.txt are then read exactly once, with
+`git show <grading_commit>:<path>`, and those exact bytes are hashed and graded; the working-tree files are never used
+for scoring. Only then does it decrypt the PRIVATE key in memory (outside the repo, see holdout_crypto.py), verify its
+sha256 against KEY_COMMITMENT.txt and the items.json hash, and write, per asset with kit items:
     data/dreamco_knowledge/evidence/holdout/<asset_id>/<YYYYMMDD>-<NN>.results.json
-    data/dreamco_knowledge/evidence/holdout/<asset_id>/<YYYYMMDD>-<NN>.json   (evidence record, with the grading commit)
-plus evidence/holdout_kit/FINALIZED.txt. A key commitment is scored once: a second --finalize for the same key_sha256 is
-refused, under any run id. A sheet outside a git repository is refused. The only exception is the test-only environment
-variable DREAMCO_HOLDOUT_TEST_ONLY_SKIP_GIT=1: it skips the git checks, records that it did, and forces every record to
-passed=false, so it can never produce passing evidence.
+    data/dreamco_knowledge/evidence/holdout/<asset_id>/<YYYYMMDD>-<NN>.json   (evidence record)
+plus evidence/holdout_kit/REVEALED_KEY.json (the exact plaintext key, nonce and seed included, so anyone can recompute
+the commitment and every score) and evidence/holdout_kit/FINALIZED.txt. Commit and push those, then have someone other
+than the scorer run verify_holdout.py on each record: the scorer cannot prove its own push on a shared box.
+
+TEST ONLY: DREAMCO_HOLDOUT_TEST_ONLY_SKIP_GIT=1 (skips the git checks and reads the working tree once) or any change to
+REMOTE_FETCH_URL marks every record test_only, names the URL actually used, and forces passed=false.
 
 Pass rule (documented in evidence/holdout_kit/README.md):
   * kit-level discrimination, required before ANY record can pass:
@@ -42,32 +48,30 @@ Pass rule (documented in evidence/holdout_kit/README.md):
     key's accepted band: 1-2 for full-strength criteria, 0-1 for the weakened criterion) AND strictly above the asset's
     own baseline_score; and no full-strength item judged factually incorrect.
 """
-import argparse, csv, datetime, hashlib, json, os, pathlib, re, subprocess
+import argparse, csv, datetime, hashlib, io, json, os, pathlib, re
 
 import holdout_crypto
+import verify_holdout as vh   # stdlib-only: hardened git session, strict URL parsing, remote checks (and the verifier)
 
 ROOT = pathlib.Path(__file__).resolve().parent
 PRIVATE = pathlib.Path(os.environ.get("DREAMCO_HOLDOUT_PRIVATE_DIR", "/workspace/edu-career-pathways-private"))
 DETECTION_MIN, FALSE_ALARM_MAX, GAP_MIN, AGREEMENT_MIN = 0.8, 0.2, 1.0, 0.8
 MIN_ITEMS_PER_MAJOR = 4
-PACK_PATH = "study_packs/career_pathways"            # pack location inside the repository
+PACK_PATH = vh.PACK_PATH                              # pack location inside the repository
 EVIDENCE_ROOT = f"{PACK_PATH}/data/dreamco_knowledge/evidence"
 PATHS_RELATIVE_TO = "repository root (the directory that contains study_packs/); evidence_root and results_path share it"
 SPLIT = "holdout"
 OWNER_NAMES = {"irean", "irean jordan", "ireanjordan24"}
 TEST_ONLY_SKIP_GIT_ENV = "DREAMCO_HOLDOUT_TEST_ONLY_SKIP_GIT"
-CANONICAL_REPO = "github.com/dreamco-technologies/dreamcobots"    # normalized: host/owner/repo, lower case
-CANONICAL_REMOTE_URL = "https://github.com/DreamCo-Technologies/Dreamcobots"
-# What `git ls-remote` and `git fetch` contact: always the canonical public https URL, never the clone's configured URL,
-# so an ssh alias or a different remote cannot stand in for it. (The test suite replaces this in its own process with a
-# local bare repository so that it never touches the network.)
-REMOTE_FETCH_URL = CANONICAL_REMOTE_URL + ".git"
-REMOTE_TIMEOUT_S = 90
-KIT_REL = f"{PACK_PATH}/evidence/holdout_kit"
-OUT_REL = f"{EVIDENCE_ROOT}/holdout"
-_URL_RX = (re.compile(r"^https://(?:[^@/]+@)?(?P<host>[^/:@]+)(?::443)?/(?P<owner>[^/]+)/(?P<repo>[^/]+?)(?:\.git)?/?$", re.I),
-           re.compile(r"^ssh://(?:[^@/]+@)?(?P<host>[^/:@]+)(?::\d+)?/(?P<owner>[^/]+)/(?P<repo>[^/]+?)(?:\.git)?/?$", re.I),
-           re.compile(r"^(?:[^@/:]+@)?(?P<host>[^/:@]+):(?P<owner>[^/]+)/(?P<repo>[^/]+?)(?:\.git)?/?$", re.I))
+CANONICAL_REPO = vh.CANONICAL_REPO
+CANONICAL_REMOTE_URL = vh.CANONICAL_REMOTE_URL
+ALLOWED_BRANCHES = vh.ALLOWED_BRANCHES
+# What `git ls-remote` and `git fetch` contact. Changing it (in code or by monkeypatching) is TEST ONLY: finalize then
+# labels every record test_only, names the URL actually used, and forces passed=false.
+REMOTE_FETCH_URL = vh.CANONICAL_FETCH_URL
+KIT_REL = vh.KIT_REL
+OUT_REL = vh.OUT_REL
+normalize_remote = vh.normalize_remote
 FINAL_RX = re.compile(r"^FINAL: grader=(?P<grader>[^;]+); declared_at=(?P<at>[^;\s]+); sheet_sha256=(?P<sheet>[0-9a-f]{64})\s*$",
                       re.M)
 METRIC = ("per-asset agreement: fraction of the asset's criterion scores inside the sealed key's accepted band (1-2 for "
@@ -89,7 +93,7 @@ BASELINE_DEFINITION = (
 
 
 def sha(b):
-    return hashlib.sha256(b).hexdigest()
+    return vh.sha(b)
 
 
 def iso_with_offset(v):
@@ -103,10 +107,11 @@ def norm_name(v):
     return " ".join(str(v).split())
 
 
-def load_sheet(path, items):
+def load_sheet(sheet_bytes, items):
+    """Grades parsed from the exact bytes of the sheet (read once by the caller)."""
     ids = [i["item_id"] for i in items]
     crit = {i["item_id"]: [c["criterion"] for c in i["rubric"]] for i in items}
-    rows = list(csv.DictReader(open(path, newline="")))
+    rows = list(csv.DictReader(io.StringIO(sheet_bytes.decode("utf-8"), newline="")))
     errs, out = [], {}
     for r in rows:
         hid = (r.get("item_id") or "").strip()
@@ -265,133 +270,68 @@ def limitations_text(grader, n_items, elig, git_note=None):
     return t
 
 
-def parse_final(kit):
-    decl_p = kit / "GRADING_FINAL.txt"
-    m = FINAL_RX.search(decl_p.read_text()) if decl_p.is_file() else None
+def parse_final(final_bytes):
+    m = FINAL_RX.search(final_bytes.decode("utf-8", "replace")) if final_bytes is not None else None
     if not m or not iso_with_offset(m["at"]):
-        raise SystemExit(f"{decl_p} with 'FINAL: grader=<name>; declared_at=<ISO with offset>; sheet_sha256=<sha256 of "
+        raise SystemExit("GRADING_FINAL.txt with 'FINAL: grader=<name>; declared_at=<ISO with offset>; sheet_sha256=<sha256 of "
                          "grading_sheet.csv>' is required before --finalize")
     return {"grader": norm_name(m["grader"]), "declared_at": m["at"], "sheet_sha256": m["sheet"]}
 
 
-def read_commitment(kit):
-    return dict(l.split(": ", 1) for l in (kit / "KEY_COMMITMENT.txt").read_text().splitlines() if ": " in l)
+def parse_commitment(commit_bytes):
+    return dict(l.split(": ", 1) for l in commit_bytes.decode("utf-8").splitlines() if ": " in l)
 
 
-def _git_env():
-    """Git runs without inherited GIT_* variables (no GIT_DIR, GIT_CONFIG_*, GIT_SSH_COMMAND overrides), without
-    replace refs, and never prompts."""
-    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
-    env.update(GIT_TERMINAL_PROMPT="0", GIT_NO_REPLACE_OBJECTS="1")
-    return env
-
-
-def _git(cwd, *args, timeout=None):
-    return subprocess.run(["git", "-C", str(cwd), *args], capture_output=True, text=True, env=_git_env(), timeout=timeout)
-
-
-def normalize_remote(url):
-    """'host/owner/repo' in lower case for an https or ssh GitHub-style URL (with or without .git), else None."""
-    url = (url or "").strip()
-    for rx in _URL_RX:
-        m = rx.match(url)
-        if m and not re.match(r"^[A-Za-z]:[\\/]", url):
-            return f"{m['host']}/{m['owner']}/{m['repo']}".lower()
-    return None
-
-
-def remote_tip(branch, timeout=REMOTE_TIMEOUT_S):
-    """The real remote's tip of refs/heads/<branch>, from `git ls-remote` against REMOTE_FETCH_URL. Refuses (never falls
-    back to local refs) if the remote cannot be reached or does not have the branch."""
-    ref = f"refs/heads/{branch}"
-    try:
-        r = subprocess.run(["git", "ls-remote", REMOTE_FETCH_URL, ref], capture_output=True, text=True, env=_git_env(),
-                           timeout=timeout, cwd="/")  # outside any repo
-    except (OSError, subprocess.TimeoutExpired) as e:
-        raise SystemExit(f"cannot reach the remote with git ls-remote ({e}); refusing to score (local refs are not trusted)")
+def check_local_clone(g, kit, out_dir):
+    """Local facts, via /usr/bin/git in the sanitized session: the canonical kit and output paths in a clone whose branch
+    remote is the canonical repository, on an allowed branch, with the grading files tracked and clean. Returns
+    (grading_commit, head, remote_branch, files)."""
+    kit = pathlib.Path(kit).resolve()
+    r = g.run(kit, "rev-parse", "--show-toplevel")
     if r.returncode:
-        raise SystemExit(f"cannot reach the remote with git ls-remote (exit {r.returncode}: {r.stderr.strip()[:300]}); "
-                         "refusing to score (local refs are not trusted)")
-    tips = [l.split("\t")[0] for l in r.stdout.splitlines() if l.endswith("\t" + ref)]
-    if len(tips) != 1 or not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", tips[0]):
-        raise SystemExit(f"the remote has no branch {ref}; push the grading commit to it first")
-    return tips[0]
-
-
-def verify_git_state(paths, kit, out_dir):
-    """The grading files must be inside a clone of the canonical repository, tracked, committed with no uncommitted
-    changes, and their latest commit must be contained in the real remote branch tip (ls-remote, not refs/remotes).
-    The kit and the output directory must be the canonical ones in that clone. Returns the facts that were checked."""
-    paths = [pathlib.Path(p).resolve() for p in paths]
-    r = _git(paths[0].parent, "rev-parse", "--show-toplevel")
-    if r.returncode:
-        raise SystemExit(f"{paths[0]} is not inside a git repository; --finalize scores only a committed and pushed sheet")
+        raise SystemExit(f"{kit} is not inside a git repository; --finalize scores only a committed and pushed sheet")
     top = pathlib.Path(r.stdout.strip()).resolve()
-    rel = []
-    for p in paths:
-        if top not in p.parents:
-            raise SystemExit(f"{p} is outside the git repository {top}; refusing to score it")
-        rp = p.relative_to(top).as_posix()
-        if _git(top, "ls-files", "--error-unmatch", "--", rp).returncode:
-            raise SystemExit(f"{rp} is not committed in git; commit and push the sheet and GRADING_FINAL.txt first")
-        rel.append(rp)
-    dirty = _git(top, "status", "--porcelain", "--untracked-files=no", "--", *rel).stdout.strip()
-    if dirty:
-        raise SystemExit("the sheet or GRADING_FINAL.txt has uncommitted changes; commit and push them first:\n" + dirty)
-    for rp, p in zip(rel, paths):  # the working files are byte-identical to HEAD
-        blob = subprocess.run(["git", "-C", str(top), "show", f"HEAD:{rp}"], capture_output=True, env=_git_env())
-        if blob.returncode or blob.stdout != p.read_bytes():
-            raise SystemExit(f"{rp} differs from the committed version at HEAD; refusing to score")
-    commit = _git(top, "log", "-1", "--format=%H", "--", *rel).stdout.strip()
-    head = _git(top, "rev-parse", "HEAD").stdout.strip()
-    # canonical layout: this kit and this output directory, in this clone
-    if pathlib.Path(kit).resolve() != top / KIT_REL:
+    if kit != top / KIT_REL:
         raise SystemExit(f"the kit directory must be <repo root>/{KIT_REL}; got {kit}. Refusing to score a copy of the kit")
     if pathlib.Path(out_dir).resolve() != top / OUT_REL:
         raise SystemExit(f"the output directory must be <repo root>/{OUT_REL} inside the canonical pack; got {out_dir}")
-    # canonical remote
-    branch = _git(top, "symbolic-ref", "-q", "--short", "HEAD").stdout.strip()
+    rel = [f"{KIT_REL}/grading_sheet.csv", f"{KIT_REL}/GRADING_FINAL.txt"]
+    for rp in rel:
+        if g.run(top, "ls-files", "--error-unmatch", "--", rp).returncode:
+            raise SystemExit(f"{rp} is not committed in git; commit and push the sheet and GRADING_FINAL.txt first")
+    dirty = g.run(top, "status", "--porcelain", "--untracked-files=no", "--", *rel).stdout.strip()
+    if dirty:
+        raise SystemExit("the sheet or GRADING_FINAL.txt has uncommitted changes; commit and push them first:\n" + dirty)
+    commit = g.run(top, "log", "-1", "--format=%H", "--", *rel).stdout.strip()
+    head = g.run(top, "rev-parse", "HEAD").stdout.strip()
+    branch = g.run(top, "symbolic-ref", "-q", "--short", "HEAD").stdout.strip()
     if not branch:
         raise SystemExit("HEAD is detached; check out the branch the grading commit was pushed to")
-    remote = _git(top, "config", "--get", f"branch.{branch}.remote").stdout.strip() or "origin"
-    merge = _git(top, "config", "--get", f"branch.{branch}.merge").stdout.strip()
+    remote = g.run(top, "config", "--get", f"branch.{branch}.remote").stdout.strip() or "origin"
+    merge = g.run(top, "config", "--get", f"branch.{branch}.merge").stdout.strip()
     remote_branch = merge[len("refs/heads/"):] if merge.startswith("refs/heads/") else branch
-    url = _git(top, "config", "--get", f"remote.{remote}.url").stdout.strip()
+    if remote_branch not in ALLOWED_BRANCHES:
+        raise SystemExit(f"branch {remote_branch!r} is not an allowed grading branch ({', '.join(ALLOWED_BRANCHES)})")
+    url = g.run(top, "config", "--get", f"remote.{remote}.url").stdout.strip()
     if normalize_remote(url) != CANONICAL_REPO:
-        raise SystemExit(f"the remote {remote!r} of branch {branch!r} is not {CANONICAL_REMOTE_URL} (https or ssh form); "
-                         "refusing to score a kit outside the canonical repository")
-    rewrites = _git(top, "config", "--get-regexp", r"^url\..*\.(insteadof|pushinsteadof)$").stdout.strip()
-    if rewrites:
+        raise SystemExit(f"the remote {remote!r} of branch {branch!r} is not {CANONICAL_REMOTE_URL} (strict https or ssh "
+                         "form); refusing to score a kit outside the canonical repository")
+    if g.run(top, "config", "--get-regexp", r"^url\..*\.(insteadof|pushinsteadof)$").stdout.strip():
         raise SystemExit("git url rewriting (url.*.insteadOf) is configured; refusing, because it could redirect the remote")
-    grafts = pathlib.Path(_git(top, "rev-parse", "--git-path", "info/grafts").stdout.strip() or ".git/info/grafts")
-    if (grafts if grafts.is_absolute() else top / grafts).exists():
-        raise SystemExit("this clone has info/grafts, which can fake history; refusing")
-    tip = remote_tip(remote_branch)
-    fetched = False
-    if _git(top, "cat-file", "-e", f"{tip}^{{commit}}").returncode:
-        f = _git(top, "fetch", "--no-tags", "--no-recurse-submodules", REMOTE_FETCH_URL, f"refs/heads/{remote_branch}",
-                 timeout=REMOTE_TIMEOUT_S * 4)
-        fetched = True
-        if f.returncode or _git(top, "cat-file", "-e", f"{tip}^{{commit}}").returncode:
-            raise SystemExit(f"could not fetch the remote tip {tip[:12]} of {remote_branch}; refusing to score")
-    if _git(top, "merge-base", "--is-ancestor", commit, tip).returncode:
-        raise SystemExit(f"grading commit {commit[:12]} is not contained in the real remote tip {tip[:12]} of "
-                         f"{remote_branch} (git ls-remote); push it to that branch first")
-    return {"grading_commit": commit, "head_commit": head, "remote_url": CANONICAL_REMOTE_URL,
-            "remote_branch": remote_branch, "remote_tip_sha": tip, "remote_tip_fetched": fetched,
-            "checked_against": "git ls-remote of the real remote; local refs/remotes are not used",
-            "kit_dir": KIT_REL, "output_dir": OUT_REL, "files": rel,
-            "repository_root": "git work tree containing the kit (path not recorded)"}
+    return commit, head, remote_branch, rel
 
 
 def prior_finalizations(root, kit, key_sha):
-    """Run ids already scored for this key commitment (from FINALIZED.txt and from holdout results files)."""
+    """Run ids already scored for this key commitment in the working tree (FINALIZED.txt, REVEALED_KEY.json, holdout
+    results files). The git-history check is separate (verify_holdout.GitSession.finalizations)."""
     runs = set()
     fp = kit / "FINALIZED.txt"
     if fp.is_file():
         d = dict(l.split(": ", 1) for l in fp.read_text().splitlines() if ": " in l)
         if d.get("key_sha256") == key_sha:
             runs.add(d.get("run_id", "?"))
+    if (kit / "REVEALED_KEY.json").exists():
+        runs.add("REVEALED_KEY.json")
     for r in (root / "data/dreamco_knowledge/evidence/holdout").glob("*/*.results.json"):
         try:
             if json.loads(r.read_text()).get("key_sha256") == key_sha:
@@ -410,49 +350,98 @@ def declare_final(a, kit, grades, sheet_bytes):
     if not name or names != [name]:
         raise SystemExit(f"every row's grader must be exactly {name!r}; the sheet names {names}")
     at = datetime.datetime.now().astimezone().isoformat(timespec="seconds")
-    p.write_text(f"FINAL: grader={name}; declared_at={at}; sheet_sha256={sha(sheet_bytes)}\n")
+    p.write_text(f"FINAL: grader={name}; declared_at={at}; sheet_sha256={vh.sha(sheet_bytes)}\n")
     print(f"wrote {p}. The sheet is now locked: do not change grading_sheet.csv. Commit and push grading_sheet.csv and "
           "GRADING_FINAL.txt.")
 
 
-def finalize(a, kit, sheet, items_doc, grades, sheet_bytes):
+def _committed_inputs(kit, out_dir, run_id, test_reasons):
+    """Everything --finalize scores, read exactly once. Outside the test-only bypass the bytes come from `git show
+    <grading_commit>:<path>` in a fresh mirror of the real remote, never from the working tree."""
+    names = ("grading_sheet.csv", "GRADING_FINAL.txt", "items.json", "KEY_COMMITMENT.txt")
+    if os.environ.get(TEST_ONLY_SKIP_GIT_ENV) == "1":
+        data = {n: (kit / n).read_bytes() if (kit / n).is_file() else None for n in names}
+        info = {"grading_commit": None, "remote_url": None, "remote_branch": None, "remote_tip_sha": None,
+                "skipped": "; ".join(test_reasons)}
+        return data, info
+    try:
+        with vh.GitSession(REMOTE_FETCH_URL) as g:
+            commit, head, remote_branch, rel = check_local_clone(g, kit, out_dir)
+            tips = g.ls_remote(ALLOWED_BRANCHES)
+            if remote_branch not in tips:
+                raise SystemExit(f"the remote has no branch refs/heads/{remote_branch}; push the grading commit to it first")
+            g.fetch(tips)
+            tip = tips[remote_branch]
+            if not g.is_ancestor(commit, tip):
+                raise SystemExit(f"grading commit {commit[:12]} is not contained in the real remote tip {tip[:12]} of "
+                                 f"{remote_branch} (git ls-remote); push it to that branch first")
+            data = {n: g.show(commit, f"{KIT_REL}/{n}") for n in names}
+            if data["KEY_COMMITMENT.txt"] is not None:
+                hist = g.finalizations(parse_commitment(data["KEY_COMMITMENT.txt"]).get("key_sha256", "?"))
+                if hist:
+                    raise SystemExit("this key commitment was already finalized in git history on the remote ("
+                                     + ", ".join(hist[:5]) + "); a kit is scored once")
+    except vh.VerifyError as e:
+        raise SystemExit(f"{e}; refusing to score")
+    used = CANONICAL_REMOTE_URL if REMOTE_FETCH_URL == vh.CANONICAL_FETCH_URL else REMOTE_FETCH_URL
+    info = {"grading_commit": commit, "head_commit": head, "remote_url": used, "remote_branch": remote_branch,
+            "remote_tip_sha": tip, "checked_against": "git ls-remote and a fresh fetch of the remote with /usr/bin/git in a "
+            "sanitized environment; local refs are not used", "inputs_read_from": f"git show {commit}:<path>",
+            "kit_dir": KIT_REL, "output_dir": OUT_REL, "files": rel,
+            "repository_root": "git work tree containing the kit (path not recorded)"}
+    if test_reasons:
+        info["test_only"] = "; ".join(test_reasons)
+    return data, info
+
+
+def finalize(a, kit):
     root = pathlib.Path(a.root)
-    decl = parse_final(kit)
-    if sha(sheet_bytes) != decl["sheet_sha256"]:
+    out_base = root / "data/dreamco_knowledge/evidence/holdout"
+    run_id = a.run_id or datetime.datetime.now().astimezone().strftime("%Y%m%d") + "-01"
+    if not re.fullmatch(r"\d{8}-\d{2}", run_id):
+        raise SystemExit("--run-id must be YYYYMMDD-NN")
+    test_reasons = []
+    if os.environ.get(TEST_ONLY_SKIP_GIT_ENV) == "1":
+        test_reasons.append(f"TEST ONLY: {TEST_ONLY_SKIP_GIT_ENV}=1 skipped the git, remote and canonical-path checks")
+    if REMOTE_FETCH_URL != vh.CANONICAL_FETCH_URL:
+        test_reasons.append(f"TEST ONLY: REMOTE_FETCH_URL was overridden to {REMOTE_FETCH_URL!r}, so the push was not "
+                            "checked against the canonical remote")
+    test_only = bool(test_reasons)
+    data, git_info = _committed_inputs(kit, out_base, run_id, test_reasons)
+    sheet_bytes, final_b, items_b, commit_b = (data[n] for n in ("grading_sheet.csv", "GRADING_FINAL.txt", "items.json",
+                                                                 "KEY_COMMITMENT.txt"))
+    if sheet_bytes is None or items_b is None or commit_b is None:
+        raise SystemExit("grading_sheet.csv, items.json or KEY_COMMITMENT.txt is missing at the grading commit")
+    decl = parse_final(final_b)
+    if vh.sha(sheet_bytes) != decl["sheet_sha256"]:
         raise SystemExit("grading_sheet.csv does not match sheet_sha256 in GRADING_FINAL.txt (the sheet changed after "
                          "grading was declared final); refusing to score")
+    items_doc = json.loads(items_b)
+    grades, errs = load_sheet(sheet_bytes, items_doc["items"])
+    if errs:
+        raise SystemExit("grading sheet incomplete or invalid:\n  " + "\n  ".join(errs))
     graders = sorted({g["grader"] for g in grades.values()})
     if graders != [decl["grader"]]:
         raise SystemExit(f"the sheet must name exactly one grader, the one declared in GRADING_FINAL.txt "
                          f"({decl['grader']!r}); it names {graders}")
     grader = decl["grader"]
-    skip_git = os.environ.get(TEST_ONLY_SKIP_GIT_ENV) == "1"
-    if skip_git:
-        git_info = {"grading_commit": None, "remote_url": None, "remote_branch": None, "remote_tip_sha": None,
-                    "skipped": f"TEST ONLY: {TEST_ONLY_SKIP_GIT_ENV}=1 skipped the git, remote and canonical-path checks; "
-                               "every record is forced to passed=false"}
-    else:
-        git_info = verify_git_state([sheet, kit / "GRADING_FINAL.txt"], kit, root / "data/dreamco_knowledge/evidence/holdout")
-    commit = read_commitment(kit)
-    run_id = a.run_id or datetime.datetime.now().astimezone().strftime("%Y%m%d") + "-01"
-    if not re.fullmatch(r"\d{8}-\d{2}", run_id):
-        raise SystemExit("--run-id must be YYYYMMDD-NN")
+    commit = parse_commitment(commit_b)
     prior = prior_finalizations(root, kit, commit["key_sha256"])
     if prior:
         raise SystemExit(f"this key commitment was already finalized (run {', '.join(prior)}); a kit is scored once")
-    if sha((kit / "items.json").read_bytes()) != commit["items_json_sha256"]:
+    if vh.sha(items_b) != commit["items_json_sha256"]:
         raise SystemExit("items.json was changed after the kit was drawn; refusing to score")
     # the key is decrypted only now, after the declaration and the sheet are committed and pushed
     key_b = holdout_crypto.decrypt_bytes(pathlib.Path(a.key).read_bytes(), holdout_crypto.read_passphrase(a.passphrase_file),
                                          "holdout_key")
-    if sha(key_b) != commit["key_sha256"]:
+    if vh.sha(key_b) != commit["key_sha256"]:
         raise SystemExit("key does not match KEY_COMMITMENT.txt (sha256 differs); refusing to score")
     key = json.loads(key_b)
     by_id = {i["item_id"]: i for i in items_doc["items"]}
     if set(key["items"]) != set(by_id):
         raise SystemExit("key and items.json list different items")
     for h, k in key["items"].items():
-        if sha(by_id[h]["candidate_answer"].encode()) != k["candidate_answer_sha256"]:
+        if vh.sha(by_id[h]["candidate_answer"].encode()) != k["candidate_answer_sha256"]:
             raise SystemExit(f"{h}: candidate answer differs from the key")
     disc, assets = evaluate(key, grades)
     now = datetime.datetime.now().astimezone()
@@ -465,28 +454,30 @@ def finalize(a, kit, sheet, items_doc, grades, sheet_bytes):
             "expected_scores": k["expected_scores"], "accepted_scores": k["accepted_scores"], "human_scores": g["scores"],
             "criterion_agreement": agree, "factually_correct": g["factually_correct"], "comments": g["comments"]})
     majors = {m_["asset_id"]: m_ for m_ in json.loads((root / "data/majors_selected.json").read_text())}
-    evaluator = (f"edu-career-pathways score_holdout.py sha256:{sha((ROOT / 'score_holdout.py').read_bytes())}; "
-                 f"holdout_crypto.py sha256:{sha((ROOT / 'holdout_crypto.py').read_bytes())}")
+    evaluator = (f"edu-career-pathways score_holdout.py sha256:{vh.sha((ROOT / 'score_holdout.py').read_bytes())}; "
+                 f"verify_holdout.py sha256:{vh.sha((ROOT / 'verify_holdout.py').read_bytes())}; "
+                 f"holdout_crypto.py sha256:{vh.sha((ROOT / 'holdout_crypto.py').read_bytes())}")
+    git_fields = {f: git_info[f] for f in ("grading_commit", "remote_url", "remote_branch", "remote_tip_sha")}
     written = []
     for aid, its in sorted(per_asset.items()):
         res_a = assets[aid]
         cip = majors[aid]["cip"]
         stem = next((root / "study_plans").glob(f"{cip}_*.md")).stem
         asset = json.loads((root / "study_plans" / stem / "asset.json").read_text())
-        passed = bool(res_a["passed"]) and not skip_git
-        lim = limitations_text(grader, len(its), res_a["eligibility"], git_info.get("skipped"))
+        passed = bool(res_a["passed"]) and not test_only
+        lim = limitations_text(grader, len(its), res_a["eligibility"], " ".join(test_reasons) or None)
         results_path = f"{EVIDENCE_ROOT}/holdout/{aid}/{run_id}.results.json"
-        results = {"schema": "dreamco.edu_career_pathways.holdout_results.v4", "asset_id": aid, "run_id": run_id,
-                   "kit": key["kit"], "kit_created_at": key["created_at"], "key_sha256": sha(key_b),
-                   "items_json_sha256": commit["items_json_sha256"], "grading_sheet_sha256": sha(sheet_bytes),
-                   "graders": [grader], "declared_final": decl, "grading_git": git_info,
-                   "grading_commit": git_info["grading_commit"], "remote_url": git_info["remote_url"],
-                   "remote_branch": git_info["remote_branch"], "remote_tip_sha": git_info["remote_tip_sha"],
+        results = {"schema": "dreamco.edu_career_pathways.holdout_results.v5", "asset_id": aid, "run_id": run_id,
+                   "kit": key["kit"], "kit_created_at": key["created_at"], "key_sha256": vh.sha(key_b),
+                   "items_json_sha256": commit["items_json_sha256"], "grading_sheet_sha256": vh.sha(sheet_bytes),
+                   "graders": [grader], "declared_final": decl, "grading_git": git_info, **git_fields,
+                   "revealed_key_path": f"{KIT_REL}/REVEALED_KEY.json",
                    "asset_integrity_hash": asset["integrity_hash"], "split": SPLIT, "metric": METRIC,
                    "threshold": AGREEMENT_MIN, "n_items": len(its), "score": res_a["score"],
                    "baseline_score": res_a["baseline_score"], "baselines": res_a["baselines"],
                    "baseline_definition": BASELINE_DEFINITION, "per_asset_eligibility": res_a["eligibility"],
                    "asset_discrimination": res_a["asset_discrimination"], "pass_checks": res_a["checks"],
+                   "rule_passed": bool(res_a["passed"]), "test_only": test_only, "test_only_reasons": test_reasons,
                    "passed": passed, "kit_discrimination": disc,
                    "full_strength_judged_incorrect": res_a["full_strength_judged_incorrect"], "items": its,
                    "limitations": lim}
@@ -497,13 +488,13 @@ def finalize(a, kit, sheet, items_doc, grades, sheet_bytes):
                "content_version": f"{aid} plan {asset['integrity_hash']}; {key['kit']} drawn {key['created_at']}",
                "license_or_usage_basis": f"DreamCo-original evaluation by human grader {grader} of DreamCo-original kit items.",
                "transformation": "original_evaluation", "evaluator_version": f"{evaluator}; human grader: {grader}",
-               "integrity_hash": "sha256:" + sha(rb), "results_path": results_path, "evidence_root": EVIDENCE_ROOT,
+               "integrity_hash": "sha256:" + vh.sha(rb), "results_path": results_path, "evidence_root": EVIDENCE_ROOT,
                "paths_relative_to": PATHS_RELATIVE_TO, "split": SPLIT, "n_items": len(its), "metric": METRIC,
                "score": res_a["score"], "baseline_score": res_a["baseline_score"], "baseline_definition": BASELINE_DEFINITION,
-               "threshold": AGREEMENT_MIN, "passed": passed, "grader": grader,
-               "grading_commit": git_info["grading_commit"], "remote_url": git_info["remote_url"],
-               "remote_branch": git_info["remote_branch"], "remote_tip_sha": git_info["remote_tip_sha"], "limitations": lim}
-        out = root / "data/dreamco_knowledge/evidence/holdout" / aid
+               "threshold": AGREEMENT_MIN, "passed": passed, "test_only": test_only, "grader": grader, **git_fields,
+               "verification": "python verify_holdout.py <this record> (run by someone other than the scorer)",
+               "limitations": lim}
+        out = out_base / aid
         if (out / f"{run_id}.json").exists():
             raise SystemExit(f"{out / (run_id + '.json')} exists; evidence is append-only, use a new --run-id")
         written.append((out, run_id, rb, rec))
@@ -511,19 +502,26 @@ def finalize(a, kit, sheet, items_doc, grades, sheet_bytes):
         out.mkdir(parents=True, exist_ok=True)
         (out / f"{run_id}.results.json").write_bytes(rb)
         (out / f"{run_id}.json").write_text(json.dumps(rec, indent=2, ensure_ascii=False) + "\n")
-        print(rec["evidence_id"], f"n_items={rec['n_items']} score={rec['score']} baseline={rec['baseline_score']} passed={rec['passed']}")
+        print(rec["evidence_id"], f"n_items={rec['n_items']} score={rec['score']} baseline={rec['baseline_score']} "
+              f"passed={rec['passed']}" + (" (TEST ONLY)" if test_only else ""))
+    # publish the reveal: the exact plaintext key bytes, so anyone can recompute the commitment and every score
+    (kit / "REVEALED_KEY.json").write_bytes(key_b)
     (kit / "FINALIZED.txt").write_text(f"key_sha256: {commit['key_sha256']}\nrun_id: {run_id}\n"
-                                       f"grading_sheet_sha256: {sha(sheet_bytes)}\ngrading_commit: {git_info['grading_commit']}\n"
+                                       f"grading_sheet_sha256: {vh.sha(sheet_bytes)}\ngrading_commit: {git_info['grading_commit']}\n"
                                        f"remote_url: {git_info['remote_url']}\nremote_branch: {git_info['remote_branch']}\n"
-                                       f"remote_tip_sha: {git_info['remote_tip_sha']}\n"
+                                       f"remote_tip_sha: {git_info['remote_tip_sha']}\ntest_only: {test_only}\n"
+                                       f"revealed_key: REVEALED_KEY.json (sha256 = key_sha256)\n"
                                        f"finalized_at: {now.isoformat(timespec='seconds')}\n"
                                        "note: this key commitment has been scored; score_holdout.py refuses to finalize it again.\n")
     print("kit discrimination:", json.dumps({k: v for k, v in disc.items() if k != "per_major_with_both_types"}))
+    print("Next: commit and push data/dreamco_knowledge/evidence/holdout/, evidence/holdout_kit/REVEALED_KEY.json and "
+          "evidence/holdout_kit/FINALIZED.txt, then have someone other than the scorer run verify_holdout.py on each record.")
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--sheet", default=None, help="default: <kit-dir>/grading_sheet.csv")
+    ap.add_argument("--sheet", default=None, help="dry run only may use another path; --declare-final and --finalize "
+                    "require <kit-dir>/grading_sheet.csv")
     ap.add_argument("--kit-dir", default=str(ROOT / "evidence" / "holdout_kit"))
     ap.add_argument("--key", default=str(PRIVATE / "holdout_key.json.enc"), help="encrypted private key (outside the repo)")
     ap.add_argument("--passphrase-file", default=None, help="default: $DREAMCO_HOLDOUT_PASSPHRASE_FILE or "
@@ -536,19 +534,21 @@ def main():
     ap.add_argument("--run-id", default=None)
     a = ap.parse_args()
     kit = pathlib.Path(a.kit_dir)
-    sheet = pathlib.Path(a.sheet or kit / "grading_sheet.csv")
-    items_doc = json.loads((kit / "items.json").read_text())
-    sheet_bytes = sheet.read_bytes()
-    grades, errs = load_sheet(sheet, items_doc["items"])
+    canonical_sheet = kit / "grading_sheet.csv"
+    if a.sheet and (a.finalize or a.declare_final) and pathlib.Path(a.sheet).resolve() != canonical_sheet.resolve():
+        raise SystemExit(f"--sheet must be the canonical {canonical_sheet} for --declare-final and --finalize (non-canonical "
+                         f"--sheet {a.sheet} refused)")
+    if a.finalize:
+        return finalize(a, kit)  # reads every scoring input itself, once, from the grading commit
+    sheet_bytes = pathlib.Path(a.sheet or canonical_sheet).read_bytes()
+    items_doc = json.loads((kit / "items.json").read_bytes())
+    grades, errs = load_sheet(sheet_bytes, items_doc["items"])
     if errs:
         raise SystemExit("grading sheet incomplete or invalid:\n  " + "\n  ".join(errs))
     if a.declare_final:
         return declare_final(a, kit, grades, sheet_bytes)
-    if not a.finalize:
-        print(f"Sheet format OK: all {len(grades)} rows complete. No scores were computed (dry run). "
-              "When grading is final, run --declare-final --grader \"<your name>\" and ask the builder to run --finalize.")
-        return
-    finalize(a, kit, sheet, items_doc, grades, sheet_bytes)
+    print(f"Sheet format OK: all {len(grades)} rows complete. No scores were computed (dry run). "
+          "When grading is final, run --declare-final --grader \"<your name>\" and ask the builder to run --finalize.")
 
 
 if __name__ == "__main__":

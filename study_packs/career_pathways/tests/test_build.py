@@ -702,7 +702,9 @@ def test_holdout_kit_v3_is_blind_shape_normalized_and_ungraded():
               "Threat model", "baseline_score", "scored once", "Asset detection rate", "Asset false-alarm rate",
               "strictly above", "grading_commit", "committed and pushed", "passphrase is on the same shared box",
               "move the passphrase off the box", "Item order", "single `rng.shuffle`", "git ls-remote", "remote_tip_sha",
-              "never falls back to local refs", "github.com/DreamCo-Technologies/Dreamcobots", "insteadOf"):
+              "unreachable remote is a refusal", "github.com/DreamCo-Technologies/Dreamcobots", "insteadOf",
+              "/usr/bin/git", "GIT_CONFIG_GLOBAL=/dev/null", "REVEALED_KEY.json", "verify_holdout.py", "someone other than the scorer",
+              "git show <grading_commit>", "TEST ONLY", "edu-career-pathways/majors-onet-study-plans"):
         assert s in readme, s
     # the number of weakened answers is secret: no README states it
     for doc in (readme, (ROOT / "README.md").read_text(), (ROOT / "docs/DATA_DICTIONARY.md").read_text()):
@@ -710,41 +712,62 @@ def test_holdout_kit_v3_is_blind_shape_normalized_and_ungraded():
                              r"exactly (half|\d+) (are )?weakened", doc)
 
 
-def test_holdout_kit_shares_no_5_word_run_with_published_content(onet_text_grams):
-    """Kit prompts, answers and rubrics are new: no 5-word run appears in any published plan, practice_tasks.json,
-    authored file, README or doc of the pack, the O*NET text (task statements, Job Zone text, occupation descriptions),
-    or any earlier kit in git history (v1 and the public v2 draw: reusing a v2 item would let anyone compare its two
-    answer versions if the shown version changed)."""
+def _kit_grams():
     kg = {}
     for i in _kit_items()["items"]:
         for f in [i["prompt"], i["candidate_answer"]] + [c["criterion"] + " " + c["description"] for c in i["rubric"]]:
             for g in _grams(f):
                 kg.setdefault(g, i["item_id"])
-    assert not set(kg) & onet_text_grams
-    files = PLANS + [ROOT / "data/practice_tasks.json", ROOT / "README.md", KIT / "README.md", ROOT / "raw/SOURCES.md"]
-    files += sorted((ROOT / "authored").glob("*.json")) + sorted((ROOT / "docs").glob("*.md"))
-    texts = [(f.name, f.read_text()) for f in files]
-    found = _git_history_repo()
-    if found:
-        import subprocess
-        repo, pack = found
-        current = (KIT / "items.json").read_bytes()
-        n_old = 0
-        for c in subprocess.run(["git", "-C", str(repo), "log", "--all", "--format=%H", "--", f"{pack}/evidence/holdout_kit/items.json"],
-                                capture_output=True, text=True).stdout.split():
-            r = subprocess.run(["git", "-C", str(repo), "show", f"{c}:{pack}/evidence/holdout_kit/items.json"], capture_output=True)
-            if r.returncode or r.stdout == current:
-                continue  # deleted in that commit, or it is this kit
-            n_old += 1
-            for name in ("items.json", "_key.json", "items.md"):
-                r = subprocess.run(["git", "-C", str(repo), "show", f"{c}:{pack}/evidence/holdout_kit/{name}"], capture_output=True, text=True)
-                if r.returncode == 0:
-                    texts.append((f"earlier kit {c[:7]}:{name}", r.stdout))
-        assert n_old >= 2  # v1 (1cda014) and v2 (def1d2d)
+    return kg
+
+
+def _shared_runs(kg, texts):
     hits = []
     for name, t in texts:
         w = _tok(t)
         hits += [(" ".join(w[k:k + 5]), kg[tuple(w[k:k + 5])], name) for k in range(len(w) - 4) if tuple(w[k:k + 5]) in kg]
+    return hits
+
+
+def test_holdout_kit_shares_no_5_word_run_with_published_content(onet_text_grams):
+    """Kit prompts, answers and rubrics are new: no 5-word run appears in any published plan, practice_tasks.json,
+    authored file, README or doc of the pack, or the O*NET text (task statements, Job Zone text, occupation
+    descriptions). Earlier kits in git history are checked by the next test."""
+    kg = _kit_grams()
+    assert not set(kg) & onet_text_grams
+    files = PLANS + [ROOT / "data/practice_tasks.json", ROOT / "README.md", KIT / "README.md", ROOT / "raw/SOURCES.md"]
+    files += sorted((ROOT / "authored").glob("*.json")) + sorted((ROOT / "docs").glob("*.md"))
+    hits = _shared_runs(kg, [(f.name, f.read_text()) for f in files])
+    assert not hits, hits[:10]
+
+
+def test_holdout_kit_shares_no_5_word_run_with_earlier_kits_in_git_history():
+    """No 5-word run is shared with any earlier kit in git history (v1 and the public v2 draw: reusing a v2 item would
+    let anyone compare its two answer versions if the shown version changed). Needs the history that holds those kits:
+    in a shallow clone without it, the test is skipped with that reason instead of failing."""
+    import subprocess
+    found = _git_history_repo()
+    if not found:
+        pytest.skip("no git history available")
+    repo, pack = found
+    git = lambda *a, **k: subprocess.run(["git", "-C", str(repo), *a], capture_output=True, **k)
+    current = (KIT / "items.json").read_bytes()
+    texts, n_old = [], 0
+    for c in git("log", "--all", "--format=%H", "--", f"{pack}/evidence/holdout_kit/items.json", text=True).stdout.split():
+        r = git("show", f"{c}:{pack}/evidence/holdout_kit/items.json")
+        if r.returncode or r.stdout == current:
+            continue  # deleted in that commit, or it is this kit
+        n_old += 1
+        for name in ("items.json", "_key.json", "items.md"):
+            r = git("show", f"{c}:{pack}/evidence/holdout_kit/{name}", text=True)
+            if r.returncode == 0:
+                texts.append((f"earlier kit {c[:7]}:{name}", r.stdout))
+    shallow = git("rev-parse", "--is-shallow-repository", text=True).stdout.strip() == "true"
+    if n_old < 2 and shallow:
+        pytest.skip("shallow clone without the commits of the earlier kits (v1 1cda014, v2 def1d2d); "
+                    "run `git fetch --unshallow` to check them")
+    assert n_old >= 2  # v1 (1cda014) and v2 (def1d2d)
+    hits = _shared_runs(_kit_grams(), texts)
     assert not hits, hits[:10]
 
 
@@ -1114,17 +1137,20 @@ def test_score_holdout_dry_run_never_opens_the_key_and_is_identical_across_sheet
     assert len(outs) == 1  # same output and exit code whatever the scores
     assert not (s["root"] / "data/dreamco_knowledge").exists() and not (s["kit"] / "GRADING_FINAL.txt").exists()
     src = (ROOT / "score_holdout.py").read_text()
-    dry = src.split("if not a.finalize:", 1)[1].split("finalize(a, kit", 1)[0]
+    dry = src.split("return finalize(a, kit)", 1)[1].split('if __name__ == "__main__":', 1)[0]
     assert "key" not in dry and "decrypt" not in dry  # the dry-run branch has no key access
 
 
 def test_finalize_requires_a_locked_sheet_and_one_matching_grader(ktmp):
+    """Parse-level refusals act on the bytes read for scoring; they are exercised here under the test-only bypass, which
+    reads the working tree once (the git-backed path reads the same files from the grading commit)."""
     s = _synthetic_kit(ktmp)
+    skip = {"DREAMCO_HOLDOUT_TEST_ONLY_SKIP_GIT": "1"}
     _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s))
-    r = _run_score("--finalize", "--run-id", "20261002-91", s=s)
+    r = _run_score("--finalize", "--run-id", "20261002-91", s=s, extra_env=skip)
     assert r.returncode != 0 and "GRADING_FINAL.txt" in r.stderr  # not declared final yet
     (s["kit"] / "GRADING_FINAL.txt").write_text("FINAL: grader=pytest-synthetic; declared_at=2026-10-02T13:00:00-05:00\n")
-    r = _run_score("--finalize", "--run-id", "20261002-91", s=s)
+    r = _run_score("--finalize", "--run-id", "20261002-91", s=s, extra_env=skip)
     assert r.returncode != 0 and "sheet_sha256" in r.stderr  # the old line without the sheet hash is not enough
     (s["kit"] / "GRADING_FINAL.txt").unlink()
     r = _run_score("--declare-final", "--grader", "someone-else", s=s)
@@ -1135,14 +1161,14 @@ def test_finalize_requires_a_locked_sheet_and_one_matching_grader(ktmp):
     assert _run_score("--declare-final", "--grader", "pytest-synthetic", s=s).returncode != 0  # declared once
     # the sheet is locked: any change after the declaration is refused
     _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], {h: [2, 2, 2] for h in s["key_items"]})
-    r = _run_score("--finalize", "--run-id", "20261002-92", s=s)
+    r = _run_score("--finalize", "--run-id", "20261002-92", s=s, extra_env=skip)
     assert r.returncode != 0 and "sheet_sha256" in r.stderr and not (s["root"] / "data/dreamco_knowledge").exists()
     # two graders on the sheet, or a grader other than the declared one, is refused
     for g in (["pytest-synthetic", "second-grader"], "someone-else"):
         _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s), grader=g)
         (s["kit"] / "GRADING_FINAL.txt").write_text("FINAL: grader=pytest-synthetic; declared_at=2026-10-02T13:00:00-05:00; "
                                                     f"sheet_sha256={sha(s['kit'] / 'grading_sheet.csv')}\n")
-        r = _run_score("--finalize", "--run-id", "20261002-93", s=s)
+        r = _run_score("--finalize", "--run-id", "20261002-93", s=s, extra_env=skip)
         assert r.returncode != 0 and "exactly one grader" in r.stderr
     assert not (s["root"] / "data/dreamco_knowledge").exists()
 
@@ -1166,7 +1192,7 @@ def test_finalize_requires_grading_files_committed_and_pushed(ktmp):
     _git(s["repo"], "checkout", "--", f"{s['kit_rel']}/GRADING_FINAL.txt")
     outside = ktmp / "outside_sheet.csv"; shutil.copy(s["kit"] / "grading_sheet.csv", outside)
     r = _run_score("--finalize", "--sheet", outside, "--run-id", "20261002-81", s=nokey)
-    assert r.returncode != 0 and "git repository" in r.stderr  # a sheet outside the repo is refused
+    assert r.returncode != 0 and "non-canonical --sheet" in r.stderr  # a sheet outside the repo is refused
     assert not (s["root"] / "data/dreamco_knowledge").exists()
     r = _run_score("--finalize", "--run-id", "20261002-81", s=s)
     assert r.returncode == 0, r.stderr
@@ -1174,8 +1200,9 @@ def test_finalize_requires_grading_files_committed_and_pushed(ktmp):
     assert len(recs) == 4
     for p in recs:
         rec = json.loads(p.read_text())
-        assert rec["grading_commit"] == sha_commit and rec["remote_tip_sha"] == sha_commit
-        assert rec["remote_url"] == "https://github.com/DreamCo-Technologies/Dreamcobots" and rec["remote_branch"] == "main"
+        assert rec["grading_commit"] == sha_commit and rec["remote_tip_sha"] == sha_commit and rec["remote_branch"] == "main"
+        # the suite points REMOTE_FETCH_URL at a local bare repository: the record names that URL and is TEST ONLY
+        assert rec["remote_url"] == str(s["remote"]) and rec["test_only"] is True and rec["passed"] is False
         res = json.loads(_resolve_results(s["root"], rec).read_text())
         for f in ("grading_commit", "remote_url", "remote_branch", "remote_tip_sha"):
             assert res[f] == res["grading_git"][f] == rec[f]
@@ -1193,9 +1220,10 @@ def test_test_only_git_bypass_never_produces_passing_evidence(ktmp):
     assert len(recs) == 4
     for rec in recs:
         assert rec["passed"] is False and rec["grading_commit"] is None and "TEST ONLY" in rec["limitations"]
-        assert rec["remote_url"] is None and rec["remote_tip_sha"] is None
+        assert rec["remote_url"] is None and rec["remote_tip_sha"] is None and rec["test_only"] is True
         res = json.loads(_resolve_results(s["root"], rec).read_text())
         assert "TEST ONLY" in res["grading_git"]["skipped"]
+    assert (s["kit"] / "REVEALED_KEY.json").read_bytes() == s["key_b"]  # the reveal is published even in test mode
 
 
 def _ready_to_finalize(s, push=True):
@@ -1208,19 +1236,35 @@ def _no_evidence(s):
     return not (s["root"] / "data/dreamco_knowledge/evidence/holdout").exists() and not (s["kit"] / "FINALIZED.txt").exists()
 
 
-def test_remote_url_normalization_accepts_only_the_canonical_repository():
-    import score_holdout
+def test_remote_url_normalization_is_strict_and_accepts_only_the_canonical_repository():
+    import score_holdout, verify_holdout
     ok = ["https://github.com/DreamCo-Technologies/Dreamcobots.git", "https://github.com/dreamco-technologies/dreamcobots",
           "HTTPS://GitHub.com/DREAMCO-TECHNOLOGIES/Dreamcobots/", "git@github.com:DreamCo-Technologies/Dreamcobots.git",
-          "git@github.com:dreamco-technologies/DREAMCOBOTS", "ssh://git@github.com/DreamCo-Technologies/Dreamcobots.git",
-          "ssh://git@github.com:22/DreamCo-Technologies/Dreamcobots", "https://user@github.com/DreamCo-Technologies/Dreamcobots.git"]
-    bad = ["/tmp/remote.git", "file:///tmp/remote.git", "../remote.git", "https://github.com/DreamCo-Technologies/Dreamcobots-fork",
-           "https://github.com/someone/Dreamcobots.git", "https://evil.example/DreamCo-Technologies/Dreamcobots.git",
-           "https://github.com.evil.example/DreamCo-Technologies/Dreamcobots", "http://github.com/DreamCo-Technologies/Dreamcobots",
-           "git://github.com/DreamCo-Technologies/Dreamcobots", "C:/DreamCo-Technologies/Dreamcobots", "", None]
-    assert all(score_holdout.normalize_remote(u) == score_holdout.CANONICAL_REPO for u in ok)
-    assert not any(score_holdout.normalize_remote(u) == score_holdout.CANONICAL_REPO for u in bad)
-    assert score_holdout.REMOTE_FETCH_URL == "https://github.com/DreamCo-Technologies/Dreamcobots.git"  # unpatched default
+          "git@GitHub.com:dreamco-technologies/DREAMCOBOTS", "ssh://git@github.com/DreamCo-Technologies/Dreamcobots.git"]
+    bad = ["https://evil.example#@github.com/DreamCo-Technologies/Dreamcobots",          # fragment trick
+           "https://evil.example/x#@github.com:DreamCo-Technologies/Dreamcobots",
+           "evil.example#@github.com:DreamCo-Technologies/Dreamcobots",                  # scp form with a fragment trick
+           "https://user@github.com/DreamCo-Technologies/Dreamcobots.git",               # userinfo
+           "https://x:token@github.com/DreamCo-Technologies/Dreamcobots",
+           "https://github.com:443/DreamCo-Technologies/Dreamcobots",                     # port
+           "ssh://git@github.com:22/DreamCo-Technologies/Dreamcobots",
+           "https://github.com/DreamCo-Technologies/Dreamcobots?ref=x",                   # query
+           "https://github.com/DreamCo-Technologies/Dreamcobots#main",                    # fragment
+           "https://github.com/DreamCo-Technologies/Dreamcobots%2egit",                   # escapes
+           "ssh://root@github.com/DreamCo-Technologies/Dreamcobots", "ssh://git@evil@github.com/DreamCo-Technologies/Dreamcobots",
+           "root@github.com:DreamCo-Technologies/Dreamcobots", "github.com:DreamCo-Technologies/Dreamcobots",
+           "https://github.com.evil.example/DreamCo-Technologies/Dreamcobots", "https://GITHUB.COM./DreamCo-Technologies/Dreamcobots",
+           "https://evil.example/DreamCo-Technologies/Dreamcobots.git", "https://github.com/DreamCo-Technologies/Dreamcobots/extra",
+           "https://github.com/DreamCo-Technologies/Dreamcobots-fork", "https://github.com/someone/Dreamcobots.git",
+           "http://github.com/DreamCo-Technologies/Dreamcobots", "git://github.com/DreamCo-Technologies/Dreamcobots",
+           "/tmp/remote.git", "file:///tmp/remote.git", "../remote.git", "C:/DreamCo-Technologies/Dreamcobots",
+           " https://github.com/DreamCo-Technologies/Dreamcobots", "https://github.com/DreamCo-Technologies/Dreamcobots\n", "", None]
+    assert score_holdout.normalize_remote is verify_holdout.normalize_remote
+    assert [u for u in ok if verify_holdout.normalize_remote(u) != verify_holdout.CANONICAL_REPO] == []
+    assert [u for u in bad if verify_holdout.normalize_remote(u) == verify_holdout.CANONICAL_REPO] == []
+    assert score_holdout.REMOTE_FETCH_URL == verify_holdout.CANONICAL_FETCH_URL == "https://github.com/DreamCo-Technologies/Dreamcobots.git"
+    assert verify_holdout.ALLOWED_BRANCHES == ("edu-career-pathways/majors-onet-study-plans", "main")
+    assert verify_holdout.GIT == "/usr/bin/git" and verify_holdout.git_binary() == "/usr/bin/git"
 
 
 def test_finalize_refuses_a_forged_remote_tracking_ref_without_a_real_push(ktmp):
@@ -1238,7 +1282,7 @@ def test_finalize_refuses_when_the_remote_is_unreachable_and_never_falls_back(kt
     _ready_to_finalize(s)  # really pushed, and the local tracking ref says so too
     _git(s["repo"], "update-ref", "refs/remotes/origin/main", "HEAD")
     r = _run_score("--finalize", "--run-id", "20261002-72", s=dict(s, remote_override=ktmp / "unreachable.git"))
-    assert r.returncode != 0 and "cannot reach the remote" in r.stderr and "local refs are not trusted" in r.stderr
+    assert r.returncode != 0 and "cannot reach the remote" in r.stderr and "local refs are never used" in r.stderr
     assert _no_evidence(s)
 
 
@@ -1274,7 +1318,6 @@ def test_finalize_fetches_the_real_remote_tip_when_it_is_not_local(ktmp):
     for p in (s["root"] / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-74.json"):
         rec = json.loads(p.read_text())
         assert rec["grading_commit"] == grading and rec["remote_tip_sha"] == tip
-        assert json.loads(_resolve_results(s["root"], rec).read_text())["grading_git"]["remote_tip_fetched"] is True
 
 
 def subprocess_ok(repo, *args):
@@ -1319,6 +1362,219 @@ def test_finalize_refuses_a_non_canonical_output_path(ktmp):
         assert r.returncode != 0 and "output directory must be" in r.stderr
         assert not (other / "data/dreamco_knowledge/evidence/holdout").exists()
     assert _no_evidence(s)
+
+
+def _commit_paths(s, paths, msg, push=True):
+    _git(s["repo"], "add", "-A", "--", *paths)
+    _git(s["repo"], "commit", "-q", "-m", msg)
+    if push:
+        _git(s["repo"], "push", "-q", str(s["remote"]), "main")
+    return _git(s["repo"], "rev-parse", "HEAD")
+
+
+def _publish_evidence(s):
+    """Commit and push what a successful finalize writes (results, records, REVEALED_KEY.json, FINALIZED.txt)."""
+    return _commit_paths(s, [f"{PACK_REL}/data/dreamco_knowledge/evidence/holdout", f"{s['kit_rel']}/REVEALED_KEY.json",
+                             f"{s['kit_rel']}/FINALIZED.txt"], "holdout evidence")
+
+
+def _records(s, run):
+    return {p: json.loads(p.read_text()) for p in (s["root"] / "data/dreamco_knowledge/evidence/holdout").glob(f"*/{run}.json")}
+
+
+def test_scorer_git_is_absolute_and_sanitized_and_ignores_a_path_shim(ktmp):
+    import verify_holdout
+    shim = ktmp / "shim"; shim.mkdir()
+    marker = ktmp / "shim-was-called"
+    (shim / "git").write_text(f"#!/bin/sh\necho called >> {marker}\n"
+                              "echo 0123456789abcdef0123456789abcdef01234567\trefs/heads/main\nexit 0\n")
+    (shim / "git").chmod(0o755)
+    s = _synthetic_kit(ktmp)
+    _ready_to_finalize(s, push=False)  # not pushed: a shimmed ls-remote would have to lie to get past the check
+    env = {"PATH": f"{shim}:{os.environ['PATH']}", "GIT_DIR": str(ktmp / "nope"), "GIT_CONFIG_GLOBAL": str(ktmp / "evil.cfg"),
+           "HTTPS_PROXY": "http://127.0.0.1:9", "https_proxy": "http://127.0.0.1:9", "HOME": str(ktmp / "evil-home")}
+    r = _run_score("--finalize", "--run-id", "20261002-61", s=s, extra_env=env)
+    assert r.returncode != 0 and "not contained in the real remote tip" in r.stderr, r.stderr
+    assert not marker.exists() and _no_evidence(s)
+    _git(s["repo"], "push", "-q", str(s["remote"]), "main")
+    r = _run_score("--finalize", "--run-id", "20261002-61", s=s, extra_env=env)
+    assert r.returncode == 0, r.stderr  # the inherited GIT_*, proxy and HOME variables are not passed to git
+    assert not marker.exists()
+    with verify_holdout.GitSession("/nonexistent") as g:
+        assert set(g.env) >= {"PATH", "HOME", "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL"} and g.env["GIT_CONFIG_GLOBAL"] == "/dev/null"
+        assert not [k for k in g.env if "proxy" in k.lower()] and not os.listdir(g.env["HOME"])
+        tmp = g.tmp
+    assert not tmp.exists()
+
+
+def test_remote_fetch_url_override_is_test_only_and_forces_passed_false(ktmp):
+    s = _synthetic_kit(ktmp)
+    _ready_to_finalize(s)
+    r = _run_score("--finalize", "--run-id", "20261002-62", s=s)  # the suite's runner overrides REMOTE_FETCH_URL
+    assert r.returncode == 0, r.stderr
+    recs = _records(s, "20261002-62")
+    assert len(recs) == 4
+    for rec in recs.values():
+        res = json.loads(_resolve_results(s["root"], rec).read_text())
+        assert rec["test_only"] is True and rec["passed"] is False and rec["remote_url"] == str(s["remote"])
+        assert res["test_only"] is True and any("REMOTE_FETCH_URL was overridden" in t for t in res["test_only_reasons"])
+        assert "TEST ONLY" in rec["limitations"]
+    cs = [r_ for r_ in recs.values() if json.loads(_resolve_results(s["root"], r_).read_text())["rule_passed"]]
+    assert len(cs) == 1  # the pass rule itself is met for CS (perfect sheet), yet the record cannot pass
+    assert "test_only: True" in (s["kit"] / "FINALIZED.txt").read_text()
+
+
+def test_finalize_scores_the_committed_sheet_bytes_not_the_working_tree(ktmp):
+    """B2: a working-tree sheet swapped after the commit (hidden from git status) is never scored."""
+    for committed, swapped, expect_cs in (("perfect", "all2", True), ("all2", "perfect", False)):
+        base = ktmp / committed; base.mkdir()
+        s = _synthetic_kit(base)
+        sheets = {"perfect": _perfect(s), "all2": {h: [2, 2, 2] for h in s["key_items"]}}
+        _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], sheets[committed])
+        _declare(s); _commit_grading(s)
+        committed_sha = sha(s["kit"] / "grading_sheet.csv")
+        sheet_rel = f"{s['kit_rel']}/grading_sheet.csv"
+        _git(s["repo"], "update-index", "--assume-unchanged", sheet_rel)
+        _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], sheets[swapped])
+        (s["kit"] / "GRADING_FINAL.txt").write_text((s["kit"] / "GRADING_FINAL.txt").read_text())
+        assert _git(s["repo"], "status", "--porcelain", "--untracked-files=no") == ""  # the swap is invisible to git status
+        r = _run_score("--finalize", "--run-id", "20261002-63", s=s)
+        assert r.returncode == 0, r.stderr
+        for rec in _records(s, "20261002-63").values():
+            res = json.loads(_resolve_results(s["root"], rec).read_text())
+            assert res["grading_sheet_sha256"] == committed_sha != sha(s["kit"] / "grading_sheet.csv")
+            if res["per_asset_eligibility"]["eligible"]:
+                assert res["rule_passed"] is expect_cs
+
+
+def test_finalize_and_declare_refuse_a_non_canonical_sheet_flag(ktmp):
+    import shutil
+    s = _synthetic_kit(ktmp)
+    _ready_to_finalize(s)
+    inside = s["kit"] / "copy_of_sheet.csv"; shutil.copy(s["kit"] / "grading_sheet.csv", inside)
+    for args in (("--finalize", "--run-id", "20261002-64"), ("--declare-final", "--grader", "pytest-synthetic")):
+        r = _run_score(*args, "--sheet", inside, s=s)
+        assert r.returncode != 0 and "non-canonical --sheet" in r.stderr
+    r = _run_score("--finalize", "--run-id", "20261002-64", "--sheet", s["kit"] / "grading_sheet.csv", s=s)
+    assert r.returncode == 0, r.stderr  # the canonical path itself is accepted
+
+
+def test_finalize_refuses_a_branch_other_than_the_pr_branch_or_main(ktmp):
+    s = _synthetic_kit(ktmp)
+    _git(s["repo"], "checkout", "-q", "-b", "feature")
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s)); _declare(s)
+    _commit_paths(s, [f"{s['kit_rel']}/grading_sheet.csv", f"{s['kit_rel']}/GRADING_FINAL.txt"], "grading", push=False)
+    _git(s["repo"], "push", "-q", str(s["remote"]), "feature")
+    r = _run_score("--finalize", "--run-id", "20261002-65", s=s)
+    assert r.returncode != 0 and "not an allowed grading branch" in r.stderr
+    _git(s["repo"], "config", "branch.feature.merge", "refs/heads/feature-upstream")  # an upstream name does not help
+    r = _run_score("--finalize", "--run-id", "20261002-65", s=s)
+    assert r.returncode != 0 and "not an allowed grading branch" in r.stderr
+    assert _no_evidence(s)
+
+
+def test_second_finalize_is_refused_from_git_history_even_after_local_traces_are_removed(ktmp):
+    s = _synthetic_kit(ktmp)
+    _ready_to_finalize(s)
+    assert _run_score("--finalize", "--run-id", "20261002-66", s=s).returncode == 0
+    _publish_evidence(s)
+    # remove every local trace and push the removal: only history remembers the first finalize
+    _git(s["repo"], "rm", "-q", "-r", f"{PACK_REL}/data/dreamco_knowledge/evidence/holdout", f"{s['kit_rel']}/REVEALED_KEY.json",
+         f"{s['kit_rel']}/FINALIZED.txt")
+    _commit_paths(s, [f"{s['kit_rel']}"], "remove traces")
+    assert _no_evidence(s) and not (s["kit"] / "REVEALED_KEY.json").exists()
+    r = _run_score("--finalize", "--run-id", "20261002-67", s=s)
+    assert r.returncode != 0 and "already finalized in git history" in r.stderr
+    assert _no_evidence(s)
+
+
+def test_verify_holdout_end_to_end_on_a_temp_repo(ktmp):
+    """The independent verifier (stdlib only) accepts the honest record's consistency and rejects a tampered record,
+    results file, sheet or key, and a grading commit that is not on the remote. No network: its remote is the local
+    bare repository, which marks the verification test-only (never `accepted`)."""
+    import copy, verify_holdout
+    s = _synthetic_kit(ktmp)
+    _ready_to_finalize(s)
+    assert _run_score("--finalize", "--run-id", "20261002-68", s=s).returncode == 0
+    _publish_evidence(s)
+    recs = _records(s, "20261002-68")
+    remote = str(s["remote"])
+    for p, rec in recs.items():
+        r = verify_holdout.verify(p, _test_remote=remote)
+        assert r["ok"] and not r["errors"], r["errors"]
+        assert r["test_only"] and r["record_test_only"] and r["accepted"] is False  # consistent, but never evidence
+        assert r["recomputed"]["score"] == rec["score"] and r["recomputed"]["passed"] is rec["passed"] is False
+    cs_path, cs = next((p, r_) for p, r_ in recs.items() if r_["n_items"] == 4)
+    assert verify_holdout.verify(cs_path, _test_remote=remote)["recomputed"]["rule_passed"] is True
+    # tampered record fields
+    for field, value in (("score", 0.5), ("passed", True), ("baseline_score", 0.1), ("grading_commit", "0" * 40),
+                         ("remote_branch", "feature"), ("grader", "someone-else")):
+        bad = dict(copy.deepcopy(cs), **{field: value})
+        r = verify_holdout.verify(bad, _test_remote=remote)
+        assert not r["ok"] and r["errors"], field
+    # a non-canonical repo URL is refused before any git call
+    r = verify_holdout.verify(cs, "https://evil.example/DreamCo-Technologies/Dreamcobots.git", _test_remote=remote)
+    assert not r["ok"] and r["checks"]["repo_url_canonical"] is False
+    assert verify_holdout.main([str(cs_path), "--repo-url", "https://evil.example#@github.com/DreamCo-Technologies/Dreamcobots"]) == 1
+    # tampered results file (committed): integrity hash and recomputation fail
+    res_p = _resolve_results(s["root"], cs)
+    res = json.loads(res_p.read_text()); res["pass_checks"]["agreement_min"] = False
+    res_p.write_text(json.dumps(res, indent=2) + "\n")
+    tamper_res = _commit_paths(s, [str(res_p.relative_to(s["repo"]))], "tamper results")
+    r = verify_holdout.verify(cs, _test_remote=remote)
+    assert not r["ok"] and not r["checks"]["results_integrity_hash"]
+    r = verify_holdout.verify(cs, _test_remote=remote, reveal_commit=_git(s["repo"], "rev-parse", "HEAD~1"))
+    assert r["ok"], r["errors"]  # the untampered reveal commit still verifies
+    # tampered key (committed REVEALED_KEY.json): the commitment fails
+    kp = s["kit"] / "REVEALED_KEY.json"
+    key = json.loads(kp.read_bytes()); key["nonce"] = "00" * 32
+    kp.write_bytes(json.dumps(key).encode())
+    _commit_paths(s, [f"{s['kit_rel']}/REVEALED_KEY.json"], "tamper key")
+    r = verify_holdout.verify(cs, _test_remote=remote)
+    assert not r["ok"] and r["checks"]["key_commitment"] is False
+    # tampered sheet: a later commit changes the sheet but not GRADING_FINAL; a record pointing at it fails sheet_sha256
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], {h: [2, 2, 2] for h in s["key_items"]})
+    forged = _commit_paths(s, [f"{s['kit_rel']}/grading_sheet.csv"], "tamper sheet")
+    r = verify_holdout.verify(dict(cs, grading_commit=forged, remote_tip_sha=forged), _test_remote=remote, reveal_commit=forged)
+    assert not r["ok"] and r["checks"]["sheet_sha256"] is False
+    # a grading commit that is not on the remote
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s))
+    local_only = _commit_paths(s, [f"{s['kit_rel']}/grading_sheet.csv"], "local only", push=False)
+    r = verify_holdout.verify(dict(cs, grading_commit=local_only), _test_remote=remote)
+    assert not r["ok"] and r["checks"]["grading_commit_on_allowed_branch"] is False
+    # an unreachable remote is a rejection, never a fallback
+    r = verify_holdout.verify(cs, _test_remote=str(ktmp / "missing.git"))
+    assert not r["ok"] and "cannot reach the remote" in " ".join(r["errors"])
+    assert tamper_res
+
+
+def test_verifier_rule_matches_the_scorer_on_random_keys_and_sheets():
+    """verify_holdout implements the pass rule independently; it must agree exactly with score_holdout.evaluate."""
+    import random, score_holdout, verify_holdout
+    rng = random.Random(4242)
+    for seed in range(1500):
+        key = _fake_key(110_000 + seed, n_cs=6 if seed % 3 else 4)
+        mode = seed % 4
+        sc = {}
+        for h, k in key["items"].items():
+            if mode == 0:
+                sc[h] = [rng.randrange(3) for _ in range(3)]
+            else:
+                s_ = [2, 2, 2]
+                if k["candidate_type"] == "weakened" and rng.random() < 0.9:
+                    s_[k["weakened_criterion"] - 1] = rng.choice([0, 1])
+                elif rng.random() < 0.05 * mode:
+                    s_[rng.randrange(3)] = rng.choice([0, 1])
+                sc[h] = s_
+        grades = {h: {"scores": v, "factually_correct": rng.choice(["yes"] * 30 + ["no", "unsure"]), "grader": "g"}
+                  for h, v in sc.items()}
+        disc, a1 = score_holdout.evaluate(key, grades)
+        kit, a2 = verify_holdout.recompute(key, grades)
+        assert {k: disc[k] for k in kit} == kit
+        for aid, x in a1.items():
+            y = a2[aid]
+            assert (x["score"], x["baseline_score"], x["baselines"], x["checks"], x["passed"], x["asset_discrimination"]) == \
+                   (y["score"], y["baseline_score"], y["baselines"], y["checks"], y["rule_passed"], y["asset_discrimination"])
 
 
 def test_finalize_verifies_the_encrypted_key_against_the_commitment(ktmp):
@@ -1379,6 +1635,7 @@ def test_perfect_grading_passes_only_eligible_assets_with_honest_record_fields(k
         for f in sch["required_fields"] + ["split", "n_items", "metric", "score", "threshold", "passed", "baseline_score", "grading_commit"]:
             assert rec.get(f) not in (None, ""), f
         assert rec["split"] == "holdout" and rec["grader"] == "Irean" and rec["grading_commit"] == grading_commit
+        assert rec["test_only"] is True and rec["passed"] is False and "REMOTE_FETCH_URL was overridden" in rec["limitations"]
         res_p = _resolve_results(s["root"], rec)
         assert rec["integrity_hash"] == "sha256:" + sha(res_p)
         res = json.loads(res_p.read_text())
@@ -1391,11 +1648,11 @@ def test_perfect_grading_passes_only_eligible_assets_with_honest_record_fields(k
         assert res["kit_discrimination"]["passed"] is True and rec["score"] == 1.0
         elig = res["per_asset_eligibility"]
         if aid == plans[CS_CIP]:
-            assert elig["eligible"] and elig["n_items"] == 4 and rec["passed"] is True and all(res["pass_checks"].values())
+            assert elig["eligible"] and elig["n_items"] == 4 and res["rule_passed"] is True and all(res["pass_checks"].values())
             ad = res["asset_discrimination"]
             assert ad["detection_rate"] == 1.0 and ad["false_alarm_rate"] == 0 and rec["score"] > rec["baseline_score"]
         else:  # single-item majors only count toward the kit-level check
-            assert not elig["eligible"] and elig["n_items"] == 1 and rec["passed"] is False and elig["reason"]
+            assert not elig["eligible"] and elig["n_items"] == 1 and res["rule_passed"] is False and elig["reason"]
 
 
 def test_shortcut_sheet_fails_finalize_on_false_alarms(ktmp):

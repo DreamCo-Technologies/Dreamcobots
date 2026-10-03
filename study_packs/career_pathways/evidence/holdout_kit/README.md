@@ -37,7 +37,7 @@ Kits are not evidence, so replacing them does not affect the append-only evidenc
    This writes `GRADING_FINAL.txt` in this folder with one line:
    `FINAL: grader=<your name>; declared_at=<ISO date-time with offset>; sheet_sha256=<sha256 of grading_sheet.csv>`
    (You can also write that line yourself; `sha256sum grading_sheet.csv` gives the hash.) After that, do not change the sheet: scoring refuses a sheet whose sha256 differs from `sheet_sha256`.
-9. Commit `grading_sheet.csv` and `GRADING_FINAL.txt` in git and push the commit. Scoring refuses a sheet or declaration that is not committed, has uncommitted changes, or whose commit is not on a remote-tracking branch.
+9. Commit `grading_sheet.csv` and `GRADING_FINAL.txt` in git and push the commit. Push to the pull-request branch `edu-career-pathways/majors-onet-study-plans` (or `main`) of github.com/DreamCo-Technologies/Dreamcobots. Scoring refuses a sheet or declaration that is not committed, has uncommitted changes, or whose commit is not on one of those branches on GitHub.
 
 Do not run `score_holdout.py --finalize` yourself, and do not look at its output before you have declared grading final.
 
@@ -47,21 +47,47 @@ Run this from a git clone of github.com/DreamCo-Technologies/Dreamcobots (such a
 
 ```
 python score_holdout.py --finalize --run-id <YYYYMMDD>-<NN>
-python build.py      # links passing records into asset.json validation_evidence_ids.holdout
+git add data/dreamco_knowledge/evidence/holdout evidence/holdout_kit/REVEALED_KEY.json evidence/holdout_kit/FINALIZED.txt
+git commit -m "holdout evidence" && git push        # then: python build.py, and ask someone else to run verify_holdout.py
 ```
 
-`--finalize` takes these steps:
-1. It checks `GRADING_FINAL.txt`: the sheet's sha256 must equal `sheet_sha256`, and the sheet must name exactly one grader, the one declared.
-2. It checks git, before the key is touched:
-   - The sheet and `GRADING_FINAL.txt` must be inside the repository's work tree (a sheet outside the repo is refused), tracked, free of uncommitted changes and identical to their committed version at `HEAD`. The last commit that touched them is `grading_commit`.
-   - Canonical repository and layout: the branch's remote URL must normalize to `github.com/DreamCo-Technologies/Dreamcobots` (https or ssh form, with or without `.git`, owner and repo in any case), no `url.*.insteadOf` rewriting may be configured, the kit directory must be exactly `<repo root>/study_packs/career_pathways/evidence/holdout_kit`, and the output directory must be `<repo root>/study_packs/career_pathways/data/dreamco_knowledge/evidence/holdout`. A copy of the kit in another repository, another folder or with another output location is refused.
-   - Pushed, checked against the real remote: `git ls-remote https://github.com/DreamCo-Technologies/Dreamcobots.git refs/heads/<branch>` gives the remote tip; if that commit is not in the clone it is fetched; `grading_commit` must equal it or be its ancestor. Local `refs/remotes/...` are never used, so a forged `git update-ref` does not count. If the remote cannot be reached, finalize refuses; it never falls back to local refs.
-   - `remote_url`, `remote_branch` and `remote_tip_sha` are recorded with `grading_commit` in every evidence record, every results file and `FINALIZED.txt`.
-3. It refuses if this key commitment was already scored (`FINALIZED.txt` here, or any holdout results file with the same `key_sha256`). A kit is scored once; a second `--finalize` under a new run id is refused.
-4. It decrypts the private key in memory, checks its sha256 against `KEY_COMMITMENT.txt`, and checks that `items.json` is unchanged.
-5. It writes one record per asset with kit items: `holdout:<asset_id>:<run>` under `data/dreamco_knowledge/evidence/holdout/<asset_id>/`, and then `FINALIZED.txt` here. Each record has source_type human_evaluation, transformation original_evaluation, split `holdout`, `grading_commit`, `remote_url`, `remote_branch`, `remote_tip_sha`, integrity_hash = sha256 of its results file, and `results_path` relative to the same repository root as `evidence_root` (`study_packs/career_pathways/data/dreamco_knowledge/evidence`).
+`--finalize` takes these steps. Every git call uses `/usr/bin/git` by absolute path (checked to be a root-owned executable; `git` is never looked up on `PATH`) with a minimal environment built from scratch: no inherited `GIT_*`, proxy or other variables, `HOME` and `XDG_*` in an empty temporary directory, `GIT_CONFIG_NOSYSTEM=1`, `GIT_CONFIG_GLOBAL=/dev/null`, and overrides for repository settings that could run commands (`core.fsmonitor`, hooks).
+1. Local clone: the kit directory must be exactly `<repo root>/study_packs/career_pathways/evidence/holdout_kit` and the output directory `<repo root>/study_packs/career_pathways/data/dreamco_knowledge/evidence/holdout`; `--sheet`, if given, must be the canonical `grading_sheet.csv`; the branch must be `edu-career-pathways/majors-onet-study-plans` or `main`; its remote URL must normalize to `github.com/DreamCo-Technologies/Dreamcobots` under a strict parse (https with no userinfo, port, query or fragment; `ssh://git@github.com/...`; or `git@github.com:...`; host exactly github.com; owner and repo in any case, with or without `.git`); no `url.*.insteadOf` rewriting; the sheet and `GRADING_FINAL.txt` tracked and clean. Their last commit is `grading_commit`.
+2. Real remote: `git ls-remote https://github.com/DreamCo-Technologies/Dreamcobots.git` for the allowed branches, then a fresh blobless fetch of them into a new temporary repository (the tips must match what ls-remote reported). `grading_commit` must equal or be an ancestor of the branch tip. Local `refs/remotes/...` are never used, and an unreachable remote is a refusal.
+3. A kit is scored once, enforced by history: it refuses if any commit reachable from the remote tips already contains `FINALIZED.txt`, `REVEALED_KEY.json` or a holdout results file for this key commitment, and also if any of those exists in the working tree.
+4. Inputs read once: `grading_sheet.csv`, `GRADING_FINAL.txt`, `items.json` and `KEY_COMMITMENT.txt` are read exactly once each, with `git show <grading_commit>:study_packs/career_pathways/evidence/holdout_kit/<file>`. Those exact bytes are hashed and graded; the working-tree files are never used for scoring, so swapping the sheet after the commit changes nothing. The sheet's sha256 must equal `sheet_sha256`, and the sheet must name exactly one grader, the one declared.
+5. Key: it decrypts the private key in memory, refuses unless its sha256 equals `key_sha256` in `KEY_COMMITMENT.txt`, and checks `items.json` against the commitment.
+6. Output: one record per asset with kit items, `holdout:<asset_id>:<run>` under `data/dreamco_knowledge/evidence/holdout/<asset_id>/`, plus its results file; then `REVEALED_KEY.json` (the exact plaintext key, including its nonce and draw seed) and `FINALIZED.txt` here. Each record has source_type human_evaluation, transformation original_evaluation, split `holdout`, `grading_commit`, `remote_url`, `remote_branch`, `remote_tip_sha`, `test_only`, integrity_hash = sha256 of its results file, and `results_path` relative to the same repository root as `evidence_root` (`study_packs/career_pathways/data/dreamco_knowledge/evidence`).
 
-For the test suite only, `DREAMCO_HOLDOUT_TEST_ONLY_SKIP_GIT=1` skips the git, remote and canonical-path checks. A run under it records `grading_commit: null` (and null remote fields), says TEST ONLY in its limitations and can never produce a passing record. The other tests never contact the network: their runner points the remote at a local bare repository in a temporary folder.
+**Publishing the reveal.** Once the evidence, `REVEALED_KEY.json` and `FINALIZED.txt` are committed and pushed, anyone can recompute the commitment (sha256 of `REVEALED_KEY.json` must equal `key_sha256`) and every score from the committed sheet. The key is revealed only after grading is final and scored; until then it stays encrypted outside the repo.
+
+**Test-only runs.** `DREAMCO_HOLDOUT_TEST_ONLY_SKIP_GIT=1` (skips the git, remote and canonical-path checks and reads the working tree once) or any change to `REMOTE_FETCH_URL` in `score_holdout.py` (the URL that ls-remote and fetch contact) marks the run TEST ONLY: every record gets `test_only: true`, names the URL actually used, says TEST ONLY in its limitations, and has `passed: false` whatever the pass rule says (`rule_passed` in the results file shows the rule's outcome). The test suite never contacts the network: its runner points `REMOTE_FETCH_URL` at a local bare repository in a temporary folder, so all of its finalize runs are test-only.
+
+## Independent verification (verify_holdout.py)
+
+The scorer runs on a shared box, so it cannot prove its own push or its own arithmetic: anyone who can write to the box could put a fake `git` earlier on `PATH`, edit `score_holdout.py`, or change `REMOTE_FETCH_URL`. The hardening above stops the easy versions of this, but the trust rests on `verify_holdout.py` being run by **someone other than the scorer**, on their own machine. It uses only the Python standard library and `/usr/bin/git`.
+
+CLI:
+```
+python verify_holdout.py data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.json [--repo-url URL] [--reveal-commit SHA] [--results RESULTS.json] [--json]
+```
+Exit code 0 means accepted, 1 rejected (the reasons are printed), 2 a usage error. `--repo-url` must normalize to the canonical repository (default `https://github.com/DreamCo-Technologies/Dreamcobots.git`); git always contacts the canonical https URL. `--reveal-commit` picks the commit that holds `REVEALED_KEY.json` and the results; it defaults to the tip of the allowed branch that contains the grading commit.
+
+API (importable by a gate):
+```python
+import verify_holdout
+r = verify_holdout.verify("…/<run>.json")      # or a dict; optional repo_url=, reveal_commit=, results=
+r["accepted"]   # True only if every check passed and nothing is test-only
+r["ok"], r["errors"], r["checks"], r["recomputed"]
+```
+
+What it checks:
+1. `git ls-remote` of the canonical repository for `edu-career-pathways/majors-onet-study-plans` and `main`, a fresh blobless fetch of them into a temporary repository, and that `grading_commit` and `remote_tip_sha` are reachable from one of those tips.
+2. With `git show`: the sheet, `GRADING_FINAL.txt`, `items.json` and `KEY_COMMITMENT.txt` at `grading_commit`, and `REVEALED_KEY.json`, the results file and the record at the reveal commit (the record must equal the committed record, and the results file must hash to `integrity_hash`).
+3. `sheet_sha256`, the key commitment (sha256 of `REVEALED_KEY.json`), the items hash, that key and items agree, and that the sheet names only the declared grader.
+4. It recomputes every score, baseline, pass check and the pass decision with its own implementation of the pass rule (a test checks it agrees exactly with `score_holdout.py` on thousands of random keys and sheets), and requires the record and results file to match exactly.
+
+A test-only record (or a verification against a non-canonical remote, which only the test suite can do through the private `_test_remote` argument) can be consistent (`ok`) but is never `accepted`.
 
 ## Pass rule
 
@@ -93,7 +119,7 @@ The draw rule (how many answers are weakened, and how many of those are Computer
 
 The answer key and the authoring source (both answer versions of every item) are stored outside the repository in `/workspace/edu-career-pathways-private/` only as AES-256-GCM files (`holdout_key.json.enc`, `holdout_source.json.enc`), with the key derived by scrypt from a passphrase kept outside `/workspace` and outside the repo (`/home/box/.ecp-holdout/passphrase`, mode 600 in a mode 700 directory). The plaintext key is never written to disk; `--finalize` decrypts it in memory. GCM authentication means a modified file fails to decrypt, and the commitment (sha256 of the plaintext key) is checked after decryption.
 
-This protects against a casual read: listing or opening the private folder reveals nothing about which answers are weakened. It does not protect against a deliberate attempt. **The passphrase is on the same shared box as the encrypted key.** Every agent runs under the same account, so any agent could read the passphrase and decrypt the key if it set out to. File permissions do not separate agents, and encryption with an on-box passphrase only raises the effort of a look. What this kit relies on is that the grader is a human (Irean) with no reason to look, and that agents are instructed not to decrypt or reveal the key. A grader who wanted to cheat could; this kit measures whether the rubric discriminates for an honest grader.
+This protects against a casual read: listing or opening the private folder reveals nothing about which answers are weakened. After scoring, the key is published as `REVEALED_KEY.json`, so the encryption only matters while grading is open. It does not protect against a deliberate attempt. **The passphrase is on the same shared box as the encrypted key.** Every agent runs under the same account, so any agent could read the passphrase and decrypt the key if it set out to. File permissions do not separate agents, and encryption with an on-box passphrase only raises the effort of a look. What this kit relies on is that the grader is a human (Irean) with no reason to look, and that agents are instructed not to decrypt or reveal the key. A grader who wanted to cheat could; this kit measures whether the rubric discriminates for an honest grader.
 
 **Before any sale-grade use**, move the passphrase off the box (for example to the owner's password manager or another machine no agent can reach), delete it from `/home/box/.ecp-holdout/`, and supply it only for the scoring step, after `GRADING_FINAL.txt` and the sheet are committed and pushed. Then no one on the box can decrypt the key while grading is open. This has not been done for this kit: the passphrase is still at `/home/box/.ecp-holdout/passphrase`. The test suite never reads the real private folder or passphrase; it uses temporary made-up keys only, so it can be run by anyone.
 
