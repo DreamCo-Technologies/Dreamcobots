@@ -630,6 +630,37 @@ def test_generated_target_plausibility_and_quality_flags():
 
 KIT = ROOT / "evidence/holdout_kit"
 CS_CIP = "11.0701"
+_FORBIDDEN = ("/workspace/edu-career-pathways-private", "/home/box/.ecp-holdout")
+_PRIVATE_ACCESS = []
+
+
+def _audit(event, args):
+    if event in ("open", "os.listdir", "os.scandir", "glob.glob", "shutil.copyfile", "os.remove", "os.rename") and args:
+        p = str(args[0]) if not isinstance(args[0], int) else ""
+        if p.startswith(_FORBIDDEN):
+            _PRIVATE_ACCESS.append((event, p))
+
+
+sys.addaudithook(_audit)
+
+
+@pytest.fixture(autouse=True)
+def _no_private_access():
+    """Every test fails if it touched the builder's private key directory or passphrase."""
+    n = len(_PRIVATE_ACCESS)
+    yield
+    assert _PRIVATE_ACCESS[n:] == [], _PRIVATE_ACCESS[n:]
+
+
+@pytest.fixture
+def ktmp():
+    """A temp directory that is deleted after the test (synthetic keys and passphrases never linger in /tmp)."""
+    import shutil, tempfile
+    d = pathlib.Path(tempfile.mkdtemp(prefix="ecp-holdout-test-"))
+    try:
+        yield d
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
 
 
 def _kit_items():
@@ -668,7 +699,9 @@ def test_holdout_kit_v3_is_blind_shape_normalized_and_ungraded():
     assert not (EVIDENCE_DIR / "holdout").exists()  # no holdout evidence until a human grades the kit
     readme = (KIT / "README.md").read_text()
     for s in ("Pass rule", "all 2s", "v1 kit", "KEY_COMMITMENT.txt", "False-alarm rate", "sheet_sha256", "at least 4",
-              "Threat model", "baseline_score", "scored once"):
+              "Threat model", "baseline_score", "scored once", "Asset detection rate", "Asset false-alarm rate",
+              "strictly above", "grading_commit", "committed and pushed", "passphrase is on the same shared box",
+              "move the passphrase off the box", "Item order", "single `rng.shuffle`"):
         assert s in readme, s
     # the number of weakened answers is secret: no README states it
     for doc in (readme, (ROOT / "README.md").read_text(), (ROOT / "docs/DATA_DICTIONARY.md").read_text()):
@@ -818,13 +851,98 @@ def test_baseline_scores_are_exact_expected_agreements():
     assert "baseline_score" in score_holdout.BASELINE_DEFINITION
 
 
-def test_holdout_crypto_round_trip_and_tamper_detection(tmp_path):
+# ---------- per-asset discrimination (made-up keys only) ----------
+def _evaluate(key, scores):
+    import score_holdout
+    return score_holdout.evaluate(key, _grades(scores))
+
+
+def _perfect_scores(key):
+    return {h: [0 if k["weakened_criterion"] == i + 1 else 2 for i in range(3)] for h, k in key["items"].items()}
+
+
+def test_cs_record_needs_discrimination_on_cs_items_themselves():
+    """Merchant v3 blocker: a grader perfect on the 12 non-CS items and all 2s on CS used to get a passing CS record
+    (kit-level checks pass, CS agreement >= 0.8). With per-asset detection, false-alarm and above-baseline checks it
+    never does."""
+    n, cs_pass, cs_pass_old_rule = 2500, 0, 0
+    for seed in range(n):
+        key = _fake_key(50_000 + seed, n_cs=6)
+        sc = _perfect_scores(key)
+        for h, k in key["items"].items():
+            if k["cip"] == CS_CIP:
+                sc[h] = [2, 2, 2]
+        disc, assets = _evaluate(key, sc)
+        cs = assets[CS_CIP]
+        cs_pass += cs["passed"]
+        c = cs["checks"]
+        cs_pass_old_rule += c["kit_discrimination"] and c["eligible"] and c["agreement_min"] and c["no_full_strength_judged_incorrect"]
+        assert cs["asset_discrimination"]["detection_rate"] == 0 and not c["asset_detection_rate"]
+        assert not c["agreement_above_baseline"]  # all 2s on CS is exactly the all-2s baseline
+    assert cs_pass == 0
+    assert cs_pass_old_rule / n > 0.2  # the hole was real: the old rule let this grader through
+
+
+def test_degenerate_graders_never_pass_any_record():
+    import random
+    rng = random.Random(99)
+
+    def shortcut(k, pick_true):
+        c = k["weakened_criterion"] - 1 if (pick_true and k["candidate_type"] == "weakened") else rng.randrange(3)
+        return [0 if i == c else 2 for i in range(3)]
+
+    graders = {
+        "all 2s": lambda key: {h: [2, 2, 2] for h in key["items"]},
+        "all 1s": lambda key: {h: [1, 1, 1] for h in key["items"]},
+        "all 0s": lambda key: {h: [0, 0, 0] for h in key["items"]},
+        "uniform random": lambda key: {h: [rng.randrange(3) for _ in range(3)] for h in key["items"]},
+        "shortcut, best case": lambda key: {h: shortcut(k, True) for h, k in key["items"].items()},
+        "shortcut, random criterion": lambda key: {h: shortcut(k, False) for h, k in key["items"].items()},
+        "perfect elsewhere, shortcut on CS": lambda key: {**_perfect_scores(key), **{h: shortcut(k, True) for h, k in key["items"].items() if k["cip"] == CS_CIP}},
+        "perfect elsewhere, random on CS": lambda key: {**_perfect_scores(key), **{h: [rng.randrange(3) for _ in range(3)] for h, k in key["items"].items() if k["cip"] == CS_CIP}},
+        "perfect elsewhere, wrong criterion on CS": lambda key: {**_perfect_scores(key), **{h: ([0 if i == k["weakened_criterion"] % 3 else 2 for i in range(3)] if k["candidate_type"] == "weakened" else [2, 2, 2]) for h, k in key["items"].items() if k["cip"] == CS_CIP}},
+    }
+    # random scoring is not a fixed strategy: a lucky draw can genuinely beat the baseline, so it gets a tiny bound
+    random_graders = {"uniform random", "perfect elsewhere, random on CS"}
+    for name, g in graders.items():
+        passes = 0
+        for seed in range(2000):
+            key = _fake_key(70_000 + seed, n_cs=6 if seed % 2 else 4)
+            passes += sum(a["passed"] for a in _evaluate(key, g(key))[1].values())
+        assert passes <= (10 if name in random_graders else 0), (name, passes)  # 0%, or <= 0.5% for random scoring
+
+
+def test_perfect_grader_passes_cs_always_and_honest_grader_usually():
+    """A perfect grader passes the CS record on every key. An honest grader who detects each weakened answer with
+    probability 0.95 and raises a false alarm on 1% of full-strength answers passes CS most of the time."""
+    import random
+    rng = random.Random(2026)
+    n, perfect, honest = 2000, 0, 0
+    for seed in range(n):
+        key = _fake_key(90_000 + seed, n_cs=6)
+        disc, assets = _evaluate(key, _perfect_scores(key))
+        perfect += assets[CS_CIP]["passed"]
+        assert all(a["passed"] == a["eligibility"]["eligible"] for a in assets.values())
+        sc = {}
+        for h, k in key["items"].items():
+            s = [2, 2, 2]
+            if k["candidate_type"] == "weakened" and rng.random() < 0.95:
+                s[k["weakened_criterion"] - 1] = rng.choice([0, 1])
+            elif k["candidate_type"] == "full_strength" and rng.random() < 0.01:
+                s[rng.randrange(3)] = 1
+            sc[h] = s
+        honest += _evaluate(key, sc)[1][CS_CIP]["passed"]
+    assert perfect == n
+    assert 0.78 <= honest / n <= 0.95, honest / n
+
+
+def test_holdout_crypto_round_trip_and_tamper_detection(ktmp):
     import holdout_crypto
-    pf = holdout_crypto.init_passphrase(tmp_path / "pp" / "passphrase")
+    pf = holdout_crypto.init_passphrase(ktmp / "pp" / "passphrase")
     assert oct(pf.stat().st_mode & 0o777) == "0o600" and oct(pf.parent.stat().st_mode & 0o777) == "0o700"
     pw = holdout_crypto.read_passphrase(pf)
     data = b'{"made_up": "pytest key"}\n'
-    p = tmp_path / "k.json.enc"
+    p = ktmp / "k.json.enc"
     holdout_crypto.write_encrypted(p, data, pw, "holdout_key")
     blob = p.read_bytes()
     assert b"made_up" not in blob and oct(p.stat().st_mode & 0o777) == "0o600"
@@ -839,31 +957,47 @@ def test_holdout_crypto_round_trip_and_tamper_detection(tmp_path):
         holdout_crypto.decrypt_bytes(json.dumps(env).encode(), pw, "holdout_key")  # modified ciphertext
 
 
-def test_private_holdout_files_are_encrypted_at_rest():
-    """On a box that has the private directory: no plaintext key or source is left in it, the encrypted files are
-    envelopes, and the passphrase is kept outside /workspace and outside the repo."""
-    import holdout_crypto, make_holdout_kit
-    pp = pathlib.Path(holdout_crypto.DEFAULT_PASSPHRASE_FILE)
-    assert not str(pp).startswith("/workspace/") and ROOT.resolve() not in pp.parents
-    assert make_holdout_kit.PRIVATE.resolve() not in pp.parents
-    priv = make_holdout_kit.PRIVATE
-    if not priv.is_dir():
-        pytest.skip("private holdout directory not on this machine")
-    assert not (priv / "holdout_key.json").exists() and not (priv / "holdout_source.json").exists()
-    for name, role in (("holdout_key.json.enc", "holdout_key"), ("holdout_source.json.enc", "holdout_source")):
-        env = json.loads((priv / name).read_text())
-        assert env["format"] == holdout_crypto.FORMAT and env["role"] == role and set(env) == {"format", "role", "kdf", "nonce", "ciphertext"}
+def test_encrypt_cli_leaves_no_plaintext_and_passphrase_lives_outside_the_repo(ktmp):
+    """Temp fixtures only (never the real private directory): the encrypt step deletes the plaintext and leaves an
+    authenticated envelope; the default passphrase location is outside /workspace, the repo and the private directory."""
+    import subprocess, holdout_crypto, make_holdout_kit
+    pp = pathlib.Path(holdout_crypto.DEFAULT_PASSPHRASE_FILE)  # string checks only; the real file is never opened
+    assert not str(pp).startswith("/workspace/") and not str(pp).startswith(str(ROOT))
+    assert not str(pp).startswith(str(make_holdout_kit.PRIVATE))
+    priv = ktmp / "private"; priv.mkdir()
+    for name in ("holdout_key.json", "holdout_source.json"):
+        (priv / name).write_text('{"made_up": true}\n')
+    env = dict(os.environ, DREAMCO_HOLDOUT_PASSPHRASE_FILE=str(ktmp / "secret" / "passphrase"))
+    r = subprocess.run([sys.executable, str(ROOT / "holdout_crypto.py"), "init-passphrase"], capture_output=True, text=True, env=env)
+    assert r.returncode == 0, r.stderr
+    for name, role in (("holdout_key.json", "holdout_key"), ("holdout_source.json", "holdout_source")):
+        r = subprocess.run([sys.executable, str(ROOT / "holdout_crypto.py"), "encrypt", str(priv / name), role],
+                           capture_output=True, text=True, env=env)
+        assert r.returncode == 0, r.stderr
+        assert not (priv / name).exists()
+        e = json.loads((priv / f"{name}.enc").read_text())
+        assert e["format"] == holdout_crypto.FORMAT and e["role"] == role and set(e) == {"format", "role", "kdf", "nonce", "ciphertext"}
+        assert b"made_up" not in (priv / f"{name}.enc").read_bytes()
 
 
 SYNTH_SPEC = [(CS_CIP, "full_strength", None), (CS_CIP, "weakened", 2), (CS_CIP, "full_strength", None), (CS_CIP, "weakened", 3),
               ("40.0501", "weakened", 1), ("52.0301", "full_strength", None), ("14.0801", "full_strength", None)]
+_GIT_ID = ["-c", "user.name=pytest", "-c", "user.email=pytest@example.invalid", "-c", "commit.gpgsign=false"]
 
 
-def _synthetic_kit(tmp_path, spec=SYNTH_SPEC):
-    """A small synthetic kit + ENCRYPTED made-up key + commitment in tmp (never the real private key)."""
+def _git(repo, *args):
+    import subprocess
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    r = subprocess.run(["git", *_GIT_ID, "-C", str(repo), *args], capture_output=True, text=True, env=env)
+    assert r.returncode == 0, r.stderr
+    return r.stdout.strip()
+
+
+def _synthetic_kit(base, spec=SYNTH_SPEC):
+    """A small synthetic kit + ENCRYPTED made-up key + commitment in a temp git repo with a local bare remote (never the
+    real private key)."""
     import holdout_crypto
-    tmp_path.mkdir(parents=True, exist_ok=True)
-    kit = tmp_path / "kit"; kit.mkdir()
+    repo = base / "repo"; kit = repo / "kit"; kit.mkdir(parents=True)
     plans = {m["cip"]: m for m in json.loads((ROOT / "data/majors_selected.json").read_text())}
     items, key_items = [], {}
     for n, (cip, kind, wc) in enumerate(spec, 1):
@@ -878,13 +1012,20 @@ def _synthetic_kit(tmp_path, spec=SYNTH_SPEC):
     items_b = (json.dumps({"kit": "synthetic", "created_at": "2026-10-02T12:00:00-05:00", "n_items": len(items), "items": items}) + "\n").encode()
     (kit / "items.json").write_bytes(items_b)
     key_b = json.dumps({"kit": "synthetic", "created_at": "2026-10-02T12:00:00-05:00", "nonce": os.urandom(32).hex(), "items": key_items}).encode()
-    priv = tmp_path / "private"; priv.mkdir()
-    pf = holdout_crypto.init_passphrase(tmp_path / "secret" / "passphrase")
+    priv = base / "private"; priv.mkdir()
+    pf = holdout_crypto.init_passphrase(base / "secret" / "passphrase")
     keyp = priv / "holdout_key.json.enc"
     holdout_crypto.write_encrypted(keyp, key_b, holdout_crypto.read_passphrase(pf), "holdout_key")
     (kit / "KEY_COMMITMENT.txt").write_text(f"key_sha256: {hashlib.sha256(key_b).hexdigest()}\n"
                                            f"items_json_sha256: {hashlib.sha256(items_b).hexdigest()}\n")
-    root = tmp_path / "pack"
+    remote = base / "remote.git"
+    _git(base, "init", "-q", "--bare", str(remote))
+    _git(base, "init", "-q", "-b", "main", str(repo))
+    _git(repo, "remote", "add", "origin", str(remote))
+    _git(repo, "add", "kit/items.json", "kit/KEY_COMMITMENT.txt")
+    _git(repo, "commit", "-q", "-m", "synthetic kit")
+    _git(repo, "push", "-q", "-u", "origin", "main")
+    root = base / "pack"
     (root / "data").mkdir(parents=True); (root / "study_plans").mkdir()
     import shutil
     shutil.copy(ROOT / "data/majors_selected.json", root / "data")
@@ -893,7 +1034,8 @@ def _synthetic_kit(tmp_path, spec=SYNTH_SPEC):
         (root / "study_plans" / src.stem).mkdir()
         shutil.copy(sidecar(src) / "asset.json", root / "study_plans" / src.stem)
         (root / "study_plans" / src.name).write_text("synthetic")
-    return {"kit": kit, "key": keyp, "key_b": key_b, "pf": pf, "root": root, "items": items, "key_items": key_items, "priv": priv}
+    return {"kit": kit, "repo": repo, "key": keyp, "key_b": key_b, "pf": pf, "root": root, "items": items,
+            "key_items": key_items, "priv": priv, "base": base}
 
 
 def _write_sheet(path, items, scores, grader="pytest-synthetic"):
@@ -907,9 +1049,10 @@ def _write_sheet(path, items, scores, grader="pytest-synthetic"):
             w.writerow([i["item_id"], i["major"], "C1", s[0], "C2", s[1], "C3", s[2], "yes", "", g, "2026-10-02T12:00:00-05:00"])
 
 
-def _run_score(*args, s):
+def _run_score(*args, s, extra_env=None):
     import subprocess
-    env = dict(os.environ, DREAMCO_HOLDOUT_PRIVATE_DIR=str(s["priv"]), DREAMCO_HOLDOUT_PASSPHRASE_FILE=str(s["pf"]))
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_") and k != "DREAMCO_HOLDOUT_TEST_ONLY_SKIP_GIT"}
+    env.update(DREAMCO_HOLDOUT_PRIVATE_DIR=str(s["priv"]), DREAMCO_HOLDOUT_PASSPHRASE_FILE=str(s["pf"]), **(extra_env or {}))
     return subprocess.run([sys.executable, str(ROOT / "score_holdout.py"), "--kit-dir", s["kit"], "--key", s["key"],
                            "--root", s["root"], *map(str, args)], capture_output=True, text=True, env=env)
 
@@ -918,6 +1061,14 @@ def _declare(s, grader="pytest-synthetic"):
     r = _run_score("--declare-final", "--grader", grader, s=s)
     assert r.returncode == 0, r.stderr
     return r
+
+
+def _commit_grading(s, push=True, msg="grading final"):
+    _git(s["repo"], "add", "kit/grading_sheet.csv", "kit/GRADING_FINAL.txt")
+    _git(s["repo"], "commit", "-q", "-m", msg)
+    if push:
+        _git(s["repo"], "push", "-q", "origin", "main")
+    return _git(s["repo"], "rev-parse", "HEAD")
 
 
 def _resolve_results(root, rec):
@@ -930,8 +1081,8 @@ def _perfect(s):
     return {h: k["expected_scores"] for h, k in s["key_items"].items()}
 
 
-def test_score_holdout_dry_run_never_opens_the_key_and_is_identical_across_sheets(tmp_path):
-    s = _synthetic_kit(tmp_path)
+def test_score_holdout_dry_run_never_opens_the_key_and_is_identical_across_sheets(ktmp):
+    s = _synthetic_kit(ktmp)
     blank = _run_score("--sheet", KIT / "grading_sheet.csv", s=s)
     assert blank.returncode != 0
     import random
@@ -939,7 +1090,7 @@ def test_score_holdout_dry_run_never_opens_the_key_and_is_identical_across_sheet
     sheets = [_perfect(s), {h: [2, 2, 2] for h in s["key_items"]}, {h: [0, 0, 0] for h in s["key_items"]},
               {h: [rng.randrange(3) for _ in range(3)] for h in s["key_items"]}]
     # the key and passphrase do not exist for these runs: the dry run must not need them
-    nokey = dict(s, key=tmp_path / "absent.enc", pf=tmp_path / "absent-passphrase")
+    nokey = dict(s, key=ktmp / "absent.enc", pf=ktmp / "absent-passphrase")
     outs = set()
     for n, sc in enumerate(sheets):
         _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], sc)
@@ -954,8 +1105,8 @@ def test_score_holdout_dry_run_never_opens_the_key_and_is_identical_across_sheet
     assert "key" not in dry and "decrypt" not in dry  # the dry-run branch has no key access
 
 
-def test_finalize_requires_a_locked_sheet_and_one_matching_grader(tmp_path):
-    s = _synthetic_kit(tmp_path)
+def test_finalize_requires_a_locked_sheet_and_one_matching_grader(ktmp):
+    s = _synthetic_kit(ktmp)
     _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s))
     r = _run_score("--finalize", "--run-id", "20261002-91", s=s)
     assert r.returncode != 0 and "GRADING_FINAL.txt" in r.stderr  # not declared final yet
@@ -983,26 +1134,73 @@ def test_finalize_requires_a_locked_sheet_and_one_matching_grader(tmp_path):
     assert not (s["root"] / "data/dreamco_knowledge").exists()
 
 
-def test_finalize_verifies_the_encrypted_key_against_the_commitment(tmp_path):
-    import holdout_crypto
-    s = _synthetic_kit(tmp_path)
+def test_finalize_requires_grading_files_committed_and_pushed(ktmp):
+    import shutil
+    s = _synthetic_kit(ktmp)
     _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s))
     _declare(s)
+    nokey = dict(s, key=ktmp / "absent.enc")  # git checks come first: the key is never touched when they fail
+    r = _run_score("--finalize", "--run-id", "20261002-81", s=nokey)
+    assert r.returncode != 0 and "not committed" in r.stderr and "decrypt" not in r.stderr
+    sha_commit = _commit_grading(s, push=False)
+    r = _run_score("--finalize", "--run-id", "20261002-81", s=nokey)
+    assert r.returncode != 0 and "remote" in r.stderr  # committed but not pushed
+    _git(s["repo"], "push", "-q", "origin", "main")
+    with open(s["kit"] / "GRADING_FINAL.txt", "a") as fh:
+        fh.write("# edited after the commit\n")
+    r = _run_score("--finalize", "--run-id", "20261002-81", s=nokey)
+    assert r.returncode != 0 and "uncommitted" in r.stderr
+    _git(s["repo"], "checkout", "--", "kit/GRADING_FINAL.txt")
+    outside = ktmp / "outside_sheet.csv"; shutil.copy(s["kit"] / "grading_sheet.csv", outside)
+    r = _run_score("--finalize", "--sheet", outside, "--run-id", "20261002-81", s=nokey)
+    assert r.returncode != 0 and "git repository" in r.stderr  # a sheet outside the repo is refused
+    assert not (s["root"] / "data/dreamco_knowledge").exists()
+    r = _run_score("--finalize", "--run-id", "20261002-81", s=s)
+    assert r.returncode == 0, r.stderr
+    recs = list((s["root"] / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-81.json"))
+    assert len(recs) == 4
+    for p in recs:
+        rec = json.loads(p.read_text())
+        assert rec["grading_commit"] == sha_commit
+        res = json.loads(_resolve_results(s["root"], rec).read_text())
+        assert res["grading_git"]["grading_commit"] == sha_commit and res["grading_git"]["remote_branches"] == ["origin/main"]
+    assert f"grading_commit: {sha_commit}" in (s["kit"] / "FINALIZED.txt").read_text()
+
+
+def test_test_only_git_bypass_never_produces_passing_evidence(ktmp):
+    s = _synthetic_kit(ktmp)
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s))
+    _declare(s)  # not committed
+    r = _run_score("--finalize", "--run-id", "20261002-82", s=s, extra_env={"DREAMCO_HOLDOUT_TEST_ONLY_SKIP_GIT": "1"})
+    assert r.returncode == 0, r.stderr
+    recs = [json.loads(p.read_text()) for p in (s["root"] / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-82.json")]
+    assert len(recs) == 4
+    for rec in recs:
+        assert rec["passed"] is False and rec["grading_commit"] is None and "TEST ONLY" in rec["limitations"]
+        res = json.loads(_resolve_results(s["root"], rec).read_text())
+        assert "TEST ONLY" in res["grading_git"]["skipped"]
+
+
+def test_finalize_verifies_the_encrypted_key_against_the_commitment(ktmp):
+    import holdout_crypto
+    s = _synthetic_kit(ktmp)
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s))
+    _declare(s); _commit_grading(s)
     pw = holdout_crypto.read_passphrase(s["pf"])
-    bad = tmp_path / "bad_key.json.enc"
+    bad = ktmp / "bad_key.json.enc"
     holdout_crypto.write_encrypted(bad, s["key_b"] + b" ", pw, "holdout_key")  # a different key, validly encrypted
     r = _run_score("--finalize", "--run-id", "20261002-92", s=dict(s, key=bad))
     assert r.returncode != 0 and "KEY_COMMITMENT" in r.stderr
-    wrong_pf = tmp_path / "wrong" / "passphrase"; holdout_crypto.init_passphrase(wrong_pf)
+    wrong_pf = ktmp / "wrong" / "passphrase"; holdout_crypto.init_passphrase(wrong_pf)
     r = _run_score("--finalize", "--run-id", "20261002-92", s=dict(s, pf=wrong_pf))
     assert r.returncode != 0 and "cannot decrypt" in r.stderr
     assert not (s["root"] / "data/dreamco_knowledge").exists() and not (s["kit"] / "FINALIZED.txt").exists()
 
 
-def test_all_2s_fails_and_a_key_commitment_is_finalized_only_once(tmp_path):
-    s = _synthetic_kit(tmp_path)
+def test_all_2s_fails_and_a_key_commitment_is_finalized_only_once(ktmp):
+    s = _synthetic_kit(ktmp)
     _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], {h: [2, 2, 2] for h in s["key_items"]})
-    _declare(s)
+    _declare(s); _commit_grading(s)
     r = _run_score("--finalize", "--run-id", "20261002-93", s=s)
     assert r.returncode == 0, r.stderr
     recs = sorted((s["root"] / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-93.json"))
@@ -1013,9 +1211,9 @@ def test_all_2s_fails_and_a_key_commitment_is_finalized_only_once(tmp_path):
         res = json.loads(_resolve_results(s["root"], rec).read_text())
         assert res["kit_discrimination"]["passed"] is False and res["kit_discrimination"]["detection_rate"] == 0
     assert "20261002-93" in (s["kit"] / "FINALIZED.txt").read_text()
-    # a second finalize of the same key commitment is refused, under a new run id too, even with a new sheet
+    # a second finalize of the same key commitment is refused, under a new run id too, even with a new committed sheet
     _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s))
-    (s["kit"] / "GRADING_FINAL.txt").unlink(); _declare(s)
+    (s["kit"] / "GRADING_FINAL.txt").unlink(); _declare(s); _commit_grading(s, msg="regrade")
     for run in ("20261002-94", "20261003-01", "20261002-93"):
         r = _run_score("--finalize", "--run-id", run, s=s)
         assert r.returncode != 0 and "already finalized" in r.stderr
@@ -1025,10 +1223,11 @@ def test_all_2s_fails_and_a_key_commitment_is_finalized_only_once(tmp_path):
     assert not list((s["root"] / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-9[45].json"))
 
 
-def test_perfect_grading_passes_only_eligible_assets_with_honest_record_fields(tmp_path):
-    s = _synthetic_kit(tmp_path)
+def test_perfect_grading_passes_only_eligible_assets_with_honest_record_fields(ktmp):
+    s = _synthetic_kit(ktmp)
     _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s), grader="Irean")
     _declare(s, "Irean")
+    grading_commit = _commit_grading(s)
     r = _run_score("--finalize", "--run-id", "20261002-94", s=s)
     assert r.returncode == 0, r.stderr
     sch = evidence_schema()
@@ -1037,9 +1236,9 @@ def test_perfect_grading_passes_only_eligible_assets_with_honest_record_fields(t
     plans = {m["cip"]: m["asset_id"] for m in json.loads((ROOT / "data/majors_selected.json").read_text())}
     assert set(recs) == {plans[c] for c, _, _ in SYNTH_SPEC}
     for aid, rec in recs.items():
-        for f in sch["required_fields"] + ["split", "n_items", "metric", "score", "threshold", "passed", "baseline_score"]:
+        for f in sch["required_fields"] + ["split", "n_items", "metric", "score", "threshold", "passed", "baseline_score", "grading_commit"]:
             assert rec.get(f) not in (None, ""), f
-        assert rec["split"] == "holdout" and rec["grader"] == "Irean"
+        assert rec["split"] == "holdout" and rec["grader"] == "Irean" and rec["grading_commit"] == grading_commit
         res_p = _resolve_results(s["root"], rec)
         assert rec["integrity_hash"] == "sha256:" + sha(res_p)
         res = json.loads(res_p.read_text())
@@ -1052,17 +1251,19 @@ def test_perfect_grading_passes_only_eligible_assets_with_honest_record_fields(t
         assert res["kit_discrimination"]["passed"] is True and rec["score"] == 1.0
         elig = res["per_asset_eligibility"]
         if aid == plans[CS_CIP]:
-            assert elig["eligible"] and elig["n_items"] == 4 and rec["passed"] is True
+            assert elig["eligible"] and elig["n_items"] == 4 and rec["passed"] is True and all(res["pass_checks"].values())
+            ad = res["asset_discrimination"]
+            assert ad["detection_rate"] == 1.0 and ad["false_alarm_rate"] == 0 and rec["score"] > rec["baseline_score"]
         else:  # single-item majors only count toward the kit-level check
             assert not elig["eligible"] and elig["n_items"] == 1 and rec["passed"] is False and elig["reason"]
 
 
-def test_shortcut_sheet_fails_finalize_on_false_alarms(tmp_path):
-    s = _synthetic_kit(tmp_path)
+def test_shortcut_sheet_fails_finalize_on_false_alarms(ktmp):
+    s = _synthetic_kit(ktmp)
     sc = {h: ([0 if c == k["weakened_criterion"] else 2 for c in (1, 2, 3)] if k["candidate_type"] == "weakened" else [2, 0, 2])
           for h, k in s["key_items"].items()}
     _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], sc)
-    _declare(s)
+    _declare(s); _commit_grading(s)
     r = _run_score("--finalize", "--run-id", "20261002-95", s=s)
     assert r.returncode == 0, r.stderr
     for p in (s["root"] / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-95.json"):
@@ -1073,10 +1274,11 @@ def test_shortcut_sheet_fails_finalize_on_false_alarms(tmp_path):
         assert d["passed"] is False and rec["passed"] is False
 
 
-def test_make_holdout_kit_cannot_regenerate_the_key_from_committed_inputs(tmp_path):
+def test_make_holdout_kit_cannot_regenerate_the_key_from_committed_inputs(ktmp):
     import subprocess
     before = {f.name: f.read_bytes() for f in KIT.iterdir()}
-    env = dict(os.environ, DREAMCO_HOLDOUT_PRIVATE_DIR=str(tmp_path))  # empty: the private source is not in the repo
+    env = dict(os.environ, DREAMCO_HOLDOUT_PRIVATE_DIR=str(ktmp),  # empty: the private source is not in the repo
+               DREAMCO_HOLDOUT_PASSPHRASE_FILE=str(ktmp / "no-passphrase"))
     r = subprocess.run([sys.executable, str(ROOT / "make_holdout_kit.py"), "--redraw"], capture_output=True, text=True, env=env)
     assert r.returncode != 0 and "private kit source not found" in (r.stdout + r.stderr)
     assert {f.name: f.read_bytes() for f in KIT.iterdir()} == before
@@ -1085,6 +1287,15 @@ def test_make_holdout_kit_cannot_regenerate_the_key_from_committed_inputs(tmp_pa
     assert "n_weakened" not in src.split("print(", 1)[-1]  # the drawn count is never printed
     for pat in ("holdout_source.json*", "holdout_key.json*", "write_source.py*", "passphrase"):
         assert not list(ROOT.rglob(pat)), pat
+
+
+def test_tests_never_touch_the_real_private_key_or_passphrase():
+    """The suite must run on any machine: no test reads the builder's private directory or passphrase. The audit
+    guard (_no_private_access) records any open/listdir/scandir under them; this also checks the test source."""
+    src = pathlib.Path(__file__).read_text()
+    for p in _FORBIDDEN:
+        assert src.count(p) == 1, p  # only in the guard's own list
+    assert not _PRIVATE_ACCESS
 
 
 def test_data_dictionary_covers_every_output_field():

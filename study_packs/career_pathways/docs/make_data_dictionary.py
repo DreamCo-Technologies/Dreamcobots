@@ -357,7 +357,8 @@ FILES["data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.json"] = {
                "paths_relative_to": "Root that evidence_root and results_path are both relative to (the repository root).",
                "baseline_score": "Highest expected agreement of a grader who cannot tell the answer types apart (uniform random, all 2s, or the best-case shortcut grader), computed exactly from the key for this asset's items.",
                "baseline_definition": "Definition of baseline_score.",
-               "passed": "Kit discrimination passed (detection >= 0.8, false alarms <= 0.2, gap >= 1.0) AND the asset has >= 4 items with both types AND agreement >= 0.8 AND no full-strength item judged factually incorrect.",
+               "passed": "Kit discrimination passed (detection >= 0.8, false alarms <= 0.2, gap >= 1.0) AND, on the asset's own items: >= 4 items with both types, detection rate >= 0.8, false-alarm rate <= 0.2, agreement >= 0.8 and strictly above baseline_score, and no full-strength item judged factually incorrect. Never true under the test-only git bypass.",
+               "grading_commit": "Git commit SHA (pushed to a remote branch) that last changed grading_sheet.csv and GRADING_FINAL.txt; --finalize refuses uncommitted, dirty, unpushed or out-of-repo files. null only under the test-only bypass, which cannot pass.",
                "limitations": "Limits of this evidence, built from the grader named on the sheet and in GRADING_FINAL.txt.",
                "grader": "The single human grader named on every sheet row and in GRADING_FINAL.txt."}}
 FILES["data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.results.json"] = {
@@ -375,7 +376,10 @@ FILES["data/dreamco_knowledge/evidence/holdout/<asset_id>/<run>.results.json"] =
                "per_asset_eligibility": "min_items (4), n_items, n_full_strength, n_weakened, eligible, reason: an asset needs >= 4 items with both types to pass.",
                "metric": "Metric definition.", "threshold": "Agreement threshold (0.8).", "n_items": "Items of this asset in the kit.",
                "score": "Per-asset agreement: fraction of criterion scores inside the accepted band.",
-               "passed": "Kit discrimination passed AND per_asset_eligibility.eligible AND agreement >= 0.8 AND no full-strength item judged factually incorrect.",
+               "passed": "Kit discrimination passed (detection >= 0.8, false alarms <= 0.2, gap >= 1.0) AND, on the asset's own items: >= 4 items with both types, detection rate >= 0.8, false-alarm rate <= 0.2, agreement >= 0.8 and strictly above baseline_score, and no full-strength item judged factually incorrect. Never true under the test-only git bypass.",
+               "asset_discrimination": "On this asset's own items: n_weakened, detected, detection_rate, n_full_strength, false_alarms, false_alarm_rate.",
+               "pass_checks": "Each pass check as true/false: kit_discrimination, eligible, asset_detection_rate, asset_false_alarm_rate, agreement_min, agreement_above_baseline, no_full_strength_judged_incorrect.",
+               "grading_git": "Git state verified before the key was opened: grading_commit, head_commit, remote_branches containing the commit, files checked (or skipped, test-only).",
                "kit_discrimination": "Kit-level pass rule: detection rate >= 0.8, false-alarm rate <= 0.2 and mean gap >= 1.0 (all-equal scores and the one-criterion-0 shortcut fail).",
                "full_strength_judged_incorrect": "Full-strength items of this asset the grader judged factually incorrect.",
                "items[]": "Per-item type, human scores, expected scores, agreement and comments (revealed only after grading is final).",
@@ -389,7 +393,7 @@ OTHER = {
     "evidence/holdout_kit/README.md": "Grader instructions, pass rule, threat model of the encrypted key, and the notes on replacing the v1 kit and the v2 draw.",
     "evidence/holdout_kit/KEY_COMMITMENT.txt": "sha256 of the plaintext private answer key (which contains a 256-bit nonce) and of items.json; the key itself is kept outside the repository, encrypted (AES-256-GCM).",
     "evidence/holdout_kit/GRADING_FINAL.txt": "NOT PRODUCED YET. Written by the grader (score_holdout.py --declare-final): FINAL: grader=<name>; declared_at=<ISO>; sheet_sha256=<sha256 of grading_sheet.csv>.",
-    "evidence/holdout_kit/FINALIZED.txt": "NOT PRODUCED YET. Written by score_holdout.py --finalize: the key commitment and run id that were scored; a second --finalize of the same commitment is refused.",
+    "evidence/holdout_kit/FINALIZED.txt": "NOT PRODUCED YET. Written by score_holdout.py --finalize: the key commitment, run id and grading_commit that were scored; a second --finalize of the same commitment is refused.",
 }
 
 
