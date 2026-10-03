@@ -1,0 +1,306 @@
+{
+  "schema": "dreamco.data_package_product.v1",
+  "generated_at": "2026-09-21T16:13:56-05:00",
+  "restored_at": "2026-10-02",
+  "restored_by": "Grok-Data-Package-Merchant (from verbatim 2026-09-21 read; original was an untracked box file that was lost)",
+  "timezone": "America/Chicago",
+  "repo": "DreamCo-Technologies/Dreamcobots",
+  "truth_boundary": "Planning inventory only. No production_ready flips. No claim of live dataset sales, O*NET mastery, or HF mastery. Prefer completing existing buddy learning / capability package / data-rights paths.",
+  "north_star": {
+    "sell_data_packages": true,
+    "multi_view_to_original_synthesis": true,
+    "store_owned_dreamco_data": true,
+    "license_gate_required_for_sellable_skus": true,
+    "hard_no": "Do not design a system to strip copyright from third-party books/datasets and resell them."
+  },
+  "allowed_source_classes_for_sale": [
+    "public_domain_or_publicly_reusable",
+    "us_government_onet_with_attribution",
+    "open_license_commercial_reuse_permitted",
+    "dreamco_owned",
+    "dreamco_commissioned_with_assignment",
+    "synthetic_generated_by_dreamco"
+  ],
+  "blocked_for_sale": [
+    "substantial_copyrighted_books_or_course_text",
+    "proprietary_datasets_without_redistribution_rights",
+    "user_pii_sensitive_minor_credentials",
+    "stolen_or_leaked_data",
+    "unknown_do_not_publish"
+  ],
+  "skus": [
+    {
+      "sku_id": "DP-ONET-OCC-SYN",
+      "name": "O*NET Occupation Synthesis Pack",
+      "primary_sources": [
+        "us_gov_onet",
+        "dreamco_original_synthesis"
+      ],
+      "status": "skeleton_v0.0.1",
+      "skeleton_path": "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.1/"
+    },
+    {
+      "sku_id": "DP-ONET-SKILL-GRAPH",
+      "name": "Skills & Work-Activities Graph Pack",
+      "primary_sources": [
+        "us_gov_onet",
+        "dreamco_original_synthesis"
+      ],
+      "status": "proposed"
+    },
+    {
+      "sku_id": "DP-MULTI-VIEW-LESSON",
+      "name": "Multi-View Lesson Pack",
+      "primary_sources": [
+        "public_domain",
+        "open_commercial",
+        "dreamco_original_synthesis"
+      ],
+      "status": "proposed"
+    },
+    {
+      "sku_id": "DP-BENCH-HOLDOUT",
+      "name": "Benchmark & Holdout Pack",
+      "primary_sources": [
+        "dreamco_original_synthesis"
+      ],
+      "status": "proposed"
+    },
+    {
+      "sku_id": "DP-BOOTCAMP-GAIN",
+      "name": "Sandbox Gain Library",
+      "primary_sources": [
+        "dreamco_experiment",
+        "dreamco_original_synthesis"
+      ],
+      "status": "proposed_internal_first"
+    },
+    {
+      "sku_id": "DP-HF-STUDY",
+      "name": "HF Capability Study Pack",
+      "primary_sources": [
+        "open_commercial_hf",
+        "dreamco_original_synthesis"
+      ],
+      "status": "proposed_align_hf_track",
+      "note": "Weights only when license allows; default metadata+evals"
+    },
+    {
+      "sku_id": "DP-DOMAIN-SYN",
+      "name": "Domain Synthesis Pack",
+      "primary_sources": [
+        "allowed_sources",
+        "dreamco_original_synthesis"
+      ],
+      "status": "proposed"
+    }
+  ],
+  "candidate_inputs": [
+    {
+      "name": "O*NET majors-to-jobs study plans (27 majors)",
+      "owner_agent": "Grok-Edu-Career-Pathways",
+      "likely_line": "LP-* with DP-ONET backbone",
+      "sample_gate_outcome": "reference_only as-is; approved_for_private_use with provenance files",
+      "sample_triage_score": 56.25
+    }
+  ],
+  "pipeline": [
+    "collect_multi_perspective_sources",
+    "normalize_claims",
+    "license_provenance_gate",
+    "synthesize_original_dreamco_asset",
+    "sandbox_benchmark_holdout_regression",
+    "store_owned_knowledge",
+    "build_package_release_artifacts",
+    "sellable_gate",
+    "list_license_fulfill"
+  ],
+  "existing_evidence": {
+    "policies_and_specs": [
+      "docs/training-methodology/DREAMCO_KNOWLEDGE_REWRITE_STANDARD.md",
+      "buddy/learning/multi_perspective_policy.json",
+      "buddy/learning/study_data_schema.json",
+      "config/dataset_product_standard.json",
+      "config/data-package-maximal-testing-program.json",
+      "config/evidence_provenance_schema.json",
+      "config/buddy-training-data-provenance-policy.json",
+      "config/data-discovery-bot-program.json",
+      "config/dataset_evaluation_scorecard.json",
+      "config/buddy_capability_package_marketplace.json",
+      "config/onet-priority-curriculum.json",
+      "config/onet-sandbox-dataset-spec.json",
+      "config/buddy_github_onet_codecademy_benchmark_system.json",
+      "docs/BUDDY_SANDBOX_BOOTCAMP_DATA_PACKAGE.md",
+      "docs/capability-package-marketplace.md"
+    ],
+    "code_stubs": [
+      "buddy/learning/open_code_perspective.py",
+      "tools/score_data_package_candidate.py",
+      "tools/build_universal_work_ai_catalog.py",
+      "tools/build_ontology_snapshot.py",
+      "tools/build_universal_capability_benchmark.py",
+      "tools/build_maximum_sandbox_matrix.py",
+      "tools/build_hf_capability_packs.py",
+      "tools/build_hf_download_packages.py",
+      "server/data-rights-policy.ts"
+    ],
+    "added_2026_10_02": [
+      "tools/license_provenance_gate.py",
+      "tools/build_sellable_data_package.py",
+      "tools/minimal_json_schema.py",
+      "config/license_provenance_gate.json",
+      "schemas/data_package_asset_provenance.schema.json",
+      "schemas/data_package_license_gate.schema.json",
+      "schemas/data_package.manifest.schema.json",
+      "tests/test_license_provenance_gate.py",
+      "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.1/"
+    ],
+    "apis_plan_only": [
+      "GET /api/data-packages",
+      "POST /api/buddy/data/package-plan"
+    ],
+    "missing_generated": [
+      "config/generated/universal-work-ai-catalog.json (generates locally in ~15s; not committed)",
+      "study_packs/"
+    ],
+    "populated_dataset_count_api_claim": 0
+  },
+  "files_to_complete": [
+    "buddy/learning/open_code_perspective.py",
+    "buddy/learning/multi_perspective_policy.json",
+    "buddy/learning/study_data_schema.json",
+    "tools/score_data_package_candidate.py",
+    "server/data-rights-policy.ts"
+  ],
+  "files_to_propose_under_existing_conventions": [
+    "buddy/learning/multi_view_synthesizer.py",
+    "buddy/learning/sellable_package_schema.json",
+    "config/generated/data-package-catalog.json"
+  ],
+  "storage_schema_summary": {
+    "asset_required": [
+      "asset_id",
+      "ownership_class",
+      "perspectives_used",
+      "source_refs",
+      "commercial_redistribution_allowed",
+      "human_layer",
+      "machine_layer",
+      "dreamco_analysis",
+      "validation_evidence_ids",
+      "integrity_hash"
+    ],
+    "package_manifest_required": [
+      "sku_id",
+      "version",
+      "included_asset_ids",
+      "license_gate_status",
+      "scorecard_score",
+      "provenance_manifest",
+      "license_manifest",
+      "quality_report",
+      "benchmark_report",
+      "known_limitations"
+    ]
+  },
+  "license_gate": {
+    "outcomes": [
+      "approved_for_sale",
+      "approved_for_private_use",
+      "reference_only",
+      "blocked"
+    ],
+    "plain_language_rules": [
+      "Know and pin every source",
+      "Classify ownership; reading is not owning",
+      "Require commercial+redistribution basis for sellable SKUs",
+      "No copyright stripping of third-party books/datasets",
+      "No sensitive personal data in sellable packs",
+      "Pass maximal testing provenance/rights + scorecard release gates",
+      "Honest marketing with version and limitations"
+    ]
+  },
+  "onet_version_policy": {
+    "recommendation": "Pin O*NET version per package version and record it in every provenance.json; standardize DP-ONET on 31.0 (current, Aug 2026). Keep 30.3 fleet catalog as a labelled snapshot until rebuilt.",
+    "ingest_tool_pin": "30.3 (tool default, unchanged for other users)",
+    "verified_compatible": "31.0",
+    "dp_onet_pin": {
+      "version": "31.0",
+      "pinned_at": "2026-10-03T09:16:00-05:00",
+      "downloads": [
+        {
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_excel.zip",
+          "sha256": "c63ad00a8e45f3d3ef8e1529fcf8864d2279f2dfcb98737436818f5664781b04"
+        },
+        {
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_csv.zip",
+          "sha256": "55033fc68b4c13ec23e7f74dc6378660f6e854e75d55d6e333ae0a761d3987cd"
+        }
+      ],
+      "ingest_override": "tools/build_universal_work_ai_catalog.py --onet-zip-url https://www.onetcenter.org/dl_files/database/db_31_0_excel.zip",
+      "recorded_in": "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.1/provenance_manifest.json"
+    },
+    "caveat": "31.0 replaced Skills with Essential Skills (2.A.*) and Transferable Skills (2.B.*); there is no single Skills file, so skill-based assets must name which one they use."
+  },
+  "mvp_week1": [
+    "Generate or document blocker for universal-work-ai-catalog.json",
+    "Stub tools/license_provenance_gate.py",
+    "Stub buddy/learning/multi_view_synthesizer.py writing one sandbox asset",
+    "SKU DP-ONET-OCC-SYN v0.0.1 manifest stub",
+    "Example candidate for score_data_package_candidate.py",
+    "Evidence packet without for-sale claims"
+  ],
+  "sales_path": {
+    "today": "plan_templates_and_policies_only",
+    "next": "gated_sample_packages_owner_approval",
+    "later": "stripe_fulfillment_after_release_gates",
+    "bot_profile": "bots/data-monetization.md",
+    "production_ready": false
+  },
+  "timelines": {
+    "onet_ops_mastery_working_days": {
+      "min": 5,
+      "max": 8,
+      "as_of": "2026-09-21"
+    },
+    "onet_curriculum_useful_working_days": {
+      "min": 15,
+      "max": 25
+    },
+    "data_package_mvp_week": "2026-09-21 to ~2026-09-28 (slipped to ~2026-10-05)",
+    "target_first_sale_window": "early-to-mid November 2026, only after release gates and owner approval"
+  },
+  "top_5_code_gaps": [
+    {
+      "rank": 1,
+      "gap": "No multi_view_synthesizer writing owned assets to a knowledge store",
+      "complete_or_add": "buddy/learning/multi_view_synthesizer.py + extend open_code_perspective.py"
+    },
+    {
+      "rank": 2,
+      "gap": "Executable license/provenance gate (skeleton added 2026-10-02; needs wiring into score_data_package_candidate)",
+      "complete_or_add": "tools/license_provenance_gate.py"
+    },
+    {
+      "rank": 3,
+      "gap": "O*NET catalog not committed; downstream tools dry",
+      "complete_or_add": "decide commit vs gitignore for config/generated/universal-work-ai-catalog.json; rebuild on 31.0"
+    },
+    {
+      "rank": 4,
+      "gap": "No real assets or scorecard run for any SKU",
+      "complete_or_add": "first sample assets + scorecard >= 75"
+    },
+    {
+      "rank": 5,
+      "gap": "APIs are plan/templates only (populatedDatasetCount 0); no fulfillment",
+      "complete_or_add": "keep server/data-rights-policy.ts honest; add gated sample after store+gate exist"
+    }
+  ],
+  "related_reports": [
+    "reports/DATA_PACKAGE_PRODUCT_PLAN.md",
+    "reports/ONET_MASTERY_TRACK.md",
+    "reports/HUGGINGFACE_MASTERY_TRACK.md",
+    "reports/MODEL_ACCESS_PRODUCT_PLAN.md"
+  ]
+}
