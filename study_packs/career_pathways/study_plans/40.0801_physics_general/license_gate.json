@@ -2,15 +2,16 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-pg-40.0801",
-  "evaluated_at": "2026-10-02T18:59:33-05:00",
+  "evaluated_at": "2026-10-02T19:55:52-05:00",
   "inputs": {
     "target": "study_plans/40.0801_physics_general",
+    "repo_root": "../..",
     "candidate_path": "study_plans/40.0801_physics_general/candidate.json",
     "candidate_sha256": "d58c43fd3779c53a4db153204a058e27cbf649137236221cc6f344d98ede8a09",
     "provenance_path": "study_plans/40.0801_physics_general/provenance.json",
-    "provenance_sha256": "1e13d835535a46dc48ab6931204ea0bdd8a405074e23f8a0ef2a693cb14fd5df",
+    "provenance_sha256": "d9e14ee8a072d037d89c39750816e9b029826c7cc2a3ebe8993502d8e3bbccc3",
     "asset_record_path": "study_plans/40.0801_physics_general/asset.json",
-    "asset_record_sha256": "ff63daf962c02b1134ed54b0bf1516a3418553b1ba32bcc8797d7208ad54d301"
+    "asset_record_sha256": "9c5c13e0e2bc6ecfb96e7bdee72bd3d4926b2692a323347dc5cedf70be3d91e2"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +103,12 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "schema: $: additional property 'evidence_root' not allowed"
+        "only 1 perspective(s) used; multi-view synthesis expects several",
+        "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
       ]
     },
     {
@@ -121,10 +123,12 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several",
+    "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

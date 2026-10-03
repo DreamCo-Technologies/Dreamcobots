@@ -19,7 +19,7 @@ Writes per asset:
       config/evidence_provenance_schema.json fields + split/n_items/metric/score/threshold/passed)
 No model, API or human grader is involved: this is a deterministic DreamCo comparison script.
 
-Usage: python regression.py --baseline-ref 8cc1ce1 --repo /workspace/dc-ecp [--run-id 20261002-01]
+Usage: python regression.py --baseline-ref 687b3c1 --repo /workspace/dc-ecp --run-id 20261002-04
 """
 import argparse, datetime, hashlib, json, pathlib, re, subprocess
 import pandas as pd
@@ -200,6 +200,12 @@ def main():
     assert re.fullmatch(r"\d{8}-\d{2}", run_id), run_id
     full_ref = subprocess.run(["git", "-C", a.repo, "rev-parse", a.baseline_ref], capture_output=True, text=True,
                               check=True).stdout.strip()
+    # Evidence is append-only: never overwrite a run id that has been committed (in any commit of --repo).
+    committed = subprocess.run(["git", "-C", a.repo, "log", "--all", "--format=%h", "-1", "--",
+                                f"{REPO_PREFIX}data/dreamco_knowledge/evidence/regression/*/{run_id}.json"],
+                               capture_output=True, text=True).stdout.strip()
+    if committed:
+        raise SystemExit(f"run id {run_id} is already committed ({committed}); evidence is append-only, use a new --run-id")
 
     old_sel = {m["cip"]: m for m in json.loads(git_show(a.repo, full_ref, "data/majors_selected.json"))}
     old_pt = json.loads(git_show(a.repo, full_ref, "data/practice_tasks.json"))["tasks"]
@@ -217,6 +223,10 @@ def main():
     for new in new_sel:
         cip, aid = new["cip"], new["asset_id"]
         old = old_sel.get(cip)
+        if new.get("tier") != "authored":
+            summary.append((aid, None, "generated tier: not regressed (rule output that quotes O*NET task statements "
+                                       "verbatim with attribution; its target selection changes by rule); no record written"))
+            continue
         if old is None:
             summary.append((aid, None, "no baseline (new in this build); no regression record written"))
             continue
@@ -257,8 +267,9 @@ def main():
             "not_compared": ["Practice prompt, rubric and outline wording are intentionally rewritten "
                              "(authored/release_changes.json#global_changes) and are not diffed word by word; their "
                              "originality is covered by the onet_text_leakage item.",
-                             "Fields added after the baseline (entry-weighted knowledge, outline_elements, quality_flags, "
-                             "license blocks) have no baseline counterpart and are not compared.",
+                             "Fields added after the baseline (for an 8cc1ce1 baseline: entry-weighted knowledge, outline_elements, "
+                             "quality_flags, license blocks; for any baseline: target_plausibility) have no baseline "
+                             "counterpart and are not compared.",
                              "The gate check synthesis_asset_record is not compared: it depends on whether this evidence is linked."],
             "determinism": ("This file has no run timestamp, and the gate file is hashed as canonical JSON without "
                             "evaluated_at, so rerunning regression.py on an unchanged build reproduces it byte for byte. "

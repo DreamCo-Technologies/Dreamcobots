@@ -10,8 +10,9 @@ provenance.json + candidate.json (schemas/data_package_asset_provenance.schema.j
 gate tool is available, license_gate.json produced by tools/license_provenance_gate.py.
 Owner approval is never set here (it stays pending).
 """
-import csv, hashlib, json, os, re, pathlib, subprocess, sys
+import collections, csv, hashlib, json, math, os, re, pathlib, subprocess, sys
 import pandas as pd
+import snowballstemmer
 
 ROOT = pathlib.Path(__file__).resolve().parent
 RAW, DATA, PLANS, AUTH = ROOT / "raw", ROOT / "data", ROOT / "study_plans", ROOT / "authored"
@@ -20,6 +21,19 @@ EVIDENCE = DATA / "dreamco_knowledge" / "evidence"
 # Fixed release timestamp (ISO 8601 with offset) so rebuilds are reproducible (override with DREAMCO_BUILD_TIMESTAMP).
 BUILD_TIMESTAMP = os.environ.get("DREAMCO_BUILD_TIMESTAMP", "2026-10-02T18:30:00-05:00")
 EVIDENCE_ROOT = "study_packs/career_pathways/data/dreamco_knowledge/evidence"
+# Root of the Dreamcobots checkout that contains study_packs/career_pathways (the gate resolves evidence ids under it).
+# Default: two levels above this pack, which is the repo root when the pack sits at <repo>/study_packs/career_pathways.
+REPO_ROOT = pathlib.Path(os.environ.get("DREAMCO_REPO_ROOT") or pathlib.Path(__file__).resolve().parents[2]).resolve()
+# Ownership classes from most to least restrictive (config/buddy-training-data-provenance-policy.json lists the classes
+# but does not rank them; this order ranks by the conditions attached to use). A file mixing classes takes the most restrictive.
+OWNERSHIP_RESTRICTIVENESS = ["unknown_do_not_publish", "third_party_reference_only", "licensed_for_use",
+                             "open_license_with_conditions", "user_contributed_with_permission",
+                             "public_domain_or_publicly_reusable", "synthetic_generated_by_dreamco",
+                             "dreamco_commissioned_with_assignment", "dreamco_owned"]
+
+
+def most_restrictive(classes):
+    return min(set(classes), key=OWNERSHIP_RESTRICTIVENESS.index)
 AUTHORSHIP = "DreamCo-original, authored by Grok-Edu-Career-Pathways (AI), not human-reviewed"
 ONET_VERSION = "31.0"
 DB_URL = "https://www.onetcenter.org/dl_files/database/db_31_0_csv/"
@@ -510,7 +524,8 @@ def plan_md_generated(cip, title, stem, occs, zones, ctx, targets, basis, ptasks
     knowledge_lines(L, ctx["know_w"], ctx["skills_w"], ctx["know"], ctx["skills"], len(ctx["weights"]), len(occs))
     L += ["", "## Entry-level targets (DreamCo rule output from O*NET 31.0 Job Zones; not manually reviewed)", ""]
     L += [f"- `{s}` {t} ({zlabel(zones.get(s))})" for s, t in targets]
-    L += ["", f"Selection rule: {basis}. These targets have not been checked for plausibility by a reviewer."]
+    L += ["", f"Selection rule: {basis}. An automatic field-fit check was applied (see Quality flags); these targets have not "
+          "been checked by a reviewer."]
     op = ctx["outline"]
     tnames = "; ".join(t for _, t in targets) or "a linked occupation"
     gened = "General education, including English Language, plus" if op["year1_knowledge"] else "General education plus"
@@ -653,76 +668,174 @@ def is_supervisory(text):
     return bool(SUPERVISORY.search(UNDER_SUPERVISION.sub("", str(text))))
 
 
-OVERLAP_STOP = set("""a an and or of the for in on to with by as at from other general all specialists specialist studies study
-science sciences technology technologies technologist technologists management managers manager services service systems system
-operations professionals professional workers worker related programs program engineering engineers engineer arts art applied
-administration administrative administrators analysts analyst teachers teacher education occupations occupation except""".split())
-OVERLAP_RULE = ("a target is flagged low_title_overlap (severity high if its O*NET description also shares no stem, else medium) when its O*NET occupation title shares no content-word stem with the "
-                "CIP program title (lower-cased words of 3+ letters; generic words such as science, studies, technology, "
-                "engineering, management, services, general and other ignored; crude suffix stripping; stems of 5+ letters "
-                "also match when one contains the other). The detail says whether the occupation's O*NET description shares "
-                "a stem. This is a crude lexical heuristic: it misses implausible pairs that share a word and flags "
-                "plausible pairs that use different words")
+# Field-fit plausibility check for generated-tier entry targets (v5). Replaces the v4 lexical title-overlap flag, which
+# flagged 1,273 targets in 756 plans and changed nothing.
+_STEMMER = snowballstemmer.stemmer("english")
+FIELD_STOP_WORDS = """a an and or of the for in on to with by as at from other general all studies study science sciences
+technology technologies program programs related applied art arts administration management engineering engineer engineers
+specialist specialists professional professionals services service system systems method methods education teacher
+teachers teaching""".split()
+_FIELD_STOP = {_STEMMER.stemWord(w) for w in FIELD_STOP_WORDS}
+FIT_DROP_MIN_BEST = 0.02   # some same-tier linked occupation must fit at least this well before a zero-fit target is dropped
+FIT_FLAG_MIN_BEST = 0.10   # a zero-fit base (.00) target is flagged only if a clearly better-fitting alternative exists
+FIT_SERIES_KEEP = 0.12     # a zero-fit target is kept if it fits the program's 4-digit CIP series this well
+FIELD_FIT_RULE = (
+    "field fit = cosine similarity between the CIP program title's field terms and the occupation's O*NET 31.0 text "
+    "(title, description and all task statements). Words are Snowball-stemmed, generic words (science, studies, "
+    "technology, engineering, management, education, general, other, ...) are ignored, and terms are weighted by "
+    "log term frequency times inverse document frequency over all O*NET occupations. Compound title words are also "
+    "split into the O*NET vocabulary stems of 5+ letters they contain (electromechanical -> electr, mechan; "
+    "telecommunications -> commun), so a compound does not count as a mismatch. CIP definitions are not in the "
+    "pinned crosswalk file, so the CIP title is the field description. "
+    f"A rule target is dropped as clearly implausible when (1) its fit is 0, meaning no field term of the program "
+    f"title occurs anywhere in its O*NET title, description or tasks; (2) some eligible linked occupation in the same Job "
+    f"Zone tier has fit >= {FIT_DROP_MIN_BEST}, so the crosswalk does offer a field match; (3) it is an O*NET "
+    "detailed specialty code (not .00), whose link is typically inherited from a broad SOC code such as Engineers, All "
+    "Other; (4) its base .00 occupation also has fit 0; and (5) its fit with the titles of all CIP codes in the "
+    f"program's 4-digit CIP series (the field family) is below {FIT_SERIES_KEEP}, so it is not a close neighbour of the "
+    "field either (e.g. a genetics program keeps Molecular and Cellular Biologists). The thresholds were set by "
+    "inspecting the candidate drops of this release; they are not validated. Dropped targets are replaced from the same ranked tier "
+    "with the next occupations whose fit is above 0; if none remain, the plan keeps fewer targets. "
+    f"A base (.00) target with fit 0 is kept but flagged better_field_match_available when a non-target occupation "
+    f"in the same tier has fit >= {FIT_FLAG_MIN_BEST}")
 
 
-def _stem(w):
-    for suf in ("ization", "ations", "ation", "ists", "ist", "ings", "ing", "ers", "er", "ical", "ics", "ic", "ies", "al", "es", "s", "y"):
-        if len(w) - len(suf) >= 4 and w.endswith(suf):
-            return w[:-len(suf)]
-    return w
+def field_terms(text):
+    return [w for w in _STEMMER.stemWords(re.findall(r"[a-z]+", str(text).lower())) if len(w) > 2 and w not in _FIELD_STOP]
 
 
-def _stems(t):
-    return {_stem(w) for w in re.findall(r"[a-z]+", str(t).lower()) if w not in OVERLAP_STOP and len(w) > 2}
+class FieldIndex:
+    """TF-IDF index of O*NET occupation text (title twice, description, task statements)."""
+    def __init__(self, occ, tasks):
+        doc = {s: f"{t} {t} {d}" for s, t, d in zip(occ["O*NET-SOC Code"], occ["Title"], occ["Description"])}
+        for s, g in tasks.groupby("O*NET-SOC Code")["Task"]:
+            doc[s] = doc.get(s, "") + " " + " ".join(map(str, g))
+        self.tf = {s: collections.Counter(field_terms(d)) for s, d in doc.items()}
+        n = len(self.tf)
+        df = collections.Counter(w for c in self.tf.values() for w in c)
+        self.idf = {w: math.log(n / k) for w, k in df.items()}
+        self.vocab_long = sorted(w for w in self.idf if len(w) >= 5)
+        self.norm = {s: math.sqrt(sum(((1 + math.log(v)) * self.idf[w]) ** 2 for w, v in c.items())) for s, c in self.tf.items()}
+
+    def query_terms(self, cip_title):
+        """Field terms of the CIP title plus the vocabulary stems (5+ letters) contained in compound words."""
+        q = set(field_terms(cip_title))
+        for t in list(q):
+            if len(t) >= 8:
+                q |= {v for v in self.vocab_long if v != t and v in t}
+        return q
+
+    def fit(self, cip_title, soc):
+        c, q = self.tf.get(soc), self.query_terms(cip_title)
+        if not c or not q:
+            return 0.0
+        qn = math.sqrt(sum(self.idf.get(w, 0) ** 2 for w in q))
+        num = sum((1 + math.log(c[w])) * self.idf[w] ** 2 for w in q if w in c)
+        return round(num / ((self.norm[soc] or 1) * (qn or 1)), 4)
 
 
-def _overlap(a, b):
-    return any(x == y or (min(len(x), len(y)) >= 5 and (x in y or y in x)) for x in a for y in b)
+def ranked_tier(eligible, zones, zone, sim):
+    """The rule's ranked same-tier pool (same order rank_entry_targets uses)."""
+    tier = [(s, t) for s, t in eligible if zones.get(s) == zone]
+    return sorted(tier, key=lambda o: (not o[0].endswith(".00"), -sim(o[0])))
 
 
-def quality_flags(cip, title, targets, zones, descriptions, ptasks, dropped, basis):
-    flags = []
-    cs = _stems(title)
+def plausibility_filter(title, targets, pool, fi, titles, series_text=""):
+    """Apply FIELD_FIT_RULE to rule targets. Returns (final targets, record for plan.json)."""
+    fits = {s: fi.fit(title, s) for s, _ in pool}
+    for s, _ in targets:
+        fits.setdefault(s, fi.fit(title, s))
+    best = max(fits.values(), default=0.0)
+    dropped = []
     for s, t in targets:
-        if not _overlap(cs, _stems(t)):
-            d = _overlap(cs, _stems(descriptions.get(s, "")))
-            flags.append({"flag": "low_title_overlap", "severity": "medium" if d else "high", "onet_soc_code": s, "occupation_title": t,
-                          "detail": ("description shares a stem with the CIP title" if d
-                                     else "description shares no stem with the CIP title either")})
-    if dropped:
-        flags.append({"flag": "supervisory_tasks_dropped", "count": len(dropped), "onet_task_ids": dropped,
-                      "detail": "supervisory/managerial tasks of the entry targets were skipped when picking practice tasks"})
+        if fits[s] == 0 and best >= FIT_DROP_MIN_BEST and not s.endswith(".00"):
+            parent = s[:-2] + "00"
+            pf = fi.fit(title, parent)
+            sf = fi.fit(series_text, s) if series_text else 0.0
+            if pf == 0 and sf < FIT_SERIES_KEEP:
+                dropped.append({"soc": s, "title": t, "fit": fits[s], "base_soc": parent, "base_title": titles.get(parent),
+                                "base_fit": pf, "series_fit": sf, "reason": "no field term of the program title in its O*NET text; base occupation does not fit either; not a close fit to the CIP series; better-fitting linked occupations exist"})
+    gone = {d["soc"] for d in dropped}
+    final = [x for x in targets if x[0] not in gone]
+    added = []
+    for s, t in pool:
+        if len(final) >= len(targets):
+            break
+        if (s, t) in targets or s in gone or fits.get(s, 0) == 0:
+            continue
+        final.append((s, t)); added.append({"soc": s, "title": t, "fit": fits[s]})
+    flags = []
+    tset = {s for s, _ in final}
+    alts = sorted([(f, s) for s, f in fits.items() if s not in tset and s not in gone and f > 0], reverse=True)
+    for s, t in final:
+        if fits[s] == 0 and s.endswith(".00") and alts and alts[0][0] >= FIT_FLAG_MIN_BEST:
+            flags.append({"flag": "better_field_match_available", "onet_soc_code": s, "occupation_title": t, "fit": fits[s],
+                          "suggested_soc": alts[0][1], "suggested_title": titles.get(alts[0][1]), "suggested_fit": alts[0][0],
+                          "detail": "kept (base occupation) but no field term of the program title occurs in its O*NET text; review the suggested alternative"})
+    rec = {"method": FIELD_FIT_RULE, "cip_field_terms": sorted(fi.query_terms(title)),
+           "rule_targets": [s for s, _ in targets], "final_targets": [s for s, _ in final],
+           "fit": {s: fits[s] for s, _ in pool} | {s: fits[s] for s, _ in targets},
+           "dropped": dropped, "added": added, "flags": flags}
+    return final, rec
+
+
+def quality_flags(targets, zones, ptasks, dropped_tasks, basis, tp):
+    """Actionable flags only; automatic changes and context go to actions and notes."""
+    flags = list(tp["flags"]) if tp else []
     kept = [p["practice_id"] for p in ptasks if p.get("supervisory_task")]
     if kept:
         flags.append({"flag": "supervisory_task_kept", "count": len(kept), "practice_ids": kept,
                       "detail": "not enough non-supervisory tasks were available, so these supervisory tasks remain"})
+    actions = []
+    for d in (tp or {}).get("dropped", []):
+        actions.append({"action": "target_dropped", "onet_soc_code": d["soc"], "occupation_title": d["title"],
+                        "detail": d["reason"]})
+    for a in (tp or {}).get("added", []):
+        actions.append({"action": "target_added", "onet_soc_code": a["soc"], "occupation_title": a["title"],
+                        "detail": f"next same-tier occupation in the rule's ranking with field fit {a['fit']}"})
+    if dropped_tasks:
+        actions.append({"action": "supervisory_tasks_dropped", "count": len(dropped_tasks), "onet_task_ids": dropped_tasks,
+                        "detail": "supervisory/managerial tasks of the entry targets were skipped when picking practice tasks"})
+    notes = []
     tz = sorted({zones.get(s) for s, _ in targets if zones.get(s)})
     if tz and 4 not in tz:
-        flags.append({"flag": "entry_target_not_job_zone_4", "job_zones": tz,
+        notes.append({"note": "entry_target_not_job_zone_4", "job_zones": tz,
                       "detail": "no eligible Job Zone 4 occupation is linked, so the entry targets come from another Job Zone"})
     if "first crosswalk link used" in basis or "no Job Zone rating" in basis:
-        flags.append({"flag": "entry_target_fallback", "detail": basis})
-    return {"method": {"supervisory_tasks": SUPERVISORY_RULE, "topical_overlap": OVERLAP_RULE},
-            "flag_count": len(flags), "flags": flags}
+        notes.append({"note": "entry_target_fallback", "detail": basis})
+    return {"method": {"field_fit": FIELD_FIT_RULE, "supervisory_tasks": SUPERVISORY_RULE},
+            "flag_count": len(flags), "flags": flags, "actions": actions, "notes": notes,
+            "retired_checks": ("v4 low_title_overlap (lexical title overlap) was retired in v5: it flagged 1,273 targets in 756 of "
+                               "1,017 plans, mostly plausible pairs that use different words, and changed nothing")}
 
 
 def quality_lines(L, qf):
     L += ["## Quality flags (automatic plausibility checks; generated tier)", ""]
     if not qf["flags"]:
-        L += ["- None raised by the automatic checks (this does not mean the plan was reviewed)."]
+        L += ["- No flags raised by the automatic checks (this does not mean the plan was reviewed)."]
     for f in qf["flags"]:
-        if f["flag"] == "low_title_overlap":
-            L += [f"- low_title_overlap ({f['severity']}): entry target `{f['onet_soc_code']}` {f['occupation_title']} shares no title word with the program title ({f['detail']}); check that it fits this major."]
-        elif f["flag"] == "supervisory_tasks_dropped":
-            L += [f"- supervisory_tasks_dropped: {f['count']} supervisory or managerial task(s) of the entry targets were skipped as unsuitable for a new graduate (O*NET task IDs {', '.join(map(str, f['onet_task_ids']))})."]
+        if f["flag"] == "better_field_match_available":
+            L += [f"- better_field_match_available: entry target `{f['onet_soc_code']}` {f['occupation_title']} has field fit {f['fit']} "
+                  f"with the program title; `{f['suggested_soc']}` {f['suggested_title']} fits better ({f['suggested_fit']}). Review before use."]
         elif f["flag"] == "supervisory_task_kept":
             L += [f"- supervisory_task_kept: {', '.join(f['practice_ids'])} cite a supervisory task because too few other tasks exist; treat as practice for a later role."]
-        elif f["flag"] == "entry_target_not_job_zone_4":
-            L += [f"- entry_target_not_job_zone_4: the entry targets are in Job Zone {', '.join(zl(z) for z in f['job_zones'])}, not the usual bachelor's-level Job Zone 4."]
         else:
             L += [f"- {f['flag']}: {f['detail']}."]
-    L += ["", "Method: supervisory check = " + SUPERVISORY_RULE + ". Topical overlap = " + OVERLAP_RULE + ".", ""]
-
+    if qf["actions"]:
+        L += ["", "Automatic changes made by the checks:", ""]
+    for a in qf["actions"]:
+        if a["action"] == "target_dropped":
+            L += [f"- target_dropped: `{a['onet_soc_code']}` {a['occupation_title']} was removed from the entry targets ({a['detail']})."]
+        elif a["action"] == "target_added":
+            L += [f"- target_added: `{a['onet_soc_code']}` {a['occupation_title']} ({a['detail']})."]
+        elif a["action"] == "supervisory_tasks_dropped":
+            L += [f"- supervisory_tasks_dropped: {a['count']} supervisory or managerial task(s) of the entry targets were skipped as unsuitable for a new graduate (O*NET task IDs {', '.join(map(str, a['onet_task_ids']))})."]
+    for n in qf["notes"]:
+        if n["note"] == "entry_target_not_job_zone_4":
+            L += ["", f"Note: the entry targets are in Job Zone {', '.join(zl(z) for z in n['job_zones'])}, not the usual bachelor's-level Job Zone 4."]
+        else:
+            L += ["", f"Note ({n['note']}): {n['detail']}."]
+    L += ["", "Method: field fit = " + FIELD_FIT_RULE + ". Supervisory check = " + SUPERVISORY_RULE + ".", ""]
 
 # Licensing blocks for the machine layer (v4).
 DB_NOTICES = [
@@ -981,16 +1094,29 @@ def asset_record(cip, title, stem, prov, entry, n_occs, excluded, review, eviden
         "notes": [
             "dreamco_analysis is generated by build.py from build facts and the authored review files; it is not a human review.",
             f"tier: {tier} (see plan.json and data/majors_selected.json).",
-            "validation_evidence_ids: only regression evidence (if listed) exists. sandbox, benchmark and holdout are empty on purpose; evidence/pytest.txt is a build-integrity run and is not counted.",
+            "validation_evidence_ids: only regression evidence (if listed) exists. sandbox and benchmark are empty on purpose; holdout stays empty until the owner grades evidence/holdout_kit; evidence/pytest.txt is a build-integrity run and is not counted.",
+            ("evidence is append-only: records for earlier versions of this asset stay linked; the ones whose source_reference is this version's integrity_hash are: "
+             + (", ".join(current_version_ids(prov["asset_id"], prov["integrity_hash"], ev)) or "none")),
             "perspectives_used has one entry: O*NET and the crosswalk are both official USDOL/ETA sources (closest policy perspective: official_documentation).",
         ],
     }
 
 
+def current_version_ids(aid, integrity_hash, ev):
+    out = []
+    for kind, ids in ev.items():
+        for eid in ids:
+            r = json.loads((EVIDENCE / kind / aid / f"{eid.split(':')[2]}.json").read_text())
+            if r.get("source_reference") == integrity_hash:
+                out.append(eid)
+    return out
+
+
 def linked_evidence(aid, integrity_hash):
-    """Evidence records under data/dreamco_knowledge/evidence/<kind>/<asset_id>/ whose source_reference is this build's
-    integrity_hash, whose integrity_hash matches the sha256 of the sibling .results.json, and which passed
-    (stale, tampered or failing records are not linked)."""
+    """Evidence records under data/dreamco_knowledge/evidence/<kind>/<asset_id>/ whose id matches the file, whose
+    integrity_hash matches the sha256 of the sibling .results.json, and which passed. Evidence is append-only, so records
+    for earlier versions of the asset are linked too; each record's source_reference names the version it evaluated
+    (tampered or failing records are not linked)."""
     ev = {"sandbox": [], "benchmark": [], "holdout": [], "regression": []}
     for kind in ev:
         d = EVIDENCE / kind / aid
@@ -1000,8 +1126,7 @@ def linked_evidence(aid, integrity_hash):
             r = json.loads(f.read_text())
             res = f.with_name(f.stem + ".results.json")
             res_ok = res.is_file() and r.get("integrity_hash") == "sha256:" + hashlib.sha256(res.read_bytes()).hexdigest()
-            if (r.get("source_reference") == integrity_hash and r.get("evidence_id") == f"{kind}:{aid}:{f.stem}"
-                    and res_ok and r.get("passed") is True):
+            if r.get("evidence_id") == f"{kind}:{aid}:{f.stem}" and res_ok and r.get("passed") is True:
                 ev[kind].append(r["evidence_id"])
     return ev
 
@@ -1028,9 +1153,18 @@ def main():
     tasks = pd.read_csv(RAW / "task_statements.csv", dtype={"O*NET-SOC Code": str})
     task_text = dict(zip(tasks["Task ID"].astype(int), tasks["Task"]))
     descriptions = dict(zip(occ["O*NET-SOC Code"], occ["Description"]))
+    occ_titles = dict(zip(occ["O*NET-SOC Code"], occ["Title"]))
+    field_index = FieldIndex(occ, tasks)
+    series_titles = {}
+    for c_, t_ in dict(zip(cw.cip, cw.cip_title)).items():
+        series_titles.setdefault(c_[:5], set()).add(str(t_).strip())
+    series_text = {k: " ".join(sorted(v)) for k, v in series_titles.items()}
     authored, topics, tov = load_authored()
     selected, coverage = select_majors(cw, valid, zones, load_coverage_rules())
     gate = find_gate_tool()
+    if (REPO_ROOT / EVIDENCE_ROOT).resolve() != EVIDENCE.resolve():
+        print(f"WARNING: {REPO_ROOT}/{EVIDENCE_ROOT} is not this pack's evidence directory; set DREAMCO_REPO_ROOT to the "
+              "repo root that contains study_packs/career_pathways, or the gate will not resolve evidence ids")
     sel, rows, all_tasks, built = [], [], [], []
     for cip, tier in selected:
         gen = tier == "generated"
@@ -1044,10 +1178,16 @@ def main():
         know = top_elements(kim, socs, 8)
         skills = top_elements(sim_, socs, 6)
         targets, tzone, basis, eligible, sim = rank_entry_targets(occs, zones, kim)
-        dropped = []
+        dropped, tp = [], None
         if gen:
+            pool = ranked_tier(eligible, zones, tzone, sim) if tzone else []
+            targets, tp = plausibility_filter(title, targets, pool, field_index, occ_titles, series_text.get(cip[:5], ""))
+            if tp["dropped"]:
+                basis += ("; then the automatic field-fit check dropped " + ", ".join(d["soc"] for d in tp["dropped"])
+                          + (" and added " + ", ".join(a["soc"] for a in tp["added"]) if tp["added"] else "")
+                          + " (see target_plausibility)")
             review = {"type": "rule_only_not_reviewed",
-                      "note": "Generated tier: rule output used as is; not reviewed for plausibility."}
+                      "note": "Generated tier: rule output after the automatic field-fit check; not reviewed by a person."}
         else:
             targets, basis, review = apply_target_override(cip, occs, zones, targets, basis, tov)
         weights = entry_weights(occs, targets, zones)
@@ -1057,7 +1197,7 @@ def main():
         ctx = {"know": know, "skills": skills, "know_w": know_w, "skills_w": skills_w, "weights": weights, "outline": outline}
         if gen:
             ptasks, dropped = generated_practice_tasks(cip, targets, eligible, sim, tasks, kim, know_w)
-            qf = quality_flags(cip, title, targets, zones, descriptions, ptasks, dropped, basis)
+            qf = quality_flags(targets, zones, ptasks, dropped, basis, tp)
         else:
             ptasks = practice_tasks(cip, occs, tasks, authored)
             sup = [p["practice_id"] for p in ptasks if is_supervisory(task_text[p["onet_task_id"]])]
@@ -1077,6 +1217,7 @@ def main():
                                             "note": "top_knowledge/top_skills are the unweighted mean over all linked occupations (kept for comparison); the outline uses the entry-weighted lists."},
                     "outline_elements": outline,
                     "quality_flags": qf,
+                    "target_plausibility": tp,
                     "entry_targets": [{"soc": s, "title": t, "job_zone": zones.get(s)} for s, t in targets],
                     "entry_target_basis": basis,
                     "entry_target_review": review,
@@ -1109,7 +1250,9 @@ def main():
         "label": "DreamCo career-pathway practice items, mixed licensing per item (see tasks[].license)",
         "label_note": ("Tier authored items are labeled '" + PRACTICE_LABEL + "' and are DreamCo-original text; tier generated items "
                        "are labeled '" + GENERATED_LABEL + "' and contain a quoted O*NET 31.0 task statement (third-party, CC BY 4.0)."),
-        "ownership_class": "mixed_per_item",
+        "ownership_class": most_restrictive(t["ownership_class"] for t in all_tasks),
+        "ownership_class_rule": ("most restrictive class among the items (order: " + " > ".join(OWNERSHIP_RESTRICTIVENESS) +
+                                 "); each item keeps its own ownership_class and license"),
         "ownership_classes": {"authored": "synthetic_generated_by_dreamco", "generated": "open_license_with_conditions"},
         "authorship": {"authored": AUTHORSHIP, "generated": GENERATED_AUTHORSHIP},
         "license": {"third_party": "CC BY 4.0", "license_url": CC_BY, "attribution": ONET_ATTRIBUTION,
@@ -1128,6 +1271,7 @@ def main():
     if gate:
         for stem in built:
             r = subprocess.run([sys.executable, str(gate), f"study_plans/{stem}", "--asset-root", ".",
+                                "--repo-root", os.path.relpath(REPO_ROOT, ROOT),
                                 "--out", f"study_plans/{stem}/license_gate.json"], cwd=ROOT, capture_output=True, text=True)
             if r.returncode == 2:
                 raise SystemExit(f"gate error for {stem}: {r.stderr}")

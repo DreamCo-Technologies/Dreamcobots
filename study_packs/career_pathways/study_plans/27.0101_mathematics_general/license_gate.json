@@ -2,15 +2,16 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-mg-27.0101",
-  "evaluated_at": "2026-10-02T18:59:33-05:00",
+  "evaluated_at": "2026-10-02T19:55:52-05:00",
   "inputs": {
     "target": "study_plans/27.0101_mathematics_general",
+    "repo_root": "../..",
     "candidate_path": "study_plans/27.0101_mathematics_general/candidate.json",
     "candidate_sha256": "fd558e4218ac5dab55c2cc0db2d5e1c85091619b27caa540927bf4eed6d7252a",
     "provenance_path": "study_plans/27.0101_mathematics_general/provenance.json",
-    "provenance_sha256": "fe4bea69c28e2c24677c6ab764fe13c89dac9559f6468957815fa2b50cff8d12",
+    "provenance_sha256": "43c6498883f0a4d70838603ffadf8d1674061e3278cbe2ddee906a90539772b5",
     "asset_record_path": "study_plans/27.0101_mathematics_general/asset.json",
-    "asset_record_sha256": "3a5ee122ef2966bd7e411ddb25a5a1d1e345d81af97f65c7d972ae40dc1ec8a2"
+    "asset_record_sha256": "43e5b21f9fb1e39efd356b4bf2f061c263d84c8c71b4e35d084dfb73c6fdadc0"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +103,12 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "schema: $: additional property 'evidence_root' not allowed"
+        "only 1 perspective(s) used; multi-view synthesis expects several",
+        "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
       ]
     },
     {
@@ -121,10 +123,12 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several",
+    "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

@@ -2,15 +2,16 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-iss-11.0401",
-  "evaluated_at": "2026-10-02T18:59:32-05:00",
+  "evaluated_at": "2026-10-02T19:55:51-05:00",
   "inputs": {
     "target": "study_plans/11.0401_information_science_studies",
+    "repo_root": "../..",
     "candidate_path": "study_plans/11.0401_information_science_studies/candidate.json",
     "candidate_sha256": "bbab58b4666c5eaef4ce8362b06dd2c7f39e0edaba9bd879da2b7d5b0687bc97",
     "provenance_path": "study_plans/11.0401_information_science_studies/provenance.json",
-    "provenance_sha256": "601c9c5400011a3fceb9603c394582722e38fa470864d6cc412c34413eb9f377",
+    "provenance_sha256": "da0db466bd080646098e3ea31b49c7b909789f14798ab5a24ecf1a7ba65093c1",
     "asset_record_path": "study_plans/11.0401_information_science_studies/asset.json",
-    "asset_record_sha256": "38054dcc042d0fe6125ee48c91545a593d65ee68aac02ee127b58b2be0c383ed"
+    "asset_record_sha256": "9972dc02ef31f5649d0e7106dec3d5c9bf9bcc75f4ac32682cc1bd5aae78591b"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +103,12 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "schema: $: additional property 'evidence_root' not allowed"
+        "only 1 perspective(s) used; multi-view synthesis expects several",
+        "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
       ]
     },
     {
@@ -121,10 +123,12 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several",
+    "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

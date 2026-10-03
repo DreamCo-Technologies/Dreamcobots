@@ -2,15 +2,16 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-eeat-13.1202",
-  "evaluated_at": "2026-10-02T18:59:33-05:00",
+  "evaluated_at": "2026-10-02T19:55:51-05:00",
   "inputs": {
     "target": "study_plans/13.1202_elementary_education_and_teaching",
+    "repo_root": "../..",
     "candidate_path": "study_plans/13.1202_elementary_education_and_teaching/candidate.json",
     "candidate_sha256": "19b375adc8fdc32a80418e2adea9060729711c4c0ae532174f9bbdd191ab85f7",
     "provenance_path": "study_plans/13.1202_elementary_education_and_teaching/provenance.json",
-    "provenance_sha256": "9614b8fbe13965a15b221757ba0268185a3e5e4a93491a552a281e0e0a978795",
+    "provenance_sha256": "75e5f1874c8cb0c716a2ed630a51891a13ce4522571e24733e0e324b645d2f40",
     "asset_record_path": "study_plans/13.1202_elementary_education_and_teaching/asset.json",
-    "asset_record_sha256": "008a250c3cad6658b446b2d35321db919b2fac9976ef887f1d68a97afc297a5b"
+    "asset_record_sha256": "ca421dcf7e10e36cb6ba4002c786259a657e0dd7f1fce89e5cd8ee3b4fe7a0af"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +103,12 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "schema: $: additional property 'evidence_root' not allowed"
+        "only 1 perspective(s) used; multi-view synthesis expects several",
+        "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
       ]
     },
     {
@@ -121,10 +123,12 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several",
+    "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

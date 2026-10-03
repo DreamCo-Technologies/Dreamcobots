@@ -1,239 +1,291 @@
-# Blind holdout items (edu-career-pathways, kit v1)
+# Blind holdout items (edu-career-pathways blind holdout v2 (rubric discrimination))
 
-Grade each candidate answer against its own rubric. Record scores in `grading_sheet.csv`. See README.md first.
+Drawn 2026-10-02T19:42:30-05:00. 16 items. Read `README.md` first. Score each candidate answer against its own rubric, 0 to 2 per criterion, in `grading_sheet.csv`.
 
-## H01
+## Q01. Computer Science (CIP 11.0701)
 
-**Scenario prompt**
+**Scenario prompt.** A team's continuous-integration pipeline fails about one run in eight, and engineers have started re-running jobs until they go green. You have just joined as a developer and are asked to propose how to find and fix the flaky tests within two weeks without freezing feature work. Write a short plan.
 
-You have been assigned a caseload of 60 people on probation. Design the case file structure and maintenance routine: the sections every file must have (court orders and conditions, risk and needs assessment, supervision plan, contacts, drug test results, treatment reports, violations, correspondence), naming and dating conventions, what must be updated after each contact and within what time, privacy and record-access rules, and a monthly self-audit checklist.
+**Candidate answer.**
 
-**Candidate answer (outline form)**
+- **Data:** Export the last 60 days of CI results and compute each test's failure rate on commits where the same test passed on retry with no code change.
+- **Ranking:** Sort tests by failure rate times how often they run, so the ten that waste the most developer time get fixed first.
+- **Reproduction:** Run each suspect 200 times in a loop and again in randomized order, to separate timing problems from order dependence or shared fixtures.
+- **Typical fixes:** Replace fixed sleeps with waits on explicit conditions, reset global state between tests, and stub the external payment sandbox the suite calls.
+- **Guardrails:** Quarantine a test only with a named owner and a ten-day deadline, list quarantined tests on the team dashboard, and block merges that add a test failing a 50-run check.
 
-- Sections in a standard order, electronic or paper.
-- Contact notes are added to the file when time allows.
-- Treatment records handled under substance-use confidentiality rules.
-- Access limited to authorized staff; release requires proper consent.
-- Monthly check: conditions tracked, assessments current, deadlines met.
+**Rubric (0 to 2 points each).**
 
-**Rubric (score each criterion 0, 1 or 2)**
+1. Measurement: Quantifies flakiness from CI history (per-test failure rates on unchanged code, retries that pass) and prioritizes by cost, rather than relying on anecdotes.
+2. Root-cause approach: Reproduces failures deliberately (many repeated or reordered runs) and targets real causes such as timing waits, shared state, order dependence or live external services.
+3. Process safeguards: Quarantines only with an owner and deadline, keeps quarantined tests visible, and stops new flaky tests from merging without hiding real failures.
 
-1. Complete structure: File sections cover legal, assessment, plan, contact and compliance records.
-2. Timely maintenance: Sets clear update deadlines and contact note standards.
-3. Confidentiality and audit: Addresses access rules for sensitive records (such as treatment information) and includes a self-audit.
+## Q02. Registered Nursing/Registered Nurse (CIP 51.3801)
 
-## H02
+**Scenario prompt.** On a surgical ward, a patient one day after bowel surgery has a heart rate that rose from 88 to 118 over four hours, a 38.4 °C fever and new confusion. The night shift is busy. Describe your assessment, escalation and handover.
 
-**Scenario prompt**
+**Candidate answer.**
 
-A city transit agency is commissioning onboard software that shows next-stop announcements and real-time arrival predictions on bus screens, using GPS and a cellular link. Write the performance requirements section of the specification: latency from GPS fix to on-screen update, prediction accuracy, behavior during cellular outages, startup time, and resource limits on the onboard computer. For each requirement give a number, how it will be measured, and why that value matters to riders.
+- **Assess:** Recheck blood pressure, breathing rate, oxygen saturation and pain, work out the early warning score, and examine the abdomen and wound.
+- **Fluids and output:** Review the fluid balance and hourly urine output, since falling output with a rising heart rate can signal sepsis or a leak.
+- **Escalate:** Note the changes for the morning ward round, and page the surgical doctor if the heart rate is still above 120 at the next check.
+- **Sepsis steps:** Give the charted paracetamol for the fever and encourage oral fluids, then decide later in the shift whether further tests are needed.
+- **Record:** Document times and findings, repeat observations at least every half hour, and hand over the plan and pending results face to face.
 
-**Candidate answer (outline form)**
+**Rubric (0 to 2 points each).**
 
-- Stop announcement at least a set number of seconds before arrival at typical speeds.
-- Screen update within about 2 seconds of a GPS fix; prediction error within a stated band for most trips.
-- During outages, fall back to schedule-based predictions and label them; resume within a stated time after reconnect.
-- Boot to usable display within a stated time after ignition.
-- CPU and memory ceilings leave headroom on the onboard computer; measured during field trials on named routes.
+1. Assessment: Completes a focused assessment (blood pressure, breathing rate, oxygen saturation, early warning score, urine output, abdomen and wound) and recognises possible sepsis or an anastomotic leak.
+2. Escalation: Escalates promptly to the responsible doctor or rapid response team using a structured format and prepares for time-critical sepsis care as ordered.
+3. Documentation and handover: Records times and findings, sets frequent reassessment, and hands over the plan and pending results clearly.
 
-**Rubric (score each criterion 0, 1 or 2)**
+## Q03. Marketing/Marketing Management, General (CIP 52.1401)
 
-1. Quantified requirements: Each requirement has a specific value and unit rather than vague words like 'fast'.
-2. Measurability: Each has a test method (logged timestamps, field trials on set routes, induced outages).
-3. Rider-centered rationale: Values are justified by rider experience or safety, such as announcing a stop before the bus reaches it.
+**Scenario prompt.** An online store planned a two-week test of a new checkout button but stopped it on day six, when variant B was converting at 4.1% against 3.8% for the current design. The head of marketing wants to roll out B to all customers. Write your advice.
 
-## H03
+**Candidate answer.**
 
-**Scenario prompt**
+- **Early stop:** Stopping on the day B pulled ahead raises the chance of a false win, because repeated looks at the data make chance gaps look real.
+- **Evidence needed:** A 0.3-point gap needs a sample size fixed in advance and a confidence interval, run over full weeks to cover weekday patterns.
+- **Right metric:** Compare revenue per visitor and not conversion alone, since a button can lift orders while lowering the average basket.
+- **Segments:** Check mobile and desktop separately, because checkout buttons often behave differently on small screens.
+- **Advice:** Restart the test for the full planned two weeks, agree the decision rule now, and roll out B only if it still wins.
 
-A first-time home buyer couple, both in their twenties with one gig-economy income and one salaried income, books a meeting to apply for a mortgage. Write your interview guide: the information and documents you need (and why for each), how you explain the steps from application to closing, the questions they are likely to ask (down payment, rate locks, credit checks) with plain-language answers, how you handle variable gig income, and the follow-up checklist you hand them.
+**Rubric (0 to 2 points each).**
 
-**Candidate answer (outline form)**
+1. Statistical validity: Explains that stopping when a variant pulls ahead inflates false positives, and that a pre-set sample size, a confidence interval and full weekly cycles are needed.
+2. Business framing: Looks beyond conversion to revenue per visitor or order value, and checks segments such as mobile and desktop.
+3. Recommendation: Gives a clear next step with an agreed decision rule before any full rollout.
 
-- Documents: whatever the bank asks for.
-- Process: application, disclosures, appraisal, underwriting, conditions, closing.
-- Explain rate locks, down payment options, and credit inquiry effects.
-- Checklist with dates and contact information.
+## Q04. Psychology, General (CIP 42.0101)
 
-**Rubric (score each criterion 0, 1 or 2)**
+**Scenario prompt.** A student club wants to show that students who use a free study app earn higher grades. They plan to email a survey to app users only, asking for their grade average and their hours of app use. Your job is to strengthen the study before it launches.
 
-1. Complete information needs: Lists the documents and data needed and explains why, including how variable income is documented.
-2. Clear process explanation: Explains the stages and timelines accurately in plain language.
-3. Fair and helpful: Answers questions without steering or promising approval, and gives a clear follow-up checklist.
+**Candidate answer.**
 
-## H04
+- **Main flaw:** Surveying only app users gives no comparison group, and motivated students may both use the app and earn higher grades for other reasons.
+- **Self-report:** Grade averages typed into a survey tend to drift upward, so use registrar records released with each student's written consent.
+- **Design:** Offer the app free to a random half of the volunteers for one term, and compare their change in grades with the other half.
+- **Measures:** Record prior grades, course load and weekly study hours for both groups, so the analysis can adjust for differences at the start.
+- **Ethics and size:** Get ethics board approval, store data without names, and recruit about 200 volunteers so a modest effect can be detected.
 
-**Scenario prompt**
+**Rubric (0 to 2 points each).**
 
-Invented case: a 67-year-old man is starting an oral anticoagulant after a diagnosis of atrial fibrillation; he takes an over-the-counter pain reliever several times a week, uses a fish-oil supplement and sometimes forgets evening doses of other medicines. Write the counseling script: opening and teach-back, how to take the medicine and what to do about a missed dose (per the product labeling), bleeding warning signs, interactions with his OTC products, storage, and when to call the pharmacist or doctor or seek emergency care.
+1. Bias: Identifies that surveying only users gives no comparison group, that motivated students may self-select into using the app (confounding), and that self-reported grades are unreliable.
+2. Design: Proposes a comparison, ideally random assignment, and measures baseline differences such as prior grades and course load.
+3. Ethics and practicalities: Addresses consent, privacy of grade data, ethics approval and a sample large enough to detect a realistic effect.
 
-**Candidate answer (outline form)**
+## Q05. Statistics, General (CIP 27.0501)
 
-- Open with purpose and ask what he already knows.
-- Dosing and missed-dose instructions from the labeling; pill organizer or phone alarm.
-- Avoid routine NSAID use; discuss fish oil with the prescriber; acetaminophen as a usual alternative within limits.
-- Teach-back: he explains how and when he takes it and what he watches for.
+**Scenario prompt.** A health survey of 1,200 adults has 18% of income values missing, and respondents with missing income also report poorer health more often. A colleague plans to delete those rows and fit a regression of health on income. Write your advice.
 
-**Rubric (score each criterion 0, 1 or 2)**
+**Candidate answer.**
 
-1. Accurate, individualized content: Advice reflects the drug's labeling and addresses his OTC pain reliever and supplement use.
-2. Safety emphasis: Clearly explains bleeding signs and emergency situations.
-3. Effective communication: Uses plain language, teach-back and adherence aids for forgetfulness.
+- **Problem:** Because missing income goes with poorer health, the data are not missing completely at random, and deleting those rows can bias the income effect.
+- **Cost:** Deleting 18% of rows also throws away their health and age data and widens every confidence interval.
+- **Method:** Use multiple imputation with variables such as education, age, employment and the health outcome itself, creating about twenty imputed datasets.
+- **Pooling:** Fit the regression in each dataset and combine the estimates with Rubin's rules, so the extra uncertainty from imputation is kept.
+- **Sensitivity:** Report the missing-data pattern, compare with the complete-case result, and test how results change if non-response depends on income itself.
 
-## H05
+**Rubric (0 to 2 points each).**
 
-**Scenario prompt**
+1. Missingness: Recognises that the data are not missing completely at random, so deleting rows can bias the estimate and also wastes information.
+2. Method: Recommends a principled method such as multiple imputation with auxiliary variables and the outcome, pooled with Rubin's rules (not single mean imputation).
+3. Sensitivity and reporting: Reports the missing-data pattern, compares with complete-case results and tests sensitivity to data missing not at random.
 
-The university library asks for a study-room booking app: students reserve rooms from their phones, staff can block rooms for events, no-shows are released after 15 minutes, and it must work with campus single sign-on. You have two part-time student developers for eight weeks and no budget for paid services beyond existing campus hosting. Write a one-page feasibility memo: the requirements you would confirm with users, a rough effort estimate per feature, what fits in eight weeks, what you would cut or defer, and your recommendation.
+## Q06. Computer Science (CIP 11.0701)
 
-**Candidate answer (outline form)**
+**Scenario prompt.** A small startup stores user passwords as unsalted SHA-256 hashes in its main database. You are asked to recommend how to move to a safer scheme without forcing every user to reset their password on the same day. Write a short recommendation.
 
-- Must-haves: SSO login, view availability, book and cancel, staff block-out; nice-to-have: notifications, analytics.
-- Open questions: booking limits per student, accessibility needs, room check-in method for no-show release.
-- The work looks manageable in the time available.
-- Defer push notifications and analytics; consider an existing open-source booking system if SSO support exists.
-- Recommendation with a scope, a timeline and the main risk.
+**Candidate answer.**
 
-**Rubric (score each criterion 0, 1 or 2)**
+- **Algorithm:** Move to Argon2id with a unique random salt per user, tuning memory and iterations so one hash takes about 250 ms on the login servers.
+- **Why change:** Unsalted SHA-256 is fast and identical passwords share hashes, so a leaked table can be cracked with precomputed lists in hours.
+- **Migration:** Right away, wrap every stored value as Argon2id of the old SHA-256 hash; at each later login, rehash the typed password directly and drop the wrapper.
+- **Old accounts:** Accounts that never log in again keep only the wrapped form, so no bare SHA-256 value remains, and nothing is ever stored or logged in plaintext.
+- **Risk steps:** Check the logs for past database exports, add login rate limits, and require resets only for accounts that appear in known breach lists.
 
-1. Requirements analysis: Distinguishes must-have from nice-to-have requirements and names open questions to confirm with students and staff.
-2. Credible estimate: Effort estimates are broken down by feature, include testing and SSO integration risk, and add up within the stated capacity.
-3. Clear recommendation: Recommends a specific scope (build, reduce, or buy/adapt existing tool) with the trade-offs stated.
+**Rubric (0 to 2 points each).**
 
-## H06
+1. Algorithm choice: Recommends a slow, salted password-hashing function (Argon2id, scrypt or bcrypt) with tuned cost settings and explains why fast unsalted hashes are unsafe.
+2. Migration path: Protects every stored credential right away (for example by wrapping the old hash in the new function) and upgrades at login, with no plaintext and no weak hashes left behind for inactive users.
+3. Risk handling: Considers whether the old hashes were already exposed, adds login rate limits or monitoring, and targets resets at accounts that are actually at risk.
 
-**Scenario prompt**
+## Q07. Biology/Biological Sciences, General (CIP 26.0101)
 
-A psychology lab ran an online survey on sleep and stress with 2,400 student responses exported from the survey platform: wide format, item names like Q14_3, some reverse-scored items, attention-check questions, and a free-text 'major' field. Write a data management plan for turning this into an analysis-ready dataset: a codebook template, the cleaning steps in order (including attention-check exclusions and reverse scoring), how you compute scale scores, how you keep the raw file untouched and record every change, and how identifying information is protected.
+**Scenario prompt.** In a teaching lab, three of eight bacterial plates streaked from the same stock show two colony types, and students suspect contamination. The practical exam uses this stock next week. Describe how you would confirm the problem and keep it from happening again.
 
-**Candidate answer (outline form)**
+**Candidate answer.**
 
-- Codebook: variable name, label, item wording reference, response scale, reverse-scored flag, missing codes.
-- Order: import, rename, flag failed attention checks, recode reverse items, compute scales, recode free-text majors into categories.
-- Scale scores as mean of items with a stated minimum number answered.
-- Raw export kept read-only; analysis script under version control; change log.
+- **Confirm:** Re-streak each colony type for isolation and Gram stain both, comparing them with the expected organism's cell shape and colony appearance.
+- **Find the source:** Incubate uninoculated plates from the same media batch and streak the stock fresh with a sterile loop, to separate stock problems from technique.
+- **Recover:** If the stock is mixed, revive the frozen master vial or order a new culture, and pick one well-isolated colony for the working stock.
+- **Verify:** Streak the new working stock on two plates and confirm purity, including a Gram stain, before the exam, keeping one plate as a reference.
+- **Prevent:** Split stocks into single-use vials, label them with dates, log media batches, and run a short aseptic technique refresher for the students.
 
-**Rubric (score each criterion 0, 1 or 2)**
+**Rubric (0 to 2 points each).**
 
-1. Reproducible pipeline: Raw data stays read-only and all transformations are scripted or logged so another person could rebuild the dataset.
-2. Correct psychometric steps: Reverse-scoring, scale scoring and handling of missing items are described correctly, and exclusion rules are stated before looking at outcomes.
-3. Data protection: Identifiers are separated or removed, storage and access are controlled, and the plan follows the study's consent and ethics approval.
+1. Diagnosis: Isolates and characterises both colony types (streak for isolation, Gram stain, colony appearance) and uses media controls to tell a mixed stock from poor technique.
+2. Corrective action: Recovers a verified pure culture from a trusted source (frozen master or new purchase), starts from a single isolated colony and confirms purity before the exam.
+3. Prevention: Prevents recurrence with single-use stock vials, labelling, media batch records and aseptic technique practice.
 
-## H07
+## Q08. Computer Science (CIP 11.0701)
 
-**Scenario prompt**
+**Scenario prompt.** A pull request adds a report endpoint that builds its SQL query by joining strings taken from URL parameters, including a sort column chosen by the user. You are the reviewer. Write the review comments you would leave.
 
-You are the project specialist for moving a 60-person insurance office to a new building in eight weeks. The team: facilities coordinator, IT technician, HR generalist, an office manager, two volunteer 'floor captains', and the moving vendor. Build a responsibility assignment (RACI) matrix for the twelve main work packages, explain how you matched duties to people's skills and workloads, how you will confirm each person accepts their assignments, and how you will rebalance if someone becomes overloaded.
+**Candidate answer.**
 
-**Candidate answer (outline form)**
+- **Blocking issue:** The date and region values go straight into the SQL text, so a crafted URL can read or change any table this account can reach.
+- **Sort column:** Column names cannot be bound as parameters, so the user's sort choice stays an injection point even after the values are fixed.
+- **Fix:** Escape every quote character in the values before joining them, and strip spaces and semicolons from the sort option so it cannot carry a second statement.
+- **Account:** Keep the report on the application's existing database account for now, and revisit permissions when the reporting module grows.
+- **Tests and tone:** Please add tests that send quotes and semicolons in each parameter; the endpoint is useful and close to ready once this is fixed.
 
-- Work packages: floor plan, IT network and phones, furniture, vendor contract, employee communication, packing, security badges, parking, mail forwarding, go-live support.
-- IT technician accountable for network cutover; HR for employee communication; facilities for vendor coordination.
-- Kickoff meeting where owners confirm scope and capacity.
-- Weekly status check of hours and task counts per person.
-- Rebalance by shifting tasks to floor captains or adding vendor support.
+**Rubric (0 to 2 points each).**
 
-**Rubric (score each criterion 0, 1 or 2)**
+1. Vulnerability: Identifies SQL injection through the values and notes that the user-chosen sort column is a separate injection point because identifiers cannot be bound as parameters.
+2. Fix: Requires bound parameters for all values, an allow-list mapping for the sort column and direction, and a least-privilege database role.
+3. Review quality: Is specific and constructive, marks what blocks the merge, and asks for tests with hostile input.
 
-1. Complete, clear matrix: Each work package has exactly one accountable owner, and responsible, consulted and informed roles are sensible.
-2. Thoughtful assignment: Assignments reflect skills, authority and availability rather than convenience.
-3. Commitment and rebalancing: Includes a step for confirming assignments and a concrete method for detecting and fixing overload.
+## Q09. Mechanical Engineering (CIP 14.1901)
 
-## H08
+**Scenario prompt.** A steel mounting bracket on a packaging machine cracked after eight months, near a sharp inside corner. The supplier offers a thicker bracket of the same shape as the fix. Write your recommendation.
 
-**Scenario prompt**
+**Candidate answer.**
 
-Your team is releasing new firmware for a battery-powered soil-moisture sensor that reports over LoRa every 15 minutes and must last two years on two AA cells. Write a test plan for the firmware release: the test scenarios (normal reporting, weak radio signal, battery near cutoff, sensor disconnected, clock drift), which tests run on a simulator versus on real devices in a test rack, how you will measure power draw, and the release criteria.
+- **Cause:** Eight months of cycling and a crack at a sharp inside corner point to fatigue starting at a stress concentration, not a single overload.
+- **Evidence:** Check the fracture surface for beach marks and measure the machine's vibration at the bracket to learn the real load cycle.
+- **Design change:** Accept the thicker bracket and weld a gusset plate across the inside corner, stiffening the bracket exactly where the crack started.
+- **On thickness:** A thicker copy lowers the average stress in the bracket, so the crack should not return as long as the bolts stay properly tightened.
+- **Verify:** Estimate the peak stress with finite element analysis against the steel's fatigue limit, then confirm with strain gauges on a test bracket.
 
-**Candidate answer (outline form)**
+**Rubric (0 to 2 points each).**
 
-- Scenario list with expected behavior, including retry and back-off on weak signal and safe shutdown at low voltage.
-- Simulator for logic and timing; a rack of real sensors with programmable power supplies for power and radio tests.
-- Power measured with a current analyzer across sleep and transmit cycles; projected battery life computed.
-- 72-hour soak test with fault injection.
-- Release only if projected battery life is at least two years and no resets occur.
+1. Failure analysis: Recognises fatigue cracking from cyclic loading at a stress concentration and gathers evidence (fracture surface marks, measured vibration or load cycles).
+2. Design change: Removes the stress concentration (generous fillet, smoother load path, welds kept away from the notch) and explains why extra thickness alone may not solve it.
+3. Verification: Checks the new design against the fatigue limit with analysis and tests it on the machine (for example with strain gauges).
 
-**Rubric (score each criterion 0, 1 or 2)**
+## Q10. Computer Engineering, General (CIP 14.0901)
 
-1. Embedded scenarios: Scenarios reflect embedded realities: power states, radio retries, brown-out, sensor faults, and long-duration behavior.
-2. Test environment: Explains what can be simulated versus what needs physical devices and instruments, and why.
-3. Quantified criteria: Release criteria include numbers (average current in microamps, packet success rate, no watchdog resets over a soak period).
+**Scenario prompt.** A battery-powered soil sensor with a microcontroller and a radio resets at random in the field, mostly when it transmits on cold mornings. Bench tests at room temperature never reproduce it. Describe how you would find and fix the cause.
 
-## H09
+**Candidate answer.**
 
-**Scenario prompt**
+- **Likely cause:** Cold raises the battery's internal resistance, so the radio's current burst can pull the supply below the brown-out threshold.
+- **First clue:** Read the reset-cause register at every boot and send it with the next report, to confirm brown-out rather than watchdog or software faults.
+- **Measurement:** Put a unit in a freezer at minus 10 °C and capture the supply rail on an oscilloscope triggered by the transmit-enable pin.
+- **Load profile:** Measure the burst current with a current probe and compare the size of the dip with the brown-out level in the datasheet.
+- **Fix and check:** Add bulk capacitance next to the radio and soften the transmit start, then run 20 units for a week between minus 15 and 25 °C.
 
-You designed an online exhibit for a local history museum with scroll-triggered animations, an interactive timeline and an image zoom viewer, to be built by one front-end and one back-end developer. Write the collaboration plan: how you specify animations (timing, easing, reduced-motion alternatives), the content model the back end must support (timeline entries, image sets, captions, credits), performance budgets for images and scripts, how you pair with developers during build, and acceptance testing.
+**Rubric (0 to 2 points each).**
 
-**Candidate answer (outline form)**
+1. Hypothesis: Connects the resets to supply droop during radio current bursts when cold raises battery resistance, and uses the reset-cause register to tell brown-out from watchdog or software faults.
+2. Measurement: Captures the transient supply dip during transmission under cold conditions (oscilloscope, current probe, cold chamber or freezer), not averages at room temperature.
+3. Fix and verification: Proposes a supply fix (bulk capacitance, softer transmit start, brown-out threshold) and verifies it on several units across the temperature range.
 
-- Motion specs with durations and easing; prefers-reduced-motion fallback.
-- Content model fields: date, title, text, images, alt text, credits.
-- Budgets: page weight limit, responsive images, lazy loading.
-- Weekly pairing sessions and a shared issues board.
-- Acceptance: device matrix, keyboard navigation, screen reader check, performance score.
+## Q11. Chemistry, General (CIP 40.0501)
 
-**Rubric (score each criterion 0, 1 or 2)**
+**Scenario prompt.** A student measuring iron in water samples by UV-visible spectroscopy gets a calibration line with an R² of 0.999, but a check standard at 2.0 mg/L reads 2.4 mg/L. The sample results are due tomorrow. Describe what you would check and how you would report.
 
-1. Precise specifications: Animation and interaction specs are concrete enough to build and include accessibility alternatives.
-2. Content and performance: Defines a content model and performance budgets that developers can implement.
-3. Working process: Describes pairing, feedback loops and acceptance tests.
+**Candidate answer.**
 
-## H10
+- **Why R² misleads:** A high R² shows the standards fit a straight line, not that they are correct, so a 20% bias in the check is a real problem.
+- **Check first:** Confirm the blank, the wavelength setting, cuvette cleanliness and path length, and that the standards were diluted from an in-date stock.
+- **Independent check:** Prepare the check standard from a second stock source, since agreement with it would point to an error in the calibration standards.
+- **Matrix:** Spike one sample with a known amount of iron and confirm recovery between 90 and 110% before trusting any sample results.
+- **Report:** Report the sample results on time after multiplying each by 2.0/2.4 to cancel the bias, and note that correction in the lab notebook.
 
-**Scenario prompt**
+**Rubric (0 to 2 points each).**
 
-Graduate-path practice. Invented case: a 16-year-old athlete had a concussion five weeks ago and still reports headaches and trouble concentrating; testing by the supervising neuropsychologist found slowed processing speed but normal memory. Draft the consultation materials the neuropsychologist could use: (1) a short consult note to the treating neurologist, and (2) talking points for a meeting with the school counselor about temporary academic accommodations. Keep medical decisions with the physician and share only information the family has authorized.
+1. Troubleshooting: Explains that a high R² does not prove accuracy and checks the blank, wavelength, cuvette, standard preparation and stock age.
+2. Corrective action: Uses an independent check standard and a spike recovery to locate the error, and recalibrates before measuring samples.
+3. Reporting and quality control: Withholds or clearly flags results until quality control passes against stated limits, documents the steps and communicates any delay; does not adjust data to hide the bias.
 
-**Candidate answer (outline form)**
+## Q12. Elementary Education and Teaching (CIP 13.1202)
 
-- Neurologist note: referral question, key findings (processing speed below expectation, memory within normal limits), impressions, recommendation to re-evaluate in a set number of weeks.
-- School points: extra time on tests, rest breaks, reduced screen load, gradual return to full workload.
-- Defer return-to-play to the physician's graduated protocol.
-- Confirm signed release of information before school contact.
-- Plan follow-up contact to review whether accommodations can be reduced.
+**Scenario prompt.** In a third-grade class, six students read aloud slowly and guess at unfamiliar words, while the rest read at grade level. You have 20 minutes a day for small-group work over six weeks. Describe your plan.
 
-**Rubric (score each criterion 0, 1 or 2)**
+**Candidate answer.**
 
-1. Audience-appropriate content: The note to the neurologist is concise and technical; the school talking points are plain-language and focus on function and accommodations.
-2. Accurate scope: Does not make medical decisions such as clearance to play; defers return-to-sport to the physician and follows concussion protocols.
-3. Privacy: Shares only what the family has authorized and avoids unnecessary diagnostic detail with the school.
+- **Diagnose:** Give each of the six a short phonics screener and a one-minute oral reading check, since slow reading can come from different gaps.
+- **Group by need:** Group students who miss the same patterns, such as vowel teams or long words, rather than treating all six alike.
+- **Teach decoding:** Encourage students to use the picture and the first letter to predict each unfamiliar word, then ask whether their guess makes sense.
+- **Build fluency:** Give students a free choice of library books each week and quiet time for independent reading, to build their confidence and motivation.
+- **Monitor:** Repeat the one-minute check every two weeks, chart words correct per minute, regroup as students progress, and share the charts with families.
 
-## H11
+**Rubric (0 to 2 points each).**
 
-**Scenario prompt**
+1. Diagnosis: Uses quick assessments (phonics or decoding screener, timed oral reading) to find each student's specific gap instead of assuming one shared need.
+2. Instruction: Teaches the missing decoding patterns explicitly and builds fluency through modelled, repeated reading with feedback, and discourages guessing from pictures or first letters.
+3. Progress monitoring: Checks progress regularly with brief fluency measures, regroups students and keeps families informed.
 
-Invented case: a process engineer reports that the last three batches of a polyurethane coating cure tacky, although every standard QC test passed. You meet the engineer and the formulation chemist. Write the meeting summary and plan: the questions you asked, hypotheses (moisture in raw materials, catalyst level, isocyanate-to-polyol ratio, cure temperature), the existing data you reviewed, a non-standard test you propose (for example, FTIR monitoring of isocyanate peak during cure or Karl Fischer water testing of raw materials), and how results will decide the fix.
+## Q13. Social Work (CIP 44.0701)
 
-**Candidate answer (outline form)**
+**Scenario prompt.** During a first home visit to support an older adult after hospital discharge, you notice spoiled food and unopened medication packs, and the adult's son, who is the main carer, seems exhausted. The adult says everything is fine. Describe your response.
 
-- Questions: raw material lots, humidity during mixing, mixing ratios, cure oven logs.
-- Hypotheses ranked by likelihood with evidence for each.
-- Tests: Karl Fischer on polyol lots, FTIR of residual isocyanate over time, small batches at controlled ratios.
-- Next steps to be agreed after the tests come back.
+**Candidate answer.**
 
-**Rubric (score each criterion 0, 1 or 2)**
+- **Talk privately:** Speak with the adult alone about meals, medicines and how care at home is going, and record their wishes in their own words.
+- **Gauge risk:** Check which medicines were missed since discharge and whether there is safe food, and note any signs of injury or fear.
+- **Procedure:** Discuss the visit with your supervisor the same day and follow the agency's adult safeguarding procedure, recording facts rather than opinions.
+- **Consent:** Respect the adult's choices if they have capacity, but share information without consent where policy requires it to prevent serious harm.
+- **Support:** Offer a carer's assessment to the son, ask the pharmacy for weekly packs, arrange meal support, and book a follow-up visit within a week.
 
-1. Collaborative inquiry: Captures input from both colleagues and asks questions that separate hypotheses.
-2. Scientific reasoning: Hypotheses are chemically plausible and the proposed tests can confirm or rule them out.
-3. Decision path: States what result points to which corrective action and how quickly it can be tested.
+**Rubric (0 to 2 points each).**
 
-## H12
+1. Assessment: Speaks with the adult privately, respects their wishes, and assesses the specific risks (missed medicines, food, injury) and the carer's strain.
+2. Safeguarding duties: Consults a supervisor promptly and follows the agency's adult safeguarding procedure, recording facts, and understands when information must be shared to prevent serious harm.
+3. Support plan: Offers practical support (carer assessment, medication packs, meals) and sets a near follow-up date.
 
-**Scenario prompt**
+## Q14. Computer Science (CIP 11.0701)
 
-A subscription meal-kit company gives you a dataset of 50,000 customers with 120 candidate features (order history, delivery issues, discounts used, survey answers) and asks for a model to predict cancellation in the next 60 days. Write the feature-selection plan: how you split data to avoid leakage (including features recorded after cancellation), at least two selection methods compared (for example, L1-regularized logistic regression and permutation importance from a tree model), how you evaluate the final model, and how you explain the selected features to the business team.
+**Scenario prompt.** A search box must suggest up to ten product names as the user types, drawn from a catalog of 2 million names that changes a few hundred times per day. Suggestions must appear in under 50 ms. Propose a design and justify it.
 
-**Candidate answer (outline form)**
+**Candidate answer.**
 
-- Train on older customers, validate on later months; prediction date fixed for each customer.
-- Drop leaked fields such as cancellation survey answers.
-- L1 logistic path versus permutation importance in gradient boosting; keep features stable across folds.
-- Evaluate AUC and precision among the top 10 percent flagged.
-- Explain with plain charts; note correlations are not causes; propose retention test.
+- **Index:** Keep names sorted in memory and find the prefix range by binary search, which costs about 21 comparisons per keystroke for 2 million entries.
+- **Ranking:** Store a precomputed top-ten list for every prefix of up to four characters, ranked by sales, so popular prefixes need no scan.
+- **Updates:** Apply the day's few hundred edits to a small delta list merged at query time, and rebuild the full index nightly into a fresh copy.
+- **Swap:** Switch readers to the rebuilt copy with a single atomic pointer change, so no query ever waits for a rebuild to finish.
+- **Checks:** Before launch, time a dozen sample prefixes on a laptop to confirm the average reply is under 50 ms, and review memory use once traffic arrives.
 
-**Rubric (score each criterion 0, 1 or 2)**
+**Rubric (0 to 2 points each).**
 
-1. Leakage prevention: Uses time-based splits and removes features that would not be known at prediction time.
-2. Sound selection methods: Compares at least two methods correctly, with cross-validation and stability checks.
-3. Evaluation and explanation: Reports appropriate metrics (AUC, precision at a contact budget) and explains features without implying causation.
+1. Data structure: Chooses a prefix-capable index (trie, or sorted list with binary search) with ranking for top suggestions, and justifies its cost per keystroke.
+2. Updates: Handles daily changes without blocking queries, for example a small delta plus a periodic rebuild swapped in atomically.
+3. Validation: Plans to verify tail latency (p95 or p99) with realistic keystroke traffic before launch, checks memory, and tests edge cases such as accents and letter case.
+
+## Q15. Accounting (CIP 52.0301)
+
+**Scenario prompt.** At year end, a retailer's physical stock count comes in 6% below the inventory ledger, about $180,000. Management wants to book the difference to cost of goods sold and close the books by Friday. As a junior accountant, write your response.
+
+**Candidate answer.**
+
+- **Before booking:** Check cut-off for goods received or shipped near year end, stock in transit, and consigned goods held on behalf of others.
+- **Recount:** Recount the twenty highest-value items and compare unit costs in the ledger with recent invoices, to find pricing errors.
+- **Treatment:** Book the full $180,000 to cost of goods sold now to meet Friday, and reverse whatever part the investigation explains in the new year.
+- **Materiality:** Spread the entry over the last three months, so no single month shows an unusual margin, and note it in the close file.
+- **Follow-up:** Document every reconciling item and propose cycle counts by location, so a gap this large is caught during the year.
+
+**Rubric (0 to 2 points each).**
+
+1. Investigation: Checks cut-off, goods in transit, consignment stock, count accuracy and unit costs before accepting the difference.
+2. Accounting treatment: Adjusts inventory to the verified count in the correct period, records unexplained shrinkage with support, and treats materiality and disclosure with the controller and auditors.
+3. Controls and communication: Documents reconciling items, escalates appropriately and proposes controls such as cycle counts.
+
+## Q16. Civil Engineering, General (CIP 14.0801)
+
+**Scenario prompt.** A new single-storey warehouse floor slab has developed cracks and a 25 mm dip near one corner within six months. Records show that corner was built on fill placed over a former drainage ditch. Outline your investigation and repair approach.
+
+**Candidate answer.**
+
+- **Monitor:** Survey slab levels on a grid now and then monthly, to learn whether the dip is still moving before a repair is chosen.
+- **Ground:** Dig test pits or drill boreholes at the corner and in a sound area, and compare the fill with the original compaction records.
+- **Cause:** Soft or poorly compacted fill over the old ditch is probably still consolidating, possibly wetted by water that still follows the ditch line.
+- **Water:** Look for leaking downpipes or a buried drain near that corner, since added water speeds up the settlement of loose fill.
+- **Repair:** Inject epoxy into the cracks and grind the raised edges flat, then pour a self-levelling topping over the dip so the floor reads level again.
+
+**Rubric (0 to 2 points each).**
+
+1. Investigation: Monitors levels over time and investigates the ground (test pits or boreholes, compaction records, water sources) before deciding.
+2. Cause: Explains settlement of soft or poorly compacted fill over the old ditch, possibly worsened by water, as distinct from ordinary shrinkage cracking.
+3. Repair: Stabilises the ground or supports the slab first (for example compaction grouting, piles or slab lifting) once movement is understood, then repairs the surface.

@@ -2,15 +2,16 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-me-14.1901",
-  "evaluated_at": "2026-10-02T18:59:33-05:00",
+  "evaluated_at": "2026-10-02T19:55:51-05:00",
   "inputs": {
     "target": "study_plans/14.1901_mechanical_engineering",
+    "repo_root": "../..",
     "candidate_path": "study_plans/14.1901_mechanical_engineering/candidate.json",
     "candidate_sha256": "f19e08f5dcfd7509ef06b19ce95f2cefd0a57ee6da97258e037ee9114ce1d109",
     "provenance_path": "study_plans/14.1901_mechanical_engineering/provenance.json",
-    "provenance_sha256": "fc70ce42e9902bd4df1b321bddf56bf4e04fa8b5079010ab443547e18cd72317",
+    "provenance_sha256": "6a8f8c191d30ae81a3e8d180b0cad13de77cdd84aaca67a2fdf8deffb06c7ad2",
     "asset_record_path": "study_plans/14.1901_mechanical_engineering/asset.json",
-    "asset_record_sha256": "529c1f204ffac3f63ff4758a282f59217737aae8930990f79d1148370a9599a5"
+    "asset_record_sha256": "3e24b2eaf7d0c7a8e40f75fdb363ac1550088a62dbe47e3f8ad52da639308a51"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +103,12 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "schema: $: additional property 'evidence_root' not allowed"
+        "only 1 perspective(s) used; multi-view synthesis expects several",
+        "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
       ]
     },
     {
@@ -121,10 +123,12 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several",
+    "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

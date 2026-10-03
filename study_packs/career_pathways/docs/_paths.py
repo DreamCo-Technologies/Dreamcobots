@@ -4,7 +4,8 @@ import csv, glob, json, pathlib, re
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 # Parents whose children are map entries keyed by data (SOC code, item id, file name, kind); shown as <key>.
 MAP_PARENTS = {"knowledge_weighting.weights", "[].knowledge_weighting.weights", "counts_by_kind_and_status",
-               "counts_by_kind_and_status.<key>", "baseline.files", "current.files", "items", "inputs", "items.<key>.weakening"}
+               "counts_by_kind_and_status.<key>", "baseline.files", "current.files", "items", "inputs", "items.<key>.weakening",
+               "target_plausibility.fit", "[].target_plausibility.fit"}
 FILES = {
     "data/majors_selected.json": "data/majors_selected.json",
     "data/practice_tasks.json": "data/practice_tasks.json",
@@ -18,7 +19,6 @@ FILES = {
     "data/dreamco_knowledge/evidence/regression/<asset_id>/<run>.json": "data/dreamco_knowledge/evidence/regression/*/*[0-9].json",
     "data/dreamco_knowledge/evidence/regression/<asset_id>/<run>.results.json": "data/dreamco_knowledge/evidence/regression/*/*.results.json",
     "evidence/holdout_kit/items.json": "evidence/holdout_kit/items.json",
-    "evidence/holdout_kit/_key.json": "evidence/holdout_kit/_key.json",
     "evidence/holdout_kit/grading_sheet.csv": "evidence/holdout_kit/grading_sheet.csv",
 }
 

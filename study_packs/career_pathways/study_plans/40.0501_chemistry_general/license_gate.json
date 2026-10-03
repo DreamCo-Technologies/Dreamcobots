@@ -2,15 +2,16 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-cg-40.0501",
-  "evaluated_at": "2026-10-02T18:59:33-05:00",
+  "evaluated_at": "2026-10-02T19:55:51-05:00",
   "inputs": {
     "target": "study_plans/40.0501_chemistry_general",
+    "repo_root": "../..",
     "candidate_path": "study_plans/40.0501_chemistry_general/candidate.json",
     "candidate_sha256": "8aaa79c9ea940db304c8bc446cb59b67c82c74dd76a76ca63eee61da1d69ddc2",
     "provenance_path": "study_plans/40.0501_chemistry_general/provenance.json",
-    "provenance_sha256": "0c8cb4f97d8fceb39f1c59f81b417bc1bd2f7fc90b05fb8d88986970c93fc80b",
+    "provenance_sha256": "bb4f007fce2e85c7de1644c476783bc5166b128a7fd78bd9eecafc7f8f779cb1",
     "asset_record_path": "study_plans/40.0501_chemistry_general/asset.json",
-    "asset_record_sha256": "a232808829f95ab4f21eb1c335f896f2a722348c40c0c11c4d9b6dd6149d6324"
+    "asset_record_sha256": "d5486e2273ab4306d56475063b54b3e4fe3fdc5c2fa2c8c06f5e4d9c64b9e2a1"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +103,12 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "schema: $: additional property 'evidence_root' not allowed"
+        "only 1 perspective(s) used; multi-view synthesis expects several",
+        "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
       ]
     },
     {
@@ -121,10 +123,12 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several",
+    "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

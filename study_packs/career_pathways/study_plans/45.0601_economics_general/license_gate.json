@@ -2,15 +2,16 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-eg-45.0601",
-  "evaluated_at": "2026-10-02T18:59:33-05:00",
+  "evaluated_at": "2026-10-02T19:55:51-05:00",
   "inputs": {
     "target": "study_plans/45.0601_economics_general",
+    "repo_root": "../..",
     "candidate_path": "study_plans/45.0601_economics_general/candidate.json",
     "candidate_sha256": "e01e9f8eae3c3bd33ab6a28e6c0552d5efdc5cf4defc561ce4e8c17cdd50cd43",
     "provenance_path": "study_plans/45.0601_economics_general/provenance.json",
-    "provenance_sha256": "7b792ca651bcc561d0cd3e5ef228105a98b17f9ba86e84d523f375be1374dc30",
+    "provenance_sha256": "33592d32bb96b8c31e9651ca3f865b5dbaf4f795d6e5d1b00fe5020ac45b28eb",
     "asset_record_path": "study_plans/45.0601_economics_general/asset.json",
-    "asset_record_sha256": "579ca6144fa75bb8bc865093652c1774a7225bd09ce7bfb1a844a4b828934459"
+    "asset_record_sha256": "7d34ee5a0ab51a6fb801bf7176acaa47cccb715d7deb638012cdb1d72b95aee8"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +103,12 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "schema: $: additional property 'evidence_root' not allowed"
+        "only 1 perspective(s) used; multi-view synthesis expects several",
+        "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
       ]
     },
     {
@@ -121,10 +123,12 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several",
+    "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

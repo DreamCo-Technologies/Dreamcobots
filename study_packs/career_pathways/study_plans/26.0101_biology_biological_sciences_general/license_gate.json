@@ -2,15 +2,16 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-bbsg-26.0101",
-  "evaluated_at": "2026-10-02T18:59:32-05:00",
+  "evaluated_at": "2026-10-02T19:55:51-05:00",
   "inputs": {
     "target": "study_plans/26.0101_biology_biological_sciences_general",
+    "repo_root": "../..",
     "candidate_path": "study_plans/26.0101_biology_biological_sciences_general/candidate.json",
     "candidate_sha256": "c70c9fb9e5f1b82f816e8dce81e6c5778c727965faad733da486c9b37ee00088",
     "provenance_path": "study_plans/26.0101_biology_biological_sciences_general/provenance.json",
-    "provenance_sha256": "fb9049703a80d48618667d17a69efd6fb32e8822204985cbabfc0401e9cb92af",
+    "provenance_sha256": "ed06b6e6a86378f8e2824ea13c2a83fb123b7b7987492ec860d84132683be66b",
     "asset_record_path": "study_plans/26.0101_biology_biological_sciences_general/asset.json",
-    "asset_record_sha256": "c50125884f8ae0a3f1d666832499534faf859057f647193f803e4fa8e18b2b1d"
+    "asset_record_sha256": "6b9c22c245b93155806b7437608c3a37873b1753fa269cd50dfbf6623501677c"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +103,12 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "schema: $: additional property 'evidence_root' not allowed"
+        "only 1 perspective(s) used; multi-view synthesis expects several",
+        "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
       ]
     },
     {
@@ -121,10 +123,12 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several",
+    "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

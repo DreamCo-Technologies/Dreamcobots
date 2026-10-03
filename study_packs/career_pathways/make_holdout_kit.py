@@ -1,108 +1,121 @@
-"""Build the blind holdout grading kit in evidence/holdout_kit/.
+"""Build the blind holdout grading kit (v2) in evidence/holdout_kit/.
 
-GRADER: DO NOT OPEN THIS FILE. It contains the answer key (which candidate answers were weakened, and how).
+The kit is a rubric-discrimination check: can the grader tell full-strength candidate answers from subtly weakened
+ones using the rubric? The items are NEW scenario prompts written for the kit only; they appear nowhere in the
+published plans, data/practice_tasks.json or authored/ (a test checks for shared 5-word runs). Candidate answers are
+written for the kit; they are not learner responses.
 
-12 items are drawn with a fixed seed from the 162 authored practice tasks (authored/practice_tasks_authored.json).
-None of them was used to tune anything: no model or grader has seen graded answers for any authored task. Six
-candidate answers are the authored reference outline as written; six are deliberately weakened copies in which the
-content for one rubric criterion is removed or replaced with a vague line. Item order and the H01-H12 labels are
-shuffled with the same seed. Outputs:
-  evidence/holdout_kit/README.md          instructions for the grader
-  evidence/holdout_kit/items.md           blind items: scenario prompt, candidate answer, rubric
-  evidence/holdout_kit/items.json         the same, machine-readable (no key)
-  evidence/holdout_kit/grading_sheet.csv  blank sheet: scores 0-2 per criterion, factual check, comments
-  evidence/holdout_kit/_key.json          SEALED answer key and item hashes (grader must not open)
-Usage: python make_holdout_kit.py   (refuses to overwrite a grading sheet that already contains scores)
+Inputs (PRIVATE, outside the repo; never committed or synced):
+  $DREAMCO_HOLDOUT_PRIVATE_DIR (default /workspace/edu-career-pathways-private)/holdout_source.json
+      both a full-strength and a weakened version of every candidate answer, with identical structure
+Outputs:
+  PRIVATE  holdout_key.json            which version each item shows, expected score bands, a 256-bit random nonce
+                                       and the secret seed; never committed
+  KIT      items.json, items.md        blind items: prompt, candidate answer, rubric (no key information)
+  KIT      grading_sheet.csv           blank sheet
+  KIT      KEY_COMMITMENT.txt          sha256 of the private key file (which contains the nonce), so the key cannot be
+                                       brute-forced from the items and cannot be changed after grading
+
+The seed comes from secrets.randbits(128) at draw time and is stored only in the private key, so this script cannot
+regenerate the key from committed inputs. Running it again draws a NEW kit; it refuses if the kit has a grading sheet
+with scores, and refuses to replace an existing kit unless --redraw is given.
+Usage: python make_holdout_kit.py [--redraw]
 """
-import csv, datetime, hashlib, json, pathlib, random
+import argparse, csv, datetime, hashlib, json, os, pathlib, random, secrets
 
 ROOT = pathlib.Path(__file__).resolve().parent
 KIT = ROOT / "evidence" / "holdout_kit"
-SEED = 20261002
-N_ITEMS, N_WEAK = 12, 6
-# practice_id -> (weakened criterion index 0-2, {outline index: replacement text or None to delete})
-WEAKENING = {
-    "11.0701-P6": (1, {2: "The work looks manageable in the time available."}),
-    "40.0501-P4": (2, {3: "Next steps to be agreed after the tests come back.", 4: None}),
-    "42.0101-P1": (2, {4: None}),
-    "44.0701-P2": (1, {1: "Contact notes are added to the file when time allows."}),
-    "51.2001-P2": (1, {2: None}),
-    "52.0801-P6": (0, {0: "Documents: whatever the bank asks for.", 3: None}),
-}
+PRIVATE = pathlib.Path(os.environ.get("DREAMCO_HOLDOUT_PRIVATE_DIR", "/workspace/edu-career-pathways-private"))
+KIT_NAME = "edu-career-pathways blind holdout v2 (rubric discrimination)"
+SHEET_COLUMNS = ["item_id", "major", "criterion_1", "score_1", "criterion_2", "score_2", "criterion_3", "score_3",
+                 "factually_correct", "comments", "grader", "graded_at"]
+# Score bands used for agreement (the pass rule itself is in score_holdout.py).
+FULL_BAND, WEAK_BAND = [1, 2], [0, 1]
 
 
-def content_hash(t):
-    keep = {k: t[k] for k in ("practice_id", "onet_soc_code", "onet_task_id", "prompt", "rubric", "reference_answer_outline")}
-    return hashlib.sha256(json.dumps(keep, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+def sha(b):
+    return hashlib.sha256(b).hexdigest()
+
+
+def answer_text(bullets):
+    return "\n".join(f"- {b}" for b in bullets)
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--redraw", action="store_true", help="replace an existing (ungraded) kit with a new draw")
+    a = ap.parse_args()
+    src_p = PRIVATE / "holdout_source.json"
+    if not src_p.is_file():
+        raise SystemExit(f"private kit source not found: {src_p} (it is never committed)")
+    if PRIVATE.resolve() == ROOT.resolve() or ROOT.resolve() in PRIVATE.resolve().parents:
+        raise SystemExit("the private directory must be outside the pack")
     sheet = KIT / "grading_sheet.csv"
-    if sheet.exists():
-        rows = list(csv.DictReader(open(sheet)))
-        if any(r.get(f"score_{i}", "").strip() for r in rows for i in (1, 2, 3)):
-            raise SystemExit("grading_sheet.csv already contains scores; refusing to overwrite")
-    tasks = json.loads((ROOT / "authored/practice_tasks_authored.json").read_text())["tasks"]
-    by = {t["practice_id"]: t for t in tasks}
-    rng = random.Random(SEED)
-    sel = sorted(rng.sample(sorted(by), N_ITEMS))
-    weak = sorted(rng.sample(sel, N_WEAK))
-    assert sorted(WEAKENING) == weak, "WEAKENING must cover exactly the seeded weakened items"
-    order = list(sel)
-    rng.shuffle(order)
+    if sheet.is_file():
+        for r in csv.DictReader(open(sheet, newline="")):
+            if any((r.get(f"score_{i}") or "").strip() for i in (1, 2, 3)):
+                raise SystemExit("grading_sheet.csv already contains scores; refusing to redraw the kit")
+    if (KIT / "KEY_COMMITMENT.txt").is_file() and not a.redraw:
+        raise SystemExit("a kit already exists; use --redraw to replace it with a new draw (the old key becomes useless)")
+    src = json.loads(src_p.read_text())
     majors = {m["cip"]: m for m in json.loads((ROOT / "data/majors_selected.json").read_text())}
-    items, key = [], {}
-    for n, pid in enumerate(order, 1):
-        t = by[pid]
-        hid = f"H{n:02d}"
-        outline = list(t["reference_answer_outline"])
-        if pid in WEAKENING:
-            crit, edits = WEAKENING[pid]
-            outline = [edits[i] if i in edits else x for i, x in enumerate(outline)]
-            outline = [x for x in outline if x is not None]
-            expected = [2, 2, 2]; expected[crit] = 0
-            accept = [[1, 2], [1, 2], [1, 2]]; accept[crit] = [0, 1]
-            kind = "weakened"
-        else:
-            crit, expected, accept, kind = None, [2, 2, 2], [[1, 2], [1, 2], [1, 2]], "reference_outline"
-        answer = "\n".join(f"- {x}" for x in outline)
-        items.append({"item_id": hid, "prompt": t["prompt"], "candidate_answer": answer,
-                      "rubric": [{"criterion": c["criterion"], "description": c["description"], "points": c["points"]} for c in t["rubric"]]})
-        cip = pid.rsplit("-P", 1)[0]
-        key[hid] = {"practice_id": pid, "asset_id": majors[cip]["asset_id"], "cip": cip, "candidate_type": kind,
-                    "weakened_criterion": None if crit is None else crit + 1,
-                    "weakening": None if crit is None else {str(k): v for k, v in WEAKENING[pid][1].items()},
-                    "expected_scores": expected, "accepted_scores": accept,
-                    "candidate_answer_sha256": hashlib.sha256(answer.encode()).hexdigest(),
-                    "authored_item_sha256": content_hash(t)}
+    seed = secrets.randbits(128)
+    rng = random.Random(seed)
+    items = list(src["items"])
+    n = len(items)
+    weak_ids = set(rng.sample([i["source_id"] for i in items], n // 2))  # exactly half weakened, chosen secretly
+    rng.shuffle(items)
     now = datetime.datetime.now().astimezone().isoformat(timespec="seconds")
+    pub, key_items = [], {}
+    for k, it in enumerate(items, 1):
+        qid = f"Q{k:02d}"
+        weak = it["source_id"] in weak_ids
+        ans = answer_text(it["weakened"] if weak else it["full"])
+        m = majors[it["cip"]]
+        if m["tier"] != "authored":
+            raise SystemExit(f"{it['cip']} is not an authored major")
+        pub.append({"item_id": qid, "major": f"{m['title']} (CIP {it['cip']})", "prompt": it["prompt"],
+                    "candidate_answer": ans, "rubric": it["rubric"]})
+        wc = it["weakened_criterion"] if weak else None
+        exp = [2, 2, 2] if not weak else [0 if c == wc else 2 for c in (1, 2, 3)]
+        acc = [FULL_BAND] * 3 if not weak else [WEAK_BAND if c == wc else FULL_BAND for c in (1, 2, 3)]
+        key_items[qid] = {"source_id": it["source_id"], "cip": it["cip"], "asset_id": m["asset_id"],
+                          "candidate_type": "weakened" if weak else "full_strength", "weakened_criterion": wc,
+                          "expected_scores": exp, "accepted_scores": acc, "candidate_answer_sha256": sha(ans.encode()),
+                          "prompt_sha256": sha(it["prompt"].encode())}
     KIT.mkdir(parents=True, exist_ok=True)
-    (KIT / "items.json").write_text(json.dumps({"kit": "edu-career-pathways blind holdout v1", "created_at": now,
-                                                "n_items": len(items), "items": items}, indent=2, ensure_ascii=False) + "\n")
-    md = ["# Blind holdout items (edu-career-pathways, kit v1)", "",
-          "Grade each candidate answer against its own rubric. Record scores in `grading_sheet.csv`. See README.md first.", ""]
-    for it in items:
-        md += [f"## {it['item_id']}", "", "**Scenario prompt**", "", it["prompt"], "", "**Candidate answer (outline form)**", "",
-               it["candidate_answer"], "", "**Rubric (score each criterion 0, 1 or 2)**", ""]
-        md += [f"{i}. {c['criterion']}: {c['description']}" for i, c in enumerate(it["rubric"], 1)]
-        md += [""]
-    (KIT / "items.md").write_text("\n".join(md))
-    with open(sheet, "w", newline="") as f:
-        w = csv.writer(f)
-        w.writerow(["item_id", "criterion_1", "score_1", "criterion_2", "score_2", "criterion_3", "score_3",
-                    "factually_correct", "comments", "grader", "graded_at"])
-        for it in items:
-            r = it["rubric"]
-            w.writerow([it["item_id"], r[0]["criterion"], "", r[1]["criterion"], "", r[2]["criterion"], "", "", "", "", ""])
-    (KIT / "_key.json").write_text(json.dumps({
-        "WARNING": "SEALED ANSWER KEY. The grader must not open this file (or make_holdout_kit.py) before submitting grades.",
-        "kit": "edu-career-pathways blind holdout v1", "created_at": now, "seed": SEED,
-        "selection": f"random.Random({SEED}).sample of {N_ITEMS} of the {len(by)} authored practice_ids (sorted), then {N_WEAK} of those chosen as weakened, then order shuffled",
-        "never_used_in_tuning": "No graded answers, model outputs or grader feedback existed for any authored task when this kit was drawn; these 12 items must not be edited or used to tune prompts, rubrics or outlines.",
-        "scoring_rule": ("A criterion score agrees with the key when it is in accepted_scores. Reference-outline answers: expected 2, accepted 1-2. "
-                         "Weakened answers: the weakened criterion expected 0, accepted 0-1; the other criteria expected 2, accepted 1-2."),
-        "items": key}, indent=2, ensure_ascii=False) + "\n")
-    print(f"kit written: {len(items)} items ({N_WEAK} weakened) -> {KIT}")
+    for old in ("_key.json", "items.json", "items.md", "grading_sheet.csv"):
+        (KIT / old).unlink(missing_ok=True)
+    items_doc = {"kit": KIT_NAME, "created_at": now, "n_items": len(pub), "items": pub}
+    items_b = (json.dumps(items_doc, indent=2, ensure_ascii=False) + "\n").encode()
+    (KIT / "items.json").write_bytes(items_b)
+    L = [f"# Blind holdout items ({KIT_NAME})", "", f"Drawn {now}. {len(pub)} items. Read `README.md` first. "
+         "Score each candidate answer against its own rubric, 0 to 2 per criterion, in `grading_sheet.csv`.", ""]
+    for p in pub:
+        L += [f"## {p['item_id']}. {p['major']}", "", "**Scenario prompt.** " + p["prompt"], "", "**Candidate answer.**", "",
+              p["candidate_answer"], "", "**Rubric (0 to 2 points each).**", ""]
+        L += [f"{i}. {c['criterion']}: {c['description']}" for i, c in enumerate(p["rubric"], 1)] + [""]
+    (KIT / "items.md").write_text("\n".join(L))
+    with open(KIT / "grading_sheet.csv", "w", newline="") as fh:
+        w = csv.writer(fh); w.writerow(SHEET_COLUMNS)
+        for p in pub:
+            c = [x["criterion"] for x in p["rubric"]]
+            w.writerow([p["item_id"], p["major"], c[0], "", c[1], "", c[2], "", "", "", "", ""])
+    key = {"WARNING": "PRIVATE ANSWER KEY. Not committed, not synced, not for the grader.",
+           "kit": KIT_NAME, "created_at": now, "nonce": secrets.token_hex(32), "seed": f"{seed:032x}",
+           "items_json_sha256": sha(items_b), "source_sha256": sha(src_p.read_bytes()),
+           "n_items": len(pub), "n_weakened": len(weak_ids), "items": key_items}
+    key_b = (json.dumps(key, indent=2) + "\n").encode()
+    kp = PRIVATE / "holdout_key.json"
+    kp.write_bytes(key_b)
+    os.chmod(kp, 0o600)
+    (KIT / "KEY_COMMITMENT.txt").write_text(
+        f"kit: {KIT_NAME}\ncreated_at: {now}\nkey_sha256: {sha(key_b)}\nitems_json_sha256: {sha(items_b)}\n"
+        "algorithm: sha256 over the exact bytes of the private key file holdout_key.json\n"
+        "note: the key file is kept outside the repository by the builder and is not available to the grader. It contains a "
+        "256-bit random nonce, so this hash cannot be matched by guessing which answers are weakened. score_holdout.py "
+        "--finalize refuses a key whose sha256 differs from key_sha256, or items.json whose sha256 differs from items_json_sha256.\n")
+    print(f"kit drawn: {len(pub)} items ({len(weak_ids)} weakened, secret); key written outside the repo; commitment {sha(key_b)[:12]}...")
 
 
 if __name__ == "__main__":

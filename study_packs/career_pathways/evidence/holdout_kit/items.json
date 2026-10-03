@@ -1,268 +1,372 @@
 {
-  "kit": "edu-career-pathways blind holdout v1",
-  "created_at": "2026-10-02T18:50:46-05:00",
-  "n_items": 12,
+  "kit": "edu-career-pathways blind holdout v2 (rubric discrimination)",
+  "created_at": "2026-10-02T19:42:30-05:00",
+  "n_items": 16,
   "items": [
     {
-      "item_id": "H01",
-      "prompt": "You have been assigned a caseload of 60 people on probation. Design the case file structure and maintenance routine: the sections every file must have (court orders and conditions, risk and needs assessment, supervision plan, contacts, drug test results, treatment reports, violations, correspondence), naming and dating conventions, what must be updated after each contact and within what time, privacy and record-access rules, and a monthly self-audit checklist.",
-      "candidate_answer": "- Sections in a standard order, electronic or paper.\n- Contact notes are added to the file when time allows.\n- Treatment records handled under substance-use confidentiality rules.\n- Access limited to authorized staff; release requires proper consent.\n- Monthly check: conditions tracked, assessments current, deadlines met.",
+      "item_id": "Q01",
+      "major": "Computer Science (CIP 11.0701)",
+      "prompt": "A team's continuous-integration pipeline fails about one run in eight, and engineers have started re-running jobs until they go green. You have just joined as a developer and are asked to propose how to find and fix the flaky tests within two weeks without freezing feature work. Write a short plan.",
+      "candidate_answer": "- **Data:** Export the last 60 days of CI results and compute each test's failure rate on commits where the same test passed on retry with no code change.\n- **Ranking:** Sort tests by failure rate times how often they run, so the ten that waste the most developer time get fixed first.\n- **Reproduction:** Run each suspect 200 times in a loop and again in randomized order, to separate timing problems from order dependence or shared fixtures.\n- **Typical fixes:** Replace fixed sleeps with waits on explicit conditions, reset global state between tests, and stub the external payment sandbox the suite calls.\n- **Guardrails:** Quarantine a test only with a named owner and a ten-day deadline, list quarantined tests on the team dashboard, and block merges that add a test failing a 50-run check.",
       "rubric": [
         {
-          "criterion": "Complete structure",
-          "description": "File sections cover legal, assessment, plan, contact and compliance records.",
+          "criterion": "Measurement",
+          "description": "Quantifies flakiness from CI history (per-test failure rates on unchanged code, retries that pass) and prioritizes by cost, rather than relying on anecdotes.",
           "points": 2
         },
         {
-          "criterion": "Timely maintenance",
-          "description": "Sets clear update deadlines and contact note standards.",
+          "criterion": "Root-cause approach",
+          "description": "Reproduces failures deliberately (many repeated or reordered runs) and targets real causes such as timing waits, shared state, order dependence or live external services.",
           "points": 2
         },
         {
-          "criterion": "Confidentiality and audit",
-          "description": "Addresses access rules for sensitive records (such as treatment information) and includes a self-audit.",
+          "criterion": "Process safeguards",
+          "description": "Quarantines only with an owner and deadline, keeps quarantined tests visible, and stops new flaky tests from merging without hiding real failures.",
           "points": 2
         }
       ]
     },
     {
-      "item_id": "H02",
-      "prompt": "A city transit agency is commissioning onboard software that shows next-stop announcements and real-time arrival predictions on bus screens, using GPS and a cellular link. Write the performance requirements section of the specification: latency from GPS fix to on-screen update, prediction accuracy, behavior during cellular outages, startup time, and resource limits on the onboard computer. For each requirement give a number, how it will be measured, and why that value matters to riders.",
-      "candidate_answer": "- Stop announcement at least a set number of seconds before arrival at typical speeds.\n- Screen update within about 2 seconds of a GPS fix; prediction error within a stated band for most trips.\n- During outages, fall back to schedule-based predictions and label them; resume within a stated time after reconnect.\n- Boot to usable display within a stated time after ignition.\n- CPU and memory ceilings leave headroom on the onboard computer; measured during field trials on named routes.",
+      "item_id": "Q02",
+      "major": "Registered Nursing/Registered Nurse (CIP 51.3801)",
+      "prompt": "On a surgical ward, a patient one day after bowel surgery has a heart rate that rose from 88 to 118 over four hours, a 38.4 °C fever and new confusion. The night shift is busy. Describe your assessment, escalation and handover.",
+      "candidate_answer": "- **Assess:** Recheck blood pressure, breathing rate, oxygen saturation and pain, work out the early warning score, and examine the abdomen and wound.\n- **Fluids and output:** Review the fluid balance and hourly urine output, since falling output with a rising heart rate can signal sepsis or a leak.\n- **Escalate:** Note the changes for the morning ward round, and page the surgical doctor if the heart rate is still above 120 at the next check.\n- **Sepsis steps:** Give the charted paracetamol for the fever and encourage oral fluids, then decide later in the shift whether further tests are needed.\n- **Record:** Document times and findings, repeat observations at least every half hour, and hand over the plan and pending results face to face.",
       "rubric": [
         {
-          "criterion": "Quantified requirements",
-          "description": "Each requirement has a specific value and unit rather than vague words like 'fast'.",
+          "criterion": "Assessment",
+          "description": "Completes a focused assessment (blood pressure, breathing rate, oxygen saturation, early warning score, urine output, abdomen and wound) and recognises possible sepsis or an anastomotic leak.",
           "points": 2
         },
         {
-          "criterion": "Measurability",
-          "description": "Each has a test method (logged timestamps, field trials on set routes, induced outages).",
+          "criterion": "Escalation",
+          "description": "Escalates promptly to the responsible doctor or rapid response team using a structured format and prepares for time-critical sepsis care as ordered.",
           "points": 2
         },
         {
-          "criterion": "Rider-centered rationale",
-          "description": "Values are justified by rider experience or safety, such as announcing a stop before the bus reaches it.",
+          "criterion": "Documentation and handover",
+          "description": "Records times and findings, sets frequent reassessment, and hands over the plan and pending results clearly.",
           "points": 2
         }
       ]
     },
     {
-      "item_id": "H03",
-      "prompt": "A first-time home buyer couple, both in their twenties with one gig-economy income and one salaried income, books a meeting to apply for a mortgage. Write your interview guide: the information and documents you need (and why for each), how you explain the steps from application to closing, the questions they are likely to ask (down payment, rate locks, credit checks) with plain-language answers, how you handle variable gig income, and the follow-up checklist you hand them.",
-      "candidate_answer": "- Documents: whatever the bank asks for.\n- Process: application, disclosures, appraisal, underwriting, conditions, closing.\n- Explain rate locks, down payment options, and credit inquiry effects.\n- Checklist with dates and contact information.",
+      "item_id": "Q03",
+      "major": "Marketing/Marketing Management, General (CIP 52.1401)",
+      "prompt": "An online store planned a two-week test of a new checkout button but stopped it on day six, when variant B was converting at 4.1% against 3.8% for the current design. The head of marketing wants to roll out B to all customers. Write your advice.",
+      "candidate_answer": "- **Early stop:** Stopping on the day B pulled ahead raises the chance of a false win, because repeated looks at the data make chance gaps look real.\n- **Evidence needed:** A 0.3-point gap needs a sample size fixed in advance and a confidence interval, run over full weeks to cover weekday patterns.\n- **Right metric:** Compare revenue per visitor and not conversion alone, since a button can lift orders while lowering the average basket.\n- **Segments:** Check mobile and desktop separately, because checkout buttons often behave differently on small screens.\n- **Advice:** Restart the test for the full planned two weeks, agree the decision rule now, and roll out B only if it still wins.",
       "rubric": [
         {
-          "criterion": "Complete information needs",
-          "description": "Lists the documents and data needed and explains why, including how variable income is documented.",
+          "criterion": "Statistical validity",
+          "description": "Explains that stopping when a variant pulls ahead inflates false positives, and that a pre-set sample size, a confidence interval and full weekly cycles are needed.",
           "points": 2
         },
         {
-          "criterion": "Clear process explanation",
-          "description": "Explains the stages and timelines accurately in plain language.",
+          "criterion": "Business framing",
+          "description": "Looks beyond conversion to revenue per visitor or order value, and checks segments such as mobile and desktop.",
           "points": 2
         },
         {
-          "criterion": "Fair and helpful",
-          "description": "Answers questions without steering or promising approval, and gives a clear follow-up checklist.",
+          "criterion": "Recommendation",
+          "description": "Gives a clear next step with an agreed decision rule before any full rollout.",
           "points": 2
         }
       ]
     },
     {
-      "item_id": "H04",
-      "prompt": "Invented case: a 67-year-old man is starting an oral anticoagulant after a diagnosis of atrial fibrillation; he takes an over-the-counter pain reliever several times a week, uses a fish-oil supplement and sometimes forgets evening doses of other medicines. Write the counseling script: opening and teach-back, how to take the medicine and what to do about a missed dose (per the product labeling), bleeding warning signs, interactions with his OTC products, storage, and when to call the pharmacist or doctor or seek emergency care.",
-      "candidate_answer": "- Open with purpose and ask what he already knows.\n- Dosing and missed-dose instructions from the labeling; pill organizer or phone alarm.\n- Avoid routine NSAID use; discuss fish oil with the prescriber; acetaminophen as a usual alternative within limits.\n- Teach-back: he explains how and when he takes it and what he watches for.",
+      "item_id": "Q04",
+      "major": "Psychology, General (CIP 42.0101)",
+      "prompt": "A student club wants to show that students who use a free study app earn higher grades. They plan to email a survey to app users only, asking for their grade average and their hours of app use. Your job is to strengthen the study before it launches.",
+      "candidate_answer": "- **Main flaw:** Surveying only app users gives no comparison group, and motivated students may both use the app and earn higher grades for other reasons.\n- **Self-report:** Grade averages typed into a survey tend to drift upward, so use registrar records released with each student's written consent.\n- **Design:** Offer the app free to a random half of the volunteers for one term, and compare their change in grades with the other half.\n- **Measures:** Record prior grades, course load and weekly study hours for both groups, so the analysis can adjust for differences at the start.\n- **Ethics and size:** Get ethics board approval, store data without names, and recruit about 200 volunteers so a modest effect can be detected.",
       "rubric": [
         {
-          "criterion": "Accurate, individualized content",
-          "description": "Advice reflects the drug's labeling and addresses his OTC pain reliever and supplement use.",
+          "criterion": "Bias",
+          "description": "Identifies that surveying only users gives no comparison group, that motivated students may self-select into using the app (confounding), and that self-reported grades are unreliable.",
           "points": 2
         },
         {
-          "criterion": "Safety emphasis",
-          "description": "Clearly explains bleeding signs and emergency situations.",
+          "criterion": "Design",
+          "description": "Proposes a comparison, ideally random assignment, and measures baseline differences such as prior grades and course load.",
           "points": 2
         },
         {
-          "criterion": "Effective communication",
-          "description": "Uses plain language, teach-back and adherence aids for forgetfulness.",
+          "criterion": "Ethics and practicalities",
+          "description": "Addresses consent, privacy of grade data, ethics approval and a sample large enough to detect a realistic effect.",
           "points": 2
         }
       ]
     },
     {
-      "item_id": "H05",
-      "prompt": "The university library asks for a study-room booking app: students reserve rooms from their phones, staff can block rooms for events, no-shows are released after 15 minutes, and it must work with campus single sign-on. You have two part-time student developers for eight weeks and no budget for paid services beyond existing campus hosting. Write a one-page feasibility memo: the requirements you would confirm with users, a rough effort estimate per feature, what fits in eight weeks, what you would cut or defer, and your recommendation.",
-      "candidate_answer": "- Must-haves: SSO login, view availability, book and cancel, staff block-out; nice-to-have: notifications, analytics.\n- Open questions: booking limits per student, accessibility needs, room check-in method for no-show release.\n- The work looks manageable in the time available.\n- Defer push notifications and analytics; consider an existing open-source booking system if SSO support exists.\n- Recommendation with a scope, a timeline and the main risk.",
+      "item_id": "Q05",
+      "major": "Statistics, General (CIP 27.0501)",
+      "prompt": "A health survey of 1,200 adults has 18% of income values missing, and respondents with missing income also report poorer health more often. A colleague plans to delete those rows and fit a regression of health on income. Write your advice.",
+      "candidate_answer": "- **Problem:** Because missing income goes with poorer health, the data are not missing completely at random, and deleting those rows can bias the income effect.\n- **Cost:** Deleting 18% of rows also throws away their health and age data and widens every confidence interval.\n- **Method:** Use multiple imputation with variables such as education, age, employment and the health outcome itself, creating about twenty imputed datasets.\n- **Pooling:** Fit the regression in each dataset and combine the estimates with Rubin's rules, so the extra uncertainty from imputation is kept.\n- **Sensitivity:** Report the missing-data pattern, compare with the complete-case result, and test how results change if non-response depends on income itself.",
       "rubric": [
         {
-          "criterion": "Requirements analysis",
-          "description": "Distinguishes must-have from nice-to-have requirements and names open questions to confirm with students and staff.",
+          "criterion": "Missingness",
+          "description": "Recognises that the data are not missing completely at random, so deleting rows can bias the estimate and also wastes information.",
           "points": 2
         },
         {
-          "criterion": "Credible estimate",
-          "description": "Effort estimates are broken down by feature, include testing and SSO integration risk, and add up within the stated capacity.",
+          "criterion": "Method",
+          "description": "Recommends a principled method such as multiple imputation with auxiliary variables and the outcome, pooled with Rubin's rules (not single mean imputation).",
           "points": 2
         },
         {
-          "criterion": "Clear recommendation",
-          "description": "Recommends a specific scope (build, reduce, or buy/adapt existing tool) with the trade-offs stated.",
+          "criterion": "Sensitivity and reporting",
+          "description": "Reports the missing-data pattern, compares with complete-case results and tests sensitivity to data missing not at random.",
           "points": 2
         }
       ]
     },
     {
-      "item_id": "H06",
-      "prompt": "A psychology lab ran an online survey on sleep and stress with 2,400 student responses exported from the survey platform: wide format, item names like Q14_3, some reverse-scored items, attention-check questions, and a free-text 'major' field. Write a data management plan for turning this into an analysis-ready dataset: a codebook template, the cleaning steps in order (including attention-check exclusions and reverse scoring), how you compute scale scores, how you keep the raw file untouched and record every change, and how identifying information is protected.",
-      "candidate_answer": "- Codebook: variable name, label, item wording reference, response scale, reverse-scored flag, missing codes.\n- Order: import, rename, flag failed attention checks, recode reverse items, compute scales, recode free-text majors into categories.\n- Scale scores as mean of items with a stated minimum number answered.\n- Raw export kept read-only; analysis script under version control; change log.",
+      "item_id": "Q06",
+      "major": "Computer Science (CIP 11.0701)",
+      "prompt": "A small startup stores user passwords as unsalted SHA-256 hashes in its main database. You are asked to recommend how to move to a safer scheme without forcing every user to reset their password on the same day. Write a short recommendation.",
+      "candidate_answer": "- **Algorithm:** Move to Argon2id with a unique random salt per user, tuning memory and iterations so one hash takes about 250 ms on the login servers.\n- **Why change:** Unsalted SHA-256 is fast and identical passwords share hashes, so a leaked table can be cracked with precomputed lists in hours.\n- **Migration:** Right away, wrap every stored value as Argon2id of the old SHA-256 hash; at each later login, rehash the typed password directly and drop the wrapper.\n- **Old accounts:** Accounts that never log in again keep only the wrapped form, so no bare SHA-256 value remains, and nothing is ever stored or logged in plaintext.\n- **Risk steps:** Check the logs for past database exports, add login rate limits, and require resets only for accounts that appear in known breach lists.",
       "rubric": [
         {
-          "criterion": "Reproducible pipeline",
-          "description": "Raw data stays read-only and all transformations are scripted or logged so another person could rebuild the dataset.",
+          "criterion": "Algorithm choice",
+          "description": "Recommends a slow, salted password-hashing function (Argon2id, scrypt or bcrypt) with tuned cost settings and explains why fast unsalted hashes are unsafe.",
           "points": 2
         },
         {
-          "criterion": "Correct psychometric steps",
-          "description": "Reverse-scoring, scale scoring and handling of missing items are described correctly, and exclusion rules are stated before looking at outcomes.",
+          "criterion": "Migration path",
+          "description": "Protects every stored credential right away (for example by wrapping the old hash in the new function) and upgrades at login, with no plaintext and no weak hashes left behind for inactive users.",
           "points": 2
         },
         {
-          "criterion": "Data protection",
-          "description": "Identifiers are separated or removed, storage and access are controlled, and the plan follows the study's consent and ethics approval.",
+          "criterion": "Risk handling",
+          "description": "Considers whether the old hashes were already exposed, adds login rate limits or monitoring, and targets resets at accounts that are actually at risk.",
           "points": 2
         }
       ]
     },
     {
-      "item_id": "H07",
-      "prompt": "You are the project specialist for moving a 60-person insurance office to a new building in eight weeks. The team: facilities coordinator, IT technician, HR generalist, an office manager, two volunteer 'floor captains', and the moving vendor. Build a responsibility assignment (RACI) matrix for the twelve main work packages, explain how you matched duties to people's skills and workloads, how you will confirm each person accepts their assignments, and how you will rebalance if someone becomes overloaded.",
-      "candidate_answer": "- Work packages: floor plan, IT network and phones, furniture, vendor contract, employee communication, packing, security badges, parking, mail forwarding, go-live support.\n- IT technician accountable for network cutover; HR for employee communication; facilities for vendor coordination.\n- Kickoff meeting where owners confirm scope and capacity.\n- Weekly status check of hours and task counts per person.\n- Rebalance by shifting tasks to floor captains or adding vendor support.",
+      "item_id": "Q07",
+      "major": "Biology/Biological Sciences, General (CIP 26.0101)",
+      "prompt": "In a teaching lab, three of eight bacterial plates streaked from the same stock show two colony types, and students suspect contamination. The practical exam uses this stock next week. Describe how you would confirm the problem and keep it from happening again.",
+      "candidate_answer": "- **Confirm:** Re-streak each colony type for isolation and Gram stain both, comparing them with the expected organism's cell shape and colony appearance.\n- **Find the source:** Incubate uninoculated plates from the same media batch and streak the stock fresh with a sterile loop, to separate stock problems from technique.\n- **Recover:** If the stock is mixed, revive the frozen master vial or order a new culture, and pick one well-isolated colony for the working stock.\n- **Verify:** Streak the new working stock on two plates and confirm purity, including a Gram stain, before the exam, keeping one plate as a reference.\n- **Prevent:** Split stocks into single-use vials, label them with dates, log media batches, and run a short aseptic technique refresher for the students.",
       "rubric": [
         {
-          "criterion": "Complete, clear matrix",
-          "description": "Each work package has exactly one accountable owner, and responsible, consulted and informed roles are sensible.",
+          "criterion": "Diagnosis",
+          "description": "Isolates and characterises both colony types (streak for isolation, Gram stain, colony appearance) and uses media controls to tell a mixed stock from poor technique.",
           "points": 2
         },
         {
-          "criterion": "Thoughtful assignment",
-          "description": "Assignments reflect skills, authority and availability rather than convenience.",
+          "criterion": "Corrective action",
+          "description": "Recovers a verified pure culture from a trusted source (frozen master or new purchase), starts from a single isolated colony and confirms purity before the exam.",
           "points": 2
         },
         {
-          "criterion": "Commitment and rebalancing",
-          "description": "Includes a step for confirming assignments and a concrete method for detecting and fixing overload.",
+          "criterion": "Prevention",
+          "description": "Prevents recurrence with single-use stock vials, labelling, media batch records and aseptic technique practice.",
           "points": 2
         }
       ]
     },
     {
-      "item_id": "H08",
-      "prompt": "Your team is releasing new firmware for a battery-powered soil-moisture sensor that reports over LoRa every 15 minutes and must last two years on two AA cells. Write a test plan for the firmware release: the test scenarios (normal reporting, weak radio signal, battery near cutoff, sensor disconnected, clock drift), which tests run on a simulator versus on real devices in a test rack, how you will measure power draw, and the release criteria.",
-      "candidate_answer": "- Scenario list with expected behavior, including retry and back-off on weak signal and safe shutdown at low voltage.\n- Simulator for logic and timing; a rack of real sensors with programmable power supplies for power and radio tests.\n- Power measured with a current analyzer across sleep and transmit cycles; projected battery life computed.\n- 72-hour soak test with fault injection.\n- Release only if projected battery life is at least two years and no resets occur.",
+      "item_id": "Q08",
+      "major": "Computer Science (CIP 11.0701)",
+      "prompt": "A pull request adds a report endpoint that builds its SQL query by joining strings taken from URL parameters, including a sort column chosen by the user. You are the reviewer. Write the review comments you would leave.",
+      "candidate_answer": "- **Blocking issue:** The date and region values go straight into the SQL text, so a crafted URL can read or change any table this account can reach.\n- **Sort column:** Column names cannot be bound as parameters, so the user's sort choice stays an injection point even after the values are fixed.\n- **Fix:** Escape every quote character in the values before joining them, and strip spaces and semicolons from the sort option so it cannot carry a second statement.\n- **Account:** Keep the report on the application's existing database account for now, and revisit permissions when the reporting module grows.\n- **Tests and tone:** Please add tests that send quotes and semicolons in each parameter; the endpoint is useful and close to ready once this is fixed.",
       "rubric": [
         {
-          "criterion": "Embedded scenarios",
-          "description": "Scenarios reflect embedded realities: power states, radio retries, brown-out, sensor faults, and long-duration behavior.",
+          "criterion": "Vulnerability",
+          "description": "Identifies SQL injection through the values and notes that the user-chosen sort column is a separate injection point because identifiers cannot be bound as parameters.",
           "points": 2
         },
         {
-          "criterion": "Test environment",
-          "description": "Explains what can be simulated versus what needs physical devices and instruments, and why.",
+          "criterion": "Fix",
+          "description": "Requires bound parameters for all values, an allow-list mapping for the sort column and direction, and a least-privilege database role.",
           "points": 2
         },
         {
-          "criterion": "Quantified criteria",
-          "description": "Release criteria include numbers (average current in microamps, packet success rate, no watchdog resets over a soak period).",
+          "criterion": "Review quality",
+          "description": "Is specific and constructive, marks what blocks the merge, and asks for tests with hostile input.",
           "points": 2
         }
       ]
     },
     {
-      "item_id": "H09",
-      "prompt": "You designed an online exhibit for a local history museum with scroll-triggered animations, an interactive timeline and an image zoom viewer, to be built by one front-end and one back-end developer. Write the collaboration plan: how you specify animations (timing, easing, reduced-motion alternatives), the content model the back end must support (timeline entries, image sets, captions, credits), performance budgets for images and scripts, how you pair with developers during build, and acceptance testing.",
-      "candidate_answer": "- Motion specs with durations and easing; prefers-reduced-motion fallback.\n- Content model fields: date, title, text, images, alt text, credits.\n- Budgets: page weight limit, responsive images, lazy loading.\n- Weekly pairing sessions and a shared issues board.\n- Acceptance: device matrix, keyboard navigation, screen reader check, performance score.",
+      "item_id": "Q09",
+      "major": "Mechanical Engineering (CIP 14.1901)",
+      "prompt": "A steel mounting bracket on a packaging machine cracked after eight months, near a sharp inside corner. The supplier offers a thicker bracket of the same shape as the fix. Write your recommendation.",
+      "candidate_answer": "- **Cause:** Eight months of cycling and a crack at a sharp inside corner point to fatigue starting at a stress concentration, not a single overload.\n- **Evidence:** Check the fracture surface for beach marks and measure the machine's vibration at the bracket to learn the real load cycle.\n- **Design change:** Accept the thicker bracket and weld a gusset plate across the inside corner, stiffening the bracket exactly where the crack started.\n- **On thickness:** A thicker copy lowers the average stress in the bracket, so the crack should not return as long as the bolts stay properly tightened.\n- **Verify:** Estimate the peak stress with finite element analysis against the steel's fatigue limit, then confirm with strain gauges on a test bracket.",
       "rubric": [
         {
-          "criterion": "Precise specifications",
-          "description": "Animation and interaction specs are concrete enough to build and include accessibility alternatives.",
+          "criterion": "Failure analysis",
+          "description": "Recognises fatigue cracking from cyclic loading at a stress concentration and gathers evidence (fracture surface marks, measured vibration or load cycles).",
           "points": 2
         },
         {
-          "criterion": "Content and performance",
-          "description": "Defines a content model and performance budgets that developers can implement.",
+          "criterion": "Design change",
+          "description": "Removes the stress concentration (generous fillet, smoother load path, welds kept away from the notch) and explains why extra thickness alone may not solve it.",
           "points": 2
         },
         {
-          "criterion": "Working process",
-          "description": "Describes pairing, feedback loops and acceptance tests.",
+          "criterion": "Verification",
+          "description": "Checks the new design against the fatigue limit with analysis and tests it on the machine (for example with strain gauges).",
           "points": 2
         }
       ]
     },
     {
-      "item_id": "H10",
-      "prompt": "Graduate-path practice. Invented case: a 16-year-old athlete had a concussion five weeks ago and still reports headaches and trouble concentrating; testing by the supervising neuropsychologist found slowed processing speed but normal memory. Draft the consultation materials the neuropsychologist could use: (1) a short consult note to the treating neurologist, and (2) talking points for a meeting with the school counselor about temporary academic accommodations. Keep medical decisions with the physician and share only information the family has authorized.",
-      "candidate_answer": "- Neurologist note: referral question, key findings (processing speed below expectation, memory within normal limits), impressions, recommendation to re-evaluate in a set number of weeks.\n- School points: extra time on tests, rest breaks, reduced screen load, gradual return to full workload.\n- Defer return-to-play to the physician's graduated protocol.\n- Confirm signed release of information before school contact.\n- Plan follow-up contact to review whether accommodations can be reduced.",
+      "item_id": "Q10",
+      "major": "Computer Engineering, General (CIP 14.0901)",
+      "prompt": "A battery-powered soil sensor with a microcontroller and a radio resets at random in the field, mostly when it transmits on cold mornings. Bench tests at room temperature never reproduce it. Describe how you would find and fix the cause.",
+      "candidate_answer": "- **Likely cause:** Cold raises the battery's internal resistance, so the radio's current burst can pull the supply below the brown-out threshold.\n- **First clue:** Read the reset-cause register at every boot and send it with the next report, to confirm brown-out rather than watchdog or software faults.\n- **Measurement:** Put a unit in a freezer at minus 10 °C and capture the supply rail on an oscilloscope triggered by the transmit-enable pin.\n- **Load profile:** Measure the burst current with a current probe and compare the size of the dip with the brown-out level in the datasheet.\n- **Fix and check:** Add bulk capacitance next to the radio and soften the transmit start, then run 20 units for a week between minus 15 and 25 °C.",
       "rubric": [
         {
-          "criterion": "Audience-appropriate content",
-          "description": "The note to the neurologist is concise and technical; the school talking points are plain-language and focus on function and accommodations.",
+          "criterion": "Hypothesis",
+          "description": "Connects the resets to supply droop during radio current bursts when cold raises battery resistance, and uses the reset-cause register to tell brown-out from watchdog or software faults.",
           "points": 2
         },
         {
-          "criterion": "Accurate scope",
-          "description": "Does not make medical decisions such as clearance to play; defers return-to-sport to the physician and follows concussion protocols.",
+          "criterion": "Measurement",
+          "description": "Captures the transient supply dip during transmission under cold conditions (oscilloscope, current probe, cold chamber or freezer), not averages at room temperature.",
           "points": 2
         },
         {
-          "criterion": "Privacy",
-          "description": "Shares only what the family has authorized and avoids unnecessary diagnostic detail with the school.",
+          "criterion": "Fix and verification",
+          "description": "Proposes a supply fix (bulk capacitance, softer transmit start, brown-out threshold) and verifies it on several units across the temperature range.",
           "points": 2
         }
       ]
     },
     {
-      "item_id": "H11",
-      "prompt": "Invented case: a process engineer reports that the last three batches of a polyurethane coating cure tacky, although every standard QC test passed. You meet the engineer and the formulation chemist. Write the meeting summary and plan: the questions you asked, hypotheses (moisture in raw materials, catalyst level, isocyanate-to-polyol ratio, cure temperature), the existing data you reviewed, a non-standard test you propose (for example, FTIR monitoring of isocyanate peak during cure or Karl Fischer water testing of raw materials), and how results will decide the fix.",
-      "candidate_answer": "- Questions: raw material lots, humidity during mixing, mixing ratios, cure oven logs.\n- Hypotheses ranked by likelihood with evidence for each.\n- Tests: Karl Fischer on polyol lots, FTIR of residual isocyanate over time, small batches at controlled ratios.\n- Next steps to be agreed after the tests come back.",
+      "item_id": "Q11",
+      "major": "Chemistry, General (CIP 40.0501)",
+      "prompt": "A student measuring iron in water samples by UV-visible spectroscopy gets a calibration line with an R² of 0.999, but a check standard at 2.0 mg/L reads 2.4 mg/L. The sample results are due tomorrow. Describe what you would check and how you would report.",
+      "candidate_answer": "- **Why R² misleads:** A high R² shows the standards fit a straight line, not that they are correct, so a 20% bias in the check is a real problem.\n- **Check first:** Confirm the blank, the wavelength setting, cuvette cleanliness and path length, and that the standards were diluted from an in-date stock.\n- **Independent check:** Prepare the check standard from a second stock source, since agreement with it would point to an error in the calibration standards.\n- **Matrix:** Spike one sample with a known amount of iron and confirm recovery between 90 and 110% before trusting any sample results.\n- **Report:** Report the sample results on time after multiplying each by 2.0/2.4 to cancel the bias, and note that correction in the lab notebook.",
       "rubric": [
         {
-          "criterion": "Collaborative inquiry",
-          "description": "Captures input from both colleagues and asks questions that separate hypotheses.",
+          "criterion": "Troubleshooting",
+          "description": "Explains that a high R² does not prove accuracy and checks the blank, wavelength, cuvette, standard preparation and stock age.",
           "points": 2
         },
         {
-          "criterion": "Scientific reasoning",
-          "description": "Hypotheses are chemically plausible and the proposed tests can confirm or rule them out.",
+          "criterion": "Corrective action",
+          "description": "Uses an independent check standard and a spike recovery to locate the error, and recalibrates before measuring samples.",
           "points": 2
         },
         {
-          "criterion": "Decision path",
-          "description": "States what result points to which corrective action and how quickly it can be tested.",
+          "criterion": "Reporting and quality control",
+          "description": "Withholds or clearly flags results until quality control passes against stated limits, documents the steps and communicates any delay; does not adjust data to hide the bias.",
           "points": 2
         }
       ]
     },
     {
-      "item_id": "H12",
-      "prompt": "A subscription meal-kit company gives you a dataset of 50,000 customers with 120 candidate features (order history, delivery issues, discounts used, survey answers) and asks for a model to predict cancellation in the next 60 days. Write the feature-selection plan: how you split data to avoid leakage (including features recorded after cancellation), at least two selection methods compared (for example, L1-regularized logistic regression and permutation importance from a tree model), how you evaluate the final model, and how you explain the selected features to the business team.",
-      "candidate_answer": "- Train on older customers, validate on later months; prediction date fixed for each customer.\n- Drop leaked fields such as cancellation survey answers.\n- L1 logistic path versus permutation importance in gradient boosting; keep features stable across folds.\n- Evaluate AUC and precision among the top 10 percent flagged.\n- Explain with plain charts; note correlations are not causes; propose retention test.",
+      "item_id": "Q12",
+      "major": "Elementary Education and Teaching (CIP 13.1202)",
+      "prompt": "In a third-grade class, six students read aloud slowly and guess at unfamiliar words, while the rest read at grade level. You have 20 minutes a day for small-group work over six weeks. Describe your plan.",
+      "candidate_answer": "- **Diagnose:** Give each of the six a short phonics screener and a one-minute oral reading check, since slow reading can come from different gaps.\n- **Group by need:** Group students who miss the same patterns, such as vowel teams or long words, rather than treating all six alike.\n- **Teach decoding:** Encourage students to use the picture and the first letter to predict each unfamiliar word, then ask whether their guess makes sense.\n- **Build fluency:** Give students a free choice of library books each week and quiet time for independent reading, to build their confidence and motivation.\n- **Monitor:** Repeat the one-minute check every two weeks, chart words correct per minute, regroup as students progress, and share the charts with families.",
       "rubric": [
         {
-          "criterion": "Leakage prevention",
-          "description": "Uses time-based splits and removes features that would not be known at prediction time.",
+          "criterion": "Diagnosis",
+          "description": "Uses quick assessments (phonics or decoding screener, timed oral reading) to find each student's specific gap instead of assuming one shared need.",
           "points": 2
         },
         {
-          "criterion": "Sound selection methods",
-          "description": "Compares at least two methods correctly, with cross-validation and stability checks.",
+          "criterion": "Instruction",
+          "description": "Teaches the missing decoding patterns explicitly and builds fluency through modelled, repeated reading with feedback, and discourages guessing from pictures or first letters.",
           "points": 2
         },
         {
-          "criterion": "Evaluation and explanation",
-          "description": "Reports appropriate metrics (AUC, precision at a contact budget) and explains features without implying causation.",
+          "criterion": "Progress monitoring",
+          "description": "Checks progress regularly with brief fluency measures, regroups students and keeps families informed.",
+          "points": 2
+        }
+      ]
+    },
+    {
+      "item_id": "Q13",
+      "major": "Social Work (CIP 44.0701)",
+      "prompt": "During a first home visit to support an older adult after hospital discharge, you notice spoiled food and unopened medication packs, and the adult's son, who is the main carer, seems exhausted. The adult says everything is fine. Describe your response.",
+      "candidate_answer": "- **Talk privately:** Speak with the adult alone about meals, medicines and how care at home is going, and record their wishes in their own words.\n- **Gauge risk:** Check which medicines were missed since discharge and whether there is safe food, and note any signs of injury or fear.\n- **Procedure:** Discuss the visit with your supervisor the same day and follow the agency's adult safeguarding procedure, recording facts rather than opinions.\n- **Consent:** Respect the adult's choices if they have capacity, but share information without consent where policy requires it to prevent serious harm.\n- **Support:** Offer a carer's assessment to the son, ask the pharmacy for weekly packs, arrange meal support, and book a follow-up visit within a week.",
+      "rubric": [
+        {
+          "criterion": "Assessment",
+          "description": "Speaks with the adult privately, respects their wishes, and assesses the specific risks (missed medicines, food, injury) and the carer's strain.",
+          "points": 2
+        },
+        {
+          "criterion": "Safeguarding duties",
+          "description": "Consults a supervisor promptly and follows the agency's adult safeguarding procedure, recording facts, and understands when information must be shared to prevent serious harm.",
+          "points": 2
+        },
+        {
+          "criterion": "Support plan",
+          "description": "Offers practical support (carer assessment, medication packs, meals) and sets a near follow-up date.",
+          "points": 2
+        }
+      ]
+    },
+    {
+      "item_id": "Q14",
+      "major": "Computer Science (CIP 11.0701)",
+      "prompt": "A search box must suggest up to ten product names as the user types, drawn from a catalog of 2 million names that changes a few hundred times per day. Suggestions must appear in under 50 ms. Propose a design and justify it.",
+      "candidate_answer": "- **Index:** Keep names sorted in memory and find the prefix range by binary search, which costs about 21 comparisons per keystroke for 2 million entries.\n- **Ranking:** Store a precomputed top-ten list for every prefix of up to four characters, ranked by sales, so popular prefixes need no scan.\n- **Updates:** Apply the day's few hundred edits to a small delta list merged at query time, and rebuild the full index nightly into a fresh copy.\n- **Swap:** Switch readers to the rebuilt copy with a single atomic pointer change, so no query ever waits for a rebuild to finish.\n- **Checks:** Before launch, time a dozen sample prefixes on a laptop to confirm the average reply is under 50 ms, and review memory use once traffic arrives.",
+      "rubric": [
+        {
+          "criterion": "Data structure",
+          "description": "Chooses a prefix-capable index (trie, or sorted list with binary search) with ranking for top suggestions, and justifies its cost per keystroke.",
+          "points": 2
+        },
+        {
+          "criterion": "Updates",
+          "description": "Handles daily changes without blocking queries, for example a small delta plus a periodic rebuild swapped in atomically.",
+          "points": 2
+        },
+        {
+          "criterion": "Validation",
+          "description": "Plans to verify tail latency (p95 or p99) with realistic keystroke traffic before launch, checks memory, and tests edge cases such as accents and letter case.",
+          "points": 2
+        }
+      ]
+    },
+    {
+      "item_id": "Q15",
+      "major": "Accounting (CIP 52.0301)",
+      "prompt": "At year end, a retailer's physical stock count comes in 6% below the inventory ledger, about $180,000. Management wants to book the difference to cost of goods sold and close the books by Friday. As a junior accountant, write your response.",
+      "candidate_answer": "- **Before booking:** Check cut-off for goods received or shipped near year end, stock in transit, and consigned goods held on behalf of others.\n- **Recount:** Recount the twenty highest-value items and compare unit costs in the ledger with recent invoices, to find pricing errors.\n- **Treatment:** Book the full $180,000 to cost of goods sold now to meet Friday, and reverse whatever part the investigation explains in the new year.\n- **Materiality:** Spread the entry over the last three months, so no single month shows an unusual margin, and note it in the close file.\n- **Follow-up:** Document every reconciling item and propose cycle counts by location, so a gap this large is caught during the year.",
+      "rubric": [
+        {
+          "criterion": "Investigation",
+          "description": "Checks cut-off, goods in transit, consignment stock, count accuracy and unit costs before accepting the difference.",
+          "points": 2
+        },
+        {
+          "criterion": "Accounting treatment",
+          "description": "Adjusts inventory to the verified count in the correct period, records unexplained shrinkage with support, and treats materiality and disclosure with the controller and auditors.",
+          "points": 2
+        },
+        {
+          "criterion": "Controls and communication",
+          "description": "Documents reconciling items, escalates appropriately and proposes controls such as cycle counts.",
+          "points": 2
+        }
+      ]
+    },
+    {
+      "item_id": "Q16",
+      "major": "Civil Engineering, General (CIP 14.0801)",
+      "prompt": "A new single-storey warehouse floor slab has developed cracks and a 25 mm dip near one corner within six months. Records show that corner was built on fill placed over a former drainage ditch. Outline your investigation and repair approach.",
+      "candidate_answer": "- **Monitor:** Survey slab levels on a grid now and then monthly, to learn whether the dip is still moving before a repair is chosen.\n- **Ground:** Dig test pits or drill boreholes at the corner and in a sound area, and compare the fill with the original compaction records.\n- **Cause:** Soft or poorly compacted fill over the old ditch is probably still consolidating, possibly wetted by water that still follows the ditch line.\n- **Water:** Look for leaking downpipes or a buried drain near that corner, since added water speeds up the settlement of loose fill.\n- **Repair:** Inject epoxy into the cracks and grind the raised edges flat, then pour a self-levelling topping over the dip so the floor reads level again.",
+      "rubric": [
+        {
+          "criterion": "Investigation",
+          "description": "Monitors levels over time and investigates the ground (test pits or boreholes, compaction records, water sources) before deciding.",
+          "points": 2
+        },
+        {
+          "criterion": "Cause",
+          "description": "Explains settlement of soft or poorly compacted fill over the old ditch, possibly worsened by water, as distinct from ordinary shrinkage cracking.",
+          "points": 2
+        },
+        {
+          "criterion": "Repair",
+          "description": "Stabilises the ground or supports the slab first (for example compaction grouting, piles or slab lifting) once movement is understood, then repairs the surface.",
           "points": 2
         }
       ]

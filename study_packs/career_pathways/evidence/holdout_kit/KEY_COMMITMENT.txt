@@ -1,0 +1,6 @@
+kit: edu-career-pathways blind holdout v2 (rubric discrimination)
+created_at: 2026-10-02T19:42:30-05:00
+key_sha256: 8d6f2833663047ec6aeb2e390daeb95904781c64ca51461ebd15ba497d0f8663
+items_json_sha256: 9be037cf941dc865aec2eadd3e6c2d73c3fc825f3923755442eff3ed9f5eb100
+algorithm: sha256 over the exact bytes of the private key file holdout_key.json
+note: the key file is kept outside the repository by the builder and is not available to the grader. It contains a 256-bit random nonce, so this hash cannot be matched by guessing which answers are weakened. score_holdout.py --finalize refuses a key whose sha256 differs from key_sha256, or items.json whose sha256 differs from items_json_sha256.

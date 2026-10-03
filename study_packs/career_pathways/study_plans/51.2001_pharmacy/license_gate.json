@@ -2,15 +2,16 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-p-51.2001",
-  "evaluated_at": "2026-10-02T18:59:33-05:00",
+  "evaluated_at": "2026-10-02T19:55:52-05:00",
   "inputs": {
     "target": "study_plans/51.2001_pharmacy",
+    "repo_root": "../..",
     "candidate_path": "study_plans/51.2001_pharmacy/candidate.json",
     "candidate_sha256": "c0b5a7373027f436786217f381d51081acd106fe56015149a28e705504209656",
     "provenance_path": "study_plans/51.2001_pharmacy/provenance.json",
-    "provenance_sha256": "9b81f5a702ead3c561e2dedcbe3d26c2a4b3b5555989f315eeedbce796b45327",
+    "provenance_sha256": "967dc06aa588477bc8e9c15ad773c2739b5c4d110fec37ef9b5839217229a531",
     "asset_record_path": "study_plans/51.2001_pharmacy/asset.json",
-    "asset_record_sha256": "a3f36e1abdb923ec0c8d6b39a93e3b8307285505f22b2c7ea6d5352b71fc3421"
+    "asset_record_sha256": "f14831da05b83716aaf971d971c0288d29ed6d0fa8c122e758d2a146964b252a"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +103,12 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "schema: $: additional property 'evidence_root' not allowed"
+        "only 1 perspective(s) used; multi-view synthesis expects several",
+        "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
       ]
     },
     {
@@ -121,10 +123,12 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several",
+    "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

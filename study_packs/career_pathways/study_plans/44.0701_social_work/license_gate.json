@@ -2,15 +2,16 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-sw-44.0701",
-  "evaluated_at": "2026-10-02T18:59:33-05:00",
+  "evaluated_at": "2026-10-02T19:55:52-05:00",
   "inputs": {
     "target": "study_plans/44.0701_social_work",
+    "repo_root": "../..",
     "candidate_path": "study_plans/44.0701_social_work/candidate.json",
     "candidate_sha256": "ccb3fb2b58d7f943bbda7e48707e74b6ca1d480e13cfc8c955fda97e012d3a07",
     "provenance_path": "study_plans/44.0701_social_work/provenance.json",
-    "provenance_sha256": "838ffb4983c22068216577786820057cdf3cf61d8a648ba65b46fee303e80c7e",
+    "provenance_sha256": "db9d8abf98efa18135c35de99e9f73ece2b19ab04ff6180faecc4bb35c471d21",
     "asset_record_path": "study_plans/44.0701_social_work/asset.json",
-    "asset_record_sha256": "502013bce0637b26808ff258f1431c1cc48dcc0d90ee69d0630efca894b521c3"
+    "asset_record_sha256": "890572e897cedd93f781ef3c9581c827cddbb1190d4dcc689857935e13bc3481"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +103,12 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "schema: $: additional property 'evidence_root' not allowed"
+        "only 1 perspective(s) used; multi-view synthesis expects several",
+        "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
       ]
     },
     {
@@ -121,10 +123,12 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several",
+    "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

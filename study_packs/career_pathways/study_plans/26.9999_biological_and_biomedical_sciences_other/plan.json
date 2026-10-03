@@ -117,42 +117,42 @@
   ],
   "top_knowledge_entry_weighted": [
     [
-      "English Language",
-      3.94
+      "Biology",
+      4.06
     ],
     [
-      "Biology",
-      3.92
+      "English Language",
+      3.97
     ],
     [
       "Mathematics",
-      3.69
+      3.8
     ],
     [
       "Computers and Electronics",
-      3.38
+      3.44
     ],
     [
       "Chemistry",
-      3.29
-    ],
-    [
-      "Education and Training",
-      3.2
+      3.4
     ],
     [
       "Engineering and Technology",
-      3.12
+      3.31
+    ],
+    [
+      "Education and Training",
+      3.27
     ],
     [
       "Administration and Management",
-      2.88
+      2.86
     ]
   ],
   "top_skills_entry_weighted": [
     [
       "Reading Comprehension",
-      4.14
+      4.16
     ],
     [
       "Writing",
@@ -164,21 +164,21 @@
     ],
     [
       "Speaking",
-      3.97
+      3.98
     ],
     [
       "Critical Thinking",
-      3.95
+      3.98
     ],
     [
       "Science",
-      3.69
+      3.78
     ]
   ],
   "knowledge_weighting": {
     "method": "entry-weighted mean of O*NET 31.0 importance (Scale IM): entry targets weight 2; other linked occupations in Job Zone 4 or 5 (or the entry targets' Job Zone) weight 1; Manager, Chief, Postsecondary-faculty, All Other, Supervisor, Director and Treasurers and Controllers titles, and non-target occupations in other Job Zones, weight 0",
     "weights": {
-      "11-9121.01": 2,
+      "11-9121.01": 1,
       "11-9121.02": 2,
       "19-1029.01": 1,
       "19-1029.02": 1,
@@ -225,51 +225,73 @@
   },
   "quality_flags": {
     "method": {
-      "supervisory_tasks": "task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and supervise); 'under supervision' does not count",
-      "topical_overlap": "a target is flagged low_title_overlap (severity high if its O*NET description also shares no stem, else medium) when its O*NET occupation title shares no content-word stem with the CIP program title (lower-cased words of 3+ letters; generic words such as science, studies, technology, engineering, management, services, general and other ignored; crude suffix stripping; stems of 5+ letters also match when one contains the other). The detail says whether the occupation's O*NET description shares a stem. This is a crude lexical heuristic: it misses implausible pairs that share a word and flags plausible pairs that use different words"
+      "field_fit": "field fit = cosine similarity between the CIP program title's field terms and the occupation's O*NET 31.0 text (title, description and all task statements). Words are Snowball-stemmed, generic words (science, studies, technology, engineering, management, education, general, other, ...) are ignored, and terms are weighted by log term frequency times inverse document frequency over all O*NET occupations. Compound title words are also split into the O*NET vocabulary stems of 5+ letters they contain (electromechanical -> electr, mechan; telecommunications -> commun), so a compound does not count as a mismatch. CIP definitions are not in the pinned crosswalk file, so the CIP title is the field description. A rule target is dropped as clearly implausible when (1) its fit is 0, meaning no field term of the program title occurs anywhere in its O*NET title, description or tasks; (2) some eligible linked occupation in the same Job Zone tier has fit >= 0.02, so the crosswalk does offer a field match; (3) it is an O*NET detailed specialty code (not .00), whose link is typically inherited from a broad SOC code such as Engineers, All Other; (4) its base .00 occupation also has fit 0; and (5) its fit with the titles of all CIP codes in the program's 4-digit CIP series (the field family) is below 0.12, so it is not a close neighbour of the field either (e.g. a genetics program keeps Molecular and Cellular Biologists). The thresholds were set by inspecting the candidate drops of this release; they are not validated. Dropped targets are replaced from the same ranked tier with the next occupations whose fit is above 0; if none remain, the plan keeps fewer targets. A base (.00) target with fit 0 is kept but flagged better_field_match_available when a non-target occupation in the same tier has fit >= 0.1",
+      "supervisory_tasks": "task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and supervise); 'under supervision' does not count"
     },
-    "flag_count": 3,
-    "flags": [
+    "flag_count": 0,
+    "flags": [],
+    "actions": [
       {
-        "flag": "low_title_overlap",
-        "severity": "high",
+        "action": "target_dropped",
         "onet_soc_code": "11-9121.01",
         "occupation_title": "Clinical Research Coordinators",
-        "detail": "description shares no stem with the CIP title either"
+        "detail": "no field term of the program title in its O*NET text; base occupation does not fit either; not a close fit to the CIP series; better-fitting linked occupations exist"
       },
       {
-        "flag": "low_title_overlap",
-        "severity": "high",
-        "onet_soc_code": "11-9121.02",
-        "occupation_title": "Water Resource Specialists",
-        "detail": "description shares no stem with the CIP title either"
-      },
-      {
-        "flag": "supervisory_tasks_dropped",
+        "action": "supervisory_tasks_dropped",
         "count": 1,
         "onet_task_ids": [
           15615
         ],
         "detail": "supervisory/managerial tasks of the entry targets were skipped when picking practice tasks"
       }
-    ]
+    ],
+    "notes": [],
+    "retired_checks": "v4 low_title_overlap (lexical title overlap) was retired in v5: it flagged 1,273 targets in 756 of 1,017 plans, mostly plausible pairs that use different words, and changed nothing"
+  },
+  "target_plausibility": {
+    "method": "field fit = cosine similarity between the CIP program title's field terms and the occupation's O*NET 31.0 text (title, description and all task statements). Words are Snowball-stemmed, generic words (science, studies, technology, engineering, management, education, general, other, ...) are ignored, and terms are weighted by log term frequency times inverse document frequency over all O*NET occupations. Compound title words are also split into the O*NET vocabulary stems of 5+ letters they contain (electromechanical -> electr, mechan; telecommunications -> commun), so a compound does not count as a mismatch. CIP definitions are not in the pinned crosswalk file, so the CIP title is the field description. A rule target is dropped as clearly implausible when (1) its fit is 0, meaning no field term of the program title occurs anywhere in its O*NET title, description or tasks; (2) some eligible linked occupation in the same Job Zone tier has fit >= 0.02, so the crosswalk does offer a field match; (3) it is an O*NET detailed specialty code (not .00), whose link is typically inherited from a broad SOC code such as Engineers, All Other; (4) its base .00 occupation also has fit 0; and (5) its fit with the titles of all CIP codes in the program's 4-digit CIP series (the field family) is below 0.12, so it is not a close neighbour of the field either (e.g. a genetics program keeps Molecular and Cellular Biologists). The thresholds were set by inspecting the candidate drops of this release; they are not validated. Dropped targets are replaced from the same ranked tier with the next occupations whose fit is above 0; if none remain, the plan keeps fewer targets. A base (.00) target with fit 0 is kept but flagged better_field_match_available when a non-target occupation in the same tier has fit >= 0.1",
+    "cip_field_terms": [
+      "biolog",
+      "biomed"
+    ],
+    "rule_targets": [
+      "11-9121.01",
+      "11-9121.02"
+    ],
+    "final_targets": [
+      "11-9121.02"
+    ],
+    "fit": {
+      "11-9121.01": 0.0,
+      "11-9121.02": 0.039
+    },
+    "dropped": [
+      {
+        "soc": "11-9121.01",
+        "title": "Clinical Research Coordinators",
+        "fit": 0.0,
+        "base_soc": "11-9121.00",
+        "base_title": "Natural Sciences Managers",
+        "base_fit": 0.0,
+        "series_fit": 0.0,
+        "reason": "no field term of the program title in its O*NET text; base occupation does not fit either; not a close fit to the CIP series; better-fitting linked occupations exist"
+      }
+    ],
+    "added": [],
+    "flags": []
   },
   "entry_targets": [
-    {
-      "soc": "11-9121.01",
-      "title": "Clinical Research Coordinators",
-      "job_zone": 4
-    },
     {
       "soc": "11-9121.02",
       "title": "Water Resource Specialists",
       "job_zone": 4
     }
   ],
-  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
+  "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first; then the automatic field-fit check dropped 11-9121.01 (see target_plausibility)",
   "entry_target_review": {
     "type": "rule_only_not_reviewed",
-    "note": "Generated tier: rule output used as is; not reviewed for plausibility."
+    "note": "Generated tier: rule output after the automatic field-fit check; not reviewed by a person."
   },
   "practice_task_ids": [
     "26.9999-P1",
@@ -340,66 +362,6 @@
       "practice_id": "26.9999-P1",
       "cip_code": "26.9999",
       "tier": "generated",
-      "onet_soc_code": "11-9121.01",
-      "occupation_title": "Clinical Research Coordinators",
-      "onet_task_id": 15583,
-      "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/11-9121.01",
-      "onet_task_statement": "Review scientific literature, participate in continuing education activities, or attend conferences and seminars to maintain current knowledge of clinical studies affairs and issues.",
-      "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
-      "supervisory_task": false,
-      "format": "applied exercise",
-      "label": "DreamCo-generated practice exercise (template)",
-      "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-      "ownership_class": "open_license_with_conditions",
-      "license": {
-        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
-        "ownership_class": "open_license_with_conditions",
-        "contains_third_party_text": true,
-        "license": "CC BY 4.0",
-        "license_url": "https://creativecommons.org/licenses/by/4.0/",
-        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
-        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
-        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
-        "dreamco_layer": {
-          "fields": [
-            "prompt",
-            "rubric",
-            "reference_answer_outline"
-          ],
-          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
-          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
-        }
-      },
-      "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Clinical Research Coordinators\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Customer and Personal Service and English Language), and how you would check the result and report it.",
-      "rubric": [
-        {
-          "criterion": "Task fit",
-          "description": "The response performs the work in the quoted O*NET task statement for a concrete case with stated assumptions.",
-          "points": 2
-        },
-        {
-          "criterion": "Method",
-          "description": "The steps are specific and ordered, and they apply Customer and Personal Service and English Language correctly rather than only naming them.",
-          "points": 2
-        },
-        {
-          "criterion": "Check and report",
-          "description": "The response says how the result would be verified (criteria, review or test) and how and to whom it would be reported.",
-          "points": 2
-        }
-      ],
-      "reference_answer_outline": [
-        "A short, concrete case with its assumptions stated.",
-        "The information or inputs needed before starting, and where they come from.",
-        "Ordered steps that use the occupation's actual methods or tools, drawing on Customer and Personal Service and English Language.",
-        "A check of the result and a plan for communicating it to the right people."
-      ]
-    },
-    {
-      "practice_id": "26.9999-P2",
-      "cip_code": "26.9999",
-      "tier": "generated",
       "onet_soc_code": "11-9121.02",
       "occupation_title": "Water Resource Specialists",
       "onet_task_id": 15616,
@@ -457,7 +419,7 @@
       ]
     },
     {
-      "practice_id": "26.9999-P3",
+      "practice_id": "26.9999-P2",
       "cip_code": "26.9999",
       "tier": "generated",
       "onet_soc_code": "19-1029.04",
@@ -517,15 +479,15 @@
       ]
     },
     {
-      "practice_id": "26.9999-P4",
+      "practice_id": "26.9999-P3",
       "cip_code": "26.9999",
       "tier": "generated",
-      "onet_soc_code": "11-9121.01",
-      "occupation_title": "Clinical Research Coordinators",
-      "onet_task_id": 15585,
+      "onet_soc_code": "19-1029.02",
+      "occupation_title": "Molecular and Cellular Biologists",
+      "onet_task_id": 16796,
       "onet_task_type": "Core",
-      "onet_task_url": "https://www.onetonline.org/link/summary/11-9121.01",
-      "onet_task_statement": "Prepare for or participate in quality assurance audits conducted by study sponsors, federal agencies, or specially designated review groups.",
+      "onet_task_url": "https://www.onetonline.org/link/summary/19-1029.02",
+      "onet_task_statement": "Verify all financial, physical, and human resources assigned to research or development projects are used as planned.",
       "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
       "supervisory_task": false,
       "format": "applied exercise",
@@ -551,7 +513,7 @@
           "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
         }
       },
-      "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Clinical Research Coordinators\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Customer and Personal Service and English Language), and how you would check the result and report it.",
+      "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Molecular and Cellular Biologists\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Biology and English Language), and how you would check the result and report it.",
       "rubric": [
         {
           "criterion": "Task fit",
@@ -560,7 +522,7 @@
         },
         {
           "criterion": "Method",
-          "description": "The steps are specific and ordered, and they apply Customer and Personal Service and English Language correctly rather than only naming them.",
+          "description": "The steps are specific and ordered, and they apply Biology and English Language correctly rather than only naming them.",
           "points": 2
         },
         {
@@ -572,12 +534,12 @@
       "reference_answer_outline": [
         "A short, concrete case with its assumptions stated.",
         "The information or inputs needed before starting, and where they come from.",
-        "Ordered steps that use the occupation's actual methods or tools, drawing on Customer and Personal Service and English Language.",
+        "Ordered steps that use the occupation's actual methods or tools, drawing on Biology and English Language.",
         "A check of the result and a plan for communicating it to the right people."
       ]
     },
     {
-      "practice_id": "26.9999-P5",
+      "practice_id": "26.9999-P4",
       "cip_code": "26.9999",
       "tier": "generated",
       "onet_soc_code": "11-9121.02",
@@ -637,7 +599,7 @@
       ]
     },
     {
-      "practice_id": "26.9999-P6",
+      "practice_id": "26.9999-P5",
       "cip_code": "26.9999",
       "tier": "generated",
       "onet_soc_code": "19-1029.04",
@@ -693,6 +655,66 @@
         "A short, concrete case with its assumptions stated.",
         "The information or inputs needed before starting, and where they come from.",
         "Ordered steps that use the occupation's actual methods or tools, drawing on Biology and Education and Training.",
+        "A check of the result and a plan for communicating it to the right people."
+      ]
+    },
+    {
+      "practice_id": "26.9999-P6",
+      "cip_code": "26.9999",
+      "tier": "generated",
+      "onet_soc_code": "19-1029.02",
+      "occupation_title": "Molecular and Cellular Biologists",
+      "onet_task_id": 16798,
+      "onet_task_type": "Core",
+      "onet_task_url": "https://www.onetonline.org/link/summary/19-1029.02",
+      "onet_task_statement": "Evaluate new supplies and equipment to ensure operability in specific laboratory settings.",
+      "onet_task_statement_note": "Quoted verbatim from O*NET 31.0 task_statements.csv (USDOL/ETA, CC BY 4.0); O*NET content, not DreamCo-owned.",
+      "supervisory_task": false,
+      "format": "applied exercise",
+      "label": "DreamCo-generated practice exercise (template)",
+      "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+      "ownership_class": "open_license_with_conditions",
+      "license": {
+        "content_class": "mixed: quoted O*NET 31.0 task statement (third-party, CC BY 4.0) plus DreamCo template prompt, rubric and outline",
+        "ownership_class": "open_license_with_conditions",
+        "contains_third_party_text": true,
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Includes information from the O*NET 31.0 Database and O*NET Crosswalk Files by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/).",
+        "modification_notice": "DreamCo has modified all or some of this information: it added a template prompt, rubric and reference outline around the task statement, which is quoted unmodified. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "trademark_notice": "O*NET\u00ae is a trademark of USDOL/ETA.",
+        "dreamco_layer": {
+          "fields": [
+            "prompt",
+            "rubric",
+            "reference_answer_outline"
+          ],
+          "authorship": "DreamCo-generated by build.py from a fixed template (tier 'generated'); not individually authored, not reviewed by a human or by an AI author",
+          "commercial_terms": "not set: commercial terms for the DreamCo-original layer are pending the owner's decision"
+        }
+      },
+      "prompt": "DreamCo-generated practice exercise (template). Assume you are in your first year in the occupation \"Molecular and Cellular Biologists\" and have been asked to carry out the O*NET task quoted above for a small, realistic case that you define in two or three sentences. In about one page, explain what information you need first, the steps and methods you would use (apply Biology and English Language), and how you would check the result and report it.",
+      "rubric": [
+        {
+          "criterion": "Task fit",
+          "description": "The response performs the work in the quoted O*NET task statement for a concrete case with stated assumptions.",
+          "points": 2
+        },
+        {
+          "criterion": "Method",
+          "description": "The steps are specific and ordered, and they apply Biology and English Language correctly rather than only naming them.",
+          "points": 2
+        },
+        {
+          "criterion": "Check and report",
+          "description": "The response says how the result would be verified (criteria, review or test) and how and to whom it would be reported.",
+          "points": 2
+        }
+      ],
+      "reference_answer_outline": [
+        "A short, concrete case with its assumptions stated.",
+        "The information or inputs needed before starting, and where they come from.",
+        "Ordered steps that use the occupation's actual methods or tools, drawing on Biology and English Language.",
         "A check of the result and a plan for communicating it to the right people."
       ]
     }

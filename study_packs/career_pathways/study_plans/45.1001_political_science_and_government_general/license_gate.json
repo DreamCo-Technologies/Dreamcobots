@@ -2,15 +2,16 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-psagg-45.1001",
-  "evaluated_at": "2026-10-02T18:59:33-05:00",
+  "evaluated_at": "2026-10-02T19:55:51-05:00",
   "inputs": {
     "target": "study_plans/45.1001_political_science_and_government_general",
+    "repo_root": "../..",
     "candidate_path": "study_plans/45.1001_political_science_and_government_general/candidate.json",
     "candidate_sha256": "7bd417236ebcedc3bcc329d292c65093279fd7fef92cbd9efbcd062c493ab90c",
     "provenance_path": "study_plans/45.1001_political_science_and_government_general/provenance.json",
-    "provenance_sha256": "949223cb1f853e5557308466aac57147b443e96799159f62ee738d815871ce8c",
+    "provenance_sha256": "653608ef1b92fb120058e025157283312b24538597dcd536d0089a3dd0bb02b1",
     "asset_record_path": "study_plans/45.1001_political_science_and_government_general/asset.json",
-    "asset_record_sha256": "37f1859041b6d4c08d8ed83190ab2f52400bc3106d35034c39eabdaf594b30e2"
+    "asset_record_sha256": "2ece53a0274c13c8d1defebaf98f86f36424063f8fa5da3c4aa73af9d09375b4"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +103,12 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "schema: $: additional property 'evidence_root' not allowed"
+        "only 1 perspective(s) used; multi-view synthesis expects several",
+        "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
       ]
     },
     {
@@ -121,10 +123,12 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several",
+    "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,

@@ -192,26 +192,39 @@
   },
   "quality_flags": {
     "method": {
-      "supervisory_tasks": "task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and supervise); 'under supervision' does not count",
-      "topical_overlap": "a target is flagged low_title_overlap (severity high if its O*NET description also shares no stem, else medium) when its O*NET occupation title shares no content-word stem with the CIP program title (lower-cased words of 3+ letters; generic words such as science, studies, technology, engineering, management, services, general and other ignored; crude suffix stripping; stems of 5+ letters also match when one contains the other). The detail says whether the occupation's O*NET description shares a stem. This is a crude lexical heuristic: it misses implausible pairs that share a word and flags plausible pairs that use different words"
+      "field_fit": "field fit = cosine similarity between the CIP program title's field terms and the occupation's O*NET 31.0 text (title, description and all task statements). Words are Snowball-stemmed, generic words (science, studies, technology, engineering, management, education, general, other, ...) are ignored, and terms are weighted by log term frequency times inverse document frequency over all O*NET occupations. Compound title words are also split into the O*NET vocabulary stems of 5+ letters they contain (electromechanical -> electr, mechan; telecommunications -> commun), so a compound does not count as a mismatch. CIP definitions are not in the pinned crosswalk file, so the CIP title is the field description. A rule target is dropped as clearly implausible when (1) its fit is 0, meaning no field term of the program title occurs anywhere in its O*NET title, description or tasks; (2) some eligible linked occupation in the same Job Zone tier has fit >= 0.02, so the crosswalk does offer a field match; (3) it is an O*NET detailed specialty code (not .00), whose link is typically inherited from a broad SOC code such as Engineers, All Other; (4) its base .00 occupation also has fit 0; and (5) its fit with the titles of all CIP codes in the program's 4-digit CIP series (the field family) is below 0.12, so it is not a close neighbour of the field either (e.g. a genetics program keeps Molecular and Cellular Biologists). The thresholds were set by inspecting the candidate drops of this release; they are not validated. Dropped targets are replaced from the same ranked tier with the next occupations whose fit is above 0; if none remain, the plan keeps fewer targets. A base (.00) target with fit 0 is kept but flagged better_field_match_available when a non-target occupation in the same tier has fit >= 0.1",
+      "supervisory_tasks": "task statement matches a supervisory/managerial pattern (supervise, provide supervision, direct and coordinate, direct the work/activities/staff of, manage staff/personnel/employees/workers/teams, oversee the work/staff, hire, subordinates, assign work to, evaluate the work/performance of, train and supervise); 'under supervision' does not count"
     },
-    "flag_count": 2,
-    "flags": [
-      {
-        "flag": "low_title_overlap",
-        "severity": "high",
-        "onet_soc_code": "25-2031.00",
-        "occupation_title": "Secondary School Teachers, Except Special and Career/Technical Education",
-        "detail": "description shares no stem with the CIP title either"
-      },
-      {
-        "flag": "low_title_overlap",
-        "severity": "medium",
-        "onet_soc_code": "27-3091.00",
-        "occupation_title": "Interpreters and Translators",
-        "detail": "description shares a stem with the CIP title"
-      }
-    ]
+    "flag_count": 0,
+    "flags": [],
+    "actions": [],
+    "notes": [],
+    "retired_checks": "v4 low_title_overlap (lexical title overlap) was retired in v5: it flagged 1,273 targets in 756 of 1,017 plans, mostly plausible pairs that use different words, and changed nothing"
+  },
+  "target_plausibility": {
+    "method": "field fit = cosine similarity between the CIP program title's field terms and the occupation's O*NET 31.0 text (title, description and all task statements). Words are Snowball-stemmed, generic words (science, studies, technology, engineering, management, education, general, other, ...) are ignored, and terms are weighted by log term frequency times inverse document frequency over all O*NET occupations. Compound title words are also split into the O*NET vocabulary stems of 5+ letters they contain (electromechanical -> electr, mechan; telecommunications -> commun), so a compound does not count as a mismatch. CIP definitions are not in the pinned crosswalk file, so the CIP title is the field description. A rule target is dropped as clearly implausible when (1) its fit is 0, meaning no field term of the program title occurs anywhere in its O*NET title, description or tasks; (2) some eligible linked occupation in the same Job Zone tier has fit >= 0.02, so the crosswalk does offer a field match; (3) it is an O*NET detailed specialty code (not .00), whose link is typically inherited from a broad SOC code such as Engineers, All Other; (4) its base .00 occupation also has fit 0; and (5) its fit with the titles of all CIP codes in the program's 4-digit CIP series (the field family) is below 0.12, so it is not a close neighbour of the field either (e.g. a genetics program keeps Molecular and Cellular Biologists). The thresholds were set by inspecting the candidate drops of this release; they are not validated. Dropped targets are replaced from the same ranked tier with the next occupations whose fit is above 0; if none remain, the plan keeps fewer targets. A base (.00) target with fit 0 is kept but flagged better_field_match_available when a non-target occupation in the same tier has fit >= 0.1",
+    "cip_field_terms": [
+      "asian",
+      "east",
+      "languag",
+      "linguist",
+      "literatur"
+    ],
+    "rule_targets": [
+      "25-2031.00",
+      "27-3091.00"
+    ],
+    "final_targets": [
+      "25-2031.00",
+      "27-3091.00"
+    ],
+    "fit": {
+      "25-2031.00": 0.0,
+      "27-3091.00": 0.0931
+    },
+    "dropped": [],
+    "added": [],
+    "flags": []
   },
   "entry_targets": [
     {
@@ -228,7 +241,7 @@
   "entry_target_basis": "Job Zone 4 linked occupations (excluding Manager/Chief/Postsecondary/All Other/Supervisor/Director/Treasurers and Controllers titles), ranked by similarity of their O*NET knowledge-importance profile to the average profile of the eligible linked occupations (Pearson correlation), base O*NET-SOC .00 codes first",
   "entry_target_review": {
     "type": "rule_only_not_reviewed",
-    "note": "Generated tier: rule output used as is; not reviewed for plausibility."
+    "note": "Generated tier: rule output after the automatic field-fit check; not reviewed by a person."
   },
   "practice_task_ids": [
     "16.0399-P1",

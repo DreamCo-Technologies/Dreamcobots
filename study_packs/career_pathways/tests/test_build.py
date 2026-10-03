@@ -109,10 +109,6 @@ def test_gate_files_exist_and_validate(plan):
         assert (d / f).is_file(), f"{d.name}/{f} missing"
     for kind, f in [("provenance", "provenance.json"), ("license_gate", "license_gate.json"), ("asset", "asset.json")]:
         doc = json.loads((d / f).read_text())
-        if kind == "asset":
-            # evidence_root is new in v4; the merchant has said the gate will support it, but the current
-            # synthesis-asset schema has additionalProperties false. Validate everything else against the schema.
-            assert doc.pop("evidence_root") == build.EVIDENCE_ROOT
         errs = sorted(validator(kind).iter_errors(doc), key=str)
         assert not errs, f"{d.name}/{f}: {[e.message for e in errs][:5]}"
 
@@ -340,10 +336,15 @@ def evidence_schema():
             return json.loads((d / "evidence_provenance_schema.json").read_text())
 
 
+LATEST_REGRESSION_RUN = "20261002-04"
+REGRESSION_BASELINE = "687b3c1"  # v3, the last release whose regression evidence the merchant reviewed
+
+
 def test_regression_evidence_records_are_real_and_linked():
-    """asset.json validation_evidence_ids has exactly sandbox/benchmark/holdout/regression; only regression is populated;
-    every regression id resolves to a record with the evidence-provenance fields whose integrity_hash is the sha256 of
-    its results file, whose source_reference is this asset's integrity_hash, and whose score is recomputable."""
+    """asset.json validation_evidence_ids has exactly sandbox/benchmark/holdout/regression. Regression lists every
+    regression record on disk for the asset (-01..-04; evidence is append-only). Every record has the evidence-provenance
+    fields, an integrity_hash equal to the sha256 of its results file, and a recomputable score. The latest run (-04)
+    compares against v3 (687b3c1) and describes the files on disk now; older runs describe the release they evaluated."""
     import regression
     sch = evidence_schema()
     for p in PLANS:
@@ -354,21 +355,23 @@ def test_regression_evidence_records_are_real_and_linked():
         assert ev["sandbox"] == ev["benchmark"] == ev["holdout"] == [], "no independent sandbox/benchmark/holdout runs exist"
         assert asset["machine_layer"] is not None and asset["dreamco_analysis"] is not None
         tier = json.loads((sidecar(p) / "plan.json").read_text())["tier"]
+        on_disk = sorted(f"regression:{asset['asset_id']}:{r.stem}"
+                         for r in (EVIDENCE_DIR / "regression" / asset["asset_id"]).glob("*.json") if not r.name.endswith(".results.json"))
         if tier == "generated":
-            assert not ev["regression"]  # new in this release: nothing to regress against
+            assert not ev["regression"] and not on_disk  # new in v4: nothing to regress against
             continue
-        assert ev["regression"], p.name
+        runs = [e.split(":")[2] for e in ev["regression"]]
+        assert sorted(ev["regression"]) == on_disk and {"20261002-01", "20261002-02", "20261002-03", LATEST_REGRESSION_RUN} <= set(runs), p.name
         for eid in ev["regression"]:
             kind, aid, run = eid.split(":")
             assert kind == "regression" and aid == asset["asset_id"] and re.fullmatch(r"\d{8}-\d{2}", run)
-            rec_p = ROOT / "data/dreamco_knowledge/evidence" / kind / aid / f"{run}.json"
+            rec_p = EVIDENCE_DIR / kind / aid / f"{run}.json"
             rec = json.loads(rec_p.read_text())
             for f in sch["required_fields"] + ["split", "n_items", "metric", "score", "threshold", "passed"]:
                 assert rec.get(f) not in (None, ""), (eid, f)
             assert rec["evidence_id"] == eid
             assert rec["source_type"] in sch["source_types"] and rec["source_type"] == "dreamco_experiment"
             assert rec["transformation"] in sch["transformation_types"] and rec["transformation"] == "original_evaluation"
-            assert rec["source_reference"] == asset["integrity_hash"]
             res_p = rec_p.with_name(f"{run}.results.json")
             assert rec["integrity_hash"] == "sha256:" + sha(res_p)
             res = json.loads(res_p.read_text())
@@ -376,9 +379,11 @@ def test_regression_evidence_records_are_real_and_linked():
             assert rec["n_items"] == len(res["items"]) and rec["score"] == round(ok / len(res["items"]), 4)
             assert rec["passed"] is True and rec["score"] >= rec["threshold"] == 1.0
             assert all(i.get("reason") for i in res["items"] if i["status"] == "changed_with_reason")
-            # the results describe the files on disk now (regression.py ran after the final build)
-            assert res["current"]["asset_integrity_hash"] == asset["integrity_hash"]
+            if run != LATEST_REGRESSION_RUN:
+                continue  # an older run evaluated an older build (and -01/-02 predate deterministic results files)
             assert "run_at" not in res and "evaluated_at" not in res
+            assert rec["source_reference"] == asset["integrity_hash"] == res["current"]["asset_integrity_hash"]
+            assert res["baseline"]["git_ref"].startswith(REGRESSION_BASELINE), res["baseline"]["git_ref"]
             stem = sidecar(p).name
             disk = {"majors_selected.json": sha(ROOT / "data/majors_selected.json"),
                     "practice_tasks.json": sha(ROOT / "data/practice_tasks.json"),
@@ -386,6 +391,48 @@ def test_regression_evidence_records_are_real_and_linked():
                     f"{stem}/license_gate.json#canonical_without_evaluated_at":
                         regression.gate_digest((sidecar(p) / "license_gate.json").read_bytes())}
             assert res["current"]["files"] == disk, (eid, res["current"]["files"], disk)
+
+
+def _git_history_repo():
+    """A git checkout whose history contains this pack: the pack itself if it is in a repo, else $DREAMCO_REPO_ROOT or
+    the default clone. Returns (repo, pack path inside the repo) or None."""
+    import subprocess
+    def top(d):
+        r = subprocess.run(["git", "-C", str(d), "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+        return pathlib.Path(r.stdout.strip()) if r.returncode == 0 else None
+    t = top(ROOT)
+    if t:
+        return t, ROOT.resolve().relative_to(t.resolve()).as_posix()
+    for d in [os.environ.get("DREAMCO_REPO_ROOT"), "/workspace/dc-ecp"]:
+        if d and pathlib.Path(d).is_dir() and top(d):
+            return top(d), "study_packs/career_pathways"
+    return None
+
+
+def test_no_committed_evidence_file_was_removed_or_changed():
+    """Evidence is append-only: every evidence file that exists in any commit of the repo history is still on disk with
+    the content of its most recent commit."""
+    import subprocess
+    found = _git_history_repo()
+    if not found:
+        pytest.skip("no git history available")
+    repo, pack = found
+    ev = f"{pack}/data/dreamco_knowledge/evidence"
+    git = lambda *a: subprocess.run(["git", "-C", str(repo), *a], capture_output=True, text=True, check=True).stdout
+    commits = git("log", "--all", "--format=%H", "--", ev).split()  # newest first
+    if not commits:
+        pytest.skip("no committed evidence yet")
+    latest = {}
+    for c in commits:
+        for line in git("ls-tree", "-r", c, "--", ev).splitlines():
+            meta, path = line.split("\t", 1)
+            latest.setdefault(path, (meta.split()[2], c))
+    assert len(latest) >= 108
+    for path, (blob, c) in sorted(latest.items()):
+        f = ROOT / path[len(pack) + 1:]
+        assert f.is_file(), f"{path} (in commit {c[:7]}) was removed"
+        data = f.read_bytes()
+        assert hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest() == blob, f"{path} differs from commit {c[:7]}"
 
 
 def test_regression_comparator_flags_unexplained_changes():
@@ -427,7 +474,7 @@ def test_every_evidence_record_integrity_hash_matches_its_results_file():
         rec = json.loads(r.read_text())
         kind, aid, run = rec["evidence_id"].split(":")
         assert r == EVIDENCE_DIR / kind / aid / f"{run}.json", r
-        assert rec["evidence_root"] == build.EVIDENCE_ROOT
+        assert rec.get("evidence_root", build.EVIDENCE_ROOT) == build.EVIDENCE_ROOT  # absent in pre-v4 records
         res = ROOT / rec["results_path"]
         assert res.is_file() and res == r.with_name(f"{run}.results.json")
         assert rec["integrity_hash"] == "sha256:" + sha(res), r
@@ -458,7 +505,7 @@ def _walk_keys(x, key, out):
 
 
 def test_created_at_is_full_iso8601_with_offset():
-    files = [ROOT / "data/practice_tasks.json", ROOT / "evidence/holdout_kit/items.json", ROOT / "evidence/holdout_kit/_key.json"]
+    files = [ROOT / "data/practice_tasks.json", ROOT / "evidence/holdout_kit/items.json"]
     for p in PLANS:
         files += [sidecar(p) / "asset.json", sidecar(p) / "plan.json"]
     n = 0
@@ -474,7 +521,11 @@ def test_created_at_is_full_iso8601_with_offset():
 
 def test_license_blocks_per_item_and_per_plan():
     pt = json.loads((ROOT / "data/practice_tasks.json").read_text())
-    assert pt["ownership_class"] == "mixed_per_item" and pt["note"]  # file-level label no longer claims all items
+    # file level = most restrictive valid policy class among the items; per-item labels are kept
+    item_classes = {t["ownership_class"] for t in pt["tasks"]}
+    assert pt["ownership_class"] == build.most_restrictive(item_classes) == "open_license_with_conditions"
+    assert pt["ownership_class"] in build.OWNERSHIP_RESTRICTIVENESS and item_classes <= set(build.OWNERSHIP_RESTRICTIVENESS)
+    assert pt["ownership_class_rule"] and pt["note"]
     assert pt["license"]["license_url"] == build.CC_BY and "USDOL/ETA" in pt["license"]["attribution"]
     for n in build.DB_NOTICES:
         assert n in pt["license"]["required_notices"]
@@ -521,112 +572,222 @@ def test_weighted_knowledge_and_skipped_elements_are_documented():
     assert "Administration and Management" in skipped and "Design" in placed  # merchant note on v3
 
 
-def test_generated_quality_flags_and_supervisory_filter():
-    sup = 0
+def test_generated_target_plausibility_and_quality_flags():
+    """v5: the field-fit check drops clearly implausible generated targets (with fallback) and records the drops in
+    plan.json; flags are only raised for high-confidence mismatches; the v4 lexical low_title_overlap check is retired."""
+    sup = n_drop = n_flag_plans = 0
     for p in PLANS:
         pj = json.loads((sidecar(p) / "plan.json").read_text())
         qf = pj["quality_flags"]
         assert qf["flag_count"] == len(qf["flags"])
+        assert all(f["flag"] != "low_title_overlap" for f in qf["flags"])
         t = p.read_text()
+        tp = pj["target_plausibility"]
         if pj["tier"] != "generated":
-            assert not qf["flags"]
+            assert not qf["flags"] and tp is None
             continue
         assert "## Quality flags (automatic plausibility checks; generated tier)" in t
+        assert tp["method"] == build.FIELD_FIT_RULE and qf["method"]["field_fit"] == build.FIELD_FIT_RULE
+        final = [e["soc"] for e in pj["entry_targets"]]
+        assert tp["final_targets"] == final and 1 <= len(final) <= 3
+        gone = {d["soc"] for d in tp["dropped"]}
+        assert not gone & set(final) and gone <= set(tp["rule_targets"])
+        for d in tp["dropped"]:
+            assert d["fit"] == 0 and d["base_fit"] == 0 and not d["soc"].endswith(".00") and d["reason"]
+            assert d["series_fit"] < build.FIT_SERIES_KEEP
+            assert max(tp["fit"].values()) >= build.FIT_DROP_MIN_BEST
+            assert f"target_dropped: `{d['soc']}`" in t
+            assert any(a["action"] == "target_dropped" and a["onet_soc_code"] == d["soc"] for a in qf["actions"])
+        for a in tp["added"]:
+            assert a["soc"] in final and a["fit"] > 0 and a["soc"] not in tp["rule_targets"]
+        n_drop += len(gone)
+        n_flag_plans += bool(qf["flags"])
         for f in qf["flags"]:
             assert f"- {f['flag']}" in t
+            if f["flag"] == "better_field_match_available":
+                assert f["onet_soc_code"] in final and f["fit"] == 0 and f["suggested_fit"] >= build.FIT_FLAG_MIN_BEST
         kept = {i for f in qf["flags"] if f["flag"] == "supervisory_task_kept" for i in f["practice_ids"]}
         for x in pj["practice_tasks"]:
             assert x["supervisory_task"] is build.is_supervisory(x["onet_task_statement"])
             if x["supervisory_task"]:
                 assert x["practice_id"] in kept, x["practice_id"]
             sup += x["supervisory_task"]
-        targets = {e["soc"] for e in pj["entry_targets"]}
-        for f in qf["flags"]:
-            if f["flag"] == "low_title_overlap":
-                assert f["onet_soc_code"] in targets and f["severity"] in ("high", "medium")
-                assert not build._overlap(build._stems(pj["title"]), build._stems(f["occupation_title"]))
-    assert sup >= 0
+    assert n_drop > 0  # the check changes target selection
+    assert n_flag_plans < 200  # actionable, not a flag on most plans (v4 flagged 887 of 1,017)
     ppe = json.loads(next((ROOT / "study_plans").glob("14.4802_*/plan.json")).read_text())  # merchant example (v3 review)
-    hi = {f["occupation_title"] for f in ppe["quality_flags"]["flags"] if f["flag"] == "low_title_overlap"}
-    assert {"Robotics Engineers", "Photonics Engineers", "Wind Energy Engineers"} <= hi
+    titles = {e["title"] for e in ppe["entry_targets"]}
+    assert not titles & {"Robotics Engineers", "Photonics Engineers"}, titles
+    assert {"Robotics Engineers", "Photonics Engineers"} <= {d["title"] for d in ppe["target_plausibility"]["dropped"]}
+    gen = {m["cip"]: m for m in json.loads((ROOT / "data/majors_selected.json").read_text())}
+    assert "Molecular and Cellular Biologists" in {e["title"] for e in gen["26.0803"]["entry_targets"]}  # series guard keeps it
     assert build.is_supervisory("Supervise and coordinate the work of technicians.")
     assert build.is_supervisory("Direct and coordinate activities of staff.")
     assert not build.is_supervisory("Perform analyses under supervision of a senior engineer.")
 
 
-def test_holdout_kit_is_blind_and_ungraded():
-    kit = ROOT / "evidence/holdout_kit"
-    items = json.loads((kit / "items.json").read_text())
-    key = json.loads((kit / "_key.json").read_text())
-    assert "must not open" in key["WARNING"] and key["never_used_in_tuning"]
-    assert items["n_items"] == len(items["items"]) == len(key["items"]) == 12
-    blob = json.dumps(items)
-    for word in ("weaken", "reference_outline", "expected_scores", "candidate_type", "practice_id", "11.0701-P", "seed"):
-        assert word not in blob  # nothing in the grader's file reveals the key or the source item
-    authored = {t["practice_id"]: t for t in json.loads((ROOT / "authored/practice_tasks_authored.json").read_text())["tasks"]}
-    import score_holdout
-    kinds = [k["candidate_type"] for k in key["items"].values()]
-    assert kinds.count("weakened") == 6 and kinds.count("reference_outline") == 6
-    by_id = {i["item_id"]: i for i in items["items"]}
-    for hid, k in key["items"].items():
-        a = authored[k["practice_id"]]
-        assert score_holdout.content_hash(a) == k["authored_item_sha256"]
-        cand = by_id[hid]["candidate_answer"]
-        assert hashlib.sha256(cand.encode()).hexdigest() == k["candidate_answer_sha256"]
-        assert by_id[hid]["rubric"] == a["rubric"]
-        if k["candidate_type"] == "reference_outline":
-            assert cand == "\n".join(f"- {x}" for x in a["reference_answer_outline"]) and k["expected_scores"] == [2, 2, 2]
-        else:
-            assert cand != "\n".join(f"- {x}" for x in a["reference_answer_outline"]) and k["expected_scores"][k["weakened_criterion"] - 1] == 0
-    rows = list(csv.DictReader(open(kit / "grading_sheet.csv")))
-    assert [r["item_id"] for r in rows] == sorted(key["items"])
+KIT = ROOT / "evidence/holdout_kit"
+
+
+def _kit_items():
+    return json.loads((KIT / "items.json").read_text())
+
+
+def test_holdout_kit_v2_is_blind_shape_normalized_and_ungraded():
+    items = _kit_items()
+    its = items["items"]
+    assert items["n_items"] == len(its) and 14 <= len(its) <= 20
+    majors = [re.search(r"CIP (\d\d\.\d{4})\)$", i["major"]).group(1) for i in its]
+    assert majors.count("11.0701") >= 3 and set(majors) <= set(build.MAJORS) and len(set(majors)) >= 8
+    blob = json.dumps(items).lower()
+    for word in ("weaken", "full_strength", "expected_scores", "candidate_type", "seed", "nonce", "practice_id", "11.0701-p"):
+        assert word not in blob  # nothing in the grader's file reveals the key
+    words = []
+    for i in its:
+        bullets = i["candidate_answer"].split("\n")
+        assert len(bullets) == 5 and all(re.match(r"- \*\*[^*]+:\*\* \S", b) for b in bullets), i["item_id"]
+        assert len(i["rubric"]) == 3 and all(c["points"] == 2 for c in i["rubric"])
+        words.append(len(_tok(i["candidate_answer"])))
+    assert max(words) <= 1.35 * min(words), words  # one length band; length gives nothing away
+    # no key file anywhere in the kit, and the commitment is present
+    assert not [f.name for f in KIT.iterdir() if "key" in f.name.lower() and f.suffix == ".json"]
+    assert not (KIT / "_key.json").exists()
+    commit = dict(l.split(": ", 1) for l in (KIT / "KEY_COMMITMENT.txt").read_text().splitlines() if ": " in l)
+    assert re.fullmatch(r"[0-9a-f]{64}", commit["key_sha256"])
+    assert commit["items_json_sha256"] == sha(KIT / "items.json")
+    rows = list(csv.DictReader(open(KIT / "grading_sheet.csv")))
+    assert [r["item_id"] for r in rows] == [i["item_id"] for i in its]
     assert all(not r[c] for r in rows for c in ("score_1", "score_2", "score_3", "factually_correct", "grader", "graded_at", "comments"))
+    assert not (KIT / "GRADING_FINAL.txt").exists()
     assert not (EVIDENCE_DIR / "holdout").exists()  # no holdout evidence until a human grades the kit
-    for p in PLANS:
-        assert json.loads((sidecar(p) / "asset.json").read_text())["validation_evidence_ids"]["holdout"] == []
-    readme = (kit / "README.md").read_text()
-    assert "_key.json" in readme and "Do not open" in readme
+    readme = (KIT / "README.md").read_text()
+    assert "Pass rule" in readme and "all 2s" in readme and "v1 kit" in readme and "KEY_COMMITMENT.txt" in readme
 
 
-def test_score_holdout_on_synthetic_sheet(tmp_path):
-    """score_holdout.py turns a (synthetic, test-only) filled sheet into schema-shaped records; nothing is written to the pack."""
-    import subprocess, shutil
-    kit = ROOT / "evidence/holdout_kit"
-    key = json.loads((kit / "_key.json").read_text())
-    rows = list(csv.DictReader(open(kit / "grading_sheet.csv")))
-    for r in rows:
-        exp = key["items"][r["item_id"]]["expected_scores"]
-        r.update({"score_1": exp[0], "score_2": exp[1], "score_3": exp[2], "factually_correct": "yes",
-                  "grader": "pytest-synthetic", "graded_at": "2026-10-02T12:00:00-05:00"})
-    sheet = tmp_path / "sheet.csv"
-    with open(sheet, "w", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
+def test_holdout_kit_shares_no_5_word_run_with_published_content():
+    """Kit prompts, answers and rubrics are new: no 5-word run appears in any published plan, practice_tasks.json or
+    authored file used by the build."""
+    kg = {}
+    for i in _kit_items()["items"]:
+        for f in [i["prompt"], i["candidate_answer"]] + [c["criterion"] + " " + c["description"] for c in i["rubric"]]:
+            for g in _grams(f):
+                kg.setdefault(g, i["item_id"])
+    files = PLANS + [ROOT / "data/practice_tasks.json"] + sorted((ROOT / "authored").glob("*.json"))
+    hits = []
+    for f in files:
+        w = _tok(f.read_text())
+        hits += [(" ".join(w[k:k + 5]), kg[tuple(w[k:k + 5])], f.name) for k in range(len(w) - 4) if tuple(w[k:k + 5]) in kg]
+    assert not hits, hits[:10]
+
+
+def _synthetic_kit(tmp_path):
+    """A tiny synthetic kit + key + commitment in tmp (never the real private key)."""
+    kit = tmp_path / "kit"; kit.mkdir()
+    plans = {m["cip"]: m for m in json.loads((ROOT / "data/majors_selected.json").read_text())}
+    spec = [("11.0701", "full_strength", None), ("11.0701", "weakened", 2), ("11.0701", "full_strength", None),
+            ("40.0501", "weakened", 1), ("40.0501", "full_strength", None), ("40.0501", "weakened", 3)]
+    items, key_items = [], {}
+    for n, (cip, kind, wc) in enumerate(spec, 1):
+        qid = f"Q{n:02d}"
+        ans = "\n".join(f"- **Point {k}:** synthetic test answer {n} {k}" for k in range(1, 6))
+        items.append({"item_id": qid, "major": f"{plans[cip]['title']} (CIP {cip})", "prompt": f"synthetic prompt {n}",
+                      "candidate_answer": ans, "rubric": [{"criterion": f"C{k}", "description": "synthetic criterion", "points": 2} for k in (1, 2, 3)]})
+        key_items[qid] = {"cip": cip, "asset_id": plans[cip]["asset_id"], "candidate_type": kind, "weakened_criterion": wc,
+                          "expected_scores": [0 if c == wc else 2 for c in (1, 2, 3)],
+                          "accepted_scores": [[0, 1] if c == wc else [1, 2] for c in (1, 2, 3)],
+                          "candidate_answer_sha256": hashlib.sha256(ans.encode()).hexdigest()}
+    items_b = (json.dumps({"kit": "synthetic", "created_at": "2026-10-02T12:00:00-05:00", "n_items": len(items), "items": items}) + "\n").encode()
+    (kit / "items.json").write_bytes(items_b)
+    key_b = json.dumps({"kit": "synthetic", "created_at": "2026-10-02T12:00:00-05:00", "nonce": os.urandom(32).hex(), "items": key_items}).encode()
+    keyp = tmp_path / "private" / "holdout_key.json"; keyp.parent.mkdir(); keyp.write_bytes(key_b)
+    (kit / "KEY_COMMITMENT.txt").write_text(f"key_sha256: {hashlib.sha256(key_b).hexdigest()}\n"
+                                           f"items_json_sha256: {hashlib.sha256(items_b).hexdigest()}\n")
     root = tmp_path / "pack"
-    for d in ("authored", "data", "study_plans"):
-        (root / d).mkdir(parents=True)
-    shutil.copy(ROOT / "authored/practice_tasks_authored.json", root / "authored")
+    (root / "data").mkdir(parents=True); (root / "study_plans").mkdir()
+    import shutil
     shutil.copy(ROOT / "data/majors_selected.json", root / "data")
-    for aid in {k["cip"] for k in key["items"].values()}:
-        src = next((ROOT / "study_plans").glob(f"{aid}_*.md"))
-        shutil.copy(src, root / "study_plans")
-        shutil.copytree(sidecar(src), root / "study_plans" / src.stem)
-    py = sys.executable
-    blank = subprocess.run([py, ROOT / "score_holdout.py", "--sheet", kit / "grading_sheet.csv", "--root", root], capture_output=True, text=True)
-    assert blank.returncode != 0 and "incomplete" in (blank.stdout + blank.stderr)
-    out = subprocess.run([py, ROOT / "score_holdout.py", "--sheet", sheet, "--root", root, "--write", "--run-id", "20261002-99"],
-                         capture_output=True, text=True)
-    assert out.returncode == 0, out.stderr
-    recs = sorted((root / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-99.json"))
-    assert len(recs) == len({k["asset_id"] for k in key["items"].values()})
+    for cip in {c for c, _, _ in spec}:
+        src = next((ROOT / "study_plans").glob(f"{cip}_*.md"))
+        (root / "study_plans" / src.stem).mkdir()
+        shutil.copy(sidecar(src) / "asset.json", root / "study_plans" / src.stem)
+        (root / "study_plans" / src.name).write_text("synthetic")
+    return kit, keyp, root, items, key_items
+
+
+def _write_sheet(path, items, scores):
+    with open(path, "w", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(["item_id", "major", "criterion_1", "score_1", "criterion_2", "score_2", "criterion_3", "score_3",
+                    "factually_correct", "comments", "grader", "graded_at"])
+        for i in items:
+            s = scores[i["item_id"]]
+            w.writerow([i["item_id"], i["major"], "C1", s[0], "C2", s[1], "C3", s[2], "yes", "", "pytest-synthetic",
+                        "2026-10-02T12:00:00-05:00"])
+
+
+def _run_score(*args, private):
+    import subprocess
+    env = dict(os.environ, DREAMCO_HOLDOUT_PRIVATE_DIR=str(private))
+    return subprocess.run([sys.executable, str(ROOT / "score_holdout.py"), *map(str, args)], capture_output=True, text=True, env=env)
+
+
+def test_score_holdout_dry_run_shows_no_scores_and_all_2s_fails(tmp_path):
+    kit, keyp, root, items, key_items = _synthetic_kit(tmp_path)
+    priv = keyp.parent
+    blank = _run_score("--kit-dir", kit, "--sheet", KIT / "grading_sheet.csv", "--root", root, private=priv)
+    assert blank.returncode != 0
+    perfect = {h: k["expected_scores"] for h, k in key_items.items()}
+    _write_sheet(kit / "grading_sheet.csv", items, perfect)
+    dry = _run_score("--kit-dir", kit, "--key", keyp, "--root", root, private=priv)
+    out = dry.stdout + dry.stderr
+    assert dry.returncode == 0 and "No scores were computed" in out
+    assert not re.search(r"score=|passed=|agreement|detection|\d\.\d", out) and not (root / "data/dreamco_knowledge").exists()
+    # --finalize refuses until grading is declared final
+    nofinal = _run_score("--kit-dir", kit, "--key", keyp, "--root", root, "--finalize", "--run-id", "20261002-91", private=priv)
+    assert nofinal.returncode != 0 and not (root / "data/dreamco_knowledge").exists()
+    (kit / "GRADING_FINAL.txt").write_text("FINAL: grader=pytest-synthetic; declared_at=2026-10-02T13:00:00-05:00\n")
+    # a tampered key is refused
+    bad = tmp_path / "bad_key.json"; bad.write_bytes(keyp.read_bytes() + b" ")
+    r = _run_score("--kit-dir", kit, "--key", bad, "--root", root, "--finalize", "--run-id", "20261002-92", private=priv)
+    assert r.returncode != 0 and "KEY_COMMITMENT" in (r.stdout + r.stderr)
+    # all 2s: nothing detected, every record fails
+    _write_sheet(kit / "grading_sheet.csv", items, {h: [2, 2, 2] for h in key_items})
+    r = _run_score("--kit-dir", kit, "--key", keyp, "--root", root, "--finalize", "--run-id", "20261002-93", private=priv)
+    assert r.returncode == 0, r.stderr
+    recs = sorted((root / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-93.json"))
+    assert len(recs) == 2
     sch = evidence_schema()
-    for r in recs:
-        rec = json.loads(r.read_text())
+    for rp in recs:
+        rec = json.loads(rp.read_text())
         for f in sch["required_fields"] + ["split", "n_items", "metric", "score", "threshold", "passed"]:
             assert rec.get(f) not in (None, ""), f
-        assert rec["source_type"] == "human_evaluation" and rec["transformation"] == "original_evaluation"
-        assert rec["integrity_hash"] == "sha256:" + sha(root / rec["results_path"])
-        assert rec["score"] == 1.0 and rec["passed"] is True
+        assert rec["passed"] is False and rec["integrity_hash"] == "sha256:" + sha(root / rec["results_path"])
+        res = json.loads((root / rec["results_path"]).read_text())
+        assert res["kit_discrimination"]["passed"] is False and res["kit_discrimination"]["detection_rate"] == 0
+    # the expected scores pass
+    _write_sheet(kit / "grading_sheet.csv", items, perfect)
+    r = _run_score("--kit-dir", kit, "--key", keyp, "--root", root, "--finalize", "--run-id", "20261002-94", private=priv)
+    assert r.returncode == 0, r.stderr
+    recs = sorted((root / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-94.json"))
+    assert len(recs) == 2 and all(json.loads(x.read_text())["passed"] is True for x in recs)
+    # append-only: an existing run id is refused
+    r = _run_score("--kit-dir", kit, "--key", keyp, "--root", root, "--finalize", "--run-id", "20261002-94", private=priv)
+    assert r.returncode != 0
     assert not (EVIDENCE_DIR / "holdout").exists()
+
+
+def test_make_holdout_kit_cannot_regenerate_the_key_from_committed_inputs(tmp_path):
+    import subprocess
+    before = {f.name: f.read_bytes() for f in KIT.iterdir()}
+    env = dict(os.environ, DREAMCO_HOLDOUT_PRIVATE_DIR=str(tmp_path))  # empty: the private source is not in the repo
+    r = subprocess.run([sys.executable, str(ROOT / "make_holdout_kit.py"), "--redraw"], capture_output=True, text=True, env=env)
+    assert r.returncode != 0 and "private kit source not found" in (r.stdout + r.stderr)
+    assert {f.name: f.read_bytes() for f in KIT.iterdir()} == before
+    src = (ROOT / "make_holdout_kit.py").read_text()
+    assert "secrets.randbits" in src and not re.search(r"random\.(seed|Random)\(\s*\d", src)
+    assert not list(ROOT.rglob("holdout_source.json")) and not list(ROOT.rglob("holdout_key.json"))
+
+
+
 
 
 def test_data_dictionary_covers_every_output_field():

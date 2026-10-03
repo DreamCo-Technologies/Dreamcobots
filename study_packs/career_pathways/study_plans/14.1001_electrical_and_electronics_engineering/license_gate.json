@@ -2,15 +2,16 @@
   "schema": "dreamco.data_package_license_gate.v1",
   "gate_version": "0.1.0",
   "asset_id": "edu-eaee-14.1001",
-  "evaluated_at": "2026-10-02T18:59:33-05:00",
+  "evaluated_at": "2026-10-02T19:55:51-05:00",
   "inputs": {
     "target": "study_plans/14.1001_electrical_and_electronics_engineering",
+    "repo_root": "../..",
     "candidate_path": "study_plans/14.1001_electrical_and_electronics_engineering/candidate.json",
     "candidate_sha256": "fa84218b6ffd256e483d85023fc8709a8edfc41e5affc9712a97aa499b63bdd5",
     "provenance_path": "study_plans/14.1001_electrical_and_electronics_engineering/provenance.json",
-    "provenance_sha256": "e4ab5308964a9ee41b8ebea9364d9e4bc9652063863c6062354ebb267c8de062",
+    "provenance_sha256": "38ccd35340cc1f6023aa3778b4fe31c36a3a0e40f971c014602e7e6fecf9c9f3",
     "asset_record_path": "study_plans/14.1001_electrical_and_electronics_engineering/asset.json",
-    "asset_record_sha256": "cc54ee1a4484cccf39bd67f27eca6d1372ea43d14805a14238b5cc91153a6777"
+    "asset_record_sha256": "46776cccd92b2295d6781c5d5c0cd6598cabba98a3bf8f3d3c0557d29610e5cf"
   },
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -102,11 +103,12 @@
     },
     {
       "id": "synthesis_asset_record",
-      "status": "fail",
+      "status": "warn",
       "scope": "sale",
-      "outcome_cap": "approved_for_private_use",
+      "outcome_cap": null,
       "reasons": [
-        "schema: $: additional property 'evidence_root' not allowed"
+        "only 1 perspective(s) used; multi-view synthesis expects several",
+        "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
       ]
     },
     {
@@ -121,10 +123,12 @@
   ],
   "failed_checks": [
     "scorecard_threshold",
-    "synthesis_asset_record",
     "owner_approval"
   ],
-  "warnings": [],
+  "warnings": [
+    "only 1 perspective(s) used; multi-view synthesis expects several",
+    "4 validation evidence id(s) resolved under study_packs/career_pathways/data/dreamco_knowledge/evidence"
+  ],
   "sale_requirements": {
     "scorecard_minimum": 75,
     "scorecard_score": null,
