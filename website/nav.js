@@ -128,6 +128,7 @@
     { href: 'costs.html', label: '💲 Cost Tracking' },
     { href: 'revenue.html', label: '💰 Revenue' },
     { href: 'settings.html', label: '⚙️ Settings' },
+    { href: 'fleet-status.html', label: '🛰️ Fleet Status' },
   ];
   const navHTML = `
 <nav>
