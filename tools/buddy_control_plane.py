@@ -61,6 +61,7 @@ MAX_INPUTS = 10
 WRITE_PERMISSIONS = {"admin", "maintain", "write"}
 MARKER = "<!-- buddy-command-router -->"
 ISSUE_MARKER = "<!-- buddy-command-router:issue-handled -->"
+YAML_REQUIRED = "PyYAML is required for the workflow cross-check (pip install pyyaml)"
 PUSH_TO_MAIN_RE = re.compile(r"^\s*git push(\s*$|\s+(origin\s+)?(main|HEAD|HEAD:main)\s*$)", re.MULTILINE)
 
 
@@ -256,7 +257,7 @@ def check_registry(
         try:
             doc = _load_yaml(path)
         except ImportError:
-            errors.append("PyYAML is required for the workflow cross-check (pip install pyyaml)")
+            errors.append(YAML_REQUIRED)
             return errors
         except Exception as exc:  # noqa: BLE001 - report any parse failure
             errors.append(f"jobs.{job_id}: cannot parse {workflow}: {exc.__class__.__name__}")

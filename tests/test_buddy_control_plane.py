@@ -78,9 +78,13 @@ class RegistrySchemaTest(unittest.TestCase):
     def test_shipped_registry_is_valid_without_workflow_files(self):
         self.assertEqual(bcp.check_registry(REGISTRY, workflows_dir=None), [])
 
-    @unittest.skipUnless(HAVE_YAML, "PyYAML not installed")
     def test_shipped_registry_matches_real_workflows(self):
-        self.assertEqual(bcp.check_registry(REGISTRY, bcp.WORKFLOWS_DIR), [])
+        errs = bcp.check_registry(REGISTRY, bcp.WORKFLOWS_DIR)
+        if not HAVE_YAML:
+            # Fail closed: without PyYAML the cross-check must refuse, never pass.
+            self.assertEqual(errs, [bcp.YAML_REQUIRED])
+            return
+        self.assertEqual(errs, [])
 
     def test_every_requested_job_family_is_registered(self):
         families = {j["family"] for j in REGISTRY["jobs"]}
@@ -140,7 +144,6 @@ class RegistrySchemaTest(unittest.TestCase):
         self.assertTrue(any("anchored pattern" in e for e in errs))
         self.assertTrue(any("invalid input name" in e for e in errs))
 
-    @unittest.skipUnless(HAVE_YAML, "PyYAML not installed")
     def test_workflow_cross_check_catches_write_tokens_and_missing_inputs(self):
         with tempfile.TemporaryDirectory() as tmp:
             wf = Path(tmp)
@@ -156,12 +159,14 @@ class RegistrySchemaTest(unittest.TestCase):
                  "requires_owner_approval": False, "triggerable": True, "inputs": {}},
             ]
             errs = bcp.check_registry(reg, wf)
+        if not HAVE_YAML:
+            self.assertEqual(errs, [bcp.YAML_REQUIRED])
+            return
         self.assertTrue(any("token can write" in e for e in errs))
         self.assertTrue(any("does not declare input mode" in e for e in errs))
         self.assertTrue(any("no workflow_dispatch" in e for e in errs))
         self.assertTrue(any("does not exist" in e for e in errs))
 
-    @unittest.skipUnless(HAVE_YAML, "PyYAML not installed")
     def test_writes_code_that_pushes_to_main_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             wf = Path(tmp)
@@ -172,6 +177,9 @@ class RegistrySchemaTest(unittest.TestCase):
             reg["jobs"] = [{"id": "code_job", "family": "f", "title": "t", "workflow": "pusher.yml", "risk_tier": "writes_code",
                             "requires_owner_approval": True, "triggerable": True, "inputs": {}}]
             errs = bcp.check_registry(reg, wf)
+        if not HAVE_YAML:
+            self.assertEqual(errs, [bcp.YAML_REQUIRED])
+            return
         self.assertTrue(any("must be PR-only" in e for e in errs))
 
     def test_public_copy_is_in_sync(self):
@@ -501,14 +509,15 @@ class WorkflowAndPagesTest(unittest.TestCase):
         self.assertEqual(run_lines, ["python3 tools/buddy_control_plane.py route"])
         self.assertNotRegex(text, r"run:[^\n]*\$\{\{")
 
-    @unittest.skipUnless(HAVE_YAML, "PyYAML not installed")
     def test_router_permissions_are_minimal(self):
-        import yaml
-
-        doc = yaml.safe_load(self.ROUTER.read_text(encoding="utf-8"))
-        self.assertEqual(doc["permissions"], {})
-        self.assertEqual(doc["jobs"]["route"]["permissions"], {"actions": "write", "issues": "write", "contents": "read"})
-        self.assertEqual(set(bcp._workflow_on(doc)), {"issues", "issue_comment"})
+        text = self.ROUTER.read_text(encoding="utf-8")
+        self.assertRegex(text, r"(?m)^permissions: \{\}$")
+        block = re.search(r"(?m)^    permissions:\n((?:      .+\n)+)", text)
+        self.assertIsNotNone(block)
+        perms = dict(line.strip().split(": ", 1) for line in block.group(1).splitlines())
+        self.assertEqual(perms, {"actions": "write", "issues": "write", "contents": "read"})
+        triggers = re.findall(r"(?m)^  ([a-z_]+):$", text.split("\npermissions:")[0])
+        self.assertEqual(triggers, ["issues", "issue_comment"])
 
     def test_pages_panel_is_static_and_linked(self):
         html = (ROOT / "website" / "buddy-control.html").read_text(encoding="utf-8")
