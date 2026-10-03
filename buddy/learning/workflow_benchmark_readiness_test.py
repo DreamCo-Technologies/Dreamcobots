@@ -1,8 +1,10 @@
 import json
+import sys
 import unittest
 from pathlib import Path
 
-from buddy.learning.workflow_benchmark_readiness import build_events, inventory
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from workflow_benchmark_readiness import build_events, inventory
 
 
 class WorkflowBenchmarkReadinessTest(unittest.TestCase):
