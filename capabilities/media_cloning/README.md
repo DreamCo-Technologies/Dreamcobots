@@ -17,7 +17,10 @@ Install this only on the machine that will run the clone. These packages are not
 - Voice is Buddy's own letter-to-sound network in `buddy/speech/`. It is not Chatterbox.
 - Pictures are Buddy's own drawing in `buddy/picture/`. They are not Stable Diffusion and they do not copy a face.
 - Personal, business, and social uses all stay on this machine.
-- Audio is not written unless AudioSeal can watermark it.
+- Audio gets an AudioSeal watermark only when `audioseal` (and `torch`) are installed. If they are missing,
+  `watermark_audio` still returns the audio with only a trivial last-sample tag, and `voice_clone.py` writes it.
+  That fallback is not a real watermark, and `verify_audio_watermark` returns `False` for it.
+  Install `requirements-media.txt` (it includes `audioseal`) on any machine that ships audio.
 - Images get a low-bit marker. That marker is not a cryptographic seal.
 
 ## What this does not do
