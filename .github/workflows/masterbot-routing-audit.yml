@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with: {python-version: "3.12"}
       - name: Run routing audit
@@ -26,7 +26,7 @@ jobs:
           for k in ('registry_divisions','files_scanned','routable','review','unclassified'):
               print(f"- {k}: {d[k]}")
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: masterbot-routing-audit
           path: masterbot-routing-audit.json

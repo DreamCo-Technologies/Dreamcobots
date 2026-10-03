@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dreamco.buddy_student_adapter_registry.v1",
+  "title": "Buddy student adapter / checkpoint registry",
+  "type": "object",
+  "required": ["schema", "registry_version", "truth", "adapters"],
+  "properties": {
+    "schema": {"const": "dreamco.buddy_student_adapter_registry.v1"},
+    "registry_version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
+    "truth": {
+      "type": "object",
+      "required": ["trained_weights_exist", "frontier_parity_proven"],
+      "properties": {
+        "trained_weights_exist": {"type": "boolean"},
+        "frontier_parity_proven": {"const": false}
+      }
+    },
+    "adapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "version", "base_model", "method", "teacher", "status", "trained_weights_exist", "artifacts", "evidence"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^buddy-student-[a-z0-9-]+$"},
+          "version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
+          "base_model": {"type": "object", "required": ["repo", "revision", "license"], "properties": {"repo": {"type": "string"}, "revision": {"type": "string"}, "license": {"type": "string"}}},
+          "method": {"enum": ["lora_adapter", "qlora_adapter", "adapter_fusion", "full_checkpoint"]},
+          "teacher": {"type": "string"},
+          "status": {"enum": ["planned", "training", "trained", "evaluated", "released", "retired"]},
+          "trained_weights_exist": {"type": "boolean"},
+          "artifacts": {"type": "array", "items": {"type": "object", "required": ["path", "sha256", "bytes"], "properties": {"path": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "bytes": {"type": "integer", "minimum": 1}}}},
+          "model_card": {"type": ["string", "null"]},
+          "evidence": {"type": "object", "properties": {"eval_scorecard": {"type": ["string", "null"]}, "training_run": {"type": ["string", "null"]}, "data_provenance": {"type": ["string", "null"]}}},
+          "supersedes": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+}

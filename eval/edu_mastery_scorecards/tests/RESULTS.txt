@@ -1,0 +1,37 @@
+test_f4_self_graded (tests.test_cert_gate.TestCertGate.test_f4_self_graded) ... ok
+test_f4_too_soon (tests.test_cert_gate.TestCertGate.test_f4_too_soon) ... ok
+test_leakage (tests.test_cert_gate.TestCertGate.test_leakage) ... ok
+test_missing_ref (tests.test_cert_gate.TestCertGate.test_missing_ref) ... ok
+test_no_benches (tests.test_cert_gate.TestCertGate.test_no_benches) ... ok
+test_overclaim (tests.test_cert_gate.TestCertGate.test_overclaim) ... ok
+test_schema (tests.test_cert_gate.TestCertGate.test_schema) ... skipped 'jsonschema not installed'
+test_valid_f2 (tests.test_cert_gate.TestCertGate.test_valid_f2) ... ok
+test_valid_f4 (tests.test_cert_gate.TestCertGate.test_valid_f4) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.001s
+
+OK (skipped=1)
+FAIL EXAMPLE-INVALID-NO-BENCHES
+  - floor_attained=F2 but evidence supports None
+  - certificate present with no bench results (no cert without benches)
+  - certificate floor F2 exceeds evidence-supported floor None
+  - certificate evidence diag does not resolve to a bench result
+  - certificate evidence practice does not resolve to a bench result
+  - certificate evidence holdout does not resolve to a bench result
+FAIL EXAMPLE-INVALID-F4-TOO-SOON
+  - floor_attained=F4 but evidence supports F3 (retest must be >= 30 days after prior floor evidence)
+  - certificate floor F4 exceeds evidence-supported floor F3
+FAIL EXAMPLE-INVALID-F4-SELF-GRADED
+  - floor_attained=F4 but evidence supports F3 (bench regression: evaluator must be independent of issuer)
+  - certificate floor F4 exceeds evidence-supported floor F3
+FAIL EXAMPLE-INVALID-LEAKAGE
+  - floor_attained=F2 but evidence supports F1 (bench holdout: leakage check not passed)
+  - certificate floor F2 exceeds evidence-supported floor F1
+FAIL EXAMPLE-INVALID-MISSING-EVIDENCE
+  - certificate evidence ghost does not resolve to a bench result
+FAIL EXAMPLE-INVALID-OVERCLAIM-F3
+  - floor_attained=F3 but evidence supports F2 (required bench transfer has no result; required bench retest has no result)
+  - certificate floor F3 exceeds evidence-supported floor F2
+PASS EXAMPLE-CARD-ALG1-F2
+PASS EXAMPLE-VALID-F4

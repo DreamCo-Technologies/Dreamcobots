@@ -2,6 +2,9 @@ name: Buddy Sandbox Bootcamp
 
 on:
   workflow_dispatch:
+  schedule:
+    # Weekday off-peak system timer: compile + sandbox smoke only.
+    - cron: "23 8 * * 1-5"
   push:
     paths:
       - 'buddy/sandbox/**'
@@ -40,6 +43,8 @@ jobs:
           print(result)
           PY
       - name: Validate curriculum JSON
+        # Scheduled timer runs the sandbox smoke only; curriculum validation stays on push/dispatch.
+        if: github.event_name != 'schedule'
         run: |
           python - <<'PY'
           import glob, json

@@ -1,0 +1,153 @@
+{
+  "schema": "dreamco.merchant_review_scorecard.v1 (reviewer summary; scores from tools/score_data_package_candidate.py)",
+  "reviewed": "PR #12441 head 687b3c1a2a4b23a5ae8fae13925bebf7eabaf197, 2026-10-02 CT",
+  "weights": {
+    "rights_clarity": 20,
+    "training_relevance": 15,
+    "data_quality": 15,
+    "provenance": 10,
+    "freshness": 10,
+    "coverage/diversity": 10,
+    "format/usability": 5,
+    "benchmark_value": 5,
+    "commercial_package_potential": 5,
+    "maintenance/updateability": 5
+  },
+  "authored_cs": {
+    "asset_id": "edu-cs-11.0701",
+    "scorer_output": {
+      "candidate_id": "edu-cs-11.0701",
+      "score": 72.4,
+      "status": "approved_for_private_use",
+      "missing_score_dimensions": [],
+      "hard_fail_reasons": [],
+      "truth_boundary": "This score is triage evidence only. Rights, privacy/security, provenance, and package verification still require review before publication or sale."
+    },
+    "v2_score": 66.0,
+    "dimensions": {
+      "rights_clarity": {
+        "v2": 85,
+        "v3": 88,
+        "delta": 3,
+        "weight": 20
+      },
+      "training_relevance": {
+        "v2": 60,
+        "v3": 70,
+        "delta": 10,
+        "weight": 15
+      },
+      "data_quality": {
+        "v2": 55,
+        "v3": 66,
+        "delta": 11,
+        "weight": 15
+      },
+      "provenance": {
+        "v2": 85,
+        "v3": 90,
+        "delta": 5,
+        "weight": 10
+      },
+      "freshness": {
+        "v2": 90,
+        "v3": 90,
+        "delta": 0,
+        "weight": 10
+      },
+      "coverage/diversity": {
+        "v2": 35,
+        "v3": 35,
+        "delta": 0,
+        "weight": 10
+      },
+      "format/usability": {
+        "v2": 70,
+        "v3": 75,
+        "delta": 5,
+        "weight": 5
+      },
+      "benchmark_value": {
+        "v2": 25,
+        "v3": 40,
+        "delta": 15,
+        "weight": 5
+      },
+      "commercial_package_potential": {
+        "v2": 40,
+        "v3": 55,
+        "delta": 15,
+        "weight": 5
+      },
+      "maintenance/updateability": {
+        "v2": 80,
+        "v3": 88,
+        "delta": 8,
+        "weight": 5
+      }
+    }
+  },
+  "generated_tier": {
+    "asset_id": "edu-careerpaths-generated-tier",
+    "scorer_output": {
+      "candidate_id": "edu-careerpaths-generated-tier",
+      "score": 59.25,
+      "status": "quality_review",
+      "missing_score_dimensions": [],
+      "hard_fail_reasons": [],
+      "truth_boundary": "This score is triage evidence only. Rights, privacy/security, provenance, and package verification still require review before publication or sale."
+    },
+    "dimensions": {
+      "rights_clarity": {
+        "v3": 75,
+        "weight": 20
+      },
+      "training_relevance": {
+        "v3": 30,
+        "weight": 15
+      },
+      "data_quality": {
+        "v3": 40,
+        "weight": 15
+      },
+      "provenance": {
+        "v3": 85,
+        "weight": 10
+      },
+      "freshness": {
+        "v3": 90,
+        "weight": 10
+      },
+      "coverage/diversity": {
+        "v3": 70,
+        "weight": 10
+      },
+      "format/usability": {
+        "v3": 70,
+        "weight": 5
+      },
+      "benchmark_value": {
+        "v3": 15,
+        "weight": 5
+      },
+      "commercial_package_potential": {
+        "v3": 15,
+        "weight": 5
+      },
+      "maintenance/updateability": {
+        "v3": 85,
+        "weight": 5
+      }
+    }
+  },
+  "gate": {
+    "authored_cs": "approved_for_private_use (rights ceiling approved_for_sale); failed: scorecard_threshold, owner_approval; warn: synthesis_asset_record (1 perspective)",
+    "generated_tier": "approved_for_private_use x1017 (rights ceiling approved_for_sale); failed: scorecard_threshold, synthesis_asset_record (no evidence ids), owner_approval"
+  },
+  "sale_blockers_authored_cs": [
+    "merchant triage score 72.4 < 75",
+    "dataset scorecard (config/dataset_evaluation_scorecard.json) never run; needs >=75 + release gates",
+    "owner_approval absent",
+    "gate does not resolve evidence ids yet"
+  ]
+}

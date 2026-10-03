@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.local/schemas/course_evidence_card.schema.json",
+  "title": "Course Mastery Evidence Card",
+  "type": "object",
+  "required": ["card_id","course_id","course_title","track","version","learner","floors","bench_results","provenance","floor_attained","status","certificate","regression_watch"],
+  "properties": {
+    "_example": {"type": "boolean"},
+    "card_id": {"type": "string"},
+    "course_id": {"type": "string"},
+    "course_title": {"type": "string"},
+    "track": {"enum": ["k12","stem","college","career","bootcamp"]},
+    "version": {"type": "string"},
+    "learner": {"type": "object", "required": ["id","type"], "properties": {"id": {"type": "string"}, "type": {"enum": ["buddy_adapter","human","model"]}}},
+    "floors": {
+      "type": "object",
+      "propertyNames": {"enum": ["F0","F1","F2","F3","F4"]},
+      "additionalProperties": {
+        "type": "object",
+        "required": ["name","required_benches","min_score","holdout_required"],
+        "properties": {
+          "name": {"type": "string"},
+          "required_benches": {"type": "array", "items": {"type": "string"}},
+          "min_score": {"type": "number", "minimum": 0, "maximum": 1},
+          "holdout_required": {"type": "boolean"},
+          "min_days_since_prior_floor": {"type": "integer", "minimum": 0},
+          "independent_evaluator_required": {"type": "boolean"}
+        }
+      }
+    },
+    "bench_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["bench_id","suite","holdout","leakage_check","score","max_score","run_id","run_timestamp","artifact_uri","artifact_sha256","evaluator"],
+        "properties": {
+          "bench_id": {"type": "string"},
+          "suite": {"type": "string"},
+          "holdout": {"type": "boolean"},
+          "leakage_check": {"type": "object", "required": ["passed","method"], "properties": {"passed": {"type": "boolean"}, "method": {"type": "string"}}},
+          "score": {"type": "number", "minimum": 0},
+          "max_score": {"type": "number", "exclusiveMinimum": 0},
+          "run_id": {"type": "string", "minLength": 1},
+          "run_timestamp": {"type": "string", "format": "date-time"},
+          "artifact_uri": {"type": "string", "minLength": 1},
+          "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "evaluator": {"type": "string"}
+        }
+      }
+    },
+    "provenance": {"type": "object", "required": ["sources"], "properties": {"sources": {"type": "array", "items": {"type": "object", "required": ["uri","license","consent"], "properties": {"uri": {"type": "string"}, "license": {"type": "string"}, "consent": {"type": "boolean"}}}}}},
+    "floor_attained": {"enum": ["F0","F1","F2","F3","F4",null]},
+    "status": {"enum": ["draft","in_progress","remediation","floor_met","certified","revoked"]},
+    "certificate": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "object", "required": ["cert_id","floor","issued_at","issued_by","evidence_bench_ids","evidence_hash"],
+         "properties": {"cert_id": {"type": "string"}, "floor": {"enum": ["F0","F1","F2","F3","F4"]}, "issued_at": {"type": "string", "format": "date-time"}, "issued_by": {"type": "string"}, "evidence_bench_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}, "evidence_hash": {"type": "string"}}}
+      ]
+    },
+    "regression_watch": {"type": "object", "required": ["last_retest_at","drift_flag"], "properties": {"last_retest_at": {"type": ["string","null"]}, "drift_flag": {"type": "boolean"}}}
+  }
+}

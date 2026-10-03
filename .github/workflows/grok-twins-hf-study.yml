@@ -10,6 +10,9 @@ on:
       - "tools/build_grok_bot_twins.py"
       - "config/huggingface-two-week-study.json"
       - "tests/test_build_grok_bot_twins.py"
+      - "tools/build_hf_capability_packs.py"
+      - "config/huggingface-capability-packs.json"
+      - "study_packs/hub/**"
       - ".github/workflows/grok-twins-hf-study.yml"
 
 permissions:
@@ -26,8 +29,37 @@ jobs:
           python-version: "3.13"
       - run: python3 tools/build_grok_bot_twins.py
       - run: python3 -m unittest tests.test_build_grok_bot_twins
+      - name: Build HF capability packs (metadata only)
+        shell: bash
+        run: |
+          if [ -f tools/build_hf_capability_packs.py ]; then
+            python3 tools/build_hf_capability_packs.py
+          else
+            echo "::notice::tools/build_hf_capability_packs.py not present; skipping HF pack build"
+          fi
+      - name: Run HF Hub drills (anonymous, metadata only, no training)
+        # Live anonymous Hub API calls; failures are recorded as evidence, not a red build.
+        continue-on-error: true
+        shell: bash
+        env:
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: |
+          unset HF_TOKEN HUGGING_FACE_HUB_TOKEN
+          ran=0
+          if [ -f study_packs/hub/day1_audit.py ]; then
+            python3 study_packs/hub/day1_audit.py
+            ran=1
+          fi
+          if [ -f study_packs/hub/drills/run_all.sh ]; then
+            python3 -m pip install --quiet --upgrade huggingface_hub
+            (cd study_packs/hub/drills && bash run_all.sh "$(command -v python3)")
+            ran=1
+          fi
+          if [ "$ran" -eq 0 ]; then
+            echo "::notice::no hub drill entrypoint (study_packs/hub/day1_audit.py or drills/run_all.sh) on this ref; skipping"
+          fi
       - if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: grok-twins-hf-study-${{ github.run_id }}
           path: |
@@ -35,4 +67,14 @@ jobs:
             reports/GROK_BOT_TWINS.md
             reports/HUGGINGFACE_TWO_WEEK_STUDY.md
             config/huggingface-two-week-study.json
+          if-no-files-found: warn
+      - name: Upload study pack evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: hf-study-pack-evidence-${{ github.run_id }}
+          path: |
+            study_packs/**/evidence
+            study_packs/index.json
+            reports/HUGGINGFACE_CAPABILITY_PACKS.md
           if-no-files-found: warn

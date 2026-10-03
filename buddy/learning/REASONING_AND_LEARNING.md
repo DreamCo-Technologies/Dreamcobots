@@ -20,6 +20,9 @@ python3 buddy/learning/reasoning_and_learning_registry.py select "debug failing 
 # Marketplace packs
 python3 buddy/learning/reasoning_and_learning_registry.py sell
 
+# LP-STRATEGIES versioned export (catalog_sku only; all gates stay false)
+python3 buddy/learning/reasoning_and_learning_registry.py lp-export
+
 # Unit tests
 python3 -m unittest buddy.learning.reasoning_and_learning_registry_test
 # or from this directory:
@@ -34,6 +37,8 @@ cd buddy/learning && python3 reasoning_and_learning_registry_test.py
 | `learning_strategies_catalog.json` | 20 strategies (spaced repetition, error analysis, continuous cycle, …) |
 
 ## Sell (honest)
+
+`lp-export` emits `LP-STRATEGIES-v{catalog.version}` with an ungraduated evidence stub. Bootcamp graduation, marketplace listing, and Path D allowlist are three separate gates; this command flips none of them.
 
 Marketplace packs are **catalog SKUs**, not automatic mastery:
 
