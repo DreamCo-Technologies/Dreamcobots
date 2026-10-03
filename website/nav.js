@@ -230,3 +230,26 @@ document.addEventListener('click', function(e) {
   script.dataset.repositoryActions = 'true';
   document.head.appendChild(script);
 })();
+
+(() => {
+  const bar = document.createElement("nav");
+  bar.setAttribute("aria-label", "Source buttons");
+  const links = [
+    ["actions.html", "Actions"],
+    ["buddy.html", "Buddy"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots", "GitHub repo"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/actions", "Workflow runs"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/DAILY_PRODUCTION_SCAN.md", "Production scan"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/settings/pages", "Pages setting"],
+    ["https://huggingface.co/models", "Hugging Face models"]
+  ];
+  links.forEach(([href, label]) => {
+    const link = document.createElement("a");
+    link.href = href;
+    link.textContent = label;
+    link.className = "btn btn-outline";
+    if (href.startsWith("http")) link.target = "_blank";
+    bar.appendChild(link);
+  });
+  document.body.prepend(bar);
+})();
