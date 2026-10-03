@@ -701,7 +701,8 @@ def test_holdout_kit_v3_is_blind_shape_normalized_and_ungraded():
     for s in ("Pass rule", "all 2s", "v1 kit", "KEY_COMMITMENT.txt", "False-alarm rate", "sheet_sha256", "at least 4",
               "Threat model", "baseline_score", "scored once", "Asset detection rate", "Asset false-alarm rate",
               "strictly above", "grading_commit", "committed and pushed", "passphrase is on the same shared box",
-              "move the passphrase off the box", "Item order", "single `rng.shuffle`"):
+              "move the passphrase off the box", "Item order", "single `rng.shuffle`", "git ls-remote", "remote_tip_sha",
+              "never falls back to local refs", "github.com/DreamCo-Technologies/Dreamcobots", "insteadOf"):
         assert s in readme, s
     # the number of weakened answers is secret: no README states it
     for doc in (readme, (ROOT / "README.md").read_text(), (ROOT / "docs/DATA_DICTIONARY.md").read_text()):
@@ -993,11 +994,21 @@ def _git(repo, *args):
     return r.stdout.strip()
 
 
-def _synthetic_kit(base, spec=SYNTH_SPEC):
-    """A small synthetic kit + ENCRYPTED made-up key + commitment in a temp git repo with a local bare remote (never the
-    real private key)."""
+CANON_URL = "https://github.com/DreamCo-Technologies/Dreamcobots.git"
+PACK_REL = "study_packs/career_pathways"
+# Runs score_holdout.main() with REMOTE_FETCH_URL pointed at a local bare repository (or a path that does not exist), so
+# no test ever contacts the network; everything else in score_holdout is unchanged.
+_RUNNER = ("import os, sys; sys.path.insert(0, os.environ['PYTEST_HOLDOUT_ROOT']); sys.argv[0] = 'score_holdout.py'; "
+           "import score_holdout; score_holdout.REMOTE_FETCH_URL = os.environ.get('PYTEST_HOLDOUT_REMOTE', "
+           "'/nonexistent/pytest-remote.git'); score_holdout.main()")
+
+
+def _synthetic_kit(base, spec=SYNTH_SPEC, kit_rel=PACK_REL + "/evidence/holdout_kit", remote_url=CANON_URL):
+    """A small synthetic kit + ENCRYPTED made-up key + commitment in a temp git repo laid out like the real one, whose
+    origin URL is the canonical GitHub URL (push URL disabled) while the 'real remote' is a local bare repository that
+    the test runner substitutes for it. Never the real private key, never the network."""
     import holdout_crypto
-    repo = base / "repo"; kit = repo / "kit"; kit.mkdir(parents=True)
+    repo = base / "repo"; kit = repo / kit_rel; kit.mkdir(parents=True)
     plans = {m["cip"]: m for m in json.loads((ROOT / "data/majors_selected.json").read_text())}
     items, key_items = [], {}
     for n, (cip, kind, wc) in enumerate(spec, 1):
@@ -1021,12 +1032,13 @@ def _synthetic_kit(base, spec=SYNTH_SPEC):
     remote = base / "remote.git"
     _git(base, "init", "-q", "--bare", str(remote))
     _git(base, "init", "-q", "-b", "main", str(repo))
-    _git(repo, "remote", "add", "origin", str(remote))
-    _git(repo, "add", "kit/items.json", "kit/KEY_COMMITMENT.txt")
+    _git(repo, "remote", "add", "origin", remote_url if remote_url is not None else str(remote))
+    _git(repo, "config", "remote.origin.pushurl", "/nonexistent/no-push-to-github-from-tests.git")
+    _git(repo, "add", f"{kit_rel}/items.json", f"{kit_rel}/KEY_COMMITMENT.txt")
     _git(repo, "commit", "-q", "-m", "synthetic kit")
-    _git(repo, "push", "-q", "-u", "origin", "main")
-    root = base / "pack"
-    (root / "data").mkdir(parents=True); (root / "study_plans").mkdir()
+    _git(repo, "push", "-q", str(remote), "main")
+    root = repo / PACK_REL
+    (root / "data").mkdir(parents=True, exist_ok=True); (root / "study_plans").mkdir()
     import shutil
     shutil.copy(ROOT / "data/majors_selected.json", root / "data")
     for cip in {c for c, _, _ in spec}:
@@ -1034,8 +1046,8 @@ def _synthetic_kit(base, spec=SYNTH_SPEC):
         (root / "study_plans" / src.stem).mkdir()
         shutil.copy(sidecar(src) / "asset.json", root / "study_plans" / src.stem)
         (root / "study_plans" / src.name).write_text("synthetic")
-    return {"kit": kit, "repo": repo, "key": keyp, "key_b": key_b, "pf": pf, "root": root, "items": items,
-            "key_items": key_items, "priv": priv, "base": base}
+    return {"kit": kit, "repo": repo, "remote": remote, "key": keyp, "key_b": key_b, "pf": pf, "root": root, "items": items,
+            "key_items": key_items, "priv": priv, "base": base, "kit_rel": kit_rel}
 
 
 def _write_sheet(path, items, scores, grader="pytest-synthetic"):
@@ -1052,8 +1064,9 @@ def _write_sheet(path, items, scores, grader="pytest-synthetic"):
 def _run_score(*args, s, extra_env=None):
     import subprocess
     env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_") and k != "DREAMCO_HOLDOUT_TEST_ONLY_SKIP_GIT"}
-    env.update(DREAMCO_HOLDOUT_PRIVATE_DIR=str(s["priv"]), DREAMCO_HOLDOUT_PASSPHRASE_FILE=str(s["pf"]), **(extra_env or {}))
-    return subprocess.run([sys.executable, str(ROOT / "score_holdout.py"), "--kit-dir", s["kit"], "--key", s["key"],
+    env.update(DREAMCO_HOLDOUT_PRIVATE_DIR=str(s["priv"]), DREAMCO_HOLDOUT_PASSPHRASE_FILE=str(s["pf"]),
+               PYTEST_HOLDOUT_ROOT=str(ROOT), PYTEST_HOLDOUT_REMOTE=str(s.get("remote_override", s["remote"])), **(extra_env or {}))
+    return subprocess.run([sys.executable, "-c", _RUNNER, "--kit-dir", s["kit"], "--key", s["key"],
                            "--root", s["root"], *map(str, args)], capture_output=True, text=True, env=env)
 
 
@@ -1064,10 +1077,10 @@ def _declare(s, grader="pytest-synthetic"):
 
 
 def _commit_grading(s, push=True, msg="grading final"):
-    _git(s["repo"], "add", "kit/grading_sheet.csv", "kit/GRADING_FINAL.txt")
+    _git(s["repo"], "add", f"{s['kit_rel']}/grading_sheet.csv", f"{s['kit_rel']}/GRADING_FINAL.txt")
     _git(s["repo"], "commit", "-q", "-m", msg)
     if push:
-        _git(s["repo"], "push", "-q", "origin", "main")
+        _git(s["repo"], "push", "-q", str(s["remote"]), "main")
     return _git(s["repo"], "rev-parse", "HEAD")
 
 
@@ -1144,13 +1157,13 @@ def test_finalize_requires_grading_files_committed_and_pushed(ktmp):
     assert r.returncode != 0 and "not committed" in r.stderr and "decrypt" not in r.stderr
     sha_commit = _commit_grading(s, push=False)
     r = _run_score("--finalize", "--run-id", "20261002-81", s=nokey)
-    assert r.returncode != 0 and "remote" in r.stderr  # committed but not pushed
-    _git(s["repo"], "push", "-q", "origin", "main")
+    assert r.returncode != 0 and "not contained in the real remote tip" in r.stderr  # committed but not pushed
+    _git(s["repo"], "push", "-q", str(s["remote"]), "main")
     with open(s["kit"] / "GRADING_FINAL.txt", "a") as fh:
         fh.write("# edited after the commit\n")
     r = _run_score("--finalize", "--run-id", "20261002-81", s=nokey)
     assert r.returncode != 0 and "uncommitted" in r.stderr
-    _git(s["repo"], "checkout", "--", "kit/GRADING_FINAL.txt")
+    _git(s["repo"], "checkout", "--", f"{s['kit_rel']}/GRADING_FINAL.txt")
     outside = ktmp / "outside_sheet.csv"; shutil.copy(s["kit"] / "grading_sheet.csv", outside)
     r = _run_score("--finalize", "--sheet", outside, "--run-id", "20261002-81", s=nokey)
     assert r.returncode != 0 and "git repository" in r.stderr  # a sheet outside the repo is refused
@@ -1161,9 +1174,12 @@ def test_finalize_requires_grading_files_committed_and_pushed(ktmp):
     assert len(recs) == 4
     for p in recs:
         rec = json.loads(p.read_text())
-        assert rec["grading_commit"] == sha_commit
+        assert rec["grading_commit"] == sha_commit and rec["remote_tip_sha"] == sha_commit
+        assert rec["remote_url"] == "https://github.com/DreamCo-Technologies/Dreamcobots" and rec["remote_branch"] == "main"
         res = json.loads(_resolve_results(s["root"], rec).read_text())
-        assert res["grading_git"]["grading_commit"] == sha_commit and res["grading_git"]["remote_branches"] == ["origin/main"]
+        for f in ("grading_commit", "remote_url", "remote_branch", "remote_tip_sha"):
+            assert res[f] == res["grading_git"][f] == rec[f]
+        assert "remote_branches" not in res["grading_git"]  # local refs/remotes are not evidence of a push
     assert f"grading_commit: {sha_commit}" in (s["kit"] / "FINALIZED.txt").read_text()
 
 
@@ -1177,8 +1193,132 @@ def test_test_only_git_bypass_never_produces_passing_evidence(ktmp):
     assert len(recs) == 4
     for rec in recs:
         assert rec["passed"] is False and rec["grading_commit"] is None and "TEST ONLY" in rec["limitations"]
+        assert rec["remote_url"] is None and rec["remote_tip_sha"] is None
         res = json.loads(_resolve_results(s["root"], rec).read_text())
         assert "TEST ONLY" in res["grading_git"]["skipped"]
+
+
+def _ready_to_finalize(s, push=True):
+    _write_sheet(s["kit"] / "grading_sheet.csv", s["items"], _perfect(s))
+    _declare(s)
+    return _commit_grading(s, push=push)
+
+
+def _no_evidence(s):
+    return not (s["root"] / "data/dreamco_knowledge/evidence/holdout").exists() and not (s["kit"] / "FINALIZED.txt").exists()
+
+
+def test_remote_url_normalization_accepts_only_the_canonical_repository():
+    import score_holdout
+    ok = ["https://github.com/DreamCo-Technologies/Dreamcobots.git", "https://github.com/dreamco-technologies/dreamcobots",
+          "HTTPS://GitHub.com/DREAMCO-TECHNOLOGIES/Dreamcobots/", "git@github.com:DreamCo-Technologies/Dreamcobots.git",
+          "git@github.com:dreamco-technologies/DREAMCOBOTS", "ssh://git@github.com/DreamCo-Technologies/Dreamcobots.git",
+          "ssh://git@github.com:22/DreamCo-Technologies/Dreamcobots", "https://user@github.com/DreamCo-Technologies/Dreamcobots.git"]
+    bad = ["/tmp/remote.git", "file:///tmp/remote.git", "../remote.git", "https://github.com/DreamCo-Technologies/Dreamcobots-fork",
+           "https://github.com/someone/Dreamcobots.git", "https://evil.example/DreamCo-Technologies/Dreamcobots.git",
+           "https://github.com.evil.example/DreamCo-Technologies/Dreamcobots", "http://github.com/DreamCo-Technologies/Dreamcobots",
+           "git://github.com/DreamCo-Technologies/Dreamcobots", "C:/DreamCo-Technologies/Dreamcobots", "", None]
+    assert all(score_holdout.normalize_remote(u) == score_holdout.CANONICAL_REPO for u in ok)
+    assert not any(score_holdout.normalize_remote(u) == score_holdout.CANONICAL_REPO for u in bad)
+    assert score_holdout.REMOTE_FETCH_URL == "https://github.com/DreamCo-Technologies/Dreamcobots.git"  # unpatched default
+
+
+def test_finalize_refuses_a_forged_remote_tracking_ref_without_a_real_push(ktmp):
+    s = _synthetic_kit(ktmp)
+    _ready_to_finalize(s, push=False)
+    _git(s["repo"], "update-ref", "refs/remotes/origin/main", "HEAD")  # forged 'pushed' state, no real push
+    _git(s["repo"], "update-ref", "refs/remotes/upstream/main", "HEAD")
+    r = _run_score("--finalize", "--run-id", "20261002-71", s=s)
+    assert r.returncode != 0 and "not contained in the real remote tip" in r.stderr, r.stderr
+    assert _no_evidence(s)
+
+
+def test_finalize_refuses_when_the_remote_is_unreachable_and_never_falls_back(ktmp):
+    s = _synthetic_kit(ktmp)
+    _ready_to_finalize(s)  # really pushed, and the local tracking ref says so too
+    _git(s["repo"], "update-ref", "refs/remotes/origin/main", "HEAD")
+    r = _run_score("--finalize", "--run-id", "20261002-72", s=dict(s, remote_override=ktmp / "unreachable.git"))
+    assert r.returncode != 0 and "cannot reach the remote" in r.stderr and "local refs are not trusted" in r.stderr
+    assert _no_evidence(s)
+
+
+def test_finalize_refuses_a_commit_that_is_not_on_the_real_remote_tip(ktmp):
+    s = _synthetic_kit(ktmp)
+    first = _git(s["repo"], "rev-parse", "HEAD")
+    grading = _ready_to_finalize(s, push=False)
+    _git(s["repo"], "push", "-q", str(s["remote"]), "HEAD:refs/heads/other")  # on the remote, but not on this branch
+    _git(s["repo"], "update-ref", "refs/remotes/origin/main", "HEAD")
+    r = _run_score("--finalize", "--run-id", "20261002-73", s=s)
+    assert r.returncode != 0 and "not contained in the real remote tip" in r.stderr
+    _git(s["repo"], "push", "-q", str(s["remote"]), "main")
+    _git(s["remote"], "update-ref", "refs/heads/main", first)  # the remote branch was rewound past the grading commit
+    r = _run_score("--finalize", "--run-id", "20261002-73", s=s)
+    assert r.returncode != 0 and "not contained in the real remote tip" in r.stderr and first[:12] in r.stderr
+    _git(s["remote"], "update-ref", "-d", "refs/heads/main")  # the branch is gone from the remote
+    r = _run_score("--finalize", "--run-id", "20261002-73", s=s)
+    assert r.returncode != 0 and "has no branch refs/heads/main" in r.stderr
+    assert _no_evidence(s) and grading
+
+
+def test_finalize_fetches_the_real_remote_tip_when_it_is_not_local(ktmp):
+    s = _synthetic_kit(ktmp)
+    grading = _ready_to_finalize(s)
+    other = ktmp / "other-clone"
+    _git(ktmp, "clone", "-q", "-b", "main", str(s["remote"]), str(other))
+    (other / "later.txt").write_text("a later commit by someone else\n")
+    _git(other, "add", "later.txt"); _git(other, "commit", "-q", "-m", "later"); _git(other, "push", "-q", "origin", "HEAD:main")
+    tip = _git(other, "rev-parse", "HEAD")
+    assert subprocess_ok(s["repo"], "cat-file", "-e", tip) is False  # not in the grading clone yet
+    r = _run_score("--finalize", "--run-id", "20261002-74", s=s)
+    assert r.returncode == 0, r.stderr
+    for p in (s["root"] / "data/dreamco_knowledge/evidence/holdout").glob("*/20261002-74.json"):
+        rec = json.loads(p.read_text())
+        assert rec["grading_commit"] == grading and rec["remote_tip_sha"] == tip
+        assert json.loads(_resolve_results(s["root"], rec).read_text())["grading_git"]["remote_tip_fetched"] is True
+
+
+def subprocess_ok(repo, *args):
+    import subprocess
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    return subprocess.run(["git", "-C", str(repo), *args], capture_output=True, env=env).returncode == 0
+
+
+def test_finalize_refuses_an_unrelated_repo_with_its_own_local_remote(ktmp):
+    s = _synthetic_kit(ktmp, remote_url=None)  # origin is the local bare repository, really pushed
+    _ready_to_finalize(s)
+    r = _run_score("--finalize", "--run-id", "20261002-75", s=s)
+    assert r.returncode != 0 and "not https://github.com/DreamCo-Technologies/Dreamcobots" in r.stderr
+    assert _no_evidence(s)
+    # pointing origin at the canonical URL but rewriting it to the local remote is refused too
+    _git(s["repo"], "remote", "set-url", "origin", CANON_URL)
+    _git(s["repo"], "config", f"url.{s['remote']}.insteadOf", CANON_URL)
+    r = _run_score("--finalize", "--run-id", "20261002-75", s=s)
+    assert r.returncode != 0 and "insteadOf" in r.stderr
+    _git(s["repo"], "config", "--unset", f"url.{s['remote']}.insteadOf")
+    _git(s["repo"], "remote", "set-url", "origin", "git@github.com:someone-else/Dreamcobots.git")
+    r = _run_score("--finalize", "--run-id", "20261002-75", s=s)
+    assert r.returncode != 0 and "not https://github.com/DreamCo-Technologies/Dreamcobots" in r.stderr
+    assert _no_evidence(s)
+
+
+def test_finalize_refuses_a_non_canonical_kit_path(ktmp):
+    s = _synthetic_kit(ktmp, kit_rel="copies/holdout_kit")
+    _ready_to_finalize(s)
+    r = _run_score("--finalize", "--run-id", "20261002-76", s=s)
+    assert r.returncode != 0 and "kit directory must be <repo root>/study_packs/career_pathways/evidence/holdout_kit" in r.stderr
+    assert not (s["root"] / "data/dreamco_knowledge/evidence/holdout").exists()
+
+
+def test_finalize_refuses_a_non_canonical_output_path(ktmp):
+    import shutil
+    s = _synthetic_kit(ktmp)
+    _ready_to_finalize(s)
+    for other in (ktmp / "elsewhere", s["repo"] / "other_pack"):  # outside the repo, and inside it but not the pack
+        shutil.copytree(s["root"] / "data", other / "data"); shutil.copytree(s["root"] / "study_plans", other / "study_plans")
+        r = _run_score("--finalize", "--run-id", "20261002-77", s=dict(s, root=other))
+        assert r.returncode != 0 and "output directory must be" in r.stderr
+        assert not (other / "data/dreamco_knowledge/evidence/holdout").exists()
+    assert _no_evidence(s)
 
 
 def test_finalize_verifies_the_encrypted_key_against_the_commitment(ktmp):

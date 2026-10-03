@@ -43,7 +43,7 @@ Do not run `score_holdout.py --finalize` yourself, and do not look at its output
 
 ## Scoring (builder, after GRADING_FINAL.txt is committed and pushed)
 
-Run this from a git clone of the repository (the sheet and `GRADING_FINAL.txt` must be inside its work tree):
+Run this from a git clone of github.com/DreamCo-Technologies/Dreamcobots (such as `/workspace/dc-ecp`), on the branch the grading commit was pushed to, with network access to GitHub:
 
 ```
 python score_holdout.py --finalize --run-id <YYYYMMDD>-<NN>
@@ -52,12 +52,16 @@ python build.py      # links passing records into asset.json validation_evidence
 
 `--finalize` takes these steps:
 1. It checks `GRADING_FINAL.txt`: the sheet's sha256 must equal `sheet_sha256`, and the sheet must name exactly one grader, the one declared.
-2. It checks git, before the key is touched: the sheet and `GRADING_FINAL.txt` must be inside the repository's work tree (a sheet outside the repo is refused), tracked, free of uncommitted changes, identical to their committed version at `HEAD`, and the last commit that touched them must be contained in a remote-tracking branch (pushed). That commit's SHA is recorded as `grading_commit`.
+2. It checks git, before the key is touched:
+   - The sheet and `GRADING_FINAL.txt` must be inside the repository's work tree (a sheet outside the repo is refused), tracked, free of uncommitted changes and identical to their committed version at `HEAD`. The last commit that touched them is `grading_commit`.
+   - Canonical repository and layout: the branch's remote URL must normalize to `github.com/DreamCo-Technologies/Dreamcobots` (https or ssh form, with or without `.git`, owner and repo in any case), no `url.*.insteadOf` rewriting may be configured, the kit directory must be exactly `<repo root>/study_packs/career_pathways/evidence/holdout_kit`, and the output directory must be `<repo root>/study_packs/career_pathways/data/dreamco_knowledge/evidence/holdout`. A copy of the kit in another repository, another folder or with another output location is refused.
+   - Pushed, checked against the real remote: `git ls-remote https://github.com/DreamCo-Technologies/Dreamcobots.git refs/heads/<branch>` gives the remote tip; if that commit is not in the clone it is fetched; `grading_commit` must equal it or be its ancestor. Local `refs/remotes/...` are never used, so a forged `git update-ref` does not count. If the remote cannot be reached, finalize refuses; it never falls back to local refs.
+   - `remote_url`, `remote_branch` and `remote_tip_sha` are recorded with `grading_commit` in every evidence record, every results file and `FINALIZED.txt`.
 3. It refuses if this key commitment was already scored (`FINALIZED.txt` here, or any holdout results file with the same `key_sha256`). A kit is scored once; a second `--finalize` under a new run id is refused.
 4. It decrypts the private key in memory, checks its sha256 against `KEY_COMMITMENT.txt`, and checks that `items.json` is unchanged.
-5. It writes one record per asset with kit items: `holdout:<asset_id>:<run>` under `data/dreamco_knowledge/evidence/holdout/<asset_id>/`, and then `FINALIZED.txt` here. Each record has source_type human_evaluation, transformation original_evaluation, split `holdout`, `grading_commit`, integrity_hash = sha256 of its results file, and `results_path` relative to the same repository root as `evidence_root` (`study_packs/career_pathways/data/dreamco_knowledge/evidence`).
+5. It writes one record per asset with kit items: `holdout:<asset_id>:<run>` under `data/dreamco_knowledge/evidence/holdout/<asset_id>/`, and then `FINALIZED.txt` here. Each record has source_type human_evaluation, transformation original_evaluation, split `holdout`, `grading_commit`, `remote_url`, `remote_branch`, `remote_tip_sha`, integrity_hash = sha256 of its results file, and `results_path` relative to the same repository root as `evidence_root` (`study_packs/career_pathways/data/dreamco_knowledge/evidence`).
 
-For the test suite only, `DREAMCO_HOLDOUT_TEST_ONLY_SKIP_GIT=1` skips the git checks. A run under it records `grading_commit: null`, says TEST ONLY in its limitations and can never produce a passing record.
+For the test suite only, `DREAMCO_HOLDOUT_TEST_ONLY_SKIP_GIT=1` skips the git, remote and canonical-path checks. A run under it records `grading_commit: null` (and null remote fields), says TEST ONLY in its limitations and can never produce a passing record. The other tests never contact the network: their runner points the remote at a local bare repository in a temporary folder.
 
 ## Pass rule
 
