@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Learning process | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">How it learns</p><h1>Learning process</h1><p>Read the file, compare a second view, record a score. A scan does not make a bot faster.</p></div></header>
+<section class="actions-review"><h2>Choose a category</h2><p id="categories"></p><label>Your own <input id="own-category" placeholder="Name a category"></label> <button class="btn btn-primary" id="save-own" type="button">Save my category</button><p id="learn-status">No category selected.</p></section>
+</main>
+<script>
+const categories = ["bot file","study pack","benchmark","ebook","lecture","movie","course","paper","manual","counterexample","second pass","user note"];
+const box = document.getElementById("categories");
+categories.forEach((name) => { const button = document.createElement("button"); button.className = "btn btn-outline"; button.type = "button"; button.textContent = name; button.addEventListener("click", () => { document.getElementById("learn-status").textContent = name + " selected. Learned 0 until a score is saved."; }); box.appendChild(button); });
+document.getElementById("save-own").addEventListener("click", () => { const name = document.getElementById("own-category").value.trim(); if (!name) return; localStorage.setItem("dreamco.own-category", name); document.getElementById("learn-status").textContent = "Saved " + name + " in this browser."; });
+</script>
+</body></html>
