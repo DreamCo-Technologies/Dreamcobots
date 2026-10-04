@@ -50,7 +50,7 @@ Test every declared capability for 3D Asset Manager in sandbox mode: 3D model ca
 implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry
 
 ## three.js hint
-Import the official build. Do not copy the library into this file.
+Training start: read https://threejs.org/docs/#api/en/scenes/Scene and https://threejs.org/docs/#api/en/objects/Mesh. Do not copy the examples.
 
 ```js
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js";

@@ -50,7 +50,7 @@ Test every declared capability for Disaster Recovery Simulator in sandbox mode: 
 implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry
 
 ## three.js hint
-Import the official build. Do not copy the library into this file.
+Training start: read https://threejs.org/docs/#api/en/audio/Audio. Do not copy the examples.
 
 ```js
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js";

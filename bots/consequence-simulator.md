@@ -50,7 +50,7 @@ Test every declared capability for Decision Consequence Simulator in sandbox mod
 implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry
 
 ## three.js hint
-Import the official build. Do not copy the library into this file.
+Training start: read https://threejs.org/docs/#api/en/cameras/PerspectiveCamera. Do not copy the examples.
 
 ```js
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js";

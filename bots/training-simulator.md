@@ -50,7 +50,7 @@ Test every declared capability for Combat Training Simulator in sandbox mode: Sc
 implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry
 
 ## three.js hint
-Import the official build. Do not copy the library into this file.
+Training start: read https://threejs.org/docs/#api/en/animation/AnimationMixer. Do not copy the examples.
 
 ```js
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js";
