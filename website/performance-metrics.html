@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Performance metrics | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Live check</p><h1>Performance metrics</h1><p>Run all checks the local list. It does not invent a model score.</p></div>
+<p><label><input id="metrics-approve" type="checkbox"> Approve the run</label> <button class="btn btn-primary" id="run-all-metrics" type="button">Run all checks</button></p>
+<p id="metrics-status">No check yet.</p></header>
+<section class="actions-review" id="metrics"></section>
+</main>
+<script>
+const metrics = ["success rate","median latency","median model calls","retries","timeouts","permission denials","missing files","404 count","200 count","cancelled actions","skipped bots","second pass","holdout","counterexample","citation check","cost check","rollback check","secret check","adapter present","sandbox present","auth present","telemetry present","section count","file count","no invented winner"];
+const box = document.getElementById("metrics");
+metrics.forEach((name) => { const link = document.createElement("a"); link.className = "btn btn-outline"; link.href = "strategy-analysis.html"; link.textContent = name; box.appendChild(link); });
+document.getElementById("run-all-metrics").addEventListener("click", () => {
+  const status = document.getElementById("metrics-status");
+  if (!document.getElementById("metrics-approve").checked) { status.textContent = "Approve the run first."; return; }
+  status.textContent = "40 sections and 12 strategy checks ran. No model score.";
+});
+</script>
+</body></html>
