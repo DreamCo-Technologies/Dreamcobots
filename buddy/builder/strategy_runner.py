@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-STRATEGIES = ["chain of thought", "ReAct", "Reflexion", "one daily job", "concurrency", "cache", "path filter"]
+STRATEGIES = ["chain of thought", "ReAct", "Reflexion", "one daily job", "concurrency", "cache", "path filter", "holdout", "counterexample", "second pass", "citation check", "permission check"]
 
 
 def run(name: str, approved: bool) -> dict:
