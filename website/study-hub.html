@@ -38,5 +38,21 @@ document.getElementById("compare-strategies").addEventListener("click", () => {
   names.sort((left, right) => saved[right] - saved[left]);
   document.getElementById("strategy-status").textContent = "Highest saved score: " + names[0] + " " + saved[names[0]] + ". This is not a model run.";
 });
+const strategies = ["chain of thought", "ReAct", "Reflexion", "tree of thoughts", "one daily job", "concurrency", "cache", "path filter"];
+function drawScores() {
+  const saved = JSON.parse(localStorage.getItem("dreamco.strategy-scores") || "{}");
+  const body = document.getElementById("strategy-table");
+  body.textContent = "";
+  strategies.forEach((name) => {
+    const row = document.createElement("tr");
+    row.innerHTML = "<td>" + name + "</td><td>" + (name in saved ? saved[name] : "not measured") + "</td>";
+    body.appendChild(row);
+  });
+}
+drawScores();
+document.getElementById("run-all-strategies").addEventListener("click", () => {
+  drawScores();
+  document.getElementById("strategy-status").textContent = "Compared the list. Unmeasured rows stay unmeasured.";
+});
 </script>
 </body></html>
