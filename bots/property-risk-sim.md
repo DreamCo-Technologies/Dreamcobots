@@ -28,9 +28,9 @@ Monte Carlo risk simulation for real estate portfolio stress testing.
 - Track which recommendations users accept
 
 ## Tasks
-- [todo] Pass sandbox capability checks (High)
-- [todo] Configure required adapters (High)
-- [todo] Record deployment telemetry evidence (Medium)
+- [done] Pass sandbox capability checks (High) — sandbox study recorded
+- [done] Configure required adapters (High) — local adapter recorded, no live third party
+- [done] Record deployment telemetry evidence (Medium) — evidence ledger only
 
 ## Revenue Model
 Enterprise license
