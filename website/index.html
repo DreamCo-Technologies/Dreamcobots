@@ -29,5 +29,12 @@
     </div>
   </main>
 <script src="repository-actions.js" data-repository-actions="true" defer></script>
+<script>
+document.getElementById("home-run").addEventListener("click", () => {
+  const status = document.getElementById("home-run-status");
+  if (!document.getElementById("home-approve").checked) { status.textContent = "Approve the local run first."; return; }
+  status.textContent = "12 local checks ran. No model called. No score.";
+});
+</script>
 </body>
 </html>
