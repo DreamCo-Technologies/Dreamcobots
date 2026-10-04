@@ -14,11 +14,22 @@
 <header class="actions-header"><div><p class="actions-kicker">Visual</p><h1>Bot stand-in</h1><p>This cube shows the selected bot name. It is not a simulation of the bot, and it is not one cube per bot.</p></div></header>
 <p><button class="btn btn-outline" type="button" data-bot="3d-asset-mgr">3d-asset-mgr</button> <button class="btn btn-outline" type="button" data-bot="lead-scraper">lead-scraper</button> <button class="btn btn-outline" type="button" data-bot="weather-app-bot">weather-app-bot</button> <button class="btn btn-primary" id="run-sim" type="button">Run simulation loop</button></p>
 <p><a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/docs/reality-simulation-engine.md">Reality simulation note</a> <a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/config/buddy-simulation-foundry.json">Simulation foundry</a> <a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/bots/3d-asset-mgr.md">3D asset bot</a></p>
-<div class="scene"><div class="cube"><div class="front" id="bot-face">bot</div><div class="back">file</div><div class="right">not a sim</div><div class="left">sandbox</div><div class="top">score?</div><div class="bottom">no</div></div></div>
+<p>This view uses three.js from the official build. MIT license. The library source is not copied into the repo. Score not measured.</p>
+<canvas id="bot-canvas" width="480" height="280"></canvas>
 </main>
 <p id="sim-status">Simulation loop not run.</p>
-<script>
-document.getElementById("run-sim") && document.getElementById("run-sim").addEventListener("click", () => { document.getElementById("sim-status").textContent = "Loop ran: observe, model, compare. Visual, physics, animation, audio, and mesh are not measured."; });
-document.querySelectorAll("[data-bot]").forEach((button) => button.addEventListener("click", () => { document.getElementById("bot-face").textContent = button.dataset.bot; }));
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js";
+const canvas = document.getElementById("bot-canvas");
+const renderer = new THREE.WebGLRenderer({ canvas });
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, 480 / 280, 0.1, 10);
+camera.position.z = 3;
+const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshNormalMaterial());
+scene.add(new THREE.AmbientLight(0xffffff));
+scene.add(mesh);
+function frame() { mesh.rotation.y += 0.01; renderer.render(scene, camera); requestAnimationFrame(frame); }
+frame();
+document.querySelectorAll("[data-bot]").forEach((button) => button.addEventListener("click", () => { mesh.name = button.dataset.bot; }));
 </script>
 </body></html>
