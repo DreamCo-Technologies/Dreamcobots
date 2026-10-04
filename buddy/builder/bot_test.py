@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def test_bots() -> dict:
     bots = sorted(path.stem for path in (ROOT / "bots").glob("*.md"))
-    return {"bots": len(bots), "files_missing": 0, "sandboxed": len(bots), "score": "not measured"}
+    return {"bots": len(bots), "files_missing": 0, "sandboxed": len(bots), "plan_task": "read, second view, record a score", "score": "not measured"}
 
 
 def main() -> int:
