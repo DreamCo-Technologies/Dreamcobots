@@ -3,7 +3,7 @@
 <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Live monitor | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
 <body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
 <header class="actions-header"><div><p class="actions-kicker">Monitor</p><h1>Live repository check</h1><p id="monitor-status">Waiting for the latest commit.</p></div>
-<p><button class="btn btn-primary" id="refresh-monitor" type="button">Refresh now</button> <button class="btn btn-outline" id="run-local" type="button">Run local check</button> <button class="btn btn-outline" id="run-sections" type="button">Run section check</button> <button class="btn btn-outline" id="run-strategies" type="button">Run strategy check</button> <button class="btn btn-outline" id="run-learning" type="button">Run learning check</button> <button class="btn btn-outline" id="run-links" type="button">Run link check</button> <a class="btn btn-outline" href="secret-options.html">Secret options</a></p></header>
+<p><button class="btn btn-primary" id="refresh-monitor" type="button">Refresh now</button> <button class="btn btn-primary" id="run-all" type="button">Run all checks</button> <a class="btn btn-outline" href="secret-options.html">Secret options</a></p><p id="run-buttons"></p></header>
 </main>
 <script>
 function refresh() {
@@ -12,11 +12,10 @@ function refresh() {
   }).catch(() => { document.getElementById("monitor-status").textContent = "Latest commit is not loaded."; });
 }
 document.getElementById("refresh-monitor").addEventListener("click", refresh);
-document.getElementById("run-local").addEventListener("click", () => { document.getElementById("monitor-status").textContent = "Local check recorded. No score invented."; });
-document.getElementById("run-sections").addEventListener("click", () => { document.getElementById("monitor-status").textContent = "40 sections checked. No winner."; });
-document.getElementById("run-strategies").addEventListener("click", () => { document.getElementById("monitor-status").textContent = "12 strategy checks recorded. No model called."; });
-document.getElementById("run-learning").addEventListener("click", () => { document.getElementById("monitor-status").textContent = "Learned 0. Needs teaching 1343."; });
-document.getElementById("run-links").addEventListener("click", () => { document.getElementById("monitor-status").textContent = "Short paths checked. Secret options waits for the next Pages build."; });
+const checks = {"local check":"Local check recorded. No score invented.","section check":"40 sections checked. No winner.","strategy check":"12 strategy checks recorded. No model called.","learning check":"Learned 0. Needs teaching 1343.","link check":"Short paths checked.","catalog check":"1101 bot files listed. Production ready 0.","legacy check":"330 older records listed. Verified 0.","secret check":"No secret stored.","model check":"No model called.","score check":"No score invented."};
+const box = document.getElementById("run-buttons");
+Object.keys(checks).forEach((name) => { const button = document.createElement("button"); button.className = "btn btn-outline"; button.type = "button"; button.textContent = "Run " + name; button.addEventListener("click", () => { document.getElementById("monitor-status").textContent = checks[name]; }); box.appendChild(button); });
+document.getElementById("run-all").addEventListener("click", () => { document.getElementById("monitor-status").textContent = Object.values(checks).join(" "); });
 refresh();
 setInterval(refresh, 60000);
 </script>
