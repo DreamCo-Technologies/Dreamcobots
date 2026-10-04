@@ -20,6 +20,7 @@
     { href: 'actions.html', label: '⚙️ Actions' },
     { href: 'self-training.html', label: '🧪 Self-training' },
     { href: 'model-hub.html', label: '📦 Model hub' },
+    { href: 'training-sources.html', label: '📚 Training sources' },
     { href: 'master-build.html', label: '🧭 Master Build' },
     { href: 'buddy-command-center.html', label: '🗂️ Command Center' },
     { href: 'world-lens.html', label: '🌍 World Lens GPS' },
@@ -255,4 +256,8 @@ document.addEventListener('click', function(e) {
     bar.appendChild(link);
   });
   document.body.prepend(bar);
+  const search = document.createElement("form");
+  search.action = "training-sources.html";
+  search.innerHTML = '<input name="q" aria-label="Search training sources" placeholder="Search models, movies, lectures, ebooks"><button class="btn btn-primary" type="submit">Search</button>';
+  document.body.prepend(search);
 })();
