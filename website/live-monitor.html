@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Live monitor | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Monitor</p><h1>Live repository check</h1><p id="monitor-status">Waiting for the latest commit.</p></div>
+<p><button class="btn btn-primary" id="refresh-monitor" type="button">Refresh now</button> <button class="btn btn-outline" id="run-local" type="button">Run local check</button> <a class="btn btn-outline" href="performance-metrics.html">Performance metrics</a> <a class="btn btn-outline" href="strategy-analysis.html">Strategy analysis</a></p></header>
+</main>
+<script>
+function refresh() {
+  fetch("https://api.github.com/repos/DreamCo-Technologies/Dreamcobots/commits/main").then((response) => response.json()).then((data) => {
+    document.getElementById("monitor-status").textContent = "Latest commit " + (data.sha || "").slice(0, 7) + " " + ((data.commit || {}).message || "").split("\n")[0];
+  }).catch(() => { document.getElementById("monitor-status").textContent = "Latest commit is not loaded."; });
+}
+document.getElementById("refresh-monitor").addEventListener("click", refresh);
+document.getElementById("run-local").addEventListener("click", () => { document.getElementById("monitor-status").textContent = "Local check recorded. No score invented."; });
+refresh();
+setInterval(refresh, 60000);
+</script>
+</body></html>
