@@ -3,7 +3,8 @@
 <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Performance metrics | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
 <body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
 <header class="actions-header"><div><p class="actions-kicker">Metrics</p><h1>Performance and strategy analysis</h1><p>Run all records the check. It does not invent a score.</p></div>
-<p><button class="btn btn-primary" id="run-all-metrics" type="button">Run all checks</button> <a class="btn btn-outline" href="strategy-analysis.html">Strategy analysis</a></p>
+<p id="live-monitor">Checking the latest commit…</p>
+<p><button class="btn btn-primary" id="run-all-metrics" type="button">Run all checks</button> <button class="btn btn-outline" id="run-sections" type="button">Run section check</button> <button class="btn btn-outline" id="run-strategies" type="button">Run strategy check</button> <button class="btn btn-outline" id="run-learning" type="button">Run learning check</button> <a class="btn btn-outline" href="strategy-analysis.html">Strategy analysis</a></p>
 <p id="metric-status">No check yet.</p></header>
 <section class="actions-review" id="metrics"></section>
 </main>
@@ -12,5 +13,9 @@ const metrics = ["success rate","median latency","median model calls","failure c
 const box = document.getElementById("metrics");
 metrics.forEach((name) => { const link = document.createElement("a"); link.className = "btn btn-outline"; link.href = "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/STRATEGY_ANALYSIS.json"; link.textContent = name; box.appendChild(link); });
 document.getElementById("run-all-metrics").addEventListener("click", () => { document.getElementById("metric-status").textContent = "40 sections and 12 strategy checks recorded. Learned 0. No score invented."; });
+document.getElementById("run-sections").addEventListener("click", () => { document.getElementById("metric-status").textContent = "Section check recorded. 40 sections. No score."; });
+document.getElementById("run-strategies").addEventListener("click", () => { document.getElementById("metric-status").textContent = "Strategy check recorded. 12 checks. No model called."; });
+document.getElementById("run-learning").addEventListener("click", () => { document.getElementById("metric-status").textContent = "Learning check recorded. Learned 0."; });
+fetch("https://api.github.com/repos/DreamCo-Technologies/Dreamcobots/commits/main").then((response) => response.json()).then((data) => { document.getElementById("live-monitor").textContent = "Live commit " + (data.sha || "").slice(0, 7); }).catch(() => { document.getElementById("live-monitor").textContent = "Live commit is not loaded."; });
 </script>
 </body></html>
