@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Teach and compare | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Plans</p><h1>Teach, test, and compare</h1><p>A button records the choice. It does not train a model or pick a winner.</p></div>
+<p><button class="btn btn-primary" id="run-plan" type="button">Run plan</button> <button class="btn btn-outline" id="test-plan" type="button">Test plan</button> <button class="btn btn-outline" id="train-note" type="button">Save training note</button> <button class="btn btn-outline" id="compare-methods" type="button">Compare methods</button> <a class="btn btn-outline" href="learning-metrics.html">Learning metrics</a></p>
+<p id="teach-status">No plan run.</p></header>
+<section class="actions-review" id="methods"></section>
+</main>
+<script>
+const methods = ["read the file","second view","counterexample","holdout","second pass","median latency","success rate","citation check","permission check","sandbox receipt"];
+const box = document.getElementById("methods");
+methods.forEach((name) => { const button = document.createElement("button"); button.className = "btn btn-outline"; button.type = "button"; button.textContent = name; button.addEventListener("click", () => { document.getElementById("teach-status").textContent = name + " selected. No score."; }); box.appendChild(button); });
+document.getElementById("run-plan").addEventListener("click", () => { document.getElementById("teach-status").textContent = "1341 plans listed. Learned 0."; });
+document.getElementById("test-plan").addEventListener("click", () => { document.getElementById("teach-status").textContent = "Test recorded. No model called."; });
+document.getElementById("train-note").addEventListener("click", () => { document.getElementById("teach-status").textContent = "Training note stays local. No weights downloaded."; });
+document.getElementById("compare-methods").addEventListener("click", () => { document.getElementById("teach-status").textContent = "Methods listed. No winner without a score."; });
+</script>
+</body></html>
