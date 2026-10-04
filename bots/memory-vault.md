@@ -28,9 +28,9 @@ User-controlled memory service for approved preferences, projects, decisions, an
 - Track which recommendations users accept
 
 ## Tasks
-- [done] Pass sandbox capability checks (High) — sandbox study recorded
-- [done] Configure required adapters (High) — local adapter recorded, no live third party
-- [done] Record deployment telemetry evidence (Medium) — evidence ledger only
+- [todo] Pass sandbox capability checks (High)
+- [todo] Configure required adapters (High)
+- [todo] Record deployment telemetry evidence (Medium)
 
 ## Revenue Model
 Included with all tiers

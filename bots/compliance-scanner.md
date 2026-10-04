@@ -28,9 +28,9 @@ Scans AI systems for regulatory compliance with EU AI Act, NIST, and SOC 2.
 - Track which recommendations users accept
 
 ## Tasks
-- [done] Pass sandbox capability checks (High) — sandbox study recorded
-- [done] Configure required adapters (High) — local adapter recorded, no live third party
-- [done] Record deployment telemetry evidence (Medium) — evidence ledger only
+- [todo] Pass sandbox capability checks (High)
+- [todo] Configure required adapters (High)
+- [todo] Record deployment telemetry evidence (Medium)
 
 ## Revenue Model
 SaaS subscription
