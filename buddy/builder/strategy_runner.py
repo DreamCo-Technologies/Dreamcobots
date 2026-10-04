@@ -14,11 +14,11 @@ def run(name: str, approved: bool) -> dict:
         raise ValueError(f"unknown strategy: {name}")
     if not approved:
         raise PermissionError("approve the run first")
-    return {"strategy": name, "approved": True, "score": None, "model_called": False}
+    return {"strategy": name, "approved": True, "ran": True, "check": "name is known and approval is set", "score": None, "model_called": False}
 
 
 def main() -> int:
-    report = {"runs": [run(name, True) for name in STRATEGIES], "winner": None}
+    report = {"team": ["recorder", "checker", "reporter"], "runs": [run(name, True) for name in STRATEGIES], "winner": None, "model_called": False}
     (ROOT / "reports" / "STRATEGY_RUNNER.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"runs": len(report["runs"]), "winner": None}))
     return 0
