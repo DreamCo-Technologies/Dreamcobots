@@ -18,6 +18,8 @@
     { href: 'buddy-expert-mode.html', label: '🎓 Expert Mode' },
     { href: 'buddy-invention-lab.html', label: '💡 Idea-to-Store' },
     { href: 'actions.html', label: '⚙️ Actions' },
+    { href: 'self-training.html', label: '🧪 Self-training' },
+    { href: 'model-hub.html', label: '📦 Model hub' },
     { href: 'master-build.html', label: '🧭 Master Build' },
     { href: 'buddy-command-center.html', label: '🗂️ Command Center' },
     { href: 'world-lens.html', label: '🌍 World Lens GPS' },
