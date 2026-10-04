@@ -1,6 +1,6 @@
 import unittest
 
-from buddy.builder.performance_bot import record, summarize
+from buddy.builder.performance_bot import CAPABILITIES, record, summarize
 
 
 class PerformanceBotTest(unittest.TestCase):
@@ -10,6 +10,7 @@ class PerformanceBotTest(unittest.TestCase):
         self.assertEqual(report["median_latency_ms"], 30)
         self.assertAlmostEqual(report["success_rate"], 2 / 3)
         self.assertFalse(report["production_ready"])
+        self.assertGreater(len(CAPABILITIES), 40)
 
 
 if __name__ == "__main__":
