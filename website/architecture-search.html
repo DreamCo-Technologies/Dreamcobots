@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Architecture search | Buddy</title><link rel="stylesheet" href="styles.css?v=41"><link rel="stylesheet" href="actions.css?v=4"></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Choice</p><h1>Architecture search</h1><p>Run is off until you press it. This is not a frontier model.</p></div></header>
+<section class="actions-review"><p><a class="btn btn-primary" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/ARCHITECTURE_SEARCH.json">Download the resource</a></p><p><button class="btn btn-outline" type="button" data-method="random search">Run random search</button> <button class="btn btn-outline" type="button" data-skip="random search">Skip random search</button></p>
+<p><button class="btn btn-outline" type="button" data-method="grid search">Run grid search</button> <button class="btn btn-outline" type="button" data-skip="grid search">Skip grid search</button></p>
+<p><button class="btn btn-outline" type="button" data-method="Bayesian optimization">Run Bayesian optimization</button> <button class="btn btn-outline" type="button" data-skip="Bayesian optimization">Skip Bayesian optimization</button></p>
+<p><button class="btn btn-outline" type="button" data-method="evolutionary search">Run evolutionary search</button> <button class="btn btn-outline" type="button" data-skip="evolutionary search">Skip evolutionary search</button></p>
+<p><button class="btn btn-outline" type="button" data-method="reinforcement search">Run reinforcement search</button> <button class="btn btn-outline" type="button" data-skip="reinforcement search">Skip reinforcement search</button></p>
+<p><button class="btn btn-outline" type="button" data-method="differentiable search">Run differentiable search</button> <button class="btn btn-outline" type="button" data-skip="differentiable search">Skip differentiable search</button></p>
+<p><button class="btn btn-outline" type="button" data-method="one-shot search">Run one-shot search</button> <button class="btn btn-outline" type="button" data-skip="one-shot search">Skip one-shot search</button></p>
+<p><button class="btn btn-outline" type="button" data-method="weight sharing">Run weight sharing</button> <button class="btn btn-outline" type="button" data-skip="weight sharing">Skip weight sharing</button></p>
+<p><button class="btn btn-outline" type="button" data-method="early stop">Run early stop</button> <button class="btn btn-outline" type="button" data-skip="early stop">Skip early stop</button></p>
+<p><button class="btn btn-outline" type="button" data-method="human review">Run human review</button> <button class="btn btn-outline" type="button" data-skip="human review">Skip human review</button></p><p id="search-status">No method selected.</p></section>
+</main>
+<script>
+document.querySelectorAll("[data-method]").forEach((button) => button.addEventListener("click", () => { localStorage.setItem("dreamco.architecture-search", button.dataset.method); document.getElementById("search-status").textContent = "Run selected for " + button.dataset.method + ". Not started."; }));
+document.querySelectorAll("[data-skip]").forEach((button) => button.addEventListener("click", () => { document.getElementById("search-status").textContent = "Skipped " + button.dataset.skip + "."; }));
+</script>
+</body></html>
