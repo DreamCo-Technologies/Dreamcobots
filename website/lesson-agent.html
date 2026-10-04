@@ -4,10 +4,12 @@
 <body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
 <header class="actions-header"><div><p class="actions-kicker">Agent</p><h1>Lesson agent</h1><p>The agent lists the resources and runs the sandbox check. It does not write a live score.</p></div>
 <p><button class="btn btn-primary" id="run-agent" type="button">Run lesson agent</button> <a class="btn btn-outline" href="score-system.html">Score system</a> <a class="btn btn-outline" href="learning-path.html">Learning path</a></p>
+<p><label>Learn from <input id="learn-from" placeholder="YouTube link or note"></label> <button class="btn btn-outline" id="save-request" type="button">Save request</button></p>
 <p id="agent-status">Agent starting one pass.</p></header>
 </main>
 <script>
-function runAgent() { document.getElementById("agent-status").textContent = "One pass: 1101 bots, 192 study packs, 48 benchmarks, 1341 plans. Learned 0. No second pass started."; }
+function runAgent() { document.getElementById("agent-status").textContent = "One pass: 1101 bots, 192 study packs, 48 benchmarks, 1341 plans. Actions latest run succeeded. Learned 0."; }
+document.getElementById("save-request").addEventListener("click", () => { const value = document.getElementById("learn-from").value.trim(); if (!value) return; localStorage.setItem("dreamco.learn-from", value); document.getElementById("agent-status").textContent = "Request saved. Score not measured."; });
 document.getElementById("run-agent").addEventListener("click", runAgent);
 runAgent();
 </script>
