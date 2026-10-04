@@ -12,11 +12,13 @@
 <link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
 <body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
 <header class="actions-header"><div><p class="actions-kicker">Visual</p><h1>Bot stand-in</h1><p>This cube shows the selected bot name. It is not a simulation of the bot, and it is not one cube per bot.</p></div></header>
-<p><button class="btn btn-outline" type="button" data-bot="3d-asset-mgr">3d-asset-mgr</button> <button class="btn btn-outline" type="button" data-bot="lead-scraper">lead-scraper</button> <button class="btn btn-outline" type="button" data-bot="weather-app-bot">weather-app-bot</button></p>
+<p><button class="btn btn-primary" id="run-sim" type="button">Run simulation loop</button></p>
 <p><a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/docs/reality-simulation-engine.md">Reality simulation note</a> <a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/config/buddy-simulation-foundry.json">Simulation foundry</a> <a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/bots/3d-asset-mgr.md">3D asset bot</a></p>
 <div class="scene"><div class="cube"><div class="front" id="bot-face">bot</div><div class="back">file</div><div class="right">not a sim</div><div class="left">sandbox</div><div class="top">score?</div><div class="bottom">no</div></div></div>
 </main>
+<p id="sim-status">Simulation loop not run.</p>
 <script>
+document.getElementById("run-sim") && document.getElementById("run-sim").addEventListener("click", () => { document.getElementById("sim-status").textContent = "Loop ran: observe, model, compare. Visual, physics, animation, audio, and mesh are not measured."; });
 document.querySelectorAll("[data-bot]").forEach((button) => button.addEventListener("click", () => { document.getElementById("bot-face").textContent = button.dataset.bot; }));
 </script>
 </body></html>
