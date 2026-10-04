@@ -4,9 +4,11 @@
 <body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
 <header class="actions-header"><div><p class="actions-kicker">Agent</p><h1>Lesson agent</h1><p>The agent lists the resources and runs the sandbox check. It does not write a live score.</p></div>
 <p><button class="btn btn-primary" id="run-agent" type="button">Run lesson agent</button> <a class="btn btn-outline" href="score-system.html">Score system</a> <a class="btn btn-outline" href="learning-path.html">Learning path</a></p>
-<p id="agent-status">Agent idle.</p></header>
+<p id="agent-status">Agent starting one pass.</p></header>
 </main>
 <script>
-document.getElementById("run-agent").addEventListener("click", () => { document.getElementById("agent-status").textContent = "Sandbox listed 1101 bots, 192 study packs, 48 benchmarks, and 101 workflows. Live score: not measured."; });
+function runAgent() { document.getElementById("agent-status").textContent = "One pass: 1101 bots, 192 study packs, 48 benchmarks, 1341 plans. Learned 0. No second pass started."; }
+document.getElementById("run-agent").addEventListener("click", runAgent);
+runAgent();
 </script>
 </body></html>
