@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Market data | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Markets</p><h1>Market data options</h1><p>Each button opens a public source. This page does not invent a price.</p></div></header>
+<section class="actions-review" id="markets"></section>
+</main>
+<script>
+const markets = [["SEC filings","https://www.sec.gov/edgar/search/"],["FRED","https://fred.stlouisfed.org/"],["BLS","https://www.bls.gov/"],["Treasury rates","https://home.treasury.gov/resource-center/data-chart-center/interest-rates"],["Census","https://data.census.gov/"],["BEA","https://www.bea.gov/data"],["World Bank","https://data.worldbank.org/"],["IMF","https://www.imf.org/en/Data"],["Yahoo Finance","https://finance.yahoo.com/"],["Nasdaq","https://www.nasdaq.com/market-activity"],["NYSE","https://www.nyse.com/markets"],["CBOE","https://www.cboe.com/"],["Coinbase prices","https://www.coinbase.com/price"],["GitHub Actions","https://github.com/DreamCo-Technologies/Dreamcobots/actions"],["Live monitor","live-monitor.html"]];
+const box = document.getElementById("markets");
+markets.forEach(([name, href]) => { const link = document.createElement("a"); link.className = "btn btn-outline"; link.href = href; link.textContent = name; box.appendChild(link); });
+</script>
+</body></html>
