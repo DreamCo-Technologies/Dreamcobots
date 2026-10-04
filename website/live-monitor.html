@@ -3,7 +3,7 @@
 <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Live monitor | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
 <body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
 <header class="actions-header"><div><p class="actions-kicker">Monitor</p><h1>Live repository check</h1><p id="monitor-status">Waiting for the latest commit.</p></div>
-<p><button class="btn btn-primary" id="refresh-monitor" type="button">Refresh now</button> <button class="btn btn-primary" id="run-all" type="button">Run all checks</button> <button class="btn btn-outline" id="run-monitor" type="button">Run live monitor</button> <a class="btn btn-outline" href="secret-options.html">Secret options</a></p><p id="run-buttons"></p></header>
+<p><button class="btn btn-primary" id="refresh-monitor" type="button">Refresh now</button> <button class="btn btn-primary" id="run-all" type="button">Run all checks</button> <button class="btn btn-outline" id="run-monitor" type="button">Run live monitor</button> <button class="btn btn-outline" id="run-market" type="button">Load FX reference</button> <a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/actions">Actions runs</a> <a class="btn btn-outline" href="secret-options.html">Secret options</a></p><p id="run-buttons"></p></header>
 </main>
 <script>
 function refresh() {
@@ -23,6 +23,11 @@ const box = document.getElementById("run-buttons");
 Object.keys(checks).forEach((name) => { const button = document.createElement("button"); button.className = "btn btn-outline"; button.type = "button"; button.textContent = "Run " + name; button.addEventListener("click", () => { document.getElementById("monitor-status").textContent = checks[name]; }); box.appendChild(button); });
 document.getElementById("run-all").addEventListener("click", () => { document.getElementById("monitor-status").textContent = Object.keys(checks).length + " checks. " + Object.values(checks).join(" "); });
 document.getElementById("run-monitor").addEventListener("click", refresh);
+document.getElementById("run-market").addEventListener("click", () => {
+  fetch("https://api.frankfurter.app/latest?from=USD&to=EUR").then((response) => response.json()).then((data) => {
+    document.getElementById("monitor-status").textContent = "ECB reference " + data.date + " USD to EUR " + data.rates.EUR + ". Not a trading price.";
+  }).catch(() => { document.getElementById("monitor-status").textContent = "FX reference is not loaded."; });
+});
 refresh();
 setInterval(refresh, 60000);
 </script>
