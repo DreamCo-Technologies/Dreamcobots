@@ -22,6 +22,7 @@ document.getElementById("save-score").addEventListener("click", () => {
   localStorage.setItem("dreamco.manual-scores", JSON.stringify(saved));
   document.getElementById("auto-eval").textContent = name + " saved as " + score + ". Bots stay not measured.";
 });
+document.getElementById("learn-note").addEventListener("change", () => {
   const note = document.getElementById("learn-note").value.trim();
   if (!note) return;
   localStorage.setItem("dreamco.learn-note", note);
