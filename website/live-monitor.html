@@ -28,11 +28,6 @@ const sources = [["GitHub commits","https://github.com/DreamCo-Technologies/Drea
 const sourcesBox = document.getElementById("source-buttons");
 sources.forEach(([name, href]) => { const link = document.createElement("a"); link.className = "btn btn-outline"; link.href = href; link.textContent = name; sourcesBox.appendChild(link); });
 refresh();
-  fetch("https://api.frankfurter.app/latest?from=USD&to=EUR").then((response) => response.json()).then((data) => {
-    document.getElementById("monitor-status").textContent = "ECB reference " + data.date + " USD to EUR " + data.rates.EUR + ". Not a trading price.";
-  }).catch(() => { document.getElementById("monitor-status").textContent = "FX reference is not loaded."; });
-});
-refresh();
 setInterval(refresh, 60000);
 </script>
 </body></html>
