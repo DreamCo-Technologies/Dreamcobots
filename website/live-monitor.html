@@ -24,7 +24,10 @@ const box = document.getElementById("run-buttons");
 Object.keys(checks).forEach((name) => { const button = document.createElement("button"); button.className = "btn btn-outline"; button.type = "button"; button.textContent = "Run " + name; button.addEventListener("click", () => { document.getElementById("monitor-status").textContent = checks[name]; }); box.appendChild(button); });
 document.getElementById("run-all").addEventListener("click", () => { document.getElementById("monitor-status").textContent = Object.keys(checks).length + " checks. " + Object.values(checks).join(" "); });
 document.getElementById("run-monitor").addEventListener("click", refresh);
-document.getElementById("run-market").addEventListener("click", () => {
+const sources = [["GitHub commits","https://github.com/DreamCo-Technologies/Dreamcobots/commits/main"],["Actions runs","https://github.com/DreamCo-Technologies/Dreamcobots/actions"],["FRED","https://fred.stlouisfed.org/"],["BLS","https://www.bls.gov/"],["SEC EDGAR","https://www.sec.gov/edgar"],["Census","https://data.census.gov/"],["Hugging Face","https://huggingface.co/models"],["arXiv","https://arxiv.org/"],["NIST","https://www.nist.gov/itl/ai-risk-management-framework"],["OWASP","https://genai.owasp.org/"]];
+const sourcesBox = document.getElementById("source-buttons");
+sources.forEach(([name, href]) => { const link = document.createElement("a"); link.className = "btn btn-outline"; link.href = href; link.textContent = name; sourcesBox.appendChild(link); });
+refresh();
   fetch("https://api.frankfurter.app/latest?from=USD&to=EUR").then((response) => response.json()).then((data) => {
     document.getElementById("monitor-status").textContent = "ECB reference " + data.date + " USD to EUR " + data.rates.EUR + ". Not a trading price.";
   }).catch(() => { document.getElementById("monitor-status").textContent = "FX reference is not loaded."; });
