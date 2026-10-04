@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Prompt chaining | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Techniques</p><h1>Prompt chaining</h1><p>Each button opens the note. This is not every method ever taught, and no score is invented.</p></div><p><a class="btn btn-primary" href="prompt-chaining.json" download>Download the list</a></p></header>
+<section class="actions-review" id="chains"></section>
+</main>
+<script>
+const chains = ["chain of thought","least to most","self-consistency","ReAct","Reflexion","tree of thoughts","graph of thoughts","plan and solve","step back","skeleton of thought","chain of verification","chain of density","program of thoughts","thread of thought","decomposed prompting","self-ask","map then reduce","draft then critique","critique then revise","role split","checklist","constraint pass","retrieve then answer","draft then cite","test then fix","second view","counterexample","stop and ask"];
+const box = document.getElementById("chains");
+chains.forEach((name) => { const link = document.createElement("a"); link.className = "btn btn-outline"; link.href = "self-training.html"; link.textContent = name; box.appendChild(link); });
+</script>
+</body></html>
