@@ -21,6 +21,7 @@
     { href: 'self-training.html', label: '🧪 Self-training' },
     { href: 'model-hub.html', label: '📦 Model hub' },
     { href: 'training-sources.html', label: '📚 Training sources' },
+    { href: 'study-hub.html', label: '🎓 Study hub' },
     { href: 'master-build.html', label: '🧭 Master Build' },
     { href: 'buddy-command-center.html', label: '🗂️ Command Center' },
     { href: 'world-lens.html', label: '🌍 World Lens GPS' },
