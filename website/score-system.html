@@ -9,9 +9,9 @@
 <section class="actions-review"><h2>Free help</h2><p>GitHub Pages and GitHub Actions are already connected and can host the pages and the daily scan for free. Vercel and Netlify can host a site. Canva, Wix, Buffer, Whop, and HeyGen do not train a bot. None of these writes a score.</p></section>
 </main>
 <script>
-const lessons = ["bot file","study pack","benchmark","goal list","workflow","Actions scan","open weight","open source","frontier list","course","ebook","lecture","second pass","holdout","success rate","median latency","permission","sandbox","age path","work task","home task"];
+const lessons = ["bot file","study pack","benchmark","goal list","workflow","Actions scan","open weight","open source","frontier list","course","ebook","lecture","movie","manual","paper","second pass","holdout","counterexample","success rate","median latency","failure count","permission","sandbox","age path","work task","home task","deep plan","task route","citation check","spaced repeat"];
 const box = document.getElementById("lessons");
-lessons.forEach((name) => { const button = document.createElement("button"); button.className = "btn btn-outline"; button.type = "button"; button.textContent = name; button.addEventListener("click", () => { document.getElementById("score-status").textContent = name + ": not measured."; }); box.appendChild(button); });
+lessons.forEach((name) => { const button = document.createElement("button"); button.className = "btn btn-outline"; button.type = "button"; button.textContent = name + " score: not measured"; button.addEventListener("click", () => { document.getElementById("score-status").textContent = name + " score: not measured."; }); box.appendChild(button); });
 document.getElementById("run-all-lessons").addEventListener("click", () => { document.getElementById("score-status").textContent = lessons.length + " lessons listed. 1101 bots, 192 study packs, 48 benchmarks, 101 workflows. Learned 0."; });
 </script>
 </body></html>
