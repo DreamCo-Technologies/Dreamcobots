@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Strategy analysis | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Team</p><h1>Strategy analysis</h1><p>The team is the recorder, the checker, and the reporter. A live run checks the list. It does not call a model.</p></div>
+<p><label><input id="analysis-approve" type="checkbox"> Approve the live check</label> <button class="btn btn-primary" id="analysis-run" type="button">Run live check</button></p>
+<p id="analysis-status">No check yet.</p></header>
+<section class="actions-review" id="ideas"></section>
+</main>
+<script>
+const ideas = ["name the section","count the files","link the folder","record a missing score","keep the run local","require approval","do not invent a winner","holdout","second pass","counterexample","citation check","permission check"];
+const box = document.getElementById("ideas");
+ideas.forEach((name) => { const link = document.createElement("a"); link.className = "btn btn-outline"; link.href = "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/STRATEGY_ANALYSIS.json"; link.textContent = name; box.appendChild(link); });
+document.getElementById("analysis-run").addEventListener("click", () => {
+  const status = document.getElementById("analysis-status");
+  if (!document.getElementById("analysis-approve").checked) { status.textContent = "Approve the live check first."; return; }
+  status.textContent = "Live check recorded. No model called. No winner.";
+});
+</script>
+</body></html>
