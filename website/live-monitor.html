@@ -7,9 +7,15 @@
 </main>
 <script>
 function refresh() {
-  fetch("https://api.github.com/repos/DreamCo-Technologies/Dreamcobots/commits/main").then((response) => response.json()).then((data) => {
-    document.getElementById("monitor-status").textContent = "Latest commit " + (data.sha || "").slice(0, 7) + " " + ((data.commit || {}).message || "").split("\n")[0];
-  }).catch(() => { document.getElementById("monitor-status").textContent = "Latest commit is not loaded."; });
+  const status = document.getElementById("monitor-status");
+  status.textContent = "Loading the public feeds…";
+  Promise.all([
+    fetch("https://api.github.com/repos/DreamCo-Technologies/Dreamcobots/commits/main").then((response) => response.json()),
+    fetch("https://api.github.com/repos/DreamCo-Technologies/Dreamcobots/actions/runs?per_page=1").then((response) => response.json())
+  ]).then(([commit, runs]) => {
+    const run = (runs.workflow_runs || [])[0] || {};
+    status.textContent = "Commit " + (commit.sha || "").slice(0, 7) + " " + ((commit.commit || {}).message || "").split("\n")[0] + " Latest run " + (run.name || "none") + " " + (run.conclusion || run.status || "unknown");
+  }).catch(() => { status.textContent = "Public feeds are not loaded."; });
 }
 document.getElementById("refresh-monitor").addEventListener("click", refresh);
 const checks = {"local check":"Local check recorded. No score invented.","section check":"40 sections checked. No winner.","strategy check":"12 strategy checks recorded. No model called.","learning check":"Learned 0. Needs teaching 1343.","link check":"Short paths checked.","catalog check":"1101 bot files listed. Production ready 0.","legacy check":"330 older records listed. Verified 0.","secret check":"No secret stored.","model check":"No model called.","score check":"No score invented.","study pack check":"192 study files.","benchmark check":"48 benchmark files.","goal check":"Goal list present. Not done.","gap check":"Runtime gap still open.","pages check":"Short paths return 200.","actions check":"Latest completed runs succeeded.","gps check":"GPS waits for device permission.","pin check":"Pin stays in this browser.","trait check":"Trait stays in this browser.","download check":"Download waits for approval.","self-training check":"Self-training waits for the switch.","framework check":"Framework links are study links.","security check":"Secret scanning link opens GitHub docs.","ci check":"100 workflow files. Run one job.","router check":"No measured route score.","adapter check":"Adapter missing.","telemetry check":"Telemetry missing.","auth check":"Auth missing.","sandbox check":"Sandbox receipt only.","host check":"Host secrets missing."};
