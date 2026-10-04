@@ -49,5 +49,13 @@ Test every declared capability for Disaster Recovery Simulator in sandbox mode: 
 ## Production gate
 implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry
 
+## three.js hint
+Import the official build. Do not copy the library into this file.
+
+```js
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js";
+const listener = new THREE.AudioListener();
+```
+
 ---
 *Generated/updated by tools/ensure_bots_production_ready.py — profile completeness only; runtime production requires evidence.*
