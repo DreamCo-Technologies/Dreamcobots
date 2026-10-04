@@ -4,7 +4,7 @@
 <body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
 <header class="actions-header"><div><p class="actions-kicker">Calculator</p><h1>Score calculator</h1><p>Enter a 0 to 100 result. Empty stays not measured. The weight is 3 for a required rule and 1 for a repo check. 1101 bots and 48 benchmarks have no saved result, so their score is not measured.</p></div>
 <p><a class="btn btn-outline" href="scoring-criteria.html">Criteria</a> <a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/scoring-criteria.md">scoring-criteria.md</a></p></header>
-<section class="actions-review"><label>Saved result <input id="saved" type="number" min="0" max="100"></label> <label>Second run <input id="second" type="number" min="0" max="100"></label> <button class="btn btn-primary" id="calc" type="button">Calculate</button><p id="calc-status">Not measured.</p></section>
+<section class="actions-review"><label>Saved result <input id="saved" type="number" min="0" max="100"></label> <label>Second run <input id="second" type="number" min="0" max="100"></label> <button class="btn btn-primary" id="calc" type="button">Calculate</button><p id="calc-status">Not measured.</p><label>Note for Buddy <input id="learn-note" placeholder="A link or a note"></label> <p id="note-status">No note saved.</p></section>
 </main>
 <script>
 document.getElementById("calc").addEventListener("click", () => {
@@ -12,6 +12,12 @@ document.getElementById("calc").addEventListener("click", () => {
   const second = document.getElementById("second").value;
   if (saved === "" || second === "") { document.getElementById("calc-status").textContent = "Not measured. Both runs are required."; return; }
   document.getElementById("calc-status").textContent = "Weighted score " + ((Number(saved) * 3 + Number(second) * 3) / 6).toFixed(1) + ". This is your entry, not a benchmark result.";
+});
+document.getElementById("learn-note").addEventListener("change", () => {
+  const note = document.getElementById("learn-note").value.trim();
+  if (!note) return;
+  localStorage.setItem("dreamco.learn-note", note);
+  document.getElementById("note-status").textContent = "Note saved in this browser. Score not measured.";
 });
 </script>
 </body></html>
