@@ -1132,12 +1132,62 @@ def linked_evidence(aid, integrity_hash):
 
 
 def find_gate_tool():
-    cands = [os.environ.get("DREAMCO_GATE_TOOL"), ROOT.parents[1] / "tools" / "license_provenance_gate.py",
+    env = os.environ.get("DREAMCO_GATE_TOOL")
+    if env in ("0", "off", "OFF", "false", "False"):
+        return None
+    cands = [env, ROOT.parents[1] / "tools" / "license_provenance_gate.py",
              "/workspace/dp-merchant/tools/license_provenance_gate.py"]
     for c in cands:
         if c and pathlib.Path(c).is_file():
             return pathlib.Path(c)
     return None
+
+
+def file_sha256(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def write_generated_manifest(sel, all_tasks, n_links):
+    """Commit-friendly record of what `python build.py` produces. Large JSON and generated plans are gitignored;
+    tests rebuild them and check these sha256s and counts."""
+    stems = sorted(p.stem for p in PLANS.glob("*.md"))
+    files = {f"data/{n}": file_sha256(DATA / n)
+             for n in ("majors_selected.json", "practice_tasks.json", "major_to_onet.csv", "coverage.csv")}
+    plans = {}
+    for stem in stems:
+        plans[f"study_plans/{stem}.md"] = file_sha256(PLANS / f"{stem}.md")
+        plans[f"study_plans/{stem}/plan.json"] = file_sha256(PLANS / stem / "plan.json")
+    out = {
+        "label": ("Deterministic outputs of python build.py (generated tier + aggregates). Large JSON and generated "
+                  "plans are not committed; rebuilt at build time."),
+        "created_at": BUILD_TIMESTAMP,
+        "onet_version": ONET_VERSION,
+        "build_command": "python fetch_sources.py && python build.py",
+        "counts": {
+            "authored_majors": sum(1 for m in sel if m["tier"] == "authored"),
+            "generated_majors": sum(1 for m in sel if m["tier"] == "generated"),
+            "majors": len(sel),
+            "practice_tasks": len(all_tasks),
+            "authored_tasks": sum(1 for t in all_tasks if t["tier"] == "authored"),
+            "generated_tasks": sum(1 for t in all_tasks if t["tier"] == "generated"),
+            "study_plan_stems": len(stems),
+            "links": n_links,
+        },
+        "files": files,
+        "study_plans": plans,
+        "gitignore": ["data/majors_selected.json", "data/practice_tasks.json",
+                      "generated study_plans/<cip>_<slug>/ (authored stems are force-tracked)"],
+        "licensing": ("Private use only until owner approval for sale. O*NET 31.0 by USDOL/ETA is CC BY 4.0; generated "
+                      "items quote O*NET task statements with attribution. Authored DreamCo text is "
+                      "synthetic_generated_by_dreamco."),
+    }
+    dest = ROOT / "evidence" / "GENERATED_MANIFEST.json"
+    dest.write_text(json.dumps(out, indent=2) + "\n")
+    return dest
 
 
 def main():
@@ -1278,7 +1328,8 @@ def main():
             gated += 1
     else:
         print("WARNING: tools/license_provenance_gate.py not found (set DREAMCO_GATE_TOOL); license_gate.json not regenerated")
-    print(f"tiers={ {t: sum(1 for m in sel if m['tier'] == t) for t in ('authored', 'generated')} } majors={len(sel)} links={len(rows)} practice_tasks={len(all_tasks)} gated={gated} gate_tool={gate}")
+    man = write_generated_manifest(sel, all_tasks, len(rows))
+    print(f"tiers={ {t: sum(1 for m in sel if m['tier'] == t) for t in ('authored', 'generated')} } majors={len(sel)} links={len(rows)} practice_tasks={len(all_tasks)} gated={gated} gate_tool={gate} manifest={man}")
 
 
 if __name__ == "__main__":

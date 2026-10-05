@@ -40,6 +40,25 @@ def sidecar(plan):
     return plan.with_suffix("")
 
 
+def test_generated_manifest_matches_built_outputs():
+    """After build.py, evidence/GENERATED_MANIFEST.json counts and sha256s match the (gitignored) outputs on disk.
+    The generated tier and the large JSON files are not committed; this is what keeps the check honest."""
+    man = json.loads((ROOT / "evidence" / "GENERATED_MANIFEST.json").read_text())
+    sel = json.loads((ROOT / "data" / "majors_selected.json").read_text())
+    pt = json.loads((ROOT / "data" / "practice_tasks.json").read_text())
+    c = man["counts"]
+    assert c["majors"] == len(sel) == len(PLANS) == 1044
+    assert c["authored_majors"] == 27 and c["generated_majors"] == 1017
+    assert c["practice_tasks"] == len(pt["tasks"]) == 6264
+    assert c["authored_tasks"] == 162 and c["generated_tasks"] == 6102
+    for rel, expect in man["files"].items():
+        assert sha(ROOT / rel) == expect, rel
+    # spot-check every stem's md and plan.json (full map is large; checking all is fine and catches drift)
+    for rel, expect in man["study_plans"].items():
+        assert sha(ROOT / rel) == expect, rel
+    assert "Private use" in man["licensing"] and "CC BY 4.0" in man["licensing"]
+
+
 def test_links_exist_in_official_sources():
     cw = build.load_crosswalk(); pairs = set(zip(cw.cip, cw.soc))
     occ = set(pd.read_csv(ROOT/"raw/occupation_data.csv", dtype=str)["O*NET-SOC Code"])
@@ -732,7 +751,8 @@ def _shared_runs(kg, texts):
 def test_holdout_kit_shares_no_5_word_run_with_published_content(onet_text_grams):
     """Kit prompts, answers and rubrics are new: no 5-word run appears in any published plan, practice_tasks.json,
     authored file, README or doc of the pack, or the O*NET text (task statements, Job Zone text, occupation
-    descriptions). Earlier kits in git history are checked by the next test."""
+    descriptions). Earlier kits in git history are checked by the next test. Generated plans and practice_tasks.json
+    are gitignored and rebuilt by build.py (see tests/conftest.py) so this check still covers all 1,044 plans."""
     kg = _kit_grams()
     assert not set(kg) & onet_text_grams
     files = PLANS + [ROOT / "data/practice_tasks.json", ROOT / "README.md", KIT / "README.md", ROOT / "raw/SOURCES.md"]
