@@ -1,0 +1,57 @@
+{
+  "schema": "dreamco.edu.scorecard_mapping.v0.1",
+  "status": "DRAFT. Proposed alignment between SET7 course packets and the edu-mastery-scorecards cert gate. Needs sign-off from Grok-Edu-Benchmark-Planner owner + Grok-Edu-Mastery-Scorecards.",
+  "their_repo": {"path": "(separate repo; set EDU_SCORECARDS_REPO)", "name": "edu-mastery-scorecards", "commit": "466e831dab89124c46453268902abe9e8088dac6", "owner": "Grok-Edu-Mastery-Scorecards", "modified_by_us": false},
+  "semantics_warning": "Their F0-F4 are per-(course, learner) evidence-card floors (EVIDENCE_CARD_SPEC.md:3,12-19). They are NOT the Buddy frontier F0-F4 tiers that frontier/F0.packet.json is waiting on. Same names, different things.",
+  "their_defaults": {
+    "_source": "edu-mastery-scorecards/docs/EVIDENCE_CARD_SPEC.md:12-19 (table, 'defaults; per-course cards may raise them'); same numbers in examples/make_examples.py:14-18. cert_gate.py itself hard-codes no min_score; it reads floors from the card (cert_gate.py:54,37).",
+    "F0": {"name": "Baseline diagnostic recorded", "min_score": 0.00, "holdout_required": false, "source": "docs/EVIDENCE_CARD_SPEC.md:15"},
+    "F1": {"name": "Practice benches passed", "min_score": 0.70, "holdout_required": false, "source": "docs/EVIDENCE_CARD_SPEC.md:16"},
+    "F2": {"name": "Held-out benches passed", "min_score": 0.80, "holdout_required": true, "source": "docs/EVIDENCE_CARD_SPEC.md:17"},
+    "F3": {"name": "Novel-transfer bench plus a retest after remediation", "min_score": 0.80, "holdout_required": true, "source": "docs/EVIDENCE_CARD_SPEC.md:18"},
+    "F4": {"name": "F3, plus a regression retest at least 30 days later by an evaluator independent of the cert issuer", "min_score": 0.80, "holdout_required": true, "min_days_since_prior_floor": 30, "independent_evaluator_required": true, "source": "docs/EVIDENCE_CARD_SPEC.md:19; examples/make_examples.py:18"}
+  },
+  "our_floors_source": "Packet `floors` object (binding copy). Defaults: SET7_COURSE_MASTERY_FLOORS_AND_HOLDOUT_POLICY.md:52-55,66,117 and skeleton/validate.py:17-20 (unit_practice_min 0.90, course_exit_mean_min 0.90, no_unit_below 0.80, holdout_min 0.90, transfer_tasks_min 1, min_comparable_runs 3, retention_retest_days 7, critical_regressions_max 0).",
+  "card_floor_rule": "strictest_wins: card min_score = max(their default, our packet floor); card min_days = max(their default, our retention_retest_days). Their spec allows cards to raise floors (EVIDENCE_CARD_SPEC.md:12). Nothing is ever lowered on either side. Null packet floors mean no card (bridge refuses).",
+  "floor_map": {
+    "F0": {"our_runs": ["baseline"], "our_floor": null, "card_min_score": "their F0 (0.00)", "note": "Our policy has no baseline floor; a baseline is not a mastery claim. Bridge never issues a certificate at any floor."},
+    "F1": {"our_runs": ["practice"], "our_floor": "unit_practice_min", "card_min_score": "max(0.70, unit_practice_min)"},
+    "F2": {"our_runs": ["holdout"], "our_floor": "holdout_min", "card_min_score": "max(0.80, holdout_min)", "reps": "min_comparable_runs slots; only the largest comparable group (same fixture_hash, grader_version, subject_version) is mapped; empty slots stay unfilled so their gate fails closed"},
+    "F3": {"our_runs": ["transfer", "remediation_retest"], "our_floor": "holdout_min (validate.py:154 already scores transfer against holdout_min)", "card_min_score": "max(0.80, holdout_min)", "slots": "transfer_tasks_min transfer slots + 1 remediation_retest slot"},
+    "F4": {"our_runs": ["retention"], "our_floor": "holdout_min applied fail-closed (SET7 defines NO retention score floor -> OWNER DECISION)", "card_min_score": "max(0.80, holdout_min)", "card_min_days": "max(30, retention_retest_days)", "independent_evaluator_required": true}
+  },
+  "not_expressible_in_their_gate": {
+    "no_unit_below": "Gate has one min_score per floor and no unit concept. Bridge checks it on our side (our_cap).",
+    "comparability": "Gate keys benches by bench_id (cert_gate.py:49), so duplicate ids collapse and the last one wins. It has no fixture/grader/subject keys. Bridge maps only one comparable group.",
+    "simulated_runs": "Gate has no simulated flag. Bridge drops simulated runs.",
+    "safety_regression_independence": "Gate has no such fields (beyond F4 evaluator independence). Bridge checks it on our side.",
+    "sealed_store_status": "Gate trusts bench.holdout=true + leakage_check.passed (cert_gate.py:39-43); it never checks a sealed store. Bridge caps at F1 unless holdout_bank.store_status=='active'.",
+    "dual_control_rotation_burn": "No equivalent in their schema/gate."
+  },
+  "field_map": {
+    "card_id": "BRIDGE-<course_id>-<version>-<learner.id>",
+    "course_id": "course_id", "course_title": "title", "version": "version", "_example": "is_example",
+    "track": {"bootcamp": "bootcamp", "school_college": "REQUIRES explicit card_track in bundle (k12|stem|college|career); bridge does not guess", "frontier_f_tier": "NO MAPPING (their track enum has no frontier; schema/course_evidence_card.schema.json:12) -> bridge refuses"},
+    "learner": "bundle.learner {id, type in buddy_adapter|human|model} (schema:14). Required; not derived.",
+    "bench_id": "run_id", "suite": "<course_id>@<version>:<bank>",
+    "holdout": "true for bank in holdout|transfer|remediation_retest|retention (non-practice gate banks); false for baseline|practice. Interpretation, flagged for owners.",
+    "leakage_check": "run.leakage_check; if absent -> {passed:false, method:'NOT RECORDED (bridge fail-closed)'}",
+    "score/max_score": "run.score / 1 (our scores are fractions 0..1)",
+    "run_timestamp": "run.ended_at", "artifact_uri": "run.artifact_uri else run.trace_ref else empty (gate fails)",
+    "artifact_sha256": "run.artifact_sha256 else empty (gate fails). fixture_hash is NEVER substituted.",
+    "evaluator": "run.evaluator else empty (F4 fails)",
+    "provenance.sources": "packet provenance.sources -> {uri: repo:path@commit, license: packet provenance.license (null -> empty -> gate FAIL), consent: bundle.consent (default false -> gate FAIL)}",
+    "status": {"unknown": "draft", "registered": "draft", "baselined": "in_progress", "testing": "in_progress", "retest": "in_progress", "repair": "remediation", "failed": "remediation", "blocked": "remediation", "passed": "floor_met if floor_attained else in_progress", "mastered_candidate": "floor_met if floor_attained else in_progress", "mastered": "floor_met if floor_attained else in_progress", "_never": "certified (certificate issuance belongs to the scorecards issuer; bridge always emits certificate=null)"},
+    "regression_watch": {"last_retest_at": "latest retention run started_at or null", "drift_flag": "any run with regression_passed=false"}
+  },
+  "conflicts_recorded_not_resolved": [
+    "F1 0.70 / F2-F4 0.80 (EVIDENCE_CARD_SPEC.md:16-19) are below SET7 0.90 (policy:52-54). Not adopted into any packet. The card uses strictest-wins.",
+    "Their gate does not stop a card from lowering min_score below the defaults. Verified: F2 min_score 0.1 with score 0.15 -> PASS (cert_gate.py:37 reads spec min_score straight from the card).",
+    "A certificate at F0 with a 0-score diagnostic -> PASS (F0 min 0.00, EVIDENCE_CARD_SPEC.md:15). Under SET7:80 that is a vanity cert.",
+    "One bench result per bench_id. Duplicate ids collapse, so a failing rep can be hidden (cert_gate.py:49). We require >=3 comparable reps (policy:55).",
+    "F4 retest >= 30d (spec:19) vs our retention_retest_days 7 (policy:66,117). Our 'mastered' does NOT imply their F4.",
+    "Leakage check is self-declared {passed, method} (cert_gate.py:42). We require a sealed private store, dual control, weekly rotation, burn-on-contamination (policy:91,99,104-106).",
+    "Track enums differ (ours bootcamp|school_college|frontier_f_tier; theirs k12|stem|college|career|bootcamp).",
+    "Provenance: their gate requires license + consent on every source (cert_gate.py:114-116). All three of our packets have provenance.license=null and no consent field, so every bridged card FAILs until owners fill these in."
+  ]
+}

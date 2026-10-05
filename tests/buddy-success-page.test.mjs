@@ -31,6 +31,13 @@ test('published resource inventory matches canonical evidence without promoting 
   assert.equal(program.truth_contract.connected_status_requires_credentials_and_health_evidence, true);
 });
 
+test('published Success Center bundle mirrors the complete canonical program', () => {
+  // The public bundle and config/generated/buddy_success_program.json are written by the same generator run;
+  // any section drifting between them means the site would show a program the repository does not evidence.
+  assert.deepEqual(JSON.parse(JSON.stringify(program)), canonical);
+  assert.equal(program.divisions.length, canonical.summary.divisions);
+});
+
 test('Success Center exposes profile, tracker, production, alliance, trust, model, and resource controls', () => {
   for (const id of [
     'success-profile-form', 'success-questionnaire', 'profile-share', 'growth-record-form', 'growth-title',

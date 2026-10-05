@@ -1,0 +1,144 @@
+{
+  "schema": "dreamco.data_package_license_gate.v1",
+  "gate_version": "0.1.0",
+  "asset_id": "edu-cs-11.0701",
+  "evaluated_at": "2026-10-03T00:00:00-05:00",
+  "inputs": {
+    "target": "data/dreamco_knowledge/assets/_candidates/edu_cs_11.0701/as_is/candidate.json",
+    "candidate_path": "data/dreamco_knowledge/assets/_candidates/edu_cs_11.0701/as_is/candidate.json",
+    "candidate_sha256": "0bab08dbff45217e6f8cd74fc0722ef453040299de00be938b6ec2646b5fec29"
+  },
+  "policy_refs": {
+    "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
+    "evidence_provenance": "config/evidence_provenance_schema.json",
+    "hard_failures": "config/data-discovery-bot-program.json#scoring.hard_failures",
+    "scorecard_tiers": "config/dataset_evaluation_scorecard.json#commercial_tiers",
+    "release_artifacts": "config/dataset_product_standard.json#required_release_artifacts",
+    "test_family": "config/data-package-maximal-testing-program.json#test_families.provenance_and_rights",
+    "asset_provenance_schema": "schemas/data_package_asset_provenance.schema.json",
+    "license_gate_schema": "schemas/data_package_license_gate.schema.json",
+    "synthesis_asset_schema": "schemas/data_package_synthesis_asset.schema.json",
+    "package_manifest_schema": "schemas/data_package.manifest.schema.json",
+    "plan": "reports/DATA_PACKAGE_PRODUCT_PLAN.md#5.2"
+  },
+  "outcome": "reference_only",
+  "rights_ceiling": "reference_only",
+  "checks": [
+    {
+      "id": "provenance_schema_conformance",
+      "status": "fail",
+      "scope": "rights",
+      "outcome_cap": "reference_only",
+      "reasons": [
+        "provenance.json missing (no provenance.json / provenance / provenance_path supplied); required by config/evidence_provenance_schema.json"
+      ]
+    },
+    {
+      "id": "sources_pinned",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "2 source(s) pinned with url + version + sha256"
+      ]
+    },
+    {
+      "id": "ownership_class_valid",
+      "status": "fail",
+      "scope": "rights",
+      "outcome_cap": "reference_only",
+      "reasons": [
+        "asset ownership_class missing (config/buddy-training-data-provenance-policy.json requires one)",
+        "onet_db_31_0: source ownership_class missing",
+        "onet_cip_soc_crosswalk: source ownership_class missing"
+      ]
+    },
+    {
+      "id": "commercial_and_redistribution_rights",
+      "status": "fail",
+      "scope": "rights",
+      "outcome_cap": "reference_only",
+      "reasons": [
+        "onet_db_31_0: redistribution_allowed is None (must be true for a sellable package; unknown is not allowed)",
+        "onet_db_31_0: commercial_use_allowed is None (must be true for sale)",
+        "onet_cip_soc_crosswalk: redistribution_allowed is None (must be true for a sellable package; unknown is not allowed)",
+        "onet_cip_soc_crosswalk: commercial_use_allowed is None (must be true for sale)"
+      ]
+    },
+    {
+      "id": "attribution_present",
+      "status": "warn",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "onet_db_31_0: attribution_text missing recommended trademark_notice (onet_database_cc_by_4)",
+        "onet_db_31_0: attribution_text missing recommended modifier_named (onet_database_cc_by_4)",
+        "onet_cip_soc_crosswalk: attribution_text missing recommended crosswalk_license_stated (onet_crosswalk_cc_by_4)"
+      ]
+    },
+    {
+      "id": "no_blocked_flags_or_categories",
+      "status": "pass",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "0 flag(s) checked against data-discovery hard_failures; none blocked"
+      ]
+    },
+    {
+      "id": "asset_file_integrity",
+      "status": "not_applicable",
+      "scope": "rights",
+      "outcome_cap": null,
+      "reasons": [
+        "no provenance asset_files to verify"
+      ]
+    },
+    {
+      "id": "scorecard_threshold",
+      "status": "fail",
+      "scope": "sale",
+      "outcome_cap": "approved_for_private_use",
+      "reasons": [
+        "no dataset scorecard score; sale requires >= 75 (standard tier)"
+      ]
+    },
+    {
+      "id": "synthesis_asset_record",
+      "status": "fail",
+      "scope": "sale",
+      "outcome_cap": "approved_for_private_use",
+      "reasons": [
+        "asset.json (plan 5.2 synthesis asset) missing (no asset.json / asset_path supplied); required for sale"
+      ]
+    },
+    {
+      "id": "owner_approval",
+      "status": "fail",
+      "scope": "sale",
+      "outcome_cap": "approved_for_private_use",
+      "reasons": [
+        "no explicit owner_approval record; truth boundary caps outcome at approved_for_private_use"
+      ]
+    }
+  ],
+  "failed_checks": [
+    "provenance_schema_conformance",
+    "ownership_class_valid",
+    "commercial_and_redistribution_rights",
+    "scorecard_threshold",
+    "synthesis_asset_record",
+    "owner_approval"
+  ],
+  "warnings": [
+    "onet_db_31_0: attribution_text missing recommended trademark_notice (onet_database_cc_by_4)",
+    "onet_db_31_0: attribution_text missing recommended modifier_named (onet_database_cc_by_4)",
+    "onet_cip_soc_crosswalk: attribution_text missing recommended crosswalk_license_stated (onet_crosswalk_cc_by_4)"
+  ],
+  "sale_requirements": {
+    "scorecard_minimum": 75,
+    "scorecard_score": null,
+    "owner_approval_present": false
+  },
+  "truth_boundary": "Gate output is rights/provenance evidence for one asset version. It is not a listing, a price, or a production-ready claim. approved_for_sale additionally requires a complete plan 5.2 synthesis asset record (asset.json), scorecard >= standard tier minimum, and an explicit owner_approval record; without owner approval the maximum outcome is approved_for_private_use."
+}

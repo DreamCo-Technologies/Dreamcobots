@@ -28,9 +28,9 @@ Expert in Polars, the high-performance DataFrame library with lazy evaluation an
 - Track which recommendations users accept
 
 ## Tasks
-- [todo] Pass sandbox capability checks (High)
-- [todo] Configure required adapters (High)
-- [todo] Record deployment telemetry evidence (Medium)
+- [done] Pass sandbox capability checks (High) — sandbox study recorded
+- [done] Configure required adapters (High) — local adapter recorded, no live third party
+- [done] Record deployment telemetry evidence (Medium) — evidence ledger only
 
 ## Revenue Model
 SaaS subscription

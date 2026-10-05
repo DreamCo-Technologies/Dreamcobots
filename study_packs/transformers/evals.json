@@ -1,0 +1,13 @@
+{
+  "schema": "dreamco.study_pack.evals.v1",
+  "pack_id": "pack.transformers-core",
+  "eval_suite": "study_packs/transformers/drills/run_drills.py",
+  "min_native_pass_rate": 1.0,
+  "drills": [
+    {"id": "tc.pipeline.pinned_textgen", "module": "pipeline", "checks": ["pipeline built with revision pin", "batch of 2 prompts returns 2 results", "return_full_text=False strips prompt"]},
+    {"id": "tc.auto.load_pinned", "module": "auto", "checks": ["AutoConfig model_type matches", "AutoTokenizer round-trips text", "AutoModelForCausalLM loads safetensors with trust_remote_code=False", "logits shape = (batch, seq, vocab)"]},
+    {"id": "tc.generate.controls", "module": "generate", "checks": ["greedy is deterministic across two runs", "max_new_tokens is respected", "seeded sampling is reproducible", "GenerationConfig object is honored", "TextIteratorStreamer yields the same text as the non-streamed call"]},
+    {"id": "tc.chat_template.render", "module": "chat_template", "checks": ["tokenizer has chat_template", "add_generation_prompt appends the assistant header", "tokenize=True ids equal encode of rendered string", "return_dict gives input_ids+attention_mask", "continue_final_message leaves final turn open", "generate from template produces a non-empty reply"]}
+  ],
+  "graduation": "all drills pass on the pinned revision, with a run log in evidence/"
+}

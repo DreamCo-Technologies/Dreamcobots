@@ -1,13 +1,27 @@
 // DreamCo Empire OS — Shared Navigation
 (function() {
   const current = location.pathname.split('/').pop() || 'index.html';
+  // Absolute links: resolve every page against this script's own folder (/Dreamcobots/website/),
+  // so the nav works from the site root, from /website/*, and after a Pages-source switch.
+  const NAV_BASE = new URL('.', (document.currentScript && document.currentScript.src) || location.href).href;
+  const abs = (h) => /^(#|[a-z]+:|\/)/i.test(h) ? h : new URL(h, NAV_BASE).href;
   const links = [
     { href: 'repository-guide.html', label: '📚 Start Here' },
-    { href: 'dashboard.html', label: '📊 Dashboard' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
+    { href: 'own-bootcamp.html', label: '🥾 Bootcamp' },
+    { href: 'models.html', label: '🤖 Model Picker' },
+    { href: 'hf-bootcamp.html', label: '📦 Packages' },
+    { href: 'bots.html', label: '🛰️ Fleet' },
+    { href: 'autonomy.html', label: '🚦 Gates' },
+    { href: 'learn-hf.html', label: '🤗 HF Lab' },
+    { href: 'dashboard.html', label: '📊 Dashboard' },
     { href: 'buddy-expert-mode.html', label: '🎓 Expert Mode' },
     { href: 'buddy-invention-lab.html', label: '💡 Idea-to-Store' },
     { href: 'actions.html', label: '⚙️ Actions' },
+    { href: 'self-training.html', label: '🧪 Self-training' },
+    { href: 'model-hub.html', label: '📦 Model hub' },
+    { href: 'training-sources.html', label: '📚 Training sources' },
+    { href: 'study-hub.html', label: '🎓 Study hub' },
     { href: 'master-build.html', label: '🧭 Master Build' },
     { href: 'buddy-command-center.html', label: '🗂️ Command Center' },
     { href: 'world-lens.html', label: '🌍 World Lens GPS' },
@@ -33,7 +47,6 @@
     { href: 'platform.html', label: '🧩 Platform Registry' },
     { href: 'calculator.html', label: '🧮 Calculator Lab' },
     { href: 'divisions.html', label: '🏛️ Divisions' },
-    { href: 'bots.html', label: '🤖 Bot Fleet' },
     { href: 'original-bots.html', label: 'Original bots' },
     { href: 'test-center.html', label: '🧪 Test Center' },
     { href: 'security.html', label: '🛡️ Defense Center' },
@@ -48,7 +61,6 @@
     { href: 'chat.html', label: '💬 Chat' },
     { href: 'install.html', label: '📲 Install & Launch' },
     { href: 'leads.html', label: '🎯 Lead Systems' },
-    { href: 'autonomy.html', label: '⚡ Autonomy' },
     { href: 'ecosystem.html', label: '🌐 Ecosystem' },
     { href: 'orchestration.html', label: '🎛️ Orchestration' },
     { href: 'marketplace.html', label: '🛍️ Marketplace' },
@@ -69,6 +81,10 @@
     { href: 'your-model.html', label: 'Their own model' },
     { href: 'buddy-desk.html', label: 'Buddy desk' },
     { href: 'frontier-path.html', label: 'Frontier path' },
+    { href: 'buddy-model-lab.html', label: '🧪 Local Model Lab' },
+    { href: 'truth-board.html', label: '✅ Truth Board' },
+    { href: 'benchmark-scanner.html', label: '📏 Benchmark Scanner' },
+    { href: 'benchmark-candidate-finder.html', label: '🔍 Benchmark Candidates' },
     { href: 'learning-methods.html', label: 'Learning methods' },
     { href: 'world-map.html', label: '3D world map' },
     { href: 'game-builder.html', label: 'Game builder' },
@@ -99,10 +115,7 @@
     { href: 'this-chat.html', label: 'This chat' },
     { href: 'app-shop.html', label: 'App shop' },
     { href: 'school.html', label: 'Buddy school' },
-    { href: 'own-bootcamp.html', label: 'Our bootcamp' },
-    { href: 'hf-bootcamp.html', label: 'HF packages' },
     { href: 'hub.html', label: 'Hub OS' },
-    { href: 'learn-hf.html', label: 'HF week' },
     { href: 'learn.html', label: 'Learn methods' },
     { href: 'goals.html', label: 'Complete a goal' },
     { href: 'desks.html', label: 'All plan desks' },
@@ -117,7 +130,6 @@
     { href: 'data-control.html', label: '🔒 Data & Memory' },
     { href: 'government.html', label: '🏛️ Government Resources' },
     { href: 'crypto.html', label: '🔐 Crypto Safety Lab' },
-    { href: 'models.html', label: '🤖 AI Models' },
     { href: 'benchmark-tracker.html', label: '📐 Benchmark Tracker' },
     { href: 'open-model-lab.html', label: '🧪 Open Model Lab' },
     { href: 'buddy-open-core.html', label: '🇺🇸 Buddy Open Core' },
@@ -128,27 +140,28 @@
     { href: 'costs.html', label: '💲 Cost Tracking' },
     { href: 'revenue.html', label: '💰 Revenue' },
     { href: 'settings.html', label: '⚙️ Settings' },
+    { href: 'fleet-status.html', label: '🛰️ Fleet Status' },
   ];
   const navHTML = `
 <nav>
   <div class="container">
     <div class="nav-inner">
-      <a href="buddy.html" class="nav-brand">
+      <a href="${abs('buddy.html')}" class="nav-brand">
         <div class="nav-logo">⚡</div>
         <span>DreamCo <strong>Empire OS</strong></span>
       </a>
       <div class="nav-links" id="nav-links-desktop">
-        ${links.slice(0,9).map(l=>`<a href="${l.href}" class="${current===l.href?'nav-active':''}">${l.label}</a>`).join('')}
+        ${links.slice(0,9).map(l=>`<a href="${abs(l.href)}" class="${current===l.href?'nav-active':''}">${l.label}</a>`).join('')}
         <div class="nav-more">
           <a href="#" class="nav-more-btn" onclick="toggleMoreMenu(event)">More ▾</a>
           <div class="nav-more-menu" id="nav-more-menu">
-            ${links.slice(9).map(l=>`<a href="${l.href}" class="${current===l.href?'nav-active':''}">${l.label}</a>`).join('')}
+            ${links.slice(9).map(l=>`<a href="${abs(l.href)}" class="${current===l.href?'nav-active':''}">${l.label}</a>`).join('')}
           </div>
         </div>
       </div>
       <div class="nav-cta">
-        <a href="install.html" class="btn btn-outline btn-sm">Install</a>
-        <a href="buddy.html" class="btn btn-primary btn-sm">Open Buddy</a>
+        <a href="${abs('install.html')}" class="btn btn-outline btn-sm">Install</a>
+        <a href="${abs('buddy.html')}" class="btn btn-primary btn-sm">Open Buddy</a>
       </div>
     </div>
   </div>
@@ -157,24 +170,24 @@
   <div class="container">
     <strong>Repository preview</strong>
     <span>Generated inventory is real repository data. Revenue, payment, task, and autonomy screens are demos unless connected to an approved backend.</span>
-    <a href="system-map.html">View verified status</a>
+    <a href="${abs('system-map.html')}">View verified status</a>
   </div>
 </div>`;
   const placeholder = document.getElementById('nav-placeholder');
   if (placeholder) placeholder.outerHTML = navHTML;
 
   if (!document.querySelector('link[rel="icon"]')) {
-    const icon = document.createElement('link'); icon.rel = 'icon'; icon.href = 'assets/images/favicon.svg'; icon.type = 'image/svg+xml'; document.head.appendChild(icon);
+    const icon = document.createElement('link'); icon.rel = 'icon'; icon.href = abs('assets/images/favicon.svg'); icon.type = 'image/svg+xml'; document.head.appendChild(icon);
   }
   if (!document.querySelector('link[rel="manifest"]')) {
-    const manifest = document.createElement('link'); manifest.rel = 'manifest'; manifest.href = 'manifest.webmanifest'; document.head.appendChild(manifest);
+    const manifest = document.createElement('link'); manifest.rel = 'manifest'; manifest.href = abs('manifest.webmanifest'); document.head.appendChild(manifest);
   }
   if (!document.querySelector('link[rel="apple-touch-icon"]')) {
-    const touchIcon = document.createElement('link'); touchIcon.rel = 'apple-touch-icon'; touchIcon.href = 'assets/images/buddy-icon-192.png'; document.head.appendChild(touchIcon);
+    const touchIcon = document.createElement('link'); touchIcon.rel = 'apple-touch-icon'; touchIcon.href = abs('assets/images/buddy-icon-192.png'); document.head.appendChild(touchIcon);
   }
 
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    window.addEventListener('load', () => { navigator.serviceWorker.register('service-worker.js', { scope: './' }).catch(() => {}); });
+    window.addEventListener('load', () => { navigator.serviceWorker.register(abs('service-worker.js'), { scope: NAV_BASE }).catch(() => {}); });
   }
 
   const style = document.createElement('style');
@@ -220,4 +233,32 @@ document.addEventListener('click', function(e) {
   script.src = new URL('repository-actions.js', document.currentScript.src).href;
   script.dataset.repositoryActions = 'true';
   document.head.appendChild(script);
+})();
+
+(() => {
+  const bar = document.createElement("nav");
+  bar.setAttribute("aria-label", "Personal and business tasks");
+  const links = [
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/settings/secrets/actions", "Add host secrets"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/.env.example", "Secret names"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/DAILY_PRODUCTION_SCAN.md", "Production scan"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/settings/pages", "Pages source"],
+    ["https://dashboard.stripe.com/apikeys", "Stripe keys"],
+    ["actions.html", "Task buttons"],
+    ["chat-buttons.html", "This chat"],
+    ["buddy.html", "Ask Buddy"]
+  ];
+  links.forEach(([href, label]) => {
+    const link = document.createElement("a");
+    link.href = href;
+    link.textContent = label;
+    link.className = "btn btn-outline";
+    if (href.startsWith("http")) link.target = "_blank";
+    bar.appendChild(link);
+  });
+  document.body.prepend(bar);
+  const search = document.createElement("form");
+  search.action = "training-sources.html";
+  search.innerHTML = '<input name="q" aria-label="Search training sources" placeholder="Search models, movies, lectures, ebooks"><button class="btn btn-primary" type="submit">Search</button>';
+  document.body.prepend(search);
 })();

@@ -13,6 +13,11 @@ DreamCo is a governed AI workbench with 1,051 specialist profiles across 45 divi
 Original Buddy chrome plus the desks from the latest Grok chat. Static HTML. No API keys. Hugging Face public cards work. Grok teacher stays on the hosted app.
 
 - [Original Buddy chat](website/buddy.html)
+- [Buddy Bootcamp](website/own-bootcamp.html) — our curriculum; [HF packages](website/hf-bootcamp.html), [step wrappers](website/bootcamp-wrappers.html)
+- [Model picker](website/models.html) — plus [Open Model Lab](website/open-model-lab.html)
+- [Packages](website/hf-bootcamp.html) — plus [Marketplace](website/marketplace.html)
+- [Bot fleet](website/bots.html) — plus [Divisions](website/divisions.html)
+- [Gates](website/autonomy.html) — plus [Test Center](website/test-center.html)
 - [This chat → Pages](website/chat-sync.html)
 - [Hub OS](website/hub.html) — study datasets, license first
 - [7-day Hugging Face week](website/learn-hf.html)

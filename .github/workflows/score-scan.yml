@@ -1,0 +1,25 @@
+name: Score scan
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "20 15 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Record the same score scan
+        run: |
+          python3 buddy/builder/daily_learning.py
+          python3 buddy/builder/teaching_plans.py
+          python3 - << 'PY'
+          import json
+          from pathlib import Path
+          Path("reports/SCORE_SCAN.json").write_text(json.dumps({"learned": 0, "score": "not measured", "actions": "same rule"}, indent=2) + "\n")
+          print("score not measured")
+          PY

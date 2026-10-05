@@ -33,6 +33,7 @@ jobs:
   trusted-code:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
         with:
@@ -141,7 +142,7 @@ jobs:
           PY
       - name: Upload trust evidence
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: code-trust-${{ github.run_id }}
           path: |

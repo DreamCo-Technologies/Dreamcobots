@@ -65,7 +65,7 @@ jobs:
         run: npx tsx tools/run_universal_verification.ts
       - name: Save debugging evidence
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: repository-test-${{ github.run_id }}
           path: |

@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Record benchmark work item
         env:
           DIVISION: ${{ matrix.division }}
@@ -39,7 +39,7 @@ jobs:
           cat > "benchmark-results/division-${DIVISION}.json" <<EOF
           {"division":${DIVISION},"status":"scheduled","next":"connect-to-real-benchmark-runner","policy":"continuous-gap-closure","evidence":"not-yet-measured"}
           EOF
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: benchmark-division-${{ matrix.division }}
           path: benchmark-results/division-${{ matrix.division }}.json

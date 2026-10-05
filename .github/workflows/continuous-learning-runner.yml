@@ -13,36 +13,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Connect workflows and benchmarks
+        run: python buddy/learning/workflow_benchmark_readiness.py
       - name: Validate learning controller
-        working-directory: buddy/learning
-        run: python -m unittest registered_runner_test.py
-      - name: Run registered evidence runner when an event fixture exists
+        run: python -m unittest buddy.learning.registered_runner_test buddy.learning.workflow_benchmark_readiness_test
+      - name: Run registered evidence runner
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p artifacts
-          if [ -f buddy/learning/events.json ]; then
-            python buddy/learning/registered_runner.py \
-              --events buddy/learning/events.json \
-              --out artifacts/continuous-learning-evidence.json
-          else
-            python - <<'PY'
-          import json
-          from pathlib import Path
-          Path("artifacts/continuous-learning-evidence.json").write_text(json.dumps({
-              "schema": "dreamco.continuous_learning.evidence.v1",
-              "events_processed": 0,
-              "promotions": 0,
-              "status": "no-event-fixture"
-          }, indent=2) + "\n")
-          PY
-          fi
+          python buddy/learning/registered_runner.py \
+            --events buddy/learning/workflow_benchmark_events.json \
+            --out artifacts/continuous-learning-evidence.json
       - name: Upload evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: buddy-continuous-learning-evidence
           path: artifacts/continuous-learning-evidence.json

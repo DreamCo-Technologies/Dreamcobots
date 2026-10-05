@@ -1,0 +1,19 @@
+# dpo recipe stub for pack.embed (metadata only; NOT run in default CI)
+schema: dreamco.study_pack_recipe.v1
+pack_id: pack.embed
+method: dpo
+enabled: false
+train_allowed: false
+teacher: xai/grok-best-available
+student:
+  repo_id: null
+  revision: null
+  license: TBD
+datasets: []
+prerequisites:
+  - "SFT eval completed and recorded in evidence/"
+  - "license allows derivatives"
+  - "exact revision recorded"
+  - "contamination check documented"
+  - "Grok teacher held-out 20-item critique shows student weak on this pack"
+notes: "Stub only. No weight download, no git-lfs. Fill after Day-1 pins and Phase 3 eval."

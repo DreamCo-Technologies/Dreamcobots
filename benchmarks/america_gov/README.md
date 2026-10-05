@@ -11,4 +11,4 @@ python3 benchmarks/america_gov/sandbox.py --ask enroll_medicare --query "enroll 
 python3 -m unittest benchmarks.america_gov.test_sandbox
 ```
 
-IRS tax filing help, Department of War public records, and Intelligence Community public careers and reports are offered to citizens in this personal bot. America.gov still excludes those three. Nothing is filed live. Classified, operational, weapons, and surveillance requests are refused. Social Security numbers are blocked before a task runs.
+The large official source list is `massive_resources.json`. America.gov can supply cited how-to answers for DreamCo, but it has no public API and cannot file yet.

@@ -15,7 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SCAN_ROOTS = (ROOT / "config", ROOT / "benchmarks")
-FIRST_PARTY_HOSTS = ("dreamco", "localhost", "127.0.0.1")
+FIRST_PARTY_HOSTS = ("dreamco", "america.gov", "localhost", "127.0.0.1")
 
 
 def _now() -> str:
@@ -24,7 +24,7 @@ def _now() -> str:
 
 def _party(url: str, source: str) -> str:
     host = url.split("/")[2].lower() if "://" in url else url.lower()
-    if any(mark in host for mark in FIRST_PARTY_HOSTS) or "america_gov" in source:
+    if any(mark in host for mark in FIRST_PARTY_HOSTS):
         return "first_party"
     return "third_party"
 

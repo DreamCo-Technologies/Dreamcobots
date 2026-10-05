@@ -1,0 +1,22 @@
+# OPT-IN Hugging Face learning stack for Buddy / HF study packs.
+#
+# NOT installed by default CI. No default workflow or test references this file.
+# Install explicitly:
+#   pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements-hf-learning.txt
+# (The CPU torch wheel comes from the PyTorch index; for GPU, install torch==2.14.0
+#  for your CUDA build first, then remove/ignore the torch line below.)
+#
+# Pin matrix, licenses, and verification evidence: docs/hf/HF_PIN_MATRIX.md
+# Verified 2026-09-28 on Python 3.13.5 (fresh venv, full install + import smoke + pip check).
+
+torch==2.14.0+cpu
+transformers==5.17.0
+tokenizers==0.23.2
+safetensors==0.8.0
+huggingface_hub==1.33.0
+accelerate==1.15.0
+datasets==5.0.1
+evaluate==0.4.6
+peft==0.21.0
+trl==0.21.0
+pyyaml==6.0.2

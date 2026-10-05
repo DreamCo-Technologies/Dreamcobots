@@ -15,7 +15,7 @@ jobs:
   compile:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
@@ -30,7 +30,7 @@ jobs:
           python -m json.tool config/generated/superbot-migration-ledger.json >/dev/null
           test -s reports/SUPERBOT_MIGRATION_LEDGER.md
       - name: Upload migration evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: superbot-migration-ledger
           path: |

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Buddy traits | DreamCo</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Personality</p><h1>Buddy trait training</h1><p>These traits are saved in this browser. They do not train a model.</p></div></header>
+<section class="actions-review"><label>Trait <input id="trait" value="calm"></label> <button class="btn btn-primary" id="save-trait" type="button">Save trait</button><p id="trait-status">No trait saved in this browser.</p></section>
+</main>
+<script>
+document.getElementById("save-trait").addEventListener("click", () => {
+  const trait = document.getElementById("trait").value.trim();
+  if (!trait) return;
+  localStorage.setItem("dreamco.buddy.trait", trait);
+  document.getElementById("trait-status").textContent = "Saved " + trait + " in this browser.";
+});
+</script>
+</body></html>
