@@ -331,6 +331,12 @@
     };
   }
 
+  function showBuddyModelAuthNotice() {
+    const notice = document.getElementById('buddy-model-auth-notice');
+    if (!notice || !notice.hidden) return;
+    notice.hidden = false;
+  }
+
   async function routePrompt(objective) {
     const fallback = localRoute(objective);
     const staticPreview = location.hostname.endsWith('github.io') || location.hostname.endsWith('vercel.app') || location.port === '8765';
@@ -339,6 +345,7 @@
       const response = await fetch('/api/buddy/route-capability', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
         body: JSON.stringify({
           objective,
           interactionMode: mode === 'Plan' ? 'plan' : 'direct_task',
@@ -352,8 +359,15 @@
           approvePaidModelForThisRequest: modelMode === 'premium' && premiumApproval.checked,
         }),
       });
+      // Keep the local routing fallback; show a one-time sign-in notice on 401 (no console spam).
+      if (response.status === 401) {
+        showBuddyModelAuthNotice();
+        return fallback;
+      }
       if (!response.ok) return fallback;
       const result = await response.json();
+      const notice = document.getElementById('buddy-model-auth-notice');
+      if (notice) notice.hidden = true;
       return {
         ...result,
         discovery: fallback.discovery,

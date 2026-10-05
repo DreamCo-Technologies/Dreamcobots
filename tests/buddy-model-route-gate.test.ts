@@ -17,7 +17,7 @@ process.env.AI_INTEGRATIONS_OPENAI_API_KEY ||= "sk-local-test-placeholder";
 process.env.BUDDY_MODEL_OWNER_SUBJECTS = "google:owner-subject";
 
 const { default: express } = await import("express");
-const { BUDDY_MODEL_ROUTES, buddyModelAccessFrom, buddyModelRouteGate } = await import("../server/buddy-model-route-gate");
+const { BUDDY_MODEL_ROUTES, buddyModelAccessFrom, buddyModelOwnerSubjects, buddyModelRouteGate } = await import("../server/buddy-model-route-gate");
 const {
   BuddyModelAccessError,
   buddyModelSelectionRequestSchema,
@@ -241,4 +241,14 @@ test("full server/routes.ts boot: every model route rejects an unauthenticated c
     assert.equal(result.status, 401, `${route.method} ${route.path}`);
     assert.equal(result.json?.code, "caller_identity_required");
   }
+});
+
+test("BUDDY_MODEL_OWNER_SUBJECTS unset means no owners; discovery stays closed", () => {
+  assert.equal(buddyModelOwnerSubjects({}).size, 0);
+  assert.equal(buddyModelOwnerSubjects({ BUDDY_MODEL_OWNER_SUBJECTS: "" }).size, 0);
+  assert.equal(buddyModelOwnerSubjects({ BUDDY_MODEL_OWNER_SUBJECTS: "  ,  " }).size, 0);
+  assert.deepEqual(
+    [...buddyModelOwnerSubjects({ BUDDY_MODEL_OWNER_SUBJECTS: "google:abc, apple:xyz, bad, GOOGLE:skip" })].sort(),
+    ["apple:xyz", "google:abc"],
+  );
 });

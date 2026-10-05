@@ -1,6 +1,6 @@
 # Plan: Model Access (plan-model-access)
 
-Status: DRAFT (local, not pushed). Source snapshot: DreamCo-Technologies/Dreamcobots @ 24e95db9; route coverage and Path D verified against main @ 5ba09f2.
+Status: DRAFT PR #13176 (branch `plan-model-access/route-gate-allowlist`). Route coverage and Path D verified; branch merged with current main.
 Rule: evidence before live. Nothing here claims live connectivity, live benchmarks, or live billing.
 
 ## Path A — Owner 500 registry
@@ -35,7 +35,7 @@ Rule: evidence before live. Nothing here claims live connectivity, live benchmar
   route gate in `server/buddy-model-route-gate.ts`; allowlist in `config/buddy/model-allowlist.json`.
 - Was (main @ 5ba09f2): `allowDiscovery` defaulted to `true`, so selection admitted `discoveryTarget` candidates;
   `matchDemandReasonToModels` hard-coded `allowDiscovery: true`; no model route checked caller identity.
-- Now (local branch `plan-model-access/route-gate-allowlist`, not pushed, not deployed):
+- Now (branch `plan-model-access/route-gate-allowlist`, PR #13176 draft, not deployed):
   - `allowDiscovery` defaults to `false`. A non-owner request with `allowDiscovery: true` is rejected
     (`403 discovery_owner_only` at the gate; `BuddyModelAccessError` in the policy as defense in depth).
   - Normal callers only ever receive targets listed in `config/buddy/model-allowlist.json`
@@ -47,6 +47,9 @@ Rule: evidence before live. Nothing here claims live connectivity, live benchmar
     `automaticPaidUpgrade` stays `false`. Approved OpenAI targets stop at `exact_model_verification_required`.
   - Owner identity = existing Buddy OAuth session (`buddy_auth_session`, `server/oauth-login.ts`) whose
     `provider:sub` is listed in `BUDDY_MODEL_OWNER_SUBJECTS`. No new auth system.
+  - Production setting `BUDDY_MODEL_OWNER_SUBJECTS` (see below): comma-separated `provider:sub` list.
+    When unset/empty, `buddyModelOwnerSubjects()` returns an empty set — nobody is owner, so discovery
+    is 403 for all callers; allowlisted selection still works for any signed-in user.
 - Allowlist seed (5 entries). Entries are validated against the catalog and router at load; a bad entry fails closed:
   - `14 Buddy Native` → `buddy_native` (`local_ready`) — Path B, connector and target.
   - `1 GPT-4o`, `2 GPT-4.5`, `26 DALL-E 3`, `33 Whisper` → `openai` (`adapter_implemented`) — Path B,
@@ -87,8 +90,25 @@ then runs `resolveBuddyModelPlan` for the requested mode/approval and sets `X-Bu
 `X-Buddy-Model-Plan-Status` headers. `tests/buddy-model-route-gate.test.ts` fails if a new `/api/...model...`
 route appears in routes.ts without the gate.
 
-Frontend effect: `website/buddy.js` (route-capability) and `website/models.js` (connections) already fall back
-to local/static data when `!response.ok`, so signed-out visitors get the fallback instead of an error.
+Frontend effect: `website/buddy.js` (route-capability) and `website/models.js` (connections) are the only
+`website/*.js` callers of the gated routes (grep of all 14 paths). Both keep the existing local/static
+fallback on any non-OK response. On **401** specifically they also show a small notice —
+"Sign in to see live model data" with a link to the existing `sign-in.html` flow (same target as
+`website/nav.js`) — without console error spam or a broken render. Other statuses stay silent fallback.
+
+## Production setting: `BUDDY_MODEL_OWNER_SUBJECTS`
+Documented in `.env.example`, `.env.buddy-local.example`, and `docs/CUSTOMER_PRODUCTION_RUNBOOK.md`.
+- **Format:** comma-separated `provider:sub` values matching the Buddy OAuth session identity
+  (regex used by the gate: `^[a-z]+:.+$`). Example shape only: `google:example-oauth-subject`
+  or `apple:example-oauth-subject`. Never commit a real production value.
+- **How the owner finds their own `provider:sub`:** sign in through the existing Buddy OAuth flow,
+  then call `GET /api/auth/session`. The JSON returns `provider` and `profile.subject` (from
+  `server/oauth-login.ts` / the sealed `buddy_auth_session` cookie). Concatenate as
+  `${provider}:${profile.subject}` and set that on the host (and in GitHub Actions secrets if used).
+- **When unset or empty:** `buddyModelOwnerSubjects()` → empty set; no caller is treated as owner.
+  Discovery routes and `allowDiscovery: true` return **403** `discovery_owner_only` for everyone.
+  Normal allowlisted selection/catalog/plan routes still work for any signed-in user (401 only when
+  the session cookie is missing).
 
 ### Routes that execute provider models directly (NOT gated; owner decision needed)
 These call `openai.chat.completions.create` / provider adapters directly, with no Buddy model policy, no
@@ -120,4 +140,5 @@ this patch.
 4. Path A: first evidenced `live_benchmark_ok` slots from bench runner.
 
 ## Blockers
-- gh token returns 403 writing to DreamCo-Technologies/Dreamcobots; this file is local only.
+- Owner must set `BUDDY_MODEL_OWNER_SUBJECTS` on the production host before discovery works for anyone.
+- Pre-existing main issue: duplicate bot seed identities still skip the full-boot gate test.
