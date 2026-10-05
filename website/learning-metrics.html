@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Learning metrics | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Scan</p><h1>Bot learning metrics</h1><p>A button shows the last recorded count. It does not invent a score.</p></div></header>
+<section class="actions-review" id="metrics"></section>
+<p id="metric-status">No metric selected.</p>
+</main>
+<script>
+const metrics = {"bots scanned":"1113","Buddy files":"158","learned":"0","study files":"192","benchmark files":"48","needs teaching":"1343","production ready":"0","original system files":"12","legacy profiles":"262"};
+const box = document.getElementById("metrics");
+Object.keys(metrics).forEach((name) => { const button = document.createElement("button"); button.className = "btn btn-outline"; button.type = "button"; button.textContent = name; button.addEventListener("click", () => { document.getElementById("metric-status").textContent = name + ": " + metrics[name]; }); box.appendChild(button); });
+</script>
+</body></html>

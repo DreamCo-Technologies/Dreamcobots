@@ -1,0 +1,11 @@
+{
+  "schema": "dreamco.study_pack_evals.v1",
+  "pack_id": "accelerate",
+  "runner": "study_packs/accelerate/scripts/smoke_offload.py",
+  "tasks": [
+    {"id": "acc.device_map.max_memory", "desc": "infer_auto_device_map with a tight max_memory spills layers to cpu/disk and never exceeds the budget for the first device", "requires_gpu": false, "pass_floor": 1.0},
+    {"id": "acc.offload.parity", "desc": "Model dispatched with a device_map that uses cpu + disk offload (offload_folder) produces identical greedy tokens to the plain in-memory baseline", "requires_gpu": false, "pass_floor": 1.0},
+    {"id": "acc.empty_weights.meta", "desc": "init_empty_weights builds the model with every parameter on the meta device (zero real allocation)", "requires_gpu": false, "pass_floor": 1.0},
+    {"id": "acc.multi_gpu.balanced", "desc": "device_map='balanced' splits layers across >=2 GPUs and output matches single-device baseline", "requires_gpu": true, "min_gpus": 2, "pass_floor": 1.0}
+  ]
+}

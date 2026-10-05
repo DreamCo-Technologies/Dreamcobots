@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Prompt chaining | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Techniques</p><h1>Prompt chaining</h1><p>Each button opens the note. This is not every method ever taught, and no score is invented.</p></div><p><a class="btn btn-primary" href="prompt-chaining.json" download>Download the list</a> <a class="btn btn-outline" href="prompt-chains-extra.json" download>Download 200 more</a> <a class="btn btn-outline" href="prompt-chains-advanced.json" download>Download 100 advanced</a></p>
+<form><input id="chain-search" aria-label="Search techniques" placeholder="Search techniques"><button class="btn btn-primary" type="button" id="chain-filter">Search</button></form></header>
+<section class="actions-review" id="chains"></section>
+</main>
+<script>
+const chains = ["chain of thought","least to most","self-consistency","ReAct","Reflexion","tree of thoughts","graph of thoughts","plan and solve","step back","skeleton of thought","chain of verification","chain of density","program of thoughts","thread of thought","decomposed prompting","self-ask","map then reduce","draft then critique","critique then revise","role split","checklist","constraint pass","retrieve then answer","draft then cite","test then fix","second view","counterexample","stop and ask"];
+const box = document.getElementById("chains");
+let chains = ["chain of thought","least to most","self-consistency","ReAct","Reflexion","tree of thoughts","graph of thoughts","plan and solve","step back","skeleton of thought","chain of verification","chain of density","program of thoughts","thread of thought","decomposed prompting","self-ask","map then reduce","draft then critique","critique then revise","role split","checklist","constraint pass","retrieve then answer","draft then cite","test then fix","second view","counterexample","stop and ask"];
+function draw(query) {
+  box.textContent = "";
+  chains.filter((name) => name.includes(query)).forEach((name) => { const link = document.createElement("a"); link.className = "btn btn-outline"; link.href = "self-training.html"; link.textContent = name; box.appendChild(link); });
+}
+draw("");
+document.getElementById("chain-filter").addEventListener("click", () => draw(document.getElementById("chain-search").value.trim().toLowerCase()));
+fetch("prompt-chains-extra.json").then((response) => response.json()).then((data) => { chains = chains.concat(data.techniques || []); return fetch("prompt-chains-advanced.json"); }).then((response) => response.json()).then((data) => { chains = chains.concat(data.techniques || []); draw(""); }).catch(() => {});
+</script>
+</body></html>

@@ -1,0 +1,189 @@
+{
+  "schema": "dreamco.license_provenance_gate.v1",
+  "version": "0.1.0",
+  "purpose": "Rules for tools/license_provenance_gate.py. Reuses existing policy configs by reference instead of duplicating them.",
+  "policy_refs": {
+    "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
+    "evidence_provenance": "config/evidence_provenance_schema.json",
+    "hard_failures": "config/data-discovery-bot-program.json#scoring.hard_failures",
+    "scorecard_tiers": "config/dataset_evaluation_scorecard.json#commercial_tiers",
+    "release_artifacts": "config/dataset_product_standard.json#required_release_artifacts",
+    "test_family": "config/data-package-maximal-testing-program.json#test_families.provenance_and_rights",
+    "asset_provenance_schema": "schemas/data_package_asset_provenance.schema.json",
+    "license_gate_schema": "schemas/data_package_license_gate.schema.json",
+    "synthesis_asset_schema": "schemas/data_package_synthesis_asset.schema.json",
+    "package_manifest_schema": "schemas/data_package.manifest.schema.json",
+    "plan": "reports/DATA_PACKAGE_PRODUCT_PLAN.md#5.2"
+  },
+  "outcomes_ranked_low_to_high": [
+    "blocked",
+    "reference_only",
+    "approved_for_private_use",
+    "approved_for_sale"
+  ],
+  "sale_requirements": {
+    "minimum_scorecard_tier": "standard",
+    "owner_approval_required": true,
+    "owner": "Irean Jordan",
+    "owner_approval_scope": "sale"
+  },
+  "reference_only_ownership_classes": [
+    "third_party_reference_only",
+    "unknown_do_not_publish"
+  ],
+  "extra_blocked_flags": [
+    "credentials_or_secrets_present",
+    "malware_detected",
+    "leaked_or_stolen_data",
+    "unauthorized_private_data",
+    "untraceable_source"
+  ],
+  "blocked_categories": [
+    "leaked_data",
+    "credential_dumps",
+    "malware",
+    "unauthorized_personal_data"
+  ],
+  "license_rules": [
+    {
+      "id": "onet_database_cc_by_4",
+      "match": {
+        "url_contains": "onetcenter.org/dl_files/database"
+      },
+      "required_elements": [
+        {
+          "id": "credit_database_version",
+          "pattern": "O\\*NET®? {version} Database"
+        },
+        {
+          "id": "credit_publisher",
+          "pattern": "USDOL/ETA|U\\.S\\. Department of Labor, Employment and Training Administration"
+        },
+        {
+          "id": "license_name",
+          "pattern": "CC BY 4\\.0|Creative Commons Attribution 4\\.0"
+        }
+      ],
+      "required_when_modified": [
+        {
+          "id": "non_endorsement_notice",
+          "pattern": "USDOL/ETA has not approved, endorsed, or tested these modifications"
+        }
+      ],
+      "recommended_elements": [
+        {
+          "id": "trademark_notice",
+          "pattern": "O\\*NET®? is a trademark of USDOL/ETA"
+        },
+        {
+          "id": "modifier_named",
+          "pattern": "DreamCo[^.]{0,40} has modified"
+        }
+      ],
+      "source_reference": "https://www.onetcenter.org/database.html (Usage License / attribution text)"
+    },
+    {
+      "id": "onet_crosswalk_cc_by_4",
+      "match": {
+        "url_contains": "onetcenter.org/crosswalks"
+      },
+      "required_elements": [
+        {
+          "id": "credit_crosswalk",
+          "pattern": "(?i)crosswalk"
+        },
+        {
+          "id": "credit_publisher",
+          "pattern": "USDOL/ETA|U\\.S\\. Department of Labor, Employment and Training Administration"
+        },
+        {
+          "id": "license_name",
+          "pattern": "CC BY 4\\.0|Creative Commons Attribution 4\\.0"
+        }
+      ],
+      "required_when_modified": [],
+      "recommended_elements": [
+        {
+          "id": "crosswalk_license_stated",
+          "pattern": "(?i)crosswalk[^.]*(CC BY 4\\.0|Creative Commons)"
+        }
+      ],
+      "source_reference": "https://www.onetcenter.org/crosswalks.html (footer: Crosswalk Files by USDOL/ETA licensed CC BY 4.0)"
+    },
+    {
+      "id": "generic_cc_by",
+      "match": {
+        "license_contains": "CC BY"
+      },
+      "required_elements": [
+        {
+          "id": "license_name",
+          "pattern": "CC BY|Creative Commons Attribution"
+        }
+      ],
+      "required_when_modified": [],
+      "recommended_elements": []
+    }
+  ],
+  "truth_boundary": "Gate output is rights/provenance evidence for one asset version. It is not a listing, a price, or a production-ready claim. approved_for_sale additionally requires a complete plan 5.2 synthesis asset record (asset.json), scorecard >= standard tier minimum, and an explicit owner_approval record; without owner approval the maximum outcome is approved_for_private_use.",
+  "package_status_mapping": {
+    "description": "How per-asset gate outcomes roll up to the plan 5.2 package license_gate_status (pass | fail | reference_only_bundle, plus pre-gate pending). Implemented by tools/license_provenance_gate.py package_gate_status().",
+    "pending": "no included assets yet, or any included asset has no license_gate.json / outcome pending",
+    "pass": "every included asset outcome is approved_for_sale and excluded_reference_only_sources is empty",
+    "reference_only_bundle": "every included asset outcome is approved_for_sale and at least one reference-only source is listed in excluded_reference_only_sources (cited, not shipped)",
+    "fail": "any included asset outcome is approved_for_private_use, reference_only, or blocked (reference-only material must be moved to excluded_reference_only_sources, not included)",
+    "sellable_statuses": [
+      "pass",
+      "reference_only_bundle"
+    ]
+  },
+  "synthesis_asset_sale_requirements": {
+    "description": "approved_for_sale also requires a complete plan 5.2 synthesis asset record (asset.json).",
+    "non_null_fields": [
+      "human_layer",
+      "machine_layer",
+      "dreamco_analysis"
+    ],
+    "min_validation_evidence_ids": 1,
+    "warn_if_perspectives_below": 2
+  },
+  "holdout_verification": {
+    "description": "Opt-in (--verify-holdout-remote) independent verification of holdout evidence records against the canonical GitHub remote. Implemented in tools/license_provenance_gate.py (verify_holdout_remote); it never imports or runs the producer's own verifier. Without the flag (or when verification fails) an asset relying on holdout evidence is capped at approved_for_private_use (required_for_sale). With the flag, a record counts only if every check passes; any mismatch or network failure is a sale-scope gap (cap approved_for_private_use), never a rights failure.",
+    "required_for_sale": true,
+    "required_for_sale_note": "When true, approved_for_sale is impossible while the asset relies on any holdout record (resolved, passed: true) that was not remotely verified in this run: without --verify-holdout-remote, or when verification fails, the outcome is capped at approved_for_private_use with 'holdout evidence not remotely verified; required for sale'.",
+    "required_signer_fingerprints": [],
+    "signer_public_keys": "config/holdout_signer_keys.asc",
+    "ssh_allowed_signers_file": "",
+    "ssh_keygen_binary": "/usr/bin/ssh-keygen",
+    "gpg_binary": "/usr/bin/gpg",
+    "signer_note": "Placeholders, empty until the grader registers a key. A signature is required when required_signer_fingerprints is non-empty or ssh_allowed_signers_file is set. Then grading_commit AND the commit that introduced the GRADING_FINAL.txt bytes present at grading_commit (if different) must each carry a valid signature from a listed signer, checked with git verify-commit in the sanitized git environment: OpenPGP via /usr/bin/gpg in a fresh GNUPGHOME holding only the armored keys in signer_public_keys, with the signing or primary key fingerprint (40 hex) listed in required_signer_fingerprints; SSH via /usr/bin/ssh-keygen with gpg.ssh.allowedSignersFile set to ssh_allowed_signers_file (principal must match, namespaces=\"git\"), or to a temporary file holding only the signing key when its SHA256:... fingerprint is listed in required_signer_fingerprints. Paths are relative to this repository.",
+    "canonical_remote_url": "https://github.com/DreamCo-Technologies/Dreamcobots",
+    "fetch_url": "https://github.com/DreamCo-Technologies/Dreamcobots.git",
+    "allowed_branches": [
+      "main",
+      "edu-career-pathways/majors-onet-study-plans"
+    ],
+    "kit_dir": "study_packs/career_pathways/evidence/holdout_kit",
+    "git_binary": "/usr/bin/git",
+    "timeout_s": 300,
+    "max_history_commits": 2000,
+    "pass_rule": {
+      "source": "study_packs/career_pathways/evidence/holdout_kit/README.md '## Pass rule' at e9b57a4 (re-implemented independently)",
+      "kit_detection_min": 0.8,
+      "kit_false_alarm_max": 0.2,
+      "kit_mean_gap_min": 1.0,
+      "asset_min_items": 4,
+      "asset_detection_min": 0.8,
+      "asset_false_alarm_max": 0.2,
+      "asset_agreement_min": 0.8,
+      "agreement_strictly_above_baseline": true,
+      "no_full_strength_judged_incorrect": true,
+      "min_nonce_hex_chars": 64
+    },
+    "expected_shas": {},
+    "expected_shas_file": "",
+    "require_expected_shas": false,
+    "expected_shas_note": "Optional pins kept outside the producer's repository (e.g. our own copy of their VERIFIED_SHAS.json). expected_shas maps an evidence_id or run_id to {grading_commit, reveal_commit, remote_tip_sha}; expected_shas_file is a JSON file in VERIFIED_SHAS.json format (run_id + SHAs) or such a mapping. When a pin exists for a record, grading_commit and reveal_commit must be identical and the pinned remote_tip_sha must still be reachable from the branch tip, so a later force-push that rewrites history fails. require_expected_shas: true makes a pin mandatory.",
+    "reveal_rules_note": "Reveal-order rules (parity with the producer's verify_holdout at dde106b, plus two stricter ones): REVEALED_KEY.json absent at grading_commit and in every ancestor; touched by exactly one non-merge commit across ALL allowed branches (the reveal), a strict descendant of grading_commit, and never modified, removed or re-added (merges included); the revealed key's bytes never committed under any path or on any allowed branch outside grading_commit's strict descendants; grading_sheet.csv and GRADING_FINAL.txt byte-identical at every commit from grading_commit to the reveal; the record and results file unchanged after the reveal; and every results file, record and FINALIZED.txt for this key commitment, in any commit reachable from any allowed branch (deleted files included), names this grading_commit."
+  }
+}

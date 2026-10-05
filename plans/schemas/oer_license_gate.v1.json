@@ -1,0 +1,48 @@
+{
+  "$schema": "dreamco.oer_license_gate.v1",
+  "purpose": "Classify OpenStax/MIT OCW/OER assets before ingest; fail closed for sale; never strip licenses.",
+  "hard_rules": [
+    "never_strip_license_or_attribution",
+    "never_relabel_third_party_as_dreamco_owned",
+    "unknown_license_blocks_sale_and_open_remix",
+    "nc_blocks_commercial_verbatim_and_derived_expression",
+    "sellable_default_is_dreamco_original_synthesis_only"
+  ],
+  "source_orgs": ["openstax", "mit_ocw", "other_oer"],
+  "required_metadata": [
+    "source_id", "title", "source_org", "canonical_url",
+    "license_spdx", "license_version", "license_url",
+    "commercial_ok", "derivatives_ok", "share_alike", "attribution_required",
+    "attribution_text", "marks_excluded", "retrieved_at", "license_evidence_url",
+    "classifier_confidence", "review_status", "provenance_hash", "allowed_modes"
+  ],
+  "allowed_modes": [
+    "internal_study",
+    "open_remix",
+    "sellable_original_synthesis",
+    "sellable_verbatim_bundle"
+  ],
+  "review_status": ["auto_pass", "needs_human", "quarantine", "blocked"],
+  "pipeline": [
+    "discover",
+    "license_classify",
+    "quarantine_if_unknown",
+    "allow_list_modes",
+    "ingest_store",
+    "synthesis_router",
+    "sellable_export_gate"
+  ],
+  "sellable_export_blockers": [
+    "commercial_ok_false_with_substantial_expression",
+    "review_not_cleared",
+    "missing_attribution_or_license_url",
+    "share_alike_conflict",
+    "marks_without_permission",
+    "false_dreamco_ownership"
+  ],
+  "buddy_provenance_alignment": "dreamco.buddy_training_data_provenance.v1",
+  "source_defaults": {
+    "openstax": "per_title_preface_required",
+    "mit_ocw": "assume_CC-BY-NC-SA-4.0_unless_stated"
+  }
+}

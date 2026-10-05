@@ -21,7 +21,7 @@ jobs:
       - run: python3 tools/run_24h_sandbox_soak.py
       - run: python3 -m unittest tests.test_build_user_money_map
       - if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: buddy-24h-soak-${{ github.run_id }}
           path: |

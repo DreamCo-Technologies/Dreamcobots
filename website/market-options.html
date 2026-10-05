@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Market options | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Market</p><h1>Market data options</h1><p>A button opens a public source. This page does not store a price.</p></div></header>
+<section class="actions-review" id="markets"></section>
+</main>
+<script>
+const markets = [["stocks","https://finance.yahoo.com/"],["index","https://finance.yahoo.com/quote/%5EGSPC"],["rates","https://fred.stlouisfed.org/"],["inflation","https://fred.stlouisfed.org/series/CPIAUCSL"],["jobs","https://fred.stlouisfed.org/series/UNRATE"],["treasury","https://home.treasury.gov/resource-center/data-chart-center/interest-rates"],["exchange","https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html"],["sec filings","https://www.sec.gov/edgar"],["earnings","https://www.sec.gov/edgar/search/"],["commodity","https://www.eia.gov/"],["energy","https://www.eia.gov/petroleum/"],["weather risk","https://www.weather.gov/"],["news","https://www.reuters.com/markets/"],["calendar","https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"],["compare","https://dreamco-technologies.github.io/Dreamcobots/live-monitor.html"]];
+const box = document.getElementById("markets");
+markets.forEach(([name, href]) => { const link = document.createElement("a"); link.className = "btn btn-outline"; link.href = href; link.textContent = name; box.appendChild(link); });
+</script>
+</body></html>

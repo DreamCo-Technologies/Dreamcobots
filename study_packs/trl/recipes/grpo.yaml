@@ -1,0 +1,28 @@
+pack_id: TRL-GRPO-001
+method: grpo
+status: plan_only
+trained_weights_exist: false
+trl_version_target: "1.14.0"
+base_model: outputs/sft
+dataset:
+  id: PLACEHOLDER/prompt-dataset
+  split: train
+  schema: 'prompt-only: "prompt" (+ optional reference fields used by reward fn)'
+reward_function: scripts/rewards.py:format_reward   # placeholder; must be reviewed
+lora:
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: all-linear
+  task_type: CAUSAL_LM
+trainer_args:                           # GRPOConfig fields
+  output_dir: outputs/grpo
+  num_train_epochs: 1
+  per_device_train_batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 1.0e-6
+  num_generations: 4
+  max_completion_length: 256
+  beta: 0.04
+  logging_steps: 10
+  bf16: true

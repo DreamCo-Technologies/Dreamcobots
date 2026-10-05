@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Scoring criteria | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Criteria</p><h1>Top 30 scoring criteria</h1><p>Each weight is a choice. It is not a measured score.</p></div>
+<p><a class="btn btn-primary" href="scoring-criteria.json" download>Download the list</a> <a class="btn btn-outline" href="score-system.html">Score system</a></p></header>
+<section class="actions-review" id="criteria"></section>
+</main>
+<script>
+const criteria = ["saved result","same task twice","median latency","failure kept","no secret","no invented score","success rate","holdout","second pass","counterexample","citation","permission","sandbox","adapter","telemetry","auth","rollback","timeout","retry","cost","404 check","200 check","approval","human review","schema","lint","link check","age path","work task","home task"];
+const box = document.getElementById("criteria");
+criteria.forEach((name, index) => { const button = document.createElement("button"); button.className = "btn btn-outline"; button.type = "button"; button.textContent = name + " weight " + (index < 6 ? "3" : "1"); box.appendChild(button); });
+</script>
+</body></html>

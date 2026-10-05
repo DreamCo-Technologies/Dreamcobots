@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dreamco.buddy.multimodal_provenance_record.v1",
+  "type": "object",
+  "required": ["asset_id","source_type","source","collection_date","owner","license","ownership_class","commercial_redistribution_allowed","attribution_required","share_alike_required","transformation_history","provenance_hash","review_status"],
+  "properties": {
+    "asset_id": {"type": "string"},
+    "source_type": {"enum": ["web","book","movie","video","user_upload","repository","synthetic"]},
+    "source": {"type": "string", "description": "URL, ISBN, title+edition, or upload id"},
+    "source_pointer": {"type": "string", "description": "page/section, timestamp range, or path@rev"},
+    "collection_date": {"type": "string", "format": "date-time"},
+    "creator": {"type": "string"},
+    "owner": {"type": "string"},
+    "license": {"type": "string"},
+    "license_url": {"type": "string"},
+    "ownership_class": {"enum": ["dreamco_owned","dreamco_commissioned_with_assignment","licensed_for_use","open_license_with_conditions","public_domain_or_publicly_reusable","third_party_reference_only","synthetic_generated_by_dreamco","user_contributed_with_permission","unknown_do_not_publish"]},
+    "commercial_redistribution_allowed": {"type": "boolean"},
+    "attribution_required": {"type": "boolean"},
+    "share_alike_required": {"type": "boolean"},
+    "consent": {
+      "type": "object",
+      "required": ["consent_id","reference_sha256","scope","attestation","revoked"],
+      "properties": {
+        "consent_id": {"type": "string"},
+        "reference_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "scope": {"type": "array", "items": {"enum": ["train","sell"]}},
+        "attestation": {"type": "string", "minLength": 20},
+        "revoked": {"type": "boolean"}
+      }
+    },
+    "transformation_history": {"type": "array", "items": {"type": "string"}},
+    "provenance_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "review_status": {"enum": ["unreviewed","approved","rejected"]}
+  },
+  "allOf": [{"if": {"properties": {"source_type": {"const": "user_upload"}}}, "then": {"required": ["consent"]}}]
+}

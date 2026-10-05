@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dreamco.production_evidence_ledger.entry.v0.1",
+  "type": "object",
+  "required": ["entry_id","schema_version","status","claim","git","artifacts","ci","soak","runtime","anti_vanity","prc","updated_at","updated_by"],
+  "properties": {
+    "entry_id": {"type":"string","pattern":"^el-[0-9]{8}-[a-z0-9-]+$"},
+    "schema_version": {"const":"0.1"},
+    "status": {"enum":["open","evidence_incomplete","evidence_complete","cert_pending","certified","rejected"]},
+    "claim": {"type":"object","required":["kind","subject_type","subject_id","asserted_ready"],
+      "properties":{"kind":{"const":"production_ready"},"subject_type":{"enum":["bot","plan","division","package","runtime"]},"subject_id":{"type":"string"},"asserted_ready":{"type":"boolean"}}},
+    "git": {"type":"object","required":["repo","sha"],"properties":{"repo":{"type":"string"},"sha":{"type":["string","null"],"pattern":"^[0-9a-f]{40}$"}}},
+    "artifacts": {"type":"array","items":{"type":"object","required":["role","uri"],"properties":{"role":{"enum":["ci","soak","runtime","gate_doc","other"]},"uri":{"type":"string"},"blob_sha":{"type":"string"}}}},
+    "ci": {"type":"object","required":["required","conclusion"]},
+    "soak": {"type":"object","required":["required","result"]},
+    "runtime": {"type":"object","required":["required","result"]},
+    "anti_vanity": {"type":"object"},
+    "prc": {"type":"object","required":["decision"],"properties":{"decision":{"enum":["pending","certify","deny"]}}}
+  }
+}

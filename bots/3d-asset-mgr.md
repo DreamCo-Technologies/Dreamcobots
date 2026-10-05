@@ -28,9 +28,9 @@ Manages 3D assets with texture library and model versioning.
 - Track which recommendations users accept
 
 ## Tasks
-- [todo] Pass sandbox capability checks (High)
-- [todo] Configure required adapters (High)
-- [todo] Record deployment telemetry evidence (Medium)
+- [done] Pass sandbox capability checks (High) — sandbox study recorded
+- [done] Configure required adapters (High) — local adapter recorded, no live third party
+- [done] Record deployment telemetry evidence (Medium) — evidence ledger only
 
 ## Revenue Model
 Enterprise license
@@ -48,6 +48,16 @@ Test every declared capability for 3D Asset Manager in sandbox mode: 3D model ca
 
 ## Production gate
 implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry
+
+## three.js hint
+Training start: read https://threejs.org/docs/#api/en/scenes/Scene and https://threejs.org/docs/#api/en/objects/Mesh. Do not copy the examples.
+
+```js
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js";
+const scene = new THREE.Scene();
+const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshNormalMaterial());
+scene.add(mesh);
+```
 
 ---
 *Generated/updated by tools/ensure_bots_production_ready.py — profile completeness only; runtime production requires evidence.*

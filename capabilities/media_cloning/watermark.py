@@ -1,7 +1,11 @@
 """Provenance watermark for cloned audio and images.
 
-Every generated file must carry a watermark before it is written. If AudioSeal
-is not installed, audio cloning stops. It does not write an unmarked file.
+Audio: when AudioSeal (and torch) are installed, `watermark_audio` embeds an AudioSeal
+watermark. When they are missing it falls back to a trivial last-sample tag and still
+returns the audio, so callers write audio without a real watermark. Install
+requirements-media.txt wherever audio is shipped.
+
+Images: a low-bit marker in the blue channel. Not a cryptographic seal.
 """
 from __future__ import annotations
 

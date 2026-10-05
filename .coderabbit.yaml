@@ -20,6 +20,20 @@ reviews:
     - "!**/node_modules/**"
     - "!reports/os-observability-metrics.stub.json"
   path_instructions:
+    - path: "**"
+      instructions: >
+        Review only small, incremental PRs rebased onto current main. If a PR
+        exceeds 5000 changed lines, reply "too large; isolate one proven slice"
+        and stop. Honor path_filters; do not review generated catalogs or lockfiles.
+        Missing, stale, skipped, cancelled, planned, or retry-only evidence is
+        not green. Require evidence_complete on the current commit; never flip
+        production_ready. Do not add workflows, file failure issues, approve
+        Dependabot majors, or delete branches listed in reports/UNMERGED_PR_VAULT.md.
+        Do not request full reviews of stale vault PRs or merge them onto each other.
+        Report only: verdict (block, request-changes, or comment); P0/P1 with file
+        paths and line numbers; duplicate vault PR and SHA (or unverified);
+        smallest next patch (or "nothing; human must rebase"). Name any observed
+        write denial and stop retrying; do not infer a missing permission.
     - path: ".github/workflows/**"
       instructions: >
         Fail closed. Do not recommend new workflows. Flag issue creation on

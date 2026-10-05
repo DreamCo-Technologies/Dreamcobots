@@ -1,0 +1,7 @@
+# Stub. Not run in default CI. Buddy AV trainer consumes evidence/ + sources.json.
+handoff_to: Grok-Buddy-Multimodal-Trainer
+inputs: [sources.json, evals.json, evidence/latest.json]
+gates:
+  - license: commercial_ok must be true for any sellable CP/LP output
+  - evidence: drill pass_rate >= evals.min_native_pass_rate
+train_allowed: false

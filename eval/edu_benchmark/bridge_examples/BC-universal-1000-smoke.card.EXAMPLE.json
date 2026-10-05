@@ -1,0 +1,111 @@
+{
+  "_example": false,
+  "card_id": "BRIDGE-BC-universal-1000-smoke-0.1.0-EXAMPLE-learner-UNSPECIFIED",
+  "course_id": "BC-universal-1000-smoke",
+  "course_title": "Buddy Universal Mastery Smoke Test (Bootcamp course packet)",
+  "track": "bootcamp",
+  "version": "0.1.0",
+  "learner": {
+    "id": "EXAMPLE-learner-UNSPECIFIED",
+    "type": "buddy_adapter"
+  },
+  "floors": {
+    "F0": {
+      "name": "Baseline diagnostic recorded",
+      "required_benches": [
+        "MISSING-baseline-1"
+      ],
+      "min_score": 0.0,
+      "holdout_required": false
+    },
+    "F1": {
+      "name": "Practice benches passed",
+      "required_benches": [
+        "MISSING-practice-1"
+      ],
+      "min_score": 0.9,
+      "holdout_required": false
+    },
+    "F2": {
+      "name": "Held-out benches passed",
+      "required_benches": [
+        "MISSING-holdout-rep-1",
+        "MISSING-holdout-rep-2",
+        "MISSING-holdout-rep-3"
+      ],
+      "min_score": 0.9,
+      "holdout_required": true
+    },
+    "F3": {
+      "name": "Novel-transfer bench plus a retest after remediation",
+      "required_benches": [
+        "MISSING-transfer-1",
+        "MISSING-remediation-retest-1"
+      ],
+      "min_score": 0.9,
+      "holdout_required": true
+    },
+    "F4": {
+      "name": "F3, plus a regression retest at least 30 days later by an evaluator independent of the cert issuer",
+      "required_benches": [
+        "MISSING-retention-1"
+      ],
+      "min_score": 0.9,
+      "holdout_required": true,
+      "min_days_since_prior_floor": 30,
+      "independent_evaluator_required": true
+    }
+  },
+  "bench_results": [],
+  "provenance": {
+    "sources": [
+      {
+        "uri": "DreamCo-Technologies/Dreamcobots:benchmarks/tasks/universal_1000_smoke.json@2ccd678e5a242e085285cae1f7cf6818b5557f70",
+        "license": "",
+        "consent": false
+      },
+      {
+        "uri": "DreamCo-Technologies/Dreamcobots:benchmarks/README.md@2ccd678e5a242e085285cae1f7cf6818b5557f70",
+        "license": "",
+        "consent": false
+      },
+      {
+        "uri": "DreamCo-Technologies/Dreamcobots:docs/BUDDY_1000_SOURCE_BOOTCAMP.md@2ccd678e5a242e085285cae1f7cf6818b5557f70",
+        "license": "",
+        "consent": false
+      },
+      {
+        "uri": "DreamCo-Technologies/Dreamcobots:docs/BENCHMARK_EVIDENCE_LIFECYCLE.md@2ccd678e5a242e085285cae1f7cf6818b5557f70",
+        "license": "",
+        "consent": false
+      },
+      {
+        "uri": "DreamCo-Technologies/Dreamcobots:eval/edu_benchmark/SET7_COURSE_MASTERY_FLOORS_AND_HOLDOUT_POLICY.md@same tree as this packet",
+        "license": "",
+        "consent": false
+      },
+      {
+        "uri": "DreamCo-Technologies/Dreamcobots:.github/workflows/benchmark-gap-planner.yml@5ba09f2ea0c1ef49e8e41bbca78c317ad70be8e9",
+        "license": "",
+        "consent": false
+      },
+      {
+        "uri": "DreamCo-Technologies/Dreamcobots:tools/benchmark_gap_planner.py@5ba09f2ea0c1ef49e8e41bbca78c317ad70be8e9",
+        "license": "",
+        "consent": false
+      },
+      {
+        "uri": "DreamCo-Technologies/Dreamcobots:actions/runs/37065929919/artifacts/11252566778:benchmark-gap-queue.json@5ba09f2ea0c1ef49e8e41bbca78c317ad70be8e9",
+        "license": "",
+        "consent": false
+      }
+    ]
+  },
+  "floor_attained": null,
+  "status": "draft",
+  "certificate": null,
+  "regression_watch": {
+    "last_retest_at": null,
+    "drift_flag": false
+  }
+}

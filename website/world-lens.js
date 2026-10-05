@@ -67,14 +67,14 @@
   function refreshExternalMap() {
     const mode = $('lens-map-mode').value;
     const earth = $('lens-earth');
-    if (earth) earth.hidden = true;
+    const maps = $('lens-maps');
     if (mode === 'world_lens') { $('lens-map-frame').hidden = true; setStatus('World Lens local coordinate plot selected.', true); return; }
     if (!$('lens-external-map').checked) { setStatus('Approve external map requests before loading the map.'); return; }
     if (!current) { setStatus('Request a GPS fix before loading the external map.'); return; }
     if (mode === 'google_earth') {
       $('lens-map-frame').hidden = true;
-      earth.hidden = false;
       earth.href = `https://earth.google.com/web/@${current.latitude},${current.longitude},0a,800d,35y,0h,0t,0r`;
+      maps.href = `https://www.google.com/maps?q=${current.latitude},${current.longitude}`;
       setStatus('Google Earth is ready. Coordinates are sent only when you open it.', true);
       return;
     }
@@ -166,7 +166,10 @@
     callback();
   }
 
-  $('lens-locate').addEventListener('click', () => requireGeolocation(() => navigator.geolocation.getCurrentPosition(acceptPosition, locationError, { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 })));
+  $('lens-locate').addEventListener('click', () => requireGeolocation(() => navigator.geolocation.getCurrentPosition(acceptPosition, (error) => {
+    if (error.code === 2 || error.code === 3) { setStatus('High-accuracy GPS failed. Retrying with the browser location…'); navigator.geolocation.getCurrentPosition(acceptPosition, locationError, { enableHighAccuracy: false, timeout: 20000, maximumAge: 60000 }); return; }
+    locationError(error);
+  }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 })));
   $('lens-watch').addEventListener('click', () => requireGeolocation(() => {
     if (watchId !== null) return;
     watchId = navigator.geolocation.watchPosition(acceptPosition, locationError, { enableHighAccuracy: true, timeout: 15000, maximumAge: 3000 });

@@ -1,0 +1,64 @@
+{
+  "schema": "dreamco.data_package_provenance_manifest.v1",
+  "sku_id": "DP-ONET-OCC-SYN",
+  "version": "0.0.1",
+  "status": "pending",
+  "asset_provenance_schema": "schemas/data_package_asset_provenance.schema.json",
+  "planned_sources": [
+    {
+      "source_id": "onet_db_31_0",
+      "title": "O*NET 31.0 Database",
+      "publisher": "USDOL/ETA",
+      "url": "https://www.onetcenter.org/database.html",
+      "downloads": [
+        {
+          "name": "db_31_0_excel.zip",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_excel.zip",
+          "bytes": 47880800,
+          "sha256": "c63ad00a8e45f3d3ef8e1529fcf8864d2279f2dfcb98737436818f5664781b04",
+          "used_by": "tools/build_universal_work_ai_catalog.py --onet-zip-url (DP-ONET override; the tool default is 30.3)"
+        },
+        {
+          "name": "db_31_0_csv.zip",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_csv.zip",
+          "bytes": 16237378,
+          "sha256": "55033fc68b4c13ec23e7f74dc6378660f6e854e75d55d6e333ae0a761d3987cd",
+          "used_by": "per-file CSV pins in asset provenance.json (occupation_data.csv, knowledge.csv, essential_skills.csv)"
+        }
+      ],
+      "version": "31.0",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "ownership_class": "open_license_with_conditions",
+      "pinned": true,
+      "pinned_at": "2026-10-03T09:16:00-05:00",
+      "skills_split": "31.0 replaces the single Skills file with Essential Skills (2.A.*, essential_skills.csv / 'Essential Skills.xlsx') and Transferable Skills (2.B.*, transferable_skills.csv / 'Transferable Skills.xlsx'); there is no skills.csv or Skills.xlsx in 31.0."
+    },
+    {
+      "source_id": "onet_cip_soc_crosswalk",
+      "title": "CIP 2020 to O*NET-SOC 2019 crosswalk",
+      "publisher": "USDOL/ETA",
+      "url": "https://www.onetcenter.org/crosswalks.html",
+      "downloads": [
+        {
+          "name": "Education_CIP_to_ONET_SOC.xlsx",
+          "url": "https://www.onetcenter.org/crosswalks/cip/Education_CIP_to_ONET_SOC.xlsx",
+          "bytes": 187053,
+          "sha256": "4802101afb1dfa83acde5d125bc55170410686c6d379a8d893c74447361ea6e8"
+        }
+      ],
+      "version": "CIP2020-SOC2019 (July 2024 update)",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "ownership_class": "open_license_with_conditions",
+      "pinned": true,
+      "pinned_at": "2026-10-03T09:16:00-05:00"
+    }
+  ],
+  "notes": [
+    "Sources pinned 2026-10-03 (CT): O*NET 31.0 download URLs and sha256 recorded here and re-checked against the per-file pins in the edu_cs_11.0701 asset provenance (occupation_data.csv, knowledge.csv, essential_skills.csv, crosswalk xlsx all match).",
+    "Pinned is not ingested: no assets are included in 0.0.1, so the package gate stays pending."
+  ],
+  "synthesis_asset_schema": "schemas/data_package_synthesis_asset.schema.json",
+  "included_asset_ids": []
+}

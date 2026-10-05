@@ -31,7 +31,7 @@ jobs:
       - run: python3 tools/place_original_bots.py
       - run: python3 -m unittest tests.test_place_original_bots
       - if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: original-bot-placement-${{ github.run_id }}
           path: |

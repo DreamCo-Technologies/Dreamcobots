@@ -1,0 +1,27 @@
+name: Daily health balancer
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 14 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-health-balancer
+  cancel-in-progress: false
+
+jobs:
+  day:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Run the day's health tasks in one job
+        run: |
+          python3 tools/expert_section_scan.py --write
+          python3 tools/daily_repo_cycle.py
+          python3 buddy/accounts/plugin_gap_bot.py
+          python3 buddy/accounts/own_skills.py
+          python3 benchmarks/model_competition/route.py

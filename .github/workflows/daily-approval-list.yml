@@ -1,0 +1,21 @@
+name: Daily approval list
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "40 11 * * *"
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build the approval list
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/daily_approval_list.py --write

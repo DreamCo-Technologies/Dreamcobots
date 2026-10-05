@@ -1,0 +1,4179 @@
+{
+ "schema": "dreamco.fleet_massive_update.v1",
+ "generated": "2026-10-03 9:46 AM CT",
+ "timezone": "America/Chicago",
+ "main_sha": "95178f3cec20886b26ff6131288abf1c548e6d96",
+ "truth_boundary": "Percentages count only what can be verified on main or live. Open PRs appear only in 'projected'. production_ready stays 0/1101 and frontier claimable=false. No bot is credited with work it did not record.",
+ "sources": [
+  "profile.json for 111 Grok-* agents",
+  "/workspace/reports/fleet-resume-replies.txt (last recorded bot replies, 2026-09-28 rounds R1/R2)",
+  "agent transcripts: not readable (store.db transcript tables are empty; no ReadTranscript tool)",
+  "gh: 50 owner PRs created since 2026-09-20, main runs and check-runs (refreshed 2026-10-03 ~9:50 AM CT)",
+  "files on the shared box (/workspace, /home/box/roadmap)"
+ ],
+ "overall": {
+  "pct": 22.0,
+  "projected_pct": 39.0,
+  "weights": {
+   "ci": 15,
+   "security": 15,
+   "fleet": 15,
+   "frontier": 10,
+   "hf": 5,
+   "onet": 5,
+   "model": 10,
+   "pages": 5,
+   "os": 5,
+   "edu": 5,
+   "selfrun": 5,
+   "workflows": 0
+  },
+  "weight_total": 95,
+  "excluded": [
+   "workflows"
+  ]
+ },
+ "areas": [
+  {
+   "id": "ci",
+   "name": "CI / main health",
+   "weight": 15,
+   "num": 31,
+   "den": 41,
+   "basis": "Latest run per workflow among the last 100 runs on main (2026-10-03 7:27–9:15 AM CT, head 95178f3ce): 31 success / 41 conclusive. Excluded: Actions Failure Watch (skipped), DreamCo Actions Command Center (cancelled), Issue Intelligence (skipped).",
+   "source": "gh run list --branch main --limit 100",
+   "detail": "Failing: Code Trust Gate, Command Center Data Contract, DreamCo 500-Model Benchmark System, DreamCo Core Health, Full System Certification, Grok Owner Systems, Parallel Benchmark Gap Builders, Production Readiness Evidence, Repository Test Matrix, Run Everything Now. Root causes: (1) public-site preflight fails on website/work-desk.html (a legacy hosted-provider name on line 24 matches FORBIDDEN_PUBLIC_NAMES/LEGACY_PROVIDER_NAME in tools/build_buddy_public_site.py), which breaks Production Readiness Evidence, Repository Test Matrix and Full System Certification (#9573 removes it); (2) DreamCo Core Health: tests/actions-page.test.mjs expects the Actions prospectus to cover 91 workflows, but it covers 86; (3) trusted-code (Code Trust Gate) fails on main and on every PR except #9576.",
+   "projected": {
+    "num": 33,
+    "den": 41,
+    "note": "If #9573 merges: on its head 4309a0e, Parallel Benchmark Gap Builders and Repository Test Matrix pass (both fail on main). Other main-red workflows either did not run on the PR or still fail. #13194 targets Grok Owner Systems (PYTHONPATH) but is not verified, so it is not counted.",
+    "pct": 80.5
+   },
+   "pct": 75.6
+  },
+  {
+   "id": "security",
+   "name": "Security / API auth",
+   "weight": 15,
+   "num": 2,
+   "den": 27,
+   "basis": "Mutating + sensitive HTTP routes (P0 class) that carry an inbound auth guard. Rescan of main @95178f3 with Grok-Prod-API-Surface's scan_routes.py (regex extended to recognize billingOwnerAuthorized): 247 routes, 156 mutating, 27 mutating+sensitive, 2 guarded (POST /api/stripe/restore-subscription, POST /api/stripe/portal).",
+   "source": "/workspace/api-surface/scan_routes.py run on main; commit 95178f3 'Lock the billing portal to the owner token'",
+   "detail": "Still unguarded: 25 P0-class routes, including POST /api/github/trigger-workflow, /api/stripe/checkout, /api/buddy/deploy-config. The scan is static and heuristic, so recheck by hand before relying on it. Host secrets that are still unset per reports/PRODUCTION_SCAN.md: DATABASE_URL, STRIPE_WEBHOOK_SECRET, Stripe keys, OWNER_BILLING_TOKEN.",
+   "projected": {
+    "num": 8,
+    "den": 27,
+    "note": "If #13176 merges: its branch guards 6/27 P0-class routes (14 model routes total), plus the 2 billing routes already on main. Estimate.",
+    "pct": 29.6
+   },
+   "pct": 7.4
+  },
+  {
+   "id": "fleet",
+   "name": "Fleet bots production_ready",
+   "weight": 15,
+   "num": 0,
+   "den": 1101,
+   "basis": "config/generated/bot-production-readiness.json on main: stats.bots=1101, production_ready_true=0. That file lists 56 division records; the owner's count is 55.",
+   "source": "config/generated/bot-production-readiness.json",
+   "detail": "Root cause (Fleet-Gap-Closer): 1100/1101 bots have no dedicated code; testCapability is self-referential; GovernedSandboxExecutor always returns blocked.",
+   "projected": null,
+   "pct": 0.0
+  },
+  {
+   "id": "frontier",
+   "name": "Buddy frontier evidence",
+   "weight": 10,
+   "num": 0,
+   "den": 7,
+   "basis": "Gates G1–G7 in config/buddy-frontier-readiness-gates.json passed with evidence. evidence/frontier/current-status.assessment.json: claimable=false, run_count=0, subjects=[], independent_learning_proven=false.",
+   "source": "evidence/frontier/current-status.assessment.json",
+   "detail": "Missing: a Buddy subject, a named frontier reference subject, and a baseline-fail → native candidate → passing holdout/safety/regression demo. No F-tier (F0–F4) is claimable. F0 scaffolding is now in open PRs: #13181 (memory F0 lane, fails closed), #13189 (F0 packet schema + peer baselines), #13186 (promotion checklist). None of them passes a gate.",
+   "projected": null,
+   "pct": 0.0
+  },
+  {
+   "id": "hf",
+   "name": "HF mastery",
+   "weight": 5,
+   "num": 0,
+   "den": 35,
+   "basis": "7 libraries (datasets, evaluate, accelerate, huggingface_hub, transformers, peft, tokenizers) × 5 CERT gates (pin, license, eval, adapter, CERT). Only gate cells with evidence on main count: 0. Certified libraries: 0/7.",
+   "source": "/workspace/hf-mastery/HF_CERT_LEDGER.md (local, 2026-09-28) + main tree (study_packs/hub only has the Day-1 audit)",
+   "detail": "In open PRs: 8/35 gate cells (datasets 2 via #12919/#12435, evaluate 3 via #12434, accelerate 3 via #12440), per the local ledger; not re-verified here. New on 10-03 and not in the ledger yet: #13179 (transformers core pack), #13182 (12-pack capability union, licenses TBD), #13190 (TRL recipes, plan only).",
+   "projected": {
+    "num": 8,
+    "den": 35,
+    "note": "If #12434, #12435, #12440 and #12919 merge. Mastery stays 0/7 until CERT.",
+    "pct": 22.9
+   },
+   "pct": 0.0
+  },
+  {
+   "id": "onet",
+   "name": "O*NET / data packages",
+   "weight": 5,
+   "num": 0,
+   "den": 8,
+   "basis": "Data Package week-1 checklist (reports/DATA_PACKAGE_PRODUCT_PLAN.md §8, 8 items) landed on main: 0. Sellable SKUs: 0. Owner approvals: 0.",
+   "source": "/workspace/dp-merchant/reports/DATA_PACKAGE_WEEK1_EVIDENCE.md (uncommitted, 10-02/10-03)",
+   "detail": "Done locally, not pushed: items 2, 4, 5, 8 (gate with 22 tests, DP-ONET-OCC-SYN 0.0.1 skeleton, scorer example, evidence packet). Item 1 is partial (the catalog generates, but the commit-vs-gitignore decision is open). Item 3 is not started. O*NET ingest (1,016 occupations) is local too.",
+   "projected": {
+    "num": 4,
+    "den": 8,
+    "note": "If #13192 merges (opened 10-03: gate, package builder, DP-ONET-OCC-SYN 0.0.1 skeleton). Items 2, 4, 5, 8, per the local evidence file.",
+    "pct": 50.0
+   },
+   "pct": 0.0
+  },
+  {
+   "id": "model",
+   "name": "Model access paths A–D",
+   "weight": 10,
+   "num": 5,
+   "den": 12,
+   "basis": "4 paths × 3 stages: (a) contract/docs on main, (b) enforcement gate in code on main, (c) gate-to-live evidence. (a) 4/4. (b) 1/4: Path C premium per-request approval and automaticPaidUpgrade=false in server/buddy-model-policy.ts. Path A has a governance workflow but no live_benchmark_ok enforcement; Path B's local_open_model is contract_only; the Path D gate is only in #13176. (c) 0/4.",
+   "source": "docs/PLAN_MODEL_ACCESS.md on the #13176 branch + main tree",
+   "detail": "Live paths: 0/4. Path A has 0 live_benchmark_ok slots.",
+   "projected": {
+    "num": 6,
+    "den": 12,
+    "note": "If #13176 merges, Path D gets an enforcement gate.",
+    "pct": 50.0
+   },
+   "pct": 41.7
+  },
+  {
+   "id": "pages",
+   "name": "GitHub Pages surface",
+   "weight": 5,
+   "num": 1,
+   "den": 7,
+   "basis": "Binary checklist: (1) 6 P0 product pages return 200 live ✔; (2) P0 products in the visible nav ✘; (3) every sitemap URL returns 200 ✘ (1/14; 13 lack the /website/ base); (4) the 7 missing pages from the connection queue exist ✘ (0/7: bootcamp, packages, data-packages, frontier, issues, agents, pulls); (5) public-site preflight green on main ✘; (6) Pages source switched to one Actions publisher ✘ (API: build_type=legacy, main:/); (7) fleet status page linked ✘ until this PR merges.",
+   "source": "curl of live URLs 2026-10-03; gh api repos/…/pages; website/nav.js; website/sitemap.xml",
+   "detail": "",
+   "projected": {
+    "num": 5,
+    "den": 7,
+    "note": "If #9573 (preflight blocker), #12439 (nav + sitemap) and this PR merge.",
+    "pct": 71.4
+   },
+   "pct": 14.3
+  },
+  {
+   "id": "os",
+   "name": "Buddy OS (actions/prs/issues/agents)",
+   "weight": 5,
+   "num": 2,
+   "den": 6,
+   "basis": "Binary checklist on main: Actions page ✔ (website/actions.html); Issues surface ✔ (issues-panel.js inside actions.html); PRs page ✘; Agents page ✘; shared session/event bus ✘ (buddy-os-bus.js absent); SLO/observability tiles ✘ (#9576 open).",
+   "source": "website/ tree on main",
+   "detail": "",
+   "projected": {
+    "num": 3,
+    "den": 6,
+    "note": "If #9576 merges.",
+    "pct": 50.0
+   },
+   "pct": 33.3
+  },
+  {
+   "id": "edu",
+   "name": "Edu curriculum",
+   "weight": 5,
+   "num": 0,
+   "den": 11,
+   "basis": "One first deliverable per Edu bot (11 bots) landed on main: 0.",
+   "source": "per-bot table below",
+   "detail": "In open PRs: K-12 map #12436, career pathways #12441, SET 7 floors #12922, mastery scorecard cert gate #13183, SM-2 engine #13188, OER license gate (inside #13187). Still local only: college catalog, STEM track.",
+   "projected": {
+    "num": 6,
+    "den": 11,
+    "note": "If #12436, #12441, #12922, #13183, #13188 and #13187 merge.",
+    "pct": 54.5
+   },
+   "pct": 0.0
+  },
+  {
+   "id": "selfrun",
+   "name": "Repo self-running automation",
+   "weight": 5,
+   "num": 9,
+   "den": 24,
+   "basis": "12 bot-job families in reports/REPO_AUTONOMOUS_SYSTEMS_PLAN.md × 2: (a) has a cron schedule on main, 9/12 verified by grepping .github/workflows (missing: Bootcamp = dispatch only, Pages = no cron, O*NET = no workflow); (b) the plan's gap is closed, 0/12.",
+   "source": ".github/workflows/*.yml on main; the plan file is in open PR #13186 (opened 10-03)",
+   "detail": "",
+   "projected": {
+    "num": 15,
+    "den": 24,
+    "note": "If #12921 merges as described: P0 conversions close 5 gaps and add the Bootcamp cron. Not verified on the branch.",
+    "pct": 62.5
+   },
+   "pct": 37.5
+  },
+  {
+   "id": "workflows",
+   "name": "Workflow consolidation",
+   "weight": 0,
+   "num": null,
+   "den": null,
+   "basis": "Not measurable yet. Main has no consolidation target or plan (reports/ACTIONS_CONSOLIDATION_PLAN.md is absent).",
+   "source": ".github/workflows on main",
+   "detail": "Raw counts: 91 workflow files, 56 with a schedule. Branch ops/workflow-schedule-demotions has 8 'demote … off the collision' commits and no PR. Actions volume on 09-28 was about 2,500 runs per 24h, roughly 47% cancelled.",
+   "projected": null,
+   "pct": null
+  }
+ ],
+ "status_counts": {
+  "complete": 32,
+  "no_output": 25,
+  "in_progress": 31,
+  "blocked": 23
+ },
+ "family_counts": {
+  "HF swarm": {
+   "complete": 8,
+   "no_output": 5,
+   "in_progress": 6,
+   "blocked": 2
+  },
+  "Buddy frontier sets": {
+   "blocked": 7,
+   "complete": 5,
+   "in_progress": 9,
+   "no_output": 9
+  },
+  "Buddy OS": {
+   "complete": 2,
+   "blocked": 3,
+   "in_progress": 2,
+   "no_output": 3
+  },
+  "Prod connectivity": {
+   "in_progress": 4,
+   "complete": 4,
+   "blocked": 2
+  },
+  "Edu": {
+   "complete": 4,
+   "in_progress": 3,
+   "no_output": 3,
+   "blocked": 1
+  },
+  "Plan owners": {
+   "no_output": 5,
+   "blocked": 8,
+   "complete": 9,
+   "in_progress": 7
+  }
+ },
+ "bots": [
+  {
+   "name": "Grok-HF-Accelerate",
+   "status": "complete",
+   "did": "Accelerate study pack: CARD, sources, evals, 3 lessons, smoke script, tests (PR #12440). Device-map, disk-offload parity and empty-weights checks PASS on CPU; multi-GPU skipped.",
+   "helped": "First HF library with pinned, license-checked, eval-passing evidence (3 of 5 CERT gates per local ledger).",
+   "left": "Address CodeRabbit CHANGES_REQUESTED; adapter wiring and a CERT artifact are still missing.",
+   "questions": [
+    "Merge #12440 once trusted-code policy is settled?"
+   ],
+   "prs": [
+    12440
+   ],
+   "evidence": [
+    "/workspace/hf-accelerate"
+   ],
+   "record": "R2: PR",
+   "family": "HF swarm",
+   "mission": "Own Accelerate + device maps + multi-GPU/CPU offload for local open models.",
+   "agent_id": "01cd03e4-e962-4094-92b1-46e3d840ddf3"
+  },
+  {
+   "name": "Grok-HF-Catalog-Adapter",
+   "status": "no_output",
+   "did": "Only a repo clone exists at /workspace/hf-catalog-adapter/Dreamcobots. No report, branch or PR found.",
+   "helped": "None yet.",
+   "left": "Start: HF Hub metadata adapter beside catalog_adapter with revision + license pins.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/hf-catalog-adapter"
+   ],
+   "record": "none",
+   "family": "HF swarm",
+   "mission": "Own HF Hub metadata adapter beside catalog_adapter; revision+license pins.",
+   "agent_id": "a24863f6-ca3b-498e-a796-77917b39c0c3"
+  },
+  {
+   "name": "Grok-HF-Datasets-Master",
+   "status": "in_progress",
+   "did": "Datasets study pack (CARD, index, sources, evals, 3 lessons, 9 tests) in /workspace/hf-datasets-pack. It was never committed there; it was bundled into PR #12919.",
+   "helped": "Gives Buddy offline load_dataset/map/streaming drills with a pinned dataset revision.",
+   "left": "#12919 fails 'Buddy quick verification', which main does not fail. Fix that, then answer CodeRabbit.",
+   "questions": [
+    "OK a PR from its own lane (asked R1)? Now covered by #12919."
+   ],
+   "prs": [
+    12919
+   ],
+   "evidence": [
+    "/workspace/hf-datasets-pack"
+   ],
+   "record": "R1: NEEDS-USER",
+   "family": "HF swarm",
+   "mission": "Own HF Datasets library: load_dataset, map, streaming, Hub datasets — efficient learning loops.",
+   "agent_id": "cbc30661-85cf-4a16-ba2a-36aea2095418"
+  },
+  {
+   "name": "Grok-HF-Day1-Evidence",
+   "status": "complete",
+   "did": "Day-1 HF evidence packet in reports/HF_DAY1_EVIDENCE_PACKET.md (PR #12920): studied / ran / failed, each linked; claimable=false.",
+   "helped": "One honest page that says what HF work actually ran. Hub drills 4/5, multimodal 5/5 CPU.",
+   "left": "CodeRabbit CHANGES_REQUESTED. Only main-inherited checks fail.",
+   "questions": [],
+   "prs": [
+    12920
+   ],
+   "evidence": [
+    "/workspace/hf-day1-evidence"
+   ],
+   "record": "PR (10-02)",
+   "family": "HF swarm",
+   "mission": "Own Day-1 HF evidence packet: what was studied, run, failed; claimable=false until CERT.",
+   "agent_id": "71b3e448-ae4a-467e-89b6-cc8bf2352b23"
+  },
+  {
+   "name": "Grok-HF-Deps-Pins",
+   "status": "complete",
+   "did": "Opt-in requirements-hf-learning.txt plus docs/hf/HF_PIN_MATRIX.md (PR #12435). Default CI deps unchanged.",
+   "helped": "HF study packs can install pinned deps without breaking default CI.",
+   "left": "CodeRabbit CHANGES_REQUESTED. Only trusted-code fails.",
+   "questions": [],
+   "prs": [
+    12435
+   ],
+   "evidence": [
+    "/workspace/hf-deps-pins"
+   ],
+   "record": "R2: PR",
+   "family": "HF swarm",
+   "mission": "Own requirements-hf-learning.txt + pin matrix; opt-in HF deps without breaking default CI.",
+   "agent_id": "9c95079f-c4a8-4df4-821e-817fc82f7913"
+  },
+  {
+   "name": "Grok-HF-Diffusers",
+   "status": "blocked",
+   "did": "Proposed building study_packs/diffusers and a PR, then waited for approval in chat (R2). No diffusers pack found on disk.",
+   "helped": "None landed yet.",
+   "left": "Build the pack after approval.",
+   "questions": [
+    "Approve the Diffusers study pack + PR?"
+   ],
+   "prs": [],
+   "evidence": [],
+   "record": "R2: APPROVE-IN-CHAT",
+   "family": "HF swarm",
+   "mission": "Own Diffusers (image/audio/video gen pipelines) literacy + study packs.",
+   "agent_id": "80284ac1-93a5-4e86-83e5-36b1c9b3f164"
+  },
+  {
+   "name": "Grok-HF-Evaluate",
+   "status": "in_progress",
+   "did": "HF Evaluate study pack with a Buddy bench metric map, offline fallbacks and 13 tests (PR #12434).",
+   "helped": "Maps Buddy F0 and edu benches onto standard HF metrics, with offline parity evidence.",
+   "left": "#12434 fails 'Buddy quick verification' (main passes it). CodeRabbit CHANGES_REQUESTED. Adapter gate is partial.",
+   "questions": [],
+   "prs": [
+    12434
+   ],
+   "evidence": [
+    "/workspace/hf-evaluate-pack"
+   ],
+   "record": "R2: PR",
+   "family": "HF swarm",
+   "mission": "Own HF Evaluate + leaderboard-style metrics; wire Buddy F0/edu benches to HF metrics where fit.",
+   "agent_id": "38080392-be56-4eb4-89c0-b89227540790"
+  },
+  {
+   "name": "Grok-HF-Hub-Master",
+   "status": "complete",
+   "did": "HF Hub Day-1 study pack: 5 anonymous drills with logs (PR #12444). 4/5 pass; drill 05 flags gated and missing models.",
+   "helped": "Hub literacy evidence, plus a real inventory problem list (gated Llama/Gemma, missing repos).",
+   "left": "CodeRabbit had no blocking review. Only trusted-code fails. Fix the drill_05 inventory findings.",
+   "questions": [],
+   "prs": [
+    12444
+   ],
+   "evidence": [
+    "/workspace/hub-day1-wt"
+   ],
+   "record": "R2: PR",
+   "family": "HF swarm",
+   "mission": "Own HF Hub literacy: repos, cards, revisions, gated models, huggingface_hub API — Day-1 evidence.",
+   "agent_id": "82fb8d0b-b5d6-4d08-9a98-f055a6004f33"
+  },
+  {
+   "name": "Grok-HF-Inference-Serve",
+   "status": "no_output",
+   "did": "No artifact, branch or PR found for TGI/vLLM/llama.cpp serving.",
+   "helped": "None yet.",
+   "left": "Start a serving-path plan behind the Path B gates.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "HF swarm",
+   "mission": "Own TGI/vLLM/llama.cpp inference servers as HF-ecosystem serving path for Buddy.",
+   "agent_id": "5f74cc73-b03a-4c63-a8bd-7f98bcf9d2de"
+  },
+  {
+   "name": "Grok-HF-Mastery-Coach",
+   "status": "in_progress",
+   "did": "HF CERT ledger (local, 09-28): 0 mastered libraries. Per-library gates: pin, license, eval, adapter, CERT.",
+   "helped": "Defines the 5-gate mastery bar used in this report's HF percentage.",
+   "left": "Land the ledger (local only). Define the CERT artifact format and sign the first cert (accelerate is closest).",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/hf-mastery/HF_CERT_LEDGER.md"
+   ],
+   "record": "R1: DONE local (403)",
+   "family": "HF swarm",
+   "mission": "Own plan-huggingface-mastery. HF inventory, study_packs, pin+license+eval+adapter+CERT loop. Tomorrow literacy; year-end fleet paths — no mastered-HF claim…",
+   "agent_id": "d69e00cb-166c-4d74-8bd8-e26955133ede"
+  },
+  {
+   "name": "Grok-HF-Multimodal",
+   "status": "complete",
+   "did": "pack.multimodal (vision/ASR/TTS/CLIP) study pack with pinned models and drill evidence, 5/5 on CPU (PR #12433).",
+   "helped": "Hands the AV trainer a tested literacy lane.",
+   "left": "CodeRabbit CHANGES_REQUESTED. License audit: facebook/mms-tts-eng is CC BY-NC 4.0 and openai/clip-vit-base-patch32 declares no license, so they are study-only.",
+   "questions": [
+    "Keep the non-commercial TTS model in a study-only pack, marked not for sale?"
+   ],
+   "prs": [
+    12433
+   ],
+   "evidence": [
+    "/workspace/mm-pack",
+    "/workspace/hf-license-audit/table.md"
+   ],
+   "record": "R2: PR",
+   "family": "HF swarm",
+   "mission": "Own HF multimodal (vision/ASR/TTS clip) literacy lane for Buddy AV trainer handoff.",
+   "agent_id": "d6b401e3-0021-4022-afd8-99c95a520920"
+  },
+  {
+   "name": "Grok-HF-NLP-Tasks",
+   "status": "in_progress",
+   "did": "NLP task zoo drills (classification/NER/QA/summarize/translate) plus tests (4 pass). Left untracked in /workspace/Dreamcobots and bundled into PR #12919.",
+   "helped": "Gives Buddy literacy drills for the core HF pipelines.",
+   "left": "#12919 has a PR-specific 'Buddy quick verification' failure.",
+   "questions": [],
+   "prs": [
+    12919
+   ],
+   "evidence": [
+    "/workspace/nlp-tasks-build",
+    "/workspace/Dreamcobots/study_packs/nlp-tasks"
+   ],
+   "record": "R1: DONE local (403)",
+   "family": "HF swarm",
+   "mission": "Own HF NLP task zoo (classif/NER/QA/summarize/translate) drills for Buddy literacy.",
+   "agent_id": "a0632729-4376-4cfb-b03b-114bdb62a33f"
+  },
+  {
+   "name": "Grok-HF-PEFT-LoRA",
+   "status": "no_output",
+   "did": "No artifact, branch or PR found.",
+   "helped": "None yet.",
+   "left": "Start a PEFT/LoRA recipe aligned with the Buddy LoRA Foundry (no CI weight training).",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "HF swarm",
+   "mission": "Own PEFT/LoRA/QLoRA on HF stack; align Buddy LoRA Foundry; no CI weight train by default.",
+   "agent_id": "de395db6-e920-488e-b0f0-04cbe73e2b7b"
+  },
+  {
+   "name": "Grok-HF-Router-Wiring",
+   "status": "no_output",
+   "did": "Worktree /workspace/pathb-router on branch path-b/hf-local-router-connectors, with 0 commits beyond main.",
+   "helped": "None yet.",
+   "left": "Wire local_open_model (contract_only today) to an adapter stub with sandbox tests.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/pathb-router"
+   ],
+   "record": "none",
+   "family": "HF swarm",
+   "mission": "Own wiring HF + local_open_model router connectors for Path B; contract→adapter stubs.",
+   "agent_id": "52bbda79-1268-491b-baa5-e05403cee647"
+  },
+  {
+   "name": "Grok-HF-Safetensors-License",
+   "status": "in_progress",
+   "did": "Hub license audit of every HF repo referenced by open PRs (audit.py, hub_license_audit.json, table.md, 10-02). Attribution is inferred from the topic.",
+   "helped": "Found non-commercial, unlicensed and gated models in study packs before anything is sold.",
+   "left": "Land the audit and add license pins to the Path B ingest. Local only.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/hf-license-audit"
+   ],
+   "record": "disk (10-02)",
+   "family": "HF swarm",
+   "mission": "Own safetensors, model cards, license pins for Path B open-weight ingest.",
+   "agent_id": "ee419a3e-5641-4a79-ae6f-ac0346c3fbd8"
+  },
+  {
+   "name": "Grok-HF-Spaces-Gradio",
+   "status": "no_output",
+   "did": "No artifact found. Related: the Dependabot gradio 4→6 major bump (#10115) is open.",
+   "helped": "None yet.",
+   "left": "Start Gradio/Spaces literacy; decide the gradio major bump.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "HF swarm",
+   "mission": "Own Gradio/Spaces literacy for demos on Pages; no fake live demos without sandbox.",
+   "agent_id": "784af31a-a14e-4597-895b-6fc952fd3af7"
+  },
+  {
+   "name": "Grok-HF-StudyPack-Builder",
+   "status": "complete",
+   "did": "Materialized 12 capability packs (study_packs/pack.*) and modified tools/build_hf_capability_packs.py with tests. All of it is untracked or modified in /workspace/Dreamcobots. Generated reports/HUGGINGFACE_CAPABILITY_PACKS.md. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13182.",
+   "helped": "Puts the 6-pack scoreboard item on disk, though several packs have 0 seeds and none allow training.",
+   "left": "Only failures inherited from main. Awaiting owner review. Owner question still open.",
+   "questions": [
+    "Approve PR for 12 study packs + builder tool/tests?"
+   ],
+   "prs": [
+    13182
+   ],
+   "evidence": [
+    "/workspace/Dreamcobots/study_packs",
+    "/workspace/Dreamcobots/reports/HUGGINGFACE_CAPABILITY_PACKS.md"
+   ],
+   "record": "R2: APPROVE-IN-CHAT + gh PR state 10-03.",
+   "family": "HF swarm",
+   "mission": "Own materializing study_packs/ from HUGGINGFACE_MASTERY_TRACK — Day-1 packs on disk.",
+   "agent_id": "6df38057-02e2-475e-a944-c2c1b81efd14"
+  },
+  {
+   "name": "Grok-HF-Swarm-Conductor",
+   "status": "complete",
+   "did": "HF swarm status checklist in reports/HF_TOMORROW_SWARM_STATUS.md (PR #12443): per-lane owner, evidence and next step; verified mastery = 0.",
+   "helped": "Single coordination view for the HF lanes; prevents double-claimed mastery.",
+   "left": "CodeRabbit CHANGES_REQUESTED. Only main-inherited checks fail.",
+   "questions": [],
+   "prs": [
+    12443
+   ],
+   "evidence": [
+    "/workspace/hf-swarm-status"
+   ],
+   "record": "R2: PR",
+   "family": "HF swarm",
+   "mission": "Own HF swarm conductor: parallel lanes, tomorrow checklist, no double-claim mastery.",
+   "agent_id": "25d5c90c-73c2-41c8-9f18-5774116c1ded"
+  },
+  {
+   "name": "Grok-HF-TRL-Train",
+   "status": "in_progress",
+   "did": "TRL SFT/DPO/GRPO recipes, eval plan and gates.json (plan-only by design) in /workspace/study_packs/trl. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13190.",
+   "helped": "Training recipes are ready to run once the approval gates are green.",
+   "left": "Fix the PR-specific failing check(s) Buddy quick verification, then get review. ",
+   "questions": [],
+   "prs": [
+    13190
+   ],
+   "evidence": [
+    "/workspace/study_packs/trl"
+   ],
+   "record": "R1: DONE local (403) + gh PR state 10-03.",
+   "family": "HF swarm",
+   "mission": "Own TRL (SFT/DPO/GRPO) training recipes on HF; plan-only until approval gates green.",
+   "agent_id": "8c756535-7a65-424d-aa99-587ac8c2a7ee"
+  },
+  {
+   "name": "Grok-HF-Tokenizers",
+   "status": "blocked",
+   "did": "Buddy chat template and special-token map, with a test and evidence (template sha256, roles rejected, special ids atomic).",
+   "helped": "Gives the Buddy open-weight path a deterministic chat format.",
+   "left": "Waiting for approval in chat to open a buddy/tokenizers PR.",
+   "questions": [
+    "Approve the buddy/tokenizers PR?"
+   ],
+   "prs": [],
+   "evidence": [
+    "/workspace/buddy-tokenizers"
+   ],
+   "record": "R2: APPROVE-IN-CHAT",
+   "family": "HF swarm",
+   "mission": "Own Tokenizers + chat templates + special tokens for Buddy open-weight path.",
+   "agent_id": "80ed32cd-5dc8-4342-8e99-3231a2fd4758"
+  },
+  {
+   "name": "Grok-HF-Transformers-Core",
+   "status": "complete",
+   "did": "Committed the Transformers core study pack with pinned drills and run evidence on local branch study/transformers-core (806ac5065). Not pushed. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13179.",
+   "helped": "Covers the pipelines/AutoModel/generate literacy lane.",
+   "left": "Only failures inherited from main. Awaiting owner review.",
+   "questions": [],
+   "prs": [
+    13179
+   ],
+   "evidence": [
+    "/workspace/hf-transformers-core"
+   ],
+   "record": "R1: DONE local (403) + gh PR state 10-03.",
+   "family": "HF swarm",
+   "mission": "Own Transformers core: pipelines, AutoModel/Tokenizer, generate, chat templates — study packs + drills.",
+   "agent_id": "a92a3a38-281d-4dbc-afc8-db14a5583601"
+  },
+  {
+   "name": "Grok-Buddy-AV-Trainer",
+   "status": "blocked",
+   "did": "No artifact. Asked the owner to pick a first AV cut (consent+sandbox harness / voice-likeness consent gate / Pages sandbox gate).",
+   "helped": "None yet.",
+   "left": "Pick a first cut.",
+   "questions": [
+    "Which first AV cut, and is a local checkout OK?"
+   ],
+   "prs": [],
+   "evidence": [],
+   "record": "R1: NEEDS-USER; R2: NOTHING-TO-LAND",
+   "family": "Buddy frontier sets",
+   "mission": "Buddy voice/video understanding trainer: multimodal AV pipelines with consent; Pages demos only when sandboxed.",
+   "agent_id": "8a1e798f-867e-41cb-a55b-7e8613bf6ae0"
+  },
+  {
+   "name": "Grok-Buddy-Adapter-Registry",
+   "status": "complete",
+   "did": "Student adapter registry: config + schema + validator + tests, 7/7 pass. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13184.",
+   "helped": "trained_weights_exist can only be set with artifacts.",
+   "left": "Only failures inherited from main. Awaiting owner review. Owner question still open.",
+   "questions": [
+    "Approve PR for the adapter registry (4 files)?"
+   ],
+   "prs": [
+    13184
+   ],
+   "evidence": [
+    "/workspace/buddy-adapter-registry"
+   ],
+   "record": "R2: APPROVE-IN-CHAT + gh PR state 10-03.",
+   "family": "Buddy frontier sets",
+   "mission": "Buddy student adapter registry: versioned Buddy adapters/checkpoints metadata; trained_weights_exist only with artifacts.",
+   "agent_id": "234a047b-118e-4ecb-a5b5-30b071ebe096"
+  },
+  {
+   "name": "Grok-Buddy-Bootcamp-Commandant",
+   "status": "in_progress",
+   "did": "Fix for Buddy Sandbox Bootcamp curriculum validation: completed rows 1001-1100 and replaced 35 duplicates (PR #12431). Evidence in /workspace/bootcamp-evidence.",
+   "helped": "Unblocks the Bootcamp curriculum validation job.",
+   "left": "#12431 is CONFLICTING and fails 'Buddy quick verification'. Rebase on main.",
+   "questions": [],
+   "prs": [
+    12431
+   ],
+   "evidence": [
+    "/workspace/bootcamp-fix",
+    "/workspace/bootcamp-evidence"
+   ],
+   "record": "R2: PR",
+   "family": "Buddy frontier sets",
+   "mission": "Own plan-buddy-bootcamp. Run Buddy Bootcamp curriculum/engine/sandbox to production-ready lessons; web→lesson→sandbox loop; feed RP/LP packages; evidence…",
+   "agent_id": "118ba9c8-d0f9-435a-b066-204c0fa020ef"
+  },
+  {
+   "name": "Grok-Buddy-Capability-Packager",
+   "status": "in_progress",
+   "did": "CP-* schema v2 and example CP-TASK-ROUTE-L1 (levels, selector, soak, allowlist bench hook).",
+   "helped": "Designs a CP schema that cannot be marked production_ready without soak.",
+   "left": "Land the schema. Local only, no reply on record.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/cp-factory"
+   ],
+   "record": "disk only",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy capability-package (CP-*) factory: task skills packages competing across levels; bench vs approved models; no production_ready without soak.",
+   "agent_id": "762ef5f1-bb79-4395-9b1f-c9b63ee80c2b"
+  },
+  {
+   "name": "Grok-Buddy-Code-Frontier",
+   "status": "blocked",
+   "did": "Collected repo references (bootcamp yaml, evaluation matrix, coding benchmark docs) for review. No original artifact.",
+   "helped": "None yet.",
+   "left": "Pick a first build step.",
+   "questions": [
+    "Which first coding-frontier build step?"
+   ],
+   "prs": [],
+   "evidence": [
+    "/workspace/buddy-code-frontier"
+   ],
+   "record": "R2: NOTHING-TO-LAND",
+   "family": "Buddy frontier sets",
+   "mission": "Buddy code-skill frontier: coding benches vs peers; link Bootcamp coding lanes to CP/RP exports.",
+   "agent_id": "802be438-5ee6-49e7-a8e6-8f5c3feccef2"
+  },
+  {
+   "name": "Grok-Buddy-Debug-Arena",
+   "status": "blocked",
+   "did": "Debug arena bootstrap: 3 original tasks, a runner, and reference/null baselines (local branch buddy-debug-arena-bootstrap, c183f8b/960dc1a).",
+   "helped": "First reproducible bug-task arena for Buddy.",
+   "left": "Waiting for approval to open a draft PR.",
+   "questions": [
+    "Approve the debug-arena draft PR?"
+   ],
+   "prs": [],
+   "evidence": [
+    "/workspace/buddy-debug-arena",
+    "/workspace/push-arena"
+   ],
+   "record": "R2: APPROVE-IN-CHAT",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy debug arena: reproduce→isolate→fix→verify; compete vs approved models on bug tasks.",
+   "agent_id": "8db28f6d-2ae9-43a7-bc63-d60ac3ffeaa1"
+  },
+  {
+   "name": "Grok-Buddy-Distill-Lead",
+   "status": "in_progress",
+   "did": "Distill evidence contract: config, schema, stdlib gate, 10 tests, and a read-only CI workflow. No runs and no weights. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13185.",
+   "helped": "Blocks any adapter from claiming the allowlist without a passing packet.",
+   "left": "Fix the PR-specific failing check(s) audit, then get review. Owner question still open.",
+   "questions": [
+    "Approve PR for the distill contract (incl. a new read-only workflow)?"
+   ],
+   "prs": [
+    13185
+   ],
+   "evidence": [
+    "/workspace/distill-contract"
+   ],
+   "record": "R2: APPROVE-IN-CHAT + gh PR state 10-03.",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy teacher→student distillation loop (Grok teacher → Buddy student adapters). Eval-before-train; no weights in default CI; evidence before allowlist.",
+   "agent_id": "2669a38b-7555-4417-bc0b-66184b858da0"
+  },
+  {
+   "name": "Grok-Buddy-Eval-Harness",
+   "status": "no_output",
+   "did": "No dedicated artifact found. The harness code on main (tools/verify_frontier_evidence.py and its tests) predates this bot.",
+   "helped": "None attributable.",
+   "left": "Own holdout suites and leakage checks, and sign scorecards.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Buddy frontier sets",
+   "mission": "Buddy frontier eval harness owner: holdout suites, leakage checks, signed scorecards before any F-tier claim.",
+   "agent_id": "44556dfd-f5c2-467a-ad57-45faa0de47ea"
+  },
+  {
+   "name": "Grok-Buddy-Explain-Then-Test",
+   "status": "no_output",
+   "did": "No artifact found.",
+   "helped": "None yet.",
+   "left": "Start a failing-test-first Bootcamp lane.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy explain-then-fix pedagogy: teach reasoning by writing failing tests first; Bootcamp lane.",
+   "agent_id": "b33c8122-05d2-4207-b4a8-ae5491737642"
+  },
+  {
+   "name": "Grok-Buddy-F0-Scorecard",
+   "status": "complete",
+   "did": "F0 evidence packet schema, peer baselines, a scorecard index, and empty scorecard/packet folders. Branch feat/buddy-frontier-scorecard-validator has no commits. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13189.",
+   "helped": "Defines the F0 packet format that the frontier claim gate needs.",
+   "left": "Only failures inherited from main. Awaiting owner review.",
+   "questions": [],
+   "prs": [
+    13189
+   ],
+   "evidence": [
+    "/workspace/f0-scorecard-draft"
+   ],
+   "record": "disk only + gh PR state 10-03.",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy frontier F0 scorecards: design/sign evidence packets, block vanity frontier claims, keep F0–F4 floors honest vs peer models.",
+   "agent_id": "fff27fc4-8b79-4572-b518-b94f803e0bf6"
+  },
+  {
+   "name": "Grok-Buddy-Frontier-Release",
+   "status": "complete",
+   "did": "Wrote the F0→F4 promotion checklist (docs/BUDDY_FRONTIER_PROMOTION_CHECKLIST.md). It is untracked in /workspace/Dreamcobots. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13186.",
+   "helped": "Every floor needs committed artifact paths; status pre-F0.",
+   "left": "Only failures inherited from main. Awaiting owner review.",
+   "questions": [],
+   "prs": [
+    13186
+   ],
+   "evidence": [
+    "/workspace/Dreamcobots/docs/BUDDY_FRONTIER_PROMOTION_CHECKLIST.md"
+   ],
+   "record": "R1: DONE local + gh PR state 10-03.",
+   "family": "Buddy frontier sets",
+   "mission": "Buddy frontier release captain: F0→F4 promotion checklist, Pages disclosure, allowlist sync — no vanity releases.",
+   "agent_id": "23d1640e-09c3-4f85-b70d-7aabbdeeb3e1"
+  },
+  {
+   "name": "Grok-Buddy-Frontier-Trust",
+   "status": "in_progress",
+   "did": "Frontier claim trust gates: tools/check_frontier_claim_trust_gates.py, a workflow, and a disclosure config. They fail closed on vanity frontier phrases (PR #9575).",
+   "helped": "Stops Pages or the API from shipping frontier claims while claimable=false.",
+   "left": "#9575 is mergeable but has 20 failing checks. PR-specific: 'Claim surfaces require all four gates' (fail-closed by design while gates are red), 'Buddy quick verification', 'audit'. The PR is from 09-21 and needs a rebase.",
+   "questions": [
+    "Should the fail-closed claim job be a required PR check even though it is red by design?"
+   ],
+   "prs": [
+    9575
+   ],
+   "evidence": [
+    "/workspace/Dreamcobots-trust-gate"
+   ],
+   "record": "PR (09-21)",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy frontier trust + safety gates: provenance, allowlist, sandbox soak, disclosure before any frontier or sellable claim ships on Pages or API.",
+   "agent_id": "befef51a-649e-4923-b942-2849aca503dd"
+  },
+  {
+   "name": "Grok-Buddy-Learning-Packager",
+   "status": "in_progress",
+   "did": "LP-STRATEGIES export: patch, manifest, graduation evidence fields, export path, and registry edits (8/8 tests) on feat/lp-strategies-export. Uncommitted. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13180 (attribution inferred from branch/topic).",
+   "helped": "First LP-* package path from Bootcamp to export with graduation evidence.",
+   "left": "Fix the PR-specific failing check(s) smoke, then get review. Owner question still open.",
+   "questions": [
+    "Approve PR for LP-STRATEGIES export?"
+   ],
+   "prs": [
+    13180
+   ],
+   "evidence": [
+    "/workspace/shared/lp-factory",
+    "/workspace/lp-strategies-wt"
+   ],
+   "record": "R2: APPROVE-IN-CHAT + gh PR state 10-03.",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy learning-package (LP-*) factory: curriculum packs from Bootcamp/1000-source tracks; evidence graduation before marketplace.",
+   "agent_id": "3c77f6a8-3885-4282-9747-1f73188b8eec"
+  },
+  {
+   "name": "Grok-Buddy-Learning-Scientist",
+   "status": "no_output",
+   "did": "No artifact found.",
+   "helped": "None yet.",
+   "left": "Spaced-repetition and mastery-check rigor for LP-*. Could reuse Edu-Study-Skills-OS SM-2.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy deliberate practice loops: spaced repetition, mastery checks, LP-* curriculum rigor.",
+   "agent_id": "8b8f23e5-9ea9-43b6-b75f-4cde8c7e4f8d"
+  },
+  {
+   "name": "Grok-Buddy-LoRA-Foundry",
+   "status": "no_output",
+   "did": "No artifact found.",
+   "helped": "None yet.",
+   "left": "foundry/lora plan to approval-gated jobs.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy LoRA/foundry path for frontier adapters: foundry/lora plans → trainable jobs behind approval; trained_weights_exist only with artifacts.",
+   "agent_id": "72de8c08-78dc-420b-8cff-2c213637ae4a"
+  },
+  {
+   "name": "Grok-Buddy-Log-Forensics",
+   "status": "no_output",
+   "did": "No artifact attributable (CI log captures in /workspace/buddy-rca belong to the RCA trainer).",
+   "helped": "None yet.",
+   "left": "Turn CI traces into lessons and feed the repair orchestrator.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy error-log forensics: CI/runtime traces→lessons; feed repair orchestrator + Bootcamp.",
+   "agent_id": "e78e8216-2241-4caa-b500-f6e686416b3e"
+  },
+  {
+   "name": "Grok-Buddy-Logic-Reasoner",
+   "status": "blocked",
+   "did": "buddy-logic-bench v0.1: 90-item deterministic holdout (prop/queens/syllogism) with exact verifiers. Baselines: oracle 1.0, random 0.267. 6/6 tests.",
+   "helped": "First F-tier-usable logic holdout with programmatic grading.",
+   "left": "Waiting for approval in chat to land it.",
+   "questions": [
+    "Approve PR for buddy-logic-bench?"
+   ],
+   "prs": [],
+   "evidence": [
+    "/workspace/buddy-logic-bench"
+   ],
+   "record": "R2: APPROVE-IN-CHAT",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy formal/logic reasoning track: proofs, constraints, puzzle benches for F-tier scorecards.",
+   "agent_id": "40b5b5f7-8d0a-463d-9dcd-7797f6a4c5dc"
+  },
+  {
+   "name": "Grok-Buddy-Memory-Frontier",
+   "status": "in_progress",
+   "did": "Memory F0 lane: task file, suite config, assessment and bundle, plus verify_frontier_evidence edits on feat/buddy-memory-f0-lane. Uncommitted. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13181.",
+   "helped": "First memory-skill F0 suite wired into the frontier verifier.",
+   "left": "Fix the PR-specific failing check(s) smoke, then get review. Owner question still open.",
+   "questions": [
+    "Approve PR for the memory F0 lane?"
+   ],
+   "prs": [
+    13181
+   ],
+   "evidence": [
+    "/workspace/memory-f0-wt"
+   ],
+   "record": "R2: APPROVE-IN-CHAT + gh PR state 10-03.",
+   "family": "Buddy frontier sets",
+   "mission": "Buddy long-context / memory frontier track: evals + training data provenance for memory skills packages.",
+   "agent_id": "23d70e71-1ba0-4222-88be-6053711c6db5"
+  },
+  {
+   "name": "Grok-Buddy-Metacog-Coach",
+   "status": "blocked",
+   "did": "Idle. Reported no task and asked for a concrete metacognition / Path D calibration task.",
+   "helped": "None yet.",
+   "left": "Needs an assignment.",
+   "questions": [
+    "Assign a concrete metacog/Path D calibration task?"
+   ],
+   "prs": [],
+   "evidence": [],
+   "record": "R1: DONE (no task); R2: idle",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy metacognition: when to ask, tool-switch, abstain; Path D selector calibration.",
+   "agent_id": "a424cf80-a577-4675-a739-225c2a6b6bf8"
+  },
+  {
+   "name": "Grok-Buddy-Multimodal-Trainer",
+   "status": "complete",
+   "did": "Buddy multimodal sellability gate (sellable/train_only/reference_only/blocked) and a provenance record schema, 12 tests (PR #12445).",
+   "helped": "First code that enforces config/buddy-training-data-provenance-policy.json.",
+   "left": "Only main-inherited checks fail. Next: lesson_provenance validator.",
+   "questions": [],
+   "prs": [
+    12445
+   ],
+   "evidence": [
+    "/workspace/buddy-multimodal-trainer",
+    "/workspace/dc-land"
+   ],
+   "record": "R1: DONE local; PR",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy multi-source trainers: web, books, movies, video, user uploads → lessons with consent + provenance. Sellable outputs =…",
+   "agent_id": "2083181c-2feb-4971-b885-0ac590420fc5"
+  },
+  {
+   "name": "Grok-Buddy-Package-Market",
+   "status": "blocked",
+   "did": "No artifact. Asked the owner to pick a first ship target.",
+   "helped": "None yet.",
+   "left": "Pick a target.",
+   "questions": [
+    "First marketplace target: listing gate+API, Pages catalog skeleton, live Pages audit, or packager contract?"
+   ],
+   "prs": [],
+   "evidence": [],
+   "record": "R1: NEEDS-USER; R2: NOTHING-TO-LAND",
+   "family": "Buddy frontier sets",
+   "mission": "Buddy marketplace listing ops: RP/LP/CP/DP listings on Pages + API; block list without license+evidence gates.",
+   "agent_id": "3aee6063-5812-44dc-8685-1b1b40b5f049"
+  },
+  {
+   "name": "Grok-Buddy-Pages-Demos",
+   "status": "in_progress",
+   "did": "website/buddy-live-demos.html: 3 tabs (Bootcamp, model picker, packages) that read real repo JSON (PR #12442). CodeRabbit APPROVED.",
+   "helped": "First Pages demo that loads real data with no invented numbers.",
+   "left": "#12442 fails CodeQL (PR-specific). Resolve the code-scanning alert.",
+   "questions": [],
+   "prs": [
+    12442
+   ],
+   "evidence": [
+    "/workspace/buddydemo",
+    "/workspace/dc-buddy-demos"
+   ],
+   "record": "R2: PR",
+   "family": "Buddy frontier sets",
+   "mission": "Buddy Pages live demos: interactive Bootcamp/model-picker/package demos on GitHub Pages wired to real stubs.",
+   "agent_id": "28f55c99-bc5f-4218-9d44-ff8f020d52f3"
+  },
+  {
+   "name": "Grok-Buddy-RCA-Trainer",
+   "status": "in_progress",
+   "did": "RCA taxonomy (26 failure classes), remediation schema, failure-lessons.json and risk score, built from real CI logs.",
+   "helped": "Gives Buddy a failure taxonomy for debug and RCA packages.",
+   "left": "Land it. Local only.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/buddy-rca"
+   ],
+   "record": "R1: DONE local",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy root-cause analysis trainer: RCA playbooks, failure taxonomies, CP-debug packages.",
+   "agent_id": "cafec718-dc7c-47d6-a428-b39940173766"
+  },
+  {
+   "name": "Grok-Buddy-Reasoning-Coach",
+   "status": "no_output",
+   "did": "Only a repo clone at /workspace/buddy-reasoning/repo.",
+   "helped": "None yet.",
+   "left": "Structured reasoning drills that export RP-*.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/buddy-reasoning"
+   ],
+   "record": "none",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy chain-of-thought / structured reasoning drills; RP-* exports; bench before sell.",
+   "agent_id": "4d2de53f-d087-4227-b212-c5536b1e847b"
+  },
+  {
+   "name": "Grok-Buddy-Reasoning-Packager",
+   "status": "no_output",
+   "did": "No artifact found.",
+   "helped": "None yet.",
+   "left": "RP-* factory with a license gate.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy reasoning-package (RP-*) factory: Bootcamp → exportable reasoning packages; license gate; feed Path D allowlist only after CERT.",
+   "agent_id": "2975e686-5dad-44c9-92dd-05014682d33e"
+  },
+  {
+   "name": "Grok-Buddy-Regression-Hunter",
+   "status": "no_output",
+   "did": "No artifact found.",
+   "helped": "None yet.",
+   "left": "Flaky-test and bisect packs.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy regression-debug packs: flaky tests, bisect skills, sellable debug LP/CP with evidence.",
+   "agent_id": "7801c9de-872b-4d48-b056-43f1d611e2c2"
+  },
+  {
+   "name": "Grok-Buddy-Socratic-Tutor",
+   "status": "blocked",
+   "did": "No artifact. Asked the owner to pick a first tutoring lane.",
+   "helped": "None yet.",
+   "left": "Pick a lane.",
+   "questions": [
+    "First Socratic lane: next Bootcamp lesson, a stuck concept, or a dry run?"
+   ],
+   "prs": [],
+   "evidence": [],
+   "record": "R1: NEEDS-USER",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy Socratic tutor mode: question-led learning from Bootcamp; no spoiler-first answers.",
+   "agent_id": "8677cba4-3d1a-4170-8009-f63e95ffbebd"
+  },
+  {
+   "name": "Grok-Buddy-Teacher-Curriculum",
+   "status": "complete",
+   "did": "Grok→Buddy teacher syllabus v0, tied to Bootcamp levels and vs500/F0-F4 floors. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13187.",
+   "helped": "Defines what Grok teaches per tier and the graduation rules.",
+   "left": "Only failures inherited from main. Awaiting owner review.",
+   "questions": [],
+   "prs": [
+    13187
+   ],
+   "evidence": [
+    "/workspace/teacher-curriculum/GROK_TEACHES_BUDDY_SYLLABUS_v0.md"
+   ],
+   "record": "disk only + gh PR state 10-03.",
+   "family": "Buddy frontier sets",
+   "mission": "Buddy teacher curriculum designer: what Grok teaches Buddy per tier; syllabus tied to Bootcamp + vs500 benches.",
+   "agent_id": "381a07bd-531d-41de-84ba-b56e13b58b46"
+  },
+  {
+   "name": "Grok-Buddy-ToolUse-Arena",
+   "status": "in_progress",
+   "did": "Tool-use arena baseline (09-21): Path D layers and stubs, no live benchmarks.",
+   "helped": "Early Path D map. It references config/buddy/approved-models-allowlist.json, but #13176 uses config/buddy/model-allowlist.json, so the names need reconciling.",
+   "left": "Land the baseline and align the allowlist file name with #13176.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/shared/buddy-tooluse-arena-baseline.md"
+   ],
+   "record": "disk only",
+   "family": "Buddy frontier sets",
+   "mission": "Buddy tool-use arena: compete Buddy tool-calling vs approved models; feed CP packages + Path D selector.",
+   "agent_id": "fa81d743-9507-45b4-bb66-d8dab19f5c2c"
+  },
+  {
+   "name": "Grok-Buddy-Vs500-Bench",
+   "status": "no_output",
+   "did": "No artifact found.",
+   "helped": "None yet.",
+   "left": "Needs Path A live_benchmark_ok slots first.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Buddy frontier sets",
+   "mission": "Own Buddy vs-500 competitive bench: run Buddy against owner 500 + open-weight peers per task tier; publish honest win/lose cards.",
+   "agent_id": "d763d0f8-122c-49aa-aade-c5b5ab049a4c"
+  },
+  {
+   "name": "Grok-Buddy-OS-Shell",
+   "status": "complete",
+   "did": "Shell command-surface IPC contract (buddy_os/contracts/shell_command_surface.ipc.yaml). On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13187.",
+   "helped": "First contract that unifies Actions/PRs/Issues/Agents commands.",
+   "left": "Only failures inherited from main. Awaiting owner review.",
+   "questions": [],
+   "prs": [
+    13187
+   ],
+   "evidence": [
+    "/workspace/buddy-os-shell"
+   ],
+   "record": "disk only + gh PR state 10-03.",
+   "family": "Buddy OS",
+   "mission": "Own Buddy OS shell: unify Actions/PRs/Issues/Agents/Pages into one command surface + IPC contracts.",
+   "agent_id": "c9c38906-e879-49b4-99ff-07ef33e7135a"
+  },
+  {
+   "name": "Grok-OS-Actions-Panel",
+   "status": "blocked",
+   "did": "No artifact. Asked the owner for a focus. Listed failures #9554/#9551/#7370/#9564/#9557.",
+   "helped": "None yet.",
+   "left": "Pick a focus.",
+   "questions": [
+    "Actions panel focus: fix Actions Health, rerun, or set up failure watch?"
+   ],
+   "prs": [],
+   "evidence": [],
+   "record": "R1: NEEDS-USER; R2: NOTHING-TO-LAND",
+   "family": "Buddy OS",
+   "mission": "Own Actions page as OS services panel: live workflow health, rerun/dispatch, tie failures to Issues+PRs+Agents.",
+   "agent_id": "2183e1d0-2b09-49f1-8e5c-72e9989ed1ce"
+  },
+  {
+   "name": "Grok-OS-Agents-ProcTable",
+   "status": "in_progress",
+   "did": "Agents process table snapshot (09-28): every Grok agent with cluster, state and mission.",
+   "helped": "First process-table view of the fleet.",
+   "left": "There is no Agents page on Pages yet. Land a page or data file.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/agents_proc_table.md",
+    "/workspace/agent-proc-table.tsv"
+   ],
+   "record": "R1: DONE",
+   "family": "Buddy OS",
+   "mission": "Own Agents section as OS process table: every Grok/fleet bot status, inbox, restart/mission assign.",
+   "agent_id": "b82d1a24-2fc2-4a0c-b666-5d678b6bff3c"
+  },
+  {
+   "name": "Grok-OS-Event-Bus",
+   "status": "no_output",
+   "did": "No artifact attributable (event-bus notes ship inside #9576).",
+   "helped": "None yet.",
+   "left": "Normalize webhooks into agent wakes and Pages tiles.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Buddy OS",
+   "mission": "Own OS event bus: normalize GitHub webhooks (actions/pr/issues) → agent wakes + Pages live tiles.",
+   "agent_id": "e9f40386-1c08-4126-920e-48fc3bff1403"
+  },
+  {
+   "name": "Grok-OS-Issues-Kernel",
+   "status": "blocked",
+   "did": "Issues triage snapshot (09-28): open issues fell from 761 to 211. Tracked tickets flagged with no verification link. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13187.",
+   "helped": "Enforces a close-with-evidence rule.",
+   "left": "Triage report is in #13187. Waiting for the owner to pick the first routing batch.",
+   "questions": [
+    "Approve the first-batch issue routing to plan-owner bots?"
+   ],
+   "prs": [
+    13187
+   ],
+   "evidence": [
+    "/workspace/issues-kernel/triage-2026-09-28.md"
+   ],
+   "record": "R1: NEEDS-USER + gh PR state 10-03.",
+   "family": "Buddy OS",
+   "mission": "Own Issues section as OS ticket kernel: triage, route to plan-owner bots, close only with evidence.",
+   "agent_id": "fe7fc19e-3435-4b6a-830d-69a5fde5bc4d"
+  },
+  {
+   "name": "Grok-OS-Observability",
+   "status": "complete",
+   "did": "SET 5: schema and fail-closed stub for 25 Actions/PR/Issues/Agents SLO/soak metrics, plus tiles on actions.html and os.html (PR #9576).",
+   "helped": "The only open PR that is fully green (39/39) and MERGEABLE/CLEAN. Blocks vanity green.",
+   "left": "CodeRabbit CHANGES_REQUESTED. Ready for owner merge.",
+   "questions": [],
+   "prs": [
+    9576
+   ],
+   "evidence": [
+    "/workspace/dreamcobots-9576"
+   ],
+   "record": "PR (updated 10-02)",
+   "family": "Buddy OS",
+   "mission": "Own OS observability: Actions+PR+Issues+Agents dashboards on Pages; soak/SLOs; no vanity green.",
+   "agent_id": "e145498c-5909-4bcd-b7b5-4b414a2e8615"
+  },
+  {
+   "name": "Grok-OS-PR-Bus",
+   "status": "no_output",
+   "did": "Reported 'read-only, nothing to land' (R2). No artifact found.",
+   "helped": "None yet.",
+   "left": "PR queue and merge-gate view.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "R2: NOTHING-TO-LAND",
+   "family": "Buddy OS",
+   "mission": "Own Pull Requests section as OS change bus: PR queue, checks, merge gates, link to Actions+Issues+Agents.",
+   "agent_id": "771e7e93-1885-4327-b9e0-aa833d7c12f4"
+  },
+  {
+   "name": "Grok-OS-Pages-Integrator",
+   "status": "blocked",
+   "did": "No PR found. It was told to land a gap doc PR, then asked again for approval or a surface pick.",
+   "helped": "None yet.",
+   "left": "Pick a surface.",
+   "questions": [
+    "Which OS surface first (shared session/event bus across actions/prs/issues/agents)?"
+   ],
+   "prs": [],
+   "evidence": [],
+   "record": "R2: APPROVE-IN-CHAT",
+   "family": "Buddy OS",
+   "mission": "Own OS integration wiring: website/actions|prs|issues|agents pages + APIs so sections share one session/state.",
+   "agent_id": "03fe8065-8a7a-4b50-b2d3-ee8c02e36a8d"
+  },
+  {
+   "name": "Grok-OS-Permissions",
+   "status": "no_output",
+   "did": "/workspace/os-acl is an empty git repo.",
+   "helped": "None yet.",
+   "left": "ACL for merge/dispatch/model approval, Path D aware.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/os-acl"
+   ],
+   "record": "none",
+   "family": "Buddy OS",
+   "mission": "Own OS permissions/ACL: who can merge, dispatch, approve models, sell packages — Path D allowlist aware.",
+   "agent_id": "64acc0e9-ed4e-41af-a5e0-fe721de2ef8a"
+  },
+  {
+   "name": "Grok-OS-Scheduler",
+   "status": "in_progress",
+   "did": "P0 first 5 autonomous conversions, as edits to existing workflows only (PR #12921). Earlier timer-catalog patch is local.",
+   "helped": "Moves bot chores into repo cron so the repo runs without agents.",
+   "left": "#12921 fails 'audit' (PR-specific). CodeRabbit CHANGES_REQUESTED.",
+   "questions": [],
+   "prs": [
+    12921
+   ],
+   "evidence": [
+    "/workspace/os-scheduler-p0",
+    "/home/box/os-scheduler"
+   ],
+   "record": "PR (10-02)",
+   "family": "Buddy OS",
+   "mission": "Own OS scheduler: cron/workflow_dispatch as system timers; Buddy Bootcamp + cert jobs as services.",
+   "agent_id": "abf48869-110d-4cdd-b3df-91a9fdcb5fa9"
+  },
+  {
+   "name": "Grok-Prod-API-Surface",
+   "status": "in_progress",
+   "did": "API surface map (09-28): 247 routes, 0 with inbound auth, 27 P0. Flagged POST /api/github/trigger-workflow as critical.",
+   "helped": "Its findings line up with the later main fix (billing portal locked to the owner token, 95178f3) and #13176. Rescan today: 2/27 P0-class routes guarded.",
+   "left": "Land the map and scan script. Track P0 closure.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/api-surface"
+   ],
+   "record": "R1: DONE local (403)",
+   "family": "Prod connectivity",
+   "mission": "Own API/route surface map: every endpoint/page action connected to auth, ACL Path D, and tests.",
+   "agent_id": "d2b3ebd2-a51b-4ab0-aaee-80a9b1830169"
+  },
+  {
+   "name": "Grok-Prod-Cert-Gate",
+   "status": "complete",
+   "did": "SET 6 final cert gate spec: three pillars (connectivity/ledger/soak) on the same SHA, plus a checklist JSON. Fork branch cert/final-prod-cert-gate-set6 has no PR. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13187.",
+   "helped": "Defines when production_ready may ever flip.",
+   "left": "Only failures inherited from main. Awaiting owner review.",
+   "questions": [],
+   "prs": [
+    13187
+   ],
+   "evidence": [
+    "/workspace/prod-cert-gate"
+   ],
+   "record": "disk + fork branch + gh PR state 10-03.",
+   "family": "Prod connectivity",
+   "mission": "Own final production certification gate: certify only with ledger+connectivity+soak; block vanity greens.",
+   "agent_id": "5217c977-f550-4816-a85b-4284a56c6bc6"
+  },
+  {
+   "name": "Grok-Prod-Config-Triangulator",
+   "status": "in_progress",
+   "did": "P0 gate root causes (09-21): stale 1051/45 baselines cascade into many reds. Secrets gap list and an env_example patch.",
+   "helped": "Showed that most P0 reds were stale generated baselines, not product bugs.",
+   "left": "Land the env example patch. The 403 has since been fixed.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/triangulation",
+    "/workspace/wt-secrets"
+   ],
+   "record": "R1: NEEDS-USER 403",
+   "family": "Prod connectivity",
+   "mission": "Own config↔code↔workflow triangulation: stale configs, dead workflows, missing secrets declarations.",
+   "agent_id": "04f6d16e-adaf-4fdb-ae61-096efe187537"
+  },
+  {
+   "name": "Grok-Prod-Connectivity-Scanner",
+   "status": "complete",
+   "did": "Whole-repo connectivity scan and resource connection queue (P0 missing pages: bootcamp, packages, data-packages, frontier, issues, agents, pulls). On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13186.",
+   "helped": "Gives this report its missing-page list.",
+   "left": "Only failures inherited from main. Awaiting owner review. Owner question still open.",
+   "questions": [
+    "Approve PR for the connectivity first-cut report?"
+   ],
+   "prs": [
+    13186
+   ],
+   "evidence": [
+    "/workspace/Dreamcobots/reports/PROD_CONNECTIVITY_SCAN.md",
+    "/workspace/connectivity-scan"
+   ],
+   "record": "R2: APPROVE-IN-CHAT + gh PR state 10-03.",
+   "family": "Prod connectivity",
+   "mission": "Own whole-repo file×resource connectivity scan: orphan docs, dangling refs, unlinked Pages/API/config. Feed production-readiness gates.",
+   "agent_id": "8daebb38-8e4b-4df5-8b45-ae1f6c24885d"
+  },
+  {
+   "name": "Grok-Prod-Data-Wiring",
+   "status": "blocked",
+   "did": "No artifact. Waiting for a next-step pick on fixtures and loader.",
+   "helped": "None yet.",
+   "left": "Pick a step.",
+   "questions": [
+    "Data wiring next step: fixtures or loader?"
+   ],
+   "prs": [],
+   "evidence": [],
+   "record": "R2: NOTHING-TO-LAND",
+   "family": "Prod connectivity",
+   "mission": "Own data/asset connectivity: datasets, O*NET, study packs, fixtures wired into Bootcamp/OS/Pages.",
+   "agent_id": "774ef39f-bb1c-468c-a92f-8c732ebf0ced"
+  },
+  {
+   "name": "Grok-Prod-Deps-Licenses",
+   "status": "in_progress",
+   "did": "Supply-chain gap scan (09-21): lockfile inventory. money_os/backend has no lockfile or license field.",
+   "helped": "First dependency and license baseline for sellable work.",
+   "left": "Land it and refresh against the current main.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/deps-license-scan-report.md"
+   ],
+   "record": "disk only",
+   "family": "Prod connectivity",
+   "mission": "Own dependency/supply-chain readiness: package locks, HF pins, license gates for anything sellable.",
+   "agent_id": "aff18251-d4d9-4ad8-b6c1-a6af5c1786c2"
+  },
+  {
+   "name": "Grok-Prod-Docs-Parity",
+   "status": "blocked",
+   "did": "Docs↔implementation parity patch (roadmap, empire README, system.ts, plugin registry).",
+   "helped": "Marks plan claims that lack code as stubs.",
+   "left": "It was given a go-ahead in R2 but then asked for approval of the patch again. No PR exists.",
+   "questions": [
+    "Approve the docs-only parity PR?"
+   ],
+   "prs": [],
+   "evidence": [
+    "/workspace/parity-fixes/parity-fixes.patch"
+   ],
+   "record": "R2: APPROVE-IN-CHAT",
+   "family": "Prod connectivity",
+   "mission": "Own docs↔implementation parity: plans/reports that claim features must link to real code paths or be marked stub.",
+   "agent_id": "084bf114-09fa-4c3c-96ff-07e1324b7e95"
+  },
+  {
+   "name": "Grok-Prod-Evidence-Ledger",
+   "status": "complete",
+   "did": "Evidence ledger v0.1: schema, 3 honest seed entries (all evidence_incomplete), a gate script, and a vanity negative control (PR #12437).",
+   "helped": "Machine-checkable rule: no production_ready without CI + soak + runtime pinned to one SHA.",
+   "left": "Only trusted-code fails. CodeRabbit CHANGES_REQUESTED.",
+   "questions": [],
+   "prs": [
+    12437
+   ],
+   "evidence": [
+    "/workspace/evidence-ledger"
+   ],
+   "record": "R2: PR",
+   "family": "Prod connectivity",
+   "mission": "Own production-readiness evidence ledger: no production_ready without linked soak/CI/runtime proof.",
+   "agent_id": "0500002e-76d1-46e4-b8a1-7e42f8910958"
+  },
+  {
+   "name": "Grok-Prod-Plan-Closure",
+   "status": "complete",
+   "did": "P0 plan gap queue plus captured Grok Owner Systems run artifacts and an API scan of main 5ba09f2 (10-02). On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13193, #13194 (attribution inferred from branch/topic).",
+   "helped": "Folds 37 plans into a single gap queue.",
+   "left": "Only failures inherited from main. Awaiting owner review.",
+   "questions": [],
+   "prs": [
+    13193,
+    13194
+   ],
+   "evidence": [
+    "/workspace/prod-plan-closure"
+   ],
+   "record": "disk (10-02) + gh PR state 10-03.",
+   "family": "Prod connectivity",
+   "mission": "Own cross-plan closure: 37 plans + SET bots → single gap queue to production evidence.",
+   "agent_id": "76b9fdb0-94c4-4636-a233-6da5347c60fd"
+  },
+  {
+   "name": "Grok-Prod-Resource-Graph",
+   "status": "in_progress",
+   "did": "Resource graph: 1051 bots. 8 named on Pages, 26 with per-bot evidence, 0 fully connected.",
+   "helped": "Quantifies the disconnected nodes behind production_ready 0/1101.",
+   "left": "Land the report and builder, and rerun for 1101 bots.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/resource-graph"
+   ],
+   "record": "R1: DONE local",
+   "family": "Prod connectivity",
+   "mission": "Own resource graph: every catalogued resource→owner bot→Pages→workflow→evidence. Close disconnected nodes.",
+   "agent_id": "f930268a-c0c0-4e4c-9b19-c27e3aa05ee0"
+  },
+  {
+   "name": "Grok-Edu-Benchmark-Planner",
+   "status": "complete",
+   "did": "SET 7: course mastery floors (0.90), holdout policy, and an edu benchmark packet skeleton under eval/edu_benchmark/ (PR #12922).",
+   "helped": "Defines anti-cheat holdouts and floors before any course cert.",
+   "left": "Only main-inherited checks fail. CodeRabbit CHANGES_REQUESTED.",
+   "questions": [],
+   "prs": [
+    12922
+   ],
+   "evidence": [
+    "/workspace/edu-benchmark",
+    "/workspace/dreamcobots-edu-pr"
+   ],
+   "record": "PR (10-02)",
+   "family": "Edu",
+   "mission": "Own learning benchmark planner: course-level evals, mastery floors, anti-cheat holdouts for school/college.",
+   "agent_id": "35bc3f45-e50a-49a7-a5cf-437224e264a9"
+  },
+  {
+   "name": "Grok-Edu-Career-Pathways",
+   "status": "in_progress",
+   "did": "27 majors (CIP 2020) mapped to 296 O*NET-SOC occupations via the official crosswalk, with per-major study plans, holdout kit and gate (PR #12441, v5 def1d2d, 6,518 files).",
+   "helped": "First O*NET-aligned majors→jobs study plans with licensing per item.",
+   "left": "#12441 fails CodeQL (PR-specific). 1,017 generated plans still fail synthesis_asset_record. Very large PR.",
+   "questions": [
+    "Is a 6.5k-file PR acceptable, or should generated plans ship as an artifact?"
+   ],
+   "prs": [
+    12441
+   ],
+   "evidence": [
+    "/workspace/dc-ecp",
+    "/workspace/ecp-repo"
+   ],
+   "record": "PR (updated 10-03)",
+   "family": "Edu",
+   "mission": "Own college admissions/career pathway learning (O*NET-aligned majors→jobs study plans).",
+   "agent_id": "0a0cffbf-164f-4068-883a-27cd69cb9707"
+  },
+  {
+   "name": "Grok-Edu-College-Catalog",
+   "status": "in_progress",
+   "did": "College course universe v0 spine (gen-eds + majors → study paths).",
+   "helped": "Seeds college-level paths for Buddy.",
+   "left": "Land it. Local only.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/college-catalog"
+   ],
+   "record": "disk only",
+   "family": "Edu",
+   "mission": "Own college/university course universe catalog (gen-eds + majors) → study paths + benchmarks.",
+   "agent_id": "eec8c25c-7a2f-4ea4-b171-836915efd20e"
+  },
+  {
+   "name": "Grok-Edu-Humanities-Track",
+   "status": "no_output",
+   "did": "No artifact found.",
+   "helped": "None yet.",
+   "left": "Humanities and social-science original-perspective packs.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Edu",
+   "mission": "Own humanities/social-science course track: reading, writing, history, civics — original-perspective packs.",
+   "agent_id": "7b5f77c2-231a-4f35-ad89-592cbf0748b6"
+  },
+  {
+   "name": "Grok-Edu-K12-Curriculum",
+   "status": "complete",
+   "did": "K-12 curriculum map spine v0: 5 grade bands, 9 subjects, OER policy, Bootcamp/LP-K12 bridges. cells_seed is intentionally empty (PR #12436).",
+   "helped": "A provenance-safe K-12 skeleton that holds no scraped data.",
+   "left": "Only main-inherited checks fail. The open question on the Codecademy snapshot remains.",
+   "questions": [
+    "Keep or delete the Codecademy catalog snapshot in /workspace/coding-courses (possible ToS issue)?"
+   ],
+   "prs": [
+    12436
+   ],
+   "evidence": [
+    "/workspace/wt-k12",
+    "/workspace/coding-courses"
+   ],
+   "record": "R1: NEEDS-USER; R2: PR",
+   "family": "Edu",
+   "mission": "Own K-12 full curriculum map (all subjects/grades) → Buddy Bootcamp lessons + LP packs; provenance-safe.",
+   "agent_id": "0bbf39fb-a606-4094-8eca-aee4b952c9f5"
+  },
+  {
+   "name": "Grok-Edu-Mastery-Scorecards",
+   "status": "complete",
+   "did": "Course mastery evidence-card schema plus a no-cert-without-benches gate (F0-F4), with examples and tests (466e831). On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13183.",
+   "helped": "This is the 'Mastery-Scorecards cert gate'. It blocks completion certs without benches.",
+   "left": "Only failures inherited from main. Awaiting owner review. Owner question still open.",
+   "questions": [
+    "Approve PR for the mastery scorecard cert gate?"
+   ],
+   "prs": [
+    13183
+   ],
+   "evidence": [
+    "/workspace/edu-mastery-scorecards"
+   ],
+   "record": "R2: APPROVE-IN-CHAT + gh PR state 10-03.",
+   "family": "Edu",
+   "mission": "Own course mastery scorecards: per-course F-style floors, evidence before completion certs.",
+   "agent_id": "32f13087-4f8a-4335-8b9b-9d30fe88eb76"
+  },
+  {
+   "name": "Grok-Edu-OER-Ingest",
+   "status": "complete",
+   "did": "OER license gate v1: policy, JSON schema, allow/deny matrix. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13187.",
+   "helped": "Required before any OER-derived sellable synthesis.",
+   "left": "Only failures inherited from main. Awaiting owner review. Owner question still open.",
+   "questions": [
+    "Approve PR for the OER license gate (3 files)?"
+   ],
+   "prs": [
+    13187
+   ],
+   "evidence": [
+    "/workspace/oer-ingest"
+   ],
+   "record": "R2: APPROVE-IN-CHAT + gh PR state 10-03.",
+   "family": "Edu",
+   "mission": "Own open courseware ingest (OER/MIT OCW/OpenStax/etc.) with license gates into sellable-only-original synthesis.",
+   "agent_id": "81b28984-f229-424a-9466-91c40432b0de"
+  },
+  {
+   "name": "Grok-Edu-Pages-Packager",
+   "status": "no_output",
+   "did": "Worktree /workspace/edu-pages-packager is clean at main. No artifact.",
+   "helped": "None yet.",
+   "left": "Courses and benchmarks on Pages; wire learn.html.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Edu",
+   "mission": "Own edu Pages + package store: courses/benchmarks on GitHub Pages; wire learn.html + Bootcamp.",
+   "agent_id": "71c2b35a-4280-40bd-9345-33f145eb5932"
+  },
+  {
+   "name": "Grok-Edu-STEM-Track",
+   "status": "blocked",
+   "did": "Proposed a STEM priority doc and waited for approval (R2). No file found on disk.",
+   "helped": "None yet.",
+   "left": "Write the doc after approval.",
+   "questions": [
+    "Approve the STEM priority doc?"
+   ],
+   "prs": [],
+   "evidence": [],
+   "record": "R2: APPROVE-IN-CHAT",
+   "family": "Edu",
+   "mission": "Own STEM course track (math/science/CS/engineering) study→bench→cert packages for Buddy.",
+   "agent_id": "3df472fc-b01e-442c-97f4-ca0abb339b24"
+  },
+  {
+   "name": "Grok-Edu-Study-Skills-OS",
+   "status": "in_progress",
+   "did": "SM-2 spaced-repetition module with 8 tests and a plan (upstream study_methods returns a fixed 1/3/7 schedule). On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13188.",
+   "helped": "Real SRS intervals and ease to replace a fixed schedule.",
+   "left": "Fix the PR-specific failing check(s) smoke, then get review. ",
+   "questions": [],
+   "prs": [
+    13188
+   ],
+   "evidence": [
+    "/workspace/study-skills-os"
+   ],
+   "record": "R1: DONE local (403) + gh PR state 10-03.",
+   "family": "Edu",
+   "mission": "Own study-skills OS: spaced repetition, notes, exams, tutoring loops wired to Buddy OS + Pages learn desks.",
+   "agent_id": "a59dc2e7-9c04-4cb7-a0d2-ef74330bfd4c"
+  },
+  {
+   "name": "Grok-Education-Program-Cluster",
+   "status": "no_output",
+   "did": "No artifact found.",
+   "helped": "None yet.",
+   "left": "Bootcamp-aligned learning packages for the education cluster.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Edu",
+   "mission": "Own plan-education-curriculum-programs. Education/curriculum program cluster; Bootcamp-aligned learning packages.",
+   "agent_id": "e2b1519a-b581-46db-b88d-e1d5c7b4e6ca"
+  },
+  {
+   "name": "Grok-500-Model-Bench-Runner",
+   "status": "no_output",
+   "did": "No artifact found. Path A has 0 live_benchmark_ok slots.",
+   "helped": "None yet.",
+   "left": "Bench the first slots with full evidence fields.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Plan owners",
+   "mission": "Own plan-500-model-bench. Benchmark owner 500-model registry slots; live_benchmark_ok only with evidence; feed Buddy allowlist.",
+   "agent_id": "488546d7-430d-4b8b-aaf1-67a8dc07fd90"
+  },
+  {
+   "name": "Grok-65-MasterBot-OS-Lead",
+   "status": "blocked",
+   "did": "65 MasterBot OS readiness audit: 65 divisions, 102/102 routable, 5 tests pass. No per-MasterBot runtime or cert evidence.",
+   "helped": "Showed that none of the 65 can be certified yet, and why.",
+   "left": "Waiting for approval in chat to open the report PR.",
+   "questions": [
+    "Approve the MasterBot OS readiness report PR?"
+   ],
+   "prs": [],
+   "evidence": [
+    "/workspace/masterbot-os/MASTERBOT_OS_READINESS.md"
+   ],
+   "record": "R2: APPROVE-IN-CHAT?",
+   "family": "Plan owners",
+   "mission": "Own plan-65-masterbot-os. 65 MasterBot OS production readiness — runtime, routing, cert evidence per MasterBot.",
+   "agent_id": "1968b7a2-bb13-4481-8439-b3b3ff3cd888"
+  },
+  {
+   "name": "Grok-Biz-Productivity-Programs",
+   "status": "complete",
+   "did": "Manufacturing productivity program sandbox acceptance evidence on local branch biz-productivity/manufacturing-acceptance (c9e407ee2). Not pushed. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13177.",
+   "helped": "First acceptance evidence for a business program.",
+   "left": "Only failures inherited from main. Awaiting owner review. Owner question still open.",
+   "questions": [
+    "Which top-3 business productivity programs first?"
+   ],
+   "prs": [
+    13177
+   ],
+   "evidence": [
+    "/workspace/biz-productivity-mfg"
+   ],
+   "record": "R1: NEEDS-USER + gh PR state 10-03.",
+   "family": "Plan owners",
+   "mission": "Own plan-biz-productivity-programs. Business productivity program cluster → production-ready capability packages.",
+   "agent_id": "e00c765b-f7f2-4dd6-9ebd-8e77cb9318d3"
+  },
+  {
+   "name": "Grok-Branch-Plan-Steward",
+   "status": "complete",
+   "did": "BRANCH_PLAN_READINESS.md first pass (09-21). Supersede/rebase language only, no deletes. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13187.",
+   "helped": "Maps each branch to its plan. Branch count is now about 414.",
+   "left": "Only failures inherited from main. Awaiting owner review.",
+   "questions": [],
+   "prs": [
+    13187
+   ],
+   "evidence": [
+    "/workspace/dreamcobots-branch-plan/BRANCH_PLAN_READINESS.md"
+   ],
+   "record": "disk only + gh PR state 10-03.",
+   "family": "Plan owners",
+   "mission": "Own plan-branch-readiness. Keep BRANCH_PLAN_READINESS current; what each branch needs to work as planned; supersede/rebase language only — user forbade mass…",
+   "agent_id": "c4496af3-898f-42f0-8098-96aaa7c1959e"
+  },
+  {
+   "name": "Grok-Data-Package-Merchant",
+   "status": "complete",
+   "did": "Data-package gate skeleton: license_provenance_gate.py (22 tests), 4 schemas, a DP-ONET-OCC-SYN 0.0.1 SKU skeleton, and an O*NET 31.0 pin (10-03). Uncommitted on feat/data-package-gate-skeleton. Active this morning. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13192.",
+   "helped": "Zero false for-sale claims. Week-1 checklist 4/8 done locally.",
+   "left": "Only failures inherited from main. Awaiting owner review. Owner question still open.",
+   "questions": [
+    "Commit or gitignore the 26 MB generated universal-work-ai-catalog.json?"
+   ],
+   "prs": [
+    13192
+   ],
+   "evidence": [
+    "/workspace/dp-merchant/reports/DATA_PACKAGE_WEEK1_EVIDENCE.md"
+   ],
+   "record": "disk (10-03) + gh PR state 10-03.",
+   "family": "Plan owners",
+   "mission": "Own plan-data-package. Multi-view→DreamCo original perspective data packages for sale; O*NET-first; provenance/license gate; no stripping third-party…",
+   "agent_id": "764caafe-1a69-454a-a660-e3e7478f2aa0"
+  },
+  {
+   "name": "Grok-Division-Production-Gates",
+   "status": "in_progress",
+   "did": "Division gate scorecard: 0 verified, 135 partial, 405 missing, plus a division production contract.",
+   "helped": "Per-division baseline across all divisions.",
+   "left": "Land the scorecard and builder.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/div-gates"
+   ],
+   "record": "R1: DONE local",
+   "family": "Plan owners",
+   "mission": "Own plan-division-production-gates. Per-division production gates across 55 divisions; pack readiness with evidence.",
+   "agent_id": "b1ec2881-58b0-48e5-a1c1-e71c6fd4921a"
+  },
+  {
+   "name": "Grok-Endgame-Architect",
+   "status": "no_output",
+   "did": "Only a repo clone at /workspace/dreamcobots-endgame/repo.",
+   "helped": "None yet.",
+   "left": "Unify the plans without parallel systems.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Plan owners",
+   "mission": "Own plan-endgame-architecture. Endgame architecture for Dreamcobots production empire — unify plans without inventing parallel systems.",
+   "agent_id": "3fcf10de-7f3c-4255-bfa1-ea9aa6753e69"
+  },
+  {
+   "name": "Grok-Eng-Gap-Closure-Pilot",
+   "status": "in_progress",
+   "did": "#9573 was re-cut into the isolated fix the owner asked for on 09-27, and it is being actively updated (last pushes 10-03 9:36 and 9:39 AM CT: merged main, regenerated derived data for 91 workflows, refreshed the Buddy learning-OS graph). It has 30 files: Gap Closure noop lane, removal of the drizzle-kit esm-loader override, a rephrase of the website/work-desk.html sentence that trips the public-site preflight, and the regenerated Actions prospectus and registries. On the previous head (4309a0e), Parallel Benchmark Gap Builders and Repository Test Matrix passed; both fail on main.",
+   "helped": "Found the stale-baseline cascade and the Pages size overage.",
+   "left": "No PR-specific failures right now. 1 checks were still running at report time. Then get owner review and merge. Check that DreamCo Core Health (it failed on 4309a0e) is green.",
+   "questions": [
+    "Static site was 61 MiB vs a 52 MiB cap (09-28): trim which assets, or raise the cap?"
+   ],
+   "prs": [
+    9573
+   ],
+   "evidence": [
+    "/workspace/eng-gap-closure"
+   ],
+   "record": "R2: APPROVE-IN-CHAT? + gh PR #9573 state 10-03.",
+   "family": "Plan owners",
+   "mission": "Own plan-eng-gap-closure. Engineering gap-closure pilot for CI/System Watch/Gap Closure; keep main green with evidence.",
+   "agent_id": "11fc7960-c1df-4fc1-b18e-8d51aa072dd9"
+  },
+  {
+   "name": "Grok-Fleet-Gap-Closer",
+   "status": "in_progress",
+   "did": "Read-only fleet gap baseline: 1100/1101 bots have no dedicated code, testCapability is self-referential, and external APIs are unconfigured.",
+   "helped": "Explains why production_ready is 0/1101 at the code level.",
+   "left": "Pick the closure order and land the baseline.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/fleet-gap/gap_summary.md"
+   ],
+   "record": "R1: DONE read-only",
+   "family": "Plan owners",
+   "mission": "Own plan-fleet-gap-closure. Scan 1101 bots / 55 divisions for missing code/tools vs declared roles; close capability gaps evidence-first; no deletes unless…",
+   "agent_id": "d994dc91-5ad4-4450-8624-62a8bbb03212"
+  },
+  {
+   "name": "Grok-Fleet-Quality-Director",
+   "status": "blocked",
+   "did": "No artifact. Waiting for a direction pick.",
+   "helped": "None yet.",
+   "left": "Pick a direction.",
+   "questions": [
+    "Fleet quality next: refresh scorecard, prove one division live, or make the 24h soak real?"
+   ],
+   "prs": [],
+   "evidence": [],
+   "record": "R1: NEEDS-USER",
+   "family": "Plan owners",
+   "mission": "Own plan-fleet-quality. Fleet-wide quality bars, soak tests, and readiness scorecards across divisions — evidence over flags.",
+   "agent_id": "8b087551-a765-4687-8992-2176e7d6e309"
+  },
+  {
+   "name": "Grok-Frontier-Loop-Captain",
+   "status": "blocked",
+   "did": "Frontier status (09-28): no F-tier claimable, 0/7 gates, harness tests 7 pass.",
+   "helped": "Confirms claimable=false with sources.",
+   "left": "Needs a runnable Buddy build and a reference endpoint.",
+   "questions": [
+    "Which runnable Buddy build and which named reference model/endpoint should F0 run against?",
+    "Approve PR for docs/BUDDY_FRONTIER_STATUS.md?"
+   ],
+   "prs": [],
+   "evidence": [
+    "/workspace/buddy-frontier/FRONTIER_STATUS.md"
+   ],
+   "record": "R1: NEEDS-USER; R2: APPROVE-IN-CHAT",
+   "family": "Plan owners",
+   "mission": "Own plan-buddy-frontier. Drive Buddy-as-frontier-track model (F0–F4 eval floors vs peers). Never claim frontier without signed scorecards. Wire multi-source…",
+   "agent_id": "2eebfd6a-c540-4e5d-8b5d-23a0b2c942b4"
+  },
+  {
+   "name": "Grok-Gain-Production-Pipeline",
+   "status": "complete",
+   "did": "GAIN production pipeline plan: stages S0-S3 with gates (PR #12438, docs only). CodeRabbit APPROVED.",
+   "helped": "Sandbox→canary→live path for revenue-adjacent bots.",
+   "left": "Only trusted-code fails. Owner decisions are open.",
+   "questions": [
+    "Confirm GAIN scope, first lane (DreamPayments vs full plan), canary soak length and spend cap?"
+   ],
+   "prs": [
+    12438
+   ],
+   "evidence": [
+    "/workspace/gain-repo"
+   ],
+   "record": "R2: PR",
+   "family": "Plan owners",
+   "mission": "Own plan-gain-production-pipeline. Production pipeline for GAIN/revenue-adjacent bots; sandbox→canary→live with gates.",
+   "agent_id": "199cc0e0-5094-4037-b56e-3d8eaeafce27"
+  },
+  {
+   "name": "Grok-GitHub-Competitor-Strategist",
+   "status": "blocked",
+   "did": "Competitor master plan, platform readiness scorecard, and a parity benchmark JSON. No PR.",
+   "helped": "Turns competitive intel into gated product edges.",
+   "left": "Waiting for a next-focus pick.",
+   "questions": [
+    "GitHub-competitor next focus?"
+   ],
+   "prs": [],
+   "evidence": [
+    "/workspace/github-competitor"
+   ],
+   "record": "R1: NEEDS-USER",
+   "family": "Plan owners",
+   "mission": "Own plan-github-competitor. Competitive strategy vs GitHub/OSS ecosystems; turn intel into DreamCo product edges.",
+   "agent_id": "550b3d20-6300-4997-99b9-10196cec56a5"
+  },
+  {
+   "name": "Grok-Goals-Gatekeeper",
+   "status": "complete",
+   "did": "GOALS_TO_PRODUCTION_GATES (09-28): nothing MET. Flagged production-readiness.yml green as not being certification. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13187.",
+   "helped": "Keeps goals→gates truthful.",
+   "left": "Only failures inherited from main. Awaiting owner review. Owner question still open.",
+   "questions": [
+    "Approve the GOALS_TO_PRODUCTION_GATES report PR?"
+   ],
+   "prs": [
+    13187
+   ],
+   "evidence": [
+    "/workspace/goals-gates"
+   ],
+   "record": "R2: APPROVE-IN-CHAT + gh PR state 10-03.",
+   "family": "Plan owners",
+   "mission": "Own plan-goals-to-gates for Dreamcobots. Map every goal-from-files to production gates; close P0 gaps with evidence; keep GOALS_TO_PRODUCTION_GATES reports…",
+   "agent_id": "43d15615-b66f-41d4-8c88-5c7c511e4070"
+  },
+  {
+   "name": "Grok-Live-Revenue-Readiness",
+   "status": "no_output",
+   "did": "Only a repo clone at /workspace/revenue-readiness/src. Main's live-revenue-readiness.json shows 0 live.",
+   "helped": "None yet.",
+   "left": "Stripe test-mode canary evidence.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Plan owners",
+   "mission": "Own plan-live-revenue-readiness. Live revenue readiness: payments, offers, canaries — sandbox evidence before real money.",
+   "agent_id": "bcfa1665-f809-4947-9393-1aea7848a8a9"
+  },
+  {
+   "name": "Grok-Master-Roadmap-Navigator",
+   "status": "complete",
+   "did": "Master roadmap crosswalk (100 ideas mapped) and a certify-first order (10-02). On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13186.",
+   "helped": "Gives a certify-first sequence for the 37 plans.",
+   "left": "Only failures inherited from main. Awaiting owner review.",
+   "questions": [],
+   "prs": [
+    13186
+   ],
+   "evidence": [
+    "/home/box/roadmap/CERTIFY_FIRST_ORDER.md",
+    "/home/box/roadmap/MASTER_ROADMAP_CROSSWALK.md"
+   ],
+   "record": "R1: DONE local; disk 10-02 + gh PR state 10-03.",
+   "family": "Plan owners",
+   "mission": "Own plan-master-roadmap. Keep the master production roadmap coherent across 37 plans; surface blockers and certify-first order.",
+   "agent_id": "64e1d57c-6de7-4667-a893-d80400e86758"
+  },
+  {
+   "name": "Grok-Media-Game-Mastery-Lead",
+   "status": "complete",
+   "did": "plan-media-game-mastery audit (no weights, no sellable package) on local branch plan/media-game-mastery-audit aca5f2b. On 10-03 (9:22–9:36 AM CT) its local work was opened as PR #13178.",
+   "helped": "Shows that no code reads the media/game matrix or provenance policy.",
+   "left": "Only failures inherited from main. Awaiting owner review.",
+   "questions": [],
+   "prs": [
+    13178
+   ],
+   "evidence": [
+    "/workspace/media-game-mastery/plan-media-game-mastery.md"
+   ],
+   "record": "R1: NEEDS-USER 403 + gh PR state 10-03.",
+   "family": "Plan owners",
+   "mission": "Own plan-media-game-mastery. Media/game mastery programs and packages; multimodal training inputs behind provenance gates.",
+   "agent_id": "a9c0bf23-6145-489e-ac7b-fb7e6533c934"
+  },
+  {
+   "name": "Grok-Model-Access-Product-Owner",
+   "status": "in_progress",
+   "did": "PR #13176 (draft, 10-03): 14 model routes require a Buddy session, and selection is allowlist-only (5 entries, deny_unlisted).",
+   "helped": "Closes the Path D policy gap. On that branch, 6/27 P0-class routes are guarded.",
+   "left": "Draft PR. Only main-inherited checks fail. Mark it ready and get review.",
+   "questions": [
+    "Who are BUDDY_MODEL_OWNER_SUBJECTS, and should the 4 OpenAI allowlist entries without exact model IDs be trimmed?"
+   ],
+   "prs": [
+    13176
+   ],
+   "evidence": [
+    "/workspace/dreamcobots-model-access",
+    "/workspace/plan-model-access"
+   ],
+   "record": "PR (10-03)",
+   "family": "Plan owners",
+   "mission": "Own plan-model-access. Ship Path A (owner 500), B (HF/GitHub open-weight), C (paid ultimate), D (Buddy selector allowlist-only). Stripe stub over parallel…",
+   "agent_id": "d305c638-aadd-4cdd-8668-f0f49425c49a"
+  },
+  {
+   "name": "Grok-Modernization-Executor",
+   "status": "blocked",
+   "did": "Modernization track baseline: P0 is 161 unauthenticated mutating routes, including /api/buddy/execute-code.",
+   "helped": "Early security alarm on the API surface.",
+   "left": "Waiting for approval in chat to open the baseline docs PR. The auth-fix code would be a separate PR.",
+   "questions": [
+    "Approve the modernization baseline docs PR?"
+   ],
+   "prs": [],
+   "evidence": [
+    "/workspace/modernization/MODERNIZATION_TRACK_BASELINE.md"
+   ],
+   "record": "R2: APPROVE-IN-CHAT",
+   "family": "Plan owners",
+   "mission": "Own plan-modernization. Execute modernization tracks (runtime, adapters, auth, telemetry) to production evidence standards.",
+   "agent_id": "6d8b5028-7a3b-412a-88d5-315c893d693d"
+  },
+  {
+   "name": "Grok-Multimodal-Learning-Fabric",
+   "status": "complete",
+   "did": "Handed off to Buddy-Multimodal-Trainer. The top gap (lesson provenance schema + validator) is now covered in part by #12445.",
+   "helped": "Avoided a parallel multimodal stack.",
+   "left": "No more fabric work recorded.",
+   "questions": [],
+   "prs": [
+    12445
+   ],
+   "evidence": [],
+   "record": "R1: DONE handoff",
+   "family": "Plan owners",
+   "mission": "Own plan-multimodal-learning. Multimodal learning fabric: web/books/movies/video/uploads → Buddy lessons with consent+provenance.",
+   "agent_id": "93e6b32c-2837-4e02-9951-3d193e9998ea"
+  },
+  {
+   "name": "Grok-ONET-Ingest-Lead",
+   "status": "in_progress",
+   "did": "O*NET 30.3 ingest: 1,016 occupations, 18,796 tasks, sanity pass, provenance manifest, 26 MB catalog.",
+   "helped": "The O*NET backbone that the data package and career pathways depend on.",
+   "left": "Land it (local only). Reconcile with the 31.0 pin used by DP-ONET.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/onet-ingest"
+   ],
+   "record": "R1: DONE local (403)",
+   "family": "Plan owners",
+   "mission": "Own plan-onet-mastery. O*NET ingest→catalog→ontology→benchmark→provenance; ops mastery in days; sellable DP-ONET SKUs only behind license gate.",
+   "agent_id": "abda92c7-67c5-4097-96bf-d3f2627b8234"
+  },
+  {
+   "name": "Grok-OSS-Invention-Mastery",
+   "status": "no_output",
+   "did": "No artifact found.",
+   "helped": "None yet.",
+   "left": "OSS study → original inventions behind license gates.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "none",
+   "family": "Plan owners",
+   "mission": "Own plan-oss-invention-mastery. Open-source invention mastery — study OSS, invent DreamCo originals, package behind license gates.",
+   "agent_id": "e4d9b343-bc26-49bf-b64d-15989f72b758"
+  },
+  {
+   "name": "Grok-PRC-Certifier",
+   "status": "no_output",
+   "did": "Reported 'read-only audit, nothing to land'. /workspace/prc-audit holds copied repo files only.",
+   "helped": "None attributable.",
+   "left": "Track PRC gates: 0 verified / 16 partial / 3 unknown per the roadmap snapshot.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/prc-audit"
+   ],
+   "record": "R2: NOTHING-TO-LAND",
+   "family": "Plan owners",
+   "mission": "Own plan-prc-certification for Dreamcobots. Drive production-readiness certification with evidence only — never flip production_ready without runtime proof.…",
+   "agent_id": "7ae2297e-5c0e-4605-b371-620b530e1796"
+  },
+  {
+   "name": "Grok-Pages-Universe-Linker",
+   "status": "in_progress",
+   "did": "PR #12439: puts six P0 products in the visible nav, rewrites the sitemap to the /website/ base, and adds a universe link plan.",
+   "helped": "Fixes the 13 of 14 sitemap URLs that 404 today.",
+   "left": "#12439 fails 'validate' (PR-specific). CodeRabbit CHANGES_REQUESTED.",
+   "questions": [
+    "Switch Pages source from legacy main:/ to GitHub Actions and keep one publisher?"
+   ],
+   "prs": [
+    12439
+   ],
+   "evidence": [
+    "/workspace/pages-universe"
+   ],
+   "record": "R2: PR",
+   "family": "Plan owners",
+   "mission": "Own GitHub Pages surface for Dreamcobots: wire Pages site to every major repo product (Bootcamp, model picker, packages, fleet, gates, HF lab). No orphan…",
+   "agent_id": "1158f852-e0a2-430d-8170-e2afd50d4ba3"
+  },
+  {
+   "name": "Grok-Platform-Expansion-Lead",
+   "status": "in_progress",
+   "did": "Platform expansion readiness (09-28): shared catalog/router/billing core mapped. No plan file exists.",
+   "helped": "Prevents forked catalog, router or billing.",
+   "left": "Land it. The token blocker has since been fixed.",
+   "questions": [],
+   "prs": [],
+   "evidence": [
+    "/workspace/platform-expansion"
+   ],
+   "record": "R1: NEEDS-USER token",
+   "family": "Plan owners",
+   "mission": "Own plan-platform-expansion. Platform expansion lead — new surfaces without forking catalog/router/billing.",
+   "agent_id": "96f8f5a2-d74f-482e-91c5-f25754782986"
+  },
+  {
+   "name": "Grok-Repair-Orchestrator",
+   "status": "blocked",
+   "did": "No artifact of its own. Waiting for the owner's OK on the #9573 repair loop (repair-scan docs appear to be repo copies).",
+   "helped": "None yet.",
+   "left": "#9573 has been re-cut to the isolated fix. Waiting for the owner's OK to merge it.",
+   "questions": [
+    "OK to run the repair loop on #9573 (isolate noop + drizzle fix, vault the rest)?"
+   ],
+   "prs": [
+    9573
+   ],
+   "evidence": [
+    "/workspace/repair-scan"
+   ],
+   "record": "R2: NOTHING-TO-LAND",
+   "family": "Plan owners",
+   "mission": "Own plan-repair-orchestration. Orchestrate repair/regen loops for failing bots, CI, and stubs until evidence-green.",
+   "agent_id": "7edb0203-1cea-409b-8e3e-13f8065ca089"
+  },
+  {
+   "name": "Grok-Startup-Factory-Planner",
+   "status": "complete",
+   "did": "Reported that its deliverable is already on main. Main has docs/STARTUP_FACTORY.md, config/startup_factory/*, tools/validate_startup_factory.py and startup-factory-contract.yml; authorship not verified.",
+   "helped": "Contracts exist on main.",
+   "left": "Nothing recorded as pending.",
+   "questions": [],
+   "prs": [],
+   "evidence": [],
+   "record": "R2: NOTHING-TO-LAND (already on main)",
+   "family": "Plan owners",
+   "mission": "Own plan-startup-factory. Startup factory planner — spin productized bots/packages from plans with evidence gates.",
+   "agent_id": "755f12c7-ca5a-4b0b-b80b-cbc8fcb3c004"
+  },
+  {
+   "name": "Grok-Superbot-Migration-Lead",
+   "status": "blocked",
+   "did": "No artifact. Waiting for a next-step pick (it recommends greening the Superbot Migration Ledger).",
+   "helped": "None yet.",
+   "left": "Waiting for a next-step pick.",
+   "questions": [
+    "Superbot next step: green the Superbot Migration Ledger first?"
+   ],
+   "prs": [],
+   "evidence": [],
+   "record": "R1: NEEDS-USER",
+   "family": "Plan owners",
+   "mission": "Own plan-superbot-migration. Migrate/align Superbot paths into Dreamcobots fleet without parallel stacks or silent deletes.",
+   "agent_id": "8a687a0f-fb9d-4902-91a4-264f8dc20444"
+  },
+  {
+   "name": "Grok-Universal-Sandbox-Director",
+   "status": "blocked",
+   "did": "No artifact. Found that GovernedSandboxExecutor always returns blocked and sandbox evidence is empty.",
+   "helped": "Identified the root blocker for every soak/cert claim.",
+   "left": "Pick a first lane.",
+   "questions": [
+    "First sandbox lane: host adapter, Bootcamp, or cert soak?"
+   ],
+   "prs": [],
+   "evidence": [],
+   "record": "R1: NEEDS-USER",
+   "family": "Plan owners",
+   "mission": "Own plan-universal-sandbox. Universal sandbox programs director — safe runtimes for Bootcamp, packages, and cert soaks.",
+   "agent_id": "e65640fb-fda9-4598-99ab-6da65dfd3a68"
+  }
+ ],
+ "prs": [
+  {
+   "number": 8847,
+   "title": "Build the DreamCo inventions hub, specialist intakes and live Actions",
+   "state": "OPEN",
+   "mergeable": "CONFLICTING",
+   "merge_state": "DIRTY",
+   "draft": true,
+   "branch": "codex/inventions-hub",
+   "created": "2026-09-20",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/8847",
+   "checks_ok": 5,
+   "checks_total": 6,
+   "failing": [
+    "deploy"
+   ],
+   "pr_specific_failing": [
+    "deploy"
+   ],
+   "bots": [],
+   "changed_files": 133,
+   "checks_pending": 0,
+   "review": "none"
+  },
+  {
+   "number": 8925,
+   "title": "Pages mirrors: Goals, desks, sources, learn, devices, OS",
+   "state": "OPEN",
+   "mergeable": "CONFLICTING",
+   "merge_state": "DIRTY",
+   "draft": false,
+   "branch": "grok/pages-mirrors-20260920",
+   "created": "2026-09-20",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/8925",
+   "checks_ok": 17,
+   "checks_total": 34,
+   "failing": [
+    "Actions Page Contract Gate",
+    "Buddy quick verification",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "Actions Page Contract Gate",
+    "Buddy quick verification"
+   ],
+   "bots": [],
+   "changed_files": 8,
+   "checks_pending": 0,
+   "review": "none"
+  },
+  {
+   "number": 9173,
+   "title": "Add this-chat Pages desks (Hub, Learn, Tasks, OS, Goals)",
+   "state": "MERGED",
+   "mergeable": "UNKNOWN",
+   "merge_state": "UNKNOWN",
+   "draft": false,
+   "branch": "grok/pages-chat-sync-20260920",
+   "created": "2026-09-20",
+   "merged": "2026-09-20",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/9173",
+   "checks_ok": 17,
+   "checks_total": 37,
+   "failing": [
+    "Actions Page Contract Gate",
+    "Buddy quick verification",
+    "Typecheck, tests, build, fleet and security",
+    "audit",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "deterministic-data",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "Actions Page Contract Gate",
+    "Buddy quick verification",
+    "audit"
+   ],
+   "bots": [],
+   "changed_files": 23,
+   "checks_pending": 0,
+   "review": "n/a"
+  },
+  {
+   "number": 9573,
+   "title": "fix(ci): System Watch 1101 App_bots routes + Gap Closure noop",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "fix/prod-ci-watch-and-gap-closure",
+   "created": "2026-09-21",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/9573",
+   "checks_ok": 42,
+   "checks_total": 43,
+   "failing": [],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Eng-Gap-Closure-Pilot",
+    "Grok-Repair-Orchestrator"
+   ],
+   "changed_files": 30,
+   "checks_pending": 1,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 9575,
+   "title": "trust: frontier claim gates for Buddy Pages (fail closed)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "trust/frontier-claim-gates",
+   "created": "2026-09-21",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/9575",
+   "checks_ok": 16,
+   "checks_total": 36,
+   "failing": [
+    "Buddy quick verification",
+    "Claim surfaces require all four gates",
+    "Typecheck, tests, build, fleet and security",
+    "audit",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "deterministic-data",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "Buddy quick verification",
+    "Claim surfaces require all four gates",
+    "audit"
+   ],
+   "bots": [
+    "Grok-Buddy-Frontier-Trust"
+   ],
+   "changed_files": 6,
+   "checks_pending": 0,
+   "review": "none"
+  },
+  {
+   "number": 9576,
+   "title": "SET 5: OS SLO/soak observability tiles (fail-closed, no vanity green)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "CLEAN",
+   "draft": false,
+   "branch": "feat/os-observability-slo-tiles",
+   "created": "2026-09-21",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/9576",
+   "checks_ok": 39,
+   "checks_total": 39,
+   "failing": [],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-OS-Observability"
+   ],
+   "changed_files": 26,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 9945,
+   "title": "Add DreamCo owner guide and searchable GitHub Pages directory",
+   "state": "CLOSED",
+   "mergeable": "UNKNOWN",
+   "merge_state": "UNKNOWN",
+   "draft": true,
+   "branch": "codex/dreamco-owner-guide",
+   "created": "2026-09-23",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/9945",
+   "checks_ok": 20,
+   "checks_total": 39,
+   "failing": [
+    "Actions Page Contract Gate",
+    "Buddy quick verification",
+    "Typecheck, tests, build, fleet and security",
+    "audit",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "Actions Page Contract Gate",
+    "Buddy quick verification",
+    "audit"
+   ],
+   "bots": [],
+   "changed_files": 56,
+   "checks_pending": 0,
+   "review": "n/a"
+  },
+  {
+   "number": 11988,
+   "title": "Connect DreamCo workspaces, conversation plans, preserved bot portfolios and model testing",
+   "state": "MERGED",
+   "mergeable": "UNKNOWN",
+   "merge_state": "UNKNOWN",
+   "draft": false,
+   "branch": "codex/dreamco-connected-command-center",
+   "created": "2026-09-26",
+   "merged": "2026-09-27",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/11988",
+   "checks_ok": 43,
+   "checks_total": 44,
+   "failing": [],
+   "pr_specific_failing": [],
+   "bots": [],
+   "changed_files": 211,
+   "checks_pending": 1,
+   "review": "n/a"
+  },
+  {
+   "number": 12057,
+   "title": "chore: vault unmerged PR inventory + efficient Dependabot",
+   "state": "MERGED",
+   "mergeable": "UNKNOWN",
+   "merge_state": "UNKNOWN",
+   "draft": false,
+   "branch": "chore/unmerged-vault-and-efficient-dependabot",
+   "created": "2026-09-27",
+   "merged": "2026-09-27",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12057",
+   "checks_ok": 19,
+   "checks_total": 20,
+   "failing": [
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [],
+   "changed_files": 2,
+   "checks_pending": 0,
+   "review": "n/a"
+  },
+  {
+   "number": 12059,
+   "title": "chore: production-readiness without CodeRabbit spend",
+   "state": "MERGED",
+   "mergeable": "UNKNOWN",
+   "merge_state": "UNKNOWN",
+   "draft": false,
+   "branch": "chore/production-readiness-without-coderabbit",
+   "created": "2026-09-27",
+   "merged": "2026-09-27",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12059",
+   "checks_ok": 19,
+   "checks_total": 22,
+   "failing": [
+    "deterministic-data",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [],
+   "changed_files": 3,
+   "checks_pending": 1,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12080,
+   "title": "Add go-live button hub for Buddy and DreamCo Pages",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "grok/go-live-button-hub",
+   "created": "2026-09-27",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12080",
+   "checks_ok": 33,
+   "checks_total": 35,
+   "failing": [
+    "deterministic-data",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [],
+   "changed_files": 1,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12082,
+   "title": "Add personal Buddy setup and learning evidence; fix full-fleet certification",
+   "state": "OPEN",
+   "mergeable": "CONFLICTING",
+   "merge_state": "DIRTY",
+   "draft": false,
+   "branch": "codex/dreamco-personal-setup-learning",
+   "created": "2026-09-27",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12082",
+   "checks_ok": 42,
+   "checks_total": 43,
+   "failing": [
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [],
+   "changed_files": 58,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12124,
+   "title": "policy: review standing orders and Actions semver-major ignore",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "policy/review-handoff-standing-orders",
+   "created": "2026-09-28",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12124",
+   "checks_ok": 21,
+   "checks_total": 22,
+   "failing": [
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [],
+   "changed_files": 3,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12431,
+   "title": "Fix Buddy Sandbox Bootcamp curriculum validation",
+   "state": "OPEN",
+   "mergeable": "CONFLICTING",
+   "merge_state": "DIRTY",
+   "draft": false,
+   "branch": "fix/buddy-sandbox-bootcamp-ci",
+   "created": "2026-09-28",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12431",
+   "checks_ok": 17,
+   "checks_total": 34,
+   "failing": [
+    "Buddy quick verification",
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "Buddy quick verification"
+   ],
+   "bots": [
+    "Grok-Buddy-Bootcamp-Commandant"
+   ],
+   "changed_files": 2,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12433,
+   "title": "Add pack.multimodal HF vision/ASR/TTS study pack with pinned models a…",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "hf/multimodal-study-pack-main",
+   "created": "2026-09-28",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12433",
+   "checks_ok": 31,
+   "checks_total": 33,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-HF-Multimodal"
+   ],
+   "changed_files": 11,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12434,
+   "title": "HF Evaluate study pack (Buddy bench metric map, offline fallbacks, 13 tests)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "feat/hf-evaluate-study-pack",
+   "created": "2026-09-29",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12434",
+   "checks_ok": 16,
+   "checks_total": 33,
+   "failing": [
+    "Buddy quick verification",
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "Buddy quick verification"
+   ],
+   "bots": [
+    "Grok-HF-Evaluate"
+   ],
+   "changed_files": 13,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12435,
+   "title": "deps: opt-in requirements-hf-learning.txt + HF pin matrix",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "feat/hf-learning-pins",
+   "created": "2026-09-29",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12435",
+   "checks_ok": 16,
+   "checks_total": 17,
+   "failing": [
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-HF-Deps-Pins"
+   ],
+   "changed_files": 2,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12436,
+   "title": "K-12 curriculum map spine v0 (draft)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "k12-curriculum-map-v0",
+   "created": "2026-09-29",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12436",
+   "checks_ok": 33,
+   "checks_total": 35,
+   "failing": [
+    "deterministic-data",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Edu-K12-Curriculum"
+   ],
+   "changed_files": 2,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12437,
+   "title": "evidence-ledger: production-readiness ledger v0.1 (claim→artifact→SHA→soak gate)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "evidence-ledger-v0.1",
+   "created": "2026-09-29",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12437",
+   "checks_ok": 18,
+   "checks_total": 19,
+   "failing": [
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Prod-Evidence-Ledger"
+   ],
+   "changed_files": 5,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12438,
+   "title": "docs: GAIN production pipeline plan (draft)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "plan/gain-production-pipeline",
+   "created": "2026-09-29",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12438",
+   "checks_ok": 18,
+   "checks_total": 19,
+   "failing": [
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Gain-Production-Pipeline"
+   ],
+   "changed_files": 1,
+   "checks_pending": 0,
+   "review": "APPROVED"
+  },
+  {
+   "number": 12439,
+   "title": "pages: wire six P0 products into nav, README, sitemap; add universe link plan",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "grok/pages-universe-links",
+   "created": "2026-09-29",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12439",
+   "checks_ok": 21,
+   "checks_total": 37,
+   "failing": [
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "governed-local-tests",
+    "trusted-code",
+    "validate"
+   ],
+   "pr_specific_failing": [
+    "validate"
+   ],
+   "bots": [
+    "Grok-Pages-Universe-Linker"
+   ],
+   "changed_files": 4,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12440,
+   "title": "Add Hugging Face Accelerate study pack (device maps, offload, empty weights)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "hf/accelerate-study-pack",
+   "created": "2026-09-29",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12440",
+   "checks_ok": 33,
+   "checks_total": 35,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-HF-Accelerate"
+   ],
+   "changed_files": 9,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12441,
+   "title": "Career pathways: majors to O*NET study plans",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "edu-career-pathways/majors-onet-study-plans",
+   "created": "2026-09-29",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12441",
+   "checks_ok": 16,
+   "checks_total": 19,
+   "failing": [
+    "CodeQL",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "CodeQL"
+   ],
+   "bots": [
+    "Grok-Edu-Career-Pathways"
+   ],
+   "changed_files": 6518,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12442,
+   "title": "Add Buddy live demos page (Bootcamp, model picker, packages)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "buddy-pages-demos",
+   "created": "2026-09-29",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12442",
+   "checks_ok": 32,
+   "checks_total": 35,
+   "failing": [
+    "CodeQL",
+    "deterministic-data",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "CodeQL"
+   ],
+   "bots": [
+    "Grok-Buddy-Pages-Demos"
+   ],
+   "changed_files": 1,
+   "checks_pending": 0,
+   "review": "APPROVED"
+  },
+  {
+   "number": 12443,
+   "title": "reports: HF swarm status checklist (evidence-only)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "hf/swarm-status-checklist",
+   "created": "2026-09-29",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12443",
+   "checks_ok": 17,
+   "checks_total": 19,
+   "failing": [
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-HF-Swarm-Conductor"
+   ],
+   "changed_files": 1,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12444,
+   "title": "HF Hub Day-1 study pack (drills + evidence)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "study-pack/hf-hub-day1",
+   "created": "2026-09-29",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12444",
+   "checks_ok": 18,
+   "checks_total": 19,
+   "failing": [
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-HF-Hub-Master"
+   ],
+   "changed_files": 17,
+   "checks_pending": 0,
+   "review": "none"
+  },
+  {
+   "number": 12445,
+   "title": "Buddy multimodal: sellability gate + provenance record schema",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "buddy-multimodal-sellability-gate",
+   "created": "2026-09-29",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12445",
+   "checks_ok": 33,
+   "checks_total": 36,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "deterministic-data",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Buddy-Multimodal-Trainer",
+    "Grok-Multimodal-Learning-Fabric"
+   ],
+   "changed_files": 6,
+   "checks_pending": 0,
+   "review": "none"
+  },
+  {
+   "number": 12919,
+   "title": "HF: land unlanded datasets + nlp-tasks study packs (13/13 tests)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "hf/unlanded-study-packs",
+   "created": "2026-10-02",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12919",
+   "checks_ok": 18,
+   "checks_total": 35,
+   "failing": [
+    "Buddy quick verification",
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "Buddy quick verification"
+   ],
+   "bots": [
+    "Grok-HF-Datasets-Master",
+    "Grok-HF-NLP-Tasks"
+   ],
+   "changed_files": 42,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12920,
+   "title": "docs(hf): Day-1 HF evidence packet (claimable=false)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "docs/hf-day1-evidence-packet",
+   "created": "2026-10-02",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12920",
+   "checks_ok": 17,
+   "checks_total": 19,
+   "failing": [
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-HF-Day1-Evidence"
+   ],
+   "changed_files": 1,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12921,
+   "title": "OS scheduler P0: first 5 autonomous conversions in existing workflows",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "os-scheduler/p0-autonomous-conversions",
+   "created": "2026-10-02",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12921",
+   "checks_ok": 19,
+   "checks_total": 37,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "audit",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "deterministic-data",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "audit"
+   ],
+   "bots": [
+    "Grok-OS-Scheduler"
+   ],
+   "changed_files": 9,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 12922,
+   "title": "SET 7: course mastery floors, holdout policy + edu benchmark packet skeleton",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "edu-benchmark/set7-course-packets",
+   "created": "2026-10-02",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/12922",
+   "checks_ok": 17,
+   "checks_total": 19,
+   "failing": [
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Edu-Benchmark-Planner"
+   ],
+   "changed_files": 14,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13176,
+   "title": "Gate model routes on caller identity; make Buddy model selection allowlist-only (plan-model-access Path D)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": true,
+   "branch": "plan-model-access/route-gate-allowlist",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13176",
+   "checks_ok": 20,
+   "checks_total": 38,
+   "failing": [
+    "CodeQL",
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "deterministic-data",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "CodeQL"
+   ],
+   "bots": [
+    "Grok-Model-Access-Product-Owner"
+   ],
+   "changed_files": 10,
+   "checks_pending": 0,
+   "review": "none"
+  },
+  {
+   "number": 13177,
+   "title": "test(biz): sandbox acceptance tests + evidence for manufacturing productivity program",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "biz-productivity/manufacturing-acceptance",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13177",
+   "checks_ok": 19,
+   "checks_total": 35,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Biz-Productivity-Programs"
+   ],
+   "changed_files": 4,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13178,
+   "title": "plans: media/game mastery audit (gaps + provenance gates, docs only)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "plan/media-game-mastery-audit",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13178",
+   "checks_ok": 17,
+   "checks_total": 19,
+   "failing": [
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Media-Game-Mastery-Lead"
+   ],
+   "changed_files": 1,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13179,
+   "title": "study pack: HF Transformers core (pipeline/Auto*/generate/chat templates, pinned SmolLM2-135M)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "study/transformers-core",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13179",
+   "checks_ok": 19,
+   "checks_total": 35,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-HF-Transformers-Core"
+   ],
+   "changed_files": 9,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13180,
+   "title": "learning: versioned LP-STRATEGIES catalog export (gates stay false)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "feat/lp-strategies-export",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13180",
+   "checks_ok": 20,
+   "checks_total": 24,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "governed-local-tests",
+    "smoke",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "smoke"
+   ],
+   "bots": [
+    "Grok-Buddy-Learning-Packager"
+   ],
+   "changed_files": 3,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13181,
+   "title": "frontier: memory/long-context F0 lane fixtures + suite (fails closed, claimable=false)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "feat/buddy-memory-f0-lane",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13181",
+   "checks_ok": 19,
+   "checks_total": 37,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "deterministic-data",
+    "governed-local-tests",
+    "smoke",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "smoke"
+   ],
+   "bots": [
+    "Grok-Buddy-Memory-Frontier"
+   ],
+   "changed_files": 6,
+   "checks_pending": 0,
+   "review": "APPROVED"
+  },
+  {
+   "number": 13182,
+   "title": "hf: 12-pack union of capability study packs (metadata only, train off, licenses TBD)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "hf/capability-packs-v2",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13182",
+   "checks_ok": 19,
+   "checks_total": 35,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-HF-StudyPack-Builder"
+   ],
+   "changed_files": 78,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13183,
+   "title": "eval: course mastery evidence card schema + no-cert-without-benches gate (F0-F4)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "edu/mastery-scorecards-cert-gate",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13183",
+   "checks_ok": 17,
+   "checks_total": 19,
+   "failing": [
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Edu-Mastery-Scorecards"
+   ],
+   "changed_files": 14,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13184,
+   "title": "buddy: student adapter registry + fail-closed validator (empty, no weights)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "feat/buddy-student-adapter-registry",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13184",
+   "checks_ok": 19,
+   "checks_total": 36,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "deterministic-data",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Buddy-Adapter-Registry"
+   ],
+   "changed_files": 4,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13185,
+   "title": "buddy: distill evidence contract + fail-closed gate (no runs, no weights)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "feat/buddy-distill-contract-gate",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13185",
+   "checks_ok": 20,
+   "checks_total": 38,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "audit",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "deterministic-data",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "audit"
+   ],
+   "bots": [
+    "Grok-Buddy-Distill-Lead"
+   ],
+   "changed_files": 7,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13186,
+   "title": "docs: fleet reports (autonomous systems plan, connectivity scan, roadmap crosswalk, frontier checklist)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "docs/fleet-reports-2026-10-03",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13186",
+   "checks_ok": 17,
+   "checks_total": 19,
+   "failing": [
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Buddy-Frontier-Release",
+    "Grok-Prod-Connectivity-Scanner",
+    "Grok-Master-Roadmap-Navigator"
+   ],
+   "changed_files": 8,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13187,
+   "title": "docs: land local fleet gate/plan drafts (cert gate, goals→gates, branch plan, OER license gate, OS shell IPC)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "docs/fleet-gate-plan-drafts",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13187",
+   "checks_ok": 18,
+   "checks_total": 21,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Buddy-Teacher-Curriculum",
+    "Grok-Buddy-OS-Shell",
+    "Grok-OS-Issues-Kernel",
+    "Grok-Prod-Cert-Gate",
+    "Grok-Edu-OER-Ingest",
+    "Grok-Branch-Plan-Steward",
+    "Grok-Goals-Gatekeeper"
+   ],
+   "changed_files": 11,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13188,
+   "title": "learning: SM-2 spaced-repetition engine (dependency-free) + study-skills OS plan",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "feat/study-skills-srs-sm2",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13188",
+   "checks_ok": 22,
+   "checks_total": 39,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "governed-local-tests",
+    "smoke",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "smoke"
+   ],
+   "bots": [
+    "Grok-Edu-Study-Skills-OS"
+   ],
+   "changed_files": 4,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13189,
+   "title": "frontier: F0 evidence packet schema + peer baselines + empty scorecard index (drafts)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "feat/buddy-f0-scorecard-scaffold",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13189",
+   "checks_ok": 19,
+   "checks_total": 35,
+   "failing": [
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "deterministic-data",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Buddy-F0-Scorecard"
+   ],
+   "changed_files": 8,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13190,
+   "title": "study pack: TRL SFT/DPO/GRPO recipes (plan_only; scripts refuse until all gates green)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "study/trl-recipe-pack",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13190",
+   "checks_ok": 18,
+   "checks_total": 35,
+   "failing": [
+    "Buddy quick verification",
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [
+    "Buddy quick verification"
+   ],
+   "bots": [
+    "Grok-HF-TRL-Train"
+   ],
+   "changed_files": 18,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13191,
+   "title": "test(media): consent gate cases + lazy-import + capability schema checks (flags XTTS non-commercial)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "feat/media-cloning-consent-gate",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13191",
+   "checks_ok": 19,
+   "checks_total": 35,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [],
+   "changed_files": 1,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13192,
+   "title": "Data packages: license/provenance gate, package builder and DP-ONET-OCC-SYN 0.0.1 skeleton (not for sale)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "feat/data-package-gate-skeleton",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13192",
+   "checks_ok": 19,
+   "checks_total": 36,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "deterministic-data",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Data-Package-Merchant"
+   ],
+   "changed_files": 42,
+   "checks_pending": 0,
+   "review": "CHANGES_REQUESTED"
+  },
+  {
+   "number": 13193,
+   "title": "reports: P0 cross-plan gap queue (ordered closure list)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "plan-closure/p0-gap-queue",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13193",
+   "checks_ok": 17,
+   "checks_total": 19,
+   "failing": [
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Prod-Plan-Closure"
+   ],
+   "changed_files": 1,
+   "checks_pending": 0,
+   "review": "APPROVED"
+  },
+  {
+   "number": 13194,
+   "title": "fix(operate): set PYTHONPATH for owner-system child scripts (foundry import)",
+   "state": "OPEN",
+   "mergeable": "MERGEABLE",
+   "merge_state": "UNSTABLE",
+   "draft": false,
+   "branch": "plan-closure/fix-operate-pythonpath",
+   "created": "2026-10-03",
+   "merged": "",
+   "url": "https://github.com/DreamCo-Technologies/Dreamcobots/pull/13194",
+   "checks_ok": 20,
+   "checks_total": 36,
+   "failing": [
+    "Typecheck, tests, build, fleet and security",
+    "benchmark-lane (architecture, 1)",
+    "benchmark-lane (backend, 2)",
+    "benchmark-lane (business_sales, 3)",
+    "benchmark-lane (creator_media, 4)",
+    "benchmark-lane (deployment, 5)",
+    "benchmark-lane (frontend, 6)",
+    "benchmark-lane (games_simulation, 7)",
+    "benchmark-lane (integrations, 8)",
+    "benchmark-lane (models, 9)",
+    "benchmark-lane (observability, 10)",
+    "benchmark-lane (privacy_permissions, 11)",
+    "benchmark-lane (security, 12)",
+    "benchmark-lane (testing, 13)",
+    "governed-local-tests",
+    "trusted-code"
+   ],
+   "pr_specific_failing": [],
+   "bots": [
+    "Grok-Prod-Plan-Closure"
+   ],
+   "changed_files": 2,
+   "checks_pending": 0,
+   "review": "APPROVED"
+  }
+ ],
+ "owner_actions": [
+  "#9573 is now the isolated CI fix and is being updated live (last push 10-03 9:39 AM CT, 30 files). It rephrases the website/work-desk.html sentence that trips the public-site preflight, adds the Gap Closure noop lane, drops the drizzle-kit esm-loader override, and regenerates the Actions prospectus for all 91 workflows. That covers the Core Health prospectus test and the preflight-driven reds. No PR-specific failures right now. 1 checks were still running at report time. Once its checks are green, review and merge it.",
+  "Decide the trusted-code (Code Trust Gate) policy. It fails on main and on 42 of 45 open owner PRs. Is it required, and what must a PR show to pass it?",
+  "Merge #9576. It is the only fully green, MERGEABLE/CLEAN PR (OS SLO tiles). Then review the bot PRs whose only failures are inherited from main: #12433, #12435, #12436, #12437, #12438, #12440, #12443, #12444, #12445, #12920, #12922, #13177, #13178, #13179, #13182, #13183, #13184, #13186, #13187, #13189, #13192, #13193, #13194.",
+  "Fix and merge #12439 (it has a PR-specific 'validate' failure). 13 of the 14 sitemap URLs on main return 404 today. Then switch Pages from legacy main:/ to GitHub Actions with one publisher (pages.yml or deploy-buddy-pages.yml).",
+  "Security: 25 of 27 mutating + sensitive API routes still have no inbound auth, including POST /api/github/trigger-workflow. Review #13176 (draft, model-route gate; now also fails CodeQL). Set OWNER_BILLING_TOKEN, BUDDY_MODEL_OWNER_SUBJECTS, DATABASE_URL, STRIPE_WEBHOOK_SECRET and the Stripe keys on the host.",
+  "Review the 18 PRs opened 10-03 9:22–9:36 AM CT (#13177–#13194). They carry the local work of 24 bots. PR-specific failures to fix first: #13180 smoke; #13181 smoke; #13185 audit; #13188 smoke; #13190 Buddy quick verification. #13194 should fix the Grok Owner Systems workflow, which fails on main.",
+  "Unblock the 23 bots that still have local-only work and no PR: HF-Diffusers, HF-Mastery-Coach, HF-Safetensors-License, HF-Tokenizers, Buddy-Capability-Packager, Buddy-Debug-Arena, Buddy-Logic-Reasoner, Buddy-RCA-Trainer, Buddy-ToolUse-Arena, OS-Agents-ProcTable, Prod-API-Surface, Prod-Config-Triangulator, Prod-Deps-Licenses, Prod-Docs-Parity, Prod-Resource-Graph, Edu-College-Catalog, Edu-STEM-Track, 65-MasterBot-OS-Lead, Division-Production-Gates, Fleet-Gap-Closer, Modernization-Executor, ONET-Ingest-Lead, Platform-Expansion-Lead. Approve them all at once, or say which to drop.",
+  "Workflow volume: open a PR for origin branch ops/workflow-schedule-demotions (8 schedule-demotion commits, no PR yet) and set a consolidation target. Main has 91 workflow files, 56 of them scheduled, and about 47% of runs were cancelled on 09-28.",
+  "Answer the lane picks that idle bots are waiting on (questions 13–19 below).",
+  "Licensing calls: (a) keep or delete the Codecademy catalog snapshot at /workspace/coding-courses; (b) the CC BY-NC TTS model in #12433 and the non-commercial XTTS flagged in #13191 stay study-only; (c) commit or gitignore the 26 MB O*NET catalog, and approve the O*NET 31.0 pin for DP-ONET (#13192)."
+ ],
+ "owner_questions": [
+  {
+   "q": "trusted-code: is it a required check, and what must a PR show to pass it? It fails on main and on 42 of 45 open owner PRs.",
+   "bots": [
+    "all PR owners"
+   ]
+  },
+  {
+   "q": "Pages: switch the source from legacy main:/ to GitHub Actions? Which single publisher: pages.yml or deploy-buddy-pages.yml?",
+   "bots": [
+    "Grok-Pages-Universe-Linker",
+    "Grok-OS-Pages-Integrator"
+   ]
+  },
+  {
+   "q": "Local-only work: may the 23 bots in action 8 open PRs without a per-bot chat approval?",
+   "bots": [
+    "HF-Diffusers",
+    "HF-Mastery-Coach",
+    "HF-Safetensors-License",
+    "HF-Tokenizers",
+    "Buddy-Capability-Packager",
+    "Buddy-Debug-Arena",
+    "Buddy-Logic-Reasoner",
+    "Buddy-RCA-Trainer",
+    "Buddy-ToolUse-Arena",
+    "OS-Agents-ProcTable",
+    "Prod-API-Surface",
+    "Prod-Config-Triangulator",
+    "Prod-Deps-Licenses",
+    "Prod-Docs-Parity",
+    "Prod-Resource-Graph",
+    "Edu-College-Catalog",
+    "Edu-STEM-Track",
+    "65-MasterBot-OS-Lead",
+    "Division-Production-Gates",
+    "Fleet-Gap-Closer",
+    "Modernization-Executor",
+    "ONET-Ingest-Lead",
+    "Platform-Expansion-Lead"
+   ]
+  },
+  {
+   "q": "Frontier: which runnable Buddy build and which named reference model/endpoint should F0 run against?",
+   "bots": [
+    "Grok-Frontier-Loop-Captain",
+    "Grok-Buddy-F0-Scorecard",
+    "Grok-Buddy-Vs500-Bench"
+   ]
+  },
+  {
+   "q": "Host secrets: when will DATABASE_URL, STRIPE_WEBHOOK_SECRET, the Stripe keys and OWNER_BILLING_TOKEN be set, so live and runtime checks can run?",
+   "bots": [
+    "Grok-Prod-Cert-Gate",
+    "Grok-Live-Revenue-Readiness"
+   ]
+  },
+  {
+   "q": "Model access: who goes in BUDDY_MODEL_OWNER_SUBJECTS? Keep or trim the 4 OpenAI allowlist entries that have no exact model IDs (#13176)?",
+   "bots": [
+    "Grok-Model-Access-Product-Owner"
+   ]
+  },
+  {
+   "q": "Static-site size: the Pages artifact was 61 MiB against a 52 MiB cap (09-28). Trim which assets, or raise the cap?",
+   "bots": [
+    "Grok-Eng-Gap-Closure-Pilot",
+    "Grok-Goals-Gatekeeper"
+   ]
+  },
+  {
+   "q": "Direct pushes to main: freeze them until main is green, or keep pushing directly?",
+   "bots": [
+    "fleet"
+   ]
+  },
+  {
+   "q": "GAIN: confirm the scope, the first lane (DreamPayments or the full plan), the canary soak length and the spend cap (#12438).",
+   "bots": [
+    "Grok-Gain-Production-Pipeline"
+   ]
+  },
+  {
+   "q": "Codecademy catalog snapshot in /workspace/coding-courses: keep or delete (possible ToS issue)?",
+   "bots": [
+    "Grok-Edu-K12-Curriculum"
+   ]
+  },
+  {
+   "q": "O*NET: commit or gitignore the 26 MB config/generated/universal-work-ai-catalog.json? Approve O*NET 31.0 for DP-ONET while the fleet ingest stays on 30.3?",
+   "bots": [
+    "Grok-Data-Package-Merchant",
+    "Grok-ONET-Ingest-Lead"
+   ]
+  },
+  {
+   "q": "Model licenses: OK to keep non-commercial (facebook/mms-tts-eng in #12433, XTTS in #13191) and gated (Llama/Gemma) models in study-only packs marked not for sale? #13182's pack licenses are still TBD.",
+   "bots": [
+    "Grok-HF-Multimodal",
+    "Grok-HF-Hub-Master",
+    "Grok-HF-Safetensors-License"
+   ]
+  },
+  {
+   "q": "Universal sandbox: first lane = host adapter, Bootcamp, or cert soak? (GovernedSandboxExecutor always returns blocked today.)",
+   "bots": [
+    "Grok-Universal-Sandbox-Director"
+   ]
+  },
+  {
+   "q": "Fleet quality: next step = refresh the scorecard, prove one division live, or make the 24h soak real?",
+   "bots": [
+    "Grok-Fleet-Quality-Director"
+   ]
+  },
+  {
+   "q": "Business productivity: which top-3 programs first?",
+   "bots": [
+    "Grok-Biz-Productivity-Programs"
+   ]
+  },
+  {
+   "q": "Package market: first ship target = listing gate + API, Pages catalog skeleton, live Pages audit, or packager contract?",
+   "bots": [
+    "Grok-Buddy-Package-Market"
+   ]
+  },
+  {
+   "q": "Buddy OS lanes: Actions panel focus (fix Actions Health / rerun / failure watch), first Issues routing batch, first OS surface for the Pages integrator?",
+   "bots": [
+    "Grok-OS-Actions-Panel",
+    "Grok-OS-Issues-Kernel",
+    "Grok-OS-Pages-Integrator"
+   ]
+  },
+  {
+   "q": "Buddy teaching lanes: Socratic first lane, AV first cut (and consent gate), a concrete Metacog/Path D task, Code-Frontier first build step?",
+   "bots": [
+    "Grok-Buddy-Socratic-Tutor",
+    "Grok-Buddy-AV-Trainer",
+    "Grok-Buddy-Metacog-Coach",
+    "Grok-Buddy-Code-Frontier"
+   ]
+  },
+  {
+   "q": "Superbot / competitor / data wiring: green the Superbot Migration Ledger first? GitHub-competitor next focus? Fixtures or loader for data wiring?",
+   "bots": [
+    "Grok-Superbot-Migration-Lead",
+    "Grok-GitHub-Competitor-Strategist",
+    "Grok-Prod-Data-Wiring"
+   ]
+  },
+  {
+   "q": "Workflow consolidation: restore or define a target (reports/ACTIONS_CONSOLIDATION_PLAN.md), and open a PR for branch ops/workflow-schedule-demotions (8 demotion commits)?",
+   "bots": [
+    "Grok-OS-Scheduler",
+    "Grok-Eng-Gap-Closure-Pilot"
+   ]
+  }
+ ],
+ "learning_plans": {
+  "stuck_loop": [
+   "Diagnose: read the failing check log (gh run view --log-failed) and say which gate failed and why, in one sentence.",
+   "Reproduce: run the same command locally on a clean worktree off origin/main, never on a shared dirty checkout.",
+   "Smallest failing test: shrink it to one test or fixture that fails for the same reason, and commit it first.",
+   "Consult docs/source: the repo's own contract or config for that gate, then upstream docs at the pinned version.",
+   "Ask a teammate: post the failing test plus a hypothesis to the owning lane (table below) before widening scope.",
+   "Escalate to the owner with one specific yes/no or A/B question, the evidence path, and what each answer unblocks. Never escalate 'what should I do?'."
+  ],
+  "learn_loop": [
+   "Curriculum: pick the lesson list from the lane's real source (Bootcamp yaml, study pack CARD, plan doc).",
+   "Drills: offline, deterministic, pinned versions. Record a run log.",
+   "Held-out eval: a holdout the learner never saw, with leakage checks and a fixed seed.",
+   "Evidence card: score, SHA, versions, run log and failures, with claimable=false until the gate passes.",
+   "Package: CP/LP/RP/DP manifest plus the license gate. Nothing is sellable without an approved_for_sale outcome and owner approval."
+  ],
+  "families": {
+   "HF swarm": {
+    "pieces": [
+     "docs/HUGGINGFACE_MASTERY_PLAN.md (main)",
+     "tools/build_hf_capability_packs.py (main)",
+     "study_packs/hub/day1_audit.py (main)",
+     "study_packs/{accelerate,evaluate,multimodal,datasets,nlp-tasks} (open PRs #12440 #12434 #12433 #12919)",
+     "requirements-hf-learning.txt (#12435)",
+     "HF CERT ledger (local: /workspace/hf-mastery)"
+    ],
+    "stuck": "Common failures: network or gated-model access, version drift, and a missing license. Re-run with the pinned versions from #12435. Swap a gated model for an ungated tiny one (e.g. hf-internal-testing tiny-random) so the drill still proves the API. Log the gated finding as evidence; do not hide it.",
+    "learn": "One library per lane. A lesson is done only when its CARD has pinned repo_id+revision+license, its drills pass offline, it has a held-out eval, and the ledger row moves one gate. CERT = all 5 gates. Grok-HF-Mastery-Coach signs; the Swarm-Conductor prevents double claims."
+   },
+   "Buddy frontier sets": {
+    "pieces": [
+     "buddy/bootcamp/buddy_bootcamp.yaml + tools/buddy_bootcamp_engine.py + tools/bootcamp_lesson_planner.py (main)",
+     "config/buddy-frontier-readiness-gates.json G1–G7 (main)",
+     "tools/verify_frontier_evidence.py + tests/test_verify_frontier_evidence.py (main)",
+     "docs/BUDDY_FRONTIER_EVALUATION_HARNESS.md (main)",
+     "frontier claim gates (#9575)",
+     "buddy-logic-bench, F0 packet schema, distill gate, RCA taxonomy (local)"
+    ],
+    "stuck": "Use the Debug-Arena loop (reproduce → isolate → fix → verify) and the RCA taxonomy (26 classes) to name the failure class before fixing. If a bench result looks too good, run a leakage check against the holdout before anything else.",
+    "learn": "Each skill set (logic, memory, tool use, code, reasoning) gets a Bootcamp lesson, drills, a holdout in the bench (e.g. buddy-logic-bench, oracle/random baselines), and an F0 evidence packet. Promotion follows docs/BUDDY_FRONTIER_PROMOTION_CHECKLIST.md (local), and #9575 keeps Pages copy fail-closed."
+   },
+   "Buddy OS": {
+    "pieces": [
+     "website/actions.html + issues-panel.js (main)",
+     "website/os.html (main)",
+     "OS SLO tiles (#9576)",
+     "scheduler P0 conversions (#12921)",
+     "shell IPC contract (local)"
+    ],
+    "stuck": "An OS surface is broken when its data contract and its page disagree. Reproduce with the page's own test (e.g. tests/actions-page.test.mjs), regenerate the data, and never paint a tile green without a run record (#9576 is fail-closed).",
+    "learn": "Learn one section at a time (Actions → PRs → Issues → Agents). Each needs a data contract, a page, a test, and a live tile with a soak/SLO number before it counts."
+   },
+   "Prod connectivity": {
+    "pieces": [
+     "tools/build_buddy_public_site.py preflight (main)",
+     "config/generated/bot-production-readiness.json (main)",
+     "evidence ledger v0.1 (#12437)",
+     "api-surface scan_routes.py, resource graph, connectivity scan (local)"
+    ],
+    "stuck": "Most reds were stale generated baselines, not product bugs (Config-Triangulator, 09-21). Check for a stale artifact first, then the code. Rescan after every main push; a scan older than the head SHA is not evidence.",
+    "learn": "Each scanner ships as a script, a JSON output and a test, scheduled in an existing workflow (REPO_AUTONOMOUS_SYSTEMS_PLAN). Findings go to the evidence ledger pinned to a SHA."
+   },
+   "Edu": {
+    "pieces": [
+     "config/buddy-bootcamp-curriculum-v1.json (main)",
+     "benchmarks/tasks/universal_1000_smoke.json mastery_threshold 0.9 (main)",
+     "eval/edu_benchmark SET 7 floors (#12922)",
+     "K-12 map (#12436)",
+     "career pathways (#12441)",
+     "Mastery-Scorecards cert gate gate/cert_gate.py (local: /workspace/edu-mastery-scorecards)",
+     "OER license gate (local)",
+     "SM-2 SRS (local)"
+    ],
+    "stuck": "If a course packet fails its floor, check holdout leakage and license first, then content. Never lower the 0.90 floor to pass.",
+    "learn": "Course curriculum → SM-2 spaced drills → SET 7 holdout (≥3 comparable runs, a transfer task, +7d retention) → mastery evidence card → the cert gate refuses certs without benches → LP pack behind the OER license gate."
+   },
+   "Plan owners": {
+    "pieces": [
+     "docs/DREAMCO_MASTER_ROADMAP_2026.md (main)",
+     "certify-first order (local: /home/box/roadmap/CERTIFY_FIRST_ORDER.md)",
+     "evidence ledger (#12437)",
+     "production cert gate spec (local + fork branch)"
+    ],
+    "stuck": "A plan is stuck when its first gate has no runnable check. Write the check, even a failing one, before writing more plan text. Escalate only the owner-only decisions (scope, spend, secrets, licenses).",
+    "learn": "Plan → one gate → one runnable check → one evidence row → one PR. Follow the certify-first order rather than starting a new parallel plan."
+   }
+  },
+  "buddy": {
+   "stuck": [
+    [
+     "Diagnose",
+     "Read the failing gate's message (verify_frontier_evidence, bootcamp engine, eval harness). Classify it with the RCA taxonomy (local: /workspace/buddy-rca)."
+    ],
+    [
+     "Reproduce",
+     "Re-run the same lesson or bench in the sandbox (tools/buddy_bootcamp_engine.py, buddy-sandbox-bootcamp.yml) with a fixed seed. Record the run."
+    ],
+    [
+     "Smallest failing test",
+     "Write one failing test or holdout item that shows the gap (explain-then-test). Commit it before the fix."
+    ],
+    [
+     "Consult docs/source",
+     "Buddy's own contracts first (docs/BUDDY_BOOTCAMP_SANDBOX_SPEC.md, docs/BUDDY_FRONTIER_EVALUATION_HARNESS.md, config/buddy-frontier-readiness-gates.json), then pinned upstream docs or study packs."
+    ],
+    [
+     "Ask a teammate",
+     "Route by gap: logic → Logic-Reasoner, memory → Memory-Frontier, tools → ToolUse-Arena, code → Code-Frontier/Debug-Arena, HF API → the HF lane owner. Log the teacher assist (cost/latency) as F0 requires."
+    ],
+    [
+     "Escalate to owner",
+     "Only for owner-only blockers: a reference model/endpoint, secrets, a license, spend. Ask one specific question with the evidence path. Abstaining is allowed; guessing is not (Metacog lane)."
+    ]
+   ],
+   "learn": [
+    [
+     "Curriculum",
+     "Lesson from buddy/bootcamp/buddy_bootcamp.yaml + config/buddy-bootcamp-curriculum-v1.json (+ study_packs/* for HF topics). Teacher syllabus: GROK_TEACHES_BUDDY_SYLLABUS_v0 (local)."
+    ],
+    [
+     "Drills",
+     "Offline drills in the sandbox, with spaced repeats (SM-2 from Edu-Study-Skills-OS, local)."
+    ],
+    [
+     "Held-out eval",
+     "Holdout never seen in drills: buddy-logic-bench (local), SET 7 holdout policy (#12922), memory F0 suite (local). Leakage check per the eval harness doc."
+    ],
+    [
+     "Evidence card",
+     "F0 evidence packet schema (local f0-scorecard-draft) or the edu evidence card (Mastery-Scorecards, local). Pin the SHA, record the reference subject, keep claimable=false until G1–G7 pass."
+    ],
+    [
+     "Package",
+     "CP/LP/RP export (cp-factory, lp-factory) behind the sellability gate (#12445) and the license/provenance gate (dp-merchant). Listing only after the cert gate and owner approval."
+    ]
+   ],
+   "note": "Graduation = repeat pass + holdout + no regression + fresh evidence (curriculum-v1 mastery rule). Today Buddy has 0 frontier runs, so the first concrete step is one F0 run on one suite against one named reference subject (owner question 4)."
+  }
+ },
+ "main_ci": {
+  "success": [
+   "65 Division Benchmark Orchestrator",
+   "Actions Failure Sweep",
+   "Autonomous Systems Builder",
+   "Benchmark Evidence Loop",
+   "Benchmark Gap Planner",
+   "Benchmark Sandbox Manifest",
+   "Benchmark Tracker",
+   "Benchmark Training Execution",
+   "Benchmark Training Queue",
+   "Buddy 1000-Source Learning",
+   "Buddy 24h Sandbox Soak",
+   "Buddy Actions Test Lab",
+   "Buddy Continuous Learning Runner",
+   "Buddy Learning Proof",
+   "Buddy Model Progress Center",
+   "Buddy Preventive Engineering",
+   "CodeQL - Code Quality",
+   "CodeQL Security Scan",
+   "DreamCo Greenkeeper Orchestrator",
+   "DreamCo Greenkeeper Root Cause",
+   "DreamCo Live Dashboard",
+   "DreamCo PR Review Guardian",
+   "DreamCo Repository System Watch",
+   "Grok Twins and HF Study",
+   "Intelligent Issue Cleaner",
+   "Keep Green",
+   "Note model hourly proof",
+   "Problem Registry Evidence",
+   "Superbot Repository Inventory",
+   "System scan hourly",
+   "pages-build-deployment"
+  ],
+  "failure": [
+   "Code Trust Gate",
+   "Command Center Data Contract",
+   "DreamCo 500-Model Benchmark System",
+   "DreamCo Core Health",
+   "Full System Certification",
+   "Grok Owner Systems",
+   "Parallel Benchmark Gap Builders",
+   "Production Readiness Evidence",
+   "Repository Test Matrix",
+   "Run Everything Now"
+  ],
+  "other": [
+   "Actions Failure Watch (skipped)",
+   "DreamCo Actions Command Center (cancelled)",
+   "Issue Intelligence (skipped)"
+  ],
+  "failing_checks_on_head": [
+   "Daily all-model/all-suite benchmark matrix",
+   "Typecheck, tests, build, fleet and security",
+   "benchmark-lane (architecture, 1)",
+   "benchmark-lane (backend, 2)",
+   "benchmark-lane (business_sales, 3)",
+   "benchmark-lane (creator_media, 4)",
+   "benchmark-lane (deployment, 5)",
+   "benchmark-lane (frontend, 6)",
+   "benchmark-lane (games_simulation, 7)",
+   "benchmark-lane (integrations, 8)",
+   "benchmark-lane (models, 9)",
+   "benchmark-lane (observability, 10)",
+   "benchmark-lane (privacy_permissions, 11)",
+   "benchmark-lane (security, 12)",
+   "benchmark-lane (testing, 13)",
+   "certify",
+   "deterministic-data",
+   "evidence-gate",
+   "governed-local-tests",
+   "run-all",
+   "trusted-code"
+  ]
+ }
+}

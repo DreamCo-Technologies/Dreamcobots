@@ -20,6 +20,7 @@ import { calculateRealEstate, calculateCarFlip, type RealEstateInputs, type CarF
 import { FORMULA_LIBRARY } from "@shared/formula-library";
 import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
+import { billingOwnerAuthorized } from "./billing-auth";
 import { getLocalTestEntitlement } from "./local-test-entitlement";
 import { db } from "./db";
 import { batchProcessWithSSE } from "./provider_integrations/batch";
@@ -2944,6 +2945,9 @@ export async function registerRoutes(
 
   app.post("/api/stripe/restore-subscription", async (req, res) => {
     try {
+      if (!billingOwnerAuthorized(req)) {
+        return res.status(401).json({ error: "Owner billing token required" });
+      }
       const { email } = req.body;
       if (!email || typeof email !== "string" || !email.includes("@")) {
         return res.status(400).json({ error: "A valid email address is required" });
@@ -3015,10 +3019,11 @@ export async function registerRoutes(
 
   app.post("/api/stripe/portal", async (req, res) => {
     try {
-      // Resolve customer ID server-side from the active subscription — never trust client input
+      if (!billingOwnerAuthorized(req)) {
+        return res.status(401).json({ error: "Owner billing token required" });
+      }
       let customerId: string | null = null;
 
-      // Prefer the customer ID persisted by the restore flow (survives browser data clearing)
       try {
         const stored = await storage.getSetting("stripe_customer_id");
         if (stored && typeof stored.value === "string" && stored.value.startsWith("cus_")) {
@@ -3027,46 +3032,7 @@ export async function registerRoutes(
       } catch { /* ignore */ }
 
       if (!customerId) {
-        try {
-          const result = await db.execute(sql`
-            SELECT customer
-            FROM stripe.subscriptions
-            WHERE status IN ('active', 'trialing')
-            ORDER BY created DESC
-            LIMIT 1
-          `);
-          if (result.rows.length > 0) {
-            customerId = (result.rows[0] as any).customer as string;
-          }
-        } catch {
-          // DB lookup failed, fall through to live API
-        }
-      }
-
-      if (!customerId) {
-        // Fall back to live Stripe API — also check stored email for customer lookup
-        const stripe = await getUncachableStripeClient();
-
-        try {
-          const emailSetting = await storage.getSetting("stripe_customer_email");
-          if (emailSetting && typeof emailSetting.value === "string" && emailSetting.value.includes("@")) {
-            const customers = await stripe.customers.list({ email: emailSetting.value, limit: 1 });
-            if (customers.data.length > 0) {
-              customerId = customers.data[0].id;
-            }
-          }
-        } catch { /* ignore */ }
-
-        if (!customerId) {
-          const subs = await stripe.subscriptions.list({ status: "active", limit: 1 });
-          if (subs.data.length > 0) {
-            customerId = subs.data[0].customer as string;
-          }
-        }
-      }
-
-      if (!customerId) {
-        return res.status(404).json({ error: "No active subscription found" });
+        return res.status(404).json({ error: "No owner billing customer is stored" });
       }
 
       const stripe = await getUncachableStripeClient();
