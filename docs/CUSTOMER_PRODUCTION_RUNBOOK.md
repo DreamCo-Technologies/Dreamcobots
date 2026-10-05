@@ -22,6 +22,7 @@ Configure these in the backend host:
 | `STRIPE_WEBHOOK_SECRET` | Verifies Stripe webhook events |
 | `AI_INTEGRATIONS_OPENAI_API_KEY` or `OPENAI_API_KEY` | Enables real model calls |
 | `GITHUB_TOKEN` | Optional governed GitHub sync to review branches |
+| `BUDDY_MODEL_OWNER_SUBJECTS` | Optional. Comma-separated `provider:sub` OAuth identities allowed to use model discovery. Find via `GET /api/auth/session` after Buddy sign-in (`provider` + `:` + `profile.subject`). When unset, nobody is owner (discovery 403); allowlisted selection still works for signed-in users. Never commit a real value. |
 
 ## Preflight Commands
 

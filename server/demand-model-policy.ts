@@ -6,7 +6,7 @@ import {
   DEMAND_RESEARCH_SOURCES,
 } from "@shared/ai-demand-ontology";
 
-import { selectBuddyModelsForTask } from "./buddy-model-policy";
+import { type BuddyModelAccess, selectBuddyModelsForTask } from "./buddy-model-policy";
 
 export const demandModelMatchRequestSchema = z.object({
   reasonId: z.string().regex(/^(ai_usage|downloaded_apps|online_purchases)-\d{3}$/),
@@ -33,6 +33,7 @@ export function getDemandOntology() {
 export function matchDemandReasonToModels(
   input: z.input<typeof demandModelMatchRequestSchema>,
   environment: NodeJS.ProcessEnv = process.env,
+  access: BuddyModelAccess = { role: "user" },
 ) {
   const request = demandModelMatchRequestSchema.parse(input);
   const reason = DEMAND_REASONS.find((candidate) => candidate.id === request.reasonId);
@@ -43,9 +44,10 @@ export function matchDemandReasonToModels(
     preferredTier: request.preferredTier,
     priorities: { quality: 0.8, cost: 0.7, latency: 0.5, privacy: 0.7 },
     maxCandidates: 20,
-    allowDiscovery: true,
+    // Path D: only the owner sees discovery / non-allowlisted options; everyone else is allowlist-only.
+    allowDiscovery: access.role === "owner",
     approvePaidModelForThisRequest: request.approvePaidModelForThisRequest,
-  }, environment);
+  }, environment, access);
   return {
     schema: "dreamco.buddy_demand_model_choices.v1",
     reason,
@@ -57,5 +59,6 @@ export function matchDemandReasonToModels(
     providerCallExecuted: false,
     paymentAuthorized: false,
     selectionTruth: selection.truthContract,
+    access: selection.access,
   } as const;
 }

@@ -50,7 +50,8 @@ export const buddyModelSelectionRequestSchema = z.object({
     privacy: 0.7,
   }),
   maxCandidates: z.number().int().min(1).max(20).default(5),
-  allowDiscovery: z.boolean().default(true),
+  // Path D: discovery (non-allowlisted / official-catalog targets) is opt-in and owner-only.
+  allowDiscovery: z.boolean().default(false),
   approvePaidModelForThisRequest: z.boolean().default(false),
 }).strict();
 
@@ -105,6 +106,92 @@ const PROVIDER_CONNECTOR_IDS: Record<string, string> = {
 };
 
 let configCache: ModelRouterConfig | undefined;
+
+export type BuddyModelCallerRole = "user" | "owner";
+export type BuddyModelAccess = { role: BuddyModelCallerRole };
+const DEFAULT_ACCESS: BuddyModelAccess = { role: "user" };
+
+export class BuddyModelAccessError extends Error {
+  constructor(readonly code: "discovery_owner_only", message: string) {
+    super(message);
+    this.name = "BuddyModelAccessError";
+  }
+}
+
+const allowlistEvidenceSchema = z.discriminatedUnion("path", [
+  z.object({
+    path: z.literal("A"),
+    benchmarkSlotId: z.string().min(1),
+    providerModelId: z.string().min(1),
+    fixtureHash: z.string().min(8),
+    responseHash: z.string().min(8),
+    latencyMs: z.number().nonnegative(),
+    costUsd: z.number().nonnegative(),
+    graderVersion: z.string().min(1),
+    utcTimestamp: z.string().datetime(),
+    source: z.string().min(1),
+    note: z.string().optional(),
+  }).strict(),
+  z.object({
+    path: z.literal("B"),
+    connectorImplementationStatus: z.enum(["local_ready", "adapter_implemented"]),
+    evidenceScope: z.enum(["connector_and_target", "connector_only"]),
+    source: z.string().min(1),
+    note: z.string().optional(),
+  }).strict(),
+]);
+
+export const buddyModelAllowlistSchema = z.object({
+  schema: z.literal("dreamco.buddy_model_allowlist.v1"),
+  _comment: z.string().min(1),
+  default_policy: z.literal("deny_unlisted"),
+  evidence_paths: z.record(z.string(), z.string()),
+  entries: z.array(z.object({
+    targetId: z.number().int().min(1),
+    name: z.string().min(1),
+    provider: z.string().min(1),
+    connectorId: z.string().regex(/^[a-z0-9_]{2,64}$/),
+    evidence: allowlistEvidenceSchema,
+  }).strict()),
+}).strict();
+
+export type BuddyModelAllowlist = z.infer<typeof buddyModelAllowlistSchema>;
+
+let allowlistCache: BuddyModelAllowlist | undefined;
+
+/** Validate the Path D allowlist against the target catalog and router; fails closed on any mismatch. */
+export function validateBuddyModelAllowlist(input: unknown, config: ModelRouterConfig = getBuddyModelRouterConfig()) {
+  const allowlist = buddyModelAllowlistSchema.parse(input);
+  const seen = new Set<number>();
+  for (const entry of allowlist.entries) {
+    if (seen.has(entry.targetId)) throw new Error(`Duplicate allowlist target: ${entry.targetId}`);
+    seen.add(entry.targetId);
+    const target = MODEL_BENCHMARK_TARGETS.find((item) => item.id === entry.targetId);
+    if (!target) throw new Error(`Allowlist target ${entry.targetId} is not in the model catalog`);
+    if (target.discoveryTarget) throw new Error(`Allowlist target ${entry.targetId} is a discovery target`);
+    if (target.name !== entry.name || target.provider !== entry.provider) {
+      throw new Error(`Allowlist target ${entry.targetId} does not match catalog name/provider`);
+    }
+    if (PROVIDER_CONNECTOR_IDS[normalized(target.provider)] !== entry.connectorId) {
+      throw new Error(`Allowlist target ${entry.targetId} is not backed by connector ${entry.connectorId}`);
+    }
+    const connector = config.connectors.find((item) => item.id === entry.connectorId);
+    if (!connector || connector.implementation_status === "contract_only") {
+      throw new Error(`Allowlist target ${entry.targetId} needs a local_ready or adapter_implemented connector`);
+    }
+    if (entry.evidence.path === "B" && entry.evidence.connectorImplementationStatus !== connector.implementation_status) {
+      throw new Error(`Allowlist target ${entry.targetId} cites stale connector evidence`);
+    }
+  }
+  return allowlist;
+}
+
+export function getBuddyModelAllowlist(
+  path = resolve(process.cwd(), "config", "buddy", "model-allowlist.json"),
+) {
+  allowlistCache ??= validateBuddyModelAllowlist(JSON.parse(readFileSync(path, "utf8")));
+  return allowlistCache;
+}
 
 export function getBuddyModelRouterConfig(
   path = resolve(process.cwd(), "config", "buddy-model-router.json"),
@@ -241,13 +328,21 @@ function targetRoutingScore(
 export function selectBuddyModelsForTask(
   requestInput: z.input<typeof buddyModelSelectionRequestSchema>,
   environment: NodeJS.ProcessEnv = process.env,
+  access: BuddyModelAccess = DEFAULT_ACCESS,
 ) {
   const request = buddyModelSelectionRequestSchema.parse(requestInput);
+  if (request.allowDiscovery && access.role !== "owner") {
+    throw new BuddyModelAccessError("discovery_owner_only", "Model discovery is available to the owner only.");
+  }
   const config = getBuddyModelRouterConfig();
+  const allowlist = getBuddyModelAllowlist();
+  const allowlistedIds = new Set(allowlist.entries.map((entry) => entry.targetId));
+  const discoveryEnabled = request.allowDiscovery && access.role === "owner";
   const taskSignals = matchingTaskSignals(request.objective, request.requiredCapabilities);
   const scored = MODEL_BENCHMARK_TARGETS
     .filter((target) => {
-      if (target.discoveryTarget) return request.allowDiscovery;
+      if (!allowlistedIds.has(target.id) && !discoveryEnabled) return false;
+      if (target.discoveryTarget) return discoveryEnabled;
       if (request.preferredTier === "free") return ["free", "freemium"].includes(target.tier);
       if (request.preferredTier === "premium") return ["paid", "freemium"].includes(target.tier);
       return true;
@@ -263,8 +358,11 @@ export function selectBuddyModelsForTask(
     const connectorConfigured = connector ? isConfigured(connector, environment) : false;
     const paidApprovalRequired = ["paid", "freemium"].includes(candidate.target.tier)
       && !request.approvePaidModelForThisRequest;
+    const allowlisted = allowlistedIds.has(candidate.target.id);
     const readiness = candidate.target.discoveryTarget
       ? "official_catalog_discovery_required"
+      : !allowlisted
+        ? "allowlist_evidence_required"
       : paidApprovalRequired
         ? "paid_approval_required"
         : !connector
@@ -284,6 +382,7 @@ export function selectBuddyModelsForTask(
       category: candidate.target.category,
       tier: candidate.target.tier,
       discoveryTarget: candidate.target.discoveryTarget,
+      allowlisted,
       officialCatalog: candidate.target.officialCatalog,
       declaredTaskFit: candidate.target.bestFor,
       matchedTaskSignals: candidate.matchedSignals,
@@ -315,6 +414,14 @@ export function selectBuddyModelsForTask(
     automaticPaidUpgrade: false,
     providerCallExecuted: false,
     permanentBestClaimed: false,
+    access: {
+      callerRole: access.role,
+      allowlistOnly: !discoveryEnabled,
+      discoveryEnabled,
+      discoveryExecuted: false,
+      allowlistSchema: allowlist.schema,
+      allowlistedTargetCount: allowlistedIds.size,
+    },
     freeFallback: {
       connectorId: "buddy_native",
       status: "free_route_ready",
@@ -322,6 +429,8 @@ export function selectBuddyModelsForTask(
     },
     nextStep: selectedStatus === "official_catalog_discovery_required"
       ? "Resolve the exact current model ID, version, access terms, and price from the official catalog, then benchmark it."
+      : selectedStatus === "allowlist_evidence_required"
+        ? "Add Path A benchmark evidence or Path B adapter evidence and a reviewed allowlist entry before users can select this model."
       : selectedStatus === "paid_approval_required"
         ? "Approve paid use for this request or keep the Buddy Native fallback."
         : selectedStatus === "configuration_required"
