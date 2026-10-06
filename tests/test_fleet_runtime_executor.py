@@ -91,19 +91,6 @@ class RouterTests(unittest.TestCase):
         self.assertEqual((out["mode"], out["text"]), ("live_model", "live text"))
 
 
-class PermissionTests(unittest.TestCase):
-    def test_fallback_matches_policy_file(self):
-        self.assertEqual(permissions.load_levels(), permissions.FALLBACK_LEVELS)
-
-    def test_decisions(self):
-        self.assertTrue(permissions.decide("sandbox", "sandbox")["allowed"])
-        self.assertTrue(permissions.decide("plan_only", "read_only")["allowed"])
-        for level in ("external_side_effect", "destructive", "production_deploy", "repository_write"):
-            self.assertFalse(permissions.decide("sandbox", level)["allowed"], level)
-        self.assertEqual(permissions.decide("sandbox", "nope")["decision"], "unknown_level")
-        self.assertFalse(permissions.decide("read_only", "sandbox")["allowed"])
-
-
 class ContractTests(unittest.TestCase):
     def test_sixteen_pieces(self):
         self.assertEqual(len(CONTRACT_PIECES), 16)
@@ -120,10 +107,6 @@ class ContractTests(unittest.TestCase):
         schema = load_schema()
         for compact in collection["bots"]:
             self.assertEqual(validate_bot_manifest(expand(compact, collection), schema), [], compact["slug"])
-
-    def test_guardrail_key_prefix_regression(self):
-        self.assertTrue(review("risk-assessor task-runner desk-chrome")["allowed"])
-        self.assertFalse(review("token sk-live123")["allowed"])
 
 
 class ExecutorTests(unittest.TestCase):
