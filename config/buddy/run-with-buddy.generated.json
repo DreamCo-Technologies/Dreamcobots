@@ -2,7 +2,7 @@
  "schema": "dreamco.buddy.run_with_buddy.v1",
  "generator": "tools/build_actions_prospectus.py",
  "merge_into": "config/buddy/control-plane.json",
- "control_plane_on_main": false,
+ "control_plane_on_main": true,
  "merge_rule": "Curated control-plane jobs win; generated jobs for the same workflow are marked covered_by_curated_job. The router must still enforce operators, never_dispatch_tiers and writes_code_must_be_pr_only.",
  "operators": [
   "ireanjordan24"
@@ -57,7 +57,7 @@
    "notes": "Generated from .github/workflows/actions-command-center.yml."
   },
   {
-   "id": "wf_actions_failure_sweep",
+   "id": "actions_failure_sweep",
    "family": "workflow",
    "title": "Actions Failure Sweep",
    "workflow": "actions-failure-sweep.yml",
@@ -66,7 +66,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/actions-failure-sweep.yml."
+   "notes": "Generated from .github/workflows/actions-failure-sweep.yml.",
+   "covered_by_curated_job": "actions_failure_sweep"
   },
   {
    "id": "wf_actions_failure_watch",
@@ -94,7 +95,7 @@
    "notes": "Generated from .github/workflows/actions-green-contract.yml."
   },
   {
-   "id": "wf_actions_health",
+   "id": "actions_health",
    "family": "workflow",
    "title": "Actions Health",
    "workflow": "actions-health.yml",
@@ -103,7 +104,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/actions-health.yml."
+   "notes": "Generated from .github/workflows/actions-health.yml.",
+   "covered_by_curated_job": "actions_health"
   },
   {
    "id": "wf_actions_page_debug",
@@ -155,7 +157,7 @@
    "notes": "Generated from .github/workflows/benchmark-65-orchestrator.yml."
   },
   {
-   "id": "wf_benchmark_evidence_loop",
+   "id": "benchmark_evidence",
    "family": "workflow",
    "title": "Benchmark Evidence Loop",
    "workflow": "benchmark-evidence-loop.yml",
@@ -164,7 +166,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/benchmark-evidence-loop.yml."
+   "notes": "Generated from .github/workflows/benchmark-evidence-loop.yml.",
+   "covered_by_curated_job": "benchmark_evidence"
   },
   {
    "id": "wf_benchmark_gap_planner",
@@ -215,7 +218,7 @@
    "notes": "Generated from .github/workflows/benchmark-sandbox-manifest.yml."
   },
   {
-   "id": "wf_benchmark_tracker",
+   "id": "benchmark_tracker",
    "family": "workflow",
    "title": "Benchmark Tracker",
    "workflow": "benchmark-tracker.yml",
@@ -224,7 +227,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/benchmark-tracker.yml."
+   "notes": "Generated from .github/workflows/benchmark-tracker.yml.",
+   "covered_by_curated_job": "benchmark_tracker"
   },
   {
    "id": "wf_benchmark_training_execution",
@@ -251,7 +255,7 @@
    "notes": "Generated from .github/workflows/benchmark-training-queue.yml."
   },
   {
-   "id": "wf_bot_production_readiness",
+   "id": "bot_production_readiness",
    "family": "workflow",
    "title": "Bot Production Readiness",
    "workflow": "bot-production-readiness.yml",
@@ -261,7 +265,8 @@
    "inputs": {},
    "generated": true,
    "notes": "pushes to main; writes_code jobs must be PR-only",
-   "blocked_reason": "pushes to main; writes_code jobs must be PR-only"
+   "blocked_reason": "pushes to main; writes_code jobs must be PR-only",
+   "covered_by_curated_job": "bot_production_readiness"
   },
   {
    "id": "wf_bot_sandbox_test",
@@ -276,7 +281,7 @@
    "notes": "Generated from .github/workflows/bot-sandbox-test.yml."
   },
   {
-   "id": "wf_branch_health_daily",
+   "id": "branch_health_scan",
    "family": "workflow",
    "title": "Daily branch health and conflict team",
    "workflow": "branch-health-daily.yml",
@@ -291,7 +296,8 @@
    },
    "generated": true,
    "notes": "pushes to main; writes_code jobs must be PR-only",
-   "blocked_reason": "pushes to main; writes_code jobs must be PR-only"
+   "blocked_reason": "pushes to main; writes_code jobs must be PR-only",
+   "covered_by_curated_job": "branch_health_scan"
   },
   {
    "id": "wf_buddy_1000_source_learning",
@@ -384,6 +390,20 @@
    "blocked_reason": "no permissions block (defaults may grant write); declare permissions before it can be triggered"
   },
   {
+   "id": "buddy_customize_apply",
+   "family": "workflow",
+   "title": "Buddy customize apply",
+   "workflow": "buddy-customize-apply.yml",
+   "risk_tier": "writes_code",
+   "requires_owner_approval": true,
+   "triggerable": false,
+   "inputs": {},
+   "generated": true,
+   "notes": "required free-text input(s) issue need an anchored pattern in the registry",
+   "blocked_reason": "required free-text input(s) issue need an anchored pattern in the registry",
+   "covered_by_curated_job": "buddy_customize_apply"
+  },
+  {
    "id": "wf_buddy_distill_gate",
    "family": "workflow",
    "title": "Buddy Distill Gate",
@@ -396,7 +416,7 @@
    "notes": "Generated from .github/workflows/buddy-distill-gate.yml."
   },
   {
-   "id": "wf_buddy_fleet_health",
+   "id": "fleet_health",
    "family": "workflow",
    "title": "Buddy Fleet Health",
    "workflow": "buddy-fleet-health.yml",
@@ -405,10 +425,11 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/buddy-fleet-health.yml."
+   "notes": "Generated from .github/workflows/buddy-fleet-health.yml.",
+   "covered_by_curated_job": "fleet_health"
   },
   {
-   "id": "wf_buddy_gap_closure_24h",
+   "id": "gap_closure_research",
    "family": "workflow",
    "title": "Buddy Gap Closure - 24h Research Loop",
    "workflow": "buddy-gap-closure-24h.yml",
@@ -417,10 +438,11 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/buddy-gap-closure-24h.yml."
+   "notes": "Generated from .github/workflows/buddy-gap-closure-24h.yml.",
+   "covered_by_curated_job": "gap_closure_research"
   },
   {
-   "id": "wf_buddy_hub_learning_packages",
+   "id": "hub_learning_packages",
    "family": "workflow",
    "title": "Buddy Hub Learning Packages",
    "workflow": "buddy-hub-learning-packages.yml",
@@ -429,7 +451,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/buddy-hub-learning-packages.yml."
+   "notes": "Generated from .github/workflows/buddy-hub-learning-packages.yml.",
+   "covered_by_curated_job": "hub_learning_packages"
   },
   {
    "id": "wf_buddy_learning_proof",
@@ -456,7 +479,7 @@
    "notes": "Generated from .github/workflows/buddy-learning-regression.yml."
   },
   {
-   "id": "wf_buddy_os_contracts",
+   "id": "observability_contracts",
    "family": "workflow",
    "title": "Buddy OS Contract Verification",
    "workflow": "buddy-os-contracts.yml",
@@ -465,7 +488,21 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/buddy-os-contracts.yml."
+   "notes": "Generated from .github/workflows/buddy-os-contracts.yml.",
+   "covered_by_curated_job": "observability_contracts"
+  },
+  {
+   "id": "pages_link_check",
+   "family": "workflow",
+   "title": "Buddy Pages Link Check",
+   "workflow": "buddy-pages-link-check.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/buddy-pages-link-check.yml.",
+   "covered_by_curated_job": "pages_link_check"
   },
   {
    "id": "wf_buddy_preventive_engineering",
@@ -480,7 +517,7 @@
    "notes": "Generated from .github/workflows/buddy-preventive-engineering.yml."
   },
   {
-   "id": "wf_buddy_sandbox_bootcamp",
+   "id": "bootcamp",
    "family": "workflow",
    "title": "Buddy Sandbox Bootcamp",
    "workflow": "buddy-sandbox-bootcamp.yml",
@@ -489,7 +526,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/buddy-sandbox-bootcamp.yml."
+   "notes": "Generated from .github/workflows/buddy-sandbox-bootcamp.yml.",
+   "covered_by_curated_job": "bootcamp"
   },
   {
    "id": "wf_build_updates_now",
@@ -517,7 +555,7 @@
    "blocked_reason": "required free-text input(s) issue_number need an anchored pattern in the registry"
   },
   {
-   "id": "wf_business_data_trade_readiness",
+   "id": "business_data_trade_readiness",
    "family": "workflow",
    "title": "Business Data Trade Readiness",
    "workflow": "business-data-trade-readiness.yml",
@@ -527,7 +565,8 @@
    "inputs": {},
    "generated": true,
    "notes": "money workflows are never triggerable from Buddy or Pages",
-   "blocked_reason": "money workflows are never triggerable from Buddy or Pages"
+   "blocked_reason": "money workflows are never triggerable from Buddy or Pages",
+   "covered_by_curated_job": "business_data_trade_readiness"
   },
   {
    "id": "wf_code_trust_gate",
@@ -834,7 +873,7 @@
    "notes": "Generated from .github/workflows/dreamco-live-dashboard.yml."
   },
   {
-   "id": "wf_dreamco_platform_evolution",
+   "id": "curriculum_bots",
    "family": "workflow",
    "title": "DreamCo Platform Evolution",
    "workflow": "dreamco-platform-evolution.yml",
@@ -843,7 +882,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/dreamco-platform-evolution.yml."
+   "notes": "Generated from .github/workflows/dreamco-platform-evolution.yml.",
+   "covered_by_curated_job": "curriculum_bots"
   },
   {
    "id": "wf_dreamco_pr_review_guardian",
@@ -870,7 +910,7 @@
    "notes": "Generated from .github/workflows/dreamco-unified-system.yml."
   },
   {
-   "id": "wf_engineering_gap_closure",
+   "id": "gap_closure_engineering",
    "family": "workflow",
    "title": "Engineering Gap Closure",
    "workflow": "engineering-gap-closure.yml",
@@ -879,7 +919,20 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/engineering-gap-closure.yml."
+   "notes": "Generated from .github/workflows/engineering-gap-closure.yml.",
+   "covered_by_curated_job": "gap_closure_engineering"
+  },
+  {
+   "id": "wf_evidence_gate",
+   "family": "workflow",
+   "title": "Evidence gate",
+   "workflow": "evidence-gate.yml",
+   "risk_tier": "read_only",
+   "requires_owner_approval": false,
+   "triggerable": true,
+   "inputs": {},
+   "generated": true,
+   "notes": "Generated from .github/workflows/evidence-gate.yml."
   },
   {
    "id": "wf_fleet_builder",
@@ -906,7 +959,7 @@
    "notes": "Generated from .github/workflows/fleet-runtime-truth.yml."
   },
   {
-   "id": "wf_full_system_certification",
+   "id": "cert_gate",
    "family": "workflow",
    "title": "Full System Certification",
    "workflow": "full-system-certification.yml",
@@ -915,7 +968,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/full-system-certification.yml."
+   "notes": "Generated from .github/workflows/full-system-certification.yml.",
+   "covered_by_curated_job": "cert_gate"
   },
   {
    "id": "wf_government_transparency_refresh",
@@ -978,7 +1032,7 @@
    "notes": "Generated from .github/workflows/grok-team.yml."
   },
   {
-   "id": "wf_grok_twins_hf_study",
+   "id": "hf_study_packs",
    "family": "workflow",
    "title": "Grok Twins and HF Study",
    "workflow": "grok-twins-hf-study.yml",
@@ -987,10 +1041,11 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/grok-twins-hf-study.yml."
+   "notes": "Generated from .github/workflows/grok-twins-hf-study.yml.",
+   "covered_by_curated_job": "hf_study_packs"
   },
   {
-   "id": "wf_intelligent_issue_cleaner",
+   "id": "issue_cleaner",
    "family": "workflow",
    "title": "Intelligent Issue Cleaner",
    "workflow": "intelligent-issue-cleaner.yml",
@@ -999,7 +1054,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/intelligent-issue-cleaner.yml."
+   "notes": "Generated from .github/workflows/intelligent-issue-cleaner.yml.",
+   "covered_by_curated_job": "issue_cleaner"
   },
   {
    "id": "wf_issue_intelligence",
@@ -1051,7 +1107,7 @@
    "notes": "Generated from .github/workflows/model-progress-center.yml."
   },
   {
-   "id": "wf_money_os_ci",
+   "id": "money_os_ci",
    "family": "workflow",
    "title": "Money OS CI",
    "workflow": "money-os-ci.yml",
@@ -1061,7 +1117,8 @@
    "inputs": {},
    "generated": true,
    "notes": "money workflows are never triggerable from Buddy or Pages",
-   "blocked_reason": "money workflows are never triggerable from Buddy or Pages"
+   "blocked_reason": "money workflows are never triggerable from Buddy or Pages",
+   "covered_by_curated_job": "money_os_ci"
   },
   {
    "id": "wf_monthly_lists",
@@ -1113,7 +1170,7 @@
    "notes": "Generated from .github/workflows/original-bot-placement.yml."
   },
   {
-   "id": "wf_pages",
+   "id": "pages_publish",
    "family": "workflow",
    "title": "Publish DreamCo AI Research Pages",
    "workflow": "pages.yml",
@@ -1122,7 +1179,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/pages.yml."
+   "notes": "Generated from .github/workflows/pages.yml.",
+   "covered_by_curated_job": "pages_publish"
   },
   {
    "id": "wf_parallel_benchmark_gap_builders",
@@ -1190,7 +1248,7 @@
    "notes": "Generated from .github/workflows/pr-review-parity-gate.yml."
   },
   {
-   "id": "wf_problem_registry",
+   "id": "problem_registry",
    "family": "workflow",
    "title": "Problem Registry Evidence",
    "workflow": "problem-registry.yml",
@@ -1199,10 +1257,11 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/problem-registry.yml."
+   "notes": "Generated from .github/workflows/problem-registry.yml.",
+   "covered_by_curated_job": "problem_registry"
   },
   {
-   "id": "wf_production_readiness",
+   "id": "goals_gates",
    "family": "workflow",
    "title": "Production Readiness Evidence",
    "workflow": "production-readiness.yml",
@@ -1211,7 +1270,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/production-readiness.yml."
+   "notes": "Generated from .github/workflows/production-readiness.yml.",
+   "covered_by_curated_job": "goals_gates"
   },
   {
    "id": "wf_repo_capability_audit",
@@ -1226,7 +1286,7 @@
    "notes": "Generated from .github/workflows/repo-capability-audit.yml."
   },
   {
-   "id": "wf_repository_scan_update",
+   "id": "connectivity_scan",
    "family": "workflow",
    "title": "Repository Scan Update",
    "workflow": "repository-scan-update.yml",
@@ -1235,10 +1295,11 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/repository-scan-update.yml."
+   "notes": "Generated from .github/workflows/repository-scan-update.yml.",
+   "covered_by_curated_job": "connectivity_scan"
   },
   {
-   "id": "wf_repository_system_watch",
+   "id": "system_watch",
    "family": "workflow",
    "title": "DreamCo Repository System Watch",
    "workflow": "repository-system-watch.yml",
@@ -1247,7 +1308,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/repository-system-watch.yml."
+   "notes": "Generated from .github/workflows/repository-system-watch.yml.",
+   "covered_by_curated_job": "system_watch"
   },
   {
    "id": "wf_repository_test_matrix",
@@ -1262,7 +1324,7 @@
    "notes": "Generated from .github/workflows/repository-test-matrix.yml."
   },
   {
-   "id": "wf_run_everything_now",
+   "id": "onet_catalog",
    "family": "workflow",
    "title": "Run Everything Now",
    "workflow": "run-everything-now.yml",
@@ -1271,7 +1333,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/run-everything-now.yml."
+   "notes": "Generated from .github/workflows/run-everything-now.yml.",
+   "covered_by_curated_job": "onet_catalog"
   },
   {
    "id": "wf_score_scan",
@@ -1286,7 +1349,7 @@
    "notes": "Generated from .github/workflows/score-scan.yml."
   },
   {
-   "id": "wf_self_working_system",
+   "id": "fleet_status",
    "family": "workflow",
    "title": "Self Working System",
    "workflow": "self-working-system.yml",
@@ -1295,7 +1358,8 @@
    "triggerable": true,
    "inputs": {},
    "generated": true,
-   "notes": "Generated from .github/workflows/self-working-system.yml."
+   "notes": "Generated from .github/workflows/self-working-system.yml.",
+   "covered_by_curated_job": "fleet_status"
   },
   {
    "id": "wf_startup_factory_contract",

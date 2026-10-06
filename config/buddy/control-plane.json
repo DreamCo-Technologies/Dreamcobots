@@ -1,0 +1,346 @@
+{
+  "schema": "dreamco.buddy.control-plane.v1",
+  "repository": "DreamCo-Technologies/Dreamcobots",
+  "default_ref": "main",
+  "command_label": "buddy-command",
+  "router_workflow": "buddy-command-router.yml",
+  "operators": ["ireanjordan24"],
+  "owners": ["ireanjordan24"],
+  "policy": {
+    "fail_closed": true,
+    "dispatch_ref_is_fixed": true,
+    "never_dispatch_tiers": ["money"],
+    "never_dispatch_destructive": true,
+    "writes_code_must_be_pr_only": true,
+    "never_flip_production_ready_or_claimable": true,
+    "notes": "Only jobs listed here can be dispatched by the router. The router always dispatches on default_ref; the caller cannot pick a branch. Inputs not declared under a job's inputs are rejected; fixed_inputs are always sent and cannot be overridden."
+  },
+  "risk_tiers": {
+    "read_only": {
+      "description": "Token is read-only. Output is logs, step summary, and artifacts only.",
+      "dispatchable": true
+    },
+    "writes_reports": {
+      "description": "May open/comment issues, publish Pages, or commit generated report/data files. No source code changes.",
+      "dispatchable": true
+    },
+    "writes_code": {
+      "description": "Changes code or branches. Allowed only when the workflow opens PRs and never pushes to main. Always needs owner approval.",
+      "dispatchable": true
+    },
+    "money": {
+      "description": "Touches payments, Stripe, payouts, pricing, or revenue. Never dispatchable from the router or Pages.",
+      "dispatchable": false
+    }
+  },
+  "jobs": [
+    {
+      "id": "connectivity_scan",
+      "family": "connectivity scan",
+      "title": "Repository scan + connectivity audit",
+      "workflow": "repository-scan-update.yml",
+      "risk_tier": "writes_reports",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {},
+      "notes": "Token has issues: write. The audit_repository_connections.py step and reports/prod-connectivity-scan.json land with PR #12921."
+    },
+    {
+      "id": "goals_gates",
+      "family": "goals -> gates",
+      "title": "Production readiness gate (goals -> gates)",
+      "workflow": "production-readiness.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {},
+      "notes": "Runs tools/production_readiness_gate.py (report + --strict). A dedicated goals-to-gates regen step is still a draft (PR #13187)."
+    },
+    {
+      "id": "gap_closure_research",
+      "family": "gap closure",
+      "title": "Buddy 24h gap-closure research loop",
+      "workflow": "buddy-gap-closure-24h.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {},
+      "notes": "Sandbox-only, bounded sources. Checkpoint uploaded as an artifact."
+    },
+    {
+      "id": "gap_closure_engineering",
+      "family": "gap closure",
+      "title": "Engineering gap-closure plan",
+      "workflow": "engineering-gap-closure.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {}
+    },
+    {
+      "id": "system_watch",
+      "family": "system watch",
+      "title": "Repository system watch",
+      "workflow": "repository-system-watch.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {}
+    },
+    {
+      "id": "cert_gate",
+      "family": "cert gate",
+      "title": "Full system certification (fail-closed)",
+      "workflow": "full-system-certification.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {}
+    },
+    {
+      "id": "benchmark_evidence",
+      "family": "benchmarks/evidence",
+      "title": "Benchmark evidence loop",
+      "workflow": "benchmark-evidence-loop.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {}
+    },
+    {
+      "id": "benchmark_tracker",
+      "family": "benchmarks/evidence",
+      "title": "Benchmark tracker",
+      "workflow": "benchmark-tracker.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {}
+    },
+    {
+      "id": "branch_health_scan",
+      "family": "branch health",
+      "title": "Branch health scan (report only, no conflict team)",
+      "workflow": "branch-health-daily.yml",
+      "risk_tier": "writes_reports",
+      "requires_owner_approval": true,
+      "triggerable": true,
+      "inputs": {},
+      "fixed_inputs": {"resolve": "false"},
+      "notes": "resolve=false is forced. The workflow tries to commit the branch-health report files to main (continue-on-error; artifact fallback), so owner approval is required."
+    },
+    {
+      "id": "branch_health_resolve",
+      "family": "branch health",
+      "title": "Branch conflict team (update-from-main / resolution PRs)",
+      "workflow": "branch-health-daily.yml",
+      "risk_tier": "writes_code",
+      "requires_owner_approval": true,
+      "triggerable": false,
+      "blocked_reason": "writes_code jobs must be PR-only; this workflow also pushes report commits to main. Enable after the report step opens a PR instead.",
+      "inputs": {},
+      "fixed_inputs": {"resolve": "true"}
+    },
+    {
+      "id": "hf_study_packs",
+      "family": "HF study packs + hub drills",
+      "title": "Grok twins + HF study packs (hub drills, metadata only)",
+      "workflow": "grok-twins-hf-study.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {},
+      "notes": "HF capability-pack build and anonymous hub drills land with PR #12921. No training, no HF token."
+    },
+    {
+      "id": "hub_learning_packages",
+      "family": "HF study packs + hub drills",
+      "title": "Buddy hub learning packages",
+      "workflow": "buddy-hub-learning-packages.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {}
+    },
+    {
+      "id": "bootcamp",
+      "family": "bootcamp",
+      "title": "Buddy sandbox bootcamp",
+      "workflow": "buddy-sandbox-bootcamp.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {},
+      "notes": "Weekday cron lands with PR #12921; curriculum validation fix is PR #12431."
+    },
+    {
+      "id": "pages_link_check",
+      "family": "Pages link check",
+      "title": "Pages link + public-site preflight check",
+      "workflow": "buddy-pages-link-check.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {},
+      "notes": "Added by this control plane (no standalone link-check workflow existed). Runs tools/build_buddy_public_site.py --check and, when present, tools/check_website_links.py (PR #12921)."
+    },
+    {
+      "id": "pages_publish",
+      "family": "Pages link check",
+      "title": "Publish GitHub Pages (also refreshes Buddy control status)",
+      "workflow": "pages.yml",
+      "risk_tier": "writes_reports",
+      "requires_owner_approval": true,
+      "triggerable": true,
+      "inputs": {},
+      "notes": "Publishes main to the public site. Owner only."
+    },
+    {
+      "id": "fleet_status",
+      "family": "fleet status",
+      "title": "Self working system + fleet status report",
+      "workflow": "self-working-system.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {},
+      "notes": "reports/FLEET_STATUS.md step lands with PR #12921."
+    },
+    {
+      "id": "fleet_health",
+      "family": "fleet status",
+      "title": "Buddy fleet health",
+      "workflow": "buddy-fleet-health.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {}
+    },
+    {
+      "id": "onet_catalog",
+      "family": "O*NET/data-package build",
+      "title": "Run everything now (includes O*NET work + AI catalog build)",
+      "workflow": "run-everything-now.yml",
+      "risk_tier": "writes_reports",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {
+        "mode": {"type": "choice", "options": ["quick", "standard", "maximum"], "default": "quick"}
+      },
+      "notes": "Opens or updates a repair issue when steps fail. No dedicated data-package build or license/provenance gate workflow exists yet."
+    },
+    {
+      "id": "curriculum_bots",
+      "family": "curriculum/edu",
+      "title": "Platform evolution (bot sandbox curriculum)",
+      "workflow": "dreamco-platform-evolution.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {},
+      "notes": "Covers bot sandbox curricula only. The K-12/edu curriculum map (PR #12436) has no workflow yet."
+    },
+    {
+      "id": "observability_contracts",
+      "family": "observability",
+      "title": "Buddy OS contracts (incl. observability contract)",
+      "workflow": "buddy-os-contracts.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {},
+      "notes": "No dedicated SLO/soak observability workflow on main (PR #9576 pending)."
+    },
+    {
+      "id": "actions_health",
+      "family": "observability",
+      "title": "Actions health audit",
+      "workflow": "actions-health.yml",
+      "risk_tier": "read_only",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {}
+    },
+    {
+      "id": "problem_registry",
+      "family": "problem registry",
+      "title": "Problem registry evidence",
+      "workflow": "problem-registry.yml",
+      "risk_tier": "writes_reports",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {},
+      "notes": "Token has contents: write; the workflow regenerates registry JSON and does not push."
+    },
+    {
+      "id": "actions_failure_sweep",
+      "family": "actions failure sweep",
+      "title": "Actions failure sweep (opens repair issues)",
+      "workflow": "actions-failure-sweep.yml",
+      "risk_tier": "writes_reports",
+      "requires_owner_approval": false,
+      "triggerable": true,
+      "inputs": {}
+    },
+    {
+      "id": "business_data_trade_readiness",
+      "family": "guardrail (money)",
+      "title": "Business data trade / live revenue readiness",
+      "workflow": "business-data-trade-readiness.yml",
+      "risk_tier": "money",
+      "requires_owner_approval": true,
+      "triggerable": false,
+      "blocked_reason": "Revenue/Stripe-adjacent. Money tier is never dispatchable from the router or Pages.",
+      "inputs": {}
+    },
+    {
+      "id": "money_os_ci",
+      "family": "guardrail (money)",
+      "title": "Money OS CI",
+      "workflow": "money-os-ci.yml",
+      "risk_tier": "money",
+      "requires_owner_approval": true,
+      "triggerable": false,
+      "blocked_reason": "Money tier is never dispatchable from the router or Pages.",
+      "inputs": {}
+    },
+    {
+      "id": "bot_production_readiness",
+      "family": "guardrail (production flags)",
+      "title": "Bot production readiness (apply mode)",
+      "workflow": "bot-production-readiness.yml",
+      "risk_tier": "writes_code",
+      "requires_owner_approval": true,
+      "triggerable": false,
+      "blocked_reason": "Pushes bot production profiles directly to main. Production flags are owner-only and never flipped by the router.",
+      "inputs": {}
+    },
+    {
+      "id": "issue_cleaner",
+      "family": "guardrail (destructive)",
+      "title": "Intelligent issue cleaner",
+      "workflow": "intelligent-issue-cleaner.yml",
+      "risk_tier": "writes_reports",
+      "requires_owner_approval": true,
+      "triggerable": false,
+      "destructive": true,
+      "blocked_reason": "Bulk-closes issues. Anything that deletes or closes in bulk is never dispatchable from the router or Pages.",
+      "inputs": {}
+    },
+    {
+      "id": "buddy_customize_apply",
+      "family": "customize",
+      "title": "Apply a validated Pages customization as a PR",
+      "workflow": "buddy-customize-apply.yml",
+      "risk_tier": "writes_code",
+      "requires_owner_approval": true,
+      "triggerable": false,
+      "blocked_reason": "Not run directly: use /buddy customize <bot-id|division:Name|file:path> with one yaml patch; the router dispatches this job after authorization.",
+      "inputs": {
+        "issue": {"type": "string", "pattern": "^[0-9]{1,7}$", "max_length": 7},
+        "comment": {"type": "string", "pattern": "^[0-9]{1,15}$", "max_length": 15}
+      },
+      "notes": "Validates against the editable-field allowlist (buddy/fleet_runtime/customize.py), commits only config/bots/customizations.json or config/files/prospectus-overrides.json to a new branch and opens a PR. Requires the fleet runtime (#13729/#13731) on the default branch."
+    }
+  ]
+}

@@ -6,11 +6,11 @@ Static check: scripts, styles and data a page uses exist; controls are wired to 
 
 | Verdict | Pages |
 |---|---:|
-| working | 189 |
+| working | 195 |
 | partial | 0 |
 | stub | 10 |
-| broken | 1 |
-| **Total** | **200** |
+| broken | 0 |
+| **Total** | **205** |
 
 Pages that load `nav.js` show these findings on the page itself (`page-truth.js` labels dead controls and server-only features as **stub**).
 
@@ -26,4 +26,3 @@ Pages that load `nav.js` show these findings on the page itself (`page-truth.js`
 - **search.html** — stub: api `/api/local/browser/search` server-only
 - **sign-in.html** — stub: api `/api/auth/` server-only; api `/api/auth/providers` server-only
 - **step-models.html** — stub: control `form#task-form` dead
-- **system-progress.html** — broken: data `./data/system-progress-status.json` missing
