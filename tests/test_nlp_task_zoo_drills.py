@@ -18,7 +18,9 @@ def test_no_training_no_pins_claimed():
         src = json.loads((ROOT / t / "sources.json").read_text())
         assert src["automatic_weight_download"] is False
         for e in src["hf_models"] + src["hf_datasets"]:
-            assert e["revision"] is None and e["license"] == "TBD"
+            assert e["revision"] is None
+            # Unverified seeds stay "TBD"; known non-commercial seeds are labelled and never commercial.
+            assert e["license"] == "TBD" or (e["license"].startswith("cc-by-nc") and e.get("commercial_ok") is False), e
 
 def test_selftest_scorer_separates_gold_from_wrong():
     r = dr.selftest()
