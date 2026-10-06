@@ -46,3 +46,9 @@ def test_page_truth_marks_stubs_from_the_audit_on_every_nav_page():
     audit = json.loads((ROOT / "website/data/pages-feature-audit.json").read_text())
     assert audit["pages"] == len([p for p in (ROOT / "website").rglob("*.html") if "node_modules" not in p.parts])
     assert {r["verdict"] for r in audit["rows"]} <= set(apf.VERDICT_RANK)
+
+
+def test_every_non_working_page_labels_itself():
+    audit = json.loads((ROOT / "website/data/pages-feature-audit.json").read_text())
+    unlabeled = [r["page"] for r in audit["rows"] if r["verdict"] != "working" and not r["has_page_truth"]]
+    assert unlabeled == [], f"pages that are stub/broken but do not load page-truth.js: {unlabeled}"

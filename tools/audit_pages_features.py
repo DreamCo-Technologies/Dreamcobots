@@ -160,7 +160,7 @@ def audit_page(page: Path) -> dict[str, Any]:
         verdict = "partial" if data_ok else "stub"
     else:
         verdict = "working"
-    return {"page": rel, "verdict": verdict, "has_page_truth": "nav.js" in " ".join(parser.scripts),
+    return {"page": rel, "verdict": verdict, "has_page_truth": any(Path(x.split("?")[0]).name in {"nav.js", "page-truth.js"} for x in parser.scripts),
             "counts": {s: statuses.count(s) for s in sorted(set(statuses))},
             "issues": [f for f in features if f["status"] != "ok"]}
 
