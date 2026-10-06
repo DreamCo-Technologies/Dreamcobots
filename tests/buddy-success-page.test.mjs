@@ -117,3 +117,8 @@ test('Success Center uses stable responsive layouts', () => {
 test('published success program is exactly the canonical generated program (no drift between copies)', () => {
   assert.deepEqual(JSON.parse(JSON.stringify(program)), canonical);
 });
+
+test('success summary and resource inventory agree on how many source files were scanned', () => {
+  assert.equal(program.summary.source_files_scanned_for_resources, program.resource_inventory.source_files_scanned);
+  assert.equal(canonical.summary.source_files_scanned_for_resources, canonical.resource_inventory.source_files_scanned);
+});

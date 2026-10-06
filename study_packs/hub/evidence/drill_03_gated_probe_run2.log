@@ -1,0 +1,10 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+== drill_03_gated_probe | huggingface_hub 2.0.0 | token_present=False | HF_TOKEN env set=False
+whoami: anonymous (LocalTokenNotFoundError)
+  accessible    http=200   gated=False   sentence-transformers/all-MiniLM-L6-v2  config.json etag=72b987fd805cfa2b58c4c8c952b274a11bfd5a00 size=612
+  needs-token   http=401   gated=manual  meta-llama/Llama-Guard-3-1B  gated repo; anonymous request refused (401). Log in + accept terms.
+  needs-token   http=401   gated=manual  meta-llama/Llama-3.1-8B-Instruct  gated repo; anonymous request refused (401). Log in + accept terms.
+  needs-token   http=401   gated=manual  google/gemma-2-9b-it  gated repo; anonymous request refused (401). Log in + accept terms.
+  missing       http=401   gated=None    mistralai/Mistral-Large-Instruct  model_info: repo not found (or private) - anonymous 401/404
+RESULT: PASS
+exit_code=0

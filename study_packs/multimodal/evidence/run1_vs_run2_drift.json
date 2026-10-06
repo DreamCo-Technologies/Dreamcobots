@@ -1,0 +1,75 @@
+{
+  "schema": "dreamco.hf_repeat_run_drift.v1",
+  "benchmark": "multimodal-study-pack-5-drills",
+  "claimable": false,
+  "mastered": false,
+  "promotion_eligible": false,
+  "promotion_eligible_reason": "pass_rate drifted 0.4 -> 1.0 between the two saved runs on the same pinned revisions; promotion requires matching stable runs.",
+  "new_run_performed": false,
+  "note": "Conductor directive: do not add another multimodal run. origin/main already has two saved runs. Drift report only.",
+  "verified_on": "origin/main @ f1ece6ffa76e6d0230ebefa1daf50523f91c7cf6",
+  "run1": {
+    "file": "study_packs/multimodal/evidence/run_20260928T225019.json",
+    "ran_at": "2026-09-28T22:50:19.318946+00:00",
+    "pass_rate": 0.4,
+    "passed": 2,
+    "total": 5,
+    "model_id": "openai/clip-vit-base-patch32 (and 4 other pinned models)",
+    "model_revision_sha": "3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268",
+    "command": "study pack multimodal drills (CPU)",
+    "metrics": {
+      "pass_rate": 0.4,
+      "passed": 2,
+      "total": 5,
+      "statuses": {
+        "mm.clip_zero_shot_shapes": "PASS",
+        "mm.vit_imagenet_smoke": "PASS",
+        "mm.tts_generate": "ERROR",
+        "mm.asr_roundtrip": "BLOCKED",
+        "mm.audio_cls_smoke": "BLOCKED"
+      }
+    },
+    "git_sha": null,
+    "blocker": "tts_generate TypeError BatchEncoding.to() dtype; asr_roundtrip and audio_cls_smoke BLOCKED"
+  },
+  "run2": {
+    "file": "study_packs/multimodal/evidence/run_20260928T225217.json",
+    "ran_at": "2026-09-28T22:52:17.173728+00:00",
+    "pass_rate": 1.0,
+    "passed": 5,
+    "total": 5,
+    "model_id": "openai/clip-vit-base-patch32 (and 4 other pinned models)",
+    "model_revision_sha": "3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268",
+    "command": "study pack multimodal drills (CPU); tts via VitsModel direct workaround",
+    "metrics": {
+      "pass_rate": 1.0,
+      "passed": 5,
+      "total": 5,
+      "statuses": {
+        "mm.clip_zero_shot_shapes": "PASS",
+        "mm.vit_imagenet_smoke": "PASS",
+        "mm.tts_generate": "PASS",
+        "mm.asr_roundtrip": "PASS",
+        "mm.audio_cls_smoke": "PASS"
+      },
+      "audio_cls_top1_is_yes": false,
+      "audio_cls_note": "PASS only checks len(out)>0; top-1 was 'visual' (0.9834), not correct class"
+    },
+    "git_sha": null
+  },
+  "same_pins": true,
+  "pins": {
+    "openai/clip-vit-base-patch32": "3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268",
+    "google/vit-base-patch16-224": "3f49326eb077187dfe1c2a2bb15fbd74e6ab91e3",
+    "facebook/mms-tts-eng": "c71de0fe7204c83f1c10820a7d696d0b450048ba",
+    "openai/whisper-tiny": "169d4a4341b33bc18d8881c4b69c2e104e1cc0af",
+    "MIT/ast-finetuned-speech-commands-v2": "315b0b847a3ca207e68b718503ad72066612eacd"
+  },
+  "drift": [
+    "pass_rate 0.4 -> 1.0 (NOT matching; not promotion-eligible)",
+    "mm.tts_generate: ERROR -> PASS (pipeline bug workaround)",
+    "mm.asr_roundtrip: BLOCKED -> PASS",
+    "mm.audio_cls_smoke: BLOCKED -> PASS (weak: top1_is_yes=False)"
+  ],
+  "match": false
+}
