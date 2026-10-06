@@ -5,25 +5,25 @@
     "website/data/actions-health-report.json"
   ],
   "summary": {
-    "workflows": 91,
-    "static_passing_workflows": 91,
+    "workflows": 105,
+    "static_passing_workflows": 105,
     "static_failing_workflows": 0,
     "runtime_passing_workflows": 0,
     "runtime_failing_workflows": 0,
-    "runtime_unknown_workflows": 91,
+    "runtime_unknown_workflows": 105,
     "possible_duplicate_groups": 0,
     "possible_duplicate_workflows": 0,
-    "workflows_with_benchmark_commands": 31,
+    "workflows_with_benchmark_commands": 35,
     "goal_counts": {
-      "Buddy automation": 20,
-      "benchmarks": 13,
-      "build and release": 3,
+      "Buddy automation": 25,
+      "benchmarks": 14,
+      "build and release": 4,
       "deployment": 2,
       "evidence data": 6,
-      "repository health": 6,
-      "repository operations": 35,
+      "repository health": 7,
+      "repository operations": 40,
       "security": 2,
-      "verification": 4
+      "verification": 5
     },
     "control_areas": 9,
     "declared_goals": [
@@ -37,7 +37,7 @@
       "security",
       "verification"
     ],
-    "benchmarked_workflows": 31
+    "benchmarked_workflows": 35
   },
   "controls": [
     {
@@ -73,7 +73,7 @@
       "success": "All applicable doctor checks pass with evidence.",
       "fallback": "Leave failed checks visible and produce owner-action guidance.",
       "progress": "configured",
-      "workflow_count": 91
+      "workflow_count": 105
     },
     {
       "id": "test",
@@ -108,7 +108,7 @@
       "success": "Applicable tests pass; blocked tests are explicitly reported.",
       "fallback": "Run focused tests and record blocker.",
       "progress": "configured",
-      "workflow_count": 91
+      "workflow_count": 105
     },
     {
       "id": "lint",
@@ -142,7 +142,7 @@
       "success": "Configured quality gates pass.",
       "fallback": "Identify exact files/rules requiring repair.",
       "progress": "configured",
-      "workflow_count": 91
+      "workflow_count": 105
     },
     {
       "id": "security",
@@ -177,7 +177,7 @@
       "success": "No unreviewed blocking findings.",
       "fallback": "Block promotion and create owner-action item.",
       "progress": "configured",
-      "workflow_count": 91
+      "workflow_count": 105
     },
     {
       "id": "benchmark",
@@ -212,7 +212,7 @@
       "success": "Results meet the registered benchmark threshold with repeat evidence.",
       "fallback": "Mark unverified or blocked; never fabricate a score.",
       "progress": "configured",
-      "workflow_count": 91
+      "workflow_count": 105
     },
     {
       "id": "repair",
@@ -248,7 +248,7 @@
       "success": "Repair is verified by evidence and recurrence falls or remains absent.",
       "fallback": "Escalate genuine owner blocker.",
       "progress": "configured",
-      "workflow_count": 91
+      "workflow_count": 105
     },
     {
       "id": "pages",
@@ -283,7 +283,7 @@
       "success": "Required public datasets exist, validate, and render.",
       "fallback": "Keep stale/missing datasets visibly flagged.",
       "progress": "configured",
-      "workflow_count": 91
+      "workflow_count": 105
     },
     {
       "id": "bundle",
@@ -318,7 +318,7 @@
       "success": "Supported package builds and launches under its documented permissions.",
       "fallback": "Publish exact build blocker; do not claim the package is bug-free.",
       "progress": "configured",
-      "workflow_count": 91
+      "workflow_count": 105
     },
     {
       "id": "refresh",
@@ -354,7 +354,7 @@
       "success": "Current public run evidence is loaded and timestamped.",
       "fallback": "Use static evidence and mark live state unavailable.",
       "progress": "configured",
-      "workflow_count": 91
+      "workflow_count": 105
     }
   ],
   "duplicate_candidate_groups": [],
@@ -404,6 +404,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_actions_command_center",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -450,6 +451,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_actions_failure_sweep",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -495,6 +497,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_actions_failure_watch",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -531,13 +534,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_actions_green_contract",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -590,6 +593,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_actions_health",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -626,13 +630,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_actions_page_debug",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -686,6 +690,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_actions_page_gate",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -734,6 +739,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_autonomous_systems_builder",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -769,14 +775,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_benchmark_65_orchestrator",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -819,14 +824,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_benchmark_evidence_loop",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -865,14 +869,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_benchmark_gap_planner",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -913,6 +916,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_benchmark_lessons_daily",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -948,13 +952,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_benchmark_manifest_validation",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -991,14 +995,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_benchmark_sandbox_manifest",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1046,15 +1049,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_benchmark_tracker",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1092,14 +1093,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_benchmark_training_execution",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1137,14 +1137,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_benchmark_training_queue",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1184,15 +1183,54 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_bot_production_readiness",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/bot-sandbox-test.yml",
+      "name": "Bot sandbox test",
+      "goal": "verification",
+      "purpose": "Catch regressions before release",
+      "what_happens": [
+        "Test bot files and record the score rule"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/bot-sandbox-test.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_bot_sandbox_test",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1234,14 +1272,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_branch_health_daily",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1280,13 +1317,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_1000_source_learning",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1328,6 +1365,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_24h_sandbox_soak",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1372,6 +1410,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_500_model_governance",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1409,14 +1448,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_65_masterbot_training",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1475,6 +1513,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_actions_test_lab",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1515,14 +1554,60 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_benchmark_smoke",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/buddy-distill-gate.yml",
+      "name": "Buddy Distill Gate",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
+      "what_happens": [
+        "Distill gate (fail closed)",
+        "Gate unit tests"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [
+        "tools/check_buddy_distill_gate.py"
+      ],
+      "triggers": [
+        "manual",
+        "push",
+        "pull request"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-distill-gate.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-python@v5 -> v7"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_distill_gate",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1569,6 +1654,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_fleet_health",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1607,14 +1693,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_gap_closure_24h",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1657,6 +1742,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_hub_learning_packages",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1703,6 +1789,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_learning_proof",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1741,13 +1828,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_learning_regression",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1792,6 +1879,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_os_contracts",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1841,6 +1929,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_preventive_engineering",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1861,7 +1950,8 @@
       "benchmark_commands": [],
       "triggers": [
         "manual",
-        "push"
+        "push",
+        "schedule"
       ],
       "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-sandbox-bootcamp.yml",
       "static_status": "static_checks_passed",
@@ -1885,6 +1975,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_sandbox_bootcamp",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1927,6 +2018,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_build_updates_now",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1974,6 +2066,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_builder_issue_reconciler",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2025,6 +2118,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_business_data_trade_readiness",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2086,6 +2180,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_code_trust_gate",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2129,6 +2224,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_codeql",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2173,6 +2269,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_command_center_index",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2218,6 +2315,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_compile_md_bots",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2254,13 +2352,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_consolidation_integrity_gate",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2299,14 +2397,55 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_continuous_learning_runner",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/daily-approval-list.yml",
+      "name": "Daily approval list",
+      "goal": "repository operations",
+      "purpose": "Operate Daily approval list as a bounded DreamCo repository workflow",
+      "what_happens": [
+        "Build the approval list"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "schedule",
+        "issues"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/daily-approval-list.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_daily_approval_list",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2348,6 +2487,252 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_daily_bot_study_scan",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/daily-buddy-profile.yml",
+      "name": "Daily Buddy profile",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
+      "what_happens": [
+        "Build the local profile"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/daily-buddy-profile.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_daily_buddy_profile",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/daily-health-balancer.yml",
+      "name": "Daily health balancer",
+      "goal": "repository health",
+      "purpose": "Keep the repository inspectable and maintainable",
+      "what_happens": [
+        "Run the day's health tasks in one job"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/daily-health-balancer.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_daily_health_balancer",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/daily-learning.yml",
+      "name": "Daily learning scan",
+      "goal": "repository operations",
+      "purpose": "Operate Daily learning scan as a bounded DreamCo repository workflow",
+      "what_happens": [
+        "Rescan study files"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/daily-learning.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_daily_learning",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/daily-repo-cycle.yml",
+      "name": "Daily repo cycle",
+      "goal": "repository operations",
+      "purpose": "Operate Daily repo cycle as a bounded DreamCo repository workflow",
+      "what_happens": [
+        "Scan and run the sandbox bootcamp catalog"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/daily-repo-cycle.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_daily_repo_cycle",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/daily-resource-ledger.yml",
+      "name": "Daily resource ledger",
+      "goal": "repository operations",
+      "purpose": "Operate Daily resource ledger as a bounded DreamCo repository workflow",
+      "what_happens": [
+        "Scan resources, gaps, and learning in one job"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/daily-resource-ledger.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_daily_resource_ledger",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/dependabot-auto-merge.yml",
+      "name": "Dependabot auto-merge",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
+      "what_happens": [
+        "Queue squash merge after checks pass"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "pull request"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/dependabot-auto-merge.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dependabot_auto_merge",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2387,6 +2772,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dependency_review",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2452,6 +2838,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_deploy_buddy_pages",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2504,6 +2891,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dreamco_control_center",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2547,15 +2935,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dreamco_control_plane",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2615,6 +3001,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dreamco_core_health",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2677,13 +3064,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dreamco_daily_research_benchmark",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2732,6 +3119,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dreamco_live_dashboard",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2782,6 +3170,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dreamco_platform_evolution",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2828,6 +3217,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dreamco_pr_review_guardian",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2888,6 +3278,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dreamco_unified_system",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2940,6 +3331,155 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_engineering_gap_closure",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/fleet-bot-run.yml",
+      "name": "Fleet bot run (Run with Buddy)",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
+      "what_happens": [
+        "Install runtime dependency",
+        "Validate input (exactly one of bot / division)",
+        "Run job (generic + fixture smoke, offline)",
+        "Upload run evidence"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/fleet-bot-run.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_fleet_bot_run",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/fleet-builder.yml",
+      "name": "Fleet Builder",
+      "goal": "build and release",
+      "purpose": "Produce a reviewable software artifact",
+      "what_happens": [
+        "Plan only"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/fleet-builder.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_fleet_builder",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/fleet-runtime-truth.yml",
+      "name": "Fleet runtime truth",
+      "goal": "repository operations",
+      "purpose": "Operate Fleet runtime truth as a bounded DreamCo repository workflow",
+      "what_happens": [
+        "Install test dependencies",
+        "Manifest drift check",
+        "Runtime, generator, auditor and link-check tests",
+        "Actions workflow count drift (health report must cover every workflow file)",
+        "Every Run button has a prospectus (and prospectus outputs are current)",
+        "File prospectus drift",
+        "Pages Run/Customize and Actions page tests",
+        "Smoke sample (one bot per engine + permission gate)",
+        "Full offline smoke (every mapped bot, no secrets)",
+        "Division smoke (every division runs at least one of its bots end to end, offline)",
+        "Pages feature audit (advertised features must be wired; no new stub/broken pages)",
+        "Navigation link check (strict)",
+        "All internal Pages links (regression vs baseline)",
+        "Fleet audit (bot states; fails only on regressions)",
+        "Upload summary",
+        "Full audit (compile, import, typecheck, folder tests, links)",
+        "Upload refreshed report and Pages status"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [
+        "tools/audit_actions_health.py",
+        "tools/audit_pages_features.py",
+        "tools/check_website_links.py",
+        "tools/fleet_runtime_audit.py"
+      ],
+      "triggers": [
+        "manual",
+        "pull request",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/fleet-runtime-truth.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 2,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 2,
+        "runner_jobs": 2,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_fleet_runtime_truth",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3016,6 +3556,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_full_system_certification",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3066,6 +3607,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_government_transparency_refresh",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3104,14 +3646,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_greenkeeper_orchestrator",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3149,14 +3690,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_greenkeeper_root_cause",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3199,6 +3739,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_grok_owner_systems",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3241,6 +3782,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_grok_team",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3249,7 +3791,9 @@
       "goal": "repository operations",
       "purpose": "Operate Grok Twins and HF Study as a bounded DreamCo repository workflow",
       "what_happens": [
-        "Executes the named workflow steps and records the GitHub Actions result."
+        "Build HF capability packs (metadata only)",
+        "Run HF Hub drills (anonymous, metadata only, no training)",
+        "Upload study pack evidence"
       ],
       "outputs": [
         "GitHub Actions run log",
@@ -3283,6 +3827,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_grok_twins_hf_study",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3320,14 +3865,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/setup-python@v5 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_intelligent_issue_cleaner",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3370,6 +3914,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_issue_intelligence",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3413,14 +3958,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_keep_green",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3460,14 +4004,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_masterbot_routing_audit",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3516,6 +4059,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_model_progress_center",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3550,13 +4094,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_money_os_ci",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3598,6 +4142,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_monthly_lists",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3639,6 +4184,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_note_model_hourly",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3689,6 +4235,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_open_source_evolution",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3731,6 +4278,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_original_bot_placement",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3739,12 +4287,16 @@
       "goal": "deployment",
       "purpose": "Publish and verify the public Buddy experience",
       "what_happens": [
-        "Builds public assets, checks generated evidence, and prepares a governed deployment."
+        "Checkout",
+        "Setup Python",
+        "Check website nav links (fails on broken links)"
       ],
       "outputs": [
         "GitHub Actions run log"
       ],
-      "benchmark_commands": [],
+      "benchmark_commands": [
+        "tools/check_website_links.py"
+      ],
       "triggers": [
         "manual"
       ],
@@ -3753,12 +4305,12 @@
       "runtime_status": "unknown_until_run_evidence_loaded",
       "errors": [],
       "warnings": [],
-      "runner_jobs": 0,
+      "runner_jobs": 1,
       "controls": {
         "permissions_declared": true,
         "concurrency_declared": false,
-        "job_timeouts_declared": 0,
-        "runner_jobs": 0,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
         "artifacts_declared": false
       },
       "upgrades": [
@@ -3770,6 +4322,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_pages",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3824,6 +4377,48 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_parallel_benchmark_gap_builders",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/plugin-gap-bot.yml",
+      "name": "Plugin gap bot",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
+      "what_happens": [
+        "Scan plugin gaps"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/plugin-gap-bot.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_plugin_gap_bot",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3863,14 +4458,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_pr_recovery_engine",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3908,14 +4502,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_pr_review_manifest",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3951,13 +4544,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_pr_review_parity_gate",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3998,14 +4591,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_problem_registry",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4047,14 +4639,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_production_readiness",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4094,14 +4685,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_repo_capability_audit",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4111,6 +4701,8 @@
       "purpose": "Operate Repository Scan Update as a bounded DreamCo repository workflow",
       "what_happens": [
         "Checkout",
+        "Setup Python",
+        "Audit repository connections",
         "Build scan update artifact",
         "Publish scan summary to workflow summary",
         "Upload scan update evidence"
@@ -4119,7 +4711,9 @@
         "GitHub Actions run log",
         "declared downloadable or deployment artifact"
       ],
-      "benchmark_commands": [],
+      "benchmark_commands": [
+        "tools/audit_repository_connections.py"
+      ],
       "triggers": [
         "manual",
         "schedule",
@@ -4147,6 +4741,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_repository_scan_update",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4201,6 +4796,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_repository_system_watch",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4263,6 +4859,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_repository_test_matrix",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4316,6 +4913,48 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_run_everything_now",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/score-scan.yml",
+      "name": "Score scan",
+      "goal": "benchmarks",
+      "purpose": "Measure Buddy capability with reproducible evidence",
+      "what_happens": [
+        "Record the same score scan"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/score-scan.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_score_scan",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4330,6 +4969,7 @@
         "Build generator registry for every bot",
         "Run deterministic self-repair and regression checks",
         "Run local-first health check",
+        "Generate fleet status report",
         "Save local-equivalent evidence"
       ],
       "outputs": [
@@ -4364,6 +5004,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_self_working_system",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4400,13 +5041,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_startup_factory_contract",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4444,14 +5085,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_superbot_inventory",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4491,14 +5131,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7",
-        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_superbot_migration_ledger",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4534,13 +5173,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_sync_to_huggingface",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4581,6 +5220,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_system_scan_hourly",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4626,6 +5266,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_tool_skill_readiness",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -4661,13 +5302,13 @@
       "upgrades": [
         "Publish machine-readable evidence for every run.",
         "Keep external writes behind explicit authorization and bounded policy.",
-        "Preserve failures and regressions instead of converting unknown states into passes.",
-        "upgrade recommendation: actions/checkout@v4 -> v7"
+        "Preserve failures and regressions instead of converting unknown states into passes."
       ],
       "possible_duplicate": false,
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_vibe_coding_taxonomy",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     }
   ],

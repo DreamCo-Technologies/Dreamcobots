@@ -12,6 +12,8 @@
     { href: 'models.html', label: '🤖 Model Picker' },
     { href: 'hf-bootcamp.html', label: '📦 Packages' },
     { href: 'bots.html', label: '🛰️ Fleet' },
+    { href: 'fleet-runtime.html', label: '🧾 Fleet Truth' },
+    { href: 'files.html', label: '🗂️ Files' },
     { href: 'autonomy.html', label: '🚦 Gates' },
     { href: 'learn-hf.html', label: '🤗 HF Lab' },
     { href: 'dashboard.html', label: '📊 Dashboard' },
@@ -225,6 +227,16 @@ document.addEventListener('click', function(e) {
   const menu = document.getElementById('nav-more-menu');
   if (menu && !e.target.closest('.nav-more')) menu.classList.remove('open');
 });
+
+// Page truth: label features the pages feature audit found to be stubs.
+(() => {
+  if (document.querySelector('script[data-page-truth]')) return;
+  const script = document.createElement('script');
+  script.src = new URL('page-truth.js', document.currentScript.src).href;
+  script.defer = true;
+  script.dataset.pageTruth = 'true';
+  document.head.appendChild(script);
+})();
 
 // Shared repository controls are loaded once after the page is ready.
 (() => {
