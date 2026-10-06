@@ -43,3 +43,12 @@ for (const order of [['nav.js', 'desk-chrome.js'], ['desk-chrome.js', 'nav.js']]
     assert.equal(loaders[0].tagName, 'script');
   });
 }
+
+test('shared nav links the Buddy Control Panel and the page loads shared controls', () => {
+  const nav = fs.readFileSync('website/nav.js', 'utf8');
+  assert.match(nav, /href: 'buddy-control\.html'/);
+  const page = fs.readFileSync('website/buddy-control.html', 'utf8');
+  assert.match(page, /<script src="buddy-control\.js"><\/script>/);
+  assert.match(page, /data-repository-actions="true"/);
+  assert.match(page, /Runs require an authorized operator/);
+});

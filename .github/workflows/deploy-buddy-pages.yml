@@ -12,6 +12,7 @@ on:
       - "website/**"
       - "docs/**"
       - "tools/build_buddy_public_site.py"
+      - "tools/buddy_control_plane.py"
       - "tools/audit_actions_health.py"
       - "tools/audit_actions_live.py"
       - "tools/build_actions_prospectus.py"
@@ -39,6 +40,9 @@ on:
       - "docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md"
       - "config/**"
       - ".github/workflows/deploy-buddy-pages.yml"
+  schedule:
+    # Refresh live-ish data on Pages (Actions health + Buddy control-plane status).
+    - cron: "47 5,17 * * *"
 
 permissions:
   contents: read
@@ -77,6 +81,13 @@ jobs:
           python3 tools/problem_registry.py
           python3 tools/auto_repair_policy.py config/generated/problem-registry.json
           python3 tools/build_actions_prospectus.py
+      - name: Publish Buddy control-plane registry and status for Pages
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python3 tools/buddy_control_plane.py check --no-workflows
+          python3 tools/buddy_control_plane.py publish-registry
+          python3 tools/buddy_control_plane.py status --out website/data/buddy-control-status.json
       - name: Run deployment preflight
         run: |
           python3 tools/check_deployment_cost_policy.py
@@ -122,6 +133,8 @@ jobs:
           test -s website/buddy-invention-lab.html
           test -s website/data/actions-prospectus.json
           test -s website/data/problem-registry.json
+          test -s website/data/buddy-control-plane.json
+          test -s website/data/buddy-control-status.json
       - name: Check generated Actions data contracts
         run: |
           python3 -m json.tool website/data/actions-prospectus.json >/dev/null
@@ -171,6 +184,7 @@ jobs:
           node --check website/buddy-invention-lab.js
           node --check website/opportunity-hub.js
           node --check website/setup-center.js
+          node --check website/buddy-control.js
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
       - name: Build rendered documentation
