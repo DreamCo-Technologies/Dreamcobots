@@ -1,0 +1,137 @@
+{
+  "schema": "dreamco.buddy.f0_peer_baselines.v1",
+  "truth_boundary": "Designated comparison targets for future F1+. Listing a peer is not a Buddy win, loss, or frontier claim. 500-model registry slots are an operating contract (slots 1-500), not 500 authenticated live models.",
+  "generated_at": "2026-09-21T16:34:30-05:00",
+  "sources": [
+    "reports/BUDDY_FRONTIER_MODEL_AND_PACKAGES.md#2.2",
+    "config/frontier-evidence-suite.json",
+    "buddy/frontier/frontier_competition_policy.json",
+    "config/buddy-open-model-coding-lab.json",
+    "config/buddy/500-model-registry.json",
+    "config/buddy/approved-models-allowlist.json",
+    "docs/500_MODEL_RESEARCH.md"
+  ],
+  "f0_rule": "F0 requires a pinned Buddy (or named subject) suite run with cost/latency/external-assist logged under evidence/frontier/. Peer head-to-heads start at F1.",
+  "suite": {
+    "suite_id": "buddy-frontier-core-2026-q4",
+    "suite_hash_current_bundle": "6a0b9500a4cdb7bdb45c3ed1cf66845a45f90073f5933f41ba31cace8f0f1447",
+    "minimum_repetitions_for_claimable_suite": 3,
+    "current_runs": 0,
+    "claimable_today": false
+  },
+  "lanes": [
+    "property_resource_routing",
+    "source_grounded_research",
+    "tool_use_and_recovery",
+    "repository_repair",
+    "permission_correctness"
+  ],
+  "competition_lanes_policy": [
+    "general_reasoning",
+    "coding_and_repository_repair",
+    "long_horizon_agents",
+    "tool_use",
+    "research_and_retrieval",
+    "multimodal_capability",
+    "mathematics_and_science",
+    "DreamCo_real_world_tasks"
+  ],
+  "peer_baselines": {
+    "path_d_allowlist_seeds": [
+      {
+        "ref": "target:14",
+        "display_name": "Buddy Native",
+        "path": "A",
+        "live_benchmark_ok": false,
+        "role": "subject_seed_not_peer"
+      },
+      {
+        "ref": "target:7",
+        "display_name": "DeepSeek R1",
+        "path": "A",
+        "live_benchmark_ok": false,
+        "role": "catalog_peer_candidate"
+      },
+      {
+        "ref": "target:8",
+        "display_name": "Llama 4 Maverick",
+        "path": "B",
+        "live_benchmark_ok": false,
+        "role": "catalog_peer_candidate"
+      }
+    ],
+    "hosted_frontier_api_references": [
+      {
+        "id": "frontier-openai-api",
+        "provider": "OpenAI",
+        "adapter_status": "configuration_required"
+      },
+      {
+        "id": "frontier-anthropic-api",
+        "provider": "Anthropic",
+        "adapter_status": "configuration_required"
+      },
+      {
+        "id": "frontier-gemini-api",
+        "provider": "Google",
+        "adapter_status": "configuration_required"
+      },
+      {
+        "id": "frontier-mistral-api",
+        "provider": "Mistral AI",
+        "adapter_status": "configuration_required"
+      },
+      {
+        "id": "frontier-xai-api",
+        "provider": "xAI",
+        "adapter_status": "configuration_required"
+      }
+    ],
+    "open_weight_family_baselines": [
+      "gpt-oss",
+      "gemma",
+      "qwen-coder",
+      "deepseek-coder",
+      "mistral-open-code",
+      "starcoder2",
+      "llama",
+      "olmo",
+      "nemotron"
+    ],
+    "registry_500": {
+      "schema": "dreamco.buddy.500_model_registry.v1",
+      "model_count_contract": 500,
+      "id_pattern": "buddy-model-{slot:03d}",
+      "slots": {
+        "start": 1,
+        "end": 500
+      },
+      "default_roles": [
+        "monitor",
+        "trainer",
+        "evaluator",
+        "builder",
+        "security",
+        "alignment",
+        "research",
+        "product",
+        "documentation",
+        "red_team"
+      ],
+      "connectivity": [
+        "unverified",
+        "verified-read",
+        "verified-propose",
+        "verified-pr",
+        "disabled"
+      ],
+      "note": "Registry defines operating contract only; connectivity must be verified separately. Not a list of 500 live authenticated peers."
+    }
+  },
+  "vanity_blocks": [
+    "Do not claim frontier from catalog size (anti_gaming.do_not_claim_frontier_status_from_catalog_size).",
+    "Do not set production_ready or live_benchmark_ok from an F0 packet.",
+    "Do not treat assisted runs as independent mastery.",
+    "evidence/frontier/current-status.bundle.json runs=[] is an honest empty baseline, not a pass."
+  ]
+}
