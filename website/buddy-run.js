@@ -33,11 +33,21 @@
         .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then((p) => {
           const map = new Map();
-          p.rows.forEach((row) => { const o = {}; p.columns.forEach((c, i) => { o[c] = row[i]; }); o.blocked_reason = o.blocked ? p.blocked_reasons[o.blocked] : null; map.set(o.id, o); });
+          p.rows.forEach((row) => { const o = decodeBotRow(p, row); map.set(o.id, o); });
           store.bots = map; return map;
         });
     }
     return store.botsPromise;
+  }
+
+  /* Bot "files" may be a layout code (see FILE_CODES in tools/build_actions_prospectus.py). */
+  const FILE_CODES = { A: (r) => 'App_bots/' + r.division + '.json', M: (r) => 'bots/' + r.id + '.md', L: () => 'config/bots/teammate-lanes.json' };
+  function decodeBotRow(p, row) {
+    const o = {};
+    p.columns.forEach((c, i) => { o[c] = row[i]; });
+    if (typeof o.files === 'string') o.files = o.files.split('').map((ch) => (FILE_CODES[ch] ? FILE_CODES[ch](o) : ch));
+    o.blocked_reason = o.blocked ? p.blocked_reasons[o.blocked] : null;
+    return o;
   }
 
   /* Expand a compact bot row with its engine template: same shape as resolve() in the generator. */
@@ -233,6 +243,6 @@
     }, true);
   }
 
-  global.BuddyRun = { REPO, GH, issueUrl, loadMeta, loadBots, resolveBot, complete, prospectusHtml, runControls,
+  global.BuddyRun = { REPO, GH, issueUrl, loadMeta, loadBots, decodeBotRow, resolveBot, complete, prospectusHtml, runControls,
     buildPatch, customizeBody, botCustomizeForm, divisionCustomizeForm, fileCustomizeForm, wireCustomize, renderPending, esc };
 })(typeof window !== 'undefined' ? window : globalThis);

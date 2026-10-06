@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Generate a prospectus for every file in the repository.
 
-Output: ``website/data/file-prospectus/index.json`` plus one compact,
-columnar shard per top-level folder (``website/data/file-prospectus/<shard>.json``).
+Output: ``config/generated/file-prospectus/index.json`` plus one compact,
+columnar shard per top-level folder (``config/generated/file-prospectus/<shard>.json``).
+The data lives outside website/ to keep the Pages site under its size budget;
+website/files.html reads it from raw.githubusercontent.com (main).
 No per-file Markdown is written. For each file:
 
 * ``path``, ``type`` (from the extension / location);
@@ -40,12 +42,16 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-OUT_DIR = ROOT / "website" / "data" / "file-prospectus"
+OUT_DIR = ROOT / "config" / "generated" / "file-prospectus"
 OVERRIDES = ROOT / "config" / "files" / "prospectus-overrides.json"
 FLEET_STATUS = ROOT / "website" / "data" / "fleet-runtime-status.json"
 ACTIONS_HEALTH = ROOT / "website" / "data" / "actions-health-report.json"
 MAX_READ = 400_000
 COLUMNS = ["path", "type", "purpose", "purpose_source", "owner", "owner_source", "used_by", "used_by_count", "tests", "readiness"]
+# Low-cardinality columns are stored as indexes into index.json "enums" to keep the Pages site small.
+ENUM_COLUMNS = ("type", "purpose_source", "owner", "owner_source", "readiness")
+USED_BY_SHOWN = 2
+TESTS_SHOWN = 3
 
 TYPE_BY_EXT = {
     ".py": "python", ".ts": "typescript", ".tsx": "typescript-react", ".js": "javascript", ".mjs": "javascript-module",
@@ -79,7 +85,7 @@ TS_ALIASES = {"@/": "client/src/", "@shared/": "shared/"}
 TEXTLIKE = {"python", "typescript", "typescript-react", "javascript", "javascript-module", "javascript-react", "json",
             "yaml", "markdown", "html", "css", "shell", "text", "toml", "config", "sql", "prisma-schema", "xml", "web-manifest", "jsonl"}
 # Generated indexes that list every path would make every file "used by" them.
-NO_REFERENCE_SCAN = ("website/data/file-prospectus/", "website/data/run-prospectus", "website/data/fleet-runtime-status.json",
+NO_REFERENCE_SCAN = ("config/generated/file-prospectus/", "website/data/run-prospectus", "website/data/fleet-runtime-status.json",
                      "config/bots/bot-manifests.generated.json", "config/generated/", "website/data/actions-health-report.json",
                      "config/buddy/run-with-buddy.generated.json", "reports/")
 INDEX_THRESHOLD = 120
@@ -450,7 +456,7 @@ def build(files: list[str] | None = None) -> dict[str, Any]:
         shard = re.sub(r"[^A-Za-z0-9_-]+", "_", top.lstrip(".")) or "root"
         if top == "(root)":
             shard = "root"
-        shards[shard].append([f, ftype, purpose, source, owner, owner_source, refs[:6], len(refs), tests[:5], readiness])
+        shards[shard].append([f, ftype, purpose, source, owner, owner_source, refs[:USED_BY_SHOWN], len(refs), tests[:TESTS_SHOWN], readiness])
     index = {
         "schema": "dreamco.file_prospectus.v1",
         "generator": "tools/build_file_prospectus.py",
@@ -464,9 +470,31 @@ def build(files: list[str] | None = None) -> dict[str, Any]:
     for shard, rows in sorted(shards.items()):
         for r in rows:
             counts[r[3]] += 1
-        index["shards"].append({"name": shard, "url": f"data/file-prospectus/{shard}.json", "files": len(rows)})
+        index["shards"].append({"name": shard, "url": f"{shard}.json", "files": len(rows)})
     index["purpose_sources"] = dict(sorted(counts.items()))
-    return {"index": index, "shards": {k: sorted(v) for k, v in shards.items()}}
+    positions = {c: COLUMNS.index(c) for c in ENUM_COLUMNS}
+    enums = {c: sorted({r[i] for rows in shards.values() for r in rows}) for c, i in positions.items()}
+    lookup = {c: {v: n for n, v in enumerate(vals)} for c, vals in enums.items()}
+    index["enums"] = enums
+    encoded = {}
+    for name, rows in shards.items():
+        out = []
+        for r in sorted(rows):
+            r = list(r)
+            for c, i in positions.items():
+                r[i] = lookup[c][r[i]]
+            out.append(r)
+        encoded[name] = out
+    return {"index": index, "shards": encoded}
+
+
+def decode_row(index: dict[str, Any], row: list[Any]) -> dict[str, Any]:
+    """Expand one shard row to a dict using index.json columns + enums."""
+    rec = dict(zip(index["columns"], row))
+    for c, values in (index.get("enums") or {}).items():
+        if isinstance(rec.get(c), int):
+            rec[c] = values[rec[c]]
+    return rec
 
 
 def render(payload: dict[str, Any]) -> dict[Path, str]:
@@ -515,12 +543,14 @@ def main(argv: list[str] | None = None) -> int:
         if diff.returncode != 0:
             print(f"cannot diff against {args.changed_since}: {diff.stderr.strip()}", file=sys.stderr)
             return 2
-        changed = {p for p in diff.stdout.split() if not p.startswith("website/data/file-prospectus/")}
-        fresh = {r[0]: r for rows in payload["shards"].values() for r in rows}
+        changed = {p for p in diff.stdout.split() if not p.startswith("config/generated/file-prospectus/")}
+        fresh = {r[0]: decode_row(payload["index"], r) for rows in payload["shards"].values() for r in rows}
         committed: dict[str, Any] = {}
+        index_path = OUT_DIR / "index.json"
+        committed_index = json.loads(index_path.read_text(encoding="utf-8")) if index_path.exists() else {"columns": COLUMNS}
         for shard in OUT_DIR.glob("*.json"):
             if shard.name != "index.json":
-                committed.update({r[0]: r for r in json.loads(shard.read_text(encoding="utf-8")).get("rows", [])})
+                committed.update({r[0]: decode_row(committed_index, r) for r in json.loads(shard.read_text(encoding="utf-8")).get("rows", [])})
         stale = sorted(p for p in changed if fresh.get(p) != committed.get(p))
         if stale:
             print(f"file prospectus drift for {len(stale)} file(s) changed in this branch: {stale[:10]}. "

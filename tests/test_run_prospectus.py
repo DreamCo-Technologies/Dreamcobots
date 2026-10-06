@@ -102,8 +102,8 @@ def test_fleet_bot_job_registered_with_anchored_input():
     assert "contents: read" in wf and "secrets." not in wf
 
 
-@pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
 def test_pages_patch_builder_output_is_accepted_by_validator():
+    assert shutil.which("node"), "node is required (CI installs it with actions/setup-node)"
     from buddy.fleet_runtime.customize import extract_from_issue, validate_bot_patch
 
     script = (

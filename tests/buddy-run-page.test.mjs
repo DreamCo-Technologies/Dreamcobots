@@ -8,7 +8,7 @@ const meta = JSON.parse(readFileSync(new URL('../website/data/run-prospectus.jso
 const bots = JSON.parse(readFileSync(new URL('../website/data/run-prospectus-bots.json', import.meta.url), 'utf8'));
 const fleetHtml = readFileSync(new URL('../website/fleet-runtime.html', import.meta.url), 'utf8');
 const filesHtml = readFileSync(new URL('../website/files.html', import.meta.url), 'utf8');
-const toCard = (row) => { const o = {}; bots.columns.forEach((c, i) => { o[c] = row[i]; }); o.blocked_reason = o.blocked ? bots.blocked_reasons[o.blocked] : null; return B.resolveBot(o, meta); };
+const toCard = (row) => B.resolveBot(B.decodeBotRow(bots, row), meta);
 
 test('every rendered Run button carries a complete prospectus; none without one', () => {
   assert.equal(B.runControls(null), '');

@@ -11,7 +11,7 @@ sys.path.insert(0, str(ROOT))
 
 import build_file_prospectus as bfp  # noqa: E402
 
-INDEX = json.loads((ROOT / "website/data/file-prospectus/index.json").read_text())
+INDEX = json.loads((ROOT / "config/generated/file-prospectus/index.json").read_text())
 
 
 def test_committed_index_is_current():
@@ -21,13 +21,12 @@ def test_committed_index_is_current():
 def test_every_repository_file_has_exactly_one_prospectus():
     rows = []
     for shard in INDEX["shards"]:
-        rows += json.loads((ROOT / "website" / shard["url"]).read_text())["rows"]
+        rows += json.loads((ROOT / "config/generated/file-prospectus" / shard["url"]).read_text())["rows"]
     paths = [r[0] for r in rows]
     assert len(paths) == len(set(paths)) == INDEX["files"]
     assert set(paths) == set(bfp.list_files())
-    cols = INDEX["columns"]
     for row in rows:
-        rec = dict(zip(cols, row))
+        rec = bfp.decode_row(INDEX, row)
         assert rec["purpose"] and rec["owner"] and rec["readiness"] and rec["type"], rec["path"]
         assert rec["purpose_source"] in {"docstring", "header", "readme", "auto-summary", "owner"}
         if rec["purpose_source"] == "auto-summary":
@@ -35,7 +34,7 @@ def test_every_repository_file_has_exactly_one_prospectus():
 
 
 def test_no_per_file_markdown_blobs():
-    out = ROOT / "website/data/file-prospectus"
+    out = ROOT / "config/generated/file-prospectus"
     assert not list(out.glob("*.md")) and len(list(out.glob("*.json"))) == len(INDEX["shards"]) + 1
 
 
@@ -77,8 +76,8 @@ def test_reference_graph_python_js_alias_and_html():
 
 
 def test_bot_specs_are_owned_by_their_bot_with_auditor_readiness():
-    rows = json.loads((ROOT / "website/data/file-prospectus/bots.json").read_text())["rows"]
-    rec = dict(zip(INDEX["columns"], next(r for r in rows if r[0] == "bots/ad-copy.md")))
+    rows = json.loads((ROOT / "config/generated/file-prospectus/bots.json").read_text())["rows"]
+    rec = bfp.decode_row(INDEX, next(r for r in rows if r[0] == "bots/ad-copy.md"))
     assert rec["owner"] == "bot:ad-copy" and rec["owner_source"] == "manifest"
     status = json.loads((ROOT / "website/data/fleet-runtime-status.json").read_text())
     state = next(r[4] for r in status["bots"] if r[0] == "ad-copy")

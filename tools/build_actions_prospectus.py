@@ -47,6 +47,28 @@ OUT_CARDS = ROOT / "website" / "data" / "run-prospectus.json"
 OUT_BOT_CARDS = ROOT / "website" / "data" / "run-prospectus-bots.json"
 BOT_COLUMNS = ["id", "title", "division", "engine", "does", "files", "risk_tier", "triggerable", "blocked", "readiness", "fixture",
                "evidence", "capabilities", "custom"]
+# Bot "files" are stored as a short code when they follow the standard layout (keeps Pages small):
+# A = App_bots/<division>.json, M = bots/<slug>.md, L = config/bots/teammate-lanes.json.
+FILE_CODES = {"A": "App_bots/{division}.json", "M": "bots/{slug}.md", "L": "config/bots/teammate-lanes.json"}
+CAPABILITIES_SHOWN = 8
+
+
+def encode_files(files: list[str], slug: str, division: str) -> str | list[str]:
+    code = ""
+    for f in files:
+        letter = next((k for k, v in FILE_CODES.items() if v.format(division=division, slug=slug) == f), None)
+        if letter is None:
+            return files
+        code += letter
+    return code
+
+
+def decode_files(value: str | list[str], slug: str, division: str) -> list[str]:
+    if isinstance(value, list):
+        return value
+    return [FILE_CODES[c].format(division=division, slug=slug) for c in value]
+
+
 BLOCKED_REASONS = {"blocked_money": "money bot: never triggerable from Buddy or Pages",
                    "blocked_destructive": "delete/destructive bot: never triggerable from Buddy or Pages",
                    "spec_only": "no shared engine fits this bot yet",
@@ -313,12 +335,12 @@ def bot_cards(collection: dict[str, Any], status: dict[str, Any], operators: lis
         cards.append([
             slug, m["name"], m["division"], m["engine"],
             (m.get("description") or "").strip()[:160] or "unknown (spec has no description)",
-            [x.split("#")[0] for x in m["sources"]][:2],
+            encode_files([x.split("#")[0] for x in m["sources"]][:2], slug, m["division"]),
             {"allowed": "read_only", "blocked_money": "money", "blocked_destructive": "destructive"}.get(policy, "none"),
             policy == "allowed", None if policy == "allowed" else policy,
             row.get("state", "unknown"), row.get("fixture"),
             f"evidence/fleet-runtime/{slug}.json" if evidence_path.exists() else None,
-            expand(compact, collection)["capabilities"][:12] if policy not in {"blocked_money", "blocked_destructive"} else [],
+            expand(compact, collection)["capabilities"][:CAPABILITIES_SHOWN] if policy not in {"blocked_money", "blocked_destructive"} else [],
             custom.get(slug) or None,
         ])
     return cards
@@ -385,6 +407,7 @@ def resolve(row: list[Any] | dict[str, Any], templates: dict[str, Any], operator
     if isinstance(row, dict):
         return row
     card = dict(zip(BOT_COLUMNS, row))
+    card["files"] = decode_files(card["files"], card["id"], card["division"])
     card["blocked_reason"] = BLOCKED_REASONS.get(card["blocked"]) if card["blocked"] else None
     card["source"] = card["files"][0] if card["files"] else ""
     t = templates.get(f"engine:{card['engine']}", {})
