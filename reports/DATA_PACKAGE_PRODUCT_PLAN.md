@@ -3,7 +3,7 @@
 **Repo:** DreamCo-Technologies/Dreamcobots  
 **Generated:** 2026-09-21T16:13:56-05:00 (CDT / America/Chicago)  
 **Restored:** 2026-10-02 by Grok-Data-Package-Merchant (owner of `plan-data-package`) from a verbatim read taken 2026-09-21; the original lived only as an untracked file on the shared box and was lost. Section 8 status notes added on restore.  
-**Truth boundary:** Planning + inventory only. Does **not** flip `production_ready`, claim live marketplace sales, claim O*NET/HF mastery, or authorize copying third-party copyrighted books/datasets for resale. Prefer completing existing Buddy learning / open-model / capability-package paths over parallel empires.
+**Truth boundary:** Planning + inventory only. Does **not** flip `production_ready`, claim live marketplace sales, claim O*NET®/HF mastery, or authorize copying third-party copyrighted books/datasets for resale. Prefer completing existing Buddy learning / open-model / capability-package paths over parallel empires.
 
 **Machine-readable sibling:** `reports/data-package-product.json`  
 **Related:** `reports/ONET_MASTERY_TRACK.md`, `reports/HUGGINGFACE_MASTERY_TRACK.md`, `reports/MODEL_ACCESS_PRODUCT_PLAN.md`
@@ -17,7 +17,7 @@ Sell **DATA PACKAGES** as a DreamCo product SKU family:
 1. Buddy (and humans) study topics from **many points of view**.
 2. Synthesize an **original DreamCo perspective** (analogy: read many books → write your own).
 3. Store that synthesis as **owned DreamCo data** for reuse and lawful sale.
-4. Ship only packages that pass a **provenance + license gate** (public domain, U.S. government / O*NET terms, open licenses allowing commercial reuse, and original DreamCo-generated synthesis).
+4. Ship only packages that pass a **provenance + license gate** (public domain, U.S. government / O*NET® terms, open licenses allowing commercial reuse, and original DreamCo-generated synthesis).
 
 **Hard no:** designing a system to strip copyright from third-party books/datasets and resell them. Reference-only manifests + original exercises are OK when redistribution of the source is forbidden.
 
@@ -40,10 +40,10 @@ Sell **DATA PACKAGES** as a DreamCo product SKU family:
 | Capability package schema | `capabilities/capability_package.schema.json` | Capability bundles (not sellable dataset SKUs yet) |
 | Capability marketplace config | `config/buddy_capability_package_marketplace.json` + `docs/capability-package-marketplace.md` | Capability install/bootcamp; knowledge_policy lawful only |
 | Bootcamp gain package | `docs/BUDDY_SANDBOX_BOOTCAMP_DATA_PACKAGE.md` + `config/buddy-sandbox-bootcamp-package.json` | Internal gains package (not customer SKU) |
-| O*NET specs | `config/onet-sandbox-dataset-spec.json`, `config/onet-priority-curriculum.json`, `config/buddy_github_onet_codecademy_benchmark_system.json` | Curriculum/sandbox contracts |
-| O*NET ingest tool | `tools/build_universal_work_ai_catalog.py` | Downloads O*NET 30.3 Excel zip by default; writes catalog. DP-ONET overrides this with `--onet-zip-url` pointing at 31.0 (see the O*NET pin note in §8); the default is unchanged for other users |
-| O*NET consumers | `tools/build_ontology_snapshot.py`, `tools/build_universal_capability_benchmark.py`, `tools/build_maximum_sandbox_matrix.py` | Expect generated catalog |
-| Generated O*NET catalog | `config/generated/universal-work-ai-catalog.json` | **Missing** (tool not run / not committed) |
+| O*NET® specs | `config/onet-sandbox-dataset-spec.json`, `config/onet-priority-curriculum.json`, `config/buddy_github_onet_codecademy_benchmark_system.json` | Curriculum/sandbox contracts |
+| O*NET® ingest tool | `tools/build_universal_work_ai_catalog.py` | Downloads O*NET® 30.3 Excel zip by default; writes catalog. DP-ONET overrides this with `--onet-zip-url` pointing at 31.0 (see the O*NET® pin note in §8); the default is unchanged for other users |
+| O*NET® consumers | `tools/build_ontology_snapshot.py`, `tools/build_universal_capability_benchmark.py`, `tools/build_maximum_sandbox_matrix.py` | Expect generated catalog |
+| Generated O*NET® catalog | `config/generated/universal-work-ai-catalog.json` | **Missing** (tool not run / not committed) |
 | User data package planner | `server/data-rights-policy.ts` → `createDataPackagePlan` | Consent-gated **plan only**; blocks sensitive/third-party PII |
 | API templates | `GET /api/data-packages`, `POST /api/buddy/data/package-plan` in `server/routes.ts` | Templates; `populatedDatasetCount: 0`; no sale |
 | Monetization bot profile | `bots/data-monetization.md` | Profile; **Production ready: False** |
@@ -55,17 +55,19 @@ Sell **DATA PACKAGES** as a DreamCo product SKU family:
 
 ## 3. Proposed SKUs (sellable package types)
 
-Prefer packages whose payload is **DreamCo-original synthesis + lawfully redistributable source extracts** (e.g. O*NET fields under their published terms + attribution), not wholesale third-party corpora.
+Prefer packages whose payload is **DreamCo-original synthesis + lawfully redistributable source extracts** (e.g. O*NET® fields under their published terms + attribution), not wholesale third-party corpora.
 
 | SKU id | Name | Primary contents | Allowed source classes | Customer use |
 | --- | --- | --- | --- | --- |
-| `DP-ONET-OCC-SYN` | O*NET Occupation Synthesis Pack | DreamCo task→capability maps, practice tasks, rubrics, occupation cards; pinned O*NET version + attribution | `us_gov_onet`, `dreamco_original_synthesis` | Train/eval bots on occupational tasks |
+| `DP-ONET-OCC-SYN` (internal id) | DreamCo Occupation Synthesis Pack (built with O*NET® 31.0 data) | DreamCo task→capability maps, practice tasks, rubrics, occupation cards; pinned O*NET® version + attribution | `us_gov_onet`, `dreamco_original_synthesis` | Train/eval bots on occupational tasks |
 | `DP-ONET-SKILL-GRAPH` | Skills & Work-Activities Graph Pack | Normalized skill/knowledge/ability/work-activity graphs + DreamCo transfer tasks | same | Capability routing / curriculum |
 | `DP-MULTI-VIEW-LESSON` | Multi-View Lesson Pack | Original lessons (human + machine layers per rewrite standard) from ≥N independent perspectives | `public_domain`, `open_commercial`, `dreamco_original_synthesis`; reference-only for restricted sources | Courseware / RAG / student adapters |
 | `DP-BENCH-HOLDOUT` | Benchmark & Holdout Pack | Original evaluation tasks + rubrics derived from concepts (not copied proprietary quizzes) | `dreamco_original_synthesis` (+ attributed open fixtures) | Eval / contamination-safe holdouts |
 | `DP-BOOTCAMP-GAIN` | Sandbox Gain Library (internal→paid later) | Verified gains, strategies, failure recoveries (no secrets) | `dreamco_experiment`, `dreamco_original_synthesis` | Fleet improvement; later B2B |
 | `DP-HF-STUDY` | HF Capability Study Pack (metadata + evals) | Pins + evals + DreamCo cards; **weights only if license allows** | `open_commercial` HF licenses; else metadata/eval only | Aligns with HF mastery track; not “all of HF” |
 | `DP-DOMAIN-SYN` | Domain Synthesis Pack (per division) | Division-specific original notes/tasks (coding, gov services, creative, etc.) | Allowed sources + synthesis only | Vertical SKUs |
+
+**Display name (2026-10-05 CT):** Irean Jordan approved option A from `reports/DATA_PACKAGE_LICENSE_QA_REVIEW.md` §1.4, so the buyer-facing name of `DP-ONET-OCC-SYN` is "DreamCo Occupation Synthesis Pack (built with O*NET® 31.0 data)". The SKU id `DP-ONET-OCC-SYN` is internal only; a buyer-facing id is decided before any listing. Other SKU names that put O*NET® first (for example `DP-ONET-SKILL-GRAPH`) need the same treatment before they are shown to buyers.
 
 **Non-SKU / blocked:** full copyrighted book dumps, Codecademy lesson text copies, proprietary course HTML, user PII, credentials, scraped paywalled content.
 
@@ -80,7 +82,7 @@ Reuse existing policy; complete the missing executable middle.
 ```text
 SOURCES (many perspectives)
   official docs | OSS | papers | exercises | case studies | security/perf reviews |
-  O*NET | public domain | open commercial | failure cases | cross-model results
+  O*NET® data | public domain | open commercial | failure cases | cross-model results
         ↓
 COLLECT + NORMALIZE CLAIMS   (multi_perspective_policy.pattern_pipeline)
         ↓
@@ -130,7 +132,7 @@ data/dreamco_knowledge/                 # owned synthesis + packages (gitignored
     benchmark_report.json
     sample/
 buddy/learning/                         # code + policies (already)
-config/generated/                       # O*NET catalog, package indexes
+config/generated/                       # O*NET® catalog, package indexes
 capabilities/                           # capability package schema (extend or sibling)
 ```
 
@@ -183,7 +185,7 @@ capabilities/                           # capability package schema (extend or s
 | **Propose** | `buddy/learning/sellable_package_schema.json` — SKU manifest schema |
 | **Propose** | `schemas/data_package.manifest.schema.json` — JSON Schema for CI validation |
 | **Propose** | `tools/build_sellable_data_package.py` — assemble release artifacts; refuse on gate fail |
-| **Propose** | `tools/license_provenance_gate.py` — shared gate used by O*NET + HF + synthesis |
+| **Propose** | `tools/license_provenance_gate.py` — shared gate used by O*NET® + HF + synthesis |
 | **Propose** | `config/generated/data-package-catalog.json` — index of SKUs (empty pins OK) |
 | **Run existing** | `python3 tools/build_universal_work_ai_catalog.py` → `config/generated/universal-work-ai-catalog.json` |
 
@@ -197,7 +199,7 @@ Before a SKU can be marked **sellable**:
 
 1. **Know the source.** Every included byte traces to a pinned source or a DreamCo-generated asset with generation inputs recorded.
 2. **Classify ownership.** Use `buddy-training-data-provenance-policy.json` classes. “We read it” ≠ “we own it.”
-3. **Check commercial + redistribution.** Sellable requires explicit allowance (public domain, U.S. gov / O*NET terms with attribution, open license that permits commercial reuse, or DreamCo-original). If redistribution forbidden → **reference_only** (citations + original exercises only).
+3. **Check commercial + redistribution.** Sellable requires explicit allowance (public domain, U.S. gov / O*NET® terms with attribution, open license that permits commercial reuse, or DreamCo-original). If redistribution forbidden → **reference_only** (citations + original exercises only).
 4. **No copyright stripping.** Do not copy substantial protected chapters, videos, or proprietary datasets into the package.
 5. **No sensitive personal data.** Align `createDataPackagePlan` blocks (minors, credentials, third-party PII, messages).
 6. **Pass tests.** Provenance/rights family in maximal testing + scorecard release gates; hard fails from Data Discovery Bot scoring.
@@ -227,19 +229,19 @@ Gate outcomes: `approved_for_sale` | `approved_for_private_use` | `reference_onl
 
 Numbered, evidence-backed, no `production_ready` flips:
 
-1. Run O*NET catalog generator (online or document offline blocker); commit or gitignore policy for `config/generated/universal-work-ai-catalog.json`.
+1. Run O*NET® catalog generator (online or document offline blocker); commit or gitignore policy for `config/generated/universal-work-ai-catalog.json`.
 2. Add `tools/license_provenance_gate.py` stub: input candidate → output `pass|fail|reference_only` using ownership classes + commercial/redistribution flags.
 3. Add `buddy/learning/multi_view_synthesizer.py` stub that reads `multi_perspective_policy.json`, calls extended `synthesize_pattern`, writes one **sandbox** asset under `data/dreamco_knowledge/assets/_mvp_demo/` with provenance.
 4. Define one SKU stub `DP-ONET-OCC-SYN` v0.0.1 manifest (empty payload OK) + license gate must run.
-5. Wire `score_data_package_candidate.py` example candidate JSON for O*NET-derived synthesis (rights_basis = O*NET + dreamco_original).
+5. Wire `score_data_package_candidate.py` example candidate JSON for O*NET®-derived synthesis (rights_basis = O*NET® data + dreamco_original).
 6. Document in package README: blocked categories + book analogy + hard no on copyright stripping.
 7. Align naming with capability marketplace + dataset product standard (no new product brand).
 8. Evidence packet: `reports/DATA_PACKAGE_WEEK1_EVIDENCE.md` listing files touched, gate results, zero false “for sale” claims.
 
-**Status on restore (2026-10-02 CT):** items 1 (catalog generates; 30.3 pin, 31.0 verified compatible; commit-vs-gitignore decision still open), 2, 4, and 5 are done on branch `feat/data-package-gate-skeleton`, with the gate's real outcome on an O*NET-derived study plan sample (`reference_only` as-is, `approved_for_private_use` once provenance files were added). Item 3 (multi-view synthesizer) is not started. The week slipped about a week.
+**Status on restore (2026-10-02 CT):** items 1 (catalog generates; 30.3 pin, 31.0 verified compatible; commit-vs-gitignore decision still open), 2, 4, and 5 are done on branch `feat/data-package-gate-skeleton`, with the gate's real outcome on an O*NET®-derived study plan sample (`reference_only` as-is, `approved_for_private_use` once provenance files were added). Item 3 (multi-view synthesizer) is not started. The week slipped about a week.
 
-**O*NET pin for DP-ONET (2026-10-03 CT):**
-- DP-ONET-OCC-SYN 0.0.1 pins **O*NET 31.0**:
+**O*NET® pin for DP-ONET (2026-10-03 CT):**
+- DP-ONET-OCC-SYN 0.0.1 pins **O*NET® 31.0**:
   - `db_31_0_excel.zip`, sha256 `c63ad00a8e45f3d3ef8e1529fcf8864d2279f2dfcb98737436818f5664781b04`
   - `db_31_0_csv.zip`, sha256 `55033fc68b4c13ec23e7f74dc6378660f6e854e75d55d6e333ae0a761d3987cd`
   - Both are under `https://www.onetcenter.org/dl_files/database/`. The crosswalk xlsx pin is in the package `provenance_manifest.json`.
@@ -254,13 +256,13 @@ Numbered, evidence-backed, no `production_ready` flips:
 
 | Window | Outcome |
 | --- | --- |
-| Week 1 | Gate + synthesizer stub + 1 SKU manifest; O*NET catalog generated |
+| Week 1 | Gate + synthesizer stub + 1 SKU manifest; O*NET® catalog generated |
 | Weeks 2–4 | First internal package with sample records; scorecard ≥ prototype; no live charge |
-| Oct 2026 | Private beta: 1–2 SKUs (O*NET synthesis + multi-view lesson) behind owner approval |
+| Oct 2026 | Private beta: 1–2 SKUs (O*NET® synthesis + multi-view lesson) behind owner approval |
 | Nov–Dec 2026 | Paid fulfillment stub (Stripe price + download of gated zip) **only after** release gates green |
 | YE 2026 | Repeatable package factory for allowed sources; still no claim of “all knowledge licensed” |
 
-See `reports/ONET_MASTERY_TRACK.md` for O*NET days-to-ops-mastery and HF track for Hub reminder.
+See `reports/ONET_MASTERY_TRACK.md` for O*NET® days-to-ops-mastery and HF track for Hub reminder.
 
 ---
 
