@@ -30,11 +30,13 @@ sys.path.insert(0, str(ROOT))
 from buddy.fleet_runtime.contract import TIER_BOILERPLATE, expand, validate_bot_manifest, validate_collection  # noqa: E402
 from buddy.fleet_runtime.permissions import text_declares_live_action  # noqa: E402
 from buddy.fleet_runtime.engines import tokens  # noqa: E402
-from buddy.fleet_runtime.sources import load_sources  # noqa: E402
+from buddy.fleet_runtime.divisions import build_division_manifests  # noqa: E402
+from buddy.fleet_runtime.sources import SEED, SEED_RE, load_sources  # noqa: E402
 
 APP_BOTS = ROOT / "App_bots"
 CATALOG = ROOT / "config" / "generated" / "bots.catalog.json"
 OUT = ROOT / "config" / "bots" / "bot-manifests.generated.json"
+DIV_OUT = ROOT / "config" / "bots" / "division-manifests.generated.json"
 
 MAX_CAPS = 12
 MIN_SCORE = 2.0
@@ -321,6 +323,19 @@ def render(collection: dict[str, Any]) -> str:
     return text[:-2] + ',\n  "bots": [\n' + lines + "\n  ]\n}\n"
 
 
+def seed_division_counts() -> dict[str, int]:
+    counts: dict[str, int] = {}
+    if SEED.exists():
+        for _slug, _name, division, _cat in SEED_RE.findall(SEED.read_text(encoding="utf-8")):
+            counts[division] = counts.get(division, 0) + 1
+    return counts
+
+
+def render_divisions(collection: dict[str, Any]) -> str:
+    """Division manifests (one per division, with its smoke bots) derived from the bot manifests + seed data."""
+    return json.dumps(build_division_manifests(collection, seed_division_counts()), indent=2, sort_keys=True) + "\n"
+
+
 def build() -> dict[str, Any]:
     entries, inputs, folder_notes = load_sources()
     api = load_api_candidates()
@@ -369,15 +384,20 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     text = render(collection)
     json.loads(text)  # render must stay valid JSON
+    div_text = render_divisions(collection)
     if args.check:
         current = args.out.read_text(encoding="utf-8") if args.out.exists() else ""
-        if current != text:
-            print(f"{args.out.relative_to(ROOT)} is stale. Run: python3 tools/generate_bot_manifests.py", file=sys.stderr)
+        div_current = DIV_OUT.read_text(encoding="utf-8") if DIV_OUT.exists() else ""
+        if current != text or (args.out == OUT and div_current != div_text):
+            stale = args.out if current != text else DIV_OUT
+            print(f"{stale.relative_to(ROOT)} is stale. Run: python3 tools/generate_bot_manifests.py", file=sys.stderr)
             return 1
         print(json.dumps({"ok": True, **collection["summary"]}, indent=2))
         return 0
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(text, encoding="utf-8")
+    if args.out == OUT:
+        DIV_OUT.write_text(div_text, encoding="utf-8")
     print(json.dumps({"written": args.out.relative_to(ROOT).as_posix(), **collection["summary"]}, indent=2))
     return 0
 
