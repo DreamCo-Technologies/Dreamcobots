@@ -126,3 +126,81 @@ python3 -m unittest tests.test_fleet_runtime_executor tests.test_generate_bot_ma
   imported (`base.py` is missing and the module names start with a digit). The
   shared runtime replaces per-bot code generation. The compiler is left alone
   in this PR; retiring it is an owner decision.
+
+## Teammate lanes (division `GrokTeammates`)
+
+`config/bots/teammate-lanes.json` lists the 112 jobs Grok teammates have done
+for the owner (name + description only, no internal ids). The generator turns
+each lane into a bot manifest like any other: capabilities are split from the
+description deterministically (flag `capabilities_derived_from_description`)
+and mapped to a shared engine. A lane manifest proves the lane's job can be
+run through the runtime offline; it is not evidence the lane's work is done.
+
+## Engine fallback
+
+When keyword scoring is too weak to clear the mapping threshold the generator
+no longer leaves a bot unmapped if it has real capabilities:
+
+* some signal → best-scoring engine, flags `engine_weak_signal` + `engine_low_confidence`;
+* no signal at all → `workflow` (a checklist over the declared capabilities), flag `engine_fallback_workflow`, confidence `0.0`.
+
+Bots with no specific capabilities (placeholder specs) stay `unmapped` / `spec_only`.
+
+## Run policy (`run` in the compact entry, `run_policy` when expanded)
+
+| value | meaning |
+|---|---|
+| `allowed` | may get a working **Run with Buddy** button |
+| `blocked_money` | money movement, payments, billing, trading: never triggerable |
+| `blocked_destructive` | delete / purge / wipe: never triggerable |
+| `spec_only` | no shared engine fits |
+
+The money pattern is intentionally broad; a false positive only costs a Run
+button, a false negative could cost money. `python -m buddy.fleet_runtime job
+<slug> --out evidence.json` is the job entry point and refuses anything not
+`allowed` (exit code 3).
+
+## Generated smoke fixtures
+
+`buddy/fleet_runtime/fixtures.py` derives one fixture per mapped bot from its
+own capabilities at load time (nothing committed, so no drift). Expectations
+come from set logic, not from running the engine: e.g. for classification the
+probe text contains exactly one label's full token set, so that label must win
+with confidence 1.0; for workflow the step count equals the capability count
+and every live-action step must be waiting for owner approval. A test swaps a
+bot's capabilities and confirms its fixture then fails. Hand-written fixtures
+in `config/bots/smoke-fixtures.json` override generated ones (`origin` shows
+which). Passing proves wiring and determinism, not output quality.
+
+## Customization (`/buddy customize`)
+
+Pages holds no tokens. The Customize form on a bot or file page builds a
+fenced YAML patch and opens a prefilled issue:
+
+````
+/buddy customize ad-copy
+
+```yaml
+enabled: true
+model: dreamco/fast
+prompt: "Keep it under 50 words"
+schedule: 17 9 * * 1
+capabilities:
+  SEO: false
+```
+````
+
+`buddy/fleet_runtime/customize.py` validates it: a restricted YAML subset (no
+anchors, tags, lists, multi-docs); only `enabled`, `display_name`, `prompt`,
+`model` (gateway aliases `dreamco/*` only), `schedule` (fixed minute and
+hour), `division` (existing) and `capabilities` (toggle existing ones, at
+least one stays on). Secrets, money, deletes, permissions, workflows, engines,
+readiness and evidence keys are rejected by name; credential-looking values
+and markup are rejected; money and destructive bots cannot be customized at
+all. Accepted patches are written to `config/bots/customizations.json` and
+overlaid by the executor (`enabled: false` makes runs return `disabled`; a
+custom prompt is prepended to the objective *before* guardrails run).
+
+The router side (actor allowlist + write permission, branch + PR) lives in the
+Buddy control plane (#13197): `python -m buddy.fleet_runtime customize
+--issue-body-file body.md [--apply]`.

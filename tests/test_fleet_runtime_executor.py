@@ -199,3 +199,48 @@ class ExecutorTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# --- generated fixtures and the Run with Buddy job --------------------------------
+
+def test_every_mapped_bot_has_a_generated_fixture_that_passes():
+    from buddy.fleet_runtime.contract import load_fixtures
+    from buddy.fleet_runtime.smoke import fixture_smoke
+
+    executor = FleetExecutor(customizations={})
+    fixtures = load_fixtures()["fixtures"]
+    mapped = [s for s, b in executor.bots.items() if b["engine"] != "unmapped"]
+    assert set(mapped) <= set(fixtures)
+    failed = [s for s in mapped if not fixture_smoke(executor, s, fixtures[s])["passed"]]
+    assert failed == []
+
+
+def test_generated_fixture_fails_when_bot_wiring_is_wrong():
+    """A fixture must catch a bot whose capabilities do not match its manifest."""
+    import copy
+
+    from buddy.fleet_runtime.fixtures import derive_fixture
+    from buddy.fleet_runtime.smoke import fixture_smoke
+
+    executor = FleetExecutor(customizations={})
+    slug = next(s for s, b in executor.bots.items() if b["engine"] == "classification")
+    manifest = executor.manifest(slug)
+    fixture = derive_fixture("classification", manifest["capabilities"])
+    broken = copy.deepcopy(manifest)
+    broken["capabilities"] = ["Completely unrelated label", "Another unrelated label"]
+    executor._expanded[slug] = broken
+    assert fixture_smoke(executor, slug, fixture)["passed"] is False
+
+
+def test_job_refuses_money_destructive_and_disabled(tmp_path):
+    from buddy.fleet_runtime.__main__ import run_job
+
+    executor = FleetExecutor(customizations={"ad-copy": {"enabled": False}})
+    assert run_job(executor, "stripe-billing", None) == 3
+    destructive = next(s for s, b in executor.bots.items() if b["run"] == "blocked_destructive")
+    assert run_job(executor, destructive, None) == 3
+    assert run_job(executor, "ad-copy", None) == 3
+    out = tmp_path / "e.json"
+    assert run_job(FleetExecutor(customizations={}), "blog-writer", str(out)) == 0
+    record = json.loads(out.read_text())
+    assert record["status"] == "passed" and record["live_external_action_taken"] is False

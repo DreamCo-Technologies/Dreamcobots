@@ -88,11 +88,18 @@ def load_schema() -> dict[str, Any]:
     return read_json(SCHEMA_PATH)
 
 
-def load_fixtures(path: Path | None = None) -> dict[str, Any]:
-    target = path or FIXTURES_PATH
-    if not target.exists():
-        return {"fixtures": {}}
-    return read_json(target)
+def load_fixtures(path: Path | None = None, include_generated: bool = True) -> dict[str, Any]:
+    """Generated fixtures (buddy.fleet_runtime.fixtures) overlaid by hand-written config/bots/smoke-fixtures.json."""
+    if path is not None:
+        return read_json(path) if path.exists() else {"fixtures": {}}
+    merged: dict[str, Any] = {}
+    if include_generated and MANIFESTS_PATH.exists():
+        from .fixtures import build_fixtures
+
+        merged.update(build_fixtures(load_manifests())["fixtures"])
+    if FIXTURES_PATH.exists():
+        merged.update(read_json(FIXTURES_PATH).get("fixtures", {}))
+    return {"fixtures": merged}
 
 
 _TYPE_MAP = {
@@ -219,6 +226,7 @@ def expand(compact: dict[str, Any], collection: dict[str, Any], with_content: bo
                       "computed_by": "tools/fleet_runtime_audit.py"},
         "sources": list(compact["sources"]),
         "flags": list(compact.get("flags", [])),
+        "run_policy": compact.get("run", "spec_only" if not mapped else "allowed"),
     }
     if compact.get("seed_division"):
         manifest["seed_division"] = compact["seed_division"]

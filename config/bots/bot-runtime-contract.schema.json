@@ -225,7 +225,8 @@
         "evidence",
         "readiness",
         "sources",
-        "flags"
+        "flags",
+        "run_policy"
       ],
       "properties": {
         "slug": {
@@ -394,6 +395,45 @@
         },
         "target_users": {
           "type": "string"
+        },
+        "run_policy": {
+          "enum": [
+            "allowed",
+            "blocked_money",
+            "blocked_destructive",
+            "spec_only"
+          ],
+          "description": "allowed = may get a working Run with Buddy button; money/destructive are never triggerable; spec_only = no engine."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Customization: false makes the runtime refuse runs and hides the Run button."
+        },
+        "prompt": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Customization: owner instructions prepended to the objective."
+        },
+        "schedule": {
+          "type": "string",
+          "description": "Customization: 'off' or a fixed-minute cron (UTC)."
+        },
+        "model_alias": {
+          "enum": [
+            "dreamco/auto",
+            "dreamco/budget",
+            "dreamco/coding",
+            "dreamco/fast",
+            "dreamco/reasoning",
+            "dreamco/vision"
+          ],
+          "description": "Customization: gateway alias used when live models are enabled."
+        },
+        "customized_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -411,7 +451,8 @@
         "live",
         "bench",
         "sources",
-        "flags"
+        "flags",
+        "run"
       ],
       "properties": {
         "slug": {
@@ -491,6 +532,14 @@
           "items": {
             "type": "string"
           }
+        },
+        "run": {
+          "enum": [
+            "allowed",
+            "blocked_money",
+            "blocked_destructive",
+            "spec_only"
+          ]
         }
       }
     }

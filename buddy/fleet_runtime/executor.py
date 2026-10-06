@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from . import engines, evidence, permissions
+from .customize import apply_customization, load_customizations
 from .contract import expand, load_manifests, validate, validate_bot_manifest, load_schema
 
 try:  # Reuse Buddy's shared guardrails; tolerate absence in stripped builds.
@@ -36,7 +37,7 @@ class FleetExecutor:
     """Run any bot manifest through the shared engines."""
 
     def __init__(self, manifests_path: Path | None = None, env: dict[str, str] | None = None,
-                 collection: dict[str, Any] | None = None):
+                 collection: dict[str, Any] | None = None, customizations: dict[str, Any] | None = None):
         self.collection = collection or load_manifests(manifests_path)
         self.bots = {bot["slug"]: bot for bot in self.collection["bots"]}
         self.profiles = self.collection["profiles"]
@@ -44,13 +45,15 @@ class FleetExecutor:
         self._schema = load_schema()
 
         self._expanded: dict[str, dict[str, Any]] = {}
+        self.customizations = load_customizations() if customizations is None else customizations
 
     def manifest(self, slug: str) -> dict[str, Any]:
         """Return the expanded 16-piece manifest for ``slug``."""
         if slug not in self.bots:
             raise KeyError(f"unknown bot: {slug}")
         if slug not in self._expanded:
-            self._expanded[slug] = expand(self.bots[slug], self.collection)
+            self._expanded[slug] = apply_customization(expand(self.bots[slug], self.collection),
+                                                       self.customizations.get(slug, {}))
         return self._expanded[slug]
 
     def _finish(self, manifest, task, status, mode, permission, guards, result, error=None, stamp=False):
@@ -89,10 +92,15 @@ class FleetExecutor:
                 return self._finish(manifest, task, "unmapped", "none", none_perm, {}, None,
                                     {"type": "engine_unmapped",
                                      "message": "No shared engine is mapped for this bot; it is spec-only."}, stamp)
+            if manifest.get("enabled") is False:
+                return self._finish(manifest, task, "disabled", "none", none_perm, {}, None,
+                                    {"type": "bot_disabled", "message": "Disabled by an accepted customization."}, stamp)
             task_errors = validate(task, TASK_SCHEMA)
             if task_errors:
                 return self._finish(manifest, task, "invalid_input", "none", none_perm, {}, None,
                                     {"type": "invalid_input", "message": "; ".join(task_errors)}, stamp)
+            if manifest.get("prompt"):
+                task["objective"] = f"{manifest['prompt']}\n\n{task.get('objective', '')}"
             permission = permissions.decide(manifest["permissions"]["ceiling"], task.get("action_level", "sandbox"))
             if not permission["allowed"]:
                 return self._finish(manifest, task, "approval_required", "none", permission, {}, None, None, stamp)
@@ -100,7 +108,9 @@ class FleetExecutor:
             if not in_guard["allowed"]:
                 return self._finish(manifest, task, "guardrail_blocked", "none", permission,
                                     {"input": in_guard}, None, None, stamp)
-            profile = self.profiles["model_router"][manifest["model_router"]]
+            profile = dict(self.profiles["model_router"][manifest["model_router"]])
+            if manifest.get("model_alias") and profile.get("mode") != "offline_only":
+                profile["live_alias"] = manifest["model_alias"]
             func = engines.ENGINE_FUNCS[engine_name]
             if engine_name == "drafting":
                 result = func(manifest, task, profile, env=self.env)

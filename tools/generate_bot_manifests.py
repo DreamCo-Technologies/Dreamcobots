@@ -191,18 +191,37 @@ def pick_engine(scores: dict[str, float]) -> tuple[str, float]:
     return engine, round(best / total, 3) if total else 0.0
 
 
+MONEY_RE = re.compile(
+    r"\b(payments?|payouts?|stripe|ach|wire transfers?|trading|trader|order execution|checkout|billing|refunds?|"
+    r"withdrawals?|deposits?|disburse\w*|invoices? (?:send|collection)|live revenue|real money|paid ultimate)\b", re.I)
+DESTRUCTIVE_RE = re.compile(r"\b(delete|deletion|deletes|purge|wipe|destroy|teardown|drop tables?)\b", re.I)
+
+
+def run_policy(text: str, engine: str) -> str:
+    """Whether the bot may get a working Run button. Money/delete stay blocked."""
+    if engine == "unmapped":
+        return "spec_only"
+    if MONEY_RE.search(text):
+        return "blocked_money"
+    if DESTRUCTIVE_RE.search(text):
+        return "blocked_destructive"
+    return "allowed"
+
+
 def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], known_divisions: set[str]) -> dict[str, Any]:
-    app, md = entry.get("app"), entry.get("md")
-    base = app or md
+    app, md, lane = entry.get("app"), entry.get("md"), entry.get("lane")
+    base = app or md or lane
     flags = set(entry["flags"])
+    if lane:
+        flags |= {"teammate_lane", "capabilities_derived_from_description"}
     if not SLUG_RE.match(slug):
         flags.add("invalid_slug")
     if app and md:
         if md["division"] and md["division"] != app["division"]:
             flags.add("division_conflict_md")
-    elif md and not app:
+    elif md and not app and not lane:
         flags.add("md_only")
-    division = (app or {}).get("division") or (md or {}).get("division") or ""
+    division = (app or {}).get("division") or (md or {}).get("division") or (lane or {}).get("division") or ""
     if not division:
         flags.add("division_missing")
     elif division not in known_divisions:
@@ -210,7 +229,7 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
     seed_division = entry.get("seed_division")
     if seed_division and seed_division != division:
         flags.add("division_conflict_seed")
-    raw_caps = list(dict.fromkeys((app or md)["capabilities"] or (md or {}).get("capabilities", [])))
+    raw_caps = list(dict.fromkeys(base["capabilities"] or (md or {}).get("capabilities", [])))
     caps = [c[:120] for c in raw_caps if c.strip().lower() not in TIER_BOILERPLATE]
     dropped = len(raw_caps) - len(caps)
     if not caps:
@@ -223,9 +242,21 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
         "description": description, "capabilities": " ; ".join(caps),
     })
     engine, confidence = pick_engine(scores)
+    if engine == "unmapped" and caps:
+        best = max(scores.values())
+        if best > 0:
+            # Weak but real signal: use the best-scoring engine, flagged.
+            engine = next(e for e in ENGINE_PRIORITY if scores[e] == best)
+            confidence = round(best / sum(scores.values()), 3)
+            flags.add("engine_weak_signal")
+        else:
+            # No keyword signal at all: a checklist over the bot's declared
+            # capabilities is the honest generic job; flagged for review.
+            engine, confidence = "workflow", 0.0
+            flags.add("engine_fallback_workflow")
     if engine == "unmapped":
         flags.add("engine_unmapped")
-    elif confidence < 0.4:
+    elif confidence < 0.4 or "engine_weak_signal" in flags:
         flags.add("engine_low_confidence")
     tool_names = list(dict.fromkeys((app or {}).get("tools") or (md or {}).get("tools") or []))
     tool_ids = [TOOL_MAP.get(t.strip().lower(), "unresolved:" + re.sub(r"[^a-z0-9]+", "-", t.lower()).strip("-")) for t in tool_names]
@@ -233,7 +264,11 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
     claims = bool((app or {}).get("claims_production_ready") or (md or {}).get("claims_production_ready"))
     if claims:
         flags.add("claims_production_ready_without_evidence")
+    policy = run_policy(" ".join([slug, base.get("name", ""), description, *caps]), engine)
+    if policy.startswith("blocked"):
+        flags.add("run_" + policy)
     entry_out: dict[str, Any] = {
+        "run": policy,
         "slug": slug,
         "name": base.get("name") or slug,
         "division": division or "UNASSIGNED",
@@ -295,6 +330,9 @@ def build() -> dict[str, Any]:
             digest.update(path.relative_to(ROOT).as_posix().encode())
             digest.update(path.read_bytes())
     known = {json.loads(p.read_text(encoding="utf-8")).get("division") for p in APP_BOTS.glob("*.json")}
+    lanes_path = ROOT / "config" / "bots" / "teammate-lanes.json"
+    if lanes_path.exists():
+        known.add(json.loads(lanes_path.read_text(encoding="utf-8")).get("division", "GrokTeammates"))
     manifests = [build_manifest(slug, entries[slug], api, known) for slug in sorted(entries)]
     mark_duplicates(manifests, entries)
     engines: dict[str, int] = {}

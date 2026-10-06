@@ -31,7 +31,32 @@ class GeneratorTests(unittest.TestCase):
         app = set()
         for path in (ROOT / "App_bots").glob("*.json"):
             app |= {b["slug"] for b in json.loads(path.read_text())["bots"]}
-        self.assertEqual(set(self.by_slug), md | app)
+        lanes = {lane["slug"] for lane in json.loads((ROOT / "config/bots/teammate-lanes.json").read_text())["lanes"]}
+        self.assertEqual(set(self.by_slug), md | app | lanes)
+
+    def test_teammate_lanes_are_bots_with_engines(self):
+        lanes = [b for b in self.collection["bots"] if "teammate_lane" in b["flags"]]
+        self.assertEqual(len(lanes), 112)
+        self.assertTrue(all(b["division"] == "GrokTeammates" and b["engine"] != "unmapped" for b in lanes))
+        lanes_text = (ROOT / "config/bots/teammate-lanes.json").read_text()
+        self.assertNotRegex(lanes_text, r'"(agent_?id|id|internal_id)"')
+
+    def test_engine_fallbacks_are_flagged(self):
+        for b in self.collection["bots"]:
+            if "engine_fallback_workflow" in b["flags"]:
+                self.assertEqual((b["engine"], b["engine_confidence"]), ("workflow", 0.0))
+            if "engine_weak_signal" in b["flags"]:
+                self.assertIn("engine_low_confidence", b["flags"])
+
+    def test_run_policy_blocks_money_and_delete(self):
+        self.assertEqual(self.by_slug["stripe-billing"]["run"], "blocked_money")
+        self.assertEqual(self.by_slug["ach-processor"]["run"], "blocked_money")
+        self.assertEqual(self.by_slug["ad-copy"]["run"], "allowed")
+        self.assertEqual(gen.run_policy("purge old records", "workflow"), "blocked_destructive")
+        self.assertEqual(gen.run_policy("anything", "unmapped"), "spec_only")
+        for b in self.collection["bots"]:
+            if b["engine"] == "unmapped":
+                self.assertEqual(b["run"], "spec_only")
 
     def test_unmapped_bots_are_flagged_not_faked(self):
         unmapped = [b for b in self.collection["bots"] if b["engine"] == "unmapped"]

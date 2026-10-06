@@ -82,6 +82,19 @@ def load_sources(root: Path = ROOT) -> tuple[dict[str, dict[str, Any]], list[Pat
         entry = bots.setdefault(slug, {"sources": [], "flags": set()})
         entry["sources"].append(path.relative_to(root).as_posix())
         entry["md"] = parse_md(path)
+    lanes_path = root / "config" / "bots" / "teammate-lanes.json"
+    if lanes_path.exists():
+        inputs.append(lanes_path)
+        lanes = json.loads(lanes_path.read_text(encoding="utf-8"))
+        for lane in lanes.get("lanes", []):
+            entry = bots.setdefault(lane["slug"], {"sources": [], "flags": set()})
+            entry["sources"].append(lanes_path.relative_to(root).as_posix() + "#" + lane["slug"])
+            entry["lane"] = {
+                "name": lane["name"], "division": lanes.get("division", "GrokTeammates"), "tier": "internal",
+                "category": "teammate-lane", "description": lane["description"],
+                "capabilities": lane_capabilities(lane["description"]), "tools": [], "benchmarks": [],
+                "claims_production_ready": False,
+            }
     seed = root / "server" / "seed-bots.ts"
     if seed.exists():
         inputs.append(seed)
@@ -93,6 +106,17 @@ def load_sources(root: Path = ROOT) -> tuple[dict[str, dict[str, Any]], list[Pat
 
 
 
+LANE_SPLIT_RE = re.compile(r"\s*(?:[;:+,]|→|->|\band\b|\. )\s*")
+
+
+def lane_capabilities(description: str) -> list[str]:
+    """Split a teammate-lane description into capability phrases (deterministic)."""
+    text = re.sub(r"^(?:Own|Owns)\s+(?:plan-[a-z0-9-]+\.\s*)?", "", description.strip())
+    parts = [p.strip(" .()") for p in LANE_SPLIT_RE.split(text)]
+    caps = [p[:120] for p in parts if len(p) >= 2 and not p.lower().startswith(("no ", "never ", "don't"))]
+    return list(dict.fromkeys(caps))[:12]
+
+
 @lru_cache(maxsize=1)
 def _all_sources() -> dict[str, dict[str, Any]]:
     return load_sources()[0]
@@ -101,7 +125,7 @@ def _all_sources() -> dict[str, dict[str, Any]]:
 def profile_content(slug: str) -> dict[str, Any]:
     """Return {name, description, capabilities, target_users?} for a bot."""
     entry = _all_sources().get(slug) or {}
-    base = entry.get("app") or entry.get("md") or {}
+    base = entry.get("app") or entry.get("md") or entry.get("lane") or {}
     caps = list(dict.fromkeys(base.get("capabilities") or (entry.get("md") or {}).get("capabilities") or []))
     return {"description": (base.get("description") or "")[:600], "capabilities_raw": caps,
             "target_users": base.get("target_users", "")}
