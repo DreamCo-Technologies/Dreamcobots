@@ -1,0 +1,21 @@
+name: Evidence gate
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 15 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Run the fail-closed evidence gate
+        run: |
+          python3 -m unittest buddy.builder.evidence_gate_test
+          python3 buddy/builder/promotion_gate.py
+          python3 buddy/builder/model_selection.py
+          python3 buddy/builder/division_audit.py
