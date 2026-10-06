@@ -51,13 +51,17 @@ jobs:
           include=[]
           for i,(owner,gaps) in enumerate(sorted(owners.items()),1):
               include.append({'owner':owner,'slot':i,'gaps':','.join(gaps)})
+          # Empty include skips the matrix job and fails the workflow via needs.
+          # Keep a noop lane so owner-lane is an explicit success when there are no gaps.
+          if not include:
+              include.append({'owner':'noop','slot':0,'gaps':''})
           with open(os.environ['GITHUB_OUTPUT'],'a') as f:
               f.write('matrix='+json.dumps({'include':include},separators=(',',':'))+'\n')
           PY
 
   owner-lane:
     needs: plan
-    if: ${{ needs.plan.outputs.matrix != '' }}
+    if: ${{ needs.plan.result == 'success' }}
     strategy:
       fail-fast: false
       max-parallel: 32
@@ -82,13 +86,18 @@ jobs:
         run: |
           echo "Owner: ${{ matrix.owner }}"
           echo "Gaps: ${{ matrix.gaps }}"
+      - name: Skip noop lane
+        if: ${{ matrix.owner == 'noop' }}
+        run: echo "No engineering gaps assigned; noop lane succeeds."
       - name: Run repository evidence and safety verification for this owner lane
+        if: ${{ matrix.owner != 'noop' }}
         run: |
           python3 tools/build_github_platform_benchmark.py
           python3 tools/build_engineering_gap_closure_plan.py
           python3 -m unittest tests.test_engineering_gap_closure_team
           python3 tools/run_safe_self_repair.py
       - name: Run universal verification
+        if: ${{ matrix.owner != 'noop' }}
         run: npx tsx tools/run_universal_verification.ts --quick
       - name: Summarize lane
         if: always()
@@ -104,7 +113,7 @@ jobs:
 
   final-review:
     needs: [plan, owner-lane]
-    if: always()
+    if: ${{ always() && needs.plan.result == 'success' && (needs.owner-lane.result == 'success' || needs.owner-lane.result == 'skipped') }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

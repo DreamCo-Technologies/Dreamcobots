@@ -49,5 +49,13 @@ Test every declared capability for Decision Consequence Simulator in sandbox mod
 ## Production gate
 implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry
 
+## three.js hint
+Training start: read https://threejs.org/docs/#api/en/cameras/PerspectiveCamera. Do not copy the examples.
+
+```js
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js";
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10);
+```
+
 ---
 *Generated/updated by tools/ensure_bots_production_ready.py — profile completeness only; runtime production requires evidence.*

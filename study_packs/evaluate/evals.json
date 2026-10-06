@@ -1,0 +1,17 @@
+{
+  "capability_ids": ["hf-evaluate-metrics", "buddy-bench-scoring"],
+  "min_native_pass_rate": 1.0,
+  "tasks": [
+    {
+      "id": "evaluate.metric_basics.offline",
+      "command": "python3 study_packs/evaluate/lessons/01_metric_basics/example_metric_basics.py",
+      "pass_if": "exit code 0 and final stdout line is JSON with ok=true"
+    },
+    {
+      "id": "evaluate.buddy_bench_scoring.offline",
+      "command": "python3 study_packs/evaluate/lessons/02_buddy_bench_scoring/example_buddy_bench_scoring.py",
+      "pass_if": "exit code 0 and final stdout line is JSON with ok=true"
+    }
+  ],
+  "train_allowed": false
+}

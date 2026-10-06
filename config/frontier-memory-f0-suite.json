@@ -1,0 +1,55 @@
+{
+  "schema": "dreamco.buddy.frontier_evidence_suite.v1",
+  "suite_id": "buddy-memory-f0-2026-09-21",
+  "floor": "F0",
+  "lane": "long_context_and_memory",
+  "fixture_file": "benchmarks/tasks/memory_f0_lane.json",
+  "minimum_repetitions": 3,
+  "score_threshold": 0.8,
+  "lanes": [
+    {
+      "id": "needle_retrieval",
+      "training_tasks": [
+        "memory-f0-needle-train-001"
+      ],
+      "holdout_tasks": [
+        "memory-f0-needle-holdout-001"
+      ]
+    },
+    {
+      "id": "memory_retrieval_precision_recall",
+      "training_tasks": [
+        "memory-f0-precision-recall-train-001"
+      ],
+      "holdout_tasks": [
+        "memory-f0-precision-recall-holdout-001"
+      ]
+    },
+    {
+      "id": "stale_memory_forgetting",
+      "training_tasks": [
+        "memory-f0-stale-memory-train-001"
+      ],
+      "holdout_tasks": [
+        "memory-f0-stale-memory-holdout-001"
+      ]
+    }
+  ],
+  "evidence_required": [
+    "exact_subject_version",
+    "fixture_hash",
+    "grader_version",
+    "timestamp",
+    "latency_ms",
+    "cost_usd",
+    "safety_passed",
+    "regression_passed",
+    "external_assistance"
+  ],
+  "truth_rule": "This suite makes no capability or frontier claim until live comparable runs exist under the same fixtures and grader. Empty runs fail closed (claimable=false).",
+  "anti_claims": [
+    "do_not_claim_frontier_from_fixtures_alone",
+    "do_not_set_production_ready_from_this_suite",
+    "do_not_train_on_holdout_answers"
+  ]
+}

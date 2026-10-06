@@ -1,0 +1,1395 @@
+{
+  "schema": "dreamco.hf_model_types.v1",
+  "note": "Type catalog for task ranking. Examples are public Hub ids, not measured winners.",
+  "models": [
+    {
+      "id": "m001",
+      "type": "Chat LLM",
+      "task": "text generation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "chat",
+        "assistant",
+        "instruction"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "meta-llama/Llama-3.1-8B-Instruct"
+    },
+    {
+      "id": "m002",
+      "type": "Small chat LLM",
+      "task": "text generation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "chat",
+        "edge",
+        "8gb"
+      ],
+      "commercial_ok": true,
+      "min_gb": 4,
+      "example": "Qwen/Qwen2.5-3B-Instruct"
+    },
+    {
+      "id": "m003",
+      "type": "Mixture of experts chat",
+      "task": "text generation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "chat",
+        "moe",
+        "long context"
+      ],
+      "commercial_ok": true,
+      "min_gb": 16,
+      "example": "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    },
+    {
+      "id": "m004",
+      "type": "Reasoning LLM",
+      "task": "reasoning",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "math",
+        "logic",
+        "chain of thought"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
+    },
+    {
+      "id": "m005",
+      "type": "Code generation",
+      "task": "code generation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "code",
+        "programming",
+        "codegen"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "Qwen/Qwen2.5-Coder-7B-Instruct"
+    },
+    {
+      "id": "m006",
+      "type": "Code completion",
+      "task": "code completion",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "fill in middle",
+        "ide"
+      ],
+      "commercial_ok": true,
+      "min_gb": 4,
+      "example": "bigcode/starcoder2-3b"
+    },
+    {
+      "id": "m007",
+      "type": "SQL generation",
+      "task": "code generation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "sql",
+        "text to sql"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "defog/sqlcoder-7b-2"
+    },
+    {
+      "id": "m008",
+      "type": "Embedding model",
+      "task": "embeddings",
+      "pipeline_tag": "feature-extraction",
+      "fits": [
+        "search",
+        "rag",
+        "similarity"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "BAAI/bge-small-en-v1.5"
+    },
+    {
+      "id": "m009",
+      "type": "Multilingual embedding",
+      "task": "embeddings",
+      "pipeline_tag": "feature-extraction",
+      "fits": [
+        "search",
+        "multilingual"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "intfloat/multilingual-e5-small"
+    },
+    {
+      "id": "m010",
+      "type": "Reranker",
+      "task": "reranking",
+      "pipeline_tag": "text-classification",
+      "fits": [
+        "rag",
+        "search ranking"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "BAAI/bge-reranker-base"
+    },
+    {
+      "id": "m011",
+      "type": "Text classification",
+      "task": "classification",
+      "pipeline_tag": "text-classification",
+      "fits": [
+        "labels",
+        "sentiment",
+        "intent"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "distilbert-base-uncased"
+    },
+    {
+      "id": "m012",
+      "type": "Zero-shot classification",
+      "task": "classification",
+      "pipeline_tag": "zero-shot-classification",
+      "fits": [
+        "labels without training"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "facebook/bart-large-mnli"
+    },
+    {
+      "id": "m013",
+      "type": "Token classification",
+      "task": "named entity recognition",
+      "pipeline_tag": "token-classification",
+      "fits": [
+        "ner",
+        "pii"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "dslim/bert-base-NER"
+    },
+    {
+      "id": "m014",
+      "type": "Question answering",
+      "task": "question answering",
+      "pipeline_tag": "question-answering",
+      "fits": [
+        "extractive qa",
+        "documents"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "deepset/roberta-base-squad2"
+    },
+    {
+      "id": "m015",
+      "type": "Summarization",
+      "task": "summarization",
+      "pipeline_tag": "summarization",
+      "fits": [
+        "notes",
+        "meetings"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "facebook/bart-large-cnn"
+    },
+    {
+      "id": "m016",
+      "type": "Translation",
+      "task": "translation",
+      "pipeline_tag": "translation",
+      "fits": [
+        "language",
+        "localize"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "Helsinki-NLP/opus-mt-en-es"
+    },
+    {
+      "id": "m017",
+      "type": "Multilingual translation",
+      "task": "translation",
+      "pipeline_tag": "translation",
+      "fits": [
+        "many languages"
+      ],
+      "commercial_ok": false,
+      "min_gb": 4,
+      "example": "facebook/nllb-200-distilled-600M"
+    },
+    {
+      "id": "m018",
+      "type": "Fill mask",
+      "task": "language modeling",
+      "pipeline_tag": "fill-mask",
+      "fits": [
+        "bert",
+        "autocomplete"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "google-bert/bert-base-uncased"
+    },
+    {
+      "id": "m019",
+      "type": "Guardrail classifier",
+      "task": "moderation",
+      "pipeline_tag": "text-classification",
+      "fits": [
+        "safety",
+        "moderation"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "facebook/roberta-hate-speech-dynabench-r4-target"
+    },
+    {
+      "id": "m020",
+      "type": "Prompt injection detector",
+      "task": "moderation",
+      "pipeline_tag": "text-classification",
+      "fits": [
+        "security",
+        "jailbreak"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "protectai/deberta-v3-base-prompt-injection"
+    },
+    {
+      "id": "m021",
+      "type": "ASR whisper",
+      "task": "speech recognition",
+      "pipeline_tag": "automatic-speech-recognition",
+      "fits": [
+        "transcribe",
+        "voice"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "openai/whisper-small"
+    },
+    {
+      "id": "m022",
+      "type": "Streaming ASR",
+      "task": "speech recognition",
+      "pipeline_tag": "automatic-speech-recognition",
+      "fits": [
+        "live caption"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "openai/whisper-tiny"
+    },
+    {
+      "id": "m023",
+      "type": "Speaker diarization",
+      "task": "speaker diarization",
+      "pipeline_tag": "automatic-speech-recognition",
+      "fits": [
+        "who spoke"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "pyannote/speaker-diarization-3.1"
+    },
+    {
+      "id": "m024",
+      "type": "Text to speech",
+      "task": "text to speech",
+      "pipeline_tag": "text-to-speech",
+      "fits": [
+        "narration",
+        "fallback voice"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "hexgrad/Kokoro-82M"
+    },
+    {
+      "id": "m025",
+      "type": "Voice cloning",
+      "task": "voice cloning",
+      "pipeline_tag": "text-to-speech",
+      "fits": [
+        "clone voice",
+        "reference clip"
+      ],
+      "commercial_ok": true,
+      "min_gb": 4,
+      "example": "ResembleAI/chatterbox"
+    },
+    {
+      "id": "m026",
+      "type": "Noncommercial voice clone",
+      "task": "voice cloning",
+      "pipeline_tag": "text-to-speech",
+      "fits": [
+        "xtts"
+      ],
+      "commercial_ok": false,
+      "min_gb": 4,
+      "example": "coqui/XTTS-v2"
+    },
+    {
+      "id": "m027",
+      "type": "Audio classification",
+      "task": "audio classification",
+      "pipeline_tag": "audio-classification",
+      "fits": [
+        "sound",
+        "events"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "MIT/ast-finetuned-audioset-10-10-0.4593"
+    },
+    {
+      "id": "m028",
+      "type": "Music generation",
+      "task": "music generation",
+      "pipeline_tag": "text-to-audio",
+      "fits": [
+        "music",
+        "audio"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "facebook/musicgen-small"
+    },
+    {
+      "id": "m029",
+      "type": "Text to audio",
+      "task": "audio generation",
+      "pipeline_tag": "text-to-audio",
+      "fits": [
+        "effects",
+        "sound"
+      ],
+      "commercial_ok": true,
+      "min_gb": 4,
+      "example": "cvssp/audioldm-s-full-v2"
+    },
+    {
+      "id": "m030",
+      "type": "Image classification",
+      "task": "image classification",
+      "pipeline_tag": "image-classification",
+      "fits": [
+        "photos",
+        "labels"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "google/vit-base-patch16-224"
+    },
+    {
+      "id": "m031",
+      "type": "Zero-shot image classification",
+      "task": "image classification",
+      "pipeline_tag": "zero-shot-image-classification",
+      "fits": [
+        "clip labels"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "openai/clip-vit-base-patch32"
+    },
+    {
+      "id": "m032",
+      "type": "Object detection",
+      "task": "object detection",
+      "pipeline_tag": "object-detection",
+      "fits": [
+        "boxes",
+        "vision"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "facebook/detr-resnet-50"
+    },
+    {
+      "id": "m033",
+      "type": "Image segmentation",
+      "task": "segmentation",
+      "pipeline_tag": "image-segmentation",
+      "fits": [
+        "masks"
+      ],
+      "commercial_ok": true,
+      "min_gb": 4,
+      "example": "facebook/sam-vit-base"
+    },
+    {
+      "id": "m034",
+      "type": "Depth estimation",
+      "task": "depth estimation",
+      "pipeline_tag": "depth-estimation",
+      "fits": [
+        "3d",
+        "distance"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "Intel/dpt-hybrid-midas"
+    },
+    {
+      "id": "m035",
+      "type": "Pose estimation",
+      "task": "pose estimation",
+      "pipeline_tag": "keypoint-detection",
+      "fits": [
+        "body",
+        "keypoints"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "facebook/detr-resnet-50"
+    },
+    {
+      "id": "m036",
+      "type": "OCR",
+      "task": "document understanding",
+      "pipeline_tag": "image-to-text",
+      "fits": [
+        "receipts",
+        "scans"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "microsoft/trocr-base-printed"
+    },
+    {
+      "id": "m037",
+      "type": "Document VLM",
+      "task": "document understanding",
+      "pipeline_tag": "image-text-to-text",
+      "fits": [
+        "forms",
+        "invoices"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "naver-clova-ix/donut-base"
+    },
+    {
+      "id": "m038",
+      "type": "Image captioning",
+      "task": "image captioning",
+      "pipeline_tag": "image-to-text",
+      "fits": [
+        "alt text"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "Salesforce/blip-image-captioning-base"
+    },
+    {
+      "id": "m039",
+      "type": "Vision language model",
+      "task": "multimodal",
+      "pipeline_tag": "image-text-to-text",
+      "fits": [
+        "see and answer"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "Qwen/Qwen2-VL-2B-Instruct"
+    },
+    {
+      "id": "m040",
+      "type": "Text to image",
+      "task": "image generation",
+      "pipeline_tag": "text-to-image",
+      "fits": [
+        "pictures",
+        "marketing"
+      ],
+      "commercial_ok": true,
+      "min_gb": 6,
+      "example": "stabilityai/sdxl-turbo"
+    },
+    {
+      "id": "m041",
+      "type": "Image to image",
+      "task": "image editing",
+      "pipeline_tag": "image-to-image",
+      "fits": [
+        "style",
+        "edit"
+      ],
+      "commercial_ok": true,
+      "min_gb": 6,
+      "example": "stabilityai/stable-diffusion-xl-refiner-1.0"
+    },
+    {
+      "id": "m042",
+      "type": "Likeness adapter",
+      "task": "image cloning",
+      "pipeline_tag": "text-to-image",
+      "fits": [
+        "ip-adapter",
+        "likeness"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "h94/IP-Adapter"
+    },
+    {
+      "id": "m043",
+      "type": "Inpainting",
+      "task": "image editing",
+      "pipeline_tag": "image-to-image",
+      "fits": [
+        "fill",
+        "mask"
+      ],
+      "commercial_ok": true,
+      "min_gb": 6,
+      "example": "runwayml/stable-diffusion-inpainting"
+    },
+    {
+      "id": "m044",
+      "type": "Upscaler",
+      "task": "image editing",
+      "pipeline_tag": "image-to-image",
+      "fits": [
+        "super resolution"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "caidas/swin2SR-classical-sr-x2-64"
+    },
+    {
+      "id": "m045",
+      "type": "Video classification",
+      "task": "video understanding",
+      "pipeline_tag": "video-classification",
+      "fits": [
+        "clips"
+      ],
+      "commercial_ok": true,
+      "min_gb": 4,
+      "example": "MCG-NJU/videomae-base"
+    },
+    {
+      "id": "m046",
+      "type": "Text to video",
+      "task": "video generation",
+      "pipeline_tag": "text-to-video",
+      "fits": [
+        "clips",
+        "ads"
+      ],
+      "commercial_ok": true,
+      "min_gb": 16,
+      "example": "cerspense/zeroscope_v2_576w"
+    },
+    {
+      "id": "m047",
+      "type": "Image to video",
+      "task": "video generation",
+      "pipeline_tag": "image-to-video",
+      "fits": [
+        "animate"
+      ],
+      "commercial_ok": true,
+      "min_gb": 16,
+      "example": "stabilityai/stable-video-diffusion-img2vid-xt"
+    },
+    {
+      "id": "m048",
+      "type": "Tabular classifier",
+      "task": "tabular",
+      "pipeline_tag": "tabular-classification",
+      "fits": [
+        "spreadsheet",
+        "fraud"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "autogluon/tabular"
+    },
+    {
+      "id": "m049",
+      "type": "Time series forecast",
+      "task": "time series",
+      "pipeline_tag": "time-series-forecasting",
+      "fits": [
+        "forecast",
+        "demand"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "amazon/chronos-t5-small"
+    },
+    {
+      "id": "m050",
+      "type": "Anomaly detection",
+      "task": "time series",
+      "pipeline_tag": "tabular-classification",
+      "fits": [
+        "outliers",
+        "monitoring"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "amazon/chronos-t5-tiny"
+    },
+    {
+      "id": "m051",
+      "type": "Reinforcement learning policy",
+      "task": "control",
+      "pipeline_tag": "reinforcement-learning",
+      "fits": [
+        "agents",
+        "games"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "sb3/ppo-Pendulum-v1"
+    },
+    {
+      "id": "m052",
+      "type": "Sentence similarity",
+      "task": "embeddings",
+      "pipeline_tag": "sentence-similarity",
+      "fits": [
+        "dedupe",
+        "match"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "sentence-transformers/all-MiniLM-L6-v2"
+    },
+    {
+      "id": "m053",
+      "type": "Cross encoder",
+      "task": "reranking",
+      "pipeline_tag": "text-classification",
+      "fits": [
+        "pair scoring"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    },
+    {
+      "id": "m054",
+      "type": "Retrieval augmented generator",
+      "task": "rag",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "grounded answers"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "Qwen/Qwen2.5-7B-Instruct"
+    },
+    {
+      "id": "m055",
+      "type": "Long context LLM",
+      "task": "text generation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "long documents"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "Qwen/Qwen2.5-7B-Instruct"
+    },
+    {
+      "id": "m056",
+      "type": "Function calling LLM",
+      "task": "agents",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "tools",
+        "json"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "Qwen/Qwen2.5-7B-Instruct"
+    },
+    {
+      "id": "m057",
+      "type": "JSON schema model",
+      "task": "agents",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "structured output"
+      ],
+      "commercial_ok": true,
+      "min_gb": 4,
+      "example": "Qwen/Qwen2.5-3B-Instruct"
+    },
+    {
+      "id": "m058",
+      "type": "Router model",
+      "task": "routing",
+      "pipeline_tag": "text-classification",
+      "fits": [
+        "pick a model"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "distilbert-base-uncased"
+    },
+    {
+      "id": "m059",
+      "type": "Quantized GGUF chat",
+      "task": "text generation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "llama.cpp",
+        "local"
+      ],
+      "commercial_ok": true,
+      "min_gb": 4,
+      "example": "TheBloke/Mistral-7B-Instruct-v0.2-GGUF"
+    },
+    {
+      "id": "m060",
+      "type": "LoRA adapter",
+      "task": "adaptation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "fine-tune",
+        "style"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "PEFT/lora"
+    },
+    {
+      "id": "m061",
+      "type": "Reward model",
+      "task": "alignment",
+      "pipeline_tag": "text-classification",
+      "fits": [
+        "preference",
+        "rlhf"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "OpenAssistant/reward-model-deberta-v3-large-v2"
+    },
+    {
+      "id": "m062",
+      "type": "Safety reward model",
+      "task": "moderation",
+      "pipeline_tag": "text-classification",
+      "fits": [
+        "harm score"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "facebook/roberta-hate-speech-dynabench-r4-target"
+    },
+    {
+      "id": "m063",
+      "type": "Protein language model",
+      "task": "science",
+      "pipeline_tag": "fill-mask",
+      "fits": [
+        "biology",
+        "sequence"
+      ],
+      "commercial_ok": true,
+      "min_gb": 4,
+      "example": "facebook/esm2_t12_35M_UR50D"
+    },
+    {
+      "id": "m064",
+      "type": "Molecule model",
+      "task": "science",
+      "pipeline_tag": "feature-extraction",
+      "fits": [
+        "chemistry"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "seyonec/ChemBERTa-zinc-base-v1"
+    },
+    {
+      "id": "m065",
+      "type": "Medical NER",
+      "task": "named entity recognition",
+      "pipeline_tag": "token-classification",
+      "fits": [
+        "clinical",
+        "notes"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "d4data/biomedical-ner-all"
+    },
+    {
+      "id": "m066",
+      "type": "Legal classifier",
+      "task": "classification",
+      "pipeline_tag": "text-classification",
+      "fits": [
+        "contracts",
+        "clauses"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "nlpaueb/legal-bert-base-uncased"
+    },
+    {
+      "id": "m067",
+      "type": "Finance sentiment",
+      "task": "classification",
+      "pipeline_tag": "text-classification",
+      "fits": [
+        "markets",
+        "news"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "ProsusAI/finbert"
+    },
+    {
+      "id": "m068",
+      "type": "Code embedding",
+      "task": "embeddings",
+      "pipeline_tag": "feature-extraction",
+      "fits": [
+        "repo search"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "microsoft/codebert-base"
+    },
+    {
+      "id": "m069",
+      "type": "Diff review model",
+      "task": "code generation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "pull request",
+        "review"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "Qwen/Qwen2.5-Coder-7B-Instruct"
+    },
+    {
+      "id": "m070",
+      "type": "Test generation",
+      "task": "code generation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "unit tests"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "Qwen/Qwen2.5-Coder-7B-Instruct"
+    },
+    {
+      "id": "m071",
+      "type": "Commit message model",
+      "task": "code generation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "git",
+        "summary"
+      ],
+      "commercial_ok": true,
+      "min_gb": 4,
+      "example": "Qwen/Qwen2.5-Coder-3B-Instruct"
+    },
+    {
+      "id": "m072",
+      "type": "LayoutLM document",
+      "task": "document understanding",
+      "pipeline_tag": "token-classification",
+      "fits": [
+        "forms",
+        "boxes"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "microsoft/layoutlmv3-base"
+    },
+    {
+      "id": "m073",
+      "type": "Table transformer",
+      "task": "document understanding",
+      "pipeline_tag": "object-detection",
+      "fits": [
+        "tables",
+        "pdf"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "microsoft/table-transformer-detection"
+    },
+    {
+      "id": "m074",
+      "type": "Handwriting OCR",
+      "task": "document understanding",
+      "pipeline_tag": "image-to-text",
+      "fits": [
+        "notes",
+        "forms"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "microsoft/trocr-base-handwritten"
+    },
+    {
+      "id": "m075",
+      "type": "Background removal",
+      "task": "image editing",
+      "pipeline_tag": "image-segmentation",
+      "fits": [
+        "cutout",
+        "product"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "briaai/RMBG-1.4"
+    },
+    {
+      "id": "m076",
+      "type": "Face detection",
+      "task": "image classification",
+      "pipeline_tag": "object-detection",
+      "fits": [
+        "faces"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "openai/clip-vit-base-patch32"
+    },
+    {
+      "id": "m077",
+      "type": "Style transfer",
+      "task": "image editing",
+      "pipeline_tag": "image-to-image",
+      "fits": [
+        "brand style"
+      ],
+      "commercial_ok": true,
+      "min_gb": 6,
+      "example": "stabilityai/sdxl-turbo"
+    },
+    {
+      "id": "m078",
+      "type": "Control image generator",
+      "task": "image generation",
+      "pipeline_tag": "text-to-image",
+      "fits": [
+        "pose",
+        "edges"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "diffusers/controlnet-canny-sdxl-1.0"
+    },
+    {
+      "id": "m079",
+      "type": "3D generation",
+      "task": "3d generation",
+      "pipeline_tag": "image-to-3d",
+      "fits": [
+        "assets",
+        "mesh"
+      ],
+      "commercial_ok": true,
+      "min_gb": 12,
+      "example": "stabilityai/TripoSR"
+    },
+    {
+      "id": "m080",
+      "type": "Point cloud model",
+      "task": "3d generation",
+      "pipeline_tag": "feature-extraction",
+      "fits": [
+        "lidar",
+        "scan"
+      ],
+      "commercial_ok": true,
+      "min_gb": 4,
+      "example": "facebook/dinov2-small"
+    },
+    {
+      "id": "m081",
+      "type": "Speech translation",
+      "task": "translation",
+      "pipeline_tag": "automatic-speech-recognition",
+      "fits": [
+        "spoken translation"
+      ],
+      "commercial_ok": true,
+      "min_gb": 4,
+      "example": "openai/whisper-small"
+    },
+    {
+      "id": "m082",
+      "type": "Keyword spotting",
+      "task": "audio classification",
+      "pipeline_tag": "audio-classification",
+      "fits": [
+        "wake word"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "MIT/ast-finetuned-speech-commands-v2"
+    },
+    {
+      "id": "m083",
+      "type": "Emotion recognition",
+      "task": "audio classification",
+      "pipeline_tag": "audio-classification",
+      "fits": [
+        "tone",
+        "support"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition"
+    },
+    {
+      "id": "m084",
+      "type": "Diarized meeting notes",
+      "task": "summarization",
+      "pipeline_tag": "automatic-speech-recognition",
+      "fits": [
+        "meetings",
+        "minutes"
+      ],
+      "commercial_ok": true,
+      "min_gb": 4,
+      "example": "openai/whisper-small"
+    },
+    {
+      "id": "m085",
+      "type": "Customer intent",
+      "task": "classification",
+      "pipeline_tag": "text-classification",
+      "fits": [
+        "support",
+        "routing"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "distilbert-base-uncased"
+    },
+    {
+      "id": "m086",
+      "type": "Ticket summarizer",
+      "task": "summarization",
+      "pipeline_tag": "summarization",
+      "fits": [
+        "support"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "facebook/bart-large-cnn"
+    },
+    {
+      "id": "m087",
+      "type": "Policy QA",
+      "task": "question answering",
+      "pipeline_tag": "question-answering",
+      "fits": [
+        "handbook",
+        "government"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "deepset/roberta-base-squad2"
+    },
+    {
+      "id": "m088",
+      "type": "Citation grounded LLM",
+      "task": "rag",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "sources",
+        "government"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "Qwen/Qwen2.5-7B-Instruct"
+    },
+    {
+      "id": "m089",
+      "type": "Multimodal receipt reader",
+      "task": "document understanding",
+      "pipeline_tag": "image-text-to-text",
+      "fits": [
+        "expenses"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "naver-clova-ix/donut-base"
+    },
+    {
+      "id": "m090",
+      "type": "Product image generator",
+      "task": "image generation",
+      "pipeline_tag": "text-to-image",
+      "fits": [
+        "catalog",
+        "ads"
+      ],
+      "commercial_ok": true,
+      "min_gb": 6,
+      "example": "stabilityai/sdxl-turbo"
+    },
+    {
+      "id": "m091",
+      "type": "Brand voice TTS",
+      "task": "text to speech",
+      "pipeline_tag": "text-to-speech",
+      "fits": [
+        "narration",
+        "ads"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "hexgrad/Kokoro-82M"
+    },
+    {
+      "id": "m092",
+      "type": "Eval judge LLM",
+      "task": "evaluation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "rank outputs",
+        "judge"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "Qwen/Qwen2.5-7B-Instruct"
+    },
+    {
+      "id": "m093",
+      "type": "Embedding index builder",
+      "task": "embeddings",
+      "pipeline_tag": "feature-extraction",
+      "fits": [
+        "vector db"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "BAAI/bge-small-en-v1.5"
+    },
+    {
+      "id": "m094",
+      "type": "Rerank then generate",
+      "task": "rag",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "answer quality"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "Qwen/Qwen2.5-7B-Instruct"
+    },
+    {
+      "id": "m095",
+      "type": "Tiny on-device LLM",
+      "task": "text generation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "phone",
+        "offline"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "Qwen/Qwen2.5-0.5B-Instruct"
+    },
+    {
+      "id": "m096",
+      "type": "Vision embedding",
+      "task": "embeddings",
+      "pipeline_tag": "feature-extraction",
+      "fits": [
+        "image search"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "openai/clip-vit-base-patch32"
+    },
+    {
+      "id": "m097",
+      "type": "Audio embedding",
+      "task": "embeddings",
+      "pipeline_tag": "feature-extraction",
+      "fits": [
+        "sound search"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "laion/clap-htsat-unfused"
+    },
+    {
+      "id": "m098",
+      "type": "Graph model",
+      "task": "tabular",
+      "pipeline_tag": "feature-extraction",
+      "fits": [
+        "relations",
+        "knowledge"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "sentence-transformers/all-MiniLM-L6-v2"
+    },
+    {
+      "id": "m099",
+      "type": "Forecast explainer",
+      "task": "time series",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "why the forecast moved"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "Qwen/Qwen2.5-7B-Instruct"
+    },
+    {
+      "id": "m100",
+      "type": "Red team classifier",
+      "task": "moderation",
+      "pipeline_tag": "text-classification",
+      "fits": [
+        "abuse",
+        "policy"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "facebook/roberta-hate-speech-dynabench-r4-target"
+    },
+    {
+      "id": "m101",
+      "type": "PII redaction NER",
+      "task": "named entity recognition",
+      "pipeline_tag": "token-classification",
+      "fits": [
+        "privacy",
+        "ssn"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "dslim/bert-base-NER"
+    },
+    {
+      "id": "m102",
+      "type": "License classifier",
+      "task": "classification",
+      "pipeline_tag": "text-classification",
+      "fits": [
+        "open source",
+        "compliance"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "distilbert-base-uncased"
+    },
+    {
+      "id": "m103",
+      "type": "Curriculum tutor",
+      "task": "text generation",
+      "pipeline_tag": "text-generation",
+      "fits": [
+        "study",
+        "explain"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "Qwen/Qwen2.5-7B-Instruct"
+    },
+    {
+      "id": "m104",
+      "type": "Translation memory matcher",
+      "task": "embeddings",
+      "pipeline_tag": "sentence-similarity",
+      "fits": [
+        "localize",
+        "tm"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "sentence-transformers/all-MiniLM-L6-v2"
+    },
+    {
+      "id": "m105",
+      "type": "Slide captioner",
+      "task": "image captioning",
+      "pipeline_tag": "image-to-text",
+      "fits": [
+        "decks",
+        "alt text"
+      ],
+      "commercial_ok": true,
+      "min_gb": 2,
+      "example": "Salesforce/blip-image-captioning-base"
+    },
+    {
+      "id": "m106",
+      "type": "Screenshot agent VLM",
+      "task": "multimodal",
+      "pipeline_tag": "image-text-to-text",
+      "fits": [
+        "computer use",
+        "ui"
+      ],
+      "commercial_ok": true,
+      "min_gb": 8,
+      "example": "Qwen/Qwen2-VL-2B-Instruct"
+    },
+    {
+      "id": "m107",
+      "type": "Voice activity detection",
+      "task": "audio classification",
+      "pipeline_tag": "audio-classification",
+      "fits": [
+        "speech segments"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "pyannote/voice-activity-detection"
+    },
+    {
+      "id": "m108",
+      "type": "Speaker verification",
+      "task": "speaker diarization",
+      "pipeline_tag": "audio-classification",
+      "fits": [
+        "same speaker"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "speechbrain/spkrec-ecapa-voxceleb"
+    },
+    {
+      "id": "m109",
+      "type": "Watermark detector",
+      "task": "moderation",
+      "pipeline_tag": "audio-classification",
+      "fits": [
+        "provenance"
+      ],
+      "commercial_ok": true,
+      "min_gb": 1,
+      "example": "facebook/audioseal"
+    }
+  ]
+}

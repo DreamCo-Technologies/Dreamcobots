@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Model hub | Buddy</title><link rel="stylesheet" href="styles.css?v=41"><link rel="stylesheet" href="actions.css?v=4"></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Models</p><h1>Frontier, open source, and open weight</h1><p>These are search links. Buddy does not host every weight.</p></div><p><a class="btn btn-primary" href="self-training.html">Self-training</a></p></header>
+<section class="actions-review"><h2>frontier</h2><p><a class="btn btn-outline" href="https://huggingface.co/models?pipeline_tag=text-generation&sort=trending">Browse frontier models</a> <button class="btn btn-primary" type="button" data-approve="frontier">Approve a download</button></p><p>Approval records the choice. It does not download a file.</p></section><section class="actions-review"><h2>open-source</h2><p><a class="btn btn-outline" href="https://huggingface.co/models?license=license:apache-2.0&sort=trending">Browse open-source models</a> <button class="btn btn-primary" type="button" data-approve="open-source">Approve a download</button></p><p>Approval records the choice. It does not download a file.</p></section><section class="actions-review"><h2>open-weight</h2><p><a class="btn btn-outline" href="https://huggingface.co/models?pipeline_tag=text-generation&sort=downloads">Browse open-weight models</a> <button class="btn btn-primary" type="button" data-approve="open-weight">Approve a download</button></p><p>Approval records the choice. It does not download a file.</p></section>
+<p><label>Model id <input id="model-id" placeholder="org/model"></label> <button class="btn btn-primary" id="download-weight" type="button">Download locally</button></p>
+<p id="hub-status">No download approved.</p>
+</main>
+<script>
+document.querySelectorAll("[data-approve]").forEach((button) => button.addEventListener("click", () => { localStorage.setItem("dreamco.weight-download", button.dataset.approve); document.getElementById("hub-status").textContent = button.dataset.approve + " download approved."; }));
+document.getElementById("download-weight").addEventListener("click", () => {
+  if (!localStorage.getItem("dreamco.weight-download")) { document.getElementById("hub-status").textContent = "Approve a download first."; return; }
+  const model = document.getElementById("model-id").value.trim();
+  if (!model.includes("/")) { document.getElementById("hub-status").textContent = "Use org/model."; return; }
+  window.location.href = "https://huggingface.co/" + encodeURIComponent(model).replace("%2F", "/") + "/tree/main";
+});
+</script>
+</body></html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Buddy Live Demos · DreamCo</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:0;background:#0f1115;color:#e8e8ea}
+header{padding:20px 24px;border-bottom:1px solid #2a2d35}h1{margin:0;font-size:22px}
+.sub{color:#9aa0aa;font-size:14px;margin-top:6px}
+nav{display:flex;gap:8px;padding:12px 24px}nav button{background:#1b1e25;color:#e8e8ea;border:1px solid #2a2d35;border-radius:8px;padding:8px 14px;cursor:pointer}
+nav button.on{background:#3b5bdb;border-color:#3b5bdb}
+main{padding:0 24px 40px}section{display:none}section.on{display:block}
+.card{background:#171a21;border:1px solid #2a2d35;border-radius:10px;padding:14px;margin:10px 0}
+.src{font-size:12px;color:#9aa0aa}.src code{color:#c9d1ff}
+.truth{background:#2b2410;border:1px solid #6b5a1e;color:#f1d98a;border-radius:8px;padding:10px;font-size:14px;margin:10px 0}
+.stub{background:#2b1414;border:1px solid #6b2a2a;color:#f3b0b0;border-radius:8px;padding:10px}
+.steps{display:flex;flex-wrap:wrap;gap:6px}.steps span{background:#232733;border-radius:6px;padding:4px 8px;font-size:13px;cursor:pointer}
+.steps span.on{background:#3b5bdb}
+input,select{background:#1b1e25;color:#e8e8ea;border:1px solid #2a2d35;border-radius:6px;padding:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.pill{display:inline-block;font-size:11px;padding:2px 6px;border-radius:5px;background:#232733;margin-right:4px}
+a{color:#8fa6ff}
+</style></head><body>
+<header><h1>Buddy Live Demos</h1>
+<div class="sub">Every panel loads a real file from this repo at page load. Nothing here is a live model call, and no number is invented.</div></header>
+<nav><button data-t="bootcamp" class="on">Bootcamp</button><button data-t="models">Model picker</button><button data-t="packages">Packages</button></nav>
+<main>
+<section id="bootcamp" class="on"></section>
+<section id="models"></section>
+<section id="packages"></section>
+</main>
+<script>
+const SRC={
+ bootcamp:'../config/buddy-bootcamp-curriculum-v1.json',
+ catalog:'../buddy/openrouter/client_model_catalog.json',
+ registry:'../config/buddy/500-model-registry.json',
+ packages:'../buddy/store/packages.json'};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const src=p=>`<div class="src">Source: <code>${p.replace('../','')}</code></div>`;
+async function load(p){try{const r=await fetch(p,{cache:'no-store'});if(!r.ok)throw new Error(r.status);return await r.json()}catch(e){return {__err:String(e)}}}
+const stub=(p,e)=>`<div class="stub">Stub: could not load <code>${p.replace('../','')}</code> (${esc(e)}). This panel has no backing data until that file exists.</div>`;
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,section').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById(b.dataset.t).classList.add('on')});
+
+(async()=>{
+ const [bc,cat,reg,pk]=await Promise.all([load(SRC.bootcamp),load(SRC.catalog),load(SRC.registry),load(SRC.packages)]);
+
+ // Bootcamp
+ const B=document.getElementById('bootcamp');
+ if(bc.__err)B.innerHTML=stub(SRC.bootcamp,bc.__err);else{
+  B.innerHTML=`<div class="card"><h3>Lesson pipeline (${bc.pipeline.length} stages)</h3><div class="steps" id="bsteps">${bc.pipeline.map((s,i)=>`<span data-i="${i}">${i+1}. ${esc(s)}</span>`).join('')}</div><p id="bstep" class="sub">Click a stage to walk a lesson through it.</p>${src(SRC.bootcamp)}</div>
+  <div class="card"><h3>Every training unit needs</h3>${bc.training_unit.required.map(x=>`<span class="pill">${esc(x)}</span>`).join('')}</div>
+  <div class="card"><h3>Mastery requires</h3>${bc.mastery.requires.map(x=>`<span class="pill">${esc(x)}</span>`).join('')}</div>
+  <div class="card"><h3>Source policy</h3>${Object.entries(bc.source_policy).map(([k,v])=>`<div>${esc(k)}: <b>${v}</b></div>`).join('')}</div>
+  <div class="truth">This file defines the curriculum contract. It does not list completed lessons or pass rates, so none are shown.</div>`;
+  B.querySelectorAll('#bsteps span').forEach(s=>s.onclick=()=>{B.querySelectorAll('#bsteps span').forEach(x=>x.classList.toggle('on',+x.dataset.i<=+s.dataset.i));const i=+s.dataset.i;document.getElementById('bstep').textContent=`Stage ${i+1} of ${bc.pipeline.length}: ${bc.pipeline[i]}${i<bc.pipeline.length-1?' then '+bc.pipeline[i+1]:' (last stage, evidence recorded)'}.`});
+ }
+
+ // Models
+ const M=document.getElementById('models');
+ let h='';
+ if(cat.__err)h+=stub(SRC.catalog,cat.__err);else{
+  const al=Object.keys(cat.client_aliases);
+  h+=`<div class="card"><h3>Pick a Buddy route</h3><select id="alias">${al.map(a=>`<option ${a===cat.selection_policy.default?'selected':''}>${esc(a)}</option>`).join('')}</select>
+  <p id="aliasout" class="sub"></p><div>Optimizes for: ${cat.selection_policy.optimize_for.map(x=>`<span class="pill">${esc(x)}</span>`).join('')}</div>
+  <div class="sub" style="margin-top:8px">Promotion needs a benchmark first (minimum ${cat.mastery.minimum_samples} samples). Fallbacks: existing catalog ${cat.selection_policy.fallback_to_existing_catalog?'on':'off'}, OpenRouter ${cat.selection_policy.fallback_to_openrouter?'on':'off'}.</div>${src(SRC.catalog)}</div>`;
+ }
+ if(reg.__err)h+=stub(SRC.registry,reg.__err);else{
+  h+=`<div class="card"><h3>Owner 500 registry slots</h3>
+  <div>Slot <input id="slot" type="number" min="${reg.slots.start}" max="${reg.slots.end}" value="1" style="width:80px"> Role <select id="role">${reg.default_roles.map(r=>`<option>${esc(r)}</option>`).join('')}</select></div>
+  <div class="card" id="slotout"></div>
+  <div>Connectivity states: ${reg.connectivity_states.map(x=>`<span class="pill">${esc(x)}</span>`).join('')}</div>
+  <div style="margin-top:6px">Evidence needed per model: ${reg.required_evidence.map(x=>`<span class="pill">${esc(x)}</span>`).join('')}</div>
+  <div class="truth">${esc(reg.truth_boundary)}</div>${src(SRC.registry)}</div>`;
+ }
+ M.innerHTML=h;
+ if(!cat.__err){const u=()=>{const a=document.getElementById('alias').value;document.getElementById('aliasout').textContent=`${a} resolves ${cat.client_aliases[a]}ly through "${cat.strategy}". No model is called from this page.`};document.getElementById('alias').onchange=u;u()}
+ if(!reg.__err){const u=()=>{let n=Math.min(reg.slots.end,Math.max(reg.slots.start,+document.getElementById('slot').value||1));const id=reg.id_pattern.replace(/\{slot:03d\}/,String(n).padStart(3,'0'));document.getElementById('slotout').innerHTML=`<b>${esc(id)}</b> as <b>${esc(document.getElementById('role').value)}</b><br><span class="sub">Status: <b>unverified</b>. No per-slot evidence file is in the repo yet, so this slot has no benchmark result.</span>`};document.getElementById('slot').oninput=u;document.getElementById('role').onchange=u;u()}
+
+ // Packages
+ const P=document.getElementById('packages');
+ if(pk.__err)P.innerHTML=stub(SRC.packages,pk.__err);else{
+  P.innerHTML=`<div class="truth">${esc(pk.rule)} Frontier model trained: <b>${pk.frontier_model_trained}</b>. Sales count known: <b>${pk.sales_count_known}</b>.</div>
+  <input id="q" placeholder="Filter ${pk.packages.length} packages" style="width:260px"> ${src(SRC.packages)}
+  <div class="grid" id="pgrid"></div>`;
+  const r=()=>{const q=document.getElementById('q').value.toLowerCase();document.getElementById('pgrid').innerHTML=pk.packages.filter(p=>JSON.stringify(p).toLowerCase().includes(q)).map(p=>`<div class="card"><b>${esc(p.plain)}</b> <span class="pill">${esc(p.id)}</span><p>${esc(p.what)}</p><div class="sub">Not included: ${esc(p.not_included)}</div><div class="sub">Ships weights: ${p.ships_weights} · <a href="${esc(p.page)}">${esc(p.page)}</a></div></div>`).join('')};
+  document.getElementById('q').oninput=r;r();
+ }
+})();
+</script><script src="repository-actions.js" data-repository-actions="true" defer></script>
+</body></html>

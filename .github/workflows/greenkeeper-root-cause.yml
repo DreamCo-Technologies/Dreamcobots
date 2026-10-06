@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
@@ -40,7 +40,7 @@ jobs:
       - name: Fingerprint and queue root cause
         run: python3 tools/greenkeeper_root_cause.py --input /tmp/observations.json
       - name: Publish root-cause artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dreamco-root-cause-${{ github.run_id }}
           path: artifacts/greenkeeper/root-cause.json

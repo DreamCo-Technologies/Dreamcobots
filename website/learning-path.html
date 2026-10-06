@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Learning path | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Path</p><h1>Learning path</h1><p>Pick a section. A score is not measured until a result is saved. This does not make Buddy into another product.</p></div></header>
+<section class="actions-review"><h2>By source</h2><p><a class="btn btn-outline" href="https://huggingface.co/models">Open weight</a> <a class="btn btn-outline" href="https://huggingface.co/models?license=license:apache-2.0">Open source</a> <a class="btn btn-outline" href="model-hub.html">Frontier list</a> <a class="btn btn-outline" href="https://ocw.mit.edu/">United States course</a> <a class="btn btn-outline" href="https://www.coursera.org/">Global courses</a></p></section>
+<section class="actions-review"><h2>Scores and age path</h2><p id="path-items"></p><p id="path-status">No score measured.</p></section>
+</main>
+<script>
+const items = ["lesson score","benchmark score","loop score","age path","deep plan","task route","work task","home task","second pass","holdout"];
+const box = document.getElementById("path-items");
+items.forEach((name) => { const button = document.createElement("button"); button.className = "btn btn-outline"; button.type = "button"; button.textContent = name; button.addEventListener("click", () => { document.getElementById("path-status").textContent = name + ": not measured."; }); box.appendChild(button); });
+</script>
+</body></html>

@@ -70,10 +70,12 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("bundle", type=Path)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--suite", type=Path, default=None, help="Pinned suite JSON (default: config/frontier-evidence-suite.json)")
     args = parser.parse_args()
-    suite = json.loads(SUITE.read_text())
     import hashlib
-    suite["suite_hash"] = hashlib.sha256(SUITE.read_bytes()).hexdigest()
+    suite_path = args.suite if args.suite is not None else SUITE
+    suite = json.loads(suite_path.read_text())
+    suite["suite_hash"] = hashlib.sha256(suite_path.read_bytes()).hexdigest()
     result = assess(json.loads(args.bundle.read_text()), suite)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + "\n")
