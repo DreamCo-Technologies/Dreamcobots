@@ -224,11 +224,51 @@
     renderJobs();
   });
 
+  // Generated jobs + prospectus (tools/build_actions_prospectus.py). Only shown when the
+  // fleet runtime outputs are deployed; buddy-run.js is loaded on demand so this page has no
+  // hard dependency on them.
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var el = document.createElement("script");
+      el.src = src; el.onload = resolve; el.onerror = function () { reject(new Error(src)); };
+      document.head.appendChild(el);
+    });
+  }
+
+  function renderGenerated(meta) {
+    var BR = window.BuddyRun;
+    if (!BR || !meta || !registry) return;
+    var curated = {};
+    (registry.jobs || []).forEach(function (j) { curated[j.id] = true; curated["wf:" + j.workflow] = true; });
+    var cards = (meta.workflows || []).filter(function (c) {
+      var wf = (c.links && c.links.workflow || "").split("/").pop();
+      return !curated[c.id] && (!wf || !curated["wf:" + wf] || /^fleet_/.test(c.id));
+    });
+    var list = document.getElementById("bcp-generated-list");
+    list.innerHTML = cards.map(function (c) {
+      return "<article class=\"desk-card\" id=\"job-" + esc(c.id) + "\"><strong>" + esc(c.title) + "</strong>" +
+        "<p><span class=\"bcp-tier " + esc(c.risk_tier) + "\">" + esc(c.risk_tier) + "</span> <span class=\"bcp-meta\">" + esc(c.id) + "</span></p>" +
+        BR.runControls(c) + "</article>";
+    }).join("") || "<p class=\"desk-note\">Every workflow is covered by a curated job.</p>";
+    document.getElementById("bcp-generated-note").insertAdjacentHTML("beforeend",
+      " Bots and divisions (Run, prospectus and Customize): <a href=\"fleet-runtime.html\">fleet runtime</a> · <a href=\"divisions.html\">divisions</a> · files: <a href=\"files.html\">file prospectus</a>.");
+    document.getElementById("bcp-generated").hidden = false;
+  }
+
+  function loadGenerated() {
+    return fetchJson("data/run-prospectus.json").then(function (meta) {
+      var css = document.createElement("link");
+      css.rel = "stylesheet"; css.href = "buddy-run.css";
+      document.head.appendChild(css);
+      return loadScript("buddy-run.js").then(function () { renderGenerated(meta); });
+    }).catch(function () { /* fleet runtime outputs not deployed yet: curated jobs only */ });
+  }
+
   loadRegistry().then(function (reg) {
     registry = reg;
     return fetchJson("data/buddy-control-status.json").then(function (s) { status = s || { jobs: {} }; }, function () { status = { jobs: {} }; });
   }).then(function () {
-    if (registry) render();
+    if (registry) { render(); loadGenerated(); }
   }).catch(function (err) {
     document.getElementById("bcp-stamp").textContent = "Could not load the Buddy job registry (" + err.message + ").";
   });

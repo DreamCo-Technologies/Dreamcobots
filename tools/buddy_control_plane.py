@@ -39,12 +39,15 @@ ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = ROOT / "config" / "buddy" / "control-plane.json"
 WORKFLOWS_DIR = ROOT / ".github" / "workflows"
 PUBLIC_REGISTRY_PATH = ROOT / "website" / "data" / "buddy-control-plane.json"
+# Generated Run with Buddy jobs (one per workflow + fleet bot/division jobs), produced by
+# tools/build_actions_prospectus.py. Merged under the curated registry: curated jobs always win.
+GENERATED_PATH = ROOT / "config" / "buddy" / "run-with-buddy.generated.json"
 PUBLIC_STATUS_PATH = ROOT / "website" / "data" / "buddy-control-status.json"
 
 SCHEMA = "dreamco.buddy.control-plane.v1"
 STATUS_SCHEMA = "dreamco.buddy.control-status.v1"
 TIERS = ("read_only", "writes_reports", "writes_code", "money")
-VERBS = ("run", "status", "list", "help")
+VERBS = ("run", "status", "list", "help", "customize")
 
 JOB_ID_RE = re.compile(r"^[a-z][a-z0-9_]{1,63}$")
 INPUT_KEY_RE = re.compile(r"^[a-z][a-z0-9_]{0,39}$")
@@ -54,6 +57,12 @@ WORKFLOW_FILE_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{0,98}\.ya?ml$")
 REPO_RE = re.compile(r"^[A-Za-z0-9_.-]{1,100}/[A-Za-z0-9_.-]{1,100}$")
 REF_RE = re.compile(r"^[A-Za-z0-9._/-]{1,100}$")
 RUN_URL_RE = re.compile(r"https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/actions/runs/\d+")
+CUSTOMIZE_TARGET_RE = re.compile(r"^(?:[a-z0-9][a-z0-9-]{1,80}|division:[A-Za-z][A-Za-z0-9]{1,40}|file:[A-Za-z0-9_.][A-Za-z0-9_./-]{0,199})$")
+YAML_FENCE_RE = re.compile(r"^```ya?ml[ \t]*$(.*?)^```[ \t]*$", re.MULTILINE | re.DOTALL)
+CUSTOMIZE_JOB_ID = "buddy_customize_apply"
+CUSTOMIZE_BODY_MAX = 4000
+GENERATED_FIELDS = ("id", "family", "title", "workflow", "risk_tier", "requires_owner_approval", "triggerable",
+                    "blocked_reason", "destructive", "inputs", "fixed_inputs", "notes")
 INPUTS_FENCE_RE = re.compile(r"^```buddy-inputs[ \t]*$(.*?)^```[ \t]*$", re.MULTILINE | re.DOTALL)
 
 COMMAND_LINE_MAX = 300
@@ -74,6 +83,53 @@ class CommandError(ValueError):
 
 def load_registry(path: Path = REGISTRY_PATH) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def merge_generated(registry: dict[str, Any], generated: dict[str, Any] | None,
+                    workflows_dir: Path | None = None) -> tuple[dict[str, Any], list[str]]:
+    """Return (registry + generated jobs, skipped notes). Curated jobs always win.
+
+    A generated job is added only when its id and workflow are not already curated and it
+    passes check_registry on its own (each job fails closed individually; a bad generated job
+    never invalidates the curated registry).
+    """
+    merged = dict(registry)
+    jobs = list(registry.get("jobs") or [])
+    skipped: list[str] = []
+    if not generated:
+        return merged, skipped
+    curated_ids = {j.get("id") for j in jobs if isinstance(j, dict)}
+    curated_workflows = {j.get("workflow") for j in jobs if isinstance(j, dict)}
+    for raw in generated.get("jobs") or []:
+        if not isinstance(raw, dict):
+            continue
+        job_id = raw.get("id")
+        if job_id in curated_ids:
+            continue
+        if raw.get("workflow") in curated_workflows and not str(job_id).startswith("fleet_"):
+            continue
+        job = {k: raw[k] for k in GENERATED_FIELDS if k in raw}
+        job["generated"] = True
+        errors = check_registry(dict(registry, jobs=[job]), workflows_dir)
+        if errors:
+            skipped.append(f"{job_id}: {errors[0]}")
+            continue
+        jobs.append(job)
+        curated_ids.add(job_id)
+    merged["jobs"] = jobs
+    return merged, skipped
+
+
+def load_merged(path: Path = REGISTRY_PATH, generated_path: Path | None = GENERATED_PATH,
+                workflows_dir: Path | None = None) -> tuple[dict[str, Any], list[str]]:
+    registry = load_registry(path)
+    generated = None
+    if generated_path is not None and generated_path.is_file():
+        try:
+            generated = json.loads(generated_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return registry, ["generated registry unreadable; using curated jobs only"]
+    return merge_generated(registry, generated, workflows_dir)
 
 
 def jobs_by_id(registry: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -303,6 +359,7 @@ class Command:
     verb: str
     job_id: str | None = None
     inputs: dict[str, str] = field(default_factory=dict)
+    target: str | None = None
 
 
 def _parse_pair(token: str, inputs: dict[str, str]) -> None:
@@ -336,8 +393,12 @@ def parse_command_line(line: str) -> Command:
         return Command("help")
     verb = tokens[1]
     if verb not in VERBS:
-        raise CommandError("unknown verb; use /buddy run, /buddy status, /buddy list, or /buddy help")
+        raise CommandError("unknown verb; use /buddy run, /buddy status, /buddy list, /buddy customize, or /buddy help")
     rest = tokens[2:]
+    if verb == "customize":
+        if len(rest) != 1 or not CUSTOMIZE_TARGET_RE.match(rest[0]) or ".." in rest[0]:
+            raise CommandError("/buddy customize needs one target: <bot-id>, division:<Name>, or file:<path>")
+        return Command("customize", target=rest[0])
     if verb in ("list", "help"):
         if rest:
             raise CommandError(f"/buddy {verb} takes no arguments")
@@ -376,6 +437,20 @@ def parse_inputs_block(body: str | None, inputs: dict[str, str]) -> dict[str, st
     return inputs
 
 
+def check_customize_body(text: str | None) -> None:
+    """Structural check only; field-level validation runs in the apply workflow (allowlists)."""
+    text = (text or "").replace("\r\n", "\n")
+    if len(text) > CUSTOMIZE_BODY_MAX:
+        raise CommandError(f"customize patches are limited to {CUSTOMIZE_BODY_MAX} characters")
+    blocks = YAML_FENCE_RE.findall(text)
+    if len(blocks) != 1:
+        raise CommandError("/buddy customize needs exactly one ```yaml fenced patch")
+    if not blocks[0].strip():
+        raise CommandError("the yaml patch is empty")
+    if any(ord(ch) < 32 and ch not in "\n\t" for ch in blocks[0]):
+        raise CommandError("the yaml patch contains control characters")
+
+
 def command_from_event(event: dict[str, str]) -> Command:
     """Build a Command from router env (issue title/body or comment body)."""
     if event.get("event_name") == "issue_comment":
@@ -384,11 +459,15 @@ def command_from_event(event: dict[str, str]) -> Command:
         cmd = parse_command_line(first)
         if cmd.verb == "run":
             parse_inputs_block(remainder, cmd.inputs)
+        if cmd.verb == "customize":
+            check_customize_body(remainder)
         return cmd
     if event.get("event_name") == "issues":
         cmd = parse_command_line(event.get("issue_title") or "")
         if cmd.verb == "run":
             parse_inputs_block(event.get("issue_body"), cmd.inputs)
+        if cmd.verb == "customize":
+            check_customize_body(event.get("issue_body"))
         return cmd
     raise CommandError("unsupported event")
 
@@ -603,6 +682,7 @@ def event_from_env(env: dict[str, str] | None = None) -> dict[str, str]:
         "issue_title": env.get("BUDDY_ISSUE_TITLE", ""),
         "issue_body": env.get("BUDDY_ISSUE_BODY", ""),
         "comment_body": env.get("BUDDY_COMMENT_BODY", ""),
+        "comment_id": env.get("BUDDY_COMMENT_ID", ""),
         "label_name": env.get("BUDDY_LABEL_NAME", ""),
         "router_run_url": env.get("BUDDY_ROUTER_RUN_URL", ""),
     }
@@ -672,6 +752,10 @@ def route(event: dict[str, str], registry: dict[str, Any], api: GitHubAPI) -> tu
     job = None
     if cmd.verb == "run":
         job = jobs_by_id(registry).get(cmd.job_id or "")
+    if cmd.verb == "customize":
+        job = jobs_by_id(registry).get(CUSTOMIZE_JOB_ID)
+        if job is None:
+            return reject("customization is not enabled (no buddy_customize_apply job in the registry)")
     actor = event.get("actor") or ""
     permission = api.permission(actor) if LOGIN_RE.match(actor) else None
     decision = authorize(registry, actor, permission, job, event.get("issue_author") if issue_event else None)
@@ -686,6 +770,7 @@ def route(event: dict[str, str], registry: dict[str, Any], api: GitHubAPI) -> tu
             "- `/buddy list` - registered jobs",
             "- `/buddy status [job_id]` - last run on " + ref,
             "- `/buddy run <job_id> [key=value ...]` - dispatch a registered job",
+            "- `/buddy customize <bot-id|division:Name|file:path>` + one ```yaml patch - validated against the editable-field allowlist, applied on a branch, opened as a PR",
             "",
             "Inputs can also go in a fenced block tagged `buddy-inputs`, one `key=value` per line.",
         ]
@@ -708,10 +793,19 @@ def route(event: dict[str, str], registry: dict[str, Any], api: GitHubAPI) -> tu
         api.post_comment(number, body)
         return 0, body
 
-    try:
-        job, final_inputs = validate_run(registry, cmd)
-    except CommandError as exc:
-        return reject(str(exc))
+    if cmd.verb == "customize":
+        tier_cfg = (registry.get("risk_tiers") or {}).get(job.get("risk_tier")) or {}
+        if job.get("risk_tier") == "money" or tier_cfg.get("dispatchable") is not True or job.get("destructive"):
+            return reject("the customize job is not dispatchable under the registry policy")
+        comment_id = event.get("comment_id") or "0"
+        if issue_event or not re.fullmatch(r"[0-9]{1,15}", comment_id):
+            comment_id = "0"
+        final_inputs = {"issue": str(number), "comment": comment_id}
+    else:
+        try:
+            job, final_inputs = validate_run(registry, cmd)
+        except CommandError as exc:
+            return reject(str(exc))
 
     started = time.time()
     try:
@@ -724,7 +818,9 @@ def route(event: dict[str, str], registry: dict[str, Any], api: GitHubAPI) -> tu
     run_url = match.group(0) if match else api.find_dispatched_run(job["workflow"], started)
     shown_inputs = ", ".join(f"`{k}={v}`" for k, v in final_inputs.items()) or "none"
     lines = [
-        f"**Buddy dispatched `{job['id']}`** ({job['risk_tier']}) on `{ref}`.",
+        f"**Buddy dispatched `{job['id']}`** ({job['risk_tier']}) on `{ref}`." + (
+            f" Customization of `{cmd.target}`: the apply job validates the patch and opens a PR; nothing is merged automatically."
+            if cmd.verb == "customize" else ""),
         f"- Workflow: `{job['workflow']}`",
         f"- Inputs: {shown_inputs}",
         f"- Run: {run_url}" if run_url else f"- Run: not found yet; see {_actions_url(repo, job['workflow'])}",
@@ -829,14 +925,19 @@ def main(argv: list[str] | None = None) -> int:
     p_pub.add_argument("--check", action="store_true")
     args = parser.parse_args(argv)
 
-    registry = load_registry(args.registry)
+    curated = load_registry(args.registry)
+    generated_path = GENERATED_PATH if args.registry == REGISTRY_PATH else None
     if args.cmd == "check":
-        errors = check_registry(registry, None if args.no_workflows else WORKFLOWS_DIR)
+        errors = check_registry(curated, None if args.no_workflows else WORKFLOWS_DIR)
+        merged, skipped = load_merged(args.registry, generated_path, None if args.no_workflows else WORKFLOWS_DIR)
         for err in errors:
             print(f"ERROR {err}")
+        for note in skipped:
+            print(f"SKIP generated job {note}")
         if not errors:
-            print(f"OK {len(registry['jobs'])} jobs")
+            print(f"OK {len(curated['jobs'])} curated jobs, {len(merged['jobs']) - len(curated['jobs'])} generated jobs merged")
         return 1 if errors else 0
+    registry, _skipped = load_merged(args.registry, generated_path, None)
     if args.cmd == "list":
         print("\n".join(_job_table(registry)))
         return 0
@@ -860,7 +961,9 @@ def main(argv: list[str] | None = None) -> int:
         print(f"wrote {args.out} source={snapshot['source']} jobs={len(snapshot['jobs'])} errors={len(snapshot['errors'])}")
         return 0
     if args.cmd == "publish-registry":
-        text = public_registry_text(registry)
+        # Curated jobs only: generated jobs are published by tools/build_actions_prospectus.py
+        # (website/data/run-prospectus.json) and rendered on buddy-control.html from there.
+        text = public_registry_text(curated)
         if args.check:
             current = args.out.read_text(encoding="utf-8") if args.out.exists() else ""
             if current != text:
