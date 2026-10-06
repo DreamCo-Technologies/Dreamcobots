@@ -31,13 +31,17 @@
   "skus": [
     {
       "sku_id": "DP-ONET-OCC-SYN",
-      "name": "O*NET Occupation Synthesis Pack",
+      "name": "DreamCo Occupation Synthesis Pack (built with O*NET® 31.0 data)",
       "primary_sources": [
         "us_gov_onet",
         "dreamco_original_synthesis"
       ],
-      "status": "skeleton_v0.0.1",
-      "skeleton_path": "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.1/"
+      "status": "populated_sample_v0.0.2_in_review",
+      "skeleton_path": "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.1/",
+      "sample_path": "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.2/",
+      "status_note": "2026-10-05 CT: 0.0.2 holds 44 rows built from pinned O*NET® 31.0 (dataset QA scorecard pass 98.5; asset gate approved_for_private_use; package license_gate_status fail; sellable build refused). Not for sale, no price. Display name set 2026-10-05 (Irean Jordan, option A).",
+      "sku_id_scope": "internal identifier only; a buyer-facing id is decided before any listing",
+      "name_decision": "Option A from reports/DATA_PACKAGE_LICENSE_QA_REVIEW.md 1.4, chosen by Irean Jordan on 2026-10-05"
     },
     {
       "sku_id": "DP-ONET-SKILL-GRAPH",
@@ -163,7 +167,9 @@
       "config/generated/universal-work-ai-catalog.json (generates locally in ~15s; not committed)",
       "study_packs/"
     ],
-    "populated_dataset_count_api_claim": 0
+    "populated_dataset_count_api_claim": 0,
+    "populated_dataset_count_on_disk": 1,
+    "populated_dataset_count_on_disk_note": "2026-10-05 CT: DP-ONET-OCC-SYN 0.0.2 sample (review branch feat/dp-onet-license-qa-review, PR pending review). server/routes.ts still returns populatedDatasetCount: 0; changing it is a follow-up for owner review."
   },
   "files_to_complete": [
     "buddy/learning/open_code_perspective.py",
@@ -289,7 +295,8 @@
     {
       "rank": 4,
       "gap": "No real assets or scorecard run for any SKU",
-      "complete_or_add": "first sample assets + scorecard >= 75"
+      "complete_or_add": "first sample assets + scorecard >= 75",
+      "status_2026_10_05": "Partial: 0.0.2 sample assets exist; dataset QA scorecard (tools/score_data_package_dataset.py) added and passing; config/dataset_evaluation_scorecard.json still not run (scorecard_score null)."
     },
     {
       "rank": 5,
@@ -301,6 +308,7 @@
     "reports/DATA_PACKAGE_PRODUCT_PLAN.md",
     "reports/ONET_MASTERY_TRACK.md",
     "reports/HUGGINGFACE_MASTERY_TRACK.md",
-    "reports/MODEL_ACCESS_PRODUCT_PLAN.md"
+    "reports/MODEL_ACCESS_PRODUCT_PLAN.md",
+    "reports/DATA_PACKAGE_LICENSE_QA_REVIEW.md"
   ]
 }

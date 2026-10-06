@@ -99,6 +99,15 @@ test('generated success program is complete and honest', () => {
   assert.equal(program.trust_and_access.zero_breach_or_fraud_guaranteed, false);
 });
 
+test('resource inventory ids are unique, stable digests and resources are sorted by host', () => {
+  const resources = canonical.resource_inventory.resources;
+  const ids = resources.map(resource => resource.id);
+  assert.equal(new Set(ids).size, ids.length);
+  for (const id of ids) assert.match(id, /^resource-[0-9a-f]{16}$/);
+  const hosts = resources.map(resource => resource.host);
+  assert.deepEqual(hosts, [...hosts].sort((a, b) => a.localeCompare(b)));
+});
+
 test('capability program selector maps to each division capability contract', () => {
   assert.match(script, /kind === 'division_capabilities' \? division\.capabilities : division\[kind\]/);
   for (const division of program.divisions) {

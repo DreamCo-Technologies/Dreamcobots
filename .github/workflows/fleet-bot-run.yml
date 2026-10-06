@@ -1,0 +1,75 @@
+name: Fleet bot run (Run with Buddy)
+
+# Target of the Pages "Run" buttons for fleet bots. Pages never holds a
+# token: a Run button opens a prefilled `/buddy run fleet_bot_run bot=<slug>`
+# issue (or `/buddy run fleet_division_run division=<Name>` for a division),
+# the Buddy command router checks the actor allowlist and dispatches
+# this workflow on the default branch. The run is offline and sandbox-only:
+# read-only token, no secrets, evidence uploaded as an artifact. Money and
+# delete bots are refused by `python -m buddy.fleet_runtime job` (exit 3).
+
+on:
+  workflow_dispatch:
+    inputs:
+      bot:
+        description: "Bot slug from config/bots/bot-manifests.generated.json (or leave empty and set division)"
+        required: false
+        default: ""
+        type: string
+      division:
+        description: "Division name from config/bots/division-manifests.generated.json (runs the division smoke)"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fleet-bot-run-${{ inputs.bot }}${{ inputs.division }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    name: Run one fleet bot offline
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Install runtime dependency
+        run: python3 -m pip install --quiet pyyaml
+      - name: Validate input (exactly one of bot / division)
+        env:
+          BOT: ${{ inputs.bot }}
+          DIVISION: ${{ inputs.division }}
+        run: |
+          if [ -n "$BOT" ] && [ -n "$DIVISION" ]; then echo "::error::set bot or division, not both"; exit 2; fi
+          if [ -n "$BOT" ]; then
+            printf '%s' "$BOT" | grep -Eq '^[a-z0-9][a-z0-9-]{0,79}$' || { echo "::error::invalid bot slug"; exit 2; }
+          elif [ -n "$DIVISION" ]; then
+            printf '%s' "$DIVISION" | grep -Eq '^[A-Za-z][A-Za-z0-9]{1,40}$' || { echo "::error::invalid division name"; exit 2; }
+          else
+            echo "::error::bot or division is required"; exit 2
+          fi
+      - name: Run job (generic + fixture smoke, offline)
+        env:
+          BOT: ${{ inputs.bot }}
+          DIVISION: ${{ inputs.division }}
+        run: |
+          mkdir -p artifacts
+          if [ -n "$BOT" ]; then
+            python3 -m buddy.fleet_runtime job "$BOT" --out "artifacts/fleet-bot-run-$BOT.json"
+          else
+            python3 -m buddy.fleet_runtime division-job "$DIVISION" --out "artifacts/fleet-division-run-$DIVISION.json"
+          fi
+      - name: Upload run evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: fleet-run-${{ inputs.bot }}${{ inputs.division }}
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 30
