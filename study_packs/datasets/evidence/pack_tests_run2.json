@@ -1,0 +1,37 @@
+{
+  "schema": "dreamco.hf_repeat_run.v1",
+  "benchmark": "datasets-pack-tests",
+  "run": 2,
+  "claimable": false,
+  "mastered": false,
+  "model_id": null,
+  "dataset_id": "openai/gsm8k",
+  "model_revision_sha": null,
+  "dataset_revision_sha": "740312add88f781978c0658806c59bc2815b9866",
+  "note": "Same pin as run 1 (sources.json). Offline examples; HF_HUB_OFFLINE=1 / HF_DATASETS_OFFLINE=1 set by tests.",
+  "command": "/workspace/.venv-hf-datasets/bin/python -m pytest -p no:cacheprovider -q -rs tests/test_study_pack_datasets.py",
+  "timestamp": "2026-10-05T16:45:47-05:00",
+  "git_sha": "f1ece6ffa76e6d0230ebefa1daf50523f91c7cf6",
+  "environment": {
+    "python": "3.13.5",
+    "datasets": "5.0.1",
+    "cpu": "x86_64",
+    "nproc": 8,
+    "venv": "/workspace/.venv-hf-datasets",
+    "worktree": "/workspace/hf-repeat-runs-main"
+  },
+  "metrics": {
+    "passed": 9,
+    "skipped": 0,
+    "failed": 0
+  },
+  "raw_result": ".........                                                                [100%]\n9 passed in 3.80s\n",
+  "pass_fail": {
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0,
+    "not_run": 0
+  },
+  "match_run1": false,
+  "drift": "Run 1: 6 passed + 3 skipped (no datasets lib). Run 2: 9 passed after installing datasets==5.0.1 in venv. The 3 previously skipped offline lesson tests now pass. Not a regression; environment enrichment."
+}
