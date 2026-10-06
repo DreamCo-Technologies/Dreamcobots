@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Learning loops | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Loops</p><h1>Learning loop styles</h1><p>Pick a loop. Buddy can read the Actions page and the benchmark files. A pick is not a score.</p></div>
+<p><a class="btn btn-primary" href="actions.html">Actions scans</a> <a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/benchmarks">Benchmark files</a></p></header>
+<section class="actions-review" id="loops"></section>
+</main>
+<script>
+const loops = ["read then retry","second pass","holdout","counterexample","spaced repeat","daily note","practice then test","draft then critique","retrieve then answer","compare two views","median check","permission check","sandbox receipt","benchmark replay","Actions scan","user category"];
+const box = document.getElementById("loops");
+loops.forEach((name) => { const button = document.createElement("button"); button.className = "btn btn-outline"; button.type = "button"; button.textContent = name; button.addEventListener("click", () => { document.getElementById("loop-status").textContent = name + " selected. Learned 0."; }); box.appendChild(button); });
+</script>
+<p id="loop-status">No loop selected.</p>
+</body></html>

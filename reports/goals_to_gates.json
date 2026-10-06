@@ -1,0 +1,286 @@
+{
+  "generated": "2026-09-28 CT",
+  "main_sha": "2ccd678e5",
+  "readiness_report_sha": "0a496c5b1",
+  "goals": [
+    {
+      "goal": "1 Buddy orchestration",
+      "area_id": "buddy_orchestration",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "PARTIAL",
+      "priority": "P1",
+      "required_evidence": [
+        "buddy router source",
+        "router tests",
+        "routing evidence"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "2 Benchmarking",
+      "area_id": "benchmark_framework",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "PARTIAL",
+      "priority": "P1",
+      "required_evidence": [
+        "benchmark schema",
+        "benchmark tests",
+        "reproducibility metadata"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "3 Capability Genome",
+      "area_id": "capability_genome",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "PARTIAL",
+      "priority": "P1",
+      "required_evidence": [
+        "capability registry",
+        "capability validation",
+        "integration evidence"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "4 Model research",
+      "area_id": "model_research",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "PARTIAL",
+      "priority": "P1",
+      "required_evidence": [
+        "model registry",
+        "official-source provenance",
+        "execution adapter evidence"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "5 Teacher-model eval",
+      "area_id": "teacher_model",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "UNVERIFIED",
+      "priority": "P1",
+      "required_evidence": [
+        "teacher benchmark contract",
+        "baseline evidence",
+        "repeat-run evidence"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "6 Experiment",
+      "area_id": "experiment_engine",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "PARTIAL",
+      "priority": "P1",
+      "required_evidence": [
+        "experiment lifecycle",
+        "isolated execution",
+        "result persistence"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "6 Ablation",
+      "area_id": "ablation",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "UNVERIFIED",
+      "priority": "P1",
+      "required_evidence": [
+        "ablation matrix",
+        "controlled fixtures",
+        "automated results"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "7 Distillation",
+      "area_id": "distillation",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "UNVERIFIED",
+      "priority": "P1",
+      "required_evidence": [
+        "teacher/student contract",
+        "quality floor",
+        "rollback evidence"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "8 Free-first",
+      "area_id": "free_first",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "PARTIAL",
+      "priority": "P1",
+      "required_evidence": [
+        "resource policy",
+        "budget enforcement",
+        "fallback tests"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "8 Resource optimization",
+      "area_id": "resource_optimization",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "PARTIAL",
+      "priority": "P1",
+      "required_evidence": [
+        "resource measurements",
+        "hardware profile",
+        "regression thresholds"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "9 Regression",
+      "area_id": "regression",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "FAILING",
+      "priority": "P0",
+      "required_evidence": [
+        "regression suite",
+        "failure fixtures",
+        "release gate"
+      ],
+      "current_failure": "governed-tests FAIL: tests/test_repository_dependencies.py (run 36492623235)"
+    },
+    {
+      "goal": "9 Security",
+      "area_id": "security",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "FAILING",
+      "priority": "P0",
+      "required_evidence": [
+        "secret scan",
+        "dependency audit",
+        "license/provenance audit"
+      ],
+      "current_failure": "code-trust-gate + full-system-certification dependency audit FAIL on main 2ccd678e5 (undeclared PIL, chatterbox, diffusers, f5_tts, kokoro, openvoice, psutil, scipy, soundfile from buddy/media/*)"
+    },
+    {
+      "goal": "10 Actions control plane",
+      "area_id": "actions",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "PARTIAL",
+      "priority": "P1",
+      "required_evidence": [
+        "stable action IDs",
+        "UI tests",
+        "source-to-UI evidence"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "11 Autonomous scanning",
+      "area_id": "daily_scan",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "PARTIAL",
+      "priority": "P1",
+      "required_evidence": [
+        "scheduled workflow",
+        "evidence artifact",
+        "Actions ingestion"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "11 Source ingestion",
+      "area_id": "source_ingestion",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "PARTIAL",
+      "priority": "P1",
+      "required_evidence": [
+        "provenance",
+        "freshness",
+        "refresh failure handling"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "12 Superbot/fleet",
+      "area_id": "superbot",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "PARTIAL",
+      "priority": "P1",
+      "required_evidence": [
+        "module registry",
+        "routing tests",
+        "conflict serialization"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "13 Deployment",
+      "area_id": "deployment",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "FAILING",
+      "priority": "P0",
+      "required_evidence": [
+        "production build",
+        "health endpoint",
+        "rollback procedure"
+      ],
+      "current_failure": "full-system-certification deployment-cost FAIL: static site 60.96 MiB > 52 MiB cap (run 36492623235)"
+    },
+    {
+      "goal": "14 Observability",
+      "area_id": "observability",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "PARTIAL",
+      "priority": "P1",
+      "required_evidence": [
+        "correlation IDs",
+        "structured telemetry",
+        "benchmark/agent traces"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "15 Cost accounting",
+      "area_id": "cost_accounting",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+      "gate": "tools/production_readiness_gate.py --strict; .github/workflows/full-system-certification.yml",
+      "status": "PARTIAL",
+      "priority": "P1",
+      "required_evidence": [
+        "usage ledger",
+        "provider/model attribution",
+        "budget reconciliation"
+      ],
+      "current_failure": null
+    },
+    {
+      "goal": "Completion criteria: platform production-ready",
+      "area_id": "completion",
+      "source": "docs/PRODUCTION_READINESS_MASTER_PLAN.md#completion-criteria",
+      "gate": "full-system-certification.yml green on stable main + live smoke tests",
+      "status": "FAILING",
+      "priority": "P0",
+      "required_evidence": [
+        "certification with no release-blocking failures",
+        "live external smoke tests"
+      ],
+      "current_failure": "cert 27 pass / 3 fail on 2ccd678e5; last green 35386383194 on e49446d44 (Sep 18); live env = external_config_required"
+    }
+  ]
+}

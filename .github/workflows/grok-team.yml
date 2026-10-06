@@ -32,7 +32,7 @@ jobs:
       - run: python3 tools/register_grok_team.py
       - run: python3 -m unittest tests.test_register_grok_team
       - if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: grok-team-${{ github.run_id }}
           path: |

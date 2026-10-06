@@ -1,0 +1,19 @@
+name: Bot sandbox test
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "25 15 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test bot files and record the score rule
+        run: |
+          python3 buddy/builder/bot_test.py
+          python3 buddy/builder/daily_learning.py

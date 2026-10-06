@@ -1,0 +1,57 @@
+{
+  "schema": "dreamco.study_pack.run_log.v1",
+  "pack_id": "pack.transformers-core",
+  "ran_at": "2026-09-28T17:51:19-05:00",
+  "host": "Linux-6.12.94+-x86_64-with-glibc2.41",
+  "python": "3.13.5",
+  "torch": "2.14.0+cpu",
+  "transformers": "5.17.0",
+  "device": "cpu",
+  "model": {
+    "repo_id": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+    "license": "apache-2.0"
+  },
+  "passed": 3,
+  "total": 4,
+  "results": [
+    {
+      "id": "tc.pipeline.pinned_textgen",
+      "passed": true,
+      "detail": {
+        "outputs": [
+          " Paris, the largest city in France and",
+          " 10.\n\nNow,"
+        ]
+      }
+    },
+    {
+      "id": "tc.auto.load_pinned",
+      "passed": true,
+      "detail": {
+        "model_type": "llama",
+        "vocab_size": 49152,
+        "params": 134515008,
+        "logits_shape": [
+          2,
+          4,
+          49152
+        ]
+      }
+    },
+    {
+      "id": "tc.generate.controls",
+      "passed": false,
+      "error": "AssertionError('greedy must be deterministic')",
+      "traceback": "Traceback (most recent call last):\n  File \"/workspace/hf-transformers-core/study_packs/transformers/drills/run_drills.py\", line 163, in main\n    detail = fn()\n  File \"/workspace/hf-transformers-core/study_packs/transformers/drills/run_drills.py\", line 90, in drill_generate\n    assert torch.equal(g1, g2), \"greedy must be deterministic\"\n           ~~~~~~~~~~~^^^^^^^^\nAssertionError: greedy must be deterministic\n"
+    },
+    {
+      "id": "tc.chat_template.render",
+      "passed": true,
+      "detail": {
+        "generation_header": "<|im_start|>assistant\n",
+        "reply": "The primary color is typically considered to be the primary color of the color wheel,"
+      }
+    }
+  ]
+}

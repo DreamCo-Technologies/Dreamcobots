@@ -1,0 +1,297 @@
+{
+  "schema": "dreamco.k12_curriculum_map.v0",
+  "owner": "Grok-Edu-K12-Curriculum",
+  "status": "draft_spine",
+  "mission": "Own the K-12 full curriculum map (all grades \u00d7 subjects) \u2192 Buddy Bootcamp lessons + LP packs. Provenance-safe / OER-or-original only. Does not claim state adoption or accredited school programs.",
+  "sources_of_truth": {
+    "education_engine": "config/buddy_education_universal_engine.json",
+    "bootcamp_curriculum": "config/buddy-bootcamp-curriculum-v1.json",
+    "bootcamp_program": "config/buddy-bootcamp-program.json",
+    "bootcamp_yaml": "buddy/bootcamp/buddy_bootcamp.yaml",
+    "provenance": "config/evidence_provenance_schema.json",
+    "college_sibling_pattern": "workspace:/workspace/college-catalog/college_course_universe_v0.json (mirror structure; do not mix levels)",
+    "learning_packages_ci": ".github/workflows/buddy-hub-learning-packages.yml"
+  },
+  "truth_rules": [
+    "OER / public-domain / US-gov / DreamCo-original only; no copyrighted textbook or course dumps",
+    "provenance_required on every cell, lesson, and LP export (inherit bootcamp source_policy)",
+    "Standards alignment (e.g. CCSS/NGSS) is reference metadata \u2014 not a license to reproduce proprietary materials",
+    "Mastery never from reading-only (inherit bootcamp mastery gates)",
+    "Catalog coverage \u2260 mastery; LP graduation needs repeat pass + holdout + no regression + fresh evidence",
+    "K-12 map is separate from college_course_universe; do not collapse grade bands into college domains"
+  ],
+  "layers": {
+    "grade_bands": "Learner bands mapped from education_universal_engine.learner_stages",
+    "subjects": "Core K-12 subject families (DreamCo IDs; not a single state's course codes)",
+    "cells": "Atomic map units: grade_band \u00d7 subject (+ optional strand)",
+    "standard_clusters": "Optional OER-safe standards references (ids + URLs only; no proprietary text)",
+    "lessons": "Bootcamp training_units produced from cells",
+    "lp_packs": "Exportable learning packages (LP-*) graduated from Bootcamp evidence"
+  },
+  "grade_bands": [
+    {
+      "id": "early_learning",
+      "label": "Early learning / Pre-K",
+      "grades": [
+        "PK"
+      ],
+      "engine_stage": "early_learning"
+    },
+    {
+      "id": "elementary_lower",
+      "label": "Elementary K\u20132",
+      "grades": [
+        "K",
+        "1",
+        "2"
+      ],
+      "engine_stage": "elementary"
+    },
+    {
+      "id": "elementary_upper",
+      "label": "Elementary 3\u20135",
+      "grades": [
+        "3",
+        "4",
+        "5"
+      ],
+      "engine_stage": "elementary"
+    },
+    {
+      "id": "middle",
+      "label": "Middle school 6\u20138",
+      "grades": [
+        "6",
+        "7",
+        "8"
+      ],
+      "engine_stage": "middle_school"
+    },
+    {
+      "id": "high",
+      "label": "High school 9\u201312",
+      "grades": [
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "engine_stage": "high_school"
+    }
+  ],
+  "subjects": [
+    {
+      "id": "ela",
+      "name": "English Language Arts",
+      "strands": [
+        "reading",
+        "writing",
+        "speaking_listening",
+        "language"
+      ]
+    },
+    {
+      "id": "math",
+      "name": "Mathematics",
+      "strands": [
+        "number",
+        "algebra",
+        "geometry",
+        "measurement_data",
+        "statistics_probability"
+      ]
+    },
+    {
+      "id": "science",
+      "name": "Science",
+      "strands": [
+        "physical",
+        "life",
+        "earth_space",
+        "engineering_practices"
+      ]
+    },
+    {
+      "id": "social_studies",
+      "name": "Social Studies",
+      "strands": [
+        "civics",
+        "economics",
+        "geography",
+        "history"
+      ]
+    },
+    {
+      "id": "arts",
+      "name": "Arts",
+      "strands": [
+        "visual",
+        "music",
+        "theater",
+        "media"
+      ]
+    },
+    {
+      "id": "pe_health",
+      "name": "PE / Health",
+      "strands": [
+        "movement",
+        "fitness",
+        "nutrition",
+        "wellness_safety"
+      ]
+    },
+    {
+      "id": "world_languages",
+      "name": "World Languages",
+      "strands": [
+        "interpretive",
+        "interpersonal",
+        "presentational",
+        "cultures"
+      ]
+    },
+    {
+      "id": "cs_tech",
+      "name": "Computer Science / Technology",
+      "strands": [
+        "computational_thinking",
+        "coding",
+        "digital_citizenship",
+        "data"
+      ]
+    },
+    {
+      "id": "cte",
+      "name": "Career / Technical (intro)",
+      "strands": [
+        "career_exploration",
+        "workplace_skills",
+        "pathways_intro"
+      ]
+    }
+  ],
+  "cell_record": {
+    "required_fields": [
+      "cell_id",
+      "grade_band_id",
+      "grade",
+      "subject_id",
+      "strand_id",
+      "title",
+      "learning_outcomes",
+      "standard_refs",
+      "bootcamp_lesson_ids",
+      "lp_pack_ids",
+      "oer_policy",
+      "provenance"
+    ],
+    "id_pattern": "K12-{SUBJECT}-{GRADE}-{STRAND}-{NNN} (e. and K12-MATH-03-number-001)",
+    "oer_policy_enum": [
+      "public_domain",
+      "cc_by",
+      "cc_by_sa",
+      "us_government_work",
+      "dreamco_original",
+      "blocked_no_rights"
+    ]
+  },
+  "bootcamp_bridge": {
+    "inherits": "config/buddy-bootcamp-curriculum-v1.json",
+    "pipeline": [
+      "discover",
+      "classify",
+      "rights_check",
+      "extract_concepts",
+      "synthesize",
+      "lesson",
+      "practice",
+      "sandbox",
+      "transfer",
+      "score",
+      "remediate",
+      "regression",
+      "evidence"
+    ],
+    "training_unit_required": [
+      "capability_id",
+      "objective",
+      "lesson",
+      "practice",
+      "sandbox_task",
+      "transfer_task",
+      "rubric",
+      "benchmark",
+      "provenance"
+    ],
+    "source_policy": {
+      "permitted_only": true,
+      "provenance_required": true,
+      "redistribution_rights_required": true,
+      "copyright_reproduction_prohibited": true
+    },
+    "map_rule": "Each cell may spawn \u22651 training_unit; rights_check must pass before lesson synthesis"
+  },
+  "lp_bridge": {
+    "pack_id_pattern": "LP-K12-{SUBJECT}-{BAND}-{slug}",
+    "graduation_gates": [
+      "repeat_pass",
+      "held_out_transfer",
+      "no_active_regression",
+      "fresh_evidence"
+    ],
+    "export_requires": [
+      "provenance",
+      "license_or_usage_basis",
+      "cell_ids",
+      "bootcamp_lesson_ids",
+      "rubric",
+      "benchmark_ids"
+    ],
+    "ci_hint": ".github/workflows/buddy-hub-learning-packages.yml"
+  },
+  "standard_refs_policy": {
+    "allowed": "Public standards identifiers + official free URLs only (e.g. CCSS/NGSS public pages)",
+    "forbidden": "Pasting proprietary curriculum text, paid textbooks, or closed item banks",
+    "fields": [
+      "framework",
+      "code",
+      "url",
+      "license_note"
+    ]
+  },
+  "coverage_matrix": {
+    "axes": [
+      "grade_bands \u00d7 subjects \u00d7 strands"
+    ],
+    "status_enum": [
+      "empty",
+      "outlined",
+      "lesson_draft",
+      "bootcamp_linked",
+      "lp_graduated",
+      "blocked_rights"
+    ],
+    "seed_note": "v0 spine defines axes only; cells_seed is intentionally empty until OER sources are rights-checked"
+  },
+  "cells_seed": [],
+  "inventory_note": {
+    "k12_catalog_in_repo": "NONE_FOUND",
+    "related_found": [
+      "config/buddy_education_universal_engine.json (learner_stages include elementary/middle/high)",
+      "config/buddy-bootcamp-curriculum-v1.json",
+      "config/buddy-college-curriculum.json (college \u2014 sibling, not K-12)",
+      "workspace college-catalog (Grok-Edu-College-Catalog)",
+      "bots/curriculum-mapper.md (product bot card only)",
+      "workspace teacher-curriculum (Bootcamp teacher syllabus, not K-12 map)"
+    ]
+  },
+  "next_build_order": [
+    "Lock grade_bands + subjects (this spine)",
+    "Pick 1 pilot cell per core subject in elementary_upper (OER-only)",
+    "rights_check \u2192 Bootcamp training_unit drafts",
+    "Wire LP-K12-* export stub with provenance fields",
+    "Expand coverage matrix status tracking in-repo under config/ when promoted from workspace"
+  ],
+  "proposed_repo_home": "config/k12_curriculum_map_v0.json (promote from workspace when approved)"
+}

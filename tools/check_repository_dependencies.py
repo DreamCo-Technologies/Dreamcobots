@@ -20,9 +20,10 @@ PYTHON_REQUIREMENT_FILES = (
     "requirements-tools.txt",
     "requirements-buddy-learning.txt",
     "requirements-media.txt",
+    "requirements-hf-learning.txt",
     "huggingface/dreamco-router/requirements.txt",
 )
-IMPORT_ALIASES = {"pillow": {"pil"}, "chatterbox_tts": {"chatterbox"}}
+IMPORT_ALIASES = {"pillow": {"pil"}, "chatterbox_tts": {"chatterbox"}, "pyyaml": {"yaml"}}
 
 
 def read_object(path: Path) -> dict[str, Any]:

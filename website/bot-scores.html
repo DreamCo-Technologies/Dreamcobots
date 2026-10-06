@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Bot scores | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Tracker</p><h1>Bot score tracker</h1><p>Select a bot and save a score. Unsaved bots stay not measured. No 3D simulator is running.</p></div>
+<p><a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/bots/3d-asset-mgr.md">3D asset bot file</a> <a class="btn btn-outline" href="original-bots.html">All bot files</a></p></header>
+<section class="actions-review"><p id="bot-picks"></p><label>Score <input id="bot-score" type="number" min="0" max="100"></label> <button class="btn btn-primary" id="save-bot-score" type="button">Save score</button> <button class="btn btn-outline" id="reset-bot-scores" type="button">Reset</button><p id="bot-score-status">No bot selected.</p></section>
+</main>
+<script>
+const picks = ["3d-asset-mgr","lead-scraper","weather-app-bot","custom"];
+let selected = "";
+const box = document.getElementById("bot-picks");
+picks.forEach((name) => { const button = document.createElement("button"); button.className = "btn btn-outline"; button.type = "button"; button.textContent = name; button.addEventListener("click", () => { selected = name; document.getElementById("bot-score-status").textContent = name + " selected. Score not measured until you save one."; }); box.appendChild(button); });
+document.getElementById("save-bot-score").addEventListener("click", () => {
+  const score = document.getElementById("bot-score").value;
+  if (!selected || score === "") { document.getElementById("bot-score-status").textContent = "Select a bot and enter a score."; return; }
+  const saved = JSON.parse(localStorage.getItem("dreamco.bot-scores") || "{}");
+  saved[selected] = Number(score);
+  localStorage.setItem("dreamco.bot-scores", JSON.stringify(saved));
+  document.getElementById("bot-score-status").textContent = selected + " tracked at " + score + ". Other bots are not measured.";
+});
+document.getElementById("reset-bot-scores").addEventListener("click", () => { localStorage.removeItem("dreamco.bot-scores"); document.getElementById("bot-score-status").textContent = "Tracked scores reset."; });
+</script>
+</body></html>

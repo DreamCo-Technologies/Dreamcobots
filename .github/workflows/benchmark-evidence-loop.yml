@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -33,7 +33,7 @@ jobs:
         run: python3 tools/convert_daily_division_benchmark.py --input benchmark-evidence/division-benchmark.json --output benchmark-evidence/benchmark-scores.json
       - name: Build next gap queue
         run: python3 tools/benchmark_gap_planner.py --scores benchmark-evidence/benchmark-scores.json --out benchmark-evidence/benchmark-gap-queue.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: benchmark-evidence-${{ github.run_id }}
           path: benchmark-evidence/

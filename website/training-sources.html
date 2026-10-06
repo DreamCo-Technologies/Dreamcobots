@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Training sources | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Train your model</p><h1>Training sources</h1><p>Pick a source. The note stays yours. A button does not copy the file.</p></div>
+<p><a class="btn btn-primary" href="self-training.html">Self-training</a> <a class="btn btn-outline" href="model-hub.html">Model selection</a></p>
+<form><input id="source-search" aria-label="Search sources" placeholder="Search sources"><button class="btn btn-primary" type="button" id="source-filter">Search</button></form></header>
+<section class="actions-review" id="sources"></section>
+</main>
+<script>
+const sources = ["movie","lecture","ebook","book","course","lab","podcast","video","paper","model card","dataset note","manual","simulation","game","commercial","osha","union course","college catalog","audio lesson","worksheet","exam note","syllabus","code repo","issue thread","pull request","benchmark row","counterexample","user note","official docs","standard","glossary","worked example","failure note","second pass","open weight card","open source card","training data selection","daily recursive review"];
+const box = document.getElementById("sources");
+function draw(query) {
+  box.textContent = "";
+  sources.filter((name) => name.includes(query)).forEach((name) => {
+    const link = document.createElement("a");
+    link.className = "btn btn-outline";
+    link.href = "self-training.html";
+    link.textContent = name;
+    box.appendChild(link);
+  });
+}
+draw("");
+document.getElementById("source-filter").addEventListener("click", () => draw(document.getElementById("source-search").value.trim().toLowerCase()));
+</script>
+</body></html>

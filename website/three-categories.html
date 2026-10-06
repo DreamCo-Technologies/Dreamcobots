@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>three.js categories | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Categories</p><h1>three.js categories</h1><p>Each category is assigned to one of the five bots. No new bot was created. Score not measured.</p></div>
+<p><a class="btn btn-primary" href="https://threejs.org/docs/">three.js docs</a></p></header>
+<section class="actions-review" id="cats"></section>
+</main>
+<script>
+const rows = [["Animation","training-simulator"],["Audio","dr-simulation"],["Cameras","consequence-simulator"],["Lights","wargame-simulator"],["Objects","3d-asset-mgr"],["Scenes","3d-asset-mgr"],["Geometries","3d-asset-mgr"],["Materials","3d-asset-mgr"],["Renderers","3d-asset-mgr"],["Textures","3d-asset-mgr"],["Loaders","3d-asset-mgr"],["Helpers","wargame-simulator"],["Math","consequence-simulator"],["Core","3d-asset-mgr"],["Extras","training-simulator"],["Nodes","training-simulator"],["Addons","training-simulator"],["TSL","training-simulator"],["Global","3d-asset-mgr"]];
+const box = document.getElementById("cats");
+rows.forEach(([category, bot]) => { const link = document.createElement("a"); link.className = "btn btn-outline"; link.href = "https://threejs.org/docs/"; link.textContent = category + " to " + bot; box.appendChild(link); });
+</script>
+</body></html>

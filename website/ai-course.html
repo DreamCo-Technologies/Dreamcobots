@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>AI course hub | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Course</p><h1>AI course hub</h1><p>This is a study list, not an accredited college. Buddy has not learned these yet.</p></div>
+<p><a class="btn btn-primary" href="learning-loops.html">Learning loops</a> <a class="btn btn-outline" href="learning-process.html">Learning process</a> <a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/study_packs">192 study packs</a> <a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/tree/main/benchmarks">48 benchmarks</a></p></header>
+<section class="actions-review"><h2>Best public sources</h2><p><a class="btn btn-outline" href="https://arxiv.org/abs/1706.03762">Attention</a> <a class="btn btn-outline" href="https://arxiv.org/abs/2005.14165">Few-shot</a> <a class="btn btn-outline" href="https://arxiv.org/abs/2201.11903">Chain of thought</a> <a class="btn btn-outline" href="https://arxiv.org/abs/2210.03629">ReAct</a> <a class="btn btn-outline" href="https://ocw.mit.edu/">MIT OpenCourseWare</a> <a class="btn btn-outline" href="https://www.khanacademy.org/">Khan Academy</a> <a class="btn btn-outline" href="https://www.freecodecamp.org/">freeCodeCamp</a> <a class="btn btn-outline" href="https://huggingface.co/learn">Hugging Face learn</a></p></section>
+<section class="actions-review"><h2>Loops, scores, and strategies</h2><p id="course-items"></p><p id="course-status">No item selected. Learned 0.</p></section>
+</main>
+<script>
+const items = ["read then retry","second pass","holdout","counterexample","spaced repeat","daily note","practice then test","draft then critique","retrieve then answer","compare two views","success rate","median latency","failure count","citation check","permission check","sandbox receipt","chain of thought","ReAct","Reflexion","tree of thoughts","plan and solve","test then fix"];
+const box = document.getElementById("course-items");
+items.forEach((name) => { const button = document.createElement("button"); button.className = "btn btn-outline"; button.type = "button"; button.textContent = name; button.addEventListener("click", () => { document.getElementById("course-status").textContent = name + " selected. Not learned yet."; }); box.appendChild(button); });
+</script>
+</body></html>

@@ -1,0 +1,341 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.example/schemas/data_package.manifest.schema.json",
+  "title": "DreamCo sellable data-package manifest (manifest.json)",
+  "description": "Plan reports/DATA_PACKAGE_PRODUCT_PLAN.md section 5.2 'Sellable package manifest'. release_artifacts keys mirror config/dataset_product_standard.json required_release_artifacts; release_level mirrors config/data-package-maximal-testing-program.json package_release_levels; commercial_tier mirrors config/dataset_evaluation_scorecard.json commercial_tiers. Cross-field rules (contents_digest match, sale signals only when license_gate_status is pass/reference_only_bundle, status recomputed from asset gate files) are enforced by tools/build_sellable_data_package.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "sku_id",
+    "version",
+    "title",
+    "summary",
+    "package_type",
+    "owner",
+    "created_at",
+    "contents_digest",
+    "source_versions",
+    "included_asset_ids",
+    "excluded_reference_only_sources",
+    "license_gate_status",
+    "scorecard_score",
+    "scorecard_protocol",
+    "commercial_tier",
+    "release_level",
+    "sales_channel",
+    "release_artifacts",
+    "known_limitations",
+    "change_log",
+    "truth_boundary"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.data_package_manifest.v1"
+    },
+    "sku_id": {
+      "type": "string",
+      "pattern": "^DP-[A-Z0-9]+(-[A-Z0-9]+)*$",
+      "description": "Plan 5.2 sku_id (see reports/data-package-product.json skus[])."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.]+)?$",
+      "description": "Plan 5.2 version; must equal the package directory name."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "package_type": {
+      "enum": [
+        "dataset-pack",
+        "evaluation-pack",
+        "benchmark-pack",
+        "book-curriculum-pack",
+        "film-curriculum-pack",
+        "multimedia-training-pack",
+        "coding-data-pack",
+        "domain-knowledge-pack",
+        "synthetic-data-pack",
+        "user-created sellable package"
+      ]
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "contents_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "sha256 over the sorted '<sha256>  <relpath>' lines of every package file except manifest.json; computed/verified by tools/build_sellable_data_package.py (--write-digest)."
+    },
+    "source_versions": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "included_asset_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9._-]*$"
+      }
+    },
+    "excluded_reference_only_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_id",
+          "reason"
+        ],
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "gate_outcome": {
+            "enum": [
+              "reference_only",
+              "blocked"
+            ]
+          }
+        }
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "asset_id",
+          "path",
+          "provenance_path",
+          "license_gate_path",
+          "license_gate_outcome"
+        ],
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]*$"
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provenance_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "license_gate_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "license_gate_outcome": {
+            "enum": [
+              "pending",
+              "approved_for_sale",
+              "approved_for_private_use",
+              "reference_only",
+              "blocked"
+            ]
+          }
+        }
+      },
+      "description": "Optional detail index for included_asset_ids (paths to asset.json/provenance.json/license_gate.json). A sellable build requires one entry per included asset."
+    },
+    "license_gate_status": {
+      "$ref": "#/$defs/package_gate_status"
+    },
+    "scorecard_score": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "scorecard_protocol": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "commercial_tier": {
+      "enum": [
+        null,
+        "prototype",
+        "standard",
+        "professional",
+        "premium"
+      ]
+    },
+    "release_level": {
+      "enum": [
+        "discovered",
+        "rights_cleared",
+        "cleaned",
+        "evaluated",
+        "robust",
+        "release_candidate",
+        "sellable_verified"
+      ]
+    },
+    "sales_channel": {
+      "enum": [
+        "none",
+        "private_preview",
+        "marketplace",
+        "direct_stripe"
+      ]
+    },
+    "stripe_price_id": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "pattern": "^price_[A-Za-z0-9]+$"
+        }
+      ],
+      "description": "Optional; unset (absent or null) until checkout is wired and the package gate is pass/reference_only_bundle with owner approval."
+    },
+    "release_artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dataset_card",
+        "data_dictionary",
+        "provenance_manifest",
+        "license_manifest",
+        "quality_report",
+        "benchmark_report",
+        "known_limitations",
+        "version_identifier",
+        "change_log",
+        "sample_or_preview"
+      ],
+      "properties": {
+        "dataset_card": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data_dictionary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance_manifest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "license_manifest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quality_report": {
+          "type": "string",
+          "minLength": 1
+        },
+        "benchmark_report": {
+          "type": "string",
+          "minLength": 1
+        },
+        "known_limitations": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version_identifier": {
+          "type": "string",
+          "minLength": 1
+        },
+        "change_log": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sample_or_preview": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "known_limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "change_log": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "version",
+          "date",
+          "changes"
+        ],
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "changes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "truth_boundary": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$defs": {
+    "package_gate_status": {
+      "enum": [
+        "pending",
+        "pass",
+        "fail",
+        "reference_only_bundle"
+      ],
+      "description": "Plan 5.2 enum pass | fail | reference_only_bundle, plus pre-gate 'pending'. Mapping from per-asset gate outcomes (config/license_provenance_gate.json#package_status_mapping): pending = any included asset not yet gated (or no assets yet); pass = every included asset approved_for_sale and excluded_reference_only_sources empty; reference_only_bundle = every included asset approved_for_sale and >=1 reference-only source cited but not shipped; fail = any included asset approved_for_private_use, reference_only, or blocked."
+    }
+  }
+}

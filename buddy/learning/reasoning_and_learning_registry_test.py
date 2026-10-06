@@ -6,7 +6,13 @@ from __future__ import annotations
 import unittest
 
 from reasoning_and_learning_registry import (
+    GATE_BOOTCAMP_GRADUATION,
+    GATE_MARKETPLACE_LISTING,
+    GATE_PATH_D_ALLOWLIST,
+    LP_FAMILY_STRATEGIES,
     discover_all,
+    export_lp_strategies_manifest,
+    learning_catalog_meta,
     load_learning,
     load_reasoning,
     marketplace_packs,
@@ -49,6 +55,29 @@ class RegistryTests(unittest.TestCase):
         complete = next(p for p in packs if p["sku"].endswith("complete"))
         self.assertGreaterEqual(complete["reasoning_count"], 15)
         self.assertGreaterEqual(complete["learning_count"], 15)
+
+
+    def test_lp_strategies_export(self) -> None:
+        meta = learning_catalog_meta()
+        lp = export_lp_strategies_manifest()
+        self.assertEqual(lp["sku"], f"{LP_FAMILY_STRATEGIES}-v{meta['version']}")
+        self.assertEqual(lp["marketplace_status"], "catalog_sku")
+        for k in ("sellable", "live", "path_d_allowlist_write"):
+            self.assertFalse(lp["claims"][k])
+        for g in (GATE_BOOTCAMP_GRADUATION, GATE_MARKETPLACE_LISTING, GATE_PATH_D_ALLOWLIST):
+            self.assertFalse(lp["gates"][g])
+        self.assertFalse(lp["graduation_evidence"]["eligible_for_mastery"])
+        self.assertEqual(lp["strategy_ids"], [i.id for i in load_learning()])
+
+    def test_lp_export_write_roundtrip(self) -> None:
+        import json
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as td:
+            dest = Path(td) / "LP-STRATEGIES.manifest.json"
+            written = export_lp_strategies_manifest(write_path=dest)
+            self.assertEqual(json.loads(dest.read_text(encoding="utf-8"))["sku"], written["sku"])
 
 
 if __name__ == "__main__":

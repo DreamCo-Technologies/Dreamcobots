@@ -1,0 +1,90 @@
+{
+  "schema": "dreamco.study_pack_evidence.v1",
+  "pack": "pack.multimodal",
+  "ran_at": "2026-09-28T22:50:19.318946+00:00",
+  "env": {
+    "python": "3.13.5",
+    "transformers": "5.17.0",
+    "torch": "2.14.0+cpu",
+    "device": "cpu"
+  },
+  "pass_rate": 0.4,
+  "passed": 2,
+  "total": 5,
+  "drills": [
+    {
+      "id": "mm.clip_zero_shot_shapes",
+      "model": "openai/clip-vit-base-patch32",
+      "revision": "3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268",
+      "license": "UNDECLARED_ON_HUB",
+      "predictions": {
+        "a red circle": "a red circle",
+        "a blue square": "a blue square",
+        "a green triangle": "a green triangle"
+      },
+      "hits": 3,
+      "pass": true,
+      "status": "PASS",
+      "seconds": 32.18
+    },
+    {
+      "id": "mm.vit_imagenet_smoke",
+      "model": "google/vit-base-patch16-224",
+      "revision": "3f49326eb077187dfe1c2a2bb15fbd74e6ab91e3",
+      "license": "apache-2.0",
+      "top5": [
+        {
+          "label": "rifle",
+          "score": 0.0244
+        },
+        {
+          "label": "bow",
+          "score": 0.0218
+        },
+        {
+          "label": "analog clock",
+          "score": 0.0175
+        },
+        {
+          "label": "plunger, plumber's helper",
+          "score": 0.0162
+        },
+        {
+          "label": "balloon",
+          "score": 0.014
+        }
+      ],
+      "pass": true,
+      "status": "PASS",
+      "seconds": 11.83
+    },
+    {
+      "id": "mm.tts_generate",
+      "model": "facebook/mms-tts-eng",
+      "revision": "c71de0fe7204c83f1c10820a7d696d0b450048ba",
+      "license": "cc-by-nc-4.0",
+      "status": "ERROR",
+      "error": "TypeError: BatchEncoding.to() got an unexpected keyword argument 'dtype'",
+      "trace": "xt_inputs, **forward_params)\n           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/mm-venv/lib/python3.13/site-packages/transformers/pipelines/base.py\", line 1299, in __call__\n    return self.run_single(inputs, preprocess_params, forward_params, postprocess_params)\n           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/mm-venv/lib/python3.13/site-packages/transformers/pipelines/base.py\", line 1302, in run_single\n    model_inputs = self.preprocess(inputs, **preprocess_params)\n  File \"/workspace/mm-venv/lib/python3.13/site-packages/transformers/pipelines/text_to_audio.py\", line 197, in preprocess\n    output = output.to(dtype=self.model.dtype)\nTypeError: BatchEncoding.to() got an unexpected keyword argument 'dtype'\n",
+      "seconds": 9.92
+    },
+    {
+      "id": "mm.asr_roundtrip",
+      "model": "openai/whisper-tiny",
+      "revision": "169d4a4341b33bc18d8881c4b69c2e104e1cc0af",
+      "license": "apache-2.0",
+      "status": "BLOCKED",
+      "reason": "tts drill produced no audio",
+      "seconds": 0.0
+    },
+    {
+      "id": "mm.audio_cls_smoke",
+      "model": "MIT/ast-finetuned-speech-commands-v2",
+      "revision": "315b0b847a3ca207e68b718503ad72066612eacd",
+      "license": "bsd-3-clause",
+      "status": "BLOCKED",
+      "reason": "tts drill produced no audio",
+      "seconds": 0.0
+    }
+  ]
+}

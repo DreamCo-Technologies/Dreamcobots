@@ -39,7 +39,7 @@ jobs:
             cat reports/BUILD_UPDATES_NOW.md >> "$GITHUB_STEP_SUMMARY"
           fi
       - if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: build-updates-now-${{ github.run_id }}
           path: |
