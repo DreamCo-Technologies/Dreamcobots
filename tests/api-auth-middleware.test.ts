@@ -367,8 +367,8 @@ describe("apiAuthFailureRateLimit (in-process express app)", () => {
 
 // Boots the real server/index.ts (local-test mode, placeholder DB, no provider secrets, GitHub/Stripe
 // credentials scrubbed from the child env) and checks the real middleware order end to end.
-// If server/routes.ts fails to load, index.ts falls back to health-only mode; the guard must still
-// reject every P0 path, and checks that need the full route runtime are skipped with the startup reason.
+// The full route runtime (server/routes.ts) must load; the sign-in and route-level owner checks below
+// fail with the startup reason if index.ts fell back to health-only mode.
 describe("real server/index.ts runtime", () => {
   let child: ChildProcess;
   let base = "";
@@ -425,11 +425,8 @@ describe("real server/index.ts runtime", () => {
 
   const call = (method: string, path: string, headers: Record<string, string> = {}) =>
     fetch(`${base}${path}`, { method: method.toUpperCase(), redirect: "manual", headers: { "content-type": "application/json", ...headers }, body: method.toUpperCase() === "GET" ? undefined : "{}" });
-  const needsFullRuntime = (t: { skip: (message?: string) => void }) => {
-    if (fullRuntime) return false;
-    t.skip(`full route runtime did not load: ${output.split("\n").find((l) => /full route runtime unavailable/.test(l)) ?? "unknown"}`);
-    return true;
-  };
+  const assertFullRuntime = () =>
+    assert.ok(fullRuntime, `full route runtime did not load: ${output.split("\n").find((l) => /full route runtime unavailable/.test(l)) ?? "unknown"}`);
 
   test("each P0 route returns 401 from the global guard without credentials", async () => {
     for (const [method, , sample] of P0_ROUTES) {
@@ -449,8 +446,15 @@ describe("real server/index.ts runtime", () => {
       const sessionOnly = await call(method, path, { cookie: validSessionCookie() });
       assert.equal(sessionOnly.status, 403, `${method} ${path} session only`);
       assert.equal((await sessionOnly.json()).error, "Owner credential required");
+      // With the full route runtime loaded the real handler answers. These handlers can return their own
+      // 403/500 (e.g. /api/github/sync answers 403 when no GitHub token is configured, as in this child env),
+      // so prove the guard let the owner through: never 401, never the guard's rejection body, and the body is
+      // the handler's own { success, ... } shape, which the guard never sends.
       const owner = await call(method, path, { authorization: `Bearer ${OWNER_TOKEN}` });
-      assert.ok(![401, 403].includes(owner.status), `${method} ${path} owner bearer was stopped by the guard (${owner.status})`);
+      assert.notEqual(owner.status, 401, `${method} ${path} owner bearer was rejected by the guard`);
+      const ownerBody = await owner.json();
+      assert.ok(!["Authentication required", "Owner credential required"].includes(ownerBody.error), `${method} ${path} owner bearer was stopped by the guard (${owner.status} ${ownerBody.error})`);
+      assert.equal(typeof ownerBody.success, "boolean", `${method} ${path} owner bearer did not reach the route handler (${owner.status} ${JSON.stringify(ownerBody)})`);
     }
   });
 
@@ -482,16 +486,16 @@ describe("real server/index.ts runtime", () => {
     assert.notEqual((await call("GET", "/api/local-test/status", { authorization: `Bearer ${OWNER_TOKEN}` })).status, 401);
   });
 
-  test("[full runtime] real sign-in routes respond and a signed-in session passes the guard", async (t) => {
-    if (needsFullRuntime(t)) return;
+  test("[full runtime] real sign-in routes respond and a signed-in session passes the guard", async () => {
+    assertFullRuntime();
     assert.equal((await call("GET", "/api/auth/providers")).status, 200);
     assert.deepEqual(await (await call("GET", "/api/auth/session")).json(), { authenticated: false });
     assert.equal((await call("GET", "/api/auth/session", { cookie: validSessionCookie() }).then((r) => r.json())).authenticated, true);
     assert.equal((await call("GET", "/api/local-test/status", { cookie: validSessionCookie() })).status, 200);
   });
 
-  test("[full runtime] route-level owner check still applies behind the guard (restore-subscription)", async (t) => {
-    if (needsFullRuntime(t)) return;
+  test("[full runtime] route-level owner check still applies behind the guard (restore-subscription)", async () => {
+    assertFullRuntime();
     const response = await call("POST", "/api/stripe/restore-subscription", { cookie: validSessionCookie() });
     assert.equal(response.status, 401);
     assert.equal((await response.json()).error, "Owner billing token required");
