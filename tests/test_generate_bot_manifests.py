@@ -97,6 +97,22 @@ class GeneratorTests(unittest.TestCase):
         finally:
             tmp.unlink()
 
+    def test_division_manifests_written_and_checked(self):
+        text = gen.render_divisions(self.collection)
+        committed = gen.DIV_OUT.read_text(encoding="utf-8")
+        self.assertEqual(committed, text)
+        divisions = {d["name"]: d for d in json.loads(text)["divisions"]}
+        app = {json.loads(p.read_text())["division"] for p in gen.APP_BOTS.glob("*.json") if json.loads(p.read_text()).get("bots")}
+        self.assertTrue(app <= set(divisions))
+        for name in app:
+            self.assertTrue(divisions[name]["smoke_bots"], name)
+        seeds = gen.seed_division_counts()
+        self.assertTrue(seeds)
+        for name, count in seeds.items():
+            if name in divisions:
+                self.assertEqual(divisions[name]["seed_bots"], count)
+                self.assertIn("server/seed-bots.ts", divisions[name]["sources"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -282,7 +282,7 @@ These files were modified/created by the folder test runs (tracked ones were res
 
 ## GitHub Pages internal links
 
-Files scanned: 619; internal links/routes checked: 3171; **broken: 0**. Server-only `/api/*` references (cannot work on static Pages): 6.
+Files scanned: 575; internal links/routes checked: 3170; **broken: 0**. Server-only `/api/*` references (cannot work on static Pages): 6.
 
 
 ## Blocked bots (0)

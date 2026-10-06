@@ -1,4 +1,6 @@
-/* File prospectus browser. Reads data/file-prospectus/index.json + shards (tools/build_file_prospectus.py). */
+/* File prospectus browser. Reads config/generated/file-prospectus/index.json + shards (tools/build_file_prospectus.py).
+ * The data is kept out of website/ (Pages size budget) and read from raw.githubusercontent.com (main);
+ * when the repository root is served locally (…/website/files.html) the local copy is used. */
 (function () {
   'use strict';
   const BR = window.BuddyRun;
@@ -7,7 +9,12 @@
   const byId = (id) => document.getElementById(id);
   const state = { index: null, rows: [], byPath: new Map(), loaded: new Set(), filtered: [], shown: PAGE, meta: null };
 
-  function toObj(cols, row) { const o = {}; cols.forEach((c, i) => { o[c] = row[i]; }); return o; }
+  function toObj(cols, row) {
+    const enums = (state.index && state.index.enums) || {};
+    const o = {};
+    cols.forEach((c, i) => { o[c] = enums[c] && typeof row[i] === 'number' ? enums[c][row[i]] : row[i]; });
+    return o;
+  }
 
   function loadShard(name) {
     if (state.loaded.has(name)) return Promise.resolve();
@@ -101,8 +108,14 @@
     applyFilters();
   }
 
-  fetch('data/file-prospectus/index.json', { cache: 'no-cache' })
-    .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  const RAW_BASE = 'https://raw.githubusercontent.com/DreamCo-Technologies/Dreamcobots/main/config/generated/file-prospectus/';
+  const LOCAL_BASE = '../config/generated/file-prospectus/';
+  const getJson = (url) => fetch(url, { cache: 'no-cache' }).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  const withBase = (base) => getJson(base + 'index.json').then((index) => {
+    index.shards.forEach((s) => { s.url = base + s.url; });
+    return index;
+  });
+  (/\/website\//.test(location.pathname) ? withBase(LOCAL_BASE).catch(() => withBase(RAW_BASE)) : withBase(RAW_BASE))
     .then(init)
     .catch((err) => { byId('fp-totals').innerHTML = '<div><span>Index unavailable</span><strong>' + esc(err.message) + '</strong></div>'; });
 })();

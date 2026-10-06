@@ -30,6 +30,7 @@ on:
       - ".github/workflows/**"
       - "config/buddy/**"
       - "config/files/**"
+      - "config/generated/file-prospectus/**"
       - "tools/build_actions_prospectus.py"
       - "tools/build_file_prospectus.py"
       - "tools/audit_actions_health.py"
@@ -96,6 +97,8 @@ jobs:
         run: python3 -m buddy.fleet_runtime smoke --all
       - name: Division smoke (every division runs at least one of its bots end to end, offline)
         run: python3 -m buddy.fleet_runtime division-smoke --all
+      - name: Pages size budget (config/buddy-deployment-cost-policy.json)
+        run: python3 tools/check_deployment_cost_policy.py
       - name: Pages feature audit (advertised features must be wired; no new stub/broken pages)
         run: python3 tools/audit_pages_features.py --check --check-regressions
       - name: Navigation link check (strict)
