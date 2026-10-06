@@ -1,0 +1,22 @@
+name: Daily repo cycle
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 12 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-repo-cycle
+  cancel-in-progress: false
+
+jobs:
+  cycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Scan and run the sandbox bootcamp catalog
+        run: python3 tools/daily_repo_cycle.py

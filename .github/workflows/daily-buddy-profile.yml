@@ -1,0 +1,21 @@
+name: Daily Buddy profile
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "25 13 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-buddy-profile
+  cancel-in-progress: false
+
+jobs:
+  profile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build the local profile
+        run: python3 buddy/accounts/daily_profile.py

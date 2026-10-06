@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Pin devices | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Map</p><h1>Open the site and pin this device</h1><p>A pin is saved in this browser. It is not shared to other devices.</p></div></header>
+<section class="actions-review">
+<p><a class="btn btn-primary" href="world-lens.html">Open the map</a> <a class="btn btn-outline" href="https://www.google.com/maps">Open Google Maps</a> <a class="btn btn-outline" href="https://earth.google.com/web/">Open Google Earth</a></p>
+<p><button class="btn btn-primary" id="pin-device" type="button">Pin this device</button></p>
+<p id="pin-status">No device pinned in this browser.</p>
+</section>
+</main>
+<script>
+document.getElementById("pin-device").addEventListener("click", () => {
+  const status = document.getElementById("pin-status");
+  if (!navigator.geolocation) { status.textContent = "This browser has no GPS API."; return; }
+  status.textContent = "Requesting location permission…";
+  navigator.geolocation.getCurrentPosition((position) => {
+    const pin = { latitude: position.coords.latitude, longitude: position.coords.longitude, savedAt: new Date().toISOString() };
+    localStorage.setItem("dreamco.buddy.device-pin", JSON.stringify(pin));
+    status.textContent = "Pinned " + pin.latitude.toFixed(5) + ", " + pin.longitude.toFixed(5) + " in this browser.";
+  }, () => { status.textContent = "Location permission was denied or timed out."; }, { enableHighAccuracy: false, timeout: 20000 });
+});
+</script>
+</body></html>

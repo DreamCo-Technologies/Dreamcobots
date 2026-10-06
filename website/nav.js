@@ -18,6 +18,10 @@
     { href: 'buddy-expert-mode.html', label: '🎓 Expert Mode' },
     { href: 'buddy-invention-lab.html', label: '💡 Idea-to-Store' },
     { href: 'actions.html', label: '⚙️ Actions' },
+    { href: 'self-training.html', label: '🧪 Self-training' },
+    { href: 'model-hub.html', label: '📦 Model hub' },
+    { href: 'training-sources.html', label: '📚 Training sources' },
+    { href: 'study-hub.html', label: '🎓 Study hub' },
     { href: 'master-build.html', label: '🧭 Master Build' },
     { href: 'buddy-command-center.html', label: '🗂️ Command Center' },
     { href: 'world-lens.html', label: '🌍 World Lens GPS' },
@@ -229,4 +233,32 @@ document.addEventListener('click', function(e) {
   script.src = new URL('repository-actions.js', document.currentScript.src).href;
   script.dataset.repositoryActions = 'true';
   document.head.appendChild(script);
+})();
+
+(() => {
+  const bar = document.createElement("nav");
+  bar.setAttribute("aria-label", "Personal and business tasks");
+  const links = [
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/settings/secrets/actions", "Add host secrets"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/.env.example", "Secret names"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/DAILY_PRODUCTION_SCAN.md", "Production scan"],
+    ["https://github.com/DreamCo-Technologies/Dreamcobots/settings/pages", "Pages source"],
+    ["https://dashboard.stripe.com/apikeys", "Stripe keys"],
+    ["actions.html", "Task buttons"],
+    ["chat-buttons.html", "This chat"],
+    ["buddy.html", "Ask Buddy"]
+  ];
+  links.forEach(([href, label]) => {
+    const link = document.createElement("a");
+    link.href = href;
+    link.textContent = label;
+    link.className = "btn btn-outline";
+    if (href.startsWith("http")) link.target = "_blank";
+    bar.appendChild(link);
+  });
+  document.body.prepend(bar);
+  const search = document.createElement("form");
+  search.action = "training-sources.html";
+  search.innerHTML = '<input name="q" aria-label="Search training sources" placeholder="Search models, movies, lectures, ebooks"><button class="btn btn-primary" type="submit">Search</button>';
+  document.body.prepend(search);
 })();

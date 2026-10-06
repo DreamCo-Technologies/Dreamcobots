@@ -1,0 +1,21 @@
+name: Plugin gap bot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "45 13 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plugin-gap-bot
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Scan plugin gaps
+        run: python3 buddy/accounts/plugin_gap_bot.py
