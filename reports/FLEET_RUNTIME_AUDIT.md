@@ -19,7 +19,7 @@ Engine unit tests passed: **True**
 | BLOCKED | 0 |
 | **Total** | **1232** |
 
-Flags: duplicates **2**, placeholders **19**, capabilities_derived_from_description 112, division_conflict_seed 8, division_missing 19, duplicate_profile 2, engine_fallback_workflow 31, engine_low_confidence 109, engine_unmapped 19, engine_weak_signal 34, fixture_generated 1204, md_only 19, placeholder_no_specific_capabilities 19, run_blocked_destructive 5, run_blocked_money 66, teammate_lane 112
+Flags: duplicates **2**, placeholders **19**, capabilities_derived_from_description 112, division_missing 19, duplicate_profile 2, engine_fallback_workflow 31, engine_low_confidence 109, engine_unmapped 19, engine_weak_signal 34, fixture_generated 1204, md_only 19, placeholder_no_specific_capabilities 19, run_blocked_destructive 5, run_blocked_money 66, teammate_lane 112
 
 ## Missing contract pieces (bots missing each piece)
 
@@ -282,7 +282,7 @@ These files were modified/created by the folder test runs (tracked ones were res
 
 ## GitHub Pages internal links
 
-Files scanned: 575; internal links/routes checked: 3170; **broken: 0**. Server-only `/api/*` references (cannot work on static Pages): 6.
+Files scanned: 586; internal links/routes checked: 3254; **broken: 0**. Server-only `/api/*` references (cannot work on static Pages): 6.
 
 
 ## Blocked bots (0)

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buddy Control Panel | Buddy</title>
+  <meta name="description" content="Run, watch, and manage every registered Buddy job from GitHub Pages. Runs go through the Buddy command router and require an authorized operator." />
+  <meta name="theme-color" content="#101218" />
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="buddy.css?v=29" />
+  <link rel="stylesheet" href="desks.css" />
+  <style>
+    .bcp-tier { display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; border: 1px solid #2a2d35; color: #c8ccd4; }
+    .bcp-tier.read_only { color: #3aa977; border-color: #24543f; }
+    .bcp-tier.writes_reports { color: #4d76c9; border-color: #2b406b; }
+    .bcp-tier.writes_code { color: #d6b56d; border-color: #5c4d2c; }
+    .bcp-tier.money { color: #d48a86; border-color: #5f3533; }
+    .bcp-state { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9298a5; }
+    .bcp-state.success { color: #3aa977; }
+    .bcp-state.failure, .bcp-state.startup_failure, .bcp-state.timed_out, .bcp-state.workflow_missing { color: #d48a86; }
+    .bcp-state.in_progress, .bcp-state.queued, .bcp-state.waiting, .bcp-state.pending, .bcp-state.cancelled { color: #d6b56d; }
+    .bcp-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .bcp-btn { display: inline-block; padding: 7px 12px; border-radius: 9px; border: 1px solid #2a2d35; background: #1b1e25; color: #e8eaee; font-size: .82rem; font-weight: 600; text-decoration: none; cursor: pointer; }
+    .bcp-btn:hover { background: #23262f; color: #fff; }
+    .bcp-btn.primary { background: #d6b56d; border-color: #d6b56d; color: #101218; }
+    .bcp-btn.primary:hover { background: #e2c584; color: #101218; }
+    .bcp-btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; pointer-events: none; }
+    .bcp-inputs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; font-size: .82rem; color: #9298a5; }
+    .bcp-inputs select { background: #101218; color: #e8eaee; border: 1px solid #2a2d35; border-radius: 7px; padding: 3px 6px; }
+    .bcp-warn { border: 1px solid #5c4d2c; background: #1d1a12; border-radius: 12px; padding: 12px 14px; color: #d9c79a; font-size: .9rem; line-height: 1.5; margin-top: 18px; }
+    .bcp-meta { font-family: "JetBrains Mono", monospace; font-size: .76rem; color: #7d8391; }
+    .bcp-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; }
+    .bcp-toolbar select { background: #101218; color: #e8eaee; border: 1px solid #2a2d35; border-radius: 7px; padding: 6px 8px; }
+  </style>
+</head>
+<body class="buddy-home buddy-simple-home">
+  <header class="buddy-simple-header">
+    <a class="buddy-wordmark" href="buddy.html" aria-label="Buddy home">
+      <img src="assets/images/buddy-icon-192.png" alt="" width="38" height="38" />
+      <span><strong>Buddy</strong><small>by DreamCo</small></span>
+    </a>
+    <div class="buddy-header-actions">
+      <a class="buddy-header-link" href="buddy.html">Chat</a>
+      <a class="buddy-header-link" href="actions.html">Actions</a>
+      <a class="buddy-header-link" href="branch-health.html">Health</a>
+      <a class="buddy-header-link" href="buddy-control.html">Control</a>
+      <a class="buddy-header-link" href="https://github.com/DreamCo-Technologies/Dreamcobots" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </header>
+  <main class="desk-page">
+    <p class="desk-kicker">Buddy runs it, you control it</p>
+    <h1>Buddy Control Panel</h1>
+    <p class="desk-note">Every recurring job Buddy's helpers and GitHub Actions do for DreamCo is registered here. Each one maps to a workflow, a risk tier, and the inputs it accepts. Press <strong>Run with Buddy</strong> to open a prefilled GitHub issue; the Buddy command router checks who you are, validates the job and inputs against the registry, dispatches the workflow on <code>main</code>, and comments back with the run link.</p>
+    <div class="bcp-warn" role="note">
+      <strong>Runs require an authorized operator.</strong> This page is public and static: it holds no tokens and cannot run anything by itself. The router only acts for GitHub users listed as Buddy operators who also have write access. Owner-approval jobs need an owner. Money/Stripe jobs and anything that deletes or bulk-closes are never runnable from here.
+    </div>
+    <div class="desk-grid" id="bcp-summary" aria-live="polite"></div>
+    <div class="bcp-toolbar">
+      <label for="bcp-filter" class="bcp-meta">Show</label>
+      <select id="bcp-filter">
+        <option value="all">All jobs</option>
+        <option value="triggerable">Runnable from Pages</option>
+        <option value="blocked">Blocked by policy</option>
+        <option value="read_only">read_only</option>
+        <option value="writes_reports">writes_reports</option>
+        <option value="writes_code">writes_code</option>
+        <option value="money">money</option>
+      </select>
+      <button type="button" class="bcp-btn" id="bcp-live">Refresh live from GitHub</button>
+      <a class="bcp-btn" id="bcp-router" href="https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-command-router.yml" target="_blank" rel="noopener">Router runs</a>
+      <a class="bcp-btn" id="bcp-commands" href="https://github.com/DreamCo-Technologies/Dreamcobots/issues?q=label%3Abuddy-command" target="_blank" rel="noopener">Command issues</a>
+    </div>
+    <p class="desk-note" id="bcp-stamp">Loading the Buddy job registry…</p>
+    <section id="bcp-jobs" class="desk-grid"></section>
+    <section id="bcp-generated" hidden aria-labelledby="bcp-generated-title">
+      <h2 id="bcp-generated-title">Generated Run with Buddy jobs</h2>
+      <p class="desk-note" id="bcp-generated-note">One job per workflow not covered above, plus the fleet bot and division jobs. Every Run button has a generated prospectus; jobs without a complete one show no button.</p>
+      <div id="bcp-generated-list" class="desk-grid"></div>
+    </section>
+    <p class="desk-note">Commands you can also type in any issue comment: <code>/buddy list</code>, <code>/buddy status [job_id]</code>, <code>/buddy run &lt;job_id&gt; key=value</code>, <code>/buddy customize &lt;bot-id|division:Name|file:path&gt;</code> with one fenced <code>yaml</code> patch (validated against the editable-field allowlist and opened as a PR). Registry: <code>config/buddy/control-plane.json</code>. How it works: <code>docs/BUDDY_CONTROL_PLANE.md</code>.</p>
+  </main>
+  <script src="buddy-control.js"></script>
+<script src="repository-actions.js" data-repository-actions="true" defer></script>
+</body>
+</html>
