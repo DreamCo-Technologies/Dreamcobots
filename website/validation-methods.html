@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Validation methods | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Sandbox</p><h1>Strategy validation</h1><p>Each method is a check. A button opens the runner. It does not invent a score.</p></div><p><a class="btn btn-primary" href="study-hub.html">Open the strategy runner</a></p></header>
+<section class="actions-review" id="methods"></section>
+</main>
+<script>
+const methods = ["holdout","second pass","counterexample","citation check","permission check","unit test","replay","timeout check","cost check","success rate","median latency","rollback check","secret check","sandbox fixture","human review","path filter","concurrency check","cache check","schema check","lint","type check","link check","404 check","approval gate","no-winner-without-score"];
+const box = document.getElementById("methods");
+methods.forEach((name) => { const link = document.createElement("a"); link.className = "btn btn-outline"; link.href = "study-hub.html"; link.textContent = name; box.appendChild(link); });
+</script>
+</body></html>

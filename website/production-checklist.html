@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><title>Production checklist</title></head>
+<body>
+<main>
+<h1>Production checklist</h1>
+<p>Paste values on the host page. Do not paste them into chat.</p>
+<p><a href="https://github.com/DreamCo-Technologies/Dreamcobots/settings/secrets/actions">Paste the values here</a></p>
+<h2>Run locally</h2>
+<pre>git clone https://github.com/DreamCo-Technologies/Dreamcobots.git
+cd Dreamcobots
+python3 tools/production_readiness_gate.py --strict</pre>
+<h2>Run on GitHub</h2>
+<p><a href="https://github.com/DreamCo-Technologies/Dreamcobots/actions">Open Actions and run Daily health balancer</a></p>
+<p><a href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/BUILD_LIST.md">Open the build list</a></p>
+<ol>
+<li>Set DATABASE_URL.</li>
+<li>Set STRIPE_LIVE_SECRET_KEY. <a href="https://dashboard.stripe.com/apikeys">Stripe keys</a></li>
+<li>Set STRIPE_LIVE_PK.</li>
+<li>Set STRIPE_WEBHOOK_SECRET. <a href="https://dashboard.stripe.com/webhooks">Stripe webhooks</a></li>
+<li>Set OWNER_BILLING_TOKEN.</li>
+<li>Set OWNER_SECRET_KEY to at least 16 characters.</li>
+<li>Switch Pages to GitHub Actions. <a href="https://github.com/DreamCo-Technologies/Dreamcobots/settings/pages">Pages setting</a></li>
+<li>Read the scan. <a href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/DAILY_PRODUCTION_SCAN.md">Production scan</a></li>
+</ol>
+<p>The gate stays external_config_required until the host has the values.</p>
+</main>
+</body>
+</html>

@@ -39,7 +39,7 @@ jobs:
         run: python3 -m unittest tests.test_compile_md_bots
       - name: Upload compiled registry
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: compiled-md-bots-${{ github.run_id }}
           path: |

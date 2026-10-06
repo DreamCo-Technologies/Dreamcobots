@@ -3,7 +3,7 @@ name: Repository Scan Update
 on:
   workflow_dispatch:
   schedule:
-    - cron: '17 6 * * 1'
+    - cron: '53 6 * * 1'
 
 permissions:
   contents: read
@@ -22,6 +22,30 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Audit repository connections
+        shell: bash
+        run: |
+          mkdir -p reports scan-update
+          if [ -f tools/audit_repository_connections.py ]; then
+            set +e
+            python3 tools/audit_repository_connections.py | tee scan-update/connections-summary.json
+            status=${PIPESTATUS[0]}
+            set -e
+            if [ -f config/generated/repository-system-connections.json ]; then
+              cp config/generated/repository-system-connections.json reports/prod-connectivity-scan.json
+            fi
+            if [ "$status" -ne 0 ]; then
+              echo "::warning::audit_repository_connections.py exited $status (required references missing); see reports/prod-connectivity-scan.json"
+            fi
+          else
+            echo "::notice::tools/audit_repository_connections.py not present; skipping connectivity scan"
+          fi
 
       - name: Build scan update artifact
         shell: bash
@@ -60,9 +84,12 @@ jobs:
         run: cat scan-update/comment.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload scan update evidence
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: repository-scan-update-${{ github.run_id }}
-          path: scan-update/
+          path: |
+            scan-update/
+            reports/prod-connectivity-scan.json
+            reports/REPOSITORY_SYSTEM_CONNECTIONS.md
           if-no-files-found: error
           retention-days: 14

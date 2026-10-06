@@ -1,0 +1,24 @@
+name: Fleet Builder
+
+on:
+  workflow_dispatch:
+    inputs:
+      style:
+        description: Bot or system style
+        required: true
+        default: python-bot
+      name:
+        description: Target name
+        required: true
+        default: buddy
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Plan only
+        run: python3 tools/fleet_builder.py --style "${{ inputs.style }}" --name "${{ inputs.name }}"

@@ -49,5 +49,13 @@ Test every declared capability for Wargame Simulation Engine in sandbox mode: Mu
 ## Production gate
 implement or configure adapters, pass sandbox checks, add authentication, and verify deployment telemetry
 
+## three.js hint
+Training start: read https://threejs.org/docs/#api/en/lights/Light. Do not copy the examples.
+
+```js
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js";
+const light = new THREE.DirectionalLight(0xffffff, 1);
+```
+
 ---
 *Generated/updated by tools/ensure_bots_production_ready.py — profile completeness only; runtime production requires evidence.*
