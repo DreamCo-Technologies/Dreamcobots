@@ -113,6 +113,7 @@ jobs:
           python3 tools/generate_buddy_open_model_lab.py --check
           python3 tools/generate_buddy_learning_strategies.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
+          python3 tools/build_system_progress_status.py
           python3 tools/connect_repository_pages.py
           python3 tools/connect_repository_pages.py --check
           python3 -m unittest tests.test_repository_browser tests.test_legacy_portfolios tests.test_branch_health_public_report
@@ -123,6 +124,7 @@ jobs:
           node --test tests/benchmark-tracker-page.test.mjs tests/service-worker-benchmark-cache.test.mjs
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
+          test -s website/data/system-progress-status.json
           test -s website/data/repository-master-map.json
           test -s website/data/actions-health-report.json
           test -s website/data/actions-live-health.json
