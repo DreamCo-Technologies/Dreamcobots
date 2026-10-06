@@ -1,0 +1,231 @@
+{
+  "schema": "dreamco.data_package_dataset_qa_scorecard.v1",
+  "config_version": "0.1.0",
+  "profile": "dp_onet_occ_syn",
+  "package_dir": "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.2",
+  "sku_id": "DP-ONET-OCC-SYN",
+  "version": "0.0.2",
+  "evaluated_at": "2026-10-05T22:35:39-05:00",
+  "inputs": {
+    "data_file": "sample/occupations.jsonl",
+    "data_sha256": "fb9d09e43d81be56b888830a6e256489f813cf4fd00474fbc24d7f507dfebf00",
+    "rows": 44,
+    "asset_provenance": "assets/dp-onet-occ-syn-sample-0.0.2/provenance.json",
+    "reference_notes": [
+      "reference: db_31_0_csv.zip sha256 matches the package pin"
+    ]
+  },
+  "overall_status": "pass",
+  "qa_score": 98.5,
+  "checks": [
+    {
+      "id": "completeness",
+      "status": "pass",
+      "hard": false,
+      "weight": 0.1,
+      "score": 100.0,
+      "metrics": {
+        "required_field_fill_rate": 1.0
+      },
+      "thresholds": {
+        "required_field_fill_rate": {
+          "pass_min": 0.99,
+          "warn_min": 0.95
+        }
+      },
+      "reasons": []
+    },
+    {
+      "id": "schema_validity",
+      "status": "pass",
+      "hard": true,
+      "weight": 0.15,
+      "score": 100.0,
+      "metrics": {
+        "rows_valid": 1.0,
+        "rows_parse": 1.0
+      },
+      "thresholds": {
+        "rows_valid": {
+          "pass_min": 1.0,
+          "warn_min": 1.0
+        },
+        "rows_parse": {
+          "pass_min": 1.0,
+          "warn_min": 1.0
+        }
+      },
+      "reasons": []
+    },
+    {
+      "id": "referential_integrity",
+      "status": "pass",
+      "hard": true,
+      "weight": 0.15,
+      "score": 100.0,
+      "metrics": {
+        "codes_resolve": 1.0,
+        "titles_match": 1.0,
+        "elements_resolve": 1.0,
+        "values_match_source": 1.0
+      },
+      "thresholds": {
+        "codes_resolve": {
+          "pass_min": 1.0,
+          "warn_min": 1.0
+        },
+        "titles_match": {
+          "pass_min": 1.0,
+          "warn_min": 1.0
+        },
+        "elements_resolve": {
+          "pass_min": 1.0,
+          "warn_min": 1.0
+        },
+        "values_match_source": {
+          "pass_min": 1.0,
+          "warn_min": 0.99
+        }
+      },
+      "reasons": []
+    },
+    {
+      "id": "deduplication",
+      "status": "pass",
+      "hard": true,
+      "weight": 0.1,
+      "score": 100.0,
+      "metrics": {
+        "unique_record_ids": 1.0,
+        "unique_keys": 1.0,
+        "unique_synthesis_payloads": 1.0
+      },
+      "thresholds": {
+        "unique_record_ids": {
+          "pass_min": 1.0,
+          "warn_min": 1.0
+        },
+        "unique_keys": {
+          "pass_min": 1.0,
+          "warn_min": 1.0
+        },
+        "unique_synthesis_payloads": {
+          "pass_min": 1.0,
+          "warn_min": 0.98
+        }
+      },
+      "reasons": []
+    },
+    {
+      "id": "value_ranges",
+      "status": "pass",
+      "hard": true,
+      "weight": 0.1,
+      "score": 100.0,
+      "metrics": {
+        "values_in_range": 1.0,
+        "internal_consistency": 1.0
+      },
+      "thresholds": {
+        "values_in_range": {
+          "pass_min": 1.0,
+          "warn_min": 1.0
+        },
+        "internal_consistency": {
+          "pass_min": 1.0,
+          "warn_min": 0.98
+        }
+      },
+      "reasons": []
+    },
+    {
+      "id": "freshness_version_match",
+      "status": "pass",
+      "hard": true,
+      "weight": 0.1,
+      "score": 100.0,
+      "metrics": {
+        "row_version_matches_pin": 1.0,
+        "file_hashes_match_pin": 1.0,
+        "pin_is_latest_known_release": 1.0
+      },
+      "thresholds": {
+        "row_version_matches_pin": {
+          "pass_min": 1.0,
+          "warn_min": 1.0
+        },
+        "file_hashes_match_pin": {
+          "pass_min": 1.0,
+          "warn_min": 1.0
+        },
+        "pin_is_latest_known_release": {
+          "pass_min": 1.0,
+          "warn_min": 0.0
+        }
+      },
+      "reasons": []
+    },
+    {
+      "id": "provenance_coverage",
+      "status": "pass",
+      "hard": true,
+      "weight": 0.15,
+      "score": 100.0,
+      "metrics": {
+        "rows_fully_covered": 1.0,
+        "refs_pinned": 1.0
+      },
+      "thresholds": {
+        "rows_fully_covered": {
+          "pass_min": 1.0,
+          "warn_min": 1.0
+        },
+        "refs_pinned": {
+          "pass_min": 1.0,
+          "warn_min": 1.0
+        }
+      },
+      "reasons": []
+    },
+    {
+      "id": "synthesis_perspective",
+      "status": "pass",
+      "hard": true,
+      "weight": 0.15,
+      "score": 90.0,
+      "metrics": {
+        "dreamco_layer_coverage": 1.0,
+        "multi_evidence_rows": 1.0,
+        "no_verbatim_onet_text": 1.0,
+        "distinct_seed_ratio": 1.0,
+        "dreamco_field_share": 0.5
+      },
+      "thresholds": {
+        "dreamco_layer_coverage": {
+          "pass_min": 0.95,
+          "warn_min": 0.9
+        },
+        "multi_evidence_rows": {
+          "pass_min": 0.8,
+          "warn_min": 0.5
+        },
+        "no_verbatim_onet_text": {
+          "pass_min": 1.0,
+          "warn_min": 1.0
+        },
+        "distinct_seed_ratio": {
+          "pass_min": 0.9,
+          "warn_min": 0.75
+        },
+        "dreamco_field_share": {
+          "pass_min": 0.3,
+          "warn_min": 0.2
+        }
+      },
+      "reasons": []
+    }
+  ],
+  "failed_checks": [],
+  "warned_checks": [],
+  "truth_boundary": "A QA pass is integrity evidence for one dataset version. It is NOT the config/dataset_evaluation_scorecard.json score (scorecard_score), NOT validation evidence for license_provenance_gate.py, and NOT a sale approval. Never copy qa_score into scorecard_score."
+}
