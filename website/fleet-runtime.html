@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fleet Runtime Truth | DreamCo</title>
+  <meta name="description" content="Computed readiness of every DreamCo bot: what runs through the shared runtime, what is tested, and what is still only a spec." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="bots.css" />
+  <link rel="stylesheet" href="fleet-runtime.css" />
+  <link rel="stylesheet" href="buddy-run.css" />
+</head>
+<body class="fleet-page">
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+
+<main class="fleet-shell">
+  <header class="fleet-header">
+    <div>
+      <div class="hero-badge fleet-truth-pill"><span></span> Computed, not declared</div>
+      <h1>Fleet runtime truth</h1>
+      <p>Every bot is a manifest run by shared engines (<code>buddy/fleet_runtime</code>). States come from <code>tools/fleet_runtime_audit.py</code>: offline smoke runs, bot-specific fixtures and committed evidence. IMPLEMENTED and TESTED prove offline wiring only — not model quality, live integrations or production readiness.</p>
+    </div>
+    <a class="btn btn-primary" href="bots.html">Open fleet prospectus</a>
+  </header>
+
+  <section class="fleet-summary fr-states" id="fr-state-totals" aria-label="Bots by readiness state">
+    <div><span>Loading</span><strong>…</strong></div>
+  </section>
+
+  <section class="fr-panel" aria-labelledby="fr-legend-title">
+    <h2 id="fr-legend-title">What each state means</h2>
+    <dl class="fr-legend" id="fr-legend">
+      <div><dt>SPEC_ONLY</dt><dd>Profile text only; no shared engine could be mapped honestly.</dd></div>
+      <div><dt>IMPLEMENTED</dt><dd>Manifest valid, engine mapped, generic offline smoke runs through the shared runtime.</dd></div>
+      <div><dt>TESTED</dt><dd>A bot-specific fixture also passes (hand-written, or generated from the bot's own capabilities: flag <code>fixture_generated</code>) and engine unit tests pass.</dd></div>
+      <div><dt>CONNECTED</dt><dd>Committed evidence shows required connections (e.g. live model) checked OK.</dd></div>
+      <div><dt>VERIFIED</dt><dd>Evidence carries test, security, build and runtime results plus a measured benchmark.</dd></div>
+      <div><dt>PRODUCTION</dt><dd>Approval, deployment, health and observability evidence recorded.</dd></div>
+      <div><dt>BLOCKED</dt><dd>Invalid manifest, failing smoke or fixture, or slug defect.</dd></div>
+    </dl>
+  </section>
+
+  <section class="fr-panel" aria-labelledby="fr-division-title">
+    <h2 id="fr-division-title">By division</h2>
+    <div class="fr-table-wrap"><table class="fr-table" id="fr-division-table"><thead></thead><tbody></tbody></table></div>
+  </section>
+
+  <section class="fr-panel" aria-labelledby="fr-div-title">
+    <h2 id="fr-div-title">Division cards</h2>
+    <p class="fr-note">Each division has a generated manifest (<code>config/bots/division-manifests.generated.json</code>) and a division smoke test that runs one of its own bots per engine end to end through the shared runtime, offline. <strong>Run with Buddy</strong> opens a prefilled <code>/buddy run fleet_division_run</code> issue.</p>
+    <div class="fr-div-grid" id="fr-div-cards"><p class="fr-note">Loading…</p></div>
+  </section>
+
+  <section class="fr-panel" aria-labelledby="fr-bots-title">
+    <h2 id="fr-bots-title">Every bot</h2>
+    <form class="fr-filters" id="fr-filters" role="search" onsubmit="return false">
+      <input id="fr-search" type="search" placeholder="Search slug, name, division, engine…" aria-label="Search bots" />
+      <select id="fr-state-filter" aria-label="Filter by state"><option value="">All states</option></select>
+      <select id="fr-division-filter" aria-label="Filter by division"><option value="">All divisions</option></select>
+      <select id="fr-engine-filter" aria-label="Filter by engine"><option value="">All engines</option></select>
+      <span class="fr-count" id="fr-result-count"></span>
+    </form>
+    <div class="fr-table-wrap"><table class="fr-table" id="fr-bot-table">
+      <thead><tr><th>Bot</th><th>Division</th><th>Engine</th><th>State</th><th>Missing contract pieces</th><th>Flags</th><th>Links</th><th>Run with Buddy</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <button class="btn btn-outline" id="fr-more" type="button" hidden>Show more</button>
+  </section>
+
+  <section class="fr-panel" aria-labelledby="fr-wf-title">
+    <h2 id="fr-wf-title">Workflow jobs (Run with Buddy)</h2>
+    <p class="fr-note">Every GitHub Actions workflow has a generated prospectus card. <strong>Run with Buddy</strong> opens a prefilled <code>/buddy run</code> issue; Pages holds no token and the Buddy command router checks the allowlist before dispatching. Money, destructive and push-to-main jobs are never runnable.</p>
+    <form class="fr-filters" role="search" onsubmit="return false">
+      <input id="fr-wf-search" type="search" placeholder="Search workflows…" aria-label="Search workflows" />
+      <span class="fr-count" id="fr-wf-count">Loading…</span>
+    </form>
+    <ul class="br-wf-list" id="fr-wf-list"></ul>
+  </section>
+
+  <section class="fr-panel" aria-labelledby="fr-folders-title">
+    <h2 id="fr-folders-title">Code folders</h2>
+    <p class="fr-note">Verdicts from actually compiling, importing, type-checking and running mapped tests when the audit ran.</p>
+    <div class="fr-table-wrap"><table class="fr-table" id="fr-folder-table">
+      <thead><tr><th>Folder</th><th>Verdict</th><th>Code files</th><th>Import probe</th><th>Python tests</th><th>Node tests</th><th>Typecheck</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <section class="fr-panel" aria-labelledby="fr-links-title">
+    <h2 id="fr-links-title">Pages link check</h2>
+    <p id="fr-links-summary">…</p>
+    <ul id="fr-links-broken"></ul>
+  </section>
+
+  <p class="fr-note">Source: <a href="data/fleet-runtime-status.json">data/fleet-runtime-status.json</a> · Contract: <a href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/docs/UNIVERSAL_BOT_RUNTIME_CONTRACT.md">UNIVERSAL_BOT_RUNTIME_CONTRACT.md</a> · Report: <a href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/FLEET_RUNTIME_AUDIT.md">FLEET_RUNTIME_AUDIT.md</a></p>
+</main>
+<script src="buddy-run.js"></script>
+<script src="fleet-runtime.js"></script>
+</body>
+</html>

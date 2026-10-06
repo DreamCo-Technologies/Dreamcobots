@@ -1,0 +1,147 @@
+{
+  "schema": "dreamco.data_package_asset_provenance.v1",
+  "asset_id": "dp-onet-occ-syn-sample-0.0.2",
+  "title": "DreamCo Occupation Synthesis Pack (built with O*NET® 31.0 data): 0.0.2 populated sample",
+  "evidence_id": "dp-onet-occ-syn-sample-0.0.2-onet31.0-2026-10-05",
+  "capability_id": "occupation-synthesis",
+  "source_type": "onet",
+  "source_reference": "https://www.onetcenter.org/dl_files/database/db_31_0_csv.zip",
+  "retrieved_at": "2026-10-05",
+  "content_version": "O*NET 31.0 (db_31_0_csv.zip sha256 55033fc68b4c13ec23e7f74dc6378660f6e854e75d55d6e333ae0a761d3987cd)",
+  "license_or_usage_basis": "CC BY 4.0 for O*NET 31.0 Database content (USDOL/ETA, https://www.onetcenter.org/license_db.html); DreamCo synthesis layer, commercial terms not yet set",
+  "transformation": "derived_metric",
+  "evaluator_version": "build_dp_onet_occ_syn_sample 0.1.1",
+  "integrity_hash": "sha256:06e0b0f6505f884babd41080e8816568ef73be5fe35028806d0a8feb06804df1",
+  "ownership_class": "open_license_with_conditions",
+  "creator": "DreamCo (Grok-Data-Package-Merchant, tools/build_dp_onet_occ_syn_sample.py)",
+  "owner": "Mixed: O*NET®-derived values and names are USDOL/ETA content under CC BY 4.0; lens scores, confidence bands, practice seeds, rubrics and analysis are DreamCo-derived",
+  "asset_files": [
+    {
+      "path": "sample/occupations.jsonl",
+      "sha256": "fb9d09e43d81be56b888830a6e256489f813cf4fd00474fbc24d7f507dfebf00",
+      "bytes": 304962
+    },
+    {
+      "path": "sample/occupation_cards.md",
+      "sha256": "311c5fb120a6908fb8574d7166c5e173e211801a2bb06fb719f719d10ba32e07",
+      "bytes": 70794
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "onet_db_31_0",
+      "title": "O*NET 31.0 Database (CSV)",
+      "publisher": "U.S. Department of Labor, Employment and Training Administration (USDOL/ETA); developed by the National Center for O*NET Development",
+      "url": "https://www.onetcenter.org/dl_files/database/db_31_0_csv.zip",
+      "version": "31.0",
+      "sha256": "55033fc68b4c13ec23e7f74dc6378660f6e854e75d55d6e333ae0a761d3987cd",
+      "files": [
+        {
+          "name": "occupation_data.csv",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_csv/occupation_data.csv",
+          "sha256": "a09eae1d6609686e44e05b7290993a1c8b523d8ca224bc0eedc194c855c3ee02"
+        },
+        {
+          "name": "job_zones.csv",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_csv/job_zones.csv",
+          "sha256": "093f01891ac2e602a8cc6c859ecb619b5bc00eb50cd3f3c1134c05b704481944"
+        },
+        {
+          "name": "knowledge.csv",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_csv/knowledge.csv",
+          "sha256": "88092e17d16096cdebe292fee4389deb460edda24ae8b4637212c69c71562f55"
+        },
+        {
+          "name": "essential_skills.csv",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_csv/essential_skills.csv",
+          "sha256": "68c4d31d8c55077238395dca40cc4e6d32e6a608b5474bb8264b1f98ae415bd7"
+        },
+        {
+          "name": "work_activities.csv",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_csv/work_activities.csv",
+          "sha256": "6c266205b2926c0c854a7a577aae29fe492c71bb0df7e197adca830b58fe4ea1"
+        },
+        {
+          "name": "task_statements.csv",
+          "url": "https://www.onetcenter.org/dl_files/database/db_31_0_csv/task_statements.csv",
+          "sha256": "4568e14d8db6f05551ad37e056e909b13ebae4a26bcb5ff915bb5f281d582c57"
+        }
+      ],
+      "retrieved_at": "2026-10-05",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "ownership_class": "open_license_with_conditions",
+      "commercial_use_allowed": true,
+      "redistribution_allowed": true,
+      "ai_training_allowed": true,
+      "attribution_required": true,
+      "share_alike_required": false,
+      "required_notices": [
+        "This page includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license. O*NET® is a trademark of USDOL/ETA.",
+        "DreamCo has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications."
+      ],
+      "restrictions": [
+        "Use 'O*NET' only as an adjective followed by a generic noun (e.g. 'built with O*NET® data'), with the ® symbol; never possessive or plural; never imply USDOL/ETA endorsement.",
+        "Do not offer terms or technical measures that restrict a recipient's CC BY 4.0 rights in the O*NET®-derived values (CC BY 4.0 s.2(a)(5)(B)).",
+        "Downloadable database files only; O*NET Web Services data (no modification, non-transferable) and Career Exploration Tools (CC BY-ND / Tools Developer License) are not sources for this asset."
+      ]
+    }
+  ],
+  "derived_components": [
+    {
+      "component": "onet_derived_values",
+      "ownership_class": "open_license_with_conditions",
+      "derivation_type": "structured_extraction",
+      "description": "O*NET-SOC code and title, job zone, top-5 knowledge / essential-skill / work-activity elements by Importance (IM, ratings flagged Recommend Suppress excluded), and core/supplemental task counts. No occupation descriptions or task statement text.",
+      "derived_from": [
+        "onet_db_31_0"
+      ]
+    },
+    {
+      "component": "dreamco_lenses_and_confidence",
+      "ownership_class": "open_license_with_conditions",
+      "derivation_type": "derived_metric",
+      "description": "DreamCo capability-lens scores (mean IM of DreamCo-grouped 4.A.* elements, rescaled 0-1), lift over the all-occupation lens mean, dominant lens (largest lift), knowledge lens (largest lift of top knowledge elements over all-occupation element means), preparation band and data-confidence band (dates, N, suppressed count, rating sources). DreamCo method over O*NET® values.",
+      "derived_from": [
+        "onet_derived_values"
+      ]
+    },
+    {
+      "component": "dreamco_synthesis_text",
+      "ownership_class": "synthetic_generated_by_dreamco",
+      "derivation_type": "synthetic_data",
+      "description": "Template-generated DreamCo practice seed, rubric dimensions and agree/caveat/improve/still-need-test analysis. Embeds O*NET® titles and element names, so the O*NET® attribution still applies.",
+      "derived_from": [
+        "onet_derived_values",
+        "dreamco_lenses_and_confidence"
+      ]
+    }
+  ],
+  "transformation_history": [
+    {
+      "step": "verify db_31_0_csv.zip sha256 against provenance_manifest.json pin; read 6 CSV members in memory",
+      "tool": "tools/build_dp_onet_occ_syn_sample.py",
+      "tool_version": "build_dp_onet_occ_syn_sample 0.1.1",
+      "at": "2026-10-05T22:35:27-05:00",
+      "inputs": [
+        "onet_db_31_0"
+      ]
+    },
+    {
+      "step": "select 2 data-level occupations per SOC major group (sha256 seed 'dp-onet-occ-syn-0.0.2'), derive rows, render cards",
+      "tool": "tools/build_dp_onet_occ_syn_sample.py",
+      "tool_version": "build_dp_onet_occ_syn_sample 0.1.1",
+      "at": "2026-10-05T22:35:27-05:00",
+      "inputs": [
+        "onet_db_31_0"
+      ]
+    }
+  ],
+  "attribution_text": "This dataset includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/). O*NET® is a trademark of USDOL/ETA. DreamCo has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications. The O*NET® Database is sponsored by USDOL/ETA and developed by the National Center for O*NET Development (source: https://www.onetcenter.org/database.html). DreamCo's changes are listed in MODIFICATIONS.md. The O*NET® material is provided as-is under CC BY 4.0, including its disclaimer of warranties (Section 5).",
+  "review_status": "unreviewed",
+  "human_review": null,
+  "notes": [
+    "Per-row source_refs in sample/occupations.jsonl name the file, member sha256 and keys behind each O*NET®-derived field.",
+    "Run tools/score_data_package_dataset.py for the dataset QA scorecard; QA is integrity evidence, not validation evidence."
+  ]
+}

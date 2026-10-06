@@ -1,6 +1,6 @@
 {
   "schema": "dreamco.license_provenance_gate.v1",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "purpose": "Rules for tools/license_provenance_gate.py. Reuses existing policy configs by reference instead of duplicating them.",
   "policy_refs": {
     "ownership_classes": "config/buddy-training-data-provenance-policy.json#ownership_classes",
@@ -80,6 +80,17 @@
           "pattern": "DreamCo[^.]{0,40} has modified"
         }
       ],
+      "required_in_declared_attribution": [
+        {
+          "id": "license_link",
+          "pattern": "creativecommons\\.org/licenses/by/4\\.0"
+        },
+        {
+          "id": "trademark_notice",
+          "pattern": "O\\*NET®? is a trademark of USDOL/ETA"
+        }
+      ],
+      "required_in_declared_attribution_basis": "https://www.onetcenter.org/license_db.html (read 2026-10-05): 'link to the license', and both 'How to Credit Us' texts end with 'O*NET® is a trademark of USDOL/ETA.' Checked in the declared attribution_text only (package-level notice); shipped files keep the recommended-element warnings.",
       "source_reference": "https://www.onetcenter.org/database.html (Usage License / attribution text)"
     },
     {
@@ -106,6 +117,12 @@
         {
           "id": "crosswalk_license_stated",
           "pattern": "(?i)crosswalk[^.]*(CC BY 4\\.0|Creative Commons)"
+        }
+      ],
+      "required_in_declared_attribution": [
+        {
+          "id": "license_link",
+          "pattern": "creativecommons\\.org/licenses/by/4\\.0"
         }
       ],
       "source_reference": "https://www.onetcenter.org/crosswalks.html (footer: Crosswalk Files by USDOL/ETA licensed CC BY 4.0)"
