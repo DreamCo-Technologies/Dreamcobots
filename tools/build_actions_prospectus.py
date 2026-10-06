@@ -218,6 +218,12 @@ def workflow_records(health: dict[str, Any], operators: list[str], curated: dict
             "inputs": info["inputs"], "generated": True,
             "notes": info["blocked_reason"] or f"Generated from .github/workflows/{path.name}.",
         }
+        if not job["triggerable"]:
+            job["blocked_reason"] = info["blocked_reason"] or "blocked by policy"
+        if info["risk_tier"] == "destructive":
+            job["destructive"] = True
+        if job["risk_tier"] in {"writes_code", "money"}:
+            job["requires_owner_approval"] = True
         if path.name in curated:
             job["covered_by_curated_job"] = curated[path.name]
         jobs.append(job)

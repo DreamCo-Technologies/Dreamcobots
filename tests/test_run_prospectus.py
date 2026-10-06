@@ -118,3 +118,23 @@ def test_pages_patch_builder_output_is_accepted_by_validator():
     assert patch["prompt"] == 'Say "hi" & keep it short' and patch["capabilities"] == {"SEO": False}
     patch.pop("capabilities")
     assert validate_bot_patch(target, patch)
+
+
+def test_generated_registry_jobs_satisfy_control_plane_rules():
+    """Shape rules enforced by tools/buddy_control_plane.py check_registry (#13197), so the router can merge these jobs."""
+    import re
+
+    registry = json.loads((ROOT / "config/buddy/run-with-buddy.generated.json").read_text())
+    ids = set()
+    for job in registry["jobs"]:
+        assert re.fullmatch(r"[a-z][a-z0-9_]{1,63}", job["id"]) and job["id"] not in ids
+        ids.add(job["id"])
+        assert job["risk_tier"] in {"read_only", "writes_reports", "writes_code", "money"}
+        assert isinstance(job["triggerable"], bool) and isinstance(job["requires_owner_approval"], bool)
+        if not job["triggerable"]:
+            assert job.get("blocked_reason"), job["id"]
+        if job["risk_tier"] in {"writes_code", "money"}:
+            assert job["requires_owner_approval"] is True, job["id"]
+        if job["risk_tier"] == "money" or job.get("destructive"):
+            assert job["triggerable"] is False, job["id"]
+        assert len(job["inputs"]) <= 10
