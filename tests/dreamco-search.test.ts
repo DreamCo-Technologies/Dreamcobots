@@ -131,3 +131,10 @@ test("web search URLs encode one visible query", () => {
   );
   assert.throws(() => buildDreamSearchWebUrl("https://example.com/?q={query}", ""), /required/);
 });
+
+test("published DreamSearch data is exactly the canonical generated index (no drift between copies)", () => {
+  const context: { window: Record<string, unknown> } = { window: {} };
+  vm.runInNewContext(readFileSync("website/data/dreamco-search-index.js", "utf8"), context);
+  assert.deepEqual(JSON.parse(JSON.stringify(context.window.DREAMCO_SEARCH_DATA)), index);
+  assert.ok(index.documents.some((item) => JSON.stringify(item).includes("system-progress.html")));
+});
