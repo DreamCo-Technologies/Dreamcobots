@@ -41,6 +41,12 @@ BOT_FIELDS = {
     "division": "an existing division name",
     "capabilities": "map of existing capability -> true/false (at least one stays enabled)",
 }
+DIVISION_FIELDS = {
+    "enabled": "boolean: false disables every bot in the division (bot-level customizations still apply on top)",
+    "prompt": "string, up to 2000 chars: division-wide instructions (a bot-level prompt replaces it)",
+    "model": "one of " + ", ".join(MODEL_ALLOWLIST),
+    "schedule": "5-field cron (UTC) with a fixed minute and hour, or 'off'",
+}
 FILE_FIELDS = {
     "purpose": "string, 10-300 chars: replaces the auto-summary",
     "owner": "an existing bot slug or division name",
@@ -54,7 +60,7 @@ FORBIDDEN_KEY_RE = re.compile(
 SECRET_VALUE_RE = re.compile(r"(?<![A-Za-z0-9])(sk-[A-Za-z0-9_-]{8,}|gh[pousr]_[A-Za-z0-9]{20,}|xox[abp]-|AKIA[0-9A-Z]{12,}|-----BEGIN)")
 CRON_FIELD = r"(\*|\d{1,2}(-\d{1,2})?(,\d{1,2}(-\d{1,2})?)*)(/\d{1,2})?"
 CRON_RE = re.compile(rf"^(\d{{1,2}}) (\d{{1,2}}|\d{{1,2}}(,\d{{1,2}})+) {CRON_FIELD} {CRON_FIELD} {CRON_FIELD}$")
-KEY_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_ .:/()&+-]{0,119}$")
+KEY_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_ ./()&+-]{0,119}$")
 FENCE_RE = re.compile(r"```ya?ml\s*\n(.*?)\n```", re.S)
 TARGET_RE = re.compile(r"/buddy\s+customize\s+(\S+)")
 
@@ -191,6 +197,31 @@ def validate_bot_patch(slug: str, patch: dict[str, Any], collection: dict[str, A
     return clean
 
 
+def validate_division_patch(name: str, patch: dict[str, Any], collection: dict[str, Any] | None = None) -> dict[str, Any]:
+    collection = collection or load_manifests()
+    bots = [b for b in collection["bots"] if b["division"] == name]
+    if not bots or name == "UNASSIGNED":
+        raise PatchError([f"unknown division {name!r}"])
+    if all(b.get("run") in {"blocked_money", "blocked_destructive"} for b in bots):
+        raise PatchError([f"{name} contains only money/destructive bots; it cannot be customized from Pages"])
+    if not isinstance(patch, dict) or not patch:
+        raise PatchError(["patch must be a non-empty mapping"])
+    errors = []
+    for key in patch:
+        if key not in DIVISION_FIELDS:
+            reason = "is protected (secrets, money, deletes, permissions, workflows and readiness are never editable)" if FORBIDDEN_KEY_RE.search(key) else "is not an editable division field"
+            errors.append(f"{key}: {reason}")
+    if errors:
+        raise PatchError(errors)
+    # Reuse the bot validators for the shared fields, against a runnable bot of the division.
+    probe = next(b["slug"] for b in bots if b.get("run") not in {"blocked_money", "blocked_destructive"})
+    return validate_bot_patch(probe, patch, collection)
+
+
+def apply_division_patch(name: str, patch: dict[str, Any], store: Path = BOT_STORE) -> dict[str, Any]:
+    return _merge_store(store, "division:" + name, validate_division_patch(name, patch))
+
+
 def validate_file_patch(path: str, patch: dict[str, Any], known_paths: set[str], owners: set[str]) -> dict[str, Any]:
     errors: list[str] = []
     if path not in known_paths:
@@ -229,9 +260,18 @@ def load_customizations(store: Path = BOT_STORE) -> dict[str, dict[str, Any]]:
     return json.loads(store.read_text(encoding="utf-8")).get("entries", {})
 
 
+def effective_customization(customizations: dict[str, dict[str, Any]], slug: str, division: str) -> dict[str, Any]:
+    """Division-level fields first, bot-level fields override them. Money/destructive bots ignore division settings."""
+    merged = dict(customizations.get("division:" + division, {}))
+    merged.update(customizations.get(slug, {}))
+    return merged
+
+
 def apply_customization(manifest: dict[str, Any], custom: dict[str, Any]) -> dict[str, Any]:
     """Overlay an accepted customization on an expanded manifest."""
     if not custom:
+        return manifest
+    if manifest.get("run_policy") in {"blocked_money", "blocked_destructive"}:
         return manifest
     out = dict(manifest)
     out["customized_fields"] = sorted(custom)

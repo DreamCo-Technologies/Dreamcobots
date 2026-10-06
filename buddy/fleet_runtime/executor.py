@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from . import engines, evidence, permissions
-from .customize import apply_customization, load_customizations
+from .customize import apply_customization, effective_customization, load_customizations
 from .contract import expand, load_manifests, validate, validate_bot_manifest, load_schema
 
 try:  # Reuse Buddy's shared guardrails; tolerate absence in stripped builds.
@@ -52,8 +52,9 @@ class FleetExecutor:
         if slug not in self.bots:
             raise KeyError(f"unknown bot: {slug}")
         if slug not in self._expanded:
-            self._expanded[slug] = apply_customization(expand(self.bots[slug], self.collection),
-                                                       self.customizations.get(slug, {}))
+            base = expand(self.bots[slug], self.collection)
+            self._expanded[slug] = apply_customization(
+                base, effective_customization(self.customizations, slug, base["division"]))
         return self._expanded[slug]
 
     def _finish(self, manifest, task, status, mode, permission, guards, result, error=None, stamp=False):
