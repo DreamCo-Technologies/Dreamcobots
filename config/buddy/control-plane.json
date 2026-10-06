@@ -326,6 +326,21 @@
       "destructive": true,
       "blocked_reason": "Bulk-closes issues. Anything that deletes or closes in bulk is never dispatchable from the router or Pages.",
       "inputs": {}
+    },
+    {
+      "id": "buddy_customize_apply",
+      "family": "customize",
+      "title": "Apply a validated Pages customization as a PR",
+      "workflow": "buddy-customize-apply.yml",
+      "risk_tier": "writes_code",
+      "requires_owner_approval": true,
+      "triggerable": false,
+      "blocked_reason": "Not run directly: use /buddy customize <bot-id|division:Name|file:path> with one yaml patch; the router dispatches this job after authorization.",
+      "inputs": {
+        "issue": {"type": "string", "pattern": "^[0-9]{1,7}$", "max_length": 7},
+        "comment": {"type": "string", "pattern": "^[0-9]{1,15}$", "max_length": 15}
+      },
+      "notes": "Validates against the editable-field allowlist (buddy/fleet_runtime/customize.py), commits only config/bots/customizations.json or config/files/prospectus-overrides.json to a new branch and opens a PR. Requires the fleet runtime (#13729/#13731) on the default branch."
     }
   ]
 }

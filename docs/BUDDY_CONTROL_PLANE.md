@@ -162,3 +162,26 @@ Create the command label once (the router also accepts new issues whose title st
 gh label create buddy-command --repo DreamCo-Technologies/Dreamcobots --color 5319e7 \
   --description "Buddy control-plane command (see docs/BUDDY_CONTROL_PLANE.md)"
 ```
+
+## Generated jobs and `/buddy customize` (fleet runtime integration)
+
+**Generated jobs.** `tools/build_actions_prospectus.py` (#13731) writes `config/buddy/run-with-buddy.generated.json`. It has one job per workflow, plus `fleet_bot_run` and `fleet_division_run`. The router merges these jobs under the curated registry (`merge_generated`):
+
+- A curated job always wins, whether it matches on id or on workflow.
+- Each generated job must pass `check_registry` by itself. A bad generated job is skipped. It never invalidates the curated registry, and if the file is unreadable the router uses curated jobs only.
+- The router reads the file through its sparse checkout. `python3 tools/buddy_control_plane.py check` lists every skipped generated job and why.
+- `publish-registry` still publishes curated jobs only. `buddy-control.html` renders the generated jobs (with their prospectus) from `website/data/run-prospectus.json` when that file is deployed.
+
+**Customize.** Write `/buddy customize <bot-id|division:Name|file:path>` as the issue title or the first line of a comment, then add exactly one fenced `yaml` patch. The Pages Customize forms open this issue already filled in.
+
+1. The router checks the target syntax and the patch structure (one fence, at most 4000 characters, no control characters). It applies the same authorization as `run`: an operator with write permission, an operator as issue author, and owner approval because the apply job is `writes_code`. Then it dispatches `buddy-customize-apply.yml` with only `issue` and `comment` ids as inputs.
+2. `tools/buddy_customize_apply.py` re-reads the request from the API (never from inputs). It re-checks the author and their permission, then runs the allowlist validator:
+   - `python -m buddy.fleet_runtime customize --apply` for bots and divisions
+   - `tools/build_file_prospectus.py customize --apply` for files
+   It fails if any file other than `config/bots/customizations.json` or `config/files/prospectus-overrides.json` changed.
+3. The workflow commits to `buddy/customize-<issue>-<run>`, opens a PR and comments the PR link on the issue (the "pending change"). It never pushes to the default branch and never merges.
+
+Requirements:
+- The fleet runtime (#13729, #13731) must be on the default branch.
+- For the workflow to open the PR itself, an owner must enable *Settings → Actions → Allow GitHub Actions to create and approve pull requests*. Without it, the workflow comments a compare link instead.
+- PRs opened with `GITHUB_TOKEN` don't trigger CI on their own. Re-run the checks or push an empty commit before merging.
