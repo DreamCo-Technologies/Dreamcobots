@@ -104,3 +104,7 @@ test('Success Center uses stable responsive layouts', () => {
   assert.doesNotMatch(css, /font-size:\s*[^;]*vw/);
   assert.doesNotMatch(css, /letter-spacing:\s*-/);
 });
+
+test('published success program is exactly the canonical generated program (no drift between copies)', () => {
+  assert.deepEqual(JSON.parse(JSON.stringify(program)), canonical);
+});

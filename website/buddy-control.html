@@ -75,7 +75,12 @@
     </div>
     <p class="desk-note" id="bcp-stamp">Loading the Buddy job registry…</p>
     <section id="bcp-jobs" class="desk-grid"></section>
-    <p class="desk-note">Commands you can also type in any issue comment: <code>/buddy list</code>, <code>/buddy status [job_id]</code>, <code>/buddy run &lt;job_id&gt; key=value</code>. Registry: <code>config/buddy/control-plane.json</code>. How it works: <code>docs/BUDDY_CONTROL_PLANE.md</code>.</p>
+    <section id="bcp-generated" hidden aria-labelledby="bcp-generated-title">
+      <h2 id="bcp-generated-title">Generated Run with Buddy jobs</h2>
+      <p class="desk-note" id="bcp-generated-note">One job per workflow not covered above, plus the fleet bot and division jobs. Every Run button has a generated prospectus; jobs without a complete one show no button.</p>
+      <div id="bcp-generated-list" class="desk-grid"></div>
+    </section>
+    <p class="desk-note">Commands you can also type in any issue comment: <code>/buddy list</code>, <code>/buddy status [job_id]</code>, <code>/buddy run &lt;job_id&gt; key=value</code>, <code>/buddy customize &lt;bot-id|division:Name|file:path&gt;</code> with one fenced <code>yaml</code> patch (validated against the editable-field allowlist and opened as a PR). Registry: <code>config/buddy/control-plane.json</code>. How it works: <code>docs/BUDDY_CONTROL_PLANE.md</code>.</p>
   </main>
   <script src="buddy-control.js"></script>
 <script src="repository-actions.js" data-repository-actions="true" defer></script>

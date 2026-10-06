@@ -2,6 +2,7 @@ name: Buddy Command Router
 
 # Lets an authorized operator run registered Buddy jobs from an issue or comment:
 #   /buddy run <job_id> [key=value ...]   /buddy status [job_id]   /buddy list   /buddy help
+#   /buddy customize <bot-id|division:Name|file:path>  (+ one ```yaml patch) -> buddy-customize-apply.yml
 # Registry + policy: config/buddy/control-plane.json. Docs: docs/BUDDY_CONTROL_PLANE.md.
 # Runs the router from the default branch only (issues/issue_comment always do).
 # No pull_request_target. User text reaches the router only through env vars and is
@@ -40,6 +41,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             config/buddy/control-plane.json
+            config/buddy/run-with-buddy.generated.json
             tools/buddy_control_plane.py
           sparse-checkout-cone-mode: false
 
@@ -54,6 +56,7 @@ jobs:
           BUDDY_ISSUE_TITLE: ${{ github.event.issue.title }}
           BUDDY_ISSUE_BODY: ${{ github.event.issue.body }}
           BUDDY_COMMENT_BODY: ${{ github.event.comment.body }}
+          BUDDY_COMMENT_ID: ${{ github.event.comment.id }}
           BUDDY_LABEL_NAME: ${{ github.event.label.name }}
           BUDDY_ROUTER_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: python3 tools/buddy_control_plane.py route
