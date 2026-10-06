@@ -2,7 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import { attachRequestIdToErrors, observeRequests, sendReadiness } from "./observability";
-import { requireApiAuth } from "./api-auth";
+import { apiAuthFailureRateLimit, requireApiAuth } from "./api-auth";
 
 const app = express();
 const httpServer = createServer(app);
@@ -87,8 +87,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(observeRequests());
 app.use(attachRequestIdToErrors());
 
-// Every /api route registered after this point requires a signed-in session or the owner token.
+// Every /api route registered after this point requires a signed-in session or the owner token,
+// and the GitHub push/workflow routes require the owner token (see API_OWNER_ONLY_ROUTES).
 // /api/health and /api/stripe/webhook are registered above; the public allowlist lives in ./api-auth.
+// The limiter only counts requests that are about to be rejected, so signed-in callers are never throttled.
+app.use("/api", apiAuthFailureRateLimit);
 app.use("/api", requireApiAuth());
 
 app.get('/api/ready', (_req, res) => {
