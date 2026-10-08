@@ -43,7 +43,7 @@
     $('previous').disabled=offset===0;$('next').disabled=offset+pageSize>=rows.length;
   }
   try {
-    const response=await fetch('data/superbot-crosswalk.json',{cache:'no-store'});
+    const response=await fetch('https://raw.githubusercontent.com/DreamCo-Technologies/Dreamcobots/main/config/generated/superbot-crosswalk.json',{cache:'no-store'});
     if(!response.ok) throw new Error('Catalog request failed');
     data=await response.json();
     if(data.schema!=='dreamco.superbot_crosswalk.v1') throw new Error('Unsupported catalog');

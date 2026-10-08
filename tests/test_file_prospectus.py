@@ -82,3 +82,10 @@ def test_bot_specs_are_owned_by_their_bot_with_auditor_readiness():
     status = json.loads((ROOT / "website/data/fleet-runtime-status.json").read_text())
     state = next(r[4] for r in status["bots"] if r[0] == "ad-copy")
     assert rec["readiness"] == state
+
+
+def test_case_colliding_templates_use_their_distinct_tracked_contents():
+    import subprocess
+    for path in ('.github/PULL_REQUEST_TEMPLATE.md', '.github/pull_request_template.md'):
+        expected = subprocess.check_output(['git', 'show', ':' + path], cwd=ROOT).decode('utf-8')
+        assert bfp.read_text(path) == expected

@@ -1,7 +1,7 @@
 import json
 import unittest
 from pathlib import Path
-from tools.build_superbot_crosswalk import build, ROOT, OUTPUT, PUBLIC
+from tools.build_superbot_crosswalk import build, ROOT, OUTPUT
 
 
 class SuperbotCrosswalkTests(unittest.TestCase):
@@ -11,7 +11,7 @@ class SuperbotCrosswalkTests(unittest.TestCase):
 
     def test_generated_views_are_current(self):
         self.assertEqual(self.data, json.loads(OUTPUT.read_text()))
-        self.assertEqual(self.data, json.loads(PUBLIC.read_text()))
+        self.assertFalse((ROOT / "website/data/superbot-crosswalk.json").exists(), "Keep the full catalog outside the Pages size budget")
 
     def test_all_namespaces_have_stable_unique_ids_and_one_existing_owner(self):
         owners = {d['name'] for d in json.loads((ROOT/'config/masterbot-65-registry.json').read_text())['divisions']}

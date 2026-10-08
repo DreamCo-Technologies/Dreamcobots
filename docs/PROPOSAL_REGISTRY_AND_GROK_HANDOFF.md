@@ -118,3 +118,5 @@ The factory creates runnable shared-runtime wrappers only after generic and gene
 Run `npm run test:superbots`, then `python3 tools/fleet_daily_factory.py plan --out /tmp/plan.json`; use `build --plan /tmp/plan.json --shard N --out /tmp/shard-N` for each planned shard, followed by `reduce --plan /tmp/plan.json --reports /tmp/factory-reports --out /tmp/summary.json` with the shard reports collected under that directory.
 
 `python3 tools/build_grok_package.py --out /tmp/grok-package --evidence /tmp/summary.json` creates every-file before/after inventory and division-sized work orders. Load only the relevant division to conserve context. Static scans and shared smoke tests do not replace independent specialist tests or qualified scientific validation.
+
+The Pages catalog reads the single canonical crosswalk from raw.githubusercontent.com, following the existing file-browser pattern. It is not duplicated into the size-limited website directory. The file prospectus reads distinct staged template blobs when a case-insensitive checkout aliases the existing uppercase/lowercase PR templates.

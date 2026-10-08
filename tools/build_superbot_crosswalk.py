@@ -20,7 +20,6 @@ from tools.proposal_registry import validate
 from tools.place_original_bots import SYSTEM_DEFAULT
 
 OUTPUT = ROOT / 'config/generated/superbot-crosswalk.json'
-PUBLIC = ROOT / 'website/data/superbot-crosswalk.json'
 STOP = set('ai bot bots assistant engine intelligence intelligent universal system systems dreamco the and for with from into of a an to research coordinate manage generate'.split())
 
 
@@ -146,7 +145,7 @@ def main():
     args=parser.parse_args()
     data=build();encoded=json.dumps(data,ensure_ascii=False,separators=(',',':'))+'\n'
     drift=[]
-    for path in (OUTPUT,PUBLIC):
+    for path in (OUTPUT,):
         if args.check:
             if not path.exists() or path.read_text()!=encoded:drift.append(str(path.relative_to(ROOT)))
         else:
