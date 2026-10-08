@@ -1,0 +1,113 @@
+name: Daily Fleet Build and Verification
+
+on:
+  pull_request:
+    paths:
+      - "tools/fleet_daily_factory.py"
+      - "tests/test_fleet_daily_factory.py"
+      - "config/bots/**"
+      - "buddy/fleet_runtime/**"
+      - ".github/workflows/fleet-daily-factory.yml"
+  workflow_dispatch:
+    inputs:
+      request_json:
+        description: 'Optional request JSON downloaded from System connections; blank uses the committed daily request'
+        required: false
+        type: string
+  schedule:
+    - cron: '23 8 * * *'
+
+permissions:
+  contents: read
+concurrency:
+  group: fleet-daily-factory-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      count: ${{ steps.plan.outputs.count }}
+      parallel: ${{ steps.plan.outputs.parallel }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Test build and evidence contracts
+        run: python3 -m unittest tests.test_fleet_daily_factory
+      - name: Validate daily demand and enforce limits
+        id: plan
+        env:
+          REQUEST_JSON: ${{ inputs.request_json }}
+        run: |
+          python3 - <<'PY'
+          import os,pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'request.json'
+          p.write_text(os.environ.get('REQUEST_JSON') or pathlib.Path('config/bots/daily-build-request.json').read_text())
+          PY
+          python3 tools/fleet_daily_factory.py plan --request "$RUNNER_TEMP/request.json" --out "$RUNNER_TEMP/factory-plan.json" --github-output "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: factory-plan
+          path: ${{ runner.temp }}/factory-plan.json
+          retention-days: 14
+  build:
+    needs: plan
+    if: needs.plan.outputs.count != '0'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ fromJSON(needs.plan.outputs.parallel) }}
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: factory-plan
+          path: ${{ runner.temp }}
+      - name: Build bounded shared-runtime bundles and test each allowed bot
+        env:
+          SHARD: ${{ matrix.shard }}
+          DREAMCO_FLEET_LIVE_MODEL: '0'
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 tools/fleet_daily_factory.py build --plan "$RUNNER_TEMP/factory-plan.json" --shard "$SHARD" --out "$RUNNER_TEMP/factory-shard"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: factory-shard-${{ matrix.shard }}
+          path: ${{ runner.temp }}/factory-shard/
+          retention-days: 7
+  evidence:
+    needs: [plan, build]
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/factory-evidence
+      - name: Require every shard and retain explicit blocked results
+        run: python3 tools/fleet_daily_factory.py reduce --plan "$RUNNER_TEMP/factory-evidence/factory-plan/factory-plan.json" --reports "$RUNNER_TEMP/factory-evidence" --out "$RUNNER_TEMP/factory-summary.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: factory-summary
+          path: ${{ runner.temp }}/factory-summary.json
+          retention-days: 14
