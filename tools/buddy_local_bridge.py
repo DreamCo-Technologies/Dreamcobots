@@ -21,6 +21,9 @@ from urllib.parse import parse_qs, quote_plus, urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from tools.general_intelligence_bridge import handle_review
 WEBSITE = ROOT / "website"
 MAX_BODY_BYTES = 32 * 1024
 MAX_AUDIT_EVENTS = 50
@@ -181,6 +184,9 @@ def workspace_targets(apps: Any, urls: Any) -> tuple[list[str], list[str]]:
 @dataclass
 class BridgeState:
     token: str
+    review_token: str = ""
+    reviewer_id: str = ""
+    review_store: Any = None
     paused: bool = False
     audit: list[dict[str, Any]] = field(default_factory=list)
     secret_writes: int = 0
@@ -241,6 +247,8 @@ class BuddyLocalHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
+        if handle_review(self, "GET", path):
+            return
         if path == "/api/local/health":
             if not self._require_session():
                 return
@@ -261,6 +269,8 @@ class BuddyLocalHandler(SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_POST(self) -> None:  # noqa: N802
+        if handle_review(self, "POST", urlparse(self.path).path):
+            return
         if not self._require_session():
             return
         try:
@@ -375,11 +385,20 @@ class BuddyLocalHandler(SimpleHTTPRequestHandler):
             self._json(HTTPStatus.INTERNAL_SERVER_ERROR, {"ok": False, "error": "Local bridge action failed safely."})
 
 
-def serve(host: str, port: int, token: str, open_page: bool) -> int:
+def serve(host: str, port: int, token: str, open_page: bool, review_console: bool = False) -> int:
     handler = lambda *args, **kwargs: BuddyLocalHandler(*args, directory=str(WEBSITE), **kwargs)
     server = ThreadingHTTPServer((host, port), handler)
     server.bridge_state = BridgeState(token=token)  # type: ignore[attr-defined]
     url = f"http://{host}:{port}/buddy.html#buddy-local-token={token}"
+    if review_console:
+        import getpass
+        from buddy_os.evaluation.review import ReviewStore
+        state = server.bridge_state
+        state.review_token = secrets.token_urlsafe(32)
+        state.reviewer_id = getpass.getuser()
+        state.review_store = ReviewStore(ROOT / "host-secrets/evaluation/reviews.sqlite3")
+        # Reviewer credentials are never returned through the agent health API.
+        url = f"http://{host}:{port}/general-intelligence.html#review-token={state.review_token}"
     print(json.dumps({
         "ok": True,
         "url": url,
@@ -405,11 +424,12 @@ def main() -> int:
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--open", action="store_true", help="Open Buddy in the default browser.")
     parser.add_argument("--token", help=argparse.SUPPRESS)
+    parser.add_argument("--review-console", action="store_true", help="Enable a separate human reviewer session and durable local queue.")
     args = parser.parse_args()
     if not 1_024 <= args.port <= 65_535:
         parser.error("Port must be between 1024 and 65535.")
     token = args.token or secrets.token_urlsafe(32)
-    return serve(args.host, args.port, token, args.open)
+    return serve(args.host, args.port, token, args.open, args.review_console)
 
 
 if __name__ == "__main__":

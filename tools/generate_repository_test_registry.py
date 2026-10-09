@@ -25,6 +25,7 @@ SKIPPED_ROOTS = {
     "__pycache__",
     "dist",
     "logs",
+    "host-secrets",
     "node_modules",
     "playwright-report",
     "reports",
@@ -128,6 +129,7 @@ def path_kind(relative: str) -> str:
 def file_suite(relative: str) -> str:
     value = relative.lower()
     rules = [
+        ("human-reviewed-evaluation", ("buddy_os/evaluation/", "general-intelligence", "general_intelligence", "human-reviewed-evaluation")),
         ("data-rights", ("privacy", "data-control", "data-rights", "memory")),
         ("security", ("open-secure-ai-defense", "security-center")),
         ("open-source-lab", ("open-model", "opensource", "repository-test")),

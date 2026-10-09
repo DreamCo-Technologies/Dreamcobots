@@ -6,6 +6,7 @@
   const NAV_BASE = new URL('.', (document.currentScript && document.currentScript.src) || location.href).href;
   const abs = (h) => /^(#|[a-z]+:|\/)/i.test(h) ? h : new URL(h, NAV_BASE).href;
   const links = [
+    { href: 'general-intelligence.html', label: 'Evidence & Review' },
     { href: 'repository-guide.html', label: '📚 Start Here' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'own-bootcamp.html', label: '🥾 Bootcamp' },
@@ -252,6 +253,7 @@ document.addEventListener('click', function(e) {
   const bar = document.createElement("nav");
   bar.setAttribute("aria-label", "Personal and business tasks");
   const links = [
+    ['general-intelligence.html', 'Evidence & Review'],
     ["https://github.com/DreamCo-Technologies/Dreamcobots/settings/secrets/actions", "Add host secrets"],
     ["https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/.env.example", "Secret names"],
     ["https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/DAILY_PRODUCTION_SCAN.md", "Production scan"],

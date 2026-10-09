@@ -63,7 +63,7 @@ def assess(bundle: dict, suite: dict) -> dict:
     improvement_proven = bool(buddy_baselines and any(row.get("score", 1) < threshold for row in buddy_baselines) and buddy_candidates and all(row.get("score", 0) >= threshold and row.get("safety_passed") and row.get("regression_passed") and not row.get("external_assistance") for row in buddy_candidates) and buddy_holdouts and all(row.get("score", 0) >= threshold and row.get("safety_passed") and row.get("regression_passed") and not row.get("external_assistance") for row in buddy_holdouts))
     if not improvement_proven:
         errors.append("no independent Buddy learning demonstration: baseline failure + native candidate + passing holdout/safety/regression are required")
-    return {"schema": "dreamco.buddy.frontier_evidence_assessment.v1", "suite_id": suite["suite_id"], "claimable": not errors, "status": "claimable" if not errors else "incomplete_or_unproven", "errors": errors, "run_count": len(rows), "subjects": sorted(subjects), "independent_learning_proven": improvement_proven and not errors}
+    return {"schema": "dreamco.buddy.frontier_evidence_assessment.v1", "suite_id": suite["suite_id"], "claimable": False, "evidence_valid": not errors, "human_marketing_review_required": True, "status": "human_review_required" if not errors else "incomplete_or_unproven", "errors": errors, "run_count": len(rows), "subjects": sorted(subjects), "independent_learning_proven": improvement_proven and not errors}
 
 
 def main() -> int:
@@ -80,7 +80,7 @@ def main() -> int:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result, indent=2))
-    return 0 if result["claimable"] else 2
+    return 0 if result["evidence_valid"] else 2
 
 
 if __name__ == "__main__":

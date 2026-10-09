@@ -3,6 +3,12 @@ name: buddy-runtime-integration-map
 purpose: connect Buddy OS contracts to existing DreamCo runtime systems without duplicating implementations
 
 existing_runtime:
+  human_reviewed_evaluation:
+    path: buddy_os/evaluation/runtime.py
+    role: scoped_review_adapter_for_existing_task_runner
+  human_review_console:
+    path: tools/buddy_local_bridge.py
+    role: separate_local_reviewer_session_and_durable_audit
   fleet_runtime:
     path: server/fleet-runtime.ts
     role: governed_bot_routing_and_sandbox_certification
