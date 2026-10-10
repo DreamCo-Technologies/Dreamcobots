@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>DreamCo Train Hub</title>
+<style>
+:root{color-scheme:dark;--bg:#07080c;--panel:#12141c;--line:#232736;--text:#f4f6fb;--muted:#9aa3b8;--accent:#7c5cff;--ok:#69e8bf}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--text)}
+header,main{padding:16px}header{border-bottom:1px solid var(--line)}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button,a.tab{background:#1b1f2b;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;text-decoration:none}
+button.primary,.tab.active{background:var(--accent);border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.ok{color:var(--ok)}.warn{color:#ffbf69}input,textarea,select{width:100%;background:#0c0e14;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0}
+.hidden{display:none}h1{margin:0 0 8px}h2{margin:0 0 8px;font-size:18px}p{color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+<h1>DreamCo Train Hub</h1>
+<p>Build, pretrain, reinforce, and verify. No outside builder required. Honest status only.</p>
+<nav id="tabs"></nav>
+</header>
+<main id="app"></main>
+<script src="train/app.js"></script>
+</body>
+</html>

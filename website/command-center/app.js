@@ -50,7 +50,7 @@ async function render() {
     const exportData = await api("/api/export/investor");
     app.innerHTML = `<div class="grid">
       <div class="card"><h2>Health</h2><p class="ok">${health.status}</p><p>${health.bots} bots cataloged</p></div>
-      <div class="card"><h2>Live Buddy</h2><p><a href="https://dreamco-technologies.github.io/Dreamcobots/" target="_blank">Official Pages</a></p><p><a href="https://dreamco-technologies.github.io/Dreamcobots/buddy.html">Buddy home</a></p></div>
+      <div class="card"><h2>Live Buddy</h2><p><a href="https://dreamco-technologies.github.io/Dreamcobots/" target="_blank">Official Pages</a></p><p><a href="train.html">Train Hub</a></p><p><a href="https://dreamco-technologies.github.io/Dreamcobots/buddy.html">Buddy home</a></p></div>
       <div class="card"><h2>Investor export</h2><p>Deals scored: ${exportData.dealsScored}</p><p>Memory: ${exportData.memoryItems}</p><p class="warn">Revenue: ${exportData.revenue}</p></div>
     </div>`;
   }
