@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Device backend</title>
+<link rel="stylesheet" href="styles.css"/>
+<style>
+body{padding:16px} .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px;margin:10px 0}
+button,a.btn{background:#7c5cff;color:#fff;border:0;border-radius:8px;padding:8px 12px;cursor:pointer;text-decoration:none;display:inline-block;margin:4px}
+input,select,textarea{width:100%;background:#0f1217;color:#fff;border:1px solid #3b424d;border-radius:8px;padding:8px;margin:6px 0}
+.ok{color:#69e8bf}.warn{color:#ffbf69}
+</style>
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>Device backend</h1>
+<p>GitHub Pages serves this page. Your laptop or phone stores the data. No outside builder required.</p>
+<p><a class="btn" href="command-center.html">Command Center</a> <a class="btn" href="live-check.html">Live check</a></p>
+
+<div class="card">
+<h2>1. Event schema</h2>
+<p>Canonical events: task.started, task.scored, task.verified, reward.applied, auth.login, device.enrolled.</p>
+<select id="etype"><option>task.started</option><option>task.scored</option><option>task.verified</option><option>reward.applied</option></select>
+<input id="epayload" placeholder="Payload"/>
+<button onclick="logEvent()">Log event</button>
+<div id="events"></div>
+</div>
+
+<div class="card">
+<h2>2. Auth on this device</h2>
+<p class="warn">Local roles only. Real SSO needs a provider key.</p>
+<input id="uname" placeholder="Name"/>
+<select id="urole"><option>owner</option><option>admin</option><option>member</option></select>
+<button onclick="addUser()">Add user</button>
+<div id="users"></div>
+</div>
+
+<div class="card">
+<h2>3. Device permissions</h2>
+<p id="deviceId"></p>
+<label><input type="checkbox" id="scopeChat" checked/> Store chats</label>
+<label><input type="checkbox" id="scopeEvents" checked/> Store events</label>
+<label><input type="checkbox" id="scopeData" checked/> Store custom data</label>
+<button onclick="saveScopes()">Save scopes</button>
+<button onclick="revokeDevice()">Revoke this device</button>
+</div>
+
+<div class="card">
+<h2>4. Admin console</h2>
+<input id="budget" type="number" placeholder="Budget" value="0"/>
+<textarea id="knowledge" rows="3" placeholder="Knowledge note"></textarea>
+<button onclick="saveAdmin()">Save admin</button>
+<div id="admin"></div>
+</div>
+
+<h2>Top 30 connection options</h2>
+<div class="grid" id="opts"></div>
+</main>
+<script>
+const KEY="dreamco.device.backend.v1";
+function load(){ try { return JSON.parse(localStorage.getItem(KEY)) || {events:[],users:[],scopes:{chat:true,events:true,data:true},admin:{budget:0,notes:[]},device:crypto.randomUUID()}; } catch { return {events:[],users:[],scopes:{},admin:{budget:0,notes:[]},device:"local"}; } }
+function save(s){ localStorage.setItem(KEY, JSON.stringify(s)); }
+function logEvent(){
+  const s=load();
+  s.events.unshift({type:document.getElementById("etype").value, payload:document.getElementById("epayload").value, at:new Date().toISOString()});
+  s.events=s.events.slice(0,50); save(s); render();
+}
+function addUser(){
+  const s=load(); const name=document.getElementById("uname").value.trim(); if(!name) return;
+  s.users.push({name, role:document.getElementById("urole").value, at:new Date().toISOString()}); save(s); render();
+}
+function saveScopes(){
+  const s=load();
+  s.scopes={chat:document.getElementById("scopeChat").checked, events:document.getElementById("scopeEvents").checked, data:document.getElementById("scopeData").checked};
+  s.events.unshift({type:"device.scopes", payload:JSON.stringify(s.scopes), at:new Date().toISOString()});
+  save(s); render();
+}
+function revokeDevice(){
+  localStorage.removeItem(KEY); render();
+}
+function saveAdmin(){
+  const s=load();
+  s.admin.budget=Number(document.getElementById("budget").value||0);
+  const note=document.getElementById("knowledge").value.trim();
+  if(note) s.admin.notes.unshift(note);
+  save(s); render();
+}
+function render(){
+  const s=load();
+  document.getElementById("deviceId").textContent="Device id: "+s.device;
+  document.getElementById("events").innerHTML=s.events.slice(0,8).map(e=>`<p>${e.at} ${e.type} ${e.payload||""}</p>`).join("")||"<p>No events.</p>";
+  document.getElementById("users").innerHTML=s.users.map(u=>`<p>${u.name} · ${u.role}</p>`).join("")||"<p>No users.</p>";
+  document.getElementById("admin").innerHTML=`<p>Budget: ${s.admin.budget}</p>`+(s.admin.notes||[]).slice(0,5).map(n=>`<p>${n}</p>`).join("");
+}
+const options=[
+["Command Center","command-center.html"],["Buddy Command Center","buddy-command-center.html"],["Train Hub","train.html"],["Finish","finish.html"],
+["Live check","live-check.html"],["Actions","actions.html"],["Fleet","bots.html"],["Buddy","buddy.html"],
+["Connections","connections.html"],["Gaps","gaps.json"],["Backend status","backend-status.json"],["Setup","setup-center.html"],
+["Models","models.html"],["Self training","self-training.html"],["Study hub","study-hub.html"],["Bootcamp","own-bootcamp.html"],
+["Expert mode","buddy-expert-mode.html"],["Workspace","buddy-workspace.html"],["Files","files.html"],["Dashboard","dashboard.html"],
+["GitHub hub","github-hub.html"],["HF hub","hf-hub.html"],["Opportunity","opportunity-hub.html"],["Independence","independence-center.html"],
+["Voice","voice-command-center.html"],["World sources","world-source-center.html"],["Resource 211","resource-211.html"],["Wiring","wiring.html"],
+["Branch health","branch-health.html"],["Repo guide","repository-guide.html"]
+];
+document.getElementById("opts").innerHTML=options.map(([n,h],i)=>`<div class="card"><strong>${i+1}. ${n}</strong><p><a class="btn" href="${h}">Open</a></p></div>`).join("");
+render();
+</script>
+</body>
+</html>
