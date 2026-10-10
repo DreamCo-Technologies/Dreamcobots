@@ -660,6 +660,9 @@ def main() -> int:
             encoding="utf-8",
         )
 
+    import subprocess
+    import sys
+    subprocess.run([sys.executable, str(ROOT / "tools/general_intelligence.py"), "--check"], check=True)
     result = validate_site()
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0

@@ -77,6 +77,7 @@ def main() -> int:
     local = sub.add_parser("local-start", help="Run Buddy through the approval-gated laptop bridge.")
     local.add_argument("--port", type=int, default=8765)
     local.add_argument("--no-open", action="store_true", help="Do not open Buddy automatically.")
+    local.add_argument("--review-console", action="store_true", help="Open the durable human review console.")
     args = parser.parse_args()
 
     commands = {
@@ -95,6 +96,7 @@ def main() -> int:
         "local-start": lambda: run([
             "python3", "tools/buddy_local_bridge.py", "--port", str(args.port),
             *([] if args.no_open else ["--open"]),
+            *(["--review-console"] if args.review_console else []),
         ]),
     }
     return commands[args.command]()
