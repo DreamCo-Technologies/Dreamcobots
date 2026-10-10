@@ -134,6 +134,7 @@
     { href: 'connections.html', label: '🔗 Connections' },
     { href: 'live-check.html', label: 'Live check' },
     { href: 'train.html', label: 'Train Hub' },
+    { href: 'techniques.html', label: 'Techniques' },
     { href: 'finish.html', label: 'Finish' },
     { href: 'data-control.html', label: '🔒 Data & Memory' },
     { href: 'government.html', label: '🏛️ Government Resources' },
