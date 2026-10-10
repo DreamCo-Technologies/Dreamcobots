@@ -2,7 +2,42 @@
   "duplicate_route_registrations": [
     {
       "method": "GET",
+      "path": "/api/health",
+      "registrations": 3
+    },
+    {
+      "method": "GET",
+      "path": "/api/ready",
+      "registrations": 2
+    },
+    {
+      "method": "GET",
+      "path": "/api/stripe/products",
+      "registrations": 2
+    },
+    {
+      "method": "GET",
+      "path": "/api/stripe/publishable-key",
+      "registrations": 2
+    },
+    {
+      "method": "GET",
       "path": "/api/stripe/subscription-status",
+      "registrations": 2
+    },
+    {
+      "method": "POST",
+      "path": "/api/github/trigger-workflow",
+      "registrations": 2
+    },
+    {
+      "method": "POST",
+      "path": "/api/stripe/checkout",
+      "registrations": 2
+    },
+    {
+      "method": "POST",
+      "path": "/api/stripe/webhook",
       "registrations": 2
     }
   ],
@@ -27,7 +62,7 @@
     ".svg": 1,
     ".swift": 1,
     ".toml": 1,
-    ".ts": 222,
+    ".ts": 225,
     ".tsv": 2,
     ".tsx": 99,
     ".txt": 163,
@@ -49,9 +84,9 @@
     "project_file": 752,
     "provider_adapter": 17,
     "reference_asset": 153,
-    "server_source": 31,
+    "server_source": 32,
     "shared_contract": 41,
-    "test": 289,
+    "test": 291,
     "web_asset": 158,
     "web_page": 205,
     "workflow": 109
@@ -17320,7 +17355,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 14007,
+      "bytes": 14075,
       "kind": "project_file",
       "path": "package.json",
       "suite_id": "repository-contracts"
@@ -17548,6 +17583,12 @@
       "suite_id": "repository-contracts"
     },
     {
+      "bytes": 5826,
+      "kind": "server_source",
+      "path": "server/api-auth.ts",
+      "suite_id": "client-build"
+    },
+    {
       "bytes": 8510,
       "kind": "server_source",
       "path": "server/approval-notifications.ts",
@@ -17668,7 +17709,7 @@
       "suite_id": "government"
     },
     {
-      "bytes": 4778,
+      "bytes": 5327,
       "kind": "server_source",
       "path": "server/index.ts",
       "suite_id": "client-build"
@@ -17716,7 +17757,7 @@
       "suite_id": "model-routing"
     },
     {
-      "bytes": 9058,
+      "bytes": 9642,
       "kind": "server_source",
       "path": "server/oauth-login.ts",
       "suite_id": "client-build"
@@ -19486,6 +19527,12 @@
       "suite_id": "repository-contracts"
     },
     {
+      "bytes": 29554,
+      "kind": "test",
+      "path": "tests/api-auth-middleware.test.ts",
+      "suite_id": "repository-contracts"
+    },
+    {
       "bytes": 5274,
       "kind": "test",
       "path": "tests/approval-notifications.test.ts",
@@ -19594,7 +19641,7 @@
       "suite_id": "repository-contracts"
     },
     {
-      "bytes": 6893,
+      "bytes": 7357,
       "kind": "test",
       "path": "tests/buddy-success-page.test.mjs",
       "suite_id": "repository-contracts"
@@ -19849,6 +19896,12 @@
       "bytes": 1324,
       "kind": "test",
       "path": "tests/oauth-login-policy.test.mjs",
+      "suite_id": "repository-contracts"
+    },
+    {
+      "bytes": 5740,
+      "kind": "test",
+      "path": "tests/oauth-login-session.test.ts",
       "suite_id": "repository-contracts"
     },
     {
@@ -24833,13 +24886,23 @@
     }
   ],
   "route_classifications": {
-    "external_or_destructive_gate": 20,
-    "plan_or_readiness": 28,
-    "read_only": 67,
+    "external_or_destructive_gate": 22,
+    "plan_or_readiness": 30,
+    "read_only": 72,
     "shared_contract": 22,
-    "state_change": 130
+    "state_change": 131
   },
   "routes": [
+    {
+      "classification": "read_only",
+      "id": "d563ff4c281c14b8cc0a",
+      "line": 132,
+      "method": "GET",
+      "path": "${path}",
+      "runtime": "local_contract",
+      "source": "tests/api-auth-middleware.test.ts",
+      "suite_id": "repository-contracts"
+    },
     {
       "classification": "read_only",
       "id": "bbdd3c3118e5619c4b63",
@@ -24892,8 +24955,8 @@
     },
     {
       "classification": "read_only",
-      "id": "ba879448be7d802bfb96",
-      "line": 101,
+      "id": "2228ad4f3ce97cda4b22",
+      "line": 117,
       "method": "GET",
       "path": "/api/auth/:provider/callback",
       "runtime": "local_contract",
@@ -24902,8 +24965,8 @@
     },
     {
       "classification": "read_only",
-      "id": "9ef3c93366077a4146b1",
-      "line": 90,
+      "id": "6ed8895bd3b273d6e745",
+      "line": 106,
       "method": "GET",
       "path": "/api/auth/:provider/start",
       "runtime": "local_contract",
@@ -24912,8 +24975,8 @@
     },
     {
       "classification": "read_only",
-      "id": "b15dc5128cfa339a1cd1",
-      "line": 88,
+      "id": "00baee63c1be00777aa1",
+      "line": 104,
       "method": "GET",
       "path": "/api/auth/providers",
       "runtime": "local_contract",
@@ -24922,8 +24985,8 @@
     },
     {
       "classification": "read_only",
-      "id": "f0942478134f0636026c",
-      "line": 117,
+      "id": "2f905284297918f53c5c",
+      "line": 133,
       "method": "GET",
       "path": "/api/auth/session",
       "runtime": "local_contract",
@@ -24932,8 +24995,8 @@
     },
     {
       "classification": "state_change",
-      "id": "1aaf549359e220671b12",
-      "line": 122,
+      "id": "514f53d645106b797047",
+      "line": 138,
       "method": "POST",
       "path": "/api/auth/sign-out",
       "runtime": "local_contract",
@@ -26941,6 +27004,16 @@
       "suite_id": "github"
     },
     {
+      "classification": "external_or_destructive_gate",
+      "id": "64381f0cc5d34d2ca984",
+      "line": 333,
+      "method": "POST",
+      "path": "/api/github/trigger-workflow",
+      "runtime": "credentials_and_exact_approval_required",
+      "source": "tests/api-auth-middleware.test.ts",
+      "suite_id": "github"
+    },
+    {
       "classification": "read_only",
       "id": "3f156fdd41c66bc5d099",
       "line": 4156,
@@ -27042,12 +27115,32 @@
     },
     {
       "classification": "plan_or_readiness",
-      "id": "dc6671d8675fce6cb6ca",
-      "line": 38,
+      "id": "539efd17a2dcd19575be",
+      "line": 39,
       "method": "GET",
       "path": "/api/health",
       "runtime": "local_contract",
       "source": "server/index.ts",
+      "suite_id": "repository-contracts"
+    },
+    {
+      "classification": "plan_or_readiness",
+      "id": "3271a78af996539b6c16",
+      "line": 163,
+      "method": "GET",
+      "path": "/api/health",
+      "runtime": "local_contract",
+      "source": "tests/api-auth-middleware.test.ts",
+      "suite_id": "repository-contracts"
+    },
+    {
+      "classification": "plan_or_readiness",
+      "id": "81acf349417e1eaef0b3",
+      "line": 330,
+      "method": "GET",
+      "path": "/api/health",
+      "runtime": "local_contract",
+      "source": "tests/api-auth-middleware.test.ts",
       "suite_id": "repository-contracts"
     },
     {
@@ -27262,12 +27355,32 @@
     },
     {
       "classification": "read_only",
-      "id": "9a4949f3a15d0f588e5a",
-      "line": 89,
+      "id": "db1715d70dc41034ddf4",
+      "line": 331,
+      "method": "GET",
+      "path": "/api/private",
+      "runtime": "local_contract",
+      "source": "tests/api-auth-middleware.test.ts",
+      "suite_id": "repository-contracts"
+    },
+    {
+      "classification": "read_only",
+      "id": "9eaf8a318d9aa88e1d6b",
+      "line": 97,
       "method": "GET",
       "path": "/api/ready",
       "runtime": "local_contract",
       "source": "server/index.ts",
+      "suite_id": "repository-contracts"
+    },
+    {
+      "classification": "read_only",
+      "id": "6a1ca4892e39967db583",
+      "line": 164,
+      "method": "GET",
+      "path": "/api/ready",
+      "runtime": "local_contract",
+      "source": "tests/api-auth-middleware.test.ts",
       "suite_id": "repository-contracts"
     },
     {
@@ -27332,6 +27445,16 @@
     },
     {
       "classification": "external_or_destructive_gate",
+      "id": "2f94c18f462689b5ec71",
+      "line": 134,
+      "method": "POST",
+      "path": "/api/stripe/checkout",
+      "runtime": "credentials_and_exact_approval_required",
+      "source": "tests/api-auth-middleware.test.ts",
+      "suite_id": "payments"
+    },
+    {
+      "classification": "external_or_destructive_gate",
       "id": "e86395d2556da3e62496",
       "line": 3008,
       "method": "POST",
@@ -27352,12 +27475,32 @@
     },
     {
       "classification": "read_only",
+      "id": "a9f8cd8df2a9bb73aea7",
+      "line": 332,
+      "method": "GET",
+      "path": "/api/stripe/products",
+      "runtime": "credentials_required",
+      "source": "tests/api-auth-middleware.test.ts",
+      "suite_id": "payments"
+    },
+    {
+      "classification": "read_only",
       "id": "80cccdd414a53fe45b6b",
       "line": 2709,
       "method": "GET",
       "path": "/api/stripe/publishable-key",
       "runtime": "credentials_required",
       "source": "server/routes.ts",
+      "suite_id": "payments"
+    },
+    {
+      "classification": "read_only",
+      "id": "56798a7f855f84fad7df",
+      "line": 133,
+      "method": "GET",
+      "path": "/api/stripe/publishable-key",
+      "runtime": "credentials_required",
+      "source": "tests/api-auth-middleware.test.ts",
       "suite_id": "payments"
     },
     {
@@ -27392,12 +27535,22 @@
     },
     {
       "classification": "state_change",
-      "id": "17c0093dfe400f472899",
-      "line": 51,
+      "id": "17a47a3f1f8f0c761491",
+      "line": 52,
       "method": "POST",
       "path": "/api/stripe/webhook",
       "runtime": "credentials_required",
       "source": "server/index.ts",
+      "suite_id": "payments"
+    },
+    {
+      "classification": "state_change",
+      "id": "aa7bdf41953c8cb5f507",
+      "line": 165,
+      "method": "POST",
+      "path": "/api/stripe/webhook",
+      "runtime": "credentials_required",
+      "source": "tests/api-auth-middleware.test.ts",
       "suite_id": "payments"
     },
     {
@@ -27520,7 +27673,7 @@
     "results_must_distinguish_contract_from_live_e2e": true,
     "test_data": "synthetic_or_owner_authorized"
   },
-  "scan_id": "c76f3e6643dd4ef39e06879d",
+  "scan_id": "98b4e73896b15a9408f8c2f9",
   "schema": "dreamco.repository_test_registry.v1",
   "suites": [
     {
@@ -28147,18 +28300,18 @@
     }
   ],
   "summary": {
-    "api_route_registrations": 267,
+    "api_route_registrations": 277,
     "blocked_suites": 0,
     "bot_sources": 1206,
     "credential_required_suites": 2,
-    "duplicate_route_keys": 1,
-    "files_scanned": 4129,
-    "literal_api_routes": 245,
+    "duplicate_route_keys": 8,
+    "files_scanned": 4132,
+    "literal_api_routes": 255,
     "locally_testable_suites": 25,
     "platform_modules": 31,
     "provider_adapters": 17,
     "shared_route_contracts": 22,
-    "test_files": 289,
+    "test_files": 291,
     "test_suites": 27,
     "web_pages": 205,
     "workflows": 109
