@@ -21,13 +21,13 @@ async function getLocalBots() {
 
 async function localApi(path, opts) {
   const bots = await getLocalBots();
-  if (path === "/api/health") return { status: "ok", replit: false, bots: bots.length, mode: "local" };
+  if (path === "/api/health") return { status: "ok", host: 'pages', bots: bots.length, mode: "local" };
   if (path.startsWith("/api/bots")) return { total: bots.length, bots: bots.slice(0, 200) };
   if (path === "/api/export/investor") return { dealsScored: 0, memoryItems: 0, revenue: "not connected" };
   if (path === "/api/capabilities") return { capabilities: [{ name: "Buddy router", status: "live" }, { name: "Voice", status: "needs_key" }] };
   if (path === "/api/memory") return { memory: [] };
   if (path === "/api/schedule") return { schedules: [] };
-  if (path === "/api/legal/terms") return { title: "Terms", text: "No Replit required. No guaranteed revenue." };
+  if (path === "/api/legal/terms") return { title: "Terms", text: "Pages mode. No guaranteed revenue." };
   if (path === "/api/legal/privacy") return { title: "Privacy", text: "Local mode keeps data in this browser." };
   if (path === "/api/buddy/chat") {
     const message = JSON.parse(opts.body).message.toLowerCase();
@@ -50,7 +50,7 @@ async function render() {
     const exportData = await api("/api/export/investor");
     app.innerHTML = `<div class="grid">
       <div class="card"><h2>Health</h2><p class="ok">${health.status}</p><p>${health.bots} bots cataloged</p></div>
-      <div class="card"><h2>Live Buddy</h2><p><a href="https://dreamco-technologies.github.io/Dreamcobots/" target="_blank">Official Pages</a></p><p><a href="https://dreamco.vercel.app/" target="_blank">Vercel Buddy</a></p><p><a href="https://github.com/DreamCo-Technologies/DreamCo-Command-Center"" target="_blank">Vercel Buddy</a></p></div>
+      <div class="card"><h2>Live Buddy</h2><p><a href="https://dreamco-technologies.github.io/Dreamcobots/" target="_blank">Official Pages</a></p><p><a href="buddy.html">Buddy home</a></p><p><a href="https://github.com/DreamCo-Technologies/DreamCo-Command-Center"" target="_blank">Vercel Buddy</a></p></div>
       <div class="card"><h2>Investor export</h2><p>Deals scored: ${exportData.dealsScored}</p><p>Memory: ${exportData.memoryItems}</p><p class="warn">Revenue: ${exportData.revenue}</p></div>
     </div>`;
   }
