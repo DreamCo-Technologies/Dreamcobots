@@ -22,8 +22,8 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: money_os/backend/package.json
-      - run: npm install --ignore-scripts
+          cache-dependency-path: money_os/backend/package-lock.json
+      - run: npm ci --ignore-scripts
       - run: node --check src/server.js
       - run: node --check src/runner.js
       - run: npm test

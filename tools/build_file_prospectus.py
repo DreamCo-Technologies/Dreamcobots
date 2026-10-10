@@ -118,7 +118,15 @@ def file_type(path: str) -> str:
 def read_text(path: str) -> str | None:
     full = ROOT / path
     try:
-        if full.stat().st_size > MAX_READ * 5:
+        # Case-insensitive checkouts cannot represent both tracked spellings.
+        # Read the exact staged blob only when two tracked paths share one inode.
+        tracked = subprocess.run(['git', 'ls-files', '--', str(full.parent.relative_to(ROOT))],
+                                 cwd=ROOT, capture_output=True, text=True, check=True).stdout.splitlines() if full.parent == ROOT / '.github' else []
+        aliases = [p for p in tracked if p.casefold() == path.casefold() and p != path]
+        collision = aliases and any((ROOT / p).exists() and (ROOT / p).samefile(full) for p in aliases)
+        if collision:
+            data = subprocess.check_output(['git', 'show', ':' + path], cwd=ROOT)
+        elif full.stat().st_size > MAX_READ * 5:
             with open(full, "rb") as handle:
                 data = handle.read(MAX_READ)
         else:

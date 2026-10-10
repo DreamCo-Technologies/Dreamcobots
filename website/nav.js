@@ -25,6 +25,7 @@
     { href: 'training-sources.html', label: '📚 Training sources' },
     { href: 'study-hub.html', label: '🎓 Study hub' },
     { href: 'master-build.html', label: '🧭 Master Build' },
+    { href: 'superbot-systems.html', label: 'System connections' },
     { href: 'buddy-command-center.html', label: '🗂️ Command Center' },
     { href: 'world-lens.html', label: '🌍 World Lens GPS' },
     { href: 'family-circle.html', label: '🛡️ Family Circle' },
