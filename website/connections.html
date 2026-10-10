@@ -1,389 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Buddy App Connections - DreamCo Empire OS</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=42" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>DreamCo Connections</title>
+<style>
+:root{color-scheme:dark;--bg:#07080c;--panel:#12141c;--line:#232736;--text:#f4f6fb;--muted:#9aa3b8;--ok:#69e8bf;--bad:#ff8b8b}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);padding:16px}
+a{color:#9cc9ff}.ok{color:var(--ok)}.bad{color:var(--bad)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+button{background:#7c5cff;color:#fff;border:0;border-radius:10px;padding:8px 12px;cursor:pointer}
+</style>
 </head>
 <body>
-<div id="nav-placeholder"></div><script src="nav.js"></script>
-
-<main class="connections-shell">
-  <header class="connections-header">
-    <div>
-      <div class="connections-kicker">Buddy access broker</div>
-      <h1>App Connections</h1>
-      <p>Scoped authentication, account handoffs, and connection governance. Provider buttons open signup or docs. No secret is stored on this page.</p>
-      <p><a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots">GitHub</a> <a class="btn btn-outline" href="https://huggingface.co/">Hugging Face</a> <a class="btn btn-outline" href="https://vercel.com/signup">Vercel</a> <a class="btn btn-outline" href="https://app.netlify.com/signup">Netlify</a> <a class="btn btn-outline" href="https://dashboard.stripe.com/register">Stripe</a> <a class="btn btn-outline" href="secret-options.html">Secret options</a></p>
-    </div>
-    <button id="planner-lock" class="btn btn-outline btn-sm" type="button">Lock planner</button>
-  </header>
-
-  <section class="connection-metrics" aria-label="Connection policy summary">
-    <div><strong id="access-connection-count">...</strong><span>Connection records</span></div>
-    <div><strong id="auth-method-count">8</strong><span>Auth methods</span></div>
-    <div><strong id="gate-count">7</strong><span>User gates</span></div>
-    <div><strong id="access-secret-location-count">3</strong><span>Secret stores</span></div>
-    <div><strong id="access-live-count">0</strong><span>Verified live</span></div>
-  </section>
-
-  <nav class="connection-tabs" aria-label="Connection views">
-    <button class="settings-tab active" type="button" data-panel="access-center-panel">Access center</button>
-    <button class="settings-tab" type="button" data-panel="catalog-panel">Catalog</button>
-    <button class="settings-tab" type="button" data-panel="connect-panel">Connect app</button>
-    <button class="settings-tab" type="button" data-panel="transfer-panel">Token handoff</button>
-    <button class="settings-tab" type="button" data-panel="signup-panel">Sign-up queue</button>
-    <button class="settings-tab" type="button" data-panel="audit-panel">Audit</button>
-  </nav>
-
-  <section id="access-center-panel" class="connection-panel">
-    <header class="access-center-heading">
-      <div>
-        <div class="connections-kicker">Unified access inventory</div>
-        <h2>Connections, authentication &amp; secrets</h2>
-        <p id="access-center-summary">Loading the public-safe connection catalog.</p>
-      </div>
-      <div class="access-center-actions">
-        <button id="access-new-connection" class="btn btn-primary btn-sm" type="button">New connection</button>
-        <button id="access-store-secret" class="btn btn-outline btn-sm" type="button">Store a secret</button>
-        <button id="access-view-auth" class="btn btn-outline btn-sm" type="button">Authentication catalog</button>
-      </div>
-    </header>
-
-    <div class="access-toolbar">
-      <label for="access-search">Search
-        <input id="access-search" type="search" placeholder="App, method, storage, scope, or status" autocomplete="off" />
-      </label>
-      <label for="access-type">Record type
-        <select id="access-type">
-          <option value="all">All records</option>
-          <option value="connection">Connections</option>
-          <option value="authentication">Authentication</option>
-          <option value="secret">Secret storage</option>
-        </select>
-      </label>
-      <label for="access-status">Status
-        <select id="access-status">
-          <option value="all">All statuses</option>
-          <option value="ready">Ready</option>
-          <option value="planned">Planned</option>
-          <option value="action">User action</option>
-          <option value="configuration">Configuration required</option>
-        </select>
-      </label>
-      <span id="access-data-source" class="badge badge-gray">Static catalog</span>
-    </div>
-
-    <div class="access-table-wrap" tabindex="0" aria-label="Connections, authentication, and secret-reference inventory">
-      <table class="access-table">
-        <thead><tr><th scope="col">Type</th><th scope="col">Name</th><th scope="col">Method or storage</th><th scope="col">Access boundary</th><th scope="col">State</th></tr></thead>
-        <tbody id="access-registry"></tbody>
-      </table>
-    </div>
-    <p id="access-row-count" class="access-row-count" aria-live="polite"></p>
-
-    <div class="access-boundary-strip">
-      <div><strong>Connections</strong><span>Catalog profiles, local plans, and public backend records are labeled separately.</span></div>
-      <div><strong>Authentication</strong><span>User-presence and backend methods keep their exact approval and configuration state.</span></div>
-      <div><strong>Secrets</strong><span>Only storage classes and reference presence are shown. Credential values are never enumerated.</span></div>
-    </div>
-  </section>
-
-  <section id="catalog-panel" class="connection-panel" hidden>
-    <div class="connection-section-heading">
-      <div><span class="status-dot status-dot-ready"></span><strong>Authentication adapters</strong></div>
-      <span id="catalog-status" class="badge badge-gray">Loading</span>
-    </div>
-    <div id="auth-method-grid" class="auth-method-grid" aria-live="polite"></div>
-
-    <div class="connection-section-heading" style="margin-top:24px">
-      <div><span class="status-dot status-dot-ready"></span><strong>Ready-start profiles</strong></div>
-      <span id="platform-profile-count" class="badge badge-gray">0 profiles</span>
-    </div>
-    <div id="platform-profile-grid" class="auth-method-grid"></div>
-
-    <div class="connections-two-column">
-      <section class="connection-surface">
-        <h2>User-presence gates</h2>
-        <div id="gate-list" class="connection-list"></div>
-      </section>
-      <section class="connection-surface">
-        <h2>Connector contracts</h2>
-        <div id="contract-list" class="connection-list"></div>
-      </section>
-    </div>
-  </section>
-
-  <section id="connect-panel" class="connection-panel" hidden>
-    <div class="connections-workbench">
-      <form id="connection-form" class="connection-surface connection-form">
-        <div class="connection-section-heading">
-          <div><span class="status-dot status-dot-ready"></span><strong>New connection plan</strong></div>
-          <span class="badge badge-green">No raw credentials</span>
-        </div>
-
-        <label for="connection-app">App label</label>
-        <input id="connection-app" name="app" type="text" minlength="2" maxlength="80" placeholder="Client workspace" required />
-
-        <label for="connection-url">Official app URL</label>
-        <input id="connection-url" name="url" type="url" placeholder="https://app.example.com" required />
-
-        <div class="connection-inline-fields">
-          <div>
-            <label for="connection-resource">Connection type</label>
-            <select id="connection-resource" name="resourceType" required>
-              <option value="application">Application</option>
-              <option value="database">Database</option>
-              <option value="server">Server</option>
-              <option value="storage">File or object storage</option>
-              <option value="data_warehouse">Data warehouse</option>
-              <option value="custom">Custom system</option>
-            </select>
-          </div>
-          <div>
-            <label for="connection-environment">Environment</label>
-            <select id="connection-environment" name="environment" required>
-              <option value="development">Development</option>
-              <option value="staging" selected>Staging</option>
-              <option value="production">Production</option>
-            </select>
-          </div>
-        </div>
-
-        <label for="connection-access">Initial access</label>
-        <select id="connection-access" name="accessMode" required>
-          <option value="read_only" selected>Read-only</option>
-          <option value="read_write">Read and write (approval required)</option>
-        </select>
-
-        <label for="connection-method">Authentication method</label>
-        <select id="connection-method" name="method" required></select>
-
-        <label for="connection-scopes">Requested scopes</label>
-        <input id="connection-scopes" name="scopes" type="text" placeholder="profile.read, projects.read" />
-
-        <div id="secret-reference-fields" hidden>
-          <label for="secret-provider">Secret storage</label>
-          <select id="secret-provider" name="secretProvider">
-            <option value="environment">Environment variable</option>
-            <option value="os_keychain">OS keychain</option>
-            <option value="managed_vault">Managed vault</option>
-          </select>
-
-          <label for="secret-reference">Secret reference name</label>
-          <input id="secret-reference" name="secretReference" type="text" placeholder="CLIENT_APP_API_KEY" autocomplete="off" />
-          <small>Enter a name or vault locator, never the credential value.</small>
-          <button id="secret-intake-open" class="btn btn-outline btn-sm secret-intake-open" type="button">Store a key in macOS Keychain</button>
-        </div>
-
-        <button class="btn btn-primary" type="submit">Prepare connection</button>
-        <p id="connection-error" class="connection-error" role="alert" hidden></p>
-      </form>
-
-      <section id="connection-result" class="connection-surface connection-result" aria-live="polite">
-        <div class="empty-connection-state">
-          <strong>No active plan</strong>
-          <span>Connection plans appear here before backend execution.</span>
-        </div>
-      </section>
-    </div>
-  </section>
-
-  <section id="transfer-panel" class="connection-panel" hidden>
-    <div class="connections-workbench">
-      <form id="transfer-form" class="connection-surface connection-form">
-        <div class="connection-section-heading">
-          <div><span class="status-dot status-dot-warn"></span><strong>Vault-to-vault handoff</strong></div>
-          <span class="badge badge-green">References only</span>
-        </div>
-
-        <label for="transfer-connector">Connector id</label>
-        <input id="transfer-connector" name="connector" type="text" pattern="[a-z][a-z0-9-]{2,63}" placeholder="client-app" required />
-
-        <label for="transfer-kind">Token class</label>
-        <select id="transfer-kind" name="kind" required>
-          <option value="api_token">API token</option>
-          <option value="oauth_access_token">OAuth access token</option>
-          <option value="oauth_refresh_token">OAuth refresh token</option>
-        </select>
-
-        <div class="connection-inline-fields">
-          <div>
-            <label for="transfer-source-provider">Source storage</label>
-            <select id="transfer-source-provider" name="sourceProvider">
-              <option value="environment">Environment variable</option>
-              <option value="os_keychain">OS keychain</option>
-              <option value="managed_vault">Managed vault</option>
-            </select>
-          </div>
-          <div>
-            <label for="transfer-destination-provider">Destination storage</label>
-            <select id="transfer-destination-provider" name="destinationProvider">
-              <option value="managed_vault">Managed vault</option>
-              <option value="os_keychain">OS keychain</option>
-            </select>
-          </div>
-        </div>
-
-        <label for="transfer-source-reference">Source reference name</label>
-        <input id="transfer-source-reference" name="sourceReference" type="text" placeholder="CLIENT_APP_TOKEN" autocomplete="off" spellcheck="false" required />
-
-        <label for="transfer-destination-reference">Destination reference name</label>
-        <input id="transfer-destination-reference" name="destinationReference" type="text" placeholder="clients/client-app/token" autocomplete="off" spellcheck="false" required />
-        <small>Enter vault locators only. Tokens, cookies, passwords, and recovery codes are rejected.</small>
-
-        <label for="transfer-source-audience">Current app audience</label>
-        <input id="transfer-source-audience" name="sourceAudience" type="url" placeholder="https://app.example.com" required />
-
-        <label for="transfer-destination-audience">Destination app audience</label>
-        <input id="transfer-destination-audience" name="destinationAudience" type="url" placeholder="https://app.example.com" required />
-
-        <label for="transfer-scopes">Approved scopes</label>
-        <input id="transfer-scopes" name="scopes" type="text" placeholder="profile.read, projects.read" />
-
-        <div class="connection-inline-fields">
-          <div>
-            <label for="transfer-ttl">Plan lifetime</label>
-            <select id="transfer-ttl" name="ttl">
-              <option value="60">1 minute</option>
-              <option value="120" selected>2 minutes</option>
-              <option value="300">5 minutes</option>
-            </select>
-          </div>
-          <div>
-            <label for="transfer-reason">Reason</label>
-            <input id="transfer-reason" name="reason" type="text" minlength="5" maxlength="240" placeholder="Move approved token to managed storage" required />
-          </div>
-        </div>
-
-        <label class="connection-approval" for="transfer-approval">
-          <input id="transfer-approval" name="approval" type="checkbox" required />
-          <span>I approve this exact same-app token handoff.</span>
-        </label>
-
-        <button class="btn btn-primary" type="submit">Prepare secure handoff</button>
-        <p id="transfer-error" class="connection-error" role="alert" hidden></p>
-      </form>
-
-      <section id="transfer-result" class="connection-surface connection-result" aria-live="polite">
-        <div class="empty-connection-state">
-          <strong>No token handoff</strong>
-          <span>Buddy never asks for or displays the token value.</span>
-        </div>
-      </section>
-    </div>
-  </section>
-
-  <section id="signup-panel" class="connection-panel" hidden>
-    <section class="resource-onboarding-center" aria-labelledby="resource-onboarding-title">
-      <header class="resource-onboarding-heading">
-        <div>
-          <div class="connections-kicker">500-target setup map</div>
-          <h2 id="resource-onboarding-title">Provider onboarding queue</h2>
-          <p>One efficient setup per provider, ordered local and free-first. Preparing the queue does not create accounts, accept terms, submit forms, spend money, or prove a live connection.</p>
-        </div>
-        <button id="resource-queue-all" class="btn btn-primary btn-sm" type="button">Prepare all provider setups</button>
-      </header>
-
-      <div class="resource-onboarding-metrics" aria-label="Resource onboarding summary">
-        <div><strong id="resource-target-count">...</strong><span>Model targets</span></div>
-        <div><strong id="resource-provider-count">...</strong><span>Provider setups</span></div>
-        <div><strong id="resource-account-count">...</strong><span>Maximum accounts</span></div>
-        <div><strong id="resource-live-count">0</strong><span>Verified live</span></div>
-      </div>
-
-      <div class="resource-onboarding-toolbar">
-        <label for="resource-search">Search
-          <input id="resource-search" type="search" placeholder="Provider, task, strength, or setup type" autocomplete="off" />
-        </label>
-        <label for="resource-task">Task
-          <select id="resource-task"><option value="all">All task categories</option></select>
-        </label>
-        <label for="resource-access">Access
-          <select id="resource-access">
-            <option value="all">All setups</option>
-            <option value="free_first">Free or local first</option>
-            <option value="no_account">No account required</option>
-            <option value="account_required">Account required</option>
-            <option value="paid_review">Paid or unverified access</option>
-          </select>
-        </label>
-      </div>
-
-      <p id="resource-queue-summary" class="resource-queue-summary" aria-live="polite">Loading provider setup catalog.</p>
-      <div class="resource-provider-table-wrap" tabindex="0" aria-label="Provider onboarding catalog">
-        <table class="resource-provider-table">
-          <thead><tr><th scope="col">Provider</th><th scope="col">Best declared use</th><th scope="col">Access</th><th scope="col">Targets</th><th scope="col">Setup</th></tr></thead>
-          <tbody id="resource-provider-rows"></tbody>
-        </table>
-      </div>
-      <p id="resource-provider-row-count" class="access-row-count" aria-live="polite"></p>
-    </section>
-
-    <div class="connections-workbench">
-      <form id="signup-form" class="connection-surface connection-form">
-        <div class="connection-section-heading">
-          <div><span class="status-dot status-dot-warn"></span><strong>Account handoff</strong></div>
-          <span class="badge badge-amber">User completes signup</span>
-        </div>
-
-        <label for="signup-app">App label</label>
-        <input id="signup-app" name="app" type="text" minlength="2" maxlength="80" placeholder="Project management app" required />
-
-        <label for="signup-url">Official signup URL</label>
-        <input id="signup-url" name="url" type="url" placeholder="https://app.example.com/signup" required />
-
-        <label for="signup-purpose">Account purpose</label>
-        <textarea id="signup-purpose" name="purpose" minlength="5" maxlength="240" placeholder="Manage an approved client project" required></textarea>
-
-        <button class="btn btn-primary" type="submit">Prepare sign-up handoff</button>
-        <p id="signup-error" class="connection-error" role="alert" hidden></p>
-      </form>
-
-      <section id="signup-result" class="connection-surface connection-result" aria-live="polite">
-        <div class="empty-connection-state">
-          <strong>No queued signup</strong>
-          <span>Buddy prepares the handoff; the user completes protected steps.</span>
-        </div>
-      </section>
-    </div>
-  </section>
-
-  <section id="audit-panel" class="connection-panel" hidden>
-    <section class="connection-surface">
-      <div class="connection-section-heading">
-        <div><span class="status-dot status-dot-ready"></span><strong>Browser-local audit</strong></div>
-        <button id="clear-connection-audit" class="btn btn-outline btn-sm" type="button">Clear</button>
-      </div>
-      <p class="connection-muted">Only plan status, app label, official host, auth method, and timestamp are retained.</p>
-      <div id="connection-audit" class="audit-list" aria-live="polite"></div>
-    </section>
-  </section>
-</main>
-
-<dialog id="secret-intake-dialog" class="secret-intake-dialog" aria-labelledby="secret-intake-title">
-  <form id="secret-intake-form">
-    <header>
-      <div><p>Local keychain intake</p><h2 id="secret-intake-title">Store a provider key</h2></div>
-      <button id="secret-intake-close" type="button" aria-label="Close key dialog">Close</button>
-    </header>
-    <div class="secret-intake-body">
-      <p id="secret-intake-boundary" class="connection-muted">The key goes directly to this Mac's Keychain through Buddy's authenticated loopback bridge. It is never written to browser storage, logs, generated files, or the connection plan.</p>
-      <label for="secret-intake-account">Reference name</label>
-      <input id="secret-intake-account" type="text" autocomplete="off" spellcheck="false" placeholder="GEMINI_API_KEY" required />
-      <label for="secret-intake-value">API key or secret</label>
-      <input id="secret-intake-value" type="password" autocomplete="new-password" spellcheck="false" minlength="8" maxlength="16384" required />
-      <label class="connection-approval" for="secret-intake-approval"><input id="secret-intake-approval" type="checkbox" required /><span>Store this one secret in my local macOS Keychain and clear the browser field immediately.</span></label>
-      <p id="secret-intake-status" class="connection-error" role="status" hidden></p>
-      <div class="secret-intake-actions"><button id="secret-intake-cancel" class="btn btn-outline" type="button">Cancel</button><button id="secret-intake-submit" class="btn btn-primary" type="submit">Store securely</button></div>
-    </div>
-  </form>
-</dialog>
-
-<script src="data/buddy-model-progress-center.js?v=2"></script>
-<script src="connections.js?v=5" defer></script>
+<h1>Connections</h1>
+<p>Live check of pages, bots, and resources. A 200 means the file is reachable. It does not mean every bot runs.</p>
+<button onclick="scan()">Scan now</button>
+<div id="out" class="card">Not scanned.</div>
+<h2>Open</h2>
+<p><a href="buddy.html">Buddy</a> · <a href="train.html">Train</a> · <a href="finish.html">Finish</a> · <a href="command-center.html">Command Center</a> · <a href="actions.html">Actions</a> · <a href="bots.html">Fleet</a> · <a href="gaps.json">Gaps</a></p>
+<script>
+const targets = [
+  "buddy.html","train.html","finish.html","command-center.html","actions.html","bots.html",
+  "backend-status.json","gaps.json","command-center/bots.json",
+  "data/buddy-control-status.json","data/buddy-connection-catalog.json","data/bot-fleet-catalog.json"
+];
+async function scan(){
+  const out = document.getElementById("out");
+  out.textContent = "Scanning...";
+  const rows = [];
+  for (const t of targets){
+    try {
+      const r = await fetch(t, {cache:"no-store"});
+      rows.push(`<p class="${r.ok?"ok":"bad"}">${r.status} ${t}</p>`);
+    } catch (e) {
+      rows.push(`<p class="bad">fail ${t}</p>`);
+    }
+  }
+  let bots = "unknown";
+  try {
+    const b = await fetch("command-center/bots.json").then(r=>r.json());
+    bots = Array.isArray(b) ? b.length : (b.bots||[]).length;
+  } catch {}
+  out.innerHTML = `<p>Catalog bots on Pages: ${bots}</p>` + rows.join("");
+}
+scan();
+</script>
 </body>
 </html>
