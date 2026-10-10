@@ -9,6 +9,7 @@
     { href: 'repository-guide.html', label: '📚 Start Here' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'own-bootcamp.html', label: '🥾 Bootcamp' },
+    { href: 'distill-course.html', label: 'Distill course' },
     { href: 'models.html', label: '🤖 Model Picker' },
     { href: 'hf-bootcamp.html', label: '📦 Packages' },
     { href: 'bots.html', label: '🛰️ Fleet' },

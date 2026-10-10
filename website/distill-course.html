@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Distillation course</title>
+<link rel="stylesheet" href="styles.css"/>
+<style>
+body{padding:16px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px;margin:12px 0}
+button,.btn{background:#7c5cff;color:#fff;border:0;border-radius:8px;padding:8px 12px;cursor:pointer;text-decoration:none;display:inline-block}
+.ok{color:#69e8bf}.warn{color:#ffbf69}
+ol li{margin:8px 0}
+</style>
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>Distillation course</h1>
+<p>Goes with the Buddy bootcamp. A large model teaches a smaller one. This page trains the method, not a frontier model.</p>
+<p><a class="btn" href="own-bootcamp.html">Bootcamp</a> <a class="btn" href="train.html">Train Hub</a> <a class="btn" href="techniques.html">Techniques</a></p>
+
+<div class="card">
+<h2>Lesson 1. What distillation is</h2>
+<p>The teacher produces answers. The student is trained to match those answers, not only the final label. Soft targets keep the teacher's uncertainty.</p>
+<button onclick="pass(1)">Mark lesson 1 done</button>
+</div>
+
+<div class="card">
+<h2>Lesson 2. Teacher, student, data</h2>
+<ol>
+<li>Pick a teacher you are allowed to query.</li>
+<li>Pick a smaller student.</li>
+<li>Collect prompts you actually use.</li>
+<li>Save teacher outputs. Do not train on private chats unless the user allowed storage.</li>
+</ol>
+<button onclick="pass(2)">Mark lesson 2 done</button>
+</div>
+
+<div class="card">
+<h2>Lesson 3. Loss</h2>
+<p>Match the teacher's token distribution, or match the final answer if you only have text. Temperature above 1 softens the teacher. A hard-label term can be mixed in.</p>
+<button onclick="pass(3)">Mark lesson 3 done</button>
+</div>
+
+<div class="card">
+<h2>Lesson 4. Try a tiny distill</h2>
+<p>Teacher answer and student draft. Score overlap. This is a check, not a weight update.</p>
+<textarea id="teacher" rows="3" placeholder="Teacher answer"></textarea>
+<textarea id="student" rows="3" placeholder="Student draft"></textarea>
+<button onclick="score()">Score</button>
+<p id="score"></p>
+<button onclick="pass(4)">Mark lesson 4 done</button>
+</div>
+
+<div class="card">
+<h2>Lesson 5. Checks before you ship</h2>
+<ul>
+<li>Hold out prompts the student never saw.</li>
+<li>Compare student to teacher and to the hard label.</li>
+<li>Watch for copied private text.</li>
+<li>Do not claim the student equals the teacher.</li>
+</ul>
+<button onclick="pass(5)">Mark lesson 5 done</button>
+</div>
+
+<div class="card">
+<h2>Progress</h2>
+<p id="progress">0 / 5</p>
+<p class="warn">Completing this course does not train weights. A real distill needs a trainer and a GPU host.</p>
+</div>
+</main>
+<script>
+const KEY="dreamco.distill.course.v1";
+function load(){ try { return JSON.parse(localStorage.getItem(KEY))||{done:[]}; } catch { return {done:[]}; } }
+function pass(n){ const s=load(); if(!s.done.includes(n)) s.done.push(n); localStorage.setItem(KEY, JSON.stringify(s)); render(); }
+function render(){ const s=load(); document.getElementById("progress").textContent=s.done.length+" / 5 done"; }
+function score(){
+  const a=(document.getElementById("teacher").value||"").toLowerCase().split(/\W+/).filter(Boolean);
+  const b=new Set((document.getElementById("student").value||"").toLowerCase().split(/\W+/).filter(Boolean));
+  const hit=a.filter(w=>b.has(w)).length;
+  const pct=a.length? Math.round(100*hit/a.length):0;
+  document.getElementById("score").textContent="Word overlap "+pct+"%. Use this as a smoke check only.";
+}
+render();
+</script>
+</body>
+</html>
