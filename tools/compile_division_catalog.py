@@ -39,7 +39,7 @@ def compile_source(text):
 
 def render(catalog,output):
     output.mkdir(parents=True,exist_ok=True)
-    def page(title,body):return '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>'+html.escape(title)+'</title><style>body{font:16px system-ui;max-width:1100px;margin:2rem auto;padding:1rem;background:#101725;color:#eee}a{color:#95d9ff}article{padding:1rem;border:1px solid #597086;margin:1rem 0}nav{display:flex;gap:1rem;flex-wrap:wrap}</style><h1>'+html.escape(title)+'</h1>'+body+'</html>'
+    def page(title,body):return '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>'+html.escape(title)+'</title><style>body{font:16px system-ui;max-width:1100px;margin:2rem auto;padding:1rem;background:#101725;color:#eee}a{color:#95d9ff}article{padding:1rem;border:1px solid #597086;margin:1rem 0}nav{display:flex;gap:1rem;flex-wrap:wrap}</style><body><h1>'+html.escape(title)+'</h1>'+body+'<script src="../repository-actions.js" data-repository-actions="true" defer></script></body></html>'
     links=[]
     for d in catalog['divisions']:
         title=d['name'];links.append(f'<article><a href="{d["page"]}">Division {d["id"]}: {html.escape(title)}</a></article>')

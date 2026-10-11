@@ -73,6 +73,8 @@ jobs:
           node-version: 22
       - name: Install dependencies
         run: npm ci
+      - name: Install workflow parser
+        run: python3 -m pip install PyYAML==6.0.3
       - name: Refresh Actions health and prospectus data for Pages
         env:
           GITHUB_TOKEN: ${{ github.token }}

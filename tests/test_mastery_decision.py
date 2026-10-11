@@ -2,7 +2,7 @@ from buddy.learning.mastery_decision import MasteryEvidence, eligible_for_master
 
 
 def evidence(**overrides):
-    values = dict(native_passes=3, holdout_passed=True, regression_passed=True, repeated_signature_stable=True, external_assistance_used=True)
+    values = dict(native_passes=3, holdout_passed=True, regression_passed=True, repeated_signature_stable=True, external_assistance_used=False)
     values.update(overrides)
     return MasteryEvidence(**values)
 
@@ -18,3 +18,8 @@ def test_mastery_requires_all_gates():
 def test_external_fallback_remains_until_mastery():
     assert not should_keep_external_fallback(evidence())
     assert should_keep_external_fallback(evidence(native_passes=2))
+
+
+def test_external_assistance_never_proves_native_mastery():
+    assert not eligible_for_mastery(evidence(external_assistance_used=True))
+    assert should_keep_external_fallback(evidence(external_assistance_used=True))
