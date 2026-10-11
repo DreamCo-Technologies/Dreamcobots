@@ -64,8 +64,31 @@ ol li{margin:8px 0}
 </div>
 
 <div class="card">
-<h2>Progress</h2>
-<p id="progress">0 / 5</p>
+<h2>Targets and temperature</h2>
+<p><strong>Hard target:</strong> the correct final answer, one label. The student only learns the winner.</p>
+<p><strong>Soft target:</strong> the teacher's probability over many answers. The student learns which answers were close.</p>
+<p><strong>Temperature:</strong> above 1 flattens the teacher distribution so rare-but-plausible answers still teach. At 1 you keep the teacher's sharpness. Below 1 makes the teacher more peaked.</p>
+<p>Real example: a support bot teacher says "refund" at 0.7 and "exchange" at 0.2. A hard target only teaches refund. A soft target at temperature 2 also teaches that exchange was reasonable.</p>
+</div>
+
+<div class="card">
+<h2>Real-world examples</h2>
+<ul>
+<li>Phone support: distill a large model into a small on-device model for common refund questions.</li>
+<li>Code helper: teacher writes full patches; student learns short, safe diffs.</li>
+<li>Clinic intake: teacher explains; student must match the explanation without adding a diagnosis.</li>
+<li>Store bot: teacher answers shipping questions; student is checked on held-out orders.</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>Sandbox quiz</h2>
+<p>Grade how close the student sounds to the teacher. This is a text check, not a weight update.</p>
+<div id="quiz"></div>
+<button onclick="gradeQuiz()">Grade quiz</button>
+<p id="quizScore"></p>
+</div>
+<p id="progress">0 / 6</p>
 <p class="warn">Completing this course does not train weights. A real distill needs a trainer and a GPU host.</p>
 </div>
 </main>
@@ -73,14 +96,35 @@ ol li{margin:8px 0}
 const KEY="dreamco.distill.course.v1";
 function load(){ try { return JSON.parse(localStorage.getItem(KEY))||{done:[]}; } catch { return {done:[]}; } }
 function pass(n){ const s=load(); if(!s.done.includes(n)) s.done.push(n); localStorage.setItem(KEY, JSON.stringify(s)); render(); }
-function render(){ const s=load(); document.getElementById("progress").textContent=s.done.length+" / 5 done"; }
+function render(){ const s=load(); document.getElementById("progress").textContent=s.done.length+" / 6 done"; }
 function score(){
   const a=(document.getElementById("teacher").value||"").toLowerCase().split(/\W+/).filter(Boolean);
   const b=new Set((document.getElementById("student").value||"").toLowerCase().split(/\W+/).filter(Boolean));
   const hit=a.filter(w=>b.has(w)).length;
   const pct=a.length? Math.round(100*hit/a.length):0;
-  document.getElementById("score").textContent="Word overlap "+pct+"%. Use this as a smoke check only.";
+  document.getElementById("score").textContent="Word overlap "+pct+"%. How close the student sounds. Not a weight update.";
 }
+const QUIZ = [
+  {q:"What does temperature above 1 do to the teacher?", a:"softens the distribution", choices:["softens the distribution","makes one answer certain","deletes the student"]},
+  {q:"A hard target teaches:", a:"only the winning label", choices:["only the winning label","every close answer","the user's private chats"]},
+  {q:"A soft target keeps:", a:"the teacher's uncertainty", choices:["the teacher's uncertainty","only the final word","the GPU temperature"]},
+  {q:"Before shipping, you must:", a:"hold out prompts", choices:["hold out prompts","train on the test set","claim the student equals the teacher"]},
+  {q:"Word overlap is:", a:"a smoke check", choices:["a smoke check","proof of equal quality","a weight update"]}
+];
+function renderQuiz(){
+  document.getElementById("quiz").innerHTML = QUIZ.map((item,i)=>`<p>${i+1}. ${item.q}</p>`+item.choices.map(c=>`<label><input type="radio" name="q${i}" value="${c}"/> ${c}</label>`).join("<br/>")).join("");
+}
+function gradeQuiz(){
+  let hit=0;
+  QUIZ.forEach((item,i)=>{
+    const picked=document.querySelector(`input[name="q${i}"]:checked`);
+    if(picked && picked.value===item.a) hit++;
+  });
+  const pct=Math.round(100*hit/QUIZ.length);
+  document.getElementById("quizScore").textContent = `Quiz ${hit}/${QUIZ.length} (${pct}%). This grades the lesson, not a trained model.`;
+  if(pct>=80) pass(6);
+}
+renderQuiz();
 render();
 </script>
 </body>

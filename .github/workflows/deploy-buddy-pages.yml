@@ -70,7 +70,9 @@ jobs:
         with:
           node-version: 22
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          python3 -m pip install --disable-pip-version-check -q PyYAML
       - name: Refresh Actions health and prospectus data for Pages
         env:
           GITHUB_TOKEN: ${{ github.token }}
