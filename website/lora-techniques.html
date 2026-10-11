@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>LoRA techniques</title><link rel="stylesheet" href="styles.css"/>
+<style>body{padding:16px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px;margin:12px 0}
+ol{padding-left:18px}li{margin:4px 0}.ok{color:#69e8bf}
+</style></head><body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>LoRA fine-tuning</h1>
+<p class="ok">Beginner default: rank 8, q and v projections, one epoch, holdout before you keep it. This page does not train weights.</p>
+<p><a href="beginner-models.html">Start here</a> · <a href="train.html">Train hub</a></p>
+<div class="card"><ol id="list"></ol></div>
+</main>
+<script>
+fetch("data/lora-techniques.json").then(r=>r.json()).then(d=>{
+  document.getElementById("list").innerHTML=d.items.map(x=>"<li>"+x+"</li>").join("");
+});
+</script></body></html>
