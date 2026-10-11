@@ -10,6 +10,7 @@
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'own-bootcamp.html', label: '🥾 Bootcamp' },
     { href: 'distill-course.html', label: 'Distill course' },
+    { href: 'mastery-30.html', label: '30-day mastery' },
     { href: 'distill-benchmarks.html', label: 'Distill benchmarks' },
     { href: 'models.html', label: '🤖 Model Picker' },
     { href: 'hf-bootcamp.html', label: '📦 Packages' },
