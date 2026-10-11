@@ -51,8 +51,9 @@ jobs:
       - name: Install repository dependencies
         run: |
           npm ci
-          python3 -m pip install --disable-pip-version-check openpyxl
+          python3 -m pip install --disable-pip-version-check openpyxl soundfile
           python3 -m pip install --disable-pip-version-check -r requirements-buddy-learning.txt
+          python3 -m pip install --disable-pip-version-check -r requirements-media.txt
       - name: Validate benchmark, learning, tracking, and prospectus contracts
         run: |
           python3 - <<'PY'
