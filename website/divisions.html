@@ -7,13 +7,13 @@
 <div id="nav-placeholder"></div><script src="nav.js"></script>
 <main>
 <h1>Divisions</h1>
-<p class="ok">No Replit. GitHub Pages serves this. Your device stores local state.</p>
+<p class="ok">GitHub Pages serves this. Your device stores local state.</p>
 <p id="sum">Loading.</p>
 <div id="list" class="grid"></div>
 </main>
 <script>
 fetch("data/divisions-live.json").then(r=>r.json()).then(d=>{
-  document.getElementById("sum").textContent = d.count+" divisions. Host: "+d.host+". Replit: "+d.replit+".";
+  document.getElementById("sum").textContent = d.count+" divisions. Host: "+d.host+". Outside builder: "+d.outside_builder+".";
   document.getElementById("list").innerHTML = d.items.map(i=>`<div class="card"><strong>${i.name}</strong><p>${i.bots} bots</p><p><a href="${i.fleet}">Fleet file</a></p></div>`).join("");
 });
 </script></body></html>
