@@ -16,6 +16,7 @@
     { href: 'demand-routing-tests.html', label: 'Demand routing tests' },
     { href: 'hf-bootcamp.html', label: '📦 Packages' },
     { href: 'bots.html', label: '🛰️ Fleet' },
+    { href: 'blocked-bots.html', label: 'Blocked bots' },
     { href: 'fleet-runtime.html', label: '🧾 Fleet Truth' },
     { href: 'files.html', label: '🗂️ Files' },
     { href: 'autonomy.html', label: '🚦 Gates' },
