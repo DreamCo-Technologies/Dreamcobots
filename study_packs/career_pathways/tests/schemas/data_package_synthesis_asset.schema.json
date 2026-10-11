@@ -1,0 +1,344 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.example/schemas/data_package_synthesis_asset.schema.json",
+  "title": "DreamCo synthesis asset record (asset.json)",
+  "description": "Plan reports/DATA_PACKAGE_PRODUCT_PLAN.md section 5.2 'Synthesis asset' (layout 5.1: assets/{asset_id}/asset.json beside provenance.json and license_gate.json). Extends buddy/learning/study_data_schema.json (capability_ids, created_at) with docs/training-methodology/DREAMCO_KNOWLEDGE_REWRITE_STANDARD.md layers. Every 5.2 field is required as a key; layer/analysis values may be null so an incomplete asset is recorded honestly instead of omitted. perspectives_used mirrors buddy/learning/multi_perspective_policy.json perspectives; ownership_class mirrors config/buddy-training-data-provenance-policy.json. Plan JSON key validation_evidence_ids implements the plan text's 'validation' (sandbox/benchmark/holdout/regression evidence ids). tools/license_provenance_gate.py cross-checks this record against provenance.json and requires complete layers + validation evidence for approved_for_sale.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "asset_id",
+    "title",
+    "capability_ids",
+    "perspectives_used",
+    "source_refs",
+    "ownership_class",
+    "commercial_redistribution_allowed",
+    "attribution_required",
+    "share_alike_required",
+    "human_layer",
+    "machine_layer",
+    "dreamco_analysis",
+    "validation_evidence_ids",
+    "integrity_hash",
+    "created_at",
+    "generator_version"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.data_package_synthesis_asset.v1"
+    },
+    "asset_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "capability_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "perspectives_used": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "official_documentation",
+          "open_source_implementation",
+          "academic_theory",
+          "research_papers",
+          "hands_on_exercises",
+          "production_case_studies",
+          "security_review",
+          "performance_review",
+          "accessibility_review",
+          "maintainer_discussion",
+          "failure_cases",
+          "alternative_architecture",
+          "cross_language_implementation",
+          "cross_model_result",
+          "user_task_requirements"
+        ]
+      }
+    },
+    "source_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_id",
+          "version",
+          "pinned_by"
+        ],
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pinned_by": {
+            "enum": [
+              "provenance.json#sources"
+            ]
+          },
+          "perspective": {
+            "enum": [
+              "official_documentation",
+              "open_source_implementation",
+              "academic_theory",
+              "research_papers",
+              "hands_on_exercises",
+              "production_case_studies",
+              "security_review",
+              "performance_review",
+              "accessibility_review",
+              "maintainer_discussion",
+              "failure_cases",
+              "alternative_architecture",
+              "cross_language_implementation",
+              "cross_model_result",
+              "user_task_requirements"
+            ]
+          }
+        }
+      }
+    },
+    "ownership_class": {
+      "enum": [
+        "dreamco_owned",
+        "dreamco_commissioned_with_assignment",
+        "licensed_for_use",
+        "open_license_with_conditions",
+        "public_domain_or_publicly_reusable",
+        "third_party_reference_only",
+        "synthetic_generated_by_dreamco",
+        "user_contributed_with_permission",
+        "unknown_do_not_publish"
+      ]
+    },
+    "commercial_redistribution_allowed": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "attribution_required": {
+      "type": "boolean"
+    },
+    "share_alike_required": {
+      "type": "boolean"
+    },
+    "human_layer": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "format",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "format": {
+              "enum": [
+                "markdown",
+                "jsonl",
+                "json",
+                "csv",
+                "text"
+              ]
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256_hex"
+            },
+            "elements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "machine_layer": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "format",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "format": {
+              "enum": [
+                "markdown",
+                "jsonl",
+                "json",
+                "csv",
+                "text"
+              ]
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256_hex"
+            },
+            "elements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "dreamco_analysis": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "agree",
+            "reject",
+            "improve",
+            "still_need_test"
+          ],
+          "properties": {
+            "agree": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "reject": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "improve": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "still_need_test": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "validation_evidence_ids": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sandbox",
+        "benchmark",
+        "holdout",
+        "regression"
+      ],
+      "properties": {
+        "sandbox": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "benchmark": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "holdout": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "regression": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "integrity_hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "created_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "string",
+          "format": "date"
+        }
+      ]
+    },
+    "generator_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "sha256_hex": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

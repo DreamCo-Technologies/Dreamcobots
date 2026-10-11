@@ -1,0 +1,431 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.example/schemas/data_package_asset_provenance.schema.json",
+  "title": "DreamCo data-package asset provenance (provenance.json)",
+  "description": "Per-asset provenance record. Extends config/evidence_provenance_schema.json (required_fields, source_types, transformation_types) with config/buddy-training-data-provenance-policy.json ownership_classes and per-source pinning. Enum values must stay in sync with those configs (tests enforce this). retrieved_at accepts a date when only the retrieval day is known (do not invent a time).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "asset_id",
+    "title",
+    "evidence_id",
+    "capability_id",
+    "source_type",
+    "source_reference",
+    "retrieved_at",
+    "content_version",
+    "license_or_usage_basis",
+    "transformation",
+    "evaluator_version",
+    "integrity_hash",
+    "ownership_class",
+    "creator",
+    "owner",
+    "asset_files",
+    "sources",
+    "derived_components",
+    "transformation_history",
+    "attribution_text",
+    "review_status"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.data_package_asset_provenance.v1"
+    },
+    "asset_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "capability_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_type": {
+      "enum": [
+        "onet",
+        "official_documentation",
+        "public_dataset",
+        "open_source_repository",
+        "paper",
+        "benchmark",
+        "professional_rubric",
+        "dreamco_generated",
+        "dreamco_experiment",
+        "tool_observation",
+        "human_evaluation"
+      ]
+    },
+    "source_reference": {
+      "type": "string",
+      "minLength": 1
+    },
+    "retrieved_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "string",
+          "format": "date"
+        }
+      ]
+    },
+    "content_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "license_or_usage_basis": {
+      "type": "string",
+      "minLength": 1
+    },
+    "transformation": {
+      "$ref": "#/$defs/transformation_type"
+    },
+    "evaluator_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "integrity_hash": {
+      "$ref": "#/$defs/sha256_prefixed"
+    },
+    "ownership_class": {
+      "$ref": "#/$defs/ownership_class"
+    },
+    "creator": {
+      "type": "string",
+      "minLength": 1
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "asset_files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "$ref": "#/$defs/sha256_hex"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "derived_components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "component",
+          "ownership_class",
+          "derivation_type",
+          "description"
+        ],
+        "properties": {
+          "component": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ownership_class": {
+            "$ref": "#/$defs/ownership_class"
+          },
+          "derivation_type": {
+            "$ref": "#/$defs/transformation_type"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "derived_from": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "transformation_history": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "step",
+          "tool",
+          "tool_version"
+        ],
+        "properties": {
+          "step": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tool": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tool_version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "attribution_text": {
+      "type": "string"
+    },
+    "review_status": {
+      "enum": [
+        "unreviewed",
+        "in_review",
+        "reviewed",
+        "rejected"
+      ]
+    },
+    "human_review": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "reviewer",
+        "reviewed_at",
+        "notes"
+      ],
+      "properties": {
+        "reviewer": {
+          "type": "string"
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "sha256_hex": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sha256_prefixed": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "ownership_class": {
+      "enum": [
+        "dreamco_owned",
+        "dreamco_commissioned_with_assignment",
+        "licensed_for_use",
+        "open_license_with_conditions",
+        "public_domain_or_publicly_reusable",
+        "third_party_reference_only",
+        "synthetic_generated_by_dreamco",
+        "user_contributed_with_permission",
+        "unknown_do_not_publish"
+      ]
+    },
+    "transformation_type": {
+      "enum": [
+        "none",
+        "summary",
+        "structured_extraction",
+        "derived_metric",
+        "original_implementation",
+        "original_evaluation",
+        "synthetic_data",
+        "human_rewrite"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "title",
+        "url",
+        "version",
+        "retrieved_at",
+        "license",
+        "license_url",
+        "ownership_class",
+        "commercial_use_allowed",
+        "redistribution_allowed",
+        "attribution_required",
+        "share_alike_required"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "sha256"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256_hex"
+              }
+            }
+          }
+        },
+        "retrieved_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "string",
+              "format": "date"
+            }
+          ]
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1
+        },
+        "license_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "ownership_class": {
+          "$ref": "#/$defs/ownership_class"
+        },
+        "commercial_use_allowed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "redistribution_allowed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "ai_training_allowed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "attribution_required": {
+          "type": "boolean"
+        },
+        "share_alike_required": {
+          "type": "boolean"
+        },
+        "required_notices": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "restrictions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "sha256"
+          ]
+        },
+        {
+          "required": [
+            "files"
+          ]
+        }
+      ]
+    }
+  }
+}
