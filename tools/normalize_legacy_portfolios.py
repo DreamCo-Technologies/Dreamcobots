@@ -21,6 +21,15 @@ def section(text, heading):
     found=re.search(r'^## '+re.escape(heading)+r'\s*\n(.*?)(?=^## |\Z)',text,re.M|re.S)
     return found[1].strip() if found else ''
 
+def lead_paragraph(text):
+    """First prose paragraph after the title, for profiles without a Description section."""
+    for block in re.split(r'\n\s*\n',text):
+        block=block.strip()
+        if not block or block.startswith(('#','>','-','*','|','```')):continue
+        if re.match(r'^[\w ]+:\s',block):continue  # metadata lines such as 'Doc: ...' or 'production_ready: false'
+        return block
+    return ''
+
 def build_legacy_portfolios(root: Path, registry: dict) -> dict:
     canonical={b['identity']['slug']:b for b in registry['bots']}
     divisions={d['name'] for d in registry['divisions']}
@@ -41,7 +50,7 @@ def build_legacy_portfolios(root: Path, registry: dict) -> dict:
             continue
         text=path.read_text();heading=re.search(r'^#\s+(.+)',text,re.M);division=re.search(r'\*\*Division:\*\*\s*([^|\n]+)',text)
         records.append({'kind':'historical_markdown_profile','source':relative,'slug':path.stem,
-            'display_name':heading[1] if heading else path.stem,'mission':section(text,'Description'),
+            'display_name':heading[1] if heading else path.stem,'mission':section(text,'Description') or lead_paragraph(text),
             'primary_division':division[1].strip() if division else 'DreamAgents',
             'capabilities':[line[2:].strip() for line in section(text,'Capabilities').splitlines() if line.startswith('- ')],
             'target_users':section(text,'Target Users'),'business_model':section(text,'Revenue Model'),
