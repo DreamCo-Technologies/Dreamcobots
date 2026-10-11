@@ -200,7 +200,7 @@ class ReviewStore:
             if not row or row["status"] != "executing":
                 raise ValueError("Action is not executing")
             overrun = actual_cost_usd > json.loads(row["body"])["expected_cost_usd"]
-            receipt = {"passed": passed and not overrun, "evidence_hash": evidence_hash, "actual_cost_usd": actual_cost_usd, "budget_overrun": overrun, "error": error}
+            receipt = {"passed": passed and not overrun and error is None, "evidence_hash": evidence_hash, "actual_cost_usd": actual_cost_usd, "budget_overrun": overrun, "error": error}
             db.execute("UPDATE actions SET status=?,receipt=?,revision=revision+1 WHERE id=?",
                        ("verified" if receipt["passed"] else "failed", json.dumps(receipt), action_id))
             self._audit(db, "verification", action_id, receipt)

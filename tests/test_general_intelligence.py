@@ -95,6 +95,20 @@ class ReviewTests(unittest.TestCase):
         self.store.finish(i,passed=True,evidence_hash=digest('result'),actual_cost_usd=1)
         self.assertEqual(self.store.get(i)['status'],'failed')
         with self.assertRaises(ValueError): self.store.finish(i,passed=True,evidence_hash=digest('result'),actual_cost_usd=0)
+    def test_receipt_error_never_verifies(self):
+        for passed, error, expected in ((True, "independent verification failed", False),
+                                        (True, "", False),
+                                        (True, None, True),
+                                        (False, None, False)):
+            with self.subTest(passed=passed, error=error):
+                i, h = self.approved()
+                self.store.consume(i, h, action_class="code_change")
+                receipt = self.store.finish(i, passed=passed, evidence_hash=digest(i),
+                                            actual_cost_usd=0, error=error)
+                self.assertEqual(receipt["passed"], expected)
+                self.assertEqual(self.store.get(i)["status"], "verified" if expected else "failed")
+                self.assertEqual(self.store.audit()[-1]["kind"], "verification")
+
     def test_invalid_numbers_and_credentials(self):
         for value in (float('nan'),float('inf'),-1,True):
             with self.assertRaises(ValueError): self.store.propose(action(expected_cost_usd=value))
