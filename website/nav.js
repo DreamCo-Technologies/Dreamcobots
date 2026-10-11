@@ -143,6 +143,7 @@
     { href: 'beginner-100.html', label: '100 ways' },
     { href: 'lora-techniques.html', label: 'LoRA' },
     { href: 'fast-distill.html', label: 'Fast distill' },
+    { href: 'gpu-hosts.html', label: 'GPU hosts' },
     { href: 'gaming.html', label: 'Gaming' },
     { href: 'train.html', label: 'Train Hub' },
     { href: 'techniques.html', label: 'Techniques' },
