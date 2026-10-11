@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.example/schemas/data_package_license_gate.schema.json",
+  "title": "DreamCo data-package license/provenance gate result (license_gate.json)",
+  "description": "Output of tools/license_provenance_gate.py for one asset version. approved_for_sale requires scorecard >= standard tier and explicit owner approval; otherwise the ceiling is approved_for_private_use.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "gate_version",
+    "asset_id",
+    "evaluated_at",
+    "inputs",
+    "policy_refs",
+    "outcome",
+    "rights_ceiling",
+    "checks",
+    "failed_checks",
+    "warnings",
+    "sale_requirements",
+    "truth_boundary"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.data_package_license_gate.v1"
+    },
+    "gate_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "asset_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evaluated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target"
+      ],
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "candidate_path": {
+          "type": "string"
+        },
+        "candidate_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "provenance_path": {
+          "type": "string"
+        },
+        "provenance_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "asset_record_path": {
+          "type": "string"
+        },
+        "asset_record_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "policy_refs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "outcome": {
+      "$ref": "#/$defs/outcome"
+    },
+    "rights_ceiling": {
+      "$ref": "#/$defs/outcome"
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "status",
+          "scope",
+          "outcome_cap",
+          "reasons"
+        ],
+        "properties": {
+          "id": {
+            "enum": [
+              "provenance_schema_conformance",
+              "sources_pinned",
+              "ownership_class_valid",
+              "commercial_and_redistribution_rights",
+              "attribution_present",
+              "no_blocked_flags_or_categories",
+              "asset_file_integrity",
+              "scorecard_threshold",
+              "owner_approval",
+              "synthesis_asset_record"
+            ]
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "warn",
+              "not_applicable"
+            ]
+          },
+          "scope": {
+            "enum": [
+              "rights",
+              "sale"
+            ]
+          },
+          "outcome_cap": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/$defs/outcome"
+              }
+            ]
+          },
+          "reasons": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "failed_checks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sale_requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scorecard_minimum",
+        "scorecard_score",
+        "owner_approval_present"
+      ],
+      "properties": {
+        "scorecard_minimum": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "scorecard_score": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "owner_approval_present": {
+          "type": "boolean"
+        }
+      }
+    },
+    "truth_boundary": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$defs": {
+    "outcome": {
+      "enum": [
+        "approved_for_sale",
+        "approved_for_private_use",
+        "reference_only",
+        "blocked"
+      ]
+    }
+  }
+}

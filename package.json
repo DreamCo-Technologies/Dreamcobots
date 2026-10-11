@@ -78,7 +78,8 @@
     "test:superbots": "python3 -m unittest tests.test_proposal_registry tests.test_codex_scan tests.test_superbot_crosswalk tests.test_fleet_daily_factory && node --import tsx --test tests/superbot-systems.test.ts tests/prompt-chaining-page.test.mjs",
     "buddy:general-intelligence": "python3 tools/general_intelligence.py --check",
     "test:general-intelligence": "python3 -m unittest tests.test_general_intelligence && node --test tests/general-intelligence-page.test.mjs",
-    "test:general-intelligence:browser": "node --test tests/general-intelligence-browser.test.mjs"
+    "test:general-intelligence:browser": "node --test tests/general-intelligence-browser.test.mjs",
+    "buddy:command-center:refresh": "python3 tools/generate_command_center_data.py && python3 tools/generate_command_center_data.py --check"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -143,7 +144,7 @@
     "react-dom": "^19.3.0",
     "react-hook-form": "^7.89.0",
     "react-icons": "^5.7.0",
-    "react-resizable-panels": "^4.13.3",
+    "react-resizable-panels": "^4.14.1",
     "recharts": "^3.10.1",
     "stripe": "^22.6.2",
     "tailwind-merge": "^3.7.0",

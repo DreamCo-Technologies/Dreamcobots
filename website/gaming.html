@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Gaming</title><link rel="stylesheet" href="styles.css"/>
+<style>body{padding:16px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px;margin:12px 0}
+a.btn{background:#7c5cff;color:#fff;border:0;border-radius:8px;padding:8px 12px;text-decoration:none;display:inline-block;margin:4px}
+</style></head><body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>Gaming</h1>
+<p>Game bots and builders. Catalog status is not a live match.</p>
+<div class="card">
+<a class="btn" href="game-builder.html">Game builder</a>
+<a class="btn" href="vibe-game-builder.html">Vibe game builder</a>
+<a class="btn" href="data/bot-fleet/GameTitan.json">GameTitan fleet</a>
+</div>
+<div class="card" id="bots"><p>Loading bots...</p></div>
+</main>
+<script>
+const bots=[
+ ["game-ai-player","Game AI Player"],
+ ["game-coach","Game coach"],
+ ["game-analytics","Game analytics"],
+ ["games-app-bot","Games app"],
+ ["gaming-titan","Gaming Titan"],
+ ["lib-unity","Unity"],
+ ["lib-godot","Godot"],
+ ["lib-phaserjs","Phaser"]
+];
+fetch("data/bot-fleet/GameTitan.json").then(r=>r.json()).then(d=>{
+  const n=(d.bots||[]).length;
+  document.getElementById("bots").innerHTML="<p>GameTitan file loaded: "+n+" bots.</p>"+bots.map(b=>"<p>"+b[1]+"</p>").join("");
+}).catch(()=>{ document.getElementById("bots").textContent="GameTitan file did not load."; });
+</script></body></html>

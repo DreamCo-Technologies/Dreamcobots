@@ -1,0 +1,30 @@
+{
+  "candidate_id": "edu-cs-11.0701",
+  "assessment_note": "BUILDER SELF-ASSESSMENT, not merchant-assigned. Starts from the Data-Package Merchant's as_is dimension scores (triage 56.25) and changes only dimensions whose cited gap was addressed in this build; every other dimension is unchanged. The merchant must re-score before this number is used.",
+  "rights_basis": "CC BY 4.0 (O*NET 31.0 Database + O*NET Crosswalk Files, USDOL/ETA); DreamCo-original outline and practice prompts",
+  "commercial_use_allowed": true,
+  "redistribution_allowed": true,
+  "flags": [],
+  "scores": {
+    "rights_clarity": 85,
+    "training_relevance": 65,
+    "data_quality": 55,
+    "provenance": 85,
+    "freshness": 90,
+    "coverage/diversity": 35,
+    "format/usability": 70,
+    "benchmark_value": 30,
+    "commercial_package_potential": 40,
+    "maintenance/updateability": 75
+  },
+  "score_changes_vs_merchant_as_is": {
+    "rights_clarity": "70 -> 85: ownership_class on asset, sources, and components; crosswalk CC BY 4.0 stated in the file; license gate rights checks all pass with no warnings.",
+    "training_relevance": "55 -> 65: 6 practice tasks with 3-criterion rubrics tied to O*NET task IDs; still one plan per major and no Q/A set.",
+    "data_quality": "45 -> 55: Year 4 now targets Job Zone 4 non-manager occupations; outline keyed to each major's knowledge with per-element study guidance. Still unweighted means and no human review.",
+    "provenance": "55 -> 85: machine-readable provenance.json and asset.json with pinned sha256 per source file, build.py sha256, ownership classes. No git commit recorded inside provenance.",
+    "format/usability": "60 -> 70: per-plan machine layer (plan.json) and data/practice_tasks.json; still no data dictionary.",
+    "benchmark_value": "15 -> 30: practice prompts with rubrics exist, but no answer keys, holdout, or validation runs.",
+    "commercial_package_potential": "35 -> 40: synthesis layer extended (targets, next steps, practice tasks) but still rule-generated.",
+    "unchanged": "freshness 90, coverage/diversity 35 (still 27 majors), maintenance/updateability 75."
+  }
+}

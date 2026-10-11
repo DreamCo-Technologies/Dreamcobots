@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>GPU hosts</title><link rel="stylesheet" href="styles.css"/>
+<style>body{padding:16px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:12px;margin:8px 0}
+a.btn{background:#7c5cff;color:#fff;border:0;border-radius:8px;padding:6px 10px;text-decoration:none;display:inline-block}
+</style></head><body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>30 GPU hosts</h1>
+<p>ChatGPT is the trainer: it writes the script. The host is where the weights update. Prices move. Check stock before you start.</p>
+<p><a href="fast-distill.html">Fast distill</a> · <a href="lora-techniques.html">LoRA</a></p>
+<div id="list"></div>
+</main>
+<script>
+fetch("data/gpu-hosts.json").then(r=>r.json()).then(d=>{
+  document.getElementById("list").innerHTML=d.items.map((h,i)=>`<div class="card"><strong>${i+1}. ${h.name}</strong><p>${h.why}</p><a class="btn" href="${h.url}">Open</a></div>`).join("");
+});
+</script></body></html>
