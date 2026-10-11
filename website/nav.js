@@ -13,6 +13,7 @@
     { href: 'mastery-30.html', label: '30-day mastery' },
     { href: 'distill-benchmarks.html', label: 'Distill benchmarks' },
     { href: 'models.html', label: '🤖 Model Picker' },
+    { href: 'demand-routing-tests.html', label: 'Demand routing tests' },
     { href: 'hf-bootcamp.html', label: '📦 Packages' },
     { href: 'bots.html', label: '🛰️ Fleet' },
     { href: 'fleet-runtime.html', label: '🧾 Fleet Truth' },
