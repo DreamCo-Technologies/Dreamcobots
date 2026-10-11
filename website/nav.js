@@ -140,6 +140,7 @@
     { href: 'connections.html', label: '🔗 Connections' },
     { href: 'live-check.html', label: 'Live check' },
     { href: 'beginner-models.html', label: 'Start here' },
+    { href: 'beginner-100.html', label: '100 ways' },
     { href: 'train.html', label: 'Train Hub' },
     { href: 'techniques.html', label: 'Techniques' },
     { href: 'finish.html', label: 'Finish' },
