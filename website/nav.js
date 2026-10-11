@@ -11,6 +11,7 @@
     { href: 'own-bootcamp.html', label: '🥾 Bootcamp' },
     { href: 'distill-course.html', label: 'Distill course' },
     { href: 'mastery-30.html', label: '30-day mastery' },
+    { href: 'study-notes.html', label: 'Study notes' },
     { href: 'distill-benchmarks.html', label: 'Distill benchmarks' },
     { href: 'models.html', label: '🤖 Model Picker' },
     { href: 'demand-routing-tests.html', label: 'Demand routing tests' },
