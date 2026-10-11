@@ -1,4 +1,4 @@
-const tabs = ["Check", "Tokens", "RL", "Weights", "Patterns", "Bootcamp", "Gestures", "Rewards", "Connect"];
+const tabs = ["Check", "Tokens", "RL", "Weights", "Patterns", "Bootcamp", "Gestures", "Rewards", "Connect", "Bank", "Qualify", "Gaps", "Scale", "SEO"];
 let current = "Check";
 
 const RL = [
@@ -250,6 +250,45 @@ function render(){
       <div class="card"><h2>Scale</h2><p>1 to 1000 users needs a host, auth, and a queue. This static page is the control surface. It is not the multi-tenant backend.</p></div>
     </div>`;
   }
+  if (current === "Bank") {
+    const bal = JSON.parse(localStorage.getItem("bank") || '{"store":0,"personal":0}');
+    app.innerHTML = `<div class="grid">
+      <div class="card"><h2>Store</h2><p>Demo balance: $${bal.store}</p><button class="primary" onclick="bankAdd('store',10)">Receive $10 demo</button></div>
+      <div class="card"><h2>Personal</h2><p>Demo balance: $${bal.personal}</p><button class="primary" onclick="bankAdd('personal',10)">Receive $10 demo</button></div>
+      <div class="card"><h2>Card connect</h2><p class="warn">Real card receive needs a licensed payment processor and a key. This page does not move real money.</p><input placeholder="Processor key (not stored on server)"/><button onclick="alert('Key stays in this browser. No charge is made.')">Save key locally</button></div>
+    </div>`;
+  }
+  if (current === "Qualify") {
+    const cores = navigator.hardwareConcurrency || 0;
+    const mem = navigator.deviceMemory || 0;
+    const gpu = (navigator.gpu ? "WebGPU present" : "No WebGPU");
+    let verdict = "Catalog and lessons only.";
+    if (cores >= 8 && mem >= 8) verdict = "Can fine-tune small adapters if you add a local trainer. Not a 150k pretrain.";
+    if (cores >= 16 && mem >= 16) verdict = "Borderline for a small continued-pretrain. 150k vocab still needs a GPU host.";
+    app.innerHTML = `<div class="card"><h2>This machine</h2><p>Cores: ${cores}</p><p>Memory hint: ${mem || "unknown"} GB</p><p>${gpu}</p><p class="ok">${verdict}</p><p>A 150,000-vocab train needs a GPU host, a tokenizer build, and a qualified trainer. This browser is the control panel.</p></div>`;
+  }
+  if (current === "Gaps") {
+    app.innerHTML = `<div class="card"><h2>Gap registry</h2><p>Loading...</p></div>`;
+    fetch("gaps.json").then(r=>r.json()).then(items=>{
+      app.innerHTML = `<div class="grid">${items.map(i=>`<div class="card"><strong>${i.name}</strong><p class="${i.status==="live"?"ok":"warn"}">${i.status}</p><p>${i.note}</p></div>`).join("")}</div>`;
+    }).catch(()=>{ app.innerHTML = `<p>gaps.json not loaded.</p>`; });
+  }
+  if (current === "Scale") {
+    app.innerHTML = `<div class="card"><h2>Scale to 1000</h2><p>Control surface is here. To serve 1000 users you still need:</p><ul><li>A host (Pages is static)</li><li>Auth and roles</li><li>A queue for jobs</li><li>A database</li></ul><p>Buddy can generate the checklist. It cannot host the users from this page.</p></div>`;
+  }
+  if (current === "SEO") {
+    const seo = [
+      ["On-page", "Title, H1, meta description, internal links, alt text."],
+      ["Technical", "Fast load, mobile, canonical, sitemap, robots, HTTPS."],
+      ["Content", "One topic per page. Answer the query. Update stale pages."],
+      ["Local", "City and region pages, consistent name/address, local links."],
+      ["Off-page", "Mentions and links you earned. Do not buy links."],
+      ["Schema", "FAQ, product, and article markup where it is true."],
+      ["Search Console", "Index coverage, queries, and fixes."],
+      ["Core Web Vitals", "LCP, INP, CLS. Measure before you claim a win."]
+    ];
+    app.innerHTML = `<div class="grid">${seo.map(([n,d])=>`<div class="card"><strong>${n}</strong><p>${d}</p></div>`).join("")}</div>`;
+  }
 }
 
 function countTok(){
@@ -261,5 +300,11 @@ function saveReward(){
   const policy = { penalty: document.getElementById("pen").value, attempts: document.getElementById("n").value, temperature: document.getElementById("temp").value };
   localStorage.setItem("rewardPolicy", JSON.stringify(policy));
   document.getElementById("rewOut").textContent = "Saved in this browser.";
+}
+function bankAdd(which, amount){
+  const bal = JSON.parse(localStorage.getItem("bank") || '{"store":0,"personal":0}');
+  bal[which] = (bal[which] || 0) + amount;
+  localStorage.setItem("bank", JSON.stringify(bal));
+  render();
 }
 render();

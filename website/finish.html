@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>DreamCo Finish Workbench</title>
+<link rel="stylesheet" href="train.html" />
+<style>
+:root{color-scheme:dark;--bg:#07080c;--panel:#12141c;--line:#232736;--text:#f4f6fb;--muted:#9aa3b8;--accent:#7c5cff;--ok:#69e8bf}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--text)}
+header,main{padding:16px}header{border-bottom:1px solid var(--line)}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button,a.tab{background:#1b1f2b;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;text-decoration:none}
+button.primary{background:var(--accent);border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.ok{color:var(--ok)}.warn{color:#ffbf69}input,textarea,select{width:100%;background:#0c0e14;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0}
+h1{margin:0 0 8px}p{color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+<h1>Finish Workbench</h1>
+<p>Codex leftovers, user data, runtime vs payload, regional sites, paper trade. Honest status only.</p>
+<nav>
+<a class="tab" href="train.html">Train Hub</a>
+<a class="tab" href="command-center.html">Command Center</a>
+<a class="tab" href="actions.html">Actions</a>
+<a class="tab" href="buddy.html">Buddy</a>
+<a class="tab" href="gaps.json">Gaps</a>
+</nav>
+</header>
+<main class="grid">
+<div class="card">
+<h2>Users</h2>
+<p>Local list. Not a hosted 1,000-user backend.</p>
+<input id="uname" placeholder="Name"/>
+<select id="urole"><option>member</option><option>admin</option><option>owner</option></select>
+<button class="primary" onclick="addUser()">Add user</button>
+<div id="users"></div>
+</div>
+<div class="card">
+<h2>Custom data</h2>
+<input id="dkey" placeholder="Key"/>
+<textarea id="dval" rows="3" placeholder="Value"></textarea>
+<button class="primary" onclick="saveData()">Save</button>
+<div id="data"></div>
+</div>
+<div class="card">
+<h2>Runtime vs payload</h2>
+<textarea id="payload" rows="3" placeholder="Paste a payload"></textarea>
+<button class="primary" onclick="measure()">Measure</button>
+<p id="rt"></p>
+</div>
+<div class="card">
+<h2>Regional microsite</h2>
+<input id="region" placeholder="City or state"/>
+<button class="primary" onclick="site()">Build page</button>
+<p class="warn">Static template. Jev can pick a template later if a key is added. Jev does not write the site.</p>
+<pre id="site"></pre>
+</div>
+<div class="card">
+<h2>Paper trade</h2>
+<input id="symbol" placeholder="Symbol" value="AAPL"/>
+<button onclick="trade('buy')">Paper buy</button>
+<button onclick="trade('sell')">Paper sell</button>
+<p id="book"></p>
+<p class="warn">Paper only. Not a broker. Not Robinhood.</p>
+</div>
+<div class="card">
+<h2>Jev</h2>
+<p>Jev is a decision model. It returns a choice and a probability. It can route which regional template to use. It does not move money or train models.</p>
+<p class="warn">Needs a provider key. Not connected.</p>
+</div>
+</main>
+<script>
+function load(k, d){ try { return JSON.parse(localStorage.getItem(k)) || d; } catch { return d; } }
+function save(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
+function addUser(){
+  const users = load('users', []);
+  const name = document.getElementById('uname').value.trim();
+  if (!name) return;
+  users.push({name, role: document.getElementById('urole').value, at: new Date().toISOString()});
+  save('users', users); renderUsers();
+}
+function renderUsers(){
+  const users = load('users', []);
+  document.getElementById('users').innerHTML = users.map(u => `<p>${u.name} · ${u.role}</p>`).join('') || '<p>No users yet.</p>';
+}
+function saveData(){
+  const data = load('cdata', {});
+  const key = document.getElementById('dkey').value.trim();
+  if (!key) return;
+  data[key] = document.getElementById('dval').value;
+  save('cdata', data); renderData();
+}
+function renderData(){
+  const data = load('cdata', {});
+  document.getElementById('data').innerHTML = Object.entries(data).map(([k,v]) => `<p><strong>${k}</strong>: ${v}</p>`).join('') || '<p>No data.</p>';
+}
+function measure(){
+  const t = document.getElementById('payload').value || '';
+  const start = performance.now();
+  const tokens = Math.max(1, Math.round(t.length / 4));
+  const ms = (performance.now() - start).toFixed(2);
+  document.getElementById('rt').textContent = `${t.length} chars, about ${tokens} tokens, ${ms} ms local estimate. Not a model tokenizer.`;
+}
+function site(){
+  const r = document.getElementById('region').value || 'Your city';
+  document.getElementById('site').textContent = `<h1>${r}</h1><p>DreamCo page for ${r}. Template only.</p>`;
+}
+function trade(side){
+  const book = load('book', []);
+  book.push({side, symbol: document.getElementById('symbol').value || 'AAPL', at: new Date().toISOString()});
+  save('book', book);
+  document.getElementById('book').innerHTML = book.slice(-8).map(b => `<p>${b.side} ${b.symbol}</p>`).join('');
+}
+renderUsers(); renderData();
+</script>
+</body>
+</html>
