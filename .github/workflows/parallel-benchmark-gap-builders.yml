@@ -50,6 +50,8 @@ jobs:
         run: python3 tools/check_guardrails_benchmark_program.py
       - name: Generate parallel benchmark plan
         run: python3 tools/plan_parallel_benchmark_gaps.py
+      - name: Verify every registered suite retains its gap closure contract
+        run: python3 tools/benchmark_suite_contracts.py --check
       - id: matrix
         name: Build lane matrix
         run: |

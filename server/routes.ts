@@ -18,6 +18,8 @@ import { FORMULA_LIBRARY } from "@shared/formula-library";
 import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { billingOwnerAuthorized } from "./billing-auth";
+import { subscriptionStatus } from "./subscription-status";
+import { requireGitHubActionOwner, approvedWorkflow } from "./github-action-auth";
 import { getLocalTestEntitlement } from "./local-test-entitlement";
 import { db } from "./db";
 import { batchProcessWithSSE } from "./provider_integrations/batch";
@@ -2848,86 +2850,17 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/stripe/subscription-status", async (_req, res) => {
+  app.get("/api/stripe/subscription-status", async (req, res) => {
+    // Existing billing is single-owner. Never infer ownership from caller email.
+    if (!billingOwnerAuthorized(req)) return res.status(401).json({error: "Owner billing token required"});
     try {
-      let hasActiveSubscription = false;
-      let tier: string | null = null;
-
-      // Try DB first — join through subscription_items → prices → products to get tier metadata
-      try {
-        const result = await db.execute(sql`
-          SELECT s.id, p.metadata
-          FROM stripe.subscriptions s
-          LEFT JOIN stripe.subscription_items si ON si.subscription = s.id
-          LEFT JOIN stripe.prices pr ON pr.id = si.price
-          LEFT JOIN stripe.products p ON p.id = pr.product
-          WHERE s.status IN ('active', 'trialing')
-          ORDER BY s.created DESC
-          LIMIT 1
-        `);
-
-        if (result.rows.length > 0) {
-          hasActiveSubscription = true;
-          const row = result.rows[0] as any;
-          const metadata = typeof row.metadata === "string" ? JSON.parse(row.metadata) : row.metadata;
-          tier = metadata?.tier ?? null;
-        }
-      } catch {
-        // DB join failed (tables may not exist yet), fall through to live API
-      }
-
-      if (!hasActiveSubscription) {
-        // Fall back to live Stripe API in case DB sync hasn't populated yet
-        try {
-          const stripe = await getUncachableStripeClient();
-
-          // Check if a customer email was stored from a previous restore operation
-          let customerEmail: string | null = null;
-          try {
-            const stored = await storage.getSetting("stripe_customer_email");
-            if (stored && typeof stored.value === "string" && stored.value.includes("@")) {
-              customerEmail = stored.value;
-            }
-          } catch { /* ignore */ }
-
-          let subs;
-          if (customerEmail) {
-            // Look up the specific customer by email first, then list their subscriptions
-            const customers = await stripe.customers.list({ email: customerEmail, limit: 1 });
-            if (customers.data.length > 0) {
-              subs = await stripe.subscriptions.list({
-                customer: customers.data[0].id,
-                status: "active",
-                limit: 1,
-                expand: ["data.items.data.price.product"],
-              });
-            }
-          }
-
-          if (!subs || subs.data.length === 0) {
-            subs = await stripe.subscriptions.list({
-              status: "active",
-              limit: 1,
-              expand: ["data.items.data.price.product"],
-            });
-          }
-
-          if (subs.data.length > 0) {
-            hasActiveSubscription = true;
-            const sub = subs.data[0];
-            const item = sub.items?.data?.[0];
-            const product = item?.price?.product as any;
-            tier = product?.metadata?.tier ?? null;
-          }
-        } catch {
-          // Live API also failed — return no subscription
-        }
-      }
-
-      res.json({ hasActiveSubscription, tier });
-    } catch (error: any) {
-      console.error("Subscription status error:", error.message);
-      res.json({ hasActiveSubscription: false, tier: null });
+      const stored = await storage.getSetting("stripe_customer_id");
+      const customer = typeof stored?.value === "string" ? stored.value : null;
+      if (!customer) return res.json({hasActiveSubscription: false, tier: null, status: "customer_unlinked"});
+      const stripe = await getUncachableStripeClient();
+      return res.json(await subscriptionStatus(customer, stripe));
+    } catch {
+      return res.status(503).json({hasActiveSubscription: false, tier: null, status: "unavailable"});
     }
   });
 
@@ -4048,6 +3981,7 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
   });
 
   // ===== GITHUB SYNC =====
+  app.use("/api/github", requireGitHubActionOwner);
   app.get("/api/github/status", async (_req, res) => {
     try {
       const { getRepoInfo, getPullRequests } = await import("./github-sync");
@@ -4205,14 +4139,12 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
 
   // Trigger a workflow dispatch (Live Dashboard) — uses numeric ID for reliability
   app.post("/api/github/trigger-workflow", async (req, res) => {
+    const wfRef = approvedWorkflow(req.body?.workflow);
+    if (!wfRef) return res.status(400).json({ success: false, error: "Workflow is not approved for this endpoint." });
     try {
       const { getToken } = await import("./github-sync");
       const token = getToken();
       const REPO = "DreamCo-Technologies/Dreamcobots";
-      const DASHBOARD_WF_ID = 284581909;
-      const { workflow } = req.body;
-      // Use numeric workflow ID for dreamco-live-dashboard, filename for others
-      const wfRef = (!workflow || workflow === "dreamco-live-dashboard.yml") ? String(DASHBOARD_WF_ID) : workflow;
       const r = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${wfRef}/dispatches`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "Content-Type": "application/json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "DreamCo-Empire-OS" },

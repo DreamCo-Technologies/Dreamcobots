@@ -1,8 +1,8 @@
 # Buddy Benchmark Index
 
 - Benchmark programs: 13
-- Repository suites: 27
-- Tracked benchmark surfaces: 40
+- Repository suites: 28
+- Tracked benchmark surfaces: 41
 - Live benchmark programs with evidence: 0
 
 ## Programs

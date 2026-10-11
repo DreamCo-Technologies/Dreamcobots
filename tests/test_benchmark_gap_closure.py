@@ -8,4 +8,5 @@ def test_gap_planner(tmp_path):
     data=json.loads(out.read_text())
     assert data['records'][0]['status']=='open'
     assert data['records'][0]['gap']==20
-    assert data['records'][1]['status']=='closed'
+    assert data['records'][1]['status']=='open'
+    assert data['records'][1]['evidence_verified'] is False

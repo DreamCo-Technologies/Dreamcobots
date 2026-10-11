@@ -23,7 +23,7 @@ def synthetic_packet(**over):
         "baseline": {"holdout_score": 0.70, "holdout_fixture_sha256": H, "evaluated_at_utc": "2026-01-01T00:00:00Z"},
         "runs": [{"train_started_at_utc": f"2026-01-0{i + 2}T00:00:00Z", "holdout_score": 0.80, "regression": 0.01, "adapter_sha256": H, "sandbox_image_digest": "sha256:synthetic"} for i in range(3)],
         "safety_suite": {"passed": True, "suite_version": "synthetic"},
-        "provenance": {"training_data_sha256": H, "sources_approved": True},
+        "provenance": {"repo_commit": "a" * 40, "model_sha256": H, "training_data_sha256": H, "sources_approved": True},
         "owner_approval": {"approved": True, "approved_by": "synthetic", "approved_at_utc": "2026-01-05T00:00:00Z"},
         "allowlist_eligible": True,
     }

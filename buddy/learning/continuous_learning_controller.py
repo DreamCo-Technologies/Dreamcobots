@@ -35,6 +35,12 @@ class LearningDecision:
 
 def evaluate_event(event: LearningEvent) -> LearningDecision:
     """Decide whether an event is usable evidence and whether it can be promoted."""
+    flags = (event.success, event.verified, event.regression_passed,
+             event.safety_passed, event.external_assistance)
+    if any(type(value) is not bool for value in flags):
+        return LearningDecision(False, False, "invalid boolean evidence")
+    if not isinstance(event.event_id, str) or not event.event_id.strip():
+        return LearningDecision(False, False, "missing event identity")
     if not event.verified:
         return LearningDecision(True, False, "unverified evidence; retain for diagnosis only")
     if not event.success:
@@ -43,4 +49,5 @@ def evaluate_event(event: LearningEvent) -> LearningDecision:
         return LearningDecision(True, False, "regression failure blocks promotion")
     if not event.safety_passed:
         return LearningDecision(True, False, "safety failure blocks promotion")
-    return LearningDecision(True, True, "verified success passed regression and safety gates")
+    return LearningDecision(True, False,
+                            "candidate only; independent execution evidence and promotion review required")

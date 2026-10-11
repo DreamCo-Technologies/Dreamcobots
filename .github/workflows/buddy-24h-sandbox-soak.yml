@@ -7,6 +7,11 @@ on:
 
 permissions:
   contents: read
+  actions: read
+
+concurrency:
+  group: buddy-soak-receipts-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   soak:
@@ -18,7 +23,39 @@ jobs:
         with:
           python-version: "3.13"
       - run: python3 tools/build_user_money_map.py
+      - name: Find prior receipt history on this branch
+        id: previous
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const {data} = await github.rest.actions.listWorkflowRuns({
+              ...context.repo, workflow_id: 'buddy-24h-sandbox-soak.yml',
+              branch: context.ref.replace('refs/heads/', ''), status: 'success', per_page: 1
+            });
+            const run = data.workflow_runs.find(r => r.id !== context.runId);
+            if (run) {
+              const {data: artifacts} = await github.rest.actions.listWorkflowRunArtifacts({...context.repo, run_id: run.id});
+              if (artifacts.artifacts.some(a => a.name === 'buddy-soak-history' && !a.expired)) {
+                core.setOutput('run_id', String(run.id));
+              } else {
+                core.notice('No prior receipt artifact: coverage starts from zero; no uptime claim.');
+              }
+            }
+      - name: Restore prior receipt history
+        if: steps.previous.outputs.run_id != ''
+        uses: actions/download-artifact@v8
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.previous.outputs.run_id }}
+          name: buddy-soak-history
+          path: config/generated
       - run: python3 tools/run_24h_sandbox_soak.py
+      - name: Save receipt history
+        uses: actions/upload-artifact@v7
+        with:
+          name: buddy-soak-history
+          path: config/generated/sandbox-24h-history.json
+          if-no-files-found: error
       - run: python3 -m unittest tests.test_build_user_money_map
       - if: always()
         uses: actions/upload-artifact@v7

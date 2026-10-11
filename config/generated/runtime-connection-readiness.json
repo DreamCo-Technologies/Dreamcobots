@@ -1,0 +1,39 @@
+{
+  "schema": "dreamco.runtime_connection_readiness.v1",
+  "connection_count": 3,
+  "runtime_verified_count": 0,
+  "all_declared_runtime_connections_verified": false,
+  "connections": [
+    {
+      "connection_id": "github",
+      "label": "GitHub",
+      "contract": "developer",
+      "auth_method": "browser_session_handoff",
+      "state": "credentials_required",
+      "runtime_verified": false,
+      "evidence_reference": null,
+      "tested_at": null
+    },
+    {
+      "connection_id": "local_device",
+      "label": "User-owned computer or mobile device",
+      "contract": "device",
+      "auth_method": "browser_session_handoff",
+      "state": "credentials_required",
+      "runtime_verified": false,
+      "evidence_reference": null,
+      "tested_at": null
+    },
+    {
+      "connection_id": "custom_app",
+      "label": "Documented app or API",
+      "contract": "custom",
+      "auth_method": "custom_rest",
+      "state": "adapter_ready",
+      "runtime_verified": false,
+      "evidence_reference": null,
+      "tested_at": null
+    }
+  ],
+  "truth_boundary": "Do not add runtime_verified without a successful authorized live probe. Never store raw credentials or tokens in this file."
+}

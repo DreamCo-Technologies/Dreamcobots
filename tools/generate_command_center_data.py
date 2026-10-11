@@ -73,7 +73,7 @@ AREA_RULES = {
 
 
 def canonical_json(payload: Any) -> str:
-    return json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    return json.dumps(payload, separators=(",", ":"), sort_keys=True, ensure_ascii=False) + "\n"
 
 
 def digest_bytes(value: bytes) -> str:

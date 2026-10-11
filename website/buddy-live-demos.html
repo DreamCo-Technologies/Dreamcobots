@@ -29,10 +29,10 @@ a{color:#8fa6ff}
 </main>
 <script>
 const SRC={
- bootcamp:'../config/buddy-bootcamp-curriculum-v1.json',
- catalog:'../buddy/openrouter/client_model_catalog.json',
- registry:'../config/buddy/500-model-registry.json',
- packages:'../buddy/store/packages.json'};
+ bootcamp:'data/live-demos/bootcamp.json',
+ catalog:'data/live-demos/model-catalog.json',
+ registry:'data/live-demos/model-registry.json',
+ packages:'data/live-demos/packages.json'};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const src=p=>`<div class="src">Source: <code>${p.replace('../','')}</code></div>`;
 async function load(p){try{const r=await fetch(p,{cache:'no-store'});if(!r.ok)throw new Error(r.status);return await r.json()}catch(e){return {__err:String(e)}}}

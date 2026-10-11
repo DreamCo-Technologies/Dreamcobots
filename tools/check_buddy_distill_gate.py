@@ -9,6 +9,7 @@ Enforces three rules, stdlib only, no network:
 from __future__ import annotations
 
 import json
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -70,7 +71,21 @@ def check_packet(packet: dict, th: dict, name: str) -> list[str]:
         except (KeyError, ValueError):
             errs.append(f"{name}: run {i} train_started_at_utc missing or invalid")
 
-    if not packet["allowlist_eligible"]:
+    if type(packet["allowlist_eligible"]) is not bool:
+        errs.append(f"{name}: allowlist_eligible must be a boolean")
+    # Authorization and rights apply to every actual training run, not just promotions.
+    if runs:
+        for obj, key in (("owner_approval", "approved"), ("provenance", "sources_approved"),
+                         ("student", "base_model_license_ok")):
+            if packet.get(obj, {}).get(key) is not True:
+                errs.append(f"{name}: {obj}.{key} must be true before training")
+        if packet.get("teacher", {}).get("teacher_terms_check", {}).get("permitted") is not True:
+            errs.append(f"{name}: teacher terms must permit training")
+        for key in ("repo_commit", "model_sha256", "training_data_sha256"):
+            length = 40 if key == "repo_commit" else 64
+            if not re.fullmatch(r"[0-9a-f]{%d}" % length, str(packet.get("provenance", {}).get(key, ""))):
+                errs.append(f"{name}: provenance.{key} must be an immutable digest")
+    if packet["allowlist_eligible"] is not True:
         return errs
 
     # Rule 3: evidence before allowlist.

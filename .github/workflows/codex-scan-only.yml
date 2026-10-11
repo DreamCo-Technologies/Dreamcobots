@@ -1,0 +1,67 @@
+name: Codex Scan Only — Grok Work Orders
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'config/proposals/**'
+      - 'tools/fleet_daily_factory.py'
+      - 'tools/build_superbot_crosswalk.py'
+      - 'server/superbot-systems.ts'
+      - 'website/superbot-systems*'
+      - 'tests/test_*'
+      - 'tests/superbot-systems.test.ts'
+      - 'tools/proposal_registry.py'
+      - 'tools/codex_scan.py'
+      - 'tools/scan_node_imports.mjs'
+      - '**/package.json'
+      - '**/package-lock.json'
+      - '**/requirements*.txt'
+      - '.github/workflows/codex-scan-only.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Bootstrap locked parsing tools without lifecycle scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Validate proposal and scanner contracts
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          python3 -m unittest tests.test_proposal_registry tests.test_codex_scan tests.test_superbot_crosswalk
+          python3 tools/build_superbot_crosswalk.py --check
+          python3 tools/proposal_registry.py
+      - name: Scan source without executing application code
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          mkdir -p "$RUNNER_TEMP/codex-scan"
+          python3 tools/codex_scan.py > "$RUNNER_TEMP/codex-scan/scan.json"
+      - name: Render Grok handoff even when dependency findings fail the scan
+        if: always()
+        run: |
+          if test -s "$RUNNER_TEMP/codex-scan/scan.json"; then
+            python3 tools/codex_scan.py --report "$RUNNER_TEMP/codex-scan/scan.json" --format markdown > "$RUNNER_TEMP/codex-scan/GROK_WORK_ORDERS.md"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: codex-scan-grok-work-orders
+          path: ${{ runner.temp }}/codex-scan/
+          if-no-files-found: warn
+          retention-days: 14

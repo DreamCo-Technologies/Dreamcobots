@@ -6,6 +6,7 @@ must enforce robots.txt, terms, authentication boundaries, rate limits, and prov
 """
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Iterable
 
@@ -20,11 +21,15 @@ class Source:
     transfer_value: float
     cost_efficiency: float
     duplicate: bool = False
-    rights_ok: bool = True
-    authorized: bool = True
+    rights_ok: bool = False
+    authorized: bool = False
 
     def score(self) -> float:
-        if not self.authorized or not self.rights_ok or self.duplicate:
+        if self.authorized is not True or self.rights_ok is not True or self.duplicate is not False:
+            return float("-inf")
+        values = (self.authority, self.benchmark_relevance, self.freshness,
+                  self.coverage_gap, self.transfer_value, self.cost_efficiency)
+        if any(type(v) not in (int, float) or not math.isfinite(v) or not 0 <= v <= 1 for v in values):
             return float("-inf")
         return (
             0.30 * self.authority

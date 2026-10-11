@@ -3,7 +3,7 @@
   const esc=value=>String(value).replace(/[&<>"']/g,character=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
   function route(raw){
     const text=raw.trim();if(!text){$('voice-status').textContent='Say or enter a command first.';return}
-    const lower=text.toLowerCase();let target='buddy.html',params={prompt:text};
+    const lower=text.toLowerCase();if(lower.startsWith('buddy open ')){const wanted=lower.slice(11).trim();fetch('data/workbench-commands.json').then(r=>r.json()).then(d=>{const c=d.commands.find(x=>x.voice.toLowerCase()==='buddy open '+wanted);if(c)location.href=c.page;else $('voice-status').textContent='Unknown workbench command.'});return}let target='buddy.html',params={prompt:text};
     if(/expert mode|seven.day sprint|learn.*resources|resource mastery|study.*resources/.test(lower)){target='buddy-expert-mode.html';params={goal:text}}
     else if(/invention|prototype|prior art|patent|idea to store|manufacturer|build my product/.test(lower)){target='buddy-invention-lab.html';params={idea:text}}
     else if(/family circle|consented family|safe place|check me in|missing-child/.test(lower)){target='family-circle.html';params={command:text}}

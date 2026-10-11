@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import { attachRequestIdToErrors, observeRequests, sendReadiness } from "./observability";
+import { createSuperbotRouter } from './superbot-systems';
 
 const app = express();
 const httpServer = createServer(app);
@@ -83,6 +84,7 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
+app.use('/api/superbots', createSuperbotRouter());
 app.use(observeRequests());
 app.use(attachRequestIdToErrors());
 
