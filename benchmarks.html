@@ -1,3 +1,26 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0; url=website/benchmarks.html"><title>Open benchmarks.html</title></head>
-<body><p><a href="website/benchmarks.html">Open benchmarks.html</a></p></body></html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Opening benchmarks.html</title>
+<style>
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#07080c;color:#f4f6fb;font-family:system-ui,sans-serif}
+.box{text-align:center}
+.spin{width:42px;height:42px;border:3px solid #232736;border-top-color:#7c5cff;border-radius:50%;margin:0 auto 12px;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+a{color:#9cc9ff}
+</style></head>
+<body>
+<div class="box">
+<div class="spin" aria-hidden="true"></div>
+<p>Loading benchmarks.html</p>
+<p id="info">Checking backend and bots...</p>
+<p><a href="website/benchmarks.html">Open now</a></p>
+</div>
+<script>
+const target="website/benchmarks.html";
+fetch("website/backend-status.json").then(r=>r.json()).then(d=>{
+  const bots=(d.bots&&d.bots.count)||d.bot_count||"";
+  document.getElementById("info").textContent = "Backend reachable"+(bots? " · "+bots+" bots":"");
+}).catch(()=>{ document.getElementById("info").textContent="Opening page"; });
+setTimeout(()=>location.replace(target), 700);
+</script>
+</body></html>
