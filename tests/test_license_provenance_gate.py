@@ -1307,3 +1307,30 @@ def test_holdout_mirror_fetch_is_not_blobless():
     import inspect
     src = inspect.getsource(gate._RemoteMirror.fetch)
     assert "blob:none" not in src and "partialClone" not in src and "promisor" not in src
+
+
+# Package-level notice (gate 0.1.1): the declared attribution_text must carry the CC BY 4.0 license link and,
+# for O*NET, the trademark notice, even when the shipped files already carry them.
+def test_gate_version_matches_config():
+    config = json.loads((ROOT / "config" / "license_provenance_gate.json").read_text(encoding="utf-8"))
+    assert gate.GATE_VERSION == config["version"]
+
+
+def test_declared_attribution_without_license_link_fails(tmp_path):
+    def strip_link(p):
+        p["attribution_text"] = p["attribution_text"].replace(" (https://creativecommons.org/licenses/by/4.0/)", "")
+        assert "creativecommons.org" not in p["attribution_text"]
+    att = check(gate.evaluate(make_asset(tmp_path, prov_edit=strip_link)), "attribution_present")
+    assert att["status"] == "fail"
+    assert any("license_link" in r and "declared attribution" in r for r in att["reasons"])
+
+
+def test_declared_attribution_without_trademark_notice_fails(tmp_path):
+    def strip_trademark(p):
+        p["attribution_text"] = p["attribution_text"].replace("O*NET\u00ae is a trademark of USDOL/ETA. ", "")
+        assert "trademark" not in p["attribution_text"]
+    report = gate.evaluate(make_asset(tmp_path, prov_edit=strip_trademark))
+    att = check(report, "attribution_present")
+    assert att["status"] == "fail"
+    assert any("trademark_notice" in r and "declared attribution" in r for r in att["reasons"])
+    assert report["outcome"] == "approved_for_private_use"

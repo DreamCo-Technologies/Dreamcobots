@@ -90,6 +90,15 @@ test('generated success program is complete and honest', () => {
   assert.equal(program.trust_and_access.zero_breach_or_fraud_guaranteed, false);
 });
 
+test('resource inventory ids are unique, stable digests and resources are sorted by host', () => {
+  const resources = canonical.resource_inventory.resources;
+  const ids = resources.map(resource => resource.id);
+  assert.equal(new Set(ids).size, ids.length);
+  for (const id of ids) assert.match(id, /^resource-[0-9a-f]{16}$/);
+  const hosts = resources.map(resource => resource.host);
+  assert.deepEqual(hosts, [...hosts].sort((a, b) => a.localeCompare(b)));
+});
+
 test('capability program selector maps to each division capability contract', () => {
   assert.match(script, /kind === 'division_capabilities' \? division\.capabilities : division\[kind\]/);
   for (const division of program.divisions) {
@@ -103,4 +112,13 @@ test('Success Center uses stable responsive layouts', () => {
   assert.match(css, /@media \(max-width: 800px\)/);
   assert.doesNotMatch(css, /font-size:\s*[^;]*vw/);
   assert.doesNotMatch(css, /letter-spacing:\s*-/);
+});
+
+test('published success program is exactly the canonical generated program (no drift between copies)', () => {
+  assert.deepEqual(JSON.parse(JSON.stringify(program)), canonical);
+});
+
+test('success summary and resource inventory agree on how many source files were scanned', () => {
+  assert.equal(program.summary.source_files_scanned_for_resources, program.resource_inventory.source_files_scanned);
+  assert.equal(canonical.summary.source_files_scanned_for_resources, canonical.resource_inventory.source_files_scanned);
 });

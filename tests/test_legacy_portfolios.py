@@ -8,7 +8,7 @@ class LegacyPortfolioTests(unittest.TestCase):
  def setUpClass(cls):
   cls.registry=json.loads((ROOT/'config/master_bot_registry.json').read_text());cls.data=build_legacy_portfolios(ROOT,cls.registry)
  def test_every_historical_record_is_counted_without_inflating_canonical_runtime_count(self):
-  self.assertEqual(self.data['summary']['historical_source_records'],262)
+  self.assertEqual(self.data['summary']['historical_source_records'],281)
   self.assertEqual(self.data['summary']['canonical_profiles'],1051)
   self.assertEqual(self.data['summary']['markdown_files_linked_to_canonical'],1051)
   ids=[x['id'] for x in self.data['items']];self.assertEqual(len(ids),len(set(ids)))

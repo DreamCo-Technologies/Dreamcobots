@@ -21,6 +21,15 @@ def section(text, heading):
     found=re.search(r'^## '+re.escape(heading)+r'\s*\n(.*?)(?=^## |\Z)',text,re.M|re.S)
     return found[1].strip() if found else ''
 
+def lead_paragraph(text):
+    """First prose paragraph after the title, for profiles without a Description section."""
+    for block in re.split(r'\n\s*\n',text):
+        block=block.strip()
+        if not block or block.startswith(('#','>','-','*','|','```')):continue
+        if re.match(r'^[\w ]+:\s',block):continue  # metadata lines such as 'Doc: ...' or 'production_ready: false'
+        return block
+    return ''
+
 def build_legacy_portfolios(root: Path, registry: dict) -> dict:
     canonical={b['identity']['slug']:b for b in registry['bots']}
     divisions={d['name'] for d in registry['divisions']}
@@ -41,7 +50,7 @@ def build_legacy_portfolios(root: Path, registry: dict) -> dict:
             continue
         text=path.read_text();heading=re.search(r'^#\s+(.+)',text,re.M);division=re.search(r'\*\*Division:\*\*\s*([^|\n]+)',text)
         records.append({'kind':'historical_markdown_profile','source':relative,'slug':path.stem,
-            'display_name':heading[1] if heading else path.stem,'mission':section(text,'Description'),
+            'display_name':heading[1] if heading else path.stem,'mission':section(text,'Description') or lead_paragraph(text),
             'primary_division':division[1].strip() if division else 'DreamAgents',
             'capabilities':[line[2:].strip() for line in section(text,'Capabilities').splitlines() if line.startswith('- ')],
             'target_users':section(text,'Target Users'),'business_model':section(text,'Revenue Model'),
@@ -65,8 +74,9 @@ def build_legacy_portfolios(root: Path, registry: dict) -> dict:
               'capability_ids':[],'legacy':True,'canonical_matches':exact,
               'source_division':raw_division,'classification':'source_declared' if division==raw_division else 'normalized_to_existing_division',
               'accounting_state':match_state,'same_name_source_records':len(historical_groups[row['slug'].removesuffix('-bot')])}
+        mission = (row.get('mission') or '').strip() or f"Historical profile for {row['display_name']} (no mission section in source)"
         bot={'identity':{'slug':identifier,'display_name':row['display_name'],'division':division,'category':row['kind'],'catalog_status':'catalogued'},
-             'prospectus':{'mission':row['mission'],'target_users':row.get('target_users') or 'Not specified in this historical record',
+             'prospectus':{'mission':mission,'target_users':row.get('target_users') or 'Not specified in this historical record',
                 'catalog_business_model':row.get('business_model') or 'Historical concept; not commercially verified',
                 'catalog_price_range':'Not verified','inputs':['Owner-defined brief and approved source material'],
                 'outputs':['A reviewed plan; runtime outputs are not verified'],

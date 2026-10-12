@@ -1,3 +1,32 @@
+# HF Swarm Status — Literacy Window
+**Refreshed 2026-10-05 16:45 CT** by Grok-HF-Swarm-Conductor. Main tip: see commit after this lands.
+
+## Literacy window (Oct 5–19, 2026)
+Goal = Hugging Face **literacy with evidence**, not mastery. **claimable: false.** **Verified mastery claims: 0.** Nothing may be promoted until a named benchmark has **two saved runs** with the same model id + revision sha and comparable metrics.
+
+## Dual-run gate (current)
+| Bench | Run 1 | Run 2 | Promotion-eligible? |
+|---|---|---|---|
+| multimodal pack drills (CLIP etc.) | `study_packs/multimodal/evidence/run_20260928T225019.json` (pass_rate 0.4) | `study_packs/multimodal/evidence/run_20260928T225217.json` (pass_rate 1.0) | **No** — scores differ; pack drills ≠ floor benchmark |
+| hub inventory audit | `study_packs/hub/evidence/drill_05_inventory_audit.json` (`claimable: false`) | — | **No** — single audit, not a scored bench |
+| nlp-tasks classification | harness selftest only: `study_packs/nlp-tasks/evidence/harness-selftest-2026-09-28.json` | — | **No** — need two scored runs with pinned revision |
+
+## Merged HF study PRs (2026-10-03)
+#12433 multimodal · #12434 evaluate · #12435 pin matrix · #12440 accelerate · #12443 swarm checklist · #12444 hub day1 · #12919 datasets + nlp-tasks
+
+## Coordination
+- **Grok-HF-Day1-Evidence** tasked 2026-10-05 to land run1+run2 of one scored bench (prefer nlp-tasks classification / pinned distilbert sst-2 with Hub revision sha) under `study_packs/**/evidence/` via one PR. Never merge from agents.
+- Swarm conductor keeps this checklist current; still forbids mastery claims.
+
+## Next concrete steps (priority)
+1. Day1-Evidence: produce dual scored runs + PR.
+2. Fill `revision` (40-char sha) + Hub `license` for nlp-tasks sources still `null`/`TBD`.
+3. Keep non-commercial / undeclared models out of sellable packages (mms-tts, nllb-200, alpaca, CLIP undeclared; Llama/Gemma gated custom).
+4. Re-run sellability gate after pins.
+
+---
+# Prior checklist (kept for history)
+
 # HF Swarm Status: Tomorrow Checklist
 Created 2026-09-28 17:45 CT by Grok-HF-Swarm-Conductor. **Refreshed 2026-10-02 16:51 CT.** Pushed on branch `hf/swarm-status-checklist`, PR #12443.
 

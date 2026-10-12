@@ -1,0 +1,63 @@
+{
+  "schema": "dreamco.data_package_license_manifest.v1",
+  "sku_id": "DP-ONET-OCC-SYN",
+  "version": "0.0.2",
+  "license_gate_status": "fail",
+  "license_gate_schema": "schemas/data_package_license_gate.schema.json",
+  "components": [
+    {
+      "component": "DreamCo synthesis layer",
+      "ownership_class": "dreamco_owned",
+      "license": "All rights reserved; commercial terms not set",
+      "commercial_use_allowed": null,
+      "redistribution_allowed": null,
+      "attribution_required": false,
+      "note": "DreamCo-derived fields per row: license.dreamco_fields. They embed O*NET names, so O*NET attribution still applies."
+    },
+    {
+      "component": "O*NET Database content",
+      "ownership_class": "open_license_with_conditions",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_allowed": true,
+      "redistribution_allowed": true,
+      "attribution_required": true,
+      "required_notices": [
+        "credit O*NET <version> Database and USDOL/ETA",
+        "CC BY 4.0 + license link",
+        "USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "O*NET® is a trademark of USDOL/ETA."
+      ],
+      "fields": "license.onet_derived_fields in each row"
+    },
+    {
+      "component": "CIP to O*NET-SOC crosswalk",
+      "ownership_class": "open_license_with_conditions",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial_use_allowed": true,
+      "redistribution_allowed": true,
+      "attribution_required": true,
+      "used_in_this_version": false
+    }
+  ],
+  "asset_gate_results": [
+    {
+      "asset_id": "dp-onet-occ-syn-sample-0.0.2",
+      "license_gate": "assets/dp-onet-occ-syn-sample-0.0.2/license_gate.json",
+      "gate_version": "0.1.1",
+      "outcome": "approved_for_private_use",
+      "rights_ceiling": "approved_for_sale",
+      "failed_checks": [
+        "scorecard_threshold",
+        "synthesis_asset_record",
+        "owner_approval"
+      ],
+      "evaluated_at": "2026-10-05T22:35:39-05:00"
+    }
+  ],
+  "owner_approval": null,
+  "license_gate_status_mapping": "config/license_provenance_gate.json#package_status_mapping (pending | pass | fail | reference_only_bundle)",
+  "excluded_reference_only_sources": [],
+  "license_gate_status_note": "fail = the included asset's gate outcome is approved_for_private_use (sale-scope caps only: no dataset evaluation scorecard, no validation evidence, no owner approval). Rights ceiling is approved_for_sale. Not for sale."
+}

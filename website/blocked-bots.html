@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Blocked bots</title><link rel="stylesheet" href="styles.css"/>
+<style>body{padding:16px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:12px;margin:8px 0}
+button{background:#7c5cff;color:#fff;border:0;border-radius:8px;padding:6px 10px;cursor:pointer}
+.warn{color:#ffbf69}</style></head><body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>Blocked bots</h1>
+<p class="warn">Each button opens an unblock plan. It does not run the bot or move money.</p>
+<p id="sum"></p>
+<div id="list"></div>
+</main>
+<script>
+fetch("data/blocked-bots.json").then(r=>r.json()).then(d=>{
+  document.getElementById("sum").textContent=d.count+" blocked bots.";
+  document.getElementById("list").innerHTML=d.items.map(b=>`<div class="card"><strong>${b.title}</strong><p>${b.division} · ${b.reason}</p><button onclick="plan('${b.id}')">Unblock plan</button><p id="p-${b.id}"></p></div>`).join("");
+  window.ITEMS=Object.fromEntries(d.items.map(b=>[b.id,b]));
+});
+function plan(id){ const b=ITEMS[id]; document.getElementById("p-"+id).textContent=b.plan; }
+</script></body></html>

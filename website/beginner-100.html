@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>100 ways</title><link rel="stylesheet" href="styles.css"/>
+<style>body{padding:16px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px;margin:12px 0}
+ol{padding-left:18px}li{margin:4px 0}.ok{color:#69e8bf}
+</style></head><body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>100 ways</h1>
+<p class="ok" id="note">Loading.</p>
+<p><a href="beginner-models.html">Start here</a></p>
+<div class="card"><h2>100 ways to build a model</h2><ol id="build"></ol></div>
+<div class="card"><h2>100 ways to distill a model</h2><ol id="distill"></ol></div>
+<div class="card"><h2>100 ways to make Pages beginner friendly</h2><ol id="pages"></ol></div>
+</main>
+<script>
+fetch("data/beginner-100.json").then(r=>r.json()).then(d=>{
+  document.getElementById("note").textContent=d.note;
+  for (const key of ["build","distill","pages"]) {
+    document.getElementById(key).innerHTML=d[key].map(x=>"<li>"+x+"</li>").join("");
+  }
+});
+</script></body></html>

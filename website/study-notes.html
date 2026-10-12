@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Buddy study notes</title><link rel="stylesheet" href="styles.css"/>
+<style>body{padding:16px}textarea,input,select{width:100%;background:#0f1217;color:#fff;border:1px solid #3b424d;border-radius:8px;padding:8px;margin:6px 0}
+button{background:#7c5cff;color:#fff;border:0;border-radius:8px;padding:8px 12px;cursor:pointer;margin:4px}
+.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px;margin:12px 0}
+.ok{color:#69e8bf}.warn{color:#ffbf69}
+</style></head><body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>Buddy study notes</h1>
+<p>Buddy studies the steps you give it, takes notes, and grades itself. Works for a wrapper task, a YouTube link, an ebook, a school course, or any source you paste. Notes stay on this device. This does not watch a video or train weights.</p>
+<div class="card">
+<label>Source type</label>
+<select id="kind"><option>wrapper task</option><option>YouTube</option><option>ebook</option><option>school course</option><option>other data</option></select>
+<label>Title or URL</label>
+<input id="title" placeholder="Task name, video link, book, or course"/>
+<label>Steps, outline, or transcript</label>
+<textarea id="source" rows="8" placeholder="Paste the steps, chapter outline, transcript, or assignment"></textarea>
+<button onclick="study()">Study and grade</button>
+</div>
+<div class="card"><h2>Notes</h2><div id="notes"></div></div>
+<div class="card"><h2>Saved on this device</h2><div id="saved"></div></div>
+</main>
+<script>
+const RUBRIC=["names the goal","lists the steps","captures a check","states what to do next","does not claim the source was watched"];
+function grade(text){
+  const t=text.toLowerCase();
+  const hits={
+    "names the goal": /goal|learn|task|course|video|book/.test(t),
+    "lists the steps": /step|1\.|first|then|next/.test(t),
+    "captures a check": /check|quiz|test|practice|recall/.test(t),
+    "states what to do next": /next|practice|review|apply/.test(t),
+    "does not claim the source was watched": !/i watched|i read the full|completed the course/.test(t)
+  };
+  const score=Math.round(Object.values(hits).filter(Boolean).length/RUBRIC.length*100);
+  return {hits, score};
+}
+function study(){
+  const kind=document.getElementById("kind").value;
+  const title=document.getElementById("title").value.trim()||"Untitled";
+  const source=document.getElementById("source").value.trim();
+  if(!source){ document.getElementById("notes").textContent="Paste steps or an outline first."; return; }
+  const lines=source.split(/\n+/).map(s=>s.trim()).filter(Boolean).slice(0,12);
+  const notes=[
+    "Source: "+kind+" — "+title,
+    "Goal: learn the stated task without claiming the source was completed.",
+    "Steps:",
+    ...lines.map((l,i)=> (i+1)+". "+l),
+    "Check: restate the goal, then do one practice item from the steps.",
+    "Next: review the weakest step and score it again."
+  ].join("\n");
+  const g=grade(notes);
+  const box=document.getElementById("notes");
+  box.innerHTML="<pre>"+notes+"</pre><p class='"+(g.score>=75?"ok":"warn")+"'>Self-score "+g.score+"%</p><ul>"+
+    RUBRIC.map(r=>"<li>"+(g.hits[r]?"pass":"miss")+" — "+r+"</li>").join("")+"</ul>";
+  const all=JSON.parse(localStorage.getItem("buddy-study-notes")||"[]");
+  all.unshift({kind,title,score:g.score,notes,at:new Date().toISOString()});
+  localStorage.setItem("buddy-study-notes", JSON.stringify(all.slice(0,30)));
+  render();
+}
+function render(){
+  const all=JSON.parse(localStorage.getItem("buddy-study-notes")||"[]");
+  document.getElementById("saved").innerHTML=all.map(n=>"<p><strong>"+n.title+"</strong> "+n.kind+" · "+n.score+"%</p>").join("")||"<p>None yet.</p>";
+}
+render();
+</script></body></html>

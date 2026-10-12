@@ -34,7 +34,7 @@ SCORECARD = ROOT / "config" / "dataset_evaluation_scorecard.json"
 PROVENANCE_SCHEMA = ROOT / "schemas" / "data_package_asset_provenance.schema.json"
 SYNTHESIS_ASSET_SCHEMA = ROOT / "schemas" / "data_package_synthesis_asset.schema.json"
 GATE_SCHEMA = ROOT / "schemas" / "data_package_license_gate.schema.json"
-GATE_VERSION = "0.1.0"
+GATE_VERSION = "0.1.1"
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 # Validation evidence ids resolve to <repo_root>/<evidence_root>/<kind>/<asset_id>/<YYYYMMDD>-<NN>.json.
 DEFAULT_REPO_ROOT = ROOT
@@ -267,6 +267,12 @@ def check_attribution(subject: dict, pol: dict, asset_root: Path | None = None) 
             miss_req, miss_rec = _missing_elements(body, s, rule, modified)
             failures += [f"{sid}: {where} missing required {el} ({rule['id']})" for el in miss_req]
             warnings += [f"{sid}: {where} missing recommended {el} ({rule['id']})" for el in miss_rec]
+        # Package-level notice: the declared attribution_text must also carry the license link and, for O*NET,
+        # the trademark notice (config license_rules[].required_in_declared_attribution; onetcenter.org/license_db.html).
+        version = re.escape(str(s.get("version", "")))
+        failures += [f"{sid}: attribution_text missing required {el['id']} ({rule['id']}, declared attribution)"
+                     for el in rule.get("required_in_declared_attribution", [])
+                     if not re.search(el["pattern"].replace("{version}", version), text)]
     if failures:
         return _check("attribution_present", "fail", failures + warnings, "approved_for_private_use")
     if warnings:

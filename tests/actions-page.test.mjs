@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import test from 'node:test';
 
 const html = readFileSync(new URL('../website/actions.html', import.meta.url), 'utf8');
@@ -38,6 +38,10 @@ test('Actions prospectus explains every workflow without turning static checks i
   assert.equal(report.schema, 'dreamco.actions_health.v2');
   assert.equal(prospectus.schema, 'dreamco.actions_prospectus.v2');
   assert.equal(prospectus.workflow_count, report.workflow_count);
+  // Drift guard: the committed report must cover every live workflow file
+  // (it once said 91 while .github/workflows had 103).
+  const liveWorkflows = readdirSync(new URL('../.github/workflows/', import.meta.url)).filter((f) => /\.ya?ml$/.test(f)).length;
+  assert.equal(report.workflow_count, liveWorkflows);
   assert.equal(prospectus.workflow_catalog_url, 'data/actions-health-report.json');
   assert.equal(repositoryProspectus.workflows.length, report.workflow_count);
   assert.equal(report.summary.runtime_unknown_workflows, report.workflow_count);

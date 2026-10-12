@@ -1,0 +1,74 @@
+{
+  "schema": "dreamco.data_package_synthesis_asset.v1",
+  "asset_id": "dp-onet-occ-syn-sample-0.0.2",
+  "title": "DreamCo Occupation Synthesis Pack (built with O*NET® 31.0 data): 0.0.2 populated sample",
+  "capability_ids": [
+    "occupation-synthesis",
+    "career-pathway-study-plan"
+  ],
+  "perspectives_used": [
+    "official_documentation"
+  ],
+  "source_refs": [
+    {
+      "source_id": "onet_db_31_0",
+      "version": "31.0",
+      "pinned_by": "provenance.json#sources",
+      "perspective": "official_documentation"
+    }
+  ],
+  "ownership_class": "open_license_with_conditions",
+  "commercial_redistribution_allowed": true,
+  "attribution_required": true,
+  "share_alike_required": false,
+  "human_layer": {
+    "path": "sample/occupation_cards.md",
+    "format": "markdown",
+    "sha256": "311c5fb120a6908fb8574d7166c5e173e211801a2bb06fb719f719d10ba32e07",
+    "elements": [
+      "occupation cards",
+      "practice seeds",
+      "DreamCo analysis",
+      "attribution footer"
+    ]
+  },
+  "machine_layer": {
+    "path": "sample/occupations.jsonl",
+    "format": "jsonl",
+    "sha256": "fb9d09e43d81be56b888830a6e256489f813cf4fd00474fbc24d7f507dfebf00",
+    "elements": [
+      "O*NET®-derived values",
+      "capability lenses",
+      "data confidence",
+      "practice seed",
+      "rubric",
+      "analysis",
+      "per-row source_refs"
+    ]
+  },
+  "dreamco_analysis": {
+    "agree": [
+      "Within the O*NET® 31.0 data, incumbent/expert-rated knowledge and activities and analyst-rated essential skills give consistent top elements for most sampled occupations (see per-row analysis.agree)."
+    ],
+    "reject": [],
+    "improve": [
+      "Add a second, independent perspective (e.g. BLS wages/outlook or CIP program data) so the synthesis is multi-view rather than single-source."
+    ],
+    "still_need_test": [
+      "Practice seeds and rubrics have no human grading, benchmark, holdout or regression evidence yet."
+    ]
+  },
+  "validation_evidence_ids": {
+    "sandbox": [],
+    "benchmark": [],
+    "holdout": [],
+    "regression": []
+  },
+  "integrity_hash": "sha256:06e0b0f6505f884babd41080e8816568ef73be5fe35028806d0a8feb06804df1",
+  "created_at": "2026-10-05T22:35:27-05:00",
+  "generator_version": "build_dp_onet_occ_syn_sample 0.1.1",
+  "notes": [
+    "perspectives_used has one entry: every value comes from one official source (the O*NET® 31.0 Database). Rating-source mix (incumbent, occupational expert, analyst) is recorded per row as evidence_perspectives, but that is still one publisher.",
+    "validation_evidence_ids are empty on purpose: the dataset QA scorecard and pytest are integrity checks, not validation."
+  ]
+}

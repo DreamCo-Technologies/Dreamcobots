@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Fail-closed routes | Buddy</title><link rel="stylesheet" href="styles.css?v=41" /><link rel="stylesheet" href="actions.css?v=4" /></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="actions-shell">
+<header class="actions-header"><div><p class="actions-kicker">Gate</p><h1>Fail-closed routes</h1><p>Try a route. A missing result stays closed. No division is marked a top competitor.</p></div></header>
+<section class="actions-review" id="routes"></section>
+<p id="route-status">No route tried.</p>
+</main>
+<script>
+const routes = [["two saved runs","reports/PROMOTION_GATE.json"],["model list","reports/MODEL_SELECTION.json"],["benchmark tasks","config/buddy-benchmark-task-registry.json"],["division audit","reports/DIVISION_AUDIT.json"],["experiment ledger","reports/EXPERIMENT_LEDGER.json"],["market data","https://fred.stlouisfed.org/"]];
+const box = document.getElementById("routes");
+routes.forEach(([name, href]) => { const link = document.createElement("a"); link.className = "btn btn-outline"; link.href = "https://github.com/DreamCo-Technologies/Dreamcobots/blob/buddy-os-evidence-gate/" + href; if (href.startsWith("http")) link.href = href; link.textContent = name; link.addEventListener("click", () => { document.getElementById("route-status").textContent = name + " opened. Gate stays closed without a saved result."; }); box.appendChild(link); });
+</script>
+</body></html>

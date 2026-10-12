@@ -1,0 +1,528 @@
+{
+  "schema": "dreamco.buddy.resource_registry.v1",
+  "scanned_on": "2026-10-05",
+  "scanned_by": "Grok Bot (read-only scan: gh api + repo grep + box teammate roster)",
+  "truth": "Listing a resource is not a live integration. 'connected' means wired in this repository or the GitHub org, with evidence named in wired_into. Secrets are recorded by name and presence only, never by value. Nothing here sets production_ready, claimable or mastered.",
+  "status_meanings": {
+    "connected": "Already wired in repo config, workflows or the org. Evidence is in wired_into.",
+    "contract_only": "A router or contract entry exists, but there is no governed execution adapter yet.",
+    "needs_secret": "An adapter or workflow exists but waits on the named secret.",
+    "needs_owner_decision": "Needs a business, compute, scope or vendoring decision from the owner.",
+    "blocked_by_license": "License or provider terms forbid the intended use.",
+    "retired_upstream": "The provider has shut the service down. Do not wire it."
+  },
+  "resources": [
+    {
+      "id": "xai_grok_api",
+      "name": "xAI Grok API (router connector `xai`)",
+      "category": "model_provider",
+      "rank": 1,
+      "gives_buddy": "Hosted frontier reasoning, coding and general chat for Buddy's premium route, called by a backend adapter inside a DreamCo product (a Bundled Service under the xAI Enterprise terms, section 1.1).",
+      "connection_status": "contract_only",
+      "secret_names": [
+        "XAI_API_KEY"
+      ],
+      "secret_present_in_actions": false,
+      "wired_into": [
+        "config/buddy-model-router.json#connectors[id=xai]",
+        "server/buddy-model-policy.ts#PROVIDER_CONNECTOR_IDS.xai"
+      ],
+      "blocker": "No governed execution adapter yet (implementation_status=contract_only) and XAI_API_KEY is not an Actions secret. Premium use still needs per-request approval.",
+      "owner_action": "Store XAI_API_KEY in the backend secret store only, then approve building the xAI adapter behind the existing sandbox tests.",
+      "owner_lane": "Grok-HF-Router-Wiring",
+      "source_url": "https://docs.x.ai/docs"
+    },
+    {
+      "id": "grok_teammate_fleet",
+      "name": "Grok teammate bot roster (~112 lanes, box-local profiles, not in this repo)",
+      "category": "workforce",
+      "rank": 2,
+      "gives_buddy": "Named owners for each Buddy capability lane. They open evidence-gated PRs for routing, evals, study packs, OS surfaces and production gates.",
+      "connection_status": "connected",
+      "wired_into": [
+        "team/grok-team.json",
+        "config/grok-help-playbook.json",
+        "config/grok-help-playbook-vol2.json",
+        ".github/agents/grok-buddy-bridge.agent.md"
+      ],
+      "lanes": {
+        "model_routing_access": {
+          "count": 7,
+          "examples": [
+            "Grok-HF-Router-Wiring",
+            "Grok-Model-Access-Product-Owner",
+            "Grok-HF-Inference-Serve",
+            "Grok-Buddy-Metacog-Coach",
+            "Grok-Buddy-Vs500-Bench"
+          ]
+        },
+        "distillation_training_adapters": {
+          "count": 9,
+          "examples": [
+            "Grok-Buddy-Distill-Lead",
+            "Grok-Buddy-LoRA-Foundry",
+            "Grok-HF-PEFT-LoRA",
+            "Grok-HF-TRL-Train",
+            "Grok-Buddy-Adapter-Registry"
+          ]
+        },
+        "evaluation_frontier_gates": {
+          "count": 14,
+          "examples": [
+            "Grok-Buddy-Eval-Harness",
+            "Grok-Buddy-F0-Scorecard",
+            "Grok-Frontier-Loop-Captain",
+            "Grok-HF-Evaluate",
+            "Grok-Prod-Cert-Gate"
+          ]
+        },
+        "reasoning_coding_tooluse": {
+          "count": 9,
+          "examples": [
+            "Grok-Buddy-Reasoning-Coach",
+            "Grok-Buddy-Logic-Reasoner",
+            "Grok-Buddy-ToolUse-Arena",
+            "Grok-Buddy-Debug-Arena",
+            "Grok-Buddy-RCA-Trainer"
+          ]
+        },
+        "learning_data_curriculum": {
+          "count": 28,
+          "examples": [
+            "Grok-Buddy-Bootcamp-Commandant",
+            "Grok-HF-StudyPack-Builder",
+            "Grok-HF-Datasets-Master",
+            "Grok-Edu-K12-Curriculum",
+            "Grok-ONET-Ingest-Lead"
+          ]
+        },
+        "os_github_surfaces": {
+          "count": 13,
+          "examples": [
+            "Grok-Buddy-OS-Shell",
+            "Grok-OS-Actions-Panel",
+            "Grok-OS-Event-Bus",
+            "Grok-OS-Scheduler",
+            "Grok-Pages-Universe-Linker"
+          ]
+        },
+        "production_readiness_ops": {
+          "count": 17,
+          "examples": [
+            "Grok-Prod-Resource-Graph",
+            "Grok-Prod-Config-Triangulator",
+            "Grok-Prod-Connectivity-Scanner",
+            "Grok-Prod-Deps-Licenses",
+            "Grok-Repair-Orchestrator"
+          ]
+        },
+        "products_revenue_packages": {
+          "count": 12,
+          "examples": [
+            "Grok-Buddy-Capability-Packager",
+            "Grok-Buddy-Package-Market",
+            "Grok-Live-Revenue-Readiness",
+            "Grok-Universal-Sandbox-Director",
+            "Grok-Platform-Expansion-Lead"
+          ]
+        },
+        "general": {
+          "count": 3,
+          "examples": [
+            "Grok Bot",
+            "Grok-Eng-Gap-Closure-Pilot",
+            "Grok-HF-Deps-Pins"
+          ]
+        }
+      },
+      "blocker": null,
+      "owner_action": null,
+      "owner_lane": "Grok-OS-Agents-ProcTable",
+      "source_url": null,
+      "secret_names": []
+    },
+    {
+      "id": "openai_adapter",
+      "name": "OpenAI route (router connector `openai`, the only adapter_implemented premium route)",
+      "category": "model_provider",
+      "rank": 3,
+      "gives_buddy": "The one premium route with a working server adapter (server/provider_integrations/chat, image, audio, batch).",
+      "connection_status": "needs_secret",
+      "secret_names": [
+        "OPENAI_API_KEY",
+        "AI_INTEGRATIONS_OPENAI_API_KEY"
+      ],
+      "secret_present_in_actions": false,
+      "wired_into": [
+        "config/buddy-model-router.json#connectors[id=openai]",
+        "server/openaiConfig.ts",
+        "server/provider_integrations/"
+      ],
+      "blocker": "Neither secret name is set as an Actions secret. Runtime presence in the deployed backend was not checked.",
+      "owner_action": "Set OPENAI_API_KEY in the backend runtime secret store if a premium route is wanted. Per-request approval stays on.",
+      "owner_lane": "Grok-Model-Access-Product-Owner",
+      "source_url": "https://platform.openai.com/docs"
+    },
+    {
+      "id": "local_open_model_route",
+      "name": "Local open-model route (`local_open_model`) + tools/buddy_local_chat.py",
+      "category": "model_provider",
+      "rank": 4,
+      "gives_buddy": "A free, private route through an OpenAI-compatible local server (Ollama, llama.cpp, vLLM or TGI). buddy_local_chat.py is a dependency-light CLI that expects a `buddy_local_runtime` adapter module. No script or workflow calls it yet, and it ships no weights.",
+      "connection_status": "needs_owner_decision",
+      "secret_names": [],
+      "config_names": [
+        "LOCAL_MODEL_BASE_URL"
+      ],
+      "wired_into": [
+        "config/buddy-model-router.json#connectors[id=local_open_model]",
+        "tools/buddy_local_chat.py"
+      ],
+      "blocker": "LOCAL_MODEL_BASE_URL is a host URL, not a secret. Someone has to decide where the local server runs (laptop, GCP or a self-hosted runner). The adapter is contract_only.",
+      "owner_action": "Pick a host and pinned open-weight model (license-checked), then set LOCAL_MODEL_BASE_URL in the backend env.",
+      "owner_lane": "Grok-HF-Inference-Serve",
+      "source_url": "https://ollama.com/library"
+    },
+    {
+      "id": "huggingface_hub",
+      "name": "Hugging Face Hub (router `huggingface`, Path B open weights, HF sync workflows)",
+      "category": "model_catalog",
+      "rank": 5,
+      "gives_buddy": "Open-weight models, datasets and metadata for the Buddy student path (catalog, LoRA base models, eval metrics).",
+      "connection_status": "needs_secret",
+      "secret_names": [
+        "HF_TOKEN",
+        "HUGGINGFACE_TOKEN"
+      ],
+      "secret_present_in_actions": false,
+      "wired_into": [
+        "config/buddy-model-router.json#connectors[id=huggingface]",
+        ".github/workflows/grok-twins-hf-study.yml",
+        ".github/workflows/sync-to-huggingface.yml",
+        "config/model-hub-scan-targets.json#hubs[id=huggingface]"
+      ],
+      "blocker": "Two workflows reference secrets.HF_TOKEN, but no HF_TOKEN Actions secret exists, so the authenticated steps cannot run. Public metadata reads work without a token.",
+      "owner_action": "Add an HF_TOKEN Actions secret (read scope first) if the HF sync and study workflows should run with authentication.",
+      "owner_lane": "Grok-HF-Hub-Master",
+      "source_url": "https://huggingface.co"
+    },
+    {
+      "id": "study_packs",
+      "name": "study_packs/ (12 capability packs with sources, evals, SFT/DPO recipes)",
+      "category": "dataset",
+      "rank": 6,
+      "gives_buddy": "Curated per-capability curricula and eval sets (instruct, code, reason, tools, research, safety, embed, rerank, vision, speech, translate, summarize).",
+      "connection_status": "needs_owner_decision",
+      "wired_into": [
+        "study_packs/index.json",
+        "tools/build_hf_capability_packs.py"
+      ],
+      "blocker": "index.json names `xai/grok-best-available` as the teacher. Generating SFT or DPO targets with Grok is blocked by the xAI terms (see xai_outputs_for_training). The evals and permissively licensed sources are usable now.",
+      "owner_action": "Pick a terms-compatible teacher (a permissive open-weight model or human-written data) for the recipes. Router changes are not required.",
+      "owner_lane": "Grok-HF-StudyPack-Builder",
+      "source_url": null,
+      "secret_names": []
+    },
+    {
+      "id": "benchmark_runner",
+      "name": "benchmarks/buddy_benchmark_runner.py + benchmarks/tasks + eval/edu_benchmark + F0 scorecards",
+      "category": "benchmark",
+      "rank": 7,
+      "gives_buddy": "An offline, free-first benchmark harness and holdout packets for scoring Buddy routes without provider calls.",
+      "connection_status": "connected",
+      "wired_into": [
+        "benchmarks/buddy_benchmark_runner.py",
+        ".github/workflows/buddy-benchmark-smoke.yml",
+        "eval/edu_benchmark/"
+      ],
+      "blocker": null,
+      "owner_action": null,
+      "owner_lane": "Grok-Buddy-Eval-Harness",
+      "source_url": null,
+      "secret_names": []
+    },
+    {
+      "id": "local_rag",
+      "name": "foundry/local_rag.py (dependency-free local RAG store)",
+      "category": "repo_tool",
+      "rank": 8,
+      "gives_buddy": "Retrieval over DreamCo docs for grounding, on laptops and in the sandbox, with no hosted embeddings. Covered by tests/test_foundry_local_rag.py, but the router and runtime don't call it yet.",
+      "connection_status": "connected",
+      "wired_into": [
+        "foundry/local_rag.py"
+      ],
+      "blocker": "Not called from server/buddy-model-policy.ts. That integration is a code change, not config, so it is not done in this PR.",
+      "owner_action": null,
+      "owner_lane": "Grok-Prod-Data-Wiring",
+      "source_url": null,
+      "secret_names": []
+    },
+    {
+      "id": "github_actions",
+      "name": "GitHub Actions on Dreamcobots (146 workflows registered, GitHub-hosted runners, 0 self-hosted)",
+      "category": "compute",
+      "rank": 9,
+      "gives_buddy": "Scheduled and dispatchable compute for checks, catalogs, benchmarks and Pages builds. GITHUB_TOKEN is available to every workflow.",
+      "connection_status": "connected",
+      "wired_into": [
+        ".github/workflows/",
+        "config/generated/buddy_expert_mode.json#actions_workflows"
+      ],
+      "blocker": null,
+      "owner_action": null,
+      "owner_lane": "Grok-OS-Actions-Panel",
+      "source_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions",
+      "secret_names": []
+    },
+    {
+      "id": "github_pages",
+      "name": "GitHub Pages (legacy build from main:/, HTTPS enforced, status built)",
+      "category": "surface",
+      "rank": 10,
+      "gives_buddy": "A public static UI for Buddy's chat, model picker, resource center and catalogs. Provider calls from the static site are disabled by policy.",
+      "connection_status": "connected",
+      "wired_into": [
+        "website/",
+        "config/repository-connections.json"
+      ],
+      "blocker": null,
+      "owner_action": null,
+      "owner_lane": "Grok-Pages-Universe-Linker",
+      "source_url": "https://dreamco-technologies.github.io/Dreamcobots/",
+      "secret_names": []
+    },
+    {
+      "id": "gcp_workload_identity",
+      "name": "GCP deploy identity (Actions secrets present: GCP_PROJECT_ID, GCP_REGION, GCP_SERVICE_ACCOUNT, GCP_WORKLOAD_IDENTITY_PROVIDER) + cloudbuild.yaml/app.yaml",
+      "category": "compute",
+      "rank": 11,
+      "gives_buddy": "A keyless OIDC path to run Buddy's backend, where provider secrets and adapters belong, on Google Cloud.",
+      "connection_status": "needs_owner_decision",
+      "secret_names": [
+        "GCP_PROJECT_ID",
+        "GCP_REGION",
+        "GCP_SERVICE_ACCOUNT",
+        "GCP_WORKLOAD_IDENTITY_PROVIDER"
+      ],
+      "secret_present_in_actions": true,
+      "wired_into": [
+        "cloudbuild.yaml",
+        "app.yaml"
+      ],
+      "blocker": "All four secrets exist, but no .github/workflows file references them, so no Actions deploy uses this identity today.",
+      "owner_action": "Decide whether Buddy's backend (model adapters plus secret store) should deploy to GCP from Actions.",
+      "owner_lane": "Grok-Modernization-Executor",
+      "source_url": null
+    },
+    {
+      "id": "copilot_agents",
+      "name": "Copilot coding agent config (.github/agents/*.agent.md, copilot environment, copilot-instructions.md)",
+      "category": "workforce",
+      "rank": 12,
+      "gives_buddy": "Repo-native agent profiles (grok-buddy-bridge, buddy-debugger, grok-fleet-debugger and others) that keep agent work routed through Buddy's single runtime.",
+      "connection_status": "connected",
+      "wired_into": [
+        ".github/agents/",
+        ".github/copilot-instructions.md"
+      ],
+      "blocker": "Copilot seat and billing details returned 403 to the current token, so plan details are unverified.",
+      "owner_action": null,
+      "owner_lane": "Grok-Buddy-OS-Shell",
+      "source_url": null,
+      "secret_names": []
+    },
+    {
+      "id": "local_training_toolchain",
+      "name": "Unwired local training tools: buddy_train_local.py, buddy_weights.py, buddy_capability_scheduler.py, buddy_code_asset_scanner.py, foundry/lora_plan.py",
+      "category": "repo_tool",
+      "rank": 13,
+      "gives_buddy": "A from-scratch or LoRA training loop, a checkpoint lifecycle, value-per-compute job selection, and a scan of repo code assets for training candidates.",
+      "connection_status": "needs_owner_decision",
+      "wired_into": [
+        "tools/buddy_train_local.py",
+        "tools/buddy_weights.py",
+        "tools/buddy_capability_scheduler.py",
+        "tools/buddy_code_asset_scanner.py",
+        "foundry/lora_plan.py"
+      ],
+      "blocker": "No package.json script or workflow calls these (lora_plan has a test). Training needs compute plus a license-checked base model and data. It is not run in default CI.",
+      "owner_action": "Approve a compute budget and host before any training run.",
+      "owner_lane": "Grok-Buddy-LoRA-Foundry",
+      "source_url": null,
+      "secret_names": []
+    },
+    {
+      "id": "azure_foundry",
+      "name": "Azure AI Foundry (router `azure_foundry`, GitHub's named successor to GitHub Models)",
+      "category": "model_provider",
+      "rank": 14,
+      "gives_buddy": "A broad hosted model catalog, including third-party models, that replaces what GitHub Models used to offer.",
+      "connection_status": "contract_only",
+      "secret_names": [
+        "AZURE_OPENAI_API_KEY",
+        "AZURE_AI_FOUNDRY_API_KEY"
+      ],
+      "secret_present_in_actions": false,
+      "wired_into": [
+        "config/buddy-model-router.json#connectors[id=azure_foundry]"
+      ],
+      "blocker": "No adapter, no secret, and no Azure subscription decision.",
+      "owner_action": "Decide whether to open an Azure subscription before anyone builds an adapter.",
+      "owner_lane": "Grok-Model-Access-Product-Owner",
+      "source_url": "https://learn.microsoft.com/azure/ai-foundry/"
+    },
+    {
+      "id": "sibling_repositories",
+      "name": "Sibling repos: Dreamcobots-Grok-Revolutionary, Dreamcobots-frontier-trust, DreamCo-Command-Center, Dreamco, Ai-bots",
+      "category": "code",
+      "rank": 15,
+      "gives_buddy": "Grok system prompts and a plugin registry (Grok-Revolutionary system/), a bot manifest schema and api-server (Command Center), and a trust fork for frontier PRs.",
+      "connection_status": "connected",
+      "wired_into": [
+        "config/repository-connections.json",
+        "website/data/repository-connections.json"
+      ],
+      "blocker": null,
+      "owner_action": null,
+      "owner_lane": "Grok-Prod-Resource-Graph",
+      "source_url": "https://github.com/ireanjordan24/Dreamcobots-Grok-Revolutionary",
+      "secret_names": []
+    },
+    {
+      "id": "github_discussions",
+      "name": "GitHub Discussions on Dreamcobots (enabled, 6 categories, 0 threads)",
+      "category": "surface",
+      "rank": null,
+      "gives_buddy": "A possible public Q&A and feedback channel for Buddy users and evals.",
+      "connection_status": "needs_owner_decision",
+      "wired_into": [],
+      "blocker": "Posting is externally visible, so the owner has to decide whether to use it.",
+      "owner_action": "Decide whether Buddy feedback should go to Discussions.",
+      "source_url": "https://github.com/DreamCo-Technologies/Dreamcobots/discussions",
+      "secret_names": [],
+      "owner_lane": null
+    },
+    {
+      "id": "github_models",
+      "name": "GitHub Models (marketplace catalog + inference)",
+      "category": "model_catalog",
+      "rank": null,
+      "gives_buddy": "Nothing now. The service was retired upstream.",
+      "connection_status": "retired_upstream",
+      "wired_into": [
+        "config/model-hub-scan-targets.json#hubs[id=github-models]"
+      ],
+      "blocker": "GitHub retired the Models catalog, playground, inference API and BYOK on 2026-07-30. On 2026-10-05, `gh models list` failed and the catalog endpoint returned non-JSON. No router connector was added.",
+      "owner_action": "Optional follow-up: remove the github-models hub from config/model-hub-scan-targets.json and use azure_foundry instead.",
+      "source_url": "https://github.blog/changelog/2026-07-30-github-models-is-now-retired/",
+      "secret_names": [],
+      "owner_lane": null
+    },
+    {
+      "id": "github_token_scope_gaps",
+      "name": "GitHub surfaces not readable with the current token: App installations, Packages, Copilot seats, org secrets",
+      "category": "github_platform",
+      "rank": null,
+      "gives_buddy": "Unknown until visible.",
+      "connection_status": "needs_owner_decision",
+      "wired_into": [],
+      "blocker": "The fine-grained PAT got HTTP 403 for installations, packages and Copilot billing. No Projects (v2) and no Codespaces were found.",
+      "owner_action": "Grant read scopes if this inventory should cover them.",
+      "source_url": null,
+      "secret_names": [],
+      "owner_lane": null
+    },
+    {
+      "id": "starred_oss_blocked",
+      "name": "Starred OSS not reusable: elder-plinius/CL4R1T4S (AGPL-3.0, leaked vendor system prompts), tinyhumansai/openhuman (GPL-3.0)",
+      "category": "code",
+      "rank": null,
+      "gives_buddy": "Nothing safe to reuse. CL4R1T4S content may violate vendor terms. GPL and AGPL code would force copyleft on Buddy.",
+      "connection_status": "blocked_by_license",
+      "wired_into": [],
+      "blocker": "Copyleft licenses, plus leaked third-party prompts.",
+      "owner_action": "Do not ingest.",
+      "source_url": "https://github.com/elder-plinius/CL4R1T4S",
+      "secret_names": [],
+      "owner_lane": null
+    },
+    {
+      "id": "starred_oss_permissive",
+      "name": "Starred OSS with permissive licenses (continuedev/continue, cline/cline, microsoft/ai-agents-for-beginners, K-Dense-AI/scientific-agent-skills, usestrix/strix, TauricResearch/TradingAgents, mattpocock/sandcastle)",
+      "category": "code",
+      "rank": null,
+      "gives_buddy": "Reference designs for coding agents, agent curricula, skill libraries, security testing and sandboxed agent orchestration.",
+      "connection_status": "needs_owner_decision",
+      "licenses": {
+        "continuedev/continue": "Apache-2.0",
+        "cline/cline": "Apache-2.0",
+        "microsoft/ai-agents-for-beginners": "MIT",
+        "K-Dense-AI/scientific-agent-skills": "MIT",
+        "usestrix/strix": "Apache-2.0",
+        "TauricResearch/TradingAgents": "Apache-2.0",
+        "mattpocock/sandcastle": "MIT"
+      },
+      "wired_into": [],
+      "blocker": "Study-only until a specific file is vendored with attribution and a license pin.",
+      "owner_action": "Approve vendoring case by case.",
+      "source_url": "https://github.com/cline/cline",
+      "secret_names": [],
+      "owner_lane": null
+    },
+    {
+      "id": "starred_oss_unclear_license",
+      "name": "Starred OSS with unclear license (rasbt/LLMs-from-scratch, oven-sh/bun, tech-leads-club/agent-skills: NOASSERTION)",
+      "category": "code",
+      "rank": null,
+      "gives_buddy": "An LLM-from-scratch training curriculum that fits tools/buddy_train_local.py, plus runtime tooling.",
+      "connection_status": "needs_owner_decision",
+      "wired_into": [],
+      "blocker": "GitHub reports NOASSERTION, so the license has to be read by hand before reuse.",
+      "owner_action": "Review LICENSE files before copying any code.",
+      "source_url": "https://github.com/rasbt/LLMs-from-scratch",
+      "secret_names": [],
+      "owner_lane": null
+    },
+    {
+      "id": "stripe_and_github_key_secrets",
+      "name": "Other Actions secrets present: STRIPE, GITHUBKEY",
+      "category": "secret_inventory",
+      "rank": null,
+      "gives_buddy": "Payments and a GitHub credential for backend jobs. Neither is referenced by any workflow.",
+      "connection_status": "needs_owner_decision",
+      "secret_names": [
+        "STRIPE",
+        "GITHUBKEY"
+      ],
+      "secret_present_in_actions": true,
+      "wired_into": [],
+      "blocker": "Unreferenced. Live money stays off by policy.",
+      "owner_action": "Confirm the intended use or rotate. Values were not inspected.",
+      "source_url": null,
+      "owner_lane": null
+    },
+    {
+      "id": "xai_outputs_for_training",
+      "name": "Grok outputs as teacher data for Buddy (distillation, SFT, DPO targets)",
+      "category": "terms_constraint",
+      "rank": null,
+      "gives_buddy": "Would supply teacher traces for Buddy student adapters. The study packs and the distill contract name xAI as the teacher.",
+      "connection_status": "blocked_by_license",
+      "wired_into": [
+        "config/buddy-model-router.json#connectors[id=xai]",
+        "config/buddy-distill-contract.json#teacher",
+        "study_packs/index.json#teacher"
+      ],
+      "blocker": "The xAI Enterprise Terms (updated 2026-08-14) section 3.2 say the customer will not use any Output to train any foundation model, LLM or other AI system unless an Order Form expressly permits it. The AUP also bans distilling model data or Outputs and using Outputs to develop competing ML models.",
+      "owner_action": "Keep Grok as a runtime and inference route only. Do not train Buddy on Grok outputs unless DreamCo gets a signed xAI Order Form that expressly allows it. Train students on permissively licensed open-weight teachers or human-written data instead.",
+      "terms_sources": [
+        "https://x.ai/legal/terms-of-service-enterprise",
+        "https://x.ai/legal/acceptable-use-policy"
+      ],
+      "terms_checked_on": "2026-10-05",
+      "owner_lane": "Grok-Buddy-Distill-Lead",
+      "source_url": "https://x.ai/legal/terms-of-service-enterprise",
+      "secret_names": []
+    }
+  ]
+}

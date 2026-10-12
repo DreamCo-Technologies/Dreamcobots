@@ -87,7 +87,20 @@ def _load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+# Seeds whose Hub card license is already known to be non-commercial. They stay unpinned, but the
+# license is labelled now so they cannot drift into a sellable package while still marked "TBD".
+KNOWN_NON_COMMERCIAL = {
+    "tatsu-lab/alpaca": "cc-by-nc-4.0",
+    "facebook/nllb-200-distilled-600M": "cc-by-nc-4.0",
+}
+NON_COMMERCIAL_NOTE = ("NON-COMMERCIAL (Hub card: cc-by-nc-4.0). Study/eval only; never in paid packages or "
+                       "trained-weight outputs sold.")
+
+
 def _entry(repo_id: str) -> dict:
+    if repo_id in KNOWN_NON_COMMERCIAL:
+        return {"repo_id": repo_id, "revision": None, "license": KNOWN_NON_COMMERCIAL[repo_id],
+                "pin_status": PIN_UNPINNED, "commercial_ok": False, "note": NON_COMMERCIAL_NOTE}
     return {"repo_id": repo_id, "revision": None, "license": LICENSE_TBD, "pin_status": PIN_UNPINNED}
 
 

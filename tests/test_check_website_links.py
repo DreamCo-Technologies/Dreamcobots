@@ -48,6 +48,36 @@ class CheckWebsiteLinksTest(unittest.TestCase):
         self.assertFalse(result["ok"])
         self.assertEqual(result["broken"], [{"source": "website/index.html", "href": "missing.html"}])
 
+    def test_all_mode_checks_every_internal_route(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site = make_site(Path(tmp), "good.html")
+            (site / "app.js").write_text(
+                "const a = { url: 'good.html' }; const b = { href: 'gone.html' };\n"
+                "fetch('data/missing.json'); fetch('/api/thing');\n"
+                "const c = '<a href=\"' + row.href + '\">';\n")
+            (site / "data").mkdir()
+            (site / "data" / "routes.json").write_text(json.dumps(
+                {"items": [{"route": "good.html"}, {"page": "lost.html"}, {"path": "website/repo-path.html"}]}))
+            (site / "extra.html").write_text('<title>x</title><img src="pic.png"><a href="not-in-nav.html">x</a>')
+            proc = subprocess.run([sys.executable, str(SCRIPT), "--site", str(site), "--all"],
+                                  capture_output=True, text=True, timeout=60)
+            result = json.loads(proc.stdout)
+            hrefs = sorted(b["href"] for b in result["broken"])
+            self.assertEqual(proc.returncode, 1)
+            self.assertEqual(hrefs, ["data/missing.json", "gone.html", "lost.html", "not-in-nav.html", "not-in-nav.html", "pic.png"])
+            self.assertEqual(result["server_api_refs"], ["/api/thing"])
+            baseline = Path(tmp) / "baseline.json"
+            subprocess.run([sys.executable, str(SCRIPT), "--site", str(site), "--all", "--write-baseline", str(baseline)],
+                           capture_output=True, text=True, timeout=60)
+            ok = subprocess.run([sys.executable, str(SCRIPT), "--site", str(site), "--all", "--baseline", str(baseline)],
+                                capture_output=True, text=True, timeout=60)
+            self.assertEqual(ok.returncode, 0)
+            (site / "new.html").write_text('<title>n</title><a href="fresh-break.html">x</a>')
+            bad = subprocess.run([sys.executable, str(SCRIPT), "--site", str(site), "--all", "--baseline", str(baseline)],
+                                 capture_output=True, text=True, timeout=60)
+            self.assertEqual(bad.returncode, 1)
+            self.assertEqual([b["href"] for b in json.loads(bad.stdout)["new_broken"]], ["fresh-break.html"])
+
     def test_missing_site_folder_is_usage_error(self):
         with tempfile.TemporaryDirectory() as tmp:
             proc = subprocess.run([sys.executable, str(SCRIPT), "--site", str(Path(tmp) / "nope")],

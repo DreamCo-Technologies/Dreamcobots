@@ -9,6 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from tools import build_hf_capability_packs as build  # noqa: E402
 from tools.build_hf_capability_packs import main  # noqa: E402
 
 SP = ROOT / "study_packs"
@@ -53,6 +54,20 @@ class HfPacksTest(unittest.TestCase):
         self.assertEqual(tools["hf_models"], [])
         self.assertEqual(tools["hf_datasets"], [])
         self.assertTrue(tools["search_hints"])
+
+    def test_known_non_commercial_seeds_are_labelled(self):
+        instruct = json.loads((SP / "pack.instruct" / "sources.json").read_text())
+        alpaca = next(e for e in instruct["hf_datasets"] if e["repo_id"] == "tatsu-lab/alpaca")
+        self.assertEqual(alpaca["license"], "cc-by-nc-4.0")
+        self.assertIs(alpaca["commercial_ok"], False)
+        self.assertIsNone(alpaca["revision"])
+        self.assertEqual(alpaca["pin_status"], "unpinned")
+        self.assertIn("NON-COMMERCIAL", alpaca["note"])
+        for repo_id in build.KNOWN_NON_COMMERCIAL:
+            entry = build._entry(repo_id)
+            self.assertTrue(entry["license"].startswith("cc-by-nc"), repo_id)
+            self.assertIs(entry["commercial_ok"], False, repo_id)
+        self.assertEqual(build._entry("bigcode/starcoder2-7b")["license"], "TBD")
 
     def test_evals_floors(self):
         evals = json.loads((SP / "pack.embed" / "evals.json").read_text())

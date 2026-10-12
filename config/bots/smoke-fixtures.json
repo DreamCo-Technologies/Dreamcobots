@@ -1,0 +1,147 @@
+{
+  "schema": "dreamco.fleet_smoke_fixtures.v1",
+  "policy": "Bot-specific smoke fixtures. Each fixture is a synthetic task plus assertions on the shared-runtime output. A passing fixture (with engine unit tests) moves a bot to TESTED: offline deterministic wiring is proven for that bot. It does not prove model quality, live integrations, or production readiness. Fixtures must use synthetic data only and are reviewed in the PR that adds them. Fixtures that name a different engine than the manifest are ignored (mapping changed; re-review).",
+  "fixtures": {
+    "analytics-hub": {
+      "engine": "analysis",
+      "origin": "hand-written",
+      "task": {
+        "objective": "Cost analysis of synthetic bot runs by division",
+        "input": {
+          "records": [
+            {"division": "DreamArts", "runs": 10, "cost_usd": 1.5},
+            {"division": "DreamArts", "runs": 4, "cost_usd": 0.5},
+            {"division": "DreamCyber", "runs": 7, "cost_usd": 3.0},
+            {"division": "DreamOps", "runs": 1, "cost_usd": 0.25}
+          ],
+          "metric": "cost_usd",
+          "group_by": "division",
+          "top_n": 1
+        }
+      },
+      "expect": [
+        {"path": "status", "equals": "ok"},
+        {"path": "result.row_count", "equals": 4},
+        {"path": "result.groups.DreamArts.sum", "equals": 2.0},
+        {"path": "result.groups.DreamCyber.count", "equals": 1},
+        {"path": "result.numeric_fields.runs.sum", "equals": 22.0},
+        {"path": "result.top.0.division", "equals": "DreamCyber"},
+        {"path": "result.capabilities_considered", "contains": "Cost analysis"}
+      ]
+    },
+    "app-perf-monitor": {
+      "engine": "analysis",
+      "origin": "hand-written",
+      "task": {
+        "objective": "Find API latency hot spots in synthetic samples",
+        "input": {
+          "records": [
+            {"endpoint": "/checkout", "latency_ms": 840},
+            {"endpoint": "/search", "latency_ms": 120},
+            {"endpoint": "/checkout", "latency_ms": 910},
+            {"endpoint": "/home", "latency_ms": 60}
+          ],
+          "metric": "latency_ms",
+          "group_by": "endpoint",
+          "query": "checkout"
+        }
+      },
+      "expect": [
+        {"path": "status", "equals": "ok"},
+        {"path": "result.numeric_fields.latency_ms.max", "equals": 910.0},
+        {"path": "result.groups./checkout.mean", "equals": 875.0},
+        {"path": "result.query_match_count", "equals": 2},
+        {"path": "result.top.0.endpoint", "equals": "/checkout"}
+      ]
+    },
+    "compliance-scanner": {
+      "engine": "classification",
+      "origin": "hand-written",
+      "task": {
+        "objective": "Route a compliance request",
+        "input": {"text": "Please map our model controls to the NIST AI RMF and show the mapping gaps."}
+      },
+      "expect": [
+        {"path": "status", "equals": "ok"},
+        {"path": "result.top_label", "equals": "NIST AI RMF mapping"},
+        {"path": "result.confidence", "gte": 0.5},
+        {"path": "result.escalate_to_human", "equals": false}
+      ]
+    },
+    "customer-segmentation": {
+      "engine": "classification",
+      "origin": "hand-written",
+      "task": {
+        "objective": "Pick the right segmentation method",
+        "input": {"text": "Score each customer by recency, frequency and monetary value (RFM) for segmentation; fraud flagged on two accounts."}
+      },
+      "expect": [
+        {"path": "status", "equals": "ok"},
+        {"path": "result.top_label", "equals": "RFM segmentation engine"},
+        {"path": "result.escalate_to_human", "equals": true}
+      ]
+    },
+    "task-scheduler": {
+      "engine": "workflow",
+      "origin": "hand-written",
+      "task": {
+        "objective": "Plan the synthetic weekly release checklist",
+        "input": {
+          "steps": ["Collect task list", "Order tasks by dependency", "Send reminder emails to the team", "Publish the schedule"],
+          "completed_steps": ["Collect task list"]
+        }
+      },
+      "expect": [
+        {"path": "status", "equals": "ok"},
+        {"path": "result.progress.done", "equals": 1},
+        {"path": "result.progress.total", "equals": 4},
+        {"path": "result.next_actions.0", "equals": "Order tasks by dependency"},
+        {"path": "result.awaiting_owner_approval", "contains": "Send reminder emails to the team"},
+        {"path": "result.awaiting_owner_approval", "contains": "Publish the schedule"}
+      ]
+    },
+    "approval-workflow": {
+      "engine": "workflow",
+      "origin": "hand-written",
+      "task": {"objective": "Draft an approval chain for a synthetic purchase request", "input": {}},
+      "expect": [
+        {"path": "status", "equals": "ok"},
+        {"path": "result.progress.total", "equals": 5},
+        {"path": "result.steps.0.title", "equals": "Prepare: Multi-level approval chains"},
+        {"path": "result.next_actions.0", "equals": "Prepare: Multi-level approval chains"}
+      ]
+    },
+    "ach-processor": {
+      "engine": "workflow",
+      "origin": "hand-written",
+      "task": {"objective": "Release a synthetic ACH batch", "input": {}, "action_level": "external_side_effect"},
+      "expect": [
+        {"path": "status", "equals": "approval_required"},
+        {"path": "evidence.permission.approval", "equals": "explicit"},
+        {"path": "result", "falsy": true}
+      ]
+    },
+    "ad-copy": {
+      "engine": "drafting",
+      "origin": "hand-written",
+      "task": {"objective": "Write headline variations for a synthetic spring sale", "input": {"audience": "PPC managers"}},
+      "expect": [
+        {"path": "status", "equals": "ok"},
+        {"path": "result.sections", "contains": "Headline variation generator"},
+        {"path": "result.generated_by", "equals": "offline_deterministic"},
+        {"path": "result.draft_markdown", "contains": "No model was called"}
+      ]
+    },
+    "blog-writer": {
+      "engine": "drafting",
+      "origin": "hand-written",
+      "task": {"objective": "Build a content outline with SEO keyword ideas for a synthetic gardening post", "input": {}},
+      "expect": [
+        {"path": "status", "equals": "ok"},
+        {"path": "result.sections", "contains": "Content outline builder"},
+        {"path": "result.sections", "contains": "SEO keyword integration"},
+        {"path": "result.draft_markdown", "contains": "No live external action was taken"}
+      ]
+    }
+  }
+}

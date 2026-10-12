@@ -13,6 +13,8 @@ REVENUE = ROOT / "config" / "generated" / "live-revenue-readiness.json"
 MARKET = ROOT / "website" / "data" / "manufacturer-marketplace.json"
 CERT = ROOT / "config" / "generated" / "full-system-operational-certification.json"
 OUT = ROOT / "config" / "generated" / "system-progress-status.json"
+# website/system-progress.html fetches ./data/system-progress-status.json, so Pages needs a public copy.
+PUBLIC_OUT = ROOT / "website" / "data" / "system-progress-status.json"
 
 
 def read_json(path: Path, fallback: dict) -> dict:
@@ -72,7 +74,9 @@ def main() -> int:
             "release_blockers": cert.get("release_blockers", []),
         },
         "gap_count": len(rows),
-        "average_gap_percent": round(sum(r["percent_complete"] for r in rows) / len(rows), 1) if rows else 100.0,
+        # No gap plan means progress is unknown, not 100%: never show an evidence-free full gauge.
+        "gap_plan_status": "generated" if GAPS.exists() else "not_generated",
+        "average_gap_percent": round(sum(r["percent_complete"] for r in rows) / len(rows), 1) if rows else (100.0 if GAPS.exists() else None),
         "github_parity_status_counts": gh.get("status_counts", {}),
         "live_revenue": {
             "bots_checked": revenue.get("bot_count", 0),
@@ -91,8 +95,10 @@ def main() -> int:
         "gauges": rows,
         "truth_boundary": cfg["truth_rule"],
     }
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    text = json.dumps(payload, indent=2) + "\n"
+    for path in (OUT, PUBLIC_OUT):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
     print(json.dumps({
         "ok": True,
         "status": status,
@@ -100,6 +106,7 @@ def main() -> int:
         "gaps": len(rows),
         "average_gap_percent": payload["average_gap_percent"],
         "output": str(OUT.relative_to(ROOT)),
+        "public_output": str(PUBLIC_OUT.relative_to(ROOT)),
     }, indent=2))
     return 0
 

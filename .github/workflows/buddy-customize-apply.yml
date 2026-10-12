@@ -1,0 +1,109 @@
+name: Buddy customize apply
+
+# Dispatched by the Buddy command router for `/buddy customize <target>` (see
+# docs/BUDDY_CONTROL_PLANE.md). Re-reads the request from the API, re-checks the author is an
+# operator with write permission, validates the patch against the editable-field allowlist
+# (buddy/fleet_runtime/customize.py), commits only the customization store files to a new
+# branch and opens a PR. Never pushes to the default branch; never merges.
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: "Issue number holding the /buddy customize request"
+        required: true
+        type: string
+      comment:
+        description: "Comment id holding the request (0 = the issue itself)"
+        required: false
+        default: "0"
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: buddy-customize-apply-${{ inputs.issue }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Validate inputs
+        env:
+          ISSUE: ${{ inputs.issue }}
+          COMMENT: ${{ inputs.comment }}
+        run: |
+          [[ "$ISSUE" =~ ^[0-9]{1,7}$ ]] || { echo "::error::bad issue input"; exit 1; }
+          [[ "$COMMENT" =~ ^[0-9]{1,15}$ ]] || { echo "::error::bad comment input"; exit 1; }
+
+      - name: Check out default branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Install validator dependencies
+        run: python3 -m pip install --quiet pyyaml
+
+      - name: Validate and apply the patch
+        id: apply
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ inputs.issue }}
+          COMMENT: ${{ inputs.comment }}
+        run: |
+          set +e
+          python3 tools/buddy_customize_apply.py --issue "$ISSUE" --comment "$COMMENT" --out "$RUNNER_TEMP/customize-result.json"
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Open PR with the accepted customization
+        if: steps.apply.outputs.code == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ inputs.issue }}
+          RUN_ID: ${{ github.run_id }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          status=$(python3 -c "import json,os;print(json.load(open(os.environ['RUNNER_TEMP']+'/customize-result.json'))['status'])")
+          if [ "$status" != "applied" ]; then
+            gh issue comment "$ISSUE" --body "Buddy customize: the patch is valid but changes nothing (already applied). No PR opened."
+            exit 0
+          fi
+          branch="buddy/customize-${ISSUE}-${RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add config/bots/customizations.json config/files/prospectus-overrides.json 2>/dev/null || true
+          git commit -m "chore(buddy): apply customization from #${ISSUE}" -m "Validated by tools/buddy_customize_apply.py against the editable-field allowlist."
+          git push origin "HEAD:refs/heads/${branch}"
+          url=$(gh pr create --base "$DEFAULT_BRANCH" --head "$branch" \
+            --title "chore(buddy): customization from #${ISSUE}" \
+            --body "Applies the validated \`/buddy customize\` request in #${ISSUE}. Only the customization store files change. Review and merge manually; nothing is merged automatically." \
+            --label buddy-command) || url=""
+          if [ -z "$url" ]; then
+            url="https://github.com/${GITHUB_REPOSITORY}/compare/${DEFAULT_BRANCH}...${branch}"
+            gh issue comment "$ISSUE" --body "Buddy customize: patch validated and pushed to \`${branch}\`, but the PR could not be opened by the workflow token. Open it here: ${url}"
+          else
+            gh issue comment "$ISSUE" --body "Buddy customize: patch validated. Pending change: ${url} (needs review + merge)."
+          fi
+
+      - name: Report rejection
+        if: steps.apply.outputs.code != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ inputs.issue }}
+        run: |
+          python3 - <<'PY' > "$RUNNER_TEMP/comment.md"
+          import json, os
+          r = json.load(open(os.environ["RUNNER_TEMP"] + "/customize-result.json")) if os.path.exists(os.environ["RUNNER_TEMP"] + "/customize-result.json") else {"reasons": ["apply step failed before validation"]}
+          print("**Buddy customize rejected.** Nothing was changed.\n")
+          for reason in r.get("reasons", [])[:10]:
+              print("- " + str(reason).replace("@", "@\u200b")[:300])
+          PY
+          gh issue comment "$ISSUE" --body-file "$RUNNER_TEMP/comment.md"
+          exit 1

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Demand routing tests</title><link rel="stylesheet" href="styles.css"/>
+<style>body{padding:16px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px;margin:12px 0}
+button,.btn{background:#7c5cff;color:#fff;border:0;border-radius:8px;padding:8px 12px;cursor:pointer;text-decoration:none;display:inline-block;margin:4px}
+input{width:100%;background:#0f1217;color:#fff;border:1px solid #3b424d;border-radius:8px;padding:8px}
+.ok{color:#69e8bf}.warn{color:#ffbf69}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
+</style></head><body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>Demand routing tests</h1>
+<p>Uses the market-demand catalogs. A job maps to a task category and capabilities. No provider is called.</p>
+<p><a class="btn" href="models.html#demand-explorer-title">Demand explorer</a></p>
+<div class="card">
+<label>Find a user job</label>
+<input id="q" placeholder="write, learn, shop, build, travel"/>
+<button onclick="search()">Route</button>
+<div id="hits"></div>
+</div>
+<div class="card">
+<h2>Catalog test</h2>
+<button onclick="runAll()">Test all 300 reasons</button>
+<p id="report"></p>
+</div>
+</main>
+<script src="data/buddy-demand-ontology.js"></script>
+<script>
+const data = window.BUDDY_DEMAND_ONTOLOGY || {reasons:[], catalogs:[]};
+const ROUTE = {
+  "Reasoning":"general reasoner",
+  "Coding":"code model",
+  "Data Analysis":"analysis model",
+  "Search and Retrieval":"retrieval plus reader",
+  "Research":"research model with sources",
+  "Agents":"tool-using agent",
+  "Safety and Moderation":"moderation model",
+  "Multilingual and Translation":"translation model",
+  "Image Generation":"image model",
+  "Image Editing":"image edit model",
+  "Video":"video model",
+  "Accessibility":"accessibility model",
+  "Simulation":"simulation model",
+  "Forecasting":"forecast model"
+};
+function route(reason){
+  return {
+    job: reason.reason,
+    category: reason.taskCategory,
+    capabilities: reason.capabilities,
+    model: ROUTE[reason.taskCategory] || "unmapped",
+    providerCall: false
+  };
+}
+function search(){
+  const q=(document.getElementById("q").value||"").toLowerCase();
+  const hits=(data.reasons||[]).filter(r=>r.reason.toLowerCase().includes(q) || r.category.toLowerCase().includes(q)).slice(0,12);
+  document.getElementById("hits").innerHTML = hits.map(r=>{
+    const x=route(r);
+    return `<div class="card"><strong>${x.job}</strong><p>${x.category} → ${x.model}</p><p>${x.capabilities.join(", ")}</p></div>`;
+  }).join("") || "<p>No match.</p>";
+}
+function runAll(){
+  const reasons=data.reasons||[];
+  const bad=reasons.filter(r=>!r.taskCategory || !(r.capabilities||[]).length || !ROUTE[r.taskCategory]);
+  const by={};
+  reasons.forEach(r=>{ by[r.taskCategory]=(by[r.taskCategory]||0)+1; });
+  document.getElementById("report").innerHTML = `<p class="${bad.length?"warn":"ok"}">${reasons.length} reasons. Unmapped: ${bad.length}. Provider calls: 0.</p>`+
+    Object.entries(by).map(([k,v])=>`<p>${k}: ${v} → ${ROUTE[k]||"unmapped"}</p>`).join("");
+}
+</script></body></html>

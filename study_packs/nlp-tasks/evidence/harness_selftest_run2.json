@@ -1,0 +1,104 @@
+{
+  "schema": "dreamco.hf_repeat_run.v1",
+  "benchmark": "nlp-tasks-harness-selftest",
+  "run": 2,
+  "claimable": false,
+  "mastered": false,
+  "model_id": null,
+  "model_revision_sha": null,
+  "note": "harness_selftest_not_model_eval; stdlib scorer only; no HF model weights; model_id/revision are null by design",
+  "command": "python3 study_packs/nlp-tasks/drill_runner.py --selftest ; python3 -m pytest -p no:cacheprovider -q tests/test_nlp_task_zoo_drills.py",
+  "timestamp": "2026-10-05T16:43:46-05:00",
+  "git_sha": "f1ece6ffa76e6d0230ebefa1daf50523f91c7cf6",
+  "environment": {
+    "python": "3.13.5",
+    "cpu": "x86_64",
+    "nproc": 8,
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.41",
+    "key_libs": "stdlib only (no transformers/torch/datasets required for this harness)",
+    "worktree": "/workspace/hf-repeat-runs-main",
+    "branch": "bench/hf-day1-repeat-runs"
+  },
+  "metrics": {
+    "ok": true,
+    "tasks_ok": 5,
+    "tasks_total": 5,
+    "tasks": {
+      "classification": {
+        "gold_mean": 1.0,
+        "wrong_mean": 0.0,
+        "floor": 0.85,
+        "ok": true
+      },
+      "ner": {
+        "gold_mean": 1.0,
+        "wrong_mean": 0.0,
+        "floor": 0.8,
+        "ok": true
+      },
+      "qa": {
+        "gold_mean": 1.0,
+        "wrong_mean": 0.0,
+        "floor": 0.75,
+        "ok": true
+      },
+      "summarization": {
+        "gold_mean": 1.0,
+        "wrong_mean": 0.0,
+        "floor": 0.35,
+        "ok": true
+      },
+      "translation": {
+        "gold_mean": 1.0,
+        "wrong_mean": 0.0,
+        "floor": 0.5,
+        "ok": true
+      }
+    },
+    "kind": "harness_selftest_not_model_eval",
+    "pytest": "....                                                                     [100%]\n4 passed in 0.04s"
+  },
+  "raw_result": {
+    "schema": "dreamco.nlp_task_zoo_selftest.v1",
+    "kind": "harness_selftest_not_model_eval",
+    "tasks": {
+      "classification": {
+        "gold_mean": 1.0,
+        "wrong_mean": 0.0,
+        "floor": 0.85,
+        "ok": true
+      },
+      "ner": {
+        "gold_mean": 1.0,
+        "wrong_mean": 0.0,
+        "floor": 0.8,
+        "ok": true
+      },
+      "qa": {
+        "gold_mean": 1.0,
+        "wrong_mean": 0.0,
+        "floor": 0.75,
+        "ok": true
+      },
+      "summarization": {
+        "gold_mean": 1.0,
+        "wrong_mean": 0.0,
+        "floor": 0.35,
+        "ok": true
+      },
+      "translation": {
+        "gold_mean": 1.0,
+        "wrong_mean": 0.0,
+        "floor": 0.5,
+        "ok": true
+      }
+    },
+    "ok": true
+  },
+  "pass_fail": {
+    "passed": 5,
+    "failed": 0,
+    "not_run": 0,
+    "pytest_passed": 4
+  }
+}

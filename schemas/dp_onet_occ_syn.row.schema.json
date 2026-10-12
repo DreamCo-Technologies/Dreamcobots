@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.example/schemas/dp_onet_occ_syn.row.schema.json",
+  "title": "DP-ONET-OCC-SYN dataset row (DreamCo occupation synthesis built with O*NET 31.0 data)",
+  "description": "One row per O*NET-SOC occupation in sample/occupations.jsonl. Fields listed in license.onet_derived_fields are O*NET 31.0 Database content (CC BY 4.0, USDOL/ETA); fields in license.dreamco_fields are DreamCo-derived. Validated by tools/score_data_package_dataset.py with tools/minimal_json_schema.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["record_id", "sku_id", "package_version", "source_version", "onet_soc_code", "onet_title", "soc_major_group",
+               "job_zone", "preparation_band", "top_knowledge", "top_essential_skills", "top_work_activities", "task_counts",
+               "capability_lenses", "lens_lift", "dominant_lens", "knowledge_lens", "data_confidence", "dreamco_synthesis",
+               "source_refs", "license"],
+  "$defs": {
+    "lens": {"enum": ["information_and_analysis", "people_and_communication", "physical_and_equipment", "digital_and_records"]},
+    "element": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["element_id", "element_name", "importance"],
+      "properties": {
+        "element_id": {"type": "string", "pattern": "^[0-9]+(\\.[A-Za-z0-9]+)+$"},
+        "element_name": {"type": "string", "minLength": 1},
+        "importance": {"type": "number", "minimum": 1, "maximum": 5}
+      }
+    },
+    "elements": {"type": "array", "minItems": 3, "maxItems": 5, "items": {"$ref": "#/$defs/element"}},
+    "unit": {"type": "number", "minimum": 0, "maximum": 1},
+    "lift": {"type": "number", "minimum": -1, "maximum": 1},
+    "strings": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "source_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "version", "file", "keys", "fields"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "file": {"type": "string", "minLength": 1},
+        "file_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "generator_version": {"type": "string"},
+        "keys": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "fields": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "derived_from": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  },
+  "properties": {
+    "record_id": {"type": "string", "pattern": "^dp-onet-occ-syn/[0-9]+\\.[0-9]+\\.[0-9]+/[0-9]{2}-[0-9]{4}\\.[0-9]{2}$"},
+    "sku_id": {"const": "DP-ONET-OCC-SYN"},
+    "package_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "source_version": {"type": "string", "pattern": "^O\\*NET [0-9]+\\.[0-9]+$"},
+    "onet_soc_code": {"type": "string", "pattern": "^[0-9]{2}-[0-9]{4}\\.[0-9]{2}$"},
+    "onet_title": {"type": "string", "minLength": 1},
+    "soc_major_group": {"type": "string", "pattern": "^[0-9]{2}$"},
+    "job_zone": {"type": "integer", "minimum": 1, "maximum": 5},
+    "preparation_band": {"enum": ["little_to_some", "medium", "considerable", "extensive"]},
+    "top_knowledge": {"$ref": "#/$defs/elements"},
+    "top_essential_skills": {"$ref": "#/$defs/elements"},
+    "top_work_activities": {"$ref": "#/$defs/elements"},
+    "task_counts": {
+      "type": "object", "additionalProperties": false, "required": ["core", "supplemental", "unclassified"],
+      "properties": {"core": {"type": "integer", "minimum": 1}, "supplemental": {"type": "integer", "minimum": 0},
+                     "unclassified": {"type": "integer", "minimum": 0}}
+    },
+    "capability_lenses": {
+      "type": "object", "additionalProperties": false,
+      "required": ["information_and_analysis", "people_and_communication", "physical_and_equipment", "digital_and_records"],
+      "properties": {"information_and_analysis": {"$ref": "#/$defs/unit"}, "people_and_communication": {"$ref": "#/$defs/unit"},
+                     "physical_and_equipment": {"$ref": "#/$defs/unit"}, "digital_and_records": {"$ref": "#/$defs/unit"}}
+    },
+    "lens_lift": {
+      "type": "object", "additionalProperties": false,
+      "required": ["information_and_analysis", "people_and_communication", "physical_and_equipment", "digital_and_records"],
+      "properties": {"information_and_analysis": {"$ref": "#/$defs/lift"}, "people_and_communication": {"$ref": "#/$defs/lift"},
+                     "physical_and_equipment": {"$ref": "#/$defs/lift"}, "digital_and_records": {"$ref": "#/$defs/lift"}}
+    },
+    "dominant_lens": {"$ref": "#/$defs/lens"},
+    "knowledge_lens": {"$ref": "#/$defs/lens"},
+    "data_confidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["band", "min_n", "suppressed_ratings_excluded", "rating_sources", "oldest_rating", "newest_rating"],
+      "properties": {
+        "band": {"enum": ["high", "medium", "low"]},
+        "min_n": {"type": ["integer", "null"], "minimum": 0},
+        "suppressed_ratings_excluded": {"type": "integer", "minimum": 0},
+        "rating_sources": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "oldest_rating": {"type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}$"},
+        "newest_rating": {"type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}$"}
+      }
+    },
+    "dreamco_synthesis": {
+      "type": "object", "additionalProperties": false,
+      "required": ["practice_task_seed", "rubric_dimensions", "analysis", "evidence_perspectives"],
+      "properties": {
+        "practice_task_seed": {"type": "string", "minLength": 40},
+        "rubric_dimensions": {"type": "array", "minItems": 3, "maxItems": 8, "items": {"type": "string", "minLength": 1}},
+        "analysis": {
+          "type": "object", "additionalProperties": false, "required": ["agree", "caveats", "improve", "still_need_test"],
+          "properties": {"agree": {"$ref": "#/$defs/strings"}, "caveats": {"$ref": "#/$defs/strings"},
+                         "improve": {"$ref": "#/$defs/strings"}, "still_need_test": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}}
+        },
+        "evidence_perspectives": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "source_refs": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/source_ref"}},
+    "license": {
+      "type": "object", "additionalProperties": false,
+      "required": ["onet_derived_fields", "onet_license", "dreamco_fields", "dreamco_terms", "attribution"],
+      "properties": {
+        "onet_derived_fields": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "onet_license": {"type": "string", "pattern": "CC BY 4\\.0"},
+        "dreamco_fields": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "dreamco_terms": {"type": "string", "minLength": 1},
+        "attribution": {"type": "string", "pattern": "O\\*NET 31\\.0 Database"}
+      }
+    }
+  }
+}

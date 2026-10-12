@@ -1,0 +1,62 @@
+name: Buddy Command Router
+
+# Lets an authorized operator run registered Buddy jobs from an issue or comment:
+#   /buddy run <job_id> [key=value ...]   /buddy status [job_id]   /buddy list   /buddy help
+#   /buddy customize <bot-id|division:Name|file:path>  (+ one ```yaml patch) -> buddy-customize-apply.yml
+# Registry + policy: config/buddy/control-plane.json. Docs: docs/BUDDY_CONTROL_PLANE.md.
+# Runs the router from the default branch only (issues/issue_comment always do).
+# No pull_request_target. User text reaches the router only through env vars and is
+# validated in Python with strict regexes; nothing is interpolated into a shell.
+
+on:
+  issues:
+    types: [opened, labeled]
+  issue_comment:
+    types: [created]
+
+permissions: {}
+
+concurrency:
+  group: buddy-command-router-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  route:
+    if: >-
+      github.event.sender.type != 'Bot' && (
+        (github.event_name == 'issue_comment' && !github.event.issue.pull_request && startsWith(github.event.comment.body, '/buddy')) ||
+        (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'buddy-command') ||
+        (github.event_name == 'issues' && github.event.action == 'opened' && (contains(github.event.issue.labels.*.name, 'buddy-command') || startsWith(github.event.issue.title, '/buddy ')))
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: write
+      issues: write
+      contents: read
+    steps:
+      - name: Check out router and registry (default branch)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            config/buddy/control-plane.json
+            config/buddy/run-with-buddy.generated.json
+            tools/buddy_control_plane.py
+          sparse-checkout-cone-mode: false
+
+      - name: Route Buddy command
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUDDY_EVENT_NAME: ${{ github.event_name }}
+          BUDDY_EVENT_ACTION: ${{ github.event.action }}
+          BUDDY_ACTOR: ${{ github.event.sender.login }}
+          BUDDY_ISSUE_NUMBER: ${{ github.event.issue.number }}
+          BUDDY_ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+          BUDDY_ISSUE_TITLE: ${{ github.event.issue.title }}
+          BUDDY_ISSUE_BODY: ${{ github.event.issue.body }}
+          BUDDY_COMMENT_BODY: ${{ github.event.comment.body }}
+          BUDDY_COMMENT_ID: ${{ github.event.comment.id }}
+          BUDDY_LABEL_NAME: ${{ github.event.label.name }}
+          BUDDY_ROUTER_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: python3 tools/buddy_control_plane.py route

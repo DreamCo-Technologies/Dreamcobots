@@ -2,12 +2,22 @@
   'use strict';
   const $ = (id) => document.getElementById(id);
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
-  const state = { divisions: [], fleet: null, active: null };
+  const state = { divisions: [], fleet: null, active: null, runMeta: null };
 
   function missionFor(division) {
     const bots = state.fleet.bots.filter((bot) => bot.identity.division === division.name);
     const capabilities = bots.flatMap((bot) => String(bot.capability_search || '').split(' · ')).filter(Boolean);
     return capabilities.slice(0, 5).join(' · ') || 'Specialist task routing, local planning, evidence, and governed execution.';
+  }
+
+  // Run with Buddy + prospectus + Customize from data/run-prospectus.json (buddy-run.js). Pages holds no token.
+  function runtimeControls(name) {
+    const B = window.BuddyRun;
+    if (!B || !state.runMeta) return '';
+    const card = (state.runMeta.divisions || []).find((c) => c.id === 'division:' + name);
+    if (!card) return '<p class="br-note">No runtime card for this division yet.</p>';
+    return `<p class="br-note">Runtime: <strong>${esc(card.readiness.state)}</strong> · ${esc(card.readiness.detail)} · <a href="fleet-runtime.html#division-${encodeURIComponent(name)}">runtime card</a></p>` +
+      B.runControls(card) + '<details class="br-custom-details"><summary>Customize division</summary>' + B.divisionCustomizeForm(card, state.runMeta.customize) + '</details>';
   }
 
   function render() {
@@ -16,7 +26,7 @@
     $('division-count').textContent = `${rows.length} of ${state.divisions.length} divisions shown`;
     $('divisions-grid').innerHTML = rows.map((division) => {
       const summary = state.fleet.divisions.find((item) => item.name === division.name) || {};
-      return `<article class="division-card"><span class="division-status">${esc(division.status)} · specialist division</span><h2>${esc(division.name)}</h2><p>${esc(missionFor(division))}</p><div class="division-metrics"><span><strong>${division.bot_ids.length}</strong> bots</span><span><strong>${summary.api_candidate_count || 0}</strong> API candidates</span></div><div class="division-actions"><button class="btn btn-outline" type="button" data-division-prospectus="${esc(division.name)}">Prospectus + questionnaire</button><a class="btn btn-primary" href="bots.html?div=${encodeURIComponent(division.name)}">Open specialists</a></div></article>`;
+      return `<article class="division-card"><span class="division-status">${esc(division.status)} · specialist division</span><h2>${esc(division.name)}</h2><p>${esc(missionFor(division))}</p><div class="division-metrics"><span><strong>${division.bot_ids.length}</strong> bots</span><span><strong>${summary.api_candidate_count || 0}</strong> API candidates</span></div><div class="division-actions"><button class="btn btn-outline" type="button" data-division-prospectus="${esc(division.name)}">Prospectus + questionnaire</button><a class="btn btn-primary" href="bots.html?div=${encodeURIComponent(division.name)}">Open specialists</a></div><div class="division-runtime" data-runtime-division="${esc(division.name)}">${runtimeControls(division.name)}</div></article>`;
     }).join('') || '<p>No division matches that search.</p>';
   }
 
@@ -37,6 +47,10 @@
     state.fleet = fleet;
     $('division-summary').textContent = `${divisions.summary.registered_divisions} implemented divisions · ${fleet.summary.profiles.toLocaleString()} specialist bot profiles · prospectus and local questionnaire for every division`;
     render();
+    if (window.BuddyRun) {
+      window.BuddyRun.wireCustomize(document.body);
+      window.BuddyRun.loadMeta().then((meta) => { state.runMeta = meta; render(); }).catch(() => {});
+    }
   }).catch((error) => { $('division-summary').textContent = `Division registry unavailable: ${error.message}`; });
 
   $('division-search').addEventListener('input', render);

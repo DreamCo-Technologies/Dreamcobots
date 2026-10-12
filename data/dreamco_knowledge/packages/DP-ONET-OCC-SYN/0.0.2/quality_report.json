@@ -1,0 +1,54 @@
+{
+  "schema": "dreamco.data_package_quality_report.v1",
+  "sku_id": "DP-ONET-OCC-SYN",
+  "version": "0.0.2",
+  "status": "partial",
+  "test_families": {
+    "schema_and_structure": "pass",
+    "quality_and_cleanliness": "partial",
+    "provenance_and_rights": "partial",
+    "privacy_and_security": "not_run",
+    "split_and_contamination": "not_run",
+    "coverage_and_bias": "partial",
+    "documentation_and_user_experience": "partial",
+    "refresh_and_reproducibility": "pass"
+  },
+  "dataset_qa_scorecard": {
+    "protocol": "config/data_package_dataset_qa_scorecard.json",
+    "tool": "tools/score_data_package_dataset.py",
+    "report": "qa_scorecard.json",
+    "overall_status": "pass",
+    "qa_score": 98.5,
+    "evaluated_at": "2026-10-05T22:35:39-05:00",
+    "reference": "db_31_0_csv.zip (sha256 matched the pin)",
+    "check_status": {
+      "completeness": "pass",
+      "schema_validity": "pass",
+      "referential_integrity": "pass",
+      "deduplication": "pass",
+      "value_ranges": "pass",
+      "freshness_version_match": "pass",
+      "provenance_coverage": "pass",
+      "synthesis_perspective": "pass"
+    }
+  },
+  "family_basis": {
+    "schema_and_structure": "QA schema_validity and completeness pass: 44/44 rows validate against schemas/dp_onet_occ_syn.row.schema.json.",
+    "quality_and_cleanliness": "QA deduplication and value_ranges pass (exact duplicates and synthesis payload duplicates). No outlier, contradiction or human spot-check review has been run yet.",
+    "provenance_and_rights": "QA provenance_coverage pass (every derived field has a pinned source ref). license_provenance_gate rights checks all pass; sale-scope checks fail; owner rights sign-off has not been recorded.",
+    "privacy_and_security": "Not run. O*NET occupational data contains no personal data, but no PII or secret scan has been recorded.",
+    "split_and_contamination": "Not run. No train/holdout split exists.",
+    "coverage_and_bias": "Partial: sample design is 2 occupations per SOC major group (22 groups); distribution stats are in the dataset card. No bias review has been run.",
+    "documentation_and_user_experience": "Partial: dataset card, data dictionary, LICENSE, ATTRIBUTION and MODIFICATIONS present. No buyer or human review.",
+    "refresh_and_reproducibility": "Pass: re-running tools/build_dp_onet_occ_syn_sample.py (0.1.1) on the pinned zip with the same --generated-at produced byte-identical sample and asset files (checked 2026-10-05 after the display-name update)."
+  },
+  "scorecard": {
+    "protocol": "config/dataset_evaluation_scorecard.json",
+    "score": null,
+    "status": "not_run"
+  },
+  "notes": [
+    "status is partial, not pass: privacy and contamination families are not run and the dataset evaluation scorecard has not been run.",
+    "The dataset QA score is integrity evidence. It is not scorecard_score, not validation evidence and not a sale approval."
+  ]
+}

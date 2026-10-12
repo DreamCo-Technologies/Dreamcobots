@@ -1,0 +1,157 @@
+name: Fleet runtime truth
+
+# Permanent fleet truth gate. On PRs it fails only on regressions against the
+# committed baseline (config/bots/fleet-runtime-baseline.json): a bot dropping
+# state, a new broken internal Pages link, manifest drift, or failing runtime
+# tests. Pre-existing debt (SPEC_ONLY bots, failing folder tests) is reported,
+# not blocking. The daily run also executes the full folder audit and the
+# full file-prospectus drift check (PRs only check the files they change).
+# It also fails if any Run with Buddy button lacks a generated prospectus or
+# the Actions health report stops covering every workflow file, if any
+# division smoke fails, or if a Pages page regresses to stub/broken.
+
+on:
+  pull_request:
+    paths:
+      - "bots/**"
+      - "App_bots/**"
+      - "website/**"
+      - "buddy/**"
+      - "config/bots/**"
+      - "server/seed-bots.ts"
+      - "config/generated/bots.catalog.json"
+      - "buddy_os/governance/approval_policy.yaml"
+      - "tools/generate_bot_manifests.py"
+      - "tools/fleet_runtime_audit.py"
+      - "tools/check_website_links.py"
+      - "tests/test_fleet_runtime_*.py"
+      - "tests/test_generate_bot_manifests.py"
+      - "tests/test_check_website_links.py"
+      - ".github/workflows/**"
+      - "config/buddy/**"
+      - "config/files/**"
+      - "config/generated/file-prospectus/**"
+      - "tools/build_actions_prospectus.py"
+      - "tools/build_file_prospectus.py"
+      - "tools/audit_actions_health.py"
+      - "tests/test_run_prospectus.py"
+      - "tests/test_file_prospectus.py"
+      - "tests/test_fleet_divisions.py"
+      - "tests/test_pages_feature_audit.py"
+      - "tests/test_build_queue.py"
+      - "docs/FLEET_ONE_WEEK_BUILD_PLAN.md"
+      - "tools/audit_pages_features.py"
+      - "tests/buddy-run-page.test.mjs"
+      - "tests/actions-page.test.mjs"
+  schedule:
+    - cron: "37 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fleet-runtime-truth-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: Manifests, smoke, links, regressions
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install test dependencies
+        run: python3 -m pip install --quiet pyyaml pytest
+      - name: Manifest drift check
+        run: python3 tools/generate_bot_manifests.py --check
+      - name: Runtime, generator, auditor and link-check tests
+        run: python3 -m pytest -q -p no:cacheprovider tests/test_fleet_runtime_executor.py tests/test_fleet_runtime_customize.py tests/test_generate_bot_manifests.py tests/test_fleet_runtime_audit.py tests/test_check_website_links.py tests/test_run_prospectus.py tests/test_file_prospectus.py tests/test_fleet_divisions.py tests/test_pages_feature_audit.py tests/test_build_queue.py
+      - name: Actions workflow count drift (health report must cover every workflow file)
+        run: |
+          python3 tools/audit_actions_health.py > /dev/null
+          git diff --exit-code -- website/data/actions-health-report.json || { echo "::error::website/data/actions-health-report.json is stale. Run: python3 tools/audit_actions_health.py && python3 tools/build_actions_prospectus.py"; exit 1; }
+      - name: Every Run button has a prospectus (and prospectus outputs are current)
+        run: python3 tools/build_actions_prospectus.py --check --check-buttons
+      - name: File prospectus drift
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if [ "$EVENT" = "pull_request" ]; then
+            python3 tools/build_file_prospectus.py --check --changed-since "origin/$BASE_REF"
+          else
+            python3 tools/build_file_prospectus.py --check
+          fi
+      - name: Pages Run/Customize and Actions page tests
+        run: node --test tests/buddy-run-page.test.mjs tests/actions-page.test.mjs
+      - name: Smoke sample (one bot per engine + permission gate)
+        run: python3 -m buddy.fleet_runtime smoke analytics-hub compliance-scanner task-scheduler ad-copy ach-processor
+      - name: Full offline smoke (every mapped bot, no secrets)
+        run: python3 -m buddy.fleet_runtime smoke --all
+      - name: Division smoke (every division runs at least one of its bots end to end, offline)
+        run: python3 -m buddy.fleet_runtime division-smoke --all
+      - name: Pages size budget (config/buddy-deployment-cost-policy.json)
+        run: python3 tools/check_deployment_cost_policy.py
+      - name: Pages feature audit (advertised features must be wired; no new stub/broken pages)
+        run: python3 tools/audit_pages_features.py --check --check-regressions
+      - name: Navigation link check (strict)
+        run: python3 tools/check_website_links.py
+      - name: All internal Pages links (regression vs baseline)
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+          base = json.loads(pathlib.Path("config/bots/fleet-runtime-baseline.json").read_text())
+          pathlib.Path("tmp").mkdir(exist_ok=True)
+          pathlib.Path("tmp/link-baseline.json").write_text(json.dumps({"broken": base.get("links_broken", [])}))
+          PY
+          python3 tools/check_website_links.py --all --baseline tmp/link-baseline.json > tmp/links.json || { cat tmp/links.json; exit 1; }
+          python3 -c "import json;d=json.load(open('tmp/links.json'));print('internal links checked:',d['links_checked'],'broken:',d['broken_count'],'new:',len(d['new_broken']))"
+      - name: Fleet audit (bot states; fails only on regressions)
+        run: python3 tools/fleet_runtime_audit.py --skip-folder-tests --check-regressions --no-write --summary-json tmp/fleet-summary.json
+      - name: Upload summary
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fleet-runtime-gate
+          path: |
+            tmp/fleet-summary.json
+            tmp/links.json
+          if-no-files-found: ignore
+
+  full-audit:
+    name: Full folder audit (daily, report-only)
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - run: npm ci
+      - run: python3 -m pip install --quiet pyyaml pytest
+      - name: Full audit (compile, import, typecheck, folder tests, links)
+        run: python3 tools/fleet_runtime_audit.py --check-regressions --summary-json tmp/fleet-summary.json
+      - name: Upload refreshed report and Pages status
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fleet-runtime-audit
+          path: |
+            reports/FLEET_RUNTIME_AUDIT.md
+            website/data/fleet-runtime-status.json
+            tmp/fleet-summary.json
+          if-no-files-found: ignore

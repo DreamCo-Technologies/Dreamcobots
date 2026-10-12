@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Build a model with Buddy</title><link rel="stylesheet" href="styles.css"/>
+<style>body{padding:16px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px;margin:12px 0}
+a.btn,button{background:#7c5cff;color:#fff;border:0;border-radius:8px;padding:8px 12px;text-decoration:none;display:inline-block;margin:4px}
+.warn{color:#ffbf69}.ok{color:#69e8fb}
+</style></head><body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>Build or distill a model</h1>
+<p>Start here. Pick one path. Buddy keeps the words plain and shows what is a guide versus what trains weights.</p>
+<div class="card">
+<h2>1. Use a model</h2>
+<p>Pick a job. Buddy routes it to a model family. No training.</p>
+<a class="btn" href="models.html">Choose a model</a>
+<a class="btn" href="demand-routing-tests.html">Test the route</a>
+</div>
+<div class="card">
+<h2>2. Use a harness</h2>
+<p>A harness is the wrapper around a model: the steps, checks, and tools. You can name one before you train your own.</p>
+<a class="btn" href="bootcamp-wrappers.html">Step wrappers</a>
+<a class="btn" href="study-notes.html">Study the steps</a>
+</div>
+<div class="card">
+<h2>3. Distill</h2>
+<p>Teach a smaller student to match a teacher. The course explains targets and temperature. Real weight updates need a GPU trainer.</p>
+<a class="btn" href="distill-course.html">Distill course</a>
+<a class="btn" href="distill-benchmarks.html">Distill benchmarks</a>
+</div>
+<div class="card">
+<h2>4. Train weights</h2>
+<p class="warn">This page does not update weights. A real train needs your data, a trainer, and a GPU host.</p>
+<a class="btn" href="train.html">Train hub</a>
+<a class="btn" href="train-own.html">Your training data</a>
+<a class="btn" href="weight-hub.html">Weight hub</a>
+<a class="btn" href="self-training.html">Self-training</a>
+</div>
+<div class="card">
+<h2>Check your machine</h2>
+<p id="check" class="ok">Checking this browser...</p>
+<button onclick="check()">Check again</button>
+</div>
+</main>
+<script>
+function check(){
+  const gpu=navigator.gpu?"WebGPU available":"No WebGPU in this browser";
+  const mem=navigator.deviceMemory?navigator.deviceMemory+" GB reported":"memory not reported";
+  document.getElementById("check").textContent=gpu+" · "+mem+". A laptop can study and route. Training a large model still needs a GPU host.";
+}
+check();
+</script></body></html>

@@ -5,7 +5,8 @@ from __future__ import annotations
 import json
 import re
 
-SECRET = re.compile(r"ghp_|github_pat_|sk-|hf_|AKIA")
+# Key prefixes must start a token: "risk-", "task-" or "desk-" are not keys.
+SECRET = re.compile(r"(?<![A-Za-z0-9])(?:ghp_|github_pat_|sk-|hf_|AKIA)")
 REFUSED = (
     "copy gpt",
     "copy claude",
@@ -38,6 +39,8 @@ def review(text: str) -> dict:
 if __name__ == "__main__":
     assert review("sort the mail")["allowed"] is True
     assert review("please copy gpt weights")["allowed"] is False
+    assert review("risk-assessor task-runner")["allowed"] is True
+    assert review("key sk-abc123")["allowed"] is False
     assert review("token ghp_abc")["allowed"] is False
     assert review("we are united states certified")["official_us_certification"] is False
     assert review("we are united states certified")["allowed"] is False

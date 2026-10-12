@@ -25,7 +25,32 @@
         "credit O*NET <version> Database and USDOL/ETA",
         "CC BY 4.0 + license link",
         "USDOL/ETA has not approved, endorsed, or tested these modifications.",
-        "O*NET® is a trademark of USDOL/ETA."
+        "O*NET® is a trademark of USDOL/ETA.",
+        "Exact text (modified form): This page includes information from the O*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA). Used under the CC BY 4.0 license. O*NET® is a trademark of USDOL/ETA. DreamCo has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications.",
+        "link to the license (https://creativecommons.org/licenses/by/4.0/) and to the source (https://www.onetcenter.org/database.html)",
+        "acknowledge the National Center for O*NET Development as developer (https://www.onetcenter.org/graphics.html)",
+        "recommended: a file listing all changes (MODIFICATIONS.md)"
+      ],
+      "license_page": "https://www.onetcenter.org/license_db.html",
+      "restrictions": [
+        "Trademark rights are not licensed (CC BY 4.0 s.2(b)(2)); 'O*NET' only as an adjective + generic noun, with ®, never possessive/plural.",
+        "No downstream restrictions on the O*NET-derived portions (CC BY 4.0 s.2(a)(5)(B)).",
+        "No implied endorsement by USDOL/ETA (CC BY 4.0 s.2(a)(6)).",
+        "Downloadable database files only; O*NET Web Services data and Career Exploration Tools are not covered by this component."
+      ],
+      "third_party_component_inventory": [
+        {
+          "file": "Software Skills",
+          "note": "Commodity hierarchy based on UNSPSC (provided by the United Nations Development Programme, per the 31.0 data dictionary). Not used by DP-ONET 0.0.x; check UNSPSC terms before using it."
+        },
+        {
+          "file": "Job Titles",
+          "note": "Lay titles drawn from professional associations, incumbents, SOC, government agencies, user input and employer job postings (31.0 data dictionary). Published under the database CC BY 4.0 license; not used by DP-ONET 0.0.x."
+        },
+        {
+          "file": "Work Styles, Basic Interests",
+          "note": "Some ratings produced with a hybrid AI-expert method (30.3 release notes / technical reports). Same CC BY 4.0 license; flag method in any derivative."
+        }
       ]
     },
     {
@@ -35,11 +60,40 @@
       "license_url": "https://creativecommons.org/licenses/by/4.0/",
       "commercial_use_allowed": true,
       "redistribution_allowed": true,
-      "attribution_required": true
+      "attribution_required": true,
+      "required_notices": [
+        "Crosswalk Files by USDOL/ETA are licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/); the CIP crosswalk is based on data from the National Center for Education Statistics."
+      ],
+      "license_page": "https://www.onetcenter.org/crosswalks.html (page footer)"
+    },
+    {
+      "component": "SOC 2018 (basis of O*NET-SOC 2019 codes)",
+      "ownership_class": "public_domain_or_publicly_reusable",
+      "license": "U.S. Government work, public domain (17 U.S.C. 105); BLS asks to be cited",
+      "license_url": "https://www.bls.gov/opub/copyright-information.htm",
+      "commercial_use_allowed": true,
+      "redistribution_allowed": true,
+      "attribution_required": false,
+      "note": "Cited as a courtesy; bls.gov returns 403 from the build box, so the page was not fetched; wording taken from the search index on 2026-10-05."
     }
   ],
   "asset_gate_results": [],
   "owner_approval": null,
   "license_gate_status_mapping": "config/license_provenance_gate.json#package_status_mapping (pending | pass | fail | reference_only_bundle)",
-  "excluded_reference_only_sources": []
+  "excluded_reference_only_sources": [],
+  "excluded_sources_not_used": [
+    {
+      "source": "O*NET Web Services data",
+      "reason": "data license requires unmodified presentation and is non-transferable (https://services.onetcenter.org/help/license_data)"
+    },
+    {
+      "source": "O*NET Career Exploration Tools (Interest Profiler etc.)",
+      "reason": "CC BY-ND 4.0 or O*NET Tools Developer License (https://www.onetcenter.org/license_tools.html)"
+    },
+    {
+      "source": "External data shown in O*NET OnLine / My Next Move (BLS projections, OEWS wages, Career Clusters, CareerOneStop videos)",
+      "reason": "not covered by O*NET licenses (https://services.onetcenter.org/help/datasources); take from the primary publisher if needed"
+    }
+  ],
+  "license_review": "reports/DATA_PACKAGE_LICENSE_QA_REVIEW.md (2026-10-05)"
 }

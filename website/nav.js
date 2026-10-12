@@ -9,9 +9,17 @@
     { href: 'repository-guide.html', label: '📚 Start Here' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'own-bootcamp.html', label: '🥾 Bootcamp' },
+    { href: 'distill-course.html', label: 'Distill course' },
+    { href: 'mastery-30.html', label: '30-day mastery' },
+    { href: 'study-notes.html', label: 'Study notes' },
+    { href: 'distill-benchmarks.html', label: 'Distill benchmarks' },
     { href: 'models.html', label: '🤖 Model Picker' },
+    { href: 'demand-routing-tests.html', label: 'Demand routing tests' },
     { href: 'hf-bootcamp.html', label: '📦 Packages' },
     { href: 'bots.html', label: '🛰️ Fleet' },
+    { href: 'blocked-bots.html', label: 'Blocked bots' },
+    { href: 'fleet-runtime.html', label: '🧾 Fleet Truth' },
+    { href: 'files.html', label: '🗂️ Files' },
     { href: 'autonomy.html', label: '🚦 Gates' },
     { href: 'learn-hf.html', label: '🤗 HF Lab' },
     { href: 'dashboard.html', label: '📊 Dashboard' },
@@ -23,7 +31,9 @@
     { href: 'training-sources.html', label: '📚 Training sources' },
     { href: 'study-hub.html', label: '🎓 Study hub' },
     { href: 'master-build.html', label: '🧭 Master Build' },
-    { href: 'buddy-command-center.html', label: '🗂️ Command Center' },
+    { href: 'command-center.html', label: 'Command Center' },
+    { href: 'buddy-command-center.html', label: 'Buddy Command Center' },
+    { href: 'device-backend.html', label: 'Device backend' },
     { href: 'world-lens.html', label: '🌍 World Lens GPS' },
     { href: 'family-circle.html', label: '🛡️ Family Circle' },
     { href: 'resource-211.html', label: '☎️ 211 Resource Guide' },
@@ -69,6 +79,7 @@
     { href: 'debug.html', label: '🛠️ Debug' },
     { href: 'wiring.html', label: 'Wiring map' },
     { href: 'branch-health.html', label: 'Branch health' },
+    { href: 'buddy-control.html', label: '🎛️ Buddy Control' },
     { href: 'command.html', label: 'Command' },
     { href: 'ops.html', label: 'Ops' },
     { href: 'chat-sync.html', label: 'This chat → Pages' },
@@ -127,6 +138,16 @@
     { href: 'work.html', label: 'Tasks' },
     { href: 'connect-desk.html', label: 'Connect permission' },
     { href: 'connections.html', label: '🔗 Connections' },
+    { href: 'live-check.html', label: 'Live check' },
+    { href: 'beginner-models.html', label: 'Start here' },
+    { href: 'beginner-100.html', label: '100 ways' },
+    { href: 'lora-techniques.html', label: 'LoRA' },
+    { href: 'fast-distill.html', label: 'Fast distill' },
+    { href: 'gpu-hosts.html', label: 'GPU hosts' },
+    { href: 'gaming.html', label: 'Gaming' },
+    { href: 'train.html', label: 'Train Hub' },
+    { href: 'techniques.html', label: 'Techniques' },
+    { href: 'finish.html', label: 'Finish' },
     { href: 'data-control.html', label: '🔒 Data & Memory' },
     { href: 'government.html', label: '🏛️ Government Resources' },
     { href: 'crypto.html', label: '🔐 Crypto Safety Lab' },
@@ -225,6 +246,16 @@ document.addEventListener('click', function(e) {
   const menu = document.getElementById('nav-more-menu');
   if (menu && !e.target.closest('.nav-more')) menu.classList.remove('open');
 });
+
+// Page truth: label features the pages feature audit found to be stubs.
+(() => {
+  if (document.querySelector('script[data-page-truth]')) return;
+  const script = document.createElement('script');
+  script.src = new URL('page-truth.js', document.currentScript.src).href;
+  script.defer = true;
+  script.dataset.pageTruth = 'true';
+  document.head.appendChild(script);
+})();
 
 // Shared repository controls are loaded once after the page is ready.
 (() => {

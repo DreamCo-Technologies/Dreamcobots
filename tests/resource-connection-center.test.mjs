@@ -17,6 +17,15 @@ test('resource connection catalog exposes every discovered machine-readable reso
   assert.ok(catalog.connection_methods.includes('mcp_transport'));
 });
 
+test('resource connection catalog embeds the validated Buddy resource registry', () => {
+  const registry = catalog.buddy_resource_registry;
+  assert.equal(registry.source, 'config/buddy/resource-registry.json');
+  assert.equal(registry.ranked.length, 15);
+  assert.ok(registry.blocked.includes('xai_outputs_for_training'));
+  assert.ok(registry.secret_names_to_set.every((name) => /^[A-Z][A-Z0-9_]+$/.test(name)));
+  assert.ok(fs.existsSync(registry.doc));
+});
+
 test('resource connection center offers safe setup choices without collecting secrets', () => {
   assert.match(page, /Choose a connection method/i);
   assert.match(script, /buddy-resource-connection-catalog\.json/);

@@ -66,6 +66,16 @@ test("supplemental division documents are usable search results with source evid
   }
 });
 
+test("every indexed public page points at a real website file and the page count matches the summary", () => {
+  const pages = (index as any).documents.filter((document: any) => document.type === "page");
+  assert.equal(pages.length, (index as any).summary.counts_by_type.page);
+  assert.equal(pages.length, (index as any).summary.indexed_public_pages);
+  for (const page of pages) {
+    assert.equal(page.evidence, `website/${page.url}`, page.id);
+    assert.ok(readFileSync(page.evidence, "utf8").length > 0, page.id);
+  }
+});
+
 test("published browser search data exactly matches the canonical search index", () => {
   const context = { window: {} as Record<string, unknown> };
   vm.runInNewContext(readFileSync("website/data/dreamco-search-index.js", "utf8"), context);
@@ -130,4 +140,11 @@ test("web search URLs encode one visible query", () => {
     "https://duckduckgo.com/?q=grants%20%26%20contracts",
   );
   assert.throws(() => buildDreamSearchWebUrl("https://example.com/?q={query}", ""), /required/);
+});
+
+test("published DreamSearch data is exactly the canonical generated index (no drift between copies)", () => {
+  const context: { window: Record<string, unknown> } = { window: {} };
+  vm.runInNewContext(readFileSync("website/data/dreamco-search-index.js", "utf8"), context);
+  assert.deepEqual(JSON.parse(JSON.stringify(context.window.DREAMCO_SEARCH_DATA)), index);
+  assert.ok(index.documents.some((item) => JSON.stringify(item).includes("system-progress.html")));
 });

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Distillation course</title><link rel="stylesheet" href="styles.css"/>
+<style>body{padding:16px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px;margin:12px 0}
+button,.btn{background:#7c5cff;color:#fff;border:0;border-radius:8px;padding:8px 12px;cursor:pointer;text-decoration:none;display:inline-block;margin:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.ok{color:#69e8bf}.warn{color:#ffbf69}#detail{min-height:48px}
+</style></head><body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>Distillation course</h1>
+<p>Buddy bootcamp add-on. Teacher teaches student. Benchmarks are part of the process. This page does not update weights.</p>
+<p><a class="btn" href="own-bootcamp.html">Bootcamp</a> <a class="btn" href="benchmarks.html">Benchmarks</a> <a class="btn" href="distill-benchmarks.html">Distill benchmarks</a> <a class="btn" href="benchmark-tracker.html">Tracker</a> <a class="btn" href="train.html">Train Hub</a></p>
+
+<div class="card"><h2>Targets and temperature</h2>
+<p><strong>Hard target:</strong> one correct label. Student only learns the winner.</p>
+<p><strong>Soft target:</strong> the teacher's spread over answers. Student learns which answers were close.</p>
+<p><strong>Temperature:</strong> above 1 flattens the spread. At 1 you keep the teacher's sharpness. Below 1 peaks it.</p>
+<p>Example: teacher says refund 0.7, exchange 0.2. Hard target teaches only refund. Soft target at temperature 2 also teaches that exchange was reasonable.</p>
+</div>
+
+<div class="card"><h2>What you can predict</h2>
+<ul>
+<li>Next letter or token, for language.</li>
+<li>Next candle: up, down, flat. Same loop, different labels. Not a broker and not proof of profit.</li>
+<li>Next action: buy, hold, sell, or route-to-bot.</li>
+<li>Next number: price, score, latency.</li>
+<li>Next span: several tokens or several bars at once.</li>
+</ul>
+</div>
+
+<div class="card"><h2>Benchmarks in the distill loop</h2>
+<p><strong>Hourly:</strong> 20 held-out prompts, word or label overlap vs teacher, latency, and one failure from the last hour.</p>
+<p><strong>Daily:</strong> full holdout set, teacher-gap report, regression on yesterday's failures, and a decision: keep, roll back, or collect more teacher data.</p>
+<p>Log each run. Do not train on the benchmark set.</p>
+<button onclick="logBench('hourly')">Log hourly check</button>
+<button onclick="logBench('daily')">Log daily check</button>
+<div id="benchlog"></div>
+</div>
+
+<div class="card"><h2>Weight training ideas</h2>
+<ul>
+<li>KL between student and softened teacher, plus a hard-label term.</li>
+<li>MSE on a hint layer if you have features.</li>
+<li>LoRA on the student so you do not touch every weight.</li>
+<li>Sweep temperature 1, 2, 4. Keep the one that wins the holdout.</li>
+<li>Stop if the daily holdout drops. Roll back to the last good checkpoint.</li>
+</ul>
+<p class="warn">These are plans. This page does not run a trainer.</p>
+</div>
+
+<div class="card"><h2>28 distillation techniques</h2>
+<div id="detail"><strong>Pick one.</strong></div>
+<div class="grid" id="techs"></div>
+</div>
+
+<div class="card"><h2>Tiny student-vs-teacher check</h2>
+<textarea id="teacher" rows="3" placeholder="Teacher answer or next-candle call"></textarea>
+<textarea id="student" rows="3" placeholder="Student draft"></textarea>
+<button onclick="score()">Score overlap</button>
+<p id="score"></p>
+</div>
+
+<div class="card"><h2>Quiz</h2>
+<div id="quiz"></div>
+<button onclick="gradeQuiz()">Grade</button>
+<p id="quizScore"></p>
+<p id="progress">0 / 6</p>
+</div>
+</main>
+<script>
+const TECHS = [('Response / logit KD', "Student matches the teacher's softened output probabilities. Classic Hinton method."), ('Hard-label mix', "Blend the true label with the teacher's soft target. Alpha controls the mix."), ('Feature / hint KD', 'Student matches a middle layer of the teacher, not only the final answer. FitNets.'), ('Attention transfer', 'Student copies where the teacher looked, not only what it said.'), ('Relation KD', "Student keeps the teacher's distances between examples."), ('Contrastive KD', 'Pull matching pairs together and push others apart in representation space.'), ('Self-distillation', 'Same model teaches a later copy of itself.'), ('Born-again', "Train a new student of the same size from the teacher's outputs."), ('Multi-teacher', 'Average or vote several teachers, then distill.'), ('Teacher assistant', 'Big teacher teaches a mid model, mid model teaches the small one.'), ('Cross-modal', 'Teacher sees text or sentiment; student only sees price or image.'), ('Sequence KD', 'Match a whole answer, not one token.'), ('Token KD', 'Match the next letter or token distribution.'), ('Multi-token KD', 'Student predicts several next tokens; teacher scores the span.'), ('Next-candle KD', 'Target is the next bar: up, down, or flat. Same idea as next letter, different alphabet.'), ('Next-action KD', 'Teacher picks buy, hold, or sell. Student copies that distribution.'), ('Regression KD', 'Teacher outputs a number, such as a price. Student matches that number.'), ('Decision-tree KD', 'Complex teacher, shallow tree student, so the rule can be read.'), ('On-policy KD', 'Student generates, teacher scores those outputs, student updates.'), ('Offline KD', 'Train only on saved teacher outputs. No new teacher calls.'), ('Data-free KD', 'No original dataset. Teacher synthesizes examples.'), ('Progressive KD', 'Start easy, raise temperature or task length over time.'), ('Adversarial KD', 'A discriminator pushes the student to look like the teacher.'), ('Quantized KD', 'Student is int8 or int4. Distill so the small bit-width still works.'), ('Prune then distill', 'Remove weights, then recover quality from the teacher.'), ('Speculative distill', 'Small draft model proposes tokens; teacher accepts or rejects.'), ('Preference distill', 'Distill ranked pairs, not only one answer.'), ('Span / region KD', 'Match a selected span, such as the next 5 candles or the next sentence.')];
+const QUIZ = [
+ {q:"Temperature above 1 does what?", a:"softens", choices:["softens","peaks to one answer","trains weights here"]},
+ {q:"A hard target teaches:", a:"only the winner", choices:["only the winner","every close answer","the test set"]},
+ {q:"Next-candle distillation predicts:", a:"the next bar", choices:["the next bar","the next letter only","a bank transfer"]},
+ {q:"Hourly benchmark should use:", a:"held-out items", choices:["held-out items","the training prompts","private chats by default"]},
+ {q:"This page:", a:"does not update weights", choices:["does not update weights","trains a 150k model","places live trades"]}
+];
+function renderTechs(){
+  document.getElementById("techs").innerHTML = TECHS.map((t,i)=>`<div class="card"><strong>${t[0]}</strong><p>${t[1]}</p><button onclick="showTech(${i})">Try</button></div>`).join("");
+}
+function showTech(i){ document.getElementById("detail").textContent = TECHS[i][0]+": "+TECHS[i][1]; }
+function load(){ try { return JSON.parse(localStorage.getItem("dreamco.distill.v2"))||{done:[],bench:[]}; } catch { return {done:[],bench:[]}; } }
+function save(s){ localStorage.setItem("dreamco.distill.v2", JSON.stringify(s)); }
+function logBench(kind){
+  const s=load(); s.bench.unshift({kind, at:new Date().toISOString()}); s.bench=s.bench.slice(0,12); save(s); render();
+}
+function score(){
+  const a=(document.getElementById("teacher").value||"").toLowerCase().split(/\W+/).filter(Boolean);
+  const b=new Set((document.getElementById("student").value||"").toLowerCase().split(/\W+/).filter(Boolean));
+  const hit=a.filter(w=>b.has(w)).length;
+  const pct=a.length? Math.round(100*hit/a.length):0;
+  document.getElementById("score").textContent = "Overlap "+pct+"%. Smoke check only.";
+}
+function renderQuiz(){
+  document.getElementById("quiz").innerHTML = QUIZ.map((item,i)=>`<p>${i+1}. ${item.q}</p>`+item.choices.map(c=>`<label><input type="radio" name="q${i}" value="${c}"/> ${c}</label>`).join("<br/>")).join("");
+}
+function gradeQuiz(){
+  let hit=0; QUIZ.forEach((item,i)=>{ const p=document.querySelector(`input[name="q${i}"]:checked`); if(p&&p.value===item.a) hit++; });
+  document.getElementById("quizScore").textContent = `Quiz ${hit}/${QUIZ.length}.`;
+  if(hit>=4){ const s=load(); if(!s.done.includes(6)) s.done.push(6); save(s); render(); }
+}
+function render(){
+  const s=load();
+  document.getElementById("progress").textContent = s.done.length+" lesson marks. Bench logs: "+s.bench.length;
+  document.getElementById("benchlog").innerHTML = s.bench.map(b=>`<p>${b.kind} ${b.at}</p>`).join("")||"<p>No logs.</p>";
+}
+renderTechs(); renderQuiz(); render();
+</script></body></html>

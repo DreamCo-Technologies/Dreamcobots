@@ -1,0 +1,196 @@
+{
+  "schema": "dreamco.build_queue.v1",
+  "week": {
+    "start": "2026-10-06",
+    "end": "2026-10-12",
+    "timezone": "America/Chicago"
+  },
+  "policy": "Automation items never merge, never flip readiness, never unblock money/destructive bots. Owner decisions are listed, not taken.",
+  "items": [
+    {
+      "id": "owner-merge-13729",
+      "day": "2026-10-06",
+      "kind": "owner_decision",
+      "owner": "ireanjordan24",
+      "title": "Review and merge #13729 (runtime contract, shared executor, generator)",
+      "depends_on": [],
+      "acceptance": "gh pr view 13729 --json state -q .state == MERGED",
+      "risk_tier": "writes_code",
+      "status": "queued"
+    },
+    {
+      "id": "owner-merge-13197",
+      "day": "2026-10-06",
+      "kind": "owner_decision",
+      "owner": "ireanjordan24",
+      "title": "Review and merge #13197 (Buddy control plane + /buddy router); confirm operators allowlist [ireanjordan24]",
+      "depends_on": [],
+      "acceptance": "gh pr view 13197 --json state -q .state == MERGED",
+      "risk_tier": "writes_code",
+      "status": "queued"
+    },
+    {
+      "id": "retarget-13731",
+      "day": "2026-10-06",
+      "kind": "automation",
+      "owner": "grok-bot",
+      "title": "Retarget #13731 to main after #13729 merges; rerun Fleet runtime truth",
+      "depends_on": [
+        "owner-merge-13729"
+      ],
+      "acceptance": "python3 tools/fleet_runtime_audit.py --skip-folder-tests --check-regressions --no-write",
+      "risk_tier": "read_only",
+      "status": "queued"
+    },
+    {
+      "id": "control-plane-integration",
+      "day": "2026-10-07",
+      "kind": "automation",
+      "owner": "grok-bot",
+      "title": "PR4: merge config/buddy/run-with-buddy.generated.json into the control-plane registry (curated jobs win); add /buddy customize to the router (allowlist + write permission, validate, branch + PR); Run/Customize/prospectus on buddy-control.html",
+      "depends_on": [
+        "owner-merge-13197"
+      ],
+      "acceptance": "python3 tools/build_actions_prospectus.py --check --check-buttons",
+      "risk_tier": "writes_code",
+      "status": "queued"
+    },
+    {
+      "id": "owner-money-regex-review",
+      "day": "2026-10-07",
+      "kind": "owner_decision",
+      "owner": "ireanjordan24",
+      "title": "Review the 66 blocked_money bots (regex is over-inclusive, e.g. massage-therapist, landscaping-mgr); list the ones that should be runnable",
+      "depends_on": [],
+      "acceptance": "config/bots/run-policy-overrides.json exists and is reviewed",
+      "risk_tier": "read_only",
+      "status": "queued"
+    },
+    {
+      "id": "apply-money-review",
+      "day": "2026-10-08",
+      "kind": "automation",
+      "owner": "grok-bot",
+      "title": "Encode the owner's money-review decisions as explicit run-policy overrides in the generator (never auto-unblock)",
+      "depends_on": [
+        "owner-money-regex-review"
+      ],
+      "acceptance": "python3 tools/generate_bot_manifests.py --check",
+      "risk_tier": "writes_code",
+      "status": "queued"
+    },
+    {
+      "id": "threejs-division",
+      "day": "2026-10-08",
+      "kind": "automation",
+      "owner": "grok-bot",
+      "title": "Give the 19 Markdown-only threejs-* bots a division source so UNASSIGNED stops being SPEC_ONLY (proposal PR, owner picks the division)",
+      "depends_on": [],
+      "acceptance": "python3 -m buddy.fleet_runtime division-smoke --all",
+      "risk_tier": "writes_code",
+      "status": "queued"
+    },
+    {
+      "id": "system-progress-data",
+      "day": "2026-10-08",
+      "kind": "automation",
+      "owner": "grok-bot",
+      "title": "Generate website/data/system-progress-status.json in CI (system-progress.html is the only 'broken' page)",
+      "depends_on": [],
+      "acceptance": "python3 tools/audit_pages_features.py --check --check-regressions",
+      "risk_tier": "writes_reports",
+      "status": "queued"
+    },
+    {
+      "id": "wire-dead-controls",
+      "day": "2026-10-09",
+      "kind": "automation",
+      "owner": "grok-bot",
+      "title": "Wire or remove the 3 dead controls (bot-visual #run-sim, live-monitor #run-market, step-models form#task-form)",
+      "depends_on": [],
+      "acceptance": "python3 tools/audit_pages_features.py --check --check-regressions",
+      "risk_tier": "writes_code",
+      "status": "queued"
+    },
+    {
+      "id": "server-only-pages",
+      "day": "2026-10-09",
+      "kind": "automation",
+      "owner": "grok-bot",
+      "title": "For the 7 server-only pages (app-shop, buddy, connections, hf-unlock, models, search, sign-in): show a static 'needs the DreamCo server' state instead of failing silently",
+      "depends_on": [],
+      "acceptance": "python3 tools/audit_pages_features.py --check --check-regressions",
+      "risk_tier": "writes_code",
+      "status": "queued"
+    },
+    {
+      "id": "hand-fixtures",
+      "day": "2026-10-09",
+      "kind": "automation",
+      "owner": "grok-bot",
+      "title": "Hand-written fixtures for one bot per division (55) so evidence is not only generated wiring checks",
+      "depends_on": [],
+      "acceptance": "python3 -m buddy.fleet_runtime smoke --all",
+      "risk_tier": "writes_code",
+      "status": "queued"
+    },
+    {
+      "id": "owner-live-model-secrets",
+      "day": "2026-10-10",
+      "kind": "owner_decision",
+      "owner": "ireanjordan24",
+      "title": "Decide whether to add model-gateway secrets for live (CONNECTED) runs; names only, never values in the repo",
+      "depends_on": [],
+      "acceptance": "secret names listed in docs/UNIVERSAL_BOT_RUNTIME_CONTRACT.md",
+      "risk_tier": "read_only",
+      "status": "queued"
+    },
+    {
+      "id": "runtime-folder",
+      "day": "2026-10-10",
+      "kind": "automation",
+      "owner": "grok-bot",
+      "title": "Fix runtime/ folder tests (verdict broken) and buddy_os capability batch import assertion",
+      "depends_on": [],
+      "acceptance": "FULL=1 bash tools/regen_fleet_truth.sh",
+      "risk_tier": "writes_code",
+      "status": "queued"
+    },
+    {
+      "id": "test-side-effects",
+      "day": "2026-10-11",
+      "kind": "automation",
+      "owner": "grok-bot",
+      "title": "Stop folder tests writing into the checkout (folder_test_side_effects in the audit)",
+      "depends_on": [],
+      "acceptance": "FULL=1 bash tools/regen_fleet_truth.sh && git diff --exit-code",
+      "risk_tier": "writes_code",
+      "status": "queued"
+    },
+    {
+      "id": "connected-evidence",
+      "day": "2026-10-11",
+      "kind": "automation",
+      "owner": "grok-bot",
+      "title": "If secrets were approved: first CONNECTED evidence run for one bot per engine via fleet-bot-run.yml",
+      "depends_on": [
+        "owner-live-model-secrets",
+        "control-plane-integration"
+      ],
+      "acceptance": "python3 tools/fleet_runtime_audit.py --skip-folder-tests --check-regressions --no-write",
+      "risk_tier": "writes_reports",
+      "status": "queued"
+    },
+    {
+      "id": "weekly-truth-report",
+      "day": "2026-10-12",
+      "kind": "automation",
+      "owner": "grok-bot",
+      "title": "Weekly truth report: per-division states, pages verdicts, what moved, what is still stub",
+      "depends_on": [],
+      "acceptance": "bash tools/regen_fleet_truth.sh",
+      "risk_tier": "writes_reports",
+      "status": "queued"
+    }
+  ]
+}

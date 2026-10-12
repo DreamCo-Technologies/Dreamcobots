@@ -1,0 +1,85 @@
+{
+  "schema": "dreamco.hf_repeat_run.v1",
+  "benchmark": "hub-drills-01-05",
+  "run": 2,
+  "claimable": false,
+  "mastered": false,
+  "model_id": "inventory-audit (23 model ids + 8 dataset ids; metadata API only)",
+  "model_revision_sha": null,
+  "model_revision_note": "Same inventory as run 1; per-repo latest_sha in drill_05_inventory_audit_run2.json. No weight downloads.",
+  "command": "bash study_packs/hub/drills/run_all.sh /workspace/hf-venv/bin/python  # cwd=/workspace/hf-repeat-runs-hub @ 15b390a84",
+  "timestamp": "2026-10-05T16:43:59-05:00",
+  "git_sha": "15b390a840a45b99dd525228f548a76e330fd8e6",
+  "environment": {
+    "python": "3.13.5",
+    "huggingface_hub": "2.0.0",
+    "cpu": "x86_64",
+    "nproc": 8,
+    "weights_downloaded": false,
+    "anonymous": true,
+    "worktree": "/workspace/hf-repeat-runs-hub",
+    "venv": "/workspace/hf-venv"
+  },
+  "metrics": {
+    "drills_exit": {
+      "drill_01": 0,
+      "drill_02": 0,
+      "drill_03": 0,
+      "drill_04": 0,
+      "drill_05": 1
+    },
+    "passed_drills": 4,
+    "failed_drills": 1,
+    "model_summary": {
+      "total": 23,
+      "ok": 16,
+      "gated": 5,
+      "missing": 2,
+      "error": 0
+    },
+    "dataset_summary": {
+      "total": 8,
+      "ok": 7,
+      "gated": 1,
+      "missing": 0,
+      "error": 0
+    },
+    "weights_downloaded": false,
+    "claimable": false,
+    "status_drift_vs_run1": [],
+    "sha_drift_vs_run1_count": 0
+  },
+  "raw_result_summary": {
+    "model_summary": {
+      "total": 23,
+      "ok": 16,
+      "gated": 5,
+      "missing": 2,
+      "error": 0
+    },
+    "dataset_summary": {
+      "total": 8,
+      "ok": 7,
+      "gated": 1,
+      "missing": 0,
+      "error": 0
+    },
+    "generated_at": "2026-10-05T21:44:10.284908+00:00"
+  },
+  "pass_fail": {
+    "passed": 4,
+    "failed": 1,
+    "not_run": 0
+  },
+  "match_run1": true,
+  "evidence_files": [
+    "study_packs/hub/evidence/hub_drills_run2.json",
+    "study_packs/hub/evidence/run_summary_run2.tsv",
+    "study_packs/hub/evidence/drill_05_inventory_audit_run2.json",
+    "study_packs/hub/evidence/drill_01_model_info_card_run2.log",
+    "study_packs/hub/evidence/drill_02_pin_revision_run2.log",
+    "study_packs/hub/evidence/drill_03_gated_probe_run2.log",
+    "study_packs/hub/evidence/drill_04_snapshot_patterns_run2.log",
+    "study_packs/hub/evidence/drill_05_inventory_audit_run2.log"
+  ]
+}

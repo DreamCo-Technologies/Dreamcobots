@@ -1,0 +1,547 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco-technologies.github.io/Dreamcobots/schemas/bot-runtime-contract.schema.json",
+  "title": "DreamCo Universal Bot Runtime Contract",
+  "description": "Contract every DreamCo bot manifest must satisfy to run through the shared fleet runtime (buddy/fleet_runtime). Bots are manifests executed by shared capability engines, not separate codebases. A manifest that validates is NOT proof of production readiness; readiness is computed from evidence by tools/fleet_runtime_audit.py. See docs/UNIVERSAL_BOT_RUNTIME_CONTRACT.md.",
+  "type": "object",
+  "required": [
+    "schema",
+    "contract",
+    "generator",
+    "source_digest",
+    "profiles",
+    "defaults",
+    "summary",
+    "bots"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.bot_manifests.v1"
+    },
+    "contract": {
+      "const": "config/bots/bot-runtime-contract.schema.json"
+    },
+    "generator": {
+      "type": "string"
+    },
+    "source_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "profiles": {
+      "type": "object",
+      "required": [
+        "model_router",
+        "io_schema",
+        "error_handling",
+        "tools"
+      ],
+      "properties": {
+        "model_router": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/modelRouterProfile"
+          }
+        },
+        "io_schema": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/ioSchemaProfile"
+          }
+        },
+        "error_handling": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/errorHandlingProfile"
+          }
+        },
+        "tools": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/toolProfile"
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object"
+    },
+    "bots": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/compactBotEntry"
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "required": [
+        "tools",
+        "error_handling",
+        "approval_policy",
+        "unit_test",
+        "smoke",
+        "health",
+        "pages_route",
+        "evidence"
+      ]
+    },
+    "truth_policy": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,79}$"
+    },
+    "engine": {
+      "enum": [
+        "drafting",
+        "analysis",
+        "classification",
+        "workflow",
+        "unmapped"
+      ]
+    },
+    "readinessState": {
+      "enum": [
+        "SPEC_ONLY",
+        "IMPLEMENTED",
+        "TESTED",
+        "CONNECTED",
+        "VERIFIED",
+        "PRODUCTION",
+        "BLOCKED"
+      ]
+    },
+    "modelRouterProfile": {
+      "type": "object",
+      "required": [
+        "mode",
+        "offline_fallback",
+        "live_alias",
+        "live_requires"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "offline_first",
+            "offline_only"
+          ]
+        },
+        "offline_fallback": {
+          "const": "deterministic"
+        },
+        "live_alias": {
+          "type": "string"
+        },
+        "live_requires": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "router_module": {
+          "type": "string"
+        }
+      }
+    },
+    "ioSchemaProfile": {
+      "type": "object",
+      "required": [
+        "input",
+        "output"
+      ],
+      "properties": {
+        "input": {
+          "type": "object"
+        },
+        "output": {
+          "type": "object"
+        }
+      }
+    },
+    "errorHandlingProfile": {
+      "type": "object",
+      "required": [
+        "on_exception",
+        "on_invalid_input",
+        "on_permission_denied",
+        "on_guardrail_block"
+      ],
+      "properties": {
+        "on_exception": {
+          "type": "string"
+        },
+        "on_invalid_input": {
+          "type": "string"
+        },
+        "on_permission_denied": {
+          "type": "string"
+        },
+        "on_guardrail_block": {
+          "type": "string"
+        }
+      }
+    },
+    "toolProfile": {
+      "type": "object",
+      "required": [
+        "kind",
+        "provided_by",
+        "external"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "provided_by": {
+          "type": "string"
+        },
+        "external": {
+          "type": "boolean"
+        }
+      }
+    },
+    "botManifest": {
+      "type": "object",
+      "description": "The 16 contract pieces. Pieces 1-9 and 14 live in the manifest; 10-13, 15 and 16 are resolved from tests, fixtures, benchmarks and evidence by the auditor.",
+      "required": [
+        "slug",
+        "name",
+        "division",
+        "capabilities",
+        "engine",
+        "runtime_adapter",
+        "model_router",
+        "tools",
+        "io_schema",
+        "permissions",
+        "error_handling",
+        "tests",
+        "benchmark",
+        "health",
+        "pages_route",
+        "evidence",
+        "readiness",
+        "sources",
+        "flags",
+        "run_policy"
+      ],
+      "properties": {
+        "slug": {
+          "$ref": "#/$defs/slug"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "division": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "type": "string"
+        },
+        "tier": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tier_features_dropped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "engine": {
+          "$ref": "#/$defs/engine"
+        },
+        "engine_confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "runtime_adapter": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^shared_engine:(drafting|analysis|classification|workflow)$"
+        },
+        "model_router": {
+          "type": "string"
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "external_api_candidates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "io_schema": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "permissions": {
+          "type": "object",
+          "required": [
+            "ceiling",
+            "live_actions_declared"
+          ],
+          "properties": {
+            "ceiling": {
+              "enum": [
+                "read_only",
+                "sandbox",
+                "plan_only"
+              ]
+            },
+            "live_actions_declared": {
+              "type": "boolean"
+            },
+            "approval_policy": {
+              "type": "string"
+            }
+          }
+        },
+        "error_handling": {
+          "type": "string"
+        },
+        "tests": {
+          "type": "object",
+          "required": [
+            "unit",
+            "smoke"
+          ],
+          "properties": {
+            "unit": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "smoke": {
+              "type": "string"
+            }
+          }
+        },
+        "benchmark": {
+          "type": "object",
+          "required": [
+            "declared",
+            "measured"
+          ],
+          "properties": {
+            "declared": {
+              "type": "integer"
+            },
+            "measured": {
+              "type": "integer"
+            }
+          }
+        },
+        "health": {
+          "type": "string"
+        },
+        "pages_route": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "string"
+        },
+        "readiness": {
+          "type": "object",
+          "required": [
+            "claimed_production_ready",
+            "computed_by"
+          ],
+          "properties": {
+            "claimed_production_ready": {
+              "type": "boolean"
+            },
+            "computed_by": {
+              "const": "tools/fleet_runtime_audit.py"
+            }
+          }
+        },
+        "seed_division": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "flags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "target_users": {
+          "type": "string"
+        },
+        "run_policy": {
+          "enum": [
+            "allowed",
+            "blocked_money",
+            "blocked_destructive",
+            "spec_only"
+          ],
+          "description": "allowed = may get a working Run with Buddy button; money/destructive are never triggerable; spec_only = no engine."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Customization: false makes the runtime refuse runs and hides the Run button."
+        },
+        "prompt": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Customization: owner instructions prepended to the objective."
+        },
+        "schedule": {
+          "type": "string",
+          "description": "Customization: 'off' or a fixed-minute cron (UTC)."
+        },
+        "model_alias": {
+          "enum": [
+            "dreamco/auto",
+            "dreamco/budget",
+            "dreamco/coding",
+            "dreamco/fast",
+            "dreamco/reasoning",
+            "dreamco/vision"
+          ],
+          "description": "Customization: gateway alias used when live models are enabled."
+        },
+        "customized_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "compactBotEntry": {
+      "type": "object",
+      "description": "Compact generated entry. buddy.fleet_runtime.contract.expand() merges it with `defaults`, `profiles` and the canonical profile sources into a full botManifest.",
+      "required": [
+        "slug",
+        "name",
+        "division",
+        "engine",
+        "engine_confidence",
+        "caps",
+        "ceiling",
+        "live",
+        "bench",
+        "sources",
+        "flags",
+        "run"
+      ],
+      "properties": {
+        "slug": {
+          "$ref": "#/$defs/slug"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "division": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tier": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "engine": {
+          "$ref": "#/$defs/engine"
+        },
+        "engine_confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "caps": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tier_features_dropped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ceiling": {
+          "enum": [
+            "read_only",
+            "sandbox",
+            "plan_only"
+          ]
+        },
+        "live": {
+          "type": "boolean"
+        },
+        "bench": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "api": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "claims_ready": {
+          "type": "boolean"
+        },
+        "seed_division": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "flags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "run": {
+          "enum": [
+            "allowed",
+            "blocked_money",
+            "blocked_destructive",
+            "spec_only"
+          ]
+        }
+      }
+    }
+  }
+}
