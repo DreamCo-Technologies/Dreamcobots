@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "strategy": "dreamco-unified-catalog",
+  "existing_catalog": {
+    "enabled": true,
+    "source": "DreamCo model registry",
+    "target_capacity": 500
+  },
+  "openrouter": {
+    "enabled": true,
+    "mode": "gateway",
+    "model_discovery": true,
+    "provider_failover": true,
+    "model_fallback": true
+  },
+  "client_aliases": {
+    "dreamco/auto": "adaptive",
+    "dreamco/coding": "adaptive",
+    "dreamco/reasoning": "adaptive",
+    "dreamco/fast": "adaptive",
+    "dreamco/vision": "adaptive",
+    "dreamco/budget": "adaptive"
+  },
+  "selection_policy": {
+    "default": "dreamco/auto",
+    "optimize_for": ["quality", "reliability", "cost", "latency", "tool_success"],
+    "fallback_to_existing_catalog": true,
+    "fallback_to_openrouter": true
+  },
+  "mastery": {
+    "benchmark_before_promotion": true,
+    "minimum_samples": 30,
+    "keep_reserve_models": 2,
+    "retirement_requires_evidence": true,
+    "never_retire_unique_capability": true,
+    "prefer_consolidation_over_model_count_growth": true
+  }
+}

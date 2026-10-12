@@ -31,7 +31,7 @@ input,select,textarea{width:100%;background:#0f1217;color:#fff;border:1px solid 
 
 <div class="card">
 <h2>2. Auth on this device</h2>
-<p class="warn">Local roles only. Real SSO needs a provider key.</p>
+<p class="warn">Local labels only; these do not authenticate users or enforce access. SSO requires a verified backend integration.</p>
 <input id="uname" placeholder="Name"/>
 <select id="urole"><option>owner</option><option>admin</option><option>member</option></select>
 <button onclick="addUser()">Add user</button>
@@ -41,9 +41,9 @@ input,select,textarea{width:100%;background:#0f1217;color:#fff;border:1px solid 
 <div class="card">
 <h2>3. Device permissions</h2>
 <p id="deviceId"></p>
-<label><input type="checkbox" id="scopeChat" checked/> Store chats</label>
-<label><input type="checkbox" id="scopeEvents" checked/> Store events</label>
-<label><input type="checkbox" id="scopeData" checked/> Store custom data</label>
+<label><input type="checkbox" id="scopeChat"/> Store chats</label>
+<label><input type="checkbox" id="scopeEvents"/> Store events</label>
+<label><input type="checkbox" id="scopeData"/> Store custom data</label>
 <button onclick="saveScopes()">Save scopes</button>
 <button onclick="revokeDevice()">Revoke this device</button>
 </div>
@@ -61,10 +61,11 @@ input,select,textarea{width:100%;background:#0f1217;color:#fff;border:1px solid 
 </main>
 <script>
 const KEY="dreamco.device.backend.v1";
-function load(){ try { return JSON.parse(localStorage.getItem(KEY)) || {events:[],users:[],scopes:{chat:true,events:true,data:true},admin:{budget:0,notes:[]},device:crypto.randomUUID()}; } catch { return {events:[],users:[],scopes:{},admin:{budget:0,notes:[]},device:"local"}; } }
+function load(){ try { return JSON.parse(localStorage.getItem(KEY)) || {events:[],users:[],scopes:{chat:false,events:false,data:false},admin:{budget:0,notes:[]},device:crypto.randomUUID()}; } catch { return {events:[],users:[],scopes:{},admin:{budget:0,notes:[]},device:"local"}; } }
 function save(s){ localStorage.setItem(KEY, JSON.stringify(s)); }
 function logEvent(){
   const s=load();
+  if(s.scopes.events !== true) return;
   s.events.unshift({type:document.getElementById("etype").value, payload:document.getElementById("epayload").value, at:new Date().toISOString()});
   s.events=s.events.slice(0,50); save(s); render();
 }
@@ -75,7 +76,7 @@ function addUser(){
 function saveScopes(){
   const s=load();
   s.scopes={chat:document.getElementById("scopeChat").checked, events:document.getElementById("scopeEvents").checked, data:document.getElementById("scopeData").checked};
-  s.events.unshift({type:"device.scopes", payload:JSON.stringify(s.scopes), at:new Date().toISOString()});
+  if(s.scopes.events === true) s.events.unshift({type:"device.scopes", payload:JSON.stringify(s.scopes), at:new Date().toISOString()});
   save(s); render();
 }
 function revokeDevice(){
@@ -83,7 +84,9 @@ function revokeDevice(){
 }
 function saveAdmin(){
   const s=load();
-  s.admin.budget=Number(document.getElementById("budget").value||0);
+  const budget=Number(document.getElementById("budget").value||0);
+  if(!Number.isFinite(budget) || budget < 0 || s.scopes.data !== true) return;
+  s.admin.budget=budget;
   const note=document.getElementById("knowledge").value.trim();
   if(note) s.admin.notes.unshift(note);
   save(s); render();
@@ -91,9 +94,14 @@ function saveAdmin(){
 function render(){
   const s=load();
   document.getElementById("deviceId").textContent="Device id: "+s.device;
-  document.getElementById("events").innerHTML=s.events.slice(0,8).map(e=>`<p>${e.at} ${e.type} ${e.payload||""}</p>`).join("")||"<p>No events.</p>";
-  document.getElementById("users").innerHTML=s.users.map(u=>`<p>${u.name} · ${u.role}</p>`).join("")||"<p>No users.</p>";
-  document.getElementById("admin").innerHTML=`<p>Budget: ${s.admin.budget}</p>`+(s.admin.notes||[]).slice(0,5).map(n=>`<p>${n}</p>`).join("");
+  for(const [id,lines] of [
+    ['events',s.events.slice(0,8).map(e=>`${e.at} ${e.type} ${e.payload||''}`)],
+    ['users',s.users.map(u=>`${u.name} · ${u.role}`)],
+    ['admin',[`Budget: ${s.admin.budget}`,...(s.admin.notes||[]).slice(0,5)]]
+  ]) document.getElementById(id).replaceChildren(...(lines.length?lines:['No records.']).map(text=>{const p=document.createElement('p');p.textContent=text;return p;}));
+  document.getElementById('scopeChat').checked=s.scopes.chat === true;
+  document.getElementById('scopeEvents').checked=s.scopes.events === true;
+  document.getElementById('scopeData').checked=s.scopes.data === true;
 }
 const options=[
 ["Command Center","command-center.html"],["Buddy Command Center","buddy-command-center.html"],["Train Hub","train.html"],["Finish","finish.html"],

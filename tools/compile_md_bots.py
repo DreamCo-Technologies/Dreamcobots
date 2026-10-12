@@ -259,8 +259,8 @@ def main() -> int:
                 "tier": s["tier"],
                 "autonomy_ceiling": s["autonomy"],
                 "capability_count": len(s["capabilities"]),
-                "status": "runtime_ready",
-                "evidence_state": "sandbox_tested",
+                "status": "generated_unverified",
+                "evidence_state": "not_tested",
                 "source": s["source"],
                 "module": f"runtime.compiled_bots.{s['slug'].replace('-', '_')}",
             }

@@ -57,6 +57,20 @@
     <div class="bcp-warn" role="note">
       <strong>Runs require an authorized operator.</strong> This page is public and static: it holds no tokens and cannot run anything by itself. The router only acts for GitHub users listed as Buddy operators who also have write access. Owner-approval jobs need an owner. Money/Stripe jobs and anything that deletes or bulk-closes are never runnable from here.
     </div>
+    <section id="buddy-operations" aria-labelledby="ops-heading">
+      <h2 id="ops-heading">Session and repository operations</h2>
+      <p id="ops-session" class="desk-note"></p>
+      <nav class="bcp-actions" aria-label="Repository surfaces">
+        <a class="bcp-btn" href="#issues">Issues</a><a class="bcp-btn" href="#agents">Agents</a><a class="bcp-btn" href="#pulls">Pull requests</a>
+        <a class="bcp-btn" href="fleet-runtime.html">Fleet Truth and repair gaps</a>
+        <a class="bcp-btn" href="resource-connection-center.html">Resources / Connections</a>
+        <a class="bcp-btn" href="local-backend.html">Local / Cloud / Hybrid setup</a>
+        <button class="bcp-btn" type="button" id="ops-refresh">Refresh selected surface</button>
+      </nav>
+      <p id="ops-status" class="desk-note" aria-live="polite">UNKNOWN — awaiting evidence.</p>
+      <div id="ops-list" class="desk-grid"></div>
+      <p class="desk-note">Learning promotion is blocked without independent execution evidence. Inventory, supplied scores and sandbox inventory receipts do not establish model improvement, runtime uptime, mastery or production readiness. <a href="learning-process.html">Learning process</a> · <a href="frontier-path.html">Frontier evidence</a></p>
+    </section>
     <div class="desk-grid" id="bcp-summary" aria-live="polite"></div>
     <div class="bcp-toolbar">
       <label for="bcp-filter" class="bcp-meta">Show</label>
@@ -82,6 +96,8 @@
     </section>
     <p class="desk-note">Commands you can also type in any issue comment: <code>/buddy list</code>, <code>/buddy status [job_id]</code>, <code>/buddy run &lt;job_id&gt; key=value</code>, <code>/buddy customize &lt;bot-id|division:Name|file:path&gt;</code> with one fenced <code>yaml</code> patch (validated against the editable-field allowlist and opened as a PR). Registry: <code>config/buddy/control-plane.json</code>. How it works: <code>docs/BUDDY_CONTROL_PLANE.md</code>.</p>
   </main>
+  <script src="buddy-session.js"></script>
+  <script src="buddy-operations.js"></script>
   <script src="buddy-control.js"></script>
 <script src="repository-actions.js" data-repository-actions="true" defer></script>
 </body>

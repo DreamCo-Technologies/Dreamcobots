@@ -10,7 +10,34 @@ import argparse
 import json
 from pathlib import Path
 
-from continuous_learning_controller import LearningEvent, EventType, evaluate_event
+try:
+    from .continuous_learning_controller import LearningEvent, EventType, evaluate_event
+except ImportError:
+    from continuous_learning_controller import LearningEvent, EventType, evaluate_event
+
+
+def process_events(events: list) -> list:
+    if not isinstance(events, list):
+        raise ValueError("events must be a list")
+    ids = [item.get("event_id") for item in events if isinstance(item, dict)]
+    if len(ids) != len(events) or any(not isinstance(i, str) or not i.strip() for i in ids):
+        raise ValueError("every event requires a nonempty string identity")
+    if len(set(ids)) != len(ids):
+        raise ValueError("duplicate event IDs")
+    results = []
+    for item in events:
+        flags = {}
+        for name in ("success", "verified", "regression_passed", "safety_passed", "external_assistance"):
+            value = item.get(name, False)
+            if type(value) is not bool:
+                raise ValueError(f"{item['event_id']}: {name} must be a boolean")
+            flags[name] = value
+        event = LearningEvent(event_id=item["event_id"], event_type=EventType(item["event_type"]),
+                              capability=item["capability"], **flags)
+        decision = evaluate_event(event)
+        results.append({"event_id": event.event_id, "capability": event.capability,
+                        "learn": decision.learn, "promote": decision.promote, "reason": decision.reason})
+    return results
 
 
 def main() -> None:
@@ -20,27 +47,13 @@ def main() -> None:
     args = parser.parse_args()
 
     payload = json.loads(Path(args.events).read_text())
-    events = payload.get("events", [])
-    results = []
-    for item in events:
-        event = LearningEvent(
-            event_id=item["event_id"],
-            event_type=EventType(item["event_type"]),
-            capability=item["capability"],
-            success=bool(item["success"]),
-            verified=bool(item["verified"]),
-            regression_passed=bool(item["regression_passed"]),
-            safety_passed=bool(item["safety_passed"]),
-            external_assistance=bool(item.get("external_assistance", False)),
-        )
-        decision = evaluate_event(event)
-        results.append({"event_id": event.event_id, "capability": event.capability,
-                        "learn": decision.learn, "promote": decision.promote,
-                        "reason": decision.reason})
+    results = process_events(payload.get("events", []))
 
     Path(args.out).write_text(json.dumps({
         "schema": "dreamco.continuous_learning.evidence.v1",
         "events_processed": len(results),
+        "weights_trained": False,
+        "production_ready": False,
         "promotions": sum(r["promote"] for r in results),
         "results": results,
     }, indent=2) + "\n")

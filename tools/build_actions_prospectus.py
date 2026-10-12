@@ -220,6 +220,8 @@ def workflow_records(health: dict[str, Any], operators: list[str], curated: dict
         text = path.read_text(encoding="utf-8")
         try:
             doc = _load_yaml(text)
+        except ImportError as exc:
+            raise RuntimeError("PyYAML is required; install requirements-tools.txt before generating workflow controls") from exc
         except Exception as exc:  # malformed workflow: still gets a card, never a button
             doc = {}
             parse_error = type(exc).__name__

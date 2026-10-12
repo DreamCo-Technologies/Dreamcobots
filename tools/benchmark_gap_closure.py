@@ -1,20 +1,94 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse,json
+import argparse,json,hashlib,math
 from pathlib import Path
 
-def plan(record):
+ROOT = Path(__file__).resolve().parents[1]
+
+def passing_evidence(record, root):
+    """Require reviewed, hash-bound local results; declarations never prove closure."""
+    evidence = record.get('evidence')
+    if not isinstance(evidence, dict) or evidence.get('review_status') != 'reviewed' or not evidence.get('reviewer'):
+        return False
+    try:
+        root = root.resolve()
+        source = (root / evidence['source']).resolve()
+        artifact = (root / evidence['artifact']).resolve()
+        if not source.is_relative_to(root) or not artifact.is_relative_to(root):
+            return False
+        raw = artifact.read_bytes()
+        if hashlib.sha256(raw).hexdigest() != evidence['artifact_sha256']:
+            return False
+        result = json.loads(raw)
+        return (result.get('benchmark_id') == record['benchmark_id']
+                and result.get('source_sha256') == hashlib.sha256(source.read_bytes()).hexdigest()
+                and result.get('status') == 'passed' and result.get('regression_status') == 'passed'
+                and type(result.get('tests_run')) is int and result['tests_run'] > 0
+                and type(result.get('tests_failed')) is int and result['tests_failed'] == 0
+                and type(result.get('score')) in (int, float) and math.isfinite(result['score'])
+                and result['score'] == record['baseline'] and result.get('target') == record['target'])
+    except (KeyError, TypeError, ValueError, OSError):
+        return False
+
+def plan(record, root=ROOT):
     required=['division_id','benchmark_id','baseline','target']
     missing=[k for k in required if k not in record]
     if missing:
-        return {'status':'blocked','missing':missing}
+        blocked = {'status':'blocked','missing':missing, 'evidence_verified': False}
+        if 'suite_id' in record:
+            blocked.update({
+                'suite_id': record['suite_id'],
+                'source': record.get('source'),
+                'review_status': 'requires_suite_specific_review',
+                'remediation_design': [
+                    'measure_and_pin_before_evidence',
+                    'diagnose_root_cause',
+                    'propose_smallest_shared_safe_fix_with_rollback',
+                    'apply_only_in_review_branch_or_sandbox',
+                    'run_targeted_tests_and_benchmark',
+                    'compare_before_after_evidence',
+                    'retest_dependent_suites_and_review_or_remain_blocked',
+                ],
+            })
+        return blocked
+    if any(type(record[k]) not in (int, float) or not math.isfinite(record[k]) for k in ('baseline', 'target')):
+        return {'status': 'blocked', 'reason': 'finite numeric measurements required'}
     gap=record['target']-record['baseline']
-    return {'status':'open' if gap>0 else 'closed','division_id':record['division_id'],'benchmark_id':record['benchmark_id'],'gap':gap,'next_action':'train_practice_sandbox_transfer' if gap>0 else 'regression_check'}
+    closed = gap <= 0 and passing_evidence(record, Path(root))
+    return {'status':'closed' if closed else 'open','division_id':record['division_id'],'benchmark_id':record['benchmark_id'],'gap':gap,'next_action':'train_practice_sandbox_transfer' if gap>0 else 'regression_check', 'evidence_verified': closed}
+
+
+def load_records(data):
+    if isinstance(data, list):
+        return data
+    if not isinstance(data, dict):
+        raise ValueError('expected a list or a recognized records/registry object')
+    if data.get('schema') == 'dreamco.benchmark_suite_gap_contracts.v1':
+        entries = data.get('entries')
+        if not isinstance(entries, list) or not entries:
+            raise ValueError('benchmark registry entries must be a nonempty list')
+        if type(data.get('count')) is not int or data['count'] != len(entries):
+            raise ValueError('benchmark registry count does not match entries')
+        if any(not isinstance(e, dict) or not isinstance(e.get('suite_id'), str) or not e['suite_id'] for e in entries):
+            raise ValueError('every benchmark registry entry requires a suite_id')
+        ids = [e['suite_id'] for e in entries]
+        if len(ids) != len(set(ids)):
+            raise ValueError('duplicate suite_id in benchmark registry')
+        # A registry contract is not a measurement ledger.
+        # Preserve all entries as blocked, without invented baselines.
+        return entries
+    records = data.get('records')
+    if not isinstance(records, list):
+        raise ValueError('expected records list or benchmark suite registry')
+    return records
 
 def main():
     p=argparse.ArgumentParser(); p.add_argument('input'); p.add_argument('--output',default='benchmark-gap-plan.json'); a=p.parse_args()
     data=json.loads(Path(a.input).read_text())
-    records=data if isinstance(data,list) else data.get('records',[])
+    try:
+        records=load_records(data)
+    except ValueError as exc:
+        p.error(str(exc))
     result=[plan(r) for r in records]
     Path(a.output).write_text(json.dumps({'schema':'dreamco.benchmark_gap_plan.v1','records':result},indent=2)+'\n')
     print(json.dumps({'records':len(result),'open':sum(x.get('status')=='open' for x in result),'blocked':sum(x.get('status')=='blocked' for x in result)},indent=2))

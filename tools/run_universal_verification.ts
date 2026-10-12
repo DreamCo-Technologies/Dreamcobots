@@ -8,6 +8,7 @@ const args = new Set(process.argv.slice(2));
 const mode = args.has("--production") ? "production" : args.has("--full") ? "full" : args.has("--quick") ? "quick" : "ci";
 
 const expectations: VerificationExpectation[] = [
+  { id: "human-reviewed-evaluation", owner: "benchmarks", level: "security", description: "Human approval, evaluation evidence and generated Pages fail closed", command: "npm run test:general-intelligence && npm run buddy:general-intelligence", requiredForMerge: true, requiredForProduction: true, requiresCredentials: false, timeoutSeconds: 600 },
   { id: "types", owner: "platform", level: "contract", description: "TypeScript contracts and imports compile cleanly", command: "npm run check", requiredForMerge: true, requiredForProduction: true, requiresCredentials: false, timeoutSeconds: 900 },
   { id: "dependencies", owner: "platform", level: "security", description: "Repository dependency graph and required files are valid", command: "npm run buddy:dependencies", requiredForMerge: true, requiredForProduction: true, requiresCredentials: false, timeoutSeconds: 600 },
   { id: "governed-tests", owner: "fleet", level: "integration", description: "Governed bot, policy, runtime, UI, and Python tests pass", command: "npm run test:governed", requiredForMerge: true, requiredForProduction: true, requiresCredentials: false, timeoutSeconds: 1800 },
@@ -73,12 +74,15 @@ const totals = {
 };
 const failedIds = new Set(results.filter(r => r.state === "failed").map(r => r.expectationId));
 const mergeReady = expectations.filter(e => e.requiredForMerge).every(e => !failedIds.has(e.id) && results.find(r => r.expectationId === e.id)?.state === "passed");
-const productionReady = expectations.filter(e => e.requiredForProduction).every(e => results.find(r => r.expectationId === e.id)?.state === "passed");
+const softwareVerified = expectations.filter(e => e.requiredForProduction).every(e => results.find(r => r.expectationId === e.id)?.state === "passed");
+// Repository checks do not certify a deployed service or a model.
+// Production certification requires its separate runtime evidence pipeline.
+const productionReady = false;
 const report: UniversalVerificationReport = { schema: "dreamco.universal_verification_report.v1", startedAt, completedAt: new Date().toISOString(), mode, results, totals, mergeReady, productionReady };
 
 const outDir = resolve("tmp", "dreamco-verification");
 mkdirSync(outDir, { recursive: true });
 writeFileSync(resolve(outDir, "latest.json"), JSON.stringify(report, null, 2));
-const runPassed = isVerificationRunSuccessful({ mode, ...totals, mergeReady, productionReady });
-console.log(`\nVerification summary: ${JSON.stringify({ mode, ...totals, mergeReady, productionReady, runPassed })}`);
+const runPassed = isVerificationRunSuccessful({ mode, ...totals, mergeReady, productionReady, softwareVerified });
+console.log(`\nVerification summary: ${JSON.stringify({ mode, ...totals, mergeReady, productionReady, softwareVerified, runPassed })}`);
 process.exit(runPassed ? 0 : 1);

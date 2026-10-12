@@ -5,7 +5,17 @@
   // so the nav works from the site root, from /website/*, and after a Pages-source switch.
   const NAV_BASE = new URL('.', (document.currentScript && document.currentScript.src) || location.href).href;
   const abs = (h) => /^(#|[a-z]+:|\/)/i.test(h) ? h : new URL(h, NAV_BASE).href;
+  if (!window.BuddySession && !document.querySelector('script[src$="buddy-session.js"]')) {
+    const session = document.createElement('script'); session.src = abs('buddy-session.js'); document.head.appendChild(session);
+  }
   const links = [
+    { href: 'research-workbench.html', label: 'Research Workbench' },
+    { href: "divisions/index.html", label: "62 Divisions" },
+    { href: "training-strategies.html", label: "Training Strategies" },
+    { href: 'general-intelligence.html', label: "Evidence & Review" },
+    { href: 'buddy-control.html#issues', label: 'Issues' },
+    { href: 'buddy-control.html#agents', label: 'Agents' },
+    { href: 'buddy-control.html#pulls', label: 'Pull requests' },
     { href: 'repository-guide.html', label: '📚 Start Here' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'own-bootcamp.html', label: '🥾 Bootcamp' },
@@ -31,6 +41,7 @@
     { href: 'training-sources.html', label: '📚 Training sources' },
     { href: 'study-hub.html', label: '🎓 Study hub' },
     { href: 'master-build.html', label: '🧭 Master Build' },
+    { href: 'superbot-systems.html', label: 'System connections' },
     { href: 'command-center.html', label: 'Command Center' },
     { href: 'buddy-command-center.html', label: 'Buddy Command Center' },
     { href: 'device-backend.html', label: 'Device backend' },

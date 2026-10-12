@@ -21,10 +21,10 @@ async function getLocalBots() {
 
 async function localApi(path, opts) {
   const bots = await getLocalBots();
-  if (path === "/api/health") return { status: "ok", host: 'pages', bots: bots.length, mode: "local" };
+  if (path === "/api/health") return { status: "backend_disconnected", host: 'pages', bots: bots.length, mode: "local" };
   if (path.startsWith("/api/bots")) return { total: bots.length, bots: bots.slice(0, 200) };
-  if (path === "/api/export/investor") return { dealsScored: 0, memoryItems: 0, revenue: "not connected" };
-  if (path === "/api/capabilities") return { capabilities: [{ name: "Buddy router", status: "live" }, { name: "Voice", status: "needs_key" }] };
+  if (path === "/api/export/investor") return { dealsScored: "unavailable", memoryItems: "unavailable", revenue: "not connected" };
+  if (path === "/api/capabilities") return { capabilities: [{ name: "Buddy router", status: "local_keyword_demo_only" }, { name: "Voice", status: "needs_key" }] };
   if (path === "/api/memory") return { memory: [] };
   if (path === "/api/schedule") return { schedules: [] };
   if (path === "/api/legal/terms") return { title: "Terms", text: "Pages mode. No guaranteed revenue." };
@@ -34,7 +34,7 @@ async function localApi(path, opts) {
     const target = message.includes("deal") ? "DealAnalyzer" : message.includes("build") ? "BuildBot" : "BuddyAI";
     return { reply: `Local mode. Matched ${target}.`, engine: "local-router" };
   }
-  return { ok: true, mode: "local" };
+  return { ok: false, mode: "offline", error: "Backend unavailable; operation was not executed" };
 }
 
 function setTab(name) {

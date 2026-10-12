@@ -294,7 +294,7 @@ function render(){
 function countTok(){
   const t = document.getElementById("tok").value || "";
   const approx = Math.max(1, Math.round(t.length / 4));
-  document.getElementById("tokOut").textContent = `${t.length} characters, about ${approx} tokens, ${t.split(/\\s+/).filter(Boolean).length} words.`;
+  document.getElementById("tokOut").textContent = `${t.length} characters, about ${approx} tokens, ${t.split(/\s+/).filter(Boolean).length} words.`;
 }
 function saveReward(){
   const policy = { penalty: document.getElementById("pen").value, attempts: document.getElementById("n").value, temperature: document.getElementById("temp").value };

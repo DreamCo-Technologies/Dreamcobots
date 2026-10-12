@@ -1,7 +1,7 @@
 """Connect every workflow and benchmark file to Buddy's learning runner.
 
 Missing files fail readiness. A listed workflow is not a passing benchmark.
-Only local sandbox runs verified in this process are marked verified.
+Inventory never proves execution; every generated event remains unverified.
 """
 
 from __future__ import annotations
@@ -64,23 +64,19 @@ def build_events(found: dict) -> dict:
             "success": True,
             "verified": False,
             "regression_passed": False,
-            "safety_passed": True,
+            "safety_passed": False,
             "external_assistance": False,
             "source": path,
         })
     for path in found["benchmarks"]:
-        local_sandbox = path in {
-            "benchmarks/america_gov/sandbox.py",
-            "benchmarks/resource_mastery/sandbox.py",
-        }
         events.append({
             "event_id": "benchmark:" + path,
             "event_type": "benchmark",
             "capability": "repository_benchmark",
-            "success": local_sandbox,
-            "verified": local_sandbox,
-            "regression_passed": local_sandbox,
-            "safety_passed": True,
+            "success": False,
+            "verified": False,
+            "regression_passed": False,
+            "safety_passed": False,
             "external_assistance": False,
             "source": path,
         })

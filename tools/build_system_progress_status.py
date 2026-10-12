@@ -76,7 +76,7 @@ def main() -> int:
         "gap_count": len(rows),
         # No gap plan means progress is unknown, not 100%: never show an evidence-free full gauge.
         "gap_plan_status": "generated" if GAPS.exists() else "not_generated",
-        "average_gap_percent": round(sum(r["percent_complete"] for r in rows) / len(rows), 1) if rows else (100.0 if GAPS.exists() else None),
+        "average_gap_percent": round(sum(r["percent_complete"] for r in rows) / len(rows), 1) if rows else None,
         "github_parity_status_counts": gh.get("status_counts", {}),
         "live_revenue": {
             "bots_checked": revenue.get("bot_count", 0),

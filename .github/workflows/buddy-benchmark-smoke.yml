@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Run deterministic benchmark
-        run: python3 benchmarks/buddy_benchmark_runner.py benchmarks/tasks/universal_1000_smoke.json --output /tmp/buddy-benchmark.json
+      - name: Validate benchmark input (no model execution)
+        run: python3 benchmarks/buddy_benchmark_runner.py benchmarks/tasks/universal_1000_smoke.json --diagnostic-only --output /tmp/buddy-benchmark.json
       - name: Record Buddy learning evidence
         env:
           GITHUB_SHA: ${{ github.sha }}
@@ -32,6 +32,9 @@ jobs:
           p = Path('/tmp/buddy-benchmark.json')
           data = json.loads(p.read_text())
           assert data['benchmark_id'] == 1000
+          assert data['model_executed'] is False
+          assert data['claimable'] is False
+          assert data['passed'] == 0
           assert data['free_first'] is True
           assert data['cost_usd'] == 0.0
           assert isinstance(data['results'], list)

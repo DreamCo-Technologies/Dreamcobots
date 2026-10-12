@@ -40,6 +40,23 @@ class SystemProgressStatusTests(unittest.TestCase):
         self.assertEqual(data["gap_plan_status"], "not_generated")
         self.assertIsNone(data["average_gap_percent"])
 
+    def test_empty_generated_gap_plan_does_not_claim_100_percent(self):
+        with TemporaryDirectory() as tmp:
+            gap_plan = Path(tmp) / "empty-gap-plan.json"
+            gap_plan.write_text('{"gaps": []}', encoding="utf-8")
+            out = Path(tmp) / "internal.json"
+            public = Path(tmp) / "public.json"
+            with mock.patch.object(progress, "ROOT", Path(tmp)), \
+                    mock.patch.object(progress, "GAPS", gap_plan), \
+                    mock.patch.object(progress, "OUT", out), \
+                    mock.patch.object(progress, "PUBLIC_OUT", public), \
+                    redirect_stdout(StringIO()):
+                self.assertEqual(progress.main(), 0)
+            data = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(data["gap_count"], 0)
+            self.assertEqual(data["gap_plan_status"], "generated")
+            self.assertIsNone(data["average_gap_percent"])
+
     def test_committed_public_copy_is_valid(self):
         data = json.loads(progress.PUBLIC_OUT.read_text(encoding="utf-8"))
         self.assertEqual(data["schema"], "dreamco.system_progress_status.v3")

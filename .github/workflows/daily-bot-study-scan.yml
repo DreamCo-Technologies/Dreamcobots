@@ -17,5 +17,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Generate local sandbox modules from canonical bot definitions
+        run: python3 tools/compile_md_bots.py --check
       - name: Scan bots, missing files, and study plans
         run: python3 tools/daily_bot_study_scan.py --check

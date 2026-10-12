@@ -138,3 +138,11 @@ def test_generated_registry_jobs_satisfy_control_plane_rules():
         if job["risk_tier"] == "money" or job.get("destructive"):
             assert job["triggerable"] is False, job["id"]
         assert len(job["inputs"]) <= 10
+
+
+def test_missing_yaml_dependency_cannot_silently_remove_workflow_controls(monkeypatch):
+    def missing(_text):
+        raise ModuleNotFoundError('yaml')
+    monkeypatch.setattr(bap, '_load_yaml', missing)
+    with pytest.raises(RuntimeError, match='PyYAML is required'):
+        bap.workflow_records({}, [], {})

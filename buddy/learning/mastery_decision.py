@@ -16,10 +16,13 @@ class MasteryEvidence:
 def eligible_for_mastery(evidence: MasteryEvidence, minimum_native_passes: int = 3) -> bool:
     """Return true only when all independent promotion gates are satisfied."""
     return (
-        evidence.native_passes >= minimum_native_passes
-        and evidence.holdout_passed
-        and evidence.regression_passed
-        and evidence.repeated_signature_stable
+        type(evidence.native_passes) is int
+        and type(minimum_native_passes) is int and minimum_native_passes >= 3
+        and evidence.native_passes >= minimum_native_passes
+        and evidence.holdout_passed is True
+        and evidence.regression_passed is True
+        and evidence.repeated_signature_stable is True
+        and evidence.external_assistance_used is False
     )
 
 

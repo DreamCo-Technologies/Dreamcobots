@@ -45,3 +45,11 @@ test("ci and full modes retain their stronger readiness gates", () => {
     productionReady: false,
   }), false);
 });
+
+ test("full software validation is separate from production certification", () => {
+  const result = {mode: "full" as const, failed: 0, blocked: 0, skipped: 0, mergeReady: true, softwareVerified: true, productionReady: false};
+  assert.equal(isVerificationRunSuccessful(result), true);
+  assert.equal(isVerificationRunSuccessful({...result, skipped: 1}), false);
+  assert.equal(isVerificationRunSuccessful({...result, failed: 1}), false);
+  assert.equal(isVerificationRunSuccessful({...result, mode: "production"}), false);
+ });

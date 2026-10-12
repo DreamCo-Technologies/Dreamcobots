@@ -20,4 +20,4 @@ class RegisteredRunnerTest(unittest.TestCase):
             subprocess.run([sys.executable, str(root / "registered_runner.py"), "--events", str(events), "--out", str(out)], check=True)
             result = json.loads(out.read_text())
             self.assertEqual(result["events_processed"], 1)
-            self.assertEqual(result["promotions"], 1)
+            self.assertEqual(result["promotions"], 0)
