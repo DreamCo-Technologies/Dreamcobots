@@ -14,6 +14,9 @@ on:
       - 'tests/test_strategy_policy.py'
       - 'tests/test_source_division_catalog.py'
       - 'tests/test_cycle_evidence_integrity.py'
+      - 'tools/benchmark_gap_closure.py'
+      - 'tests/test_benchmark_gap_closure.py'
+      - 'config/generated/benchmark-suite-gap-contracts.json'
 permissions:
   contents: read
 concurrency:
@@ -34,13 +37,15 @@ jobs:
       - run: python tools/compile_division_catalog.py
       - run: python tools/build_training_strategy_pages.py
       - run: python tools/general_intelligence.py
-      - run: python -m pytest -q tests/test_workbench.py tests/test_workbench_bridge.py tests/test_workbench_finance.py tests/test_strategy_policy.py tests/test_source_division_catalog.py tests/test_cycle_evidence_integrity.py tests/test_verify_frontier_evidence.py tests/test_general_intelligence.py --junitxml=evidence/consolidated-tests.xml
+      - run: python -m pytest -q tests/test_workbench.py tests/test_workbench_bridge.py tests/test_workbench_finance.py tests/test_strategy_policy.py tests/test_source_division_catalog.py tests/test_cycle_evidence_integrity.py tests/test_verify_frontier_evidence.py tests/test_general_intelligence.py tests/test_benchmark_gap_closure.py --junitxml=evidence/consolidated-tests.xml
+      - run: python tools/benchmark_gap_closure.py config/generated/benchmark-suite-gap-contracts.json --output evidence/benchmark-gap-plan.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: consolidated-offline-evidence
           path: |
             evidence/consolidated-tests.xml
+            evidence/benchmark-gap-plan.json
             config/generated/source-divisions/
             website/data/training-strategy-registry.json
           if-no-files-found: error
