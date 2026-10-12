@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Distill benchmarks</title><link rel="stylesheet" href="styles.css"/>
+<style>body{padding:16px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px;margin:12px 0}
+button,.btn{background:#7c5cff;color:#fff;border:0;border-radius:8px;padding:8px 12px;cursor:pointer;text-decoration:none;display:inline-block;margin:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.warn{color:#ffbf69}.ok{color:#69e8bf}
+</style></head><body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>Benchmarks in distillation</h1>
+<p>Every tracked benchmark is a distill target. Prompt engineer writes the teacher prompt. Builder bot owns the artifact. A test checks the student. No live score is invented.</p>
+<p><a class="btn" href="distill-course.html">Course</a> <a class="btn" href="benchmarks.html">Benchmarks</a> <a class="btn" href="bots.html">Fleet</a></p>
+<div class="card"><h2>Roles</h2>
+<ul>
+<li><strong>Prompt engineer:</strong> writes the teacher prompt and the held-out check.</li>
+<li><strong>Benchmark runner:</strong> runs the listed command when a host exists.</li>
+<li><strong>Builder bots:</strong> website, workflow, tool, protocol, and assessment builders turn a passing distill note into an artifact.</li>
+</ul>
+<p class="warn">This page stores the plan and the smoke test. It does not train weights.</p>
+</div>
+<div id="list" class="grid"></div>
+<div class="card"><h2>Student smoke test</h2>
+<p id="active">Pick a benchmark.</p>
+<textarea id="student" rows="4" placeholder="Student answer"></textarea>
+<button onclick="grade()">Grade</button>
+<p id="grade"></p>
+</div>
+</main>
+<script>
+let data={programs:[]}; let active=null;
+fetch("data/distill-benchmarks.json").then(r=>r.json()).then(d=>{
+  data=d;
+  document.getElementById("list").innerHTML = d.programs.map((p,i)=>`<div class="card"><strong>${p.name}</strong><p>${p.cadence}</p><p>Bot: ${p.bot}</p><p>Test: ${p.test}</p><button onclick="pick(${i})">Use prompt</button> <a class="btn" href="${p.page||'benchmarks.html'}">Open</a></div>`).join("");
+  document.getElementById("list").insertAdjacentHTML("beforeend", `<div class="card"><strong>${d.suites.length} repository suites</strong><p>Each suite is a local contract. Distill the pass rule. Do not mark it live.</p></div>`);
+});
+function pick(i){ active=data.programs[i]; document.getElementById("active").textContent = active.prompt; }
+function grade(){
+  if(!active){ document.getElementById("grade").textContent="Pick a benchmark first."; return; }
+  const text=(document.getElementById("student").value||"").toLowerCase();
+  const need=[active.cadence.toLowerCase().split(" ")[0], "no live", active.bot.split("-")[0]];
+  const hit=need.filter(n=>text.includes(n)).length;
+  document.getElementById("grade").textContent = `Smoke ${hit}/${need.length}. Must mention cadence, no live score, and the builder family. Not a weight update.`;
+}
+</script></body></html>

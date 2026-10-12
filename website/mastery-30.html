@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>30-day mastery</title><link rel="stylesheet" href="styles.css"/>
+<style>body{padding:16px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px;margin:12px 0}
+button,.btn{background:#7c5cff;color:#fff;border:0;border-radius:8px;padding:8px 12px;cursor:pointer;text-decoration:none;display:inline-block;margin:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.warn{color:#ffbf69}.ok{color:#69e8bf} textarea,input{width:100%;background:#0f1217;color:#fff;border:1px solid #3b424d;border-radius:8px;padding:8px}
+</style></head><body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>30-day mastery</h1>
+<p>Buddy scores its own responses. Benchmarks use the same loop. Progress stays on this device.</p>
+<p><a class="btn" href="distill-course.html">Course</a> <a class="btn" href="distill-benchmarks.html">Distill benchmarks</a> <a class="btn" href="benchmarks.html">Benchmarks</a></p>
+
+<div class="card"><h2>Self-score a response</h2>
+<label>Prompt</label><textarea id="prompt" rows="2" placeholder="What should Buddy answer?"></textarea>
+<label>Response</label><textarea id="response" rows="3" placeholder="Buddy response"></textarea>
+<button onclick="scoreResponse()">Score</button>
+<p id="scoreOut"></p>
+</div>
+
+<div class="card"><h2>Learning log</h2>
+<p>High scores are kept as patterns. Low scores become the next drill.</p>
+<div id="log"></div>
+</div>
+
+<div class="card"><h2>30 days</h2>
+<p class="warn">A day is marked done only after a scored response. This does not train weights.</p>
+<div id="days" class="grid"></div>
+</div>
+</main>
+<script>
+const KEY="dreamco.mastery30.v1";
+const RUBRIC=["names the goal","states a check","does not claim a live score","names the next step"];
+function load(){ try { return JSON.parse(localStorage.getItem(KEY))||{days:{},log:[]}; } catch { return {days:{},log:[]}; } }
+function save(s){ localStorage.setItem(KEY, JSON.stringify(s)); }
+function scoreResponse(){
+  const prompt=document.getElementById("prompt").value.trim();
+  const response=document.getElementById("response").value.trim().toLowerCase();
+  if(!prompt || !response){ document.getElementById("scoreOut").textContent="Need a prompt and a response."; return; }
+  const hits=RUBRIC.filter(r=>{
+    if(r==="names the goal") return response.length>20;
+    if(r==="states a check") return /check|test|holdout|score/.test(response);
+    if(r==="does not claim a live score") return !/passed live|production ready|guaranteed/.test(response);
+    return /next|then|tomorrow/.test(response);
+  });
+  const pct=Math.round(100*hits.length/RUBRIC.length);
+  const s=load();
+  const day=Object.keys(s.days).length+1;
+  s.log.unshift({prompt, pct, at:new Date().toISOString(), missing:RUBRIC.filter(r=>!hits.includes(r))});
+  s.log=s.log.slice(0,30);
+  if(pct>=75 && day<=30) s.days[day]={pct, at:new Date().toISOString()};
+  save(s);
+  document.getElementById("scoreOut").textContent=`Score ${pct}%. Hit: ${hits.join(", ")||"none"}.`;
+  render();
+}
+function render(){
+  const s=load();
+  const done=Object.keys(s.days).length;
+  document.getElementById("days").innerHTML=Array.from({length:30},(_,i)=>{
+    const n=i+1; const d=s.days[n];
+    return `<div class="card"><strong>Day ${n}</strong><p class="${d?"ok":""}">${d?d.pct+"%":"open"}</p></div>`;
+  }).join("")+`<p>${done}/30 days scored.</p>`;
+  document.getElementById("log").innerHTML=s.log.slice(0,8).map(l=>`<p>${l.pct}% ${l.at}<br/>Missing: ${(l.missing||[]).join(", ")||"none"}</p>`).join("")||"<p>No scores yet.</p>";
+}
+render();
+</script></body></html>

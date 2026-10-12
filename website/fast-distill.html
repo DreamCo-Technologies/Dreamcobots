@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Fast distill</title><link rel="stylesheet" href="styles.css"/>
+<style>body{padding:16px}.card{background:#15191f;border:1px solid #303741;border-radius:12px;padding:14px;margin:12px 0}
+button,a.btn{background:#7c5cff;color:#fff;border:0;border-radius:8px;padding:8px 12px;text-decoration:none;display:inline-block;margin:4px}
+textarea,input{width:100%;background:#0f1217;color:#fff;border:1px solid #3b424d;border-radius:8px;padding:8px}
+</style></head><body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main>
+<h1>Fast distill</h1>
+<p>Pick a task. Buddy gives the cheapest useful distill plan. No weights are updated here.</p>
+<div class="card">
+<label>Task</label>
+<textarea id="task" rows="4" placeholder="Example: answer support questions from our docs"></textarea>
+<button onclick="plan()">Make a plan</button>
+<pre id="out"></pre>
+</div>
+<div class="card">
+<h2>Fast rules</h2>
+<ol>
+<li>Save teacher outputs once. Do not regenerate them.</li>
+<li>Distill the top failed tasks first.</li>
+<li>Use a small student and rank-8 LoRA.</li>
+<li>Soft targets, temperature 2, half hard labels.</li>
+<li>20-item smoke, then the holdout.</li>
+<li>Stop if the holdout stalls.</li>
+<li>Serve the student. Fall back to the teacher.</li>
+</ol>
+<p><a class="btn" href="distill-course.html">Course</a><a class="btn" href="beginner-100.html">100 ways</a></p>
+</div>
+</main>
+<script>
+function plan(){
+  const task=document.getElementById("task").value.trim()||"your task";
+  document.getElementById("out").textContent=[
+    "Task: "+task,
+    "1. Write 20 examples. Hold out 4.",
+    "2. Teacher answers the 16. Save them.",
+    "3. Student: small model, LoRA rank 8, q/v.",
+    "4. Loss: half soft targets at temperature 2, half hard labels.",
+    "5. One epoch. Score the 4 holdout items.",
+    "6. Keep it only if it beats the base.",
+    "No provider was called. No weights were updated."
+  ].join("\n");
+}
+</script></body></html>
