@@ -31,6 +31,15 @@ test('published resource inventory matches canonical evidence without promoting 
   assert.equal(program.truth_contract.connected_status_requires_credentials_and_health_evidence, true);
 });
 
+test('resource inventory never counts loopback or placeholder hosts (test fixtures and local servers stay out)', () => {
+  for (const resource of canonical.resource_inventory.resources) {
+    assert.notEqual(resource.host, 'localhost', resource.host);
+    assert.ok(!resource.host.endsWith('.localhost'), resource.host);
+    assert.notEqual(resource.host, 'example.com', resource.host);
+  }
+  assert.ok(canonical.resource_inventory.source_files_scanned > 0);
+});
+
 test('published Success Center bundle mirrors the complete canonical program', () => {
   // The public bundle and config/generated/buddy_success_program.json are written by the same generator run;
   // any section drifting between them means the site would show a program the repository does not evidence.
