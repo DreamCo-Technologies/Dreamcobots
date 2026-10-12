@@ -1,0 +1,38 @@
+{
+  "schema": "dreamco.general_intelligence_suites.v1",
+  "native_checks": [
+    {
+      "id": "approval-and-evidence",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "tests.test_general_intelligence"
+      ],
+      "scope": "framework_controls_only"
+    },
+    {
+      "id": "frontier-evidence",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "tests.test_verify_frontier_evidence"
+      ],
+      "scope": "evidence_validator_only"
+    },
+    {
+      "id": "buddy-os",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "tests.test_buddy_os_contracts",
+        "tests.test_buddy_governance_contracts"
+      ],
+      "scope": "repository_contracts_only"
+    }
+  ],
+  "registered_suites": [],
+  "registration_rule": "Commit a reviewed suite before running subjects. Pin expected cases, repetitions, fixture hashes, disjoint task families, training corpus and evaluator version. Keep private fixture text outside public Pages."
+}

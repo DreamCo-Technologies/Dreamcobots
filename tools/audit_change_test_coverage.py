@@ -110,7 +110,13 @@ def main() -> int:
     test_paths = POLICY["test_paths"]
     tests = [path for status, path in status_rows if status != "D" and any(path.startswith(prefix) for prefix in test_paths)]
     deleted_tests = [path for status, path in status_rows if status == "D" and any(path.startswith(prefix) for prefix in test_paths)]
-    executable = [path for status, path in status_rows if status != "D" and Path(path).suffix in exts and not any(path.startswith(prefix) for prefix in test_paths)]
+    protected = set(POLICY.get("protected_source_paths", []))
+    executable = [
+        path for status, path in status_rows
+        if status != "D"
+        and (Path(path).suffix in exts or path in protected)
+        and not any(path.startswith(prefix) for prefix in test_paths)
+    ]
     skip_hits = added_skip_markers(args.base, args.head) if executable else []
 
     rows = []

@@ -81,6 +81,38 @@ class ChangeImpactTestPolicyTests(unittest.TestCase):
     def test_policy_does_not_claim_bug_free_proof(self):
         self.assertIn("cannot prove absence of every defect", self.policy["truth_rule"].lower())
 
+    def test_protected_html_changes_are_audited_and_require_changed_tests(self):
+        import importlib.util
+        from tempfile import TemporaryDirectory
+        from unittest.mock import patch
+
+        self.assertIn("website/divisions.html", self.policy["protected_source_paths"])
+        self.assertIn("website/bots.html", self.policy["protected_source_paths"])
+        module_path = ROOT / "tools" / "audit_change_test_coverage.py"
+        spec = importlib.util.spec_from_file_location("dreamco_change_impact_auditor", module_path)
+        auditor = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(auditor)
+        with TemporaryDirectory() as tmp:
+            out = Path(tmp) / "change-impact.json"
+            argv = ["audit_change_test_coverage.py", "--base", "before", "--head", "after"]
+            with patch.object(auditor, "OUT", out), patch("sys.argv", argv), patch.object(auditor, "added_skip_markers", return_value=[]):
+                for page in ("website/divisions.html", "website/bots.html"):
+                    with self.subTest(page=page):
+                        with patch.object(auditor, "changed_name_status", return_value=[("M", page)]):
+                            self.assertEqual(auditor.main(), 1)
+                            report = json.loads(out.read_text())
+                            self.assertEqual(report["changed_executable_file_count"], 1)
+                            self.assertFalse(report["ok"])
+                            self.assertIn(page, report["release_blockers"][0])
+                        with patch.object(auditor, "changed_name_status", return_value=[
+                            ("M", page),
+                            ("M", "tests/specialist-prospectus-page.test.mjs"),
+                        ]):
+                            self.assertEqual(auditor.main(), 0)
+                            report = json.loads(out.read_text())
+                            self.assertTrue(report["ok"])
+                            self.assertEqual(report["files"][0]["focused_tests"], ["tests/specialist-prospectus-page.test.mjs"])
+
 
 if __name__ == "__main__":
     unittest.main()

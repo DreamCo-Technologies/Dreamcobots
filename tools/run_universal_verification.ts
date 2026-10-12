@@ -8,6 +8,7 @@ const args = new Set(process.argv.slice(2));
 const mode = args.has("--production") ? "production" : args.has("--full") ? "full" : args.has("--quick") ? "quick" : "ci";
 
 const expectations: VerificationExpectation[] = [
+  { id: "human-reviewed-evaluation", owner: "benchmarks", level: "security", description: "Human approval, evaluation evidence and generated Pages fail closed", command: "npm run test:general-intelligence && npm run buddy:general-intelligence", requiredForMerge: true, requiredForProduction: true, requiresCredentials: false, timeoutSeconds: 600 },
   { id: "types", owner: "platform", level: "contract", description: "TypeScript contracts and imports compile cleanly", command: "npm run check", requiredForMerge: true, requiredForProduction: true, requiresCredentials: false, timeoutSeconds: 900 },
   { id: "dependencies", owner: "platform", level: "security", description: "Repository dependency graph and required files are valid", command: "npm run buddy:dependencies", requiredForMerge: true, requiredForProduction: true, requiresCredentials: false, timeoutSeconds: 600 },
   { id: "governed-tests", owner: "fleet", level: "integration", description: "Governed bot, policy, runtime, UI, and Python tests pass", command: "npm run test:governed", requiredForMerge: true, requiredForProduction: true, requiresCredentials: false, timeoutSeconds: 1800 },

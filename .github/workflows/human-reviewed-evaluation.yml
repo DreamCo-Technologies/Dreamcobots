@@ -1,0 +1,59 @@
+name: Human-Reviewed General Intelligence Evaluation
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 8 * * 1'
+  pull_request:
+    paths:
+      - 'buddy_os/evaluation/**'
+      - 'config/general-intelligence/**'
+      - 'evidence/general-intelligence/**'
+      - 'tools/general_intelligence*.py'
+      - 'tools/buddy_local_bridge.py'
+      - 'tools/buddy_cli.py'
+      - 'website/general-intelligence*'
+      - 'website/data/general-intelligence*'
+      - 'tests/*general*intelligence*'
+      - '.github/workflows/human-reviewed-evaluation.yml'
+permissions:
+  contents: read
+concurrency:
+  group: human-reviewed-evaluation-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  controls-and-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Install contract-test dependencies
+        run: python -m pip install PyYAML jsonschema
+      - name: Check generated data and section manifest
+        run: python tools/general_intelligence.py --check
+      - name: Run local control and existing contract checks
+        run: python tools/general_intelligence.py --native reports/general-intelligence-controls.json
+      - name: Check page links, fail-closed UI and JavaScript
+        run: |
+          node --test tests/general-intelligence-page.test.mjs
+          node --check website/general-intelligence.js
+      - name: Verify review console in Chromium
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium
+          npm run test:general-intelligence:browser
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: human-reviewed-evaluation-${{ github.run_id }}
+          path: reports/general-intelligence-controls.json
+          retention-days: 30
+# Read-only scheduled verification. No credentials, live model calls, automatic
+# reviews, model promotion, private queue export, commits, or deployment.
