@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>DreamCo Live Check</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main style="padding:16px">
+<h1>Live check</h1>
+<p>Reachability only. A 200 does not mean a bot executes.</p>
+<button type="button" onclick="scan()">Scan now</button>
+<div id="out">Not scanned.</div>
+<p><a href="connections.html">App connections</a> | <a href="train.html">Train</a> | <a href="finish.html">Finish</a> | <a href="command-center.html">Command Center</a> | <a href="bots.html">Fleet</a></p>
+</main>
+<script>
+const targets = ["buddy.html","train.html","finish.html","command-center.html","actions.html","bots.html","connections.html","backend-status.json","gaps.json","command-center/bots.json","data/buddy-control-status.json","data/buddy-connection-catalog.json","data/bot-fleet-catalog.json"];
+async function scan(){
+  const out = document.getElementById("out");
+  out.textContent = "Scanning...";
+  const rows = [];
+  for (const t of targets){
+    try {
+      const r = await fetch(t, {cache:"no-store"});
+      rows.push('<p style="color:' + (r.ok ? '#69e8bf' : '#ff8b8b') + '">' + r.status + ' ' + t + '</p>');
+    } catch (e) {
+      rows.push('<p style="color:#ff8b8b">fail ' + t + '</p>');
+    }
+  }
+  let bots = "unknown";
+  try {
+    const b = await fetch("command-center/bots.json").then(r=>r.json());
+    bots = Array.isArray(b) ? b.length : (b.bots||[]).length;
+  } catch (e) {}
+  out.innerHTML = '<p>Catalog bots on Pages: ' + bots + '. Fleet markdown in repo: 1120.</p>' + rows.join("");
+}
+scan();
+</script>
+</body>
+</html>

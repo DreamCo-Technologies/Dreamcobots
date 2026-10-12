@@ -41,7 +41,12 @@ jobs:
           python3 -m unittest tests.test_command_center_data tests.test_repository_browser tests.test_legacy_portfolios tests.test_branch_health_public_report
           python3 tools/connect_repository_pages.py --check
       - name: Verify generated data is current
-        run: python3 tools/generate_command_center_data.py --check
+        run: |
+          python3 tools/generate_command_center_data.py --check || {
+            echo "Generated command-center data is stale."
+            echo "Fix: npm run buddy:command-center:refresh && git add command-center/data website/data/command-center && git commit"
+            exit 1
+          }
       - name: Verify command-center route and controls
         run: node --test tests/command-center-page.test.mjs
       - name: Verify JSON syntax

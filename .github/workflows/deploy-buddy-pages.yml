@@ -63,6 +63,8 @@ jobs:
           persist-credentials: false
       - name: Validate human-reviewed evaluation Pages artifacts
         run: python3 tools/general_intelligence.py --check
+      - name: Frontier claim trust gates (block vanity until claimable)
+        run: python3 tools/check_frontier_claim_trust_gates.py
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
@@ -72,7 +74,9 @@ jobs:
         with:
           node-version: 22
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          python3 -m pip install --disable-pip-version-check -q PyYAML
       - name: Refresh Actions health and prospectus data for Pages
         env:
           GITHUB_TOKEN: ${{ github.token }}

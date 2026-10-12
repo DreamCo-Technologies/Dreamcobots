@@ -1,0 +1,83 @@
+name: Frontier Claim Trust Gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "website/**"
+      - "evidence/frontier/**"
+      - "config/buddy-frontier-claim-disclosure.json"
+      - "config/buddy-frontier-readiness-gates.json"
+      - "config/buddy-training-data-provenance-policy.json"
+      - "config/buddy/500-model-operating-contract.json"
+      - "config/generated/sandbox-24h-tick.json"
+      - "reports/SANDBOX_24H.md"
+      - "tools/check_frontier_claim_trust_gates.py"
+      - "tools/verify_frontier_evidence.py"
+      - "tools/run_24h_sandbox_soak.py"
+      - "tests/test_frontier_claim_trust_gates.py"
+      - ".github/workflows/frontier-claim-trust-gate.yml"
+      - ".github/workflows/deploy-buddy-pages.yml"
+  push:
+    branches: [main]
+    paths:
+      - "website/**"
+      - "evidence/frontier/**"
+      - "config/buddy-frontier-claim-disclosure.json"
+      - "config/buddy-frontier-readiness-gates.json"
+      - "config/buddy-training-data-provenance-policy.json"
+      - "config/buddy/500-model-operating-contract.json"
+      - "config/generated/sandbox-24h-tick.json"
+      - "reports/SANDBOX_24H.md"
+      - "tools/check_frontier_claim_trust_gates.py"
+      - "tools/verify_frontier_evidence.py"
+      - "tools/run_24h_sandbox_soak.py"
+      - "tests/test_frontier_claim_trust_gates.py"
+      - ".github/workflows/frontier-claim-trust-gate.yml"
+      - ".github/workflows/deploy-buddy-pages.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontier-claim-trust-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  vanity-and-unit:
+    name: Block vanity copy + unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Deploy-mode trust check (fail on vanity while gates red)
+        run: python3 tools/check_frontier_claim_trust_gates.py --output reports/frontier-claim-trust-deploy.json
+      - name: Unit tests
+        run: python3 -m unittest tests.test_frontier_claim_trust_gates
+      - if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: frontier-claim-trust-deploy-${{ github.run_id }}
+          path: reports/frontier-claim-trust-deploy.json
+          if-no-files-found: warn
+
+  claim-surfaces-all-gates:
+    name: Claim surfaces require all four gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Strict require-all-gates (hard-fail until claimable)
+        run: python3 tools/check_frontier_claim_trust_gates.py --require-all-gates --output reports/frontier-claim-trust-strict.json
+      - if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: frontier-claim-trust-strict-${{ github.run_id }}
+          path: reports/frontier-claim-trust-strict.json
+          if-no-files-found: warn
