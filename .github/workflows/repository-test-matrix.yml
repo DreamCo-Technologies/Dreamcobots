@@ -63,8 +63,6 @@ jobs:
         run: python3 tools/generate_repository_test_registry.py
       - name: Run DreamCo Universal Verification Engine
         run: npx tsx tools/run_universal_verification.ts
-      - name: Run system progress truth regression
-        run: python3 -m unittest tests.test_build_system_progress_status
       - name: Save debugging evidence
         if: always()
         uses: actions/upload-artifact@v7

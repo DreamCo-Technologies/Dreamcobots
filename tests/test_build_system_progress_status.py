@@ -46,7 +46,8 @@ class SystemProgressStatusTests(unittest.TestCase):
             gap_plan.write_text('{"gaps": []}', encoding="utf-8")
             out = Path(tmp) / "internal.json"
             public = Path(tmp) / "public.json"
-            with mock.patch.object(progress, "GAPS", gap_plan), \
+            with mock.patch.object(progress, "ROOT", Path(tmp)), \
+                    mock.patch.object(progress, "GAPS", gap_plan), \
                     mock.patch.object(progress, "OUT", out), \
                     mock.patch.object(progress, "PUBLIC_OUT", public), \
                     redirect_stdout(StringIO()):
