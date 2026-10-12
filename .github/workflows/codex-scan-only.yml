@@ -43,10 +43,11 @@ jobs:
         env:
           PYTHONDONTWRITEBYTECODE: '1'
         run: |
-          python3 -m unittest tests.test_proposal_registry tests.test_codex_scan tests.test_superbot_crosswalk
+          python3 -m unittest tests.test_proposal_registry tests.test_codex_scan tests.test_superbot_crosswalk tests.test_codex_scan_workflow_resilience
           python3 tools/build_superbot_crosswalk.py --check
           python3 tools/proposal_registry.py
       - name: Scan source without executing application code
+        if: ${{ !cancelled() }}
         env:
           PYTHONDONTWRITEBYTECODE: '1'
         run: |
