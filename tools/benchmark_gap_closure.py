@@ -30,9 +30,11 @@ def passing_evidence(record, root):
     except (KeyError, TypeError, ValueError, OSError):
         return False
 
-def plan(record, root=ROOT):
+def plan(record, root=ROOT, *, registry_only=False):
     required=['division_id','benchmark_id','baseline','target']
     missing=[k for k in required if k not in record]
+    if registry_only:
+        missing.append('independent_measurement_ledger')
     if missing:
         blocked = {'status':'blocked','missing':missing, 'evidence_verified': False}
         if 'suite_id' in record:
@@ -89,7 +91,8 @@ def main():
         records=load_records(data)
     except ValueError as exc:
         p.error(str(exc))
-    result=[plan(r) for r in records]
+    registry_only = isinstance(data, dict) and data.get('schema') == 'dreamco.benchmark_suite_gap_contracts.v1'
+    result=[plan(r, registry_only=registry_only) for r in records]
     Path(a.output).write_text(json.dumps({'schema':'dreamco.benchmark_gap_plan.v1','records':result},indent=2)+'\n')
     print(json.dumps({'records':len(result),'open':sum(x.get('status')=='open' for x in result),'blocked':sum(x.get('status')=='blocked' for x in result)},indent=2))
 if __name__=='__main__': main()

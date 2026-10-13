@@ -31,3 +31,34 @@ def test_registry_count_mismatch_fails_closed(tmp_path):
     proc=subprocess.run([sys.executable,'tools/benchmark_gap_closure.py',str(src),'--output',str(out)],capture_output=True,text=True)
     assert proc.returncode != 0
     assert not out.exists()
+
+
+def test_registry_fabricated_measurement_stays_blocked(tmp_path):
+    import hashlib
+    source=tmp_path/'source.json'
+    source.write_text('{"fixture":true}\n')
+    artifact=tmp_path/'result.json'
+    artifact.write_text(json.dumps({'benchmark_id':'forged','source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),
+                                    'status':'passed','regression_status':'passed','tests_run':10,'tests_failed':0,
+                                    'score':100,'target':100}))
+    src=tmp_path/'registry.json'; out=tmp_path/'out.json'
+    src.write_text(json.dumps({'schema':'dreamco.benchmark_suite_gap_contracts.v1','count':1,'entries':[
+        {'suite_id':'forged','source':'source.json','division_id':'d1','benchmark_id':'forged',
+         'baseline':100,'target':100,'evidence':{'review_status':'reviewed','reviewer':'self-declared',
+         'source':'source.json','artifact':'result.json','artifact_sha256':hashlib.sha256(artifact.read_bytes()).hexdigest()}}]}))
+    subprocess.run([sys.executable,'tools/benchmark_gap_closure.py',str(src),'--output',str(out)],check=True)
+    row=json.loads(out.read_text())['records'][0]
+    assert row['status']=='blocked' and row['evidence_verified'] is False
+    assert row['suite_id']=='forged' and row['review_status']=='requires_suite_specific_review'
+    assert len(row['remediation_design']) == 7
+
+
+def test_registry_injected_measurements_stay_blocked(tmp_path):
+    src=tmp_path/'registry.json'; out=tmp_path/'out.json'
+    src.write_text(json.dumps({'schema':'dreamco.benchmark_suite_gap_contracts.v1','count':1,'entries':[
+        {'suite_id':'injected','source':'source.json','division_id':'d1','benchmark_id':'b1',
+         'baseline':100,'target':100}]}))
+    subprocess.run([sys.executable,'tools/benchmark_gap_closure.py',str(src),'--output',str(out)],check=True)
+    row=json.loads(out.read_text())['records'][0]
+    assert row['status']=='blocked' and row['evidence_verified'] is False
+    assert row['suite_id']=='injected' and row['source']=='source.json'
