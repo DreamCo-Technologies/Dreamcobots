@@ -23,6 +23,13 @@ const oauthCallbackRateLimit = rateLimit({
   legacyHeaders: false,
   message: { error: "Too many sign-in callbacks. Start again after waiting." },
 });
+const oauthSessionRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 300,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: { error: "Too many session checks. Wait before trying again." },
+});
 const providerConfig = {
   google: {
     clientId: () => process.env.GOOGLE_OAUTH_CLIENT_ID,
@@ -123,7 +130,7 @@ export function registerOAuthLoginRoutes(app: Express) {
     } catch { response.redirect(`${state.next && ["/sign-in.html", "/hf-unlock.html", "/frontier-shop.html"].includes(state.next) ? state.next : "/sign-in.html"}?status=failed`); }
   });
 
-  app.get("/api/auth/session", (request, response) => {
+  app.get("/api/auth/session", oauthSessionRateLimit, (request, response) => {
     const session = readBuddyAuthSession(request);
     if (!session) return response.json({ authenticated: false });
     response.json({ authenticated: true, provider: session.provider, profile: { subject: session.sub, email: session.email, name: session.name } });

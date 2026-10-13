@@ -116,6 +116,10 @@ after(async () => {
   if (fullServer) await new Promise<void>((resolve) => fullServer!.close(() => resolve()));
 });
 
+function escapeRegExp(value: string) {
+  return value.replace(/[\\^$.*+?()[\]{}|/-]/g, "\\$&");
+}
+
 async function call(method: string, path: string, cookie?: string, body?: unknown, root = base) {
   const url = method === "GET" && path.endsWith("/council") ? `${root}${path}?taskCategory=Coding` : `${root}${path}`;
   const response = await fetch(url, {
@@ -132,7 +136,7 @@ async function call(method: string, path: string, cookie?: string, body?: unknow
 test("routes.ts gates every model route listed in BUDDY_MODEL_ROUTES and no model route is left out", () => {
   const routes = readFileSync("server/routes.ts", "utf8");
   for (const route of BUDDY_MODEL_ROUTES) {
-    const pattern = new RegExp(`app\\.${route.method.toLowerCase()}\\("${route.path.replace(/[/.-]/g, "\\$&")}", buddyModelRouteGate\\("${route.kind}"\\)`);
+    const pattern = new RegExp(`app\\.${route.method.toLowerCase()}\\("${escapeRegExp(route.path)}", buddyModelRouteGate\\("${route.kind}"\\)`);
     assert.match(routes, pattern, `${route.method} ${route.path} is not gated as ${route.kind}`);
   }
   const listed = new Set(BUDDY_MODEL_ROUTES.map((route) => `${route.method} ${route.path}`));
