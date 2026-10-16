@@ -5,6 +5,8 @@ import { z } from "zod";
 
 import { MODEL_DISCOVERY_TASKS } from "@shared/model-benchmark-targets";
 
+import { type BuddyModelAccess, getBuddyModelAllowlist } from "./buddy-model-policy";
+
 type ProgressCatalog = {
   schema: string;
   summary: Record<string, number>;
@@ -55,16 +57,46 @@ export function getModelProgressCenter(
   return catalogCache;
 }
 
-export function selectModelCouncil(input: z.input<typeof modelCouncilRequestSchema>) {
+/**
+ * Path D: non-owner callers only see council members on config/buddy/model-allowlist.json (fail-closed:
+ * an unreadable or invalid allowlist throws). The owner also sees unlisted members, marked as needing
+ * evidence and never executable. No provider call is made either way.
+ */
+export function selectModelCouncil(
+  input: z.input<typeof modelCouncilRequestSchema>,
+  access: BuddyModelAccess = { role: "user" },
+) {
   const request = modelCouncilRequestSchema.parse(input);
   const catalog = getModelProgressCenter();
   const council = catalog.councils.find((item) => item.task === request.taskCategory && item.mode === request.mode);
   if (!council) throw new Error(`No ${request.mode} council exists for ${request.taskCategory}`);
+  const allowlist = getBuddyModelAllowlist();
+  const allowlistedIds = new Set(allowlist.entries.map((entry) => entry.targetId));
+  const isOwner = access.role === "owner";
+  const members = council.members
+    .filter((member) => isOwner || allowlistedIds.has(member.targetId))
+    .map((member) => {
+      const allowlisted = allowlistedIds.has(member.targetId);
+      return allowlisted
+        ? { ...member, allowlisted: true }
+        : {
+          ...member,
+          allowlisted: false,
+          readiness: "allowlist_evidence_required",
+          ownerReviewOnly: true,
+          executable: false,
+        };
+    });
   const paidApprovalRequired = request.mode === "premium" && !request.approvePaidModelsForThisRequest;
   return {
     schema: "dreamco.buddy_model_council_selection.v1",
     ...council,
-    memberCount: council.members.length,
+    members,
+    memberCount: members.length,
+    catalogMemberCount: council.members.length,
+    allowlistOnly: !isOwner,
+    allowlistSchema: allowlist.schema,
+    hiddenUnlistedMemberCount: isOwner ? 0 : council.members.length - members.length,
     status: paidApprovalRequired ? "paid_approval_required" : council.status,
     paidApprovalRecordedForThisRequest: request.mode === "premium" && request.approvePaidModelsForThisRequest,
     providerCallsExecuted: 0,

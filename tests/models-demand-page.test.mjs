@@ -36,3 +36,13 @@ test('all model rows expose official signup and bounded Buddy setup', () => {
   assert.match(script, /Do not ask for or store a password, raw token, API key, recovery code, or payment data/);
   assert.match(script, /Do not claim the model is live until the exact model probe passes/);
 });
+
+test('Models page shows a sign-in notice on gated 401 and keeps the local fallback', () => {
+  assert.match(html, /id=["']model-live-auth-notice["']/);
+  assert.match(html, /Sign in to see live model data/);
+  assert.match(html, /href=["']sign-in\.html["']/);
+  assert.match(script, /response\.status === 401/);
+  assert.match(script, /showModelLiveAuthNotice/);
+  assert.match(script, /model-live-auth-notice/);
+  assert.doesNotMatch(script, /console\.(error|warn|log).*401/);
+});
