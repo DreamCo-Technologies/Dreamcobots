@@ -3332,7 +3332,7 @@ Any improvements or fixes (optional, 1-2 bullet points max)`;
     });
     if (!parsed.success) return res.status(400).json(zodValidationError(parsed.error));
     try {
-      return res.json(selectModelCouncil(parsed.data));
+      return res.json(selectModelCouncil(parsed.data, buddyModelAccessFrom(res)));
     } catch (error) {
       return res.status(400).json({ error: error instanceof Error ? error.message : "Invalid model council" });
     }

@@ -6,6 +6,7 @@ import {
   getModelProgressCenter,
   selectModelCouncil,
 } from "../server/model-progress-policy";
+import { getBuddyModelAllowlist } from "../server/buddy-model-policy";
 
 test("all 500 model targets have categorized source and setup records", () => {
   const catalog = getModelProgressCenter();
@@ -39,7 +40,7 @@ test("premium council pauses before a paid provider call", () => {
     taskCategory: "Coding",
     mode: "premium",
     approvePaidModelsForThisRequest: false,
-  });
+  }, { role: "owner" });
   assert.equal(selection.memberCount, 20);
   assert.equal(selection.status, "paid_approval_required");
   assert.equal(selection.providerCallsExecuted, 0);
@@ -70,4 +71,49 @@ test("50 dataset packages are empty rights-gated templates", () => {
   assert.ok(catalog.datasetPackages.every((item: any) => item.recordsIncluded === 0));
   assert.ok(catalog.datasetPackages.every((item: any) => item.sellableVerified === false));
   assert.ok(catalog.datasetPackages.every((item: any) => item.blockedInputs.includes("private conversations")));
+});
+
+test("non-owner council members are limited to the Path D allowlist", () => {
+  const allowlisted = new Set(getBuddyModelAllowlist().entries.map((entry) => entry.targetId));
+  const catalog = getModelProgressCenter();
+  for (const council of catalog.councils) {
+    for (const access of [undefined, { role: "user" as const }]) {
+      const selection = selectModelCouncil({ taskCategory: council.task, mode: council.mode }, access);
+      assert.ok(selection.members.every((member) => allowlisted.has(member.targetId)), `${council.id} leaked an unlisted member`);
+      assert.ok(selection.members.every((member) => member.allowlisted === true));
+      assert.equal(selection.memberCount, selection.members.length);
+      assert.equal(selection.catalogMemberCount, council.members.length);
+      assert.equal(selection.hiddenUnlistedMemberCount, council.members.length - selection.members.length);
+      assert.equal(selection.allowlistOnly, true);
+      assert.equal(selection.providerCallsExecuted, 0);
+    }
+  }
+  const coding = selectModelCouncil({ taskCategory: "Coding", mode: "free" });
+  assert.ok(coding.members.some((member) => member.targetId === 14), "Buddy Native should remain visible");
+  assert.ok(coding.hiddenUnlistedMemberCount > 0);
+});
+
+test("owner sees unlisted council members marked as needing evidence and never executable", () => {
+  const allowlisted = new Set(getBuddyModelAllowlist().entries.map((entry) => entry.targetId));
+  const selection = selectModelCouncil({ taskCategory: "Coding", mode: "free" }, { role: "owner" });
+  assert.equal(selection.memberCount, 20);
+  assert.equal(selection.allowlistOnly, false);
+  assert.equal(selection.hiddenUnlistedMemberCount, 0);
+  const unlisted = selection.members.filter((member) => !allowlisted.has(member.targetId));
+  assert.ok(unlisted.length > 0);
+  for (const member of unlisted) {
+    assert.equal(member.allowlisted, false);
+    assert.equal(member.readiness, "allowlist_evidence_required");
+    assert.equal((member as Record<string, unknown>).executable, false);
+    assert.equal((member as Record<string, unknown>).ownerReviewOnly, true);
+  }
+  assert.equal(selection.providerCallsExecuted, 0);
+  assert.equal(selection.liveQualityClaimed, false);
+});
+
+test("premium council still requires per-request paid approval after allowlist filtering", () => {
+  const selection = selectModelCouncil({ taskCategory: "Coding", mode: "premium", approvePaidModelsForThisRequest: false });
+  assert.equal(selection.status, "paid_approval_required");
+  assert.equal(selection.paidApprovalRecordedForThisRequest, false);
+  assert.equal(selection.providerCallsExecuted, 0);
 });

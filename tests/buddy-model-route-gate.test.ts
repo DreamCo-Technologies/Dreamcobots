@@ -247,6 +247,22 @@ test("full server/routes.ts boot: every model route rejects an unauthenticated c
   }
 });
 
+test("full server/routes.ts boot: council route filters members to the allowlist for non-owners", { skip: fullBootError ? `server/routes.ts cannot be imported on this base commit: ${fullBootError}` : false }, async () => {
+  const allowlisted = new Set(getBuddyModelAllowlist().entries.map((entry) => entry.targetId));
+  const user = await call("GET", "/api/buddy/models/council", USER, undefined, fullBase);
+  assert.equal(user.status, 200);
+  assert.ok(user.json.members.length > 0);
+  assert.ok(user.json.members.every((member: { targetId: number }) => allowlisted.has(member.targetId)));
+  assert.equal(user.json.allowlistOnly, true);
+  assert.equal(user.json.providerCallsExecuted, 0);
+  const owner = await call("GET", "/api/buddy/models/council", OWNER, undefined, fullBase);
+  assert.equal(owner.status, 200);
+  assert.equal(owner.json.allowlistOnly, false);
+  const unlisted = owner.json.members.filter((member: { targetId: number }) => !allowlisted.has(member.targetId));
+  assert.ok(unlisted.length > 0);
+  assert.ok(unlisted.every((member: { readiness: string; executable: boolean }) => member.readiness === "allowlist_evidence_required" && member.executable === false));
+});
+
 test("BUDDY_MODEL_OWNER_SUBJECTS unset means no owners; discovery stays closed", () => {
   assert.equal(buddyModelOwnerSubjects({}).size, 0);
   assert.equal(buddyModelOwnerSubjects({ BUDDY_MODEL_OWNER_SUBJECTS: "" }).size, 0);
