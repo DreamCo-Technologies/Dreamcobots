@@ -58,39 +58,44 @@ def scan_python_imports(files: list[Path]) -> tuple[set[str], list[str]]:
         except SyntaxError as error:
             syntax_errors.append(f"{relative}:{error.lineno}: {error.msg}")
             continue
-        optional_imports: set[str] = set()
-        file_imports: set[str] = set()
+
+        # Imports inside the guarded try body are optional. Imports in the
+        # handler, else, finally, or elsewhere in the file are still required.
+        optional_nodes: set[int] = set()
         for node in ast.walk(tree):
-            if isinstance(node, ast.Try):
-                handles_optional_import = any(
-                    (
-                        handler.type is None
-                        or (
-                            isinstance(handler.type, ast.Name)
-                            and handler.type.id in {"ImportError", "ModuleNotFoundError"}
-                        )
-                        or (
-                            isinstance(handler.type, ast.Tuple)
-                            and any(
-                                isinstance(element, ast.Name)
-                                and element.id in {"ImportError", "ModuleNotFoundError"}
-                                for element in handler.type.elts
-                            )
+            if not isinstance(node, ast.Try):
+                continue
+            handles_optional_import = any(
+                (
+                    handler.type is None
+                    or (
+                        isinstance(handler.type, ast.Name)
+                        and handler.type.id in {"ImportError", "ModuleNotFoundError"}
+                    )
+                    or (
+                        isinstance(handler.type, ast.Tuple)
+                        and any(
+                            isinstance(element, ast.Name)
+                            and element.id in {"ImportError", "ModuleNotFoundError"}
+                            for element in handler.type.elts
                         )
                     )
-                    for handler in node.handlers
                 )
-                if handles_optional_import:
-                    for body_node in ast.walk(node):
-                        if isinstance(body_node, ast.Import):
-                            optional_imports.update(alias.name.split(".")[0] for alias in body_node.names)
-                        elif isinstance(body_node, ast.ImportFrom) and body_node.level == 0 and body_node.module:
-                            optional_imports.add(body_node.module.split(".")[0])
+                for handler in node.handlers
+            )
+            if handles_optional_import:
+                for statement in node.body:
+                    for guarded in ast.walk(statement):
+                        if isinstance(guarded, (ast.Import, ast.ImportFrom)):
+                            optional_nodes.add(id(guarded))
+
+        for node in ast.walk(tree):
+            if id(node) in optional_nodes:
+                continue
             if isinstance(node, ast.Import):
-                file_imports.update(alias.name.split(".")[0] for alias in node.names)
+                imports.update(alias.name.split(".")[0] for alias in node.names)
             elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
-                file_imports.add(node.module.split(".")[0])
-        imports.update(file_imports - optional_imports)
+                imports.add(node.module.split(".")[0])
     return imports, syntax_errors
 
 
