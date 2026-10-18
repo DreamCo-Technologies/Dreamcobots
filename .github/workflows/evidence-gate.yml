@@ -15,7 +15,8 @@ jobs:
       - uses: actions/checkout@v7
       - name: Run the fail-closed evidence gate
         run: |
-          python3 -m unittest buddy.builder.evidence_gate_test
+          python3 -m unittest discover -s tests -p 'test_buddy_os_evidence_gate.py'
+          python3 -m unittest discover -s tests -p 'test_promotion_gate_finite_evidence.py'
           python3 buddy/builder/promotion_gate.py
           python3 buddy/builder/model_selection.py
           python3 buddy/builder/division_audit.py
