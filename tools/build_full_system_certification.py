@@ -12,6 +12,20 @@ REPORT=ROOT/'reports/FULL_SYSTEM_OPERATIONAL_CERTIFICATION.md'
 SOURCES={
  'verification':ROOT/'tmp/dreamco-verification/latest.json','speed_accuracy':ROOT/'config/generated/system-speed-accuracy-benchmarks.json','runtime_smoke':ROOT/'config/generated/production-runtime-smoke.json','connections':ROOT/'config/generated/runtime-connection-readiness.json','repository_connections':ROOT/'config/generated/repository-system-connections.json','code_trust':ROOT/'config/generated/trusted-code-delivery-audit.json','bot_accounting':ROOT/'config/generated/bot-accounting-placement-audit.json','legacy_recovery':ROOT/'config/generated/legacy-bot-recovery-manifest.json','unified_bots':ROOT/'config/generated/unified-bot-system.json','maximum_sandbox':ROOT/'config/generated/maximum-sandbox-matrix.json','sandbox_runtime':ROOT/'config/generated/maximum-sandbox-runtime-audit.json','ontology':ROOT/'config/generated/dreamco-ontology-snapshot.json','work_benchmarks':ROOT/'config/generated/work-platform-benchmark-backlog.json','manufacturing':ROOT/'config/generated/manufacturing-productivity-benchmarks.json','universal_benchmark':ROOT/'config/generated/universal-capability-benchmark.json','business_benchmarks':ROOT/'config/generated/business-lifecycle-benchmarks.json','creative_benchmarks':ROOT/'config/generated/creative-studio-mastery-benchmarks.json','government_benchmarks':ROOT/'config/generated/government-public-sector-benchmarks.json','benchmark_gap_registry':ROOT/'config/generated/parallel-benchmark-gap-registry.json','value_discovery':ROOT/'config/generated/continuous-value-discovery-backlog.json'}
 def load(path): return json.loads(path.read_text()) if path.exists() else {}
+
+def has_work_benchmark_backlog(evidence: object) -> bool:
+    # Backlog creation is not benchmark execution or a mastery result.
+    if not isinstance(evidence, dict) or evidence.get('status') != 'generated':
+        return False
+    count = evidence.get('benchmark_case_count')
+    task_count = evidence.get('task_count')
+    cases = evidence.get('cases')
+    return (
+        type(count) is int and count > 0
+        and type(task_count) is int and task_count > 0
+        and isinstance(cases, list) and len(cases) == count
+    )
+
 def main()->int:
     program=json.loads(PROGRAM.read_text()); docs={n:load(p) for n,p in SOURCES.items()}; blockers=[f'missing evidence:{n}' for n,p in SOURCES.items() if not p.exists()]
     d=docs
@@ -28,7 +42,7 @@ def main()->int:
       'ontology_snapshot':d['ontology'].get('object_count',0)>0 and d['ontology'].get('link_count',0)>0,
       'runtime_connection_truth':d['connections'].get('connection_count',0)>=0,
       'repository_connection_integrity':d['repository_connections'].get('ok') is True,
-      'work_platform_benchmarks':d['work_benchmarks'].get('status') in {'generated','work_catalog_missing'},
+      'work_platform_benchmarks':has_work_benchmark_backlog(d['work_benchmarks']),
       'manufacturing_productivity_benchmarks':d['manufacturing'].get('benchmark_case_count',0)>0,
       'universal_human_computer_ai_benchmark':d['universal_benchmark'].get('case_count',0)>0,
       'business_lifecycle_benchmarks':d['business_benchmarks'].get('case_count',0)>0,
