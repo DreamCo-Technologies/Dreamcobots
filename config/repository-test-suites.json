@@ -8,6 +8,29 @@
   },
   "suites": [
     {
+      "id": "human-reviewed-evaluation",
+      "name": "Human-reviewed general intelligence evaluation",
+      "area": "Benchmarks and governance",
+      "level": "local_contract",
+      "scripts": [
+        "buddy:general-intelligence",
+        "test:general-intelligence"
+      ],
+      "sources": [
+        "buddy_os/evaluation",
+        "config/general-intelligence",
+        "tools/general_intelligence.py",
+        "tools/general_intelligence_bridge.py",
+        "website/general-intelligence.html"
+      ],
+      "tests": [
+        "tests/test_general_intelligence.py",
+        "tests/general-intelligence-page.test.mjs",
+        "tests/general-intelligence-browser.test.mjs"
+      ],
+      "boundary": "Tests approval and evaluation controls. Does not certify model capability, execute live providers or grant AGI claims."
+    },
+    {
       "id": "repository-contracts",
       "name": "Repository contracts",
       "area": "Repository",

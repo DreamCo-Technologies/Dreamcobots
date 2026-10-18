@@ -1,5 +1,9 @@
 {
   "$schema":"dreamco.agi_capability_policy.v1",
+  "human_review_framework":"config/general-intelligence/framework.json",
+  "automatic_agi_claim":false,
+  "automatic_frontier_claim":false,
+  "marketing_claim_gate":"Authenticated human review of exact claim text and evidence hash through buddy_os/evaluation/review.py; passing benchmark gates alone never authorizes a claim.",
   "target":"agi_like_capability_not_agi_claim",
   "cognitive_loop":["perceive","understand","retrieve","plan","decompose","select_tools","act_safely","observe","verify","reflect","learn","replan"],
   "memory_requirements":["working_context","episodic_task_memory","validated_domain_knowledge","shared_organizational_knowledge","provenance_audit"],

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Buddy · Human-Reviewed Evaluation</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="general-intelligence.css">
+</head>
+<body>
+<div id="nav-placeholder"></div><script src="nav.js"></script>
+<main class="container gi-main">
+  <p class="gi-eyebrow">BUDDY / EVIDENCE & HUMAN REVIEW</p>
+  <h1>General intelligence evaluation</h1>
+  <p>See what was tested, what the evidence supports, and where a person must decide.</p>
+  <p id="gi-status" role="status">Loading evidence. No capability claim is available.</p>
+  <p class="gi-boundary">No automatic AGI or frontier claim. Repository checks verify controls; model capabilities need separate runtime evidence and human review.</p>
+  <nav id="gi-sections" aria-label="Evaluation sections"></nav>
+  <section id="capability-matrix"><h2>Capability Matrix</h2><p>Verified means the pinned evaluation evidence passed validation. Reviewed additionally requires an authenticated human review of that evidence.</p><label>Filter capabilities <input id="gi-filter" type="search" placeholder="Reasoning, coding, memory…"></label><div class="gi-scroll"><table><thead><tr><th>Capability</th><th>Status</th><th>Evidence gap</th></tr></thead><tbody id="gi-matrix"></tbody></table></div></section>
+  <section id="human-review-queue"><h2>Human Review Queue</h2><p id="gi-review-status">Private queue unavailable. Open the local Buddy review console to review actions. GitHub Pages cannot approve actions.</p><button id="gi-refresh" disabled>Refresh private queue</button><div id="gi-queue"></div><details><summary>Review console setup</summary><p>On the owner’s computer, run <code>python3 tools/buddy_cli.py local-start --review-console</code>. Use its local review session; keep the reviewer credential private.</p></details></section>
+  <section id="general-intelligence-benchmarks"><h2>General Intelligence Benchmarks</h2><div id="gi-benchmarks"></div><h3>Autonomy boundaries</h3><div id="gi-autonomy"></div></section>
+  <section id="transfer-tests"><h2>Transfer Tests</h2><p id="gi-transfer">Untested. Novel families, cross-domain tasks and training-disjoint holdouts are required.</p></section>
+  <section id="red-team-results"><h2>Red-Team Results</h2><div id="gi-red-team"></div></section>
+  <section id="long-horizon-tasks"><h2>Long-Horizon Tasks</h2><p id="gi-horizon">No published runtime evidence. Local checkpoints record recovery, rollback and intervention.</p></section>
+  <section id="calibration"><h2>Calibration</h2><div id="gi-calibration"></div></section>
+  <section id="human-intervention-rate"><h2>Human Intervention Rate</h2><div id="gi-interventions"></div></section>
+  <section id="safety-approval-logs"><h2>Safety/Approval Logs</h2><p>Local append-only audit records are private. Empty public data does not mean zero interventions.</p><div id="gi-audit"></div></section>
+  <section id="distillation-lessons"><h2>Distillation Lessons</h2><div id="gi-lessons"></div></section>
+  <section id="model-policy-promotion-history"><h2>Model/Policy Promotion History</h2><div id="gi-promotions"></div><p>Model, policy, router and retrieval revisions are reviewed together. Orchestration does not modify proprietary weights.</p></section>
+  <section id="evidence-ledger"><h2>Evidence Ledger</h2><p><a href="data/general-intelligence.json">Public evidence data</a> · <a href="data/general-intelligence-manifest.json">Page manifest</a> · <a href="benchmarks.html">Existing benchmark catalog</a> · <a href="fleet-runtime.html">Fleet certification</a> · <a href="buddy-operating-system.html">Buddy OS</a></p><div id="gi-ledger"></div></section>
+</main><script src="general-intelligence.js"></script>
+</body></html>
