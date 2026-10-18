@@ -66,6 +66,12 @@
     byId('model-source-summary').textContent = `${Number(data.summary.sourceLinked || 0).toLocaleString()} of ${targets.length.toLocaleString()} targets have an official or owner-controlled source, and ${Number(data.summary.setupPathsReady || 0).toLocaleString()} have a secure setup path. ${Number(data.summary.liveConnected || 0).toLocaleString()} have passed an exact-model live connection probe.`;
   }
 
+  function showModelLiveAuthNotice() {
+    const notice = byId('model-live-auth-notice');
+    if (!notice || !notice.hidden) return;
+    notice.hidden = false;
+  }
+
   async function hydrateBackendConnectionState() {
     const configuredBase = typeof window.BUDDY_BACKEND_API_BASE === 'string'
       ? window.BUDDY_BACKEND_API_BASE.trim()
@@ -75,7 +81,12 @@
     if (!backendBase) return;
     try {
       const endpoint = new URL('/api/buddy/models/connections', backendBase).toString();
-      const response = await fetch(endpoint, { headers: { Accept: 'application/json' } });
+      const response = await fetch(endpoint, { headers: { Accept: 'application/json' }, credentials: 'same-origin' });
+      // Keep the local catalog fallback; only surface a clear sign-in notice on 401.
+      if (response.status === 401) {
+        showModelLiveAuthNotice();
+        return;
+      }
       if (!response.ok || !String(response.headers.get('content-type') || '').includes('application/json')) return;
       const audit = await response.json();
       const summary = audit.summary || {};
@@ -83,6 +94,8 @@
       byId('model-credential-state').textContent = `${Number(summary.credentialConfiguredTargets || 0).toLocaleString()} target routes configured`;
       byId('model-probe-state').textContent = `${Number(summary.liveVerifiedTargets || 0).toLocaleString()} passed`;
       byId('model-source-summary').textContent = `${Number(summary.sourceLinkedTargets || 0).toLocaleString()} of ${Number(summary.targets || 0).toLocaleString()} targets have a governed source; ${Number(summary.setupPathTargets || 0).toLocaleString()} have setup paths; ${Number(summary.connectorContractTargets || 0).toLocaleString()} have connector or handoff contracts. Live status still requires an exact-model probe.`;
+      const notice = byId('model-live-auth-notice');
+      if (notice) notice.hidden = true;
     } catch (_) {
       // Static hosting intentionally falls back to the generated public manifest.
     }

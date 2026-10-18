@@ -1,0 +1,76 @@
+{
+  "schema": "dreamco.buddy_model_allowlist.v1",
+  "_comment": "Path D allowlist. Normal (non-owner) callers of Buddy model selection only ever receive targets listed here. Every entry MUST cite Path A benchmark evidence (a live_benchmark_ok slot with provider+model id, fixture hash, response hash, latency, cost, grader version, UTC timestamp) or Path B adapter evidence (the backing connector in config/buddy-model-router.json is local_ready or adapter_implemented and its adapter passes sandbox tests). Being listed is NOT a live or quality claim: readiness, per-request paid approval, and providerCallExecuted=false still apply. Add entries only by reviewed PR.",
+  "default_policy": "deny_unlisted",
+  "evidence_paths": {
+    "A": "Path A benchmark evidence: live_benchmark_ok slot in config/buddy/500-model-registry.json with full signed evidence.",
+    "B": "Path B adapter evidence: backing connector implementation_status is local_ready or adapter_implemented in config/buddy-model-router.json."
+  },
+  "entries": [
+    {
+      "targetId": 14,
+      "name": "Buddy Native",
+      "provider": "DreamCo",
+      "connectorId": "buddy_native",
+      "evidence": {
+        "path": "B",
+        "connectorImplementationStatus": "local_ready",
+        "source": "config/buddy-model-router.json connectors[id=buddy_native]",
+        "note": "Local planner; no provider call or charge.",
+        "evidenceScope": "connector_and_target"
+      }
+    },
+    {
+      "targetId": 1,
+      "name": "GPT-4o",
+      "provider": "OpenAI",
+      "connectorId": "openai",
+      "evidence": {
+        "path": "B",
+        "connectorImplementationStatus": "adapter_implemented",
+        "source": "config/buddy-model-router.json connectors[id=openai]; server/provider_integrations/chat",
+        "note": "Connector-level Path B evidence only: server/provider_integrations/chat is wired to gpt-5.1, not this catalog target's exact model id. Exact provider model id not recorded, so readiness can never be executable from this entry alone.",
+        "evidenceScope": "connector_only"
+      }
+    },
+    {
+      "targetId": 2,
+      "name": "GPT-4.5",
+      "provider": "OpenAI",
+      "connectorId": "openai",
+      "evidence": {
+        "path": "B",
+        "connectorImplementationStatus": "adapter_implemented",
+        "source": "config/buddy-model-router.json connectors[id=openai]; server/provider_integrations/chat",
+        "note": "Connector-level Path B evidence only: server/provider_integrations/chat is wired to gpt-5.1, not this catalog target's exact model id. Paid tier; per-request approval required. Exact provider model id not recorded, so readiness can never be executable from this entry alone.",
+        "evidenceScope": "connector_only"
+      }
+    },
+    {
+      "targetId": 26,
+      "name": "DALL-E 3",
+      "provider": "OpenAI",
+      "connectorId": "openai",
+      "evidence": {
+        "path": "B",
+        "connectorImplementationStatus": "adapter_implemented",
+        "source": "config/buddy-model-router.json connectors[id=openai]; server/provider_integrations/image",
+        "note": "Connector-level Path B evidence only: server/provider_integrations/image is wired to gpt-image-1, not this catalog target's exact model id. Exact provider model id not recorded, so readiness can never be executable from this entry alone.",
+        "evidenceScope": "connector_only"
+      }
+    },
+    {
+      "targetId": 33,
+      "name": "Whisper",
+      "provider": "OpenAI",
+      "connectorId": "openai",
+      "evidence": {
+        "path": "B",
+        "connectorImplementationStatus": "adapter_implemented",
+        "source": "config/buddy-model-router.json connectors[id=openai]; server/provider_integrations/audio",
+        "note": "Connector-level Path B evidence only: server/provider_integrations/audio is wired to gpt-audio / gpt-4o-mini-transcribe, not this catalog target's exact model id. Exact provider model id not recorded, so readiness can never be executable from this entry alone.",
+        "evidenceScope": "connector_only"
+      }
+    }
+  ]
+}
