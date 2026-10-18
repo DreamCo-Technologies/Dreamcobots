@@ -31,6 +31,7 @@ def contract(definition, source):
 
 def build(root=ROOT):
     entries=[]
+    registered_ids=set()
     for path in sorted((root / 'config').rglob('*.json')):
         if 'generated' in path.relative_to(root).parts:
             continue
@@ -40,16 +41,21 @@ def build(root=ROOT):
         for key in ('suites', 'benchmark_suites', 'domains'):
             if key != 'suites' and 'benchmark' not in path.name:
                 continue
-            rows=doc.get(key)
-            if not isinstance(rows, list):
+            if key not in doc:
                 continue
+            rows=doc[key]
+            if not isinstance(rows, list):
+                raise ValueError(f'Benchmark suite {key} must be a list in {path.relative_to(root)}')
             source=path.relative_to(root).as_posix()
             seen=set()
             for row in rows:
                 identity=str(row.get('id') or row.get('name') or '') if isinstance(row, dict) else str(row)
-                if not identity or identity in seen:
-                    raise ValueError(f'Missing or duplicate suite identity in {source}')
+                if not identity.strip():
+                    raise ValueError(f'Missing or blank suite identity in {source}')
+                if identity in seen or identity in registered_ids:
+                    raise ValueError(f'duplicate suite identity {identity!r} in {source}')
                 seen.add(identity)
+                registered_ids.add(identity)
                 entries.append({'suite_id': identity, 'source_array':key, **contract(row,source)})
     return {'schema':'dreamco.benchmark_suite_gap_contracts.v1','count':len(entries),'entries':entries}
 
