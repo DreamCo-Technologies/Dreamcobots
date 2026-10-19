@@ -1,0 +1,76 @@
+"""Fail-closed benchmark planner tests; no paid/network services."""
+import importlib.util
+import unittest
+from pathlib import Path
+
+SCRIPT = Path(__file__).resolve().parents[1] / "tools/benchmark_gap_planner.py"
+spec = importlib.util.spec_from_file_location("benchmark_gap_planner", SCRIPT)
+planner = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(planner)
+
+REGISTRY = {"divisions": [{"name": f"Division{i}", "id": i} for i in range(1, 66)]}
+
+
+def measure(score, **kw):
+    return {"division": "Division1", "benchmark": "contract", "score": score, "target": 100, "status": "failed", **kw}
+
+
+class PlannerIntegrityTests(unittest.TestCase):
+    def test_valid_gap_is_queued_for_repair(self):
+        output = planner.build_queue({"results": [measure(70)]}, REGISTRY)
+        self.assertTrue(output["complete"])
+        self.assertEqual(output["queue"][0]["action"], "RUN_BENCHMARKS")
+        self.assertEqual(next(row for row in output["queue"] if row["division"] == 1)["action"], "CLOSE_GAPS")
+
+    def test_zero_score_remains_real_gap(self):
+        output = planner.build_queue({"results": [measure(0)]}, REGISTRY)
+        self.assertEqual(next(row for row in output["queue"] if row["division"] == 1)["action"], "CLOSE_GAPS")
+
+    def test_nan_rejected_not_treated_as_at_target(self):
+        output = planner.build_queue({"results": [measure(float("nan"))]}, REGISTRY)
+        self.assertFalse(output["complete"])
+        self.assertEqual(next(row for row in output["queue"] if row["division"] == 1)["action"], "RUN_BENCHMARKS")
+
+    def test_infinity_rejected(self):
+        output = planner.build_queue({"results": [measure(float("inf"))]}, REGISTRY)
+        self.assertEqual(len(output["rejected"]), 1)
+
+    def test_boolean_score_rejected(self):
+        output = planner.build_queue({"results": [measure(True)]}, REGISTRY)
+        self.assertFalse(output["complete"])
+
+    def test_nonnumeric_score_rejected(self):
+        output = planner.build_queue({"results": [measure("100")]}, REGISTRY)
+        self.assertFalse(output["complete"])
+
+    def test_malformed_results_list_rejected(self):
+        with self.assertRaises(ValueError):
+            planner.build_queue({"results": {"division": "Division1"}}, REGISTRY)
+
+    def test_duplicate_measurements_not_silently_accepted(self):
+        output = planner.build_queue({"results": [measure(80), measure(100)]}, REGISTRY)
+        self.assertFalse(output["complete"])
+        self.assertIn("duplicate", output["rejected"][0]["reason"])
+
+    def test_invalid_duplicate_does_not_hide_valid_measurement(self):
+        output = planner.build_queue({"results": [measure(float("nan")), measure(70)]}, REGISTRY)
+        self.assertFalse(output["complete"])
+        self.assertEqual(len(output["rejected"]), 1)
+        self.assertEqual(next(row for row in output["queue"] if row["division"] == 1)["action"], "CLOSE_GAPS")
+
+    def test_missing_measurement_remains_unmeasured(self):
+        output = planner.build_queue({"results": [{"division": "Division1", "benchmark": "contract"}]}, REGISTRY)
+        self.assertEqual(next(row for row in output["queue"] if row["division"] == 1)["action"], "RUN_BENCHMARKS")
+
+    def test_bad_registry_rejected(self):
+        with self.assertRaises(ValueError):
+            planner.build_queue({"results": []}, {"divisions": [{"name": "OnlyOne", "id": 1}]})
+
+    def test_unknown_division_not_discarded_silently(self):
+        output = planner.build_queue({"results": [{"division": "Unknown", "benchmark": "contract", "score": 100, "target": 100}]}, REGISTRY)
+        self.assertFalse(output["complete"])
+        self.assertEqual(len(output["rejected"]), 1)
+
+
+if __name__ == "__main__":
+    unittest.main()

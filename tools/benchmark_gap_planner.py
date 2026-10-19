@@ -1,42 +1,112 @@
 #!/usr/bin/env python3
-"""Create a deterministic next-work queue for all 65 MasterBots.
+"""Build an evidence-preserving 65-division benchmark work queue.
 
-Input may be a JSON scorecard with entries containing division, benchmark,
-score, target, status, and evidence_count. Missing measurements are queued for
-measurement rather than treated as failures or successes.
+Invalid or untrusted measurements are never treated as passing. This planner
+is not a benchmark executor or a mastery certifier.
 """
 from __future__ import annotations
-import argparse,json
+
+import argparse
+import json
+import math
 from pathlib import Path
 
+
+def finite_score(value):
+    return type(value) in (int, float) and math.isfinite(value)
+
+
+def build_queue(data, registry):
+    if not isinstance(data, dict):
+        raise ValueError("scorecard must be an object")
+    results = data.get("results", data.get("divisionResults", []))
+    if not isinstance(results, list):
+        raise ValueError("results must be a list")
+    if not isinstance(registry, dict) or not isinstance(registry.get("divisions"), list):
+        raise ValueError("canonical division registry is malformed")
+    names = {}
+    ids = set()
+    for entry in registry["divisions"]:
+        if (not isinstance(entry, dict) or not isinstance(entry.get("name"), str)
+                or type(entry.get("id")) is not int or entry["id"] in ids
+                or entry["name"] in names):
+            raise ValueError("canonical division registry contains invalid or duplicate identities")
+        names[entry["name"]] = entry["id"]
+        ids.add(entry["id"])
+    if ids != set(range(1, 66)):
+        raise ValueError("canonical division registry must contain exactly IDs 1..65")
+
+    by = {}
+    rejected = []
+    seen = set()
+    for index, record in enumerate(results):
+        if not isinstance(record, dict):
+            rejected.append({"index": index, "reason": "measurement must be an object"})
+            continue
+        value = record.get("division_id", record.get("division"))
+        division = names.get(value) if isinstance(value, str) else value
+        if isinstance(division, str) and division.isdigit():
+            division = int(division)
+        if type(division) is not int or division not in ids:
+            rejected.append({"index": index, "division": value, "reason": "unknown division identity"})
+            continue
+        benchmark = record.get("benchmark", "buddy-division-contract")
+        if not isinstance(benchmark, str) or not benchmark.strip():
+            rejected.append({"index": index, "division": value, "reason": "invalid benchmark identity"})
+            continue
+        identity = (division, benchmark)
+        if identity in seen:
+            rejected.append({"index": index, "division": value, "benchmark": benchmark, "reason": "duplicate measurement identity"})
+            continue
+        score, target = record.get("score"), record.get("target")
+        if score is not None and not finite_score(score):
+            rejected.append({"index": index, "division": value, "benchmark": benchmark, "reason": "non-finite or nonnumeric score"})
+            continue
+        if target is not None and not finite_score(target):
+            rejected.append({"index": index, "division": value, "benchmark": benchmark, "reason": "non-finite or nonnumeric target"})
+            continue
+        seen.add(identity)
+        by.setdefault(division, []).append(record)
+
+    queue = []
+    for division in range(1, 66):
+        records = by.get(division, [])
+        if not records:
+            queue.append({"division": division, "priority": 0, "action": "RUN_BENCHMARKS", "reason": "no valid measured evidence"})
+            continue
+        for record in records:
+            score, target = record.get("score"), record.get("target")
+            if score is None or target is None:
+                priority, action, reason = 0, "RUN_BENCHMARKS", "incomplete measurement"
+            elif score < target:
+                gap = target - score
+                priority = 1 if record.get("status") == "failed" else 2
+                action, reason = "CLOSE_GAPS", f"gap={gap:g}"
+            else:
+                priority = 3
+                action = "RETEST_FAILURES" if record.get("status") == "regression" else "RUN_SANDBOX"
+                reason = "at/above target; verify repeatability"
+            queue.append({"division": division, "benchmark": record.get("benchmark"), "priority": priority, "action": action, "reason": reason})
+    queue.sort(key=lambda item: (item["priority"], item["division"], item.get("benchmark") or ""))
+    return {"rejected": rejected, "complete": not rejected, "schema": "dreamco.benchmark_gap_queue.v1", "divisions": 65,
+            "queue": queue, "measurement_policy": "unknown is not failure", "mastery_policy": "repeatable evidence required"}
+
+
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument("--scores",default="benchmark-scores.json"); ap.add_argument("--out",default="benchmark-gap-queue.json"); a=ap.parse_args()
-    p=Path(a.scores); data=json.loads(p.read_text()) if p.exists() else {"results":[]}
-    registry=json.loads((Path(__file__).resolve().parents[1]/"config/masterbot-65-registry.json").read_text())
-    names={r["name"]:r["id"] for r in registry["divisions"]}
-    valid_ids=set(names.values())
-    results=data.get("results", data.get("divisionResults", [])); by={}; rejected=[]
-    for r in results:
-        value=r.get("division_id", r.get("division"))
-        d=names.get(value) if isinstance(value,str) else value
-        if isinstance(d,str) and d.isdigit(): d=int(d)
-        if type(d) is not int or d not in valid_ids:
-            rejected.append({"division":value,"reason":"unknown division identity"}); continue
-        by.setdefault(d,[]).append(r)
-    queue=[]
-    for d in range(1,66):
-        rs=by.get(d,[])
-        if not rs: queue.append({"division":d,"priority":0,"action":"RUN_BENCHMARKS","reason":"no measured evidence"}); continue
-        for r in rs:
-            score=r.get("score"); target=r.get("target")
-            if score is None or target is None: priority=0; action="RUN_BENCHMARKS"; reason="incomplete measurement"
-            elif float(score)<float(target):
-                gap=float(target)-float(score); priority=1 if r.get("status")=="failed" else 2; action="CLOSE_GAPS"; reason=f"gap={gap:g}"
-            else: priority=3; action="RETEST_FAILURES" if r.get("status")=="regression" else "RUN_SANDBOX"; reason="at/above target; verify repeatability"
-            queue.append({"division":d,"benchmark":r.get("benchmark"),"priority":priority,"action":action,"reason":reason})
-    queue.sort(key=lambda x:(x["priority"],x["division"],x.get("benchmark") or ""))
-    out={"rejected":rejected,"complete":not rejected,"schema":"dreamco.benchmark_gap_queue.v1","divisions":65,"queue":queue,"measurement_policy":"unknown is not failure","mastery_policy":"repeatable evidence required"}
-    Path(a.out).write_text(json.dumps(out,indent=2)+"\n")
-    print(json.dumps({"divisions":65,"queue_items":len(queue),"unmeasured_divisions":sum(not by.get(d) for d in range(1,66))},indent=2))
-    return 2 if rejected else 0
-if __name__=="__main__": raise SystemExit(main())
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--scores", default="benchmark-scores.json")
+    parser.add_argument("--out", default="benchmark-gap-queue.json")
+    args = parser.parse_args()
+    source = Path(args.scores)
+    data = json.loads(source.read_text()) if source.exists() else {"results": []}
+    registry = json.loads((Path(__file__).resolve().parents[1] / "config/masterbot-65-registry.json").read_text())
+    result = build_queue(data, registry)
+    Path(args.out).write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps({"divisions": 65, "queue_items": len(result["queue"]),
+                      "unmeasured_divisions": sum(row["action"] == "RUN_BENCHMARKS" for row in result["queue"]),
+                      "rejected": len(result["rejected"])}, indent=2))
+    return 2 if result["rejected"] else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
