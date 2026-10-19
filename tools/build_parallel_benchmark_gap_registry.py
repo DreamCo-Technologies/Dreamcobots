@@ -20,39 +20,53 @@ def case_id(row:dict,index:int,source:str)->str:
     return f'{Path(source).stem}:{stable(str(label))}'
 
 def main()->int:
-    entries=[]; seen=set(); sources=[]
+    entries=[]; seen=set(); sources=[]; errors=[]; placeholders=0
     for path in sorted(GEN.glob('*.json')):
         if 'benchmark' not in path.name.lower(): continue
         if path.name=='parallel-benchmark-gap-registry.json': continue
-        try: doc=json.loads(path.read_text())
-        except Exception: continue
         source=str(path.relative_to(ROOT)); sources.append(source)
+        try:
+            doc=json.loads(path.read_text())
+        except (OSError, ValueError) as exc:
+            errors.append(f'{source}: invalid JSON or unreadable artifact ({type(exc).__name__})')
+            continue
+        if not isinstance(doc, dict):
+            errors.append(f'{source}: benchmark artifact must be an object')
+            continue
         arrays=[]
         for key in ('cases','gaps','benchmarks','tasks','workers'):
             value=doc.get(key)
             if isinstance(value,list): arrays.append((key,value))
+            elif key in doc: errors.append(f'{source}:{key}: benchmark case collection must be an array')
         if not arrays:
-            synthetic={'case_id':f'artifact:{path.stem}','intent':f'Validate benchmark artifact {path.stem}'}; arrays=[('artifact',[synthetic])]
+            synthetic={'case_id':f'artifact:{path.stem}','intent':f'Define benchmark cases for {path.stem}'}
+            arrays=[('artifact',[synthetic])]
+            placeholders += 1
         for key,rows in arrays:
             for index,row in enumerate(rows):
-                if not isinstance(row,dict): continue
+                if not isinstance(row,dict):
+                    errors.append(f'{source}:{key}[{index}]: benchmark case must be an object')
+                    continue
                 cid=case_id(row,index,source); unique=f'{source}|{cid}'
-                if unique in seen: continue
+                if unique in seen:
+                    errors.append(f'{source}:{key}[{index}]: duplicate case identity {cid!r}')
+                    continue
                 seen.add(unique)
                 risk='high' if any(word in json.dumps(row).lower() for word in ('security','payment','auth','government','regulated','privacy','medical','legal')) else 'normal'
                 entries.append({
                   'gap_worker_id':f'benchmark-gap-{stable(unique)}','source_artifact':source,'source_array':key,'case_id':cid,
                   'domain':row.get('domain') or row.get('medium') or row.get('phase') or row.get('scenario') or 'general',
-                  'risk':risk,'status':'needs_runtime_baseline',
+                  'risk':risk,'status':'needs_benchmark_definition' if key=='artifact' else 'needs_runtime_baseline',
                   'parallel_team':['domain benchmark bot','gap analyst bot','builder bot','integration bot','sandbox QA bot','security/compliance bot','performance bot','business-value bot','release reviewer'],
                   'engineering_specialists':[member['id'] for member in TEAM['team']],
                   'required_outputs':['baseline evidence','capability/quality gap','canonical owner','acceptance criteria','parallel build proposals','sandbox/regression tests','security review when applicable','before/after score','runtime evidence','release recommendation'],
                   'closure_rule':'close only when required benchmark threshold and affected regression evidence pass'
                 })
-    payload={'schema':'dreamco.parallel_benchmark_gap_registry.v1','benchmark_source_count':len(set(sources)),'benchmark_case_count':len(entries),'parallel_lane_limit':TEAM['parallel_policy']['maximum_parallel_lanes'],'entries':entries,'truth_boundary':'Every discovered benchmark case gets an accountable closure path. A worker assignment is not evidence that the gap is closed.'}
+    payload={'schema':'dreamco.parallel_benchmark_gap_registry.v1','benchmark_source_count':len(set(sources)),'benchmark_case_count':len(entries),'defined_case_count':len(entries)-placeholders,'artifact_placeholder_count':placeholders,'registry_complete':not errors,'source_errors':errors,'parallel_lane_limit':TEAM['parallel_policy']['maximum_parallel_lanes'],'entries':entries,'truth_boundary':'Every discovered benchmark case gets an accountable closure path. A worker assignment is not evidence that the gap is closed.'}
     OUT.parent.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n')
     lines=['# Parallel Benchmark Gap Registry','',f"- Benchmark sources: **{payload['benchmark_source_count']}**",f"- Benchmark cases with workers: **{len(entries)}**",f"- Parallel lane limit: **{payload['parallel_lane_limit']}**",'']
     for row in entries[:1000]: lines.append(f"- `{row['case_id']}` → `{row['gap_worker_id']}` ({row['domain']}, {row['risk']})")
+    if errors: lines += ['', '## Registry integrity blockers', ''] + [f'- {error}' for error in errors]
     REPORT.write_text('\n'.join(lines)+'\n')
-    print(json.dumps({'ok':True,'sources':payload['benchmark_source_count'],'cases':len(entries),'output':str(OUT.relative_to(ROOT))},indent=2)); return 0
+    print(json.dumps({'ok':not errors,'sources':payload['benchmark_source_count'],'cases':len(entries),'placeholders':placeholders,'errors':len(errors),'output':str(OUT.relative_to(ROOT))},indent=2)); return 2 if errors
 if __name__=='__main__': raise SystemExit(main())
