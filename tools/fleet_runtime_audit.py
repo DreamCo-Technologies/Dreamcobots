@@ -100,13 +100,15 @@ def load_evidence(slug: str) -> dict[str, Any] | None:
 def connections_ok(manifest: dict[str, Any], record: dict[str, Any] | None) -> bool:
     if not record or record.get("_invalid"):
         return False
-    conns = {c.get("id"): c for c in record.get("connections", []) if isinstance(c, dict)}
+    conns = {c["id"]: c for c in record.get("connections", [])
+             if isinstance(c, dict) and isinstance(c.get("id"), str) and c["id"].strip()}
     required = set(record.get("required_apis", []))
     if manifest["engine"] == "drafting":
         required.add("model_router")
-    if not required and not conns:
-        return False  # evidence must show at least one checked connection
-    return all(conns.get(r, {}).get("status") == "ok" and conns.get(r, {}).get("checked_at") for r in required)
+    if not required:
+        # Avoid vacuous all([]): require a real connection with passing evidence.
+        return any(c.get("status") == "ok" and bool(c.get("checked_at")) for c in conns.values())
+    return all(conns.get(r, {}).get("status") == "ok" and bool(conns.get(r, {}).get("checked_at")) for r in required)
 
 
 def unit_tests_pass(skip: bool) -> bool | None:

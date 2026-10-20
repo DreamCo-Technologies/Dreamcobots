@@ -22,6 +22,27 @@ FULL_EVIDENCE = {
 }
 
 
+class ConnectionEvidenceTests(unittest.TestCase):
+    def test_no_required_api_needs_passing_checked_connection(self):
+        manifest = {"engine": "analysis"}
+        for connections in (
+            [{"id": "db", "status": "failed", "checked_at": "2026-10-20T12:00:00Z"}],
+            [{"id": "db", "status": "ok"}],
+            [{"status": "ok", "checked_at": "2026-10-20T12:00:00Z"}],
+        ):
+            with self.subTest(connections=connections):
+                self.assertFalse(audit.connections_ok(manifest, {"connections": connections}))
+        self.assertTrue(audit.connections_ok(manifest, {"connections": [
+            {"id": "db", "status": "ok", "checked_at": "2026-10-20T12:00:00Z"}]}))
+
+    def test_drafting_still_requires_model_router(self):
+        manifest = {"engine": "drafting"}
+        self.assertFalse(audit.connections_ok(manifest, {"connections": [
+            {"id": "db", "status": "ok", "checked_at": "2026-10-20T12:00:00Z"}]}))
+        self.assertTrue(audit.connections_ok(manifest, {"connections": [
+            {"id": "model_router", "status": "ok", "checked_at": "2026-10-20T12:00:00Z"}]}))
+
+
 class BotStateTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
