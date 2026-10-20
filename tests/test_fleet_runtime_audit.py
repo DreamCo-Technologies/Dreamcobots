@@ -16,10 +16,36 @@ from buddy.fleet_runtime.contract import PIECE_IDS, load_fixtures, load_manifest
 
 FULL_EVIDENCE = {
     "connections": [{"id": "model_router", "status": "ok", "checked_at": "2026-10-06T00:00:00Z"}],
-    "benchmark_results": [{"label": "x", "value": 1}],
+    "benchmark_results": [{"suite_id": "synthetic-fleet-test", "status": "measured", "passed": True, "evidence_hash": "a" * 64}],
     "test_reference": "t", "security_result": "s", "build_result": "b", "runtime_result": "r",
     "approval_reference": "a", "deployment_reference": "d", "health_result": "h", "observability_reference": "o",
 }
+
+
+class BenchmarkEvidenceTruthTests(unittest.TestCase):
+    def test_only_identified_passing_measured_receipts_qualify(self):
+        valid = FULL_EVIDENCE["benchmark_results"][0]
+        self.assertTrue(audit.benchmarks_measured({"benchmark_results": [valid]}))
+        self.assertFalse(audit.benchmarks_measured(None))
+        for bad in (
+            {"benchmark_results": [{"label": "x", "value": 1}]},
+            {"benchmark_results": [{"suite_id": "x", "status": "planned", "passed": True, "evidence_hash": "a" * 64}]},
+            {"benchmark_results": [{"suite_id": "x", "status": "measured", "passed": False, "evidence_hash": "a" * 64}]},
+            {"benchmark_results": [{"suite_id": "x", "status": "measured", "passed": True, "evidence_hash": "bad"}]},
+            {"benchmark_results": [valid, {"label": "bad"}]},
+            {"benchmark_results": {"suite_id": "x"}},
+            {"benchmark_results": []},
+        ):
+            with self.subTest(record=bad):
+                self.assertFalse(audit.benchmarks_measured(bad))
+
+    def test_unverified_truthy_benchmark_cannot_promote(self):
+        slug = "ad-copy"
+        record = {**FULL_EVIDENCE, "benchmark_results": [{"label": "x", "value": 1}]}
+        with mock.patch.object(audit, "load_evidence", lambda s: record if s == slug else None):
+            rows = audit.audit_bots(unit_ok=True)["rows"]
+        state = next(r["state"] for r in rows if r["slug"] == slug)
+        self.assertEqual(state, "CONNECTED")
 
 
 class ConnectionEvidenceTests(unittest.TestCase):

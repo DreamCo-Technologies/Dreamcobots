@@ -51,6 +51,31 @@ def run_record(*, manifest: dict[str, Any], task: dict[str, Any], status: str, m
     return record
 
 
+
+def benchmarks_measured(record: dict[str, Any] | None) -> bool:
+    """Require passing, identified benchmark receipts before fleet promotion.
+
+    A syntactically valid receipt is not independent verification of its artifact.
+    Benchmark mastery and production deployment require separate evidence gates.
+    """
+    import re
+
+    if not isinstance(record, dict):
+        return False
+    rows = record.get("benchmark_results")
+    if not isinstance(rows, list) or not rows:
+        return False
+    return all(
+        isinstance(row, dict)
+        and row.get("status") == "measured"
+        and row.get("passed") is True
+        and isinstance(row.get("suite_id"), str)
+        and bool(row["suite_id"].strip())
+        and isinstance(row.get("evidence_hash"), str)
+        and re.fullmatch(r"[0-9a-f]{64}", row["evidence_hash"]) is not None
+        for row in rows
+    )
+
 def promotion_gaps(record: dict[str, Any] | None, state: str) -> list[str]:
     """Return missing release_readiness fields for promoting to ``state``."""
     needed = list(PROMOTION_FIELDS.get("VERIFIED", ()))

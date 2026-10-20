@@ -38,7 +38,7 @@ from buddy.fleet_runtime.contract import (  # noqa: E402
     CONTRACT_PIECES, EVIDENCE_DIR, PIECE_IDS, READINESS_STATES, STATE_RANK,
     load_fixtures, load_schema, validate_bot_manifest,
 )
-from buddy.fleet_runtime.evidence import PROMOTION_FIELDS  # noqa: E402
+from buddy.fleet_runtime.evidence import PROMOTION_FIELDS, benchmarks_measured  # noqa: E402
 from buddy.fleet_runtime.executor import FleetExecutor  # noqa: E402
 from buddy.fleet_runtime.smoke import fixture_smoke, generic_smoke  # noqa: E402
 
@@ -139,7 +139,7 @@ def audit_bots(unit_ok: bool | None) -> dict[str, Any]:
         if fixture and fixture.get("engine") == m["engine"] and mapped and not problems:
             fx = fixture_smoke(executor, slug, fixture)
         record = load_evidence(slug)
-        bench_measured = bool(record and record.get("benchmark_results"))
+        bench_measured = benchmarks_measured(record)
         pieces = {
             "manifest": not problems,
             "division": m["division"] in known_divisions,
