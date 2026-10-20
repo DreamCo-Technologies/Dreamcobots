@@ -1,6 +1,6 @@
-"""Retain a reviewed shared closure contract for every canonical registered suite.
+"""Retain a pending-review closure contract for every canonical registered suite.
 
-The review covers this contract, not execution results or specialist capability.
+The shared contract is a remediation design, not a suite-specific review or mastery claim.
 Generated registries are excluded because they are derived, not canonical inputs.
 """
 from __future__ import annotations
@@ -18,8 +18,18 @@ def contract(definition, source):
         'schema': 'dreamco.suite_gap_closure.v1',
         'source': source,
         'definition_sha256': hashlib.sha256(json.dumps(definition, sort_keys=True).encode()).hexdigest(),
-        'review': {'status': 'reviewed', 'reviewer': 'Codex implementation review',
-                   'scope': 'Shared closure contract only; not suite execution, owner approval, or capability certification.'},
+        # A generated template is not an individual suite review.
+        'review': {'status': 'requires_suite_specific_review', 'reviewer': None,
+                   'scope': 'Remediation design only; no independent benchmark evidence, owner approval, or endorsement.'},
+        'remediation_design': [
+            'measure_and_pin_before_evidence',
+            'diagnose_root_cause',
+            'propose_smallest_shared_safe_fix_with_rollback',
+            'apply_only_in_review_branch_or_sandbox',
+            'run_targeted_tests_and_benchmark',
+            'compare_before_after_evidence',
+            'retest_dependent_suites_and_review_or_remain_blocked',
+        ],
         'required': ['baseline', 'target', 'canonical_owner', 'acceptance_criteria',
                      'source_hash', 'passing_execution_artifact_hash', 'nonzero_tests',
                      'passing_affected_regressions', 'evidence_review'],
