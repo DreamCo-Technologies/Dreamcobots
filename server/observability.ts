@@ -61,7 +61,7 @@ export function attachRequestIdToErrors(): RequestHandler {
   };
 }
 
-export function productionReadinessSnapshot() {
+export function productionReadinessSnapshot(runtimeInitialized = false) {
   const databaseConfigured = Boolean(process.env.DATABASE_URL);
   const stripeConfigured = Boolean(process.env.STRIPE_SECRET_KEY || process.env.STRIPE_LIVE_SECRET_KEY);
   const stripeWebhookConfigured = Boolean(process.env.STRIPE_WEBHOOK_SECRET);
@@ -71,8 +71,9 @@ export function productionReadinessSnapshot() {
     process.env.OPENAI_ADMIN_KEY,
   );
   return {
-    ready: databaseConfigured && stripeConfigured && stripeWebhookConfigured,
+    ready: runtimeInitialized && databaseConfigured && stripeConfigured && stripeWebhookConfigured,
     checks: {
+      runtimeInitialized,
       databaseConfigured,
       stripeConfigured,
       stripeWebhookConfigured,
@@ -82,7 +83,7 @@ export function productionReadinessSnapshot() {
   };
 }
 
-export function sendReadiness(res: Response) {
-  const snapshot = productionReadinessSnapshot();
+export function sendReadiness(res: Response, runtimeInitialized = false) {
+  const snapshot = productionReadinessSnapshot(runtimeInitialized);
   res.status(snapshot.ready ? 200 : 503).json(snapshot);
 }

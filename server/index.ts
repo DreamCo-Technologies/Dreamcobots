@@ -7,6 +7,8 @@ import { createSuperbotRouter } from './superbot-systems';
 const app = express();
 const httpServer = createServer(app);
 const processStartedAt = Date.now();
+// Set only after registerRoutes resolves; configured secrets are not runtime evidence.
+let routeRuntimeInitialized = false;
 
 declare module "http" {
   interface IncomingMessage {
@@ -44,7 +46,7 @@ app.get('/api/health', (_req, res) => {
     uptimeSeconds: Math.floor((Date.now() - processStartedAt) / 1000),
     stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY || process.env.STRIPE_LIVE_SECRET_KEY),
     databaseConfigured: Boolean(process.env.DATABASE_URL),
-    runtimeMode: process.env.DATABASE_URL ? 'full' : 'health-only',
+    runtimeMode: routeRuntimeInitialized && process.env.DATABASE_URL ? 'full' : 'health-only',
     timestamp: new Date().toISOString(),
   });
 });
@@ -89,7 +91,7 @@ app.use(observeRequests());
 app.use(attachRequestIdToErrors());
 
 app.get('/api/ready', (_req, res) => {
-  sendReadiness(res);
+  sendReadiness(res, routeRuntimeInitialized);
 });
 
 export function log(message: string, source = "express") {
@@ -109,6 +111,7 @@ export function log(message: string, source = "express") {
   try {
     const { registerRoutes } = await import("./routes");
     await registerRoutes(httpServer, app);
+    routeRuntimeInitialized = true;
     console.log("DreamCo full route runtime initialized.");
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);

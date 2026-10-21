@@ -45,7 +45,7 @@ test("readiness is false until customer-critical production services are configu
   );
 });
 
-test("readiness is true when database and Stripe live services are configured", () => {
+test("readiness is true only after routes initialize and required services are configured", () => {
   withEnv(
     {
       DATABASE_URL: "postgresql://user:pass@example.test:5432/dreamco",
@@ -54,8 +54,28 @@ test("readiness is true when database and Stripe live services are configured", 
       STRIPE_WEBHOOK_SECRET: "whsec_test",
     },
     () => {
-      const snapshot = productionReadinessSnapshot();
+      const snapshot = productionReadinessSnapshot(true);
       assert.equal(snapshot.ready, true);
+      assert.equal(snapshot.checks.runtimeInitialized, true);
+      assert.equal(snapshot.checks.databaseConfigured, true);
+      assert.equal(snapshot.checks.stripeConfigured, true);
+      assert.equal(snapshot.checks.stripeWebhookConfigured, true);
+    },
+  );
+});
+
+test("configured credentials cannot mask failed route registration", () => {
+  withEnv(
+    {
+      DATABASE_URL: "postgresql://example.invalid/dreamco",
+      STRIPE_SECRET_KEY: "synthetic-test-value",
+      STRIPE_LIVE_SECRET_KEY: undefined,
+      STRIPE_WEBHOOK_SECRET: "synthetic-test-value",
+    },
+    () => {
+      const snapshot = productionReadinessSnapshot(false);
+      assert.equal(snapshot.ready, false);
+      assert.equal(snapshot.checks.runtimeInitialized, false);
       assert.equal(snapshot.checks.databaseConfigured, true);
       assert.equal(snapshot.checks.stripeConfigured, true);
       assert.equal(snapshot.checks.stripeWebhookConfigured, true);
