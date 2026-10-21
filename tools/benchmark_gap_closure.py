@@ -26,7 +26,18 @@ def passing_evidence(record, root):
                 and type(result.get('tests_run')) is int and result['tests_run'] > 0
                 and type(result.get('tests_failed')) is int and result['tests_failed'] == 0
                 and type(result.get('score')) in (int, float) and math.isfinite(result['score'])
-                and result['score'] == record['baseline'] and result.get('target') == record['target'])
+                and result.get('target') == record['target']
+                and result['score'] >= record['target']
+                # New closures pin the historical baseline separately from the passing rerun.
+                # Preserve legacy receipts only if their original baseline already passed.
+                and (
+                    (type(result.get('baseline')) in (int, float)
+                     and math.isfinite(result['baseline'])
+                     and result['baseline'] == record['baseline'])
+                    or (result.get('baseline') is None
+                        and record['baseline'] >= record['target']
+                        and result['score'] == record['baseline'])
+                ))
     except (KeyError, TypeError, ValueError, OSError):
         return False
 
@@ -56,8 +67,8 @@ def plan(record, root=ROOT, *, registry_only=False):
     if any(type(record[k]) not in (int, float) or not math.isfinite(record[k]) for k in ('baseline', 'target')):
         return {'status': 'blocked', 'reason': 'finite numeric measurements required'}
     gap=record['target']-record['baseline']
-    closed = gap <= 0 and passing_evidence(record, Path(root))
-    return {'status':'closed' if closed else 'open','division_id':record['division_id'],'benchmark_id':record['benchmark_id'],'gap':gap,'next_action':'train_practice_sandbox_transfer' if gap>0 else 'regression_check', 'evidence_verified': closed}
+    closed = passing_evidence(record, Path(root))
+    return {'status':'closed' if closed else 'open','division_id':record['division_id'],'benchmark_id':record['benchmark_id'],'gap':gap,'next_action':'regression_check' if closed or gap<=0 else 'train_practice_sandbox_transfer', 'evidence_verified': closed}
 
 
 def load_records(data):
