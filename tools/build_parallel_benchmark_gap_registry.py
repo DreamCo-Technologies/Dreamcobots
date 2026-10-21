@@ -10,6 +10,8 @@ GEN=ROOT/'config/generated'
 TEAM=json.loads((ROOT/'config/engineering-gap-closure-team.json').read_text())
 OUT=GEN/'parallel-benchmark-gap-registry.json'
 REPORT=ROOT/'reports/PARALLEL_BENCHMARK_GAP_REGISTRY.md'
+# Derived review/measurement artifacts are not executable benchmark sources.
+DERIVED_METADATA_ARTIFACTS=frozenset({'benchmark-suite-gap-contracts.json','buddy_benchmark_index.json','buddy_model_benchmarks.json','system-speed-accuracy-benchmarks.json'})
 
 def stable(v:str)->str: return hashlib.sha256(v.encode()).hexdigest()[:16]
 
@@ -23,7 +25,7 @@ def main()->int:
     entries=[]; seen=set(); sources=[]; errors=[]; placeholders=0
     for path in sorted(GEN.glob('*.json')):
         if 'benchmark' not in path.name.lower(): continue
-        if path.name=='parallel-benchmark-gap-registry.json': continue
+        if path.name=='parallel-benchmark-gap-registry.json' or path.name in DERIVED_METADATA_ARTIFACTS: continue
         source=str(path.relative_to(ROOT)); sources.append(source)
         try:
             doc=json.loads(path.read_text())
@@ -38,6 +40,8 @@ def main()->int:
             value=doc.get(key)
             if isinstance(value,list): arrays.append((key,value))
             elif key in doc: errors.append(f'{source}:{key}: benchmark case collection must be an array')
+        if arrays and not any(rows for _,rows in arrays):
+            errors.append(f'{source}: no executable benchmark cases; preserve as a blocked source')
         if not arrays:
             synthetic={'case_id':f'artifact:{path.stem}','intent':f'Define benchmark cases for {path.stem}'}
             arrays=[('artifact',[synthetic])]
@@ -62,11 +66,12 @@ def main()->int:
                   'required_outputs':['baseline evidence','capability/quality gap','canonical owner','acceptance criteria','parallel build proposals','sandbox/regression tests','security review when applicable','before/after score','runtime evidence','release recommendation'],
                   'closure_rule':'close only when required benchmark threshold and affected regression evidence pass'
                 })
+    if not sources: errors.append('no benchmark source artifacts discovered')
     payload={'schema':'dreamco.parallel_benchmark_gap_registry.v1','benchmark_source_count':len(set(sources)),'benchmark_case_count':len(entries),'defined_case_count':len(entries)-placeholders,'artifact_placeholder_count':placeholders,'registry_complete':not errors,'source_errors':errors,'parallel_lane_limit':TEAM['parallel_policy']['maximum_parallel_lanes'],'entries':entries,'truth_boundary':'Every discovered benchmark case gets an accountable closure path. A worker assignment is not evidence that the gap is closed.'}
     OUT.parent.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n')
     lines=['# Parallel Benchmark Gap Registry','',f"- Benchmark sources: **{payload['benchmark_source_count']}**",f"- Benchmark cases with workers: **{len(entries)}**",f"- Parallel lane limit: **{payload['parallel_lane_limit']}**",'']
     for row in entries[:1000]: lines.append(f"- `{row['case_id']}` → `{row['gap_worker_id']}` ({row['domain']}, {row['risk']})")
     if errors: lines += ['', '## Registry integrity blockers', ''] + [f'- {error}' for error in errors]
     REPORT.write_text('\n'.join(lines)+'\n')
-    print(json.dumps({'ok':not errors,'sources':payload['benchmark_source_count'],'cases':len(entries),'placeholders':placeholders,'errors':len(errors),'output':str(OUT.relative_to(ROOT))},indent=2)); return 2 if errors
+    print(json.dumps({'ok':not errors,'sources':payload['benchmark_source_count'],'cases':len(entries),'placeholders':placeholders,'errors':len(errors),'output':str(OUT.relative_to(ROOT))},indent=2)); return 2 if errors else 0
 if __name__=='__main__': raise SystemExit(main())
