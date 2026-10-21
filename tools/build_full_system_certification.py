@@ -26,6 +26,57 @@ def has_work_benchmark_backlog(evidence: object) -> bool:
         and isinstance(cases, list) and len(cases) == count
     )
 
+def unified_inventory_consistent(unified: object, accounting: object) -> bool:
+    """Reconcile canonical and supplemental IDs; this is not runtime certification."""
+    if not isinstance(unified, dict) or not isinstance(accounting, dict):
+        return False
+    bots = unified.get('canonical_bots')
+    pending = unified.get('legacy_candidates')
+    canonical = accounting.get('canonical_profiles')
+    supplemental = accounting.get('supplemental_profiles')
+    if not all(isinstance(rows, list) for rows in (bots, pending, canonical, supplemental)) or not bots:
+        return False
+
+    def slugs(rows):
+        if any(not isinstance(row, dict) for row in rows):
+            return None
+        values = [row.get('slug') for row in rows]
+        if any(not isinstance(value, str) or not value.strip() for value in values):
+            return None
+        return values if len(values) == len(set(values)) else None
+
+    unified_ids = slugs(bots)
+    canonical_ids = slugs(canonical)
+    supplemental_ids = slugs(supplemental)
+    if any(ids is None for ids in (unified_ids, canonical_ids, supplemental_ids)):
+        return False
+    if set(unified_ids) != set(canonical_ids + supplemental_ids):
+        return False
+    if len(unified_ids) != len(canonical_ids) + len(supplemental_ids):
+        return False
+    if any(not isinstance(row, dict) for row in pending):
+        return False
+    expected_unified = {
+        'canonical_bot_count': len(bots),
+        'legacy_pending_candidate_count': len(pending),
+        'total_accounted_worker_records': len(bots) + len(pending),
+    }
+    expected_accounting = {
+        'canonical_bot_count': len(canonical),
+        'supplemental_bot_count': len(supplemental),
+        'total_profile_count': len(bots),
+    }
+    if any(type(unified.get(k)) is not int or unified[k] != n for k, n in expected_unified.items()):
+        return False
+    if any(type(accounting.get(k)) is not int or accounting[k] != n for k, n in expected_accounting.items()):
+        return False
+    return (
+        accounting.get('accounting_complete') is True
+        and all(accounting.get(k) == [] for k in (
+            'duplicate_slugs', 'declared_total_mismatches', 'supplemental_division_mismatches'
+        ))
+    )
+
 def main()->int:
     program=json.loads(PROGRAM.read_text()); docs={n:load(p) for n,p in SOURCES.items()}; blockers=[f'missing evidence:{n}' for n,p in SOURCES.items() if not p.exists()]
     d=docs
@@ -36,7 +87,7 @@ def main()->int:
       'trusted_code_static_audit':not d['code_trust'].get('release_blockers',['missing']),
       'bot_accounting':d['bot_accounting'].get('accounting_complete') is True,
       'legacy_recovery_inventory':d['legacy_recovery'].get('file_count',0)>0,
-      'unified_bot_system':d['unified_bots'].get('canonical_bot_count')==1051,
+      'unified_bot_system':unified_inventory_consistent(d['unified_bots'], d['bot_accounting']),
       'maximum_sandbox_matrix':d['maximum_sandbox'].get('worker_count',0)>=1051 and d['maximum_sandbox'].get('minimum_test_dimensions_per_applicable_case',0)>=40,
       'canonical_sandbox_runtime_evidence':d['sandbox_runtime'].get('all_canonical_workers_have_runtime_evidence') is True,
       'ontology_snapshot':d['ontology'].get('object_count',0)>0 and d['ontology'].get('link_count',0)>0,
