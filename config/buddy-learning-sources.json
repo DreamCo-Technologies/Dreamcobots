@@ -1,0 +1,27 @@
+{
+  "schema":"dreamco.learning_source_registry.v1",
+  "status":"curriculum_sources_not_ingested_or_watched",
+  "providers":[
+    {"id":"freecodecamp","name":"freeCodeCamp","url":"https://www.freecodecamp.org/learn/","subjects":["python","sql","postgresql","full_text_search","bm25","vector_search","hybrid_search","web_development","machine_learning"],"access":"public_material_subject_to_license_and_terms"},
+    {"id":"khan_academy","name":"Khan Academy","url":"https://www.khanacademy.org/","subjects":["mathematics","science","computing","economics"],"access":"public_material_subject_to_license_and_terms"},
+    {"id":"harvard_cs50","name":"Harvard CS50","url":"https://cs50.harvard.edu/x/","subjects":["computer_science","python","sql","algorithms","web_development"],"access":"public_material_subject_to_license_and_terms"},
+    {"id":"mit_ocw","name":"MIT OpenCourseWare","url":"https://ocw.mit.edu/","subjects":["engineering","computer_science","mathematics","physics"],"access":"public_material_subject_to_license_and_terms"},
+    {"id":"stanford_online","name":"Stanford Online","url":"https://online.stanford.edu/","subjects":["ai","machine_learning","computer_science"],"access":"public_material_subject_to_license_and_terms"},
+    {"id":"google_ml_crash_course","name":"Google Machine Learning Crash Course","url":"https://developers.google.com/machine-learning/crash-course","subjects":["machine_learning","evaluation","data"],"access":"public_material_subject_to_license_and_terms"}
+  ],
+  "learning_pipeline":["discover_official_course_metadata","verify_rights_and_allowed_access","collect_authorized_transcripts_or_notes","record_source_url_version_and_attribution","extract_skill_and_prerequisite_graph","build_original_practice_exercises","run_sandbox_implementations","evaluate_on_independent_holdouts","store_evidence_and_progress","route_failed_skills_to_remediation"],
+  "rules":{
+    "no_claim_of_watching_without_retrieval":true,
+    "no_bypass_of_paywalls_or_access_controls":true,
+    "no_bulk_copying_unlicensed_transcripts_into_training":true,
+    "no_use_of_copyrighted_content_for_weight_training_without_verified_rights":true,
+    "separate_course_coverage_from_proven_capability":true,
+    "human_review_for_high_impact_domains":true,
+    "video_completion_requires_evidence":true
+  },
+  "first_project":{
+    "title":"Wikipedia hybrid search with PostgreSQL",
+    "topics":["PostgreSQL native full text","PGTextSearch BM25","pgvector","pgvectorscale","semantic embeddings","reciprocal rank fusion","EXPLAIN ANALYZE","index freshness","coverage accounting"],
+    "acceptance":["verified PostgreSQL extension availability","repeatable SQL migrations","article provenance","keyword vs semantic vs hybrid metrics","holdout relevance judgments","latency and memory receipts"]
+  }
+}
