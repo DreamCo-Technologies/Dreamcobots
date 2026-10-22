@@ -24,7 +24,7 @@ jobs:
       - name: Refresh Actions catalog
         run: |
           python3 tools/audit_actions_health.py
-          python3 tools/generate_actions_prospectus.py || true
+          python3 tools/build_actions_prospectus.py
       - name: Refresh command center data
         run: python3 tools/generate_command_center_data.py
       - name: Stage only expected generated artifacts
