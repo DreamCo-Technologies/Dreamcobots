@@ -25,7 +25,7 @@ jobs:
       - name: Rebuild tracked file index
         run: python3 tools/build_pages_connection_index.py
       - name: Verify supervised runtime and learning boundaries
-        run: python3 -m unittest tests.test_observed_capability_runtime tests.test_fleet_runtime_permissions tests.test_check_buddy_distill_gate tests.test_buddy_local_bridge
+        run: python3 -m unittest tests.test_observed_capability_runtime tests.test_build_pages_connection_index tests.test_fleet_runtime_permissions tests.test_check_buddy_distill_gate tests.test_buddy_local_bridge
       - name: Verify workbench behavior and file links
         run: node --test tests/capability-workbench.test.mjs
       - name: Upload connection evidence
