@@ -12,6 +12,7 @@ on:
       - 'tests/test_buddy_task_champions.py'
       - 'tests/test_buddy_task_distillation.py'
       - 'tests/test_buddy_all_bot_goals.py'
+      - 'tests/test_buddy_fleet_study_queue.py'
       - 'App_bots/**'
       - 'config/buddy/benchmarks/**'
       - 'config/buddy/unified-build-training-plan.json'
@@ -49,6 +50,10 @@ jobs:
         run: python -m unittest tests.test_buddy_all_bot_goals -v
       - name: Inventory every canonical bot capability goal
         run: python -m buddy.certification.all_bot_goals
+      - name: Verify fleet study queue evidence gating
+        run: python -m unittest tests.test_buddy_fleet_study_queue -v
+      - name: Generate bounded cross-division study queue
+        run: python -m buddy.certification.fleet_study_queue
       - name: Verify unified training backlog planner
         run: python -m unittest tests.test_buddy_training_planner -v
       - name: Generate daily capability, workflow, tool, function, library and generator gap report
@@ -66,4 +71,5 @@ jobs:
             website/data/buddy-repository-discovery.json
             website/data/buddy-training-backlog.json
             website/data/buddy-all-bot-goals.json
+            website/data/buddy-fleet-study-queue.json
           retention-days: 30
