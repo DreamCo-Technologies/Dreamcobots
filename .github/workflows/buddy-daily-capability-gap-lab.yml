@@ -1,0 +1,38 @@
+name: Buddy Daily Capability Gap Lab
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 11 * * *'
+  pull_request:
+    paths:
+      - 'buddy/certification/**'
+      - 'config/buddy/capability-certification-goals.json'
+      - 'tests/test_buddy_daily_capability_gap_lab.py'
+      - '.github/workflows/buddy-daily-capability-gap-lab.yml'
+permissions:
+  contents: read
+concurrency:
+  group: buddy-daily-gap-lab
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify lab logic
+        run: python -m unittest tests.test_buddy_capability_certification tests.test_buddy_daily_capability_gap_lab -v
+      - name: Run registered local capability tests and build gap plans
+        run: python -m buddy.certification.daily_lab --execute-local-tests --revision "${{ github.sha }}"
+      - name: Upload versioned public-safe evidence for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-daily-capability-gap-report
+          path: |
+            website/data/buddy-capability-certification.json
+            website/data/buddy-daily-capability-gaps.json
+          retention-days: 30
