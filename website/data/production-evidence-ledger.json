@@ -1,0 +1,2946 @@
+{
+  "schema": "dreamco.production_evidence_ledger.v1",
+  "truth_rule": "A catalog entry, shared runtime route, plan, or passing repository test is not production evidence. Every required gate must carry its own current receipt.",
+  "summary": {
+    "canonical_divisions": 45,
+    "supplemental_divisions": 10,
+    "real_divisions": 55,
+    "catalog_profiles": 1101,
+    "production_ready_divisions": 0,
+    "trained_weight_artifacts": 0,
+    "gesture_hardware_verified": false,
+    "professional_deployments_verified": 0,
+    "soak_24h_verified": false,
+    "catalogs_reconciled": true
+  },
+  "catalog_reconciliation": [
+    {
+      "source": "config/generated/bots.catalog.json",
+      "scope": "canonical",
+      "divisions": 45
+    },
+    {
+      "source": "config/generated/bots.catalog.json#supplemental_divisions",
+      "scope": "supplemental",
+      "divisions": 10
+    },
+    {
+      "source": "config/bots/division-manifests.generated.json",
+      "scope": "real divisions plus routing buckets",
+      "records": 57
+    },
+    {
+      "source": "config/generated/bot-production-readiness.json",
+      "scope": "real divisions plus exclusion bucket",
+      "records": 56
+    },
+    {
+      "source": "website/data/command-center/divisions.json",
+      "scope": "canonical",
+      "divisions": 45
+    }
+  ],
+  "non_division_buckets": [
+    {
+      "name": "GrokTeammates",
+      "reason": "routing or exclusion bucket; not counted as a business division"
+    },
+    {
+      "name": "MasterbotProfilesExcluded",
+      "reason": "routing or exclusion bucket; not counted as a business division"
+    },
+    {
+      "name": "UNASSIGNED",
+      "reason": "routing or exclusion bucket; not counted as a business division"
+    }
+  ],
+  "global_gates": [
+    {
+      "id": "real_model_weights",
+      "passed": false,
+      "evidence": "config/buddy-student-adapter-registry.json",
+      "requires": "Artifact files with SHA-256 hashes, model card, training run, provenance, and evaluation scorecard."
+    },
+    {
+      "id": "gesture_hardware",
+      "passed": false,
+      "evidence": "config/buddy-professional-bootcamp.json",
+      "requires": "Permissioned camera/device adapter, physical-device identifier, calibration receipt, consent state, and passing gesture test."
+    },
+    {
+      "id": "sandbox_24h",
+      "passed": false,
+      "evidence": "config/generated/sandbox-24h-history.json",
+      "requires": "At least 24 successful ticks across at least 24 real elapsed hours, with zero failed ticks."
+    },
+    {
+      "id": "professional_deployment",
+      "passed": false,
+      "evidence": "config/buddy-professional-bootcamp.json",
+      "requires": "A versioned deployment receipt with environment, release SHA, health checks, rollback, telemetry, and owner acceptance."
+    }
+  ],
+  "soak_progress": {},
+  "divisions": [
+    {
+      "name": "CommandCore",
+      "tier": "canonical",
+      "profiles": 13,
+      "source": "App_bots/CommandCore.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamAIInfra",
+      "tier": "canonical",
+      "profiles": 25,
+      "source": "App_bots/DreamAIInfra.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamAdmin",
+      "tier": "canonical",
+      "profiles": 21,
+      "source": "App_bots/DreamAdmin.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamAffiliate",
+      "tier": "supplemental",
+      "profiles": 5,
+      "source": "App_bots/DreamAffiliate.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Supplemental divisions are published through this ledger and fleet catalog."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamAgency",
+      "tier": "supplemental",
+      "profiles": 5,
+      "source": "App_bots/DreamAgency.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Supplemental divisions are published through this ledger and fleet catalog."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamAgents",
+      "tier": "canonical",
+      "profiles": 20,
+      "source": "App_bots/DreamAgents.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamAgriculture",
+      "tier": "canonical",
+      "profiles": 20,
+      "source": "App_bots/DreamAgriculture.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamArts",
+      "tier": "canonical",
+      "profiles": 18,
+      "source": "App_bots/DreamArts.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamAutomation",
+      "tier": "canonical",
+      "profiles": 21,
+      "source": "App_bots/DreamAutomation.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamBizLaunch",
+      "tier": "canonical",
+      "profiles": 21,
+      "source": "App_bots/DreamBizLaunch.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamCodeLab",
+      "tier": "canonical",
+      "profiles": 146,
+      "source": "App_bots/DreamCodeLab.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamConstruction",
+      "tier": "canonical",
+      "profiles": 19,
+      "source": "App_bots/DreamConstruction.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamContent",
+      "tier": "canonical",
+      "profiles": 16,
+      "source": "App_bots/DreamContent.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamCrypto",
+      "tier": "canonical",
+      "profiles": 20,
+      "source": "App_bots/DreamCrypto.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamCustIntel",
+      "tier": "canonical",
+      "profiles": 25,
+      "source": "App_bots/DreamCustIntel.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamCyber",
+      "tier": "canonical",
+      "profiles": 25,
+      "source": "App_bots/DreamCyber.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamData",
+      "tier": "canonical",
+      "profiles": 16,
+      "source": "App_bots/DreamData.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamDecision",
+      "tier": "canonical",
+      "profiles": 25,
+      "source": "App_bots/DreamDecision.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamEducation",
+      "tier": "canonical",
+      "profiles": 20,
+      "source": "App_bots/DreamEducation.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamEmpire",
+      "tier": "canonical",
+      "profiles": 5,
+      "source": "App_bots/DreamEmpire.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamEntFinance",
+      "tier": "canonical",
+      "profiles": 25,
+      "source": "App_bots/DreamEntFinance.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamFinance",
+      "tier": "canonical",
+      "profiles": 25,
+      "source": "App_bots/DreamFinance.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamFlow",
+      "tier": "canonical",
+      "profiles": 5,
+      "source": "App_bots/DreamFlow.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamFood",
+      "tier": "canonical",
+      "profiles": 20,
+      "source": "App_bots/DreamFood.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamFoundry",
+      "tier": "supplemental",
+      "profiles": 5,
+      "source": "App_bots/DreamFoundry.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Supplemental divisions are published through this ledger and fleet catalog."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamFranchise",
+      "tier": "supplemental",
+      "profiles": 5,
+      "source": "App_bots/DreamFranchise.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Supplemental divisions are published through this ledger and fleet catalog."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamGlobal",
+      "tier": "canonical",
+      "profiles": 16,
+      "source": "App_bots/DreamGlobal.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamHealth",
+      "tier": "canonical",
+      "profiles": 20,
+      "source": "App_bots/DreamHealth.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamInfluence",
+      "tier": "canonical",
+      "profiles": 25,
+      "source": "App_bots/DreamInfluence.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamIntegrations",
+      "tier": "supplemental",
+      "profiles": 5,
+      "source": "App_bots/DreamIntegrations.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Supplemental divisions are published through this ledger and fleet catalog."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamLegal",
+      "tier": "canonical",
+      "profiles": 25,
+      "source": "App_bots/DreamLegal.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamLicensing",
+      "tier": "supplemental",
+      "profiles": 5,
+      "source": "App_bots/DreamLicensing.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Supplemental divisions are published through this ledger and fleet catalog."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamLoans",
+      "tier": "canonical",
+      "profiles": 23,
+      "source": "App_bots/DreamLoans.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamMaintenance",
+      "tier": "canonical",
+      "profiles": 21,
+      "source": "App_bots/DreamMaintenance.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamMarket",
+      "tier": "canonical",
+      "profiles": 5,
+      "source": "App_bots/DreamMarket.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamMilitary",
+      "tier": "canonical",
+      "profiles": 20,
+      "source": "App_bots/DreamMilitary.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamOps",
+      "tier": "canonical",
+      "profiles": 26,
+      "source": "App_bots/DreamOps.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamPayments",
+      "tier": "canonical",
+      "profiles": 23,
+      "source": "App_bots/DreamPayments.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamPersonalCare",
+      "tier": "canonical",
+      "profiles": 30,
+      "source": "App_bots/DreamPersonalCare.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamPlanetary",
+      "tier": "canonical",
+      "profiles": 25,
+      "source": "App_bots/DreamPlanetary.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamProServices",
+      "tier": "canonical",
+      "profiles": 25,
+      "source": "App_bots/DreamProServices.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamProduction",
+      "tier": "canonical",
+      "profiles": 20,
+      "source": "App_bots/DreamProduction.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamProtection",
+      "tier": "canonical",
+      "profiles": 20,
+      "source": "App_bots/DreamProtection.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamRealEstate",
+      "tier": "canonical",
+      "profiles": 25,
+      "source": "App_bots/DreamRealEstate.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamRetail",
+      "tier": "canonical",
+      "profiles": 26,
+      "source": "App_bots/DreamRetail.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamRobotics",
+      "tier": "supplemental",
+      "profiles": 5,
+      "source": "App_bots/DreamRobotics.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Supplemental divisions are published through this ledger and fleet catalog."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamSaaS",
+      "tier": "supplemental",
+      "profiles": 5,
+      "source": "App_bots/DreamSaaS.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Supplemental divisions are published through this ledger and fleet catalog."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamSalesPro",
+      "tier": "canonical",
+      "profiles": 37,
+      "source": "App_bots/DreamSalesPro.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamScience",
+      "tier": "canonical",
+      "profiles": 20,
+      "source": "App_bots/DreamScience.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamSocial",
+      "tier": "canonical",
+      "profiles": 33,
+      "source": "App_bots/DreamSocial.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamStreaming",
+      "tier": "supplemental",
+      "profiles": 5,
+      "source": "App_bots/DreamStreaming.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Supplemental divisions are published through this ledger and fleet catalog."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamTrade",
+      "tier": "canonical",
+      "profiles": 12,
+      "source": "App_bots/DreamTrade.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamTransport",
+      "tier": "canonical",
+      "profiles": 19,
+      "source": "App_bots/DreamTransport.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "DreamTravel",
+      "tier": "supplemental",
+      "profiles": 5,
+      "source": "App_bots/DreamTravel.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Supplemental divisions are published through this ledger and fleet catalog."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    },
+    {
+      "name": "GameTitan",
+      "tier": "canonical",
+      "profiles": 4,
+      "source": "App_bots/GameTitan.json",
+      "production_ready": false,
+      "status": "evidence_required",
+      "gates": [
+        {
+          "id": "catalog_record",
+          "passed": true
+        },
+        {
+          "id": "division_manifest",
+          "passed": true
+        },
+        {
+          "id": "production_readiness_record",
+          "passed": true
+        },
+        {
+          "id": "pages_command_record",
+          "passed": true,
+          "note": "Canonical command-center record required."
+        },
+        {
+          "id": "shared_runtime_route",
+          "passed": true
+        },
+        {
+          "id": "verified_external_runtime",
+          "passed": false
+        },
+        {
+          "id": "authentication_and_authorization",
+          "passed": false
+        },
+        {
+          "id": "deployment_telemetry_and_rollback",
+          "passed": false
+        }
+      ],
+      "blockers": [
+        "verified_external_runtime",
+        "authentication_and_authorization",
+        "deployment_telemetry_and_rollback",
+        "real_model_weights",
+        "gesture_hardware",
+        "sandbox_24h",
+        "professional_deployment"
+      ]
+    }
+  ]
+}
