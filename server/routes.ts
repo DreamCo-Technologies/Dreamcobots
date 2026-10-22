@@ -18,6 +18,7 @@ import { FORMULA_LIBRARY } from "@shared/formula-library";
 import { buildEnhancedSystemPrompt } from "@shared/tool-belt";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { billingOwnerAuthorized } from "./billing-auth";
+import { createBuddyExecutionGuard } from "./buddy-kill-switch-policy";
 import { subscriptionStatus } from "./subscription-status";
 import { requireGitHubActionOwner, approvedWorkflow } from "./github-action-auth";
 import { getLocalTestEntitlement } from "./local-test-entitlement";
@@ -478,6 +479,14 @@ export async function registerRoutes(
     const message = error instanceof Error ? error.message : String(error);
     console.warn(`Local test mode started without database seed data: ${message}`);
   }
+
+  // Shared fail-closed safety guard; owner authorization and provider budgets remain separate controls.
+  const BUDDY_HIGH_RISK_ROUTES = [
+    "/api/buddy/execute-code",
+    "/api/buddy/analyze-image",
+    "/api/buddy/agent-run",
+  ];
+  app.use(BUDDY_HIGH_RISK_ROUTES, createBuddyExecutionGuard(() => storage.getSetting("kill_switch")));
 
   // ===== LOCAL-FIRST VOICE AND LIKENESS =====
   app.post("/api/voice/clone", async (req, res) => {
