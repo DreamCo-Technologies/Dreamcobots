@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - 'buddy/certification/**'
+      - 'config/buddy/daily-lab-manifest.json'
+      - 'tests/test_buddy_daily_lab.py'
       - 'config/buddy/capability-certification-goals.json'
       - 'tests/test_buddy_capability_certification.py'
       - '.github/workflows/buddy-inhouse-capability-certification.yml'
@@ -22,10 +24,16 @@ jobs:
           python-version: '3.11'
       - name: Verify certification engine
         run: python -m unittest tests.test_buddy_capability_certification -v
+      - name: Verify daily inventory, deduplication and gap planning
+        run: python -m unittest tests.test_buddy_daily_lab -v
+      - name: Generate daily capability, workflow, tool, function, library and generator gap report
+        run: python -m buddy.certification.daily_lab --revision "${{ github.sha }}"
       - name: Generate conservative evidence
         run: python -m buddy.certification.engine --revision "${{ github.sha }}"
       - uses: actions/upload-artifact@v4
         with:
           name: buddy-capability-certification
-          path: website/data/buddy-capability-certification.json
+          path: |
+            website/data/buddy-capability-certification.json
+            website/data/buddy-daily-lab.json
           retention-days: 30
