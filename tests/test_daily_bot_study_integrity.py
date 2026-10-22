@@ -30,6 +30,25 @@ class StudyIntegrityTests(unittest.TestCase):
                 self.assertEqual(scan_mod.main(["--complete"]), 2)
             self.assertFalse(ledger.exists())
 
+    def test_compiled_file_and_cleared_todos_do_not_prove_sandbox_execution(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            bots = root / "bots"
+            compiled = root / "runtime" / "compiled_bots"
+            original = root / "original-bots"
+            for directory in (bots, compiled, original):
+                directory.mkdir(parents=True)
+            (bots / "sample.md").write_text("## Learning plan\n- [done] Task complete\n")
+            (compiled / "sample.py").write_text("print('hello')\n")
+            with patch.multiple(scan_mod, ROOT=root, BOTS=bots, COMPILED=compiled,
+                                ORIGINAL=original, REQUIRED=()):
+                result = scan_mod.scan()
+            self.assertTrue(result["bots"][0]["structural_ready"])
+            self.assertFalse(result["bots"][0]["sandbox_studied"])
+            self.assertEqual(result["bots"][0]["evidence_status"], "unverified")
+            self.assertEqual(result["sandbox_studied"], 0)
+            self.assertEqual(result["ready_basis"], "inventory_and_todos_only")
+
     def test_original_markdown_record_is_not_sandbox_proof(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

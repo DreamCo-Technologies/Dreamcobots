@@ -64,7 +64,10 @@ def scan() -> dict:
         if not compiled.is_file():
             gaps.append("missing_compiled_bot")
             missing.append(compiled.relative_to(ROOT).as_posix())
-        bots.append({"bot": path.stem, "gaps": gaps, "sandbox_studied": not gaps})
+        # Source presence and cleared TODOs establish structural readiness only.
+        # No execution receipt is bound to this bot by the inventory scanner.
+        bots.append({"bot": path.stem, "gaps": gaps, "structural_ready": not gaps,
+                     "sandbox_studied": False, "evidence_status": "unverified"})
     original = []
     for path in sorted(ORIGINAL.rglob("*.md")):
         if path.name == "README.md":
@@ -96,6 +99,7 @@ def scan() -> dict:
         "original_bot_studies": len(original),
         "missing_files": missing,
         "ready": not missing and open_tasks == 0,
+        "ready_basis": "inventory_and_todos_only",
         "production_mastered": False,
         "speed": speed,
         "bots": bots,
