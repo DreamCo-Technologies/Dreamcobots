@@ -19,7 +19,9 @@ class TaskChampionsTests(unittest.TestCase):
         x["independent_verified"]=False
         self.assertEqual(choose_champions([x])["champions"],[])
     def test_buddy_gap(self):
-        result=choose_champions([record("buddy","coding","debug",.8),record("gpt","coding","debug",.95)])
+        buddy=record("buddy","coding","debug",.8)
+        buddy["scores"]["safety"]=.95
+        result=choose_champions([buddy,record("gpt","coding","debug",.95)])
         self.assertGreater(result["champions"][0]["buddy_gap"],0)
     def test_separate_task_set(self):
         a=record("gpt","coding","debug",.95)
