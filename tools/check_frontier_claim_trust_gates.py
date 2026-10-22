@@ -18,6 +18,11 @@ import json
 import sys
 from pathlib import Path
 
+try:
+    from tools.soak_evidence_integrity import validate_runtime_soak
+except ModuleNotFoundError:
+    from soak_evidence_integrity import validate_runtime_soak
+
 ROOT = Path(__file__).resolve().parents[1]
 DISCLOSURE = ROOT / "config" / "buddy-frontier-claim-disclosure.json"
 
@@ -68,20 +73,30 @@ def check_allowlist(cfg: dict, errors: list[str]) -> bool:
 
 
 def check_soak(cfg: dict, errors: list[str]) -> bool:
+    """Fail closed on inventory-only or insufficient measured 24-hour receipts."""
     req = cfg["soak_requirements"]
     tick_path = ROOT / req["tick_path"]
     report_path = ROOT / req["report_path"]
+    history_path = ROOT / req.get("history_path", "config/generated/sandbox-24h-history.json")
     ok = True
     if not tick_path.is_file():
         errors.append(f"sandbox soak tick missing: {req['tick_path']}")
         ok = False
     else:
-        tick = _load_json(tick_path)
-        if tick.get("status") != req.get("required_tick_status", "sandbox_tick_ok"):
-            errors.append(
-                f"sandbox soak tick status={tick.get('status')!r}, "
-                f"need {req.get('required_tick_status')!r}"
-            )
+        try:
+            tick = _load_json(tick_path)
+            if tick.get("status") != req.get("required_tick_status", "sandbox_tick_ok"):
+                errors.append(f"sandbox soak tick status={tick.get('status')!r}, need {req.get('required_tick_status', 'sandbox_tick_ok')!r}")
+                ok = False
+            if not history_path.is_file():
+                errors.append(f"sandbox runtime receipt history missing: {history_path.relative_to(ROOT)}")
+                ok = False
+            else:
+                history = json.loads(history_path.read_text(encoding="utf-8"))
+                if not validate_runtime_soak(tick, history, errors):
+                    ok = False
+        except (ValueError, TypeError, OSError, KeyError) as exc:
+            errors.append(f"sandbox soak evidence invalid: {exc}")
             ok = False
     if not report_path.is_file():
         errors.append(f"sandbox soak report missing: {req['report_path']}")

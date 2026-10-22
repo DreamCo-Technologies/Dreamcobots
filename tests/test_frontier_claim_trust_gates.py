@@ -131,14 +131,15 @@ class FrontierClaimTrustGatesTest(unittest.TestCase):
             self.assertFalse(result["ok"])
             self.assertGreater(result["vanity_hit_count"], 0)
 
-    def test_require_all_gates_passes_when_green(self) -> None:
+    def test_require_all_gates_rejects_status_only_soak_fixture(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             self._write_tree(root, claimable=True, soak=True, vanity=False)
             self._bind(root)
             result = self.mod.evaluate(require_all_gates=True)
-            self.assertTrue(result["ok"])
-            self.assertTrue(result["all_gates_green"])
+            self.assertFalse(result["ok"])
+            self.assertFalse(result["all_gates_green"])
+            self.assertFalse(result["gates"]["sandbox_soak"])
             self.assertTrue(result["claimable"])
 
     def test_require_all_gates_fails_when_soak_missing(self) -> None:
