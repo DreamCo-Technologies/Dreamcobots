@@ -16,7 +16,9 @@ DreamCo is a governed AI workbench with 1,051 specialist profiles across 45 divi
 - [Bot prospectus](website/bots.html) — profile and sandbox contracts are distinct from production integrations.
 - [Buddy training](website/professional-bootcamp.html) — curriculum and generated evidence are distinct from actual weight-training jobs.
 
-## Buddy on GitHub Pages
+## Capability Workbench and Evidence Status
+
+[Capability workbench](website/capability-workbench.html) shows repository-backed navigation and capability controls. GitHub Pages is a static interface; a visible control or bot profile is not evidence of external execution. Check runtime adapters, explicit permissions, benchmark evidence, and backend availability before describing an action as live. Training and personal fine-tuning require consent, reviewed datasets, provider credentials, cost limits, and independent evaluation. Unsupported tasks must use a guided handoff rather than silently executing.\n\n## Buddy on GitHub Pages
 
 Original Buddy chrome plus the desks from the latest Grok chat. Static HTML. No API keys. Hugging Face public cards work. Grok teacher stays on the hosted app.
 
