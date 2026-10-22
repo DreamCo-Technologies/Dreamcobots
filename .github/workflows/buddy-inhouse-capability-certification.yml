@@ -7,6 +7,8 @@ on:
       - 'config/buddy/daily-lab-manifest.json'
       - 'tests/test_buddy_daily_lab.py'
       - 'tests/test_buddy_discovery_benchmarks.py'
+      - 'tests/test_buddy_training_planner.py'
+      - 'config/buddy/unified-build-training-plan.json'
       - 'config/buddy/capability-certification-goals.json'
       - 'tests/test_buddy_capability_certification.py'
       - '.github/workflows/buddy-inhouse-capability-certification.yml'
@@ -31,8 +33,12 @@ jobs:
         run: python -m unittest tests.test_buddy_discovery_benchmarks -v
       - name: Generate repository-wide static symbol inventory
         run: python -m buddy.certification.repository_discovery
+      - name: Verify unified training backlog planner
+        run: python -m unittest tests.test_buddy_training_planner -v
       - name: Generate daily capability, workflow, tool, function, library and generator gap report
         run: python -m buddy.certification.daily_lab --revision "${{ github.sha }}"
+      - name: Produce review-only training proposals from gap evidence
+        run: python -m buddy.certification.training_planner
       - name: Generate conservative evidence
         run: python -m buddy.certification.engine --revision "${{ github.sha }}"
       - uses: actions/upload-artifact@v4
@@ -42,4 +48,5 @@ jobs:
             website/data/buddy-capability-certification.json
             website/data/buddy-daily-lab.json
             website/data/buddy-repository-discovery.json
+            website/data/buddy-training-backlog.json
           retention-days: 30
