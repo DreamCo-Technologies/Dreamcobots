@@ -1,0 +1,45 @@
+{
+  "schema": "dreamco.buddy_flash_training.v1",
+  "status": "scaffold_not_trained",
+  "inspiration": {
+    "tutorial": "https://www.youtube.com/watch?v=-gfgQfw2g_E",
+    "upstream": "https://github.com/vukrosic/glm-5.3-flash-from-scratch",
+    "upstream_license": "MIT",
+    "review_note": "25.7M educational miniature, not released GLM-5.3-Flash weights or GPT-level performance; review exact source and license before reuse"
+  },
+  "model_ownership": "train_random_initialization_and_save_local_checkpoint",
+  "training_tracks": ["from_scratch","supervised_finetune","lora","qlora","executable_reward_rl","retrieval","tool_routing"],
+  "initial_track": "from_scratch",
+  "data_policy": {
+    "allowed": ["original_synthetic","owner_created","explicitly_licensed"],
+    "disallowed": ["secrets","private_user_records_without_consent","unlicensed_model_outputs","holdout_leakage"],
+    "interleave_divisions": true,
+    "train_validation_test_isolation": true,
+    "no_training_on_protected_holdout": true
+  },
+  "architecture_options": ["byte_level_small_transformer","hybrid_linear_sparse_attention","mixture_of_experts","optional_vision_encoder"],
+  "division_coverage": {
+    "source": "config/generated/bots.catalog.json",
+    "benchmark_source": "config/buddy-benchmark-task-registry.json",
+    "goal_source": "reports/goals_to_gates.json",
+    "missing_domains": "report_uncovered_not_mastered"
+  },
+  "training_guardrails": {
+    "paid_compute_allowed": false,
+    "automatic_download": false,
+    "production_promotion": false,
+    "max_seconds_default": 300,
+    "save_checkpoints": true,
+    "require_baseline_comparison": true,
+    "require_human_review_for_external_actions": true
+  },
+  "acceptance": [
+    "dependency_and_license_audit",
+    "CPU_or_MPS_smoke_train_with_checkpoint_hash",
+    "unseen_holdout_test_with_reproducible_seed",
+    "division_coverage_report",
+    "regression_and_safety_gate",
+    "local_inference_adapter_proof",
+    "no_unverified_mastery_claims"
+  ]
+}
