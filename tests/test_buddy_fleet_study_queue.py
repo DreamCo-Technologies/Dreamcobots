@@ -19,6 +19,15 @@ class FleetQueueTests(unittest.TestCase):
         self.assertEqual(report["tasks"][0]["next_action"],"study_and_retest_specific_failure")
         self.assertEqual(report["tasks"][0]["champion_model"],"model-y")
         self.assertFalse(report["tasks"][0]["training_started"])
+    def test_pagination(self):
+        g=goal()
+        g["goals"].append({**g["goals"][0],"id":"g2","bot_id":"Code/b"})
+        empty={"schema":"dreamco.task_champions.v1","champions":[]}
+        first=make_queue(g,empty,max_items=1,offset=0)
+        second=make_queue(g,empty,max_items=1,offset=1)
+        self.assertNotEqual(first["tasks"][0]["goal_id"],second["tasks"][0]["goal_id"])
+        self.assertEqual(first["remaining"],1)
+        self.assertEqual(second["remaining"],0)
     def test_budget(self):
         with self.assertRaises(ValueError):
             make_queue(goal(),{"schema":"dreamco.task_champions.v1"},max_items=0)
