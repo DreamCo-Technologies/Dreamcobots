@@ -1,0 +1,86 @@
+{
+  "schema": "dreamco.genealogy_curriculum.v1",
+  "status": "implemented_curriculum_not_live_records_integration",
+  "tracks": [
+    {
+      "id": "family_history",
+      "topics": [
+        "pedigree charts",
+        "family group sheets",
+        "oral history",
+        "census records",
+        "vital records",
+        "immigration records",
+        "land and probate records",
+        "historical maps",
+        "newspapers",
+        "archival citations",
+        "conflicting evidence",
+        "identity resolution",
+        "GEDCOM import and export"
+      ],
+      "projects": [
+        "Parse sample GEDCOM records",
+        "Build source-cited family tree with uncertainty flags",
+        "Compare duplicate-person candidates without automatic merges",
+        "Create research timeline from public records"
+      ]
+    },
+    {
+      "id": "genetic_genealogy",
+      "topics": [
+        "autosomal inheritance",
+        "mitochondrial DNA",
+        "Y-DNA",
+        "centimorgan interpretation",
+        "DNA matches and shared segments",
+        "population reference limitations",
+        "adoption and unknown-parentage sensitivity",
+        "genetic privacy"
+      ],
+      "projects": [
+        "Analyze synthetic kinship examples",
+        "Explain inheritance patterns without definitive kinship claims",
+        "Document consent and deletion of sensitive data"
+      ]
+    }
+  ],
+  "research_sources": [
+    {
+      "name": "US National Archives genealogy",
+      "url": "https://www.archives.gov/research/genealogy"
+    },
+    {
+      "name": "Library of Congress",
+      "url": "https://www.loc.gov/"
+    },
+    {
+      "name": "FamilySearch",
+      "url": "https://www.familysearch.org/"
+    },
+    {
+      "name": "National Genealogical Society",
+      "url": "https://www.ngsgenealogy.org/"
+    }
+  ],
+  "privacy_rules": [
+    "Do not expose living persons' sensitive information",
+    "Require explicit permission to import private family trees or DNA",
+    "Do not scrape authenticated records or bypass access controls",
+    "Do not infer or assert paternity, ethnicity, or biological relationships from unverified matches",
+    "Provide source citations and uncertainty for every claimed relationship",
+    "Support revocation, retention limits, and deletion of stored records"
+  ],
+  "evaluation": [
+    "GEDCOM parsing fixtures",
+    "source-provenance coverage",
+    "conflicting-record detection",
+    "privacy regression tests",
+    "independent historical record verification"
+  ],
+  "integrations": {
+    "postgresql": "future source-cited genealogy graph and indexed record search",
+    "buddy": "research assistant with reviewable evidence and user confirmation before tree edits",
+    "dna_track": "optional synthetic educational examples, not automatic personal-genome linkage"
+  }
+}
