@@ -7,6 +7,7 @@ import json
 import re
 import time
 from .coding_sandbox import run_python_tests
+from .research_evidence import verify_research_answer
 from .tool_execution_bench import execute
 
 def evaluate(task, adapter):
@@ -25,8 +26,12 @@ def evaluate(task, adapter):
         passed=receipt["passed"] and receipt["sandbox_executed"]
     elif kind=="research":
         # Independently authored expected answer; citation validity needs separate source checks.
-        passed=output.strip().casefold()==task["expected"].strip().casefold()
-        receipt={"passed":passed,"scorer":"exact_match","source_verified":False}
+        if task.get("sources"):
+            receipt=verify_research_answer(output,task)
+            passed=receipt["passed"]
+        else:
+            passed=output.strip().casefold()==task["expected"].strip().casefold()
+            receipt={"passed":passed,"scorer":"exact_match","source_verified":False}
     elif kind=="multi_step_tools":
         try:
             actions=json.loads(output)
