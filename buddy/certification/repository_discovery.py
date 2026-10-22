@@ -46,7 +46,7 @@ def discover(root):
         elif p.name in ("package.json", "requirements.txt", "pyproject.toml"):
             add("library", p.name, 1)
         else:
-            for m in re.finditer(r"(?m)^\\s*(?:export\\s+)?(?:async\\s+)?(?:function|class)\\s+([A-Za-z_$][\\w$]*)", source):
+            for m in re.finditer(r"(?m)^\s*(?:export\s+)?(?:async\s+)?(?:function|class)\s+([A-Za-z_$][\w$]*)", source):
                 add("function", m.group(1), source.count("\n", 0, m.start()) + 1)
         if "generat" in p.stem.lower() or p.stem.startswith("build_"):
             add("generator", p.stem, 1)
