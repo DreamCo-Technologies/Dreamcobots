@@ -11,6 +11,8 @@ on:
       - 'tests/test_buddy_provider_adapters.py'
       - 'tests/test_buddy_task_champions.py'
       - 'tests/test_buddy_task_distillation.py'
+      - 'tests/test_buddy_all_bot_goals.py'
+      - 'App_bots/**'
       - 'config/buddy/benchmarks/**'
       - 'config/buddy/unified-build-training-plan.json'
       - 'config/buddy/capability-certification-goals.json'
@@ -43,6 +45,10 @@ jobs:
         run: python -m unittest tests.test_buddy_task_champions -v
       - name: Verify rights-aware task distillation and stateful tool sandbox
         run: python -m unittest tests.test_buddy_task_distillation -v
+      - name: Verify fleet-wide bot goal discovery
+        run: python -m unittest tests.test_buddy_all_bot_goals -v
+      - name: Inventory every canonical bot capability goal
+        run: python -m buddy.certification.all_bot_goals
       - name: Verify unified training backlog planner
         run: python -m unittest tests.test_buddy_training_planner -v
       - name: Generate daily capability, workflow, tool, function, library and generator gap report
@@ -59,4 +65,5 @@ jobs:
             website/data/buddy-daily-lab.json
             website/data/buddy-repository-discovery.json
             website/data/buddy-training-backlog.json
+            website/data/buddy-all-bot-goals.json
           retention-days: 30
