@@ -6,23 +6,21 @@ Static check: scripts, styles and data a page uses exist; controls are wired to 
 
 | Verdict | Pages |
 |---|---:|
-| working | 195 |
-| partial | 0 |
-| stub | 10 |
+| working | 216 |
+| partial | 1 |
+| stub | 7 |
 | broken | 0 |
-| **Total** | **205** |
+| **Total** | **224** |
 
 Pages that load `nav.js` show these findings on the page itself (`page-truth.js` labels dead controls and server-only features as **stub**).
 
 ## Pages that are not fully working
 
 - **app-shop.html** — stub: api `/api/auth/` server-only; api `/api/auth/providers` server-only
-- **bot-visual.html** — stub: control `button#run-sim` dead
 - **buddy.html** — stub: api `/api/buddy/route-capability` server-only; api `/api/local/apps/open` server-only; api `/api/local/browser/search` server-only; api `/api/local/health` server-only; api `/api/local/pause` server-only; api `/api/local/workspaces/open` server-only
+- **command-center.html** — partial: api `/api/bots` server-only; api `/api/bots/` server-only; api `/api/buddy/chat` server-only; api `/api/capabilities` server-only; api `/api/consent` server-only; api `/api/deals/score` server-only; api `/api/export/investor` server-only; api `/api/health` server-only (+5 more)
 - **connections.html** — stub: api `/api/local/secrets/store` server-only; api `/api/platform-connections` server-only
 - **hf-unlock.html** — stub: api `/api/auth/` server-only; api `/api/auth/providers` server-only
-- **live-monitor.html** — stub: control `button#run-market` dead
 - **models.html** — stub: api `/api/buddy/models/connections` server-only
 - **search.html** — stub: api `/api/local/browser/search` server-only
 - **sign-in.html** — stub: api `/api/auth/` server-only; api `/api/auth/providers` server-only
-- **step-models.html** — stub: control `form#task-form` dead

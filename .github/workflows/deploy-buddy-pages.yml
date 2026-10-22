@@ -40,6 +40,10 @@ on:
       - "docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md"
       - "config/**"
       - ".github/workflows/deploy-buddy-pages.yml"
+      - "tools/build_pages_connection_index.py"
+      - "buddy/capabilities/**"
+      - "tests/capability-workbench.test.mjs"
+      - "tests/test_observed_capability_runtime.py"
   schedule:
     # Refresh live-ish data on Pages (Actions health + Buddy control-plane status).
     - cron: "47 5,17 * * *"
@@ -141,6 +145,11 @@ jobs:
           test -s website/data/problem-registry.json
           test -s website/data/buddy-control-plane.json
           test -s website/data/buddy-control-status.json
+      - name: Build repository connection index and verify workbench
+        run: |
+          python3 tools/build_pages_connection_index.py
+          python3 -m unittest tests.test_observed_capability_runtime
+          node --test tests/capability-workbench.test.mjs
       - name: Check generated Actions data contracts
         run: |
           python3 -m json.tool website/data/actions-prospectus.json >/dev/null

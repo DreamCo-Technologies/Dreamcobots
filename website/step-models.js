@@ -1,5 +1,9 @@
 (function () {
   const params = new URLSearchParams(window.location.search);
+  document.getElementById("task-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    document.getElementById("status").textContent = "Task selected. Choose a model and press Start for each step. No model has been called.";
+  });
   fetch("data/step-board.json").then(function (response) { return response.json(); }).then(function (data) {
     document.getElementById("lead").textContent = data.steps.length + " steps, " + data.approved_models.length + " approved models, " + data.connections.length + " connections, " + data.apis.length + " APIs, " + data.workflows.length + " workflows, " + data.plugins + " plugins. No measured best. Nothing is called.";
     const task = document.getElementById("task");

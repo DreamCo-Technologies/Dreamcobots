@@ -6,6 +6,7 @@
   const NAV_BASE = new URL('.', (document.currentScript && document.currentScript.src) || location.href).href;
   const abs = (h) => /^(#|[a-z]+:|\/)/i.test(h) ? h : new URL(h, NAV_BASE).href;
   const links = [
+    { href: 'capability-workbench.html', label: 'Build & Prove' },
     { href: 'repository-guide.html', label: '📚 Start Here' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'own-bootcamp.html', label: '🥾 Bootcamp' },
