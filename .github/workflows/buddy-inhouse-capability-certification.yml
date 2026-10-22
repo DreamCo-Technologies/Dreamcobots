@@ -13,10 +13,10 @@ on:
       - 'tests/test_buddy_task_distillation.py'
       - 'tests/test_buddy_all_bot_goals.py'
       - 'tests/test_buddy_fleet_study_queue.py'
+      - 'tests/test_buddy_fleet_study_pages.py'
       - 'tests/test_buddy_executable_evaluations.py'
       - 'config/buddy/benchmarks/**'
       - 'App_bots/**'
-      - 'config/buddy/benchmarks/**'
       - 'config/buddy/unified-build-training-plan.json'
       - 'config/buddy/capability-certification-goals.json'
       - 'tests/test_buddy_capability_certification.py'
@@ -56,6 +56,10 @@ jobs:
         run: python -m unittest tests.test_buddy_fleet_study_queue -v
       - name: Generate bounded cross-division study queue
         run: python -m buddy.certification.fleet_study_queue
+      - name: Verify complete fleet study pagination
+        run: python -m unittest tests.test_buddy_fleet_study_pages -v
+      - name: Generate all fleet study pages and coverage manifest
+        run: python -m buddy.certification.fleet_study_pages
       - name: Verify executable benchmark scoring offline
         run: python -m unittest tests.test_buddy_executable_evaluations -v
       - name: Verify unified training backlog planner
@@ -76,4 +80,5 @@ jobs:
             website/data/buddy-training-backlog.json
             website/data/buddy-all-bot-goals.json
             website/data/buddy-fleet-study-queue.json
+            website/data/buddy-fleet-study-pages/
           retention-days: 30
