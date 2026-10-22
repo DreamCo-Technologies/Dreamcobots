@@ -20,10 +20,10 @@ def build():
     content = REPORT.read_text(encoding="utf-8") if REPORT.is_file() else ""
     counts = {}
     for key, label in FIELDS.items():
-        match = re.search(r"^-\\s*" + re.escape(label) + r":\\s*(\\d+)\\s*$", content, re.M)
+        match = re.search(r"^-\s*" + re.escape(label) + r":\s*(\d+)\s*$", content, re.M)
         counts[key] = int(match.group(1)) if match else None
     programs = []
-    for name, area, status in re.findall(r"^- \\*\\*(.+?)\\*\\* \\((.+?)\\): \\x60([^\\x60]+)\\x60\\s*$", content, re.M):
+    for name, area, status in re.findall(r"^- \*\*(.+?)\*\* \((.+?)\): \x60([^\x60]+)\x60\s*$", content, re.M):
         programs.append({"name": name, "area": area, "reported_status": status,
                          "mastered": False, "verified_live": False})
     return {"schema": "dreamco.buddy_mastery_evidence.v1",
@@ -46,7 +46,7 @@ def build():
 def main():
     result = build()
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(result, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
+    OUT.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(f"Wrote {OUT.relative_to(ROOT)}")
 
 if __name__ == "__main__":
