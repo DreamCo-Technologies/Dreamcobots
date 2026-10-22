@@ -75,8 +75,8 @@ def search(query="", *, provider=None, category=None, level=None, topic=None):
     return results
 
 def validate():
-    from buddy.bootcamp.training_methods_hub import PROVIDERS
-    if set(LIBRARIES) != set(PROVIDERS):
+    expected = {"colab", "kaggle", "hugging_face", "unsloth", "axolotl", "pytorch", "runpod", "vast", "modal", "aws", "google_cloud", "azure"}
+    if set(LIBRARIES) != expected:
         raise ValueError("libraries must cover all providers exactly")
     for item in catalog():
         if not item["resources"]:
