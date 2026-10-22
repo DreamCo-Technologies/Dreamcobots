@@ -186,7 +186,8 @@
       "tests": [
         "tests/actions-page.test.mjs",
         "tests/shared-repository-controls.test.mjs",
-        "tests/repository-workbench.browser.cjs"
+        "tests/repository-workbench.browser.cjs",
+        "tests/capability-workbench.test.mjs"
       ]
     },
     {
@@ -395,6 +396,31 @@
         "tests/test_buddy_os_evidence_gate.py"
       ],
       "reason": "Buddy OS evidence gate fail-closed contracts"
+    },
+    {
+      "sources": [
+        "buddy/capabilities/__init__.py"
+      ],
+      "tests": [
+        "tests/test_observed_capability_runtime.py"
+      ]
+    },
+    {
+      "sources": [
+        "tools/build_pages_connection_index.py"
+      ],
+      "tests": [
+        "tests/test_build_pages_connection_index.py"
+      ]
+    },
+    {
+      "sources": [
+        "website/repository-actions.js",
+        "website/step-models.js"
+      ],
+      "tests": [
+        "tests/capability-workbench.test.mjs"
+      ]
     }
   ],
   "evidence_rules": {

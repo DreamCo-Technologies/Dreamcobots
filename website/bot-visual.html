@@ -30,6 +30,12 @@ scene.add(new THREE.AmbientLight(0xffffff));
 scene.add(mesh);
 function frame() { mesh.rotation.y += 0.01; renderer.render(scene, camera); requestAnimationFrame(frame); }
 frame();
+document.getElementById("run-sim").addEventListener("click", () => {
+  const started = performance.now();
+  for (let step = 0; step < 120; step += 1) mesh.rotation.y += 0.01;
+  renderer.render(scene, camera);
+  document.getElementById("sim-status").textContent = "120 local rotation steps completed in " + (performance.now() - started).toFixed(2) + " ms. This tests rendering only; no bot task was executed.";
+});
 document.querySelectorAll("[data-bot]").forEach((button) => button.addEventListener("click", () => { mesh.name = button.dataset.bot; }));
 </script>
 </body></html>
