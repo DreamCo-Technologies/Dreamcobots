@@ -8,6 +8,8 @@ on:
       - 'tests/test_buddy_daily_lab.py'
       - 'tests/test_buddy_discovery_benchmarks.py'
       - 'tests/test_buddy_training_planner.py'
+      - 'tests/test_buddy_provider_adapters.py'
+      - 'config/buddy/benchmarks/**'
       - 'config/buddy/unified-build-training-plan.json'
       - 'config/buddy/capability-certification-goals.json'
       - 'tests/test_buddy_capability_certification.py'
@@ -33,6 +35,8 @@ jobs:
         run: python -m unittest tests.test_buddy_discovery_benchmarks -v
       - name: Generate repository-wide static symbol inventory
         run: python -m buddy.certification.repository_discovery
+      - name: Verify approved provider adapter safety without network or secrets
+        run: python -m unittest tests.test_buddy_provider_adapters -v
       - name: Verify unified training backlog planner
         run: python -m unittest tests.test_buddy_training_planner -v
       - name: Generate daily capability, workflow, tool, function, library and generator gap report
