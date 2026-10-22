@@ -35,8 +35,8 @@ def main():
     for old in dest.glob("page-*.json"):
         old.unlink()
     for idx,page in enumerate(pages):
-        (dest/f"page-{idx+1:04d}.json").write_text(json.dumps(page,indent=2)+"\\n")
-    (dest/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\\n")
+        (dest/f"page-{idx+1:04d}.json").write_text(json.dumps(page,indent=2)+"\n")
+    (dest/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
     print(json.dumps(manifest))
 
 if __name__=="__main__":
