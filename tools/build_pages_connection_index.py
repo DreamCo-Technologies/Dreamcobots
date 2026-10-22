@@ -15,7 +15,7 @@ OUTPUT = ROOT / "website/data/pages-connection-index.json"
 def build(root: Path = ROOT) -> dict:
     tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=root).decode().split("\0")
     rows = []
-    for name in sorted(set(tracked) - {"", "website/data/pages-connection-index.json"}):
+    for name in sorted(set(tracked) - {""}):
         path = root / name
         if not path.is_file():
             continue

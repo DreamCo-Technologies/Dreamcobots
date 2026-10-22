@@ -12,12 +12,15 @@ class ConnectionIndexTests(unittest.TestCase):
             root = Path(folder)
             subprocess.run(["git", "init", "-q", str(root)], check=True)
             (root / "website").mkdir()
+            (root / "website/data").mkdir()
+            (root / "website/data/pages-connection-index.json").write_text("{}")
             for name in ("website/page.html", "website/site.js", "source.py", "notes.html", "private.txt"):
                 (root / name).write_text("fixture")
             subprocess.run(["git", "add", "website", "source.py", "notes.html"], cwd=root, check=True)
             index = build(root)
             rows = {row["path"]: row for row in index["files"]}
-            self.assertEqual(index["counts"], {"tracked_files": 4, "pages": 1})
+            self.assertEqual(index["counts"], {"tracked_files": 5, "pages": 1})
+            self.assertIn("website/data/pages-connection-index.json", rows)
             self.assertNotIn("private.txt", rows)
             self.assertEqual(rows["website/page.html"]["page"], "page.html")
             self.assertEqual(rows["website/site.js"]["kind"], "asset")
