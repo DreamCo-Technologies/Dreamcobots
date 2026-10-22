@@ -14,6 +14,7 @@ on:
       - 'tests/test_buddy_all_bot_goals.py'
       - 'tests/test_buddy_fleet_study_queue.py'
       - 'tests/test_buddy_fleet_study_pages.py'
+      - 'tests/test_buddy_production_release_gate.py'
       - 'tests/test_buddy_executable_evaluations.py'
       - 'tests/test_buddy_research_evidence.py'
       - 'config/buddy/benchmarks/**'
@@ -61,6 +62,10 @@ jobs:
         run: python -m unittest tests.test_buddy_fleet_study_pages -v
       - name: Generate all fleet study pages and coverage manifest
         run: python -m buddy.certification.fleet_study_pages
+      - name: Verify production release evidence gates
+        run: python -m unittest tests.test_buddy_production_release_gate -v
+      - name: Generate fail-closed fleet production readiness
+        run: python -m buddy.certification.production_release_gate
       - name: Verify executable benchmark scoring offline
         run: python -m unittest tests.test_buddy_executable_evaluations -v
       - name: Verify research source receipts and tool prerequisites
@@ -84,4 +89,5 @@ jobs:
             website/data/buddy-all-bot-goals.json
             website/data/buddy-fleet-study-queue.json
             website/data/buddy-fleet-study-pages/
+            website/data/buddy-production-release-gate.json
           retention-days: 30
