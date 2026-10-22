@@ -10,13 +10,17 @@ class ReleaseGateTests(unittest.TestCase):
         self.assertEqual(r["blocked_goals"],2)
         self.assertFalse(r["fleet_production_ready"])
     def test_partial_evidence_not_fleet_ready(self):
-        r=evaluate_release(self.goals,{"goals":{"g1":dict.fromkeys(REQUIRED,True)}})
+        r=evaluate_release(self.goals,{"signature_validated":True,"goals":{"g1":dict.fromkeys(REQUIRED,True)}})
         self.assertEqual(r["evidence_ready_goals"],1)
         self.assertFalse(r["fleet_production_ready"])
     def test_complete_evidence_required(self):
         checks=dict.fromkeys(REQUIRED,True)
-        r=evaluate_release(self.goals,{"goals":{"g1":checks,"g2":checks}})
+        r=evaluate_release(self.goals,{"signature_validated":True,"goals":{"g1":checks,"g2":checks}})
         self.assertTrue(r["fleet_production_ready"])
+    def test_unsigned_complete_claims_blocked(self):
+        checks=dict.fromkeys(REQUIRED,True)
+        r=evaluate_release(self.goals,{"goals":{"g1":checks,"g2":checks}})
+        self.assertEqual(r["evidence_ready_goals"],0)
     def test_empty_inventory_not_ready(self):
         r=evaluate_release({"schema":"dreamco.all_bot_goals.v1","goals":[]},{"goals":{}})
         self.assertFalse(r["fleet_production_ready"])
