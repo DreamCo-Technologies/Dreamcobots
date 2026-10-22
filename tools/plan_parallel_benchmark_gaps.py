@@ -29,7 +29,25 @@ def main() -> int:
         raise ValueError('maximum_parallel_lanes must be between 1 and 20')
     groups: dict[str, list[dict]] = defaultdict(list)
 
-    for suite in suites.get("suites", []):
+    registered = suites.get("suites")
+    if not isinstance(registered, list) or not registered:
+        raise ValueError("repository-test-suites.json must register a nonempty suites array")
+    seen_ids: set[str] = set()
+    for index, suite in enumerate(registered):
+        if not isinstance(suite, dict):
+            raise ValueError(f"suite[{index}] must be an object")
+        suite_id = suite.get("id")
+        if not isinstance(suite_id, str) or not suite_id.strip():
+            raise ValueError(f"suite[{index}] requires a nonblank string id")
+        if suite_id in seen_ids:
+            raise ValueError(f"duplicate benchmark suite id: {suite_id}")
+        seen_ids.add(suite_id)
+        if not isinstance(suite.get("name"), str) or not suite["name"].strip():
+            raise ValueError(f"suite {suite_id} requires a nonblank name")
+        for field in ("sources", "tests", "scripts"):
+            value = suite.get(field, [])
+            if not isinstance(value, list) or any(not isinstance(item, str) or not item.strip() for item in value):
+                raise ValueError(f"suite {suite_id} {field} must contain only nonblank strings")
         lane = LANE_HINTS.get(suite.get("area"), "testing")
         groups[lane].append({
             "suite_id": suite["id"],
@@ -47,7 +65,7 @@ def main() -> int:
                 "required_regressions": suite.get("tests", []),
                 "required_scripts": suite.get("scripts", []),
                 "acceptance": "Nonzero passing execution evidence, measured target, source and artifact hashes, passing affected regressions, and evidence review are required to close a gap.",
-                "review": {"status": "reviewed", "reviewer": "Codex implementation review", "scope": "Shared closure contract only; not suite execution, owner approval, or capability certification."},
+                "review": {"status": "requires_suite_specific_review", "reviewer": None, "scope": "Shared remediation design only; no suite-specific review, passing execution evidence, owner approval, or endorsement."},
                 "closure_evaluator": "tools/benchmark_gap_closure.py",
                 "production_ready": False,
             },
