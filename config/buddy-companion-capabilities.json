@@ -1,0 +1,46 @@
+{
+  "schema": "dreamco.buddy_companion_capabilities.v1",
+  "status": "integration_contract_not_production_verified",
+  "experience": {
+    "modes": ["push_to_talk", "hands_free_with_visible_mic_indicator", "text_chat", "step_by_step_assistant"],
+    "conversation": ["streaming_asr", "incremental_responses", "streaming_tts", "interrupt_and_barge_in", "speaker_turn_detection", "multilingual_support", "accessible_captions"],
+    "quality_target": "Natural low-latency duplex conversation; not a claim of parity with ChatGPT Voice 1.1",
+    "persona": "Warm, supportive, honest, user-configurable; never pretend to be a human friend or hide AI identity"
+  },
+  "capabilities": [
+    {"id":"speech_to_text","permission":"microphone","evidence":"real_audio_word_error_rate_latency"},
+    {"id":"text_to_speech","permission":"audio_output","evidence":"latency_intelligibility_accessibility"},
+    {"id":"speaker_recognition","permission":"opt_in_voiceprint","evidence":"false_accept_reject_rates_spoof_resistance"},
+    {"id":"face_recognition","permission":"opt_in_face_template","evidence":"false_accept_reject_rates_liveness_and_demographic_testing"},
+    {"id":"voice_cloning","permission":"signed_adult_subject_consent_bound_to_clip_hash","evidence":"consent_watermark_and_similarity_tests"},
+    {"id":"image_personalization","permission":"image_rights_and_subject_consent","evidence":"provenance_and_identity_misuse_checks"},
+    {"id":"email_read","permission":"oauth_scoped_read","evidence":"provider_adapter_integration_test"},
+    {"id":"email_draft","permission":"oauth_scoped_draft","evidence":"provider_adapter_integration_test"},
+    {"id":"email_send","permission":"oauth_scoped_send_and_per_message_confirmation","evidence":"confirmation_and_audit_log"},
+    {"id":"messages_read","permission":"provider_supported_read_scope","evidence":"provider_adapter_integration_test"},
+    {"id":"messages_send","permission":"provider_supported_write_scope_and_per_message_confirmation","evidence":"confirmation_and_audit_log"},
+    {"id":"account_management","permission":"provider_oauth_least_privilege","evidence":"revoke_refresh_and_action_receipts"}
+  ],
+  "security": {
+    "biometrics":"opt_in_only_encrypted_templates_not_raw_images_by_default",
+    "face_and_voice_not_sole_authorization_for_sensitive_actions":true,
+    "require_liveness_and_secondary_confirmation":true,
+    "no_surveillance_or_bystander_identification":true,
+    "no_clone_or_likeness_without_verifiable_rights_and_consent":true,
+    "synthetic_media_disclosure_and_provenance":true,
+    "no_credentials_or_tokens_in_model_training":true,
+    "secrets":"encrypted_provider_vault_only",
+    "data_retention":"user_configurable_minimal",
+    "user_controls":["disconnect","delete_history","delete_biometric_templates","export_data","stop_agent"],
+    "external_actions":"draft_or_preview_first; explicit confirmation for sending, purchases, account security and destructive changes"
+  },
+  "integration_sources": [
+    "buddy/media/voice.py",
+    "capabilities/media_cloning/voice_clone.capability.json",
+    "docs/VOICE_CLONING_PLAN.md"
+  ],
+  "verification": {
+    "status":"not_tested_end_to_end",
+    "required":["live_asr_tts_duplex_test","consent_and_watermark_fail_closed_test","biometric_opt_in_and_delete_test","oauth_revoke_test","email_and_message_draft_send_confirmation_test","privacy_and_accessibility_review"]
+  }
+}
