@@ -14,7 +14,7 @@ def evaluate_release(goals, evidence):
     rows=goals.get("goals",[])
     if goals.get("schema")!="dreamco.all_bot_goals.v1":
         raise ValueError("unknown goal inventory")
-    receipts=evidence.get("goals",{})
+    receipts=evidence.get("goals",{}) if evidence.get("signature_validated") is True else {}
     ready=[]; blocked=[]
     for goal in rows:
         checks=receipts.get(goal["id"],{})
@@ -30,7 +30,7 @@ def evaluate_release(goals, evidence):
             "ready_goal_ids":ready,
             "blocked_sample":blocked[:100],
             "requirements":list(REQUIRED),
-            "note":"This gate checks supplied attestations, not their authenticity. Independent signed evidence validation is still required."}
+            "note":"Only verified, unexpired Ed25519 attestations bound to the current commit qualify."}
 
 def main():
     parser=argparse.ArgumentParser()
@@ -39,7 +39,16 @@ def main():
     root=Path(__file__).resolve().parents[2]
     goals=json.loads((root/"website/data/buddy-all-bot-goals.json").read_text())
     path=root/args.evidence
-    evidence=json.loads(path.read_text()) if path.exists() else {"goals":{}}
+    evidence={"goals":{}}
+    if path.exists():
+        from .signed_evidence import verified_goal_checks
+        raw=json.loads(path.read_text())
+        keys_path=root/"config/buddy/release-verifier-public-keys.json"
+        keys=json.loads(keys_path.read_text()) if keys_path.exists() else {}
+        import os
+        commit=os.getenv("GITHUB_SHA","")
+        evidence=verified_goal_checks(raw.get("attestations",[]),keys,commit)
+        evidence["signature_validated"]=True
     report=evaluate_release(goals,evidence)
     dest=root/"website/data/buddy-production-release-gate.json"
     dest.write_text(json.dumps(report,indent=2)+"\n")
