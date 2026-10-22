@@ -6,11 +6,11 @@ Static check: scripts, styles and data a page uses exist; controls are wired to 
 
 | Verdict | Pages |
 |---|---:|
-| working | 216 |
+| working | 217 |
 | partial | 1 |
 | stub | 7 |
 | broken | 0 |
-| **Total** | **224** |
+| **Total** | **225** |
 
 Pages that load `nav.js` show these findings on the page itself (`page-truth.js` labels dead controls and server-only features as **stub**).
 
