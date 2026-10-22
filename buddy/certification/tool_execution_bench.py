@@ -8,6 +8,7 @@ def execute(steps, *, inventory=8, reserved=3):
         raise ValueError("too many tool actions")
     state = {"inventory": inventory, "reserved": reserved, "available": None, "published": False}
     receipts = []
+    observed = set()
     for action in steps:
         if action not in ALLOWED:
             raise ValueError("unapproved tool action")
@@ -16,6 +17,9 @@ def execute(steps, *, inventory=8, reserved=3):
         elif action == "read_reserved":
             output = state["reserved"]
         elif action == "calculate_available":
+            if not {"read_inventory", "read_reserved"}.issubset(observed):
+                receipts.append({"action":action,"status":"blocked","reason":"observations_required"})
+                break
             state["available"] = state["inventory"] - state["reserved"]
             output = state["available"]
         else:
@@ -24,6 +28,8 @@ def execute(steps, *, inventory=8, reserved=3):
                 break
             state["published"] = True
             output = True
+        if action in ("read_inventory", "read_reserved"):
+            observed.add(action)
         receipts.append({"action": action, "status": "success", "output": output})
     digest = hashlib.sha256(json.dumps(state, sort_keys=True).encode()).hexdigest()
     return {"schema": "dreamco.tool_execution_receipt.v1", "state": state,
