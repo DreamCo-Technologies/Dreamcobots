@@ -1,0 +1,54 @@
+{
+  "schema": "dreamco.task_model_taxonomy.v1",
+  "source_registry_paths": [
+    "config/universal_software_capability_taxonomy.json",
+    "config/superbot-capability-taxonomy.json",
+    "config/buddy-model-router.json",
+    "original-bots/STATUS.json"
+  ],
+  "purpose": "Task-aware free-first model discovery and distillation eligibility; not evidence of a trained model.",
+  "dimensions": {
+    "capability_domains": ["discover","analyze","learn","execute","communicate","transact","govern","observe"],
+    "modalities": ["text","code","image","audio","video","document","structured_data","time_series","multimodal"],
+    "task_families": ["code_generation","code_repair","code_review","tool_calling","workflow_planning","retrieval","classification","ranking","reasoning","math","sql","forecasting","document_extraction","translation","speech_recognition","speech_synthesis","vision","image_generation","video_generation","simulation","robotics","safety_evaluation"],
+    "model_roles": ["teacher","student","judge","embedding","reranker","tool_router","specialist"],
+    "evidence_states": ["verified","partial","contract_only","planned","blocked"],
+    "training_methods": ["none","prompt","retrieval","tool_adapter","supervised_finetune","lora","qlora","distillation"]
+  },
+  "routing_policy": {
+    "default": "free_first",
+    "require_task_benchmark": true,
+    "require_license_review": true,
+    "require_runtime_adapter_proof": true,
+    "require_resource_budget": true,
+    "require_owner_approval_for_paid_compute": true,
+    "prohibit_unlicensed_teacher_output_training": true,
+    "require_isolated_holdout_for_promotion": true,
+    "no_claim_of_weight_ownership_from_adapter_only": true,
+    "fallback": "buddy_native"
+  },
+  "selection_order": [
+    "extract division and canonical capability id",
+    "classify outcome and modality",
+    "select model role and minimum quality/safety requirements",
+    "filter by license, training rights, cost, hardware and available adapter",
+    "benchmark eligible candidates against pinned tasks",
+    "select lowest-cost candidate meeting quality and safety thresholds",
+    "distill only when authorized, licensed, benchmarked and budgeted",
+    "retain baseline and rollback"
+  ],
+  "examples": [
+    {"division":"DreamSalesPro","capability":"discover.lead_matching","task_family":"ranking","modality":"text","preferred_roles":["embedding","reranker"],"fallback":"buddy_native"},
+    {"division":"DreamEducation","capability":"learn.tutoring","task_family":"reasoning","modality":"text","preferred_roles":["specialist","judge"],"fallback":"buddy_native"},
+    {"division":"DreamAIInfra","capability":"execute.code_repair","task_family":"code_repair","modality":"code","preferred_roles":["specialist","judge"],"fallback":"buddy_native"},
+    {"division":"DreamFinance","capability":"analyze.forecast","task_family":"forecasting","modality":"time_series","preferred_roles":["specialist","judge"],"fallback":"buddy_native"},
+    {"division":"DreamRealEstate","capability":"analyze.valuation","task_family":"reasoning","modality":"structured_data","preferred_roles":["specialist","judge"],"fallback":"buddy_native"},
+    {"division":"GameTitan","capability":"execute.simulation","task_family":"simulation","modality":"multimodal","preferred_roles":["specialist","judge"],"fallback":"buddy_native"}
+  ],
+  "notes": [
+    "Example division names are illustrative; canonical division IDs must be resolved from the current registry.",
+    "Hugging Face catalog availability does not imply free inference or permissive training rights.",
+    "Model candidates must be discovered dynamically; do not assume any named model is available or licensed.",
+    "A model fine-tuned from third-party weights remains subject to its base license and provenance."
+  ]
+}
