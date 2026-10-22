@@ -71,9 +71,29 @@ def plan(record, root=ROOT, *, registry_only=False):
     return {'status':'closed' if closed else 'open','division_id':record['division_id'],'benchmark_id':record['benchmark_id'],'gap':gap,'next_action':'regression_check' if closed or gap<=0 else 'train_practice_sandbox_transfer', 'evidence_verified': closed}
 
 
+def _validated_measurements(records):
+    # A raw measurement ledger must not count one benchmark twice. Missing
+    # identities remain visible as blocked records; malformed entries fail closed.
+    seen = set()
+    for index, record in enumerate(records):
+        if not isinstance(record, dict):
+            raise ValueError(f'measurement at index {index} must be an object')
+        division, benchmark = record.get('division_id'), record.get('benchmark_id')
+        if 'division_id' not in record or 'benchmark_id' not in record:
+            continue
+        if (type(division) not in (str, int) or not str(division).strip()
+                or not isinstance(benchmark, str) or not benchmark.strip()):
+            raise ValueError(f'invalid measurement identity at index {index}')
+        identity = (str(division).strip(), benchmark.strip())
+        if identity in seen:
+            raise ValueError(f'duplicate measurement identity: {identity[0]}/{identity[1]}')
+        seen.add(identity)
+    return records
+
+
 def load_records(data):
     if isinstance(data, list):
-        return data
+        return _validated_measurements(data)
     if not isinstance(data, dict):
         raise ValueError('expected a list or a recognized records/registry object')
     if data.get('schema') == 'dreamco.benchmark_suite_gap_contracts.v1':
@@ -93,7 +113,7 @@ def load_records(data):
     records = data.get('records')
     if not isinstance(records, list):
         raise ValueError('expected records list or benchmark suite registry')
-    return records
+    return _validated_measurements(records)
 
 def main():
     p=argparse.ArgumentParser(); p.add_argument('input'); p.add_argument('--output',default='benchmark-gap-plan.json'); a=p.parse_args()
