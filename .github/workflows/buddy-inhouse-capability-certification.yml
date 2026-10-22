@@ -6,6 +6,7 @@ on:
       - 'buddy/certification/**'
       - 'config/buddy/daily-lab-manifest.json'
       - 'tests/test_buddy_daily_lab.py'
+      - 'tests/test_buddy_discovery_benchmarks.py'
       - 'config/buddy/capability-certification-goals.json'
       - 'tests/test_buddy_capability_certification.py'
       - '.github/workflows/buddy-inhouse-capability-certification.yml'
@@ -26,6 +27,10 @@ jobs:
         run: python -m unittest tests.test_buddy_capability_certification -v
       - name: Verify daily inventory, deduplication and gap planning
         run: python -m unittest tests.test_buddy_daily_lab -v
+      - name: Verify static repository discovery, repeatable model benchmark harness and training gates
+        run: python -m unittest tests.test_buddy_discovery_benchmarks -v
+      - name: Generate repository-wide static symbol inventory
+        run: python -m buddy.certification.repository_discovery
       - name: Generate daily capability, workflow, tool, function, library and generator gap report
         run: python -m buddy.certification.daily_lab --revision "${{ github.sha }}"
       - name: Generate conservative evidence
@@ -36,4 +41,5 @@ jobs:
           path: |
             website/data/buddy-capability-certification.json
             website/data/buddy-daily-lab.json
+            website/data/buddy-repository-discovery.json
           retention-days: 30
