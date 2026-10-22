@@ -18,7 +18,9 @@ def evaluate(task, adapter):
         raise TypeError("model output must be text")
     kind=task["kind"]
     if kind=="coding_python":
-        code=re.sub(r"^\\s*```(?:python)?\\s*|\\s*```\\s*$","",output.strip())
+        code=output.strip()
+        if code.startswith("```") and code.endswith("```"):
+            code="\n".join(code.splitlines()[1:-1])
         receipt=run_python_tests(code,task["hidden_tests"])
         passed=receipt["passed"] and receipt["sandbox_executed"]
     elif kind=="research":
