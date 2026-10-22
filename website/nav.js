@@ -8,6 +8,7 @@
   const links = [
     { href: 'capability-workbench.html', label: 'Build & Prove' },
     { href: 'professional-bootcamp.html', label: '🎓 Professional College' },
+    { href: 'production-evidence.html', label: '🧾 Production Evidence' },
     { href: 'repository-guide.html', label: '📚 Start Here' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'own-bootcamp.html', label: '🥾 Bootcamp' },

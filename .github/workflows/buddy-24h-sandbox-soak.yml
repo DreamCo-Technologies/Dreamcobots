@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   soak:
@@ -18,6 +19,19 @@ jobs:
         with:
           python-version: "3.13"
       - run: python3 tools/build_user_money_map.py
+      - name: Restore the latest rolling soak history
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          previous_run=$(gh run list --workflow buddy-24h-sandbox-soak.yml --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          if [ -n "$previous_run" ] && [ "$previous_run" != "${{ github.run_id }}" ]; then
+            mkdir -p previous-soak
+            gh run download "$previous_run" --pattern 'buddy-24h-soak-*' --dir previous-soak || true
+            previous_history=$(find previous-soak -type f -name sandbox-24h-history.json -print -quit)
+            if [ -n "$previous_history" ]; then
+              cp "$previous_history" config/generated/sandbox-24h-history.json
+            fi
+          fi
       - run: python3 tools/run_24h_sandbox_soak.py
       - run: python3 -m unittest tests.test_build_user_money_map
       - if: always()
@@ -29,4 +43,5 @@ jobs:
             reports/SANDBOX_24H.md
             config/generated/user-money-map.json
             config/generated/sandbox-24h-tick.json
+            config/generated/sandbox-24h-history.json
           if-no-files-found: warn

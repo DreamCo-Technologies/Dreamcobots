@@ -121,6 +121,7 @@ jobs:
           python3 tools/generate_buddy_open_model_lab.py --check
           python3 tools/generate_buddy_learning_strategies.py --check
           python3 tools/generate_professional_bootcamp.py --check
+          python3 tools/generate_production_evidence_ledger.py --check
           python3 tools/build_manufacturer_marketplace_catalog.py
           python3 tools/build_system_progress_status.py
           python3 tools/connect_repository_pages.py
@@ -132,6 +133,7 @@ jobs:
           npm run test:expert-mode
           node --test tests/benchmark-tracker-page.test.mjs tests/service-worker-benchmark-cache.test.mjs
           npm run test:professional-bootcamp
+          npm run test:production-evidence
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
           test -s website/data/system-progress-status.json
@@ -200,6 +202,7 @@ jobs:
           node --check website/buddy-expert-mode.js
           node --check website/buddy-invention-lab.js
           node --check website/professional-bootcamp.js
+          node --check website/production-evidence.js
           node --check website/opportunity-hub.js
           node --check website/setup-center.js
           node --check website/buddy-control.js
@@ -221,6 +224,7 @@ jobs:
           test -s public_site/project-conversations.html
           test -s public_site/buddy-model-lab.html
           test -s public_site/professional-bootcamp.html
+          test -s public_site/production-evidence.html
       - name: Upload public website
         uses: actions/upload-pages-artifact@v5
         with:

@@ -4,7 +4,7 @@
 Four gates must be green before claimable shipping:
   1) provenance policy present and coherent
   2) allowlist / readiness never_claim_frontier_without_evidence
-  3) sandbox soak tick evidence present and ok
+  3) sandbox soak history proves at least 24 real hours and 24 successful ticks
   4) disclosure config present + assessment claimable:true
 
 Default (deploy) mode: fail if vanity claim phrases appear in website/ while
@@ -70,6 +70,7 @@ def check_allowlist(cfg: dict, errors: list[str]) -> bool:
 def check_soak(cfg: dict, errors: list[str]) -> bool:
     req = cfg["soak_requirements"]
     tick_path = ROOT / req["tick_path"]
+    history_path = ROOT / req["history_path"]
     report_path = ROOT / req["report_path"]
     ok = True
     if not tick_path.is_file():
@@ -82,6 +83,25 @@ def check_soak(cfg: dict, errors: list[str]) -> bool:
                 f"sandbox soak tick status={tick.get('status')!r}, "
                 f"need {req.get('required_tick_status')!r}"
             )
+            ok = False
+    if not history_path.is_file():
+        errors.append(f"sandbox soak history missing: {req['history_path']}")
+        ok = False
+    else:
+        summary = _load_json(history_path).get("summary", {})
+        minimum_ticks = int(req.get("minimum_successful_ticks", 24))
+        minimum_hours = float(req.get("minimum_elapsed_hours", 24))
+        if int(summary.get("successful_ticks", 0)) < minimum_ticks:
+            errors.append(f"sandbox soak has {summary.get('successful_ticks', 0)} successful ticks; need {minimum_ticks}")
+            ok = False
+        if float(summary.get("elapsed_hours", 0)) < minimum_hours:
+            errors.append(f"sandbox soak elapsed {summary.get('elapsed_hours', 0)} hours; need {minimum_hours}")
+            ok = False
+        if req.get("require_no_failed_ticks") and int(summary.get("failed_ticks", 0)):
+            errors.append(f"sandbox soak has {summary.get('failed_ticks')} failed ticks")
+            ok = False
+        if summary.get("complete") is not True or summary.get("status") != "passed_24h":
+            errors.append("sandbox soak summary is not complete/passed_24h")
             ok = False
     if not report_path.is_file():
         errors.append(f"sandbox soak report missing: {req['report_path']}")
