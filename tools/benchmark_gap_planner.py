@@ -83,9 +83,12 @@ def build_queue(data, registry):
                 priority = 1 if record.get("status") == "failed" else 2
                 action, reason = "CLOSE_GAPS", f"gap={gap:g}"
             else:
-                priority = 3
-                action = "RETEST_FAILURES" if record.get("status") == "regression" else "RUN_SANDBOX"
-                reason = "at/above target; verify repeatability"
+                if record.get("status") in ("failed", "regression"):
+                    priority, action = 1, "RETEST_FAILURES"
+                    reason = "failed or regressed despite score at/above target"
+                else:
+                    priority, action = 3, "RUN_SANDBOX"
+                    reason = "at/above target; verify repeatability"
             queue.append({"division": division, "benchmark": record.get("benchmark"), "priority": priority, "action": action, "reason": reason})
     queue.sort(key=lambda item: (item["priority"], item["division"], item.get("benchmark") or ""))
     return {"rejected": rejected, "complete": not rejected, "schema": "dreamco.benchmark_gap_queue.v1", "divisions": 65,
