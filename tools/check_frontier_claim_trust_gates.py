@@ -93,7 +93,7 @@ def check_soak(cfg: dict, errors: list[str]) -> bool:
                 ok = False
             else:
                 history = json.loads(history_path.read_text(encoding="utf-8"))
-                if not validate_runtime_soak(tick, history, errors):
+                if not validate_runtime_soak(tick, history, errors, require_fresh=True):
                     ok = False
         except (ValueError, TypeError, OSError, KeyError) as exc:
             errors.append(f"sandbox soak evidence invalid: {exc}")

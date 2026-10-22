@@ -10,7 +10,8 @@ import re
 from datetime import datetime, timezone
 
 
-def validate_runtime_soak(tick: dict, history: object, errors: list[str]) -> bool:
+def validate_runtime_soak(tick: dict, history: object, errors: list[str], *,
+                          require_fresh: bool = False, now: datetime | None = None) -> bool:
     """Reject inventory-only, unmeasured, inconsistent, or incomplete runtime evidence."""
     if tick.get("runtime_verified") is not True:
         errors.append("sandbox soak runtime_verified must be true (inventory is not runtime evidence)")
@@ -89,4 +90,17 @@ def validate_runtime_soak(tick: dict, history: object, errors: list[str]) -> boo
             or tick.get("fleet_sha256") != fleet):
         errors.append("sandbox soak tick does not match final runtime receipt")
         return False
+    if (tick.get("run_id") != history[-1]["run_id"]
+            or tick.get("generated_at") != history[-1]["generated_at"]):
+        errors.append("sandbox soak tick identity or timestamp differs from final receipt")
+        return False
+    if require_fresh:
+        clock = now if now is not None else datetime.now(timezone.utc)
+        if clock.tzinfo is None:
+            errors.append("sandbox soak freshness clock must include timezone")
+            return False
+        age = (clock.astimezone(timezone.utc) - previous_at).total_seconds()
+        if not -300 <= age <= 5400:
+            errors.append("sandbox soak final runtime receipt is stale or future-dated")
+            return False
     return True

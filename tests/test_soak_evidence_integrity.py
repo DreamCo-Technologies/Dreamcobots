@@ -61,4 +61,38 @@ class TestSoak(unittest.TestCase):
         tick, history=fixture();history[1].pop('probe')
         self.assert_invalid(tick,history)
 
+    def test_recent_receipts_with_freshness_required(self):
+        tick, history = fixture()
+        now = datetime.fromisoformat(history[-1]["generated_at"]) + timedelta(minutes=30)
+        self.assertTrue(validate_runtime_soak(tick, history, [], require_fresh=True, now=now))
+
+    def test_stale_receipts_rejected(self):
+        tick, history = fixture()
+        now = datetime.fromisoformat(history[-1]["generated_at"]) + timedelta(hours=3)
+        self.assert_invalid_fresh(tick, history, now)
+
+    def test_future_receipts_rejected(self):
+        tick, history = fixture()
+        now = datetime.fromisoformat(history[-1]["generated_at"]) - timedelta(minutes=10)
+        self.assert_invalid_fresh(tick, history, now)
+
+    def assert_invalid_fresh(self, tick, history, now):
+        errors = []
+        self.assertFalse(validate_runtime_soak(tick, history, errors, require_fresh=True, now=now))
+        self.assertTrue(errors)
+
+    def test_tick_identity_tampering_rejected(self):
+        tick, history = fixture()
+        tick["run_id"] = "different-run"
+        self.assert_invalid(tick, history)
+
+    def test_tick_timestamp_tampering_rejected(self):
+        tick, history = fixture()
+        tick["generated_at"] = "2026-10-22T00:00:00+00:00"
+        self.assert_invalid(tick, history)
+
+    def test_naive_freshness_clock_rejected(self):
+        tick, history = fixture()
+        self.assert_invalid_fresh(tick, history, datetime(2026, 10, 2))
+
 if __name__ == '__main__': unittest.main()
