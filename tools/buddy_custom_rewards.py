@@ -3,6 +3,7 @@
 No cryptocurrency, transferable assets, payouts, or model weight updates.
 """
 from dataclasses import dataclass, field
+from types import MappingProxyType
 from datetime import datetime, timezone
 from typing import Dict, List
 import uuid
@@ -30,6 +31,7 @@ class Rules:
                                           not isinstance(v, int) or isinstance(v, bool) or v < 1
                                           for k, v in self.rewards.items()):
             raise ValueError("invalid reward catalog")
+        object.__setattr__(self, "rewards", MappingProxyType(dict(self.rewards)))
 
 class Ledger:
     def __init__(self, rules: Rules):
