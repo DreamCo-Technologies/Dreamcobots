@@ -1,7 +1,7 @@
 """Daily scan of bots, study plans, and required files.
 
-Completing a study here means the sandbox lesson was recorded. It is not
-production mastery and it does not call a third party.
+This is a structural inventory scan, not evidence of sandbox execution or
+production mastery; no external calls are performed.
 """
 
 from __future__ import annotations
@@ -42,16 +42,9 @@ def _now() -> str:
 
 
 def complete_bot_studies() -> int:
-    changed = 0
-    for path in sorted(BOTS.glob("*.md")):
-        text = path.read_text(encoding="utf-8")
-        updated = text
-        for old, new in DONE.items():
-            updated = updated.replace(old, new)
-        if updated != text:
-            path.write_text(updated, encoding="utf-8")
-            changed += 1
-    return changed
+    # Markdown checkboxes cannot attest that sandbox tests or adapters ran.
+    # Refuse bulk completion until an evidence-bound per-bot receipt verifier exists.
+    raise RuntimeError("study completion requires verified sandbox receipts; no files changed")
 
 
 def scan() -> dict:
@@ -81,7 +74,9 @@ def scan() -> dict:
                 "source": path.relative_to(ROOT).as_posix(),
                 "bot": match.group(1),
                 "mission": match.group(2),
-                "sandbox_studied": True,
+                "sandbox_studied": False,
+                "study_recorded": True,
+                "evidence_status": "unverified",
                 "production_mastered": False,
             })
     elapsed = round(time.perf_counter() - started, 3)
@@ -136,7 +131,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args(argv)
     if args.complete:
-        complete_bot_studies()
+        print("Refused: study completion requires verified sandbox receipts; no files changed", file=sys.stderr)
+        return 2
     report = scan()
     write_report(report)
     print(json.dumps({key: report[key] for key in ("ready", "bot_count", "sandbox_studied", "open_tasks", "original_bot_studies", "elapsed_seconds", "missing_files")}, indent=2))
