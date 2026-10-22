@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Buddy Daily Capability Gap Lab</title><link rel="stylesheet" href="styles.css"></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="container">
+<h1>Buddy Daily Capability Gap Lab</h1>
+<p>Daily tests, possible duplicate capabilities, frontier comparison readiness, and training plans. An unrun benchmark is never a win.</p>
+<p><a href="https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-daily-capability-gap-lab.yml">Open daily Actions results</a></p>
+<p id="status" role="status">Loading published snapshot…</p><div id="cards"></div></main>
+<script>
+const esc = x => String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+(async()=>{try{const r=await fetch('data/buddy-daily-capability-gaps.json',{cache:'no-store'});
+if(!r.ok)throw Error('No published snapshot');const d=await r.json();
+document.getElementById('status').textContent='Revision: '+d.revision+' | Generated: '+d.generated_at+' | Frontier: '+d.benchmark_status+' | Training: '+d.training_status;
+document.getElementById('cards').innerHTML=d.plans.map(p=>'<section class="card"><h2>'+esc(p.id)+'</h2><p>Status: '+esc(p.status)+' | Priority: '+esc(p.priority)+'</p><p>Frontier: '+esc(p.frontier_comparison_status)+' | Training: '+esc(p.training_status)+'</p><h3>Training and gap closure plan</h3><ol>'+p.gaps.map(g=>'<li>'+esc(g)+'</li>').join('')+'</ol></section>').join('');
+}catch(e){document.getElementById('status').textContent='Evidence unavailable: '+e.message;}})();
+</script></body></html>
