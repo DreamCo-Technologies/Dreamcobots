@@ -6,13 +6,13 @@ import argparse
 import json
 from pathlib import Path
 
-def make_queue(goals_report, champion_report, *, max_items=250):
+def make_queue(goals_report, champion_report, *, max_items=250, offset=0):
     if goals_report.get("schema") != "dreamco.all_bot_goals.v1":
         raise ValueError("unexpected fleet goals schema")
     if champion_report.get("schema") != "dreamco.task_champions.v1":
         raise ValueError("unexpected task champions schema")
-    if not 1 <= max_items <= 1000:
-        raise ValueError("invalid queue budget")
+    if not 1 <= max_items <= 1000 or not isinstance(offset,int) or offset < 0:
+        raise ValueError("invalid queue budget or offset")
     verified = {}
     for c in champion_report.get("champions", []):
         if c.get("selection_basis") != "independently_verified_comparable_trials":
@@ -50,21 +50,23 @@ def make_queue(goals_report, champion_report, *, max_items=250):
                       "training_started":False,"production_certified":False})
     queue.sort(key=lambda x:(x["priority"],x["division"],x["bot_id"],x["goal_id"]))
     return {"schema":"dreamco.fleet_study_queue.v1",
-            "total_discovered":len(queue),"queued":min(len(queue),max_items),
-            "remaining":max(0,len(queue)-max_items),
-            "tasks":queue[:max_items],"automatic_paid_execution":False,
+            "total_discovered":len(queue),"offset":offset,
+            "queued":len(queue[offset:offset+max_items]),
+            "remaining":max(0,len(queue)-offset-max_items),
+            "tasks":queue[offset:offset+max_items],"automatic_paid_execution":False,
             "note":"No champion is inferred without an explicit verified goal mapping."}
 
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--max-items",type=int,default=250)
+    parser.add_argument("--offset",type=int,default=0)
     args=parser.parse_args()
     root=Path(__file__).resolve().parents[2]
     goals=json.loads((root/"website/data/buddy-all-bot-goals.json").read_text())
     # Champion evidence is optional; missing means there are no verified task champions.
     p=root/"website/data/buddy-task-champions.json"
     champions=json.loads(p.read_text()) if p.exists() else {"schema":"dreamco.task_champions.v1","champions":[]}
-    report=make_queue(goals,champions,max_items=args.max_items)
+    report=make_queue(goals,champions,max_items=args.max_items,offset=args.offset)
     out=root/"website/data/buddy-fleet-study-queue.json"
     out.write_text(json.dumps(report,indent=2)+"\n")
     print(json.dumps({"queued":report["queued"],"remaining":report["remaining"]}))
