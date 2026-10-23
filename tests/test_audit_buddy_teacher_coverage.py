@@ -115,5 +115,67 @@ class TeacherCoverageTests(unittest.TestCase):
                 audit(Path(tmp))
 
 
+    def test_string_readiness_is_not_truth(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["production"]
+            data = json.loads(p.read_text())
+            data["divisions"][0]["production_ready"] = "false"
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "production_ready must be a boolean"):
+                audit(root)
+
+    def test_boolean_benchmark_run_count_is_not_an_integer_receipt(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["tasks"]
+            data = json.loads(p.read_text())
+            data["runs"] = True
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "nonnegative integer"):
+                audit(root)
+
+    def test_ledger_zero_weight_artifacts_rejects_distill_claim(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["production"]
+            data = json.loads(p.read_text())
+            data["summary"]["trained_weight_artifacts"] = 0
+            p.write_text(json.dumps(data))
+            p = root / SOURCES["distill"]
+            p.write_text(json.dumps({
+                "status": "research_only",
+                "truth": {"trained_weights_exist": True, "distill_runs_exist": False},
+            }))
+            with self.assertRaisesRegex(AuditError, "reports zero artifacts"):
+                audit(root)
+
+    def test_division_subtotal_mismatch_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["production"]
+            data = json.loads(p.read_text())
+            data["summary"].update({"canonical_divisions": 2, "supplemental_divisions": 1})
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "subtotals disagree"):
+                audit(root)
+
+    def test_non_boolean_distill_claim_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["distill"]
+            p.write_text(json.dumps({
+                "status": "contract_draft_no_runs",
+                "truth": {"distill_runs_exist": "false"},
+            }))
+            with self.assertRaisesRegex(AuditError, "distill_runs_exist must be a boolean"):
+                audit(root)
+
+
 if __name__ == "__main__":
     unittest.main()
