@@ -61,6 +61,54 @@ class TeacherCoverageTests(unittest.TestCase):
             with self.assertRaisesRegex(AuditError, "count disagrees"):
                 audit(root)
 
+    def test_alias_proposals_do_not_count_as_verified_routes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["models"]
+            data = json.loads(p.read_text())
+            data["models"] = [{"id": "code-only", "task_types": ["code"]}]
+            p.write_text(json.dumps(data))
+            report = audit(root)
+            coding = next(row for row in report["task_routes"] if row["task"] == "coding")
+            self.assertEqual(coding["declared_candidate_model_ids"], [])
+            self.assertEqual(coding["suggested_alias_model_ids_unverified"], ["code-only"])
+            self.assertEqual(coding["independently_verified_model_ids"], [])
+            self.assertIn("coding", report["summary"]["benchmark_tasks_without_exact_catalog_type"])
+            self.assertIn("code", report["summary"]["catalog_model_task_types_not_in_benchmark_registry"])
+
+    def test_missing_dedicated_suite_is_visible(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["suites"]
+            p.write_text(json.dumps({"suites": [{"id": "code_generation"}]}))
+            report = audit(root)
+            coding = next(row for row in report["task_routes"] if row["task"] == "coding")
+            sql = next(row for row in report["task_routes"] if row["task"] == "sql")
+            self.assertEqual(coding["candidate_suite_ids_design_only"], ["code_generation"])
+            self.assertFalse(coding["needs_dedicated_suite_design"])
+            self.assertTrue(sql["needs_dedicated_suite_design"])
+            self.assertIn("sql", report["summary"]["benchmark_tasks_without_candidate_suite_design"])
+
+    def test_inconsistent_weight_claim_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["students"]
+            p.write_text(json.dumps({"adapters": [], "truth": {"trained_weights_exist": True}}))
+            with self.assertRaisesRegex(AuditError, "without any registered student adapter"):
+                audit(root)
+
+    def test_invalid_benchmark_run_count_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["tasks"]
+            p.write_text(json.dumps({"tasks": ["coding"], "runs": -1}))
+            with self.assertRaisesRegex(AuditError, "nonnegative integer"):
+                audit(root)
+
     def test_missing_source_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaisesRegex(AuditError, "production-evidence-ledger"):
