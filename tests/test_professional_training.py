@@ -28,10 +28,30 @@ class ProfessionalTrainingTests(unittest.TestCase):
         base=[BenchmarkRun(.6,.6,.9,60,0,2)]*3
         candidate=[BenchmarkRun(.9,.85,.95,30,0,1,.01)]*3
         holdout=[BenchmarkRun(.85,.8,.95,40,0,1,.01)]*3
-        self.assertTrue(promotion_decision(base,candidate,holdout)["promote"])
-        self.assertFalse(promotion_decision(base,candidate[:2],holdout)["promote"])
+        scored = promotion_decision(base, candidate, holdout)
+        self.assertTrue(scored["score_gate_passed"])
+        self.assertFalse(scored["promote"])
+        self.assertFalse(scored["independent_holdout_verified"])
+        self.assertFalse(scored["repetitions_independently_verified"])
+        self.assertEqual(scored["reason"], "independent_evidence_and_owner_approval_required")
+        self.assertEqual(
+            promotion_decision(base,candidate[:2],holdout)["reason"],
+            "minimum_repetitions_not_met",
+        )
         regressed=[BenchmarkRun(.9,.85,.95,30,0,1,.03)]*3
-        self.assertFalse(promotion_decision(base,regressed,holdout)["promote"])
+        regressed_result = promotion_decision(base,regressed,holdout)
+        self.assertFalse(regressed_result["score_gate_passed"])
+        self.assertFalse(regressed_result["promote"])
+        self.assertEqual(regressed_result["reason"], "metric_gates_failed")
+
+    def test_perfect_but_unverified_in_memory_scores_cannot_promote(self):
+        base = [BenchmarkRun(.1,.1,1,60,0,0)] * 3
+        candidate = [BenchmarkRun(1,1,1,0,0,0)] * 3
+        holdout = [BenchmarkRun(1,1,1,0,0,0)] * 3
+        result = promotion_decision(base, candidate, holdout)
+        self.assertTrue(result["score_gate_passed"])
+        self.assertFalse(result["promote"])
+        self.assertFalse(result["independent_holdout_verified"])
 
     def test_training_manifest_is_a_handoff_without_weights_or_private_rows(self):
         row=distill_task(example_record())
