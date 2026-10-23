@@ -60,6 +60,10 @@ def route(task: str, models: list[dict], free_only: bool = False, accounts: list
             continue
         if row.get("source") not in SOURCES or not isinstance(row.get("name"), str) or not row["name"].strip():
             continue
+        # A connected account for another provider cannot authorize this model.
+        # register() binds these fields; reject altered or incomplete registry rows.
+        if row.get("provider") != row["source"]:
+            continue
         if not _valid_score(row.get("quality")) or not _valid_score(row.get("efficiency")):
             continue
         if type(row.get("free")) is not bool:
