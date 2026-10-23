@@ -177,5 +177,22 @@ class TeacherCoverageTests(unittest.TestCase):
                 audit(root)
 
 
+    def test_new_unseeded_division_is_not_assumed_covered(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["production"]
+            data = json.loads(p.read_text())
+            data["divisions"].append({"name": "FutureDivision", "production_ready": False})
+            data["summary"]["real_divisions"] = 3
+            p.write_text(json.dumps(data))
+            report = audit(root)
+            self.assertEqual(report["summary"]["divisions_needing_fixture_design"], 1)
+            future = next(row for row in report["division_coverage"]
+                          if row["division"] == "FutureDivision")
+            self.assertEqual(future["status"], "representative_task_needed")
+            self.assertIsNone(future["independent_holdout_receipt"])
+
+
 if __name__ == "__main__":
     unittest.main()
