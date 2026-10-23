@@ -42,4 +42,62 @@ class ProfessionalTrainingTests(unittest.TestCase):
         self.assertEqual(public_summary(manifest)["example_count"],1)
 
 
+    def _training_request(self):
+        return {"run_id":"offline-1","method":"LoRA","base_model":"example/base",
+                "base_revision":"pinned123","base_license":"Apache-2.0",
+                "dataset_license":"owner-approved","hardware":"local-test",
+                "max_cost_usd":0,"output_repo":"owner/private-model",
+                "owner_approved":True}
+
+    def test_zero_budget_handoff_never_trains_weights(self):
+        manifest = build_training_manifest(self._training_request(), [distill_task(example_record())])
+        self.assertEqual(manifest["max_cost_usd"], 0)
+        self.assertFalse(manifest["weights_trained_by_this_function"])
+
+    def test_tampered_distilled_example_cannot_enter_training(self):
+        row = distill_task(example_record())
+        row["result"] = "fabricated result"
+        with self.assertRaisesRegex(ValueError, "content hash mismatch"):
+            build_training_manifest(self._training_request(), [row])
+
+    def test_holdout_row_cannot_enter_training_even_with_recomputed_hash(self):
+        from hashlib import sha256
+        import json
+        row = distill_task(example_record())
+        row["split"] = "hidden_test"
+        payload = {k: v for k, v in row.items() if k != "example_sha256"}
+        row["example_sha256"] = sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        with self.assertRaisesRegex(ValueError, "holdout"):
+            build_training_manifest(self._training_request(), [row])
+
+    def test_duplicate_examples_cannot_inflate_dataset_count(self):
+        row = distill_task(example_record())
+        with self.assertRaisesRegex(ValueError, "duplicate distilled"):
+            build_training_manifest(self._training_request(), [row, dict(row)])
+
+    def test_private_field_cannot_be_injected_after_distillation(self):
+        row = distill_task(example_record())
+        row["holdout_answer"] = "secret"
+        with self.assertRaisesRegex(ValueError, "private or evaluation-only"):
+            build_training_manifest(self._training_request(), [row])
+
+    def test_budget_rejects_bool_nan_and_infinity(self):
+        row = distill_task(example_record())
+        for invalid in (True, float("nan"), float("inf"), -1):
+            with self.subTest(invalid=invalid), self.assertRaisesRegex(ValueError, "finite nonnegative"):
+                request = self._training_request()
+                request["max_cost_usd"] = invalid
+                build_training_manifest(request, [row])
+
+    def test_benchmark_metrics_reject_bool_nan_infinity(self):
+        for bad in (float("nan"), float("inf"), True):
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                BenchmarkRun(bad, .8, .9, 1, 0, 0).validate()
+        for bad in (float("nan"), float("inf"), True):
+            with self.subTest(latency=bad), self.assertRaises(ValueError):
+                BenchmarkRun(.8, .8, .9, bad, 0, 0).validate()
+        with self.assertRaisesRegex(ValueError, "human_touches"):
+            BenchmarkRun(.8, .8, .9, 1, 0, True).validate()
+
+
 if __name__ == "__main__": unittest.main()
