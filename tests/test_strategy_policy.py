@@ -40,3 +40,35 @@ def test_promotion_and_rollback():
     bad=copy.deepcopy(c);bad['runs'][1]['seed']=0
     assert not promotion(bad,base)['eligible_for_review']
     assert rollback_decision({},base,'v1')['rollback_required']
+
+
+def test_safety_regression_never_uses_tolerance():
+    base = dict(revision='v1', quality=.5, safety=1, factuality=1, retention=1)
+    runs = [dict(id=str(i), seed=i, quality=.7, safety=1, factuality=1, retention=1,
+                 cost_usd=0, latency_ms=1, heldout=True, uncontaminated=True,
+                 rights_verified=True, regression_passed=True, receipt_hash='a'*64,
+                 config_hash='b'*64, hardware='fixture') for i in range(3)]
+    proposal = dict(baseline_revision='v1', runs=runs, rollback_revision='v1')
+    assert promotion(proposal, base, max_regression=.02)['eligible_for_review']
+    unsafe = copy.deepcopy(proposal)
+    unsafe['runs'][0]['safety'] = .99
+    result = promotion(unsafe, base, max_regression=.02)
+    assert result['eligible_for_review'] is False
+    assert 'safety' in result['reasons'][0]
+    assert result['production_ready'] is False
+
+
+def test_promotion_rollback_must_pin_actual_baseline():
+    base = dict(revision='v1', quality=.5, safety=1, factuality=1, retention=1)
+    runs = [dict(id=str(i), seed=i, quality=.7, safety=1, factuality=1, retention=1,
+                 cost_usd=0, latency_ms=1, heldout=True, uncontaminated=True,
+                 rights_verified=True, regression_passed=True, receipt_hash='a'*64,
+                 config_hash='b'*64, hardware='fixture') for i in range(3)]
+    proposal = dict(baseline_revision='v1', runs=runs, rollback_revision='v1')
+    assert promotion(proposal, base)['eligible_for_review']
+    for wrong in ('v0', 'not-found', None, ''):
+        invalid = {**proposal, 'rollback_revision': wrong}
+        result = promotion(invalid, base)
+        assert result['eligible_for_review'] is False
+        assert 'rollback' in result['reasons'][0]
+        assert result['mastery'] is False
