@@ -5,6 +5,8 @@ on:
     paths:
       - "tools/audit_buddy_teacher_coverage.py"
       - "tests/test_audit_buddy_teacher_coverage.py"
+      - "buddy/bootcamp/professional_training.py"
+      - "tests/test_professional_training.py"
       - "config/buddy-benchmark-task-registry.json"
       - "config/buddy-model-benchmarks.json"
       - "config/buddy-model-selection-registry.json"
@@ -32,7 +34,7 @@ jobs:
           python-version: "3.12"
       # Stdlib-only, read-only; never downloads or trains weights.
       - name: Verify synthetic audit tests
-        run: python3 -m unittest tests.test_audit_buddy_teacher_coverage -v
+        run: python3 -m unittest tests.test_audit_buddy_teacher_coverage tests.test_professional_training -v
       - name: Inventory divisions, benchmark gaps and model catalog aliases
         run: python3 tools/audit_buddy_teacher_coverage.py --output buddy-teacher-coverage.json
       - name: Validate report is a registry audit, not an evaluation receipt
