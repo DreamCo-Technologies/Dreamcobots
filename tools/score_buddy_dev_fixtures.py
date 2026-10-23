@@ -53,7 +53,9 @@ def _grade(suite_id: str, response: str) -> bool:
     if suite_id == "structured_output":
         try:
             parsed = json.loads(response, object_pairs_hook=_reject_duplicate_json_keys)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError, RecursionError):
+            # Deeply nested untrusted JSON can exceed the parser recursion
+            # limit; treat it as an invalid answer, not a grader crash.
             return False
         if not isinstance(parsed, dict) or set(parsed) != {"result", "confidence"}:
             return False
