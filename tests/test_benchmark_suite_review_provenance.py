@@ -28,5 +28,43 @@ class BenchmarkSuiteReviewProvenanceTests(unittest.TestCase):
                 self.assertEqual(row["gap_state"], "unknown")
                 self.assertTrue(row["definition_sha256"])
 
+
+class StrategyPromotionGuardTests(unittest.TestCase):
+    """Ensure shared learning policy cannot certify a safety regression or false rollback."""
+
+    def _proposal(self):
+        baseline = {"revision": "v1", "quality": .5, "safety": 1,
+                    "factuality": 1, "retention": 1}
+        runs = [
+            {"id": str(i), "seed": i, "quality": .7, "safety": 1,
+             "factuality": 1, "retention": 1, "cost_usd": 0,
+             "latency_ms": 1, "heldout": True, "uncontaminated": True,
+             "rights_verified": True, "regression_passed": True,
+             "receipt_hash": "a" * 64, "config_hash": "b" * 64,
+             "hardware": "fixture"}
+            for i in range(3)
+        ]
+        return baseline, {"baseline_revision": "v1", "runs": runs,
+                          "rollback_revision": "v1"}
+
+    def test_safety_regression_rejected_despite_tolerance(self):
+        from buddy.learning.strategy_policy import promotion
+        baseline, proposal = self._proposal()
+        self.assertTrue(promotion(proposal, baseline, max_regression=.02)["eligible_for_review"])
+        proposal["runs"][0]["safety"] = .99
+        decision = promotion(proposal, baseline, max_regression=.02)
+        self.assertFalse(decision["eligible_for_review"])
+        self.assertFalse(decision["production_ready"])
+
+    def test_rollback_must_match_actual_baseline(self):
+        from buddy.learning.strategy_policy import promotion
+        baseline, proposal = self._proposal()
+        for revision in ("nonexistent", "v0", "", None):
+            with self.subTest(rollback_revision=revision):
+                proposal["rollback_revision"] = revision
+                decision = promotion(proposal, baseline)
+                self.assertFalse(decision["eligible_for_review"])
+                self.assertFalse(decision["mastery"])
+
 if __name__ == "__main__":
     unittest.main()
