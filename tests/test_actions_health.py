@@ -39,6 +39,8 @@ class ActionsHealthAuditTest(unittest.TestCase):
         self.assertIn("contents: read", text)
         self.assertNotIn("contents: write", text)
         self.assertIn("persist-credentials: false", text)
+        self.assertIn("cmp config/generated/problem-registry.json website/data/problem-registry.json", text)
+        self.assertLess(text.index("python3 tools/auto_repair_policy.py"), text.index("cmp config/generated/problem-registry.json website/data/problem-registry.json"))
         self.assertIn("python3 tools/audit_actions_health.py", text)
         self.assertLess(text.index("python3 tools/audit_actions_health.py"),
                         text.index("python3 tools/problem_registry.py"))
