@@ -6,7 +6,7 @@ on:
     - cron: '17 * * * *'
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: problem-registry-${{ github.ref }}
@@ -18,9 +18,13 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
+      - name: Generate fresh Actions health input
+        run: python3 tools/audit_actions_health.py
       - name: Build problem registry
         run: python3 tools/problem_registry.py
       - name: Apply bounded auto-repair policy
