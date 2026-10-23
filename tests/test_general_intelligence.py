@@ -130,6 +130,40 @@ class ReviewTests(unittest.TestCase):
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_learning_strategy_pilot_receipts_fail_closed(self):
+        from buddy.learning.strategy_policy import select
+        proposal = dict(strategy_id='prompt_optimization', estimated_cost_usd=0,
+                        pilot_gain_lower_bound=.2, pilot_receipt_hash='a' * 64,
+                        baseline_revision='v1', adapter_verified=True, compatible=True)
+        self.assertEqual(select([proposal], .1, 5, {}, [], [])['selected'], proposal)
+        for field, invalid in (('pilot_receipt_hash', 'not-a-hash'),
+                               ('pilot_receipt_hash', ['a' * 64]),
+                               ('baseline_revision', []),
+                               ('baseline_revision', '  ')):
+            malformed = dict(proposal, **{field: invalid})
+            result = select([malformed], .1, 5, {}, [], [])
+            self.assertIsNone(result['selected'], (field, invalid))
+            self.assertFalse(result['execution_authorized'])
+
+    def test_learning_promotion_requires_reproducible_trial_identity(self):
+        from buddy.learning.strategy_policy import promotion as learning_promotion
+        baseline = dict(revision='v1', quality=.5, safety=1, factuality=1, retention=1)
+        runs = [dict(id=str(i), seed=i, quality=.7, safety=1, factuality=1, retention=1,
+                     cost_usd=0, latency_ms=1, heldout=True, uncontaminated=True,
+                     rights_verified=True, regression_passed=True, receipt_hash='a' * 64,
+                     config_hash='b' * 64, hardware='fixture') for i in range(3)]
+        proposal = dict(baseline_revision='v1', runs=runs, rollback_revision='v1')
+        self.assertTrue(learning_promotion(proposal, baseline)['eligible_for_review'])
+        for field, invalid in (('receipt_hash', 'not-a-hash'),
+                               ('config_hash', 'b' * 63),
+                               ('hardware', '  '),
+                               ('id', 1),
+                               ('seed', True)):
+            malformed = copy.deepcopy(proposal)
+            malformed['runs'][0][field] = invalid
+            self.assertFalse(learning_promotion(malformed, baseline)['eligible_for_review'], field)
+        self.assertFalse(learning_promotion({'baseline_revision': 'v1', 'runs': None}, baseline)['eligible_for_review'])
+
     def test_complete_synthetic_contract_is_eligible_but_not_claim(self):
         r=assess(bundle()); self.assertTrue(r['eligible'],r['errors']); self.assertEqual(r['status'],'partial')
     def test_missing_malformed_simulated_and_nan_fail_closed(self):
