@@ -6,6 +6,9 @@ on:
       - "tools/audit_buddy_teacher_coverage.py"
       - "tests/test_audit_buddy_teacher_coverage.py"
       - "tools/score_buddy_dev_fixtures.py"
+      - "tools/validate_buddy_lora_proposal.py"
+      - "tests/test_validate_buddy_lora_proposal.py"
+      - "config/buddy-lora-experiment-proposal.json"
       - "tests/test_score_buddy_dev_fixtures.py"
       - "buddy/bootcamp/professional_training.py"
       - "tests/test_professional_training.py"
@@ -36,7 +39,19 @@ jobs:
           python-version: "3.12"
       # Stdlib-only, read-only; never downloads or trains weights.
       - name: Verify synthetic audit tests
-        run: python3 -m unittest tests.test_audit_buddy_teacher_coverage tests.test_professional_training tests.test_score_buddy_dev_fixtures -v
+        run: python3 -m unittest tests.test_audit_buddy_teacher_coverage tests.test_professional_training tests.test_score_buddy_dev_fixtures tests.test_validate_buddy_lora_proposal -v
+      - name: Preflight disabled LoRA proposal (no training or model downloads)
+        run: |
+          python3 tools/validate_buddy_lora_proposal.py --proposal config/buddy-lora-experiment-proposal.json > buddy-lora-preflight.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("buddy-lora-preflight.json").read_text())
+          assert report["missing_evidence_count"] > 0
+          assert report["training_authorized"] is False
+          assert report["eligible_for_model_promotion"] is False
+          print("LoRA preflight remains blocked; no training authorized.")
+          PY
       - name: Inventory divisions, benchmark gaps and model catalog aliases
         run: python3 tools/audit_buddy_teacher_coverage.py --output buddy-teacher-coverage.json
       - name: Validate report is a registry audit, not an evaluation receipt
