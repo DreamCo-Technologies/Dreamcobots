@@ -56,5 +56,22 @@ class ProspectusEvidenceTests(unittest.TestCase):
         self.assertEqual(data['matrix'][0]['status'], 'needs_review')
 
 
+    def test_500_by_15_matrix_stays_unverified_without_receipts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / 'catalog.json').write_text(json.dumps({'model_count':500, 'id_pattern':'buddy-model-{slot:03d}', 'slots':{'start':1,'end':500}}))
+            (root / 'suites.json').write_text(json.dumps({'domains':[f'suite_{i}' for i in range(15)]}))
+            out = root / 'matrix.json'
+            with patch.object(module, 'CATALOG_CANDIDATES', [root / 'catalog.json']), \
+                 patch.object(module, 'SUITE_CANDIDATES', [root / 'suites.json']), \
+                 patch.object(module, 'EVIDENCE_CANDIDATES', [root / 'missing.json']), \
+                 patch.object(module, 'OUT', out):
+                self.assertEqual(module.main(), 0)
+            data=json.loads(out.read_text())
+            self.assertEqual(data['matrix_rows'], 7500)
+            self.assertEqual(data['verified_rows'], 0)
+            self.assertEqual(data['unverified_rows'], 7500)
+
+
 if __name__ == '__main__':
     unittest.main()
