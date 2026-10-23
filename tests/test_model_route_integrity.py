@@ -52,6 +52,23 @@ class ModelRouteIntegrityTests(unittest.TestCase):
             with self.subTest(accounts=accounts):
                 self.assertIsNone(route("code", [paid], accounts=accounts)["model"])
 
+    def test_paid_model_cannot_borrow_unrelated_provider_connection(self):
+        paid = register("premium", "frontier", "code", 0.99, 0.9, "owner", False)
+        forged = {**paid, "provider": "open-source"}
+        accounts = [connect_account("open-source", True)]
+        self.assertIsNone(route("code", [forged], accounts=accounts)["model"])
+
+    def test_provider_mismatch_does_not_outscore_valid_free_model(self):
+        paid = register("premium", "frontier", "code", 0.99, 0.9, "owner", False)
+        forged = {**paid, "provider": "open-source"}
+        free = register("free", "open-source", "code", 0.7, 0.6, "user", True)
+        self.assertEqual(route("code", [forged, free], accounts=[connect_account("open-source", True)])["model"], "free")
+
+    def test_legitimate_paid_provider_connection_still_routes(self):
+        paid = register("premium", "frontier", "code", 0.99, 0.9, "owner", False)
+        self.assertEqual(route("code", [paid], accounts=[connect_account("frontier", True)])["model"], "premium")
+
+
 
 if __name__ == "__main__":
     unittest.main()
