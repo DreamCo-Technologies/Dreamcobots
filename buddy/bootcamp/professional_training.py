@@ -153,6 +153,9 @@ def build_training_manifest(request: Mapping[str, Any], examples: Iterable[Mappi
             raise ValueError(f"example {index}: invalid distilled task schema")
         if row.get("split") != "train":
             raise ValueError(f"example {index}: evaluation/holdout rows cannot enter training")
+        supplied = {str(key).lower() for key in row}
+        if supplied & PRIVATE_FIELDS:
+            raise ValueError(f"example {index}: private or evaluation-only field present")
         # A recomputed SHA-256 does not make an unrecognized payload safe.
         unknown = set(row) - TRAINING_EXAMPLE_FIELDS
         missing = TRAINING_EXAMPLE_FIELDS - set(row)
@@ -171,9 +174,6 @@ def build_training_manifest(request: Mapping[str, Any], examples: Iterable[Mappi
         ):
             raise ValueError(f"example {index}: steps must be nonempty visible text")
 
-        supplied = {str(key).lower() for key in row}
-        if supplied & PRIVATE_FIELDS:
-            raise ValueError(f"example {index}: private or evaluation-only field present")
         digest = row.get("example_sha256")
         if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
             raise ValueError(f"example {index}: invalid example_sha256")
