@@ -41,23 +41,28 @@ def load_first(paths: list[Path]) -> Any:
 
 def rows(value: Any) -> list[dict[str, Any]]:
     if isinstance(value, list):
-        return [x for x in value if isinstance(x, dict)]
+        if any(not isinstance(x, dict) for x in value):
+            raise ValueError("registry entries must be objects")
+        return value
     if isinstance(value, dict):
         if isinstance(value.get("model_count"), int) and isinstance(value.get("id_pattern"), str):
             return expand_model_slots(value)
         if isinstance(value.get("domains"), list):
+            if any(not isinstance(domain, str) or not domain.strip() for domain in value["domains"]):
+                raise ValueError("benchmark domains must be nonblank strings")
             return [
                 {
                     "benchmark_id": domain,
                     "name": domain.replace("_", " ").title(),
                 }
                 for domain in value["domains"]
-                if isinstance(domain, str) and domain
             ]
         for key in ("models", "providers", "suites", "benchmarks", "results", "records", "items"):
             candidate = value.get(key)
             if isinstance(candidate, list):
-                return [x for x in candidate if isinstance(x, dict)]
+                if any(not isinstance(x, dict) for x in candidate):
+                    raise ValueError("registry entries must be objects")
+                return candidate
     return []
 
 
