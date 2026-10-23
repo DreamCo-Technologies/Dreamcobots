@@ -49,6 +49,16 @@ class ModelProspectusRegistryIntegrityTests(unittest.TestCase):
                        "slots": {"start": 1, "end": 499}},
                       {"domains": ["trust"]}, expected_error="slot range must match")
 
+    def test_malformed_model_row_cannot_disappear_silently(self):
+        self.run_case({"models": [{"model_id": "m1"}, None]},
+                      {"suites": [{"benchmark_id": "trust"}]},
+                      expected_error="registry entries must be objects")
+
+    def test_blank_benchmark_domain_cannot_disappear_silently(self):
+        self.run_case({"models": [{"model_id": "m1"}]},
+                      {"domains": ["trust", ""]},
+                      expected_error="benchmark domains must be nonblank")
+
     def test_valid_canonical_shape_preserves_all_7500_unverified_rows(self):
         data = self.run_case({"model_count": 500, "id_pattern": "buddy-model-{slot:03d}",
                               "slots": {"start": 1, "end": 500}},
