@@ -66,5 +66,43 @@ class StrategyPromotionGuardTests(unittest.TestCase):
                 self.assertFalse(decision["eligible_for_review"])
                 self.assertFalse(decision["mastery"])
 
+class StrategyInputIntegrityTests(unittest.TestCase):
+    """Malformed shared learning inputs must not abort a batch or bypass data rights."""
+
+    def test_invalid_candidate_does_not_abort_valid_sandbox_selection(self):
+        from buddy.learning.strategy_policy import select
+        good = {"strategy_id": "prompt_optimization", "estimated_cost_usd": 0,
+                "pilot_gain_lower_bound": .2, "pilot_receipt_hash": "a" * 64,
+                "baseline_revision": "v1", "adapter_verified": True, "compatible": True}
+        result = select([None, "bad", good], .1, 0, {}, [], [])
+        self.assertEqual(result["selected"], good)
+        self.assertEqual(len(result["rejected"]), 2)
+        self.assertFalse(result["execution_authorized"])
+
+    def test_malformed_training_records_fail_closed(self):
+        from buddy.learning.strategy_policy import validate_data
+        valid = {"text": "licensed fixture", "training_allowed": True,
+                 "rights_verified": True, "license": "MIT", "provenance": "test"}
+        for records in ([None], [{**valid, "text": None}], [{**valid, "text": 42}],
+                        [{**valid, "text": "   "}], [{**valid, "license": 42}]):
+            with self.subTest(records=records):
+                with self.assertRaises(ValueError):
+                    validate_data(records, ["heldout"])
+        with self.assertRaises(ValueError):
+            validate_data([valid], "not-a-heldout-hash-collection")
+
+    def test_bad_weight_training_data_blocks_candidate_without_crash(self):
+        from buddy.learning.strategy_policy import select
+        model = {"training_allowed": True, "rights_verified": True,
+                 "weights_available": True, "ownership": "licensed_open", "license": "MIT"}
+        candidate = {"strategy_id": "lora_adapter", "estimated_cost_usd": 0,
+                     "pilot_gain_lower_bound": .2, "pilot_receipt_hash": "a" * 64,
+                     "baseline_revision": "v1", "adapter_verified": True, "compatible": True}
+        result = select([candidate], .1, 0, model, [None], ["heldout"])
+        self.assertIsNone(result["selected"])
+        self.assertEqual(len(result["rejected"]), 1)
+        self.assertFalse(result["production_ready"])
+
+
 if __name__ == "__main__":
     unittest.main()
