@@ -61,6 +61,18 @@ class PublicDevelopmentSmokeTests(unittest.TestCase):
                 )
                 self.assertEqual(report["passed_public_dev_fixtures"], 0)
 
+    def test_overdeep_structured_json_fails_without_crashing(self):
+        # json.loads may raise RecursionError on nested untrusted answers.
+        # A malformed model response must never terminate the audit runner.
+        nested = "[" * 1500 + "0" + "]" * 1500
+        response = '{"result":42,"confidence":0.5,"extra":' + nested + "}"
+        report = score_dev_responses(
+            [{"suite_id": "structured_output", "response": response}], catalog()
+        )
+        self.assertEqual(report["scored_public_dev_fixtures"], 1)
+        self.assertEqual(report["passed_public_dev_fixtures"], 0)
+        self.assertFalse(report["eligible_for_model_promotion"])
+
     def test_changed_fixture_fails_closed(self):
         data = catalog()
         data["suites"][0]["prompt_fixture"] = "Different public prompt"
