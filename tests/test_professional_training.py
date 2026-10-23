@@ -99,5 +99,38 @@ class ProfessionalTrainingTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "human_touches"):
             BenchmarkRun(.8, .8, .9, 1, 0, True).validate()
 
+    def test_rehashed_extra_field_is_still_rejected(self):
+        import json
+        from hashlib import sha256
+        row = distill_task(example_record())
+        row["customer_ssn"] = "synthetic-sensitive-value"
+        payload = {k: v for k, v in row.items() if k != "example_sha256"}
+        row["example_sha256"] = sha256(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        with self.assertRaisesRegex(ValueError, "unexpected or missing training fields"):
+            build_training_manifest(self._training_request(), [row])
+
+    def test_rehashed_malformed_steps_and_mode_are_rejected(self):
+        import json
+        from hashlib import sha256
+        for field, invalid in (
+            ("steps", []),
+            ("steps", [None]),
+            ("steps", "not a list"),
+            ("mode", "unsafe"),
+            ("mode", ["observe"]),
+            ("goal", {"injected": "payload"}),
+        ):
+            with self.subTest(field=field, invalid=invalid):
+                row = distill_task(example_record())
+                row[field] = invalid
+                payload = {k: v for k, v in row.items() if k != "example_sha256"}
+                row["example_sha256"] = sha256(
+                    json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+                ).hexdigest()
+                with self.assertRaises(ValueError):
+                    build_training_manifest(self._training_request(), [row])
+
 
 if __name__ == "__main__": unittest.main()
