@@ -4,6 +4,11 @@ name: Intelligent Issue Cleaner
 # Never closes or labels issues without independently verified resolution evidence.
 
 on:
+  pull_request:
+    paths:
+      - "tools/issue_cleaner/**"
+      - "tests/test_issue_cleaner_read_only.py"
+      - ".github/workflows/intelligent-issue-cleaner.yml"
   schedule:
     - cron: "17 * * * *"
   workflow_dispatch:
