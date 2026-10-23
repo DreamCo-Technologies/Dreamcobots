@@ -72,3 +72,53 @@ def test_promotion_rollback_must_pin_actual_baseline():
         assert result['eligible_for_review'] is False
         assert 'rollback' in result['reasons'][0]
         assert result['mastery'] is False
+
+
+@pytest.mark.parametrize('field,bad', [
+    ('pilot_receipt_hash', 'not-a-digest'),
+    ('pilot_receipt_hash', ['a' * 64]),
+    ('pilot_receipt_hash', 'A' * 64),
+    ('baseline_revision', []),
+    ('baseline_revision', '  '),
+])
+def test_selection_rejects_malformed_pilot_provenance(field, bad):
+    proposal = candidate()
+    proposal[field] = bad
+    result = select([proposal], .1, 5, {}, [], [])
+    assert result['selected'] is None
+    assert result['rejected']
+    assert result['execution_authorized'] is False
+
+
+@pytest.mark.parametrize('field,bad', [
+    ('receipt_hash', 'not-a-digest'),
+    ('receipt_hash', ['a' * 64]),
+    ('config_hash', 'b' * 63),
+    ('hardware', []),
+    ('hardware', '  '),
+    ('id', 1),
+    ('id', '  '),
+    ('seed', True),
+    ('seed', '2'),
+])
+def test_promotion_rejects_malformed_trial_provenance(field, bad):
+    baseline = dict(revision='v1', quality=.5, safety=1, factuality=1, retention=1)
+    runs = [dict(id=str(i), seed=i, quality=.7, safety=1, factuality=1, retention=1,
+                 cost_usd=0, latency_ms=1, heldout=True, uncontaminated=True,
+                 rights_verified=True, regression_passed=True, receipt_hash='a' * 64,
+                 config_hash='b' * 64, hardware='fixture') for i in range(3)]
+    proposal = dict(baseline_revision='v1', runs=runs, rollback_revision='v1')
+    assert promotion(proposal, baseline)['eligible_for_review'] is True
+    malformed = copy.deepcopy(proposal)
+    malformed['runs'][0][field] = bad
+    result = promotion(malformed, baseline)
+    assert result['eligible_for_review'] is False
+    assert result['mastery'] is False
+    assert result['production_ready'] is False
+
+
+@pytest.mark.parametrize('runs', [None, [], [1, 2, 3]])
+def test_promotion_requires_trial_records(runs):
+    baseline = dict(revision='v1', quality=.5, safety=1, factuality=1, retention=1)
+    proposal = dict(baseline_revision='v1', runs=runs, rollback_revision='v1')
+    assert promotion(proposal, baseline)['eligible_for_review'] is False
