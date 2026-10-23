@@ -77,6 +77,36 @@ class PublicDevelopmentSmokeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "only suite_id and response"):
             score_dev_responses([{"suite_id": "instruction_following", "response": "READY", "api_key": "secret"}], catalog())
 
+    def test_response_text_and_digest_are_not_persisted(self):
+        report = score_dev_responses(
+            [{"suite_id": "instruction_following", "response": "private-example-123"}],
+            catalog(),
+        )
+        serialized = json.dumps(report)
+        self.assertNotIn("private-example-123", serialized)
+        self.assertNotIn("response_sha256", serialized)
+
+    def test_invalid_unicode_rejected_as_input_error(self):
+        with self.assertRaisesRegex(ValueError, "valid UTF-8"):
+            score_dev_responses(
+                [{"suite_id": "instruction_following", "response": "\ud800"}],
+                catalog(),
+            )
+
+    def test_workflow_includes_scorer_and_its_tests_in_path_filters(self):
+        from pathlib import Path
+
+        workflow = (
+            Path(__file__).resolve().parents[1]
+            / ".github/workflows/buddy-teacher-coverage-audit.yml"
+        ).read_text(encoding="utf-8")
+        for path in (
+            "tools/score_buddy_dev_fixtures.py",
+            "tests/test_score_buddy_dev_fixtures.py",
+        ):
+            with self.subTest(path=path):
+                self.assertIn(f'      - "{path}"', workflow)
+
 
 if __name__ == "__main__":
     unittest.main()

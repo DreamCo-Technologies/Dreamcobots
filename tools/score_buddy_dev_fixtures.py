@@ -70,7 +70,8 @@ def score_dev_responses(rows: Any, catalog: Any) -> dict:
     """Score only supplied responses against three pinned, publicly known tasks.
 
     The result intentionally has no model identifier, independent holdout
-    status, or production-readiness field. Response text is never persisted.
+    status, or production-readiness field. Response text and response hashes
+    are never persisted (unsalted hashes can disclose low-entropy content).
     """
     if not isinstance(catalog, dict) or catalog.get("schema") != "dreamco.buddy_model_benchmarks.v1":
         raise ValueError("unexpected benchmark catalog schema")
@@ -102,13 +103,20 @@ def score_dev_responses(rows: Any, catalog: Any) -> dict:
         seen.add(suite_id)
         if not isinstance(response, str) or len(response) > 20000:
             raise ValueError("response must be plain text of at most 20000 characters")
+        # Even non-persisted responses must be valid UTF-8. Reject lone
+        # surrogates with a clear input error instead of an uncaught crash.
+        try:
+            response.encode("utf-8")
+        except UnicodeEncodeError as exc:
+            raise ValueError("response must be valid UTF-8 text") from exc
         fixture = PINNED[suite_id]
         fixture_bytes = json.dumps(fixture, sort_keys=True, separators=(",", ":")).encode()
         results.append({
             "suite_id": suite_id,
             "passed_public_dev_fixture": _grade(suite_id, response),
             "fixture_sha256": sha256(fixture_bytes).hexdigest(),
-            "response_sha256": sha256(response.encode()).hexdigest(),
+            # No unsalted digest of supplied text: low-entropy response
+            # hashes can be dictionary-reversed and reveal private content.
         })
     results.sort(key=lambda r: r["suite_id"])
     return {
