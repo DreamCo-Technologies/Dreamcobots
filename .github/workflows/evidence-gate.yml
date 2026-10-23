@@ -1,6 +1,16 @@
 name: Evidence gate
 
 on:
+  pull_request:
+    paths:
+      - ".github/workflows/evidence-gate.yml"
+      - "tests/test_buddy_os_evidence_gate.py"
+      - "buddy/builder/promotion_gate.py"
+      - "buddy/builder/model_selection.py"
+      - "buddy/builder/division_audit.py"
+      - "buddy/builder/division_gaps.py"
+      - "buddy/builder/division_resources.py"
+      - "config/buddy-model-selection-registry.json"
   workflow_dispatch:
   schedule:
     - cron: "30 15 * * *"
