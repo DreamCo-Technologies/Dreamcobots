@@ -26,15 +26,33 @@ jobs:
           python-version: "3.12"
       - run: npm ci
       - name: Run existing 65-division contract benchmark
+        id: benchmark_run
+        continue-on-error: true
         run: |
           mkdir -p benchmark-evidence
-          node --import tsx tools/run_daily_division_benchmarks.ts --concurrency=16 > benchmark-evidence/division-benchmark.json || true
+          node --import tsx tools/run_daily_division_benchmarks.ts --concurrency=16 > benchmark-evidence/division-benchmark.json
       - name: Convert measured evidence to gap scores
+        id: convert
+        if: ${{ !cancelled() && steps.benchmark_run.outcome != 'skipped' }}
         run: python3 tools/convert_daily_division_benchmark.py --input benchmark-evidence/division-benchmark.json --output benchmark-evidence/benchmark-scores.json
       - name: Build next gap queue
+        id: plan
+        if: ${{ !cancelled() && steps.convert.outcome == 'success' }}
         run: python3 tools/benchmark_gap_planner.py --scores benchmark-evidence/benchmark-scores.json --out benchmark-evidence/benchmark-gap-queue.json
       - uses: actions/upload-artifact@v7
+        if: always()
         with:
           name: benchmark-evidence-${{ github.run_id }}
           path: benchmark-evidence/
           retention-days: 14
+          if-no-files-found: warn
+      - name: Enforce benchmark evidence gate
+        if: always()
+        env:
+          BENCHMARK_OUTCOME: ${{ steps.benchmark_run.outcome }}
+          CONVERT_OUTCOME: ${{ steps.convert.outcome }}
+          PLAN_OUTCOME: ${{ steps.plan.outcome }}
+        run: |
+          test "$BENCHMARK_OUTCOME" = success
+          test "$CONVERT_OUTCOME" = success
+          test "$PLAN_OUTCOME" = success
