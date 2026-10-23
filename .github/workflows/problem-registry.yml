@@ -29,6 +29,10 @@ jobs:
         run: python3 tools/problem_registry.py
       - name: Apply bounded auto-repair policy
         run: python3 tools/auto_repair_policy.py config/generated/problem-registry.json
+      - name: Synchronize and verify public registry after policy classification
+        run: |
+          cp config/generated/problem-registry.json website/data/problem-registry.json
+          cmp config/generated/problem-registry.json website/data/problem-registry.json
       - name: Validate registry JSON
         run: python3 -m json.tool config/generated/problem-registry.json >/dev/null
       - name: Validate public registry JSON
