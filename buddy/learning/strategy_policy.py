@@ -49,14 +49,20 @@ def registry():
 
 
 def validate_data(records, heldout_hashes):
-    if not records or not heldout_hashes:
+    if (not isinstance(records, (list, tuple)) or not records
+            or not isinstance(heldout_hashes, (list, tuple, set, frozenset)) or not heldout_hashes):
         raise ValueError('training and heldout records required')
     seen = set()
     for row in records:
+        if not isinstance(row, dict):
+            raise ValueError('training records must be objects')
         if row.get('training_allowed') is not True or row.get('rights_verified') is not True:
             raise ValueError('data rights not authorized')
-        if not row.get('license') or not row.get('provenance'):
+        if (not isinstance(row.get('license'), str) or not row['license'].strip()
+                or not isinstance(row.get('provenance'), str) or not row['provenance'].strip()):
             raise ValueError('license and provenance required')
+        if not isinstance(row.get('text'), str) or not row['text'].strip():
+            raise ValueError('nonempty training text required')
         h = hashlib.sha256(row['text'].strip().encode()).hexdigest()
         if h in seen or h in heldout_hashes:
             raise ValueError('duplicate or heldout contamination')
@@ -66,10 +72,15 @@ def validate_data(records, heldout_hashes):
 
 def select(candidates, gap, budget_usd, model, data, heldout_hashes):
     finite(gap, 'gap'); finite(budget_usd, 'budget')
+    if not isinstance(candidates, (list, tuple)):
+        raise ValueError('strategy candidates must be a sequence')
     by_id = {x['id']: x for x in registry()['strategies']}
     eligible, rejected = [], []
     ids = set()
     for c in candidates:
+        if not isinstance(c, dict):
+            rejected.append({'strategy_id': None, 'reason': 'strategy candidate must be an object'})
+            continue
         sid = c.get('strategy_id')
         try:
             if sid in ids: raise ValueError('duplicate strategy candidate')
@@ -83,6 +94,8 @@ def select(candidates, gap, budget_usd, model, data, heldout_hashes):
                 raise ValueError('compatible verified adapter required')
             if cost > budget_usd or gain < gap: raise ValueError('budget or expected gain insufficient')
             if strategy['changes_weights']:
+                if not isinstance(model, dict):
+                    raise ValueError('model metadata required for weight training')
                 if model.get('training_allowed') is not True or model.get('rights_verified') is not True or model.get('weights_available') is not True:
                     raise ValueError('weight training rights unavailable')
                 if model.get('ownership') not in ('dreamco', 'licensed_open') or not model.get('license'):
