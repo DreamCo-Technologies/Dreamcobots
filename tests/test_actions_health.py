@@ -33,5 +33,71 @@ class ActionsHealthAuditTest(unittest.TestCase):
         self.assertTrue(all(item["github_url"].startswith("https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/") for item in report["findings"]))
 
 
+    def test_problem_registry_workflow_requires_fresh_evidence_and_least_privilege(self) -> None:
+        from tools.audit_actions_health import ROOT
+        text = (ROOT / ".github/workflows/problem-registry.yml").read_text(encoding="utf-8")
+        self.assertIn("contents: read", text)
+        self.assertNotIn("contents: write", text)
+        self.assertIn("persist-credentials: false", text)
+        self.assertIn("python3 tools/audit_actions_health.py", text)
+        self.assertLess(text.index("python3 tools/audit_actions_health.py"),
+                        text.index("python3 tools/problem_registry.py"))
+
+    def test_problem_registry_rejects_missing_and_invalid_input_without_erasing_output(self) -> None:
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from unittest.mock import patch
+        from tools import problem_registry
+        with TemporaryDirectory() as folder:
+            root = Path(folder)
+            actions = root / "actions.json"
+            output = root / "registry.json"
+            public = root / "public.json"
+            report = root / "report.md"
+            output.write_text('{"existing":"must-preserve"}', encoding="utf-8")
+            with (patch.object(problem_registry, "ACTIONS", actions),
+                  patch.object(problem_registry, "OUT", output),
+                  patch.object(problem_registry, "PUBLIC", public),
+                  patch.object(problem_registry, "REPORT", report)):
+                for invalid in (None, "{", "{}", '{"schema":"dreamco.actions_health.v2","workflow_count":1,"findings":[]}'):
+                    if invalid is None:
+                        actions.unlink(missing_ok=True)
+                    else:
+                        actions.write_text(invalid, encoding="utf-8")
+                    self.assertNotEqual(problem_registry.main(), 0)
+                    self.assertEqual(json.loads(output.read_text()), {"existing": "must-preserve"})
+                    self.assertFalse(public.exists())
+                    self.assertFalse(report.exists())
+
+    def test_problem_registry_processes_valid_current_scan(self) -> None:
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from unittest.mock import patch
+        from tools import problem_registry
+        with TemporaryDirectory() as folder:
+            root = Path(folder)
+            actions = root / "actions.json"
+            output = root / "registry.json"
+            public = root / "public.json"
+            report = root / "report.md"
+            actions.write_text(json.dumps({
+                "schema": "dreamco.actions_health.v2",
+                "workflow_count": 1,
+                "findings": [{"workflow": ".github/workflows/example.yml",
+                              "errors": ["missing jobs section"], "warnings": []}],
+            }), encoding="utf-8")
+            with (patch.object(problem_registry, "ACTIONS", actions),
+                  patch.object(problem_registry, "OUT", output),
+                  patch.object(problem_registry, "PUBLIC", public),
+                  patch.object(problem_registry, "REPORT", report)):
+                self.assertEqual(problem_registry.main(), 0)
+                data = json.loads(output.read_text(encoding="utf-8"))
+                self.assertEqual(data["summary"]["high"], 1)
+                self.assertEqual(data["summary"]["observed"], 1)
+                self.assertEqual(json.loads(public.read_text(encoding="utf-8")), data)
+                self.assertTrue(report.exists())
+
+
+
 if __name__ == "__main__":
     unittest.main()
