@@ -35,6 +35,16 @@ PINNED = {
 }
 
 
+def _reject_duplicate_json_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    """Reject ambiguous JSON objects, including duplicate keys in nested objects."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate JSON object key")
+        result[key] = value
+    return result
+
+
 def _grade(suite_id: str, response: str) -> bool:
     if suite_id == "instruction_following":
         return response == "READY"
@@ -42,7 +52,7 @@ def _grade(suite_id: str, response: str) -> bool:
         return response == "42"
     if suite_id == "structured_output":
         try:
-            parsed = json.loads(response)
+            parsed = json.loads(response, object_pairs_hook=_reject_duplicate_json_keys)
         except (ValueError, TypeError):
             return False
         if not isinstance(parsed, dict) or set(parsed) != {"result", "confidence"}:
