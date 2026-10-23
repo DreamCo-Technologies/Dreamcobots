@@ -49,3 +49,18 @@ All 55 division task prompts are **design proposals**, not runnable benchmark
 cases, consented datasets, independent hidden holdouts, training receipts,
 or proof of capability. Build and independently grade small, rights-cleared
 holdouts in each lane before promoting model-routing or division-readiness claims.
+
+
+## Offline public development-fixture scorer (not a model benchmark)
+
+`tools/score_buddy_dev_fixtures.py` now accepts **externally supplied** responses for three public fixtures already in `config/buddy-model-benchmarks.json`: instruction following, arithmetic reasoning, and structured JSON. Example local input:
+
+```json
+[
+  {"suite_id": "instruction_following", "response": "READY"},
+  {"suite_id": "arithmetic_reasoning", "response": "42"},
+  {"suite_id": "structured_output", "response": "{\\"result\\":42,\\"confidence\\":0.5}"}
+]
+```
+
+Save the JSON list to a local file and run `python3 tools/score_buddy_dev_fixtures.py --responses /path/to/local-responses.json --output /tmp/buddy-dev-smoke.json`. The tool checks that catalog prompts, graders and expected values match pinned public definitions, rejects unsupported/duplicate suite IDs and unexpected metadata, and writes **only hashes and per-fixture pass/fail**, not response text. It makes zero model calls, does not identify or authenticate a model, does not run hidden holdouts, and never authorizes promotion. These public tasks are trivially memorized; even a 3/3 result proves only that the supplied strings matched the public dev fixtures. Do not report it as a Buddy model-quality improvement. The other nine suite designs still need appropriate evaluators, and all 55 divisions still need independently graded holdouts.
