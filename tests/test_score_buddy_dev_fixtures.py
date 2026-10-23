@@ -47,6 +47,20 @@ class PublicDevelopmentSmokeTests(unittest.TestCase):
                 result = score_dev_responses([{"suite_id": "structured_output", "response": answer}], catalog())
                 self.assertEqual(result["passed_public_dev_fixtures"], 0)
 
+    def test_structured_output_rejects_duplicate_json_keys(self):
+        # Default json.loads silently keeps the last value, so an ambiguous
+        # result could otherwise be incorrectly graded as passing.
+        for answer in (
+            '{"result":43,"result":42,"confidence":0.5}',
+            '{"result":42,"confidence":0.9,"confidence":0.5}',
+            '{"result":42,"confidence":0.5,"metadata":{"x":1,"x":2}}',
+        ):
+            with self.subTest(answer=answer):
+                report = score_dev_responses(
+                    [{"suite_id": "structured_output", "response": answer}], catalog()
+                )
+                self.assertEqual(report["passed_public_dev_fixtures"], 0)
+
     def test_changed_fixture_fails_closed(self):
         data = catalog()
         data["suites"][0]["prompt_fixture"] = "Different public prompt"
