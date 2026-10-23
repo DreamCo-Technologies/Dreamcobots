@@ -185,4 +185,23 @@ class ProfessionalTrainingTests(unittest.TestCase):
                     build_training_manifest(self._training_request(), [row])
 
 
+    def test_handoff_never_claims_private_destination_or_execution_permission(self):
+        row = distill_task(example_record())
+        request = self._training_request()
+        # A string naming a public repository cannot establish its privacy.
+        request["output_repo"] = "example/public-repo"
+        request["max_cost_usd"] = 0
+        manifest = build_training_manifest(request, [row])
+        summary = public_summary(manifest)
+        for key in (
+            "push_checkpoint_to_private_repo",
+            "output_repo_privacy_verified",
+            "training_execution_authorized",
+        ):
+            self.assertIs(manifest[key], False)
+            self.assertIs(summary[key], False)
+        self.assertIn("independently verify output repository privacy and access", manifest["preflight"])
+        self.assertIn("obtain separate execution approval", " ".join(manifest["preflight"]))
+        self.assertFalse(manifest["weights_trained_by_this_function"])
+
 if __name__ == "__main__": unittest.main()
