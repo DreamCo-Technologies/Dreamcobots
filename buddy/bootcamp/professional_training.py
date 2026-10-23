@@ -158,7 +158,7 @@ def build_training_manifest(request: Mapping[str, Any], examples: Iterable[Mappi
         missing = TRAINING_EXAMPLE_FIELDS - set(row)
         if unknown or missing:
             raise ValueError(f"example {index}: unexpected or missing training fields")
-        if row.get("mode") not in ALLOWED_MODES:
+        if not isinstance(row.get("mode"), str) or row["mode"] not in ALLOWED_MODES:
             raise ValueError(f"example {index}: unsupported learning mode")
         for field in TRAINING_EXAMPLE_FIELDS - {"steps", "example_sha256"}:
             if not isinstance(row[field], str):
