@@ -221,8 +221,18 @@ def build_training_manifest(request: Mapping[str, Any], examples: Iterable[Mappi
         "example_count": len(rows),
         "required_splits": ["train", "validation", "hidden_test"],
         "monitoring": "Trackio or equivalent run metrics",
-        "push_checkpoint_to_private_repo": True,
-        "preflight": ["validate dataset format", "estimate cost", "baseline hidden test", "confirm token can write output repository"],
+        # A repository path is not proof that the destination is private or
+        # writable. A handoff must never be mistaken for upload permission.
+        "push_checkpoint_to_private_repo": False,
+        "output_repo_privacy_verified": False,
+        "training_execution_authorized": False,
+        "preflight": [
+            "independently verify output repository privacy and access",
+            "independently verify base and dataset license rights",
+            "validate dataset format and consent evidence",
+            "estimate cost and obtain separate execution approval",
+            "baseline isolated hidden test",
+        ],
         "postflight": ["hidden test", "safety and capability regressions", "three repeated evaluations", "model card", "owner promotion review"],
         "weights_trained_by_this_function": False,
         "status": "ready_for_adapter_review",
@@ -231,5 +241,5 @@ def build_training_manifest(request: Mapping[str, Any], examples: Iterable[Mappi
 
 def public_summary(manifest: Mapping[str, Any]) -> dict[str, Any]:
     """Return fields safe for public evidence without dataset rows or credentials."""
-    keep = ("schema", "run_id", "method", "base_model", "base_revision", "hardware", "max_cost_usd", "dataset_sha256", "example_count", "status", "weights_trained_by_this_function")
+    keep = ("schema", "run_id", "method", "base_model", "base_revision", "hardware", "max_cost_usd", "dataset_sha256", "example_count", "status", "weights_trained_by_this_function", "output_repo_privacy_verified", "training_execution_authorized", "push_checkpoint_to_private_repo")
     return {name: manifest[name] for name in keep if name in manifest}
