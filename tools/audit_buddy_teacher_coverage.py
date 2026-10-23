@@ -46,6 +46,27 @@ SEEDS = {
     "DreamPersonalCare": ("accessibility", "Rewrite a synthetic instruction in plain accessible language."),
 }
 
+# Design crosswalk only. These are plausible starting suites, NOT proven task
+# coverage: a generic code or research suite cannot certify a specialist.
+TASK_SUITE_DESIGN_LINKS = {
+    "reasoning": ("arithmetic_reasoning",),
+    "coding": ("code_generation", "code_repair"),
+    "python": ("code_generation", "code_repair"),
+    "tool_use": ("tool_selection",),
+    "retrieval": ("long_context_retrieval", "grounded_research"),
+    "long_context": ("long_context_retrieval",),
+    "factuality": ("grounded_research",),
+    "safety": ("safety_boundary",),
+}
+
+# Human-reviewable vocabulary proposals, not executable or validated routes.
+MODEL_TYPE_ALIAS_PROPOSALS = {
+    "coding": ("code",), "python": ("code",),
+    "sql": ("data",), "spreadsheets": ("data",),
+    "retrieval": ("research",), "factuality": ("research",),
+    "agentic_completion": ("plan",),
+}
+
 
 class AuditError(ValueError):
     """A registry cannot be safely audited."""
@@ -79,6 +100,18 @@ def audit(root: Path = ROOT) -> dict:
     suites = _unique(data["suites"]["suites"], "id", SOURCES["suites"])
     models = _unique(data["models"]["models"], "id", SOURCES["models"])
     students = _unique(data["students"]["adapters"], "id", SOURCES["students"])
+    if not isinstance(data["tasks"].get("runs"), int) or data["tasks"]["runs"] < 0:
+        raise AuditError("benchmark runs must be a nonnegative integer")
+    if data["students"]["truth"].get("trained_weights_exist") and not students:
+        raise AuditError("trained weights claimed without any registered student adapter")
+    if data["distill"].get("status") == "contract_draft_no_runs" and data["distill"].get("truth", {}).get("distill_runs_exist"):
+        raise AuditError("distillation run claim contradicts no-runs contract status")
+    catalog_types = set()
+    for model in data["models"]["models"]:
+        model_types = model.get("task_types", [])
+        if not isinstance(model_types, list) or any(not isinstance(x, str) or not x.strip() for x in model_types):
+            raise AuditError("model task_types must be a list of nonempty strings")
+        catalog_types.update(model_types)
     summary = data["production"]["summary"]
     if summary["real_divisions"] != len(divisions):
         raise AuditError("production ledger division count disagrees with entries")
@@ -91,8 +124,20 @@ def audit(root: Path = ROOT) -> dict:
     routes = []
     for task in sorted(tasks):
         candidates = sorted(m["id"] for m in data["models"]["models"] if task in m.get("task_types", []))
-        routes.append({"task": task, "declared_candidate_model_ids": candidates,
-                       "independently_verified_model_ids": [], "status": "unverified"})
+        aliases = MODEL_TYPE_ALIAS_PROPOSALS.get(task, ())
+        suggested = sorted(m["id"] for m in data["models"]["models"]
+                           if any(alias in m.get("task_types", []) for alias in aliases))
+        proposed_suites = [suite for suite in TASK_SUITE_DESIGN_LINKS.get(task, ())
+                           if suite in suites]
+        routes.append({
+            "task": task,
+            "declared_candidate_model_ids": candidates,
+            "suggested_alias_model_ids_unverified": suggested,
+            "candidate_suite_ids_design_only": proposed_suites,
+            "needs_dedicated_suite_design": not bool(proposed_suites),
+            "independently_verified_model_ids": [],
+            "status": "unverified",
+        })
     division_rows = []
     for division in sorted(divisions):
         seed = SEEDS.get(division)
@@ -118,6 +163,11 @@ def audit(root: Path = ROOT) -> dict:
             "registered_benchmark_task_labels": len(tasks),
             "benchmark_suite_definitions": len(suites),
             "catalog_model_ids": len(models),
+            "catalog_model_task_types_not_in_benchmark_registry": sorted(catalog_types - set(tasks)),
+            "benchmark_tasks_without_exact_catalog_type": sorted(set(tasks) - catalog_types),
+            "benchmark_tasks_without_candidate_suite_design": sorted(
+                task for task in tasks if not any(s in suites for s in TASK_SUITE_DESIGN_LINKS.get(task, ()))
+            ),
             "student_adapter_entries": len(students),
             "reported_benchmark_runs": data["tasks"]["runs"],
             "trained_weights_claimed": data["students"]["truth"].get("trained_weights_exist", False),
