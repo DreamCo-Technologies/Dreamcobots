@@ -2,7 +2,7 @@
 
 Run `python3 tools/audit_buddy_teacher_coverage.py --output /tmp/buddy-coverage.json` after checking out a review branch. This is a **read-only inventory** with no network calls, training, model downloads, workflow dispatches, or paid API calls. Run `python3 -m unittest tests.test_audit_buddy_teacher_coverage` for the synthetic unit tests.
 
-The tool reads the **55 actual divisions** from the production evidence ledger and separately compares the **65 MasterBot taxonomy entries**. A name in only one taxonomy is not proof of a missing or locked bot. It detects duplicate IDs and count mismatches rather than silently counting them as progress. It maps the existing task-label registry to **declared** candidate models, not verified runnable routes, and proposes a small set of **original synthetic fixture designs**. The remaining divisions are explicitly `representative_task_needed`.
+The tool reads the **55 actual divisions** from the production evidence ledger and separately compares the **65 MasterBot taxonomy entries**. A name in only one taxonomy is not proof of a missing or locked bot. It detects duplicate IDs and count mismatches rather than silently counting them as progress. It maps the existing task-label registry to **declared** candidate models, not verified runnable routes, and proposes **55 original synthetic representative-task designs**, one per division currently named in the ledger. If new divisions appear, they remain explicitly `representative_task_needed` until a human reviews an appropriate task.
 
 Every division still needs an owner-approved representative task, licensed/consented data, a genuinely isolated and independently graded holdout, an exact model revision and evaluation receipt. Fixture suggestions are **not** a dataset, passing benchmark, or hidden holdout. No task-route is marked verified by catalog membership. Avoid storing private holdout answers in this public repository.
 
@@ -35,3 +35,17 @@ No alias is treated as a working route. It also links plausible existing
 suite designs to task labels while identifying tasks needing a dedicated
 benchmark; a generic suite is never a pass receipt. This is an offline
 design audit only, not an evaluation of any model.
+
+## Evidence-integrity checks
+
+The auditor now rejects string-valued readiness flags (including `"false"`),
+boolean values masquerading as integer benchmark counts, inconsistent
+canonical/supplemental division subtotals, and any claimed trained weights
+when the production ledger explicitly reports zero trained-weight artifacts.
+These checks prevent registry bookkeeping errors from becoming false evidence;
+they do **not** validate a checkpoint or prove a completed evaluation.
+
+All 55 division task prompts are **design proposals**, not runnable benchmark
+cases, consented datasets, independent hidden holdouts, training receipts,
+or proof of capability. Build and independently grade small, rights-cleared
+holdouts in each lane before promoting model-routing or division-readiness claims.
