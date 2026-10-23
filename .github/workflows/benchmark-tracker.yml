@@ -35,8 +35,15 @@ jobs:
       - name: Diagnose evaluation Pages evidence fingerprint
         run: |
           python - <<'PY'
+          import json
+          from pathlib import Path
           from tools.general_intelligence import build
-          print("EXPECTED_GENERAL_INTELLIGENCE_SOURCE_HASH=" + build()["source_hash"])
+          data = build()
+          print("EXPECTED_GENERAL_INTELLIGENCE_SOURCE_HASH=" + data["source_hash"])
+          for path in ("website/data/general-intelligence.json", "website/data/general-intelligence-manifest.json"):
+              existing = json.loads(Path(path).read_text())
+              changed = [key for key in existing if key != "source_hash" and (key not in data or existing[key] != data[key])] if path.endswith("general-intelligence.json") else []
+              print("PAGES_OTHER_DIFF_KEYS=" + path + ":" + ",".join(changed))
           PY
 
       - name: Verify governed evidence fail-closed contracts
