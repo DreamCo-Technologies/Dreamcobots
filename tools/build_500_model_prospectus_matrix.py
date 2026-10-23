@@ -44,17 +44,7 @@ def rows(value: Any) -> list[dict[str, Any]]:
         return [x for x in value if isinstance(x, dict)]
     if isinstance(value, dict):
         if isinstance(value.get("model_count"), int) and isinstance(value.get("id_pattern"), str):
-            start = int(value.get("slots", {}).get("start", 1))
-            end = int(value.get("slots", {}).get("end", value["model_count"]))
-            width = max(3, len(str(end)))
-            return [
-                {
-                    "model_id": value["id_pattern"].format(slot=slot),
-                    "name": f"Buddy Model {slot:0{width}d}",
-                    "provider": "DreamCo Buddy",
-                }
-                for slot in range(start, end + 1)
-            ]
+            return expand_model_slots(value)
         if isinstance(value.get("domains"), list):
             return [
                 {
@@ -79,10 +69,48 @@ def ident(item: dict[str, Any], keys: tuple[str, ...]) -> str:
     return "unknown"
 
 
+def expand_model_slots(value: dict[str, Any]) -> list[dict[str, Any]]:
+    """Do not silently invent or omit model slots when registry counts disagree."""
+    count = value["model_count"]
+    slots = value.get("slots", {})
+    if not isinstance(slots, dict):
+        raise ValueError("model slots must be an object")
+    start = slots.get("start", 1)
+    end = slots.get("end", count)
+    if (type(count) is not int or type(start) is not int or type(end) is not int
+            or count < 1 or start < 1 or end < start or end - start + 1 != count):
+        raise ValueError("model slot range must match model_count exactly")
+    width = max(3, len(str(end)))
+    return [
+        {
+            "model_id": value["id_pattern"].format(slot=slot),
+            "name": f"Buddy Model {slot:0{width}d}",
+            "provider": "DreamCo Buddy",
+        }
+        for slot in range(start, end + 1)
+    ]
+
+
+def require_unique_ids(items: list[dict[str, Any]], keys: tuple[str, ...], label: str) -> None:
+    """Fail closed instead of publishing a misleading duplicate/empty matrix."""
+    if not items:
+        raise ValueError(f"{label} registry must contain at least one entry")
+    seen: set[str] = set()
+    for index, item in enumerate(items):
+        value = ident(item, keys)
+        if value == "unknown" or not value.strip():
+            raise ValueError(f"{label} entry {index} has no usable identity")
+        if value in seen:
+            raise ValueError(f"duplicate {label} identity: {value}")
+        seen.add(value)
+
+
 def main() -> int:
     catalog = rows(load_first(CATALOG_CANDIDATES))
     suites = rows(load_first(SUITE_CANDIDATES))
     evidence = rows(load_first(EVIDENCE_CANDIDATES))
+    require_unique_ids(catalog, ("model_id", "id", "slug", "name"), "model")
+    require_unique_ids(suites, ("benchmark_id", "suite_id", "id", "slug", "name"), "benchmark suite")
 
     # This source is a *catalog of claims*, not a trusted execution ledger.
     # A reported `passed` string must never certify model mastery. Preserve
