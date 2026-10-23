@@ -93,13 +93,17 @@ def assess(run):
     if run.get("simulated") is not False:
         errors.append("simulated or unspecified execution")
     rights = run.get("license_review", {})
-    if not isinstance(rights, dict) or rights.get("allowed") is not True or not rights.get("reviewer") or not rights.get("source"):
+    if (not isinstance(rights, dict) or rights.get("allowed") is not True
+            or any(not isinstance(rights.get(k), str) or not rights[k].strip() for k in ("reviewer", "source"))):
         errors.append("dataset license review required")
     scan = run.get("contamination", {})
-    if not isinstance(scan, dict) or scan.get("passed") is not True or scan.get("collisions") != [] or not scan.get("scope"):
+    if (not isinstance(scan, dict) or scan.get("passed") is not True or scan.get("collisions") != []
+            or not isinstance(scan.get("scope"), str) or not scan["scope"].strip()):
         errors.append("contamination scan missing or failed")
     artifacts = run.get("artifacts", [])
-    if not isinstance(artifacts, list) or not artifacts or any(not isinstance(a, dict) or not HASH.fullmatch(str(a.get("sha256", ""))) or not a.get("path") for a in artifacts):
+    if (not isinstance(artifacts, list) or not artifacts
+            or any(not isinstance(a, dict) or not HASH.fullmatch(str(a.get("sha256", "")))
+                   or not isinstance(a.get("path"), str) or not a["path"].strip() for a in artifacts)):
         errors.append("content-addressed runtime artifacts required")
     cases = run.get("cases", [])
     if not isinstance(cases, list):
