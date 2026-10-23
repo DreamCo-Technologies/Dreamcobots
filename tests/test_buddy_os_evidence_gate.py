@@ -24,7 +24,12 @@ class BuddyOsEvidenceGateTests(unittest.TestCase):
 
     def test_division_gaps_keep_every_division_not_working(self) -> None:
         report = check()
-        self.assertEqual(len(report["divisions"]), 40)
+        # The number of top-level folders changes as the repository grows.
+        # Compare inventories instead of freezing a stale folder count.
+        expected = {row["division"] for row in audit()["divisions"]}
+        observed = [row["division"] for row in report["divisions"]]
+        self.assertEqual(len(observed), len(set(observed)), "duplicate division folder")
+        self.assertEqual(set(observed), expected)
         self.assertEqual(report["working"], 0)
         self.assertFalse(report["production_ready"])
         self.assertTrue(all(row["working"] is False for row in report["divisions"]))
