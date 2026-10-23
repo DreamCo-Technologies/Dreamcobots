@@ -46,6 +46,9 @@ jobs:
               print("PAGES_OTHER_DIFF_KEYS=" + path + ":" + ",".join(changed))
           PY
 
+      - name: Guard against Actions workflow-run fanout regressions
+        run: python -m unittest tests.test_actions_fanout_guard
+
       - name: Verify governed evidence fail-closed contracts
         run: python -m unittest tests.test_evidence_malformed_inputs tests.test_general_intelligence.EvidenceTests tests.test_general_intelligence.RunnerTests tests.test_benchmark_suite_review_provenance tests.test_benchmark_gap_reviewer_integrity
 
