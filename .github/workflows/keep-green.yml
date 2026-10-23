@@ -28,7 +28,11 @@ jobs:
       - name: Validate Actions page contract
         run: python3 tools/validate_actions_page.py
       - name: Validate Python syntax for touched intelligence code
-        run: python3 -m compileall -q buddy_os tests
+        run: python3 -m compileall -q buddy buddy_os tools tests
+      - name: Test Buddy wiki search and reverse engineering contracts
+        run: python3 -m unittest tests.test_buddy_wiki_search tests.test_buddy_reverse_engineering_coverage tests.test_buddy_genealogy_gedcom
+      - name: Regenerate deterministic Pages connection index
+        run: python3 tools/build_pages_connection_index.py
       - name: Validate JSON files
         run: |
           python3 - <<'PY'
