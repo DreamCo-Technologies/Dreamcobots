@@ -84,11 +84,19 @@ def main() -> int:
     suites = rows(load_first(SUITE_CANDIDATES))
     evidence = rows(load_first(EVIDENCE_CANDIDATES))
 
+    # This source is a *catalog of claims*, not a trusted execution ledger.
+    # A reported `passed` string must never certify model mastery. Preserve
+    # original claims for diagnosis until an independent receipt verifier is wired.
     evidence_map: dict[tuple[str, str], dict[str, Any]] = {}
+    ambiguous: set[tuple[str, str]] = set()
     for item in evidence:
         model = ident(item, ("model_id", "model", "model_name", "provider_model"))
         suite = ident(item, ("benchmark_id", "suite_id", "benchmark_suite", "suite", "benchmark"))
-        evidence_map[(model, suite)] = item
+        key = (model, suite)
+        if key in evidence_map:
+            ambiguous.add(key)
+        else:
+            evidence_map[key] = item
 
     matrix = []
     for model_item in catalog:
@@ -98,17 +106,22 @@ def main() -> int:
         for suite_item in suites:
             suite_id = ident(suite_item, ("benchmark_id", "suite_id", "id", "slug", "name"))
             record = evidence_map.get((model_id, suite_id))
-            status = "unverified"
-            if record:
-                status = record.get("status", "needs_review")
+            reported_status = record.get("status") if record else None
+            # Even a hash-bound local file is not proof that a real model ran.
+            # Keep all unverified claims visible without promoting them to passes.
+            status = "needs_review" if record else "unverified"
+            if (model_id, suite_id) in ambiguous:
+                status = "conflicting_evidence"
             matrix.append({
                 "provider": provider,
                 "model_id": model_id,
                 "model_name": model_name,
                 "benchmark_suite": suite_id,
                 "status": status,
+                "reported_status": reported_status,
                 "evidence": record.get("evidence_reference") if record else None,
-                "last_verified": record.get("execution_timestamp") if record else None,
+                "reported_timestamp": record.get("execution_timestamp") if record else None,
+                "last_verified": None,
             })
 
     output = {
@@ -118,9 +131,10 @@ def main() -> int:
         "registered_benchmark_suites": len(suites),
         "matrix_rows": len(matrix),
         "verified_rows": sum(1 for row in matrix if row["status"] == "passed"),
-        "unverified_rows": sum(1 for row in matrix if row["status"] == "unverified"),
+        "unverified_rows": sum(1 for row in matrix if row["status"] != "passed"),
+        "unreviewed_pass_claims": sum(1 for row in matrix if row["reported_status"] == "passed"),
         "matrix": matrix,
-        "interpretation": "This page is an evidence projection. Missing or unverified combinations are not passes.",
+        "interpretation": "This page projects untrusted source claims, not executed mastery. No row may be promoted to passed until an independent, model-and-suite-bound execution receipt verifier is connected and tested.",
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(output, indent=2) + "\n")
