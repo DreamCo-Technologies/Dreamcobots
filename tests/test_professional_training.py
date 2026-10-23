@@ -111,6 +111,38 @@ class ProfessionalTrainingTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unexpected or missing training fields"):
             build_training_manifest(self._training_request(), [row])
 
+    def test_distillation_rejects_nested_corrections_and_unhashable_modes(self):
+        for field, invalid in (
+            ("user_correction", {"private": "nested payload"}),
+            ("user_correction", ["nested"]),
+            ("user_correction", None),
+            ("mode", ["observe"]),
+            ("mode", {"observe": True}),
+        ):
+            with self.subTest(field=field, invalid=invalid):
+                record = example_record()
+                record[field] = invalid
+                with self.assertRaises(ValueError):
+                    distill_task(record)
+
+    def test_training_handoff_rejects_nontext_or_blank_metadata(self):
+        row = distill_task(example_record())
+        for field, invalid in (
+            ("run_id", ["not-an-id"]),
+            ("method", ["LoRA"]),
+            ("base_model", {"model": "untrusted"}),
+            ("base_revision", "  "),
+            ("base_license", True),
+            ("dataset_license", ["license"]),
+            ("hardware", {"gpu": "unknown"}),
+            ("output_repo", ["public/repo"]),
+        ):
+            with self.subTest(field=field, invalid=invalid):
+                request = self._training_request()
+                request[field] = invalid
+                with self.assertRaises(ValueError):
+                    build_training_manifest(request, [row])
+
     def test_rehashed_malformed_steps_and_mode_are_rejected(self):
         import json
         from hashlib import sha256

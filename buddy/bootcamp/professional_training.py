@@ -51,8 +51,11 @@ def distill_task(record: Mapping[str, Any]) -> dict[str, Any]:
     if not isinstance(steps, list) or not steps or not all(isinstance(step, str) and step.strip() for step in steps):
         raise ValueError("steps must be a non-empty list of visible actions")
     mode = record.get("mode", "observe")
-    if mode not in ALLOWED_MODES:
+    if not isinstance(mode, str) or mode not in ALLOWED_MODES:
         raise ValueError("unsupported learning mode")
+    correction = record.get("user_correction", "")
+    if not isinstance(correction, str):
+        raise ValueError("user_correction must be plain text")
     candidate = {
         "schema": "dreamco.professional_task_example.v1",
         "task_id": _required_text(record, "task_id"),
@@ -64,7 +67,7 @@ def distill_task(record: Mapping[str, Any]) -> dict[str, Any]:
         "mode": mode,
         "steps": [step.strip() for step in steps],
         "result": _required_text(record, "result"),
-        "user_correction": str(record.get("user_correction", "")).strip(),
+        "user_correction": correction.strip(),
         "customization": _required_text(record, "customization"),
         "split": "train",
     }
@@ -137,6 +140,13 @@ def build_training_manifest(request: Mapping[str, Any], examples: Iterable[Mappi
     values = {name: request.get(name) for name in required}
     if any(value in (None, "") for value in values.values()):
         raise ValueError("training request is incomplete")
+    # A review manifest must never serialize nested or boolean metadata as if
+    # it were a pinned model, a license, or a private output repository.
+    for name in required:
+        if name != "max_cost_usd" and (
+            not isinstance(values[name], str) or not values[name].strip()
+        ):
+            raise ValueError(f"{name} must be nonempty plain text")
     if request.get("owner_approved") is not True:
         raise ValueError("owner approval is required")
     if request["method"] not in {"SFT", "DPO", "GRPO", "reward_modeling", "LoRA", "QLoRA"}:
