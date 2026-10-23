@@ -24,3 +24,14 @@ The following **upstream model cards** advertise the listed licenses. Verify the
 Apache-2.0 generally permits commercial use and modifications with its notice and other conditions; it does **not** confer rights to arbitrary third-party training datasets or hosted teacher outputs. Do not call custom-licensed weights OSI-open-source.
 
 For a 24 GB unified-memory Apple Silicon laptop, start with **inference-only** smoke tests on an exact, pinned small checkpoint using an approved local runtime. Measure peak memory, time-to-first-token, tokens/second, total cost and temperature, alongside paired correctness and safety. Do not assume CUDA QLoRA recipes work on Apple Metal/MPS or that the machine can train a 7B model. A locally measured small-model baseline is more useful than unverified frontier-parity claims. Only consider private LoRA after source/teacher rights and independent holdouts are documented; default CI must not train or fetch weights.
+
+
+## Registry vocabulary and suite-design gaps
+
+The benchmark task labels and model catalog `task_types` use different
+vocabularies. The audit now reports exact mismatches separately from
+**unverified alias proposals** (for example `coding` versus `code`).
+No alias is treated as a working route. It also links plausible existing
+suite designs to task labels while identifying tasks needing a dedicated
+benchmark; a generic suite is never a pass receipt. This is an offline
+design audit only, not an evaluation of any model.
