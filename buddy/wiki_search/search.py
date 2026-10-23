@@ -16,7 +16,7 @@ class SearchOptions:
     rrf_k: int = 60
 
     def validate(self) -> None:
-        if not self.collection or len(self.collection) > 100:
+        if not isinstance(self.collection, str) or not self.collection.strip() or len(self.collection) > 100:
             raise ValueError("Invalid collection")
         if not (1 <= self.limit <= 100 and self.limit <= self.candidate_limit <= 1000):
             raise ValueError("Invalid result limits")
@@ -61,6 +61,14 @@ FROM buddy_knowledge WHERE collection=%(collection)s
 ORDER BY search_text <@> %(query)s, id LIMIT %(limit)s
 """
 
+SEMANTIC_SQL = """
+SELECT external_id,title,body,source_url,license,language,
+       embedding <=> %(embedding)s::vector AS semantic_distance
+FROM buddy_knowledge
+WHERE collection=%(collection)s AND embedding IS NOT NULL
+ORDER BY embedding <=> %(embedding)s::vector, id LIMIT %(limit)s
+"""
+
 def search(connection, query: str, *, embedding=None, options: SearchOptions = SearchOptions()):
     """Return cited rows; connection is a psycopg connection provided by the host."""
     options.validate()
@@ -69,12 +77,12 @@ def search(connection, query: str, *, embedding=None, options: SearchOptions = S
     if embedding is not None:
         if len(embedding) != 384 or any(not isfinite(float(v)) for v in embedding):
             raise ValueError("Expected finite 384-dimensional embedding")
-    if embedding is None and options.keyword_weight == 0:
+    if (embedding is None or options.semantic_weight == 0) and options.keyword_weight == 0:
         raise ValueError("Semantic-only mode requires embedding")
     params = vars(options).copy()
     params["query"] = query
     params["embedding"] = None if embedding is None else "[" + ",".join(str(float(v)) for v in embedding) + "]"
     with connection.cursor() as cursor:
-        cursor.execute(SQL if embedding is not None and options.semantic_weight > 0 else KEYWORD_SQL, params)
+        cursor.execute(SQL if embedding is not None and options.semantic_weight > 0 and options.keyword_weight > 0 else (SEMANTIC_SQL if embedding is not None and options.keyword_weight == 0 else KEYWORD_SQL), params)
         cols = [col.name for col in cursor.description]
         return [dict(zip(cols, row)) for row in cursor.fetchall()]
