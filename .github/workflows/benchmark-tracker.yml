@@ -47,7 +47,7 @@ jobs:
           PY
 
       - name: Verify governed evidence fail-closed contracts
-        run: python -m unittest tests.test_evidence_malformed_inputs tests.test_general_intelligence.EvidenceTests tests.test_general_intelligence.RunnerTests tests.test_benchmark_suite_review_provenance
+        run: python -m unittest tests.test_evidence_malformed_inputs tests.test_general_intelligence.EvidenceTests tests.test_general_intelligence.RunnerTests tests.test_benchmark_suite_review_provenance tests.test_benchmark_gap_reviewer_integrity
 
       - name: Collect benchmark metadata
         shell: bash
