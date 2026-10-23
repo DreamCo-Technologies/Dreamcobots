@@ -48,5 +48,8 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Verify issue-preservation regression
+        run: python3 -m unittest tests.test_issue_cleaner_read_only
+
       - name: Run intelligent cleaner
         run: python3 tools/issue_cleaner/clean_issues.py
