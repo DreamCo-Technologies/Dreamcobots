@@ -1,0 +1,56 @@
+name: Buddy Teacher Coverage Audit
+
+on:
+  pull_request:
+    paths:
+      - "tools/audit_buddy_teacher_coverage.py"
+      - "tests/test_audit_buddy_teacher_coverage.py"
+      - "config/buddy-benchmark-task-registry.json"
+      - "config/buddy-model-benchmarks.json"
+      - "config/buddy-model-selection-registry.json"
+      - "config/buddy-student-adapter-registry.json"
+      - "config/buddy-distill-contract.json"
+      - "config/generated/production-evidence-ledger.json"
+      - "config/masterbot-65-registry.json"
+      - ".github/workflows/buddy-teacher-coverage-audit.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-teacher-coverage-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Stdlib-only, read-only; never downloads or trains weights.
+      - name: Verify synthetic audit tests
+        run: python3 -m unittest tests.test_audit_buddy_teacher_coverage -v
+      - name: Inventory divisions, benchmark gaps and model catalog aliases
+        run: python3 tools/audit_buddy_teacher_coverage.py --output buddy-teacher-coverage.json
+      - name: Validate report is a registry audit, not an evaluation receipt
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("buddy-teacher-coverage.json").read_text())
+          assert report["schema"] == "dreamco.buddy_teacher_coverage_audit.v1"
+          assert report["summary"]["actual_divisions"] == len(report["division_coverage"])
+          assert report["summary"]["independent_holdout_receipts_in_this_audit"] == 0
+          assert all(not row["independently_verified_model_ids"] for row in report["task_routes"])
+          print("Audit shape valid; no model readiness claimed.")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: buddy-teacher-coverage-audit
+          path: buddy-teacher-coverage.json
+          if-no-files-found: ignore
+          retention-days: 7
