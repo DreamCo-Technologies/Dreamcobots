@@ -7,9 +7,18 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+HASH64 = re.compile(r'^[0-9a-f]{64}$')
+
+
+def valid_hash(value):
+    """Shape check only: a digest is not independently verified evidence."""
+    return isinstance(value, str) and HASH64.fullmatch(value) is not None
+
+
 NON_WEIGHT = ('prompt_optimization', 'router_optimization', 'retrieval_optimization',
               'memory_optimization', 'tool_policy_optimization', 'benchmark_only')
 
@@ -88,8 +97,10 @@ def select(candidates, gap, budget_usd, model, data, heldout_hashes):
             strategy = by_id[sid]
             cost = finite(c.get('estimated_cost_usd'), 'estimated cost')
             gain = finite(c.get('pilot_gain_lower_bound'), 'pilot gain')
-            if not c.get('pilot_receipt_hash') or not c.get('baseline_revision'):
-                raise ValueError('measured pilot and versioned baseline required')
+            if (not valid_hash(c.get('pilot_receipt_hash'))
+                    or not isinstance(c.get('baseline_revision'), str)
+                    or not c['baseline_revision'].strip()):
+                raise ValueError('well-formed pilot receipt hash and versioned baseline required')
             if c.get('adapter_verified') is not True or c.get('compatible') is not True:
                 raise ValueError('compatible verified adapter required')
             if cost > budget_usd or gain < gap: raise ValueError('budget or expected gain insufficient')
@@ -115,9 +126,17 @@ def promotion(candidate, baseline, max_regression=0.0):
     finite(max_regression, 'max regression')
     reasons = []
     try:
+        if not isinstance(candidate, dict) or not isinstance(baseline, dict):
+            raise ValueError('candidate and baseline must be objects')
+        if not isinstance(baseline.get('revision'), str) or not baseline['revision'].strip():
+            raise ValueError('versioned baseline required')
         if candidate.get('baseline_revision') != baseline['revision']: raise ValueError('baseline mismatch')
         runs = candidate['runs']
-        if len(runs) < 3 or len({r['id'] for r in runs}) != len(runs): raise ValueError('three independent trial IDs required')
+        if not isinstance(runs, (list, tuple)) or len(runs) < 3 or any(not isinstance(r, dict) for r in runs):
+            raise ValueError('three independent trial records required')
+        if any(not isinstance(r.get('id'), str) or not r['id'].strip() or type(r.get('seed')) is not int for r in runs):
+            raise ValueError('trial IDs and integer seeds required')
+        if len({r['id'] for r in runs}) != len(runs): raise ValueError('three independent trial IDs required')
         if len({r['seed'] for r in runs}) != len(runs): raise ValueError('independent seeds required')
         for r in runs:
             for flag in ('heldout', 'uncontaminated', 'rights_verified', 'regression_passed'):
@@ -127,7 +146,9 @@ def promotion(candidate, baseline, max_regression=0.0):
                 if score > 1 or old > 1 or score + (0 if key == 'safety' else max_regression) < old: raise ValueError(key+' regression or range error')
             if r['quality'] <= baseline['quality']: raise ValueError('reproducible quality gain absent')
             for key in ('cost_usd','latency_ms'): finite(r[key], key)
-            if not r.get('receipt_hash') or not r.get('config_hash') or not r.get('hardware'): raise ValueError('reproducibility metadata missing')
+            if (not valid_hash(r.get('receipt_hash')) or not valid_hash(r.get('config_hash'))
+                    or not isinstance(r.get('hardware'), str) or not r['hardware'].strip()):
+                raise ValueError('reproducibility metadata missing or malformed')
         if candidate.get('rollback_revision') != baseline['revision']: raise ValueError('rollback must restore the baseline revision')
     except (KeyError, ValueError, TypeError) as e: reasons.append(str(e))
     return {'eligible_for_review': not reasons, 'reasons': reasons, 'production_ready': False, 'frontier': False, 'mastery': False}
