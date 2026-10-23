@@ -14,7 +14,8 @@ def test_every_canonical_suite_retains_unknown_state_and_reviewed_contract():
     assert len({(r['source'], r['source_array'], r['suite_id']) for r in result['entries']}) == result['count']
     assert any(r['suite_id'] == 'human-reviewed-evaluation' for r in result['entries'])
     assert all(r['gap_state'] == 'unknown' and r['production_ready'] is False for r in result['entries'])
-    assert all(r['review']['status'] == 'reviewed' and 'passing_affected_regressions' in r['required'] for r in result['entries'])
+    assert all(r['review']['status'] == 'requires_suite_specific_review' and r['review']['reviewer'] is None
+               and 'passing_affected_regressions' in r['required'] for r in result['entries'])
 
 
 def test_declared_or_overridden_scores_do_not_establish_mastery():
@@ -66,6 +67,7 @@ def test_all_registered_suites_keep_contracts_when_slots_are_limited(tmp_path, m
     rows = [s for lane in out['lanes'] for s in lane['suites']]
     expected = json.loads(planner.SUITES.read_text())['suites']
     assert {s['suite_id'] for s in rows} == {s['id'] for s in expected}
-    assert all(s['gap_closure_contract']['review']['status'] == 'reviewed' for s in rows)
+    assert all(s['gap_closure_contract']['review']['status'] == 'requires_suite_specific_review'
+               and s['gap_closure_contract']['review']['reviewer'] is None for s in rows)
     assert all(s['gap_state'] == 'unknown' for s in rows)
     assert all(1 <= lane['parallel_slot'] <= 2 for lane in out['lanes'])
