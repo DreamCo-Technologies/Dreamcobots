@@ -20,6 +20,13 @@ PRIVATE_FIELDS = frozenset({
     "hidden_reasoning", "chain_of_thought", "screen_capture", "holdout_answer",
 })
 ALLOWED_MODES = frozenset({"observe", "suggest", "guide", "assist", "supervised_automation"})
+# Closed schema: a hash verifies integrity, not whether an extra field is safe.
+# Unknown fields can carry private data or hidden evaluation labels.
+TRAINING_EXAMPLE_FIELDS = frozenset({
+    "schema", "task_id", "profession", "goal", "source", "source_revision",
+    "wrapper_id", "mode", "steps", "result", "user_correction",
+    "customization", "split", "example_sha256",
+})
 
 
 def _required_text(record: Mapping[str, Any], name: str) -> str:
@@ -146,6 +153,24 @@ def build_training_manifest(request: Mapping[str, Any], examples: Iterable[Mappi
             raise ValueError(f"example {index}: invalid distilled task schema")
         if row.get("split") != "train":
             raise ValueError(f"example {index}: evaluation/holdout rows cannot enter training")
+        # A recomputed SHA-256 does not make an unrecognized payload safe.
+        unknown = set(row) - TRAINING_EXAMPLE_FIELDS
+        missing = TRAINING_EXAMPLE_FIELDS - set(row)
+        if unknown or missing:
+            raise ValueError(f"example {index}: unexpected or missing training fields")
+        if row.get("mode") not in ALLOWED_MODES:
+            raise ValueError(f"example {index}: unsupported learning mode")
+        for field in TRAINING_EXAMPLE_FIELDS - {"steps", "example_sha256"}:
+            if not isinstance(row[field], str):
+                raise ValueError(f"example {index}: {field} must be text")
+            if field not in {"user_correction"} and not row[field].strip():
+                raise ValueError(f"example {index}: {field} must not be blank")
+        steps = row["steps"]
+        if not isinstance(steps, list) or not steps or not all(
+            isinstance(step, str) and step.strip() for step in steps
+        ):
+            raise ValueError(f"example {index}: steps must be nonempty visible text")
+
         supplied = {str(key).lower() for key in row}
         if supplied & PRIVATE_FIELDS:
             raise ValueError(f"example {index}: private or evaluation-only field present")
