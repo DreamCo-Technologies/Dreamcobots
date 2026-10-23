@@ -20,7 +20,9 @@ def passing_evidence(record, root):
         if hashlib.sha256(raw).hexdigest() != evidence['artifact_sha256']:
             return False
         result = json.loads(raw)
-        return (result.get('benchmark_id') == record['benchmark_id']
+        return (type(result.get('division_id')) in (str, int)
+                and str(result['division_id']).strip() == str(record['division_id']).strip()
+                and result.get('benchmark_id') == record['benchmark_id']
                 and result.get('source_sha256') == hashlib.sha256(source.read_bytes()).hexdigest()
                 and result.get('status') == 'passed' and result.get('regression_status') == 'passed'
                 and type(result.get('tests_run')) is int and result['tests_run'] > 0
