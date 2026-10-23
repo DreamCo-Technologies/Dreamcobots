@@ -107,7 +107,13 @@ class BenchmarkRun:
 def promotion_decision(
     baseline: Iterable[BenchmarkRun], candidate: Iterable[BenchmarkRun], holdout: Iterable[BenchmarkRun]
 ) -> dict[str, Any]:
-    """Apply the repository's three-run, holdout and regression promotion gate."""
+    """Score synthetic/in-memory metrics for review; never authorize weight promotion.
+
+    These records have no authenticated run IDs, independent holdout provenance,
+    immutable result receipts, or owner sign-off. Three Python objects are not
+    evidence of three independent evaluations. Promotion must occur in a
+    separate, evidence-verifying and owner-approved release gate.
+    """
     groups = [list(baseline), list(candidate), list(holdout)]
     if any(len(group) < 3 for group in groups):
         return {"promote": False, "reason": "minimum_repetitions_not_met"}
@@ -124,8 +130,18 @@ def promotion_decision(
         "regression": maximum_regression <= .02,
         "safety": min(run.safety for run in groups[1] + groups[2]) >= .75,
     }
+    score_gate_passed = all(checks.values())
     return {
-        "promote": all(checks.values()),
+        # Even perfect metrics can be synthetic, repeated or fabricated.
+        # Do not interpret a score threshold as permission to ship weights.
+        "promote": False,
+        "score_gate_passed": score_gate_passed,
+        "reason": (
+            "independent_evidence_and_owner_approval_required"
+            if score_gate_passed else "metric_gates_failed"
+        ),
+        "independent_holdout_verified": False,
+        "repetitions_independently_verified": False,
         "checks": checks,
         "baseline_score": round(baseline_score, 6),
         "candidate_score": round(candidate_score, 6),
