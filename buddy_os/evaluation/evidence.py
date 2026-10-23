@@ -33,10 +33,12 @@ def contamination(evaluation, training):
 
 
 def calibration(samples, bins=10):
+    if not isinstance(samples, (list, tuple)):
+        raise ValueError("Calibration samples must be a sequence of records")
     if not samples:
         return {"status": "untested", "count": 0, "brier": None, "ece": None, "coverage": None, "selective_accuracy": None, "abstention_error": None}
     for row in samples:
-        if not finite(row.get("confidence"), 0, 1) or any(type(row.get(k)) is not bool for k in ("correct", "abstained", "should_abstain")):
+        if not isinstance(row, dict) or not finite(row.get("confidence"), 0, 1) or any(type(row.get(k)) is not bool for k in ("correct", "abstained", "should_abstain")):
             raise ValueError("Calibration requires probabilities and observed binary outcomes")
     if type(bins) is not int or not 1 <= bins <= 100:
         raise ValueError("Invalid bin count")
@@ -66,7 +68,7 @@ def assess(run):
     errors += [f"missing {k}" for k in sorted(required - set(run))]
     if run.get("schema") != "dreamco.general_intelligence_run.v1":
         errors.append("wrong schema")
-    if run.get("capability") not in {c["id"] for c in POLICY["capabilities"]}:
+    if not isinstance(run.get("capability"), str) or run["capability"] not in {c["id"] for c in POLICY["capabilities"]}:
         errors.append("unknown capability")
     for key in ("suite_hash", "dataset_hash", "config_hash", "baseline_hash", "training_corpus_hash"):
         if not isinstance(run.get(key), str) or not HASH.fullmatch(run[key]):
@@ -80,7 +82,10 @@ def assess(run):
     if not isinstance(components, dict) or set(components) != COMPONENTS or not all(isinstance(v, str) and v.strip() for v in components.values()):
         errors.append("exact model/policy/router/retrieval revisions required")
     try:
-        stamp = datetime.fromisoformat(run.get("timestamp", "").replace("Z", "+00:00"))
+        raw_timestamp = run.get("timestamp")
+        if not isinstance(raw_timestamp, str):
+            raise ValueError("Timestamp must be a string")
+        stamp = datetime.fromisoformat(raw_timestamp.replace("Z", "+00:00"))
         if stamp.tzinfo is None or stamp > datetime.now(timezone.utc):
             errors.append("timestamp is timezone-free or in the future")
     except (ValueError, TypeError):
@@ -119,7 +124,9 @@ def assess(run):
             errors.append(f"{prefix}: duplicate repetition")
         seen.add(identity)
         counts[identity[0]].add(identity[1])
-        if case.get("split") not in {"holdout", "transfer"} or case.get("withheld_from_training") is not True or not case.get("family"):
+        if (not isinstance(case.get("split"), str) or case["split"] not in {"holdout", "transfer"}
+                or case.get("withheld_from_training") is not True
+                or not isinstance(case.get("family"), str) or not case["family"].strip()):
             errors.append(f"{prefix}: held-out task family required")
         if not HASH.fullmatch(str(case.get("fixture_hash", ""))) or not HASH.fullmatch(str(case.get("response_hash", ""))):
             errors.append(f"{prefix}: fixture/response hashes missing")
@@ -133,8 +140,9 @@ def assess(run):
             errors.append(f"{prefix}: assistance/intervention log missing")
     if set(counts) != set(expected) or len(counts) < POLICY["minimum_independent_tasks"]:
         errors.append("missing preregistered task coverage")
-    if any(len(v) < POLICY["minimum_repetitions"] for v in counts.values()):
-        errors.append("insufficient independent repetitions")
+    required_repetitions = set(range(POLICY["minimum_repetitions"]))
+    if any(v != required_repetitions for v in counts.values()):
+        errors.append("invalid or missing preregistered repetitions")
     if not any(c.get("split") == "transfer" and c.get("cross_domain") is True for c in cases):
         errors.append("cross-domain transfer evidence required")
     if len({c.get("family") for c in cases if isinstance(c.get("family"), str)}) < POLICY["minimum_independent_tasks"]:
