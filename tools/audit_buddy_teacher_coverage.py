@@ -100,11 +100,21 @@ def audit(root: Path = ROOT) -> dict:
     suites = _unique(data["suites"]["suites"], "id", SOURCES["suites"])
     models = _unique(data["models"]["models"], "id", SOURCES["models"])
     students = _unique(data["students"]["adapters"], "id", SOURCES["students"])
-    if not isinstance(data["tasks"].get("runs"), int) or data["tasks"]["runs"] < 0:
+    runs = data["tasks"].get("runs")
+    if type(runs) is not int or runs < 0:
         raise AuditError("benchmark runs must be a nonnegative integer")
-    if data["students"]["truth"].get("trained_weights_exist") and not students:
+    student_truth = data["students"]["truth"]
+    distill_truth = data["distill"].get("truth", {})
+    for label, value in (
+        ("student trained_weights_exist", student_truth.get("trained_weights_exist")),
+        ("distill trained_weights_exist", distill_truth.get("trained_weights_exist", False)),
+        ("distill distill_runs_exist", distill_truth.get("distill_runs_exist", False)),
+    ):
+        if type(value) is not bool:
+            raise AuditError(f"{label} must be a boolean")
+    if student_truth["trained_weights_exist"] and not students:
         raise AuditError("trained weights claimed without any registered student adapter")
-    if data["distill"].get("status") == "contract_draft_no_runs" and data["distill"].get("truth", {}).get("distill_runs_exist"):
+    if data["distill"].get("status") == "contract_draft_no_runs" and distill_truth.get("distill_runs_exist"):
         raise AuditError("distillation run claim contradicts no-runs contract status")
     catalog_types = set()
     for model in data["models"]["models"]:
@@ -113,8 +123,25 @@ def audit(root: Path = ROOT) -> dict:
             raise AuditError("model task_types must be a list of nonempty strings")
         catalog_types.update(model_types)
     summary = data["production"]["summary"]
-    if summary["real_divisions"] != len(divisions):
+    if type(summary["real_divisions"]) is not int or summary["real_divisions"] != len(divisions):
         raise AuditError("production ledger division count disagrees with entries")
+    if "canonical_divisions" in summary and "supplemental_divisions" in summary:
+        canonical, supplemental = summary["canonical_divisions"], summary["supplemental_divisions"]
+        if any(type(n) is not int or n < 0 for n in (canonical, supplemental)):
+            raise AuditError("production ledger division subtotals must be nonnegative integers")
+        if canonical + supplemental != len(divisions):
+            raise AuditError("production ledger division subtotals disagree with entries")
+    for division in data["production"]["divisions"]:
+        if type(division.get("production_ready")) is not bool:
+            raise AuditError("division production_ready must be a boolean")
+    ledger_weights = summary.get("trained_weight_artifacts")
+    if ledger_weights is not None:
+        if type(ledger_weights) is not int or ledger_weights < 0:
+            raise AuditError("trained_weight_artifacts must be a nonnegative integer")
+        if ledger_weights == 0 and (
+            student_truth["trained_weights_exist"] or distill_truth.get("trained_weights_exist")
+        ):
+            raise AuditError("trained weights claimed while production ledger reports zero artifacts")
     if data["masterbots"]["canonical_count"] != len(masterbots):
         raise AuditError("MasterBot registry count disagrees with entries")
     if summary["production_ready_divisions"] != sum(bool(d["production_ready"]) for d in data["production"]["divisions"]):
@@ -170,7 +197,10 @@ def audit(root: Path = ROOT) -> dict:
             ),
             "student_adapter_entries": len(students),
             "reported_benchmark_runs": data["tasks"]["runs"],
-            "trained_weights_claimed": data["students"]["truth"].get("trained_weights_exist", False),
+            "trained_weights_claimed": student_truth["trained_weights_exist"],
+            "distill_trained_weights_claimed": distill_truth.get("trained_weights_exist", False),
+            "distill_runs_claimed": distill_truth.get("distill_runs_exist", False),
+            "ledger_trained_weight_artifacts": ledger_weights,
             "distill_contract_status": data["distill"].get("status", "unknown"),
             "independently_verified_routes_in_this_audit": 0,
             "independent_holdout_receipts_in_this_audit": 0,
