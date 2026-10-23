@@ -8,7 +8,9 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from hashlib import sha256
+from hmac import compare_digest
 import json
+from math import isfinite
 from statistics import mean
 from typing import Any, Iterable, Mapping
 
@@ -76,10 +78,14 @@ class BenchmarkRun:
     def validate(self) -> None:
         for name in ("task_success", "quality", "safety", "regression"):
             value = getattr(self, name)
-            if not isinstance(value, (int, float)) or not 0 <= value <= 1:
-                raise ValueError(f"{name} must be between 0 and 1")
-        if self.latency_seconds < 0 or self.cost_usd < 0 or self.human_touches < 0:
-            raise ValueError("latency, cost and human touches cannot be negative")
+            if type(value) not in (int, float) or not isfinite(value) or not 0 <= value <= 1:
+                raise ValueError(f"{name} must be a finite number between 0 and 1")
+        for name in ("latency_seconds", "cost_usd"):
+            value = getattr(self, name)
+            if type(value) not in (int, float) or not isfinite(value) or value < 0:
+                raise ValueError(f"{name} must be a finite nonnegative number")
+        if type(self.human_touches) is not int or self.human_touches < 0:
+            raise ValueError("human_touches must be a nonnegative integer")
 
     @property
     def score(self) -> float:
@@ -128,13 +134,35 @@ def build_training_manifest(request: Mapping[str, Any], examples: Iterable[Mappi
         raise ValueError("owner approval is required")
     if request["method"] not in {"SFT", "DPO", "GRPO", "reward_modeling", "LoRA", "QLoRA"}:
         raise ValueError("unsupported training method")
-    if not isinstance(request["max_cost_usd"], (int, float)) or request["max_cost_usd"] <= 0:
-        raise ValueError("max_cost_usd must be positive")
+    budget = request["max_cost_usd"]
+    if type(budget) not in (int, float) or not isfinite(budget) or budget < 0:
+        raise ValueError("max_cost_usd must be a finite nonnegative number")
     rows = list(examples)
-    if not rows or any(row.get("schema") != "dreamco.professional_task_example.v1" for row in rows):
+    if not rows:
         raise ValueError("at least one distilled professional task example is required")
-    hashes = sorted(_required_text(row, "example_sha256") for row in rows)
-    dataset_hash = sha256("\n".join(hashes).encode()).hexdigest()
+    hashes = []
+    for index, row in enumerate(rows):
+        if not isinstance(row, Mapping) or row.get("schema") != "dreamco.professional_task_example.v1":
+            raise ValueError(f"example {index}: invalid distilled task schema")
+        if row.get("split") != "train":
+            raise ValueError(f"example {index}: evaluation/holdout rows cannot enter training")
+        supplied = {str(key).lower() for key in row}
+        if supplied & PRIVATE_FIELDS:
+            raise ValueError(f"example {index}: private or evaluation-only field present")
+        digest = row.get("example_sha256")
+        if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+            raise ValueError(f"example {index}: invalid example_sha256")
+        payload = {key: value for key, value in row.items() if key != "example_sha256"}
+        try:
+            canonical = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"example {index}: invalid JSON fields") from exc
+        if not compare_digest(sha256(canonical).hexdigest(), digest):
+            raise ValueError(f"example {index}: content hash mismatch")
+        hashes.append(digest)
+    if len(hashes) != len(set(hashes)):
+        raise ValueError("duplicate distilled training examples")
+    dataset_hash = sha256("\n".join(sorted(hashes)).encode()).hexdigest()
     return {
         "schema": "dreamco.professional_training_handoff.v1",
         **values,
