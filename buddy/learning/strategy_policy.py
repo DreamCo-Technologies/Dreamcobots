@@ -111,11 +111,11 @@ def promotion(candidate, baseline, max_regression=0.0):
                 if r.get(flag) is not True: raise ValueError(f'{flag} required')
             for key in ('quality','safety','factuality','retention'):
                 score=finite(r[key], key); old=finite(baseline[key], key)
-                if score > 1 or old > 1 or score + max_regression < old: raise ValueError(key+' regression or range error')
+                if score > 1 or old > 1 or score + (0 if key == 'safety' else max_regression) < old: raise ValueError(key+' regression or range error')
             if r['quality'] <= baseline['quality']: raise ValueError('reproducible quality gain absent')
             for key in ('cost_usd','latency_ms'): finite(r[key], key)
             if not r.get('receipt_hash') or not r.get('config_hash') or not r.get('hardware'): raise ValueError('reproducibility metadata missing')
-        if not candidate.get('rollback_revision'): raise ValueError('rollback required')
+        if candidate.get('rollback_revision') != baseline['revision']: raise ValueError('rollback must restore the baseline revision')
     except (KeyError, ValueError, TypeError) as e: reasons.append(str(e))
     return {'eligible_for_review': not reasons, 'reasons': reasons, 'production_ready': False, 'frontier': False, 'mastery': False}
 
