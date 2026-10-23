@@ -32,6 +32,13 @@ jobs:
       - name: Run executable reality benchmark protocol smoke test
         run: python tools/reality_benchmark_smoke.py
 
+      - name: Diagnose evaluation Pages evidence fingerprint
+        run: |
+          python - <<'PY'
+          from tools.general_intelligence import build
+          print("EXPECTED_GENERAL_INTELLIGENCE_SOURCE_HASH=" + build()["source_hash"])
+          PY
+
       - name: Verify governed evidence fail-closed contracts
         run: python -m unittest tests.test_evidence_malformed_inputs tests.test_general_intelligence.EvidenceTests
 
