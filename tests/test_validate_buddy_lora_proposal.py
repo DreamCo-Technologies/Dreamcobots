@@ -3,7 +3,7 @@ import copy
 import json
 import unittest
 from pathlib import Path
-from tools.validate_buddy_lora_proposal import ProposalError, validate
+from tools.validate_buddy_lora_proposal import ProposalError, parse_proposal, validate
 
 TEMPLATE = Path(__file__).resolve().parents[1] / "config/buddy-lora-experiment-proposal.json"
 
@@ -11,6 +11,35 @@ TEMPLATE = Path(__file__).resolve().parents[1] / "config/buddy-lora-experiment-p
 class ProposalPreflightTests(unittest.TestCase):
     def setUp(self):
         self.p = json.loads(TEMPLATE.read_text(encoding="utf-8"))
+
+    def test_rejects_duplicate_authorization_key_before_validation(self):
+        # A duplicate field must not be resolved by "last value wins".
+        raw = json.dumps(self.p).replace(
+            '"execution_authorized": false',
+            '"execution_authorized": true, "execution_authorized": false',
+            1,
+        )
+        with self.assertRaisesRegex(ProposalError, "duplicate JSON key"):
+            parse_proposal(raw)
+
+    def test_rejects_nested_duplicate_receipt_keys(self):
+        raw = '{"metadata":{"receipt":"first","receipt":"second"}}'
+        with self.assertRaisesRegex(ProposalError, "duplicate JSON key"):
+            parse_proposal(raw)
+
+    def test_rejects_nonfinite_json_constants(self):
+        for constant in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(constant=constant):
+                raw = json.dumps(self.p).replace(
+                    '"compute_budget_usd": 0', '"compute_budget_usd": ' + constant, 1
+                )
+                with self.assertRaisesRegex(ProposalError, "nonfinite JSON constant"):
+                    parse_proposal(raw)
+
+    def test_valid_proposal_json_parses_without_authorizing_training(self):
+        parsed = parse_proposal(json.dumps(self.p))
+        self.assertEqual(parsed, self.p)
+        self.assertFalse(validate(parsed)["training_authorized"])
 
     def test_default_is_explicitly_blocked(self):
         report = validate(self.p)

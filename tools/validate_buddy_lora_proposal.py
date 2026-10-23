@@ -38,6 +38,33 @@ class ProposalError(ValueError):
     """Unsafe or malformed proposed configuration."""
 
 
+def _reject_duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    """Reject ambiguous JSON objects, including nested duplicate keys."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ProposalError("duplicate JSON key in LoRA proposal")
+        result[key] = value
+    return result
+
+
+def _reject_nonfinite_constant(value: str) -> None:
+    """Python's JSON decoder accepts NaN/Infinity by default; proposals do not."""
+    raise ProposalError(f"nonfinite JSON constant in LoRA proposal: {value}")
+
+
+def parse_proposal(text: str) -> Any:
+    """Parse a proposal without silently overriding duplicate security fields."""
+    try:
+        return json.loads(
+            text,
+            object_pairs_hook=_reject_duplicate_keys,
+            parse_constant=_reject_nonfinite_constant,
+        )
+    except json.JSONDecodeError as exc:
+        raise ProposalError("invalid LoRA proposal JSON") from exc
+
+
 def validate(proposal: Any) -> dict:
     if not isinstance(proposal, dict) or set(proposal) != ALLOWED:
         raise ProposalError("proposal must contain exactly the defined schema fields")
@@ -107,7 +134,7 @@ def main() -> int:
     parser.add_argument("--proposal", required=True, type=Path)
     args = parser.parse_args()
     try:
-        proposal = json.loads(args.proposal.read_text(encoding="utf-8"))
+        proposal = parse_proposal(args.proposal.read_text(encoding="utf-8"))
         report = validate(proposal)
     except (OSError, ValueError, TypeError) as exc:
         parser.exit(2, f"LoRA proposal preflight blocked: {exc}\n")
