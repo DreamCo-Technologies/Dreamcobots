@@ -32,6 +32,9 @@ jobs:
       - name: Run executable reality benchmark protocol smoke test
         run: python tools/reality_benchmark_smoke.py
 
+      - name: Verify governed evidence fail-closed contracts
+        run: python -m unittest tests.test_evidence_malformed_inputs tests.test_general_intelligence.EvidenceTests
+
       - name: Collect benchmark metadata
         shell: bash
         run: |
