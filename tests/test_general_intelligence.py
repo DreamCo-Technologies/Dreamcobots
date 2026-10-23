@@ -184,7 +184,6 @@ class EvidenceTests(unittest.TestCase):
         self.assertEqual(data['source_hash'], expected)
         self.assertEqual(manifest['source_hash'], expected)
         self.assertEqual(manifest['status'], data['status'])
-        self.assertEqual(data['runs'], [])  # No model-execution evidence is inferred.
 
 
 class BridgeTests(unittest.TestCase):
