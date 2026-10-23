@@ -175,6 +175,18 @@ class EvidenceTests(unittest.TestCase):
         self.assertEqual(data['runs'],[]); self.assertTrue(all(c['status']=='untested' for c in data['matrix'])); generate(check=True)
 
 
+    def test_pages_fingerprints_match_current_sources(self):
+        # Generated public evidence must never silently describe an older evaluator.
+        root = Path(__file__).resolve().parents[1]
+        data = json.loads((root / 'website/data/general-intelligence.json').read_text())
+        manifest = json.loads((root / 'website/data/general-intelligence-manifest.json').read_text())
+        expected = build(root)['source_hash']
+        self.assertEqual(data['source_hash'], expected)
+        self.assertEqual(manifest['source_hash'], expected)
+        self.assertEqual(manifest['status'], data['status'])
+        self.assertEqual(data['runs'], [])  # No model-execution evidence is inferred.
+
+
 class BridgeTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory(); self.store=ReviewStore(Path(self.tmp.name)/'review.db')
