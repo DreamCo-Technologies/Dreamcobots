@@ -11,7 +11,6 @@ on:
 permissions:
   actions: read
   contents: read
-  issues: write
 
 jobs:
   sweep:
@@ -69,34 +68,15 @@ jobs:
           Path('sweep/report.md').write_text('\n'.join(lines)+'\n')
           PY
           cat sweep/report.md >> "$GITHUB_STEP_SUMMARY"
-      - name: Open repair issues for uncovered failures
+      - name: Group failures into read-only triage evidence
         shell: bash
         run: |
           set -euo pipefail
-          python3 - <<'PY' > sweep/ids.txt
-          import json
-          from pathlib import Path
-          for row in json.loads(Path('sweep/failures.json').read_text()): print(row['id'])
-          PY
-          while read -r run_id; do
-            [ -z "$run_id" ] && continue
-            existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "Actions run $run_id in:title" --json number --jq '.[0].number // empty')
-            [ -n "$existing" ] && continue
-            run=$(gh run view "$run_id" --repo "$GITHUB_REPOSITORY" --json workflowName,conclusion,url,headSha,event)
-            workflow=$(printf '%s' "$run" | jq -r '.workflowName'); conclusion=$(printf '%s' "$run" | jq -r '.conclusion'); url=$(printf '%s' "$run" | jq -r '.url'); sha=$(printf '%s' "$run" | jq -r '.headSha'); event=$(printf '%s' "$run" | jq -r '.event')
-            cat > sweep/issue.md <<EOF
-          A GitHub Actions run needs repair.
-
-          - Workflow: **$workflow**
-          - Conclusion: **$conclusion**
-          - Event: **$event**
-          - Commit: \`$sha\`
-          - Run: $url
-
-          **Repair rule:** inspect the first failing job/step, reproduce the smallest root cause, fix without weakening tests, then rerun the affected suite. Preserve blocked/owner-action states when verification cannot be completed.
-          EOF
-            gh issue create --repo "$GITHUB_REPOSITORY" --title "Actions run $run_id failed: $workflow" --body-file sweep/issue.md
-          done < sweep/ids.txt
+          python3 tools/actions_failure_triage.py \
+            --input sweep/failures.json \
+            --output sweep/triage.json \
+            --summary sweep/triage.md
+          cat sweep/triage.md >> "$GITHUB_STEP_SUMMARY"
       - name: Save sweep evidence
         if: always()
         uses: actions/upload-artifact@v7
