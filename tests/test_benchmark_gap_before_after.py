@@ -10,7 +10,7 @@ from tools.benchmark_gap_closure import plan
 def case(tmp_path: Path, *, before=40, after=65, target=60, regression='passed', with_before=True):
     source = tmp_path / 'suite.json'
     source.write_text('{"fixture": true}\n')
-    result = {'benchmark_id': 'synthetic', 'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
+    result = {'division_id': 'sandbox', 'benchmark_id': 'synthetic', 'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
               'status': 'passed', 'regression_status': regression, 'tests_run': 3,
               'tests_failed': 0, 'score': after, 'target': target}
     if with_before:
