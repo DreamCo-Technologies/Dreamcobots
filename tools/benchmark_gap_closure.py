@@ -8,7 +8,12 @@ ROOT = Path(__file__).resolve().parents[1]
 def passing_evidence(record, root):
     """Require reviewed, hash-bound local results; declarations never prove closure."""
     evidence = record.get('evidence')
-    if not isinstance(evidence, dict) or evidence.get('review_status') != 'reviewed' or not evidence.get('reviewer'):
+    # A truthy value is not reviewer provenance: booleans, numbers, objects,
+    # and whitespace-only strings must never promote a benchmark receipt.
+    if not isinstance(evidence, dict) or evidence.get('review_status') != 'reviewed':
+        return False
+    reviewer = evidence.get('reviewer')
+    if not isinstance(reviewer, str) or not reviewer.strip():
         return False
     try:
         root = root.resolve()
