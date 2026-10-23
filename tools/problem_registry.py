@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -32,7 +33,25 @@ def load_json(path: Path, default):
 
 
 def main() -> int:
-    health = load_json(ACTIONS, {})
+    # An absent, malformed, or stale-schema input must not silently publish a
+    # zero-problem registry. Preserve existing outputs and fail visibly.
+    try:
+        health = json.loads(ACTIONS.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError) as exc:
+        print(f"Actions health evidence unavailable or invalid: {ACTIONS}: {exc}", file=sys.stderr)
+        return 2
+    if (not isinstance(health, dict)
+            or health.get("schema") != "dreamco.actions_health.v2"
+            or not isinstance(health.get("findings"), list)
+            or not health["findings"]
+            or type(health.get("workflow_count")) is not int
+            or health["workflow_count"] != len(health["findings"])
+            or any(not isinstance(item, dict)
+                   or not isinstance(item.get("errors"), list)
+                   or not isinstance(item.get("warnings"), list)
+                   for item in health["findings"])):
+        print("Actions health evidence has invalid schema or incomplete workflow coverage", file=sys.stderr)
+        return 2
     problems = []
     for item in health.get("findings", []):
         workflow = item.get("workflow", "unknown")
