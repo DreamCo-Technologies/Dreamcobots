@@ -59,7 +59,7 @@ holdouts in each lane before promoting model-routing or division-readiness claim
 [
   {"suite_id": "instruction_following", "response": "READY"},
   {"suite_id": "arithmetic_reasoning", "response": "42"},
-  {"suite_id": "structured_output", "response": "{\\"result\\":42,\\"confidence\\":0.5}"}
+  {"suite_id": "structured_output", "response": "{\"result\":42,\"confidence\":0.5}"}
 ]
 ```
 
