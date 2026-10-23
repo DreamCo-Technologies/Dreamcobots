@@ -34,7 +34,7 @@ jobs:
           python-version: "3.12"
       # Stdlib-only, read-only; never downloads or trains weights.
       - name: Verify synthetic audit tests
-        run: python3 -m unittest tests.test_audit_buddy_teacher_coverage tests.test_professional_training -v
+        run: python3 -m unittest tests.test_audit_buddy_teacher_coverage tests.test_professional_training tests.test_score_buddy_dev_fixtures -v
       - name: Inventory divisions, benchmark gaps and model catalog aliases
         run: python3 tools/audit_buddy_teacher_coverage.py --output buddy-teacher-coverage.json
       - name: Validate report is a registry audit, not an evaluation receipt
