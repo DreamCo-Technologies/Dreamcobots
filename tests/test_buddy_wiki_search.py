@@ -28,6 +28,15 @@ class SearchTests(unittest.TestCase):
         with self.assertRaises(ValueError): SearchOptions(keyword_weight=-1).validate()
     def test_bad_vector(self):
         with self.assertRaises(ValueError): search(Connection(),"x",embedding=[1,2])
+    def test_semantic_only(self):
+        db=Connection()
+        search(db,"space",embedding=[0.0]*384,options=SearchOptions(keyword_weight=0))
+        self.assertIn("semantic_distance",db.cur.sql)
+        self.assertNotIn("FULL OUTER JOIN",db.cur.sql)
+    def test_bad_collection(self):
+        with self.assertRaises(ValueError): SearchOptions(collection=" ").validate()
+    def test_both_weights_zero(self):
+        with self.assertRaises(ValueError): SearchOptions(keyword_weight=0,semantic_weight=0).validate()
     def test_blank_query(self):
         with self.assertRaises(ValueError): search(Connection(),"  ")
     def test_no_semantic_without_vector(self):
