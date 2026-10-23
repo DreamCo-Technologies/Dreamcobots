@@ -25,6 +25,25 @@ class MalformedEvidenceTests(unittest.TestCase):
                 self.assertFalse(result["eligible"])
                 self.assertTrue(result["errors"])
 
+    def test_provenance_and_artifact_paths_require_nonempty_strings(self):
+        mutations = (
+            ("reviewer list", lambda r: r["license_review"].update(reviewer=["untrusted"])),
+            ("reviewer blank", lambda r: r["license_review"].update(reviewer="  ")),
+            ("source object", lambda r: r["license_review"].update(source={"url": "fixture"})),
+            ("source blank", lambda r: r["license_review"].update(source="  ")),
+            ("contamination scope list", lambda r: r["contamination"].update(scope=["fixture"])),
+            ("contamination scope blank", lambda r: r["contamination"].update(scope="  ")),
+            ("artifact path list", lambda r: r["artifacts"][0].update(path=["trace.json"])),
+            ("artifact path blank", lambda r: r["artifacts"][0].update(path="  ")),
+        )
+        for label, mutate in mutations:
+            with self.subTest(label=label):
+                run = bundle()
+                mutate(run)
+                result = assess(run)
+                self.assertFalse(result["eligible"])
+                self.assertTrue(result["errors"])
+
     def test_repetition_indices_are_exact_and_preregistered(self):
         for offset in (-3, 10):
             with self.subTest(offset=offset):
