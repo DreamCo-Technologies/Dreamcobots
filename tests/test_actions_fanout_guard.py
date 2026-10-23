@@ -35,7 +35,7 @@ def top_level_block(text: str, key: str) -> str:
 
 
 def event_declared(block: str, event: str) -> bool:
-    return bool(re.search(rf"(?m)^\s+{re.escape(event)}:\s*(?:#.*)?$", block))
+    return bool(re.search(rf"(?m)^\s+{re.escape(event)}\s*:", block))
 
 
 class WorkflowFanoutGuardTests(unittest.TestCase):
@@ -44,6 +44,10 @@ class WorkflowFanoutGuardTests(unittest.TestCase):
         block = top_level_block(sample, "on")
         self.assertTrue(event_declared(block, "schedule"))
         self.assertFalse(event_declared(block, "workflow_run"))
+
+    def test_inline_workflow_run_cannot_bypass_guard(self):
+        self.assertTrue(event_declared("  workflow_run: {types: [completed]}", "workflow_run"))
+        self.assertTrue(event_declared("  workflow_run: # watch", "workflow_run"))
 
     def test_summary_workflows_do_not_fan_out_on_every_completed_run(self):
         for filename in SUMMARY_WORKFLOWS:
