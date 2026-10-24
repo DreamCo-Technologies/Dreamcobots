@@ -4,7 +4,7 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-from tools.validate_benchmark_upstream_run import verify_run
+from tools.validate_benchmark_upstream_run import verify_run, EXPECTED_WORKFLOW_PATHS
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = "DreamCo-Technologies/Dreamcobots"
@@ -21,6 +21,7 @@ class BenchmarkUpstreamRunBindingTests(unittest.TestCase):
         return {
             "id": 12345,
             "name": "Benchmark Evidence Loop",
+            "path": ".github/workflows/benchmark-evidence-loop.yml@main",
             "status": "completed",
             "conclusion": "success",
             "repository": {"full_name": REPO},
@@ -50,6 +51,24 @@ class BenchmarkUpstreamRunBindingTests(unittest.TestCase):
         for change in changes:
             with self.subTest(change=change):
                 self.assertTrue(self.check({**self.sample(), **change}))
+
+    def test_workflow_name_collision_cannot_spoof_artifact_source(self):
+        for path in (None, True, 123, "", ".github/workflows/other.yml@main",
+                     ".github/workflows/benchmark-evidence-loop.yml",
+                     ".github/workflows/benchmark-evidence-loop.yml@",
+                     ".github/workflows/benchmark-evidence-loop.yml.bak@main"):
+            with self.subTest(path=path):
+                self.assertTrue(self.check({**self.sample(), "path": path}))
+
+    def test_registered_training_queue_source_and_pr_ref(self):
+        queue = {**self.sample(), "name": "Benchmark Training Queue",
+                 "path": ".github/workflows/benchmark-training-queue.yml@main"}
+        self.assertEqual(verify_run(queue, run_id="12345", expected_name="Benchmark Training Queue",
+                                    repository=REPO, expected_branch=BRANCH), [])
+        pr = {**self.sample(), "path": ".github/workflows/benchmark-evidence-loop.yml@refs/pull/14014/merge"}
+        self.assertEqual(self.check(pr), [])
+        self.assertTrue(verify_run(queue, run_id="12345", expected_name="Not Registered",
+                                   repository=REPO, expected_branch=BRANCH))
 
     def test_missing_current_branch_rejected(self):
         for expected_branch in ("", "  ", None):
@@ -81,6 +100,7 @@ class BenchmarkUpstreamRunBindingTests(unittest.TestCase):
                 self.assertIn("github.event.workflow_run.id || inputs.source_run_id", workflow)
                 self.assertIn("python3 tools/validate_benchmark_upstream_run.py", workflow)
                 self.assertIn(f'--expected "{expected}"', workflow)
+                self.assertIn(expected, EXPECTED_WORKFLOW_PATHS)
                 self.assertLess(workflow.index("python3 tools/validate_benchmark_upstream_run.py"),
                                 workflow.index("uses: actions/download-artifact@"))
                 self.assertIn("actions: read", workflow)
