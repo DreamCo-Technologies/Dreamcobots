@@ -10,8 +10,14 @@ import sys
 from urllib.request import Request, urlopen
 
 
+EXPECTED_WORKFLOW_PATHS = {
+    "Benchmark Evidence Loop": ".github/workflows/benchmark-evidence-loop.yml",
+    "Benchmark Training Queue": ".github/workflows/benchmark-training-queue.yml",
+}
+
+
 def verify_run(run: object, *, run_id: str, expected_name: str, repository: str, expected_branch: str) -> list[str]:
-    """Reject wrong, failed, cross-repository, or cross-branch source runs."""
+    """Reject wrong, failed, cross-repository, cross-workflow, or cross-branch runs."""
     if not re.fullmatch(r"[1-9][0-9]{0,19}", run_id):
         return ["source run ID must be a positive decimal integer"]
     if not isinstance(run, dict):
@@ -21,6 +27,16 @@ def verify_run(run: object, *, run_id: str, expected_name: str, repository: str,
         problems.append("source run ID does not match API metadata")
     if run.get("name") != expected_name:
         problems.append("unexpected upstream workflow")
+    expected_path = EXPECTED_WORKFLOW_PATHS.get(expected_name)
+    actual_path = run.get("path")
+    if not expected_path:
+        problems.append("upstream workflow has no registered source path")
+    elif not isinstance(actual_path, str):
+        problems.append("upstream workflow source path is missing or malformed")
+    else:
+        workflow_path, separator, workflow_ref = actual_path.partition("@")
+        if workflow_path != expected_path or not separator or not workflow_ref.strip():
+            problems.append("upstream workflow source path does not match registered workflow")
     if run.get("status") != "completed" or run.get("conclusion") != "success":
         problems.append("upstream workflow has no completed passing run")
     for key in ("repository", "head_repository"):
