@@ -16,6 +16,8 @@ SCHEMA = "dreamco.buddy_dataset_split_manifest.v1"
 HEX64 = re.compile(r"[0-9a-f]{64}\Z")
 OPAQUE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{7,79}\Z")
 SPLITS = ("train", "validation", "holdout")
+# Bound untrusted manifests before JSON parsing; no raw dataset examples belong here.
+MAX_MANIFEST_BYTES = 64_000_000
 TOP_KEYS = {"schema", "dataset_id", "contains_raw_examples", "training_authorized",
             "provenance_review_receipt", "license_review_receipt",
             "consent_review_receipt", "privacy_review_receipt", "splits"}
@@ -40,11 +42,31 @@ def _reject_nonfinite(value: str) -> None:
 
 
 def parse_manifest(raw: str) -> Any:
+    if not isinstance(raw, str):
+        raise SplitManifestError("manifest must be UTF-8 text")
+    try:
+        if len(raw.encode("utf-8")) > MAX_MANIFEST_BYTES:
+            raise SplitManifestError("manifest exceeds size limit")
+    except UnicodeEncodeError as exc:
+        raise SplitManifestError("manifest contains invalid Unicode") from exc
     try:
         return json.loads(raw, object_pairs_hook=_unique_keys,
                           parse_constant=_reject_nonfinite)
-    except json.JSONDecodeError as exc:
-        raise SplitManifestError("invalid JSON") from exc
+    except (json.JSONDecodeError, RecursionError) as exc:
+        raise SplitManifestError("invalid or excessively nested JSON") from exc
+
+
+def read_manifest(path: Path) -> Any:
+    """Read at most the allowed bytes, including for an unexpectedly large file."""
+    with path.open("rb") as stream:
+        payload = stream.read(MAX_MANIFEST_BYTES + 1)
+    if len(payload) > MAX_MANIFEST_BYTES:
+        raise SplitManifestError("manifest exceeds size limit")
+    try:
+        raw = payload.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise SplitManifestError("manifest must be valid UTF-8") from exc
+    return parse_manifest(raw)
 
 
 def validate(manifest: Any) -> dict[str, Any]:
@@ -114,7 +136,7 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, required=True)
     args = parser.parse_args()
     try:
-        report = validate(parse_manifest(args.manifest.read_text(encoding="utf-8")))
+        report = validate(read_manifest(args.manifest))
     except (OSError, ValueError, TypeError) as exc:
         parser.exit(2, f"dataset split preflight blocked: {exc}\n")
     print(json.dumps(report, sort_keys=True, indent=2))
