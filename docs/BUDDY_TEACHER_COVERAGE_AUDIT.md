@@ -74,3 +74,19 @@ Save the JSON list to a local file and run `python3 tools/score_buddy_dev_fixtur
 `tools/validate_buddy_dataset_splits.py --manifest /path/to/local-metadata.json` checks a proposed dataset's **metadata only**. Schema `dreamco.buddy_dataset_split_manifest.v1` requires an opaque `dataset_id`, `contains_raw_examples: false`, `training_authorized: false`, four nullable review-receipt ID fields (provenance, license, consent, privacy), and nonempty `train`, `validation`, and `holdout` lists. Each list entry must contain only opaque `example_id`, lowercase 64-character `content_sha256`, and opaque `group_id`. The validator rejects duplicate IDs/hashes across splits, group leakage across splits, duplicate JSON keys, unexpected/raw-text fields, and missing holdout metadata. No raw prompts, responses, personal identifiers, or weights are accepted or emitted.
 
 **Limits:** Opaque IDs are a formatting rule, not proof of anonymization. Hash equality detects exact duplicates, not paraphrase or semantic contamination. Review receipt IDs are unverified pointers, not evidence of licensing or consent. A listed holdout is not independently sealed or evaluated. The preflight always reports `training_authorized: false`, `independent_holdout_verified: false`, and `eligible_for_model_promotion: false`. A human must separately verify source rights, data minimization, dataset access, split construction, independent holdout integrity, approved compute and release authorization. The ten synthetic tests run in the Buddy Teacher Coverage Audit workflow; they do not train or evaluate a model.
+
+## Division-to-task and model route gap accounting (2026-10-24)
+
+The audit now reports `division_task_families_without_exact_benchmark_label`,
+`divisions_without_exact_benchmark_task_label`, and
+`divisions_without_exact_declared_model_route`. Each division row includes
+`task_family_has_exact_benchmark_label` and
+`declared_exact_catalog_model_ids_unverified`. These compare the proposed
+representative-task family with existing registry labels and catalog types
+**by exact spelling**. A domain fixture may require a dedicated benchmark
+even if another division shares a generic family; alias suggestions do not
+close an exact-route gap. A declared catalog route is **not** a working
+adapter, completed model invocation, independent holdout, or production
+readiness receipt. New divisions without a proposed fixture remain visible
+as missing, rather than being assigned a guessed model. No model training,
+download, inference, or workflow dispatch is performed by this report.
