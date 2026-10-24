@@ -7,6 +7,8 @@ on:
       - "tests/test_audit_buddy_teacher_coverage.py"
       - "tools/score_buddy_dev_fixtures.py"
       - "tools/validate_buddy_lora_proposal.py"
+      - "tools/validate_buddy_dataset_splits.py"
+      - "tests/test_validate_buddy_dataset_splits.py"
       - "tests/test_validate_buddy_lora_proposal.py"
       - "config/buddy-lora-experiment-proposal.json"
       - "tests/test_score_buddy_dev_fixtures.py"
@@ -39,7 +41,7 @@ jobs:
           python-version: "3.12"
       # Stdlib-only, read-only; never downloads or trains weights.
       - name: Verify synthetic audit tests
-        run: python3 -m unittest tests.test_audit_buddy_teacher_coverage tests.test_professional_training tests.test_score_buddy_dev_fixtures tests.test_validate_buddy_lora_proposal -v
+        run: python3 -m unittest tests.test_audit_buddy_teacher_coverage tests.test_professional_training tests.test_score_buddy_dev_fixtures tests.test_validate_buddy_lora_proposal tests.test_validate_buddy_dataset_splits -v
       - name: Preflight disabled LoRA proposal (no training or model downloads)
         run: |
           python3 tools/validate_buddy_lora_proposal.py --proposal config/buddy-lora-experiment-proposal.json > buddy-lora-preflight.json
