@@ -143,6 +143,7 @@ def run_baseline(*, model: str, expected_digest: str, catalog: dict,
     rows = []
     latencies = []
     rates = []
+    suite_runtime = {}
     for suite_id in SUITES:
         payload = {"model": model, "prompt": PINNED[suite_id]["prompt_fixture"],
                    "stream": False, "options": {"temperature": 0, "num_predict": 128}}
@@ -165,6 +166,12 @@ def run_baseline(*, model: str, expected_digest: str, catalog: dict,
         rate = _server_rate(response)
         if rate is not None:
             rates.append(rate)
+        # Preserve task-level speed for later route comparison without storing
+        # prompts, responses, or reversible low-entropy response hashes.
+        suite_runtime[suite_id] = {
+            "latency_ms": latencies[-1],
+            "server_reported_tokens_per_second": rate,
+        }
     # A tag can be replaced while the suite runs. Recheck after all requests;
     # this detects ordinary tag drift, but cannot attest to model-file integrity.
     final_tags = transport(base, "/api/tags", None, float(timeout_seconds))
@@ -186,6 +193,9 @@ def run_baseline(*, model: str, expected_digest: str, catalog: dict,
         "passed_public_dev_fixtures": score["passed_public_dev_fixtures"],
         "scored_public_dev_fixtures": score["scored_public_dev_fixtures"],
         "public_fixture_results": score["results"],
+        "public_fixture_runtime": suite_runtime,
+        "generation_options": {"temperature": 0, "num_predict": 128},
+        "request_timeout_seconds": float(timeout_seconds),
         "latency_ms_median": round(statistics.median(latencies), 3),
         "latency_ms_p95": round(_p95(latencies), 3),
         "server_reported_tokens_per_second_mean": round(statistics.mean(rates), 3) if len(rates) == len(rows) else None,
