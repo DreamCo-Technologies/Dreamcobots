@@ -7,7 +7,9 @@ Registry declarations are never counted as completed independent evaluations.
 from __future__ import annotations
 
 import argparse
+from hashlib import sha256
 import json
+import re
 import unicodedata
 from pathlib import Path
 
@@ -146,6 +148,30 @@ def _unique(rows: list, key: str, source: str) -> list:
     return values
 
 
+def _has_pinned_gate_receipt(root: Path, gate: dict) -> bool:
+    """Require an in-repository, content-addressed receipt before readiness.
+
+    This verifies receipt bytes, NOT the underlying test's independence or
+    validity. A matching digest is necessary, never sufficient, for promotion.
+    """
+    relative = gate.get("evidence")
+    digest = gate.get("receipt_sha256")
+    if (not isinstance(relative, str) or not relative.strip()
+            or not isinstance(digest, str)
+            or re.fullmatch(r"[0-9a-fA-F]{64}", digest) is None):
+        return False
+    try:
+        root_path = root.resolve()
+        receipt = (root_path / relative).resolve()
+        if not receipt.is_relative_to(root_path) or not receipt.is_file():
+            return False
+        if receipt.stat().st_size > 10_000_000:
+            return False
+        return sha256(receipt.read_bytes()).hexdigest() == digest.lower()
+    except OSError:
+        return False
+
+
 def audit(root: Path = ROOT) -> dict:
     data = {}
     for name, relative in SOURCES.items():
@@ -200,10 +226,11 @@ def audit(root: Path = ROOT) -> dict:
             raise AuditError("division production_ready must be a boolean")
         if division["production_ready"]:
             # A readiness flag alone is not evidence: every gate must have
-            # explicitly passed and the division must have no blockers.
+            # explicitly passed, carry pinned receipts, and have no blockers.
             gates = division.get("gates")
             if (not isinstance(gates, list) or not gates
                     or any(not isinstance(gate, dict) or gate.get("passed") is not True
+                           or not _has_pinned_gate_receipt(root, gate)
                            for gate in gates)
                     or division.get("blockers") != []):
                 raise AuditError("production_ready division has missing or failed gates or blockers")
