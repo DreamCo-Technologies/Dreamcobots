@@ -210,5 +210,51 @@ class ActionsHealthAuditTest(unittest.TestCase):
 
 
 
+    def test_live_sample_full_recent_page_is_not_30_day_proof(self) -> None:
+        from datetime import datetime, timedelta, timezone
+        from tools.audit_actions_live import recent_run_sample
+
+        cutoff = datetime(2026, 9, 24, tzinfo=timezone.utc)
+        runs = [
+            {"created_at": (cutoff + timedelta(days=1, seconds=10 - i)).isoformat(),
+             "conclusion": "success"}
+            for i in range(10)
+        ]
+        recent, complete = recent_run_sample(runs, cutoff)
+        self.assertEqual(len(recent), 10)
+        self.assertFalse(complete, "Ten recent runs cannot prove the whole 30-day window")
+
+    def test_live_sample_coverage_complete_when_history_ends_or_crosses_cutoff(self) -> None:
+        from datetime import datetime, timedelta, timezone
+        from tools.audit_actions_live import recent_run_sample
+
+        cutoff = datetime(2026, 9, 24, tzinfo=timezone.utc)
+        newest = {"created_at": (cutoff + timedelta(days=1)).isoformat(), "conclusion": "failure"}
+        old = {"created_at": (cutoff - timedelta(days=1)).isoformat(), "conclusion": "failure"}
+        recent, complete = recent_run_sample([newest, old], cutoff)
+        self.assertEqual(recent, [newest])
+        self.assertTrue(complete)
+        recent, complete = recent_run_sample([newest] * 9 + [old], cutoff)
+        self.assertEqual(len(recent), 9)
+        self.assertTrue(complete)
+        self.assertEqual(recent_run_sample([], cutoff), ([], True))
+
+    def test_live_sample_rejects_malformed_unordered_or_oversized_evidence(self) -> None:
+        from datetime import datetime, timedelta, timezone
+        from tools.audit_actions_live import recent_run_sample
+
+        cutoff = datetime(2026, 9, 24, tzinfo=timezone.utc)
+        new = {"created_at": (cutoff + timedelta(days=2)).isoformat()}
+        old = {"created_at": (cutoff + timedelta(days=1)).isoformat()}
+        cases = [
+            None, {}, [None], [{}], [{"created_at": "bad-date"}],
+            [{"created_at": "2026-10-01T00:00:00"}],
+            [old, new], [new] * 11,
+        ]
+        for case in cases:
+            with self.subTest(case=case), self.assertRaises(RuntimeError):
+                recent_run_sample(case, cutoff)
+
+
 if __name__ == "__main__":
     unittest.main()
