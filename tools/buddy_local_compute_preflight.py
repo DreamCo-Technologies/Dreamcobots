@@ -36,7 +36,7 @@ def parse_linux_memtotal(text: str) -> int | None:
 
 def parse_linux_memavailable(text: str) -> int | None:
     """Parse a single host MemAvailable line; this is NOT container headroom."""
-    matches = re.findall(r"^MemAvailable:\\s*([0-9]+) kB\\s*$", text, re.MULTILINE)
+    matches = re.findall(r"^MemAvailable:\s*([0-9]+) kB\s*$", text, re.MULTILINE)
     if len(matches) != 1:
         return None
     kib = int(matches[0])
