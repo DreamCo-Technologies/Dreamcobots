@@ -26,6 +26,9 @@ def process_events(events: list) -> list:
         raise ValueError("duplicate event IDs")
     results = []
     for item in events:
+        capability = item.get("capability")
+        if not isinstance(capability, str) or not capability.strip():
+            raise ValueError(f"{item['event_id']}: capability must be a nonempty string")
         flags = {}
         for name in ("success", "verified", "regression_passed", "safety_passed", "external_assistance"):
             value = item.get(name, False)
