@@ -1,8 +1,9 @@
 """Fake local-server contract tests. No model, network, or GPU is used."""
 import json
+import tempfile
 import unittest
 
-from tools.run_buddy_ollama_dev_baseline import BaselineError, _parse_server_json, loopback_endpoint, run_baseline
+from tools.run_buddy_ollama_dev_baseline import BaselineError, _parse_server_json, loopback_endpoint, run_baseline, write_receipt_exclusive
 from tools.score_buddy_dev_fixtures import PINNED
 
 D = "a" * 64
@@ -147,6 +148,44 @@ class LocalBaselineTests(unittest.TestCase):
                                  capture_output=True, text=True, timeout=10)
         self.assertEqual(blocked.returncode, 2)
         self.assertIn("explicit local execution", blocked.stderr)
+
+    def test_receipt_is_exclusive_and_never_overwrites_existing_evidence(self):
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "baseline.json"
+            write_receipt_exclusive(path, {"training_performed": False, "scored_public_dev_fixtures": 4})
+            self.assertFalse(json.loads(path.read_text())["training_performed"])
+            original = path.read_bytes()
+            with self.assertRaises(FileExistsError):
+                write_receipt_exclusive(path, {"training_performed": True})
+            self.assertEqual(path.read_bytes(), original)
+
+    def test_receipt_refuses_symlink_even_when_target_does_not_exist(self):
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / "future-private-file"
+            link = Path(folder) / "baseline.json"
+            link.symlink_to(target)
+            with self.assertRaises(FileExistsError):
+                write_receipt_exclusive(link, {"status": "fake"})
+            self.assertFalse(target.exists())
+
+    def test_cli_rejects_existing_output_before_contacting_local_model(self):
+        from pathlib import Path
+        import subprocess
+        import sys
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "baseline.json"
+            path.write_text("existing evidence must survive")
+            script = Path(__file__).resolve().parents[1] / "tools/run_buddy_ollama_dev_baseline.py"
+            result = subprocess.run(
+                [sys.executable, str(script), "--model", "buddy:local", "--digest", D,
+                 "--output", str(path), "--execute-local-inference",
+                 "--approved-free-compute", "--rights-reviewed"],
+                capture_output=True, text=True, timeout=10)
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("refusing overwrite", result.stderr)
+            self.assertEqual(path.read_text(), "existing evidence must survive")
 
     def test_workflow_registers_test_and_code(self):
         from pathlib import Path
