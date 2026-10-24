@@ -26,7 +26,7 @@ class RegisteredRunnerTest(unittest.TestCase):
 
 
     def test_invalid_capability_identity_cannot_enter_evidence(self):
-        for capability in (None, False, 17, [], {}, "", " \\t "):
+        for capability in (None, False, 17, [], {}, "", " \t "):
             with self.subTest(capability=capability):
                 with self.assertRaisesRegex(ValueError, "capability must be a nonempty string"):
                     process_events([{
