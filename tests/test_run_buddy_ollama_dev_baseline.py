@@ -97,6 +97,20 @@ class LocalBaselineTests(unittest.TestCase):
         with self.assertRaisesRegex(BaselineError, "invalid installed model"):
             run_baseline(model="../evil", expected_digest=D, catalog=catalog())
 
+    def test_direct_cli_imports_and_blocks_unapproved_execution(self):
+        from pathlib import Path
+        import subprocess
+        import sys
+        script = Path(__file__).resolve().parents[1] / "tools/run_buddy_ollama_dev_baseline.py"
+        help_result = subprocess.run([sys.executable, str(script), "--help"],
+                                     capture_output=True, text=True, timeout=10)
+        self.assertEqual(help_result.returncode, 0, help_result.stderr)
+        blocked = subprocess.run([sys.executable, str(script), "--model", "buddy:local",
+                                  "--digest", D, "--output", "unused-baseline.json"],
+                                 capture_output=True, text=True, timeout=10)
+        self.assertEqual(blocked.returncode, 2)
+        self.assertIn("explicit local execution", blocked.stderr)
+
     def test_workflow_registers_test_and_code(self):
         from pathlib import Path
         wf = (Path(__file__).resolve().parents[1] / ".github/workflows/buddy-teacher-coverage-audit.yml").read_text()
