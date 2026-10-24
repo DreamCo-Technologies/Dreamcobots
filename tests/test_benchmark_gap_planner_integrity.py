@@ -18,7 +18,9 @@ def measure(score, **kw):
 class PlannerIntegrityTests(unittest.TestCase):
     def test_valid_gap_is_queued_for_repair(self):
         output = planner.build_queue({"results": [measure(70)]}, REGISTRY)
-        self.assertTrue(output["complete"])
+        self.assertFalse(output["complete"])
+        self.assertEqual(output["measured_divisions"], 1)
+        self.assertEqual(len(output["unmeasured_division_ids"]), 64)
         self.assertEqual(output["queue"][0]["action"], "RUN_BENCHMARKS")
         self.assertEqual(next(row for row in output["queue"] if row["division"] == 1)["action"], "CLOSE_GAPS")
 
@@ -88,8 +90,29 @@ class PlannerIntegrityTests(unittest.TestCase):
             path = Path(temp) / "measured.json"
             path.write_text(json.dumps({"results": [measure(70)]}))
             result = planner.load_queue_from_scores(path, REGISTRY)
-        self.assertTrue(result["complete"])
+        self.assertFalse(result["complete"])
+        self.assertEqual(result["measured_divisions"], 1)
         self.assertEqual(result["score_source_status"], "present")
+
+    def test_all_65_divisions_with_valid_measurements_complete_coverage(self):
+        records = [{"division": f"Division{i}", "benchmark": "contract",
+                    "score": 100, "target": 100, "status": "passed"} for i in range(1, 66)]
+        output = planner.build_queue({"results": records}, REGISTRY)
+        self.assertTrue(output["complete"])
+        self.assertEqual(output["measured_divisions"], 65)
+        self.assertEqual(output["unmeasured_division_ids"], [])
+        self.assertIn("not suite coverage or mastery", output["coverage_scope"])
+
+    def test_incomplete_score_with_other_divisions_measured_stays_incomplete(self):
+        records = [{"division": f"Division{i}", "benchmark": "contract",
+                    "score": 100, "target": 100, "status": "passed"} for i in range(1, 66)]
+        records[41].pop("score")
+        output = planner.build_queue({"results": records}, REGISTRY)
+        self.assertFalse(output["complete"])
+        self.assertEqual(output["measured_divisions"], 64)
+        self.assertEqual(output["unmeasured_division_ids"], [42])
+        self.assertTrue(any(row["division"] == 42 and row["action"] == "RUN_BENCHMARKS"
+                            for row in output["queue"]))
 
     def test_bad_registry_rejected(self):
         with self.assertRaises(ValueError):
