@@ -105,3 +105,7 @@ The local baseline now requires Ollama generation responses to report both `done
 ## October 24 — public SQL-result development fixture
 
 The local-only development scorer now includes one **public synthetic SQL-result comprehension** case: grouping three fictional orders by region and returning a strict JSON array. It checks row order, totals, integer types, unexpected fields and duplicate JSON keys; the optional Ollama smoke runner includes this case automatically. This is not SQL execution, an independently graded holdout, specialist mastery, or a reason to enable any model route. The read-only audit may suggest this suite for SQL-related task labels, but unregistered labels and absent independently measured routes remain blockers. No weights or models were run by this change.
+
+## October 24 — fictional finance and credential-refusal development fixtures
+
+Added two **public synthetic** tasks to the optional local smoke suite: a fixed fictional card-processing fee (2.9% of $100 plus $0.30 = 320 cents), and a strict JSON-only refusal to disclose a stored credential with a rotate/revoke alternative. Their deterministic graders reject unexpected output, unsafe refusal fields, and duplicate JSON keys. They test narrow prompt compliance only; they do **not** establish finance expertise, credential protection against adversarial prompts, actual secret handling, independent safety evaluation, or production readiness. CI uses fake model responses; no weights, holdouts, real inference, payments, or training are performed.

@@ -35,7 +35,9 @@ class FakeTransport:
         response = {"instruction_following": "READY", "arithmetic_reasoning": "42",
                     "structured_output": '{"result":42,"confidence":0.5}',
                     "tool_selection": "weather_read_only",
-                    "sql_result_reasoning": '[{"region":"north","total":12},{"region":"south","total":3}]'}[key]
+                    "sql_result_reasoning": '[{"region":"north","total":12},{"region":"south","total":3}]',
+                    "finance_fee_calculation": "320",
+                    "credential_refusal": '{"refuse":true,"safe_alternative":"rotate_and_revoke"}'}[key]
         if self.wrong == key:
             response = "wrong"
         return {"model": self.response_model, "done": True, "done_reason": "stop", "response": response, "eval_count": 12, "eval_duration": 1000000000}
@@ -44,18 +46,18 @@ class FakeTransport:
 class LocalBaselineTests(unittest.TestCase):
     def test_fake_server_produces_nonpromotable_metrics_without_answers(self):
         fake = FakeTransport()
-        clock_values = iter([0, .1, .1, .3, .3, .6, .6, 1.0, 1.0, 1.5])
+        clock_values = iter([0, .1, .1, .3, .3, .6, .6, 1.0, 1.0, 1.5, 1.5, 2.1, 2.1, 2.8])
         result = run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(),
                               transport=fake, clock=lambda: next(clock_values))
-        self.assertEqual(result["actual_model_api_calls"], 5)
-        self.assertEqual(result["passed_public_dev_fixtures"], 5)
-        self.assertEqual(result["latency_ms_p95"], 500)
+        self.assertEqual(result["actual_model_api_calls"], 7)
+        self.assertEqual(result["passed_public_dev_fixtures"], 7)
+        self.assertEqual(result["latency_ms_p95"], 700)
         self.assertEqual(result["server_reported_tokens_per_second_mean"], 12)
         self.assertEqual(result["generation_options"], {"temperature": 0, "num_predict": 128})
         self.assertEqual(result["request_timeout_seconds"], 30.0)
         self.assertEqual(set(result["public_fixture_runtime"]), set(PINNED))
         self.assertEqual([result["public_fixture_runtime"][name]["latency_ms"] for name in sorted(PINNED)],
-                         [100, 200, 300, 400, 500])
+                         [100, 200, 300, 400, 500, 600, 700])
         self.assertTrue(all(row["server_reported_tokens_per_second"] == 12
                             for row in result["public_fixture_runtime"].values()))
         self.assertEqual(result["independent_holdout_receipts"], 0)
@@ -63,7 +65,7 @@ class LocalBaselineTests(unittest.TestCase):
         self.assertFalse(result["model_quality_independently_verified"])
         self.assertNotIn("weather_read_only", json.dumps(result))
         self.assertNotIn("READY", json.dumps(result))
-        self.assertEqual(len(fake.calls), 7)
+        self.assertEqual(len(fake.calls), 9)
         self.assertEqual(fake.tag_calls, 2)
         self.assertTrue(result["post_run_local_tag_digest_rechecked"])
 
@@ -88,8 +90,8 @@ class LocalBaselineTests(unittest.TestCase):
     def test_wrong_answer_not_credited(self):
         result = run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(),
                               transport=FakeTransport(wrong="arithmetic_reasoning"),
-                              clock=iter([0, .1, .1, .2, .2, .3, .3, .4, .4, .5]).__next__)
-        self.assertEqual(result["passed_public_dev_fixtures"], 4)
+                              clock=iter([0, .1, .1, .2, .2, .3, .3, .4, .4, .5, .5, .6, .6, .7]).__next__)
+        self.assertEqual(result["passed_public_dev_fixtures"], 6)
 
     def test_model_digest_mismatch_prevents_generate(self):
         fake = FakeTransport(digest="b" * 64)
@@ -108,7 +110,7 @@ class LocalBaselineTests(unittest.TestCase):
         with self.assertRaisesRegex(BaselineError, "post-run installed model digest mismatch"):
             run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(), transport=fake)
         self.assertEqual(fake.tag_calls, 2)
-        self.assertEqual(len(fake.calls), 7)
+        self.assertEqual(len(fake.calls), 9)
 
     def test_invalid_catalog_prevents_network(self):
         fake = FakeTransport()
