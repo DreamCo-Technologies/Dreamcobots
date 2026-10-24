@@ -37,7 +37,7 @@ def observations(payload: object, *, now: datetime, max_age_hours: int) -> list[
     for run in payload["workflow_runs"]:
         if not isinstance(run, dict):
             continue
-        if run.get("name") != "Keep Green" or run.get("status") != "completed":
+        if run.get("name") != "Keep Green" or run.get("status") != "completed" or run.get("head_branch") != "main":
             continue
         completed_at = parse_time(run.get("updated_at"))
         if completed_at is None or not cutoff <= completed_at <= now.astimezone(timezone.utc):
@@ -58,7 +58,7 @@ def observations(payload: object, *, now: datetime, max_age_hours: int) -> list[
 def collect(repo: str, *, now: datetime, max_age_hours: int) -> list[dict]:
     if not REPO_RE.fullmatch(repo):
         raise ValueError("GITHUB_REPOSITORY must be an owner/repo name")
-    endpoint = f"repos/{repo}/actions/workflows/keep-green.yml/runs?status=completed&per_page=30"
+    endpoint = f"repos/{repo}/actions/workflows/keep-green.yml/runs?status=completed&branch=main&per_page=30"
     result = subprocess.run(["gh", "api", endpoint], check=True, capture_output=True, text=True, timeout=30)
     return observations(json.loads(result.stdout), now=now, max_age_hours=max_age_hours)
 
