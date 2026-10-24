@@ -16,7 +16,7 @@ NOW = datetime(2026, 10, 24, 6, 0, tzinfo=timezone.utc)
 
 
 def run(*, run_id=42, name="Keep Green", conclusion="failure", updated_at="2026-10-24T05:50:00Z", status="completed"):
-    return {"id": run_id, "name": name, "conclusion": conclusion, "updated_at": updated_at, "status": status, "head_sha": "abc123", "head_branch": "main", "html_url": "https://github.com/example/repo/actions/runs/42"}
+    return {"id": run_id, "name": name, "conclusion": conclusion, "updated_at": updated_at, "status": status, "head_sha": "a" * 40, "head_branch": "main", "path": ".github/workflows/keep-green.yml", "repository": {"full_name": "DreamCo-Technologies/Dreamcobots"}, "html_url": f"https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/{run_id}"}
 
 
 class GreenkeeperObservationsTests(unittest.TestCase):
@@ -65,6 +65,37 @@ class GreenkeeperObservationsTests(unittest.TestCase):
         mock_run.side_effect = subprocess.CalledProcessError(1, args)
         with self.assertRaises(subprocess.CalledProcessError):
             collect("DreamCo-Technologies/Dreamcobots", now=NOW, max_age_hours=6)
+
+    def test_unrelated_workflow_path_cannot_supply_success(self):
+        forged = run(conclusion="success")
+        forged["path"] = ".github/workflows/other.yml"
+        self.assertEqual(observations({"workflow_runs": [forged]}, now=NOW, max_age_hours=6)[0]["conclusion"], "unknown")
+
+    def test_cross_repository_or_untrusted_run_url_cannot_supply_success(self):
+        for field, bad in (("repository", {"full_name": "someone/other"}), ("html_url", "https://example.org/redirect"), ("repository", None)):
+            with self.subTest(field=field, bad=bad):
+                forged = run(conclusion="success")
+                forged[field] = bad
+                self.assertEqual(observations({"workflow_runs": [forged]}, now=NOW, max_age_hours=6, expected_repo="DreamCo-Technologies/Dreamcobots")[0]["conclusion"], "unknown")
+
+    def test_missing_or_malformed_commit_cannot_supply_success(self):
+        for bad in ("abc123", "", None, 123, True):
+            with self.subTest(bad=bad):
+                forged = run(conclusion="success")
+                forged["head_sha"] = bad
+                self.assertEqual(observations({"workflow_runs": [forged]}, now=NOW, max_age_hours=6)[0]["conclusion"], "unknown")
+
+    def test_newer_invalid_run_prevents_stale_success_fallback(self):
+        older = run(run_id=41, conclusion="success", updated_at="2026-10-24T05:10:00Z")
+        newer = run(run_id=42, conclusion="failure")
+        newer["path"] = ".github/workflows/other.yml"
+        result = observations({"workflow_runs": [older, newer]}, now=NOW, max_age_hours=6)
+        self.assertEqual(result[0]["conclusion"], "unknown")
+        self.assertEqual(result[0]["evidence_status"], "latest_run_invalid_provenance")
+
+    def test_expected_repository_must_match(self):
+        result = observations({"workflow_runs": [run(conclusion="success")]}, now=NOW, max_age_hours=6, expected_repo="other/repo")
+        self.assertEqual(result[0]["conclusion"], "unknown")
 
     def test_invalid_repo_rejected_without_network(self):
         with patch("tools.greenkeeper_observations.subprocess.run") as mock_run:
