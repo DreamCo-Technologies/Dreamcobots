@@ -50,6 +50,18 @@ class ActionsHealthAuditTest(unittest.TestCase):
                 [],
             )
 
+    def test_conflicted_review_branch_still_receives_actions_health_checks(self) -> None:
+        from tools.audit_actions_health import ROOT
+
+        workflow = (ROOT / ".github/workflows/actions-health.yml").read_text(
+            encoding="utf-8"
+        )
+        push_block = workflow.split("  push:", 1)[1].split("  pull_request:", 1)[0]
+        self.assertIn("codex/consolidated-dreamco-completion", push_block)
+        self.assertIn("tools/audit_actions_health.py", push_block)
+        self.assertIn("tests/test_actions_health.py", push_block)
+        self.assertIn("  pull_request:", workflow)
+
     def test_current_official_action_baseline_is_recognized(self) -> None:
         self.assertEqual(MAX_MAJOR["actions/checkout"], 7)
         self.assertEqual(MAX_MAJOR["actions/upload-pages-artifact"], 5)
