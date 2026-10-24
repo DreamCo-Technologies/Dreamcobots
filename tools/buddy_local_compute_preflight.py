@@ -34,6 +34,37 @@ def parse_linux_memtotal(text: str) -> int | None:
     return kib * 1024 if kib > 0 else None
 
 
+def parse_cgroup_memory_limit(text: str) -> int | None:
+    """Parse cgroup v2 memory.max or v1 memory.limit_in_bytes.
+
+    'max', zero, malformed values and v1 unlimited sentinels are unknown.
+    This is a limit, not free or available RAM.
+    """
+    value = text.strip()
+    if not re.fullmatch(r"[0-9]+", value):
+        return None
+    number = int(value)
+    return number if 0 < number < (1 << 60) else None
+
+
+def observed_cgroup_memory_limit() -> tuple[int | None, str]:
+    """Read container memory ceilings only; no identifiers or process data."""
+    for path, source in (
+        ("/sys/fs/cgroup/memory.max", "cgroup_v2"),
+        ("/sys/fs/cgroup/memory/memory.limit_in_bytes", "cgroup_v1"),
+        ("/sys/fs/cgroup/memory.limit_in_bytes", "cgroup_v1"),
+    ):
+        try:
+            limit = parse_cgroup_memory_limit(
+                Path(path).read_text(encoding="ascii")
+            )
+        except (OSError, UnicodeError):
+            continue
+        if limit is not None:
+            return limit, source
+    return None, "unavailable"
+
+
 def observed_memory() -> tuple[int | None, str]:
     """Read total system memory only; never inspect user data or process state."""
     system = platform.system()
@@ -69,13 +100,23 @@ def _parameter_count(label: str) -> Decimal:
     return count
 
 
-def report(data: dict, memory_bytes: int | None, memory_source: str, system: str) -> dict:
-    """Calculate weight-only arithmetic, never a claim that a model fits."""
+def report(
+    data: dict, memory_bytes: int | None, memory_source: str, system: str,
+    cgroup_limit_bytes: int | None = None, cgroup_source: str = "unavailable",
+) -> dict:
+    """Calculate weight-only arithmetic and an upper memory ceiling, never fit."""
     validate(data)  # Reject research-registry readiness or training claims.
     if memory_bytes is not None and (type(memory_bytes) is not int or memory_bytes <= 0):
         raise ValueError("memory_bytes must be a positive integer or unknown")
+    if cgroup_limit_bytes is not None:
+        if type(cgroup_limit_bytes) is not int or not 0 < cgroup_limit_bytes < (1 << 60):
+            raise ValueError("cgroup limit must be a bounded positive integer")
+        if system != "Linux" or cgroup_source not in {"cgroup_v1", "cgroup_v2"}:
+            raise ValueError("cgroup limit requires a Linux cgroup source")
     if system not in {"Linux", "Darwin", "Windows", "Other"}:
         system = "Other"
+    limits = [value for value in (memory_bytes, cgroup_limit_bytes) if value is not None]
+    ceiling = min(limits) if limits else None
     rows = []
     for candidate in data["candidates"]:
         count = _parameter_count(candidate["advertised_parameter_class"])
@@ -93,8 +134,11 @@ def report(data: dict, memory_bytes: int | None, memory_source: str, system: str
         "os_family": system,
         "memory_source": memory_source if memory_bytes is not None else "unavailable",
         "observed_total_memory_gib": round(memory_bytes / float(GIB), 2) if memory_bytes is not None else None,
+        "observed_cgroup_limit_gib": round(cgroup_limit_bytes / float(GIB), 2) if cgroup_limit_bytes is not None else None,
+        "cgroup_limit_source": cgroup_source if cgroup_limit_bytes is not None else "unavailable",
+        "observed_effective_memory_ceiling_gib": round(ceiling / float(GIB), 2) if ceiling is not None else None,
         "candidate_weight_only_estimates": rows,
-        "notes": "Weight-only estimates omit tokenizer, quantization metadata, runtime, KV cache, activations and OS usage; not minimum hardware requirements.",
+        "notes": "Effective ceiling is the lesser of host total and detected cgroup limit, NOT available/free RAM. Weight-only estimates omit tokenizer, quantization metadata, runtime, KV cache, activations and OS usage; not minimum hardware requirements.",
         "rights_verified": False,
         "hardware_suitability_verified": False,
         "local_latency_measured": False,
@@ -112,8 +156,12 @@ def main() -> int:
     args = parser.parse_args()
     try:
         data = parse(args.registry.read_text(encoding="utf-8"))
+        system = platform.system()
         memory, source = observed_memory()
-        result = report(data, memory, source, platform.system())
+        cgroup_limit, cgroup_source = (
+            observed_cgroup_memory_limit() if system == "Linux" else (None, "unavailable")
+        )
+        result = report(data, memory, source, system, cgroup_limit, cgroup_source)
     except (OSError, ValueError, TypeError) as exc:
         parser.exit(2, f"Buddy local compute preflight blocked: {exc}\n")
     output = json.dumps(result, indent=2, sort_keys=True) + "\n"

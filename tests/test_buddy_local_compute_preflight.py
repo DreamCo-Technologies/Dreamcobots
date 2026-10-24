@@ -4,7 +4,7 @@ import json
 import unittest
 from pathlib import Path
 
-from tools.buddy_local_compute_preflight import parse_linux_memtotal, report
+from tools.buddy_local_compute_preflight import parse_cgroup_memory_limit, parse_linux_memtotal, report
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -20,6 +20,36 @@ class LocalComputePreflightTests(unittest.TestCase):
         self.assertIsNone(parse_linux_memtotal("MemTotal: 1024 kB\nMemTotal: 2048 kB\n"))
         self.assertIsNone(parse_linux_memtotal("MemTotal: 0 kB\n"))
         self.assertIsNone(parse_linux_memtotal("MemTotal: secret kB\n"))
+
+    def test_cgroup_v2_and_v1_limits(self):
+        self.assertEqual(parse_cgroup_memory_limit("4294967296\\n"), 4 * 1024 ** 3)
+        for value in ("max", "0", "-1", "1.5", "1\\n2", str(2 ** 63 - 4096)):
+            with self.subTest(value=value):
+                self.assertIsNone(parse_cgroup_memory_limit(value))
+
+    def test_cgroup_caps_host_memory_without_claiming_fit(self):
+        result = report(self.data, 16 * 1024 ** 3, "linux_meminfo", "Linux",
+                        4 * 1024 ** 3, "cgroup_v2")
+        self.assertEqual(result["observed_total_memory_gib"], 16)
+        self.assertEqual(result["observed_cgroup_limit_gib"], 4)
+        self.assertEqual(result["observed_effective_memory_ceiling_gib"], 4)
+        self.assertFalse(result["hardware_suitability_verified"])
+
+    def test_host_total_caps_higher_cgroup_limit(self):
+        result = report(self.data, 4 * 1024 ** 3, "linux_meminfo", "Linux",
+                        16 * 1024 ** 3, "cgroup_v1")
+        self.assertEqual(result["observed_effective_memory_ceiling_gib"], 4)
+
+    def test_cgroup_limit_without_host_memory_and_invalid_inputs(self):
+        result = report(self.data, None, "unavailable", "Linux",
+                        2 * 1024 ** 3, "cgroup_v2")
+        self.assertIsNone(result["observed_total_memory_gib"])
+        self.assertEqual(result["observed_effective_memory_ceiling_gib"], 2)
+        for value in (True, 0, -1, 1.2, 2 ** 60):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                report(self.data, None, "unavailable", "Linux", value, "cgroup_v2")
+        with self.assertRaises(ValueError):
+            report(self.data, None, "unavailable", "Darwin", 1024, "cgroup_v2")
 
     def test_unknown_memory_is_not_approval(self):
         result = report(self.data, None, "unavailable", "Linux")
