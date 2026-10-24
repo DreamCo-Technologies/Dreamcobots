@@ -158,5 +158,57 @@ class ActionsHealthAuditTest(unittest.TestCase):
 
 
 
+    def test_live_audit_fetches_all_workflow_pages(self) -> None:
+        from unittest.mock import patch
+        from tools import audit_actions_live
+
+        first = [{"id": i} for i in range(1, 101)]
+        second = [{"id": i} for i in range(101, 114)]
+
+        def fake_api(path):
+            return {"total_count": 113, "workflows": second if "page=2" in path else first}
+
+        with patch.object(audit_actions_live, "api", side_effect=fake_api) as mocked:
+            rows = audit_actions_live.fetch_workflow_inventory("org/repo")
+        self.assertEqual(len(rows), 113)
+        self.assertEqual(mocked.call_count, 2)
+
+    def test_live_audit_rejects_truncated_or_duplicate_pages(self) -> None:
+        from unittest.mock import patch
+        from tools import audit_actions_live
+
+        first = [{"id": i} for i in range(1, 101)]
+        cases = [
+            [{"total_count": 113, "workflows": first},
+             {"total_count": 113, "workflows": []}],
+            [{"total_count": 101, "workflows": first},
+             {"total_count": 101, "workflows": [{"id": 100}]}],
+        ]
+        for pages in cases:
+            with self.subTest(last_page=pages[-1]), patch.object(
+                audit_actions_live, "api", side_effect=pages
+            ):
+                with self.assertRaises(RuntimeError):
+                    audit_actions_live.fetch_workflow_inventory("org/repo")
+
+    def test_live_audit_rejects_unbounded_or_malformed_inventory(self) -> None:
+        from unittest.mock import patch
+        from tools import audit_actions_live
+
+        with patch.object(audit_actions_live, "api", return_value={
+            "workflows": [{"id": 1}]
+        }):
+            with self.assertRaises(RuntimeError):
+                audit_actions_live.fetch_workflow_inventory("org/repo")
+        with patch.object(audit_actions_live, "api", return_value={
+            "total_count": 2, "workflows": [{"id": 1}]
+        }) as mocked:
+            with self.assertRaises(RuntimeError):
+                audit_actions_live.fetch_workflow_inventory("org/repo", page_limit=1)
+            self.assertEqual(mocked.call_count, 1)
+
+
+
+
 if __name__ == "__main__":
     unittest.main()
