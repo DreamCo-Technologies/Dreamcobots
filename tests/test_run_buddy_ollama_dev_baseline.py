@@ -14,15 +14,20 @@ def catalog():
 
 
 class FakeTransport:
-    def __init__(self, *, digest=D, wrong=None):
+    def __init__(self, *, digest=D, wrong=None, response_model="buddy:local", post_run_digest=None):
         self.calls = []
         self.digest = digest
         self.wrong = wrong
+        self.response_model = response_model
+        self.post_run_digest = post_run_digest
+        self.tag_calls = 0
 
     def __call__(self, base, route, payload, timeout):
         self.calls.append((base, route, payload, timeout))
         if route == "/api/tags":
-            return {"models": [{"name": "buddy:local", "digest": self.digest}]}
+            self.tag_calls += 1
+            digest = self.post_run_digest if self.tag_calls > 1 and self.post_run_digest is not None else self.digest
+            return {"models": [{"name": "buddy:local", "digest": digest}]}
         assert route == "/api/generate"
         prompt = payload["prompt"]
         key = next(k for k, v in PINNED.items() if v["prompt_fixture"] == prompt)
@@ -31,7 +36,7 @@ class FakeTransport:
                     "tool_selection": "weather_read_only"}[key]
         if self.wrong == key:
             response = "wrong"
-        return {"done": True, "response": response, "eval_count": 12, "eval_duration": 1000000000}
+        return {"model": self.response_model, "done": True, "response": response, "eval_count": 12, "eval_duration": 1000000000}
 
 
 class LocalBaselineTests(unittest.TestCase):
@@ -49,7 +54,9 @@ class LocalBaselineTests(unittest.TestCase):
         self.assertFalse(result["model_quality_independently_verified"])
         self.assertNotIn("weather_read_only", json.dumps(result))
         self.assertNotIn("READY", json.dumps(result))
-        self.assertEqual(len(fake.calls), 5)
+        self.assertEqual(len(fake.calls), 6)
+        self.assertEqual(fake.tag_calls, 2)
+        self.assertTrue(result["post_run_local_tag_digest_rechecked"])
 
     def test_wrong_answer_not_credited(self):
         result = run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(),
@@ -62,6 +69,19 @@ class LocalBaselineTests(unittest.TestCase):
         with self.assertRaisesRegex(BaselineError, "digest mismatch"):
             run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(), transport=fake)
         self.assertEqual(len(fake.calls), 1)
+
+    def test_generation_response_from_other_model_is_rejected(self):
+        fake = FakeTransport(response_model="different:tag")
+        with self.assertRaisesRegex(BaselineError, "response model identity mismatch"):
+            run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(), transport=fake)
+        self.assertEqual(fake.tag_calls, 1)
+
+    def test_tag_replacement_during_benchmark_invalidates_receipt(self):
+        fake = FakeTransport(post_run_digest="b" * 64)
+        with self.assertRaisesRegex(BaselineError, "post-run installed model digest mismatch"):
+            run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(), transport=fake)
+        self.assertEqual(fake.tag_calls, 2)
+        self.assertEqual(len(fake.calls), 6)
 
     def test_invalid_catalog_prevents_network(self):
         fake = FakeTransport()
