@@ -171,6 +171,8 @@ def audit(root: Path = ROOT) -> dict:
         model_types = model.get("task_types", [])
         if not isinstance(model_types, list) or any(not isinstance(x, str) or not x.strip() for x in model_types):
             raise AuditError("model task_types must be a list of nonempty strings")
+        if len(model_types) != len(set(model_types)):
+            raise AuditError("duplicate model task_type")
         catalog_types.update(model_types)
     summary = data["production"]["summary"]
     if type(summary["real_divisions"]) is not int or summary["real_divisions"] != len(divisions):
@@ -184,6 +186,15 @@ def audit(root: Path = ROOT) -> dict:
     for division in data["production"]["divisions"]:
         if type(division.get("production_ready")) is not bool:
             raise AuditError("division production_ready must be a boolean")
+        if division["production_ready"]:
+            # A readiness flag alone is not evidence: every gate must have
+            # explicitly passed and the division must have no blockers.
+            gates = division.get("gates")
+            if (not isinstance(gates, list) or not gates
+                    or any(not isinstance(gate, dict) or gate.get("passed") is not True
+                           for gate in gates)
+                    or division.get("blockers") != []):
+                raise AuditError("production_ready division has missing or failed gates or blockers")
     ledger_weights = summary.get("trained_weight_artifacts")
     if ledger_weights is not None:
         if type(ledger_weights) is not int or ledger_weights < 0:
@@ -192,9 +203,12 @@ def audit(root: Path = ROOT) -> dict:
             student_truth["trained_weights_exist"] or distill_truth.get("trained_weights_exist")
         ):
             raise AuditError("trained weights claimed while production ledger reports zero artifacts")
-    if data["masterbots"]["canonical_count"] != len(masterbots):
+    if (type(data["masterbots"]["canonical_count"]) is not int
+            or data["masterbots"]["canonical_count"] != len(masterbots)):
         raise AuditError("MasterBot registry count disagrees with entries")
-    if summary["production_ready_divisions"] != sum(bool(d["production_ready"]) for d in data["production"]["divisions"]):
+    if (type(summary["production_ready_divisions"]) is not int
+            or summary["production_ready_divisions"] != sum(
+                d["production_ready"] for d in data["production"]["divisions"])):
         raise AuditError("production readiness count disagrees with entries")
 
     # Declared catalog routes are not proof of availability, quality, or successful calls.

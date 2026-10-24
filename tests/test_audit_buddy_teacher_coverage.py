@@ -221,5 +221,67 @@ class TeacherCoverageTests(unittest.TestCase):
             self.assertIsNone(future["independent_holdout_receipt"])
 
 
+    def test_duplicate_model_task_type_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["models"]
+            data = json.loads(p.read_text())
+            data["models"][0]["task_types"] = ["coding", "coding"]
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "duplicate model task_type"):
+                audit(root)
+
+    def test_boolean_masterbot_count_is_not_an_integer(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["masterbots"]
+            data = json.loads(p.read_text())
+            data["canonical_count"] = True
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "MasterBot registry count"):
+                audit(root)
+
+    def test_boolean_readiness_count_is_not_an_integer(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["production"]
+            data = json.loads(p.read_text())
+            data["summary"]["production_ready_divisions"] = False
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "production readiness count"):
+                audit(root)
+
+    def test_readiness_claim_with_failed_gate_or_blocker_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["production"]
+            data = json.loads(p.read_text())
+            data["summary"]["production_ready_divisions"] = 1
+            division = data["divisions"][0]
+            division["production_ready"] = True
+            division["gates"] = [{"id": "runtime", "passed": False}]
+            division["blockers"] = ["runtime"]
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "missing or failed gates"):
+                audit(root)
+
+    def test_readiness_claim_without_gate_evidence_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["production"]
+            data = json.loads(p.read_text())
+            data["summary"]["production_ready_divisions"] = 1
+            division = data["divisions"][0]
+            division["production_ready"] = True
+            division["blockers"] = []
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "missing or failed gates"):
+                audit(root)
+
 if __name__ == "__main__":
     unittest.main()
