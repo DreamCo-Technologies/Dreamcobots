@@ -1,6 +1,11 @@
 name: Benchmark Training Execution
 on:
   workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: "Successful Benchmark Training Queue run ID with required benchmark artifacts"
+        required: true
+        type: string
   workflow_run:
     workflows: ["Benchmark Training Queue"]
     types: [completed]
@@ -14,11 +19,15 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
+      - name: Validate upstream benchmark evidence provenance
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SOURCE_RUN_ID: ${{ github.event.workflow_run.id || inputs.source_run_id }}
+        run: python3 tools/validate_benchmark_upstream_run.py --run-id "$SOURCE_RUN_ID" --expected "Benchmark Training Queue"
       - uses: actions/download-artifact@v8
-        if: ${{ github.event_name == 'workflow_run' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ github.event.workflow_run.id || inputs.source_run_id }}
           pattern: benchmark-training-queue-*
           path: training-evidence
           merge-multiple: true

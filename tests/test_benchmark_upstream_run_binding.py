@@ -1,0 +1,72 @@
+"""Provenance and manual-dispatch regression tests for benchmark artifact handoffs."""
+from __future__ import annotations
+
+import unittest
+from pathlib import Path
+
+from tools.validate_benchmark_upstream_run import verify_run
+
+ROOT = Path(__file__).resolve().parents[1]
+REPO = "DreamCo-Technologies/Dreamcobots"
+WORKFLOWS = {
+    "benchmark-training-queue.yml": "Benchmark Evidence Loop",
+    "benchmark-sandbox-manifest.yml": "Benchmark Training Queue",
+    "benchmark-training-execution.yml": "Benchmark Training Queue",
+}
+
+
+class BenchmarkUpstreamRunBindingTests(unittest.TestCase):
+    def sample(self):
+        return {
+            "id": 12345,
+            "name": "Benchmark Evidence Loop",
+            "status": "completed",
+            "conclusion": "success",
+            "repository": {"full_name": REPO},
+            "head_repository": {"full_name": REPO},
+        }
+
+    def check(self, data):
+        return verify_run(data, run_id="12345", expected_name="Benchmark Evidence Loop", repository=REPO)
+
+    def test_valid_completed_same_repository_run(self):
+        self.assertEqual(self.check(self.sample()), [])
+
+    def test_untrusted_or_incomplete_upstream_run_rejected(self):
+        changes = [
+            {"id": 12346}, {"name": "Unrelated Workflow"},
+            {"status": "in_progress"}, {"conclusion": "failure"},
+            {"repository": {"full_name": "someone/else"}},
+            {"head_repository": {"full_name": "someone/fork"}},
+            {"head_repository": None},
+        ]
+        for change in changes:
+            with self.subTest(change=change):
+                self.assertTrue(self.check({**self.sample(), **change}))
+
+    def test_malformed_run_identity_rejected(self):
+        for run_id in ("", "0", "-1", "1e3", "12345;echo", " 12345"):
+            with self.subTest(run_id=run_id):
+                self.assertTrue(verify_run(self.sample(), run_id=run_id,
+                                           expected_name="Benchmark Evidence Loop", repository=REPO))
+        self.assertTrue(self.check(None))
+
+    def test_all_three_manual_workflows_bind_and_validate_upstream_artifacts(self):
+        for filename, expected in WORKFLOWS.items():
+            with self.subTest(workflow=filename):
+                workflow = (ROOT / ".github/workflows" / filename).read_text(encoding="utf-8")
+                self.assertIn("source_run_id:", workflow)
+                self.assertIn("required: true", workflow)
+                self.assertIn("github.event.workflow_run.id || inputs.source_run_id", workflow)
+                self.assertIn("python3 tools/validate_benchmark_upstream_run.py", workflow)
+                self.assertIn(f'--expected "{expected}"', workflow)
+                self.assertLess(workflow.index("python3 tools/validate_benchmark_upstream_run.py"),
+                                workflow.index("uses: actions/download-artifact@"))
+                self.assertIn("actions: read", workflow)
+                self.assertIn("contents: read", workflow)
+                self.assertNotIn("contents: write", workflow)
+                self.assertNotIn("issues: write", workflow)
+
+
+if __name__ == "__main__":
+    unittest.main()
