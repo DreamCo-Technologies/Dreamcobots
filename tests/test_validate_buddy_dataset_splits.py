@@ -1,8 +1,11 @@
 """Synthetic metadata tests, not model, consent, rights, or holdout evidence."""
 import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
-from tools.validate_buddy_dataset_splits import SplitManifestError, SCHEMA, parse_manifest, validate
+from tools.validate_buddy_dataset_splits import SplitManifestError, SCHEMA, parse_manifest, read_manifest, validate
 
 
 def sample():
@@ -77,6 +80,31 @@ class SplitTests(unittest.TestCase):
         x["splits"]["train"][0]["group_id"] = "person@example.com"
         with self.assertRaisesRegex(SplitManifestError, "opaque"):
             validate(x)
+
+    def test_reject_excessively_nested_json_without_traceback(self):
+        raw = "[" * 1500 + "0" + "]" * 1500
+        with self.assertRaisesRegex(SplitManifestError, "excessively nested"):
+            parse_manifest(raw)
+
+    def test_reject_invalid_unicode_before_parsing(self):
+        with self.assertRaisesRegex(SplitManifestError, "invalid Unicode"):
+            parse_manifest("\\ud800".encode("ascii").decode("unicode_escape"))
+
+    def test_limit_in_memory_manifest_bytes(self):
+        with patch("tools.validate_buddy_dataset_splits.MAX_MANIFEST_BYTES", 100):
+            with self.assertRaisesRegex(SplitManifestError, "size limit"):
+                parse_manifest(json.dumps(sample()))
+
+    def test_bounded_file_read_rejects_oversized_and_invalid_utf8(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "metadata.json"
+            path.write_bytes(b"x" * 101)
+            with patch("tools.validate_buddy_dataset_splits.MAX_MANIFEST_BYTES", 100):
+                with self.assertRaisesRegex(SplitManifestError, "size limit"):
+                    read_manifest(path)
+            path.write_bytes(b"\\xff")
+            with self.assertRaisesRegex(SplitManifestError, "valid UTF-8"):
+                read_manifest(path)
 
     def test_receipt_pointers_are_not_verification(self):
         x = sample()
