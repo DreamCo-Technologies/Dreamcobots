@@ -1,4 +1,5 @@
 """Synthetic fixtures only: tests do not assert model capability or training."""
+from hashlib import sha256
 import json
 import tempfile
 import unittest
@@ -395,6 +396,83 @@ class TeacherCoverageTests(unittest.TestCase):
             self.assertEqual(report["summary"]["divisions_without_exact_declared_model_route"], [])
             self.assertIsNone(row["evaluated_model_revision"])
             self.assertIsNone(row["independent_holdout_receipt"])
+
+    def test_passing_readiness_gate_without_receipt_is_not_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["production"]
+            data = json.loads(p.read_text())
+            data["summary"]["production_ready_divisions"] = 1
+            data["divisions"][0].update({
+                "production_ready": True, "blockers": [],
+                "gates": [{"id": "runtime", "passed": True}],
+            })
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "missing or failed gates"):
+                audit(root)
+
+    def test_readiness_receipt_digest_mismatch_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            receipt = root / "reports" / "toy-receipt.json"
+            receipt.parent.mkdir(parents=True, exist_ok=True)
+            receipt.write_text('{"test":"synthetic"}')
+            p = root / SOURCES["production"]
+            data = json.loads(p.read_text())
+            data["summary"]["production_ready_divisions"] = 1
+            data["divisions"][0].update({
+                "production_ready": True, "blockers": [],
+                "gates": [{"id": "runtime", "passed": True,
+                           "evidence": "reports/toy-receipt.json",
+                           "receipt_sha256": "0" * 64}],
+            })
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "missing or failed gates"):
+                audit(root)
+
+    def test_readiness_receipt_cannot_escape_repository(self):
+        with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as outside:
+            root = Path(tmp)
+            fixture(root)
+            receipt = Path(outside) / "fake-receipt.json"
+            receipt.write_text('{"test":"synthetic"}')
+            p = root / SOURCES["production"]
+            data = json.loads(p.read_text())
+            data["summary"]["production_ready_divisions"] = 1
+            data["divisions"][0].update({
+                "production_ready": True, "blockers": [],
+                "gates": [{"id": "runtime", "passed": True,
+                           "evidence": str(receipt),
+                           "receipt_sha256": sha256(receipt.read_bytes()).hexdigest()}],
+            })
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "missing or failed gates"):
+                audit(root)
+
+    def test_pinned_receipt_only_supports_ledger_not_independent_model_quality(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            receipt = root / "reports" / "toy-receipt.json"
+            receipt.parent.mkdir(parents=True, exist_ok=True)
+            receipt.write_text('{"test":"synthetic"}')
+            p = root / SOURCES["production"]
+            data = json.loads(p.read_text())
+            data["summary"]["production_ready_divisions"] = 1
+            data["divisions"][0].update({
+                "production_ready": True, "blockers": [],
+                "gates": [{"id": "runtime", "passed": True,
+                           "evidence": "reports/toy-receipt.json",
+                           "receipt_sha256": sha256(receipt.read_bytes()).hexdigest()}],
+            })
+            p.write_text(json.dumps(data))
+            report = audit(root)
+            self.assertEqual(report["summary"]["production_ready_divisions_in_ledger"], 1)
+            self.assertEqual(report["summary"]["independent_holdout_receipts_in_this_audit"], 0)
+            self.assertEqual(report["summary"]["independently_verified_routes_in_this_audit"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()
