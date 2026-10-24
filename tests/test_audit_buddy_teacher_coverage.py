@@ -109,6 +109,33 @@ class TeacherCoverageTests(unittest.TestCase):
             with self.assertRaisesRegex(AuditError, "nonnegative integer"):
                 audit(root)
 
+    def test_duplicate_benchmark_run_key_fails_closed(self):
+        # JSON's default last-value-wins parser would conceal a conflicting run count.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["tasks"]
+            raw = p.read_text(encoding="utf-8")
+            self.assertIn('"runs": 0', raw)
+            p.write_text(raw.replace('"runs": 0', '"runs": 999, "runs": 0', 1))
+            with self.assertRaisesRegex(AuditError, "duplicate JSON key"):
+                audit(root)
+
+    def test_nested_duplicate_training_truth_key_fails_closed(self):
+        # Conflicting weight claims must not be erased by JSON parsing.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["students"]
+            raw = p.read_text(encoding="utf-8")
+            self.assertIn('"trained_weights_exist": false', raw)
+            p.write_text(raw.replace(
+                '"trained_weights_exist": false',
+                '"trained_weights_exist": true, "trained_weights_exist": false', 1,
+            ))
+            with self.assertRaisesRegex(AuditError, "duplicate JSON key"):
+                audit(root)
+
     def test_missing_source_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaisesRegex(AuditError, "production-evidence-ledger"):
