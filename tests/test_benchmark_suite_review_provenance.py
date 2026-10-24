@@ -13,6 +13,18 @@ class BenchmarkSuiteReviewProvenanceTests(unittest.TestCase):
         self.assertEqual(row["remediation_design"], STAGES)
         self.assertFalse(row["production_ready"])
 
+    def test_generated_contracts_match_current_canonical_sources(self):
+        # A self-consistent generated JSON file can still be stale. Compare
+        # every registered suite and source hash to the canonical source tree.
+        from tools.benchmark_suite_contracts import build
+        stored = json.loads(OUTPUT.read_text(encoding="utf-8"))
+        actual = build()
+        self.assertEqual(
+            stored, actual,
+            "Benchmark remediation contracts are stale: regenerate them from "
+            "canonical sources; do not treat stale contracts as reviewed evidence.",
+        )
+
     def test_all_registered_suites_remain_unverified(self):
         registry = json.loads(OUTPUT.read_text(encoding="utf-8"))
         rows = registry["entries"]
