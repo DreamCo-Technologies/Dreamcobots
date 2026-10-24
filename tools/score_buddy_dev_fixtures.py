@@ -32,6 +32,10 @@ PINNED = {
         "prompt_fixture": "Return JSON with result set to 42 and confidence between 0 and 1.",
         "expected": "json_result_42", "grader": "schema", "modality": "text",
     },
+    "tool_selection": {
+        "prompt_fixture": "Choose the read-only weather tool for a current forecast request.",
+        "expected": "weather_read_only", "grader": "schema", "modality": "tool_call",
+    },
 }
 
 
@@ -50,6 +54,10 @@ def _grade(suite_id: str, response: str) -> bool:
         return response == "READY"
     if suite_id == "arithmetic_reasoning":
         return response == "42"
+    if suite_id == "tool_selection":
+        # Public enum-only selection check; no tool invocation, argument
+        # validation, execution permission, or independent model evaluation.
+        return response == "weather_read_only"
     if suite_id == "structured_output":
         try:
             parsed = json.loads(response, object_pairs_hook=_reject_duplicate_json_keys)
@@ -69,7 +77,7 @@ def _grade(suite_id: str, response: str) -> bool:
 
 
 def score_dev_responses(rows: Any, catalog: Any) -> dict:
-    """Score only supplied responses against three pinned, publicly known tasks.
+    """Score only supplied responses against pinned, publicly known tasks.
 
     The result intentionally has no model identifier, independent holdout
     status, or production-readiness field. Response text and response hashes
@@ -91,7 +99,7 @@ def score_dev_responses(rows: Any, catalog: Any) -> dict:
         if name not in known or any(known[name].get(k) != v for k, v in expected.items()):
             raise ValueError(f"public fixture changed or missing: {name}; review grader first")
     if not isinstance(rows, list) or not rows or len(rows) > len(PINNED):
-        raise ValueError("provide one to three public development responses")
+        raise ValueError("provide one to four public development responses")
     results = []
     seen = set()
     for row in rows:
