@@ -2,7 +2,7 @@
 import json
 import unittest
 
-from tools.run_buddy_ollama_dev_baseline import BaselineError, loopback_endpoint, run_baseline
+from tools.run_buddy_ollama_dev_baseline import BaselineError, _parse_server_json, loopback_endpoint, run_baseline
 from tools.score_buddy_dev_fixtures import PINNED
 
 D = "a" * 64
@@ -109,6 +109,23 @@ class LocalBaselineTests(unittest.TestCase):
                 return d
         with self.assertRaisesRegex(BaselineError, "incomplete"):
             run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(), transport=Incomplete())
+
+    def test_duplicate_server_json_keys_fail_closed_at_any_depth(self):
+        for raw in (
+            b'{"models":[],"models":[{"name":"buddy:local"}]}',
+            b'{"models":[{"name":"buddy:local","digest":"a","digest":"b"}]}',
+            b'{"done":true,"response":"safe","response":"different"}',
+        ):
+            with self.subTest(raw=raw), self.assertRaisesRegex(BaselineError, "duplicate key"):
+                _parse_server_json(raw)
+
+    def test_server_json_rejects_nonfinite_invalid_utf8_and_nonobjects(self):
+        for raw in (b'{"eval_count":NaN}', b'{"eval_duration":Infinity}',
+                    b'{"text":"\\xff"}', b'[]', b'null'):
+            with self.subTest(raw=raw), self.assertRaises(BaselineError):
+                _parse_server_json(raw)
+        self.assertEqual(_parse_server_json(b'{"done":true,"response":"ok"}'),
+                         {"done": True, "response": "ok"})
 
     def test_timeout_and_model_name_are_bounded(self):
         for timeout in (0, 61, float("nan"), True):
