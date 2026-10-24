@@ -91,8 +91,8 @@ class LocalBaselineTests(unittest.TestCase):
     def test_wrong_answer_not_credited(self):
         result = run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(),
                               transport=FakeTransport(wrong="arithmetic_reasoning"),
-                              clock=iter([0, .1, .1, .2, .2, .3, .3, .4, .4, .5, .5, .6, .6, .7]).__next__)
-        self.assertEqual(result["passed_public_dev_fixtures"], 6)
+                              clock=iter([0, .1, .1, .2, .2, .3, .3, .4, .4, .5, .5, .6, .6, .7, .7, .8]).__next__)
+        self.assertEqual(result["passed_public_dev_fixtures"], 7)
 
     def test_model_digest_mismatch_prevents_generate(self):
         fake = FakeTransport(digest="b" * 64)
@@ -111,7 +111,7 @@ class LocalBaselineTests(unittest.TestCase):
         with self.assertRaisesRegex(BaselineError, "post-run installed model digest mismatch"):
             run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(), transport=fake)
         self.assertEqual(fake.tag_calls, 2)
-        self.assertEqual(len(fake.calls), 9)
+        self.assertEqual(len(fake.calls), 10)
 
     def test_invalid_catalog_prevents_network(self):
         fake = FakeTransport()
