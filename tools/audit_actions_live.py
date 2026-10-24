@@ -84,6 +84,34 @@ def fetch_workflow_inventory(repo: str, *, page_limit: int = 20) -> list[dict]:
     raise RuntimeError("GitHub workflow inventory exceeds bounded page limit")
 
 
+
+def recent_run_sample(runs: list[dict], cutoff: datetime, *, page_size: int = 10) -> tuple[list[dict], bool]:
+    """Return observed recent runs and whether the 30-day window is complete.
+
+    The API returns newest first. A full page of recent runs is only a lower
+    bound, never evidence that older failures did not occur. Malformed or
+    unordered API evidence is a blocker, not a zero-failure observation.
+    """
+    if not isinstance(runs, list) or len(runs) > page_size or page_size < 1:
+        raise RuntimeError("invalid or oversized GitHub workflow run sample")
+    dated = []
+    previous = None
+    for run in runs:
+        if not isinstance(run, dict) or not isinstance(run.get("created_at"), str):
+            raise RuntimeError("invalid GitHub workflow run timestamp")
+        try:
+            stamp = datetime.fromisoformat(run["created_at"].replace("Z", "+00:00"))
+        except ValueError as exc:
+            raise RuntimeError("malformed GitHub workflow run timestamp") from exc
+        if stamp.tzinfo is None or (previous is not None and stamp > previous):
+            raise RuntimeError("unordered or timezone-naive GitHub workflow run sample")
+        previous = stamp
+        dated.append((stamp, run))
+    recent = [run for stamp, run in dated if stamp >= cutoff]
+    complete = len(dated) < page_size or bool(dated and dated[-1][0] < cutoff)
+    return recent, complete
+
+
 def main() -> int:
     repo = os.environ.get("GITHUB_REPOSITORY", "DreamCo-Technologies/Dreamcobots")
     workflows = fetch_workflow_inventory(repo)
@@ -92,15 +120,11 @@ def main() -> int:
     rows = []
     for workflow in workflows:
         wid = workflow["id"]
-        runs = api(f"/repos/{repo}/actions/workflows/{wid}/runs?per_page=10").get("workflow_runs", [])
-        recent = []
-        for run in runs:
-            try:
-                dt = datetime.fromisoformat(run["created_at"].replace("Z", "+00:00"))
-            except Exception:
-                dt = cutoff
-            if dt >= cutoff:
-                recent.append(run)
+        run_payload = api(f"/repos/{repo}/actions/workflows/{wid}/runs?per_page=10")
+        if not isinstance(run_payload, dict):
+            raise RuntimeError("invalid GitHub workflow run response")
+        runs = run_payload.get("workflow_runs")
+        recent, coverage_complete = recent_run_sample(runs, cutoff)
         failures = [r for r in recent if r.get("conclusion") in {"failure", "timed_out", "action_required", "stale"}]
         latest = runs[0] if runs else None
         path = workflow.get("path", "")
@@ -121,6 +145,8 @@ def main() -> int:
                 "head_sha": latest.get("head_sha"),
             } if latest else None,
             "recent_30d_runs": len(recent),
+            "recent_30d_coverage": "complete" if coverage_complete else "sampled_lower_bound",
+            "recent_30d_sample_size": len(runs),
             "recent_30d_failures": len(failures),
             "recent_failure_urls": [r.get("html_url") for r in failures[:5]],
         })
@@ -140,9 +166,10 @@ def main() -> int:
         "target_files_missing_from_review_branch": missing_targets,
         "active_github_workflows_without_local_file": orphan_active,
         "workflows_with_recent_failures": len(failing),
+        "workflows_with_incomplete_30d_coverage": sum(r["recent_30d_coverage"] != "complete" for r in rows),
         "target_workflows": target_rows,
         "all_workflows": rows,
-        "truth_boundary": "Live run state proves observed GitHub execution status only. It does not prove application correctness, benchmark mastery, or production readiness.",
+        "truth_boundary": "Live run status is sampled from at most 10 newest runs per workflow. A full recent page gives a lower bound, not complete 30-day coverage. No run evidence proves application correctness, benchmark mastery, or production readiness.",
     }
     for output in (OUT_JSON, PUBLIC_JSON):
         output.parent.mkdir(parents=True, exist_ok=True)
@@ -156,13 +183,14 @@ def main() -> int:
         f"Target workflow records found: **{len(target_rows)}**",
         f"Target files missing on review branch: **{len(missing_targets)}**",
         f"Active GitHub workflows without a local workflow file: **{len(orphan_active)}**",
-        f"Workflows with failures in the last 30 days: **{len(failing)}**",
+        f"Workflows with observed failures in sampled runs: **{len(failing)}**",
+        f"Workflows with incomplete 30-day coverage: **{payload['workflows_with_incomplete_30d_coverage']}**",
         "",
         "## Target workflows",
     ]
     for row in target_rows:
         latest = row["latest_run"] or {}
-        lines.append(f"- **{row['name']}** — state={row['state']} — local={row['local_file_present']} — latest={latest.get('conclusion') or latest.get('status') or 'never observed'} — recent failures={row['recent_30d_failures']}")
+        lines.append(f"- **{row['name']}** — state={row['state']} — local={row['local_file_present']} — latest={latest.get('conclusion') or latest.get('status') or 'never observed'} — observed failures={row['recent_30d_failures']} — 30d coverage={row['recent_30d_coverage']}")
     if missing_targets:
         lines += ["", "## Target files missing from review branch"] + [f"- `{x}`" for x in missing_targets]
     if orphan_active:
