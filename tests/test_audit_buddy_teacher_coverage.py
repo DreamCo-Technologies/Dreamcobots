@@ -328,5 +328,35 @@ class TeacherCoverageTests(unittest.TestCase):
             with self.assertRaisesRegex(AuditError, "non-finite JSON constant NaN"):
                 audit(root)
 
+    def test_cross_registry_cosmetic_variant_not_misreported_as_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["masterbots"]
+            data = json.loads(p.read_text())
+            data["divisions"][0]["name"] = " dreamcodelab "
+            p.write_text(json.dumps(data))
+            summary = audit(root)["summary"]
+            self.assertEqual(summary["masterbot_only_names"], ["AnotherTaxonomy"])
+            self.assertEqual(summary["actual_only_names"], ["DreamData"])
+            self.assertEqual(summary["cross_registry_identifier_variants"], [
+                {"actual_division": "DreamCodeLab", "masterbot_division": " dreamcodelab "}
+            ])
+
+    def test_cross_registry_unicode_width_variant_reconciles_without_renaming(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["masterbots"]
+            data = json.loads(p.read_text())
+            data["divisions"][0]["name"] = "ＤｒｅａｍＣｏｄｅＬａｂ"
+            p.write_text(json.dumps(data))
+            summary = audit(root)["summary"]
+            self.assertEqual(summary["masterbot_only_names"], ["AnotherTaxonomy"])
+            self.assertEqual(summary["actual_only_names"], ["DreamData"])
+            self.assertEqual(summary["cross_registry_identifier_variants"][0]["actual_division"], "DreamCodeLab")
+            self.assertEqual(summary["cross_registry_identifier_variants"][0]["masterbot_division"],
+                             "ＤｒｅａｍＣｏｄｅＬａｂ")
+
 if __name__ == "__main__":
     unittest.main()
