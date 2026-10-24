@@ -29,24 +29,10 @@ jobs:
         run: python3 tools/validate_actions_page.py
       - name: Validate Python syntax for touched intelligence code
         run: python3 -m compileall -q buddy_os tests
+      - name: Run JSON validator regression tests
+        run: python3 -m unittest discover -s tests -p 'test_validate_repository_json.py'
       - name: Validate JSON files
-        run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          failures = []
-          for path in Path('.').rglob('*.json'):
-              if any(part in {'.git','node_modules'} for part in path.parts):
-                  continue
-              try:
-                  json.loads(path.read_text(encoding='utf-8'))
-              except Exception as exc:
-                  failures.append(f'{path}: {exc}')
-          if failures:
-              print('\n'.join(failures))
-              raise SystemExit(1)
-          print('All discovered JSON files are valid.')
-          PY
+        run: python3 tools/validate_repository_json.py
 
   actions-page-tests:
     name: Actions page tests
