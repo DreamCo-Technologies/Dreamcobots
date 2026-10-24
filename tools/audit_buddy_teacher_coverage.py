@@ -241,6 +241,17 @@ def audit(root: Path = ROOT) -> dict:
             "independently_verified_model_ids": [],
             "status": "unverified",
         })
+    # Reconcile independently maintained registries by normalized identity.
+    # Cosmetic casing, surrounding whitespace and Unicode width differences
+    # are not evidence of a missing division. Preserve source spellings in
+    # the report so maintainers can review and standardize them deliberately.
+    actual_by_fold = {_identifier_fold(name): name for name in divisions}
+    masterbot_by_fold = {_identifier_fold(name): name for name in masterbots}
+    shared_folds = sorted(set(actual_by_fold) & set(masterbot_by_fold))
+    identifier_variants = [
+        {"actual_division": actual_by_fold[key], "masterbot_division": masterbot_by_fold[key]}
+        for key in shared_folds if actual_by_fold[key] != masterbot_by_fold[key]
+    ]
     division_rows = []
     for division in sorted(divisions):
         seed = SEEDS.get(division)
@@ -259,8 +270,11 @@ def audit(root: Path = ROOT) -> dict:
         "summary": {
             "actual_divisions": len(divisions),
             "masterbot_taxonomy_entries": len(masterbots),
-            "masterbot_only_names": sorted(set(masterbots) - set(divisions)),
-            "actual_only_names": sorted(set(divisions) - set(masterbots)),
+            "masterbot_only_names": sorted(name for key, name in masterbot_by_fold.items()
+                                           if key not in actual_by_fold),
+            "actual_only_names": sorted(name for key, name in actual_by_fold.items()
+                                        if key not in masterbot_by_fold),
+            "cross_registry_identifier_variants": identifier_variants,
             "representative_fixture_suggestions": sum(d["suggested_fixture"] is not None for d in division_rows),
             "divisions_needing_fixture_design": sum(d["suggested_fixture"] is None for d in division_rows),
             "registered_benchmark_task_labels": len(tasks),
