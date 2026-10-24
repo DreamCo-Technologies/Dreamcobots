@@ -131,6 +131,8 @@ def run_baseline(*, model: str, expected_digest: str, catalog: dict,
         elapsed = clock() - start
         if not isfinite(elapsed) or elapsed < 0:
             raise BaselineError("invalid elapsed time")
+        if response.get("model") != model:
+            raise BaselineError("generation response model identity mismatch")
         answer = response.get("response")
         if response.get("done") is not True or not isinstance(answer, str) or len(answer) > 20_000:
             raise BaselineError("incomplete or invalid model response")
@@ -143,12 +145,22 @@ def run_baseline(*, model: str, expected_digest: str, catalog: dict,
         rate = _server_rate(response)
         if rate is not None:
             rates.append(rate)
+    # A tag can be replaced while the suite runs. Recheck after all requests;
+    # this detects ordinary tag drift, but cannot attest to model-file integrity.
+    final_tags = transport(base, "/api/tags", None, float(timeout_seconds))
+    final_models = final_tags.get("models")
+    if not isinstance(final_models, list):
+        raise BaselineError("post-run local model list unavailable")
+    final_matches = [item for item in final_models if isinstance(item, dict) and item.get("name") == model]
+    if len(final_matches) != 1 or _digest(final_matches[0].get("digest")) != pinned:
+        raise BaselineError("post-run installed model digest mismatch")
     score = score_dev_responses(rows, catalog)
     return {
         "schema": "dreamco.buddy_ollama_public_dev_baseline.v1",
         "status": "measured_local_server_responses_public_fixtures_only_unverified",
         "model_name": model,
         "local_model_digest": pinned,
+        "post_run_local_tag_digest_rechecked": True,
         "benchmark_catalog_sha256": sha256(json.dumps(catalog, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
         "actual_model_api_calls": len(rows),
         "passed_public_dev_fixtures": score["passed_public_dev_fixtures"],
