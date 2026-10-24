@@ -1,9 +1,8 @@
 name: DreamCo Greenkeeper Root Cause
 
 on:
-  workflow_run:
-    workflows: ["Keep Green", "DreamCo Greenkeeper Orchestrator"]
-    types: [completed]
+  schedule:
+    - cron: "37 */6 * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -23,20 +22,10 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - name: Capture observation
+      - name: Collect bounded Keep Green evidence
         env:
-          WORKFLOW: ${{ github.event.workflow_run.name || 'manual' }}
-          CONCLUSION: ${{ github.event.workflow_run.conclusion || 'manual' }}
-        run: |
-          python3 - <<'PY'
-          import json, os
-          with open('/tmp/observations.json','w',encoding='utf-8') as f:
-              json.dump([{
-                  'workflow': os.environ['WORKFLOW'],
-                  'conclusion': os.environ['CONCLUSION'],
-                  'source': 'github_actions'
-              }], f)
-          PY
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/greenkeeper_observations.py --output /tmp/observations.json --max-age-hours 6
       - name: Fingerprint and queue root cause
         run: python3 tools/greenkeeper_root_cause.py --input /tmp/observations.json
       - name: Publish root-cause artifact
