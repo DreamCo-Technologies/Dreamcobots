@@ -10,8 +10,8 @@ import sys
 from urllib.request import Request, urlopen
 
 
-def verify_run(run: object, *, run_id: str, expected_name: str, repository: str) -> list[str]:
-    """Reject wrong, failed, cross-repository, or unidentifiable source runs."""
+def verify_run(run: object, *, run_id: str, expected_name: str, repository: str, expected_branch: str) -> list[str]:
+    """Reject wrong, failed, cross-repository, or cross-branch source runs."""
     if not re.fullmatch(r"[1-9][0-9]{0,19}", run_id):
         return ["source run ID must be a positive decimal integer"]
     if not isinstance(run, dict):
@@ -27,6 +27,10 @@ def verify_run(run: object, *, run_id: str, expected_name: str, repository: str)
         owner = run.get(key)
         if not isinstance(owner, dict) or owner.get("full_name") != repository:
             problems.append(f"{key} is not the expected repository")
+    if not isinstance(expected_branch, str) or not expected_branch.strip():
+        problems.append("current workflow branch is missing")
+    elif run.get("head_branch") != expected_branch:
+        problems.append("source run branch does not match current workflow branch")
     return problems
 
 
@@ -36,12 +40,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--expected", required=True)
     args = parser.parse_args(argv)
     repository = os.environ.get("GITHUB_REPOSITORY", "")
+    branch = os.environ.get("GITHUB_REF_NAME", "")
     token = os.environ.get("GITHUB_TOKEN", "")
     if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository):
         print("Benchmark handoff blocked: invalid repository identity", file=sys.stderr)
         return 2
     if not re.fullmatch(r"[1-9][0-9]{0,19}", args.run_id) or not token:
         print("Benchmark handoff blocked: valid source run ID and read token required", file=sys.stderr)
+        return 2
+    if not branch or branch.startswith("refs/"):
+        print("Benchmark handoff blocked: current workflow branch unavailable", file=sys.stderr)
         return 2
     url = f"https://api.github.com/repos/{repository}/actions/runs/{args.run_id}"
     request = Request(url, headers={
@@ -55,11 +63,12 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, ValueError) as exc:
         print(f"Benchmark handoff blocked: source run metadata unavailable ({type(exc).__name__})", file=sys.stderr)
         return 2
-    problems = verify_run(metadata, run_id=args.run_id, expected_name=args.expected, repository=repository)
+    problems = verify_run(metadata, run_id=args.run_id, expected_name=args.expected,
+                          repository=repository, expected_branch=branch)
     if problems:
         print("Benchmark handoff blocked: " + "; ".join(problems), file=sys.stderr)
         return 2
-    print(f"Verified passing upstream run {args.run_id} from {args.expected} in {repository}")
+    print(f"Verified passing upstream run {args.run_id} from {args.expected} in {repository} on {branch}")
     return 0
 
 
