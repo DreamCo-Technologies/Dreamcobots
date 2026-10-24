@@ -126,3 +126,9 @@ permission check, or evidence that a model is safe or production-ready.
 The scorer never authorizes a tool, and a successful public response can be
 memorized. Independent, consented holdouts and real permission-aware adapter
 tests remain necessary.
+
+## Local Buddy compute inventory (2026-10-24; no inference)
+
+Run `python3 tools/buddy_local_compute_preflight.py --output /tmp/buddy-local-compute.json` **on the intended machine**, not on a GitHub Actions runner, to record the OS family and total memory without hostnames, serial numbers, usernames or process details. The stdlib-only script reads Linux `/proc/meminfo` or macOS `hw.memsize`, and returns unknown memory on unsupported hosts. It validates the research-only candidate registry before calculating approximate FP16 and 4-bit **weight-only** sizes from advertised parameter classes. These are arithmetic estimates, **not measured model sizes, VRAM requirements, runtime support, model quality, or proof a model fits**. The estimates omit runtime overhead, activations, KV cache, quantization metadata, tokenizer and OS use.
+
+The CLI does **not** download models, run inference, train, upload artifacts, or authorize anything. It always reports `rights_verified: false`, `hardware_suitability_verified: false`, `model_quality_measured: false` and `training_authorized: false`. CI runs only a runner-specific smoke check and seven synthetic regression tests; CI runner memory must never be presented as the owner's laptop memory. Actual local latency, peak memory and clean holdout performance still require separately approved, pinned inference on the target hardware.
