@@ -4,7 +4,7 @@ import json
 import unittest
 from pathlib import Path
 
-from tools.buddy_local_compute_preflight import parse_cgroup_memory_limit, parse_linux_memtotal, report
+from tools.buddy_local_compute_preflight import parse_cgroup_memory_limit, parse_linux_memavailable, parse_linux_memtotal, report
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -20,6 +20,35 @@ class LocalComputePreflightTests(unittest.TestCase):
         self.assertIsNone(parse_linux_memtotal("MemTotal: 1024 kB\nMemTotal: 2048 kB\n"))
         self.assertIsNone(parse_linux_memtotal("MemTotal: 0 kB\n"))
         self.assertIsNone(parse_linux_memtotal("MemTotal: secret kB\n"))
+
+    def test_linux_available_memory_parser(self):
+        self.assertEqual(parse_linux_memavailable("MemTotal: 8192 kB\nMemAvailable: 4096 kB\n"), 4096 * 1024)
+        for sample in ("MemAvailable: 0 kB\n", "MemAvailable: nope kB\n",
+                       "MemAvailable: 1 kB\nMemAvailable: 2 kB\n"):
+            with self.subTest(sample=sample):
+                self.assertIsNone(parse_linux_memavailable(sample))
+
+    def test_host_available_is_not_container_fit(self):
+        result = report(self.data, 16 * 1024 ** 3, "linux_meminfo", "Linux",
+                        2 * 1024 ** 3, "cgroup_v2",
+                        12 * 1024 ** 3, "linux_meminfo")
+        self.assertEqual(result["observed_host_available_memory_gib"], 12)
+        self.assertEqual(result["observed_effective_memory_ceiling_gib"], 2)
+        self.assertFalse(result["hardware_suitability_verified"])
+        self.assertFalse(result["training_authorized"])
+
+    def test_invalid_host_available_memory_fails_closed(self):
+        for available, source, system in (
+            (True, "linux_meminfo", "Linux"),
+            (0, "linux_meminfo", "Linux"),
+            (17 * 1024 ** 3, "linux_meminfo", "Linux"),
+            (8 * 1024 ** 3, "unavailable", "Linux"),
+            (8 * 1024 ** 3, "linux_meminfo", "Darwin"),
+        ):
+            with self.subTest(available=available, source=source, system=system):
+                with self.assertRaises(ValueError):
+                    report(self.data, 16 * 1024 ** 3, "linux_meminfo", system,
+                           available_memory_bytes=available, available_memory_source=source)
 
     def test_cgroup_v2_and_v1_limits(self):
         self.assertEqual(parse_cgroup_memory_limit("4294967296\n"), 4 * 1024 ** 3)
