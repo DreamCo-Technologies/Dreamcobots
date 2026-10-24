@@ -88,7 +88,7 @@ class SplitTests(unittest.TestCase):
 
     def test_reject_invalid_unicode_before_parsing(self):
         with self.assertRaisesRegex(SplitManifestError, "invalid Unicode"):
-            parse_manifest("\\ud800".encode("ascii").decode("unicode_escape"))
+            parse_manifest(chr(0xD800))
 
     def test_limit_in_memory_manifest_bytes(self):
         with patch("tools.validate_buddy_dataset_splits.MAX_MANIFEST_BYTES", 100):
@@ -102,7 +102,7 @@ class SplitTests(unittest.TestCase):
             with patch("tools.validate_buddy_dataset_splits.MAX_MANIFEST_BYTES", 100):
                 with self.assertRaisesRegex(SplitManifestError, "size limit"):
                     read_manifest(path)
-            path.write_bytes(b"\\xff")
+            path.write_bytes(bytes([0xFF]))
             with self.assertRaisesRegex(SplitManifestError, "valid UTF-8"):
                 read_manifest(path)
 
