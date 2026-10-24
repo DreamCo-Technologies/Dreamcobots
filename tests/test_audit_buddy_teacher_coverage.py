@@ -283,5 +283,50 @@ class TeacherCoverageTests(unittest.TestCase):
             with self.assertRaisesRegex(AuditError, "missing or failed gates"):
                 audit(root)
 
+
+    def test_casefold_equivalent_division_ids_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["production"]
+            data = json.loads(p.read_text())
+            data["divisions"][1]["name"] = "dreamcodelab"
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "duplicate name after normalization"):
+                audit(root)
+
+    def test_nfkc_equivalent_division_ids_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["production"]
+            data = json.loads(p.read_text())
+            data["divisions"][1]["name"] = "ＤｒｅａｍＣｏｄｅＬａｂ"
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "duplicate name after normalization"):
+                audit(root)
+
+    def test_padded_casefold_model_task_type_collision_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["models"]
+            data = json.loads(p.read_text())
+            data["models"][0]["task_types"] = ["coding", " CODING "]
+            p.write_text(json.dumps(data))
+            with self.assertRaisesRegex(AuditError, "duplicate model task_type"):
+                audit(root)
+
+    def test_nonfinite_json_registry_value_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["tasks"]
+            raw = p.read_text()
+            self.assertIn('"runs": 0', raw)
+            p.write_text(raw.replace('"runs": 0', '"runs": NaN', 1))
+            with self.assertRaisesRegex(AuditError, "non-finite JSON constant NaN"):
+                audit(root)
+
 if __name__ == "__main__":
     unittest.main()

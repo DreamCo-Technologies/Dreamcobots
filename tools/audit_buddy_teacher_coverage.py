@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import unicodedata
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -121,6 +122,16 @@ def _reject_duplicate_json_keys(pairs: list[tuple[str, object]]) -> dict:
     return result
 
 
+def _identifier_fold(value: str) -> str:
+    """Detect visually equivalent identifiers without rewriting stored IDs."""
+    return unicodedata.normalize("NFKC", value.strip()).casefold()
+
+
+def _reject_nonfinite_constant(value: str) -> None:
+    """Python's JSON parser otherwise accepts NaN and Infinity as extensions."""
+    raise AuditError(f"non-finite JSON constant {value} in registry")
+
+
 def _unique(rows: list, key: str, source: str) -> list:
     if not isinstance(rows, list):
         raise AuditError(f"{source}: expected a list")
@@ -130,8 +141,8 @@ def _unique(rows: list, key: str, source: str) -> list:
         if not isinstance(value, str) or not value.strip():
             raise AuditError(f"{source}: missing {key}")
         values.append(value)
-    if len(values) != len(set(values)):
-        raise AuditError(f"{source}: duplicate {key}")
+    if len(values) != len({_identifier_fold(value) for value in values}):
+        raise AuditError(f"{source}: duplicate {key} after normalization")
     return values
 
 
@@ -141,7 +152,8 @@ def audit(root: Path = ROOT) -> dict:
         path = root / relative
         try:
             data[name] = json.loads(path.read_text(encoding="utf-8"),
-                                    object_pairs_hook=_reject_duplicate_json_keys)
+                                    object_pairs_hook=_reject_duplicate_json_keys,
+                                    parse_constant=_reject_nonfinite_constant)
         except (OSError, ValueError) as exc:
             raise AuditError(f"{relative}: {exc}") from exc
     divisions = _unique(data["production"]["divisions"], "name", SOURCES["production"])
@@ -171,8 +183,8 @@ def audit(root: Path = ROOT) -> dict:
         model_types = model.get("task_types", [])
         if not isinstance(model_types, list) or any(not isinstance(x, str) or not x.strip() for x in model_types):
             raise AuditError("model task_types must be a list of nonempty strings")
-        if len(model_types) != len(set(model_types)):
-            raise AuditError("duplicate model task_type")
+        if len(model_types) != len({_identifier_fold(value) for value in model_types}):
+            raise AuditError("duplicate model task_type after normalization")
         catalog_types.update(model_types)
     summary = data["production"]["summary"]
     if type(summary["real_divisions"]) is not int or summary["real_divisions"] != len(divisions):
