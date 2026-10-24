@@ -56,6 +56,31 @@ class NoRedirect(HTTPRedirectHandler):
         raise BaselineError("HTTP redirects are forbidden")
 
 
+def _reject_duplicate_json_keys(pairs: list[tuple[str, Any]]) -> dict:
+    """Fail closed when an untrusted local server repeats a JSON object key."""
+    obj = {}
+    for key, value in pairs:
+        if key in obj:
+            raise BaselineError("duplicate key in local Ollama JSON response")
+        obj[key] = value
+    return obj
+
+
+def _parse_server_json(raw: bytes) -> dict:
+    """Decode an untrusted response without silently accepting ambiguous JSON."""
+    try:
+        obj = json.loads(
+            raw.decode("utf-8"),
+            object_pairs_hook=_reject_duplicate_json_keys,
+            parse_constant=lambda value: (_ for _ in ()).throw(BaselineError("nonfinite JSON")),
+        )
+    except (UnicodeError, json.JSONDecodeError, RecursionError) as exc:
+        raise BaselineError("invalid Ollama JSON response") from exc
+    if not isinstance(obj, dict):
+        raise BaselineError("Ollama response must be an object")
+    return obj
+
+
 def local_transport(base: str, route: str, payload: dict | None, timeout: float) -> dict:
     if route not in ("/api/tags", "/api/generate"):
         raise BaselineError("unsupported local API route")
@@ -72,13 +97,7 @@ def local_transport(base: str, route: str, payload: dict | None, timeout: float)
         raise BaselineError("local Ollama request failed") from exc
     if len(raw) > MAX_RESPONSE_BYTES:
         raise BaselineError("local Ollama response exceeds size limit")
-    try:
-        obj = json.loads(raw.decode("utf-8"), parse_constant=lambda x: (_ for _ in ()).throw(BaselineError("nonfinite JSON")))
-    except (UnicodeError, json.JSONDecodeError, RecursionError) as exc:
-        raise BaselineError("invalid Ollama JSON response") from exc
-    if not isinstance(obj, dict):
-        raise BaselineError("Ollama response must be an object")
-    return obj
+    return _parse_server_json(raw)
 
 
 def _digest(value: Any) -> str:
