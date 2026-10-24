@@ -50,7 +50,10 @@ def main() -> None:
     args = parser.parse_args()
 
     payload = json.loads(Path(args.events).read_text())
-    results = process_events(payload.get("events", []))
+    # Missing/misspelled event envelopes must not create a false zero-event receipt.
+    if not isinstance(payload, dict) or "events" not in payload:
+        raise ValueError("input must contain an explicit events list")
+    results = process_events(payload["events"])
 
     Path(args.out).write_text(json.dumps({
         "schema": "dreamco.continuous_learning.evidence.v1",
