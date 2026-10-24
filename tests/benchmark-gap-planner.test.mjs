@@ -14,4 +14,8 @@ test("planner creates work for all 65 divisions",()=>{
  assert.equal(q.divisions,65);
  assert.ok(q.queue.some(x=>x.division===1&&x.action==="CLOSE_GAPS"));
  assert.ok(q.queue.some(x=>x.division===3&&x.action==="RUN_BENCHMARKS"));
+ assert.equal(q.complete,false);
+ assert.equal(q.measured_divisions,2);
+ assert.equal(q.unmeasured_division_ids.length,63);
+ assert.ok(q.unmeasured_division_ids.includes(3));
 });
