@@ -45,6 +45,16 @@ when the production ledger explicitly reports zero trained-weight artifacts.
 These checks prevent registry bookkeeping errors from becoming false evidence;
 they do **not** validate a checkpoint or prove a completed evaluation.
 
+As of 2026-10-24, a division marked `production_ready: true` also needs
+nonempty passing gates with **in-repository evidence files pinned by a
+64-character SHA-256 receipt digest**. Missing files, changed bytes, oversized
+receipts and paths escaping the repository fail closed. This verifies only
+that the referenced receipt bytes exist and match the declared hash; it does
+**not** independently verify the receipt's truth, evaluator independence,
+model quality, consent or real deployment. Synthetic regression tests cover
+missing, altered, out-of-repository and matching receipt cases. Existing
+non-ready divisions remain non-ready.
+
 All 55 division task prompts are **design proposals**, not runnable benchmark
 cases, consented datasets, independent hidden holdouts, training receipts,
 or proof of capability. Build and independently grade small, rights-cleared
