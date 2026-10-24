@@ -121,7 +121,7 @@ class LocalBaselineTests(unittest.TestCase):
 
     def test_server_json_rejects_nonfinite_invalid_utf8_and_nonobjects(self):
         for raw in (b'{"eval_count":NaN}', b'{"eval_duration":Infinity}',
-                    b'{"text":"\\xff"}', b'[]', b'null'):
+                    b'{"text":"' + bytes([255]) + b'"}', b'[]', b'null'):
             with self.subTest(raw=raw), self.assertRaises(BaselineError):
                 _parse_server_json(raw)
         self.assertEqual(_parse_server_json(b'{"done":true,"response":"ok"}'),
