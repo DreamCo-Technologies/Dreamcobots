@@ -43,3 +43,21 @@ class RegisteredRunnerTest(unittest.TestCase):
         self.assertEqual(result[0]["capability"], "workflow_connection")
         self.assertTrue(result[0]["learn"])
         self.assertFalse(result[0]["promote"])
+
+
+    def test_malformed_capability_does_not_overwrite_existing_evidence(self):
+        root = Path(__file__).resolve().parent
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            events = temp_path / "events.json"
+            out = temp_path / "evidence.json"
+            out.write_text("previous-evidence\n")
+            events.write_text(json.dumps({"events": [{
+                "event_id": "bad", "event_type": "benchmark", "capability": {},
+                "success": True, "verified": True, "regression_passed": True, "safety_passed": True,
+            }]}))
+            result = subprocess.run([sys.executable, str(root / "registered_runner.py"),
+                                     "--events", str(events), "--out", str(out)],
+                                    capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(out.read_text(), "previous-evidence\n")
