@@ -5,6 +5,51 @@ from tools.audit_actions_health import MAX_MAJOR, OUT_JSON, PUBLIC_JSON, main
 
 
 class ActionsHealthAuditTest(unittest.TestCase):
+    def test_static_audit_detects_missing_local_unittest_modules(self) -> None:
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from tools.audit_actions_health import missing_unittest_modules
+
+        with TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "buddy" / "builder").mkdir(parents=True)
+            (root / "buddy" / "builder" / "__init__.py").write_text("")
+            (root / "tests").mkdir()
+            (root / "tests" / "test_valid.py").write_text("")
+
+            # A parent package must not mask an absent test module.
+            self.assertEqual(
+                missing_unittest_modules(
+                    "run: python3 -m unittest buddy.builder.evidence_gate_test", root
+                ),
+                ["buddy.builder.evidence_gate_test"],
+            )
+            # Check every explicit target, not only the first one.
+            self.assertEqual(
+                missing_unittest_modules(
+                    "run: python3 -m unittest tests.test_valid tests.test_missing", root
+                ),
+                ["tests.test_missing"],
+            )
+            # Class and method selectors resolve through their actual module.
+            self.assertEqual(
+                missing_unittest_modules(
+                    "run: python3 -m unittest tests.test_valid.Case.test_method", root
+                ),
+                [],
+            )
+            # Dynamic discovery and external dependencies are not local paths.
+            self.assertEqual(
+                missing_unittest_modules(
+                    "run: python3 -m unittest discover -s tests -p 'test_*.py'", root
+                ),
+                [],
+            )
+            self.assertEqual(
+                missing_unittest_modules("run: python3 -m unittest external.module", root),
+                [],
+            )
+
     def test_current_official_action_baseline_is_recognized(self) -> None:
         self.assertEqual(MAX_MAJOR["actions/checkout"], 7)
         self.assertEqual(MAX_MAJOR["actions/upload-pages-artifact"], 5)
