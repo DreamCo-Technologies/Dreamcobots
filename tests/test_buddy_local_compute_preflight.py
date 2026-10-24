@@ -57,9 +57,9 @@ class LocalComputePreflightTests(unittest.TestCase):
                 self.assertIsNone(parse_cgroup_memory_limit(value))
 
     def test_cgroup_current_parser_accepts_zero_and_rejects_bad_readings(self):
-        self.assertEqual(parse_cgroup_memory_current("0\\n"), 0)
-        self.assertEqual(parse_cgroup_memory_current("1073741824\\n"), 1024 ** 3)
-        for value in ("max", "-1", "1.5", "1\\n2", str(2 ** 60)):
+        self.assertEqual(parse_cgroup_memory_current("0\n"), 0)
+        self.assertEqual(parse_cgroup_memory_current("1073741824\n"), 1024 ** 3)
+        for value in ("max", "-1", "1.5", "1\n2", str(2 ** 60)):
             with self.subTest(value=value):
                 self.assertIsNone(parse_cgroup_memory_current(value))
 
