@@ -50,7 +50,7 @@ jobs:
           print(f"- Failed sources: **{d.get('failed_source_count',0)}**")
           for failure in d.get('failures',[]):
               source=str(failure.get('source_id','unknown'))[:80]
-              reason=str(failure.get('error','unspecified'))[:240].replace('\\n',' ')
+              reason=' '.join(str(failure.get('error','unspecified')).split())[:240]
               print(f"- Blocked source: **{source}** — {reason}")
           debt=(d.get('debt_records') or [{}])[0]
           if debt:
