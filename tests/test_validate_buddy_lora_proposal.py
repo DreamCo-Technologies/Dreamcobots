@@ -36,6 +36,23 @@ class ProposalPreflightTests(unittest.TestCase):
                 with self.assertRaisesRegex(ProposalError, "nonfinite JSON constant"):
                     parse_proposal(raw)
 
+    def test_rejects_overflowed_exponent_and_nonfinite_hyperparameters(self):
+        # JSON 1e999 is valid syntax but Python decodes it as infinity.
+        # NaN/Infinity can also arrive through direct validate() calls.
+        for field in ("dropout", "learning_rate"):
+            with self.subTest(field=field, case="json_exponent_overflow"):
+                raw = json.dumps(self.p).replace(
+                    f'"{field}": {self.p[field]}', f'"{field}": 1e999', 1
+                )
+                with self.assertRaisesRegex(ProposalError, "invalid " + field):
+                    validate(parse_proposal(raw))
+            for value in (float("nan"), float("inf"), -float("inf")):
+                with self.subTest(field=field, case=str(value)):
+                    p = copy.deepcopy(self.p)
+                    p[field] = value
+                    with self.assertRaisesRegex(ProposalError, "invalid " + field):
+                        validate(p)
+
     def test_valid_proposal_json_parses_without_authorizing_training(self):
         parsed = parse_proposal(json.dumps(self.p))
         self.assertEqual(parsed, self.p)
