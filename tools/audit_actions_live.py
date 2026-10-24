@@ -85,6 +85,27 @@ def fetch_workflow_inventory(repo: str, *, page_limit: int = 20) -> list[dict]:
 
 
 
+
+def canonical_workflow_filename(path: object) -> str | None:
+    """Accept only direct children of GitHub's canonical workflow directory.
+
+    Comparing basenames alone lets a historical or noncanonical workflow path
+    impersonate a local file, concealing a missing runtime binding.
+    """
+    prefix = ".github/workflows/"
+    if not isinstance(path, str) or not path.startswith(prefix):
+        return None
+    filename = path[len(prefix):]
+    if (
+        not filename
+        or "/" in filename
+        or "\\" in filename
+        or not filename.endswith((".yml", ".yaml"))
+    ):
+        return None
+    return filename
+
+
 def recent_run_sample(runs: list[dict], cutoff: datetime, *, page_size: int = 10) -> tuple[list[dict], bool]:
     """Return observed recent runs and whether the 30-day window is complete.
 
@@ -128,14 +149,15 @@ def main() -> int:
         failures = [r for r in recent if r.get("conclusion") in {"failure", "timed_out", "action_required", "stale"}]
         latest = runs[0] if runs else None
         path = workflow.get("path", "")
-        filename = Path(path).name
+        filename = canonical_workflow_filename(path)
         rows.append({
             "id": wid,
             "name": workflow.get("name"),
             "path": path,
             "state": workflow.get("state"),
-            "local_file_present": filename in local,
-            "targeted": filename in TARGETS,
+            "canonical_workflow_path": filename is not None,
+            "local_file_present": filename is not None and filename in local,
+            "targeted": filename is not None and filename in TARGETS,
             "latest_run": {
                 "id": latest.get("id"),
                 "status": latest.get("status"),
