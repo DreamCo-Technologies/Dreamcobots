@@ -54,6 +54,11 @@ def build(root=ROOT):
             if key not in doc:
                 continue
             rows=doc[key]
+            if key == 'domains' and isinstance(rows, dict):
+                # Some benchmark documents use a named-domain taxonomy map,
+                # not a registry of independently executable suites.
+                # Preserve the taxonomy in its source without inventing suites.
+                continue
             if not isinstance(rows, list):
                 raise ValueError(f'Benchmark suite {key} must be a list in {path.relative_to(root)}')
             source=path.relative_to(root).as_posix()
