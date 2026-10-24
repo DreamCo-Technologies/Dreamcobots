@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from math import isfinite
 import re
 from pathlib import Path
 from typing import Any
@@ -86,7 +87,8 @@ def validate(proposal: Any) -> dict:
             raise ProposalError(f"invalid {field}")
     for field, low, high in (("dropout", 0, 1), ("learning_rate", 0, 1)):
         value = proposal[field]
-        if type(value) not in (int, float) or not low <= value <= high or (field == "learning_rate" and value == 0):
+        if (type(value) not in (int, float) or not isfinite(value)
+                or not low <= value <= high or (field == "learning_rate" and value == 0)):
             raise ProposalError(f"invalid {field}")
     if type(proposal["compute_budget_usd"]) not in (int, float) or proposal["compute_budget_usd"] != 0:
         raise ProposalError("review-only proposal requires zero-dollar compute budget")
