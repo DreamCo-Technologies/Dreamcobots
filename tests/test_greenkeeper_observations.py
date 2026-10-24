@@ -123,6 +123,16 @@ class GreenkeeperObservationsTests(unittest.TestCase):
                 self.assertEqual(result[0]["conclusion"], "unknown")
                 self.assertEqual(result[0]["evidence_status"], "latest_run_invalid_provenance")
 
+    def test_unhashable_conclusions_fail_closed_without_crashing(self):
+        for invalid in ([], {}, ["success"], {"status": "success"}):
+            with self.subTest(invalid=invalid):
+                item = run(conclusion=invalid)
+                item["path"] = ".github/workflows/keep-green.yml@main"
+                result = observations({"workflow_runs": [item]}, now=NOW, max_age_hours=6,
+                                      expected_repo="DreamCo-Technologies/Dreamcobots")
+                self.assertEqual(result[0]["conclusion"], "unknown")
+                self.assertEqual(result[0]["evidence_status"], "latest_run_invalid_provenance")
+
     def test_invalid_repo_rejected_without_network(self):
         with patch("tools.greenkeeper_observations.subprocess.run") as mock_run:
             with self.assertRaises(ValueError):
