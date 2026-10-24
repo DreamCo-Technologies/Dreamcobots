@@ -70,6 +70,7 @@ jobs:
       - name: Verify Actions-page contracts
         if: always()
         run: |
+          python3 -m unittest tests.test_actions_fanout_guard tests.test_greenkeeper_observations
           python3 -m unittest tests.test_actions_health
           if [ -f package-lock.json ]; then npm ci --ignore-scripts; fi
           npm run test:actions-page
