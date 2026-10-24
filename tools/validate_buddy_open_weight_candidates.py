@@ -40,7 +40,7 @@ DECISION_FIELDS = {
     "model_promotion_authorized", "release_authorized", "required_before_training",
 }
 MODEL_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*/[A-Za-z0-9][A-Za-z0-9._-]{0,127}\Z")
-PARAMS = re.compile(r"[0-9]+(?:\\.[0-9]+)?[MB]\Z")
+PARAMS = re.compile(r"[0-9]+(?:\.[0-9]+)?[MB]\Z")
 LICENSE = re.compile(r"[A-Za-z0-9][A-Za-z0-9.+-]{1,63}\Z")
 
 
