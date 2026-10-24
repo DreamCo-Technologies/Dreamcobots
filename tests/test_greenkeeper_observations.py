@@ -16,7 +16,7 @@ NOW = datetime(2026, 10, 24, 6, 0, tzinfo=timezone.utc)
 
 
 def run(*, run_id=42, name="Keep Green", conclusion="failure", updated_at="2026-10-24T05:50:00Z", status="completed"):
-    return {"id": run_id, "name": name, "conclusion": conclusion, "updated_at": updated_at, "status": status, "head_sha": "abc123", "html_url": "https://github.com/example/repo/actions/runs/42"}
+    return {"id": run_id, "name": name, "conclusion": conclusion, "updated_at": updated_at, "status": status, "head_sha": "abc123", "head_branch": "main", "html_url": "https://github.com/example/repo/actions/runs/42"}
 
 
 class GreenkeeperObservationsTests(unittest.TestCase):
@@ -31,6 +31,11 @@ class GreenkeeperObservationsTests(unittest.TestCase):
         for payload in ({"workflow_runs": []}, {"workflow_runs": [run(updated_at="2026-10-22T05:50:00Z")]}, {"workflow_runs": [run(status="in_progress")]}):
             with self.subTest(payload=payload):
                 self.assertEqual(observations(payload, now=NOW, max_age_hours=6)[0]["conclusion"], "unknown")
+
+    def test_other_branch_cannot_supply_main_evidence(self):
+        other = run(conclusion="success")
+        other["head_branch"] = "codex/consolidated-dreamco-completion"
+        self.assertEqual(observations({"workflow_runs": [other]}, now=NOW, max_age_hours=6)[0]["conclusion"], "unknown")
 
     def test_malformed_run_identity_never_becomes_success(self):
         for invalid in (True, "42", 0, -1):
@@ -55,7 +60,7 @@ class GreenkeeperObservationsTests(unittest.TestCase):
         self.assertEqual(rows[0]["conclusion"], "failure")
         args = mock_run.call_args.args[0]
         self.assertEqual(args[:2], ["gh", "api"])
-        self.assertIn("status=completed&per_page=30", args[2])
+        self.assertIn("status=completed&branch=main&per_page=30", args[2])
         self.assertEqual(mock_run.call_args.kwargs["timeout"], 30)
         mock_run.side_effect = subprocess.CalledProcessError(1, args)
         with self.assertRaises(subprocess.CalledProcessError):
