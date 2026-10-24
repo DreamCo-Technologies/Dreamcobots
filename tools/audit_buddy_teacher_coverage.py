@@ -107,6 +107,20 @@ class AuditError(ValueError):
     """A registry cannot be safely audited."""
 
 
+def _reject_duplicate_json_keys(pairs: list[tuple[str, object]]) -> dict:
+    """Reject duplicate registry keys, including nested truth/receipt fields.
+
+    Standard json.loads silently uses the final value, hiding contradictory
+    declarations such as trained_weights_exist=true followed by false.
+    """
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise AuditError("duplicate JSON key in registry")
+        result[key] = value
+    return result
+
+
 def _unique(rows: list, key: str, source: str) -> list:
     if not isinstance(rows, list):
         raise AuditError(f"{source}: expected a list")
@@ -126,7 +140,8 @@ def audit(root: Path = ROOT) -> dict:
     for name, relative in SOURCES.items():
         path = root / relative
         try:
-            data[name] = json.loads(path.read_text(encoding="utf-8"))
+            data[name] = json.loads(path.read_text(encoding="utf-8"),
+                                    object_pairs_hook=_reject_duplicate_json_keys)
         except (OSError, ValueError) as exc:
             raise AuditError(f"{relative}: {exc}") from exc
     divisions = _unique(data["production"]["divisions"], "name", SOURCES["production"])
