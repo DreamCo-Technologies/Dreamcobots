@@ -62,6 +62,35 @@ class PlannerIntegrityTests(unittest.TestCase):
         output = planner.build_queue({"results": [{"division": "Division1", "benchmark": "contract"}]}, REGISTRY)
         self.assertEqual(next(row for row in output["queue"] if row["division"] == 1)["action"], "RUN_BENCHMARKS")
 
+    def test_missing_scorecard_cannot_report_complete(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as temp:
+            result = planner.load_queue_from_scores(Path(temp) / "absent.json", REGISTRY)
+        self.assertFalse(result["complete"])
+        self.assertEqual(result["score_source_status"], "missing")
+        self.assertEqual(len(result["queue"]), 65)
+        self.assertTrue(all(row["action"] == "RUN_BENCHMARKS" for row in result["queue"]))
+
+    def test_empty_scorecard_cannot_report_complete(self):
+        import json
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as temp:
+            path = Path(temp) / "empty.json"
+            path.write_text(json.dumps({"results": []}))
+            result = planner.load_queue_from_scores(path, REGISTRY)
+        self.assertFalse(result["complete"])
+        self.assertEqual(result["score_source_status"], "empty")
+
+    def test_measured_scorecard_remains_complete(self):
+        import json
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as temp:
+            path = Path(temp) / "measured.json"
+            path.write_text(json.dumps({"results": [measure(70)]}))
+            result = planner.load_queue_from_scores(path, REGISTRY)
+        self.assertTrue(result["complete"])
+        self.assertEqual(result["score_source_status"], "present")
+
     def test_bad_registry_rejected(self):
         with self.assertRaises(ValueError):
             planner.build_queue({"results": []}, {"divisions": [{"name": "OnlyOne", "id": 1}]})

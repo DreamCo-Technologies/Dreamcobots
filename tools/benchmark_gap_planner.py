@@ -95,19 +95,41 @@ def build_queue(data, registry):
             "queue": queue, "measurement_policy": "unknown is not failure", "mastery_policy": "repeatable evidence required"}
 
 
+def load_queue_from_scores(source: Path, registry: dict) -> dict:
+    """Preserve an honest incomplete state when no measured scorecard exists.
+
+    This is a planning queue, not passing benchmark or mastery evidence.
+    """
+    if not source.is_file():
+        result = build_queue({"results": []}, registry)
+        result["complete"] = False
+        result["score_source_status"] = "missing"
+        return result
+    data = json.loads(source.read_text())
+    result = build_queue(data, registry)
+    measurements = data.get("results", data.get("divisionResults", []))
+    if not measurements:
+        result["complete"] = False
+        result["score_source_status"] = "empty"
+    else:
+        result["score_source_status"] = "present"
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--scores", default="benchmark-scores.json")
     parser.add_argument("--out", default="benchmark-gap-queue.json")
     args = parser.parse_args()
     source = Path(args.scores)
-    data = json.loads(source.read_text()) if source.exists() else {"results": []}
     registry = json.loads((Path(__file__).resolve().parents[1] / "config/masterbot-65-registry.json").read_text())
-    result = build_queue(data, registry)
+    result = load_queue_from_scores(source, registry)
     Path(args.out).write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps({"divisions": 65, "queue_items": len(result["queue"]),
                       "unmeasured_divisions": sum(row["action"] == "RUN_BENCHMARKS" for row in result["queue"]),
-                      "rejected": len(result["rejected"])}, indent=2))
+                      "rejected": len(result["rejected"]),
+                      "score_source_status": result["score_source_status"],
+                      "complete": result["complete"]}, indent=2))
     return 2 if result["rejected"] else 0
 
 

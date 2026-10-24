@@ -52,6 +52,9 @@ jobs:
       - name: Verify bounded Greenkeeper observation evidence
         run: python -m unittest tests.test_greenkeeper_observations
 
+      - name: Verify benchmark scorecard provenance and completeness
+        run: python -m unittest tests.test_benchmark_gap_planner_integrity
+
       - name: Verify benchmark handoff provenance and manual inputs
         run: python -m unittest discover -s tests -p 'test_benchmark_upstream_run_binding.py'
 
