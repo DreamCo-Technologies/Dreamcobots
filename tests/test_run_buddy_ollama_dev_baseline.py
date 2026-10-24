@@ -50,6 +50,13 @@ class LocalBaselineTests(unittest.TestCase):
         self.assertEqual(result["passed_public_dev_fixtures"], 4)
         self.assertEqual(result["latency_ms_p95"], 400)
         self.assertEqual(result["server_reported_tokens_per_second_mean"], 12)
+        self.assertEqual(result["generation_options"], {"temperature": 0, "num_predict": 128})
+        self.assertEqual(result["request_timeout_seconds"], 30.0)
+        self.assertEqual(set(result["public_fixture_runtime"]), set(PINNED))
+        self.assertEqual([result["public_fixture_runtime"][name]["latency_ms"] for name in sorted(PINNED)],
+                         [100, 200, 300, 400])
+        self.assertTrue(all(row["server_reported_tokens_per_second"] == 12
+                            for row in result["public_fixture_runtime"].values()))
         self.assertEqual(result["independent_holdout_receipts"], 0)
         self.assertFalse(result["eligible_for_model_promotion"])
         self.assertFalse(result["model_quality_independently_verified"])
@@ -58,6 +65,24 @@ class LocalBaselineTests(unittest.TestCase):
         self.assertEqual(len(fake.calls), 6)
         self.assertEqual(fake.tag_calls, 2)
         self.assertTrue(result["post_run_local_tag_digest_rechecked"])
+
+    def test_missing_server_rate_is_visible_per_task_not_fabricated(self):
+        class MissingRate(FakeTransport):
+            def __call__(self, base, route, payload, timeout):
+                response = super().__call__(base, route, payload, timeout)
+                if route == "/api/generate":
+                    response.pop("eval_duration")
+                return response
+
+        result = run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(),
+                              transport=MissingRate())
+        self.assertIsNone(result["server_reported_tokens_per_second_mean"])
+        self.assertEqual(set(result["public_fixture_runtime"]), set(PINNED))
+        self.assertTrue(all(row["server_reported_tokens_per_second"] is None
+                            for row in result["public_fixture_runtime"].values()))
+        self.assertTrue(all(row["latency_ms"] >= 0
+                            for row in result["public_fixture_runtime"].values()))
+        self.assertNotIn("weather_read_only", json.dumps(result))
 
     def test_wrong_answer_not_credited(self):
         result = run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(),
