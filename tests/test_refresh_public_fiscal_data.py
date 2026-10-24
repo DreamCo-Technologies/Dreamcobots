@@ -23,7 +23,10 @@ class FiscalRefreshEvidenceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / 'evidence.json'
             def fake_fetch(url):
-                return debt if url == refresh.US_DEBT_URL else agencies
+                value = debt if url == refresh.US_DEBT_URL else agencies
+                if isinstance(value, BaseException):
+                    raise value
+                return value
             args = ['refresh_public_fiscal_data.py'] + (['--allow-offline'] if allow_offline else [])
             with patch.object(refresh, 'fetch_json', side_effect=fake_fetch), patch.object(refresh, 'OUT', output), patch.object(refresh, 'ROOT', Path(tmp)), patch.object(sys, 'argv', args), contextlib.redirect_stdout(io.StringIO()) as stdout:
                 code = refresh.main()
@@ -62,6 +65,20 @@ class FiscalRefreshEvidenceTests(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertEqual(payload['runtime_verified_source_count'], 0)
         self.assertEqual(set(status['failed_sources']), {'us_treasury_debt_to_penny', 'us_usaspending'})
+
+    def test_network_unreachable_keeps_partial_evidence_blocked(self):
+        code, payload, status = self.run_refresh(DEBT, OSError('Network is unreachable'))
+        self.assertEqual(code, 1)
+        self.assertEqual(payload['runtime_verified_source_count'], 1)
+        self.assertEqual(payload['failures'][0]['source_id'], 'us_usaspending')
+        self.assertIn('Network is unreachable', payload['failures'][0]['error'])
+        self.assertEqual(status['failed_sources'], ['us_usaspending'])
+
+    def test_non_object_response_rejected(self):
+        with patch.object(refresh.urllib.request, 'urlopen') as urlopen:
+            urlopen.return_value.__enter__.return_value.read.return_value = b'[]'
+            with self.assertRaisesRegex(ValueError, 'non-object JSON'):
+                refresh.fetch_json(refresh.US_DEBT_URL)
 
     def test_allow_offline_retains_blocked_evidence(self):
         code, payload, status = self.run_refresh({}, {}, allow_offline=True)
