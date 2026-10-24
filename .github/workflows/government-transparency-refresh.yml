@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  issues: write
 
 concurrency:
   group: government-transparency-refresh
@@ -22,8 +21,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - name: Validate global government architecture
-        run: python3 -m unittest tests.test_global_government_system
+      - name: Validate global government architecture and fiscal source evidence
+        run: python3 -m unittest tests.test_global_government_system tests.test_refresh_public_fiscal_data
       - name: Refresh authoritative public fiscal data
         run: python3 tools/refresh_public_fiscal_data.py
       - name: Rebuild global government benchmarks
@@ -49,6 +48,10 @@ jobs:
           print(f"- Debt records: **{len(d.get('debt_records',[]))}**")
           print(f"- Agency spending records: **{len(d.get('agency_spending_records',[]))}**")
           print(f"- Failed sources: **{d.get('failed_source_count',0)}**")
+          for failure in d.get('failures',[]):
+              source=str(failure.get('source_id','unknown'))[:80]
+              reason=str(failure.get('error','unspecified'))[:240].replace('\\n',' ')
+              print(f"- Blocked source: **{source}** — {reason}")
           debt=(d.get('debt_records') or [{}])[0]
           if debt:
               print(f"- U.S. debt source date: **{debt.get('source_record_date')}**")
