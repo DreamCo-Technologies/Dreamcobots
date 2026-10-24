@@ -55,9 +55,38 @@ def api(path: str) -> dict:
         return json.loads(response.read().decode("utf-8"))
 
 
+def fetch_workflow_inventory(repo: str, *, page_limit: int = 20) -> list[dict]:
+    """Read every workflow page, never silently reporting a partial inventory.
+
+    GitHub's workflow listing is paginated; the first 100 records cannot
+    represent repositories with more workflows. An inconsistent response
+    remains a visible blocker rather than producing false coverage evidence.
+    """
+    workflows: list[dict] = []
+    seen: set[int] = set()
+    for page in range(1, page_limit + 1):
+        payload = api(f"/repos/{repo}/actions/workflows?per_page=100&page={page}")
+        batch = payload.get("workflows")
+        total = payload.get("total_count")
+        if not isinstance(batch, list) or type(total) is not int or total < 0:
+            raise RuntimeError("invalid GitHub workflow inventory response")
+        for workflow in batch:
+            if not isinstance(workflow, dict) or type(workflow.get("id")) is not int:
+                raise RuntimeError("invalid GitHub workflow identity")
+            if workflow["id"] in seen:
+                raise RuntimeError("duplicate GitHub workflow across inventory pages")
+            seen.add(workflow["id"])
+            workflows.append(workflow)
+        if len(workflows) == total:
+            return workflows
+        if len(workflows) > total or not batch:
+            raise RuntimeError("incomplete or inconsistent GitHub workflow inventory")
+    raise RuntimeError("GitHub workflow inventory exceeds bounded page limit")
+
+
 def main() -> int:
     repo = os.environ.get("GITHUB_REPOSITORY", "DreamCo-Technologies/Dreamcobots")
-    workflows = api(f"/repos/{repo}/actions/workflows?per_page=100").get("workflows", [])
+    workflows = fetch_workflow_inventory(repo)
     local = {p.name for p in (ROOT / ".github" / "workflows").glob("*.yml")} | {p.name for p in (ROOT / ".github" / "workflows").glob("*.yaml")}
     cutoff = datetime.now(timezone.utc) - timedelta(days=30)
     rows = []
