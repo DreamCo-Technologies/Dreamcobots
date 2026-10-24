@@ -8,6 +8,7 @@ from tools.validate_benchmark_upstream_run import verify_run
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = "DreamCo-Technologies/Dreamcobots"
+BRANCH = "main"
 WORKFLOWS = {
     "benchmark-training-queue.yml": "Benchmark Evidence Loop",
     "benchmark-sandbox-manifest.yml": "Benchmark Training Queue",
@@ -24,10 +25,12 @@ class BenchmarkUpstreamRunBindingTests(unittest.TestCase):
             "conclusion": "success",
             "repository": {"full_name": REPO},
             "head_repository": {"full_name": REPO},
+            "head_branch": BRANCH,
         }
 
     def check(self, data):
-        return verify_run(data, run_id="12345", expected_name="Benchmark Evidence Loop", repository=REPO)
+        return verify_run(data, run_id="12345", expected_name="Benchmark Evidence Loop",
+                          repository=REPO, expected_branch=BRANCH)
 
     def test_valid_completed_same_repository_run(self):
         self.assertEqual(self.check(self.sample()), [])
@@ -39,16 +42,34 @@ class BenchmarkUpstreamRunBindingTests(unittest.TestCase):
             {"repository": {"full_name": "someone/else"}},
             {"head_repository": {"full_name": "someone/fork"}},
             {"head_repository": None},
+            {"head_branch": "unrelated-branch"},
+            {"head_branch": ""},
+            {"head_branch": None},
+            {"head_branch": True},
         ]
         for change in changes:
             with self.subTest(change=change):
                 self.assertTrue(self.check({**self.sample(), **change}))
 
+    def test_missing_current_branch_rejected(self):
+        for expected_branch in ("", "  ", None):
+            with self.subTest(expected_branch=expected_branch):
+                self.assertTrue(verify_run(self.sample(), run_id="12345",
+                                           expected_name="Benchmark Evidence Loop",
+                                           repository=REPO, expected_branch=expected_branch))
+
+    def test_review_branch_must_match_review_source(self):
+        review = {**self.sample(), "head_branch": "codex/consolidated-dreamco-completion"}
+        self.assertEqual(verify_run(review, run_id="12345", expected_name="Benchmark Evidence Loop",
+                                    repository=REPO, expected_branch="codex/consolidated-dreamco-completion"), [])
+        self.assertTrue(self.check(review))
+
     def test_malformed_run_identity_rejected(self):
         for run_id in ("", "0", "-1", "1e3", "12345;echo", " 12345"):
             with self.subTest(run_id=run_id):
                 self.assertTrue(verify_run(self.sample(), run_id=run_id,
-                                           expected_name="Benchmark Evidence Loop", repository=REPO))
+                                           expected_name="Benchmark Evidence Loop", repository=REPO,
+                                           expected_branch=BRANCH))
         self.assertTrue(self.check(None))
 
     def test_all_three_manual_workflows_bind_and_validate_upstream_artifacts(self):
