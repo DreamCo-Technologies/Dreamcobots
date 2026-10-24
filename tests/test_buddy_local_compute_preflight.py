@@ -4,7 +4,7 @@ import json
 import unittest
 from pathlib import Path
 
-from tools.buddy_local_compute_preflight import parse_cgroup_memory_limit, parse_linux_memavailable, parse_linux_memtotal, report
+from tools.buddy_local_compute_preflight import parse_cgroup_memory_current, parse_cgroup_memory_limit, parse_linux_memavailable, parse_linux_memtotal, report
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -55,6 +55,47 @@ class LocalComputePreflightTests(unittest.TestCase):
         for value in ("max", "0", "-1", "1.5", "1\n2", str(2 ** 63 - 4096)):
             with self.subTest(value=value):
                 self.assertIsNone(parse_cgroup_memory_limit(value))
+
+    def test_cgroup_current_parser_accepts_zero_and_rejects_bad_readings(self):
+        self.assertEqual(parse_cgroup_memory_current("0\\n"), 0)
+        self.assertEqual(parse_cgroup_memory_current("1073741824\\n"), 1024 ** 3)
+        for value in ("max", "-1", "1.5", "1\\n2", str(2 ** 60)):
+            with self.subTest(value=value):
+                self.assertIsNone(parse_cgroup_memory_current(value))
+
+    def test_cgroup_v2_usage_is_not_model_fit_evidence(self):
+        result = report(self.data, 16 * 1024 ** 3, "linux_meminfo", "Linux",
+                        4 * 1024 ** 3, "cgroup_v2",
+                        cgroup_current_bytes=3 * 1024 ** 3,
+                        cgroup_current_source="cgroup_v2")
+        self.assertEqual(result["observed_cgroup_current_usage_gib"], 3)
+        self.assertEqual(result["observed_cgroup_limit_minus_usage_gib"], 1)
+        self.assertFalse(result["hardware_suitability_verified"])
+        self.assertFalse(result["training_authorized"])
+
+    def test_over_limit_usage_never_reports_negative_headroom(self):
+        result = report(self.data, None, "unavailable", "Linux",
+                        2 * 1024 ** 3, "cgroup_v2",
+                        cgroup_current_bytes=3 * 1024 ** 3,
+                        cgroup_current_source="cgroup_v2")
+        self.assertEqual(result["observed_cgroup_limit_minus_usage_gib"], 0)
+        self.assertFalse(result["candidate_weight_only_estimates"][0]["fits_in_memory_verified"])
+
+    def test_cgroup_current_requires_matching_v2_provenance(self):
+        for limit, limit_source, current, current_source, system in (
+            (None, "unavailable", 0, "cgroup_v2", "Linux"),
+            (1024, "cgroup_v1", 0, "cgroup_v2", "Linux"),
+            (1024, "cgroup_v2", 0, "unavailable", "Linux"),
+            (1024, "cgroup_v2", True, "cgroup_v2", "Linux"),
+            (1024, "cgroup_v2", -1, "cgroup_v2", "Linux"),
+            (1024, "cgroup_v2", 0, "cgroup_v2", "Darwin"),
+        ):
+            with self.subTest(limit=limit, current=current, source=current_source, system=system):
+                with self.assertRaises(ValueError):
+                    report(self.data, None, "unavailable", system,
+                           limit, limit_source,
+                           cgroup_current_bytes=current,
+                           cgroup_current_source=current_source)
 
     def test_cgroup_caps_host_memory_without_claiming_fit(self):
         result = report(self.data, 16 * 1024 ** 3, "linux_meminfo", "Linux",
