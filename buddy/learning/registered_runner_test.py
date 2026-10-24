@@ -25,6 +25,33 @@ class RegisteredRunnerTest(unittest.TestCase):
             self.assertEqual(result["promotions"], 0)
 
 
+    def test_missing_or_malformed_event_envelope_cannot_replace_evidence(self):
+        root = Path(__file__).resolve().parent
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            events = temp_path / "events.json"
+            out = temp_path / "evidence.json"
+            for payload in ({"eventz": [{"event_id": "lost-event"}]}, [], {"events": "not-a-list"}):
+                with self.subTest(payload=payload):
+                    out.write_text("previous-evidence\\n")
+                    events.write_text(json.dumps(payload))
+                    result = subprocess.run(
+                        [sys.executable, str(root / "registered_runner.py"),
+                         "--events", str(events), "--out", str(out)],
+                        capture_output=True, text=True,
+                    )
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertEqual(out.read_text(), "previous-evidence\\n")
+            # An explicitly empty batch is still a valid, transparent no-op.
+            events.write_text(json.dumps({"events": []}))
+            subprocess.run(
+                [sys.executable, str(root / "registered_runner.py"),
+                 "--events", str(events), "--out", str(out)], check=True,
+            )
+            receipt = json.loads(out.read_text())
+            self.assertEqual(receipt["events_processed"], 0)
+            self.assertFalse(receipt["production_ready"])
+
     def test_invalid_capability_identity_cannot_enter_evidence(self):
         for capability in (None, False, 17, [], {}, "", " \t "):
             with self.subTest(capability=capability):
