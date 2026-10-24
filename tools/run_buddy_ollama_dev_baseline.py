@@ -21,7 +21,10 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
-from tools.score_buddy_dev_fixtures import PINNED, score_dev_responses, CATALOG
+if __package__:
+    from .score_buddy_dev_fixtures import PINNED, score_dev_responses, CATALOG
+else:
+    from score_buddy_dev_fixtures import PINNED, score_dev_responses, CATALOG
 
 DIGEST = re.compile(r"(?:sha256:)?([0-9a-f]{64})\Z")
 MODEL = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:/-]{0,119}\Z")
