@@ -18,6 +18,7 @@ OPAQUE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{7,79}\Z")
 SPLITS = ("train", "validation", "holdout")
 # Bound untrusted manifests before JSON parsing; no raw dataset examples belong here.
 MAX_MANIFEST_BYTES = 64_000_000
+MAX_JSON_NESTING = 128
 TOP_KEYS = {"schema", "dataset_id", "contains_raw_examples", "training_authorized",
             "provenance_review_receipt", "license_review_receipt",
             "consent_review_receipt", "privacy_review_receipt", "splits"}
@@ -41,6 +42,29 @@ def _reject_nonfinite(value: str) -> None:
     raise SplitManifestError("nonfinite JSON constant")
 
 
+def _check_json_nesting(raw: str) -> None:
+    """Limit structural nesting without confusing quoted brackets with arrays."""
+    depth = 0
+    quoted = False
+    escaped = False
+    for char in raw:
+        if quoted:
+            if escaped:
+                escaped = False
+            elif char == "\\\\":
+                escaped = True
+            elif char == '"':
+                quoted = False
+        elif char == '"':
+            quoted = True
+        elif char in "[{":
+            depth += 1
+            if depth > MAX_JSON_NESTING:
+                raise SplitManifestError("excessively nested JSON")
+        elif char in "]}":
+            depth -= 1
+
+
 def parse_manifest(raw: str) -> Any:
     if not isinstance(raw, str):
         raise SplitManifestError("manifest must be UTF-8 text")
@@ -49,6 +73,7 @@ def parse_manifest(raw: str) -> Any:
             raise SplitManifestError("manifest exceeds size limit")
     except UnicodeEncodeError as exc:
         raise SplitManifestError("manifest contains invalid Unicode") from exc
+    _check_json_nesting(raw)
     try:
         return json.loads(raw, object_pairs_hook=_unique_keys,
                           parse_constant=_reject_nonfinite)
