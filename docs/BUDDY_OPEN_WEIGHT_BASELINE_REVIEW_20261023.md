@@ -70,3 +70,22 @@ On PR #15436 head `833e1a270697d292a88a02004f8c68b857b90fbd`, the Buddy Teacher 
 **Evidence URLs:** https://github.com/DreamCo-Technologies/Dreamcobots/pull/15436 ; https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/40007963488 ; https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/40007963388 .
 
 **What was not done:** no model downloaded, no LoRA/QLoRA job run, no new weights or benchmark receipts, no private dataset access, no paid API, no secrets touched, no workflow dispatched, no production deployment or merge.
+
+
+## Optional, local-only Buddy public-fixture inference baseline (2026-10-24)
+
+The new `tools/run_buddy_ollama_dev_baseline.py` is an **opt-in** stdlib-only adapter for a locally running Ollama server. Unlike the supplied-response fixture scorer, it requests four public synthetic prompts from an **already installed** model, checks the exact local model tag against a pinned SHA-256 digest reported by Ollama, and records wall-clock latency, any server-reported output-token rate, and public-fixture scores. It does **not** install Ollama, pull weights, access private data, train, execute tools, use paid APIs, dispatch CI, or promote a model. CI runs only fake-server tests and never calls a real model.
+
+Run **only after** separately reviewing the exact model's commercial/derivative rights, verifying free/approved compute, installing an approved local model by a separately authorized procedure, and checking that the Ollama server is genuinely local rather than cloud-backed:
+
+```sh
+python3 tools/run_buddy_ollama_dev_baseline.py \
+  --model 'REPLACE_WITH_EXACT_INSTALLED_MODEL_TAG' \
+  --digest 'REPLACE_WITH_LOCAL_64_HEX_MODEL_DIGEST' \
+  --execute-local-inference --approved-free-compute --rights-reviewed \
+  --output buddy-local-public-dev-baseline.json
+```
+
+Obtain the model tag/digest from the local Ollama `/api/tags` inventory and compare it with the exact intended artifact. This tool only connects to explicit HTTP loopback IPs, disables proxies, and rejects redirects; it **cannot prove** that the server is not using remote inference, or that license, provenance, privacy or cost claims are valid. Never use it on private or sealed holdouts. Its public fixtures are visible in source and susceptible to memorization. A perfect score is **not** an independent model benchmark, division mastery, training evidence, or release approval. No raw prompts, model responses, response hashes, or hidden test content are saved. Financial cost is explicitly marked unverified.
+
+The output includes the local artifact digest, benchmark-catalog digest, count of actual API calls, scores on four public development tasks, median/p95 client wall-clock latency, and mean server-reported tokens/sec only when all four calls include valid counts/durations. Compare results only under controlled hardware, runtime, model-revision and generation settings; startup effects and server-side concurrency affect latency. Independent sealed holdouts, verifiable evaluation receipts, safety tests, actual compute costs, rollback and human approval are still required before model promotion.
