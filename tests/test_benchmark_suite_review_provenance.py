@@ -25,6 +25,40 @@ class BenchmarkSuiteReviewProvenanceTests(unittest.TestCase):
             "canonical sources; do not treat stale contracts as reviewed evidence.",
         )
 
+    def test_taxonomy_domain_map_is_not_misregistered_as_suites(self):
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from tools.benchmark_suite_contracts import build
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "config").mkdir()
+            (root / "config" / "universal-benchmark.json").write_text(
+                json.dumps({"domains": {"communication": ["email", "chat"]}}),
+                encoding="utf-8",
+            )
+            (root / "config" / "trust-benchmark-suite.json").write_text(
+                json.dumps({"domains": ["privacy"]}), encoding="utf-8",
+            )
+            result = build(root)
+        self.assertEqual(result["count"], 1)
+        self.assertEqual(result["entries"][0]["suite_id"], "privacy")
+        self.assertEqual(result["entries"][0]["review"]["status"],
+                         "requires_suite_specific_review")
+
+    def test_malformed_suite_list_still_fails_closed(self):
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from tools.benchmark_suite_contracts import build
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "config").mkdir()
+            (root / "config" / "bad-benchmark.json").write_text(
+                json.dumps({"suites": {"not_a_suite_list": True}}),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "must be a list"):
+                build(root)
+
     def test_all_registered_suites_remain_unverified(self):
         registry = json.loads(OUTPUT.read_text(encoding="utf-8"))
         rows = registry["entries"]
