@@ -91,7 +91,14 @@ def build_queue(data, registry):
                     reason = "at/above target; verify repeatability"
             queue.append({"division": division, "benchmark": record.get("benchmark"), "priority": priority, "action": action, "reason": reason})
     queue.sort(key=lambda item: (item["priority"], item["division"], item.get("benchmark") or ""))
-    return {"rejected": rejected, "complete": not rejected, "schema": "dreamco.benchmark_gap_queue.v1", "divisions": 65,
+    # A successfully constructed queue is not complete measurement coverage.
+    # A single valid division score must not hide 64 unmeasured divisions, and
+    # an incomplete score/target pair must not be counted as measured.
+    unmeasured = sorted({item["division"] for item in queue if item["action"] == "RUN_BENCHMARKS"})
+    return {"rejected": rejected, "complete": not rejected and not unmeasured,
+            "schema": "dreamco.benchmark_gap_queue.v1", "divisions": 65,
+            "measured_divisions": 65 - len(unmeasured), "unmeasured_division_ids": unmeasured,
+            "coverage_scope": "division_measurement_presence_only; not suite coverage or mastery",
             "queue": queue, "measurement_policy": "unknown is not failure", "mastery_policy": "repeatable evidence required"}
 
 
