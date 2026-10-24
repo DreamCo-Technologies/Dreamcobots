@@ -256,5 +256,26 @@ class ActionsHealthAuditTest(unittest.TestCase):
                 recent_run_sample(case, cutoff)
 
 
+    def test_live_audit_requires_canonical_workflow_paths(self) -> None:
+        from tools.audit_actions_live import canonical_workflow_filename
+
+        self.assertEqual(canonical_workflow_filename(".github/workflows/ci.yml"), "ci.yml")
+        self.assertEqual(canonical_workflow_filename(".github/workflows/ci.yaml"), "ci.yaml")
+        for invalid in (
+            ".github/archived/ci.yml",
+            "ci.yml",
+            "../.github/workflows/ci.yml",
+            ".github/workflows/nested/ci.yml",
+            ".github/workflows/ci.yml@main",
+            ".github/workflows/ci.yml/../ci.yml",
+            ".github/workflows/",
+            None,
+            {},
+        ):
+            with self.subTest(path=invalid):
+                self.assertIsNone(canonical_workflow_filename(invalid))
+
+
+
 if __name__ == "__main__":
     unittest.main()
