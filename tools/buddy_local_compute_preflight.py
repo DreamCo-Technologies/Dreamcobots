@@ -14,7 +14,11 @@ import platform
 import re
 import subprocess
 
-from tools.validate_buddy_open_weight_candidates import parse, validate
+# Support both `python3 tools/...` and `python3 -m unittest` imports.
+if __package__:
+    from .validate_buddy_open_weight_candidates import parse, validate
+else:
+    from validate_buddy_open_weight_candidates import parse, validate
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "config/buddy-open-weight-candidate-research.json"
