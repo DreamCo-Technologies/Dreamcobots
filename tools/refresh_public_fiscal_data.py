@@ -13,13 +13,22 @@ US_AGENCIES_URL='https://api.usaspending.gov/api/v2/references/toptier_agencies/
 def fetch_json(url:str)->dict:
     req=urllib.request.Request(url,headers={'User-Agent':'DreamCo-Buddy-Public-Fiscal-Transparency/1.0'})
     with urllib.request.urlopen(req,timeout=30) as response:
-        return json.loads(response.read().decode('utf-8'))
+        doc=json.loads(response.read().decode('utf-8'))
+    if not isinstance(doc,dict):
+        raise ValueError('Source returned a non-object JSON response')
+    return doc
 
 def main()->int:
     ap=argparse.ArgumentParser(); ap.add_argument('--allow-offline',action='store_true'); args=ap.parse_args()
     records=[]; agency_spending=[]; failures=[]; fetched_at=datetime.now(timezone.utc).isoformat()
     try:
-        doc=fetch_json(US_DEBT_URL); row=(doc.get('data') or [])[0]
+        doc=fetch_json(US_DEBT_URL)
+        rows=doc.get('data')
+        if not isinstance(rows,list) or not rows or not isinstance(rows[0],dict):
+            raise ValueError('Treasury response missing a debt record')
+        row=rows[0]
+        if not row.get('record_date') or row.get('tot_pub_debt_out_amt') in (None,''):
+            raise ValueError('Treasury debt record missing date or debt amount')
         records.append({
           'jurisdiction':'US','source_id':'us_treasury_debt_to_penny','authority':'U.S. Department of the Treasury Fiscal Data','source_endpoint':US_DEBT_URL,
           'source_record_date':row.get('record_date'),'currency':'USD','debt_measure':'total_public_debt_outstanding','debt_value':row.get('tot_pub_debt_out_amt'),
@@ -29,7 +38,12 @@ def main()->int:
         failures.append({'source_id':'us_treasury_debt_to_penny','error':str(exc),'runtime_status':'blocked'})
     try:
         doc=fetch_json(US_AGENCIES_URL)
-        for row in doc.get('results',[]):
+        rows=doc.get('results')
+        if not isinstance(rows,list) or not rows:
+            raise ValueError('USAspending response missing agency results')
+        if any(not isinstance(row,dict) or not row.get('agency_name') or (row.get('agency_id') is None and not row.get('toptier_code')) for row in rows):
+            raise ValueError('USAspending response contains an invalid agency record')
+        for row in rows:
             agency_spending.append({
               'jurisdiction':'US','source_id':'us_usaspending','authority':'USAspending.gov / U.S. Treasury','source_endpoint':US_AGENCIES_URL,
               'agency_id':row.get('agency_id'),'toptier_code':row.get('toptier_code'),'agency_name':row.get('agency_name'),'abbreviation':row.get('abbreviation'),
@@ -45,7 +59,7 @@ def main()->int:
       'truth_boundary':'Values are copied from authoritative source records with their fiscal/source context. The generated-at timestamp is not the fiscal record date; debt and spending use different accounting periods and definitions and must not be mixed without explicit normalization.'
     }
     OUT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n')
-    print(json.dumps({'ok':not failures,'debt_records':len(records),'agency_spending_records':len(agency_spending),'failures':len(failures),'output':str(OUT.relative_to(ROOT))},indent=2))
+    print(json.dumps({'ok':not failures,'debt_records':len(records),'agency_spending_records':len(agency_spending),'failures':len(failures),'failed_sources':[x['source_id'] for x in failures],'output':str(OUT.relative_to(ROOT))},indent=2))
     if failures and not args.allow_offline: return 1
     return 0
 if __name__=='__main__': raise SystemExit(main())
