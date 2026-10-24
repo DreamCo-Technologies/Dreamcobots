@@ -37,7 +37,14 @@ def valid_provenance(run: dict, *, expected_repo: str | None = None) -> bool:
         return False
     if expected_repo is not None and full_name != expected_repo:
         return False
-    if run.get("path") != WORKFLOW_PATH:
+    # GitHub Actions workflow-run metadata normally appends @<workflow ref>
+    # to the workflow file path. Accept main-only ref forms and retain the
+    # legacy bare-path representation; never accept an unrelated workflow ref.
+    if run.get("path") not in (
+        WORKFLOW_PATH,
+        f"{WORKFLOW_PATH}@main",
+        f"{WORKFLOW_PATH}@refs/heads/main",
+    ):
         return False
     if not isinstance(run_id, int) or isinstance(run_id, bool) or run_id <= 0:
         return False
