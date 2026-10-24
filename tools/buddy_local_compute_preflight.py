@@ -56,6 +56,26 @@ def parse_cgroup_memory_limit(text: str) -> int | None:
     return number if 0 < number < (1 << 60) else None
 
 
+def parse_cgroup_memory_current(text: str) -> int | None:
+    """Parse a single cgroup v2 memory.current reading; zero is valid."""
+    value = text.strip()
+    if not re.fullmatch(r"[0-9]+", value):
+        return None
+    number = int(value)
+    return number if 0 <= number < (1 << 60) else None
+
+
+def observed_cgroup_memory_current() -> tuple[int | None, str]:
+    """Read v2 usage from the same cgroup as memory.max, never process data."""
+    try:
+        usage = parse_cgroup_memory_current(
+            Path("/sys/fs/cgroup/memory.current").read_text(encoding="ascii")
+        )
+    except (OSError, UnicodeError):
+        return None, "unavailable"
+    return (usage, "cgroup_v2") if usage is not None else (None, "unavailable")
+
+
 def observed_cgroup_memory_limit() -> tuple[int | None, str]:
     """Read container memory ceilings only; no identifiers or process data."""
     for path, source in (
@@ -124,6 +144,7 @@ def report(
     data: dict, memory_bytes: int | None, memory_source: str, system: str,
     cgroup_limit_bytes: int | None = None, cgroup_source: str = "unavailable",
     available_memory_bytes: int | None = None, available_memory_source: str = "unavailable",
+    cgroup_current_bytes: int | None = None, cgroup_current_source: str = "unavailable",
 ) -> dict:
     """Calculate weight-only arithmetic and an upper memory ceiling, never fit."""
     validate(data)  # Reject research-registry readiness or training claims.
@@ -141,6 +162,12 @@ def report(
             raise ValueError("cgroup limit must be a bounded positive integer")
         if system != "Linux" or cgroup_source not in {"cgroup_v1", "cgroup_v2"}:
             raise ValueError("cgroup limit requires a Linux cgroup source")
+    if cgroup_current_bytes is not None:
+        if type(cgroup_current_bytes) is not int or not 0 <= cgroup_current_bytes < (1 << 60):
+            raise ValueError("cgroup current usage must be a bounded nonnegative integer")
+        if (system != "Linux" or cgroup_source != "cgroup_v2"
+                or cgroup_current_source != "cgroup_v2" or cgroup_limit_bytes is None):
+            raise ValueError("cgroup current usage requires matching v2 limit provenance")
     if system not in {"Linux", "Darwin", "Windows", "Other"}:
         system = "Other"
     limits = [value for value in (memory_bytes, cgroup_limit_bytes) if value is not None]
@@ -164,11 +191,14 @@ def report(
         "observed_total_memory_gib": round(memory_bytes / float(GIB), 2) if memory_bytes is not None else None,
         "observed_cgroup_limit_gib": round(cgroup_limit_bytes / float(GIB), 2) if cgroup_limit_bytes is not None else None,
         "observed_host_available_memory_gib": round(available_memory_bytes / float(GIB), 2) if available_memory_bytes is not None else None,
+        "observed_cgroup_current_usage_gib": round(cgroup_current_bytes / float(GIB), 2) if cgroup_current_bytes is not None else None,
+        "observed_cgroup_limit_minus_usage_gib": round(max(0, cgroup_limit_bytes - cgroup_current_bytes) / float(GIB), 2) if cgroup_current_bytes is not None else None,
+        "cgroup_current_source": cgroup_current_source if cgroup_current_bytes is not None else "unavailable",
         "host_available_memory_source": available_memory_source if available_memory_bytes is not None else "unavailable",
         "cgroup_limit_source": cgroup_source if cgroup_limit_bytes is not None else "unavailable",
         "observed_effective_memory_ceiling_gib": round(ceiling / float(GIB), 2) if ceiling is not None else None,
         "candidate_weight_only_estimates": rows,
-        "notes": "Effective ceiling is the lesser of host total and detected cgroup limit, NOT available/free RAM. Linux MemAvailable is host-wide and may exceed actual container headroom; cgroup ancestor limits and usage are not assessed. Weight-only estimates use advertised size, not verified tensor count, and omit tokenizer, quantization metadata, runtime, KV cache, activations and OS usage; not minimum hardware requirements.",
+        "notes": "Effective ceiling is the lesser of host total and detected cgroup limit, NOT available/free RAM. Linux MemAvailable is host-wide and may exceed actual container headroom; cgroup ancestor limits are not assessed; v2 current usage is a momentary observation, not a promise of allocatable memory, and may change immediately. Weight-only estimates use advertised size, not verified tensor count, and omit tokenizer, quantization metadata, runtime, KV cache, activations and OS usage; not minimum hardware requirements.",
         "rights_verified": False,
         "hardware_suitability_verified": False,
         "local_latency_measured": False,
@@ -192,8 +222,13 @@ def main() -> int:
             observed_cgroup_memory_limit() if system == "Linux" else (None, "unavailable")
         )
         available, available_source = observed_available_memory()
+        current, current_source = (
+            observed_cgroup_memory_current()
+            if system == "Linux" and cgroup_source == "cgroup_v2"
+            else (None, "unavailable")
+        )
         result = report(data, memory, source, system, cgroup_limit, cgroup_source,
-                        available, available_source)
+                        available, available_source, current, current_source)
     except (OSError, ValueError, TypeError) as exc:
         parser.exit(2, f"Buddy local compute preflight blocked: {exc}\n")
     output = json.dumps(result, indent=2, sort_keys=True) + "\n"
