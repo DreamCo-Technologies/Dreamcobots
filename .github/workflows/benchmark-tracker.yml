@@ -49,6 +49,9 @@ jobs:
       - name: Guard against Actions workflow-run fanout regressions
         run: python -m unittest tests.test_actions_fanout_guard
 
+      - name: Verify bounded Greenkeeper observation evidence
+        run: python -m unittest tests.test_greenkeeper_observations
+
       - name: Verify benchmark handoff provenance and manual inputs
         run: python -m unittest discover -s tests -p 'test_benchmark_upstream_run_binding.py'
 
