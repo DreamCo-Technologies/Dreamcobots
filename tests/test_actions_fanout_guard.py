@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / ".github" / "workflows"
-SUMMARY_WORKFLOWS = ("actions-command-center.yml", "problem-registry.yml")
+SUMMARY_WORKFLOWS = ("actions-command-center.yml", "problem-registry.yml", "greenkeeper-root-cause.yml", "greenkeeper-orchestrator.yml")
 
 
 def top_level_block(text: str, key: str) -> str:
@@ -68,6 +68,14 @@ class WorkflowFanoutGuardTests(unittest.TestCase):
                 permissions = top_level_block(content, "permissions")
                 self.assertRegex(permissions, r"(?m)^\s+contents:\s*read\s*$")
                 self.assertNotRegex(permissions, r"(?m)^\s+contents:\s*write\s*$")
+
+    def test_greenkeeper_uses_bounded_live_evidence_instead_of_event_fanout(self):
+        for filename in ("greenkeeper-root-cause.yml", "greenkeeper-orchestrator.yml"):
+            with self.subTest(workflow=filename):
+                content = (WORKFLOWS / filename).read_text(encoding="utf-8")
+                self.assertIn("tools/greenkeeper_observations.py", content)
+                self.assertIn("--max-age-hours 6", content)
+                self.assertIn("GH_TOKEN:", content)
 
     def test_registry_refreshes_evidence_before_classifying(self):
         content = (WORKFLOWS / "problem-registry.yml").read_text(encoding="utf-8")
