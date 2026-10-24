@@ -70,7 +70,7 @@ def parse(text: str) -> Any:
 
 
 def _date(value: Any) -> dt.date:
-    if not isinstance(value, str) or not re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}", value):
+    if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
         raise CandidateError("invalid ISO date")
     try:
         return dt.date.fromisoformat(value)
@@ -155,7 +155,7 @@ def main() -> int:
     try:
         result = validate(parse(args.registry.read_text(encoding="utf-8")))
     except (OSError, CandidateError, TypeError, ValueError) as exc:
-        parser.exit(2, "Candidate registry preflight blocked: " + str(exc) + "\\n")
+        parser.exit(2, "Candidate registry preflight blocked: " + str(exc) + "\n")
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 
