@@ -34,6 +34,15 @@ def parse_linux_memtotal(text: str) -> int | None:
     return kib * 1024 if kib > 0 else None
 
 
+def parse_linux_memavailable(text: str) -> int | None:
+    """Parse a single host MemAvailable line; this is NOT container headroom."""
+    matches = re.findall(r"^MemAvailable:\\s*([0-9]+) kB\\s*$", text, re.MULTILINE)
+    if len(matches) != 1:
+        return None
+    kib = int(matches[0])
+    return kib * 1024 if kib > 0 else None
+
+
 def parse_cgroup_memory_limit(text: str) -> int | None:
     """Parse cgroup v2 memory.max or v1 memory.limit_in_bytes.
 
@@ -87,6 +96,17 @@ def observed_memory() -> tuple[int | None, str]:
     return None, "unavailable"
 
 
+def observed_available_memory() -> tuple[int | None, str]:
+    """Read Linux host MemAvailable, never imply per-process allocatable RAM."""
+    if platform.system() == "Linux":
+        try:
+            value = parse_linux_memavailable(Path("/proc/meminfo").read_text(encoding="ascii"))
+            return value, "linux_meminfo" if value is not None else "unavailable"
+        except (OSError, UnicodeError):
+            pass
+    return None, "unavailable"
+
+
 def _parameter_count(label: str) -> Decimal:
     match = re.fullmatch(r"([0-9]+(?:\.[0-9]+)?)([MB])", label)
     if not match:
@@ -103,11 +123,19 @@ def _parameter_count(label: str) -> Decimal:
 def report(
     data: dict, memory_bytes: int | None, memory_source: str, system: str,
     cgroup_limit_bytes: int | None = None, cgroup_source: str = "unavailable",
+    available_memory_bytes: int | None = None, available_memory_source: str = "unavailable",
 ) -> dict:
     """Calculate weight-only arithmetic and an upper memory ceiling, never fit."""
     validate(data)  # Reject research-registry readiness or training claims.
     if memory_bytes is not None and (type(memory_bytes) is not int or memory_bytes <= 0):
         raise ValueError("memory_bytes must be a positive integer or unknown")
+    if available_memory_bytes is not None:
+        if type(available_memory_bytes) is not int or available_memory_bytes <= 0:
+            raise ValueError("available memory must be a positive integer or unknown")
+        if memory_bytes is not None and available_memory_bytes > memory_bytes:
+            raise ValueError("host available memory cannot exceed host total memory")
+        if system != "Linux" or available_memory_source != "linux_meminfo":
+            raise ValueError("available memory requires Linux meminfo provenance")
     if cgroup_limit_bytes is not None:
         if type(cgroup_limit_bytes) is not int or not 0 < cgroup_limit_bytes < (1 << 60):
             raise ValueError("cgroup limit must be a bounded positive integer")
@@ -135,10 +163,12 @@ def report(
         "memory_source": memory_source if memory_bytes is not None else "unavailable",
         "observed_total_memory_gib": round(memory_bytes / float(GIB), 2) if memory_bytes is not None else None,
         "observed_cgroup_limit_gib": round(cgroup_limit_bytes / float(GIB), 2) if cgroup_limit_bytes is not None else None,
+        "observed_host_available_memory_gib": round(available_memory_bytes / float(GIB), 2) if available_memory_bytes is not None else None,
+        "host_available_memory_source": available_memory_source if available_memory_bytes is not None else "unavailable",
         "cgroup_limit_source": cgroup_source if cgroup_limit_bytes is not None else "unavailable",
         "observed_effective_memory_ceiling_gib": round(ceiling / float(GIB), 2) if ceiling is not None else None,
         "candidate_weight_only_estimates": rows,
-        "notes": "Effective ceiling is the lesser of host total and detected cgroup limit, NOT available/free RAM. Weight-only estimates omit tokenizer, quantization metadata, runtime, KV cache, activations and OS usage; not minimum hardware requirements.",
+        "notes": "Effective ceiling is the lesser of host total and detected cgroup limit, NOT available/free RAM. Linux MemAvailable is host-wide and may exceed actual container headroom; cgroup ancestor limits and usage are not assessed. Weight-only estimates use advertised size, not verified tensor count, and omit tokenizer, quantization metadata, runtime, KV cache, activations and OS usage; not minimum hardware requirements.",
         "rights_verified": False,
         "hardware_suitability_verified": False,
         "local_latency_measured": False,
@@ -161,7 +191,9 @@ def main() -> int:
         cgroup_limit, cgroup_source = (
             observed_cgroup_memory_limit() if system == "Linux" else (None, "unavailable")
         )
-        result = report(data, memory, source, system, cgroup_limit, cgroup_source)
+        available, available_source = observed_available_memory()
+        result = report(data, memory, source, system, cgroup_limit, cgroup_source,
+                        available, available_source)
     except (OSError, ValueError, TypeError) as exc:
         parser.exit(2, f"Buddy local compute preflight blocked: {exc}\n")
     output = json.dumps(result, indent=2, sort_keys=True) + "\n"
