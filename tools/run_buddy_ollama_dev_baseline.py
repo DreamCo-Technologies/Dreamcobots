@@ -155,8 +155,12 @@ def run_baseline(*, model: str, expected_digest: str, catalog: dict,
         if response.get("model") != model:
             raise BaselineError("generation response model identity mismatch")
         answer = response.get("response")
-        if response.get("done") is not True or not isinstance(answer, str) or len(answer) > 20_000:
-            raise BaselineError("incomplete or invalid model response")
+        # Ollama can report done=true after hitting num_predict; that is not
+        # a complete answer. Require an explicit normal stop, not a missing,
+        # truncated, or unknown termination reason, before scoring any task.
+        if (response.get("done") is not True or response.get("done_reason") != "stop"
+                or not isinstance(answer, str) or len(answer) > 20_000):
+            raise BaselineError("incomplete, truncated or invalid model response")
         try:
             answer.encode("utf-8")
         except UnicodeEncodeError as exc:

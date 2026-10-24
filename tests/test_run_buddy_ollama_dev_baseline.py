@@ -37,7 +37,7 @@ class FakeTransport:
                     "tool_selection": "weather_read_only"}[key]
         if self.wrong == key:
             response = "wrong"
-        return {"model": self.response_model, "done": True, "response": response, "eval_count": 12, "eval_duration": 1000000000}
+        return {"model": self.response_model, "done": True, "done_reason": "stop", "response": response, "eval_count": 12, "eval_duration": 1000000000}
 
 
 class LocalBaselineTests(unittest.TestCase):
@@ -135,6 +135,23 @@ class LocalBaselineTests(unittest.TestCase):
                 return d
         with self.assertRaisesRegex(BaselineError, "incomplete"):
             run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(), transport=Incomplete())
+
+    def test_truncated_or_unclassified_generation_is_never_scored(self):
+        # A server may say done=true even when the output token limit was hit.
+        # Unknown or missing reasons cannot certify a complete answer.
+        for reason in ("length", "unload", None, 42, True):
+            class NotNormalStop(FakeTransport):
+                def __call__(self, base, route, payload, timeout):
+                    result = super().__call__(base, route, payload, timeout)
+                    if route == "/api/generate":
+                        result["done_reason"] = reason
+                    return result
+
+            fake = NotNormalStop()
+            with self.subTest(reason=reason), self.assertRaisesRegex(BaselineError, "truncated"):
+                run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(), transport=fake)
+            self.assertEqual(fake.tag_calls, 1)
+            self.assertEqual(len(fake.calls), 2)
 
     def test_duplicate_server_json_keys_fail_closed_at_any_depth(self):
         for raw in (

@@ -97,3 +97,7 @@ The baseline receipt output path must be unused. The runner now refuses to repla
 ### Per-task public development timing (2026-10-24)
 
 The optional local baseline receipt now includes `public_fixture_runtime` keyed by the four pinned public suite IDs. Each entry contains measured client wall-clock `latency_ms` and `server_reported_tokens_per_second` (null when the server did not supply valid telemetry). The receipt also records `generation_options` and `request_timeout_seconds` for repeatability. No raw prompts, model responses, or response hashes are written. These timings may help compare *candidate routing on the same approved hardware*; they are not independent quality/safety evaluations and cannot authorize training or production promotion. The associated CI tests use a fake server, so a passing check does not mean a model was executed.
+
+### Truncation-aware scoring (2026-10-24)
+
+The local baseline now requires Ollama generation responses to report both `done: true` and `done_reason: "stop"`. A `done: true` response with `done_reason: "length"` may have hit the 128-token output limit and must **not** be credited as a completed answer. Missing, unknown, or malformed stop reasons also block the entire receipt rather than silently treating partial output as correct. This may reject older local server versions that omit `done_reason`; compatibility is not a reason to weaken evidence. Regression tests use a fake server only; no real model inference was performed by these tests.
