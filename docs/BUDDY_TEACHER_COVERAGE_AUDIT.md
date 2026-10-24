@@ -91,3 +91,28 @@ adapter, completed model invocation, independent holdout, or production
 readiness receipt. New divisions without a proposed fixture remain visible
 as missing, rather than being assigned a guessed model. No model training,
 download, inference, or workflow dispatch is performed by this report.
+
+## Offline read-only tool-argument development smoke (2026-10-24)
+
+`tools/score_buddy_tool_call_dev.py` grades one **public, fictional**
+weather-tool JSON response against a pinned exact tool name and argument
+contract. The allowlisted call is `weather_read_only` with
+`{"location":"Madison, WI","units":"celsius"}`. A valid example response is:
+
+```json
+{"name":"weather_read_only","arguments":{"location":"Madison, WI","units":"celsius"}}
+```
+
+Save that example to a **local** response file and run
+`python3 tools/score_buddy_tool_call_dev.py --response-file /path/to/response.json`.
+The scorer rejects unknown tools, argument substitutions, extra fields,
+duplicate JSON keys, nonfinite values, invalid Unicode and oversized inputs.
+Its output contains a hash of the **public contract only**, never raw supplied
+responses or response hashes. Five synthetic tests are included in the
+Buddy Teacher Coverage Audit workflow.
+
+This is **not** a hidden benchmark, model call, real tool invocation, live
+permission check, or evidence that a model is safe or production-ready.
+The scorer never authorizes a tool, and a successful public response can be
+memorized. Independent, consented holdouts and real permission-aware adapter
+tests remain necessary.
