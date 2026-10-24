@@ -24,6 +24,40 @@ MIN_MAJOR = {"actions/checkout": 4, "actions/setup-node": 4, "actions/setup-pyth
 USES_RE = re.compile(r"uses:\s*([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)@v(\d+)")
 NPM_RE = re.compile(r"npm\s+run\s+([A-Za-z0-9:_-]+)")
 PATH_CMD_RE = re.compile(r"(?:python3|python|node|tsx|npx\s+tsx)\s+((?:tools|script|scripts|tests)/[^\s\'\"|&;]+)")
+
+# Validate explicit local unittest module targets. Path-command scanning alone
+# misses "python3 -m unittest package.module" and can falsely report green CI.
+UNITTEST_CMD_RE = re.compile(r"\bpython(?:3(?:\.\d+)?)?\s+-m\s+unittest\s+([^\n#;&|]+)")
+
+
+def missing_unittest_modules(text: str, root: Path = ROOT) -> list[str]:
+    """Find absent local modules named in explicit unittest invocations.
+
+    Discovery mode is dynamic and is intentionally excluded. A parent package
+    alone is not evidence that its requested child module exists.
+    """
+    missing: set[str] = set()
+    for args in UNITTEST_CMD_RE.findall(text):
+        tokens = args.strip().split()
+        if not tokens or tokens[0] == "discover":
+            continue
+        for token in tokens:
+            if token.startswith("-") or not re.fullmatch(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)+", token):
+                continue
+            parts = token.split(".")
+            # Do not assert that installed third-party modules are local files.
+            if not (root / parts[0]).is_dir():
+                continue
+            module_exists = any(
+                root.joinpath(*parts[:end]).with_suffix(".py").is_file()
+                for end in range(len(parts), 1, -1)
+            )
+            package_exists = (root.joinpath(*parts) / "__init__.py").is_file()
+            if not (module_exists or package_exists):
+                missing.add(token)
+    return sorted(missing)
+
+
 NAME_RE = re.compile(r"^name:\s*[\"']?(.+?)[\"']?\s*$", re.M)
 STEP_NAME_RE = re.compile(r"^\s*-\s+name:\s*[\"']?(.+?)[\"']?\s*$", re.M)
 TRIGGERS = [("manual", r"^\s+workflow_dispatch\s*:"), ("push", r"^\s+push\s*:"), ("pull request", r"^\s+pull_request(?:_target)?\s*:"), ("schedule", r"^\s+schedule\s*:"), ("issues", r"^\s+issues\s*:"), ("workflow completion", r"^\s+workflow_run\s*:")]
@@ -99,6 +133,8 @@ def main() -> int:
                 errors.append(f"obsolete action major: {action}@v{major}; minimum supported major is v{minimum}")
             elif preferred is not None and major < preferred:
                 upgrades.append(f"upgrade recommendation: {action}@v{major} -> v{preferred}")
+        for module in missing_unittest_modules(text):
+            errors.append(f"missing unittest module: {module}")
         npm = sorted(set(NPM_RE.findall(text)))
         for script in npm:
             if script not in SCRIPTS:
