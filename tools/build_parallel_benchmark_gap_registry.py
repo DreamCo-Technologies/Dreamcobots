@@ -43,6 +43,9 @@ def main()->int:
         if arrays and not any(rows for _,rows in arrays):
             errors.append(f'{source}: no executable benchmark cases; preserve as a blocked source')
         if not arrays:
+            # Keep a visible planning placeholder, but never certify a source
+            # with no executable case collection as registry-complete.
+            errors.append(f'{source}: no executable benchmark case collection; definition required')
             synthetic={'case_id':f'artifact:{path.stem}','intent':f'Define benchmark cases for {path.stem}'}
             arrays=[('artifact',[synthetic])]
             placeholders += 1
@@ -67,7 +70,7 @@ def main()->int:
                   'closure_rule':'close only when required benchmark threshold and affected regression evidence pass'
                 })
     if not sources: errors.append('no benchmark source artifacts discovered')
-    payload={'schema':'dreamco.parallel_benchmark_gap_registry.v1','benchmark_source_count':len(set(sources)),'benchmark_case_count':len(entries),'defined_case_count':len(entries)-placeholders,'artifact_placeholder_count':placeholders,'registry_complete':not errors,'source_errors':errors,'parallel_lane_limit':TEAM['parallel_policy']['maximum_parallel_lanes'],'entries':entries,'truth_boundary':'Every discovered benchmark case gets an accountable closure path. A worker assignment is not evidence that the gap is closed.'}
+    payload={'schema':'dreamco.parallel_benchmark_gap_registry.v1','benchmark_source_count':len(set(sources)),'benchmark_case_count':len(entries),'defined_case_count':len(entries)-placeholders,'artifact_placeholder_count':placeholders,'registry_complete':not errors and placeholders == 0,'source_errors':errors,'parallel_lane_limit':TEAM['parallel_policy']['maximum_parallel_lanes'],'entries':entries,'truth_boundary':'Every discovered benchmark case gets an accountable closure path. A worker assignment is not evidence that the gap is closed.'}
     OUT.parent.mkdir(parents=True,exist_ok=True); REPORT.parent.mkdir(parents=True,exist_ok=True); OUT.write_text(json.dumps(payload,indent=2)+'\n')
     lines=['# Parallel Benchmark Gap Registry','',f"- Benchmark sources: **{payload['benchmark_source_count']}**",f"- Benchmark cases with workers: **{len(entries)}**",f"- Parallel lane limit: **{payload['parallel_lane_limit']}**",'']
     for row in entries[:1000]: lines.append(f"- `{row['case_id']}` → `{row['gap_worker_id']}` ({row['domain']}, {row['risk']})")
