@@ -255,10 +255,19 @@ def audit(root: Path = ROOT) -> dict:
     division_rows = []
     for division in sorted(divisions):
         seed = SEEDS.get(division)
+        family = seed[0] if seed else None
+        # Exact spelling only: a plausible domain-to-task mapping is not an
+        # executable route, and an alias must not silently count as coverage.
+        exact_model_ids = sorted(
+            model["id"] for model in data["models"]["models"]
+            if family is not None and family in model.get("task_types", [])
+        )
         division_rows.append({
             "division": division,
-            "suggested_task_family": seed[0] if seed else None,
+            "suggested_task_family": family,
             "suggested_fixture": seed[1] if seed else None,
+            "task_family_has_exact_benchmark_label": family in tasks if family else False,
+            "declared_exact_catalog_model_ids_unverified": exact_model_ids,
             "independent_holdout_receipt": None,
             "evaluated_model_revision": None,
             "status": "fixture_design_only" if seed else "representative_task_needed",
@@ -277,6 +286,18 @@ def audit(root: Path = ROOT) -> dict:
             "cross_registry_identifier_variants": identifier_variants,
             "representative_fixture_suggestions": sum(d["suggested_fixture"] is not None for d in division_rows),
             "divisions_needing_fixture_design": sum(d["suggested_fixture"] is None for d in division_rows),
+            "division_task_families_without_exact_benchmark_label": sorted({
+                d["suggested_task_family"] for d in division_rows
+                if d["suggested_task_family"] and not d["task_family_has_exact_benchmark_label"]
+            }),
+            "divisions_without_exact_benchmark_task_label": sorted(
+                d["division"] for d in division_rows
+                if not d["task_family_has_exact_benchmark_label"]
+            ),
+            "divisions_without_exact_declared_model_route": sorted(
+                d["division"] for d in division_rows
+                if not d["declared_exact_catalog_model_ids_unverified"]
+            ),
             "registered_benchmark_task_labels": len(tasks),
             "benchmark_suite_definitions": len(suites),
             "catalog_model_ids": len(models),
