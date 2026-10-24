@@ -22,8 +22,8 @@ class LocalComputePreflightTests(unittest.TestCase):
         self.assertIsNone(parse_linux_memtotal("MemTotal: secret kB\n"))
 
     def test_cgroup_v2_and_v1_limits(self):
-        self.assertEqual(parse_cgroup_memory_limit("4294967296\\n"), 4 * 1024 ** 3)
-        for value in ("max", "0", "-1", "1.5", "1\\n2", str(2 ** 63 - 4096)):
+        self.assertEqual(parse_cgroup_memory_limit("4294967296\n"), 4 * 1024 ** 3)
+        for value in ("max", "0", "-1", "1.5", "1\n2", str(2 ** 63 - 4096)):
             with self.subTest(value=value):
                 self.assertIsNone(parse_cgroup_memory_limit(value))
 
