@@ -1,0 +1,57 @@
+"""Offline, synthetic tests; no weights or network needed."""
+import copy
+import json
+import unittest
+from pathlib import Path
+
+from tools.buddy_local_compute_preflight import parse_linux_memtotal, report
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class LocalComputePreflightTests(unittest.TestCase):
+    def setUp(self):
+        self.data = json.loads((ROOT / "config/buddy-open-weight-candidate-research.json").read_text())
+
+    def test_linux_memory_single_line(self):
+        self.assertEqual(parse_linux_memtotal("MemTotal:       8192 kB\nMemFree: 2 kB\n"), 8192 * 1024)
+
+    def test_rejects_ambiguous_memory(self):
+        self.assertIsNone(parse_linux_memtotal("MemTotal: 1024 kB\nMemTotal: 2048 kB\n"))
+        self.assertIsNone(parse_linux_memtotal("MemTotal: 0 kB\n"))
+        self.assertIsNone(parse_linux_memtotal("MemTotal: secret kB\n"))
+
+    def test_unknown_memory_is_not_approval(self):
+        result = report(self.data, None, "unavailable", "Linux")
+        self.assertIsNone(result["observed_total_memory_gib"])
+        self.assertFalse(result["hardware_suitability_verified"])
+        self.assertFalse(result["training_authorized"])
+        self.assertEqual(result["model_runs"], 0)
+
+    def test_weight_only_arithmetic(self):
+        result = report(self.data, 16 * 1024 ** 3, "linux_meminfo", "Linux")
+        self.assertEqual(result["observed_total_memory_gib"], 16.0)
+        self.assertEqual(len(result["candidate_weight_only_estimates"]), 3)
+        self.assertAlmostEqual(result["candidate_weight_only_estimates"][0]["approx_fp16_weight_only_gib"], 1.118, places=3)
+        self.assertTrue(all(not x["fits_in_memory_verified"] for x in result["candidate_weight_only_estimates"]))
+
+    def test_rejects_fake_memory(self):
+        for value in (True, 0, -1, 1.2, "16"):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                report(self.data, value, "unavailable", "Linux")
+
+    def test_cannot_promote_candidate(self):
+        data = copy.deepcopy(self.data)
+        data["candidates"][0]["model_trained"] = True
+        with self.assertRaises(ValueError):
+            report(data, 16 * 1024 ** 3, "linux_meminfo", "Linux")
+
+    def test_no_host_identifiers(self):
+        result = report(self.data, 8 * 1024 ** 3, "linux_meminfo", "Linux")
+        serialized = json.dumps(result)
+        for sensitive in ("hostname", "serial_number", "username", "mac_address"):
+            self.assertNotIn(sensitive, serialized)
+
+
+if __name__ == "__main__":
+    unittest.main()
