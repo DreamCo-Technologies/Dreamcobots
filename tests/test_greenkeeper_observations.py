@@ -97,6 +97,32 @@ class GreenkeeperObservationsTests(unittest.TestCase):
         result = observations({"workflow_runs": [run(conclusion="success")]}, now=NOW, max_age_hours=6, expected_repo="other/repo")
         self.assertEqual(result[0]["conclusion"], "unknown")
 
+    def test_github_workflow_run_ref_paths_are_accepted(self):
+        # GitHub REST workflow-run payloads use path@ref (e.g. @main).
+        for suffix in ("@main", "@refs/heads/main", ""):
+            with self.subTest(suffix=suffix):
+                item = run(conclusion="success")
+                item["path"] += suffix
+                result = observations({"workflow_runs": [item]}, now=NOW, max_age_hours=6,
+                                      expected_repo="DreamCo-Technologies/Dreamcobots")
+                self.assertEqual(result[0]["conclusion"], "success")
+                self.assertEqual(result[0]["evidence_status"], "observed")
+
+    def test_unrelated_workflow_refs_never_supply_success(self):
+        for bad_path in (
+            ".github/workflows/keep-green.yml@other-branch",
+            ".github/workflows/keep-green.yml@refs/heads/other-branch",
+            ".github/workflows/other.yml@main",
+            ".github/workflows/keep-green.yml@",
+        ):
+            with self.subTest(path=bad_path):
+                item = run(conclusion="success")
+                item["path"] = bad_path
+                result = observations({"workflow_runs": [item]}, now=NOW, max_age_hours=6,
+                                      expected_repo="DreamCo-Technologies/Dreamcobots")
+                self.assertEqual(result[0]["conclusion"], "unknown")
+                self.assertEqual(result[0]["evidence_status"], "latest_run_invalid_provenance")
+
     def test_invalid_repo_rejected_without_network(self):
         with patch("tools.greenkeeper_observations.subprocess.run") as mock_run:
             with self.assertRaises(ValueError):
