@@ -358,5 +358,43 @@ class TeacherCoverageTests(unittest.TestCase):
             self.assertEqual(summary["cross_registry_identifier_variants"][0]["masterbot_division"],
                              "ＤｒｅａｍＣｏｄｅＬａｂ")
 
+
+    def test_division_family_gaps_are_explicit_not_certification(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            report = audit(root)
+            rows = {row["division"]: row for row in report["division_coverage"]}
+            self.assertTrue(rows["DreamCodeLab"]["task_family_has_exact_benchmark_label"])
+            self.assertEqual(rows["DreamCodeLab"]["declared_exact_catalog_model_ids_unverified"], ["docs-only"])
+            self.assertFalse(rows["DreamData"]["task_family_has_exact_benchmark_label"])
+            self.assertEqual(rows["DreamData"]["declared_exact_catalog_model_ids_unverified"], [])
+            self.assertIn("sql_data", report["summary"]["division_task_families_without_exact_benchmark_label"])
+            self.assertEqual(report["summary"]["divisions_without_exact_benchmark_task_label"], ["DreamData"])
+            self.assertEqual(report["summary"]["divisions_without_exact_declared_model_route"], ["DreamData"])
+            self.assertIsNone(rows["DreamCodeLab"]["independent_holdout_receipt"])
+            self.assertEqual(report["summary"]["independently_verified_routes_in_this_audit"], 0)
+
+    def test_registry_label_and_model_declaration_still_do_not_prove_route(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            task_path = root / SOURCES["tasks"]
+            task_data = json.loads(task_path.read_text())
+            task_data["tasks"].append("sql_data")
+            task_path.write_text(json.dumps(task_data))
+            model_path = root / SOURCES["models"]
+            model_data = json.loads(model_path.read_text())
+            model_data["models"][0]["task_types"].append("sql_data")
+            model_path.write_text(json.dumps(model_data))
+            report = audit(root)
+            row = next(r for r in report["division_coverage"] if r["division"] == "DreamData")
+            self.assertTrue(row["task_family_has_exact_benchmark_label"])
+            self.assertEqual(row["declared_exact_catalog_model_ids_unverified"], ["docs-only"])
+            self.assertEqual(report["summary"]["divisions_without_exact_benchmark_task_label"], [])
+            self.assertEqual(report["summary"]["divisions_without_exact_declared_model_route"], [])
+            self.assertIsNone(row["evaluated_model_revision"])
+            self.assertIsNone(row["independent_holdout_receipt"])
+
 if __name__ == "__main__":
     unittest.main()
