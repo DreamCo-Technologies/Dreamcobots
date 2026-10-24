@@ -140,6 +140,28 @@ class PublicDevelopmentSmokeTests(unittest.TestCase):
                 data,
             )
 
+    def test_public_sql_result_fixture_requires_exact_grouped_rows(self):
+        good = '[{"region":"north","total":12},{"region":"south","total":3}]'
+        report = score_dev_responses(
+            [{"suite_id": "sql_result_reasoning", "response": good}], catalog()
+        )
+        self.assertEqual(report["passed_public_dev_fixtures"], 1)
+        self.assertFalse(report["model_quality_verified"])
+        self.assertNotIn(good, json.dumps(report))
+        for bad in (
+            '[{"region":"north","total":true},{"region":"south","total":3}]',
+            '[{"region":"north","total":12.0},{"region":"south","total":3}]',
+            '[{"region":"south","total":3},{"region":"north","total":12}]',
+            '[{"region":"north","total":12,"total":12},{"region":"south","total":3}]',
+            '[{"region":"north","total":12},{"region":"south","total":3,"pii":"x"}]',
+            '{"north":12,"south":3}',
+            "not JSON",
+        ):
+            with self.subTest(bad=bad):
+                self.assertEqual(score_dev_responses(
+                    [{"suite_id": "sql_result_reasoning", "response": bad}], catalog()
+                )["passed_public_dev_fixtures"], 0)
+
     def test_workflow_includes_scorer_and_its_tests_in_path_filters(self):
         from pathlib import Path
 

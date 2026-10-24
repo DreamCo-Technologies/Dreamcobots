@@ -36,6 +36,10 @@ PINNED = {
         "prompt_fixture": "Choose the read-only weather tool for a current forecast request.",
         "expected": "weather_read_only", "grader": "schema", "modality": "tool_call",
     },
+    "sql_result_reasoning": {
+        "prompt_fixture": "A fictional SQL query is SELECT region, SUM(amount) AS total FROM orders GROUP BY region ORDER BY region. The orders rows are ('north',4), ('north',8), ('south',3). Return only a JSON array of objects with region and total in query order.",
+        "expected": "json_sql_group_totals", "grader": "schema", "modality": "text",
+    },
 }
 
 
@@ -73,6 +77,21 @@ def _grade(suite_id: str, response: str) -> bool:
             and type(confidence) in (int, float) and isfinite(confidence)
             and 0 <= confidence <= 1
         )
+    if suite_id == "sql_result_reasoning":
+        # Public toy SQL-result comprehension, not SQL execution or proof of
+        # general SQL competence. Require exact rows, order and integer types.
+        try:
+            parsed = json.loads(response, object_pairs_hook=_reject_duplicate_json_keys)
+        except (ValueError, TypeError, RecursionError):
+            return False
+        return (
+            type(parsed) is list and len(parsed) == 2
+            and all(type(row) is dict and set(row) == {"region", "total"} for row in parsed)
+            and parsed[0]["region"] == "north" and type(parsed[0]["total"]) is int
+            and parsed[0]["total"] == 12
+            and parsed[1]["region"] == "south" and type(parsed[1]["total"]) is int
+            and parsed[1]["total"] == 3
+        )
     raise ValueError("unsupported public development suite")
 
 
@@ -99,7 +118,7 @@ def score_dev_responses(rows: Any, catalog: Any) -> dict:
         if name not in known or any(known[name].get(k) != v for k, v in expected.items()):
             raise ValueError(f"public fixture changed or missing: {name}; review grader first")
     if not isinstance(rows, list) or not rows or len(rows) > len(PINNED):
-        raise ValueError("provide one to four public development responses")
+        raise ValueError(f"provide one to {len(PINNED)} public development responses")
     results = []
     seen = set()
     for row in rows:

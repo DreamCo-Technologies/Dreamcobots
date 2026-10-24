@@ -101,3 +101,7 @@ The optional local baseline receipt now includes `public_fixture_runtime` keyed 
 ### Truncation-aware scoring (2026-10-24)
 
 The local baseline now requires Ollama generation responses to report both `done: true` and `done_reason: "stop"`. A `done: true` response with `done_reason: "length"` may have hit the 128-token output limit and must **not** be credited as a completed answer. Missing, unknown, or malformed stop reasons also block the entire receipt rather than silently treating partial output as correct. This may reject older local server versions that omit `done_reason`; compatibility is not a reason to weaken evidence. Regression tests use a fake server only; no real model inference was performed by these tests.
+
+## October 24 — public SQL-result development fixture
+
+The local-only development scorer now includes one **public synthetic SQL-result comprehension** case: grouping three fictional orders by region and returning a strict JSON array. It checks row order, totals, integer types, unexpected fields and duplicate JSON keys; the optional Ollama smoke runner includes this case automatically. This is not SQL execution, an independently graded holdout, specialist mastery, or a reason to enable any model route. The read-only audit may suggest this suite for SQL-related task labels, but unregistered labels and absent independently measured routes remain blockers. No weights or models were run by this change.

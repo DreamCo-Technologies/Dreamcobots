@@ -95,6 +95,8 @@ TASK_SUITE_DESIGN_LINKS = {
     "long_context": ("long_context_retrieval",),
     "factuality": ("grounded_research",),
     "safety": ("safety_boundary",),
+    "sql": ("sql_result_reasoning",),
+    "sql_data": ("sql_result_reasoning",),
 }
 
 # Human-reviewable vocabulary proposals, not executable or validated routes.

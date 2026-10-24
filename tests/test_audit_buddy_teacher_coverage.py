@@ -92,6 +92,22 @@ class TeacherCoverageTests(unittest.TestCase):
             self.assertTrue(sql["needs_dedicated_suite_design"])
             self.assertIn("sql", report["summary"]["benchmark_tasks_without_candidate_suite_design"])
 
+    def test_sql_suite_is_design_only_not_verified_model_quality(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["suites"]
+            data = json.loads(p.read_text())
+            data["suites"].append({"id": "sql_result_reasoning"})
+            p.write_text(json.dumps(data))
+            report = audit(root)
+            sql = next(row for row in report["task_routes"] if row["task"] == "sql")
+            self.assertEqual(sql["candidate_suite_ids_design_only"], ["sql_result_reasoning"])
+            self.assertFalse(sql["needs_dedicated_suite_design"])
+            self.assertEqual(sql["independently_verified_model_ids"], [])
+            self.assertEqual(report["summary"]["independent_holdout_receipts_in_this_audit"], 0)
+            self.assertIn("DreamData", report["summary"]["divisions_without_exact_benchmark_task_label"])
+
     def test_inconsistent_weight_claim_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
