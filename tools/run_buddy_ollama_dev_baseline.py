@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 from hashlib import sha256
 import json
+import os
 from math import isfinite
 from pathlib import Path
 import re
@@ -198,6 +199,18 @@ def run_baseline(*, model: str, expected_digest: str, catalog: dict,
     }
 
 
+
+def write_receipt_exclusive(output: Path, result: dict) -> None:
+    """Write a measured receipt without replacing existing files or symlinks.
+
+    The caller must supply an unused path. The exclusive-create flag also
+    protects against a file appearing after the initial CLI preflight.
+    """
+    serialized = json.dumps(result, indent=2, sort_keys=True, allow_nan=False) + "\n"
+    with output.open("x", encoding="utf-8") as receipt:
+        receipt.write(serialized)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", required=True, help="Exact installed Ollama model tag")
@@ -213,10 +226,12 @@ def main() -> int:
     if not (args.execute_local_inference and args.approved_free_compute and args.rights_reviewed):
         parser.exit(2, "blocked: explicit local execution, approved free compute and rights review required\n")
     try:
+        if os.path.lexists(args.output):
+            raise BaselineError("output receipt path already exists; refusing overwrite")
         catalog = json.loads(args.catalog.read_text(encoding="utf-8"))
         result = run_baseline(model=args.model, expected_digest=args.digest, catalog=catalog,
                               endpoint=args.endpoint, timeout_seconds=args.timeout_seconds)
-        args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        write_receipt_exclusive(args.output, result)
     except (OSError, ValueError, TypeError) as exc:
         parser.exit(2, f"local Buddy baseline blocked: {exc}\n")
     print("Public development baseline saved; NOT a holdout or model-promotion receipt.")
