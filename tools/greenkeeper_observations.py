@@ -75,8 +75,10 @@ def observations(payload: object, *, now: datetime, max_age_hours: int, expected
     if not eligible:
         return [{"workflow": "Keep Green", "conclusion": "unknown", "source": "github_actions", "evidence_status": "no_recent_valid_completed_run"}]
     _, run_id, run = max(eligible, key=lambda row: (row[0], row[1]))
+    conclusion = run.get("conclusion")
     if (not valid_provenance(run, expected_repo=expected_repo)
-            or run.get("conclusion") not in {"success", "failure", "cancelled", "timed_out", "action_required", "stale", "skipped", "neutral"}):
+            or not isinstance(conclusion, str)
+            or conclusion not in {"success", "failure", "cancelled", "timed_out", "action_required", "stale", "skipped", "neutral"}):
         return [{"workflow": "Keep Green", "conclusion": "unknown", "source": "github_actions", "evidence_status": "latest_run_invalid_provenance"}]
     return [{"workflow": "Keep Green", "conclusion": run["conclusion"], "source": "github_actions", "evidence_status": "observed", "run_id": run_id, "run_url": run.get("html_url", ""), "head_sha": run.get("head_sha", ""), "updated_at": run["updated_at"]}]
 
