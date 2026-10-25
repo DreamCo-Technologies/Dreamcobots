@@ -63,7 +63,7 @@ holdouts in each lane before promoting model-routing or division-readiness claim
 
 ## Offline public development-fixture scorer (not a model benchmark)
 
-`tools/score_buddy_dev_fixtures.py` now accepts **externally supplied** responses for four public fixtures already in `config/buddy-model-benchmarks.json`: instruction following, arithmetic reasoning, structured JSON, and read-only tool-name selection. Example local input:
+`tools/score_buddy_dev_fixtures.py` accepts **externally supplied** responses for ten public fixtures currently in `config/buddy-model-benchmarks.json` (the four below are a subset): instruction following, arithmetic reasoning, structured JSON, and read-only tool-name selection. Example local input:
 
 ```json
 [
