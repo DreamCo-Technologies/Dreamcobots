@@ -97,6 +97,7 @@ TASK_SUITE_DESIGN_LINKS = {
     "orchestration": ("orchestration_approval",),
     "sales": ("sales_opt_out",),
     "marketing": ("marketing_claim_evidence",),
+    "education": ("education_feedback",),
     "safety": ("safety_boundary",),
     "sql": ("sql_result_reasoning",),
     "sql_data": ("sql_result_reasoning",),
