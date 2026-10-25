@@ -58,7 +58,7 @@ class LocalBaselineTests(unittest.TestCase):
                               transport=fake, clock=lambda: next(clock_values))
         self.assertEqual(result["actual_model_api_calls"], len(PINNED))
         self.assertEqual(result["passed_public_dev_fixtures"], len(PINNED))
-        self.assertEqual(result["latency_ms_p95"], 900)
+        self.assertEqual(result["latency_ms_p95"], 100 * len(PINNED))
         self.assertEqual(result["server_reported_tokens_per_second_mean"], 12)
         self.assertEqual(result["generation_options"], {"temperature": 0, "num_predict": 128})
         self.assertEqual(result["request_timeout_seconds"], 30.0)
