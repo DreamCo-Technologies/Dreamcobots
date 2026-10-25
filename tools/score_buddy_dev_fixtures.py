@@ -64,6 +64,10 @@ PINNED = {
         "prompt_fixture": "A fictional campaign logged 100 visits and 4 signups. No ad spend, revenue, or control group is provided. Return only JSON with exactly three keys: \"signup_rate_percent\" set to 4, \"roi_claim_supported\" set to false, and \"causal_lift_claim_supported\" set to false.",
         "expected": "json_marketing_claim_evidence", "grader": "schema", "modality": "text",
     },
+    "education_feedback": {
+        "prompt_fixture": "A fictional learner answered 3/4 + 1/4 = 1/2. Evaluate this answer. Return only JSON with exactly three keys: \"is_correct\" (boolean), \"correct_answer\" (the simplified result as a string), and \"misconception\" (\"added_denominators\" if the learner incorrectly added denominators, otherwise \"other\").",
+        "expected": "json_education_fraction_feedback", "grader": "schema", "modality": "text",
+    },
 }
 
 
@@ -166,6 +170,17 @@ def _grade(suite_id: str, response: str) -> bool:
                 and parsed["signup_rate_percent"] == 4
                 and parsed["roi_claim_supported"] is False
                 and parsed["causal_lift_claim_supported"] is False)
+    if suite_id == "education_feedback":
+        # Fictional public tutoring example; no learner outcome or mastery claim.
+        try:
+            parsed = json.loads(response, object_pairs_hook=_reject_duplicate_json_keys)
+        except (ValueError, TypeError, RecursionError):
+            return False
+        return (type(parsed) is dict
+                and set(parsed) == {"is_correct", "correct_answer", "misconception"}
+                and parsed["is_correct"] is False
+                and parsed["correct_answer"] == "1"
+                and parsed["misconception"] == "added_denominators")
     raise ValueError("unsupported public development suite")
 
 
