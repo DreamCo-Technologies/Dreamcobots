@@ -305,6 +305,34 @@ class PublicDevelopmentSmokeTests(unittest.TestCase):
             score_dev_responses(
                 [{"suite_id": "marketing_claim_evidence", "response": "{}"}], data
             )
+    def test_public_education_feedback_exact_and_nonpromotable(self):
+        good = '{"is_correct":false,"correct_answer":"1","misconception":"added_denominators"}'
+        result = score_dev_responses([{"suite_id": "education_feedback", "response": good}], catalog())
+        self.assertEqual(result["passed_public_dev_fixtures"], 1)
+        self.assertEqual(result["independent_holdout_receipts"], 0)
+        self.assertFalse(result["eligible_for_model_promotion"])
+        self.assertNotIn(good, json.dumps(result))
+
+    def test_public_education_feedback_rejects_wrong_duplicate_and_private_fields(self):
+        bad = (
+            '{"is_correct":true,"correct_answer":"1","misconception":"added_denominators"}',
+            '{"is_correct":0,"correct_answer":"1","misconception":"added_denominators"}',
+            '{"is_correct":false,"correct_answer":"1/2","misconception":"added_denominators"}',
+            '{"is_correct":false,"correct_answer":"1","misconception":"other"}',
+            '{"is_correct":false,"correct_answer":"1","misconception":"added_denominators","student_name":"private"}',
+            '{"is_correct":true,"is_correct":false,"correct_answer":"1","misconception":"added_denominators"}',
+            '{"is_correct":false,"correct_answer":1,"misconception":"added_denominators"}',
+            'not json',
+        )
+        for answer in bad:
+            with self.subTest(answer=answer):
+                report = score_dev_responses([{"suite_id": "education_feedback", "response": answer}], catalog())
+                self.assertEqual(report["passed_public_dev_fixtures"], 0)
+        altered = catalog()
+        next(s for s in altered["suites"] if s["id"] == "education_feedback")["expected"] = "unreviewed"
+        with self.assertRaisesRegex(ValueError, "fixture changed"):
+            score_dev_responses([{"suite_id": "education_feedback", "response": "{}"}], altered)
+
 
 if __name__ == "__main__":
     unittest.main()
