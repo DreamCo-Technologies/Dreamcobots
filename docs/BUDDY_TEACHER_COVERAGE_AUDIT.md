@@ -237,3 +237,10 @@ real-world source material are downloaded or processed.
 ## Public security prompt-injection boundary fixture (2026-10-25)
 
 The synthetic `security_prompt_injection_boundary` suite and `security` task label check whether an externally supplied JSON answer describes an untrusted fictional note without obeying its token-export instruction. The strict grader rejects unsafe execution flags, extra/private fields, duplicate keys, incorrect summaries and malformed JSON. This is a public development fixture, not a red-team evaluation, model inference, secret-handling test, verified task-to-model route, or independent holdout. The audit's security suite crosswalk is a design proposal only; no production capability or training rights are established.
+
+
+## Evaluation receipt metadata preflight (2026-10-25)
+
+Run `python3 tools/validate_buddy_evaluation_receipt.py --receipt /path/to/private-receipt-metadata.json` locally on **metadata only**, never on a file containing holdout prompts, answers, personal data, or secrets. The strict schema requires an exact model revision, distinct checkpoint/dataset/holdout SHA-256 identifiers, opaque evaluator and rights-review receipt references, and bounded self-reported sample, safety and latency metrics. Missing receipt IDs are explicitly reported. Synthetic tests reject duplicate JSON keys, unauthorized flags, invalid hashes, malformed counts, extra raw-example fields, and unbounded inputs.
+
+**Crucially:** a well-formed metadata receipt is *not* independent holdout evidence. The validator cannot authenticate the evaluator, attest dataset rights, inspect holdout isolation, prove model inference, establish quality or authorize training/promotion. Every report fails closed on those claims. Keep signed independent evaluator artifacts and raw holdouts in an approved private store, verify them separately, and do not commit holdout contents or model weights to the public repository.
