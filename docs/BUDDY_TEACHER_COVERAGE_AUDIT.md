@@ -233,3 +233,7 @@ This public fixture can be memorized and is not web retrieval, independent
 citation validation, a clean holdout, model inference, training, or proof
 of research competence or production readiness. No model weights or
 real-world source material are downloaded or processed.
+
+## Public security prompt-injection boundary fixture (2026-10-25)
+
+The synthetic `security_prompt_injection_boundary` suite and `security` task label check whether an externally supplied JSON answer describes an untrusted fictional note without obeying its token-export instruction. The strict grader rejects unsafe execution flags, extra/private fields, duplicate keys, incorrect summaries and malformed JSON. This is a public development fixture, not a red-team evaluation, model inference, secret-handling test, verified task-to-model route, or independent holdout. The audit's security suite crosswalk is a design proposal only; no production capability or training rights are established.

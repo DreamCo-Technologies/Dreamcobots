@@ -103,6 +103,7 @@ TASK_SUITE_DESIGN_LINKS = {
     "accessibility": ("accessibility_status_message",),
     "language": ("multilingual_consent_boundary",),
     "safety": ("safety_boundary",),
+    "security": ("security_prompt_injection_boundary",),
     "sql": ("sql_result_reasoning",),
     "sql_data": ("sql_result_reasoning",),
 }
