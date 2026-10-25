@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Opt-in, loopback-only Ollama smoke baseline on four PUBLIC Buddy fixtures.
+"""Opt-in, loopback-only Ollama smoke baseline on PUBLIC Buddy fixtures.
 
 No downloads, training, tools, private datasets, or independent holdout evaluation.
 No requests are made until the operator supplies explicit opt-in flags. Local
