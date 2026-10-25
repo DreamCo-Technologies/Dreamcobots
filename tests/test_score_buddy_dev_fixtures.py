@@ -334,5 +334,35 @@ class PublicDevelopmentSmokeTests(unittest.TestCase):
             score_dev_responses([{"suite_id": "education_feedback", "response": "{}"}], altered)
 
 
+    def test_public_science_lab_units_exact_and_nonpromotable(self):
+        good = '{"mean_mm":100,"range_mm":4,"calibrated_uncertainty_supported":false}'
+        result = score_dev_responses([{"suite_id": "science_lab_units", "response": good}], catalog())
+        self.assertEqual(result["passed_public_dev_fixtures"], 1)
+        self.assertEqual(result["independent_holdout_receipts"], 0)
+        self.assertFalse(result["eligible_for_model_promotion"])
+        self.assertNotIn(good, json.dumps(result))
+
+    def test_public_science_lab_units_rejects_invalid_and_catalog_mutation(self):
+        for answer in (
+            '{"mean_mm":99,"range_mm":4,"calibrated_uncertainty_supported":false}',
+            '{"mean_mm":100,"range_mm":0.4,"calibrated_uncertainty_supported":false}',
+            '{"mean_mm":100.0,"range_mm":4,"calibrated_uncertainty_supported":false}',
+            '{"mean_mm":100,"range_mm":4,"calibrated_uncertainty_supported":true}',
+            '{"mean_mm":100,"range_mm":4,"calibrated_uncertainty_supported":0}',
+            '{"mean_mm":100,"range_mm":4,"calibrated_uncertainty_supported":false,"student_name":"private"}',
+            '{"mean_mm":99,"mean_mm":100,"range_mm":4,"calibrated_uncertainty_supported":false}',
+            'not json',
+        ):
+            with self.subTest(answer=answer):
+                report = score_dev_responses(
+                    [{"suite_id": "science_lab_units", "response": answer}], catalog()
+                )
+                self.assertEqual(report["passed_public_dev_fixtures"], 0)
+        altered = catalog()
+        next(s for s in altered["suites"] if s["id"] == "science_lab_units")["prompt_fixture"] += " unreviewed"
+        with self.assertRaisesRegex(ValueError, "fixture changed"):
+            score_dev_responses([{"suite_id": "science_lab_units", "response": "{}"}], altered)
+
+
 if __name__ == "__main__":
     unittest.main()

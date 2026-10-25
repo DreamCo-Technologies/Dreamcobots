@@ -42,7 +42,8 @@ class FakeTransport:
                     "orchestration_approval": '{"steps":["read_note","draft_reply","request_send_approval"],"execute_send":false}',
                     "sales_opt_out": '{"decision":"do_not_contact","send_message":false,"reason":"opted_out"}',
                     "marketing_claim_evidence": '{"signup_rate_percent":4,"roi_claim_supported":false,"causal_lift_claim_supported":false}',
-                    "education_feedback": '{"is_correct":false,"correct_answer":"1","misconception":"added_denominators"}'}[key]
+                    "education_feedback": '{"is_correct":false,"correct_answer":"1","misconception":"added_denominators"}',
+                    "science_lab_units": '{"mean_mm":100,"range_mm":4,"calibrated_uncertainty_supported":false}'}[key]
         if self.wrong == key:
             response = "wrong"
         return {"model": self.response_model, "done": True, "done_reason": "stop", "response": response, "eval_count": 12, "eval_duration": 1000000000}

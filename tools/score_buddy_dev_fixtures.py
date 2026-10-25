@@ -68,6 +68,10 @@ PINNED = {
         "prompt_fixture": "A fictional learner answered 3/4 + 1/4 = 1/2. Evaluate this answer. Return only JSON with exactly three keys: \"is_correct\" (boolean), \"correct_answer\" (the simplified result as a string), and \"misconception\" (\"added_denominators\" if the learner incorrectly added denominators, otherwise \"other\").",
         "expected": "json_education_fraction_feedback", "grader": "schema", "modality": "text",
     },
+    "science_lab_units": {
+        "prompt_fixture": "In a fictional lab, three measured lengths are 9.8 cm, 10.0 cm and 10.2 cm. Convert their arithmetic mean and range to millimeters. No instrument resolution or calibration evidence is provided. Return only JSON with exactly three keys: \"mean_mm\" (integer), \"range_mm\" (integer), and \"calibrated_uncertainty_supported\" (boolean).",
+        "expected": "json_science_lab_units", "grader": "schema", "modality": "text",
+    },
 }
 
 
@@ -181,6 +185,18 @@ def _grade(suite_id: str, response: str) -> bool:
                 and parsed["is_correct"] is False
                 and parsed["correct_answer"] == "1"
                 and parsed["misconception"] == "added_denominators")
+    if suite_id == "science_lab_units":
+        # Public fictional measurement arithmetic, not calibrated metrology
+        # or evidence of scientific reasoning on independent examples.
+        try:
+            parsed = json.loads(response, object_pairs_hook=_reject_duplicate_json_keys)
+        except (ValueError, TypeError, RecursionError):
+            return False
+        return (type(parsed) is dict
+                and set(parsed) == {"mean_mm", "range_mm", "calibrated_uncertainty_supported"}
+                and type(parsed["mean_mm"]) is int and parsed["mean_mm"] == 100
+                and type(parsed["range_mm"]) is int and parsed["range_mm"] == 4
+                and parsed["calibrated_uncertainty_supported"] is False)
     raise ValueError("unsupported public development suite")
 
 

@@ -182,3 +182,22 @@ The audit links the marketing task family to the new suite as a **design
 proposal**, not a verified model route or division benchmark. This fixture
 is public and trivially memorized; it is not independent holdout evidence,
 marketing competence, a campaign outcome, training or production readiness.
+
+## Fictional science units and uncertainty public fixture (2026-10-25)
+
+The `science_lab_units` public synthetic development fixture checks the mean and
+range of three fictional lengths (9.8, 10.0 and 10.2 cm) converted to
+millimeters: integer mean 100 mm, integer range 4 mm. It requires
+`calibrated_uncertainty_supported: false` because measurement spread alone
+cannot establish calibrated instrument uncertainty without resolution and
+calibration evidence. The strict JSON grader rejects incorrect units, floats
+where integers are required, unsupported uncertainty claims, extra/private
+fields and duplicate keys. Two regression tests cover the grader and fixture
+pinning; the fake local-model transport also includes the case.
+
+This is a **public, trivially memorized development check**, not a clean holdout,
+real model run, experimental validation, or proof of scientific competence.
+The science task registry and audit mapping are **design-only**; no production
+route, trained weights, permissioned compute, independent grading, or release
+approval is implied. Real science tasks require independent rights-cleared
+holdouts and specialist review before any quality claim.
