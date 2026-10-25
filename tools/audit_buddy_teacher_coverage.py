@@ -101,6 +101,7 @@ TASK_SUITE_DESIGN_LINKS = {
     "education": ("education_feedback",),
     "science": ("science_lab_units",),
     "accessibility": ("accessibility_status_message",),
+    "language": ("multilingual_consent_boundary",),
     "safety": ("safety_boundary",),
     "sql": ("sql_result_reasoning",),
     "sql_data": ("sql_result_reasoning",),
