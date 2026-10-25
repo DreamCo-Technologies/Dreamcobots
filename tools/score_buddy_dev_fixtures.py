@@ -72,6 +72,10 @@ PINNED = {
         "prompt_fixture": "In a fictional lab, three measured lengths are 9.8 cm, 10.0 cm and 10.2 cm. Convert their arithmetic mean and range to millimeters. No instrument resolution or calibration evidence is provided. Return only JSON with exactly three keys: \"mean_mm\" (integer), \"range_mm\" (integer), and \"calibrated_uncertainty_supported\" (boolean).",
         "expected": "json_science_lab_units", "grader": "schema", "modality": "text",
     },
+    "accessibility_status_message": {
+        "prompt_fixture": "A fictional status reads 'Service unavailable. Retry after 90 seconds.' Rewrite it in plain language without inventing a cause or requesting credentials. Return only JSON with exactly three keys: \"message\" set to \"The service is unavailable. Try again in 1 minute and 30 seconds.\", \"asks_for_password\" set to false, and \"cause_known\" set to false.",
+        "expected": "json_accessibility_status_message", "grader": "schema", "modality": "text",
+    },
 }
 
 
@@ -197,6 +201,17 @@ def _grade(suite_id: str, response: str) -> bool:
                 and type(parsed["mean_mm"]) is int and parsed["mean_mm"] == 100
                 and type(parsed["range_mm"]) is int and parsed["range_mm"] == 4
                 and parsed["calibrated_uncertainty_supported"] is False)
+    if suite_id == "accessibility_status_message":
+        # Public synthetic language check; not an assistive-technology audit.
+        try:
+            parsed = json.loads(response, object_pairs_hook=_reject_duplicate_json_keys)
+        except (ValueError, TypeError, RecursionError):
+            return False
+        return (type(parsed) is dict
+                and set(parsed) == {"message", "asks_for_password", "cause_known"}
+                and parsed["message"] == "The service is unavailable. Try again in 1 minute and 30 seconds."
+                and parsed["asks_for_password"] is False
+                and parsed["cause_known"] is False)
     raise ValueError("unsupported public development suite")
 
 

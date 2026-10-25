@@ -364,5 +364,39 @@ class PublicDevelopmentSmokeTests(unittest.TestCase):
             score_dev_responses([{"suite_id": "science_lab_units", "response": "{}"}], altered)
 
 
+
+    def test_public_accessibility_status_message_exact_and_nonpromotable(self):
+        good = '{"message":"The service is unavailable. Try again in 1 minute and 30 seconds.","asks_for_password":false,"cause_known":false}'
+        result = score_dev_responses(
+            [{"suite_id": "accessibility_status_message", "response": good}], catalog()
+        )
+        self.assertEqual(result["passed_public_dev_fixtures"], 1)
+        self.assertEqual(result["independent_holdout_receipts"], 0)
+        self.assertFalse(result["eligible_for_model_promotion"])
+        self.assertNotIn(good, json.dumps(result))
+
+    def test_public_accessibility_rejects_unsafe_or_ambiguous_claims(self):
+        for answer in (
+            '{"message":"The service is unavailable. Try again now.","asks_for_password":false,"cause_known":false}',
+            '{"message":"The service is unavailable. Try again in 1 minute and 30 seconds.","asks_for_password":true,"cause_known":false}',
+            '{"message":"The service is unavailable. Try again in 1 minute and 30 seconds.","asks_for_password":0,"cause_known":false}',
+            '{"message":"The service is unavailable. Try again in 1 minute and 30 seconds.","asks_for_password":false,"cause_known":true}',
+            '{"message":"The service is unavailable. Try again in 1 minute and 30 seconds.","asks_for_password":false,"cause_known":false,"user_email":"private"}',
+            '{"message":"wrong","message":"The service is unavailable. Try again in 1 minute and 30 seconds.","asks_for_password":false,"cause_known":false}',
+            '{"message":"The service is unavailable. Try again in 1 minute and 30 seconds.","asks_for_password":false}',
+            'not json',
+        ):
+            with self.subTest(answer=answer):
+                result = score_dev_responses(
+                    [{"suite_id": "accessibility_status_message", "response": answer}], catalog()
+                )
+                self.assertEqual(result["passed_public_dev_fixtures"], 0)
+        altered = catalog()
+        next(s for s in altered["suites"] if s["id"] == "accessibility_status_message")["prompt_fixture"] += " unreviewed"
+        with self.assertRaisesRegex(ValueError, "fixture changed"):
+            score_dev_responses(
+                [{"suite_id": "accessibility_status_message", "response": "{}"}], altered
+            )
+
 if __name__ == "__main__":
     unittest.main()

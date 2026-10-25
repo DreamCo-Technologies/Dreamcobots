@@ -201,3 +201,18 @@ The science task registry and audit mapping are **design-only**; no production
 route, trained weights, permissioned compute, independent grading, or release
 approval is implied. Real science tasks require independent rights-cleared
 holdouts and specialist review before any quality claim.
+
+## Plain-language accessibility public development fixture (2026-10-25)
+
+The fourteenth **public synthetic development fixture**, `accessibility_status_message`,
+asks for a simple rewrite of a fictional 90-second service retry notice.
+Its strict JSON grader requires the precise duration, no password request,
+and no invented outage cause. It rejects duplicate keys, missing fields,
+private fields, and incorrect boolean types. The audit now includes an
+`accessibility` benchmark task label with a **design-only** suite mapping;
+there is no independently verified model route for it.
+
+This is **not** an accessibility certification, usability study, screen-reader
+check, real model run, independent holdout, training result, or production
+readiness evidence. The optional Ollama runner remains explicitly opt-in and
+loopback-only; CI uses a fake model transport without downloading weights.
