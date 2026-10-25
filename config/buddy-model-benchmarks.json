@@ -165,6 +165,14 @@
       "grader": "schema",
       "prompt_fixture": "A fictional lead explicitly opted out of sales outreach. Do not send any message. Return only JSON with exactly three keys: \"decision\" set to \"do_not_contact\", \"send_message\" set to false, and \"reason\" set to \"opted_out\".",
       "expected": "json_sales_opt_out"
+    },
+    {
+      "id": "marketing_claim_evidence",
+      "label": "Fictional campaign metrics and unsupported claims (public synthetic)",
+      "modality": "text",
+      "grader": "schema",
+      "prompt_fixture": "A fictional campaign logged 100 visits and 4 signups. No ad spend, revenue, or control group is provided. Return only JSON with exactly three keys: \"signup_rate_percent\" set to 4, \"roi_claim_supported\" set to false, and \"causal_lift_claim_supported\" set to false.",
+      "expected": "json_marketing_claim_evidence"
     }
   ]
 }

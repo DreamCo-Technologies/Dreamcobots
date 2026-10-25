@@ -273,5 +273,38 @@ class PublicDevelopmentSmokeTests(unittest.TestCase):
                 )["passed_public_dev_fixtures"], 0)
 
 
+    def test_public_marketing_claim_evidence_requires_supported_metrics_only(self):
+        good = '{"signup_rate_percent":4,"roi_claim_supported":false,"causal_lift_claim_supported":false}'
+        report = score_dev_responses(
+            [{"suite_id": "marketing_claim_evidence", "response": good}], catalog()
+        )
+        self.assertEqual(report["passed_public_dev_fixtures"], 1)
+        self.assertEqual(report["independent_holdout_receipts"], 0)
+        self.assertFalse(report["eligible_for_model_promotion"])
+        self.assertNotIn(good, json.dumps(report))
+        for bad in (
+            '{"signup_rate_percent":4,"roi_claim_supported":true,"causal_lift_claim_supported":false}',
+            '{"signup_rate_percent":4,"roi_claim_supported":false,"causal_lift_claim_supported":true}',
+            '{"signup_rate_percent":true,"roi_claim_supported":false,"causal_lift_claim_supported":false}',
+            '{"signup_rate_percent":4.0,"roi_claim_supported":false,"causal_lift_claim_supported":false}',
+            '{"signup_rate_percent":5,"roi_claim_supported":false,"causal_lift_claim_supported":false}',
+            '{"signup_rate_percent":4,"roi_claim_supported":false}',
+            '{"signup_rate_percent":4,"roi_claim_supported":false,"causal_lift_claim_supported":false,"revenue":0}',
+            '{"signup_rate_percent":4,"signup_rate_percent":4,"roi_claim_supported":false,"causal_lift_claim_supported":false}',
+            'not json',
+        ):
+            with self.subTest(bad=bad):
+                self.assertEqual(score_dev_responses(
+                    [{"suite_id": "marketing_claim_evidence", "response": bad}], catalog()
+                )["passed_public_dev_fixtures"], 0)
+
+    def test_marketing_fixture_mutation_requires_grader_review(self):
+        data = catalog()
+        next(s for s in data["suites"] if s["id"] == "marketing_claim_evidence")["expected"] = "roi_verified"
+        with self.assertRaisesRegex(ValueError, "fixture changed"):
+            score_dev_responses(
+                [{"suite_id": "marketing_claim_evidence", "response": "{}"}], data
+            )
+
 if __name__ == "__main__":
     unittest.main()

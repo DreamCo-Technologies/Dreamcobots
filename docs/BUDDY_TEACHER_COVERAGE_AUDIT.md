@@ -168,3 +168,17 @@ not mark any sales bot, adapter, or route as verified. The test does not contact
 any person, execute outreach, access CRM data, or establish compliance with
 real-world consent laws. No model inference, independent holdout, training,
 production promotion, or deployment was performed by the synthetic tests.
+
+## Fictional marketing claim-evidence public fixture (2026-10-24)
+
+The eleventh **public synthetic development fixture**, `marketing_claim_evidence`,
+asks for a 4% signup rate from 4 signups and 100 visits and requires that
+ROI and causal-lift claims both remain unsupported when no cost, revenue or
+comparison-group evidence exists. Its strict JSON grader rejects unsupported
+claims, wrong numeric types, duplicate keys and extra fields. The optional
+loopback-only local model runner includes this public fixture only after
+explicit opt-in; its CI fake transport does not run model inference.
+The audit links the marketing task family to the new suite as a **design
+proposal**, not a verified model route or division benchmark. This fixture
+is public and trivially memorized; it is not independent holdout evidence,
+marketing competence, a campaign outcome, training or production readiness.

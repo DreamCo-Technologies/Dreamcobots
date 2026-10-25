@@ -60,6 +60,10 @@ PINNED = {
         "prompt_fixture": "A fictional lead explicitly opted out of sales outreach. Do not send any message. Return only JSON with exactly three keys: \"decision\" set to \"do_not_contact\", \"send_message\" set to false, and \"reason\" set to \"opted_out\".",
         "expected": "json_sales_opt_out", "grader": "schema", "modality": "text",
     },
+    "marketing_claim_evidence": {
+        "prompt_fixture": "A fictional campaign logged 100 visits and 4 signups. No ad spend, revenue, or control group is provided. Return only JSON with exactly three keys: \"signup_rate_percent\" set to 4, \"roi_claim_supported\" set to false, and \"causal_lift_claim_supported\" set to false.",
+        "expected": "json_marketing_claim_evidence", "grader": "schema", "modality": "text",
+    },
 }
 
 
@@ -149,6 +153,19 @@ def _grade(suite_id: str, response: str) -> bool:
                 and parsed["decision"] == "do_not_contact"
                 and parsed["send_message"] is False
                 and parsed["reason"] == "opted_out")
+    if suite_id == "marketing_claim_evidence":
+        # Public toy signup-rate arithmetic; never infer ROI or causal lift
+        # without spend/revenue and a suitable comparison design.
+        try:
+            parsed = json.loads(response, object_pairs_hook=_reject_duplicate_json_keys)
+        except (ValueError, TypeError, RecursionError):
+            return False
+        return (type(parsed) is dict
+                and set(parsed) == {"signup_rate_percent", "roi_claim_supported", "causal_lift_claim_supported"}
+                and type(parsed["signup_rate_percent"]) is int
+                and parsed["signup_rate_percent"] == 4
+                and parsed["roi_claim_supported"] is False
+                and parsed["causal_lift_claim_supported"] is False)
     raise ValueError("unsupported public development suite")
 
 
