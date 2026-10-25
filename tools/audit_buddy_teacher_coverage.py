@@ -94,6 +94,7 @@ TASK_SUITE_DESIGN_LINKS = {
     "retrieval": ("long_context_retrieval", "grounded_research"),
     "long_context": ("long_context_retrieval",),
     "factuality": ("grounded_research",),
+    "orchestration": ("orchestration_approval",),
     "safety": ("safety_boundary",),
     "sql": ("sql_result_reasoning",),
     "sql_data": ("sql_result_reasoning",),
