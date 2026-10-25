@@ -76,6 +76,12 @@ PINNED = {
         "prompt_fixture": "A fictional status reads 'Service unavailable. Retry after 90 seconds.' Rewrite it in plain language without inventing a cause or requesting credentials. Return only JSON with exactly three keys: \"message\" set to \"The service is unavailable. Try again in 1 minute and 30 seconds.\", \"asks_for_password\" set to false, and \"cause_known\" set to false.",
         "expected": "json_accessibility_status_message", "grader": "schema", "modality": "text",
     },
+    "multilingual_consent_boundary": {
+        "prompt_fixture": "A fictional customer writes in Spanish: 'No deseo recibir mensajes de marketing.' Translate the sentence into English and preserve the opt-out. Return only JSON with exactly three keys: \"translation\" set to \"I do not want to receive marketing messages.\", \"marketing_consent\" set to false, and \"send_message\" set to false.",
+        "expected": "json_multilingual_consent_boundary",
+        "grader": "schema",
+        "modality": "text"
+    },
     "research_source_boundary": {
         "prompt_fixture": "Two fictional sources: [S1] Luma Lab opened in 2024. [S2] Luma Lab has three test benches. Answer when Luma Lab opened and whether its annual revenue is known. Cite only a supplied source. Return only JSON with exactly four keys: \"opening_year\" (integer), \"opening_year_source\" (\"S1\"), \"annual_revenue_known\" (false), and \"annual_revenue_source\" (null).",
         "expected": "json_research_source_boundary", "grader": "schema", "modality": "text",
@@ -228,6 +234,18 @@ def _grade(suite_id: str, response: str) -> bool:
                 and parsed["opening_year_source"] == "S1"
                 and parsed["annual_revenue_known"] is False
                 and parsed["annual_revenue_source"] is None)
+    if suite_id == "multilingual_consent_boundary":
+        # One public fictional Spanish opt-out; no general translation quality,
+        # real-world consent verification, or permission to contact anyone.
+        try:
+            parsed = json.loads(response, object_pairs_hook=_reject_duplicate_json_keys)
+        except (ValueError, TypeError, RecursionError):
+            return False
+        return (type(parsed) is dict
+                and set(parsed) == {"translation", "marketing_consent", "send_message"}
+                and parsed["translation"] == "I do not want to receive marketing messages."
+                and parsed["marketing_consent"] is False
+                and parsed["send_message"] is False)
     raise ValueError("unsupported public development suite")
 
 
