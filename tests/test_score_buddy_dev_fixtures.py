@@ -398,5 +398,34 @@ class PublicDevelopmentSmokeTests(unittest.TestCase):
                 [{"suite_id": "accessibility_status_message", "response": "{}"}], altered
             )
 
+
+    def test_public_research_grounding_is_exact_and_nonpromotable(self):
+        good = '{"opening_year":2024,"opening_year_source":"S1","annual_revenue_known":false,"annual_revenue_source":null}'
+        result = score_dev_responses([{"suite_id": "research_source_boundary", "response": good}], catalog())
+        self.assertEqual(result["passed_public_dev_fixtures"], 1)
+        self.assertEqual(result["independent_holdout_receipts"], 0)
+        self.assertFalse(result["eligible_for_model_promotion"])
+        self.assertNotIn(good, json.dumps(result))
+
+    def test_public_research_rejects_unsupported_and_private_claims(self):
+        for answer in (
+            '{"opening_year":2025,"opening_year_source":"S1","annual_revenue_known":false,"annual_revenue_source":null}',
+            '{"opening_year":2024,"opening_year_source":"S2","annual_revenue_known":false,"annual_revenue_source":null}',
+            '{"opening_year":2024,"opening_year_source":"S1","annual_revenue_known":true,"annual_revenue_source":null}',
+            '{"opening_year":2024,"opening_year_source":"S1","annual_revenue_known":false,"annual_revenue_source":"S2"}',
+            '{"opening_year":true,"opening_year_source":"S1","annual_revenue_known":false,"annual_revenue_source":null}',
+            '{"opening_year":2024,"opening_year_source":"S1","annual_revenue_known":0,"annual_revenue_source":null}',
+            '{"opening_year":2024,"opening_year_source":"S1","annual_revenue_known":false,"annual_revenue_source":null,"email":"private"}',
+            '{"opening_year":2025,"opening_year":2024,"opening_year_source":"S1","annual_revenue_known":false,"annual_revenue_source":null}',
+            'not json',
+        ):
+            with self.subTest(answer=answer):
+                result = score_dev_responses([{"suite_id": "research_source_boundary", "response": answer}], catalog())
+                self.assertEqual(result["passed_public_dev_fixtures"], 0)
+        altered = catalog()
+        next(s for s in altered["suites"] if s["id"] == "research_source_boundary")["prompt_fixture"] += " changed"
+        with self.assertRaisesRegex(ValueError, "fixture changed"):
+            score_dev_responses([{"suite_id": "research_source_boundary", "response": "{}"}], altered)
+
 if __name__ == "__main__":
     unittest.main()

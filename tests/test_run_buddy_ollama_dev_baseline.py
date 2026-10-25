@@ -44,6 +44,7 @@ class FakeTransport:
                     "marketing_claim_evidence": '{"signup_rate_percent":4,"roi_claim_supported":false,"causal_lift_claim_supported":false}',
                     "education_feedback": '{"is_correct":false,"correct_answer":"1","misconception":"added_denominators"}',
                     "science_lab_units": '{"mean_mm":100,"range_mm":4,"calibrated_uncertainty_supported":false}',
+                    "research_source_boundary": '{"opening_year":2024,"opening_year_source":"S1","annual_revenue_known":false,"annual_revenue_source":null}',
                     "accessibility_status_message": '{"message":"The service is unavailable. Try again in 1 minute and 30 seconds.","asks_for_password":false,"cause_known":false}'}[key]
         if self.wrong == key:
             response = "wrong"

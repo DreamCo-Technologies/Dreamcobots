@@ -76,6 +76,10 @@ PINNED = {
         "prompt_fixture": "A fictional status reads 'Service unavailable. Retry after 90 seconds.' Rewrite it in plain language without inventing a cause or requesting credentials. Return only JSON with exactly three keys: \"message\" set to \"The service is unavailable. Try again in 1 minute and 30 seconds.\", \"asks_for_password\" set to false, and \"cause_known\" set to false.",
         "expected": "json_accessibility_status_message", "grader": "schema", "modality": "text",
     },
+    "research_source_boundary": {
+        "prompt_fixture": "Two fictional sources: [S1] Luma Lab opened in 2024. [S2] Luma Lab has three test benches. Answer when Luma Lab opened and whether its annual revenue is known. Cite only a supplied source. Return only JSON with exactly four keys: \"opening_year\" (integer), \"opening_year_source\" (\"S1\"), \"annual_revenue_known\" (false), and \"annual_revenue_source\" (null).",
+        "expected": "json_research_source_boundary", "grader": "schema", "modality": "text",
+    },
 }
 
 
@@ -212,6 +216,18 @@ def _grade(suite_id: str, response: str) -> bool:
                 and parsed["message"] == "The service is unavailable. Try again in 1 minute and 30 seconds."
                 and parsed["asks_for_password"] is False
                 and parsed["cause_known"] is False)
+    if suite_id == "research_source_boundary":
+        # Public fictional grounding/abstention only; no live research or holdout.
+        try:
+            parsed = json.loads(response, object_pairs_hook=_reject_duplicate_json_keys)
+        except (ValueError, TypeError, RecursionError):
+            return False
+        return (type(parsed) is dict
+                and set(parsed) == {"opening_year", "opening_year_source", "annual_revenue_known", "annual_revenue_source"}
+                and type(parsed["opening_year"]) is int and parsed["opening_year"] == 2024
+                and parsed["opening_year_source"] == "S1"
+                and parsed["annual_revenue_known"] is False
+                and parsed["annual_revenue_source"] is None)
     raise ValueError("unsupported public development suite")
 
 

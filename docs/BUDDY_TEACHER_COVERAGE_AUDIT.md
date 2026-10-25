@@ -216,3 +216,20 @@ This is **not** an accessibility certification, usability study, screen-reader
 check, real model run, independent holdout, training result, or production
 readiness evidence. The optional Ollama runner remains explicitly opt-in and
 loopback-only; CI uses a fake model transport without downloading weights.
+
+## Fictional research grounding public fixture (2026-10-25)
+
+The fifteenth **public synthetic development fixture**, `research_source_boundary`,
+uses original fictional sources: S1 states a lab opened in 2024; S2 states
+its test-bench count. The grader requires the opening year cited to S1 and
+explicit abstention about annual revenue, which neither source supplies.
+It rejects unsupported sources, invented revenue knowledge, wrong types,
+extra/private fields, duplicate keys, and fixture-contract mutations.
+The optional local Ollama runner includes this public case only after
+existing explicit opt-ins. CI uses fake transport, not real model inference.
+The `research` task label and suite link are **design-only**.
+
+This public fixture can be memorized and is not web retrieval, independent
+citation validation, a clean holdout, model inference, training, or proof
+of research competence or production readiness. No model weights or
+real-world source material are downloaded or processed.

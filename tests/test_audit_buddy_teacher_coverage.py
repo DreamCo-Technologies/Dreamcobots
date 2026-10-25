@@ -490,5 +490,24 @@ class TeacherCoverageTests(unittest.TestCase):
             self.assertEqual(report["summary"]["independently_verified_routes_in_this_audit"], 0)
 
 
+
+    def test_research_route_is_design_only_not_verified(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            p = root / SOURCES["tasks"]
+            data = json.loads(p.read_text())
+            data["tasks"].append("research")
+            p.write_text(json.dumps(data))
+            p = root / SOURCES["suites"]
+            data = json.loads(p.read_text())
+            data["suites"].append({"id": "research_source_boundary"})
+            p.write_text(json.dumps(data))
+            report = audit(root)
+            row = next(x for x in report["task_routes"] if x["task"] == "research")
+            self.assertEqual(row["candidate_suite_ids_design_only"], ["research_source_boundary"])
+            self.assertEqual(row["independently_verified_model_ids"], [])
+            self.assertEqual(report["summary"]["independent_holdout_receipts_in_this_audit"], 0)
+
 if __name__ == "__main__":
     unittest.main()

@@ -91,6 +91,7 @@ TASK_SUITE_DESIGN_LINKS = {
     "coding": ("code_generation", "code_repair"),
     "python": ("code_generation", "code_repair"),
     "tool_use": ("tool_selection",),
+    "research": ("research_source_boundary",),
     "retrieval": ("long_context_retrieval", "grounded_research"),
     "long_context": ("long_context_retrieval",),
     "factuality": ("grounded_research",),
