@@ -96,7 +96,7 @@ class LocalBaselineTests(unittest.TestCase):
     def test_wrong_answer_not_credited(self):
         result = run_baseline(model="buddy:local", expected_digest=D, catalog=catalog(),
                               transport=FakeTransport(wrong="arithmetic_reasoning"),
-                              clock=iter(value for i in range(len(PINNED)) for value in (i / 10, (i + 1) / 10)).__next__
+                              clock=iter(value for i in range(len(PINNED)) for value in (i / 10, (i + 1) / 10)).__next__)
         self.assertEqual(result["passed_public_dev_fixtures"], len(PINNED) - 1)
 
     def test_model_digest_mismatch_prevents_generate(self):
