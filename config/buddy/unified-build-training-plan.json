@@ -1,0 +1,245 @@
+{
+  "schema": "dreamco.unified_build_training_plan.v1",
+  "version": "2026-10-22",
+  "status": "proposed_not_production_certified",
+  "source_documents": [
+    "docs/MASTER_PLAN.md",
+    "docs/PRODUCTION_READINESS_MASTER_PLAN.md",
+    "docs/DREAMCO_DELIVERY_PLAN.md",
+    "reports/P0_PLAN_GAP_QUEUE.md",
+    "reports/GOALS_TO_PRODUCTION_GATES.md",
+    "reports/MASTER_ROADMAP_CROSSWALK.md"
+  ],
+  "north_star": "Deliver secure, independently verified Buddy OS, then scale reusable capabilities across the fleet with evidence-gated learning.",
+  "release_policy": {
+    "no_self_certification": true,
+    "require_current_main_sha": true,
+    "external_mutations_require_approval": true,
+    "paid_training_requires_explicit_approval": true,
+    "never_train_on_unlicensed_data": true,
+    "holdouts_never_used_for_training": true,
+    "do_not_auto_merge_or_deploy": true,
+    "failed_gates_block_promotion": true
+  },
+  "release_stages": [
+    "discovered",
+    "implemented",
+    "tested",
+    "connected",
+    "independently_verified",
+    "production_certified"
+  ],
+  "workstreams": [
+    {
+      "id": "security",
+      "priority": "P0",
+      "goal": "Reverify unauthenticated GitHub, Stripe, money, device and deployment routes on current main; patch and test authorization"
+    },
+    {
+      "id": "ci",
+      "priority": "P0",
+      "goal": "Reproduce required red workflows; fix root causes, dependencies, Pages size and certification"
+    },
+    {
+      "id": "buddy_core",
+      "priority": "P0",
+      "goal": "Prove chat, orchestration, tool permissions, recovery, mobile and deliverable output"
+    },
+    {
+      "id": "data_rights",
+      "priority": "P0",
+      "goal": "Verify license, consent, provenance, privacy and holdout separation"
+    },
+    {
+      "id": "inventory",
+      "priority": "P1",
+      "goal": "Discover canonical bots, workflows, tools, functions, libraries, generators and models"
+    },
+    {
+      "id": "capability_genome",
+      "priority": "P1",
+      "goal": "Stable IDs, contracts, owners, dependency graph, runtime binding and evidence"
+    },
+    {
+      "id": "benchmarking",
+      "priority": "P1",
+      "goal": "Versioned independent task packs, repeated trials, exact environment and scorer"
+    },
+    {
+      "id": "frontier_models",
+      "priority": "P1",
+      "goal": "Authorized pinned frontier/open-weight adapters, measured cost, latency, quality and safety"
+    },
+    {
+      "id": "training",
+      "priority": "P1",
+      "goal": "Gap-driven method selection, isolated approved training, checkpoints and rollback"
+    },
+    {
+      "id": "fleet",
+      "priority": "P1",
+      "goal": "Reuse shared infrastructure, reconcile duplicate profiles, certify specialist workflows"
+    },
+    {
+      "id": "delivery",
+      "priority": "P1",
+      "goal": "Public Pages, personal dashboard and authenticated owner command center"
+    },
+    {
+      "id": "observability",
+      "priority": "P1",
+      "goal": "Logs, traces, budgets, alerts, metrics, backup, restore and rollback"
+    },
+    {
+      "id": "business",
+      "priority": "P2",
+      "goal": "Pilot website builder, coding assistant and research/business assistant"
+    },
+    {
+      "id": "education",
+      "priority": "P2",
+      "goal": "Buddy Bootcamp exercises, independent evaluation and graduation receipts"
+    },
+    {
+      "id": "devices",
+      "priority": "P2",
+      "goal": "Permissioned Wi-Fi/Bluetooth adapters with actual device smoke tests"
+    },
+    {
+      "id": "media",
+      "priority": "P2",
+      "goal": "Rights-checked audio, video, image, game and creator workflows"
+    }
+  ],
+  "milestones": [
+    {
+      "day": 3,
+      "goal": "Current-sha release blocker audit"
+    },
+    {
+      "day": 10,
+      "goal": "Reverified P0 closure and required CI stabilization"
+    },
+    {
+      "day": 21,
+      "goal": "Buddy Core release candidate with E2E receipts"
+    },
+    {
+      "day": 31,
+      "goal": "Controlled production release after live smoke and rollback"
+    },
+    {
+      "day": 61,
+      "goal": "Three tested commercial product pilots"
+    },
+    {
+      "day": 92,
+      "goal": "25 independently evaluated capabilities"
+    },
+    {
+      "day": 182,
+      "goal": "25 production-certified specialists"
+    },
+    {
+      "day": 365,
+      "goal": "100 independently verified capabilities and one paying-customer product"
+    }
+  ],
+  "training_loop": {
+    "stages": [
+      "discover",
+      "classify_and_deduplicate",
+      "derive_contract_and_rights",
+      "write_independent_task_pack",
+      "baseline",
+      "gap_analysis",
+      "choose_cheapest_safe_improvement",
+      "owner_approval",
+      "sandbox_training_or_code_change",
+      "heldout_retest",
+      "safety_regression",
+      "human_review",
+      "promote_or_rollback"
+    ],
+    "methods": [
+      "tool_improvement",
+      "retrieval",
+      "prompt_or_policy",
+      "synthetic_fixtures_with_rights",
+      "supervised_fine_tuning",
+      "lora_qlora",
+      "preference_optimization",
+      "distillation_with_permission",
+      "from_scratch_research_only_when_justified"
+    ],
+    "selection_rules": [
+      "Prefer code/tool repair over model training when failure is deterministic",
+      "No training without authorized datasets, compute budget and owner approval",
+      "Compare identical pinned tasks and scorers with heldout isolation",
+      "Require positive independent improvement and no critical regression before promotion"
+    ],
+    "trigger_conditions": [
+      "Independent benchmark score below approved threshold",
+      "Regression on a previously certified capability",
+      "New authorized source or model revision requires retest",
+      "User-approved capability gap with concrete acceptance test"
+    ],
+    "task_schema": [
+      "id",
+      "source_sha",
+      "owner",
+      "capability_id",
+      "observed_failure",
+      "benchmark_id",
+      "dataset_license",
+      "data_split_hashes",
+      "candidate_method",
+      "resource_profile",
+      "max_cost_usd",
+      "required_approvals",
+      "success_metrics",
+      "rollback",
+      "evidence_links"
+    ]
+  },
+  "daily_schedule": {
+    "pull_request": "changed-scope tests",
+    "merge": "required release checks",
+    "daily": "static inventory, security/dependency checks, smoke tests, gap queue and low-cost benchmarks",
+    "weekly": "full independent benchmarks and integration",
+    "monthly": "load, disaster recovery, security and production recertification"
+  },
+  "certification_requirements": [
+    "Current main SHA",
+    "Authenticated authorization tests",
+    "Executable positive, negative, recovery tests",
+    "Independent heldout benchmarks",
+    "Real adapter and environment smoke",
+    "Latency/cost/reliability measurements",
+    "Observability and alerting",
+    "Backup and rollback verification",
+    "Reviewer approval and evidence links"
+  ],
+  "first_product_pilots": [
+    "website_business_builder",
+    "coding_repository_assistant",
+    "research_business_assistant"
+  ],
+  "known_historical_risks": [
+    "Oct 2 P0 report: unauthenticated mutating API routes; must reverify",
+    "Sep 28 report: optional media dependency audit failures; must reverify",
+    "Sep 28 report: Pages size cap exceeded; must reverify",
+    "Oct 2 report: required workflows red; must reverify",
+    "Sep 27 inventory: zero of 1101 production certified; recount current main"
+  ],
+  "next_actions": [
+    "Review and merge tested capability lab PR",
+    "Reverify P0 security and required CI on main",
+    "Create canonical discovery-to-genome ingestion",
+    "Implement provider and local-model adapters with explicit authorization",
+    "Implement independent benchmark task packs and safe scoring",
+    "Build training executor with isolated resource quotas",
+    "Wire evidence JSON into Pages publisher",
+    "Pilot one complete Buddy workflow and one product"
+  ]
+}

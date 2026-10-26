@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Buddy In-House Capability Lab</title><link rel="stylesheet" href="styles.css"></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script><main class="container">
+<h1>Buddy In-House Capability Lab</h1>
+<p>Evidence-first internal testing. Listed goals are not proof of working skills.</p>
+<section class="card"><h2>Current report</h2><p id="status" role="status">Loading…</p><div id="summary"></div></section>
+<section class="card"><h2>Capability goals</h2><div id="capabilities"></div></section>
+<section class="card"><h2>Run and verify</h2><p>Run the read-only certification workflow on GitHub Actions. Artifacts contain the result for that exact commit; this page is a published snapshot, not a live connection to Actions.</p>
+<p><a href="https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-inhouse-capability-certification.yml">Open certification workflow</a></p></section></main>
+<script>
+const esc = x => String(x).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+(async () => {
+ try {
+  const r = await fetch('data/buddy-capability-certification.json',{cache:'no-store'});
+  if (!r.ok) throw Error('No published certification snapshot');
+  const data = await r.json();
+  document.getElementById('status').textContent='Revision: '+data.revision+' | '+data.generated_at+' | Mode: '+data.mode;
+  document.getElementById('summary').textContent=JSON.stringify(data.summary);
+  document.getElementById('capabilities').innerHTML=data.results.map(x=>'<article class="card"><h3>'+esc(x.id)+'</h3><p>'+esc(x.description)+'</p><p>Target: '+esc(x.target)+' | Observed: '+esc(x.observed)+'</p><p>'+esc(x.reason)+'</p><p>Independent verification: NO | Production: NO</p></article>').join('');
+ } catch(e) {document.getElementById('status').textContent='Evidence unavailable: '+e.message+' — do not infer capability.'}
+})();
+</script></body></html>
