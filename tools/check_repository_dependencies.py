@@ -22,6 +22,7 @@ PYTHON_REQUIREMENT_FILES = (
     "requirements-media.txt",
     "requirements-hf-learning.txt",
     "huggingface/dreamco-router/requirements.txt",
+    "study_packs/career_pathways/requirements.txt",
 )
 IMPORT_ALIASES = {"pillow": {"pil"}, "chatterbox_tts": {"chatterbox"}, "pyyaml": {"yaml"}}
 
