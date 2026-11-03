@@ -1,0 +1,34 @@
+name: Unified PR inventory validation
+on:
+  pull_request:
+    paths:
+      - 'integration/open-pr-inventory.json'
+      - 'integration/validate_pr_inventory.py'
+      - 'integration/classify_open_prs.py'
+      - '.github/workflows/unified-pr-inventory.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify complete PR inventory
+        run: python integration/validate_pr_inventory.py
+      - name: Classify PRs without losing coverage
+        run: python integration/classify_open_prs.py
+      - name: Check report generation
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path("integration/open-pr-workstreams.json").read_text())
+          assert report["classified_count"] == report["inventory_count"]
+          assert report["merge_policy"].startswith("NO_AUTO_MERGE")
+          print("Coverage verified; no merge permissions granted.")
+          PY
