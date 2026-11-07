@@ -1,0 +1,63 @@
+name: Five-Minute Repository Health Audit
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+    inputs:
+      run_tests:
+        description: "Run the focused repository test suite after the audit"
+        required: false
+        default: false
+        type: boolean
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: repository-health-audit-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pull-requests: read
+  actions: read
+
+jobs:
+  audit:
+    name: Full repository inventory and static health audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Check out exact revision
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Audit tracked repository files and open pull requests
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_STEP_SUMMARY: ${{ github.step_summary }}
+        run: python3 tools/repository_health_audit.py
+
+      - name: Run focused tests when explicitly requested
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_tests }}
+        run: |
+          python3 -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Preserve audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repository-health-${{ github.run_id }}
+          path: reports/repository-health-latest.json
+          if-no-files-found: warn
+          retention-days: 14
