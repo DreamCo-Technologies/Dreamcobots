@@ -13,9 +13,11 @@ test('income practice includes variable and fixed costs and handles nonprofitabl
 test('all indexed pages exist and every tracked file has a source button target',()=>{
   const index=JSON.parse(readFileSync('website/data/pages-connection-index.json','utf8'));
   assert.ok(index.files.length>1000);
+  assert.equal(index.source_base,'https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/');
   for(const row of index.files){
     assert.ok(existsSync(row.path),row.path);
-    assert.ok(row.source.startsWith('https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/'));
+    assert.equal(decodeURIComponent(row.source),row.path);
+    assert.ok((index.source_base+row.source).startsWith('https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/'));
     if(row.page)assert.ok(existsSync('website/'+row.page),row.page);
   }
 });
