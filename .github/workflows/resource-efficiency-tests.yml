@@ -4,6 +4,8 @@ on:
     paths:
       - 'website/resource-efficiency*'
       - 'tests/resource-efficiency*.test.cjs'
+      - 'tests/resource-router.test.cjs'
+      - 'website/resource-router.js'
       - '.github/workflows/resource-efficiency-tests.yml'
   workflow_dispatch:
 permissions:
@@ -18,9 +20,10 @@ jobs:
         with:
           node-version: '22'
       - name: Test resource math
-        run: node --test tests/resource-efficiency.test.cjs tests/resource-efficiency-policy.test.cjs
+        run: node --test tests/resource-efficiency.test.cjs tests/resource-efficiency-policy.test.cjs tests/resource-router.test.cjs
       - name: Validate browser script syntax
         run: |
           node --check website/resource-efficiency-core.js
           node --check website/resource-efficiency-policy.js
+          node --check website/resource-router.js
           node --check website/resource-efficiency.js
