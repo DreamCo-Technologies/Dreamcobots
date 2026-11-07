@@ -1,0 +1,147 @@
+{
+  "schema": "dreamco.goal_registry.v1",
+  "updated_at": null,
+  "policy": "Proposed baseline goals. Status remains unknown or planned until repository evidence verifies progress. No target date or owner is invented.",
+  "goals": [
+    {
+      "id": "repo-production-readiness",
+      "title": "Make the full repository production-ready",
+      "status": "planned",
+      "owner": "DreamCo maintainers",
+      "target_date": null,
+      "priority": "critical",
+      "success_criteria": [
+        "All tracked source/config files parse",
+        "Required CI checks pass on main",
+        "Generated artifacts are reproducible and current",
+        "Runtime integrations have smoke-test evidence",
+        "Security and dependency findings are triaged"
+      ],
+      "milestones": [
+        {
+          "id": "inventory",
+          "title": "Whole-repository inventory",
+          "status": "in_progress"
+        },
+        {
+          "id": "connections",
+          "title": "Verify cross-component connections",
+          "status": "planned"
+        },
+        {
+          "id": "generators",
+          "title": "Regenerate and validate generated artifacts",
+          "status": "planned"
+        },
+        {
+          "id": "ci",
+          "title": "Resolve required CI failures",
+          "status": "planned"
+        },
+        {
+          "id": "runtime",
+          "title": "Verify runtime and deployment paths",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "buddy-learning-loop",
+      "title": "Build a governed Buddy learning and Bootcamp pipeline",
+      "status": "planned",
+      "owner": "DreamCo maintainers",
+      "target_date": null,
+      "priority": "high",
+      "success_criteria": [
+        "Sources are ingested, not merely catalogued",
+        "Licenses, provenance, privacy, and tenant boundaries are enforced",
+        "Courses and reusable learning assets are generated",
+        "Training jobs produce checkpoints and reproducible receipts",
+        "Holdout, regression, and transfer evaluations pass"
+      ],
+      "milestones": [
+        {
+          "id": "source-rights",
+          "title": "Approved source and rights registry",
+          "status": "planned"
+        },
+        {
+          "id": "ingestion",
+          "title": "Content ingestion and course generation",
+          "status": "planned"
+        },
+        {
+          "id": "worker",
+          "title": "Bounded training worker and checkpoint pipeline",
+          "status": "planned"
+        },
+        {
+          "id": "evaluation",
+          "title": "Baseline, holdout, and regression evaluation",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "model-routing-quality",
+      "title": "Measure Buddy model routing quality",
+      "status": "planned",
+      "owner": "DreamCo maintainers",
+      "target_date": null,
+      "priority": "high",
+      "success_criteria": [
+        "Provider adapters are implemented and contract-tested",
+        "Task-level quality, reliability, latency, and cost are measured",
+        "Routing decisions are benchmark-backed",
+        "Fallback and failure paths are tested"
+      ],
+      "milestones": [
+        {
+          "id": "adapters",
+          "title": "Provider adapter verification",
+          "status": "planned"
+        },
+        {
+          "id": "benchmarks",
+          "title": "Reproducible task benchmark suite",
+          "status": "planned"
+        },
+        {
+          "id": "routing",
+          "title": "Evidence-based routing and fallback",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "pages-observability",
+      "title": "Publish trustworthy project status on GitHub Pages",
+      "status": "in_progress",
+      "owner": "DreamCo maintainers",
+      "target_date": null,
+      "priority": "high",
+      "success_criteria": [
+        "Latest audit report is published to a dedicated results branch",
+        "Pages dashboard displays audit timestamp, revision, findings, goals, and PR inventory",
+        "Unknown or stale data is labelled honestly"
+      ],
+      "milestones": [
+        {
+          "id": "audit",
+          "title": "Five-minute static repository audit",
+          "status": "in_progress"
+        },
+        {
+          "id": "results-branch",
+          "title": "Publish machine-readable results to GitHub",
+          "status": "planned"
+        },
+        {
+          "id": "dashboard",
+          "title": "Pages goals and build-status dashboard",
+          "status": "planned"
+        }
+      ]
+    }
+  ]
+}
