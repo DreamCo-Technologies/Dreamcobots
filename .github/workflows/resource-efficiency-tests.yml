@@ -6,6 +6,8 @@ on:
       - 'tests/resource-efficiency*.test.cjs'
       - 'tests/resource-router.test.cjs'
       - 'website/resource-router.js'
+      - 'website/account-control.js'
+      - 'tests/account-control.test.cjs'
       - '.github/workflows/resource-efficiency-tests.yml'
   workflow_dispatch:
 permissions:
@@ -20,10 +22,11 @@ jobs:
         with:
           node-version: '22'
       - name: Test resource math
-        run: node --test tests/resource-efficiency.test.cjs tests/resource-efficiency-policy.test.cjs tests/resource-router.test.cjs
+        run: node --test tests/resource-efficiency.test.cjs tests/resource-efficiency-policy.test.cjs tests/resource-router.test.cjs tests/account-control.test.cjs
       - name: Validate browser script syntax
         run: |
           node --check website/resource-efficiency-core.js
           node --check website/resource-efficiency-policy.js
           node --check website/resource-router.js
+          node --check website/account-control.js
           node --check website/resource-efficiency.js
