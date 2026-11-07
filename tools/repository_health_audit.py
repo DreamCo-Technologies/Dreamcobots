@@ -19,6 +19,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "reports" / "repository-health-latest.json"
+GOALS = ROOT / "config" / "repository-goals.json"
 SUMMARY = os.environ.get("GITHUB_STEP_SUMMARY")
 REPO = os.environ.get("GITHUB_REPOSITORY", "")
 TOKEN = os.environ.get("GH_TOKEN", "")
@@ -120,6 +121,18 @@ def main() -> int:
     if counts["workflow_files"] == 0:
         add("critical", "no_workflows", ".github/workflows", "No tracked GitHub Actions workflows found.")
 
+    goals = {"available": False, "reason": "Goal registry missing or invalid"}
+    try:
+        goals_data = json.loads(GOALS.read_text(encoding="utf-8"))
+        goals = {
+            "available": True,
+            "schema": goals_data.get("schema"),
+            "updated_at": goals_data.get("updated_at"),
+            "goals": goals_data.get("goals", []),
+        }
+    except (OSError, ValueError) as exc:
+        add("warning", "goal_registry_unavailable", str(GOALS.relative_to(ROOT)), str(exc))
+
     prs = github_open_prs()
     if not prs.get("available"):
         add("warning", "pr_inventory_unavailable", "GitHub API", prs.get("reason", "Unknown API error"))
@@ -138,6 +151,7 @@ def main() -> int:
         "mode": "read_only_static_inventory",
         "counts": counts,
         "pull_requests": prs,
+        "goal_registry": goals,
         "finding_counts": {"critical": critical, "warning": warnings},
         "findings": findings,
         "limitations": [
