@@ -5,6 +5,8 @@ on:
       - 'integration/open-pr-inventory.json'
       - 'integration/validate_pr_inventory.py'
       - 'integration/classify_open_prs.py'
+      - 'integration/validate_pages_index.py'
+      - 'integration/test_validate_pages_index.py'
       - '.github/workflows/unified-pr-inventory.yml'
   workflow_dispatch:
 permissions:
@@ -32,3 +34,8 @@ jobs:
           assert report["merge_policy"].startswith("NO_AUTO_MERGE")
           print("Coverage verified; no merge permissions granted.")
           PY
+
+      - name: Unit-test Pages index fail-closed validation
+        run: python -m unittest integration.test_validate_pages_index
+      - name: Validate actual Pages index
+        run: python integration/validate_pages_index.py
