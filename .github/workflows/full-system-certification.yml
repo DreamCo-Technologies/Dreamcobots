@@ -1,6 +1,11 @@
 name: Full System Certification
 
 on:
+  pull_request:
+    paths:
+      - "tools/build_unified_bot_system.py"
+      - "tests/test_unified_bot_cohorts.py"
+      - ".github/workflows/full-system-certification.yml"
   workflow_dispatch:
   schedule:
     - cron: "41 9 * * *"
@@ -62,7 +67,7 @@ jobs:
 
       - name: Validate certification policies
         run: |
-          python3 -m unittest tests.test_full_system_operational_certification tests.test_trusted_code_delivery tests.test_change_impact_test_policy tests.test_recovery_ontology_workforce_runtime
+          python3 -m unittest tests.test_full_system_operational_certification tests.test_trusted_code_delivery tests.test_change_impact_test_policy tests.test_recovery_ontology_workforce_runtime tests.test_unified_bot_cohorts
           node --import tsx --test tests/server-health-runtime-policy.test.ts
 
       - name: Recover and unify legacy bot system
