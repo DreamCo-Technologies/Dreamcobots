@@ -1,0 +1,29 @@
+{
+  "schema": "dreamco.executable_tasks.v1",
+  "rights": "owned",
+  "note": "Authored fixtures; hidden tests must never be supplied to model prompts or training.",
+  "tasks": [
+    {
+      "id": "python-square",
+      "domain": "coding",
+      "kind": "coding_python",
+      "prompt": "Write only Python code defining square(n), returning n*n. No markdown.",
+      "hidden_tests": "import unittest\nfrom solution import square\nclass TestSquare(unittest.TestCase):\n def test_positive(self): self.assertEqual(square(4),16)\n def test_negative(self): self.assertEqual(square(-3),9)\n def test_zero(self): self.assertEqual(square(0),0)\n"
+    },
+    {
+      "id": "research-arithmetic",
+      "domain": "research",
+      "kind": "research",
+      "prompt": "A trial enrolled 120 people and 95 completed follow-up. How many did not complete follow-up? Return only the number.",
+      "expected": "25"
+    },
+    {
+      "id": "inventory-workflow",
+      "domain": "multi_step_tools",
+      "kind": "multi_step_tools",
+      "prompt": "You have tools read_inventory, read_reserved, calculate_available, publish. Return a JSON array of actions to read inventory and reservations, calculate available, then publish. No prose.",
+      "inventory": 8,
+      "reserved": 3
+    }
+  ]
+}

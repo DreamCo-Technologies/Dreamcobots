@@ -1,0 +1,52 @@
+name: DreamCo Generated Data Repair PR
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+      - name: Refresh Actions catalog
+        run: |
+          python3 tools/audit_actions_health.py
+          python3 tools/build_actions_prospectus.py
+      - name: Refresh command center data
+        run: python3 tools/generate_command_center_data.py
+      - name: Stage only expected generated artifacts
+        run: |
+          git add config/generated/actions-health-report.json config/generated/actions-prospectus.json
+          git add website/data/actions-health-report.json website/data/actions-prospectus.json
+          git add reports/ACTIONS_HEALTH_REPORT.md
+          git add command-center/data website/data/command-center
+      - name: Create reviewable repair PR, never auto-merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --cached --quiet; then
+            echo "Generated files already current"
+            exit 0
+          fi
+          BRANCH="automation/refresh-generated-data-${{ github.run_id }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git commit -m "chore: refresh generated Actions and command-center evidence"
+          git push origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "chore: refresh generated Actions and command-center evidence" \
+            --body "Generated from repository sources. Review diffs and run all required checks before merging. This does not certify production readiness."
