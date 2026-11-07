@@ -1,0 +1,24 @@
+name: Buddy Learning Income Engine Tests
+on:
+  pull_request:
+    paths:
+      - 'tools/buddy_learning_income_engine.py'
+      - 'tests/test_buddy_learning_income_engine.py'
+      - '.github/workflows/buddy-learning-income-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/buddy_learning_income_engine.py'
+      - 'tests/test_buddy_learning_income_engine.py'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run isolated unit tests
+        run: python -m unittest -v tests.test_buddy_learning_income_engine
