@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: read
   actions: read
 
@@ -46,6 +46,36 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_RUN_ID: ${{ github.run_id }}
         run: python3 tools/repository_health_audit.py
+
+      - name: Publish traceability records for GitHub Pages
+        if: ${{ always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && hashFiles('reports/repository-health-latest.json') != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          target="$RUNNER_TEMP/dreamco-health-publish"
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git ls-remote --exit-code --heads "$remote" repository-health-results >/dev/null 2>&1; then
+            git clone --depth 1 --branch repository-health-results "$remote" "$target"
+          else
+            mkdir -p "$target"
+            git -C "$target" init -b repository-health-results
+            git -C "$target" remote add origin "$remote"
+          fi
+          mkdir -p "$target/reports/history" "$target/config"
+          cp reports/repository-health-latest.json "$target/reports/repository-health-latest.json"
+          cp config/repository-goals.json "$target/config/repository-goals.json"
+          cp reports/repository-health-latest.json "$target/reports/history/${GITHUB_RUN_ID}.json"
+          git -C "$target" config user.name "github-actions[bot]"
+          git -C "$target" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$target" add reports config/repository-goals.json
+          if ! git -C "$target" diff --cached --quiet; then
+            git -C "$target" commit -m "Publish repository health run ${GITHUB_RUN_ID} (${GITHUB_SHA:0:12})"
+            git -C "$target" push origin HEAD:repository-health-results
+          fi
 
       - name: Run focused tests when explicitly requested
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_tests }}
