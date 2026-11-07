@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Buddy same-task evaluation input",
+  "type": "object",
+  "required": ["schema", "evaluation_id", "task", "metadata", "candidates"],
+  "properties": {
+    "schema": {"const": "dreamco.buddy_task_evaluation_input.v1"},
+    "evaluation_id": {"type": "string", "minLength": 1},
+    "task": {
+      "type": "object",
+      "required": ["task_id", "fixture_version", "acceptance_criteria", "input_digest", "prompt_version", "task_fingerprint"],
+      "properties": {
+        "task_id": {"type": "string", "minLength": 1},
+        "fixture_version": {"type": "string", "minLength": 1},
+        "acceptance_criteria": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "input_digest": {"type": "string", "minLength": 1},
+        "prompt_version": {"type": "string", "minLength": 1},
+        "task_fingerprint": {"type": "string", "minLength": 1},
+        "expected_actions": {"type": "array", "items": {"type": "object", "required": ["action_id"], "properties": {"action_id": {"type": "string", "minLength": 1}}, "additionalProperties": true}}
+      },
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["dataset_version", "evaluator_version", "environment", "model_and_provider_versions", "measurement_method", "timestamp", "concurrency", "cache_state"],
+      "properties": {
+        "dataset_version": {"type": "string", "minLength": 1},
+        "evaluator_version": {"type": "string", "minLength": 1},
+        "environment": {"type": "string", "minLength": 1},
+        "model_and_provider_versions": {"type": "object"},
+        "measurement_method": {"type": "string", "minLength": 1},
+        "timestamp": {"type": "string", "minLength": 1},
+        "concurrency": {"type": "integer", "minimum": 1},
+        "cache_state": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    },
+    "candidates": {
+      "type": "object",
+      "required": ["buddy"],
+      "properties": {
+        "buddy": {"$ref": "#/$defs/candidate"},
+        "wrapper_baseline": {"$ref": "#/$defs/candidate"},
+        "distilled_student": {"$ref": "#/$defs/candidate"}
+      },
+      "additionalProperties": {"$ref": "#/$defs/candidate"}
+    }
+  },
+  "$defs": {
+    "candidate": {
+      "type": "object",
+      "required": ["acceptance_passed", "evaluator_type", "evidence_refs", "task_fingerprint"],
+      "properties": {
+        "acceptance_passed": {"type": ["boolean", "null"]},
+        "evaluator_type": {"type": ["string", "null"]},
+        "task_fingerprint": {"type": "string", "minLength": 1},
+        "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "quality_dimensions": {"type": "object", "additionalProperties": {"type": ["number", "null"], "minimum": 0, "maximum": 100}},
+        "applicable_dimensions": {"type": "array", "items": {"type": "string"}},
+        "permission_cases": {"type": "array", "items": {"type": "object"}},
+        "action_events": {"type": "array", "items": {"type": "object"}},
+        "tool_selection": {"type": "object"},
+        "model_selection": {"type": "object"},
+        "control_loop": {"type": "object"},
+        "memory": {"type": "object"},
+        "learning": {
+          "type": "object",
+          "properties": {
+            "baseline_holdout_scores": {"type": "array", "items": {"type": ["number", "null"], "minimum": 0, "maximum": 100}},
+            "post_training_holdout_scores": {"type": "array", "items": {"type": ["number", "null"], "minimum": 0, "maximum": 100}},
+            "holdout_fixture_version": {"type": "string", "minLength": 1},
+            "target_gain_points": {"type": "number", "exclusiveMinimum": 0},
+            "checkpoint_hash": {"type": "string", "minLength": 1},
+            "training_run_id": {"type": "string", "minLength": 1},
+            "data_permission": {"type": "boolean"},
+            "isolated_training": {"type": "boolean"},
+            "teacher_terms_verified": {"type": "boolean"},
+            "regression_tests_passed": {"type": "boolean"}
+          },
+          "additionalProperties": true
+        },
+        "performance": {"type": "object"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

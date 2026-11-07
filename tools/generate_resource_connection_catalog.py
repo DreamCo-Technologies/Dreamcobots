@@ -8,6 +8,10 @@ from pathlib import Path
 from urllib.parse import urlparse
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'website/data/buddy-resource-connection-catalog.json'
+GENERATED_INPUTS={
+    ROOT/'website/data/buddy-bootcamp-resource-catalog.json',
+    ROOT/'website/data/wikipedia-learning-target-map.json',
+}
 SCAN=(ROOT/'config',ROOT/'website/data')
 PUBLIC_NAME_POLICY=re.compile(r'(?:r[e]plit|\bi[b]m\b|w[a]tson)',re.IGNORECASE)
 REGISTRY=ROOT/'config/buddy/resource-registry.json'
@@ -74,7 +78,7 @@ def build():
     scanned=0
     for root in SCAN:
         for path in root.rglob('*.json'):
-            if path==OUT:continue
+            if path==OUT or path in GENERATED_INPUTS:continue
             try: data=json.loads(path.read_text())
             except (json.JSONDecodeError,UnicodeDecodeError):continue
             scanned+=1;urls=set();walk(data,urls)
