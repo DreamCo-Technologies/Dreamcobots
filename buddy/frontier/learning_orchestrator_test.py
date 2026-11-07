@@ -1,4 +1,4 @@
-from learning_orchestrator import EvaluationFailure, LearningAction, can_promote, propose_learning_jobs
+from buddy.frontier.learning_orchestrator import EvaluationFailure, LearningAction, can_promote, propose_learning_jobs
 
 
 def test_clusters_same_root_cause():

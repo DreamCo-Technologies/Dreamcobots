@@ -337,6 +337,30 @@ class BuddyPlatformExpansionTests(unittest.TestCase):
             self.assertFalse(plan["sandbox"]["live_execution_performed"])
             self.assertEqual(plan["sandbox"]["source_mount"], "read_only")
 
+    def test_dreamco_clean_room_workbench_reports_evidence_and_requires_original_customization(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            (root / "LICENSE").write_text("MIT License\n", encoding="utf-8")
+            (root / "src").mkdir()
+            (root / "src" / "app.py").write_text("@app.route('/api/items')\ndef items(): pass\n", encoding="utf-8")
+            (root / "tests").mkdir()
+            (root / "tests" / "test_app.py").write_text("def test_items(): pass\n", encoding="utf-8")
+            lab = BuddyOpenSourceLab()
+            with self.assertRaisesRegex(OpenSourceError, "authorization"):
+                lab.analyze_clean_room(root, owner_authorized=False, customizations=["workflow", "privacy"], differentiator="DreamCo makes an original product for its users.")
+            with self.assertRaisesRegex(OpenSourceError, "two supported"):
+                lab.analyze_clean_room(root, owner_authorized=True, customizations=["workflow"], differentiator="DreamCo makes an original product for its users.")
+            report = lab.analyze_clean_room(
+                root, owner_authorized=True, customizations=["workflow", "privacy"],
+                differentiator="DreamCo makes an original product for its own learning community.",
+            )
+            self.assertEqual(report["system"], "DreamCo Code Workbench")
+            self.assertEqual(report["evidence"]["routes_and_apis"][0]["path"], "src/app.py")
+            self.assertTrue(report["evidence"]["tests"])
+            self.assertFalse(report["source_executed"])
+            self.assertFalse(report["network_used"])
+            self.assertFalse(report["source_code_copied"])
+
     def test_open_source_lab_blocks_secret_bearing_upgrade_package(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

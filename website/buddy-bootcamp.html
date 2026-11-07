@@ -5,9 +5,105 @@
 <header class="actions-header"><div><p class="actions-kicker">Sandbox</p><h1>Buddy bootcamp</h1><p>The daily jobs test the files and update the scan. This is not the best sandbox on the planet.</p></div>
 <p><a class="btn btn-primary" href="professional-bootcamp.html">Professional College</a> <a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/BOT_TEST.json">Latest bot test</a> <a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/DAILY_LEARNING.md">Daily learning</a> <a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/ALL_SCORES.json">Daily scores</a></p>
 <p id="bootcamp-status">1101 bots sandboxed. Score not measured. Daily jobs run at 15:15, 15:20, and 15:25 UTC.</p></header>
+<section class="actions-review" id="bootcamp-resources">
+  <h2>Choose resources for this bootcamp</h2>
+  <p id="bootcamp-resource-summary" aria-live="polite">Loading categorized resources.</p>
+  <p>Resource choices are curriculum references. To authorize an actual account connection, use the <a href="resource-connection-center.html">Resource Connection Center</a>.</p>
+  <div class="actions-row">
+    <label>Find resources <input id="bootcamp-resource-search" type="search" maxlength="160" placeholder="Wikipedia, Hugging Face, GitHub, health…"></label>
+    <label>Category <select id="bootcamp-resource-category"><option value="all">All categories</option></select></label>
+    <button class="btn btn-outline" id="bootcamp-select-visible" type="button">Select visible</button>
+    <button class="btn btn-outline" id="bootcamp-clear-selection" type="button">Clear selection</button>
+  </div>
+  <details class="card"><summary>Add a resource you use</summary>
+    <p>Add only a name and public HTTPS link. Never enter a password, API key, or private link. Custom entries stay in this browser.</p>
+    <label>Name <input id="bootcamp-custom-name" maxlength="100" type="text"></label>
+    <label>Public HTTPS URL <input id="bootcamp-custom-url" type="url" placeholder="https://example.org"></label>
+    <label>Category <select id="bootcamp-custom-category"><option value="other_needs_review">Other / needs review</option></select></label>
+    <button class="btn btn-outline" id="bootcamp-add-custom" type="button">Add to this bootcamp catalog</button>
+  </details>
+  <div id="bootcamp-resource-list" class="resource-grid" aria-live="polite"></div>
+  <button class="btn btn-outline" id="bootcamp-resource-more" type="button" hidden>Show more resources</button>
+  <p><label>Learning goals, one per line <textarea id="bootcamp-goals" rows="3" placeholder="Learn to build and test a retrieval system"></textarea></label></p>
+  <p><label>Benchmark IDs, comma-separated <input id="bootcamp-benchmarks" type="text" placeholder="retrieval, coding, reasoning"></label></p>
+  <button class="btn btn-primary" id="bootcamp-export-plan" type="button">Export selected bootcamp plan</button>
+  <button class="btn btn-outline" id="bootcamp-export-resources" type="button">Download my resource selection</button>
+  <p id="bootcamp-plan-status" aria-live="polite">Your choices stay in this browser until you export them. Selecting a resource does not connect an account or start training.</p>
+</section>
+<section class="actions-review" id="buddy-data-study">
+  <h2>Study a dataset with Buddy</h2>
+  <p>Users can inspect public metadata and test a split before choosing whether to download any files. The preflight checks up to 100 returned rows for schema problems, missing values, duplicates, mixed types, likely emails/phone numbers/SSNs/payment cards/credentials, active HTML/script markers, and prompt-injection phrases. It flags sensitive-looking field names, unsupported formats, and dataset scripts, and removes sample values from its saved report. Pattern scans can miss issues or flag ordinary text. The Dataset Viewer preview is not pinned to the selected commit, so users must review it against that exact revision. A successful preview cannot prove safety, rights, privacy, or quality.</p>
+  <p><code>python3 tools/buddy_discover_hf_dataset.py OWNER/DATASET main</code> resolves the selected revision and lists supported files without downloading them.</p>
+  <p><code>python3 tools/buddy_discover_hf_dataset.py OWNER/DATASET main --preview --config CONFIG --split SPLIT</code> fetches split metadata and a redacted sample schema before download. Script files are flagged and never run. Users still review the publisher, dataset card, license and terms, provenance, selected files, hash, and intended use; download rights and model-training consent are separate choices.</p>
+  <p><code>python3 tools/buddy_study_dataset.py ./dataset.csv --owner-id YOUR_USER_ID --buddy-id YOUR_BUDDY_ID --source-url https://huggingface.co/datasets/OWNER/NAME --source-family hugging_face --license LICENSE_ID --rights-reviewed --terms-checked --private-study</code></p>
+  <p>Use <code>--owner-created --consent-receipt RECEIPT_ID</code> for a dataset you created. Private study, private training, shared-fleet training, and publication each require separate permissions. User-created data remains user-owned; Buddy's access is a scoped permission.</p>
+  <p><a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/docs/BUDDY_WEB_LEARNING_FABRIC.md" target="_blank" rel="noopener noreferrer">Dataset rights and study guide</a></p>
+  <h3>Review models, chatbots, and open-source GitHub components</h3>
+  <p>Use the provider-neutral resource preflight for hosted/local models, chatbots, agents, MCP servers, and tools. It records evidence and missing checks without connecting credentials. A selected GitHub folder can be reviewed at a pinned commit before users choose whether to copy it. Copying requires authorization, a reviewed identified license, preserved notices, and at least two DreamCo customizations.</p>
+  <p><code>python3 tools/buddy_resource_preflight.py ai MODEL_ID ai_model PROVIDER https://provider.example/model --revision REVISION --license LICENSE</code></p>
+  <p><code>python3 tools/buddy_resource_preflight.py github https://github.com/OWNER/REPOSITORY --select src/agent --output review.json</code></p>
+  <p><code>python3 tools/buddy_resource_preflight.py clone-selected review.json ./my-dreamco-module --confirm-authorization --confirm-license-review --customize workflow --customize privacy --differentiator "Describe an original DreamCo behavior that serves my users."</code></p>
+  <p><a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/docs/BUDDY_RESOURCE_PREFLIGHT.md" target="_blank" rel="noopener noreferrer">Model, chatbot, and GitHub preflight guide</a></p>
+  <p>Research findings can feed benchmark proposals. Verified code-tracking failures produce reverse-engineering plans; training and checkpoint failures produce rights-gated distillation or training diagnosis. Only verified repeated benchmark mastery can earn non-cash learning points. These proposals do not start runs, change weights, execute source code, or transfer financial tokens.</p>
+  <p><a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/docs/BUDDY_RESEARCH_BENCHMARK_TOKEN_INTEGRATION.md" target="_blank" rel="noopener noreferrer">Research, benchmark, and learning-points flow</a></p>
+</section>
+<section class="actions-review" id="clean-room-reconstruction">
+  <h2>DreamCo Code Workbench</h2>
+  <p>DreamCo’s own code analysis system is available for local source repositories. It records repository structure, language and dependency manifests, entry points, route hints, tests, and documentation as file-and-line evidence. It does not execute target code, fetch the repository, or copy source into its report.</p>
+  <p>Run <code>python3 tools/dreamco_code_workbench.py /path/to/authorized/repository --owner-authorized --customize workflow --customize privacy --differentiator "Describe the original DreamCo product direction here"</code> from the Dreamcobots checkout. Choose at least two customizations and write an original differentiator.</p>
+  <p>For model, website, app, game, film/media, and API targets, prepare a scoped plan with <code>python3 tools/dreamco_investigation_plan.py --help</code>. These profiles specify evidence and test methods; a separate isolated adapter is required before any live connection or execution.</p>
+  <p><a class="btn btn-outline" href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/docs/DREAMCO_REVERSE_ENGINEERING_PLAYBOOK.md" target="_blank" rel="noopener noreferrer">DreamCo investigation playbook</a></p>
+  <details class="card"><summary>Prepare a DreamCo investigation plan in this browser</summary>
+    <form id="dreamco-investigation-form">
+      <p><label>Target type <select id="dreamco-target-kind" required></select></label></p>
+      <p><label>Local reference or credential-free HTTPS URL <input id="dreamco-target-reference" maxlength="2048" required placeholder="./my-project or https://example.org"></label></p>
+      <p><label>Immutable repository/model revision if applicable <input id="dreamco-target-revision" maxlength="160" placeholder="commit SHA or content hash"></label></p>
+      <p><label>Written test scope <textarea id="dreamco-target-scope" minlength="20" maxlength="1000" required></textarea></label></p>
+      <fieldset><legend>DreamCo customizations (choose at least two)</legend>
+        <label><input type="checkbox" name="dreamco-customization" value="workflow"> Workflow</label>
+        <label><input type="checkbox" name="dreamco-customization" value="interface"> Interface</label>
+        <label><input type="checkbox" name="dreamco-customization" value="audience"> Audience</label>
+        <label><input type="checkbox" name="dreamco-customization" value="accessibility"> Accessibility</label>
+        <label><input type="checkbox" name="dreamco-customization" value="privacy"> Privacy</label>
+        <label><input type="checkbox" name="dreamco-customization" value="security"> Security</label>
+        <label><input type="checkbox" name="dreamco-customization" value="integrations"> Integrations</label>
+        <label><input type="checkbox" name="dreamco-customization" value="performance"> Performance</label>
+        <label><input type="checkbox" name="dreamco-customization" value="cost"> Cost</label>
+        <label><input type="checkbox" name="dreamco-customization" value="original_features"> Original features</label>
+      </fieldset>
+      <p><label>Original DreamCo differentiator (30+ characters) <textarea id="dreamco-target-differentiator" minlength="30" maxlength="1000" required></textarea></label></p>
+      <p><label><input id="dreamco-target-authorized" type="checkbox" required> I own this target or have written permission to analyze it within the scope above.</label></p>
+      <p><label><input id="dreamco-plan-run-intent" type="checkbox"> Record that I want an execution adapter (this does not start a run).</label></p>
+      <button class="btn btn-primary" type="submit">Download scoped investigation plan</button>
+    </form>
+    <p id="dreamco-investigation-status" aria-live="polite">No target is connected and no test has run.</p>
+  </details>
+  <h3>Optional REA reference</h3>
+  <p>REA is an external project listed for review; it is not installed or connected here. DreamCo’s workbench runs independently. This web form creates a review plan only; it does not clone, download, or run a target.</p>
+  <p><a class="btn btn-outline" href="https://github.com/morluto/rea" target="_blank" rel="noopener noreferrer">Review REA source repository</a></p>
+  <form id="reconstruction-form">
+    <p><label>HTTPS target URL <input id="reconstruction-target" type="url" required placeholder="https://your-authorized-target.example"></label></p>
+    <fieldset><legend>Required original changes (choose at least two)</legend>
+      <label><input type="checkbox" name="customization" value="user_interface"> User interface</label>
+      <label><input type="checkbox" name="customization" value="workflow"> Workflow</label>
+      <label><input type="checkbox" name="customization" value="target_audience"> Target audience</label>
+      <label><input type="checkbox" name="customization" value="accessibility"> Accessibility</label>
+      <label><input type="checkbox" name="customization" value="security_privacy"> Security and privacy</label>
+      <label><input type="checkbox" name="customization" value="integrations"> Integrations</label>
+      <label><input type="checkbox" name="customization" value="performance_cost"> Performance and cost</label>
+      <label><input type="checkbox" name="customization" value="original_features"> Original features</label>
+    </fieldset>
+    <p><label>Describe what makes your implementation different (at least 30 characters)<textarea id="reconstruction-differentiator" rows="3" minlength="30" required></textarea></label></p>
+    <p><label><input id="reconstruction-rea-reviewed" type="checkbox" required> I reviewed REA's current code, license, dependencies, and security before use</label></p>
+    <p><label><input id="reconstruction-owner-authorized" type="checkbox" required> I own the target or have authorization to analyze it</label></p>
+    <p><label><input id="reconstruction-clean-room" type="checkbox" required> I will build an independent implementation and will not copy proprietary source or assets</label></p>
+    <button class="btn btn-primary" type="submit">Export customized reconstruction plan</button>
+  </form>
+  <p id="reconstruction-status" aria-live="polite">Plan is blocked until authorization, clean-room terms, REA selection, and two customizations are present.</p>
+</section>
 <section class="actions-review"><h2>Sandbox security</h2><p><a class="btn btn-outline" href="https://genai.owasp.org/">OWASP LLM</a> <a class="btn btn-outline" href="https://owasp.org/www-project-top-ten/">OWASP Top 10</a> <a class="btn btn-outline" href="https://atlas.mitre.org/">MITRE ATLAS</a> <a class="btn btn-outline" href="https://www.cisa.gov/topics/cybersecurity-best-practices">CISA</a> <a class="btn btn-outline" href="https://www.nist.gov/cyberframework">NIST CSF</a> <a class="btn btn-outline" href="https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions">Actions hardening</a> <a class="btn btn-outline" href="https://docs.github.com/en/code-security/secret-scanning">Secret scanning</a> <a class="btn btn-outline" href="https://docs.github.com/en/code-security/code-scanning">Code scanning</a> <a class="btn btn-outline" href="secret-options.html">Secret options</a> <a class="btn btn-outline" href="score-calculator.html">Score calculator</a> <a class="btn btn-outline" href="learning-path.html">Learning path</a></p><p><a class="btn btn-outline" href="original-bots.html">1,101 bot files</a> <a class="btn btn-outline" href="missing-original-bots.html">Older bot records</a> <a class="btn btn-outline" href="score-calculator.html">Score calculator</a></p>
 <p id="security-status">No security option selected. Score not measured.</p></section>
 <script>
 document.querySelectorAll(".actions-review a").forEach((link) => link.addEventListener("click", () => { document.getElementById("security-status").textContent = link.textContent + " selected. Score not measured."; }));
 </script>
-</main></body></html>
+</main><script src="buddy-bootcamp-resource-picker.js"></script><script src="dreamco-investigation-planner.js"></script></body></html>

@@ -67,4 +67,40 @@
   }).catch(function () {
     lead.textContent = "The benchmark list did not load.";
   });
+
+  const wikiSummary = document.getElementById("wiki-learning-summary");
+  const wikiGoals = document.getElementById("wiki-goal-links");
+  const wikiBenchmarks = document.getElementById("wiki-benchmark-links");
+  if (wikiSummary && wikiGoals && wikiBenchmarks) {
+    function renderTargetLinks(container, headingText, rows, idKey) {
+      const heading = document.createElement("h3");
+      heading.textContent = headingText;
+      container.append(heading);
+      const list = document.createElement("ul");
+      rows.forEach(function (row) {
+        const item = document.createElement("li");
+        const link = document.createElement("a");
+        const url = new URL(row.wikipedia_search_url);
+        if (url.origin !== "https://en.wikipedia.org" || !url.pathname.startsWith("/w/index.php") || !url.searchParams.has("search")) return;
+        link.href = url.href;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = row.label + " (" + row[idKey] + ")";
+        item.append(link);
+        list.append(item);
+      });
+      container.append(list);
+    }
+
+    fetch("data/wikipedia-learning-target-map.json").then(function (response) {
+      if (!response.ok) throw new Error("map unavailable");
+      return response.json();
+    }).then(function (map) {
+      wikiSummary.textContent = map.goal_count + " goals and " + map.benchmark_count + " benchmarks have Wikipedia discovery links. Training remains governed separately.";
+      renderTargetLinks(wikiGoals, "Goals", map.goals || [], "goal_id");
+      renderTargetLinks(wikiBenchmarks, "Benchmarks", map.benchmarks || [], "benchmark_id");
+    }).catch(function () {
+      wikiSummary.textContent = "Wikipedia goal and benchmark links are unavailable.";
+    });
+  }
 })();

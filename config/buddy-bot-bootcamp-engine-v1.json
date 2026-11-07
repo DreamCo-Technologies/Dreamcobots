@@ -6,6 +6,25 @@
   "lesson_policy":{"generate_original_explanations":true,"generate_original_examples":true,"generate_original_exercises":true,"generate_failure_cases":true,"generate_transfer_tasks":true},
   "training_policy":{"reuse_cached_assets":true,"prefer_small_models_for_routine_generation":true,"parallelize_independent_tasks":true,"escalate_model_only_when_expected_learning_gain_justifies_cost":true,"never_train_on_locked_evaluation_answers":true},
   "mastery":{"require_independent_success":true,"require_novel_transfer":true,"require_regression_pass":true,"require_safety_validation":true,"min_score":0.90},
-  "customer_controls":["capability_selection","benchmark_selection","source_allowlist","privacy_namespace","compute_budget","time_budget","model_allowlist","minimum_mastery_score"],
+  "customer_controls":["capability_selection","benchmark_selection","source_allowlist","resource_category_selection","per_user_resource_selection","privacy_namespace","compute_budget","time_budget","model_allowlist","minimum_mastery_score"],
+  "resource_catalog":{
+    "generated_path":"website/data/buddy-bootcamp-resource-catalog.json",
+    "source_catalogs":["website/data/buddy-resource-connection-catalog.json","config/buddy/resource-registry.json"],
+    "resource_categories_config":"config/buddy-bootcamp-resource-policy.json",
+    "users_can_select_resources_per_curriculum":true,
+    "default_selected":false,
+    "connection_status_must_remain_visible":true,
+    "catalog_presence_does_not_claim_connection_or_training_rights":true
+  },
+  "reverse_engineering":{
+    "reference_resource":"project:rea_reverse_engineer_anything",
+    "requires_target_owner_authorization":true,
+    "requires_clean_room_implementation":true,
+    "requires_at_least_two_distinct_user_customizations":true,
+    "requires_original_differentiator_minimum_characters":30,
+    "plan_only_until_authorized_local_runner_is_configured":true,
+    "never_copy_proprietary_source_or_assets":true,
+    "never_bypass_access_controls_or_drm":true
+  },
   "artifacts":["curriculum.json","study-guide.md","lesson-bank.json","practice-set.json","sandbox-suite.json","benchmark-plan.json","mastery-report.json","regression-plan.json"]
 }
