@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Buddy Dataset Profile Builder | DreamCo</title>
+<style>
+:root{color-scheme:dark;--bg:#10151e;--panel:#192231;--line:#34445a;--ink:#edf3fb;--muted:#a8b6c8;--accent:#77b8ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+main{max-width:980px;margin:32px auto;padding:0 18px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin:16px 0}
+h1,h2{line-height:1.2}p,.hint{color:var(--muted)}label{display:block;font-weight:650;margin:12px 0 5px}
+input,textarea,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:8px;background:#0f1723;color:var(--ink);font:inherit}
+textarea{min-height:85px}button{background:var(--accent);color:#071321;border:0;border-radius:8px;padding:11px 16px;font-weight:750;cursor:pointer;margin:8px 8px 0 0}
+button.secondary{background:#34445a;color:var(--ink)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.check{display:flex;gap:9px;align-items:center;font-weight:500}.check input{width:auto}
+.weights{display:grid;grid-template-columns:1fr 90px;gap:10px;align-items:center;margin:8px 0}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0b111a;padding:14px;border-radius:8px;max-height:420px;overflow:auto}
+.status{padding:12px;border:1px solid var(--line);border-radius:8px;color:var(--muted)}
+small{color:var(--muted)}a{color:var(--accent)}
+</style>
+</head>
+<body><main>
+<p><a href="./buddy-bootcamp.html">← Buddy Bootcamp</a></p>
+<h1>Dataset Profile Builder</h1>
+<p>Design what your Buddy should learn, which sources it may learn from, how examples are weighted, and which model or adapter to customize. Building a profile does not itself launch training.</p>
+<section class="panel">
+<h2>1. Your learning goal</h2>
+<div class="grid"><div><label for="profileName">Profile name</label><input id="profileName" value="My Buddy specialist"></div><div><label for="owner">Account profile ID</label><input id="owner" value="local-user" autocomplete="off"></div></div>
+<label for="goal">What should this model or Buddy become good at?</label><textarea id="goal">Become a reliable Python debugging assistant that explains fixes and proves them with tests.</textarea>
+<label for="model">Target model / base model</label><input id="model" placeholder="e.g. Qwen/Qwen2.5-Coder-7B-Instruct">
+<label for="capabilities">Capabilities (comma separated)</label><input id="capabilities" value="Python, debugging, testing, code review">
+</section>
+<section class="panel">
+<h2>2. Choose learning methods</h2>
+<div class="grid">
+<label class="check"><input type="checkbox" name="method" value="retrieval" checked> Retrieval / knowledge</label>
+<label class="check"><input type="checkbox" name="method" value="skill_pack" checked> Skill packs / courses</label>
+<label class="check"><input type="checkbox" name="method" value="prompt_policy"> Prompt and policy</label>
+<label class="check"><input type="checkbox" name="method" value="sft"> Supervised fine-tuning</label>
+<label class="check"><input type="checkbox" name="method" value="lora"> LoRA adapter</label>
+<label class="check"><input type="checkbox" name="method" value="qlora"> QLoRA adapter</label>
+<label class="check"><input type="checkbox" name="method" value="preference_optimization"> Preference optimization</label>
+<label class="check"><input type="checkbox" name="method" value="distillation"> Teacher/student distillation</label>
+<label class="check"><input type="checkbox" name="method" value="continued_pretraining"> Continued pretraining (advanced)</label>
+</div><p class="hint">Start with retrieval and skill packs. Enable weight-changing methods only after dataset rights, model license, baseline, budget and compute checks.</p>
+</section>
+<section class="panel">
+<h2>3. Dataset mix weights</h2><p>Set the share of examples to draw from each source category. Values are normalized to 100% when you save the profile.</p>
+<div id="weights"></div><p id="weightTotal" class="status" aria-live="polite"></p>
+</section>
+<section class="panel">
+<h2>4. Add learning sources</h2>
+<p>Provide a source URL and record rights review. A URL alone is not training data: the content must be ingested into an approved, tenant-scoped content store with a provenance record before it enters the learning plan.</p>
+<label for="sourceUrl">Source URL</label><input id="sourceUrl" type="url" placeholder="https://huggingface.co/datasets/...">
+<div class="grid"><div><label for="sourceCategory">Category</label><select id="sourceCategory"><option value="official_docs">Official documentation</option><option value="courses">Courses</option><option value="papers">Research papers</option><option value="datasets">Datasets</option><option value="code_examples">Code examples</option><option value="user_material">My materials</option></select></div>
+<div><label for="rights">Rights status</label><select id="rights"><option value="pending_review">Pending review</option><option value="owned">Owned by me</option><option value="open_license">Open license verified</option><option value="public_domain">Public domain verified</option><option value="licensed">Licensed for this use</option><option value="user_authorized">Authorized by user</option><option value="unknown">Unknown — blocked</option></select></div></div>
+<button id="addSource" class="secondary" type="button">Add source to profile</button><div id="sourceList" class="status">No sources added yet.</div>
+</section>
+<section class="panel">
+<h2>5. Privacy, quality and training budget</h2>
+<div class="grid"><div><label for="examples">Maximum examples</label><input id="examples" type="number" min="0" value="5000"></div><div><label for="budget">Maximum compute budget (USD)</label><input id="budget" type="number" min="0" step="0.01" value="0"></div><div><label for="runtime">Maximum runtime (minutes)</label><input id="runtime" type="number" min="0" value="20"></div><div><label for="gpu">Maximum GPU hours</label><input id="gpu" type="number" min="0" step="0.1" value="0"></div></div>
+<label class="check"><input id="personal" type="checkbox"> Allow my personal data after explicit review</label>
+<label class="check"><input id="external" type="checkbox"> Allow upload to external training providers</label>
+<label class="check"><input id="baseline" type="checkbox" checked> Require baseline, holdout, transfer and regression evaluation</label>
+</section>
+<section class="panel">
+<h2>6. Export your profile</h2>
+<p>Export a portable JSON profile for review or import into a connected Buddy Training Studio.</p>
+<button id="build" type="button">Validate and build profile</button><button id="download" class="secondary" type="button" disabled>Download JSON</button>
+<div id="status" class="status" role="status">Profile not built yet.</div><pre id="output" aria-label="Profile JSON"></pre>
+</section>
+</main>
+<script>
+(function(){
+const categories=["official_docs","courses","papers","datasets","code_examples","user_material"];
+const labels={official_docs:"Official documentation",courses:"Courses",papers:"Research papers",datasets:"Datasets",code_examples:"Code examples",user_material:"My materials"};
+const weights={official_docs:25,courses:20,papers:15,datasets:15,code_examples:15,user_material:10};
+const sources=[];let lastProfile=null;
+const weightRoot=document.getElementById("weights");
+categories.forEach(k=>{const row=document.createElement("div");row.className="weights";const label=document.createElement("label");label.textContent=labels[k];label.htmlFor="w-"+k;const input=document.createElement("input");input.type="number";input.min="0";input.max="100";input.id="w-"+k;input.value=weights[k];input.addEventListener("input",updateTotal);row.append(label,input);weightRoot.append(row);});
+function updateTotal(){const total=categories.reduce((n,k)=>n+Math.max(0,Number(document.getElementById("w-"+k).value)||0),0);document.getElementById("weightTotal").textContent="Current total: "+total+"%"+(total===100?" — balanced":" — values will be normalized when saved");}
+function normMix(){const vals=categories.map(k=>Math.max(0,Number(document.getElementById("w-"+k).value)||0));const total=vals.reduce((a,b)=>a+b,0);if(!total)throw Error("Give at least one source category a positive weight.");const out={};categories.forEach((k,i)=>out[k]=Number((vals[i]/total).toFixed(8)));return out;}
+document.getElementById("addSource").addEventListener("click",()=>{const uri=document.getElementById("sourceUrl").value.trim();if(!/^https:\/\//i.test(uri)){alert("Enter an HTTPS source URL.");return;}const rights=document.getElementById("rights").value;const id="source-"+(sources.length+1);sources.push({id,uri,category:document.getElementById("sourceCategory").value,status:rights==="pending_review"||rights==="unknown"?"pending_review":"approved",rights,content_state:"not_ingested",provenance:{reviewed_by:"profile_owner",reviewed_at:null}});document.getElementById("sourceList").textContent=sources.map(s=>s.id+" — "+s.uri+" — "+s.rights+" — "+s.content_state).join("\n");document.getElementById("sourceUrl").value="";});
+document.getElementById("build").addEventListener("click",()=>{try{const methods=[...document.querySelectorAll('input[name="method"]:checked')].map(x=>x.value);if(!methods.length)throw Error("Choose at least one learning method.");const profile={schema:"dreamco.buddy.dataset_profile.v1",profile_id:"draft-"+Date.now(),owner_id:document.getElementById("owner").value.trim(),name:document.getElementById("profileName").value.trim(),goal:document.getElementById("goal").value.trim(),status:"draft",target_model:{provider:"user_choice",model_id:document.getElementById("model").value.trim()||null,base_model_revision:null},training_methods:methods,capabilities:document.getElementById("capabilities").value.split(",").map(x=>x.trim()).filter(Boolean),sources:sources,source_mix:normMix(),quality:{deduplicate:true,min_quality_score:0.7,require_provenance:true,holdout_fraction:0.15,validation_fraction:0.10},privacy:{allow_personal_data:document.getElementById("personal").checked,pii_policy:"exclude_or_redact",allow_external_provider_upload:document.getElementById("external").checked},training:{max_examples:Number(document.getElementById("examples").value),max_compute_usd:Number(document.getElementById("budget").value),max_runtime_minutes:Number(document.getElementById("runtime").value),max_gpu_hours:Number(document.getElementById("gpu").value),checkpoint_every_steps:100,seed:42},evaluation:{baseline_required:document.getElementById("baseline").checked,holdout_required:true,transfer_tasks:3,regression_required:true,minimum_improvement:0.02},created_at:new Date().toISOString(),updated_at:new Date().toISOString()};if(!profile.owner_id||!profile.name||!profile.goal)throw Error("Account profile ID, profile name and learning goal are required.");if(profile.training_methods.includes("continued_pretraining"))throw Error("Continued pretraining requires an advanced server-side approval workflow. Remove it from this draft for now.");if(profile.training_methods.includes("distillation"))throw Error("Distillation requires teacher-model license review in Training Studio.");if(profile.training.max_compute_usd<0||profile.training.max_examples<0||profile.training.max_runtime_minutes<0||profile.training.max_gpu_hours<0)throw Error("Training limits cannot be negative.");lastProfile=profile;document.getElementById("output").textContent=JSON.stringify(profile,null,2);document.getElementById("status").textContent="Profile structure validated locally. "+sources.filter(s=>s.status==="approved").length+" sources approved, but 0 content items ingested. No training job has run and no weights changed.";document.getElementById("download").disabled=false;}catch(e){document.getElementById("status").textContent="Cannot build profile: "+e.message;document.getElementById("download").disabled=true;}});
+document.getElementById("download").addEventListener("click",()=>{if(!lastProfile)return;const blob=new Blob([JSON.stringify(lastProfile,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="buddy-dataset-profile.json";a.click();URL.revokeObjectURL(url);});
+updateTotal();
+})();
+</script>
+</body></html>
