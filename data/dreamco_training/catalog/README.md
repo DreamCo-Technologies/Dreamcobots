@@ -2,6 +2,10 @@
 
 This directory is the versioned home for original DreamCo learning assets and rights-cleared dataset manifests.
 
+## Initial repository inventory
+
+`repository_asset_inventory_seed.json` records **1,223 candidate paths** discovered from a complete Git tree scan at commit `7a74b23732e2bfff03813f00edc8eeb1404fc6fd`. It contains path, blob hash, and file-size metadata only; no file bodies were copied. Every candidate is marked `unknown_do_not_publish`, `rights_review: pending`, and `training_eligible: false` until individual review.
+
 ## Directory contract
 
 - `sources/` — normalized source metadata and provenance records; no bulk copies of third-party course content.
