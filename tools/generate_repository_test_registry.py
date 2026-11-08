@@ -84,6 +84,8 @@ def normalized_files() -> list[Path]:
             continue
         if relative.as_posix() in SKIPPED_FILES:
             continue
+        if relative.name.startswith(".plugin-catalog.json."):
+            continue
         rows.append(path)
     return sorted(rows, key=lambda item: item.relative_to(ROOT).as_posix().lower())
 
