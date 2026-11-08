@@ -27,7 +27,7 @@ The repository already contains multiple overlapping but useful learning systems
 | `benchmarks/`, `study_packs/`, `data/dreamco_training/` | Candidate tasks, study packs, benchmark assets, and original course bundles |
 | `config/onet-priority-curriculum.json` and `config/onet-sandbox-dataset-spec.json` | Occupational skill and real-world task mapping |
 
-The source of truth for detailed inventory is the repository itself. The new manifest at `config/dreamco-owned-learning-fabric.json` records the catalog roots and canonical registries.
+The source of truth for detailed inventory is the repository itself. The new manifest at `config/dreamco-owned-learning-fabric.json` records the catalog roots and canonical registries. An initial complete Git-tree scan created `data/dreamco_training/catalog/repository_asset_inventory_seed.json` with 1,223 candidate paths, blob hashes, and sizes; it deliberately copied no file bodies and marks every candidate as rights-review-pending and ineligible for training.
 
 ## One canonical catalog, multiple asset types
 
