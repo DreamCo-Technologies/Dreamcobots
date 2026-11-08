@@ -1,0 +1,111 @@
+version: 1
+name: DreamCo Buddy Bootcamp Resource Registry
+last_reviewed: "2026-11-08"
+truth_policy:
+  discovery_is_not_testing: true
+  free_software_does_not_imply_free_compute: true
+  model_license_and_dataset_license_are_independent: true
+  require_human_approval_for_paid_compute: true
+  require_rights_and_provenance_before_training: true
+resources:
+  - id: huggingface_hub
+    name: Hugging Face Hub
+    category: model_dataset_research_registry
+    url: https://huggingface.co/docs
+    access: free_discovery; gated_assets_possible
+    training_role: discovery_and_artifact_registry
+    execution_tested: false
+    license_check_required: true
+  - id: huggingface_jobs
+    name: Hugging Face Jobs
+    category: hosted_compute
+    url: https://huggingface.co/docs/hub/jobs-training
+    access: paid_pay_as_you_go
+    training_role: hosted_training_and_scheduled_jobs
+    execution_tested: false
+    requires_cost_cap: true
+  - id: ollama
+    name: Ollama
+    category: local_inference_packaging
+    url: https://ollama.com
+    access: free_local_runtime; hardware_required; cloud_usage_separate
+    training_role: local_inference_import_export_and_serving
+    primary_weight_trainer: false
+    execution_tested: false
+  - id: unsloth
+    name: Unsloth
+    category: training_framework
+    url: https://github.com/unslothai/unsloth
+    access: open_source_tooling; compute_separate
+    training_role: efficient_sft_lora_qlora_and_post_training
+    execution_tested: false
+  - id: axolotl
+    name: Axolotl
+    category: training_framework
+    url: https://docs.axolotl.ai/
+    access: open_source_tooling; compute_separate
+    training_role: configurable_llm_vlm_post_training
+    execution_tested: false
+  - id: llama_factory
+    name: LLaMA-Factory
+    category: training_framework
+    url: https://github.com/hiyouga/LlamaFactory
+    access: open_source_tooling; compute_separate
+    training_role: multi_model_finetuning_and_post_training
+    execution_tested: false
+  - id: transformers_accelerate
+    name: Transformers and Accelerate
+    category: training_framework
+    url: https://huggingface.co/docs/transformers
+    access: open_source_tooling; compute_separate
+    training_role: reference_training_and_distributed_execution
+    execution_tested: false
+  - id: peft
+    name: PEFT
+    category: adapter_training
+    url: https://huggingface.co/docs/peft
+    access: open_source_tooling; compatible_model_license_required
+    training_role: parameter_efficient_adaptation
+    execution_tested: false
+  - id: trl
+    name: TRL
+    category: post_training
+    url: https://huggingface.co/docs/trl
+    access: open_source_tooling; compute_separate
+    training_role: sft_dpo_grpo_and_preference_optimization
+    execution_tested: false
+  - id: pytorch_torchtune
+    name: PyTorch and torchtune
+    category: custom_training
+    url: https://docs.pytorch.org/torchtune/
+    access: open_source_tooling; compute_separate
+    training_role: custom_training_and_reference_recipes
+    execution_tested: false
+  - id: kaggle
+    name: Kaggle Notebooks
+    category: hosted_notebook_compute
+    url: https://www.kaggle.com/docs/efficient-gpu-usage
+    access: free_quota_limited_dynamic
+    training_role: small_experiments_and_notebooks
+    execution_tested: false
+  - id: google_colab
+    name: Google Colab
+    category: hosted_notebook_compute
+    url: https://research.google.com/colaboratory/faq.html
+    access: free_quota_limited_dynamic
+    training_role: prototyping_and_small_experiments
+    execution_tested: false
+  - id: lm_eval
+    name: EleutherAI LM Evaluation Harness
+    category: evaluation
+    url: https://github.com/EleutherAI/lm-evaluation-harness
+    access: open_source_tooling; compute_separate
+    training_role: independent_model_evaluation
+    execution_tested: false
+  - id: lerobot
+    name: Hugging Face LeRobot
+    category: embodied_ai
+    url: https://github.com/huggingface/lerobot
+    access: open_source_tooling; hardware_data_compute_separate
+    training_role: robotics_datasets_and_policy_training
+    execution_tested: false
