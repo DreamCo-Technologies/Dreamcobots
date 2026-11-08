@@ -16,6 +16,12 @@ This directory is the versioned home for original DreamCo learning assets and ri
 - `evidence/` — benchmark runs, artifact references, and review decisions.
 - `releases/` — immutable catalog snapshots and changelogs.
 
+## Current original lesson bundle
+
+`../lessons/universal_task_mastery_lessons_v1.json` contains six original DreamCo lesson drafts linked to the six modules in `../courses/universal_task_mastery_v1.json`. Topics cover task decomposition, rights-aware research, evidence-based debugging, reproducible analytics, safe incident recovery, and professional safety boundaries. The lessons include objectives, authored explanations, worked examples, practice tasks, common failure modes, and assessment rubrics. They are `draft_needs_independent_review` and `not_eligible_until_reviewed_and_split`; do not treat them as certified training or production training data yet.
+
+The catalog builder indexes these lesson IDs and their review status. Run `python3 tools/build_dreamco_training_catalog.py` after changing the lesson library, then inspect the generated `data/dreamco_training/catalog.json` diff before committing it.
+
 ## Required record fields
 
 Every catalog record must carry a stable ID, title, version, skills, source references, source commit/hash where relevant, ownership class, license/attribution, transformation history, privacy classification, quality review, and publication/training eligibility.
