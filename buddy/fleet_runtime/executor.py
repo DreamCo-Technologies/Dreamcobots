@@ -188,7 +188,7 @@ class FleetExecutor:
             if learning_packet is not None:
                 result = dict(result)
                 result["learning_execution"] = learning_packet
-                        status = "ok" if result.get("status") == "ok" else result.get("status", "ok")
+            status = "ok" if result.get("status") == "ok" else result.get("status", "ok")
             return self._finish(manifest, task, status, mode, permission, guards, result, None, stamp)
         except Exception as exc:  # error_handling profile: structured, never raises
             return self._finish(manifest, task, "error", "none", none_perm, {}, None,
