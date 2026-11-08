@@ -48,7 +48,13 @@ def prepare_learning_execution(
             "execution_started": False,
             "weights_trained": False,
         }
-    approvals = sorted(set(approval_requirements))
+    approvals = set(approval_requirements)
+    selected_resource = route["selected_resource"]["resource"]
+    if selected_resource.get("requires_account"):
+        approvals.add("user_authorizes_external_learning_source_connection")
+    if float(selected_resource.get("cost_per_hour_usd", 0.0)) > 0:
+        approvals.add("user_approves_paid_learning_resource_or_compute")
+    approvals = sorted(approvals)
     return {
         "schema": REQUEST_SCHEMA,
         "request_id": request_id,
