@@ -158,4 +158,4 @@ Expose one user journey for learn, build, execute, evaluate, and improve, with t
 
 ## Current implementation boundary
 
-This branch establishes the new catalog manifest and integration contract. It does not yet claim that a full repository scan has completed, that every provider account is connected, that every existing workflow is passing, or that Buddy's production task dispatcher has already consumed the new packet. Those are implementation and verification milestones tracked separately.
+This branch establishes the catalog manifest, 1,223-path metadata inventory seed, execution packet contract, and a live integration hook in Buddy's shared `FleetExecutor`. The runtime hook has targeted unit tests committed, but those tests have not yet been executed in the repository environment. It does not claim that every asset has been rights-reviewed, every provider account is connected, external course content has been fetched, arbitrary labs have been executed, or model weights have been trained. Those remain separately verified milestones.
