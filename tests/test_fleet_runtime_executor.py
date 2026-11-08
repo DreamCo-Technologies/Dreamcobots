@@ -174,6 +174,59 @@ class ExecutorTests(unittest.TestCase):
         self.assertEqual(check_expectations(out, [{"path": "a.b.1", "equals": 2}, {"path": "s", "contains": "ell"}]), [])
         self.assertEqual(len(check_expectations(out, [{"path": "a.b.0", "gte": 5}, {"path": "missing", "truthy": True}])), 2)
 
+    def test_learning_request_routes_through_live_fleet_executor(self):
+        slug = next(s for s, bot in self.ex.bots.items() if bot["engine"] == "workflow")
+        learning = {
+            "request_id": "learn-1",
+            "task_id": "task-learn-1",
+            "request": "Build a tested Python API",
+            "skills": ["python", "api"],
+            "sandbox_profile": "python-isolated",
+            "resources": [{
+                "id": "python-api-lab",
+                "name": "Python API lab",
+                "url": "https://example.org/python-api",
+                "skills": ["python", "api"],
+                "modes": ["read", "practice"],
+                "access": "free",
+                "quality": 0.9,
+                "supports_execution": True,
+            }],
+        }
+        out = self.ex.run(slug, {"objective": "Learn and practice Python API development",
+                                  "input": {"learning_request": learning}})
+        self.assertEqual(out["status"], "ok")
+        packet = out["result"]["learning_execution"]
+        self.assertEqual(packet["schema"], "dreamco.learning_execution_request.v1")
+        self.assertEqual(packet["status"], "proposed")
+        self.assertIn("confirm_resource_access_and_license", [step["title"] for step in out["result"]["steps"]])
+
+    def test_paid_learning_resource_stops_at_existing_approval_gate(self):
+        slug = next(s for s, bot in self.ex.bots.items() if bot["engine"] == "workflow")
+        learning = {
+            "request": "Learn Python API development",
+            "skills": ["python"],
+            "allow_paid": True,
+            "max_cost_per_hour_usd": 10,
+            "resources": [{
+                "id": "paid-lab", "name": "Paid Python lab",
+                "url": "https://example.org/paid-lab", "skills": ["python"],
+                "cost_per_hour_usd": 5, "access": "paid",
+            }],
+        }
+        out = self.ex.run(slug, {"objective": "Learn Python", "input": {"learning_request": learning}})
+        self.assertEqual(out["status"], "approval_required")
+        self.assertFalse(out["live_external_action_taken"])
+        self.assertIn("user_approves_paid_learning_resource_or_compute",
+                      out["result"]["approval_requirements"])
+
+    def test_learning_request_without_matching_resource_is_blocked(self):
+        slug = next(s for s, bot in self.ex.bots.items() if bot["engine"] == "workflow")
+        learning = {"request": "Build a Rust app", "skills": ["rust"], "resources": []}
+        out = self.ex.run(slug, {"objective": "Build a Rust app", "input": {"learning_request": learning}})
+        self.assertEqual(out["status"], "learning_blocked")
+        self.assertFalse(out["live_external_action_taken"])
+
     def test_cli_run(self):
         from buddy.fleet_runtime.__main__ import main
         with mock.patch("sys.stdout"):
