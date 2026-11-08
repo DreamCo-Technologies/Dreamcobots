@@ -109,6 +109,62 @@ class FleetExecutor:
             if not in_guard["allowed"]:
                 return self._finish(manifest, task, "guardrail_blocked", "none", permission,
                                     {"input": in_guard}, None, None, stamp)
+            learning_packet = None
+            learning_request = (task.get("input") or {}).get("learning_request")
+            if learning_request is not None:
+                if not isinstance(learning_request, dict):
+                    return self._finish(manifest, task, "learning_blocked", "none", permission,
+                                        {"input": in_guard}, None,
+                                        {"type": "invalid_learning_request", "message": "input.learning_request must be an object."}, stamp)
+                try:
+                    from buddy.bootcamp.live_learning_bridge import prepare_learning_execution
+                    from buddy.bootcamp.task_learning_router import LearningResource, TaskRequest
+
+                    raw_resources = learning_request.get("resources") or []
+                    resources = []
+                    for raw in raw_resources:
+                        item = dict(raw)
+                        item["skills"] = tuple(item.get("skills") or ())
+                        item["modes"] = tuple(item.get("modes") or ("read", "practice"))
+                        resources.append(LearningResource(**item))
+                    learning_task = TaskRequest(
+                        request=str(learning_request.get("request") or task.get("objective") or ""),
+                        skills=tuple(learning_request.get("skills") or ()),
+                        preferred_mode=str(learning_request.get("preferred_mode") or "practice"),
+                        max_cost_per_hour_usd=float(learning_request.get("max_cost_per_hour_usd") or 0.0),
+                        allow_paid=bool(learning_request.get("allow_paid", False)),
+                        allow_external_access=bool(learning_request.get("allow_external_access", False)),
+                    )
+                    learning_packet = prepare_learning_execution(
+                        learning_task, resources,
+                        request_id=str(learning_request.get("request_id") or task.get("task_id") or "learning-request"),
+                        task_id=str(learning_request.get("task_id") or task.get("task_id") or "learning-task"),
+                        sandbox_profile=str(learning_request.get("sandbox_profile") or "fleet-runtime-sandbox"),
+                        allowed_tools=learning_request.get("allowed_tools") or (),
+                        source_rights_refs=learning_request.get("source_rights_refs") or (),
+                        original_lesson_id=learning_request.get("original_lesson_id"),
+                        practice_task_ids=learning_request.get("practice_task_ids") or (),
+                        benchmark_ids=learning_request.get("benchmark_ids") or (),
+                        compute_budget_usd=float(learning_request.get("compute_budget_usd") or 0.0),
+                        time_budget_seconds=int(learning_request.get("time_budget_seconds") or 300),
+                        approval_requirements=learning_request.get("approval_requirements") or (),
+                    )
+                except (TypeError, ValueError, KeyError) as exc:
+                    return self._finish(manifest, task, "learning_blocked", "none", permission,
+                                        {"input": in_guard}, None,
+                                        {"type": "invalid_learning_request", "class": type(exc).__name__}, stamp)
+                if learning_packet.get("status") == "blocked":
+                    return self._finish(manifest, task, "learning_blocked", "none", permission,
+                                        {"input": in_guard}, learning_packet, None, stamp)
+                if learning_packet.get("status") == "awaiting_user_approval":
+                    return self._finish(manifest, task, "approval_required", "none", permission,
+                                        {"input": in_guard}, learning_packet, None, stamp)
+                task.setdefault("input", {})["learning_execution"] = learning_packet
+                if engine_name == "workflow":
+                    route_steps = learning_packet.get("route", {}).get("course_plan", [])
+                    existing_steps = task["input"].get("steps") or []
+                    task["input"]["steps"] = route_steps + existing_steps
+
             profile = dict(self.profiles["model_router"][manifest["model_router"]])
             if manifest.get("model_alias") and profile.get("mode") != "offline_only":
                 profile["live_alias"] = manifest["model_alias"]
@@ -129,7 +185,10 @@ class FleetExecutor:
             if output_errors:
                 return self._finish(manifest, task, "error", mode, permission, guards, result,
                                     {"type": "invalid_output", "message": "; ".join(output_errors[:5])}, stamp)
-            status = "ok" if result.get("status") == "ok" else result.get("status", "ok")
+            if learning_packet is not None:
+                result = dict(result)
+                result["learning_execution"] = learning_packet
+                        status = "ok" if result.get("status") == "ok" else result.get("status", "ok")
             return self._finish(manifest, task, status, mode, permission, guards, result, None, stamp)
         except Exception as exc:  # error_handling profile: structured, never raises
             return self._finish(manifest, task, "error", "none", none_perm, {}, None,
