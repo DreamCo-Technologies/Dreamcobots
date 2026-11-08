@@ -1,0 +1,389 @@
+{
+  "schema": "dreamco.learning_source_catalog.v1",
+  "version": "1.0.0",
+  "purpose": "Canonical cross-platform and repository-native source catalog for task-routed learning and original DreamCo synthesis.",
+  "policy": {
+    "discovery_is_not_access": true,
+    "repository_presence_is_not_ownership": true,
+    "unknown_rights_are_reference_only": true,
+    "copy_source_course_content": false,
+    "synthesize_original_lessons": true,
+    "require_provenance_for_every_derived_asset": true,
+    "require_owner_approval_for_paid_compute": true,
+    "never_train_on_holdouts": true
+  },
+  "repository_collections": [
+    {
+      "id": "buddy_learning",
+      "name": "Buddy learning policies and study evidence",
+      "paths": [
+        "buddy/learning/",
+        "buddy/bootcamp/"
+      ],
+      "domains": [
+        "learning",
+        "model_training",
+        "capability_acquisition"
+      ]
+    },
+    {
+      "id": "study_packs",
+      "name": "Study packs and authored curricula",
+      "paths": [
+        "study_packs/"
+      ],
+      "domains": [
+        "courseware",
+        "practice",
+        "occupational_learning"
+      ]
+    },
+    {
+      "id": "benchmarks",
+      "name": "Benchmarks, tasks, and source registries",
+      "paths": [
+        "benchmarks/",
+        "evidence/"
+      ],
+      "domains": [
+        "evaluation",
+        "holdouts",
+        "source_quality"
+      ]
+    },
+    {
+      "id": "dreamco_knowledge",
+      "name": "DreamCo knowledge assets and package manifests",
+      "paths": [
+        "data/dreamco_knowledge/"
+      ],
+      "domains": [
+        "synthesized_knowledge",
+        "dataset_packages",
+        "provenance"
+      ]
+    },
+    {
+      "id": "training_methodology",
+      "name": "DreamCo training methodology",
+      "paths": [
+        "docs/training-methodology/",
+        "docs/BUDDY_SANDBOX_BOOTCAMP_DATA_PACKAGE.md"
+      ],
+      "domains": [
+        "knowledge_synthesis",
+        "bootcamp",
+        "learning_science"
+      ]
+    },
+    {
+      "id": "capability_library",
+      "name": "Capability packages and competency maps",
+      "paths": [
+        "capabilities/",
+        "config/buddy-bootcamp-program.json",
+        "config/buddy-college-curriculum.json",
+        "config/onet-priority-curriculum.json"
+      ],
+      "domains": [
+        "skills",
+        "occupations",
+        "capabilities"
+      ]
+    },
+    {
+      "id": "data_governance",
+      "name": "Dataset discovery, provenance, and rights policies",
+      "paths": [
+        "config/data-discovery-bot-program.json",
+        "config/dataset_product_standard.json",
+        "config/buddy-training-data-provenance-policy.json",
+        "config/license_provenance_gate.json",
+        "schemas/data_package_"
+      ],
+      "domains": [
+        "data_governance",
+        "privacy",
+        "licensing"
+      ]
+    }
+  ],
+  "external_sources": [
+    {
+      "id": "github_skills",
+      "name": "GitHub Skills",
+      "url": "https://skills.github.com/",
+      "domains": [
+        "git",
+        "github",
+        "pull_requests",
+        "actions",
+        "automation"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "public_course; account may be needed for exercises",
+      "cost_class": "free_or_account_dependent"
+    },
+    {
+      "id": "github_docs",
+      "name": "GitHub Docs",
+      "url": "https://docs.github.com/",
+      "domains": [
+        "git",
+        "github",
+        "api",
+        "actions",
+        "security",
+        "releases"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "public_documentation",
+      "cost_class": "free"
+    },
+    {
+      "id": "huggingface_learn",
+      "name": "Hugging Face Learn",
+      "url": "https://huggingface.co/learn",
+      "domains": [
+        "transformers",
+        "datasets",
+        "peft",
+        "agents",
+        "evaluation",
+        "computer_vision",
+        "audio",
+        "robotics"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "public_courses; gated assets or compute possible",
+      "cost_class": "free_content_compute_may_cost"
+    },
+    {
+      "id": "ollama_docs",
+      "name": "Ollama Docs",
+      "url": "https://docs.ollama.com/",
+      "domains": [
+        "local_inference",
+        "model_import",
+        "model_serving",
+        "tool_use"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "public_documentation; local hardware required",
+      "cost_class": "free_local_runtime"
+    },
+    {
+      "id": "onet",
+      "name": "O*NET OnLine and Web Services",
+      "url": "https://www.onetonline.org/",
+      "domains": [
+        "occupations",
+        "tasks",
+        "skills",
+        "knowledge",
+        "abilities",
+        "work_activities"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "public_data; attribution and license conditions apply",
+      "cost_class": "free"
+    },
+    {
+      "id": "freecodecamp",
+      "name": "freeCodeCamp",
+      "url": "https://www.freecodecamp.org/learn/",
+      "domains": [
+        "html",
+        "css",
+        "javascript",
+        "python",
+        "databases",
+        "security"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "public_curriculum",
+      "cost_class": "free"
+    },
+    {
+      "id": "khan_academy",
+      "name": "Khan Academy",
+      "url": "https://www.khanacademy.org/",
+      "domains": [
+        "math",
+        "science",
+        "economics",
+        "computing"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "public_lessons",
+      "cost_class": "free"
+    },
+    {
+      "id": "mit_ocw",
+      "name": "MIT OpenCourseWare",
+      "url": "https://ocw.mit.edu/",
+      "domains": [
+        "engineering",
+        "computer_science",
+        "mathematics",
+        "science",
+        "business"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "open_course_materials; asset-specific terms apply",
+      "cost_class": "free"
+    },
+    {
+      "id": "microsoft_learn",
+      "name": "Microsoft Learn",
+      "url": "https://learn.microsoft.com/training/",
+      "domains": [
+        "azure",
+        "developer_tools",
+        "security",
+        "data"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "public_learning_paths",
+      "cost_class": "free_content_labs_may_cost"
+    },
+    {
+      "id": "aws_skill_builder",
+      "name": "AWS Skill Builder",
+      "url": "https://skillbuilder.aws/",
+      "domains": [
+        "aws",
+        "cloud_architecture",
+        "security",
+        "machine_learning"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "freemium",
+      "cost_class": "freemium"
+    },
+    {
+      "id": "google_cloud",
+      "name": "Google Cloud Learn",
+      "url": "https://cloud.google.com/learn",
+      "domains": [
+        "google_cloud",
+        "data",
+        "ai",
+        "infrastructure",
+        "security"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "freemium",
+      "cost_class": "freemium"
+    },
+    {
+      "id": "nist",
+      "name": "NIST",
+      "url": "https://www.nist.gov/",
+      "domains": [
+        "cybersecurity",
+        "privacy",
+        "risk_management",
+        "ai_governance",
+        "standards"
+      ],
+      "modes": [
+        "read"
+      ],
+      "access": "public_standards",
+      "cost_class": "free"
+    },
+    {
+      "id": "osha",
+      "name": "OSHA Training",
+      "url": "https://www.osha.gov/training",
+      "domains": [
+        "workplace_safety",
+        "hazard_communication",
+        "fall_protection",
+        "lockout_tagout"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "public_guidance; certification restrictions apply",
+      "cost_class": "free_guidance"
+    },
+    {
+      "id": "coursera",
+      "name": "Coursera",
+      "url": "https://www.coursera.org/",
+      "domains": [
+        "technology",
+        "business",
+        "data",
+        "professional_certificates"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "freemium; paid enrollment possible",
+      "cost_class": "freemium"
+    },
+    {
+      "id": "edx",
+      "name": "edX",
+      "url": "https://www.edx.org/",
+      "domains": [
+        "computer_science",
+        "engineering",
+        "business",
+        "humanities"
+      ],
+      "modes": [
+        "read",
+        "practice"
+      ],
+      "access": "freemium; certificates may cost",
+      "cost_class": "freemium"
+    }
+  ],
+  "source_statuses": [
+    "discovered",
+    "metadata_reviewed",
+    "access_verified",
+    "rights_reviewed",
+    "content_reviewed",
+    "task_tested"
+  ]
+}
