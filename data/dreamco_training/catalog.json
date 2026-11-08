@@ -1,0 +1,58 @@
+{
+  "schema": "dreamco.training_catalog.v1",
+  "catalog_id": "dreamco-unified-bootcamp-corpus",
+  "title": "DreamCo Unified Learning, Course, Dataset and Benchmark Catalog",
+  "version": "0.1.0",
+  "ownership_policy": "config/buddy-training-data-provenance-policy.json",
+  "dataset_factory_policy": "config/buddy_benchmark_dataset_factory.json",
+  "generated_by": "tools/build_dreamco_training_catalog.py",
+  "generation_status": "source_index_only_until_builder_runs",
+  "totals": {
+    "source_manifests": 0,
+    "external_dataset_pointers": 0,
+    "platform_resource_pointers": 0,
+    "courses": 0,
+    "study_packs": 0,
+    "versioned_data_packages": 0,
+    "dreamco_original_training_records": 0,
+    "train_eligible_assets": 0
+  },
+  "source_manifests": [
+    {"id":"external_dataset_discovery","path":"website/data/free-datasets.json","ownership":"reference_only","content_ingested":false,"license_review":"per_dataset_required"},
+    {"id":"open_platform_inventory","path":"website/data/open-platforms.json","ownership":"reference_only","content_ingested":false,"license_review":"per_resource_required"},
+    {"id":"learning_source_catalog","path":"buddy/bootcamp/learning_source_catalog.yaml","ownership":"reference_only","content_ingested":false,"license_review":"per_source_required"},
+    {"id":"bootcamp_resource_registry","path":"buddy/bootcamp/resource_registry.yaml","ownership":"reference_only","content_ingested":false,"license_review":"per_resource_required"},
+    {"id":"course_catalog","path":"benchmarks/study_courses/course_catalog.json","ownership":"dreamco_owned_metadata","content_ingested":true,"license_review":"internal_authorship"},
+    {"id":"study_packs","path":"study_packs","ownership":"mixed_per_pack","content_ingested":"per_pack_manifest","license_review":"per_asset_required"},
+    {"id":"benchmark_factory","path":"config/buddy_benchmark_dataset_factory.json","ownership":"dreamco_owned_methodology","content_ingested":true,"license_review":"internal_authorship"},
+    {"id":"onet_curriculum","path":"config/onet-priority-curriculum.json","ownership":"dreamco_owned_methodology_plus_third_party_reference","content_ingested":"metadata_only","license_review":"O*NET_terms_and_attribution"},
+    {"id":"onet_sandbox_dataset_spec","path":"config/onet-sandbox-dataset-spec.json","ownership":"dreamco_owned_methodology_plus_third_party_reference","content_ingested":"metadata_only","license_review":"O*NET_terms_and_attribution"},
+    {"id":"versioned_knowledge_packages","path":"data/dreamco_knowledge/packages","ownership":"mixed_per_package_and_field","content_ingested":"manifest_and_asset_level","license_review":"per_field_and_asset"},
+    {"id":"education_benchmarks","path":"eval/edu_benchmark","ownership":"mixed_per_benchmark","content_ingested":"manifest_only_until_reviewed","license_review":"per_benchmark"},
+    {"id":"mastery_scorecards","path":"eval/edu_mastery_scorecards","ownership":"dreamco_owned_schema_and_evidence","content_ingested":true,"license_review":"internal_authorship"}
+  ],
+  "record_contract": {
+    "required": ["record_id","record_type","title","domain","skills","task_objective","content","ownership_class","source_refs","license","provenance","split","quality_status","created_at","version"],
+    "record_types": ["lesson","worked_example","practice_task","tool_trace","failure_case","recovery_case","rubric","benchmark_task","occupation_task_mapping"],
+    "ownership_classes": ["dreamco_owned","dreamco_synthetic","licensed_for_training","reference_only","restricted","unknown"],
+    "splits": ["train","validation","test_holdout","transfer","regression","reference_only"],
+    "quality_statuses": ["draft","needs_review","passed","blocked"]
+  },
+  "training_rules": {
+    "reference_only_is_never_trainable": true,
+    "unknown_or_restricted_is_never_trainable": true,
+    "third_party_is_never_relabelled_as_dreamco_owned": true,
+    "preserve_attribution_and_license": true,
+    "keep_holdout_sealed": true,
+    "require_human_review_for_ambiguous_rights": true,
+    "require_privacy_safety_quality_and_leakage_checks": true,
+    "no_external_downloads_or_paid_compute_in_catalog_build": true
+  },
+  "course_generation": {
+    "derive_skill_objectives_not_copied_course_text": true,
+    "author_original_lessons_and_examples": true,
+    "generate_practice_and_rubrics": true,
+    "map_to_real_world_tasks_and_occupations": true,
+    "require_transfer_and_regression_evidence_for_mastery": true
+  }
+}
