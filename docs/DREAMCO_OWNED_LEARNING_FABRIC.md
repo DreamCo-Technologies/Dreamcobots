@@ -96,7 +96,7 @@ User request
   -> Buddy updates the next route and reports verified progress
 ```
 
-The existing components named in the manifest are the integration points. The new execution packet contract is `dreamco.learning_execution_request.v1`; the completion event is `dreamco.learning_execution_result.v1`. The live runtime must consume these packets through the normal task authorization, tool policy, sandbox, and audit layers. The learning fabric must never become a parallel unrestricted executor.
+The existing components named in the manifest are the integration points. The new execution packet contract is `dreamco.learning_execution_request.v1`; the completion event is `dreamco.learning_execution_result.v1`. `buddy/fleet_runtime/executor.py` now consumes `input.learning_request` through the bridge after the normal task permission and input guardrail checks. It attaches the resulting packet to the run result and run-evidence digest; workflow-engine tasks also receive the ordered course-plan steps. Paid or account-gated resources return `approval_required`, and missing eligible resources return `learning_blocked`. The learning fabric never becomes a parallel unrestricted executor.
 
 ### Execution packet minimum fields
 
