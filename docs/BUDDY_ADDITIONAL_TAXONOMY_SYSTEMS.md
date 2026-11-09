@@ -12042,3 +12042,125 @@ Every taxonomy subsystem must receive its own owner lane, versioned input/output
 - **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
 - **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
 
+
+
+## Newly discovered technology source categories
+
+### Product Hunt Vibe Coding directory
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_producthunt_vibe_coding`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Product Hunt Vibe Coding directory".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `producthunt-vibe-coding`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Product Hunt AI Coding Agents directory
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_producthunt_ai_coding_agents`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Product Hunt AI Coding Agents directory".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `producthunt-ai-coding-agents`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### ShipStack AI development stack directory
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_shipstack_vibe_stack`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "ShipStack AI development stack directory".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `shipstack-vibe-stack`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### The AI Small Business case directory
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_small_business_ai_cases`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "The AI Small Business case directory".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `small-business-ai-cases`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### getAIwork AI job listings and market snapshot
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_getaiwork_remote_ai_jobs`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "getAIwork AI job listings and market snapshot".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `getaiwork-remote-ai-jobs`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### The Agent Economy open-source framework directory
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_agent_economy_frameworks`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "The Agent Economy open-source framework directory".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `agent-economy-frameworks`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Langfuse open-source agent framework comparison
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_langfuse_agent_framework_comparison`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Langfuse open-source agent framework comparison".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `langfuse-agent-framework-comparison`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
