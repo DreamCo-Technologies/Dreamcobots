@@ -65,3 +65,41 @@ def test_missing_completion_evidence_is_rejected():
     result = evaluate_learning_completion({"request_id": "req-4"})
     assert result["accepted"] is False
     assert result["promote"] is False
+
+
+
+def test_completion_rejects_string_false_permission_evidence():
+    base = {
+        "request_id": "req-5",
+        "run_id": "run-5",
+        "status": "succeeded",
+        "capability": "python",
+        "success": "false",
+        "verified": True,
+        "regression_passed": True,
+        "safety_passed": True,
+        "holdout_passed": True,
+    }
+    result = evaluate_learning_completion(base)
+    assert result["accepted"] is False
+    assert result["promote"] is False
+    assert result["reason"] == "boolean_fields_must_be_json_booleans"
+    assert result["invalid_fields"] == ["success"]
+
+
+def test_completion_rejects_malformed_optional_boolean_evidence():
+    base = {
+        "request_id": "req-6",
+        "run_id": "run-6",
+        "status": "succeeded",
+        "capability": "python",
+        "success": True,
+        "verified": True,
+        "regression_passed": True,
+        "safety_passed": True,
+        "holdout_passed": "false",
+    }
+    result = evaluate_learning_completion(base)
+    assert result["accepted"] is False
+    assert result["promote"] is False
+    assert result["invalid_fields"] == ["holdout_passed"]
