@@ -152,6 +152,21 @@ def main() -> int:
     add("government_catalog_type", government_types, [government_catalog_path], lambda x: [x],
         lambda x: len(government_catalog.get(x, [])))
 
+
+    vibe_path = "config/vibe-coding/capability-taxonomy.json"
+    vibe = load(vibe_path)
+    add("vibe_coding_category", vibe["top_level_categories"], [vibe_path], lambda x: [slug(x)])
+    add("vibe_coding_family", vibe["category_families"].keys(), [vibe_path], lambda x: [slug(x)])
+    add("vibe_coding_evidence_stage", vibe["evidence_lifecycle"], [vibe_path], lambda x: [slug(x)])
+
+    technology_path = "config/buddy/technology-discovery-policy.json"
+    technology = load(technology_path)
+    add("technology_discovery_lens", [x["label"] for x in technology["priority_lenses"]], [technology_path],
+        lambda label: [next(x["id"] for x in technology["priority_lenses"] if x["label"] == label)])
+    add("technology_discovery_source", [x["name"] for x in technology["sources"]], [technology_path],
+        lambda name: [next(x["id"] for x in technology["sources"] if x["name"] == name)])
+    add("technology_discovery_truth_rule", technology["truth_rules"], [technology_path], lambda x: [slug(x)])
+
     systems = registry.get("systems")
     if not isinstance(systems, list):
         fail("systems must be an array")
