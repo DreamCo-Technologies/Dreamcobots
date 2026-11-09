@@ -13,7 +13,7 @@ class MarkdownRequirementsAuditTests(unittest.TestCase):
             cwd=ROOT, capture_output=True, text=True, check=False,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("1623 files", result.stdout)
+        self.assertIn("1624 files", result.stdout)
 
 if __name__ == "__main__":
     unittest.main()
