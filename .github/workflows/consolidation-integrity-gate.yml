@@ -47,10 +47,14 @@ jobs:
           PY
       - name: Validate Actions contract
         run: python3 tools/validate_actions_page_contract.py
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
       - name: Validate Buddy category-system registry
         run: |
           npm run buddy:category-systems
           python3 -m unittest tests.test_buddy_category_system_registry tests.test_buddy_additional_taxonomy_registry
+          node --check website/category-systems.js
       - name: Validate consolidation map
         run: |
           python3 - <<'PY'
