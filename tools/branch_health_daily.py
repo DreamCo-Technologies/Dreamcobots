@@ -118,6 +118,10 @@ def local_branches() -> list[dict]:
 
 
 def local_ahead_behind(name: str) -> tuple[int, int]:
+    merge_base = git(["merge-base", f"origin/{DEFAULT}", f"origin/{name}"], check=False)
+    if merge_base.returncode != 0 or not merge_base.stdout.strip():
+        detail = merge_base.stderr.strip() or "branches have no common ancestor"
+        raise RuntimeError(detail)
     proc = git(["rev-list", "--left-right", "--count", f"origin/{DEFAULT}...origin/{name}"], check=False)
     if proc.returncode != 0:
         detail = proc.stderr.strip() or "git rev-list failed"
