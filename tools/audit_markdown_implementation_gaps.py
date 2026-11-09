@@ -72,8 +72,10 @@ def inventory_count_claims(text: str, policy: dict[str, Any]) -> list[dict[str, 
     range_pattern = re.compile(r"^\s*#{1,6}\s+\d+\s*[–-]\s*\d+\b|\b\d[\d,]*\s*[-–]\s*category\b", re.I)
     claims = []
     for line_number, line in enumerate(text.splitlines(), start=1):
-        if count_pattern.search(line) or range_pattern.search(line):
-            claims.append({"line": line_number, "excerpt": line.strip()[:280], "review_required": True})
+        matches = [match.group(0) for match in count_pattern.finditer(line)]
+        matches.extend(match.group(0) for match in range_pattern.finditer(line))
+        for matched in matches:
+            claims.append({"line": line_number, "match": matched, "excerpt": line.strip()[:280], "review_required": True})
     return claims
 
 
