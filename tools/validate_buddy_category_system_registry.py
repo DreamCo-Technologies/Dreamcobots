@@ -79,10 +79,9 @@ def main() -> int:
         },
     }
 
-    model_block = re.search(r"AI_MODEL_CATEGORIES\s*=\s*\[(.*?)\]\s*as const", model_source, re.S)
-    if not model_block:
-        fail("could not locate AI_MODEL_CATEGORIES in shared/ai-models.ts")
-    model_categories = re.findall(r'"([^"]+)"', model_block.group(1))
+    model_categories = sorted(set(re.findall(r'category:\s*"([^"]+)"', model_source)))
+    if not model_categories:
+        fail("no model categories found in shared/ai-models.ts")
     model_counts = Counter(re.findall(r'category:\s*"([^"]+)"', model_source))
     expected["model"] = {category: set() for category in model_categories}
 
