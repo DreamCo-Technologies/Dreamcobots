@@ -36,6 +36,13 @@ def tracked_files() -> list[Path]:
         raise RuntimeError("git ls-files failed: " + err[-2000:])
     return [ROOT / p for p in out.split("\0") if p]
 
+def is_redirect_stub(html: str) -> bool:
+    """A redirect-only compatibility page delegates controls to its destination."""
+    return bool(
+        re.search(r"""<meta\b[^>]*http-equiv=["']refresh["']""", html, re.I)
+        or re.search(r"window\.location\.replace\s*\(", html, re.I)
+    )
+
 def github_open_prs() -> dict:
     if not TOKEN or not REPO or "/" not in REPO:
         return {"available": False, "reason": "GitHub token/repository context unavailable"}
@@ -111,7 +118,7 @@ def main() -> int:
             counts["html_files"] += 1
             html = raw.decode("utf-8", errors="replace")
             # Match the repository's shared-controls contract.
-            if not re.search(r'<script[^>]+src=["\'][^"\']*(?:nav|desk-chrome|repository-actions)\.js(?:[?][^"\']*)?["\']', html, re.I):
+            if not is_redirect_stub(html) and not re.search(r'<script[^>]+src=["\'][^"\']*(?:nav|desk-chrome|repository-actions)\.js(?:[?][^"\']*)?["\']', html, re.I):
                 add("critical", "page_controls_disconnected", rel,
                     "HTML page does not load nav.js, desk-chrome.js, or repository-actions.js.")
         if rel.startswith(".github/workflows/") and suffix in {".yml", ".yaml"}:
