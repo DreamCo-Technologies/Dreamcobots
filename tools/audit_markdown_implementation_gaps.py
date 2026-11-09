@@ -32,7 +32,7 @@ def tracked_markdown(root: Path = ROOT) -> list[Path]:
 
 def candidate_paths(text: str) -> set[str]:
     candidates = set(re.findall(r"`([^`]+)`", text))
-    candidates.update(re.findall(r"](([^)]+))", text))
+    candidates.update(re.findall(r"\\]\\(([^)]+)\\)", text))
     output = set()
     for value in candidates:
         token = value.strip().split()[0].strip(".,;:()[]{}<>")
@@ -167,6 +167,12 @@ def main() -> int:
     mode.add_argument("--check", action="store_true", help="fail when generated outputs are stale")
     args = parser.parse_args()
     data = build()
+    if args.check and JSON_OUTPUT.exists():
+        try:
+            previous = json.loads(JSON_OUTPUT.read_text(encoding="utf-8"))
+            data["generated_at"] = previous.get("generated_at")
+        except (json.JSONDecodeError, OSError):
+            pass
     outputs = {
         JSON_OUTPUT: json.dumps(data, indent=2, ensure_ascii=False) + "\n",
         WEB_OUTPUT: json.dumps(data, indent=2, ensure_ascii=False) + "\n",
