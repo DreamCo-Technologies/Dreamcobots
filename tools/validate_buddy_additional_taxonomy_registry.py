@@ -88,7 +88,7 @@ def main() -> int:
         ("model_matrix_status", "statuses"),
         ("model_matrix_section", "prospectus_sections"),
     ]:
-        add(group, matrix[key], [matrix_path], lambda x: [x])
+        add(group, matrix[key], [matrix_path], lambda x: [slug(x)])
 
     bootcamp_path = "config/buddy-1000-source-bootcamp.json"
     add("bootcamp_lifecycle_stage", load(bootcamp_path)["learning_lifecycle"], [bootcamp_path], lambda x: [slug(x)])
@@ -134,7 +134,7 @@ def main() -> int:
         ("211_prohibited_autonomy_action", "never_autonomous"),
         ("211_benchmark_dimension", "benchmark_dimensions"),
     ]:
-        add(group, navigator[key], [navigator_path], lambda x: [x])
+        add(group, navigator[key], [navigator_path], lambda x: [slug(x)])
 
     seed_path = "config/new-divisions-seed.json"
     proposed_path = "config/proposed-10-divisions.json"
