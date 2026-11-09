@@ -1536,7 +1536,7 @@ Every subsystem must eventually have a machine-readable record with:
 
 The dedicated subsystem specifications are also stored in `config/buddy/category-system-registry.json`, schema `dreamco.buddy.category_system_registry.v1`. This file contains one record per category, with a stable subsystem ID, exact source label, source references, contract fields, lifecycle status, implementation status, and verification status. The catalog currently defines 500 records: 12 resource-registry categories, 403 study-resource categories, 20 model categories, and 65 division systems. The 65-division list is preserved as a candidate inventory because it conflicts with other repository sources that state 45 or 46 divisions; 20 entries appear only in the 65-entry registry and remain flagged for reconciliation.
 
-Run `npm run buddy:category-systems` to validate the category-system registry against the authoritative source catalogs. The validator checks category completeness across every study catalog, source-row mapping, model category counts, unique subsystem IDs, division reconciliation against the 45-division placement audit, required contract fields, lifecycle values, and summary counts. The test is `tests/test_buddy_category_system_registry.py`.
+Run `npm run buddy:category-systems` to validate both category-system registries against their authoritative source catalogs and published Pages mirrors. The validator checks category completeness across every study catalog, source-row mapping, model category counts, unique subsystem IDs, division reconciliation against the 45-division placement audit, required contract fields, lifecycle values, and summary counts. The test is `tests/test_buddy_category_system_registry.py`.
 
 The validator is now committed in this feature branch. Its execution in the repository's full CI environment remains pending; a source-file re-fetch and static consistency checks are not a substitute for a successful test run.
 
@@ -5546,7 +5546,7 @@ These totals cover the inspected source files and taxonomy definitions, not ever
 
 The category-system inventory is exposed through `website/category-systems.html` and `website/category-systems.js`. The dashboard loads both the primary and additional taxonomy registries and presents the combined 1,099 category systems with group filters, search, individual expandable records, source links, and lifecycle/verification states. The published data mirrors are `website/data/category-system-registry.json` and `website/data/additional-taxonomy-system-registry.json`.
 
-The primary validator checks the 500-system registry and its published mirror. A companion validator checks the additional 599-system registry and its mirror against the source taxonomy files. The dashboard is a read-only visibility surface; it does not grant runtime permissions or imply that catalogued systems are implemented.
+The command `npm run buddy:category-systems` runs both validators: the primary 500-system registry and its mirror, plus the additional 599-system registry and its mirror against the source taxonomy files. The dashboard is a read-only visibility surface; it does not grant runtime permissions or imply that catalogued systems are implemented.
 
 
 ## 14. Additional taxonomy registry
