@@ -5535,3 +5535,10 @@ Before any division count is declared canonical, compare the 45-entry placement 
 - **500 total category-system records.**
 
 These totals are an inspected snapshot of the listed source files, not proof that every repository-wide resource family, every bot, every integration, or every sibling repository has been inventoried. Continue expanding the registry as additional authoritative sources are discovered.
+
+
+## 13. GitHub Pages category-system dashboard
+
+The category-system inventory is exposed through `website/category-systems.html` and `website/category-systems.js`. The published data mirror is `website/data/category-system-registry.json`, kept byte-for-byte semantically aligned with `config/buddy/category-system-registry.json`. The shared site navigation links to the dashboard. Users can search and filter all 500 category systems, expand an individual record, and inspect its mission, inputs, outputs, permissions, safety controls, metrics, acceptance criteria, dependencies, source files, and evidence status.
+
+The validator checks that the published mirror parses to the same JSON object as the authoritative registry and that the page, script, and navigation are wired. The dashboard is a read-only visibility surface; it does not grant runtime permissions or imply that catalogued systems are implemented.
