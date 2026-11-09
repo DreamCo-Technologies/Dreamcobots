@@ -14,6 +14,9 @@ class MarkdownImplementationGapTests(unittest.TestCase):
         text = "See \`tools/run.py\` and [the test](tests/test_run.py)."
         self.assertEqual(candidate_paths(text), {"tools/run.py", "tests/test_run.py"})
 
+    def test_ignores_empty_inline_code_and_empty_link_targets(self):
+        self.assertEqual(candidate_paths("Empty `` and [blank]() references."), set())
+
     def test_detects_missing_implementation_references(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
