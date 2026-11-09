@@ -105,7 +105,9 @@
           ["Branches", report.branchCount],
           ["Open PRs", report.prOpen],
           ["Healthy", report.healthy],
-          ["Conflicts", report.dirty]
+          ["Conflicts", report.dirty],
+          ["PRs merge-ready", Array.isArray(report.pullRequests) ? report.pullRequests.filter(function (pr) { return pr.mergeReady; }).length : "n/a"],
+          ["PRs blocked", Array.isArray(report.pullRequests) ? report.pullRequests.filter(function (pr) { return !pr.mergeReady; }).length : "n/a"]
         ];
         document.getElementById("metrics").innerHTML = metrics.map(function (m) {
           return "<article class=\"desk-card\"><strong>" + esc(m[1]) + "</strong><p>" + esc(m[0]) + "</p></article>";
@@ -146,7 +148,9 @@
           var summary = pr.checkSummary || {};
           var checks = pr.checkState || "unavailable";
           var review = pr.reviewState || "unavailable";
-          return "<article class=\"desk-card\"><strong>#" + esc(pr.number) + " " + esc(pr.title) + "</strong><p><span class=\"desk-status " + (pr.mergeReady ? "healthy" : "blocked") + "\">" + esc(status) + "</span> · CI " + esc(checks) + " · review " + esc(review) + " · merge " + esc(pr.mergeableState || "unknown") + "</p><p>" + esc(pr.headRef) + " → " + esc(pr.baseRef) + " · " + esc(summary.total == null ? "?" : summary.total) + " checks · " + esc(summary.failed || 0) + " failed · " + esc(pr.approvedReviews || 0) + " approvals · " + esc(pr.changesRequestedReviews || 0) + " changes requested</p><p><a href=\"" + esc(pr.url) + "\" target=\"_blank\" rel=\"noopener\">Open pull request</a></p></article>";
+          var baseState = pr.baseComparisonStatus === "verified" ? (pr.baseAhead + " ahead / " + pr.baseBehind + " behind its base") : "base comparison unavailable";
+          var missing = pr.baseMissingRequired && pr.baseMissingRequired.length ? " · missing required files: " + pr.baseMissingRequired.join(", ") : "";
+          return "<article class=\"desk-card\"><strong>#" + esc(pr.number) + " " + esc(pr.title) + "</strong><p><span class=\"desk-status " + (pr.mergeReady ? "healthy" : "blocked") + "\">" + esc(status) + "</span> · CI " + esc(checks) + " · review " + esc(review) + " · merge " + esc(pr.mergeableState || "unknown") + "</p><p>" + esc(pr.headRef) + " → " + esc(pr.baseRef) + " · " + esc(baseState) + esc(missing) + "</p><p>" + esc(summary.total == null ? "?" : summary.total) + " checks · " + esc(summary.failed || 0) + " failed · " + esc(pr.approvedReviews || 0) + " approvals · " + esc(pr.changesRequestedReviews || 0) + " changes requested</p><p><a href=\"" + esc(pr.url) + "\" target=\"_blank\" rel=\"noopener\">Open pull request</a></p></article>";
         }).join("") : "<p class=\"desk-note\">This report predates PR check/review evidence. Run the updated branch-health workflow to populate a safe PR readiness list.</p>");
         var conflicts = report.conflictActions || [];
         document.getElementById("conflicts").innerHTML = conflicts.length
