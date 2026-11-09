@@ -5528,17 +5528,27 @@ Before any division count is declared canonical, compare the 45-entry placement 
 
 ## 12. Updated category-system totals
 
-- 12 resource-registry category systems.
-- 403 study-resource category systems from 576 unique resource rows across six currently present catalogs.
-- 20 AI model category systems.
-- 65 separately documented division systems, including 20 candidates awaiting source reconciliation.
-- **500 total category-system records.**
+The primary registry contains 500 systems: 12 resource-registry categories, 403 study-resource categories from 576 unique rows across six study catalogs, 20 AI model categories, and 65 division systems.
 
-These totals are an inspected snapshot of the listed source files, not proof that every repository-wide resource family, every bot, every integration, or every sibling repository has been inventoried. Continue expanding the registry as additional authoritative sources are discovered.
+A companion taxonomy registry adds 599 individually specified systems across 29 additional taxonomy groups, including opportunity-resource categories, 112 web-source domains, universal capability domains, software capability categories, model-matrix dimensions, learning and bootcamp stages, government-service domains, tools, skills, and proposed divisions.
+
+- **Primary category systems:** 500.
+- **Additional taxonomy systems:** 599.
+- **Combined documented category systems:** **1,099**.
+- **Dedicated documentation sections:** 500 in this document plus 599 in `docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md`.
+
+The division inventory conflict remains open: the 65-entry registry is actively used by CI, while the README/rebuild/audit sources state 45 and the lineage document states 46. Twenty names in the 65-entry registry are absent from the 45-division audit and remain flagged for reconciliation.
+
+These totals cover the inspected source files and taxonomy definitions, not every possible repository-wide resource, bot, integration, or sibling-repository asset. Continue expanding the inventory as additional authoritative sources are discovered.
 
 
 ## 13. GitHub Pages category-system dashboard
 
-The category-system inventory is exposed through `website/category-systems.html` and `website/category-systems.js`. The published data mirror is `website/data/category-system-registry.json`, kept byte-for-byte semantically aligned with `config/buddy/category-system-registry.json`. The shared site navigation links to the dashboard. Users can search and filter all 500 category systems, expand an individual record, and inspect its mission, inputs, outputs, permissions, safety controls, metrics, acceptance criteria, dependencies, source files, and evidence status.
+The category-system inventory is exposed through `website/category-systems.html` and `website/category-systems.js`. The dashboard loads both the primary and additional taxonomy registries and presents the combined 1,099 category systems with group filters, search, individual expandable records, source links, and lifecycle/verification states. The published data mirrors are `website/data/category-system-registry.json` and `website/data/additional-taxonomy-system-registry.json`.
 
-The validator checks that the published mirror parses to the same JSON object as the authoritative registry and that the page, script, and navigation are wired. The dashboard is a read-only visibility surface; it does not grant runtime permissions or imply that catalogued systems are implemented.
+The primary validator checks the 500-system registry and its published mirror. A companion validator checks the additional 599-system registry and its mirror against the source taxonomy files. The dashboard is a read-only visibility surface; it does not grant runtime permissions or imply that catalogued systems are implemented.
+
+
+## 14. Additional taxonomy registry
+
+The companion file `config/buddy/additional-taxonomy-system-registry.json` and its detailed section-by-section documentation in `docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md` preserve 599 more category systems across 29 taxonomy groups. Their source registries remain distinct; no aliasing or merging is inferred from similar names.
