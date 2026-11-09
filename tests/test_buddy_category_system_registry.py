@@ -1,4 +1,5 @@
 """Tests for the Buddy category-system registry validator."""
+import json
 import subprocess
 import sys
 import unittest
@@ -18,8 +19,8 @@ class BuddyCategorySystemRegistryTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         registry = json.loads((ROOT / "config/buddy/category-system-registry.json").read_text(encoding="utf-8"))
         self.assertIn(str(len(registry["systems"])) + " systems", result.stdout)
-        self.assertIn("403 study", result.stdout)
-        self.assertIn("576 study records", result.stdout)
+        self.assertIn(str(registry["counts"]["study_categories"]) + " study", result.stdout)
+        self.assertIn(str(registry["counts"]["study_resource_records"]) + " study records", result.stdout)
 
     def test_category_systems_dashboard_is_wired(self):
         page = (ROOT / "website/category-systems.html").read_text(encoding="utf-8")
