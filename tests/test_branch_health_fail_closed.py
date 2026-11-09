@@ -26,6 +26,16 @@ class BranchHealthFailClosedTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "no merge base"):
                 health.local_missing("unrelated-history")
 
+    def test_local_branch_inventory_uses_api_protection_flags(self):
+        branch_line = "origin/example\\tdeadbeef\\t2026-11-09T00:00:00Z"
+        completed = subprocess.CompletedProcess(["git"], 0, branch_line, "")
+        with patch.object(health, "git", return_value=completed), patch.object(
+            health, "api_branches", return_value=[{"name": "example", "protected": True}]
+        ):
+            rows = health.local_branches()
+        self.assertEqual(rows[0]["protected"], True)
+        self.assertEqual(rows[0]["protectionStatus"], "api_flag")
+
     def test_report_labels_missing_comparison_as_unverified(self):
         report = {
             "scannedAt": "2026-11-09T00:00:00+00:00",
