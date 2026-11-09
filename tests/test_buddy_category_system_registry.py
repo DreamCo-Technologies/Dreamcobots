@@ -16,7 +16,8 @@ class BuddyCategorySystemRegistryTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("500 systems", result.stdout)
+        registry = json.loads((ROOT / "config/buddy/category-system-registry.json").read_text(encoding="utf-8"))
+        self.assertIn(str(len(registry["systems"])) + " systems", result.stdout)
         self.assertIn("403 study", result.stdout)
         self.assertIn("576 study records", result.stdout)
 
