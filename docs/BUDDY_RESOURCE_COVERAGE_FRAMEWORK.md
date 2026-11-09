@@ -5530,11 +5530,12 @@ Before any division count is declared canonical, compare the 45-entry placement 
 
 The primary registry's current system total and per-source counts are computed from the source registries at validation time. The displayed sections are a snapshot, not a permanent inventory or fixed architecture ceiling.
 
-A companion taxonomy registry adds individually specified systems across the additional taxonomy groups discovered in source registries, including opportunity-resource categories, web-source domains, universal capability domains, software capability categories, model-matrix dimensions, learning and bootcamp stages, government-service domains, tools, skills, and proposed divisions.
+A companion taxonomy registry adds individually specified systems across the additional taxonomy groups discovered in source registries, including opportunity-resource categories, web-source domains, universal capability domains, software capability categories, model-matrix dimensions, learning and bootcamp stages, government-service domains, tools, skills, vibe-coding categories, and technology-discovery sources. A third task taxonomy registry separately covers human-AI task actions, domains, contexts, modalities, execution environments, quality dimensions, business/personal scenarios, and Markdown implementation-gap states.
 
 - **Primary category systems:** computed from the current primary registry.
 - **Additional taxonomy systems:** computed from the current additional registry.
-- **Combined documented category systems:** derived from the two current registries.
+- **Task and Markdown taxonomy systems:** computed from the task taxonomy registry.
+- **Combined documented category systems:** derived from all three current registries.
 - **Dedicated documentation sections:** generated from current source categories; no fixed count or ceiling.
 
 Division inventories in older README, rebuild, audit, and lineage documents disagree. The validator now compares the current master registry with the current placement audit and computes the unmatched records dynamically; legacy file names and historical counts are not treated as permanent limits.
@@ -5544,9 +5545,9 @@ These totals cover the inspected source files and taxonomy definitions, not ever
 
 ## 13. GitHub Pages category-system dashboard
 
-The category-system inventory is exposed through `website/category-systems.html` and `website/category-systems.js`. The dashboard loads both the primary and additional taxonomy registries and presents the combined current inventory with group filters, search, individual expandable records, source links, and lifecycle/verification states. The published data mirrors are `website/data/category-system-registry.json` and `website/data/additional-taxonomy-system-registry.json`.
+The category-system inventory is exposed through `website/category-systems.html` and `website/category-systems.js`. The dashboard loads the primary, additional, and task/Markdown taxonomy registries and presents the combined current inventory with group filters, search, individual expandable records, source links, and lifecycle/verification states. The published data mirrors are `website/data/category-system-registry.json`, `website/data/additional-taxonomy-system-registry.json`, and `website/data/task-taxonomy-system-registry.json`.
 
-The command `npm run buddy:category-systems` runs both validators: the primary registry and its mirror, plus the additional registry and its mirror against the source taxonomy files. Counts are recomputed from the source catalogs. The dashboard is a read-only visibility surface; it does not grant runtime permissions or imply that catalogued systems are implemented.
+The command `npm run buddy:category-systems` runs all three registry validators and the open-vocabulary vibe-coding taxonomy validator. Each registry is checked against its source catalogs, documentation sections, and published Pages mirror. Counts are recomputed from the source catalogs. The dashboard is a read-only visibility surface; it does not grant runtime permissions or imply that catalogued systems are implemented.
 
 
 ## 14. Additional taxonomy registry (open and extensible)
@@ -5561,3 +5562,8 @@ The repository now has a source-driven AI and technology radar at `website/techn
 The Markdown-to-implementation gap audit scans every tracked Markdown file, maps linked paths to implementation/tests/workflows/configuration, and highlights missing or untested references. Its dashboard is `website/markdown-gap-audit.html`; its policy is `config/buddy/markdown-implementation-gap-policy.json`. A code or test reference is not proof of a passing test. Actual execution, benchmark, regression, and production evidence remain separate gates.
 
 Both inventories are open-vocabulary and versioned. No tool, model, provider, category, task, document, or reference count is a permanent ceiling. Historical records remain traceable; stale entries are marked rather than silently deleted.
+
+
+## 16. Task and Markdown taxonomy systems
+
+The third machine-readable catalog, `config/buddy/task-taxonomy-system-registry.json`, contains separate systems for the human-AI task sandbox and Markdown implementation-gap policy. Its individual sections are in `docs/BUDDY_TASK_AND_MARKDOWN_TAXONOMY_SYSTEMS.md`, and its GitHub Pages mirror is `website/data/task-taxonomy-system-registry.json`. The dashboard combines this catalog with the primary and additional taxonomy registries. These systems remain catalogued specifications until their individual interfaces, owners, tests, and evidence exist.
