@@ -4868,7 +4868,7 @@ The following additional source labels were found across the other study catalog
 
 ## 11. Dedicated division systems and unresolved division-count conflict
 
-The repository contains a 65-entry candidate division registry in `config/masterbot-65-registry.json`. Other sources disagree: the README, rebuild plan, and placement audit state 45 divisions; the legacy lineage map states 46. The 65-entry registry contains the 45 names present in the 45-division audit plus 20 additional names. A separate Actions contract workflow also validates generation of 65 division runtime contracts, so the 65-entry registry is actively consumed by CI; the conflict still needs reconciliation with the 45/46-count documents. This is a source-of-truth conflict, not permission to silently expand or delete divisions. All 65 receive separate catalogued subsystem records, but the 20 entries present in the 65-entry registry but absent from the 45-division audit are marked `present_in_65_registry_not_in_45_audit` pending owner reconciliation.
+The legacy-named `config/masterbot-65-registry.json` is treated as a versioned source file, not a count ceiling. Older README, rebuild, placement-audit, and lineage snapshots disagree about division membership. The validator now compares the current master registry with the current placement audit and computes unmatched records dynamically. No historical count is canonical, and no entry is silently deleted. Every current master-registry entry receives its own catalogued subsystem record; entries absent from the placement audit are marked `present_in_master_registry_not_in_placement_audit` pending owner reconciliation.
 
 ### DIV-01 — DreamFinance
 
