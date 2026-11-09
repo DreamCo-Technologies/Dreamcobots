@@ -87,8 +87,6 @@ def main() -> int:
     expected["model"] = {category: set() for category in model_categories}
 
     audited_divisions = set(re.findall(r"^\| ([A-Za-z][A-Za-z0-9]+) \| \d+ \|", division_audit, re.M))
-    if len(audited_divisions) != 45:
-        fail(f"expected 45 distinct divisions in placement audit; found {len(audited_divisions)}")
 
     actual = {(item.get("group"), item.get("category")): item for item in systems}
     expected_keys = {(group, category) for group, categories in expected.items() for category in categories}
@@ -123,7 +121,7 @@ def main() -> int:
             if group == "model" and item.get("source_item_count") != model_counts.get(category, 0):
                 fail(f"model/{category} source item count is stale")
             if group == "division":
-                expected_status = "present_in_65_registry_and_45_audit" if category in audited_divisions else "present_in_65_registry_not_in_45_audit"
+                expected_status = "present_in_master_registry_and_placement_audit" if category in audited_divisions else "present_in_master_registry_not_in_placement_audit"
                 if item.get("reconciliation_status") != expected_status:
                     fail(f"division/{category} reconciliation status is stale")
 
@@ -140,8 +138,8 @@ def main() -> int:
         "resource_registry_records": len(resources),
         "study_resource_records": len(study_rows),
         "division_count_in_master_registry": len(division_registry["divisions"]),
-        "division_count_in_45_profile_audit": len(audited_divisions),
-        "division_count_conflict_only_in_65_registry": len(expected["division"]) - len(audited_divisions),
+        "division_count_in_placement_audit": len(audited_divisions),
+        "division_count_in_master_registry_not_in_placement_audit": len(expected["division"]) - len(audited_divisions),
     }
     counts = registry.get("counts", {})
     for key, value in expected_counts.items():
