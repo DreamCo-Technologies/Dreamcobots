@@ -1,0 +1,25 @@
+import unittest
+from tools.generate_github_control_tower import PUBLIC_REPOSITORIES, summarize_checks, summarize_status
+
+class ControlTowerSummaryTests(unittest.TestCase):
+    def test_failure_is_not_ready(self):
+        x=summarize_checks([{"name":"unit","status":"completed","conclusion":"success"},{"name":"security","status":"completed","conclusion":"failure"}])
+        self.assertEqual(x["readiness"],"checks_failing")
+        self.assertEqual(x["failures"][0]["name"],"security")
+    def test_pending_is_not_passing(self):
+        x=summarize_checks([{"name":"build","status":"in_progress","conclusion":None}])
+        self.assertEqual(x["readiness"],"checks_pending")
+    def test_all_green_still_requires_review(self):
+        x=summarize_checks([{"name":"unit","status":"completed","conclusion":"success"},{"name":"lint","status":"completed","conclusion":"skipped"}])
+        self.assertEqual(x["readiness"],"checks_passed_review_still_required")
+    def test_no_checks_is_not_green(self):
+        self.assertEqual(summarize_checks([])["readiness"],"no_check_runs")
+    def test_commit_status_contexts_are_kept(self):
+        x=summarize_status({"state":"failure","statuses":[{"context":"build","state":"failure","target_url":"https://example.invalid"}]})
+        self.assertEqual(x["state"],"failure")
+        self.assertEqual(x["contexts"][0]["context"],"build")
+    def test_private_repository_is_not_in_public_scope(self):
+        self.assertEqual(len(PUBLIC_REPOSITORIES),3)
+        self.assertNotIn("ireanjordan24/dreamcobots",PUBLIC_REPOSITORIES)
+
+if __name__=="__main__": unittest.main()
