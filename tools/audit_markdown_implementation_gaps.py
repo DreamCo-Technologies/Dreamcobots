@@ -37,7 +37,10 @@ def candidate_paths(text: str) -> set[str]:
     candidates.update(re.findall(r"\]\(([^)]+)\)", text))
     output = set()
     for value in candidates:
-        token = value.strip().split()[0].strip(".,;:()[]{}<>")
+        parts = value.strip().split()
+        if not parts:
+            continue
+        token = parts[0].strip(".,;:()[]{}<>")
         if token.startswith("./"):
             token = token[2:]
         if token.startswith(("https://", "http://", "mailto:", "#")):
