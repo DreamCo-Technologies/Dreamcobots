@@ -58,6 +58,20 @@ def classify_reference(path: str, policy: dict[str, Any]) -> str:
     return "other"
 
 
+def inventory_count_claims(text: str, policy: dict[str, Any]) -> list[dict[str, Any]]:
+    units = sorted({str(value) for value in policy.get("inventory_count_units", [])}, key=len, reverse=True)
+    if not units:
+        return []
+    unit_pattern = "|".join(re.escape(value) for value in units)
+    count_pattern = re.compile(rf"\b\d[\d,]*(?:\+)?\s+(?:{unit_pattern})\b", re.I)
+    range_pattern = re.compile(r"^\s*#{1,6}\s+\d+\s*[–-]\s*\d+\b|\b\d[\d,]*\s*[-–]\s*category\b", re.I)
+    claims = []
+    for line_number, line in enumerate(text.splitlines(), start=1):
+        if count_pattern.search(line) or range_pattern.search(line):
+            claims.append({"line": line_number, "excerpt": line.strip()[:280], "review_required": True})
+    return claims
+
+
 def analyze_document(relative: str, text: str, policy: dict[str, Any], root: Path = ROOT) -> dict[str, Any]:
     refs = sorted(candidate_paths(text))
     existing = [path for path in refs if (root / path).is_file()]
@@ -67,6 +81,7 @@ def analyze_document(relative: str, text: str, policy: dict[str, Any], root: Pat
         kind = classify_reference(path, policy)
         if kind in buckets:
             buckets[kind].append(path)
+    count_claims = inventory_count_claims(text, policy)
     actionable_lines = [
         line.strip() for line in text.splitlines()
         if re.search(r"\b(must|should|shall|required|needs to|implement|build|create|support|enable|provide|automate|verify|test|deploy)\b", line, re.I)
@@ -89,6 +104,8 @@ def analyze_document(relative: str, text: str, policy: dict[str, Any], root: Pat
         "title": next((line.lstrip("# ").strip() for line in text.splitlines() if line.startswith("#")), Path(relative).stem),
         "sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
         "actionable_claim_lines": len(actionable_lines),
+        "numeric_inventory_claims": count_claims,
+        "count_claim_review_required": bool(count_claims),
         "referenced_paths": existing,
         "missing_paths": missing,
         "implementation_paths": sorted(buckets["implementation"]),
@@ -115,6 +132,8 @@ def build(root: Path = ROOT) -> dict[str, Any]:
         "inventory_mode": policy["inventory_mode"],
         "document_count": len(documents),
         "actionable_claim_lines": sum(row["actionable_claim_lines"] for row in documents),
+        "documents_with_count_claims": sum(row["count_claim_review_required"] for row in documents),
+        "numeric_inventory_claim_count": sum(len(row["numeric_inventory_claims"]) for row in documents),
         "gap_status_counts": dict(sorted(counts.items())),
         "documents_with_missing_paths": sum(bool(row["missing_paths"]) for row in documents),
         "documents_without_implementation_references": sum(not row["implementation_paths"] for row in documents),
@@ -139,6 +158,16 @@ def render_report(data: dict[str, Any]) -> str:
         f"- Documents with missing path references: {data['documents_with_missing_paths']}",
         f"- Documents without implementation references: {data['documents_without_implementation_references']}",
         f"- Documents with implementation references but no test references: {data['documents_without_test_references']}",
+        "",
+        "## Fixed-count claims requiring review",
+        "",
+    ]
+    for row in data["documents"]:
+        for claim in row.get("numeric_inventory_claims", []):
+            lines.append(f"- {row['path']}:{claim['line']} — {claim['excerpt']}")
+    lines.extend([
+        "",
+        "These are candidate count claims, not automatically incorrect values. Convert live inventory counts to generated values or label historical snapshots with their source and review date.",
         "",
         "## Gap inventory",
         "",
