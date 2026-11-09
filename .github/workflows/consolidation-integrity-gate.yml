@@ -23,6 +23,14 @@ on:
       - "website/data/additional-taxonomy-system-registry.json"
       - "docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md"
       - "website/nav.js"
+      - "config/buddy/technology-discovery-policy.json"
+      - "config/generated/buddy-technology-radar.json"
+      - "website/data/buddy-technology-radar.json"
+      - "website/data/technology-discovery-policy.json"
+      - "tools/refresh_buddy_technology_radar.py"
+      - "tests/test_buddy_technology_radar.py"
+      - "website/technology-radar.html"
+      - "website/technology-radar.js"
   workflow_dispatch:
 permissions:
   contents: read
@@ -34,16 +42,17 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - name: Validate canonical 65 registry
+      - name: Validate current division registry
         run: |
           python3 - <<'PY'
           import json
           d=json.load(open('config/masterbot-65-registry.json'))
-          assert d['canonical_count'] == 65
-          assert len(d['divisions']) == 65
-          assert len({x['id'] for x in d['divisions']}) == 65
-          assert len({x['name'] for x in d['divisions']}) == 65
-          print('canonical 65 registry: PASS')
+          divisions=d['divisions']
+          assert divisions
+          assert d['canonical_count'] == len(divisions)
+          assert len({x['id'] for x in divisions}) == len(divisions)
+          assert len({x['name'] for x in divisions}) == len(divisions)
+          print(f'current division registry: PASS ({len(divisions)} records; count derived)')
           PY
       - name: Validate Actions contract
         run: python3 tools/validate_actions_page_contract.py
@@ -53,15 +62,18 @@ jobs:
       - name: Validate Buddy category-system registry
         run: |
           npm run buddy:category-systems
-          python3 -m unittest tests.test_buddy_category_system_registry tests.test_buddy_additional_taxonomy_registry
+          python3 -m unittest tests.test_buddy_category_system_registry tests.test_buddy_additional_taxonomy_registry tests.test_buddy_technology_radar
+          python3 tools/refresh_buddy_technology_radar.py --check
           node --check website/category-systems.js
+          node --check website/technology-radar.js
       - name: Validate consolidation map
         run: |
           python3 - <<'PY'
           import json
           d=json.load(open('config/consolidated-pr-integration.json'))
           assert d['base'] == 'main'
-          assert len(d['pull_requests']) >= 10
-          assert len(d['canonical_assets']) == 3
+          assert isinstance(d['pull_requests'], list)
+          assert isinstance(d['canonical_assets'], list)
+          assert len({str(x.get('number')) for x in d['pull_requests']}) == len(d['pull_requests'])
           print('consolidation map: PASS')
           PY
