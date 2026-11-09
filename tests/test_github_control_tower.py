@@ -1,5 +1,5 @@
 import unittest
-from tools.generate_github_control_tower import PUBLIC_REPOSITORIES, summarize_checks, summarize_status
+from tools.generate_github_control_tower import PUBLIC_REPOSITORIES, summarize_checks, summarize_reviews, summarize_status
 
 class ControlTowerSummaryTests(unittest.TestCase):
     def test_failure_is_not_ready(self):
@@ -14,6 +14,16 @@ class ControlTowerSummaryTests(unittest.TestCase):
         self.assertEqual(x["readiness"],"checks_passed_review_still_required")
     def test_no_checks_is_not_green(self):
         self.assertEqual(summarize_checks([])["readiness"],"no_check_runs")
+    def test_review_summary_uses_latest_state_per_reviewer(self):
+        summary = summarize_reviews([
+            {"user": {"login": "reviewer"}, "state": "COMMENTED", "submitted_at": "2026-01-01T00:00:00Z"},
+            {"user": {"login": "reviewer"}, "state": "APPROVED", "submitted_at": "2026-01-02T00:00:00Z"},
+            {"user": {"login": "owner"}, "state": "CHANGES_REQUESTED", "submitted_at": "2026-01-03T00:00:00Z"},
+        ])
+        self.assertEqual(summary["reviewers"], 2)
+        self.assertEqual(summary["counts"]["approved"], 1)
+        self.assertEqual(summary["counts"]["changes_requested"], 1)
+
     def test_commit_status_contexts_are_kept(self):
         x=summarize_status({"state":"failure","statuses":[{"context":"build","state":"failure","target_url":"https://example.invalid"}]})
         self.assertEqual(x["state"],"failure")
