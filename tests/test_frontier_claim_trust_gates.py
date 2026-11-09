@@ -99,6 +99,7 @@ class FrontierClaimTrustGatesTest(unittest.TestCase):
                 {
                     "claimable": claimable,
                     "status": "claimable" if claimable else "incomplete_or_unproven",
+                    "errors": [] if claimable else ["missing Buddy subject"],
                 }
             ),
             encoding="utf-8",
@@ -148,6 +149,15 @@ class FrontierClaimTrustGatesTest(unittest.TestCase):
             self.assertTrue(result["ok"])
             self.assertTrue(result["all_gates_green"])
             self.assertTrue(result["claimable"])
+
+    def test_unproven_claim_includes_specific_assessment_errors(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._write_tree(root, claimable=False, soak=True, vanity=False)
+            self._bind(root)
+            result = self.mod.evaluate(require_all_gates=True)
+            self.assertFalse(result["ok"])
+            self.assertIn("claim assessment: missing Buddy subject", result["errors"])
 
     def test_require_all_gates_fails_when_soak_missing(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
