@@ -21,6 +21,20 @@ This is a live inventory and first-pass requirements audit, not a claim that eve
 | Pages connection index | 5,426 tracked paths in the main tree; 800,108-byte JSON artifact | Tracks repository paths and page reachability, not runtime behavior |
 | Branch-health public report | Last scan 2026-09-19; 373 branches, 14 open PRs | Stale; must be regenerated from current Git state |
 
+## Fresh full branch-health scan
+
+The existing `branch-health-daily.yml` workflow was triggered through the approved Buddy control plane with fixed input `resolve=false`. Run: https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/42549780199. It completed successfully and published a fresh report at `2026-11-09T02:16:10Z`.
+
+- 476 total branches including `main` (475 non-default branches).
+- 64 open PRs; 63 branch records were linked to an open PR.
+- 414 branches classified blocked, 60 watch, and 1 healthy by the current scanner's freshness/completeness/mergeability/safety/scope heuristics.
+- 28 PR conflicts reported; money/payment PRs #730 and #928 were skipped for automatic conflict work.
+- The scan did not run the conflict team and did not merge PRs.
+
+**Important limitation:** This run used the current `main` scanner, which did not check for a common merge base before counting commits. Earlier GitHub compare checks found unrelated histories for `gaming-engine` and `add-index-html`; local Git can count both entire histories and present huge ahead/behind numbers. The current 414/60/1 classifications are useful triage, not final branch certification. The audit PR changes the scanner to mark no-common-ancestor and comparison failures unavailable/blocked, and adds regression tests. A new scan must run after that repair is merged.
+
+The branch API reported `protected=false` for all 475 branches. The detailed branch-protection endpoint returned HTTP 403 for this connection, so effective branch protection and ruleset requirements remain unverified.
+
 ## Branch comparison evidence
 
 The repository branch list was paginated through five pages. A sample of eight distinct branch heads was compared with `main`; the results already show very old or unrelated histories:
