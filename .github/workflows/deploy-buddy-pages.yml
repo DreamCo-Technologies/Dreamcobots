@@ -12,6 +12,7 @@ on:
       - "website/**"
       - "docs/**"
       - "tools/build_buddy_public_site.py"
+      - "tools/generate_github_control_tower.py"
       - "tools/buddy_control_plane.py"
       - "tools/audit_actions_health.py"
       - "tools/audit_actions_live.py"
@@ -51,6 +52,7 @@ on:
 permissions:
   contents: read
   actions: read
+  pull-requests: read
 
 concurrency:
   group: dreamco-github-pages-${{ github.ref }}
@@ -86,6 +88,7 @@ jobs:
           mkdir -p config/generated reports website/data
           python3 tools/audit_actions_health.py
           python3 tools/audit_actions_live.py
+          python3 tools/generate_github_control_tower.py
           python3 tools/problem_registry.py
           python3 tools/auto_repair_policy.py config/generated/problem-registry.json
           python3 tools/build_actions_prospectus.py
@@ -111,6 +114,9 @@ jobs:
           python3 tools/generate_master_directive_status.py
           python3 tools/generate_command_center_data.py
           python3 tools/generate_command_center_data.py --check
+          python3 tools/generate_github_control_tower.py --check
+          python3 -m unittest tests.test_github_control_tower
+          node --check website/control-tower.js
           python3 tools/generate_resource_connection_catalog.py
           python3 tools/generate_resource_connection_catalog.py --check
           python3 tools/generate_opportunity_hub.py --check
@@ -225,6 +231,8 @@ jobs:
           test -s public_site/buddy-model-lab.html
           test -s public_site/professional-bootcamp.html
           test -s public_site/production-evidence.html
+          test -s public_site/control-tower.html
+          test -s public_site/data/control-tower/github-status.json
       - name: Upload public website
         uses: actions/upload-pages-artifact@v5
         with:
