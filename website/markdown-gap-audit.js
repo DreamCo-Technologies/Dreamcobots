@@ -16,7 +16,7 @@
       '<p><strong>Implementation references</strong></p><div class="gap-paths">' + (row.implementation_paths || []).map(p=>'<a href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/' + encodeURI(p) + '">' + esc(p) + '</a>').join('<br>') + (row.implementation_paths?.length ? '' : 'None detected') + '</div>' +
       '<p><strong>Test references</strong></p><div class="gap-paths">' + (row.test_paths || []).map(p=>'<a href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/' + encodeURI(p) + '">' + esc(p) + '</a>').join('<br>') + (row.test_paths?.length ? '' : 'None detected') + '</div>' +
       '<p><strong>Missing paths</strong></p><div class="gap-paths">' + ((row.missing_paths || []).map(esc).join('<br>') || 'None detected') + '</div>' +
-      '<p>' + esc(row.next_action) + '</p><p class="gap-muted">Execution verified: no. This report does not claim implementation or production readiness.</p></article>').join('') || '<p class="gap-muted">No matching documents.</p>';
+      '<p><strong>Inventory count claims</strong></p><div class="gap-paths">' + (row.numeric_inventory_claims || []).map(c => 'Line ' + Number(c.line) + ': ' + esc(c.excerpt)).join('<br>') + ((row.numeric_inventory_claims || []).length ? '' : 'None detected') + '</div><p>' + esc(row.next_action) + '</p><p class="gap-muted">Execution verified: no. This report does not claim implementation or production readiness.</p></article>').join('') || '<p class="gap-muted">No matching documents.</p>';
   }
   async function init() {
     try {
@@ -26,6 +26,8 @@
       const metrics = [
         ['Markdown files',data.document_count],
         ['Actionable claim lines',data.actionable_claim_lines],
+        ['Documents with count claims',data.documents_with_count_claims],
+        ['Count claims to review',data.numeric_inventory_claim_count],
         ['Missing path references',data.documents_with_missing_paths],
         ['No implementation links',data.documents_without_implementation_references],
         ['Code links without tests',data.documents_without_test_references]
