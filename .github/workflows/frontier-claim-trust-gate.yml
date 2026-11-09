@@ -38,6 +38,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: frontier-claim-trust-${{ github.ref }}
@@ -53,6 +54,39 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
+      - name: Restore latest successful 24-hour sandbox evidence
+        env:
+          GH_TOKEN: \${{ github.token }}
+        run: |
+          set -euo pipefail
+          run_id="$(gh run list --workflow buddy-24h-sandbox-soak.yml --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
+          if [ -z "$run_id" ]; then
+            echo "::error::No successful 24-hour sandbox soak artifact is available."
+            exit 1
+          fi
+          mkdir -p previous-soak
+          gh run download "$run_id" --pattern 'buddy-24h-soak-*' --dir previous-soak
+          tick="$(find previous-soak -type f -name sandbox-24h-tick.json -print -quit)"
+          history="$(find previous-soak -type f -name sandbox-24h-history.json -print -quit)"
+          report="$(find previous-soak -type f -name SANDBOX_24H.md -print -quit)"
+          test -n "$tick" && test -n "$history" && test -n "$report"
+          mkdir -p config/generated reports
+          cp "$tick" config/generated/sandbox-24h-tick.json
+          cp "$history" config/generated/sandbox-24h-history.json
+          cp "$report" reports/SANDBOX_24H.md
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          history = json.loads(Path("config/generated/sandbox-24h-history.json").read_text())
+          summary = history.get("summary", {})
+          if not summary.get("complete"):
+              raise SystemExit(
+                  "24-hour sandbox evidence is still collecting: "
+                  f"{summary.get('successful_ticks', 0)} successful ticks, "
+                  f"{summary.get('elapsed_hours', 0)} elapsed hours."
+              )
+          print("Verified rolling 24-hour sandbox evidence:", summary)
+          PY
       - name: Deploy-mode trust check (fail on vanity while gates red)
         run: python3 tools/check_frontier_claim_trust_gates.py --output reports/frontier-claim-trust-deploy.json
       - name: Unit tests
@@ -73,6 +107,39 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
+      - name: Restore latest successful 24-hour sandbox evidence
+        env:
+          GH_TOKEN: \${{ github.token }}
+        run: |
+          set -euo pipefail
+          run_id="$(gh run list --workflow buddy-24h-sandbox-soak.yml --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
+          if [ -z "$run_id" ]; then
+            echo "::error::No successful 24-hour sandbox soak artifact is available."
+            exit 1
+          fi
+          mkdir -p previous-soak
+          gh run download "$run_id" --pattern 'buddy-24h-soak-*' --dir previous-soak
+          tick="$(find previous-soak -type f -name sandbox-24h-tick.json -print -quit)"
+          history="$(find previous-soak -type f -name sandbox-24h-history.json -print -quit)"
+          report="$(find previous-soak -type f -name SANDBOX_24H.md -print -quit)"
+          test -n "$tick" && test -n "$history" && test -n "$report"
+          mkdir -p config/generated reports
+          cp "$tick" config/generated/sandbox-24h-tick.json
+          cp "$history" config/generated/sandbox-24h-history.json
+          cp "$report" reports/SANDBOX_24H.md
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          history = json.loads(Path("config/generated/sandbox-24h-history.json").read_text())
+          summary = history.get("summary", {})
+          if not summary.get("complete"):
+              raise SystemExit(
+                  "24-hour sandbox evidence is still collecting: "
+                  f"{summary.get('successful_ticks', 0)} successful ticks, "
+                  f"{summary.get('elapsed_hours', 0)} elapsed hours."
+              )
+          print("Verified rolling 24-hour sandbox evidence:", summary)
+          PY
       - name: Strict require-all-gates (hard-fail until claimable)
         run: python3 tools/check_frontier_claim_trust_gates.py --require-all-gates --output reports/frontier-claim-trust-strict.json
       - if: always()
