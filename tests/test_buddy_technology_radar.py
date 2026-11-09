@@ -38,6 +38,7 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
     def test_counts_are_derived_and_no_fixed_ceiling_exists(self):
         self.assertIsNone(POLICY["catalog_policy"]["fixed_category_ceiling"])
         self.assertIsNone(POLICY["catalog_policy"]["fixed_item_ceiling"])
+        self.assertTrue(POLICY["catalog_policy"]["new_sources_may_be_added_without_code_changes"])
         self.assertEqual(POLICY["catalog_policy"]["taxonomy_mode"], "open_vocabulary")
         self.assertTrue(POLICY["catalog_policy"]["never_delete_historical_observations"])
 
