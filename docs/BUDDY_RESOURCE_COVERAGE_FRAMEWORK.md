@@ -16,7 +16,7 @@ This document is a coverage crosswalk, not a replacement for the machine-readabl
 
 The resource map says its last scan was **2026-10-05**. Treat its connection states and counts as a dated inventory snapshot, not live verification. Re-scan before reporting a provider, secret, workflow, deployment, license, or integration as currently available. The `101-200` set and the other study catalogs are dated source snapshots. Current row, resource-ID, and category counts are derived by the validator from every discovered source file; no category or item count is a permanent limit. Continue scanning for additional resource catalogs.
 
-## 1. Machine-readable resource-registry categories
+## 1. Current machine-readable resource-registry categories
 
 The current inspected registry contains resource records across its dynamically derived categories:
 
@@ -5526,7 +5526,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 Before any division count is declared canonical, compare the 45-entry placement audit, the 46-division legacy-lineage description, the 65-entry master registry, the bot manifest/capability registry, and the current generated division catalog. Preserve all historical names and mappings. Record explicit aliases, merged identities, retired divisions, or unresolved candidates with evidence and owner approval. Never delete a division or reassign its bots solely to make counts agree.
 
-## 12. Updated category-system totals
+## 12. Current category-system inventory (derived snapshot)
 
 The primary registry's current system total and per-source counts are computed from the source registries at validation time. The displayed sections are a snapshot, not a permanent inventory or fixed architecture ceiling.
 
@@ -5549,6 +5549,6 @@ The category-system inventory is exposed through `website/category-systems.html`
 The command `npm run buddy:category-systems` runs both validators: the primary registry and its mirror, plus the additional registry and its mirror against the source taxonomy files. Counts are recomputed from the source catalogs. The dashboard is a read-only visibility surface; it does not grant runtime permissions or imply that catalogued systems are implemented.
 
 
-## 14. Additional taxonomy registry
+## 14. Additional taxonomy registry (open and extensible)
 
 The companion file `config/buddy/additional-taxonomy-system-registry.json` and its detailed section-by-section documentation in `docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md` preserve the additional category systems currently discovered across the source taxonomies. Their source registries remain distinct; no aliasing or merging is inferred from similar names.
