@@ -5716,7 +5716,8 @@ All records remain `catalogued`, `not_implemented`, and `not_verified` until the
 - **Mission:** Dedicated superbot capability domain subsystem for "analyze".
 - **Source files:** `config/superbot-capability-taxonomy.json`
 - **Source resource IDs:** `analyze`
-- **Source record count:** 6
+- **Source record count:** 1
+- **Example count:** 6
 - **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
 - **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
 - **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
@@ -5733,7 +5734,8 @@ All records remain `catalogued`, `not_implemented`, and `not_verified` until the
 - **Mission:** Dedicated superbot capability domain subsystem for "learn".
 - **Source files:** `config/superbot-capability-taxonomy.json`
 - **Source resource IDs:** `learn`
-- **Source record count:** 5
+- **Source record count:** 1
+- **Example count:** 5
 - **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
 - **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
 - **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
@@ -5750,7 +5752,8 @@ All records remain `catalogued`, `not_implemented`, and `not_verified` until the
 - **Mission:** Dedicated superbot capability domain subsystem for "execute".
 - **Source files:** `config/superbot-capability-taxonomy.json`
 - **Source resource IDs:** `execute`
-- **Source record count:** 5
+- **Source record count:** 1
+- **Example count:** 5
 - **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
 - **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
 - **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
@@ -5767,7 +5770,8 @@ All records remain `catalogued`, `not_implemented`, and `not_verified` until the
 - **Mission:** Dedicated superbot capability domain subsystem for "communicate".
 - **Source files:** `config/superbot-capability-taxonomy.json`
 - **Source resource IDs:** `communicate`
-- **Source record count:** 5
+- **Source record count:** 1
+- **Example count:** 5
 - **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
 - **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
 - **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
@@ -5784,7 +5788,8 @@ All records remain `catalogued`, `not_implemented`, and `not_verified` until the
 - **Mission:** Dedicated superbot capability domain subsystem for "transact".
 - **Source files:** `config/superbot-capability-taxonomy.json`
 - **Source resource IDs:** `transact`
-- **Source record count:** 5
+- **Source record count:** 1
+- **Example count:** 5
 - **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
 - **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
 - **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
@@ -5801,7 +5806,8 @@ All records remain `catalogued`, `not_implemented`, and `not_verified` until the
 - **Mission:** Dedicated superbot capability domain subsystem for "govern".
 - **Source files:** `config/superbot-capability-taxonomy.json`
 - **Source resource IDs:** `govern`
-- **Source record count:** 6
+- **Source record count:** 1
+- **Example count:** 6
 - **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
 - **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
 - **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
@@ -5818,7 +5824,8 @@ All records remain `catalogued`, `not_implemented`, and `not_verified` until the
 - **Mission:** Dedicated superbot capability domain subsystem for "observe".
 - **Source files:** `config/superbot-capability-taxonomy.json`
 - **Source resource IDs:** `observe`
-- **Source record count:** 5
+- **Source record count:** 1
+- **Example count:** 5
 - **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
 - **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
 - **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
