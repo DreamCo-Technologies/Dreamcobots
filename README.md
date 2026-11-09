@@ -110,7 +110,7 @@ Creative Studio can record adult owner voice samples, capture owner camera image
 
 The Model Benchmark Lab audits 200 targets across 12 capability suites: 100 curated catalog records plus 100 task-specific discovery lanes that refresh exact model IDs from official provider catalogs. Catalog checks run locally. Live quality, latency, and cost scores remain empty until authenticated adapters return evidence under a per-run budget and approval.
 
-The Buddy Success Center stores a 30-question, non-sensitive profile in the user's browser, shares only an opted-in summary with specialist routes, and keeps opportunity estimates separate from user-confirmed revenue. Its generated production program covers all 45 divisions with a professional charter, 100 capability contracts, 100 must-have records, 100 upgrade records, 12 production gates, a deterministic robot identity, and an evidence-first competitor benchmark process. A local daily harness checks all 4,500 division capability contracts with bounded parallelism; external comparisons still require a scheduler, configured adapters, current terms, and run-specific approval.
+The Buddy Success Center stores a non-sensitive profile in the user's browser, shares only an opted-in summary with specialist routes, and keeps opportunity estimates separate from user-confirmed revenue. Its generated production program derives divisions, capability contracts, must-have records, upgrade records, and production gates from the current registries, with a deterministic robot identity and an evidence-first competitor benchmark process. A local daily harness checks the current division capability contracts with bounded parallelism; external comparisons still require a scheduler, configured adapters, current terms, and run-specific approval.
 
 The AI Organization Intelligence registry combines 94 normalized providers from the existing 200-target program with a dated 196-entry snapshot of the official AI Alliance directory. It maps declared strengths and common user jobs to 20 user-need categories and 15 benchmark dimensions while keeping membership, connectivity, and live evidence separate. Refresh with `python3 tools/generate_ai_organization_intelligence.py --refresh`; normal repository checks use the committed snapshot so builds do not depend on the network.
 
@@ -136,7 +136,7 @@ All bots are accessible via the Empire OS REST API:
 - `GET /api/bots` — list all bots
 - `POST /api/chat` — chat with any bot
 - `GET /api/bots/:slug` — bot profile
-- `GET /api/divisions` — all 45 divisions
+- `GET /api/divisions` — current division registry
 - `POST /api/bots/normalize` — validate all bot profiles
 
 ---
