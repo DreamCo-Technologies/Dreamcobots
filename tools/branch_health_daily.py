@@ -174,6 +174,14 @@ def vote_merge(pr: dict | None) -> tuple[str, str]:
     if state == "dirty":
         return "block", "Conflicts with its base branch. Human resolution required."
     evidence = pr.get("_evidence") or {}
+    if evidence.get("baseComparisonStatus") != "verified":
+        return "block", "PR head/base comparison is unavailable; cannot verify the actual target branch."
+    if evidence.get("baseBehind") != 0:
+        return "block", f"PR head is {evidence.get('baseBehind')} commits behind its actual base."
+    if evidence.get("baseMissingRequired"):
+        return "block", "PR removes or renames required Buddy files from its actual base."
+    if not evidence.get("baseAhead"):
+        return "block", "PR has no verified commits ahead of its actual base."
     check_state = evidence.get("checkState", "unavailable")
     review_state = evidence.get("reviewState", "unavailable")
     if check_state != "success":
@@ -307,6 +315,8 @@ def pr_evidence(pr: dict) -> dict:
             raise RuntimeError("GitHub check-runs response was unavailable")
         conclusions = [row.get("conclusion") for row in check_runs]
         statuses = [row.get("status") for row in check_runs]
+        status_contexts = (status_payload or {}).get("statuses", []) if isinstance(status_payload, dict) else []
+        context_states = [row.get("state") for row in status_contexts]
         failed = sum(1 for value in conclusions if value in {"failure", "timed_out", "cancelled", "action_required", "startup_failure", "stale"})
         pending = sum(1 for value in statuses if value in {"queued", "in_progress", "pending"})
         skipped = sum(1 for value in conclusions if value in {"skipped", "neutral"})
@@ -317,7 +327,7 @@ def pr_evidence(pr: dict) -> dict:
             check_state = "pending"
         elif check_runs and all(value in {"success", "neutral"} for value in conclusions) and combined in {None, "success"}:
             check_state = "success"
-        elif not check_runs and combined == "success":
+        elif not check_runs and context_states and all(value == "success" for value in context_states):
             check_state = "success"
         elif skipped:
             check_state = "incomplete"
@@ -325,7 +335,8 @@ def pr_evidence(pr: dict) -> dict:
             check_state = "unknown"
         checks["checkState"] = check_state
         checks["checkSummary"] = {"total": len(check_runs), "failed": failed, "pending": pending,
-                                  "skipped_or_neutral": skipped, "combined_status": combined}
+                                  "skipped_or_neutral": skipped, "status_contexts": len(context_states),
+                                  "combined_status": combined}
     except RuntimeError as exc:
         checks["checkSummary"] = {"error": str(exc)[:240]}
     try:
@@ -348,6 +359,36 @@ def pr_evidence(pr: dict) -> dict:
         checks["reviewState"] = "unavailable"
         checks["reviewError"] = str(exc)[:240]
     return checks
+
+
+
+def pr_base_comparison(pr: dict, use_git: bool) -> dict:
+    """Compare a PR head with its own base branch, never assume main."""
+    head = (pr.get("head") or {}).get("ref")
+    base = (pr.get("base") or {}).get("ref")
+    result = {"baseComparisonStatus": "unavailable", "baseAhead": None, "baseBehind": None,
+              "baseMissingRequired": None}
+    if not head or not base:
+        result["baseComparisonError"] = "PR head/base refs missing"
+        return result
+    try:
+        if use_git:
+            ahead, behind = local_ahead_behind(head, base)
+            missing = local_missing(head, base)
+        else:
+            comparison = gh(f"/repos/{OWNER}/{REPO}/compare/{urllib.parse.quote(base, safe='')}...{urllib.parse.quote(head, safe='')}")
+            files = comparison.get("files") or []
+            if len(files) >= 300:
+                raise RuntimeError("GitHub compare file list may be truncated at 300 entries")
+            ahead = int(comparison.get("ahead_by") or 0)
+            behind = int(comparison.get("behind_by") or 0)
+            missing_set = {row.get("filename") for row in files if row.get("status") in {"removed", "renamed"}}
+            missing = [path for path in REQUIRED if path in missing_set]
+        result.update({"baseComparisonStatus": "verified", "baseAhead": ahead,
+                       "baseBehind": behind, "baseMissingRequired": missing})
+    except RuntimeError as exc:
+        result["baseComparisonError"] = str(exc)[:240]
+    return result
 
 
 def public_report(report: dict) -> dict:
@@ -404,7 +445,9 @@ def main() -> int:
             full = gh(f"/repos/{OWNER}/{REPO}/pulls/{pr['number']}")
         except RuntimeError:
             full = pr
-        full["_evidence"] = pr_evidence(full)
+        evidence = pr_evidence(full)
+        evidence.update(pr_base_comparison(full, use_git))
+        full["_evidence"] = evidence
         pr_by_ref[full["head"]["ref"]] = full
 
     records = []
@@ -446,6 +489,9 @@ def main() -> int:
             "reviewState": ((pr or {}).get("_evidence") or {}).get("reviewState"),
             "approvedReviews": ((pr or {}).get("_evidence") or {}).get("approvedReviews", 0),
             "changesRequestedReviews": ((pr or {}).get("_evidence") or {}).get("changesRequestedReviews", 0),
+            "prBaseComparisonStatus": ((pr or {}).get("_evidence") or {}).get("baseComparisonStatus"),
+            "prBaseAhead": ((pr or {}).get("_evidence") or {}).get("baseAhead"),
+            "prBaseBehind": ((pr or {}).get("_evidence") or {}).get("baseBehind"),
             "moneySensitive": bool(MONEY_RE.search((pr or {}).get("title") or "")),
             "votes": votes,
             "score": score,
@@ -488,6 +534,10 @@ def main() -> int:
                 "mergeable": pr.get("mergeable"), "mergeableState": pr.get("mergeable_state"),
                 **(pr.get("_evidence") or {}),
                 "mergeReady": (not pr.get("draft") and pr.get("mergeable_state") == "clean"
+                               and (pr.get("_evidence") or {}).get("baseComparisonStatus") == "verified"
+                               and (pr.get("_evidence") or {}).get("baseBehind") == 0
+                               and not (pr.get("_evidence") or {}).get("baseMissingRequired")
+                               and bool((pr.get("_evidence") or {}).get("baseAhead"))
                                and (pr.get("_evidence") or {}).get("checkState") == "success"
                                and (pr.get("_evidence") or {}).get("reviewState") == "approved"),
             } for pr in prs
