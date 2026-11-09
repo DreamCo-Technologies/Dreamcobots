@@ -28,6 +28,8 @@ This registry is the source of truth for mapping each project conversation to it
 | CHAT-13 | MomMap App Concept | [Open checklist](conversation-checklists/CHAT-13-mommap-app-concept.md) |
 | CHAT-14 | Buddy Master Teacher and Benchmarks | [Open checklist](conversation-checklists/CHAT-14-buddy-master-teacher-and-benchmarks.md) |
 
+| CHAT-15 | Buddy OS — Universal AI Model Routing, Customization & Repository Engineering | [Open checklist](conversation-checklists/CHAT-15-buddy-os-universal-model-routing-customization-repository-engineering.md) |
+
 ## Canonical requirement IDs
 
 - **D01** — Consolidate every project conversation
@@ -117,3 +119,10 @@ All 196 conversation-requirement pairs are **unverified / not yet reconciled**. 
 ## Per-conversation file verification
 
 All 14 independent checklist files were fetched successfully from the tracking branch after creation. Each contains its own 14 unchecked requirements and traceability fields.
+
+
+## CHAT-15 expanded Buddy OS requirements
+
+The CHAT-15 checklist adds 20 independently verifiable workstreams covering universal routing, benchmarking, customization, device/offline execution, learning and actual training, Hugging Face discovery, frontend/backend management, multi-agent orchestration, repository engineering, PR safety, Cloudflare deployment isolation, builder bots, command centers, cost controls, security, roadmap, and definition of done. See [CHAT-15 checklist](conversation-checklists/CHAT-15-buddy-os-universal-model-routing-customization-repository-engineering.md).
+
+The candidate PRs named in CHAT-15 are review candidates only. Their current state and safety must be freshly checked before action.
