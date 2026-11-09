@@ -84,7 +84,10 @@
     "buddy:command-center:refresh": "python3 tools/generate_command_center_data.py && python3 tools/generate_command_center_data.py --check",
     "buddy:technology-radar": "python3 tools/refresh_buddy_technology_radar.py --check",
     "refresh:technology-radar": "python3 tools/refresh_buddy_technology_radar.py --refresh",
-    "test:technology-radar": "python3 -m unittest tests.test_buddy_technology_radar"
+    "test:technology-radar": "python3 -m unittest tests.test_buddy_technology_radar",
+    "buddy:markdown-gaps": "python3 tools/audit_markdown_implementation_gaps.py --check",
+    "refresh:markdown-gaps": "python3 tools/audit_markdown_implementation_gaps.py --write",
+    "test:markdown-gaps": "python3 -m unittest tests.test_markdown_implementation_gaps"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
