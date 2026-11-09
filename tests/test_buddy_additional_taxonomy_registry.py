@@ -1,4 +1,5 @@
 """Tests for additional DreamCo taxonomy system coverage."""
+import json
 import subprocess
 import sys
 import unittest
