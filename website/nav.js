@@ -61,6 +61,7 @@
     { href: 'calculator.html', label: '🧮 Calculator Lab' },
     { href: 'divisions.html', label: '🏛️ Divisions' },
     { href: 'category-systems.html', label: '🧩 Category Systems' },
+    { href: 'technology-radar.html', label: '🌐 AI & Tech Radar' },
     { href: 'original-bots.html', label: 'Original bots' },
     { href: 'test-center.html', label: '🧪 Test Center' },
     { href: 'security.html', label: '🛡️ Defense Center' },
