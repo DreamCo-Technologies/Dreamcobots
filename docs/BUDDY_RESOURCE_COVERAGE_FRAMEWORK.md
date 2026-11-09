@@ -14,11 +14,11 @@ This document is a coverage crosswalk, not a replacement for the machine-readabl
 - Model category source inspected: `shared/ai-models.ts` (`AI_MODEL_CATEGORIES`).
 - Project constraints and evidence rules: `docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md`.
 
-The resource map says its last scan was **2026-10-05**. Treat its connection states and counts as a dated inventory snapshot, not live verification. Re-scan before reporting a provider, secret, workflow, deployment, license, or integration as currently available. The `101-200` set contains 94 rows; the six study-resource catalogs currently present in `config/` contain 576 unique resource IDs across 403 exact category labels. These are the catalogs inspected for this iteration; continue scanning for additional resource catalogs.
+The resource map says its last scan was **2026-10-05**. Treat its connection states and counts as a dated inventory snapshot, not live verification. Re-scan before reporting a provider, secret, workflow, deployment, license, or integration as currently available. The `101-200` set and the other study catalogs are dated source snapshots. Current row, resource-ID, and category counts are derived by the validator from every discovered source file; no category or item count is a permanent limit. Continue scanning for additional resource catalogs.
 
 ## 1. Machine-readable resource-registry categories
 
-The inspected registry contains 23 resource records across these 12 categories:
+The current inspected registry contains resource records across its dynamically derived categories:
 
 | Registry category | Count | Coverage responsibility |
 |---|---:|---|
@@ -43,7 +43,7 @@ Do not collapse distinct connection states. Preserve the registry's meanings: `c
 
 ## 2. Study-resource category coverage
 
-The six inspected study-resource catalogs contain 576 rows and the following 403 distinct category labels. Preserve every exact source label; similar labels are separate systems until an explicit, reviewed alias decision is recorded.
+The following section is a snapshot of the study-resource category labels discovered in the inspected catalogs. Preserve every exact source label; similar labels are separate systems until an explicit, reviewed alias decision is recorded. New labels must be added automatically by the registry builder and must never be rejected because a previous count was reached.
 
 - 3D learning environments
 - AI
@@ -5528,27 +5528,27 @@ Before any division count is declared canonical, compare the 45-entry placement 
 
 ## 12. Updated category-system totals
 
-The primary registry contains 500 systems: 12 resource-registry categories, 403 study-resource categories from 576 unique rows across six study catalogs, 20 AI model categories, and 65 division systems.
+The primary registry's current system total and per-source counts are computed from the source registries at validation time. The displayed sections are a snapshot, not a permanent inventory or fixed architecture ceiling.
 
-A companion taxonomy registry adds 599 individually specified systems across 29 additional taxonomy groups, including opportunity-resource categories, 112 web-source domains, universal capability domains, software capability categories, model-matrix dimensions, learning and bootcamp stages, government-service domains, tools, skills, and proposed divisions.
+A companion taxonomy registry adds individually specified systems across the additional taxonomy groups discovered in source registries, including opportunity-resource categories, web-source domains, universal capability domains, software capability categories, model-matrix dimensions, learning and bootcamp stages, government-service domains, tools, skills, and proposed divisions.
 
-- **Primary category systems:** 500.
-- **Additional taxonomy systems:** 599.
-- **Combined documented category systems:** **1,099**.
-- **Dedicated documentation sections:** 500 in this document plus 599 in `docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md`.
+- **Primary category systems:** computed from the current primary registry.
+- **Additional taxonomy systems:** computed from the current additional registry.
+- **Combined documented category systems:** derived from the two current registries.
+- **Dedicated documentation sections:** generated from current source categories; no fixed count or ceiling.
 
-The division inventory conflict remains open: the 65-entry registry is actively used by CI, while the README/rebuild/audit sources state 45 and the lineage document states 46. Twenty names in the 65-entry registry are absent from the 45-division audit and remain flagged for reconciliation.
+Division inventories in older README, rebuild, audit, and lineage documents disagree. The validator now compares the current master registry with the current placement audit and computes the unmatched records dynamically; legacy file names and historical counts are not treated as permanent limits.
 
 These totals cover the inspected source files and taxonomy definitions, not every possible repository-wide resource, bot, integration, or sibling-repository asset. Continue expanding the inventory as additional authoritative sources are discovered.
 
 
 ## 13. GitHub Pages category-system dashboard
 
-The category-system inventory is exposed through `website/category-systems.html` and `website/category-systems.js`. The dashboard loads both the primary and additional taxonomy registries and presents the combined 1,099 category systems with group filters, search, individual expandable records, source links, and lifecycle/verification states. The published data mirrors are `website/data/category-system-registry.json` and `website/data/additional-taxonomy-system-registry.json`.
+The category-system inventory is exposed through `website/category-systems.html` and `website/category-systems.js`. The dashboard loads both the primary and additional taxonomy registries and presents the combined current inventory with group filters, search, individual expandable records, source links, and lifecycle/verification states. The published data mirrors are `website/data/category-system-registry.json` and `website/data/additional-taxonomy-system-registry.json`.
 
-The command `npm run buddy:category-systems` runs both validators: the primary 500-system registry and its mirror, plus the additional 599-system registry and its mirror against the source taxonomy files. The dashboard is a read-only visibility surface; it does not grant runtime permissions or imply that catalogued systems are implemented.
+The command `npm run buddy:category-systems` runs both validators: the primary registry and its mirror, plus the additional registry and its mirror against the source taxonomy files. Counts are recomputed from the source catalogs. The dashboard is a read-only visibility surface; it does not grant runtime permissions or imply that catalogued systems are implemented.
 
 
 ## 14. Additional taxonomy registry
 
-The companion file `config/buddy/additional-taxonomy-system-registry.json` and its detailed section-by-section documentation in `docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md` preserve 599 more category systems across 29 taxonomy groups. Their source registries remain distinct; no aliasing or merging is inferred from similar names.
+The companion file `config/buddy/additional-taxonomy-system-registry.json` and its detailed section-by-section documentation in `docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md` preserve the additional category systems currently discovered across the source taxonomies. Their source registries remain distinct; no aliasing or merging is inferred from similar names.
