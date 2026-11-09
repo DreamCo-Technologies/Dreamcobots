@@ -36,6 +36,7 @@
     { href: 'master-build.html', label: '🧭 Master Build' },
     { href: 'command-center.html', label: 'Command Center' },
     { href: 'buddy-command-center.html', label: 'Buddy Command Center' },
+    { href: 'control-tower.html', label: '🚦 GitHub Control Tower' },
     { href: 'device-backend.html', label: 'Device backend' },
     { href: 'world-lens.html', label: '🌍 World Lens GPS' },
     { href: 'family-circle.html', label: '🛡️ Family Circle' },
