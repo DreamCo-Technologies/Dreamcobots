@@ -18,7 +18,8 @@
       ['Remote-work leads', remote],
       ['Priority matches', matched],
       ['Sources checked', summary.sources_succeeded || 0],
-      ['Sources needing attention', summary.sources_failed || 0]
+      ['Sources needing attention', summary.sources_failed || 0],
+      ['Sources not yet checked', summary.sources_pending || 0]
     ].map(([label,value]) => '<article class="radar-metric"><strong>' + Number(value).toLocaleString() + '</strong><span>' + label + '</span></article>').join('');
   }
 
