@@ -2,47 +2,14 @@
 
 **Status:** `catalogued` subsystem specifications; not evidence of implementation.
 
-This companion catalog expands the 500 primary category systems with additional taxonomies found in DreamCo's resource, source, capability, learning, model-matrix, tool, government-service, and proposed-division registries. Every record below has its own stable subsystem ID and section. Similar terms from different source taxonomies remain separate.
+This companion catalog expands the primary category systems with additional taxonomies found in DreamCo's resource, source, capability, learning, model-matrix, tool, government-service, and proposed-division registries. Every record below is a generated snapshot with its own stable subsystem ID and section. Similar terms from different source taxonomies remain separate. This document is not a permanent list: new source labels must create new records and sections, while retired or superseded entries retain their history.
 
-- **Additional systems:** 599
-- **Taxonomy groups:** 29
+- **Current system and group counts:** computed from the machine-readable registry at validation time; neither has a fixed ceiling.
 - **Machine-readable source:** `config/buddy/additional-taxonomy-system-registry.json`
 - **Published mirror:** `website/data/additional-taxonomy-system-registry.json`
 - **Dashboard:** `website/category-systems.html`
 
 All records remain `catalogued`, `not_implemented`, and `not_verified` until their own interfaces, owners, tests, benchmarks, and evidence are delivered.
-
-## Taxonomy group totals
-
-- **opportunity_category:** 17
-- **web_source_domain:** 112
-- **connection_area:** 14
-- **learning_adapter_category:** 9
-- **study_resource_family:** 15
-- **repository_learning_domain:** 23
-- **model_matrix_dimension:** 8
-- **model_matrix_axis:** 12
-- **model_matrix_status:** 10
-- **model_matrix_section:** 17
-- **bootcamp_lifecycle_stage:** 19
-- **universal_capability_domain:** 74
-- **superbot_capability_domain:** 8
-- **software_capability_category:** 74
-- **software_productivity_dimension:** 34
-- **software_evidence_state:** 6
-- **buddy_tool:** 10
-- **buddy_skill:** 5
-- **hf_capability_pack:** 6
-- **government_source_adapter:** 9
-- **211_service_domain:** 27
-- **211_user_journey_stage:** 17
-- **211_source_priority:** 5
-- **211_service_capability:** 20
-- **211_application_assistance_level:** 5
-- **211_prohibited_autonomy_action:** 9
-- **211_benchmark_dimension:** 18
-- **proposed_division:** 10
-- **government_catalog_type:** 6
 
 ## Opportunity Category
 
