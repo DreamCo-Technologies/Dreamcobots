@@ -312,6 +312,8 @@ def main() -> int:
         OUTPUT_PATH.write_text(json.dumps(catalog, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         WEB_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
         WEB_OUTPUT_PATH.write_text(json.dumps(catalog, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        POLICY_MIRROR_PATH.parent.mkdir(parents=True, exist_ok=True)
+        POLICY_MIRROR_PATH.write_text(json.dumps(policy, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     else:
         if not OUTPUT_PATH.exists() or not WEB_OUTPUT_PATH.exists():
             raise SystemExit("technology radar output or Pages mirror is missing; run --refresh")
