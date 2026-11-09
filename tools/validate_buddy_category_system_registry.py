@@ -89,10 +89,16 @@ def main() -> int:
 
     actual = {(item.get("group"), item.get("category")): item for item in systems}
     expected_keys = {(group, category) for group, categories in expected.items() for category in categories}
-    if set(actual) != expected_keys:
-        missing = sorted(expected_keys - set(actual))
-        extra = sorted(set(actual) - expected_keys)
-        fail(f"category mismatch; missing={missing}; extra={extra}")
+    legacy_keys = set(actual) - expected_keys
+    invalid_legacy = {
+        key for key in legacy_keys
+        if key[0] != "model"
+        or actual[key].get("reconciliation_status") != "legacy_category_not_present_in_current_model_catalog"
+        or actual[key].get("source_item_count") != 0
+    }
+    missing = sorted(expected_keys - set(actual))
+    if missing or invalid_legacy:
+        fail(f"category mismatch; missing={missing}; invalid_legacy={sorted(invalid_legacy)}")
 
     required_contract_fields = {
         "mission", "inputs", "outputs", "permissions", "safety_controls",
@@ -124,6 +130,13 @@ def main() -> int:
                 if item.get("reconciliation_status") != expected_status:
                     fail(f"division/{category} reconciliation status is stale")
 
+    for key in legacy_keys:
+        item = actual[key]
+        if item.get("lifecycle_status") != "catalogued":
+            fail(f"legacy model category {key[1]} must remain catalogued")
+        if not item.get("contract"):
+            fail(f"legacy model category {key[1]} must retain its contract")
+
     study_ids = [row[0] for row in study_rows]
     if len(study_ids) != len(set(study_ids)):
         fail("study resource IDs must be unique across all study catalogs")
@@ -134,6 +147,9 @@ def main() -> int:
         "model_categories": len(expected["model"]),
         "division_systems": len(expected["division"]),
         "total_category_systems": len(expected_keys),
+        "total_records_including_legacy": len(systems),
+        "legacy_model_categories": len(legacy_keys),
+        "model_catalog_entries_by_category": dict(model_counts),
         "resource_registry_records": len(resources),
         "study_resource_records": len(study_rows),
         "division_count_in_master_registry": len(division_registry["divisions"]),
