@@ -1,0 +1,25 @@
+(() => {
+"use strict";
+const node=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined&&text!==null)n.textContent=String(text);return n;};
+const anchor=(url,label)=>{const a=node("a","",label);a.href=url||"#";a.target="_blank";a.rel="noopener noreferrer";return a;};
+const pill=(text,cls)=>node("span","ct-pill "+(cls||""),text);
+function readiness(pr){const s=pr.checks?.readiness||"unknown";if(s==="checks_failing")return pill("Checks failing","ct-bad");if(s==="checks_pending")return pill("Checks pending","ct-warn");if(s==="checks_passed_review_still_required")return pill("Checks passed · review required","ct-good");if(s==="no_check_runs")return pill("No check runs","ct-warn");return pill("Unknown","");}
+function render(data){
+document.getElementById("ct-updated").textContent=data.generated_at?"Snapshot: "+new Date(data.generated_at).toLocaleString():"Snapshot not yet generated";
+const summary=data.summary||{},metrics=document.getElementById("ct-metrics");metrics.replaceChildren();
+const metric=(v,l)=>{const x=node("article","ct-metric");x.append(node("strong","",v),node("span","",l));metrics.append(x);};
+metric(data.repositories?.length||0,"Public repositories reporting");metric(summary.open_pull_requests||0,"Open pull requests");metric(summary.checks_failing||0,"PRs with failing checks");metric(summary.checks_pending||0,"PRs with pending checks");metric(summary.checks_passed_review_still_required||0,"Checks passed · review required");metric(summary.no_check_runs||0,"PRs without check runs");
+const root=document.getElementById("ct-repositories");root.replaceChildren();
+for(const repo of data.repositories||[]){const sec=node("section","ct-repo"),head=node("div","ct-repo-head"),h=node("h2");h.append(anchor(repo.html_url,repo.full_name));head.append(h,node("span","ct-small","Default branch: "+(repo.default_branch||"unknown")));sec.append(head,node("p","ct-small","Updated: "+(repo.updated_at?new Date(repo.updated_at).toLocaleString():"unknown")+" · Pushed: "+(repo.pushed_at?new Date(repo.pushed_at).toLocaleString():"unknown")+" · Open PRs: "+(repo.open_pull_requests_total??"unknown")));
+if(repo.repository_error||repo.pull_requests_error)sec.append(node("p","ct-notice",repo.repository_error||repo.pull_requests_error));
+const wrap=node("div","ct-table-wrap"),table=node("table","ct-table"),thead=node("thead"),hr=node("tr");["Pull request","Branch → base","Check status","Check counts / failures","Mergeability","Updated"].forEach(t=>hr.append(node("th","",t)));thead.append(hr);table.append(thead);const body=node("tbody");
+for(const pr of repo.pull_requests||[]){const tr=node("tr"),title=node("td"),a=anchor(pr.html_url,"#"+pr.number+" "+(pr.title||"Untitled"));title.append(a);if(pr.draft)title.append(node("div","ct-small","Draft"));
+const branch=node("td","ct-small",(pr.head_branch||"?")+" → "+(pr.base_branch||"?")),state=node("td");state.append(readiness(pr));const c=pr.checks?.counts||{},counts=node("td","ct-small",Object.entries(c).map(([k,v])=>k+": "+v).join(" · ")||"No check data");
+const failed=pr.checks?.failures||[];if(failed.length)counts.append(node("div","ct-small","Failed: "+failed.map(x=>x.name).join(", ")));
+const merge=node("td","ct-small",pr.mergeable_state||(pr.mergeable===null?"GitHub evaluating":"Not reported")),updated=node("td","ct-small",pr.updated_at?new Date(pr.updated_at).toLocaleString():"unknown");[title,branch,state,counts,merge,updated].forEach(x=>tr.append(x));body.append(tr);}
+if(!(repo.pull_requests||[]).length){const tr=node("tr"),td=node("td","ct-empty","No open PRs found or inventory unavailable.");td.colSpan=6;tr.append(td);body.append(tr);}table.append(body);wrap.append(table);sec.append(wrap);root.append(sec);}
+const runs=document.getElementById("ct-runs");runs.replaceChildren();for(const repo of data.repositories||[])for(const run of (repo.workflow_runs||[]).slice(0,8)){const card=node("article","ct-run");card.append(anchor(run.html_url,repo.full_name+" · "+(run.display_title||run.name||"Workflow run")),node("div","ct-small",(run.status||"unknown")+" / "+(run.conclusion||"not concluded")),node("div","ct-small",(run.event||"event")+" · "+(run.created_at?new Date(run.created_at).toLocaleString():"unknown")));runs.append(card);}
+if(!runs.children.length)runs.append(node("p","ct-empty","No recent workflow run data."));
+}
+fetch("data/control-tower/github-status.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("Snapshot unavailable ("+r.status+")");return r.json();}).then(render).catch(e=>{document.getElementById("ct-updated").textContent="Snapshot unavailable";document.getElementById("ct-repositories").replaceChildren(node("p","ct-notice",e.message));document.getElementById("ct-metrics").replaceChildren(node("p","ct-empty","No current GitHub status data."));document.getElementById("ct-runs").replaceChildren(node("p","ct-empty","No workflow data."));});
+})();
