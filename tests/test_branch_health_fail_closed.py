@@ -45,6 +45,7 @@ class BranchHealthFailClosedTests(unittest.TestCase):
             evidence = health.pr_evidence(pr)
         self.assertEqual(evidence["checkState"], "success")
         self.assertEqual(evidence["reviewState"], "approved")
+        evidence.update({"baseComparisonStatus": "verified", "baseAhead": 1, "baseBehind": 0, "baseMissingRequired": []})
         self.assertEqual(health.vote_merge({"mergeable_state": "clean", "draft": False, "_evidence": evidence})[0], "pass")
 
     def test_pr_failure_or_missing_review_blocks(self):
@@ -55,6 +56,7 @@ class BranchHealthFailClosedTests(unittest.TestCase):
             evidence = health.pr_evidence(pr)
         self.assertEqual(evidence["checkState"], "failure")
         self.assertEqual(evidence["reviewState"], "unreviewed")
+        evidence.update({"baseComparisonStatus": "verified", "baseAhead": 1, "baseBehind": 0, "baseMissingRequired": []})
         vote, note = health.vote_merge({"mergeable_state": "clean", "draft": False, "_evidence": evidence})
         self.assertEqual(vote, "block")
         self.assertIn("CI evidence", note)
@@ -63,6 +65,21 @@ class BranchHealthFailClosedTests(unittest.TestCase):
         comparison = {"ahead_by": 3, "behind_by": 2, "files": []}
         with patch.object(health, "gh", return_value=comparison) as request:
             self.assertEqual(health.api_ahead_behind_missing("feature/head", "release/base"), (3, 2, []))
+        self.assertIn("/compare/release%2Fbase...feature%2Fhead", request.call_args.args[0])
+
+    def test_merge_vote_blocks_pr_behind_its_actual_base(self):
+        evidence = {"baseComparisonStatus": "verified", "baseAhead": 3, "baseBehind": 2,
+                    "baseMissingRequired": [], "checkState": "success", "reviewState": "approved"}
+        vote, note = health.vote_merge({"mergeable_state": "clean", "draft": False, "_evidence": evidence})
+        self.assertEqual(vote, "block")
+        self.assertIn("behind its actual base", note)
+
+    def test_pr_base_comparison_uses_head_and_actual_base(self):
+        comparison = {"ahead_by": 2, "behind_by": 0, "files": []}
+        with patch.object(health, "gh", return_value=comparison) as request:
+            result = health.pr_base_comparison({"head": {"ref": "feature/head"}, "base": {"ref": "release/base"}}, False)
+        self.assertEqual(result["baseComparisonStatus"], "verified")
+        self.assertEqual(result["baseAhead"], 2)
         self.assertIn("/compare/release%2Fbase...feature%2Fhead", request.call_args.args[0])
 
     def test_markdown_report_includes_all_branches_not_only_first_80(self):
