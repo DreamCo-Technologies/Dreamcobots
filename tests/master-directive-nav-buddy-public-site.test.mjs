@@ -49,6 +49,8 @@ test('master build page renders searchable audit data and is linked in navigatio
   assert.match(controlTowerJs,/data\/control-tower\/github-status\.json/);
   assert.match(controlTowerJs,/textContent/);
   assert.doesNotMatch(controlTowerJs,/innerHTML/);
+  assert.match(controlTowerJs,/review_summary/);
+  assert.match(controlTowerJs,/changes requested/);
   assert.match(buddyCommandCenter,/href=[\"']control-tower\.html[\"']/);
   assert.match(worker,/master-build\.html/);
   assert.match(worker,/buddy-learning-os-connections\.json/);
