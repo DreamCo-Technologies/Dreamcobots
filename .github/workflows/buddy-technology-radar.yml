@@ -1,0 +1,44 @@
+name: Buddy Living AI and Technology Radar
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+  push:
+    paths:
+      - "config/buddy/technology-discovery-policy.json"
+      - "tools/refresh_buddy_technology_radar.py"
+      - ".github/workflows/buddy-technology-radar.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: buddy-technology-radar
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Refresh public AI and technology sources
+        run: python3 tools/refresh_buddy_technology_radar.py --refresh
+      - name: Validate the refreshed index and Pages mirror
+        run: |
+          python3 tools/refresh_buddy_technology_radar.py --check
+          python3 -m unittest tests.test_buddy_technology_radar
+      - name: Commit new discoveries without deleting history
+        run: |
+          git diff --exit-code config/generated/buddy-technology-radar.json website/data/buddy-technology-radar.json && exit 0
+          git config user.name "DreamCo Buddy"
+          git config user.email "buddy@dreamco.local"
+          git add config/generated/buddy-technology-radar.json website/data/buddy-technology-radar.json
+          git commit -m "research: refresh living AI and technology radar"
+          git push
