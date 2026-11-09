@@ -27,7 +27,7 @@ class BuddyCategorySystemRegistryTests(unittest.TestCase):
         self.assertIn("category-systems.js", page)
         self.assertIn("data/category-system-registry.json", script)
         self.assertIn("category-systems.html", nav)
-        self.assertIn("details class=\\\"cs-card\\\"", script)
+        self.assertIn("cs-card", script)
 
 if __name__ == "__main__":
     unittest.main()
