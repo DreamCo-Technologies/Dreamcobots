@@ -91,6 +91,11 @@ def local_branches() -> list[dict]:
             "--format=%(refname:short)\t%(objectname)\t%(committerdate:iso-strict)",
         ]
     ).stdout
+    protection_by_name = {}
+    try:
+        protection_by_name = {row["name"]: row.get("protected") for row in api_branches()}
+    except RuntimeError as exc:
+        print(f"branch protection flags unavailable: {exc}", file=sys.stderr)
     rows = []
     for line in out.splitlines():
         parts = line.split("\t")
@@ -102,7 +107,13 @@ def local_branches() -> list[dict]:
         name = short[7:] if short.startswith("origin/") else short
         if name == DEFAULT:
             continue
-        rows.append({"name": name, "sha": sha, "updated": date, "protected": False})
+        rows.append({
+            "name": name,
+            "sha": sha,
+            "updated": date,
+            "protected": protection_by_name.get(name),
+            "protectionStatus": "api_flag" if name in protection_by_name else "unavailable",
+        })
     return rows
 
 
