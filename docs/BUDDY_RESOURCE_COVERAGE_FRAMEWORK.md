@@ -1327,7 +1327,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-02 — Coding
 
-- **Subsystem ID:** `study_coding`
+- **Subsystem ID:** `model_coding`
 - **Mission:** Coding capability research, practice, and controlled execution.
 - **Inputs:** Curated Coding resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1336,7 +1336,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-03 — Research
 
-- **Subsystem ID:** `study_research`
+- **Subsystem ID:** `model_research`
 - **Mission:** Research capability research, practice, and controlled execution.
 - **Inputs:** Curated Research resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1444,7 +1444,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-15 — Education
 
-- **Subsystem ID:** `study_education`
+- **Subsystem ID:** `model_education`
 - **Mission:** Education capability research, practice, and controlled execution.
 - **Inputs:** Curated Education resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1480,7 +1480,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-19 — Security
 
-- **Subsystem ID:** `study_security`
+- **Subsystem ID:** `model_security`
 - **Mission:** Security capability research, practice, and controlled execution.
 - **Inputs:** Curated Security resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
