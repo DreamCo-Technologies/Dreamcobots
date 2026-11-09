@@ -227,6 +227,54 @@ class ExecutorTests(unittest.TestCase):
         self.assertEqual(out["status"], "learning_blocked")
         self.assertFalse(out["live_external_action_taken"])
 
+    def test_learning_permission_flags_reject_string_false(self):
+        slug = next(s for s, bot in self.ex.bots.items() if bot["engine"] == "workflow")
+        for field in ("allow_paid", "allow_external_access"):
+            learning = {
+                "request": "Learn Python",
+                "skills": ["python"],
+                field: "false",
+                "resources": [{
+                    "id": "python-resource", "name": "Python resource",
+                    "url": "https://example.org/python", "skills": ["python"],
+                    "access": "free",
+                }],
+            }
+            out = self.ex.run(slug, {
+                "objective": "Learn Python",
+                "input": {"learning_request": learning},
+            })
+            self.assertEqual(out["status"], "learning_blocked", field)
+            self.assertEqual(out["error"]["type"], "invalid_learning_request", field)
+            self.assertFalse(out["live_external_action_taken"])
+
+    def test_learning_request_rejects_malformed_permissions_and_budgets(self):
+        slug = next(s for s, bot in self.ex.bots.items() if bot["engine"] == "workflow")
+        for field, value in (
+            ("allow_paid", 1),
+            ("allow_external_access", None),
+            ("max_cost_per_hour_usd", float("nan")),
+            ("compute_budget_usd", -1),
+            ("resources", {"not": "a list"}),
+        ):
+            learning = {
+                "request": "Learn Python",
+                "skills": ["python"],
+                "resources": [{
+                    "id": "python-resource", "name": "Python resource",
+                    "url": "https://example.org/python", "skills": ["python"],
+                    "access": "free",
+                }],
+            }
+            learning[field] = value
+            out = self.ex.run(slug, {
+                "objective": "Learn Python",
+                "input": {"learning_request": learning},
+            })
+            self.assertEqual(out["status"], "learning_blocked", field)
+            self.assertEqual(out["error"]["type"], "invalid_learning_request", field)
+            self.assertFalse(out["live_external_action_taken"])
+
     def test_cli_run(self):
         from buddy.fleet_runtime.__main__ import main
         with mock.patch("sys.stdout"):
