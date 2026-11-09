@@ -33,7 +33,7 @@ At every stage Buddy should show the current objective, deliverables, dependenci
 
 The factory is designed for software/SaaS, AI agents, voice/audio, creator businesses, e-commerce, local businesses, professional services, hardware/electronics, robotics, manufacturing, automotive, education, media/film, games, health technology, fintech interfaces, real-estate technology, logistics, industrial automation, climate/environment, scientific products, developer tools, marketplaces, subscriptions, and hybrid companies.
 
-The 50-category vibe-coding taxonomy remains the canonical cross-category capability map. Startup plans should reuse it instead of creating a disconnected category system.
+The vibe-coding taxonomy is a living, open-vocabulary seed map—not a closed category list or a fixed-size catalog. Startup plans should reuse and extend the canonical taxonomy rather than creating disconnected duplicates. New product, service, industry, and work categories can be added whenever discovery finds a gap.
 
 ## Financing and loans
 
