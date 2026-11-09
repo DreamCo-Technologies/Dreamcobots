@@ -190,7 +190,7 @@ def extract_source(source: dict[str, Any], content: bytes, observed_at: str, pol
         parser.feed(content.decode("utf-8", errors="replace"))
         raw_items = [{
             "title": " ".join("".join(parser.title_parts).split()) or source.get("name", source["id"]),
-            "url": source["url"], "summary": parser.description,
+            "url": source["url"], "summary": parser.description or source.get("description", ""),
             "published_at": None, "external_id": source["id"],
         }]
     elif source["kind"] == "json_collection":
