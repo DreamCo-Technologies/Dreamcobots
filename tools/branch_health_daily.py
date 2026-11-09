@@ -187,7 +187,9 @@ def review(behind: int | None, missing: list[str] | None, pr: dict | None) -> tu
         votes.append({"reviewer": "safety", "vote": "block", "note": "Money/Stripe path. No auto-edit."})
     else:
         votes.append({"reviewer": "safety", "vote": "pass", "note": "No payment-surface auto-edit."})
-    if "website/buddy.html" in missing:
+    if missing is None:
+        votes.append({"reviewer": "scope", "vote": "block", "note": "Could not verify required Buddy files; comparison unavailable."})
+    elif "website/buddy.html" in missing:
         votes.append({"reviewer": "scope", "vote": "block", "note": "Would drop original Buddy chat."})
     elif "website/wiring.html" in missing:
         votes.append({"reviewer": "scope", "vote": "warn", "note": "Predates the wiring map."})
@@ -215,7 +217,7 @@ def markdown_report(report: dict) -> str:
         "|---|---:|---|---:|---:|---|---|",
     ]
     for b in report["branches"][:80]:
-        missing = ", ".join(b["missingRequired"]) or "—"
+        missing = "unverified (comparison unavailable)" if b.get("missingRequired") is None else ", ".join(b["missingRequired"]) or "—"
         pr = f"#{b['prNumber']}" if b.get("prNumber") else "—"
         lines.append(
             f"| `{b['name']}` | {b['score']} | {b['status']} | {b['ahead']} | {b['behind']} | {pr} | {missing} |"
