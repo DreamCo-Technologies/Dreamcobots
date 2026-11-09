@@ -257,6 +257,8 @@ def merge_catalog(existing: dict[str, Any], discovered: list[dict[str, Any]], so
         prior = records.get(item["id"])
         if prior:
             item["first_seen_at"] = prior.get("first_seen_at") or item["first_seen_at"]
+            if not item.get("published_at"):
+                item["published_at"] = prior.get("published_at")
             updated_count += 1
         else:
             new_count += 1
