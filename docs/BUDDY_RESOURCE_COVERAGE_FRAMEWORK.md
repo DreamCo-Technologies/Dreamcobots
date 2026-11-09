@@ -10,7 +10,7 @@ This document is a coverage crosswalk, not a replacement for the machine-readabl
 
 - Resource inventory authority: `config/buddy/resource-registry.json` (`dreamco.buddy.resource_registry.v1`).
 - Resource-map explanation: `docs/BUDDY_RESOURCE_MAP.md`.
-- Study-resource catalogs inspected: six files covering sets 001–100, 101–200, 201–300, 401–500, 501–600, and 1001–1100-must-have.
+- Study-resource catalogs: discovered dynamically from `config/buddy-study-resources-*.json`; the file list shown below is a dated documentation snapshot, not a closed source list.
 - Model category source inspected: `shared/ai-models.ts` (`AI_MODEL_CATEGORIES`).
 - Project constraints and evidence rules: `docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md`.
 
@@ -542,7 +542,7 @@ A future automated validator should fail or warn when:
 Suggested initial validation targets (to be implemented and tested separately):
 - all 23 resource-registry IDs represented;
 - all 12 registry categories represented;
-- all 576 study-resource rows represented, preserving all 403 distinct labels;
+- all currently discovered study-resource rows represented, preserving every distinct source label;
 - all 20 AI model categories represented;
 - every new research item tagged to at least one category and one Buddy capability or explicit “monitor only” disposition.
 
@@ -1524,7 +1524,7 @@ Every subsystem must eventually have a machine-readable record with:
 ## 8.3 Implementation sequence
 
 1. Generate and validate the 12 registry-category subsystem records from the authoritative resource registry.
-2. Generate one study-category subsystem for each of the 403 exact labels, preserving all 576 source resource rows.
+2. Generate one study-category subsystem for every exact label found in all discovered study-resource catalogs, preserving every source resource row.
 3. Generate 20 model-category subsystem records from the model catalog source.
 4. Add dedicated schemas, tests, owner mapping, and dashboard panels in small reviewable changes.
 5. Only then extend the same pattern to bot divisions, individual bots, sibling repositories, and any additional categories found in the full repository audit.
@@ -1534,9 +1534,9 @@ Every subsystem must eventually have a machine-readable record with:
 
 ## 9. Machine-readable category-system registry and validation
 
-The dedicated subsystem specifications are also stored in `config/buddy/category-system-registry.json`, schema `dreamco.buddy.category_system_registry.v1`. This file contains one record per category, with a stable subsystem ID, exact source label, source references, contract fields, lifecycle status, implementation status, and verification status. The catalog currently defines 500 records: 12 resource-registry categories, 403 study-resource categories, 20 model categories, and 65 division systems. The 65-division list is preserved as a candidate inventory because it conflicts with other repository sources that state 45 or 46 divisions; 20 entries appear only in the 65-entry registry and remain flagged for reconciliation.
+The dedicated subsystem specifications are also stored in `config/buddy/category-system-registry.json`, schema `dreamco.buddy.category_system_registry.v1`. This file contains one record per category, with a stable subsystem ID, exact source label, source references, contract fields, lifecycle status, implementation status, and verification status. The current catalog record count and category breakdown are derived by the validator from the live resource registry, all matching study-resource files, model records, and the current division registry. Historical division inventories disagree; the validator computes unmatched division records from the current registry and placement audit without treating any previous count as canonical.
 
-Run `npm run buddy:category-systems` to validate both category-system registries against their authoritative source catalogs and published Pages mirrors. The validator checks category completeness across every study catalog, source-row mapping, model category counts, unique subsystem IDs, division reconciliation against the 45-division placement audit, required contract fields, lifecycle values, and summary counts. The test is `tests/test_buddy_category_system_registry.py`.
+Run `npm run buddy:category-systems` to validate both category-system registries against their authoritative source catalogs and published Pages mirrors. The validator discovers every matching study-resource catalog, derives model categories from the current model records, and checks source-row mapping, unique subsystem IDs, division reconciliation against the current placement audit, required contract fields, lifecycle values, and dynamically derived summary counts. The test is `tests/test_buddy_category_system_registry.py`.
 
 The validator is now committed in this feature branch. Its execution in the repository's full CI environment remains pending; a source-file re-fetch and static consistency checks are not a substitute for a successful test run.
 
