@@ -109,7 +109,7 @@ def main() -> int:
             if group == "model" and item.get("source_item_count") != model_counts.get(category, 0):
                 fail(f"model/{category} source item count is stale")
             if group == "division":
-                expected_status = "present_in_45_division_sources" if category in audited_divisions else "candidate_only_in_65_registry"
+                expected_status = "present_in_65_registry_and_45_audit" if category in audited_divisions else "present_in_65_registry_not_in_45_audit"
                 if item.get("reconciliation_status") != expected_status:
                     fail(f"division/{category} reconciliation status is stale")
 
