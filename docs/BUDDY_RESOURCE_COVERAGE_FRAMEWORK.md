@@ -4868,7 +4868,7 @@ The following additional source labels were found across the other study catalog
 
 ## 11. Dedicated division systems and unresolved division-count conflict
 
-The repository contains a 65-entry candidate division registry in `config/masterbot-65-registry.json`. Other sources disagree: the README, rebuild plan, and placement audit state 45 divisions; the legacy lineage map states 46. The 65-entry registry contains the 45 names present in the 45-division audit plus 20 additional names. This is a source-of-truth conflict, not permission to silently expand or delete divisions. All 65 receive separate catalogued subsystem records, but the 20 additional entries are explicitly marked `candidate_only_in_65_registry` pending owner reconciliation.
+The repository contains a 65-entry candidate division registry in `config/masterbot-65-registry.json`. Other sources disagree: the README, rebuild plan, and placement audit state 45 divisions; the legacy lineage map states 46. The 65-entry registry contains the 45 names present in the 45-division audit plus 20 additional names. A separate Actions contract workflow also validates generation of 65 division runtime contracts, so the 65-entry registry is actively consumed by CI; the conflict still needs reconciliation with the 45/46-count documents. This is a source-of-truth conflict, not permission to silently expand or delete divisions. All 65 receive separate catalogued subsystem records, but the 20 entries present in the 65-entry registry but absent from the 45-division audit are marked `present_in_65_registry_not_in_45_audit` pending owner reconciliation.
 
 ### DIV-01 — DreamFinance
 
@@ -5324,7 +5324,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamresearch`
 - **Registry identity:** `masterbot-65-registry.json` entry 46.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5334,7 +5334,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreambenchmark`
 - **Registry identity:** `masterbot-65-registry.json` entry 47.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5344,7 +5344,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamknowledge`
 - **Registry identity:** `masterbot-65-registry.json` entry 48.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5354,7 +5354,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamevolution`
 - **Registry identity:** `masterbot-65-registry.json` entry 49.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5364,7 +5364,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamintegration`
 - **Registry identity:** `masterbot-65-registry.json` entry 50.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5374,7 +5374,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamreason`
 - **Registry identity:** `masterbot-65-registry.json` entry 51.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5384,7 +5384,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamworld`
 - **Registry identity:** `masterbot-65-registry.json` entry 52.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5394,7 +5394,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamvision`
 - **Registry identity:** `masterbot-65-registry.json` entry 53.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5404,7 +5404,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamvoice`
 - **Registry identity:** `masterbot-65-registry.json` entry 54.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5414,7 +5414,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamhuman`
 - **Registry identity:** `masterbot-65-registry.json` entry 55.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5424,7 +5424,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamsecurity`
 - **Registry identity:** `masterbot-65-registry.json` entry 56.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5434,7 +5434,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamproduct`
 - **Registry identity:** `masterbot-65-registry.json` entry 57.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5444,7 +5444,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamoperations`
 - **Registry identity:** `masterbot-65-registry.json` entry 58.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5454,7 +5454,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamstrategy`
 - **Registry identity:** `masterbot-65-registry.json` entry 59.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5464,7 +5464,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamexperiment`
 - **Registry identity:** `masterbot-65-registry.json` entry 60.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5474,7 +5474,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamsimulation`
 - **Registry identity:** `masterbot-65-registry.json` entry 61.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5484,7 +5484,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamdiscovery`
 - **Registry identity:** `masterbot-65-registry.json` entry 62.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5494,7 +5494,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamquality`
 - **Registry identity:** `masterbot-65-registry.json` entry 63.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5504,7 +5504,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamresource`
 - **Registry identity:** `masterbot-65-registry.json` entry 64.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
@@ -5514,7 +5514,7 @@ The repository contains a 65-entry candidate division registry in `config/master
 
 - **Subsystem ID:** `division_dreamfuture`
 - **Registry identity:** `masterbot-65-registry.json` entry 65.
-- **Reconciliation status:** `candidate_only_in_65_registry`.
+- **Reconciliation status:** `present_in_65_registry_not_in_45_audit`.
 - **Mission:** Dedicated division system owning its bot placement, capability contracts, specialist workforce, workflows, tools, benchmarks, lineage, and operational evidence.
 - **Inputs:** Assigned bot profiles, capability records, task requests, division policies, and cross-division dependencies.
 - **Outputs:** Division-owned capability plans, task routing, evidence records, workforce status, and dashboard health.
