@@ -46,6 +46,24 @@ def summarize_status(payload: dict[str,Any]) -> dict[str,Any]:
                "target_url":x.get("target_url")} for x in payload.get("statuses",[])]
     return {"state":str(payload.get("state") or "unknown"),"total":len(contexts),"contexts":contexts}
 
+def summarize_reviews(reviews: list[dict[str, Any]]) -> dict[str, Any]:
+    latest: dict[str, dict[str, Any]] = {}
+    for review in reviews:
+        user = str((review.get("user") or {}).get("login") or "")
+        submitted = str(review.get("submitted_at") or "")
+        if not user or not submitted:
+            continue
+        if user not in latest or submitted > str(latest[user].get("submitted_at") or ""):
+            latest[user] = review
+    counts = {"approved": 0, "changes_requested": 0, "commented": 0, "dismissed": 0}
+    states = []
+    for user, review in sorted(latest.items()):
+        state = str(review.get("state") or "unknown").lower()
+        if state in counts:
+            counts[state] += 1
+        states.append({"reviewer": user, "state": state, "submitted_at": review.get("submitted_at")})
+    return {"reviewers": len(latest), "counts": counts, "latest_states": states}
+
 def api_repo_path(repo: str) -> str: return urllib.parse.quote(repo,safe="/")
 
 def build_repository(repo: str, token: str | None) -> dict[str,Any]:
@@ -73,6 +91,10 @@ def build_repository(repo: str, token: str | None) -> dict[str,Any]:
                             "changed_files":detail.get("changed_files"),"commits":detail.get("commits"),
                             "requested_reviewers":[str(x.get("login")) for x in detail.get("requested_reviewers",[])]})
             except GitHubApiError as exc: row["detail_error"]=str(exc)
+            try:
+                row["review_summary"] = summarize_reviews(api_get(f"/repos/{path}/pulls/{number}/reviews?per_page=100", token))
+            except GitHubApiError as exc:
+                row["review_summary"] = {"error": str(exc), "reviewers": 0, "counts": {}, "latest_states": []}
             if sha:
                 try: row["checks"]=summarize_checks(api_get(f"/repos/{path}/commits/{sha}/check-runs?per_page=100",token).get("check_runs",[]))
                 except GitHubApiError as exc: row["checks_error"]=str(exc); row["checks"]=summarize_checks([])
