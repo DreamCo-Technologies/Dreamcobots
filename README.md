@@ -16,6 +16,7 @@ Original Buddy chrome plus the desks from the latest Grok chat. Static HTML. No 
 - [Buddy Bootcamp](website/own-bootcamp.html) — our curriculum; [HF packages](website/hf-bootcamp.html), [step wrappers](website/bootcamp-wrappers.html)
 - [Model picker](website/models.html) — plus [Open Model Lab](website/open-model-lab.html)
 - [Living AI & Technology Radar](website/technology-radar.html) — current discoveries across AI models, vibe coding, coding agents, remote work, and home-business tools
+- [Markdown → Code Gap Audit](website/markdown-gap-audit.html) — maps all tracked Markdown requirements to code, tests, workflows, and missing paths
 - [Category Systems](website/category-systems.html) — source-derived taxonomy systems and evidence states
 - [Packages](website/hf-bootcamp.html) — plus [Marketplace](website/marketplace.html)
 - [Bot fleet](website/bots.html) — plus [Divisions](website/divisions.html)
