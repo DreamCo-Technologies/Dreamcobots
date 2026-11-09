@@ -46,7 +46,7 @@ test('master build page renders searchable audit data and is linked in navigatio
   assert.match(nav,/master-build\.html/);
   assert.match(nav,/control-tower\.html/);
   assert.match(controlTower,/DreamCo GitHub Control Tower/);
-  assert.match(controlTowerJs,/data\\/control-tower\\/github-status\\.json/);
+  assert.match(controlTowerJs,/data\/control-tower\/github-status\.json/);
   assert.match(controlTowerJs,/textContent/);
   assert.doesNotMatch(controlTowerJs,/innerHTML/);
   assert.match(buddyCommandCenter,/href=[\"']control-tower\.html[\"']/);
