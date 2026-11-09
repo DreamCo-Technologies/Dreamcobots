@@ -65,14 +65,14 @@ def main() -> int:
         },
     }
 
-    model_block = re.search(r"AI_MODEL_CATEGORIES\\s*=\\s*\\[(.*?)\\]\\s*as const", model_source, re.S)
+    model_block = re.search(r"AI_MODEL_CATEGORIES\s*=\s*\[(.*?)\]\s*as const", model_source, re.S)
     if not model_block:
         fail("could not locate AI_MODEL_CATEGORIES in shared/ai-models.ts")
     model_categories = re.findall(r'"([^"]+)"', model_block.group(1))
-    model_counts = Counter(re.findall(r'category:\\s*"([^"]+)"', model_source))
+    model_counts = Counter(re.findall(r'category:\s*"([^"]+)"', model_source))
     expected["model"] = {category: set() for category in model_categories}
 
-    audited_divisions = set(re.findall(r"^\\| ([A-Za-z][A-Za-z0-9]+) \\| \\d+ \\|", division_audit, re.M))
+    audited_divisions = set(re.findall(r"^\| ([A-Za-z][A-Za-z0-9]+) \| \d+ \|", division_audit, re.M))
     if len(audited_divisions) != 45:
         fail(f"expected 45 distinct divisions in placement audit; found {len(audited_divisions)}")
 
