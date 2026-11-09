@@ -1500,6 +1500,9 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 - **Acceptance gate:** a category-specific contract, owner, unit/integration tests, benchmark or checklist, documented failure modes, and evidence links must exist before the subsystem advances beyond `catalogued`.
 
 
+
+**Model-category status note:** The active category index is derived from current model records. Legacy labels remain documented with their reconciliation status and are not counted as active model categories. Adding a model with a new category automatically changes the live category index; the category-system registry and documentation must then be regenerated and validated.
+
 ## 8.1 Required subsystem contract for every category
 
 Every subsystem must eventually have a machine-readable record with:
