@@ -20,6 +20,10 @@ def load(path: str):
 def fail(message: str) -> None:
     raise SystemExit(f"Buddy additional taxonomy registry: FAIL: {message}")
 
+def slug(value: str) -> str:
+    import re
+    return re.sub(r"^_+|_+$", "", re.sub(r"[^a-z0-9]+", "_", str(value).lower()))
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="validate without modifying files")
@@ -70,11 +74,11 @@ def main() -> int:
 
     study_family_path = "config/buddy-study-resource-policy.json"
     study_families = load(study_family_path)["resource_families"]
-    add("study_resource_family", study_families.keys(), [study_family_path], lambda x: [x])
+    add("study_resource_family", study_families.keys(), [study_family_path], lambda x: [slug(x)])
 
     repository_learning_path = "config/unified-repository-learning-registry.json"
     tracked_domains = load(repository_learning_path)["tracked_domains"]
-    add("repository_learning_domain", tracked_domains, [repository_learning_path], lambda x: [x])
+    add("repository_learning_domain", tracked_domains, [repository_learning_path], lambda x: [slug(x)])
 
     matrix_path = "config/500-model-full-matrix-prospectus.json"
     matrix = load(matrix_path)
@@ -87,22 +91,22 @@ def main() -> int:
         add(group, matrix[key], [matrix_path], lambda x: [x])
 
     bootcamp_path = "config/buddy-1000-source-bootcamp.json"
-    add("bootcamp_lifecycle_stage", load(bootcamp_path)["learning_lifecycle"], [bootcamp_path], lambda x: [x])
+    add("bootcamp_lifecycle_stage", load(bootcamp_path)["learning_lifecycle"], [bootcamp_path], lambda x: [slug(x)])
 
     universal_path = "config/universal-capability-domains.json"
-    add("universal_capability_domain", load(universal_path)["domains"], [universal_path], lambda x: [x])
+    add("universal_capability_domain", load(universal_path)["domains"], [universal_path], lambda x: [slug(x)])
 
     superbot_path = "config/superbot-capability-taxonomy.json"
     superbot_domains = load(superbot_path)["capability_domains"]
-    add("superbot_capability_domain", superbot_domains.keys(), [superbot_path], lambda x: [x],
+    add("superbot_capability_domain", superbot_domains.keys(), [superbot_path], lambda x: [slug(x)],
         lambda x: len(superbot_domains[x].get("examples", [])))
 
     software_path = "config/universal_software_capability_taxonomy.json"
     software = load(software_path)
     add("software_capability_category", [x["name"] for x in software["categories"]], [software_path],
         lambda name: [next(x["id"] for x in software["categories"] if x["name"] == name)])
-    add("software_productivity_dimension", software["productivity_dimensions"], [software_path], lambda x: [x])
-    add("software_evidence_state", software["evidence_states"], [software_path], lambda x: [x])
+    add("software_productivity_dimension", software["productivity_dimensions"], [software_path], lambda x: [slug(x)])
+    add("software_evidence_state", software["evidence_states"], [software_path], lambda x: [slug(x)])
 
     tool_catalog_path = "config/buddy_tool_skill_catalog.json"
     tool_catalog = load(tool_catalog_path)
