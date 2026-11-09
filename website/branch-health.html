@@ -87,7 +87,7 @@
       .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error("No daily report yet")); })
       .then(function (report) {
         document.getElementById("stamp").textContent =
-          "Scanned " + report.scannedAt + ". " + (report.note || "");
+          "Scanned " + report.scannedAt + ". " + (report.note || "") + (report.scannedAt && (Date.now() - Date.parse(report.scannedAt) > 86400000) ? " WARNING: report is older than 24 hours." : "");
         var metrics = [
           ["Branches", report.branchCount],
           ["Open PRs", report.prOpen],
@@ -98,7 +98,7 @@
           return "<article class=\"desk-card\"><strong>" + esc(m[1]) + "</strong><p>" + esc(m[0]) + "</p></article>";
         }).join("");
         var rows = (report.branches || []).slice(0, 60).map(function (b) {
-          var miss = (b.missingRequired && b.missingRequired.length) ? b.missingRequired.join(", ") : "required files present";
+          var miss = b.comparisonStatus === "unavailable" || b.missingRequired === null ? "comparison unavailable — not verified" : ((b.missingRequired && b.missingRequired.length) ? b.missingRequired.join(", ") : "required files present");
           var pr = b.prNumber ? ("PR #" + b.prNumber) : "no PR";
           return "<article class=\"desk-card\"><strong>" + esc(b.name) + "</strong><p><span class=\"desk-status " + esc(b.status) + "\">" + esc(b.status) + " · " + esc(b.score) + "</span> · " + esc(b.ahead) + " ahead · " + esc(b.behind) + " behind · " + esc(pr) + "</p><p>" + esc(miss) + "</p></article>";
         }).join("");
