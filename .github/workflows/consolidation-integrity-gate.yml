@@ -24,6 +24,10 @@ on:
       - "docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md"
       - "website/nav.js"
       - "config/buddy/technology-discovery-policy.json"
+      - "config/vibe-coding/capability-taxonomy.json"
+      - "tools/validate_vibe_coding_taxonomy.py"
+      - ".github/workflows/vibe-coding-taxonomy.yml"
+      - "docs/VIBE_CODING_CATEGORY_MAP.md"
       - "config/generated/buddy-technology-radar.json"
       - "website/data/buddy-technology-radar.json"
       - "website/data/technology-discovery-policy.json"
@@ -64,6 +68,7 @@ jobs:
           npm run buddy:category-systems
           python3 -m unittest tests.test_buddy_category_system_registry tests.test_buddy_additional_taxonomy_registry tests.test_buddy_technology_radar
           python3 tools/refresh_buddy_technology_radar.py --check
+          python3 tools/validate_vibe_coding_taxonomy.py
           node --check website/category-systems.js
           node --check website/technology-radar.js
       - name: Validate consolidation map
