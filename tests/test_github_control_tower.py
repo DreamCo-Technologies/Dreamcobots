@@ -18,8 +18,11 @@ class ControlTowerSummaryTests(unittest.TestCase):
         x=summarize_status({"state":"failure","statuses":[{"context":"build","state":"failure","target_url":"https://example.invalid"}]})
         self.assertEqual(x["state"],"failure")
         self.assertEqual(x["contexts"][0]["context"],"build")
-    def test_private_repository_is_not_in_public_scope(self):
-        self.assertEqual(len(PUBLIC_REPOSITORIES),3)
-        self.assertNotIn("ireanjordan24/dreamcobots",PUBLIC_REPOSITORIES)
+    def test_public_repository_allowlist_is_explicit(self):
+        self.assertEqual(set(PUBLIC_REPOSITORIES), {
+            "DreamCo-Technologies/Dreamcobots",
+            "ireanjordan24/Dreamcobots-frontier-trust",
+            "ireanjordan24/Dreamcobots-Grok-Revolutionary",
+        })
 
 if __name__=="__main__": unittest.main()
