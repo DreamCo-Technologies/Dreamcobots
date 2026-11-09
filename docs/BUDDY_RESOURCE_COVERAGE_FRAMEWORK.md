@@ -43,79 +43,411 @@ Do not collapse distinct connection states. Preserve the registry's meanings: `c
 
 ## 2. Study-resource category coverage
 
-The six inspected study-resource catalogs contain 576 rows and the following 403 distinct category labels. Keep the original labels in source data; normalize only in derived indexes so no category is silently lost.
+The six inspected study-resource catalogs contain 576 rows and the following 403 distinct category labels. Preserve every exact source label; similar labels are separate systems until an explicit, reviewed alias decision is recorded.
 
+- 3D learning environments
 - AI
+- AI applications
+- AI coding
 - AI education
 - AI engineering
+- AI evaluation
+- AI feedback
+- AI gateway
 - AI governance
+- AI inference
+- AI interface
+- AI observability
+- AI orchestration
+- AI performance
+- AI quality testing
+- AI research
+- AI safety
+- AI tooling
+- AI video learning
+- AI web apps
+- AI/ML
+- AI/cloud
 - API design
 - API development
 - API engineering
+- API invocation
+- API security
 - API standards
 - API testing
+- API-use evaluation
+- Apple ML
+- Apple Silicon AI
+- Apple development
+- Apple train
 - C++ testing
+- CI/CD
+- CS curriculum
 - CS education
+- CS roadmap
+- DevOps
+- FT toolkit
+- GPU/AI
+- GitOps
+- HCI
+- HTTP
+- HTTP standards
+- Java backend
 - Java testing
+- JavaScript
 - JavaScript runtime
+- JavaScript standards
+- JavaScript tooling
+- Kubernetes
+- LLM applications
+- LLM engineering
+- LLM evaluation
+- LLM evaluation infrastructure
+- LLM inference
+- LLM observability
+- LLM serving
+- LLM testing
+- Linux/security
+- LoRA
+- ML
 - ML education
+- ML engineering
+- ML experiments
+- ML lifecycle
+- ML orchestration
+- ML pedagogy
 - ML practice
+- ML research
+- ML systems
+- MLOps
 - NLP
+- NLP literature
 - Node.js
 - Python
+- Python coding
+- Python ecosystem
 - Python testing
+- Python web
+- RAG
+- RAG evaluation
+- RAG/program
+- RAG/search
+- RL datasets
+- RL environments
+- RL research
+- RLHF
+- SQL
+- SQL practice
 - TLS
 - TLS security
+- US base
+- US open weights
+- abstract reasoning
+- agent evaluation
+- agent security
+- agent state
+- agent teams
+- agents
+- agents/automation
 - algorithms
+- alignment
 - analytics
 - analytics engineering
+- application agents
 - application monitoring
+- application security
+- architecture
+- attack patterns
+- authentication
+- automation
 - backend
 - backend architecture
+- benchmark tracking
+- binary-feedback optimization
+- browser agents
 - browser automation
 - browser engineering
 - browser testing
+- caching
+- cleaned web corpus
+- cloud
+- cloud native
 - cloud native education
+- cloud/software
+- code data
+- code eval
+- code language modeling
+- code modeling
+- code models
 - code quality
+- code-specialized modeling
+- code-text retrieval
+- coder student
+- coding
+- coding agents
+- community
+- competitive programming
+- compiler optimization
+- compiler systems
+- complex instruction following
+- computational linguistics
+- computer architecture
+- computer science
+- computer security
 - computer vision
+- computer vision research
+- computer-use agents
+- consensus
+- containers
+- context
+- cross-language
+- cryptography
+- cybersecurity
+- data
+- data analysis
+- data caution
 - data engineering
+- data eval
 - data format
 - data science
+- data structures
 - data systems
 - data validation
+- data/ML
+- data/model versioning
 - database
+- database systems
+- database/cache
 - databases
 - deep learning
+- deep learning practice
+- deep reinforcement learning
+- deep-learning research
+- deep-learning textbook
+- defensive security
 - dependency security
+- development
+- direct preference optimization
+- distributed AI
+- distributed SQL
+- distributed data
+- distributed database
+- distributed systems
+- distributed training
+- diverse language-model corpus composition
+- education
+- educational web data
+- efficiency
+- efficient FT
+- efficient fine-tuning
+- efficient learning
+- efficient transformers
+- embeddings
+- encyclopedic text
+- engineering
+- enterprise browser agents
+- enterprise catalog
+- environments
+- eval
+- eval harness
+- evaluation
 - event streaming
+- experiment tracking
+- frontend
+- frontier teacher
+- game AI
+- general assistants
+- generalization
+- graph databases
+- graph reasoning
+- group-relative optimization
+- holistic evaluation
+- hosted catalog
+- hosted infer
+- hosted run
+- hub
+- identity
+- identity preference optimization
+- image building
+- incident response
+- inference benchmarking
+- inference optimization
+- information retrieval
+- infra
+- infrastructure as code
+- infrastructure programming
+- instruction evolution
+- instruction tuning
+- instruction-following evaluation
+- interactive tool reasoning
+- internet standards
+- iterative refinement
+- language modeling
+- language research
+- language-model internals
+- language-model training
+- large artifacts
+- large-model training
+- licenses
+- load balancing
+- local AI
+- local UX
+- local infer
+- local models
+- local packs
+- long-form language
 - machine learning
+- machine-learning research
+- math programming
 - mathematics
 - meta-learning
+- methods
+- mobile agents
+- model gateway
+- model post-training
+- model routing
+- model storage
+- model/data ecosystem
+- modular reasoning
+- multi-agent AI
+- multi-agent RL
+- multi-turn evaluation
+- natural language processing
+- network analysis
+- networking
+- networking/security
+- news
+- numerical computing
+- observability
+- occupations
+- odds-ratio preference optimization
+- on-device AI
+- on-device ML
+- open US stack
+- open code corpus
+- open conversational data
+- open model research
 - open source
+- operating systems
+- ops
+- orchestration
+- parallel computing
+- parameter-efficient learning
+- peer hub
+- planned tool execution
+- policy
+- post-training
+- pretrain data
+- principle-guided self-critique
 - privacy
+- problem decomposition
+- production ML
+- program-aided reasoning
+- program-assisted reasoning
+- programmatic AI
+- programming
 - programming education
+- proximal policy optimization
+- proxy
+- quant
+- quantization
+- real-time communications
+- real-time web
+- reason eval
+- reasoning
+- reasoning aggregation
+- reasoning environments
+- reasoning plans
+- reasoning plus acting
+- reasoning search
 - reinforcement learning
+- research
+- research graphs
+- research hub
+- research index
+- research literature
+- research org
+- reverse proxy
+- router catalog
+- safety methods
+- safety ops
+- safety org
+- scale train
 - search
+- secrets management
+- secure SDLC
 - secure development
 - security
 - security analysis
 - security controls
+- security education
 - security knowledge
+- security research
 - security taxonomy
+- self-supervised tool use
+- serve
+- service mesh
+- service networking
+- serving
+- serving efficiency
+- shell
+- small instruction dataset
+- software education
+- software engineering
 - software licensing
 - software security
 - software signing
 - software supply chain
+- speech AI
+- stateful tool agents
 - static analysis
 - statistics
+- stream processing
+- structured generation
+- structured outputs
+- subquestion decomposition
+- synthetic dialogue
+- synthetic instruction generation
+- synthetic instruction synthesis
 - systems
+- systems engineering
 - systems/cloud
+- technical Q&A
 - technical education
+- test
+- tokenization
+- tokens
+- tool agents
+- tool use
+- tool-assisted critique
+- tool-augmented QA
+- tools
+- train
+- training
+- transformer concepts
+- transformer research
 - transformers
+- transparent language-model corpus
+- unsupervised learning
+- vectors
+- verbal reinforcement
+- verifiable instruction following
+- version control
+- visual browser agents
+- visual web interaction
+- visualization
+- web
+- web agents
 - web development
+- web dialogue agents
+- web framework
 - web performance
 - web security
+- web server
+- web standards
+- web-agent trajectories
 - workflow orchestration
+- zero trust
 
 ## 3. AI model catalog categories
 
@@ -229,7 +561,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### REG-01 — benchmark
 
-- **Subsystem ID:** `buddy_benchmark_system`
+- **Subsystem ID:** `registry_benchmark`
 - **Mission:** Evaluation and certification.
 - **Inputs:** Versioned tasks, datasets, baselines, scoring rubrics, run artifacts.
 - **Outputs:** Comparable scores, pass/fail gates, regression reports.
@@ -238,7 +570,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### REG-02 — code
 
-- **Subsystem ID:** `buddy_code_system`
+- **Subsystem ID:** `registry_code`
 - **Mission:** Reusable software and repository assets.
 - **Inputs:** Source files, dependency manifests, ownership, licenses, tests.
 - **Outputs:** Reviewed code modules, integration proposals, SBOM and test evidence.
@@ -247,7 +579,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### REG-03 — compute
 
-- **Subsystem ID:** `buddy_compute_system`
+- **Subsystem ID:** `registry_compute`
 - **Mission:** Execution capacity and runtime environments.
 - **Inputs:** Runner inventory, workload profile, budgets, secrets references.
 - **Outputs:** Scheduled or on-demand execution with resource and cost telemetry.
@@ -256,7 +588,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### REG-04 — dataset
 
-- **Subsystem ID:** `buddy_dataset_system`
+- **Subsystem ID:** `registry_dataset`
 - **Mission:** Governed learning and evaluation data.
 - **Inputs:** Dataset metadata, provenance, license, schema, splits, consent/terms.
 - **Outputs:** Validated, versioned datasets and data cards.
@@ -265,7 +597,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### REG-05 — github_platform
 
-- **Subsystem ID:** `buddy_github_platform_system`
+- **Subsystem ID:** `registry_github_platform`
 - **Mission:** GitHub platform capabilities and permission boundaries.
 - **Inputs:** API scopes, app installation state, org settings, audit events.
 - **Outputs:** Least-privilege integration plan and verified platform actions.
@@ -274,7 +606,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### REG-06 — model_catalog
 
-- **Subsystem ID:** `buddy_model_catalog_system`
+- **Subsystem ID:** `registry_model_catalog`
 - **Mission:** Model discovery and capability metadata.
 - **Inputs:** Provider/model identifiers, versions, context limits, modalities, terms.
 - **Outputs:** Searchable model cards and eligibility decisions.
@@ -283,7 +615,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### REG-07 — model_provider
 
-- **Subsystem ID:** `buddy_model_provider_system`
+- **Subsystem ID:** `registry_model_provider`
 - **Mission:** Governed access to external or local inference providers.
 - **Inputs:** Adapter contracts, runtime health, secret references, policy and terms.
 - **Outputs:** Approved inference calls, normalized responses, usage/cost records.
@@ -292,7 +624,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### REG-08 — repo_tool
 
-- **Subsystem ID:** `buddy_repo_tool_system`
+- **Subsystem ID:** `registry_repo_tool`
 - **Mission:** Developer, learning, retrieval, and training utilities.
 - **Inputs:** Tool contracts, code, dependencies, CLI/API inputs, tests.
 - **Outputs:** Versioned tool outputs and reproducible execution artifacts.
@@ -301,7 +633,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### REG-09 — secret_inventory
 
-- **Subsystem ID:** `buddy_secret_inventory_system`
+- **Subsystem ID:** `registry_secret_inventory`
 - **Mission:** Secret lifecycle and access governance.
 - **Inputs:** Secret names, owning service, vault reference, rotation metadata (never values).
 - **Outputs:** Presence/health attestations and remediation tasks.
@@ -310,7 +642,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### REG-10 — surface
 
-- **Subsystem ID:** `buddy_surface_system`
+- **Subsystem ID:** `registry_surface`
 - **Mission:** User-facing and operator-facing product surfaces.
 - **Inputs:** Page/app routes, content data, auth policy, telemetry, accessibility checks.
 - **Outputs:** Published, traceable views of verified system state.
@@ -319,7 +651,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### REG-11 — terms_constraint
 
-- **Subsystem ID:** `buddy_terms_constraint_system`
+- **Subsystem ID:** `registry_terms_constraint`
 - **Mission:** Legal, contractual, and licensing guardrails.
 - **Inputs:** Provider terms, OSS licenses, dataset permissions, usage restrictions.
 - **Outputs:** Allow/deny decisions and documented compliance conditions.
@@ -328,7 +660,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### REG-12 — workforce
 
-- **Subsystem ID:** `buddy_workforce_system`
+- **Subsystem ID:** `registry_workforce`
 - **Mission:** Human and specialist-agent ownership model.
 - **Inputs:** Capability lanes, owners, responsibilities, permissions, escalation paths.
 - **Outputs:** Assigned work, review evidence, handoffs, accountability records.
@@ -342,7 +674,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-01 — AI
 
-- **Subsystem ID:** `buddy_ai_system`
+- **Subsystem ID:** `study_ai`
 - **Mission:** AI capability research, practice, and controlled execution.
 - **Inputs:** Curated AI resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -351,7 +683,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-02 — AI education
 
-- **Subsystem ID:** `buddy_ai_education_system`
+- **Subsystem ID:** `study_ai_education`
 - **Mission:** AI education capability research, practice, and controlled execution.
 - **Inputs:** Curated AI education resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -360,7 +692,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-03 — AI engineering
 
-- **Subsystem ID:** `buddy_ai_engineering_system`
+- **Subsystem ID:** `study_ai_engineering`
 - **Mission:** AI engineering capability research, practice, and controlled execution.
 - **Inputs:** Curated AI engineering resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -369,7 +701,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-04 — AI governance
 
-- **Subsystem ID:** `buddy_ai_governance_system`
+- **Subsystem ID:** `study_ai_governance`
 - **Mission:** AI governance capability research, practice, and controlled execution.
 - **Inputs:** Curated AI governance resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -378,7 +710,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-05 — API design
 
-- **Subsystem ID:** `buddy_api_design_system`
+- **Subsystem ID:** `study_api_design`
 - **Mission:** API design capability research, practice, and controlled execution.
 - **Inputs:** Curated API design resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -387,7 +719,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-06 — API development
 
-- **Subsystem ID:** `buddy_api_development_system`
+- **Subsystem ID:** `study_api_development`
 - **Mission:** API development capability research, practice, and controlled execution.
 - **Inputs:** Curated API development resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -396,7 +728,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-07 — API engineering
 
-- **Subsystem ID:** `buddy_api_engineering_system`
+- **Subsystem ID:** `study_api_engineering`
 - **Mission:** API engineering capability research, practice, and controlled execution.
 - **Inputs:** Curated API engineering resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -405,7 +737,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-08 — API standards
 
-- **Subsystem ID:** `buddy_api_standards_system`
+- **Subsystem ID:** `study_api_standards`
 - **Mission:** API standards capability research, practice, and controlled execution.
 - **Inputs:** Curated API standards resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -414,7 +746,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-09 — API testing
 
-- **Subsystem ID:** `buddy_api_testing_system`
+- **Subsystem ID:** `study_api_testing`
 - **Mission:** API testing capability research, practice, and controlled execution.
 - **Inputs:** Curated API testing resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -423,7 +755,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-10 — C++ testing
 
-- **Subsystem ID:** `buddy_c_testing_system`
+- **Subsystem ID:** `study_c_testing`
 - **Mission:** C++ testing capability research, practice, and controlled execution.
 - **Inputs:** Curated C++ testing resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -432,7 +764,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-11 — CS education
 
-- **Subsystem ID:** `buddy_cs_education_system`
+- **Subsystem ID:** `study_cs_education`
 - **Mission:** CS education capability research, practice, and controlled execution.
 - **Inputs:** Curated CS education resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -441,7 +773,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-12 — Java testing
 
-- **Subsystem ID:** `buddy_java_testing_system`
+- **Subsystem ID:** `study_java_testing`
 - **Mission:** Java testing capability research, practice, and controlled execution.
 - **Inputs:** Curated Java testing resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -450,7 +782,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-13 — JavaScript runtime
 
-- **Subsystem ID:** `buddy_javascript_runtime_system`
+- **Subsystem ID:** `study_javascript_runtime`
 - **Mission:** JavaScript runtime capability research, practice, and controlled execution.
 - **Inputs:** Curated JavaScript runtime resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -459,7 +791,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-14 — ML education
 
-- **Subsystem ID:** `buddy_ml_education_system`
+- **Subsystem ID:** `study_ml_education`
 - **Mission:** ML education capability research, practice, and controlled execution.
 - **Inputs:** Curated ML education resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -468,7 +800,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-15 — ML practice
 
-- **Subsystem ID:** `buddy_ml_practice_system`
+- **Subsystem ID:** `study_ml_practice`
 - **Mission:** ML practice capability research, practice, and controlled execution.
 - **Inputs:** Curated ML practice resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -477,7 +809,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-16 — NLP
 
-- **Subsystem ID:** `buddy_nlp_system`
+- **Subsystem ID:** `study_nlp`
 - **Mission:** NLP capability research, practice, and controlled execution.
 - **Inputs:** Curated NLP resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -486,7 +818,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-17 — Node.js
 
-- **Subsystem ID:** `buddy_node_js_system`
+- **Subsystem ID:** `study_node_js`
 - **Mission:** Node.js capability research, practice, and controlled execution.
 - **Inputs:** Curated Node.js resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -495,7 +827,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-18 — Python
 
-- **Subsystem ID:** `buddy_python_system`
+- **Subsystem ID:** `study_python`
 - **Mission:** Python capability research, practice, and controlled execution.
 - **Inputs:** Curated Python resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -504,7 +836,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-19 — Python testing
 
-- **Subsystem ID:** `buddy_python_testing_system`
+- **Subsystem ID:** `study_python_testing`
 - **Mission:** Python testing capability research, practice, and controlled execution.
 - **Inputs:** Curated Python testing resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -513,7 +845,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-20 — TLS
 
-- **Subsystem ID:** `buddy_tls_system`
+- **Subsystem ID:** `study_tls`
 - **Mission:** TLS capability research, practice, and controlled execution.
 - **Inputs:** Curated TLS resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -522,7 +854,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-21 — TLS security
 
-- **Subsystem ID:** `buddy_tls_security_system`
+- **Subsystem ID:** `study_tls_security`
 - **Mission:** TLS security capability research, practice, and controlled execution.
 - **Inputs:** Curated TLS security resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -531,7 +863,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-22 — algorithms
 
-- **Subsystem ID:** `buddy_algorithms_system`
+- **Subsystem ID:** `study_algorithms`
 - **Mission:** algorithms capability research, practice, and controlled execution.
 - **Inputs:** Curated algorithms resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -540,7 +872,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-23 — analytics
 
-- **Subsystem ID:** `buddy_analytics_system`
+- **Subsystem ID:** `study_analytics`
 - **Mission:** analytics capability research, practice, and controlled execution.
 - **Inputs:** Curated analytics resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -549,7 +881,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-24 — analytics engineering
 
-- **Subsystem ID:** `buddy_analytics_engineering_system`
+- **Subsystem ID:** `study_analytics_engineering`
 - **Mission:** analytics engineering capability research, practice, and controlled execution.
 - **Inputs:** Curated analytics engineering resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -558,7 +890,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-25 — application monitoring
 
-- **Subsystem ID:** `buddy_application_monitoring_system`
+- **Subsystem ID:** `study_application_monitoring`
 - **Mission:** application monitoring capability research, practice, and controlled execution.
 - **Inputs:** Curated application monitoring resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -567,7 +899,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-26 — backend
 
-- **Subsystem ID:** `buddy_backend_system`
+- **Subsystem ID:** `study_backend`
 - **Mission:** backend capability research, practice, and controlled execution.
 - **Inputs:** Curated backend resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -576,7 +908,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-27 — backend architecture
 
-- **Subsystem ID:** `buddy_backend_architecture_system`
+- **Subsystem ID:** `study_backend_architecture`
 - **Mission:** backend architecture capability research, practice, and controlled execution.
 - **Inputs:** Curated backend architecture resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -585,7 +917,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-28 — browser automation
 
-- **Subsystem ID:** `buddy_browser_automation_system`
+- **Subsystem ID:** `study_browser_automation`
 - **Mission:** browser automation capability research, practice, and controlled execution.
 - **Inputs:** Curated browser automation resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -594,7 +926,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-29 — browser engineering
 
-- **Subsystem ID:** `buddy_browser_engineering_system`
+- **Subsystem ID:** `study_browser_engineering`
 - **Mission:** browser engineering capability research, practice, and controlled execution.
 - **Inputs:** Curated browser engineering resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -603,7 +935,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-30 — browser testing
 
-- **Subsystem ID:** `buddy_browser_testing_system`
+- **Subsystem ID:** `study_browser_testing`
 - **Mission:** browser testing capability research, practice, and controlled execution.
 - **Inputs:** Curated browser testing resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -612,7 +944,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-31 — cloud native education
 
-- **Subsystem ID:** `buddy_cloud_native_education_system`
+- **Subsystem ID:** `study_cloud_native_education`
 - **Mission:** cloud native education capability research, practice, and controlled execution.
 - **Inputs:** Curated cloud native education resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -621,7 +953,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-32 — code quality
 
-- **Subsystem ID:** `buddy_code_quality_system`
+- **Subsystem ID:** `study_code_quality`
 - **Mission:** code quality capability research, practice, and controlled execution.
 - **Inputs:** Curated code quality resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -630,7 +962,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-33 — computer vision
 
-- **Subsystem ID:** `buddy_computer_vision_system`
+- **Subsystem ID:** `study_computer_vision`
 - **Mission:** computer vision capability research, practice, and controlled execution.
 - **Inputs:** Curated computer vision resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -639,7 +971,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-34 — data engineering
 
-- **Subsystem ID:** `buddy_data_engineering_system`
+- **Subsystem ID:** `study_data_engineering`
 - **Mission:** data engineering capability research, practice, and controlled execution.
 - **Inputs:** Curated data engineering resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -648,7 +980,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-35 — data format
 
-- **Subsystem ID:** `buddy_data_format_system`
+- **Subsystem ID:** `study_data_format`
 - **Mission:** data format capability research, practice, and controlled execution.
 - **Inputs:** Curated data format resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -657,7 +989,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-36 — data science
 
-- **Subsystem ID:** `buddy_data_science_system`
+- **Subsystem ID:** `study_data_science`
 - **Mission:** data science capability research, practice, and controlled execution.
 - **Inputs:** Curated data science resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -666,7 +998,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-37 — data systems
 
-- **Subsystem ID:** `buddy_data_systems_system`
+- **Subsystem ID:** `study_data_systems`
 - **Mission:** data systems capability research, practice, and controlled execution.
 - **Inputs:** Curated data systems resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -675,7 +1007,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-38 — data validation
 
-- **Subsystem ID:** `buddy_data_validation_system`
+- **Subsystem ID:** `study_data_validation`
 - **Mission:** data validation capability research, practice, and controlled execution.
 - **Inputs:** Curated data validation resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -684,7 +1016,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-39 — database
 
-- **Subsystem ID:** `buddy_database_system`
+- **Subsystem ID:** `study_database`
 - **Mission:** database capability research, practice, and controlled execution.
 - **Inputs:** Curated database resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -693,7 +1025,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-40 — databases
 
-- **Subsystem ID:** `buddy_databases_system`
+- **Subsystem ID:** `study_databases`
 - **Mission:** databases capability research, practice, and controlled execution.
 - **Inputs:** Curated databases resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -702,7 +1034,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-41 — deep learning
 
-- **Subsystem ID:** `buddy_deep_learning_system`
+- **Subsystem ID:** `study_deep_learning`
 - **Mission:** deep learning capability research, practice, and controlled execution.
 - **Inputs:** Curated deep learning resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -711,7 +1043,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-42 — dependency security
 
-- **Subsystem ID:** `buddy_dependency_security_system`
+- **Subsystem ID:** `study_dependency_security`
 - **Mission:** dependency security capability research, practice, and controlled execution.
 - **Inputs:** Curated dependency security resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -720,7 +1052,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-43 — event streaming
 
-- **Subsystem ID:** `buddy_event_streaming_system`
+- **Subsystem ID:** `study_event_streaming`
 - **Mission:** event streaming capability research, practice, and controlled execution.
 - **Inputs:** Curated event streaming resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -729,7 +1061,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-44 — machine learning
 
-- **Subsystem ID:** `buddy_machine_learning_system`
+- **Subsystem ID:** `study_machine_learning`
 - **Mission:** machine learning capability research, practice, and controlled execution.
 - **Inputs:** Curated machine learning resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -738,7 +1070,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-45 — mathematics
 
-- **Subsystem ID:** `buddy_mathematics_system`
+- **Subsystem ID:** `study_mathematics`
 - **Mission:** mathematics capability research, practice, and controlled execution.
 - **Inputs:** Curated mathematics resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -747,7 +1079,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-46 — meta-learning
 
-- **Subsystem ID:** `buddy_meta_learning_system`
+- **Subsystem ID:** `study_meta_learning`
 - **Mission:** meta-learning capability research, practice, and controlled execution.
 - **Inputs:** Curated meta-learning resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -756,7 +1088,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-47 — open source
 
-- **Subsystem ID:** `buddy_open_source_system`
+- **Subsystem ID:** `study_open_source`
 - **Mission:** open source capability research, practice, and controlled execution.
 - **Inputs:** Curated open source resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -765,7 +1097,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-48 — privacy
 
-- **Subsystem ID:** `buddy_privacy_system`
+- **Subsystem ID:** `study_privacy`
 - **Mission:** privacy capability research, practice, and controlled execution.
 - **Inputs:** Curated privacy resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -774,7 +1106,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-49 — programming education
 
-- **Subsystem ID:** `buddy_programming_education_system`
+- **Subsystem ID:** `study_programming_education`
 - **Mission:** programming education capability research, practice, and controlled execution.
 - **Inputs:** Curated programming education resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -783,7 +1115,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-50 — reinforcement learning
 
-- **Subsystem ID:** `buddy_reinforcement_learning_system`
+- **Subsystem ID:** `study_reinforcement_learning`
 - **Mission:** reinforcement learning capability research, practice, and controlled execution.
 - **Inputs:** Curated reinforcement learning resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -792,7 +1124,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-51 — search
 
-- **Subsystem ID:** `buddy_search_system`
+- **Subsystem ID:** `study_search`
 - **Mission:** search capability research, practice, and controlled execution.
 - **Inputs:** Curated search resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -801,7 +1133,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-52 — secure development
 
-- **Subsystem ID:** `buddy_secure_development_system`
+- **Subsystem ID:** `study_secure_development`
 - **Mission:** secure development capability research, practice, and controlled execution.
 - **Inputs:** Curated secure development resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -810,7 +1142,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-53 — security
 
-- **Subsystem ID:** `buddy_security_system`
+- **Subsystem ID:** `study_security`
 - **Mission:** security capability research, practice, and controlled execution.
 - **Inputs:** Curated security resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -819,7 +1151,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-54 — security analysis
 
-- **Subsystem ID:** `buddy_security_analysis_system`
+- **Subsystem ID:** `study_security_analysis`
 - **Mission:** security analysis capability research, practice, and controlled execution.
 - **Inputs:** Curated security analysis resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -828,7 +1160,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-55 — security controls
 
-- **Subsystem ID:** `buddy_security_controls_system`
+- **Subsystem ID:** `study_security_controls`
 - **Mission:** security controls capability research, practice, and controlled execution.
 - **Inputs:** Curated security controls resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -837,7 +1169,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-56 — security knowledge
 
-- **Subsystem ID:** `buddy_security_knowledge_system`
+- **Subsystem ID:** `study_security_knowledge`
 - **Mission:** security knowledge capability research, practice, and controlled execution.
 - **Inputs:** Curated security knowledge resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -846,7 +1178,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-57 — security taxonomy
 
-- **Subsystem ID:** `buddy_security_taxonomy_system`
+- **Subsystem ID:** `study_security_taxonomy`
 - **Mission:** security taxonomy capability research, practice, and controlled execution.
 - **Inputs:** Curated security taxonomy resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -855,7 +1187,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-58 — software licensing
 
-- **Subsystem ID:** `buddy_software_licensing_system`
+- **Subsystem ID:** `study_software_licensing`
 - **Mission:** software licensing capability research, practice, and controlled execution.
 - **Inputs:** Curated software licensing resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -864,7 +1196,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-59 — software security
 
-- **Subsystem ID:** `buddy_software_security_system`
+- **Subsystem ID:** `study_software_security`
 - **Mission:** software security capability research, practice, and controlled execution.
 - **Inputs:** Curated software security resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -873,7 +1205,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-60 — software signing
 
-- **Subsystem ID:** `buddy_software_signing_system`
+- **Subsystem ID:** `study_software_signing`
 - **Mission:** software signing capability research, practice, and controlled execution.
 - **Inputs:** Curated software signing resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -882,7 +1214,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-61 — software supply chain
 
-- **Subsystem ID:** `buddy_software_supply_chain_system`
+- **Subsystem ID:** `study_software_supply_chain`
 - **Mission:** software supply chain capability research, practice, and controlled execution.
 - **Inputs:** Curated software supply chain resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -891,7 +1223,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-62 — static analysis
 
-- **Subsystem ID:** `buddy_static_analysis_system`
+- **Subsystem ID:** `study_static_analysis`
 - **Mission:** static analysis capability research, practice, and controlled execution.
 - **Inputs:** Curated static analysis resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -900,7 +1232,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-63 — statistics
 
-- **Subsystem ID:** `buddy_statistics_system`
+- **Subsystem ID:** `study_statistics`
 - **Mission:** statistics capability research, practice, and controlled execution.
 - **Inputs:** Curated statistics resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -909,7 +1241,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-64 — systems
 
-- **Subsystem ID:** `buddy_systems_system`
+- **Subsystem ID:** `study_systems`
 - **Mission:** systems capability research, practice, and controlled execution.
 - **Inputs:** Curated systems resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -918,7 +1250,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-65 — systems/cloud
 
-- **Subsystem ID:** `buddy_systems_cloud_system`
+- **Subsystem ID:** `study_systems_cloud`
 - **Mission:** systems/cloud capability research, practice, and controlled execution.
 - **Inputs:** Curated systems/cloud resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -927,7 +1259,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-66 — technical education
 
-- **Subsystem ID:** `buddy_technical_education_system`
+- **Subsystem ID:** `study_technical_education`
 - **Mission:** technical education capability research, practice, and controlled execution.
 - **Inputs:** Curated technical education resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -936,7 +1268,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-67 — transformers
 
-- **Subsystem ID:** `buddy_transformers_system`
+- **Subsystem ID:** `study_transformers`
 - **Mission:** transformers capability research, practice, and controlled execution.
 - **Inputs:** Curated transformers resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -945,7 +1277,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-68 — web development
 
-- **Subsystem ID:** `buddy_web_development_system`
+- **Subsystem ID:** `study_web_development`
 - **Mission:** web development capability research, practice, and controlled execution.
 - **Inputs:** Curated web development resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -954,7 +1286,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-69 — web performance
 
-- **Subsystem ID:** `buddy_web_performance_system`
+- **Subsystem ID:** `study_web_performance`
 - **Mission:** web performance capability research, practice, and controlled execution.
 - **Inputs:** Curated web performance resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -963,7 +1295,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-70 — web security
 
-- **Subsystem ID:** `buddy_web_security_system`
+- **Subsystem ID:** `study_web_security`
 - **Mission:** web security capability research, practice, and controlled execution.
 - **Inputs:** Curated web security resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -972,7 +1304,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### STUDY-71 — workflow orchestration
 
-- **Subsystem ID:** `buddy_workflow_orchestration_system`
+- **Subsystem ID:** `study_workflow_orchestration`
 - **Mission:** workflow orchestration capability research, practice, and controlled execution.
 - **Inputs:** Curated workflow orchestration resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -986,7 +1318,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-01 — General Chat
 
-- **Subsystem ID:** `buddy_general_chat_system`
+- **Subsystem ID:** `model_general_chat`
 - **Mission:** General Chat capability research, practice, and controlled execution.
 - **Inputs:** Curated General Chat resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -995,7 +1327,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-02 — Coding
 
-- **Subsystem ID:** `buddy_coding_system`
+- **Subsystem ID:** `study_coding`
 - **Mission:** Coding capability research, practice, and controlled execution.
 - **Inputs:** Curated Coding resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1004,7 +1336,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-03 — Research
 
-- **Subsystem ID:** `buddy_research_system`
+- **Subsystem ID:** `study_research`
 - **Mission:** Research capability research, practice, and controlled execution.
 - **Inputs:** Curated Research resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1013,7 +1345,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-04 — Writing & Content
 
-- **Subsystem ID:** `buddy_writing_content_system`
+- **Subsystem ID:** `model_writing_content`
 - **Mission:** Writing & Content capability research, practice, and controlled execution.
 - **Inputs:** Curated Writing & Content resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1022,7 +1354,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-05 — Image Generation
 
-- **Subsystem ID:** `buddy_image_generation_system`
+- **Subsystem ID:** `model_image_generation`
 - **Mission:** Image Generation capability research, practice, and controlled execution.
 - **Inputs:** Curated Image Generation resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1031,7 +1363,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-06 — Video & Audio
 
-- **Subsystem ID:** `buddy_video_audio_system`
+- **Subsystem ID:** `model_video_audio`
 - **Mission:** Video & Audio capability research, practice, and controlled execution.
 - **Inputs:** Curated Video & Audio resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1040,7 +1372,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-07 — Business & CRM
 
-- **Subsystem ID:** `buddy_business_crm_system`
+- **Subsystem ID:** `model_business_crm`
 - **Mission:** Business & CRM capability research, practice, and controlled execution.
 - **Inputs:** Curated Business & CRM resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1049,7 +1381,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-08 — Data & Analytics
 
-- **Subsystem ID:** `buddy_data_analytics_system`
+- **Subsystem ID:** `model_data_analytics`
 - **Mission:** Data & Analytics capability research, practice, and controlled execution.
 - **Inputs:** Curated Data & Analytics resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1058,7 +1390,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-09 — Autonomous Agents
 
-- **Subsystem ID:** `buddy_autonomous_agents_system`
+- **Subsystem ID:** `model_autonomous_agents`
 - **Mission:** Autonomous Agents capability research, practice, and controlled execution.
 - **Inputs:** Curated Autonomous Agents resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1067,7 +1399,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-10 — Customer Support
 
-- **Subsystem ID:** `buddy_customer_support_system`
+- **Subsystem ID:** `model_customer_support`
 - **Mission:** Customer Support capability research, practice, and controlled execution.
 - **Inputs:** Curated Customer Support resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1076,7 +1408,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-11 — Marketing & SEO
 
-- **Subsystem ID:** `buddy_marketing_seo_system`
+- **Subsystem ID:** `model_marketing_seo`
 - **Mission:** Marketing & SEO capability research, practice, and controlled execution.
 - **Inputs:** Curated Marketing & SEO resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1085,7 +1417,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-12 — Finance & Trading
 
-- **Subsystem ID:** `buddy_finance_trading_system`
+- **Subsystem ID:** `model_finance_trading`
 - **Mission:** Finance & Trading capability research, practice, and controlled execution.
 - **Inputs:** Curated Finance & Trading resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1094,7 +1426,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-13 — Healthcare AI
 
-- **Subsystem ID:** `buddy_healthcare_ai_system`
+- **Subsystem ID:** `model_healthcare_ai`
 - **Mission:** Healthcare AI capability research, practice, and controlled execution.
 - **Inputs:** Curated Healthcare AI resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1103,7 +1435,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-14 — Legal & Compliance
 
-- **Subsystem ID:** `buddy_legal_compliance_system`
+- **Subsystem ID:** `model_legal_compliance`
 - **Mission:** Legal & Compliance capability research, practice, and controlled execution.
 - **Inputs:** Curated Legal & Compliance resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1112,7 +1444,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-15 — Education
 
-- **Subsystem ID:** `buddy_education_system`
+- **Subsystem ID:** `study_education`
 - **Mission:** Education capability research, practice, and controlled execution.
 - **Inputs:** Curated Education resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1121,7 +1453,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-16 — Voice & Speech
 
-- **Subsystem ID:** `buddy_voice_speech_system`
+- **Subsystem ID:** `model_voice_speech`
 - **Mission:** Voice & Speech capability research, practice, and controlled execution.
 - **Inputs:** Curated Voice & Speech resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1130,7 +1462,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-17 — Translation
 
-- **Subsystem ID:** `buddy_translation_system`
+- **Subsystem ID:** `model_translation`
 - **Mission:** Translation capability research, practice, and controlled execution.
 - **Inputs:** Curated Translation resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1139,7 +1471,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-18 — Robotics & IoT
 
-- **Subsystem ID:** `buddy_robotics_iot_system`
+- **Subsystem ID:** `model_robotics_iot`
 - **Mission:** Robotics & IoT capability research, practice, and controlled execution.
 - **Inputs:** Curated Robotics & IoT resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1148,7 +1480,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-19 — Security
 
-- **Subsystem ID:** `buddy_security_system`
+- **Subsystem ID:** `study_security`
 - **Mission:** Security capability research, practice, and controlled execution.
 - **Inputs:** Curated Security resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1157,7 +1489,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 
 ### MODEL-20 — No-Code/Low-Code
 
-- **Subsystem ID:** `buddy_no_code_low_code_system`
+- **Subsystem ID:** `model_no_code_low_code`
 - **Mission:** No-Code/Low-Code capability research, practice, and controlled execution.
 - **Inputs:** Curated No-Code/Low-Code resources, task definitions, versioned references, constraints, and evaluation examples.
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
@@ -1204,7 +1536,7 @@ Every subsystem must eventually have a machine-readable record with:
 
 The dedicated subsystem specifications are also stored in `config/buddy/category-system-registry.json`, schema `dreamco.buddy.category_system_registry.v1`. This file contains one record per category, with a stable subsystem ID, exact source label, source references, contract fields, lifecycle status, implementation status, and verification status. The catalog currently defines 500 records: 12 resource-registry categories, 403 study-resource categories, 20 model categories, and 65 division systems. The 65-division list is preserved as a candidate inventory because it conflicts with other repository sources that state 45 or 46 divisions; 20 entries appear only in the 65-entry registry and remain flagged for reconciliation.
 
-Run `npm run buddy:category-systems` to validate the category-system registry against the authoritative source catalogs. The validator checks category completeness, source-row mapping, model category counts, unique subsystem IDs, required contract fields, lifecycle values, and summary counts. The test is `tests/test_buddy_category_system_registry.py`.
+Run `npm run buddy:category-systems` to validate the category-system registry against the authoritative source catalogs. The validator checks category completeness across every study catalog, source-row mapping, model category counts, unique subsystem IDs, division reconciliation against the 45-division placement audit, required contract fields, lifecycle values, and summary counts. The test is `tests/test_buddy_category_system_registry.py`.
 
 The validator is now committed in this feature branch. Its execution in the repository's full CI environment remains pending; a source-file re-fetch and static consistency checks are not a substitute for a successful test run.
 
