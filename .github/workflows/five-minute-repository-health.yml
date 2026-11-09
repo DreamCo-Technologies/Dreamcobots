@@ -1,0 +1,120 @@
+name: Five-Minute Repository Health Audit
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+    inputs:
+      run_tests:
+        description: "Run the focused repository test suite after the audit"
+        required: false
+        default: false
+        type: boolean
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: repository-health-audit-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pull-requests: read
+  actions: read
+
+jobs:
+  audit:
+    name: Full repository inventory and static health audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: read
+    steps:
+      - name: Check out exact revision
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Audit tracked repository files and open pull requests
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: python3 tools/repository_health_audit.py
+
+      - name: Run focused tests when explicitly requested
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_tests }}
+        run: |
+          python3 -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Preserve audit report
+        if: ${{ always() && hashFiles('reports/repository-health-latest.json') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: repository-health-${{ github.run_id }}
+          path: reports/repository-health-latest.json
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    name: Publish traceability records
+    needs: audit
+    if: ${{ always() && needs.audit.result != 'cancelled' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Check out trusted main-branch goal registry
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: source
+          persist-credentials: false
+
+      - name: Download audit report
+        uses: actions/download-artifact@v4
+        with:
+          name: repository-health-${{ github.run_id }}
+          path: report
+
+      - name: Publish report to dedicated results branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          target="$RUNNER_TEMP/dreamco-health-publish"
+          remote="https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+          if git ls-remote --exit-code --heads "$remote" repository-health-results >/dev/null 2>&1; then
+            git clone --depth 1 --branch repository-health-results "$remote" "$target"
+          else
+            mkdir -p "$target"
+            git -C "$target" init -b repository-health-results
+            git -C "$target" remote add origin "$remote"
+          fi
+          mkdir -p "$target/reports/history" "$target/config"
+          cp report/repository-health-latest.json "$target/reports/repository-health-latest.json"
+          cp source/config/repository-goals.json "$target/config/repository-goals.json"
+          cp report/repository-health-latest.json "$target/reports/history/$GITHUB_RUN_ID.json"
+          git -C "$target" config user.name "github-actions[bot]"
+          git -C "$target" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$target" add reports config/repository-goals.json
+          if ! git -C "$target" diff --cached --quiet; then
+            short_sha=$(printf '%.12s' "$GITHUB_SHA")
+            git -C "$target" commit -m "Publish repository health run $GITHUB_RUN_ID ($short_sha)"
+            git -C "$target" push origin HEAD:repository-health-results
+          fi
