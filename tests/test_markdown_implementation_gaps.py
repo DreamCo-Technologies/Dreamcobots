@@ -2,10 +2,12 @@
 import tempfile
 import unittest
 from pathlib import Path
+import json
 
 from tools.audit_markdown_implementation_gaps import analyze_document, candidate_paths
 
-POLICY = {
+POLICY_PATH = Path(__file__).resolve().parents[1] / "config/buddy/markdown-implementation-gap-policy.json"
+POLICY = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
     "path_roots": {
         "implementation": ["tools/", "server/", "shared/", "website/"],
         "tests": ["tests/"],
@@ -39,8 +41,9 @@ class MarkdownImplementationGapTests(unittest.TestCase):
             self.assertFalse(row["execution_verified"])
 
     def test_no_fixed_document_or_reference_ceiling(self):
-        self.assertTrue(POLICY["path_roots"]["implementation"])
-        self.assertIsNone(None)
+        self.assertIsNone(POLICY["fixed_document_ceiling"])
+        self.assertIsNone(POLICY["fixed_claim_ceiling"])
+        self.assertIsNone(POLICY["fixed_reference_ceiling"])
 
 if __name__ == "__main__":
     unittest.main()
