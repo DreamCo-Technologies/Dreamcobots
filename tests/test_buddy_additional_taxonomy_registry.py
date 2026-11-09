@@ -16,8 +16,9 @@ class BuddyAdditionalTaxonomyRegistryTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("599 systems", result.stdout)
-        self.assertIn("29 groups", result.stdout)
+        registry = json.loads((ROOT / "config/buddy/additional-taxonomy-system-registry.json").read_text(encoding="utf-8"))
+        self.assertIn(str(len(registry["systems"])) + " systems", result.stdout)
+        self.assertIn(str(len(registry["counts"]["groups"])) + " groups", result.stdout)
 
 if __name__ == "__main__":
     unittest.main()
