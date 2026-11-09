@@ -65,7 +65,7 @@
     try {
       const [catalogResponse, policyResponse] = await Promise.all([
         fetch('data/buddy-technology-radar.json', {cache:'no-store'}),
-        fetch('../config/buddy/technology-discovery-policy.json', {cache:'no-store'}).catch(() => null)
+        fetch('data/technology-discovery-policy.json', {cache:'no-store'}).catch(() => null)
       ]);
       if (!catalogResponse.ok) throw new Error('Technology index unavailable: HTTP ' + catalogResponse.status);
       catalog = await catalogResponse.json();
