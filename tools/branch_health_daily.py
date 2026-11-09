@@ -117,12 +117,12 @@ def local_branches() -> list[dict]:
     return rows
 
 
-def local_ahead_behind(name: str) -> tuple[int, int]:
-    merge_base = git(["merge-base", f"origin/{DEFAULT}", f"origin/{name}"], check=False)
+def local_ahead_behind(name: str, base: str = DEFAULT) -> tuple[int, int]:
+    merge_base = git(["merge-base", f"origin/{base}", f"origin/{name}"], check=False)
     if merge_base.returncode != 0 or not merge_base.stdout.strip():
         detail = merge_base.stderr.strip() or "branches have no common ancestor"
         raise RuntimeError(detail)
-    proc = git(["rev-list", "--left-right", "--count", f"origin/{DEFAULT}...origin/{name}"], check=False)
+    proc = git(["rev-list", "--left-right", "--count", f"origin/{base}...origin/{name}"], check=False)
     if proc.returncode != 0:
         detail = proc.stderr.strip() or "git rev-list failed"
         raise RuntimeError(detail)
@@ -133,9 +133,9 @@ def local_ahead_behind(name: str) -> tuple[int, int]:
     return ahead, behind
 
 
-def local_missing(name: str) -> list[str]:
+def local_missing(name: str, base: str = DEFAULT) -> list[str]:
     proc = git(
-        ["diff", "--name-only", "--diff-filter=AR", f"origin/{name}...origin/{DEFAULT}"],
+        ["diff", "--name-only", "--diff-filter=AR", f"origin/{name}...origin/{base}"],
         check=False,
     )
     if proc.returncode != 0:
@@ -169,11 +169,20 @@ def vote_merge(pr: dict | None) -> tuple[str, str]:
     if not pr:
         return "warn", "No open pull request."
     state = pr.get("mergeable_state") or "unknown"
+    if pr.get("draft"):
+        return "block", "Draft PR; not eligible for merge."
     if state == "dirty":
-        return "block", "Conflicts with main. Conflict team required."
+        return "block", "Conflicts with its base branch. Human resolution required."
+    evidence = pr.get("_evidence") or {}
+    check_state = evidence.get("checkState", "unavailable")
+    review_state = evidence.get("reviewState", "unavailable")
+    if check_state != "success":
+        return "block", f"CI evidence is not green ({check_state})."
+    if review_state != "approved":
+        return "block", f"Independent review is not approved ({review_state})."
     if state == "clean":
-        return "pass", "PR mergeable_state=clean."
-    return "warn", f"PR mergeable_state={state}."
+        return "pass", "Non-draft PR, clean merge state, passing checks, and approval."
+    return "block", f"GitHub mergeable_state={state}; mergeability is not verified."
 
 
 def score_votes(votes: list[dict]) -> tuple[int, str]:
@@ -231,7 +240,7 @@ def markdown_report(report: dict) -> str:
         "| Branch | Score | Status | Ahead | Behind | PR | Missing |",
         "|---|---:|---|---:|---:|---|---|",
     ]
-    for b in report["branches"][:80]:
+    for b in report["branches"]:
         missing = "unverified (comparison unavailable)" if b.get("missingRequired") is None else ", ".join(b["missingRequired"]) or "—"
         pr = f"#{b['prNumber']}" if b.get("prNumber") else "—"
         lines.append(
@@ -274,11 +283,71 @@ def api_branches() -> list[dict]:
     return rows
 
 
-def api_ahead_behind_missing(name: str) -> tuple[int, int, list[str]]:
-    cmp = gh(f"/repos/{OWNER}/{REPO}/compare/{urllib.parse.quote(name, safe='')}...{DEFAULT}")
-    behind = int(cmp.get("ahead_by") or 0)
-    ahead = int(cmp.get("behind_by") or 0)
+def api_ahead_behind_missing(name: str, base: str = DEFAULT) -> tuple[int, int, list[str]]:
+    cmp = gh(f"/repos/{OWNER}/{REPO}/compare/{urllib.parse.quote(base, safe='')}...{urllib.parse.quote(name, safe='')}")
+    ahead = int(cmp.get("ahead_by") or 0)
+    behind = int(cmp.get("behind_by") or 0)
     return ahead, behind, missing_from(cmp.get("files") or [])
+
+
+
+def pr_evidence(pr: dict) -> dict:
+    """Collect real CI and review evidence; missing/unreadable evidence is never green."""
+    number = pr.get("number")
+    sha = (pr.get("head") or {}).get("sha")
+    checks = {"checkState": "unavailable", "checkSummary": {}, "reviewState": "unavailable",
+              "approvedReviews": 0, "changesRequestedReviews": 0, "reviewCount": 0}
+    if not number or not sha:
+        return checks
+    try:
+        check_payload = gh(f"/repos/{OWNER}/{REPO}/commits/{sha}/check-runs?per_page=100")
+        status_payload = gh(f"/repos/{OWNER}/{REPO}/commits/{sha}/status")
+        check_runs = check_payload.get("check_runs") if isinstance(check_payload, dict) else None
+        if not isinstance(check_runs, list):
+            raise RuntimeError("GitHub check-runs response was unavailable")
+        conclusions = [row.get("conclusion") for row in check_runs]
+        statuses = [row.get("status") for row in check_runs]
+        failed = sum(1 for value in conclusions if value in {"failure", "timed_out", "cancelled", "action_required", "startup_failure", "stale"})
+        pending = sum(1 for value in statuses if value in {"queued", "in_progress", "pending"})
+        skipped = sum(1 for value in conclusions if value in {"skipped", "neutral"})
+        combined = (status_payload or {}).get("state") if isinstance(status_payload, dict) else None
+        if failed or combined in {"failure", "error"}:
+            check_state = "failure"
+        elif pending or combined == "pending":
+            check_state = "pending"
+        elif check_runs and all(value in {"success", "neutral"} for value in conclusions) and combined in {None, "success"}:
+            check_state = "success"
+        elif not check_runs and combined == "success":
+            check_state = "success"
+        elif skipped:
+            check_state = "incomplete"
+        else:
+            check_state = "unknown"
+        checks["checkState"] = check_state
+        checks["checkSummary"] = {"total": len(check_runs), "failed": failed, "pending": pending,
+                                  "skipped_or_neutral": skipped, "combined_status": combined}
+    except RuntimeError as exc:
+        checks["checkSummary"] = {"error": str(exc)[:240]}
+    try:
+        reviews = gh_pages(f"/repos/{OWNER}/{REPO}/pulls/{number}/reviews")
+        latest = {}
+        for row in reviews:
+            login = (row.get("user") or {}).get("login")
+            if not login or not row.get("submitted_at"):
+                continue
+            if login not in latest or row["submitted_at"] > latest[login].get("submitted_at", ""):
+                latest[login] = row
+        states = [row.get("state") for row in latest.values()]
+        approvals = states.count("APPROVED")
+        changes = states.count("CHANGES_REQUESTED")
+        checks["reviewCount"] = len(latest)
+        checks["approvedReviews"] = approvals
+        checks["changesRequestedReviews"] = changes
+        checks["reviewState"] = "changes_requested" if changes else ("approved" if approvals else "unreviewed")
+    except RuntimeError as exc:
+        checks["reviewState"] = "unavailable"
+        checks["reviewError"] = str(exc)[:240]
+    return checks
 
 
 def public_report(report: dict) -> dict:
@@ -335,6 +404,7 @@ def main() -> int:
             full = gh(f"/repos/{OWNER}/{REPO}/pulls/{pr['number']}")
         except RuntimeError:
             full = pr
+        full["_evidence"] = pr_evidence(full)
         pr_by_ref[full["head"]["ref"]] = full
 
     records = []
@@ -348,7 +418,7 @@ def main() -> int:
                 ahead, behind = local_ahead_behind(name)
                 missing = local_missing(name)
             else:
-                ahead, behind, missing = api_ahead_behind_missing(name)
+                ahead, behind, missing = api_ahead_behind_missing(name, DEFAULT)
         except RuntimeError as exc:
             comparison_error = str(exc)
             print(f"compare blocked {name}: {comparison_error}", file=sys.stderr)
@@ -371,13 +441,18 @@ def main() -> int:
             "prUrl": (pr or {}).get("html_url"),
             "mergeable": (pr or {}).get("mergeable"),
             "mergeableState": (pr or {}).get("mergeable_state"),
+            "checkState": ((pr or {}).get("_evidence") or {}).get("checkState"),
+            "checkSummary": ((pr or {}).get("_evidence") or {}).get("checkSummary"),
+            "reviewState": ((pr or {}).get("_evidence") or {}).get("reviewState"),
+            "approvedReviews": ((pr or {}).get("_evidence") or {}).get("approvedReviews", 0),
+            "changesRequestedReviews": ((pr or {}).get("_evidence") or {}).get("changesRequestedReviews", 0),
             "moneySensitive": bool(MONEY_RE.search((pr or {}).get("title") or "")),
             "votes": votes,
             "score": score,
             "status": status,
         }
         records.append(rec)
-        if pr and pr.get("mergeable_state") == "dirty":
+        if pr and (pr.get("mergeable_state") == "dirty" or (pr.get("_evidence") or {}).get("checkState") != "success" or (pr.get("_evidence") or {}).get("reviewState") != "approved" or pr.get("draft")):
             money = rec["moneySensitive"]
             conflicts.append(
                 {
@@ -405,6 +480,18 @@ def main() -> int:
         "watch": sum(1 for r in records if r["status"] == "watch"),
         "blocked": sum(1 for r in records if r["status"] == "blocked"),
         "branches": records,
+        "pullRequests": [
+            {
+                "number": pr.get("number"), "title": pr.get("title"), "url": pr.get("html_url"),
+                "draft": pr.get("draft"), "baseRef": (pr.get("base") or {}).get("ref"),
+                "headRef": (pr.get("head") or {}).get("ref"), "headSha": (pr.get("head") or {}).get("sha"),
+                "mergeable": pr.get("mergeable"), "mergeableState": pr.get("mergeable_state"),
+                **(pr.get("_evidence") or {}),
+                "mergeReady": (not pr.get("draft") and pr.get("mergeable_state") == "clean"
+                               and (pr.get("_evidence") or {}).get("checkState") == "success"
+                               and (pr.get("_evidence") or {}).get("reviewState") == "approved"),
+            } for pr in prs
+        ],
         "conflictActions": conflicts,
         "note": "Inventory is not mastery. Auto-merge to main is off. Review team votes; conflict team never force-merges main.",
     }
