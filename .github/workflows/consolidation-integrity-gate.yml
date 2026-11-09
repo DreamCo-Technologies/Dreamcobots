@@ -35,6 +35,12 @@ on:
       - "tests/test_buddy_technology_radar.py"
       - "website/technology-radar.html"
       - "website/technology-radar.js"
+      - "config/buddy/markdown-implementation-gap-policy.json"
+      - "tools/audit_markdown_implementation_gaps.py"
+      - "tests/test_markdown_implementation_gaps.py"
+      - "website/markdown-gap-audit.html"
+      - "website/markdown-gap-audit.js"
+      - "website/data/markdown-implementation-gap-audit.json"
   workflow_dispatch:
 permissions:
   contents: read
@@ -66,11 +72,14 @@ jobs:
       - name: Validate Buddy category-system registry
         run: |
           npm run buddy:category-systems
-          python3 -m unittest tests.test_buddy_category_system_registry tests.test_buddy_additional_taxonomy_registry tests.test_buddy_technology_radar
+          python3 tools/audit_markdown_implementation_gaps.py --write
+          python3 tools/audit_markdown_implementation_gaps.py --check
+          python3 -m unittest tests.test_markdown_implementation_gaps tests.test_buddy_category_system_registry tests.test_buddy_additional_taxonomy_registry tests.test_buddy_technology_radar
           python3 tools/refresh_buddy_technology_radar.py --check
           python3 tools/validate_vibe_coding_taxonomy.py
           node --check website/category-systems.js
           node --check website/technology-radar.js
+          node --check website/markdown-gap-audit.js
       - name: Validate consolidation map
         run: |
           python3 - <<'PY'
