@@ -2,11 +2,11 @@
 
 **Start here:** [Owner guide: what exists and what needs setup](docs/REPOSITORY_OWNER_GUIDE.md) · [Website directory](https://dreamco-technologies.github.io/Dreamcobots/repository-guide.html) · [Repository map](https://dreamco-technologies.github.io/Dreamcobots/system-map.html)
 
-[![Bots](https://img.shields.io/badge/bots-1051+-blue)](App_bots/)
-[![Divisions](https://img.shields.io/badge/divisions-45-purple)](App_bots/)
+[![Bots](https://img.shields.io/badge/bots-live%20registry-blue)](App_bots/)
+[![Divisions](https://img.shields.io/badge/divisions-dynamic-purple)](App_bots/)
 [![Autonomy](https://img.shields.io/badge/autonomy-governed-green)](docs/)
 
-DreamCo is a governed AI workbench with 1,051 specialist profiles across 45 divisions. Buddy routes requests, prepares testable task packets, and pauses before external writes, publishing, outreach, account changes, or spending.
+DreamCo is a governed AI workbench with a changing specialist and division inventory. Current totals are derived from the canonical registries and audits; no badge, list, or historical count is a permanent ceiling. Buddy routes requests, prepares testable task packets, and pauses before external writes, publishing, outreach, account changes, or spending.
 
 ## Buddy on GitHub Pages
 
@@ -15,6 +15,9 @@ Original Buddy chrome plus the desks from the latest Grok chat. Static HTML. No 
 - [Original Buddy chat](website/buddy.html)
 - [Buddy Bootcamp](website/own-bootcamp.html) — our curriculum; [HF packages](website/hf-bootcamp.html), [step wrappers](website/bootcamp-wrappers.html)
 - [Model picker](website/models.html) — plus [Open Model Lab](website/open-model-lab.html)
+- [Living AI & Technology Radar](website/technology-radar.html) — current discoveries across AI models, vibe coding, coding agents, remote work, and home-business tools
+- [Markdown → Code Gap Audit](website/markdown-gap-audit.html) — maps all tracked Markdown requirements to code, tests, workflows, and missing paths
+- [Category Systems](website/category-systems.html) — source-derived taxonomy systems and evidence states
 - [Packages](website/hf-bootcamp.html) — plus [Marketplace](website/marketplace.html)
 - [Bot fleet](website/bots.html) — plus [Divisions](website/divisions.html)
 - [Gates](website/autonomy.html) — plus [Test Center](website/test-center.html)
@@ -36,7 +39,7 @@ Original Buddy chrome plus the desks from the latest Grok chat. Static HTML. No 
 
 ```
 Dreamcobots/
-├── App_bots/          # All 1051 bots organized by division (JSON)
+├── App_bots/          # Current bot profiles organized by division (JSON)
 ├── bots/              # Specialty & elite bot profiles (Markdown)
 ├── website/           # Static website (see generated page directory)
 │   ├── index.html     # Landing page
@@ -79,7 +82,7 @@ Dreamcobots/
 ## 🧠 Buddy Bot - Governed Task Router
 
 Buddy Bot ([profile](bots/buddy-bot.md)) provides one interface for the repository fleet:
-- Routes requests across all 1,051 cataloged specialist profiles
+- Routes requests across all currently cataloged specialist profiles
 - Shows repository-controlled capability certification evidence
 - Defaults to free local planning and supports optional approved provider routing
 - Creates previews and approval gates before external side effects
@@ -107,7 +110,7 @@ Creative Studio can record adult owner voice samples, capture owner camera image
 
 The Model Benchmark Lab audits 200 targets across 12 capability suites: 100 curated catalog records plus 100 task-specific discovery lanes that refresh exact model IDs from official provider catalogs. Catalog checks run locally. Live quality, latency, and cost scores remain empty until authenticated adapters return evidence under a per-run budget and approval.
 
-The Buddy Success Center stores a 30-question, non-sensitive profile in the user's browser, shares only an opted-in summary with specialist routes, and keeps opportunity estimates separate from user-confirmed revenue. Its generated production program covers all 45 divisions with a professional charter, 100 capability contracts, 100 must-have records, 100 upgrade records, 12 production gates, a deterministic robot identity, and an evidence-first competitor benchmark process. A local daily harness checks all 4,500 division capability contracts with bounded parallelism; external comparisons still require a scheduler, configured adapters, current terms, and run-specific approval.
+The Buddy Success Center stores a non-sensitive profile in the user's browser, shares only an opted-in summary with specialist routes, and keeps opportunity estimates separate from user-confirmed revenue. Its generated production program derives divisions, capability contracts, must-have records, upgrade records, and production gates from the current registries, with a deterministic robot identity and an evidence-first competitor benchmark process. A local daily harness checks the current division capability contracts with bounded parallelism; external comparisons still require a scheduler, configured adapters, current terms, and run-specific approval.
 
 The AI Organization Intelligence registry combines 94 normalized providers from the existing 200-target program with a dated 196-entry snapshot of the official AI Alliance directory. It maps declared strengths and common user jobs to 20 user-need categories and 15 benchmark dimensions while keeping membership, connectivity, and live evidence separate. Refresh with `python3 tools/generate_ai_organization_intelligence.py --refresh`; normal repository checks use the committed snapshot so builds do not depend on the network.
 
@@ -133,7 +136,7 @@ All bots are accessible via the Empire OS REST API:
 - `GET /api/bots` — list all bots
 - `POST /api/chat` — chat with any bot
 - `GET /api/bots/:slug` — bot profile
-- `GET /api/divisions` — all 45 divisions
+- `GET /api/divisions` — current division registry
 - `POST /api/bots/normalize` — validate all bot profiles
 
 ---

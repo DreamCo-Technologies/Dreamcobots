@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Living, source-linked AI and technology radar for DreamCo Buddy, including vibe coding, AI agents, remote work and home-business opportunities.">
+  <title>AI & Technology Radar | DreamCo Buddy</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .radar-shell{max-width:1440px;margin:0 auto;padding:24px 18px 64px}
+    .radar-intro{max-width:940px;color:var(--text2);margin:8px 0 20px}
+    .radar-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:20px 0}
+    .radar-metric,.radar-panel,.radar-card{background:var(--card);border:1px solid var(--border2);border-radius:12px}
+    .radar-metric{padding:14px}.radar-metric strong{display:block;font-size:1.55rem}.radar-metric span,.radar-muted{color:var(--text2);font-size:.82rem}
+    .radar-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:20px 0}
+    .radar-links a{display:block;padding:14px;border:1px solid var(--border2);border-radius:10px;background:var(--card);color:var(--text);text-decoration:none}
+    .radar-links a:hover{border-color:var(--primary2)}
+    .radar-controls{display:grid;grid-template-columns:minmax(220px,1fr) minmax(180px,260px) minmax(160px,220px);gap:10px;margin:18px 0}
+    .radar-controls input,.radar-controls select{width:100%;min-height:44px;padding:10px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--bg2);color:var(--text)}
+    .radar-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+    .radar-card{padding:14px;display:flex;flex-direction:column;gap:9px}
+    .radar-card h3{font-size:1rem;margin:0}.radar-card p{font-size:.84rem;color:var(--text2);margin:0}
+    .radar-card a{overflow-wrap:anywhere;color:var(--primary2);font-size:.82rem}
+    .radar-pills{display:flex;flex-wrap:wrap;gap:6px}.radar-pill{font-size:.68rem;padding:3px 7px;border:1px solid var(--border2);border-radius:99px;color:var(--text2)}
+    .radar-status{margin:12px 0;color:var(--text2);font-size:.82rem}.radar-status.error{color:var(--red)}
+    .radar-panel{padding:16px;margin:18px 0}.radar-panel h2{margin:0 0 8px}
+    @media(max-width:760px){.radar-controls{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="radar-shell">
+    <p class="actions-kicker">DreamCo Buddy · Living Intelligence</p>
+    <h1>AI & Technology Radar</h1>
+    <p class="radar-intro">A continuously refreshed, source-linked discovery index. New models, tools, coding agents, frameworks, research, platforms, and work opportunities can be added without a fixed category or item ceiling. Every discovery stays a lead until independently checked.</p>
+    <div id="radar-metrics" class="radar-metrics" aria-live="polite"></div>
+    <section class="radar-panel">
+      <h2>Build, earn, and work with AI</h2>
+      <p class="radar-muted">Explore current pathways for human-led, AI-assisted, and software-enabled work. Listings and ideas are not income guarantees; validate demand, costs, skills, licensing, platform rules, and customer trust before acting.</p>
+      <div class="radar-links">
+        <a href="vibe-game-builder.html"><strong>Vibe coding & builders</strong><br><span class="radar-muted">Turn ideas into apps, websites, software, and games.</span></a>
+        <a href="opportunity-hub.html"><strong>Opportunity Hub</strong><br><span class="radar-muted">Explore business, job, grant, and resource pathways.</span></a>
+        <a href="independence-center.html"><strong>Home business & independence</strong><br><span class="radar-muted">Plan practical income and self-employment workflows.</span></a>
+        <a href="tasks.html"><strong>Human-AI task workspace</strong><br><span class="radar-muted">Route work to people, AI, or a supervised combination.</span></a>
+      </div>
+    </section>
+    <div class="radar-controls">
+      <input id="radar-search" type="search" placeholder="Search tools, models, jobs, research, or skills" aria-label="Search discoveries">
+      <select id="radar-lens" aria-label="Filter priority lens"><option value="all">All focus areas</option></select>
+      <select id="radar-kind" aria-label="Filter discovery type"><option value="all">All discovery types</option></select>
+    </div>
+    <p id="radar-status" class="radar-status">Loading the latest saved discovery index…</p>
+    <div id="radar-results" class="radar-grid"></div>
+    <section class="radar-panel">
+      <h2>Source health and freshness</h2>
+      <p class="radar-muted">A failed source refresh does not erase its last successful records. Stale records remain visible with their status, and every record retains its source and observation timestamps.</p>
+      <div id="radar-sources" class="radar-grid"></div>
+    </section>
+    <p class="radar-muted">Last saved refresh: <time id="radar-updated">not yet available</time>. This page does not make purchases, contact employers or customers, submit applications, or verify earnings.</p>
+  </main>
+  <script src="nav.js"></script>
+  <script src="technology-radar.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+{
+  "schema": "dreamco.buddy.markdown_implementation_gap_policy.v1",
+  "purpose": "Continuously map repository Markdown plans, bot specifications, and requirements to existing implementation, tests, workflows, configuration, and unresolved references without treating documentation as proof of capability.",
+  "inventory_mode": "all_tracked_markdown_files",
+  "taxonomy_mode": "open_vocabulary",
+  "count_policy": "all totals derived from current Git-tracked files and references",
+  "fixed_document_ceiling": null,
+  "fixed_claim_ceiling": null,
+  "fixed_reference_ceiling": null,
+  "preserve_all_documents": true,
+  "status_policy": {
+    "broken_path_references": "One or more referenced repository paths do not exist.",
+    "implementation_reference_missing": "Actionable documentation has no linked implementation path; manual code discovery is required.",
+    "test_reference_missing": "Implementation paths are referenced but no test path is referenced.",
+    "implementation_and_test_paths_referenced_not_verified": "Code and test paths are linked, but their execution and outcomes must be checked separately.",
+    "reference_only": "Document contains no detected actionable implementation claims."
+  },
+  "path_roots": {
+    "implementation": [
+      "tools/",
+      "framework/",
+      "buddy_os/",
+      "buddy/",
+      "server/",
+      "client/",
+      "shared/",
+      "bots/",
+      "App_bots/",
+      "Business_bots/",
+      "Marketing_bots/",
+      "Occupational_bots/",
+      "Real_Estate_bots/",
+      "Fiverr_bots/",
+      "website/",
+      "automation-tools/",
+      "dreamco_platform/"
+    ],
+    "tests": [
+      "tests/"
+    ],
+    "workflows": [
+      ".github/workflows/"
+    ],
+    "configuration": [
+      "config/"
+    ],
+    "documentation": [
+      "docs/"
+    ]
+  },
+  "excluded_path_segments": [
+    ".git",
+    "node_modules",
+    "dist",
+    "build",
+    ".venv",
+    "venv",
+    "__pycache__"
+  ],
+  "source_patterns": [
+    "inline_code_paths",
+    "markdown_link_destinations"
+  ],
+  "actionable_language": [
+    "must",
+    "should",
+    "shall",
+    "needs to",
+    "required",
+    "implement",
+    "build",
+    "create",
+    "support",
+    "enable",
+    "provide",
+    "automate",
+    "verify",
+    "test",
+    "deploy"
+  ],
+  "truth_rules": [
+    "A Markdown statement is a requirement or proposal, not proof of implementation.",
+    "An existing code path is not proof that the code works.",
+    "A linked test path is not proof that the test passed.",
+    "Only run-specific CI, benchmark, regression, and production evidence can promote lifecycle status.",
+    "Do not delete or silently rewrite old documents; supersede them with dated decisions and traceable mappings."
+  ],
+  "inventory_count_units": [
+    "bot",
+    "bots",
+    "division",
+    "divisions",
+    "category",
+    "categories",
+    "system",
+    "systems",
+    "model",
+    "models",
+    "tool",
+    "tools",
+    "resource",
+    "resources",
+    "source",
+    "sources",
+    "task",
+    "tasks",
+    "skill",
+    "skills",
+    "capability",
+    "capabilities",
+    "plugin",
+    "plugins",
+    "agent",
+    "agents",
+    "provider",
+    "providers",
+    "workflow",
+    "workflows",
+    "page",
+    "pages"
+  ],
+  "excluded_paths": [
+    "reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md"
+  ]
+}

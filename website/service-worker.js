@@ -1,5 +1,5 @@
-const SHELL_CACHE = 'buddy-shell-v61';
-const RUNTIME_CACHE = 'buddy-runtime-v61';
+const SHELL_CACHE = 'buddy-shell-v63';
+const RUNTIME_CACHE = 'buddy-runtime-v63';
 const APP_SHELL = [
   './',
   './buddy.html',
@@ -80,6 +80,13 @@ const APP_SHELL = [
   './buddy-invention-lab.js',
   './data/buddy-expert-mode.js',
   './data/buddy-resource-connection-catalog.json',
+  './technology-radar.html',
+  './technology-radar.js',
+  './data/buddy-technology-radar.json',
+  './data/technology-discovery-policy.json',
+  './markdown-gap-audit.html',
+  './markdown-gap-audit.js',
+  './data/markdown-implementation-gap-audit.json',
   './data/buddy-connection-catalog.json',
   './data/bot-fleet-catalog.json',
   './data/command-center/divisions.json',

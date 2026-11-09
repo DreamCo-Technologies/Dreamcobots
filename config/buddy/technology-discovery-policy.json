@@ -1,0 +1,478 @@
+{
+  "schema": "dreamco.buddy.technology_discovery_policy.v1",
+  "purpose": "Continuously discover, timestamp, compare, and preserve AI and broader technology changes, with priority attention to vibe coding, AI-assisted software creation, small/home businesses, remote work, freelancing, creator income, digital products, and human-AI work.",
+  "catalog_policy": {
+    "mode": "append_only_versioned_observations",
+    "taxonomy_mode": "open_vocabulary",
+    "source_registry_mode": "extensible_owner_reviewed",
+    "category_counts": "computed_from_current_records",
+    "item_counts": "computed_from_current_records",
+    "fixed_category_ceiling": null,
+    "fixed_item_ceiling": null,
+    "fixed_provider_ranking": false,
+    "never_delete_historical_observations": true,
+    "mark_missing_records_stale_only_after_successful_source_refresh": true,
+    "preserve_first_seen_last_seen_and_source_provenance": true,
+    "new_categories_may_be_added_without_schema_rewrite": true,
+    "new_sources_may_be_added_without_code_changes": true
+  },
+  "refresh_policy": {
+    "cadence": "every_6_hours_and_manual_dispatch",
+    "request_timeout_seconds": 25,
+    "user_agent": "DreamCo-Buddy-Technology-Radar/1.0",
+    "maximum_response_bytes": 12000000,
+    "preserve_last_good_data_on_source_failure": true,
+    "no_paid_api_calls": true,
+    "no_account_creation_or_sign_in": true,
+    "no_automated_purchases_or_outreach": true,
+    "max_rss_age_days": 365
+  },
+  "priority_lenses": [
+    {
+      "id": "vibe_coding",
+      "label": "Vibe coding and natural-language software creation",
+      "terms": [
+        "vibe coding",
+        "prompt to app",
+        "prompt-to-app",
+        "AI app builder",
+        "AI website builder",
+        "AI coding",
+        "coding agent",
+        "agentic coding",
+        "code generation"
+      ]
+    },
+    {
+      "id": "coding_agents",
+      "label": "Coding agents and software engineering",
+      "terms": [
+        "coding agent",
+        "code review",
+        "debugging",
+        "software engineering agent",
+        "pull request",
+        "repository agent",
+        "IDE agent"
+      ]
+    },
+    {
+      "id": "home_business",
+      "label": "Home businesses and solo entrepreneurship",
+      "terms": [
+        "home business",
+        "small business",
+        "solopreneur",
+        "solo founder",
+        "side business",
+        "side hustle",
+        "micro business",
+        "entrepreneur"
+      ]
+    },
+    {
+      "id": "remote_work",
+      "label": "Remote work and work-from-home opportunities",
+      "terms": [
+        "remote work",
+        "work from home",
+        "work-from-home",
+        "remote job",
+        "distributed work",
+        "virtual assistant"
+      ]
+    },
+    {
+      "id": "freelancing",
+      "label": "Freelancing and service work",
+      "terms": [
+        "freelance",
+        "freelancer",
+        "consulting",
+        "contract work",
+        "service business",
+        "client work"
+      ]
+    },
+    {
+      "id": "creator_economy",
+      "label": "Creator economy and digital products",
+      "terms": [
+        "creator economy",
+        "digital products",
+        "newsletter",
+        "video creator",
+        "content creator",
+        "online course",
+        "template shop"
+      ]
+    },
+    {
+      "id": "ecommerce",
+      "label": "E-commerce and online selling",
+      "terms": [
+        "ecommerce",
+        "e-commerce",
+        "online store",
+        "marketplace seller",
+        "print on demand",
+        "dropshipping",
+        "shopify"
+      ]
+    },
+    {
+      "id": "sales_marketing",
+      "label": "Sales, marketing, and customer acquisition",
+      "terms": [
+        "lead generation",
+        "sales automation",
+        "marketing automation",
+        "customer acquisition",
+        "SEO",
+        "advertising",
+        "CRM"
+      ]
+    },
+    {
+      "id": "ai_agents",
+      "label": "AI agents, orchestration, and computer use",
+      "terms": [
+        "AI agent",
+        "agent framework",
+        "multi-agent",
+        "computer use",
+        "browser automation",
+        "MCP",
+        "workflow automation"
+      ]
+    },
+    {
+      "id": "models_infrastructure",
+      "label": "Models, datasets, compute, and infrastructure",
+      "terms": [
+        "open model",
+        "foundation model",
+        "LLM",
+        "inference",
+        "GPU",
+        "dataset",
+        "benchmark",
+        "model release"
+      ]
+    },
+    {
+      "id": "robotics_embodied",
+      "label": "Robotics and embodied AI",
+      "terms": [
+        "robotics",
+        "humanoid",
+        "embodied AI",
+        "computer vision",
+        "human robot interaction",
+        "robot learning"
+      ]
+    },
+    {
+      "id": "security_governance",
+      "label": "Security, privacy, licensing, and governance",
+      "terms": [
+        "AI safety",
+        "cybersecurity",
+        "prompt injection",
+        "privacy",
+        "license",
+        "copyright",
+        "regulation",
+        "governance"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "openai-news",
+      "name": "OpenAI News",
+      "kind": "rss",
+      "url": "https://openai.com/news/rss.xml",
+      "trust_tier": "primary",
+      "record_kind": "announcement"
+    },
+    {
+      "id": "deepmind-blog",
+      "name": "Google DeepMind Blog",
+      "kind": "rss",
+      "url": "https://deepmind.google/blog/rss.xml",
+      "trust_tier": "primary",
+      "record_kind": "research_or_announcement"
+    },
+    {
+      "id": "google-ai-blog",
+      "name": "Google AI Blog",
+      "kind": "rss",
+      "url": "https://blog.google/technology/ai/rss/",
+      "trust_tier": "primary",
+      "record_kind": "announcement"
+    },
+    {
+      "id": "huggingface-blog",
+      "name": "Hugging Face Blog",
+      "kind": "rss",
+      "url": "https://huggingface.co/blog/feed.xml",
+      "trust_tier": "primary",
+      "record_kind": "model_or_tool_announcement"
+    },
+    {
+      "id": "nvidia-blog",
+      "name": "NVIDIA Blog",
+      "kind": "rss",
+      "url": "https://blogs.nvidia.com/feed/",
+      "trust_tier": "primary",
+      "record_kind": "infrastructure_or_research"
+    },
+    {
+      "id": "aws-machine-learning",
+      "name": "AWS Machine Learning Blog",
+      "kind": "rss",
+      "url": "https://aws.amazon.com/blogs/machine-learning/feed/",
+      "trust_tier": "primary",
+      "record_kind": "engineering_or_product"
+    },
+    {
+      "id": "github-changelog",
+      "name": "GitHub Changelog",
+      "kind": "rss",
+      "url": "https://github.blog/changelog/feed/",
+      "trust_tier": "primary",
+      "record_kind": "developer_platform_update"
+    },
+    {
+      "id": "arxiv-ai",
+      "name": "arXiv cs.AI",
+      "kind": "rss",
+      "url": "https://rss.arxiv.org/rss/cs.AI",
+      "trust_tier": "research",
+      "record_kind": "research_paper"
+    },
+    {
+      "id": "arxiv-machine-learning",
+      "name": "arXiv cs.LG",
+      "kind": "rss",
+      "url": "https://rss.arxiv.org/rss/cs.LG",
+      "trust_tier": "research",
+      "record_kind": "research_paper"
+    },
+    {
+      "id": "arxiv-software-engineering",
+      "name": "arXiv cs.SE",
+      "kind": "rss",
+      "url": "https://rss.arxiv.org/rss/cs.SE",
+      "trust_tier": "research",
+      "record_kind": "research_paper"
+    },
+    {
+      "id": "arxiv-human-computer-interaction",
+      "name": "arXiv cs.HC",
+      "kind": "rss",
+      "url": "https://rss.arxiv.org/rss/cs.HC",
+      "trust_tier": "research",
+      "record_kind": "research_paper"
+    },
+    {
+      "id": "techcrunch-ai",
+      "name": "TechCrunch Artificial Intelligence",
+      "kind": "rss",
+      "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+      "trust_tier": "news",
+      "record_kind": "industry_news"
+    },
+    {
+      "id": "the-verge-ai",
+      "name": "The Verge AI",
+      "kind": "rss",
+      "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+      "trust_tier": "news",
+      "record_kind": "industry_news"
+    },
+    {
+      "id": "hn-vibe-coding",
+      "name": "Hacker News: vibe coding signals",
+      "kind": "rss",
+      "url": "https://hnrss.org/newest?q=vibe%20coding",
+      "trust_tier": "community",
+      "record_kind": "community_signal"
+    },
+    {
+      "id": "hn-ai-business",
+      "name": "Hacker News: AI and small-business signals",
+      "kind": "rss",
+      "url": "https://hnrss.org/newest?q=AI%20small%20business%20automation",
+      "trust_tier": "community",
+      "record_kind": "community_signal"
+    },
+    {
+      "id": "github-ai-agents",
+      "name": "GitHub repository search: AI agents",
+      "kind": "json_collection",
+      "url": "https://api.github.com/search/repositories?q=topic%3Aai-agent&sort=updated&order=desc&per_page=100",
+      "collection_path": "items",
+      "title_field": "full_name",
+      "url_field": "html_url",
+      "summary_field": "description",
+      "date_field": "updated_at",
+      "id_field": "id",
+      "trust_tier": "community_code",
+      "record_kind": "repository"
+    },
+    {
+      "id": "github-vibe-coding",
+      "name": "GitHub repository search: vibe coding",
+      "kind": "json_collection",
+      "url": "https://api.github.com/search/repositories?q=vibe-coding&sort=updated&order=desc&per_page=100",
+      "collection_path": "items",
+      "title_field": "full_name",
+      "url_field": "html_url",
+      "summary_field": "description",
+      "date_field": "updated_at",
+      "id_field": "id",
+      "trust_tier": "community_code",
+      "record_kind": "repository"
+    },
+    {
+      "id": "huggingface-models",
+      "name": "Hugging Face Models API",
+      "kind": "json_collection",
+      "url": "https://huggingface.co/api/models?sort=lastModified&direction=-1&limit=100",
+      "title_field": "id",
+      "url_template": "https://huggingface.co/{id}",
+      "summary_field": "pipeline_tag",
+      "date_field": "lastModified",
+      "id_field": "id",
+      "trust_tier": "catalog",
+      "record_kind": "model"
+    },
+    {
+      "id": "huggingface-spaces",
+      "name": "Hugging Face Spaces API",
+      "kind": "json_collection",
+      "url": "https://huggingface.co/api/spaces?sort=lastModified&direction=-1&limit=100",
+      "title_field": "id",
+      "url_template": "https://huggingface.co/spaces/{id}",
+      "summary_field": "sdk",
+      "date_field": "lastModified",
+      "id_field": "id",
+      "trust_tier": "catalog",
+      "record_kind": "demo_or_app"
+    },
+    {
+      "id": "openrouter-models",
+      "name": "OpenRouter model catalog API",
+      "kind": "json_collection",
+      "url": "https://openrouter.ai/api/v1/models",
+      "collection_path": "data",
+      "title_field": "name",
+      "url_template": "https://openrouter.ai/{id}",
+      "summary_field": "description",
+      "date_field": "created",
+      "id_field": "id",
+      "trust_tier": "aggregator",
+      "record_kind": "model_catalog_record"
+    },
+    {
+      "id": "remoteok-jobs",
+      "name": "Remote OK public job feed",
+      "kind": "json_collection",
+      "url": "https://remoteok.com/api",
+      "title_field": "position",
+      "url_field": "url",
+      "summary_field": "description",
+      "date_field": "date",
+      "id_field": "id",
+      "trust_tier": "marketplace",
+      "record_kind": "remote_job"
+    },
+    {
+      "id": "remotive-jobs",
+      "name": "Remotive remote jobs API",
+      "kind": "json_collection",
+      "url": "https://remotive.com/api/remote-jobs?limit=100",
+      "collection_path": "jobs",
+      "title_field": "title",
+      "url_field": "url",
+      "summary_field": "description",
+      "date_field": "publication_date",
+      "id_field": "id",
+      "trust_tier": "marketplace",
+      "record_kind": "remote_job"
+    },
+    {
+      "id": "producthunt-vibe-coding",
+      "name": "Product Hunt Vibe Coding directory",
+      "kind": "html_page",
+      "url": "https://www.producthunt.com/categories/vibe-coding?order=recent_launches",
+      "trust_tier": "marketplace_catalog",
+      "record_kind": "tool_catalog",
+      "description": "Current Product Hunt directory for vibe-coding tools and recent launches. Listings, reviews, and launch claims require independent verification."
+    },
+    {
+      "id": "producthunt-ai-coding-agents",
+      "name": "Product Hunt AI Coding Agents directory",
+      "kind": "html_page",
+      "url": "https://www.producthunt.com/categories/ai-coding-agents?order=recent_launches",
+      "trust_tier": "marketplace_catalog",
+      "record_kind": "tool_catalog",
+      "description": "Current Product Hunt directory for AI coding agents. Community ratings and listings are discovery signals, not proof of capability."
+    },
+    {
+      "id": "shipstack-vibe-stack",
+      "name": "ShipStack AI development stack directory",
+      "kind": "html_page",
+      "url": "https://shipstack.tools/",
+      "trust_tier": "industry_catalog",
+      "record_kind": "tool_catalog",
+      "description": "Curated AI developer stack and release notes. Use as a discovery index; verify product features and prices with vendors."
+    },
+    {
+      "id": "small-business-ai-cases",
+      "name": "The AI Small Business case directory",
+      "kind": "html_page",
+      "url": "https://theaismallbusiness.com/small-businesses-using-ai-agents/",
+      "trust_tier": "case_study_directory",
+      "record_kind": "small_business_case_directory",
+      "description": "Third-party directory of reported small-business AI use cases, including operations, marketing, sales follow-up, and customer service. Case claims are not independently audited by DreamCo."
+    },
+    {
+      "id": "getaiwork-remote-ai-jobs",
+      "name": "getAIwork AI job listings and market snapshot",
+      "kind": "html_page",
+      "url": "https://getaiwork.com/articles/ai-job-market-statistics/",
+      "trust_tier": "job_marketplace",
+      "record_kind": "remote_work_directory",
+      "description": "Third-party AI work and remote-job market snapshot. Listings are leads only; verify employers, terms, location, and compensation before applying."
+    },
+    {
+      "id": "agent-economy-frameworks",
+      "name": "The Agent Economy open-source framework directory",
+      "kind": "html_page",
+      "url": "https://theagenteconomy.si/best/open-source-agent-frameworks",
+      "trust_tier": "community_directory",
+      "record_kind": "agent_framework_directory",
+      "description": "Community directory of open-source agent frameworks with links to project documentation. Verify maintenance, licenses, and terms at the official project."
+    },
+    {
+      "id": "langfuse-agent-framework-comparison",
+      "name": "Langfuse open-source agent framework comparison",
+      "kind": "html_page",
+      "url": "https://langfuse.com/blog/2025-03-19-ai-agent-comparison",
+      "trust_tier": "industry_analysis",
+      "record_kind": "agent_framework_comparison",
+      "description": "Industry comparison of agent frameworks and observability practices. Use for discovery; verify current features against official documentation."
+    }
+  ],
+  "truth_rules": [
+    "A discovery is a lead, not an endorsement, verified integration, job offer, income claim, or proof of quality.",
+    "Marketplace job listings are unverified leads; check employer, listing freshness, location, eligibility, and scam signals before recommending.",
+    "AI income ideas require customer demand, delivery capability, costs, platform rules, legal obligations, and human review; never promise earnings.",
+    "Only official provider documentation and reproducible tests can establish product capabilities, access, pricing, terms, or integration status.",
+    "Community and news signals must be corroborated before they change production routing or user-facing factual claims.",
+    "No fixed item count, category count, provider count, tool count, or permanent best ranking is an acceptance criterion."
+  ]
+}
