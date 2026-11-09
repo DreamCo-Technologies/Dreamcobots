@@ -270,6 +270,15 @@ def validate_catalog(catalog: dict[str, Any]) -> None:
     ids = [item.get("id") for item in records]
     if any(not item for item in ids) or len(ids) != len(set(ids)):
         raise ValueError("record IDs must be present and unique")
+    summary = catalog.get("summary", {})
+    if summary.get("records_total") != len(records):
+        raise ValueError("summary.records_total does not match the current record list")
+    if summary.get("sources_total") != len(catalog.get("source_runs", [])):
+        raise ValueError("summary.sources_total does not match source run records")
+    if summary.get("sources_succeeded") != sum(run.get("status") == "success" for run in catalog.get("source_runs", [])):
+        raise ValueError("summary.sources_succeeded is stale")
+    if summary.get("sources_failed") != sum(run.get("status") == "failed" for run in catalog.get("source_runs", [])):
+        raise ValueError("summary.sources_failed is stale")
     for item in records:
         if item.get("evidence_class") != "discovery_lead_not_verified":
             raise ValueError(f"unsupported evidence class for {item.get('id')}")
