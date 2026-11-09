@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = ROOT / "config/buddy/technology-discovery-policy.json"
 OUTPUT_PATH = ROOT / "config/generated/buddy-technology-radar.json"
 WEB_OUTPUT_PATH = ROOT / "website/data/buddy-technology-radar.json"
+POLICY_MIRROR_PATH = ROOT / "website/data/technology-discovery-policy.json"
 
 
 def now_iso() -> str:
@@ -318,6 +319,8 @@ def main() -> int:
         mirror = json.loads(WEB_OUTPUT_PATH.read_text(encoding="utf-8"))
         if catalog != mirror:
             raise SystemExit("technology radar Pages mirror is stale")
+        if not POLICY_MIRROR_PATH.exists() or json.loads(POLICY_MIRROR_PATH.read_text(encoding="utf-8")) != policy:
+            raise SystemExit("technology discovery policy Pages mirror is stale")
         validate_catalog(catalog)
     print(json.dumps({"ok": True, **catalog["summary"]}, indent=2))
     return 0
