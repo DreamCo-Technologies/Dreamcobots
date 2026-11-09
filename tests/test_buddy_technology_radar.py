@@ -2,12 +2,19 @@
 import json
 import unittest
 from pathlib import Path
-from tools.refresh_buddy_technology_radar import extract_source, merge_catalog, normalize_item, parse_feed, validate_catalog
+from tools.refresh_buddy_technology_radar import extract_source, merge_catalog, normalize_item, parse_feed, validate_catalog, validate_policy
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = json.loads((ROOT / "config/buddy/technology-discovery-policy.json").read_text(encoding="utf-8"))
 
 class BuddyTechnologyRadarTests(unittest.TestCase):
+    def test_source_registry_and_seed_catalog_are_valid(self):
+        validate_policy(POLICY)
+        catalog = json.loads((ROOT / "config/generated/buddy-technology-radar.json").read_text(encoding="utf-8"))
+        validate_catalog(catalog)
+        self.assertEqual(catalog["summary"]["sources_pending"], len(catalog["source_runs"]))
+        self.assertTrue(all(run["status"] in {"seeded_from_web_search", "not_yet_checked"} for run in catalog["source_runs"]))
+
     def test_feed_parser_accepts_rss_and_atom(self):
         rss = b"""<rss><channel><item><title>New AI coding agent</title><link>https://example.com/a</link><description>Build software with agents</description><pubDate>Sun, 08 Nov 2026 12:00:00 GMT</pubDate></item></channel></rss>"""
         atom = b"""<feed xmlns='http://www.w3.org/2005/Atom'><entry><title>Remote work AI</title><link href='https://example.com/b'/><summary>Work from home with AI</summary><updated>2026-11-08T12:00:00Z</updated></entry></feed>"""
