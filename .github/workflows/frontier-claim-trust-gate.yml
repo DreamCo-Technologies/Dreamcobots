@@ -56,7 +56,7 @@ jobs:
           python-version: "3.13"
       - name: Restore latest successful 24-hour sandbox evidence
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           run_id="$(gh run list --workflow buddy-24h-sandbox-soak.yml --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
@@ -109,7 +109,7 @@ jobs:
           python-version: "3.13"
       - name: Restore latest successful 24-hour sandbox evidence
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           run_id="$(gh run list --workflow buddy-24h-sandbox-soak.yml --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
