@@ -43,7 +43,7 @@ Do not collapse distinct connection states. Preserve the registry's meanings: `c
 
 ## 2. Study-resource category coverage
 
-The inspected study-resource set contains 94 rows and the following 70 distinct category labels. Keep the original labels in source data; normalize only in derived indexes so no category is silently lost.
+The inspected study-resource set contains 94 rows and the following 71 distinct category labels. Keep the original labels in source data; normalize only in derived indexes so no category is silently lost.
 
 - AI
 - AI education
@@ -210,7 +210,7 @@ A future automated validator should fail or warn when:
 Suggested initial validation targets (to be implemented and tested separately):
 - all 23 resource-registry IDs represented;
 - all 12 registry categories represented;
-- all 94 study-resource rows represented, preserving all 70 distinct labels;
+- all 94 study-resource rows represented, preserving all 71 distinct labels;
 - all 20 AI model categories represented;
 - every new research item tagged to at least one category and one Buddy capability or explicit “monitor only” disposition.
 
