@@ -47,6 +47,10 @@ def should_check_page_controls(rel: str, html: str) -> bool:
     """Only real HTML pages inside the deployed website need shared site controls."""
     return rel.startswith("website/") and not is_redirect_stub(html)
 
+def is_dedicated_generated_json(rel: str) -> bool:
+    """The Pages connection index has its own deterministic generator/check."""
+    return rel == "website/data/pages-connection-index.json"
+
 def github_open_prs() -> dict:
     if not TOKEN or not REPO or "/" not in REPO:
         return {"available": False, "reason": "GitHub token/repository context unavailable"}
@@ -107,6 +111,9 @@ def main() -> int:
             add("warning", "file_unreadable", rel, str(exc))
             continue
         if suffix == ".json":
+            if is_dedicated_generated_json(rel):
+                # The dedicated Pages generator gate validates this derived artifact.
+                continue
             counts["json_files"] += 1
             try:
                 json.loads(raw.decode("utf-8"))
