@@ -165,7 +165,7 @@ def main() -> int:
 
     print(
         "Buddy category-system registry: PASS "
-        f"({expected_counts['total_category_systems']} systems; "
+        f"({expected_counts['total_category_systems']} active systems; {expected_counts['legacy_model_categories']} legacy model categories; "
         f"{expected_counts['registry_categories']} registry, "
         f"{expected_counts['study_categories']} study, "
         f"{expected_counts['model_categories']} model, "
