@@ -1,8 +1,8 @@
-# DreamCo Massive Vibe-Coding Category Map
+# DreamCo Living Vibe-Coding Capability Map
 
-This is the human-readable companion to `config/vibe-coding/capability-taxonomy.json`. Buddy should route user intent into one or more categories, then cross-combine categories into an executable project/company plan.
+This is a human-readable snapshot of the current seed labels in `config/vibe-coding/capability-taxonomy.json`, not a complete or permanent list. The canonical taxonomy is open-vocabulary: new categories, tools, workflows, products, industries, and work types must be added when discovered. Counts and ordering are computed from the current registry and must never be treated as architectural limits. Buddy routes user intent into one or more categories, then cross-combines them into an executable project/company plan.
 
-## 1–10: Creation, software and media
+## Creation, software and media
 
 1. **Games** — 2D, 3D, AAA-style, open-world, MMORPG, RPG, strategy, RTS, turn-based, FPS, TPS, racing, fighting, sports, simulation, survival, horror, puzzle, platformer, roguelike, roguelite, tower defense, card, board, casino-style simulation, educational, multiplayer, co-op, competitive, VR, AR, mixed reality, mobile, browser, console, PC, cloud, game engines, editors, level editors, quest systems, NPC systems, dialogue, inventory, economy, crafting, procedural/AI worlds, physics, character controllers, multiplayer infrastructure, matchmaking, leaderboards, achievements, analytics, modding.
 2. **Software** — desktop, CLI, developer tools, IDEs, code editors, compilers, interpreters, debuggers, build systems, package managers, OS utilities, file managers, backup, productivity, business, accounting, CRM, ERP, HR, project management, time tracking, scheduling, collaboration, knowledge management, search, recommendation, data analysis, scientific, engineering, CAD, simulation, security, monitoring, automation, workflow engines, API platforms, SaaS, enterprise, AI, agents, robotics, SDKs, libraries, frameworks, plugins, extensions, browser extensions.
@@ -15,7 +15,7 @@ This is the human-readable companion to `config/vibe-coding/capability-taxonomy.
 9. **Advertising** — commercials, TV, YouTube, TikTok, Instagram, Facebook, Google, display, banners, search, video, audio, podcast, influencer campaigns, product launches, brand campaigns, direct response, retargeting, email, SMS, promotional video, product photography, ad creatives, landing pages, funnels, lead magnets, marketing automation, A/B testing, analytics.
 10. **Social Media** — social networks, communities, forums, messaging, creator platforms, profiles, follows, likes, comments, shares, reposts, stories, Reels, Shorts, live streaming, creator dashboards, moderation, recommendation feeds, trending, hashtags, notifications, DMs, group chats, fan clubs, creator marketplaces.
 
-## 11–20: Publishing, design, hardware and business
+## Publishing, design, hardware and business
 
 11. **Writing & Publishing** — blogs, articles, books, e-books, novels, short stories, poetry, scripts, screenplays, newsletters, magazines, newspapers, manuals, documentation, technical writing, copywriting, product descriptions, sales pages, press releases, reports, whitepapers, research papers, case studies, resumes, cover letters, proposals, business plans, grant applications.
 12. **Design** — logos, brand identities, UI/UX, web/app/game/product/industrial design, packaging, posters, flyers, brochures, business cards, presentations, infographics, icons, illustrations, 3D models, character/concept art, architecture visualization, interior, fashion, jewelry, furniture.
@@ -28,7 +28,7 @@ This is the human-readable companion to `config/vibe-coding/capability-taxonomy.
 19. **Engineering** — mechanical, civil, electrical, chemical, aerospace, automotive, robotics, manufacturing, structural analysis, CAD, CAM, CAE, FEM, CFD, thermal analysis, materials, digital twins, engineering simulation.
 20. **Business** — CRM, ERP, accounting, invoicing, payroll, HR, recruiting, scheduling, inventory, procurement, sales, marketing, support, project management, operations, analytics, BI, forecasting, automation, document management.
 
-## 21–30: Finance, commerce, science, geography and audio
+## Finance, commerce, science, geography and audio
 
 21. **Finance / FinTech** — budgeting, expenses, accounting, invoicing, payment interfaces, subscription billing, dashboards, investment research, portfolio tracking, financial education, tax organization, payroll, lending workflows, insurance workflows, fraud detection, risk analysis, financial simulations.
 22. **E-Commerce** — stores, marketplaces, product catalogs, carts, checkout, subscriptions, digital products, print-on-demand, dropshipping, inventory, orders, shipping, returns, loyalty, reviews, recommendations, seller dashboards.
