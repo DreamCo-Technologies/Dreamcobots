@@ -20,5 +20,14 @@ class BuddyCategorySystemRegistryTests(unittest.TestCase):
         self.assertIn("403 study", result.stdout)
         self.assertIn("576 study records", result.stdout)
 
+    def test_category_systems_dashboard_is_wired(self):
+        page = (ROOT / "website/category-systems.html").read_text(encoding="utf-8")
+        script = (ROOT / "website/category-systems.js").read_text(encoding="utf-8")
+        nav = (ROOT / "website/nav.js").read_text(encoding="utf-8")
+        self.assertIn("category-systems.js", page)
+        self.assertIn("data/category-system-registry.json", script)
+        self.assertIn("category-systems.html", nav)
+        self.assertIn("details class=\\\"cs-card\\\"", script)
+
 if __name__ == "__main__":
     unittest.main()
