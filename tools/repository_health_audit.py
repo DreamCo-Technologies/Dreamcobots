@@ -43,6 +43,10 @@ def is_redirect_stub(html: str) -> bool:
         or re.search(r"window\.location\.replace\s*\(", html, re.I)
     )
 
+def should_check_page_controls(rel: str, html: str) -> bool:
+    """Only real HTML pages inside the deployed website need shared site controls."""
+    return rel.startswith("website/") and not is_redirect_stub(html)
+
 def github_open_prs() -> dict:
     if not TOKEN or not REPO or "/" not in REPO:
         return {"available": False, "reason": "GitHub token/repository context unavailable"}
@@ -118,7 +122,7 @@ def main() -> int:
             counts["html_files"] += 1
             html = raw.decode("utf-8", errors="replace")
             # Match the repository's shared-controls contract.
-            if not is_redirect_stub(html) and not re.search(r'<script[^>]+src=["\'][^"\']*(?:nav|desk-chrome|repository-actions)\.js(?:[?][^"\']*)?["\']', html, re.I):
+            if should_check_page_controls(rel, html) and not re.search(r'<script[^>]+src=["\'][^"\']*(?:nav|desk-chrome|repository-actions)\.js(?:[?][^"\']*)?["\']', html, re.I):
                 add("critical", "page_controls_disconnected", rel,
                     "HTML page does not load nav.js, desk-chrome.js, or repository-actions.js.")
         if rel.startswith(".github/workflows/") and suffix in {".yml", ".yaml"}:
