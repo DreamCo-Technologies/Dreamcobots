@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="DreamCo Buddy's individually governed category systems, evidence status, and source traceability.">
+  <title>Buddy Category Systems | DreamCo</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .cs-shell{max-width:1440px;margin:0 auto;padding:24px 18px 64px}
+    .cs-intro{max-width:900px;color:var(--text2);margin:8px 0 22px}
+    .cs-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:20px 0}
+    .cs-metric,.cs-group,.cs-card{background:var(--card);border:1px solid var(--border2);border-radius:12px}
+    .cs-metric{padding:14px}.cs-metric strong{display:block;font-size:1.55rem}.cs-metric span,.cs-muted{color:var(--text2);font-size:.82rem}
+    .cs-controls{display:grid;grid-template-columns:minmax(220px,1fr) 240px;gap:10px;margin:18px 0}
+    .cs-controls input,.cs-controls select{width:100%;min-height:44px;padding:10px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--bg2);color:var(--text)}
+    .cs-group{padding:16px;margin:18px 0}.cs-group h2{margin-bottom:4px}.cs-group-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+    .cs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:10px}
+    .cs-card{padding:12px}.cs-card summary{cursor:pointer;list-style:none}.cs-card summary::-webkit-details-marker{display:none}
+    .cs-card summary:after{content:'＋';float:right;color:var(--text2)}.cs-card[open] summary:after{content:'−'}
+    .cs-id{display:block;font: .72rem var(--mono);color:var(--text2);overflow-wrap:anywhere;margin-top:5px}
+    .cs-pills{display:flex;gap:6px;flex-wrap:wrap;margin:9px 0}.cs-pill{font-size:.68rem;padding:3px 7px;border:1px solid var(--border2);border-radius:99px;color:var(--text2)}
+    .cs-detail{border-top:1px solid var(--border);margin-top:12px;padding-top:10px}.cs-detail h3{font-size:.8rem;margin:12px 0 4px}.cs-detail p,.cs-detail li{font-size:.8rem;color:var(--text2);overflow-wrap:anywhere}.cs-detail ul{padding-left:18px}
+    .cs-source a{color:var(--primary2);font-size:.78rem;overflow-wrap:anywhere}
+    .cs-status{margin:12px 0;color:var(--text2);font-size:.82rem}.cs-status.error{color:var(--red)}
+    @media(max-width:760px){.cs-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.cs-controls{grid-template-columns:1fr}.cs-group-head{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="cs-shell">
+    <p class="actions-kicker">DreamCo Buddy · Governance and Traceability</p>
+    <h1>Category Systems</h1>
+    <p class="cs-intro">Every source category has its own separately identified subsystem record, contract, lifecycle status, and evidence boundary. Shared infrastructure does not merge category ownership. Catalogued does not mean implemented or production verified.</p>
+    <div id="cs-metrics" class="cs-metrics" aria-live="polite"></div>
+    <div class="cs-controls">
+      <input id="cs-search" type="search" placeholder="Search category, subsystem ID, source, or mission" aria-label="Search category systems">
+      <select id="cs-group-filter" aria-label="Filter category group">
+        <option value="all">All category groups</option>
+        <option value="registry">Resource registry</option>
+        <option value="study">Study resources</option>
+        <option value="model">AI model categories</option>
+        <option value="division">Division systems</option>
+      </select>
+    </div>
+    <p id="cs-status" class="cs-status">Loading category system registry…</p>
+    <div id="cs-groups"></div>
+  </main>
+  <script src="nav.js"></script>
+  <script src="category-systems.js" defer></script>
+</body>
+</html>
