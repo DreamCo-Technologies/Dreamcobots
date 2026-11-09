@@ -2,7 +2,7 @@
 import json
 import unittest
 from pathlib import Path
-from tools.refresh_buddy_technology_radar import merge_catalog, normalize_item, parse_feed, validate_catalog
+from tools.refresh_buddy_technology_radar import extract_source, merge_catalog, normalize_item, parse_feed, validate_catalog
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = json.loads((ROOT / "config/buddy/technology-discovery-policy.json").read_text(encoding="utf-8"))
@@ -13,6 +13,13 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
         atom = b"""<feed xmlns='http://www.w3.org/2005/Atom'><entry><title>Remote work AI</title><link href='https://example.com/b'/><summary>Work from home with AI</summary><updated>2026-11-08T12:00:00Z</updated></entry></feed>"""
         self.assertEqual(parse_feed(rss)[0]["title"], "New AI coding agent")
         self.assertEqual(parse_feed(atom)[0]["url"], "https://example.com/b")
+
+    def test_html_directory_sources_extract_title_and_description(self):
+        source = {"id": "page", "name": "Example directory", "kind": "html_page", "url": "https://example.com", "record_kind": "tool_catalog"}
+        content = b"<html><head><title>AI tools directory</title><meta name='description' content='Vibe coding and home business tools'></head></html>"
+        rows = extract_source(source, content, "2026-11-08T00:00:00Z", POLICY)
+        self.assertEqual(rows[0]["title"], "AI tools directory")
+        self.assertIn("Vibe coding", rows[0]["summary"])
 
     def test_priority_lenses_are_discovered_without_fixed_category_count(self):
         source = {"id": "fixture", "name": "Fixture", "url": "https://example.com/feed", "trust_tier": "test"}
