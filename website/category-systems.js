@@ -76,6 +76,7 @@
         ['Study categories', counts.study_categories],
         ['Registry categories', counts.registry_categories],
         ['Model categories', counts.model_categories],
+        ['Legacy model categories', counts.legacy_model_categories],
         ['Division systems', counts.division_systems],
         ['Additional taxonomies', (taxonomy.counts || {}).total],
         ['Task & Markdown taxonomies', (taskTaxonomy.counts || {}).total]
