@@ -109,10 +109,11 @@ def local_branches() -> list[dict]:
 def local_ahead_behind(name: str) -> tuple[int, int]:
     proc = git(["rev-list", "--left-right", "--count", f"origin/{DEFAULT}...origin/{name}"], check=False)
     if proc.returncode != 0:
-        return 0, 0
+        detail = proc.stderr.strip() or "git rev-list failed"
+        raise RuntimeError(detail)
     bits = proc.stdout.strip().split()
     if len(bits) != 2:
-        return 0, 0
+        raise RuntimeError("git rev-list returned an invalid ahead/behind result")
     behind, ahead = int(bits[0]), int(bits[1])
     return ahead, behind
 
@@ -122,11 +123,16 @@ def local_missing(name: str) -> list[str]:
         ["diff", "--name-only", "--diff-filter=AR", f"origin/{name}...origin/{DEFAULT}"],
         check=False,
     )
+    if proc.returncode != 0:
+        detail = proc.stderr.strip() or "git diff failed"
+        raise RuntimeError(detail)
     added = {ln.strip() for ln in proc.stdout.splitlines() if ln.strip()}
     return [p for p in REQUIRED if p in added]
 
 
-def vote_freshness(behind: int) -> tuple[str, str]:
+def vote_freshness(behind: int | None) -> tuple[str, str]:
+    if behind is None:
+        return "block", "Could not verify branch freshness; comparison unavailable."
     if behind == 0:
         return "pass", "Caught up with main."
     if behind < 40:
@@ -134,7 +140,9 @@ def vote_freshness(behind: int) -> tuple[str, str]:
     return "block", f"{behind} commits behind main."
 
 
-def vote_complete(missing: list[str]) -> tuple[str, str]:
+def vote_complete(missing: list[str] | None) -> tuple[str, str]:
+    if missing is None:
+        return "block", "Could not verify required files; comparison unavailable."
     if not missing:
         return "pass", "Required Buddy files present vs main."
     if len(missing) <= 2:
@@ -166,7 +174,7 @@ def score_votes(votes: list[dict]) -> tuple[int, str]:
     return max(0, score), status
 
 
-def review(behind: int, missing: list[str], pr: dict | None) -> tuple[list[dict], int, str]:
+def review(behind: int | None, missing: list[str] | None, pr: dict | None) -> tuple[list[dict], int, str]:
     votes = []
     f_v, f_n = vote_freshness(behind)
     votes.append({"reviewer": "freshness", "vote": f_v, "note": f_n})
@@ -317,6 +325,7 @@ def main() -> int:
     for br in branches:
         name = br["name"]
         pr = pr_by_ref.get(name)
+        comparison_error = None
         try:
             if use_git:
                 ahead, behind = local_ahead_behind(name)
@@ -324,9 +333,10 @@ def main() -> int:
             else:
                 ahead, behind, missing = api_ahead_behind_missing(name)
         except RuntimeError as exc:
-            print(f"compare skip {name}: {exc}", file=sys.stderr)
-            ahead = behind = 0
-            missing = []
+            comparison_error = str(exc)
+            print(f"compare blocked {name}: {comparison_error}", file=sys.stderr)
+            ahead = behind = None
+            missing = None
 
         votes, score, status = review(behind, missing, pr)
         rec = {
@@ -336,6 +346,8 @@ def main() -> int:
             "updated": br.get("updated") or (pr or {}).get("updated_at"),
             "ahead": ahead,
             "behind": behind,
+            "comparisonStatus": "verified" if comparison_error is None else "unavailable",
+            "comparisonError": comparison_error,
             "missingRequired": missing,
             "prNumber": (pr or {}).get("number"),
             "prTitle": (pr or {}).get("title"),
