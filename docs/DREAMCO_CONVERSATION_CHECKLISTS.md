@@ -336,3 +336,23 @@
 6. No requirement is complete based solely on a plan, generated code, or an unchecked PR.
 7. Repository and GitHub Pages changes are tracked together where relevant.
 8. Cloudflare remains outside the active build path until explicitly reauthorized; no authorization or security bypasses.
+
+
+## CHAT 15 — Buddy OS Universal AI Model Routing, Customization & Repository Engineering
+
+- [ ] Consolidate every project conversation
+- [ ] Create master requirements registry
+- [ ] Audit all repositories and branches
+- [ ] Reconcile all open pull requests
+- [ ] Find duplicate bots and implementations
+- [ ] Resolve outstanding CI failures
+- [ ] Complete Buddy OS
+- [ ] Enable builder bot development workflows
+- [ ] Validate all 45 divisions
+- [ ] Implement 50 command centers
+- [ ] Complete Buddy learning and benchmark system
+- [ ] Connect monetization infrastructure
+- [ ] Update and validate GitHub Pages
+- [ ] Complete final integration testing
+
+**Expanded technical requirements:** See [CHAT-15 independent checklist](conversation-checklists/CHAT-15-buddy-os-universal-model-routing-customization-repository-engineering.md), which adds 20 dedicated acceptance criteria.
