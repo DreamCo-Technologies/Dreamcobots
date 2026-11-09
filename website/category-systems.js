@@ -56,14 +56,15 @@
   }
   async function init() {
     try {
-      const [baseResponse, taxonomyResponse] = await Promise.all([
+      const [baseResponse, taxonomyResponse, taskResponse] = await Promise.all([
         fetch('data/category-system-registry.json', { cache: 'no-store' }),
-        fetch('data/additional-taxonomy-system-registry.json', { cache: 'no-store' })
+        fetch('data/additional-taxonomy-system-registry.json', { cache: 'no-store' }),
+        fetch('data/task-taxonomy-system-registry.json', { cache: 'no-store' })
       ]);
-      if (!baseResponse.ok || !taxonomyResponse.ok) throw new Error('Registry request failed: HTTP ' + baseResponse.status + '/' + taxonomyResponse.status);
-      const [base, taxonomy] = await Promise.all([baseResponse.json(), taxonomyResponse.json()]);
-      systems = [...(base.systems || []), ...(taxonomy.systems || [])];
-      profiles = taxonomy.contract_profiles || {};
+      if (!baseResponse.ok || !taxonomyResponse.ok || !taskResponse.ok) throw new Error('Registry request failed: HTTP ' + baseResponse.status + '/' + taxonomyResponse.status + '/' + taskResponse.status);
+      const [base, taxonomy, taskTaxonomy] = await Promise.all([baseResponse.json(), taxonomyResponse.json(), taskResponse.json()]);
+      systems = [...(base.systems || []), ...(taxonomy.systems || []), ...(taskTaxonomy.systems || [])];
+      profiles = { ...(taxonomy.contract_profiles || {}), ...(taskTaxonomy.contract_profiles || {}) };
       const groups = [...new Set(systems.map(item => item.group))];
       const priority = ['registry', 'study', 'model', 'division'];
       groupOrder = [...priority.filter(key => groups.includes(key)), ...groups.filter(key => !priority.includes(key)).sort()];
@@ -76,7 +77,8 @@
         ['Registry categories', counts.registry_categories],
         ['Model categories', counts.model_categories],
         ['Division systems', counts.division_systems],
-        ['Additional taxonomies', (taxonomy.counts || {}).total]
+        ['Additional taxonomies', (taxonomy.counts || {}).total],
+        ['Task & Markdown taxonomies', (taskTaxonomy.counts || {}).total]
       ].map(([label, value]) => '<article class="cs-metric"><strong>' + Number(value || 0).toLocaleString() + '</strong><span>' + label + '</span></article>').join('');
       $('cs-search').addEventListener('input', render);
       $('cs-group-filter').addEventListener('change', render);
