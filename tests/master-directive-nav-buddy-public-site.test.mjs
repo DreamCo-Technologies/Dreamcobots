@@ -43,9 +43,9 @@ test('master build page renders searchable audit data and is linked in navigatio
   assert.match(js,/evidence_refs/);
   assert.match(js,/structured_stage_plan/);
   assert.match(nav,/master-build\.html/);
-  assert.match(nav,/control-tower\\.html/);
+  assert.match(nav,/control-tower\.html/);
   assert.match(controlTower,/DreamCo GitHub Control Tower/);
-  assert.match(buddyCommandCenter,/href=[\"']control-tower\\.html[\"']/);
+  assert.match(buddyCommandCenter,/href=[\"']control-tower\.html[\"']/);
   assert.match(worker,/master-build\.html/);
   assert.match(worker,/buddy-learning-os-connections\.json/);
   assert.match(html,/Buddy learning OS connections/);
