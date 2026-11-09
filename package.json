@@ -36,7 +36,7 @@
     "buddy:connections": "python3 tools/generate_buddy_connection_catalog.py --check",
     "buddy:resource-connections": "python3 tools/generate_resource_connection_catalog.py --check",
     "buddy:additional-taxonomies": "python3 tools/validate_buddy_additional_taxonomy_registry.py --check",
-    "buddy:category-systems": "python3 tools/validate_buddy_category_system_registry.py --check && npm run buddy:additional-taxonomies",
+    "buddy:category-systems": "python3 tools/validate_buddy_category_system_registry.py --check && npm run buddy:additional-taxonomies && python3 tools/validate_vibe_coding_taxonomy.py",
     "buddy:expert-mode": "python3 tools/generate_buddy_expert_mode.py --check",
     "test:expert-mode": "python3 tools/generate_resource_connection_catalog.py && python3 tools/generate_buddy_expert_mode.py && node --import tsx --test tests/expert-mode-policy.test.ts tests/buddy-expert-mode-page.test.mjs && node --check website/buddy-expert-mode.js && node --check website/buddy-invention-lab.js",
     "test:professional-bootcamp": "python3 tools/generate_professional_bootcamp.py --check && python3 -m unittest tests.test_professional_training && node --test tests/professional-bootcamp-page.test.mjs && node --check website/professional-bootcamp.js",
