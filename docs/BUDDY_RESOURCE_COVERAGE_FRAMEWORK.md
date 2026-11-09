@@ -5552,3 +5552,12 @@ The command `npm run buddy:category-systems` runs both validators: the primary r
 ## 14. Additional taxonomy registry (open and extensible)
 
 The companion file `config/buddy/additional-taxonomy-system-registry.json` and its detailed section-by-section documentation in `docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md` preserve the additional category systems currently discovered across the source taxonomies. Their source registries remain distinct; no aliasing or merging is inferred from similar names.
+
+
+## 15. Living AI/technology discovery and Markdown gap closure
+
+The repository now has a source-driven AI and technology radar at `website/technology-radar.html`. Its extensible source registry is `config/buddy/technology-discovery-policy.json`; `tools/refresh_buddy_technology_radar.py` refreshes RSS, research, public model/space APIs, GitHub repository search, and remote-work listings into an append-only, timestamped catalog. Counts and facets are derived from the current records. Source failures preserve the last good records, and all discoveries remain unverified leads until checked. The radar prioritizes vibe coding, coding agents, AI app builders, home businesses, remote work, freelancing, creator businesses, digital products, e-commerce, sales/marketing, agents, model infrastructure, robotics, and security/governance. Its scheduled workflow runs after merge to the default branch; source refreshes do not purchase services, contact employers, submit applications, or promise earnings.
+
+The Markdown-to-implementation gap audit scans every tracked Markdown file, maps linked paths to implementation/tests/workflows/configuration, and highlights missing or untested references. Its dashboard is `website/markdown-gap-audit.html`; its policy is `config/buddy/markdown-implementation-gap-policy.json`. A code or test reference is not proof of a passing test. Actual execution, benchmark, regression, and production evidence remain separate gates.
+
+Both inventories are open-vocabulary and versioned. No tool, model, provider, category, task, document, or reference count is a permanent ceiling. Historical records remain traceable; stale entries are marked rather than silently deleted.
