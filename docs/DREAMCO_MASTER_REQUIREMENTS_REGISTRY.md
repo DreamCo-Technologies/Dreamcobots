@@ -11,22 +11,22 @@ This registry is the source of truth for mapping each project conversation to it
 
 ## Conversation inventory
 
-| ID | Conversation | Checklist |
+| ID | Conversation | Independent checklist |
 |---|---|---|
-| CHAT-01 | Daily DreamCo Repository Debug | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-01-daily-dreamco-repository-debug) |
-| CHAT-02 | Repository Engineering Review 1 | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-02-repository-engineering-review-1) |
-| CHAT-03 | Repository Engineering Review 2 | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-03-repository-engineering-review-2) |
-| CHAT-04 | Repository Engineering Review 3 | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-04-repository-engineering-review-3) |
-| CHAT-05 | Repository Engineering Review 4 | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-05-repository-engineering-review-4) |
-| CHAT-06 | Repository Engineering Review 5 | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-06-repository-engineering-review-5) |
-| CHAT-07 | Repository Engineering Review 6 | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-07-repository-engineering-review-6) |
-| CHAT-08 | DreamCo Lite | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-08-dreamco-lite) |
-| CHAT-09 | Buddy OS Agent Architecture | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-09-buddy-os-agent-architecture) |
-| CHAT-10 | DreamCo Bot Revamp | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-10-dreamco-bot-revamp) |
-| CHAT-11 | DreamCo Pitch and Monetization | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-11-dreamco-pitch-and-monetization) |
-| CHAT-12 | GitHub and Copilot Setup | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-12-github-and-copilot-setup) |
-| CHAT-13 | MomMap App Concept | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-13-mommap-app-concept) |
-| CHAT-14 | Buddy Master Teacher and Benchmarks | [Checklist](DREAMCO_CONVERSATION_CHECKLISTS.md#chat-14-buddy-master-teacher-and-benchmarks) |
+| CHAT-01 | Daily DreamCo Repository Debug | [Open checklist](conversation-checklists/CHAT-01-daily-dreamco-repository-debug.md) |
+| CHAT-02 | Repository Engineering Review 1 | [Open checklist](conversation-checklists/CHAT-02-repository-engineering-review-1.md) |
+| CHAT-03 | Repository Engineering Review 2 | [Open checklist](conversation-checklists/CHAT-03-repository-engineering-review-2.md) |
+| CHAT-04 | Repository Engineering Review 3 | [Open checklist](conversation-checklists/CHAT-04-repository-engineering-review-3.md) |
+| CHAT-05 | Repository Engineering Review 4 | [Open checklist](conversation-checklists/CHAT-05-repository-engineering-review-4.md) |
+| CHAT-06 | Repository Engineering Review 5 | [Open checklist](conversation-checklists/CHAT-06-repository-engineering-review-5.md) |
+| CHAT-07 | Repository Engineering Review 6 | [Open checklist](conversation-checklists/CHAT-07-repository-engineering-review-6.md) |
+| CHAT-08 | DreamCo Lite | [Open checklist](conversation-checklists/CHAT-08-dreamco-lite.md) |
+| CHAT-09 | Buddy OS Agent Architecture | [Open checklist](conversation-checklists/CHAT-09-buddy-os-agent-architecture.md) |
+| CHAT-10 | DreamCo Bot Revamp | [Open checklist](conversation-checklists/CHAT-10-dreamco-bot-revamp.md) |
+| CHAT-11 | DreamCo Pitch and Monetization | [Open checklist](conversation-checklists/CHAT-11-dreamco-pitch-and-monetization.md) |
+| CHAT-12 | GitHub and Copilot Setup | [Open checklist](conversation-checklists/CHAT-12-github-and-copilot-setup.md) |
+| CHAT-13 | MomMap App Concept | [Open checklist](conversation-checklists/CHAT-13-mommap-app-concept.md) |
+| CHAT-14 | Buddy Master Teacher and Benchmarks | [Open checklist](conversation-checklists/CHAT-14-buddy-master-teacher-and-benchmarks.md) |
 
 ## Canonical requirement IDs
 
@@ -112,3 +112,8 @@ All 196 conversation-requirement pairs are **unverified / not yet reconciled**. 
 - Tracking branch: `codex/per-conversation-tracking-20261108`
 - Checklist file verification: fetched successfully from the tracking branch after creation.
 - Registry file verification: fetched successfully from the tracking branch after creation.
+
+
+## Per-conversation file verification
+
+All 14 independent checklist files were fetched successfully from the tracking branch after creation. Each contains its own 14 unchecked requirements and traceability fields.
