@@ -11,16 +11,19 @@ POLICY = json.loads((ROOT / "config/buddy/markdown-implementation-gap-policy.jso
 
 class MarkdownImplementationGapTests(unittest.TestCase):
     def test_extracts_inline_and_markdown_link_paths(self):
-        text = "See \`tools/run.py\` and [the test](tests/test_run.py)."
+        tick = chr(96)
+        text = "See " + tick + "tools/run.py" + tick + " and [the test](tests/test_run.py)."
         self.assertEqual(candidate_paths(text), {"tools/run.py", "tests/test_run.py"})
 
     def test_ignores_empty_inline_code_and_empty_link_targets(self):
-        self.assertEqual(candidate_paths("Empty `` and [blank]() references."), set())
+        tick = chr(96)
+        self.assertEqual(candidate_paths("Empty " + tick + tick + " and [blank]()."), set())
 
     def test_detects_missing_implementation_references(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
-            row = analyze_document("docs/plan.md", "Buddy must implement this. See \`server/missing.ts\`.", POLICY, root)
+            tick = chr(96)
+            row = analyze_document("docs/plan.md", "Buddy must implement this. See " + tick + "server/missing.ts" + tick + ".", POLICY, root)
             self.assertEqual(row["gap_status"], "broken_path_references")
             self.assertEqual(row["missing_paths"], ["server/missing.ts"])
 
@@ -31,7 +34,9 @@ class MarkdownImplementationGapTests(unittest.TestCase):
             (root / "tests").mkdir()
             (root / "server/app.ts").write_text("export const app = true")
             (root / "tests/app.test.ts").write_text("test('app', () => {})")
-            row = analyze_document("docs/plan.md", "Build \`server/app.ts\` and verify \`tests/app.test.ts\`.", POLICY, root)
+            tick = chr(96)
+            text = "Build " + tick + "server/app.ts" + tick + " and verify " + tick + "tests/app.test.ts" + tick + "."
+            row = analyze_document("docs/plan.md", text, POLICY, root)
             self.assertEqual(row["gap_status"], "implementation_and_test_paths_referenced_not_verified")
             self.assertFalse(row["execution_verified"])
 
