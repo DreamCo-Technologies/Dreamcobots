@@ -49,7 +49,7 @@ def main() -> int:
         },
         "model": {},
     }
-    model_block = re.search(r"AI_MODEL_CATEGORIES\s*=\s*\\[(.*?)\\]\s*as const", model_source, re.S)
+    model_block = re.search(r"AI_MODEL_CATEGORIES\s*=\s*\[(.*?)\]\s*as const", model_source, re.S)
     if not model_block:
         fail("could not locate AI_MODEL_CATEGORIES in shared/ai-models.ts")
     model_categories = re.findall(r'"([^"]+)"', model_block.group(1))
