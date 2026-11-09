@@ -103,3 +103,12 @@ A branch-health report found in the primary repository reports 476 branches, 64 
 ## Current status
 
 All 196 conversation-requirement pairs are **unverified / not yet reconciled**. This registry and the per-conversation checklists are tracking artifacts; they do not assert that the underlying product work is complete.
+
+
+## Tracking artifacts created in this change
+
+- Tracking issue: [#17172](https://github.com/DreamCo-Technologies/Dreamcobots/issues/17172)
+- Documentation pull request: [#17173](https://github.com/DreamCo-Technologies/Dreamcobots/pull/17173) (draft; not merged)
+- Tracking branch: `codex/per-conversation-tracking-20261108`
+- Checklist file verification: fetched successfully from the tracking branch after creation.
+- Registry file verification: fetched successfully from the tracking branch after creation.
