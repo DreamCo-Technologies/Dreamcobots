@@ -16,6 +16,10 @@ RESOURCE_PATH = CONFIG / "buddy/resource-registry.json"
 DIVISION_PATH = CONFIG / "masterbot-65-registry.json"
 DIVISION_AUDIT_PATH = ROOT / "reports/BOT_DIVISION_PLACEMENT_AUDIT.md"
 MODEL_PATH = ROOT / "shared/ai-models.ts"
+MIRROR_PATH = ROOT / "website/data/category-system-registry.json"
+NAV_PATH = ROOT / "website/nav.js"
+PAGE_PATH = ROOT / "website/category-systems.html"
+PAGE_SCRIPT_PATH = ROOT / "website/category-systems.js"
 
 def load_json(path: Path):
     with path.open(encoding="utf-8") as handle:
@@ -30,6 +34,16 @@ def main() -> int:
     parser.parse_args()
 
     registry = load_json(REGISTRY_PATH)
+    mirror = load_json(MIRROR_PATH)
+    if mirror != registry:
+        fail("GitHub Pages category-system data mirror is stale")
+    nav_source = NAV_PATH.read_text(encoding="utf-8")
+    page_source = PAGE_PATH.read_text(encoding="utf-8")
+    page_script = PAGE_SCRIPT_PATH.read_text(encoding="utf-8")
+    if "category-systems.html" not in nav_source or "category-systems.js" not in page_source:
+        fail("category-systems page is not connected to shared navigation and page script")
+    if "data/category-system-registry.json" not in page_script:
+        fail("category-systems page does not load its published registry data")
     resources = load_json(RESOURCE_PATH)["resources"]
     study_paths = sorted(CONFIG.glob("buddy-study-resources-*.json"))
     if not study_paths:
