@@ -10301,3 +10301,1744 @@ All records remain `catalogued`, `not_implemented`, and `not_verified` until the
 ## Implementation rule
 
 Every taxonomy subsystem must receive its own owner lane, versioned input/output contract, tests, benchmark or checklist, regression gate, evidence links, and Command Center health state. Shared contract profiles provide reusable defaults only; they do not merge ownership or verification. Any taxonomy term that is proposed, empty, blocked, or unverified must remain visibly so.
+
+
+## Vibe Coding Category
+
+### Games
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_games`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Games".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `games`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Software
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_software`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Software".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `software`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Websites
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_websites`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Websites".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `websites`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Mobile Apps
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_mobile_apps`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Mobile Apps".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `mobile_apps`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### AI & Agents
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_ai_agents`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "AI & Agents".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `ai_agents`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Education
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_education`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Education".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `education`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Video
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_video`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Video".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `video`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Movies & Film
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_movies_film`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Movies & Film".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `movies_film`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Advertising
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_advertising`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Advertising".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `advertising`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Social Media
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_social_media`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Social Media".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `social_media`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Writing & Publishing
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_writing_publishing`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Writing & Publishing".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `writing_publishing`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Design
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_design`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Design".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `design`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Hardware
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_hardware`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Hardware".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `hardware`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Electrical Engineering
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_electrical_engineering`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Electrical Engineering".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `electrical_engineering`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Manufacturing
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_manufacturing`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Manufacturing".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `manufacturing`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Robotics
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_robotics`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Robotics".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `robotics`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Smart Home / IoT
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_smart_home_iot`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Smart Home / IoT".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `smart_home_iot`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Automotive
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_automotive`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Automotive".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `automotive`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Engineering
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_engineering`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Engineering".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `engineering`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Business
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_business`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Business".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `business`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Finance / FinTech
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_finance_fintech`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Finance / FinTech".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `finance_fintech`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### E-Commerce
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_e_commerce`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "E-Commerce".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `e_commerce`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Real Estate
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_real_estate`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Real Estate".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `real_estate`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Healthcare Technology
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_healthcare_technology`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Healthcare Technology".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `healthcare_technology`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Science
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_science`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Science".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `science`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Environment
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_environment`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Environment".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `environment`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Maps / Geography
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_maps_geography`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Maps / Geography".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `maps_geography`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Travel
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_travel`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Travel".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `travel`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Music
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_music`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Music".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `music`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Audio
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_audio`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Audio".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `audio`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### VR / AR / XR
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_vr_ar_xr`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "VR / AR / XR".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `vr_ar_xr`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Simulation
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_simulation`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Simulation".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `simulation`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Aerospace / Space
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_aerospace_space`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Aerospace / Space".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `aerospace_space`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Cybersecurity
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_cybersecurity`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Cybersecurity".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `cybersecurity`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Cloud / Infrastructure
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_cloud_infrastructure`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Cloud / Infrastructure".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `cloud_infrastructure`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Developer Tools
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_developer_tools`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Developer Tools".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `developer_tools`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### APIs / Platforms
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_apis_platforms`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "APIs / Platforms".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `apis_platforms`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Data
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_data`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Data".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `data`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Analytics
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_analytics`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Analytics".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `analytics`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Productivity
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_productivity`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Productivity".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `productivity`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Government / Civic Tech
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_government_civic_tech`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Government / Civic Tech".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `government_civic_tech`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Legal Technology
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_legal_technology`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Legal Technology".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `legal_technology`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Career / Workforce
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_career_workforce`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Career / Workforce".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `career_workforce`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Local Business Systems
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_local_business_systems`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Local Business Systems".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `local_business_systems`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Logistics
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_logistics`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Logistics".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `logistics`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Industrial Automation
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_industrial_automation`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Industrial Automation".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `industrial_automation`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Virtual Worlds
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_virtual_worlds`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Virtual Worlds".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `virtual_worlds`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Creator Economy
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_creator_economy`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Creator Economy".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `creator_economy`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### News / Media
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_news_media`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "News / Media".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `news_media`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Physical Products
+
+- **Subsystem ID:** `taxonomy_vibe_coding_category_physical_products`
+- **Group:** `vibe_coding_category`
+- **Mission:** Dedicated vibe coding category subsystem for "Physical Products".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `physical_products`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+
+
+## Vibe Coding Family
+
+### CREATE
+
+- **Subsystem ID:** `taxonomy_vibe_coding_family_create`
+- **Group:** `vibe_coding_family`
+- **Mission:** Dedicated vibe coding family subsystem for "CREATE".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `create`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### OPERATE
+
+- **Subsystem ID:** `taxonomy_vibe_coding_family_operate`
+- **Group:** `vibe_coding_family`
+- **Mission:** Dedicated vibe coding family subsystem for "OPERATE".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `operate`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### LEARN
+
+- **Subsystem ID:** `taxonomy_vibe_coding_family_learn`
+- **Group:** `vibe_coding_family`
+- **Mission:** Dedicated vibe coding family subsystem for "LEARN".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `learn`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### SHIP
+
+- **Subsystem ID:** `taxonomy_vibe_coding_family_ship`
+- **Group:** `vibe_coding_family`
+- **Mission:** Dedicated vibe coding family subsystem for "SHIP".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `ship`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+
+
+## Vibe Coding Evidence Stage
+
+### idea
+
+- **Subsystem ID:** `taxonomy_vibe_coding_evidence_stage_idea`
+- **Group:** `vibe_coding_evidence_stage`
+- **Mission:** Dedicated vibe coding evidence stage subsystem for "idea".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `idea`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### generated
+
+- **Subsystem ID:** `taxonomy_vibe_coding_evidence_stage_generated`
+- **Group:** `vibe_coding_evidence_stage`
+- **Mission:** Dedicated vibe coding evidence stage subsystem for "generated".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `generated`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### executed
+
+- **Subsystem ID:** `taxonomy_vibe_coding_evidence_stage_executed`
+- **Group:** `vibe_coding_evidence_stage`
+- **Mission:** Dedicated vibe coding evidence stage subsystem for "executed".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `executed`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### tested
+
+- **Subsystem ID:** `taxonomy_vibe_coding_evidence_stage_tested`
+- **Group:** `vibe_coding_evidence_stage`
+- **Mission:** Dedicated vibe coding evidence stage subsystem for "tested".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `tested`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### verified
+
+- **Subsystem ID:** `taxonomy_vibe_coding_evidence_stage_verified`
+- **Group:** `vibe_coding_evidence_stage`
+- **Mission:** Dedicated vibe coding evidence stage subsystem for "verified".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `verified`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### deployed
+
+- **Subsystem ID:** `taxonomy_vibe_coding_evidence_stage_deployed`
+- **Group:** `vibe_coding_evidence_stage`
+- **Mission:** Dedicated vibe coding evidence stage subsystem for "deployed".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `deployed`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### real_world_validated
+
+- **Subsystem ID:** `taxonomy_vibe_coding_evidence_stage_real_world_validated`
+- **Group:** `vibe_coding_evidence_stage`
+- **Mission:** Dedicated vibe coding evidence stage subsystem for "real_world_validated".
+- **Source files:** `config/vibe-coding/capability-taxonomy.json`
+- **Source resource IDs:** `real_world_validated`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+
+
+## Technology Discovery Lens
+
+### Vibe coding and natural-language software creation
+
+- **Subsystem ID:** `taxonomy_technology_discovery_lens_vibe_coding_and_natural_language_software_creation`
+- **Group:** `technology_discovery_lens`
+- **Mission:** Dedicated technology discovery lens subsystem for "Vibe coding and natural-language software creation".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `vibe_coding`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Coding agents and software engineering
+
+- **Subsystem ID:** `taxonomy_technology_discovery_lens_coding_agents_and_software_engineering`
+- **Group:** `technology_discovery_lens`
+- **Mission:** Dedicated technology discovery lens subsystem for "Coding agents and software engineering".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `coding_agents`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Home businesses and solo entrepreneurship
+
+- **Subsystem ID:** `taxonomy_technology_discovery_lens_home_businesses_and_solo_entrepreneurship`
+- **Group:** `technology_discovery_lens`
+- **Mission:** Dedicated technology discovery lens subsystem for "Home businesses and solo entrepreneurship".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `home_business`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Remote work and work-from-home opportunities
+
+- **Subsystem ID:** `taxonomy_technology_discovery_lens_remote_work_and_work_from_home_opportunities`
+- **Group:** `technology_discovery_lens`
+- **Mission:** Dedicated technology discovery lens subsystem for "Remote work and work-from-home opportunities".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `remote_work`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Freelancing and service work
+
+- **Subsystem ID:** `taxonomy_technology_discovery_lens_freelancing_and_service_work`
+- **Group:** `technology_discovery_lens`
+- **Mission:** Dedicated technology discovery lens subsystem for "Freelancing and service work".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `freelancing`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Creator economy and digital products
+
+- **Subsystem ID:** `taxonomy_technology_discovery_lens_creator_economy_and_digital_products`
+- **Group:** `technology_discovery_lens`
+- **Mission:** Dedicated technology discovery lens subsystem for "Creator economy and digital products".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `creator_economy`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### E-commerce and online selling
+
+- **Subsystem ID:** `taxonomy_technology_discovery_lens_e_commerce_and_online_selling`
+- **Group:** `technology_discovery_lens`
+- **Mission:** Dedicated technology discovery lens subsystem for "E-commerce and online selling".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `ecommerce`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Sales, marketing, and customer acquisition
+
+- **Subsystem ID:** `taxonomy_technology_discovery_lens_sales_marketing_and_customer_acquisition`
+- **Group:** `technology_discovery_lens`
+- **Mission:** Dedicated technology discovery lens subsystem for "Sales, marketing, and customer acquisition".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `sales_marketing`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### AI agents, orchestration, and computer use
+
+- **Subsystem ID:** `taxonomy_technology_discovery_lens_ai_agents_orchestration_and_computer_use`
+- **Group:** `technology_discovery_lens`
+- **Mission:** Dedicated technology discovery lens subsystem for "AI agents, orchestration, and computer use".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `ai_agents`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Models, datasets, compute, and infrastructure
+
+- **Subsystem ID:** `taxonomy_technology_discovery_lens_models_datasets_compute_and_infrastructure`
+- **Group:** `technology_discovery_lens`
+- **Mission:** Dedicated technology discovery lens subsystem for "Models, datasets, compute, and infrastructure".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `models_infrastructure`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Robotics and embodied AI
+
+- **Subsystem ID:** `taxonomy_technology_discovery_lens_robotics_and_embodied_ai`
+- **Group:** `technology_discovery_lens`
+- **Mission:** Dedicated technology discovery lens subsystem for "Robotics and embodied AI".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `robotics_embodied`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Security, privacy, licensing, and governance
+
+- **Subsystem ID:** `taxonomy_technology_discovery_lens_security_privacy_licensing_and_governance`
+- **Group:** `technology_discovery_lens`
+- **Mission:** Dedicated technology discovery lens subsystem for "Security, privacy, licensing, and governance".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `security_governance`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+
+
+## Technology Discovery Source
+
+### OpenAI News
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_openai_news`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "OpenAI News".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `openai-news`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Google DeepMind Blog
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_google_deepmind_blog`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Google DeepMind Blog".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `deepmind-blog`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Google AI Blog
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_google_ai_blog`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Google AI Blog".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `google-ai-blog`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Hugging Face Blog
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_hugging_face_blog`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Hugging Face Blog".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `huggingface-blog`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### NVIDIA Blog
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_nvidia_blog`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "NVIDIA Blog".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `nvidia-blog`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### AWS Machine Learning Blog
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_aws_machine_learning_blog`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "AWS Machine Learning Blog".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `aws-machine-learning`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### GitHub Changelog
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_github_changelog`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "GitHub Changelog".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `github-changelog`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### arXiv cs.AI
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_arxiv_cs_ai`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "arXiv cs.AI".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `arxiv-ai`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### arXiv cs.LG
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_arxiv_cs_lg`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "arXiv cs.LG".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `arxiv-machine-learning`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### arXiv cs.SE
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_arxiv_cs_se`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "arXiv cs.SE".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `arxiv-software-engineering`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### arXiv cs.HC
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_arxiv_cs_hc`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "arXiv cs.HC".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `arxiv-human-computer-interaction`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### TechCrunch Artificial Intelligence
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_techcrunch_artificial_intelligence`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "TechCrunch Artificial Intelligence".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `techcrunch-ai`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### The Verge AI
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_the_verge_ai`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "The Verge AI".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `the-verge-ai`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Hacker News: vibe coding signals
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_hacker_news_vibe_coding_signals`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Hacker News: vibe coding signals".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `hn-vibe-coding`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Hacker News: AI and small-business signals
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_hacker_news_ai_and_small_business_signals`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Hacker News: AI and small-business signals".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `hn-ai-business`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### GitHub repository search: AI agents
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_github_repository_search_ai_agents`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "GitHub repository search: AI agents".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `github-ai-agents`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### GitHub repository search: vibe coding
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_github_repository_search_vibe_coding`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "GitHub repository search: vibe coding".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `github-vibe-coding`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Hugging Face Models API
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_hugging_face_models_api`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Hugging Face Models API".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `huggingface-models`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Hugging Face Spaces API
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_hugging_face_spaces_api`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Hugging Face Spaces API".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `huggingface-spaces`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### OpenRouter model catalog API
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_openrouter_model_catalog_api`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "OpenRouter model catalog API".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `openrouter-models`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Remote OK public job feed
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_remote_ok_public_job_feed`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Remote OK public job feed".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `remoteok-jobs`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Remotive remote jobs API
+
+- **Subsystem ID:** `taxonomy_technology_discovery_source_remotive_remote_jobs_api`
+- **Group:** `technology_discovery_source`
+- **Mission:** Dedicated technology discovery source subsystem for "Remotive remote jobs API".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `remotive-jobs`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+
+
+## Technology Discovery Truth Rule
+
+### A discovery is a lead, not an endorsement, verified integration, job offer, income claim, or proof of quality.
+
+- **Subsystem ID:** `taxonomy_technology_discovery_truth_rule_a_discovery_is_a_lead_not_an_endorsement_verified_integration_job_offer_income_claim_or_proof_of_quality`
+- **Group:** `technology_discovery_truth_rule`
+- **Mission:** Dedicated technology discovery truth rule subsystem for "A discovery is a lead, not an endorsement, verified integration, job offer, income claim, or proof of quality.".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `a_discovery_is_a_lead_not_an_endorsement_verified_integration_job_offer_income_claim_or_proof_of_quality`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Marketplace job listings are unverified leads; check employer, listing freshness, location, eligibility, and scam signals before recommending.
+
+- **Subsystem ID:** `taxonomy_technology_discovery_truth_rule_marketplace_job_listings_are_unverified_leads_check_employer_listing_freshness_location_eligibility_and_scam_signals_before_recommending`
+- **Group:** `technology_discovery_truth_rule`
+- **Mission:** Dedicated technology discovery truth rule subsystem for "Marketplace job listings are unverified leads; check employer, listing freshness, location, eligibility, and scam signals before recommending.".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `marketplace_job_listings_are_unverified_leads_check_employer_listing_freshness_location_eligibility_and_scam_signals_before_recommending`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### AI income ideas require customer demand, delivery capability, costs, platform rules, legal obligations, and human review; never promise earnings.
+
+- **Subsystem ID:** `taxonomy_technology_discovery_truth_rule_ai_income_ideas_require_customer_demand_delivery_capability_costs_platform_rules_legal_obligations_and_human_review_never_promise_earnings`
+- **Group:** `technology_discovery_truth_rule`
+- **Mission:** Dedicated technology discovery truth rule subsystem for "AI income ideas require customer demand, delivery capability, costs, platform rules, legal obligations, and human review; never promise earnings.".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `ai_income_ideas_require_customer_demand_delivery_capability_costs_platform_rules_legal_obligations_and_human_review_never_promise_earnings`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Only official provider documentation and reproducible tests can establish product capabilities, access, pricing, terms, or integration status.
+
+- **Subsystem ID:** `taxonomy_technology_discovery_truth_rule_only_official_provider_documentation_and_reproducible_tests_can_establish_product_capabilities_access_pricing_terms_or_integration_status`
+- **Group:** `technology_discovery_truth_rule`
+- **Mission:** Dedicated technology discovery truth rule subsystem for "Only official provider documentation and reproducible tests can establish product capabilities, access, pricing, terms, or integration status.".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `only_official_provider_documentation_and_reproducible_tests_can_establish_product_capabilities_access_pricing_terms_or_integration_status`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### Community and news signals must be corroborated before they change production routing or user-facing factual claims.
+
+- **Subsystem ID:** `taxonomy_technology_discovery_truth_rule_community_and_news_signals_must_be_corroborated_before_they_change_production_routing_or_user_facing_factual_claims`
+- **Group:** `technology_discovery_truth_rule`
+- **Mission:** Dedicated technology discovery truth rule subsystem for "Community and news signals must be corroborated before they change production routing or user-facing factual claims.".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `community_and_news_signals_must_be_corroborated_before_they_change_production_routing_or_user_facing_factual_claims`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
+### No fixed item count, category count, provider count, tool count, or permanent best ranking is an acceptance criterion.
+
+- **Subsystem ID:** `taxonomy_technology_discovery_truth_rule_no_fixed_item_count_category_count_provider_count_tool_count_or_permanent_best_ranking_is_an_acceptance_criterion`
+- **Group:** `technology_discovery_truth_rule`
+- **Mission:** Dedicated technology discovery truth rule subsystem for "No fixed item count, category count, provider count, tool count, or permanent best ranking is an acceptance criterion.".
+- **Source files:** `config/buddy/technology-discovery-policy.json`
+- **Source resource IDs:** `no_fixed_item_count_category_count_provider_count_tool_count_or_permanent_best_ranking_is_an_acceptance_criterion`
+- **Source record count:** 1
+- **Lifecycle:** `catalogued` / `not_implemented` / `not_verified`
+- **Inputs:** Exact source labels and identifiers; Source provenance, licensing, and freshness metadata; Approved Buddy task requests
+- **Outputs:** Category-specific knowledge and routing metadata; Structured evidence and lifecycle records; Recommendations or governed execution requests
+- **Permissions:** Least privilege; No external side effects without required approval
+- **Safety controls:** Validate source provenance; Preserve exact labels and source IDs; Expose blocked, stale, and unresolved states; Audit consequential actions
+- **Metrics:** Category coverage; Source freshness; Correctness; Reliability; Cost where applicable
+- **Acceptance criteria:** Dedicated subsystem ID and category section; Source mappings validated; Owner and interface assigned; Category-specific tests and benchmark/checklist; Failure and rollback behavior documented
+- **Dependencies:** buddy_master_orchestrator; buddy_policy_system; buddy_observability_system
+
