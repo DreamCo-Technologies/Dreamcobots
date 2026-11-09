@@ -15,28 +15,154 @@
     "study_packs": 0,
     "versioned_data_packages": 0,
     "dreamco_original_training_records": 0,
-    "train_eligible_assets": 0
+    "train_eligible_assets": 0,
+    "dreamco_original_lesson_drafts": 6
   },
   "source_manifests": [
-    {"id":"external_dataset_discovery","path":"website/data/free-datasets.json","ownership":"reference_only","content_ingested":false,"license_review":"per_dataset_required"},
-    {"id":"open_platform_inventory","path":"website/data/open-platforms.json","ownership":"reference_only","content_ingested":false,"license_review":"per_resource_required"},
-    {"id":"learning_source_catalog","path":"buddy/bootcamp/learning_source_catalog.yaml","ownership":"reference_only","content_ingested":false,"license_review":"per_source_required"},
-    {"id":"bootcamp_resource_registry","path":"buddy/bootcamp/resource_registry.yaml","ownership":"reference_only","content_ingested":false,"license_review":"per_resource_required"},
-    {"id":"course_catalog","path":"benchmarks/study_courses/course_catalog.json","ownership":"dreamco_owned_metadata","content_ingested":true,"license_review":"internal_authorship"},
-    {"id":"study_packs","path":"study_packs","ownership":"mixed_per_pack","content_ingested":"per_pack_manifest","license_review":"per_asset_required"},
-    {"id":"benchmark_factory","path":"config/buddy_benchmark_dataset_factory.json","ownership":"dreamco_owned_methodology","content_ingested":true,"license_review":"internal_authorship"},
-    {"id":"onet_curriculum","path":"config/onet-priority-curriculum.json","ownership":"dreamco_owned_methodology_plus_third_party_reference","content_ingested":"metadata_only","license_review":"O*NET_terms_and_attribution"},
-    {"id":"onet_sandbox_dataset_spec","path":"config/onet-sandbox-dataset-spec.json","ownership":"dreamco_owned_methodology_plus_third_party_reference","content_ingested":"metadata_only","license_review":"O*NET_terms_and_attribution"},
-    {"id":"versioned_knowledge_packages","path":"data/dreamco_knowledge/packages","ownership":"mixed_per_package_and_field","content_ingested":"manifest_and_asset_level","license_review":"per_field_and_asset"},
-    {"id":"education_benchmarks","path":"eval/edu_benchmark","ownership":"mixed_per_benchmark","content_ingested":"manifest_only_until_reviewed","license_review":"per_benchmark"},
-    {"id":"mastery_scorecards","path":"eval/edu_mastery_scorecards","ownership":"dreamco_owned_schema_and_evidence","content_ingested":true,"license_review":"internal_authorship"}
+    {
+      "id": "external_dataset_discovery",
+      "path": "website/data/free-datasets.json",
+      "ownership": "reference_only",
+      "content_ingested": false,
+      "license_review": "per_dataset_required"
+    },
+    {
+      "id": "open_platform_inventory",
+      "path": "website/data/open-platforms.json",
+      "ownership": "reference_only",
+      "content_ingested": false,
+      "license_review": "per_resource_required"
+    },
+    {
+      "id": "learning_source_catalog",
+      "path": "buddy/bootcamp/learning_source_catalog.yaml",
+      "ownership": "reference_only",
+      "content_ingested": false,
+      "license_review": "per_source_required"
+    },
+    {
+      "id": "bootcamp_resource_registry",
+      "path": "buddy/bootcamp/resource_registry.yaml",
+      "ownership": "reference_only",
+      "content_ingested": false,
+      "license_review": "per_resource_required"
+    },
+    {
+      "id": "course_catalog",
+      "path": "benchmarks/study_courses/course_catalog.json",
+      "ownership": "dreamco_owned_metadata",
+      "content_ingested": true,
+      "license_review": "internal_authorship"
+    },
+    {
+      "id": "study_packs",
+      "path": "study_packs",
+      "ownership": "mixed_per_pack",
+      "content_ingested": "per_pack_manifest",
+      "license_review": "per_asset_required"
+    },
+    {
+      "id": "benchmark_factory",
+      "path": "config/buddy_benchmark_dataset_factory.json",
+      "ownership": "dreamco_owned_methodology",
+      "content_ingested": true,
+      "license_review": "internal_authorship"
+    },
+    {
+      "id": "onet_curriculum",
+      "path": "config/onet-priority-curriculum.json",
+      "ownership": "dreamco_owned_methodology_plus_third_party_reference",
+      "content_ingested": "metadata_only",
+      "license_review": "O*NET_terms_and_attribution"
+    },
+    {
+      "id": "onet_sandbox_dataset_spec",
+      "path": "config/onet-sandbox-dataset-spec.json",
+      "ownership": "dreamco_owned_methodology_plus_third_party_reference",
+      "content_ingested": "metadata_only",
+      "license_review": "O*NET_terms_and_attribution"
+    },
+    {
+      "id": "versioned_knowledge_packages",
+      "path": "data/dreamco_knowledge/packages",
+      "ownership": "mixed_per_package_and_field",
+      "content_ingested": "manifest_and_asset_level",
+      "license_review": "per_field_and_asset"
+    },
+    {
+      "id": "education_benchmarks",
+      "path": "eval/edu_benchmark",
+      "ownership": "mixed_per_benchmark",
+      "content_ingested": "manifest_only_until_reviewed",
+      "license_review": "per_benchmark"
+    },
+    {
+      "id": "mastery_scorecards",
+      "path": "eval/edu_mastery_scorecards",
+      "ownership": "dreamco_owned_schema_and_evidence",
+      "content_ingested": true,
+      "license_review": "internal_authorship"
+    },
+    {
+      "id": "original_dreamco_lesson_library",
+      "path": "data/dreamco_training/lessons/universal_task_mastery_lessons_v1.json",
+      "ownership": "dreamco_owned_draft",
+      "content_ingested": true,
+      "license_review": "independent_review_required",
+      "training_eligibility": "not_eligible_until_reviewed_and_split"
+    }
   ],
   "record_contract": {
-    "required": ["record_id","record_type","title","domain","skills","task_objective","content","ownership_class","source_refs","license","provenance","split","quality_status","created_at","version"],
-    "record_types": ["lesson","worked_example","practice_task","tool_trace","failure_case","recovery_case","rubric","benchmark_task","occupation_task_mapping"],
-    "ownership_classes": ["dreamco_owned","dreamco_synthetic","licensed_for_training","reference_only","restricted","unknown"],
-    "splits": ["train","validation","test_holdout","transfer","regression","reference_only"],
-    "quality_statuses": ["draft","needs_review","passed","blocked"]
+    "required": [
+      "record_id",
+      "record_type",
+      "title",
+      "domain",
+      "skills",
+      "task_objective",
+      "content",
+      "ownership_class",
+      "source_refs",
+      "license",
+      "provenance",
+      "split",
+      "quality_status",
+      "created_at",
+      "version"
+    ],
+    "record_types": [
+      "lesson",
+      "worked_example",
+      "practice_task",
+      "tool_trace",
+      "failure_case",
+      "recovery_case",
+      "rubric",
+      "benchmark_task",
+      "occupation_task_mapping"
+    ],
+    "ownership_classes": [
+      "dreamco_owned",
+      "dreamco_synthetic",
+      "licensed_for_training",
+      "reference_only",
+      "restricted",
+      "unknown"
+    ],
+    "splits": [
+      "train",
+      "validation",
+      "test_holdout",
+      "transfer",
+      "regression",
+      "reference_only"
+    ],
+    "quality_statuses": [
+      "draft",
+      "needs_review",
+      "passed",
+      "blocked"
+    ]
   },
   "training_rules": {
     "reference_only_is_never_trainable": true,
@@ -54,5 +180,103 @@
     "generate_practice_and_rubrics": true,
     "map_to_real_world_tasks_and_occupations": true,
     "require_transfer_and_regression_evidence_for_mastery": true
-  }
+  },
+  "original_lesson_index": [
+    {
+      "lesson_id": "DCO-LESSON-0001",
+      "module_id": "M01",
+      "title": "Turn an Outcome into a Verifiable Plan",
+      "domain": "task_execution",
+      "skills": [
+        "intent_analysis",
+        "requirements",
+        "acceptance_criteria",
+        "planning"
+      ],
+      "review_status": "draft_needs_independent_review",
+      "training_eligibility": "not_eligible_until_reviewed_and_split",
+      "ownership": "dreamco_owned"
+    },
+    {
+      "lesson_id": "DCO-LESSON-0002",
+      "module_id": "M02",
+      "title": "Build a Rights-Aware Evidence Trail",
+      "domain": "research_and_data_governance",
+      "skills": [
+        "source_evaluation",
+        "provenance",
+        "license_review",
+        "privacy",
+        "deduplication"
+      ],
+      "review_status": "draft_needs_independent_review",
+      "training_eligibility": "not_eligible_until_reviewed_and_split",
+      "ownership": "dreamco_owned"
+    },
+    {
+      "lesson_id": "DCO-LESSON-0003",
+      "module_id": "M03",
+      "title": "Debug by Reproduction, Evidence, and Regression",
+      "domain": "software_engineering",
+      "skills": [
+        "programming",
+        "debugging",
+        "testing",
+        "security",
+        "reasoning"
+      ],
+      "review_status": "draft_needs_independent_review",
+      "training_eligibility": "not_eligible_until_reviewed_and_split",
+      "ownership": "dreamco_owned"
+    },
+    {
+      "lesson_id": "DCO-LESSON-0004",
+      "module_id": "M04",
+      "title": "Make Data Analysis Reproducible and Honest",
+      "domain": "data_analytics",
+      "skills": [
+        "data_cleaning",
+        "sql",
+        "statistics",
+        "visualization",
+        "communication"
+      ],
+      "review_status": "draft_needs_independent_review",
+      "training_eligibility": "not_eligible_until_reviewed_and_split",
+      "ownership": "dreamco_owned"
+    },
+    {
+      "lesson_id": "DCO-LESSON-0005",
+      "module_id": "M05",
+      "title": "Recover a Service Without Losing Data",
+      "domain": "cloud_operations",
+      "skills": [
+        "deployment",
+        "observability",
+        "incident_response",
+        "rollback",
+        "cost_control"
+      ],
+      "review_status": "draft_needs_independent_review",
+      "training_eligibility": "not_eligible_until_reviewed_and_split",
+      "ownership": "dreamco_owned"
+    },
+    {
+      "lesson_id": "DCO-LESSON-0006",
+      "module_id": "M06",
+      "title": "Respect Safety and Professional Boundaries",
+      "domain": "workplace_and_professional_tasks",
+      "skills": [
+        "hazard_identification",
+        "procedure_following",
+        "risk_communication",
+        "escalation",
+        "quality_control"
+      ],
+      "review_status": "draft_needs_independent_review",
+      "training_eligibility": "not_eligible_until_reviewed_and_split",
+      "ownership": "dreamco_owned"
+    }
+  ],
+  "lesson_library_status": "draft_needs_independent_review"
 }
