@@ -158,6 +158,8 @@ def render_report(data: dict[str, Any]) -> str:
         f"- Documents with missing path references: {data['documents_with_missing_paths']}",
         f"- Documents without implementation references: {data['documents_without_implementation_references']}",
         f"- Documents with implementation references but no test references: {data['documents_without_test_references']}",
+        f"- Documents with inventory count claims: {data['documents_with_count_claims']}",
+        f"- Inventory count claims requiring review: {data['numeric_inventory_claim_count']}",
         "",
         "## Fixed-count claims requiring review",
         "",
@@ -171,18 +173,21 @@ def render_report(data: dict[str, Any]) -> str:
         "",
         "## Gap inventory",
         "",
-    ]
+    ])
     for row in data["documents"]:
+        implementation = ", ".join(row.get("implementation_paths", [])) or "None detected"
+        tests = ", ".join(row.get("test_paths", [])) or "None detected"
+        missing = ", ".join(row.get("missing_paths", [])) or "None detected"
         lines.extend([
             f"### {row['path']}",
             "",
-            f"- **Status:** `{row['gap_status']}`",
-            f"- **Actionable claim lines:** {row['actionable_claim_lines']}",
-            f"- **Implementation paths:** {', '.join(f'`{x}`' for x in row['implementation_paths']) or 'None detected'}",
-            f"- **Test paths:** {', '.join(f'`{x}`' for x in row['test_paths']) or 'None detected'}",
-            f"- **Missing paths:** {', '.join(f'`{x}`' for x in row['missing_paths']) or 'None detected'}",
-            f"- **Next action:** {row['next_action']}",
-            "- **Execution verified:** No; run-specific evidence is required.",
+            f"- Status: {row['gap_status']}",
+            f"- Actionable claim lines: {row['actionable_claim_lines']}",
+            f"- Implementation paths: {implementation}",
+            f"- Test paths: {tests}",
+            f"- Missing paths: {missing}",
+            f"- Next action: {row['next_action']}",
+            "- Execution verified: No; run-specific evidence is required.",
             "",
         ])
     lines.extend(["## Truth boundary", "", data["truth_boundary"], ""])
