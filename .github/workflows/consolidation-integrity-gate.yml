@@ -7,6 +7,13 @@ on:
       - "config/actions-page-operating-system.json"
       - "config/local-buddy-model.yaml"
       - "tools/validate_actions_page_contract.py"
+      - "config/buddy/category-system-registry.json"
+      - "config/buddy/resource-registry.json"
+      - "config/buddy-study-resources-*.json"
+      - "shared/ai-models.ts"
+      - "tools/validate_buddy_category_system_registry.py"
+      - "tests/test_buddy_category_system_registry.py"
+      - "package.json"
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,6 +38,10 @@ jobs:
           PY
       - name: Validate Actions contract
         run: python3 tools/validate_actions_page_contract.py
+      - name: Validate Buddy category-system registry
+        run: |
+          npm run buddy:category-systems
+          python3 -m unittest tests.test_buddy_category_system_registry
       - name: Validate consolidation map
         run: |
           python3 - <<'PY'
