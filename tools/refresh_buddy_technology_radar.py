@@ -15,6 +15,7 @@ import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
 from urllib.parse import urldefrag, urlparse
@@ -156,9 +157,42 @@ def normalize_item(source: dict[str, Any], raw: dict[str, Any], observed_at: str
     }
 
 
+class HtmlMetaParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.title_parts: list[str] = []
+        self.description = ""
+        self.in_title = False
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        values = dict(attrs)
+        if tag.lower() == "title":
+            self.in_title = True
+        if tag.lower() == "meta":
+            key = (values.get("name") or values.get("property") or "").lower()
+            if key in {"description", "og:description", "twitter:description"} and not self.description:
+                self.description = clean_text(values.get("content") or "")
+
+    def handle_data(self, data: str) -> None:
+        if self.in_title:
+            self.title_parts.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.lower() == "title":
+            self.in_title = False
+
+
 def extract_source(source: dict[str, Any], content: bytes, observed_at: str, policy: dict[str, Any]) -> list[dict[str, Any]]:
     if source["kind"] == "rss":
         raw_items = parse_feed(content)
+    elif source["kind"] == "html_page":
+        parser = HtmlMetaParser()
+        parser.feed(content.decode("utf-8", errors="replace"))
+        raw_items = [{
+            "title": " ".join("".join(parser.title_parts).split()) or source.get("name", source["id"]),
+            "url": source["url"], "summary": parser.description,
+            "published_at": None, "external_id": source["id"],
+        }]
     elif source["kind"] == "json_collection":
         payload = json.loads(content.decode("utf-8"))
         raw_items = []
@@ -255,6 +289,7 @@ def merge_catalog(existing: dict[str, Any], discovered: list[dict[str, Any]], so
             "sources_total": len(source_runs),
             "sources_succeeded": sum(run["status"] == "success" for run in source_runs),
             "sources_failed": sum(run["status"] == "failed" for run in source_runs),
+            "sources_pending": sum(run["status"] not in {"success", "failed"} for run in source_runs),
         },
         "source_runs": source_runs,
         "records": ordered,
@@ -280,6 +315,8 @@ def validate_catalog(catalog: dict[str, Any]) -> None:
         raise ValueError("summary.sources_succeeded is stale")
     if summary.get("sources_failed") != sum(run.get("status") == "failed" for run in catalog.get("source_runs", [])):
         raise ValueError("summary.sources_failed is stale")
+    if summary.get("sources_pending") != sum(run.get("status") not in {"success", "failed"} for run in catalog.get("source_runs", [])):
+        raise ValueError("summary.sources_pending is stale")
     for item in records:
         if item.get("evidence_class") != "discovery_lead_not_verified":
             raise ValueError(f"unsupported evidence class for {item.get('id')}")
