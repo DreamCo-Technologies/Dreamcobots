@@ -341,7 +341,7 @@ def validate_catalog(catalog: dict[str, Any]) -> None:
     source_ids = [run.get("source_id") for run in source_runs]
     if len(source_ids) != len(set(source_ids)):
         raise ValueError("source run IDs must be unique")
-    if any(run.get("status") not in {"success", "failed", "not_yet_checked"} for run in source_runs):
+    if any(run.get("status") not in {"success", "failed", "not_yet_checked", "seeded_from_web_search"} for run in source_runs):
         raise ValueError("source run contains an unknown status")
     kinds: dict[str, int] = {}
     statuses: dict[str, int] = {}
