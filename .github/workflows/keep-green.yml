@@ -29,6 +29,12 @@ jobs:
         run: python3 tools/validate_actions_page.py
       - name: Validate Python syntax for touched intelligence code
         run: python3 -m compileall -q buddy_os tests
+      - name: Validate branch health fail-closed behavior
+        run: python3 -m unittest tests.test_branch_health_fail_closed
+      - name: Validate per-file Markdown requirements audit
+        run: |
+          npm run markdown:audit:check
+          python3 -m unittest tests.test_markdown_requirements_audit
       - name: Validate JSON files
         run: |
           python3 - <<'PY'

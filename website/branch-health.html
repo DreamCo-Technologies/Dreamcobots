@@ -34,15 +34,25 @@
       <button type="button" class="desk-tab" role="tab" aria-selected="true" data-tab="report">Report</button>
       <button type="button" class="desk-tab" role="tab" aria-selected="false" data-tab="review">Review team</button>
       <button type="button" class="desk-tab" role="tab" aria-selected="false" data-tab="conflict">Conflict team</button>
+      <button type="button" class="desk-tab" role="tab" aria-selected="false" data-tab="pulls">Pull requests</button>
     </div>
     <p class="desk-note" id="stamp">Loading the last daily report…</p>
     <section id="panel-report">
       <div class="desk-grid" id="metrics"></div>
+      <div class="desk-grid" style="grid-template-columns:minmax(220px,2fr) minmax(180px,1fr);gap:10px">
+        <label>Search all branches<input id="branch-search" type="search" placeholder="Branch name or PR number" style="display:block;width:100%;padding:10px;margin-top:6px"></label>
+        <label>Filter status<select id="branch-status" style="display:block;width:100%;padding:10px;margin-top:6px"><option value="">All statuses</option><option value="healthy">Healthy</option><option value="watch">Watch</option><option value="blocked">Blocked</option></select></label>
+      </div>
+      <p class="desk-note" id="branch-results"></p>
       <div id="rows"></div>
     </section>
     <section id="panel-review" hidden>
       <div class="desk-grid" id="reviewers"></div>
       <div id="votes"></div>
+    </section>
+    <section id="panel-pulls" hidden>
+      <p class="desk-note">Every open PR is listed separately. Merge readiness requires a clean base merge state, successful checks, an approval, and a non-draft state. Missing or unreadable evidence is not green.</p>
+      <div id="pull-rows"></div>
     </section>
     <section id="panel-conflict" hidden>
       <p class="desk-note">Update-from-main first. If that still conflicts, a <code>dreamco/conflict-resolve/…</code> PR is opened. Original Buddy files stay from main. Money branches stay human-only.</p>
@@ -62,7 +72,9 @@
     var REVIEWERS = [
       ["Freshness", "How far the branch is behind main, and how stale the last commit is."],
       ["Completeness", "Whether the branch still has the original Buddy site and required contracts from main."],
-      ["Mergeability", "Open PR state: clean, unstable, or conflicted."],
+      ["Mergeability", "Open PR state against its actual base branch: clean, unstable, or conflicted."],
+      ["CI evidence", "Current commit check-runs and combined commit status must be successful."],
+      ["Independent review", "At least one approval and no outstanding changes-requested review."],
       ["Safety", "Blocks auto-resolve on money/Stripe/payment PRs and never force-merges main."],
       ["Scope", "Flags branches that rewrite the original Buddy home without a wiring map."]
     ];
@@ -74,7 +86,8 @@
     var panels = {
       report: document.getElementById("panel-report"),
       review: document.getElementById("panel-review"),
-      conflict: document.getElementById("panel-conflict")
+      conflict: document.getElementById("panel-conflict"),
+      pulls: document.getElementById("panel-pulls")
     };
     tabs.forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -87,22 +100,39 @@
       .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error("No daily report yet")); })
       .then(function (report) {
         document.getElementById("stamp").textContent =
-          "Scanned " + report.scannedAt + ". " + (report.note || "");
+          "Scanned " + report.scannedAt + ". " + (report.note || "") + (report.scannedAt && (Date.now() - Date.parse(report.scannedAt) > 86400000) ? " WARNING: report is older than 24 hours." : "");
         var metrics = [
           ["Branches", report.branchCount],
           ["Open PRs", report.prOpen],
           ["Healthy", report.healthy],
-          ["Conflicts", report.dirty]
+          ["Conflicts", report.dirty],
+          ["PRs merge-ready", Array.isArray(report.pullRequests) ? report.pullRequests.filter(function (pr) { return pr.mergeReady; }).length : "n/a"],
+          ["PRs blocked", Array.isArray(report.pullRequests) ? report.pullRequests.filter(function (pr) { return !pr.mergeReady; }).length : "n/a"]
         ];
         document.getElementById("metrics").innerHTML = metrics.map(function (m) {
           return "<article class=\"desk-card\"><strong>" + esc(m[1]) + "</strong><p>" + esc(m[0]) + "</p></article>";
         }).join("");
-        var rows = (report.branches || []).slice(0, 60).map(function (b) {
-          var miss = (b.missingRequired && b.missingRequired.length) ? b.missingRequired.join(", ") : "required files present";
-          var pr = b.prNumber ? ("PR #" + b.prNumber) : "no PR";
-          return "<article class=\"desk-card\"><strong>" + esc(b.name) + "</strong><p><span class=\"desk-status " + esc(b.status) + "\">" + esc(b.status) + " · " + esc(b.score) + "</span> · " + esc(b.ahead) + " ahead · " + esc(b.behind) + " behind · " + esc(pr) + "</p><p>" + esc(miss) + "</p></article>";
-        }).join("");
-        document.getElementById("rows").innerHTML = rows || "<p class=\"desk-note\">No branches in the last report.</p>";
+        var allBranches = report.branches || [];
+        function renderBranches() {
+          var query = document.getElementById("branch-search").value.trim().toLowerCase();
+          var status = document.getElementById("branch-status").value;
+          var filtered = allBranches.filter(function (b) {
+            var text = (b.name + " " + (b.prNumber || "") + " " + (b.prTitle || "")).toLowerCase();
+            return (!query || text.includes(query)) && (!status || b.status === status);
+          });
+          var rows = filtered.map(function (b) {
+            var miss = b.comparisonStatus === "unavailable" || b.missingRequired === null ? "comparison unavailable — not verified" : ((b.missingRequired && b.missingRequired.length) ? b.missingRequired.join(", ") : "required files present");
+            var pr = b.prNumber ? ("PR #" + b.prNumber) : "no PR";
+            var checks = b.checkState ? (" · CI " + b.checkState + " · review " + (b.reviewState || "unknown")) : "";
+            var protection = b.protected === true ? "protected flag: yes" : (b.protected === false ? "protected flag: no" : "protection flag unavailable");
+            return "<article class=\"desk-card\"><strong>" + esc(b.name) + "</strong><p><span class=\"desk-status " + esc(b.status) + "\">" + esc(b.status) + " · " + esc(b.score) + "</span> · " + esc(b.ahead) + " ahead · " + esc(b.behind) + " behind · " + esc(pr) + esc(checks) + "</p><p>" + esc(miss) + " · " + esc(protection) + "</p></article>";
+          }).join("");
+          document.getElementById("rows").innerHTML = rows || "<p class=\"desk-note\">No branches match these filters.</p>";
+          document.getElementById("branch-results").textContent = "Showing " + filtered.length + " of " + allBranches.length + " branches.";
+        }
+        document.getElementById("branch-search").addEventListener("input", renderBranches);
+        document.getElementById("branch-status").addEventListener("change", renderBranches);
+        renderBranches();
 
         var worst = (report.branches || []).slice().sort(function (a, b) { return a.score - b.score; }).slice(0, 12);
         document.getElementById("votes").innerHTML = worst.map(function (b) {
@@ -112,6 +142,16 @@
           return "<article class=\"desk-card\"><strong>" + esc(b.name) + "</strong><p class=\"desk-status " + esc(b.status) + "\">" + esc(b.status) + " · " + esc(b.score) + "</p>" + votes + "</article>";
         }).join("") || "<p class=\"desk-note\">Votes appear after the daily scan.</p>";
 
+        var pullRequests = report.pullRequests;
+        document.getElementById("pull-rows").innerHTML = Array.isArray(pullRequests) ? (pullRequests.map(function (pr) {
+          var status = pr.mergeReady ? "merge-ready" : "blocked / not verified";
+          var summary = pr.checkSummary || {};
+          var checks = pr.checkState || "unavailable";
+          var review = pr.reviewState || "unavailable";
+          var baseState = pr.baseComparisonStatus === "verified" ? (pr.baseAhead + " ahead / " + pr.baseBehind + " behind its base") : "base comparison unavailable";
+          var missing = pr.baseMissingRequired && pr.baseMissingRequired.length ? " · missing required files: " + pr.baseMissingRequired.join(", ") : "";
+          return "<article class=\"desk-card\"><strong>#" + esc(pr.number) + " " + esc(pr.title) + "</strong><p><span class=\"desk-status " + (pr.mergeReady ? "healthy" : "blocked") + "\">" + esc(status) + "</span> · CI " + esc(checks) + " · review " + esc(review) + " · merge " + esc(pr.mergeableState || "unknown") + "</p><p>" + esc(pr.headRef) + " → " + esc(pr.baseRef) + " · " + esc(baseState) + esc(missing) + "</p><p>" + esc(summary.total == null ? "?" : summary.total) + " checks · " + esc(summary.failed || 0) + " failed · " + esc(pr.approvedReviews || 0) + " approvals · " + esc(pr.changesRequestedReviews || 0) + " changes requested</p><p><a href=\"" + esc(pr.url) + "\" target=\"_blank\" rel=\"noopener\">Open pull request</a></p></article>";
+        }).join("") : "<p class=\"desk-note\">This report predates PR check/review evidence. Run the updated branch-health workflow to populate a safe PR readiness list.</p>");
         var conflicts = report.conflictActions || [];
         document.getElementById("conflicts").innerHTML = conflicts.length
           ? conflicts.map(function (c) {
