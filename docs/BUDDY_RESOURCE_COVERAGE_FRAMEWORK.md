@@ -1468,6 +1468,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
 - **Control and measures:** Correctness, coverage, reproducibility, safety/compliance, freshness, and cost. Enforce access policy, provenance, human approval for consequential side effects, and a visible failure state.
 - **Acceptance gate:** a category-specific contract, owner, unit/integration tests, benchmark or checklist, documented failure modes, and evidence links must exist before the subsystem advances beyond `catalogued`.
+- **Reconciliation:** `legacy_category_not_present_in_current_model_catalog`; retained as a historical category record, not counted as an active model category.
 
 ### MODEL-18 — Robotics & IoT
 
@@ -1477,6 +1478,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
 - **Control and measures:** Correctness, coverage, reproducibility, safety/compliance, freshness, and cost. Enforce access policy, provenance, human approval for consequential side effects, and a visible failure state.
 - **Acceptance gate:** a category-specific contract, owner, unit/integration tests, benchmark or checklist, documented failure modes, and evidence links must exist before the subsystem advances beyond `catalogued`.
+- **Reconciliation:** `legacy_category_not_present_in_current_model_catalog`; retained as a historical category record, not counted as an active model category.
 
 ### MODEL-19 — Security
 
@@ -1486,6 +1488,7 @@ Each category below has its own named Buddy subsystem boundary. These are **arch
 - **Outputs:** Category-specific knowledge records, validated artifacts, experiment results, and actionable recommendations.
 - **Control and measures:** Correctness, coverage, reproducibility, safety/compliance, freshness, and cost. Enforce access policy, provenance, human approval for consequential side effects, and a visible failure state.
 - **Acceptance gate:** a category-specific contract, owner, unit/integration tests, benchmark or checklist, documented failure modes, and evidence links must exist before the subsystem advances beyond `catalogued`.
+- **Reconciliation:** `legacy_category_not_present_in_current_model_catalog`; retained as a historical category record, not counted as an active model category.
 
 ### MODEL-20 — No-Code/Low-Code
 
@@ -1523,13 +1526,13 @@ Every subsystem must eventually have a machine-readable record with:
 
 ## 8.3 Implementation sequence
 
-1. Generate and validate the 12 registry-category subsystem records from the authoritative resource registry.
+1. Generate and validate one subsystem record for every category currently present in the authoritative resource registry.
 2. Generate one study-category subsystem for every exact label found in all discovered study-resource catalogs, preserving every source resource row.
-3. Generate 20 model-category subsystem records from the model catalog source.
+3. Generate active model-category subsystem records from the categories currently used by model records; preserve legacy category records separately.
 4. Add dedicated schemas, tests, owner mapping, and dashboard panels in small reviewable changes.
 5. Only then extend the same pattern to bot divisions, individual bots, sibling repositories, and any additional categories found in the full repository audit.
 
-**Scope/evidence warning:** these sections define independent subsystem contracts and intended boundaries. They do not claim that 102 separate executable systems, APIs, agents, dashboards, or tests have already been built. Their implementation must proceed incrementally through evidence-gated PRs.
+**Scope/evidence warning:** these sections define independent subsystem contracts and intended boundaries. They do not claim that the catalogued systems, APIs, agents, dashboards, or tests have already been built. Their implementation must proceed incrementally through evidence-gated PRs.
 
 
 ## 9. Machine-readable category-system registry and validation
