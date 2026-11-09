@@ -50,7 +50,12 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
         self.assertTrue(POLICY["catalog_policy"]["never_delete_historical_observations"])
 
     def test_validation_rejects_unverified_capability_or_income_claims(self):
-        bad = {"schema":"dreamco.buddy.technology_radar.v1","records":[{"id":"x","evidence_class":"discovery_lead_not_verified","verified_capability":True,"income_claim_verified":False,"status":"active"}]}
+        bad = {
+            "schema": "dreamco.buddy.technology_radar.v1",
+            "records": [{"id": "x", "record_kind": "test", "priority_lenses": [], "evidence_class": "discovery_lead_not_verified", "verified_capability": True, "income_claim_verified": False, "status": "active"}],
+            "source_runs": [],
+            "summary": {"records_total": 1, "sources_total": 0, "sources_succeeded": 0, "sources_failed": 0, "sources_pending": 0, "records_by_kind": {"test": 1}, "records_by_status": {"active": 1}, "records_by_priority_lens": {}}
+        }
         with self.assertRaises(ValueError):
             validate_catalog(bad)
 
