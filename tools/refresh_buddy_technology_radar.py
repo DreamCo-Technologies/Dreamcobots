@@ -297,6 +297,24 @@ def merge_catalog(existing: dict[str, Any], discovered: list[dict[str, Any]], so
     }
 
 
+def validate_policy(policy: dict[str, Any]) -> None:
+    sources = policy.get("sources")
+    if not isinstance(sources, list) or not sources:
+        raise ValueError("technology discovery source registry must be a non-empty array")
+    source_ids = [item.get("id") for item in sources]
+    if any(not item for item in source_ids) or len(source_ids) != len(set(source_ids)):
+        raise ValueError("technology discovery source IDs must be present and unique")
+    supported = {"rss", "json_collection", "html_page"}
+    for source in sources:
+        if source.get("kind") not in supported:
+            raise ValueError(f"unsupported source kind for {source.get('id')}: {source.get('kind')}")
+        if not safe_url(source.get("url")):
+            raise ValueError(f"invalid public source URL for {source.get('id')}")
+    lens_ids = [item.get("id") for item in policy.get("priority_lenses", [])]
+    if len(lens_ids) != len(set(lens_ids)):
+        raise ValueError("priority lens IDs must be unique")
+
+
 def validate_catalog(catalog: dict[str, Any]) -> None:
     if catalog.get("schema") != "dreamco.buddy.technology_radar.v1":
         raise ValueError("unexpected technology radar schema")
@@ -317,6 +335,28 @@ def validate_catalog(catalog: dict[str, Any]) -> None:
         raise ValueError("summary.sources_failed is stale")
     if summary.get("sources_pending") != sum(run.get("status") not in {"success", "failed"} for run in catalog.get("source_runs", [])):
         raise ValueError("summary.sources_pending is stale")
+    source_runs = catalog.get("source_runs", [])
+    source_ids = [run.get("source_id") for run in source_runs]
+    if len(source_ids) != len(set(source_ids)):
+        raise ValueError("source run IDs must be unique")
+    if any(run.get("status") not in {"success", "failed", "not_yet_checked"} for run in source_runs):
+        raise ValueError("source run contains an unknown status")
+    kinds: dict[str, int] = {}
+    statuses: dict[str, int] = {}
+    lenses: dict[str, int] = {}
+    for record in records:
+        kind = record.get("record_kind", "unknown")
+        status = record.get("status", "unknown")
+        kinds[kind] = kinds.get(kind, 0) + 1
+        statuses[status] = statuses.get(status, 0) + 1
+        for lens in record.get("priority_lenses", []):
+            lenses[lens] = lenses.get(lens, 0) + 1
+    if summary.get("records_by_kind") != dict(sorted(kinds.items())):
+        raise ValueError("summary.records_by_kind is stale")
+    if summary.get("records_by_status") != dict(sorted(statuses.items())):
+        raise ValueError("summary.records_by_status is stale")
+    if summary.get("records_by_priority_lens") != dict(sorted(lenses.items())):
+        raise ValueError("summary.records_by_priority_lens is stale")
     for item in records:
         if item.get("evidence_class") != "discovery_lead_not_verified":
             raise ValueError(f"unsupported evidence class for {item.get('id')}")
@@ -333,6 +373,7 @@ def main() -> int:
     mode.add_argument("--check", action="store_true", help="validate existing index and published mirror without network calls")
     args = parser.parse_args()
     policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+    validate_policy(policy)
     if args.refresh:
         existing = json.loads(OUTPUT_PATH.read_text(encoding="utf-8")) if OUTPUT_PATH.exists() else {
             "schema": "dreamco.buddy.technology_radar.v1", "records": []
