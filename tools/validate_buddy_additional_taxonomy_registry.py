@@ -99,7 +99,7 @@ def main() -> int:
     superbot_path = "config/superbot-capability-taxonomy.json"
     superbot_domains = load(superbot_path)["capability_domains"]
     add("superbot_capability_domain", superbot_domains.keys(), [superbot_path], lambda x: [slug(x)],
-        lambda x: len(superbot_domains[x].get("examples", [])))
+        lambda x: 1)
 
     software_path = "config/universal_software_capability_taxonomy.json"
     software = load(software_path)
@@ -181,6 +181,8 @@ def main() -> int:
                 fail(f"{group}/{category} source file references are stale")
             if item.get("source_item_count") != expected_item["count"]:
                 fail(f"{group}/{category} source item count is stale")
+            if group == "superbot_capability_domain" and item.get("example_count") != len(superbot_domains[category].get("examples", [])):
+                fail(f"{group}/{category} example count is stale")
             if expected_item["status"] and item.get("reconciliation_status") != expected_item["status"]:
                 fail(f"{group}/{category} reconciliation status is stale")
 
