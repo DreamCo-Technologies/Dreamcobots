@@ -1198,3 +1198,12 @@ Every subsystem must eventually have a machine-readable record with:
 5. Only then extend the same pattern to bot divisions, individual bots, sibling repositories, and any additional categories found in the full repository audit.
 
 **Scope/evidence warning:** these sections define independent subsystem contracts and intended boundaries. They do not claim that 102 separate executable systems, APIs, agents, dashboards, or tests have already been built. Their implementation must proceed incrementally through evidence-gated PRs.
+
+
+## 9. Machine-readable category-system registry and validation
+
+The dedicated subsystem specifications are also stored in `config/buddy/category-system-registry.json`, schema `dreamco.buddy.category_system_registry.v1`. This file contains one record per category, with a stable subsystem ID, exact source label, source references, contract fields, lifecycle status, implementation status, and verification status. The catalog currently defines 103 records: 12 resource-registry categories, 71 study-resource categories, and 20 model categories.
+
+Run `npm run buddy:category-systems` to validate the category-system registry against the authoritative source catalogs. The validator checks category completeness, source-row mapping, model category counts, unique subsystem IDs, required contract fields, lifecycle values, and summary counts. The test is `tests/test_buddy_category_system_registry.py`.
+
+The validator is now committed in this feature branch. Its execution in the repository's full CI environment remains pending; a source-file re-fetch and static consistency checks are not a substitute for a successful test run.
