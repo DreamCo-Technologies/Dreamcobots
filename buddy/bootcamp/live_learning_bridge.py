@@ -114,6 +114,24 @@ def evaluate_learning_completion(event: Mapping[str, Any]) -> dict[str, Any]:
             "missing_fields": missing,
             "weights_trained": False,
         }
+    boolean_fields = ("success", "verified", "regression_passed", "safety_passed")
+    optional_boolean_fields = ("external_assistance", "holdout_passed", "weights_trained")
+    malformed = [
+        key for key in boolean_fields
+        if type(event[key]) is not bool
+    ] + [
+        key for key in optional_boolean_fields
+        if key in event and type(event[key]) is not bool
+    ]
+    if malformed:
+        return {
+            "schema": RESULT_SCHEMA,
+            "accepted": False,
+            "promote": False,
+            "reason": "boolean_fields_must_be_json_booleans",
+            "invalid_fields": malformed,
+            "weights_trained": False,
+        }
     try:
         event_type = EventType(str(event.get("event_type", "tool_outcome")))
     except ValueError:
@@ -128,14 +146,14 @@ def evaluate_learning_completion(event: Mapping[str, Any]) -> dict[str, Any]:
         event_id=str(event["run_id"]),
         event_type=event_type,
         capability=str(event["capability"]),
-        success=bool(event["success"]),
-        verified=bool(event["verified"]),
-        regression_passed=bool(event["regression_passed"]),
-        safety_passed=bool(event["safety_passed"]),
-        external_assistance=bool(event.get("external_assistance", False)),
+        success=event["success"],
+        verified=event["verified"],
+        regression_passed=event["regression_passed"],
+        safety_passed=event["safety_passed"],
+        external_assistance=event.get("external_assistance", False),
     )
     decision = evaluate_event(learning_event)
-    holdout_passed = bool(event.get("holdout_passed", False))
+    holdout_passed = event.get("holdout_passed", False)
     promote = bool(decision.promote and holdout_passed and event["status"] == "succeeded")
     return {
         "schema": RESULT_SCHEMA,
