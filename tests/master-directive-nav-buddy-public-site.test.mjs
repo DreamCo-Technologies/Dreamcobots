@@ -7,6 +7,9 @@ const connectionGraph=JSON.parse(readFileSync(new URL('../website/data/buddy-lea
 const html=readFileSync(new URL('../website/master-build.html',import.meta.url),'utf8');
 const js=readFileSync(new URL('../website/master-build.js',import.meta.url),'utf8');
 const nav=readFileSync(new URL('../website/nav.js',import.meta.url),'utf8');
+const controlTower=readFileSync(new URL('../website/control-tower.html',import.meta.url),'utf8');
+const controlTowerJs=readFileSync(new URL('../website/control-tower.js',import.meta.url),'utf8');
+const buddyCommandCenter=readFileSync(new URL('../website/buddy-command-center.html',import.meta.url),'utf8');
 const worker=readFileSync(new URL('../website/service-worker.js',import.meta.url),'utf8');
 const pagesWorkflow=readFileSync(new URL('../.github/workflows/deploy-buddy-pages.yml',import.meta.url),'utf8');
 
@@ -41,6 +44,16 @@ test('master build page renders searchable audit data and is linked in navigatio
   assert.match(js,/evidence_refs/);
   assert.match(js,/structured_stage_plan/);
   assert.match(nav,/master-build\.html/);
+  assert.match(nav,/control-tower\.html/);
+  assert.match(controlTower,/DreamCo GitHub Control Tower/);
+  assert.match(controlTowerJs,/data\/control-tower\/github-status\.json/);
+  assert.match(controlTowerJs,/textContent/);
+  assert.doesNotMatch(controlTowerJs,/innerHTML/);
+  assert.match(controlTowerJs,/review_summary/);
+  assert.match(controlTowerJs,/changes requested/);
+  assert.match(controlTowerJs,/More PR metadata/);
+  assert.match(controlTowerJs,/commit_status/);
+  assert.match(buddyCommandCenter,/href=[\"']control-tower\.html[\"']/);
   assert.match(worker,/master-build\.html/);
   assert.match(worker,/buddy-learning-os-connections\.json/);
   assert.match(html,/Buddy learning OS connections/);
