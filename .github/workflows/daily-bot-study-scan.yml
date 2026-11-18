@@ -1,6 +1,8 @@
 name: Daily bot study scan
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
   schedule:
     - cron: "30 11 * * *"
@@ -17,5 +19,9 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Compile Markdown bot catalog into sandbox runtime
+        run: python3 tools/compile_md_bots.py --check
       - name: Scan bots, missing files, and study plans
         run: python3 tools/daily_bot_study_scan.py --check
+      - name: Verify daily scan contract
+        run: python3 -m unittest tests.test_daily_bot_study_scan
