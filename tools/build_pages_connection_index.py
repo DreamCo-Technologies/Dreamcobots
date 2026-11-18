@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Index tracked repository paths and Pages reachability, without publishing contents."""
+"""Index tracked paths and Pages reachability with a compact, verifiable source base."""
 from __future__ import annotations
 
 import argparse
@@ -22,9 +22,9 @@ def build(root: Path = ROOT) -> dict:
         served = name.startswith("website/")
         page = served and path.suffix == ".html"
         rows.append({"path": name, "kind": "page" if page else "asset" if served else "repository_source",
-                     "source": "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/" + quote(name, safe="/"),
+                     "source": quote(name, safe="/"),
                      "page": name[len("website/"):] if page else None})
-    return {"schema": "dreamco.pages_connection_index.v1", "files": rows,
+    return {"schema": "dreamco.pages_connection_index.v1", "source_base": "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/", "files": rows,
             "counts": {"tracked_files": len(rows), "pages": sum(r["kind"] == "page" for r in rows)},
             "scope": "Tracked paths only; source visibility and page reachability do not prove runtime behavior.",
             "evidence": {"features": "data/pages-feature-audit.json", "runtime": "data/fleet-runtime-status.json"}}
