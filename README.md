@@ -8,6 +8,14 @@
 
 DreamCo is a governed AI workbench with 1,051 specialist profiles across 45 divisions. Buddy routes requests, prepares testable task packets, and pauses before external writes, publishing, outreach, account changes, or spending.
 
+## Repository traceability on GitHub Pages
+
+- [Goals, milestones, build plans, latest audit findings, and pull-request status](website/goals-build-status.html)
+- [Machine-readable latest audit report and run history](https://github.com/DreamCo-Technologies/Dreamcobots/tree/repository-health-results/reports)
+- [Goal and milestone registry](config/repository-goals.json)
+
+The scheduled audit publishes timestamped, revision-linked reports to the `repository-health-results` branch. This is static/source-level traceability; runtime behavior is only traceable when the relevant service emits evidence into the repository's audit inputs.
+
 ## Buddy on GitHub Pages
 
 Original Buddy chrome plus the desks from the latest Grok chat. Static HTML. No API keys. Hugging Face public cards work. Grok teacher stays on the hosted app.
