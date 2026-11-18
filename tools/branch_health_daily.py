@@ -91,6 +91,11 @@ def local_branches() -> list[dict]:
             "--format=%(refname:short)\t%(objectname)\t%(committerdate:iso-strict)",
         ]
     ).stdout
+    protection_by_name = {}
+    try:
+        protection_by_name = {row["name"]: row.get("protected") for row in api_branches()}
+    except RuntimeError as exc:
+        print(f"branch protection flags unavailable: {exc}", file=sys.stderr)
     rows = []
     for line in out.splitlines():
         parts = line.split("\t")
@@ -102,31 +107,47 @@ def local_branches() -> list[dict]:
         name = short[7:] if short.startswith("origin/") else short
         if name == DEFAULT:
             continue
-        rows.append({"name": name, "sha": sha, "updated": date, "protected": False})
+        rows.append({
+            "name": name,
+            "sha": sha,
+            "updated": date,
+            "protected": protection_by_name.get(name),
+            "protectionStatus": "api_flag" if name in protection_by_name else "unavailable",
+        })
     return rows
 
 
-def local_ahead_behind(name: str) -> tuple[int, int]:
-    proc = git(["rev-list", "--left-right", "--count", f"origin/{DEFAULT}...origin/{name}"], check=False)
+def local_ahead_behind(name: str, base: str = DEFAULT) -> tuple[int, int]:
+    merge_base = git(["merge-base", f"origin/{base}", f"origin/{name}"], check=False)
+    if merge_base.returncode != 0 or not merge_base.stdout.strip():
+        detail = merge_base.stderr.strip() or "branches have no common ancestor"
+        raise RuntimeError(detail)
+    proc = git(["rev-list", "--left-right", "--count", f"origin/{base}...origin/{name}"], check=False)
     if proc.returncode != 0:
-        return 0, 0
+        detail = proc.stderr.strip() or "git rev-list failed"
+        raise RuntimeError(detail)
     bits = proc.stdout.strip().split()
     if len(bits) != 2:
-        return 0, 0
+        raise RuntimeError("git rev-list returned an invalid ahead/behind result")
     behind, ahead = int(bits[0]), int(bits[1])
     return ahead, behind
 
 
-def local_missing(name: str) -> list[str]:
+def local_missing(name: str, base: str = DEFAULT) -> list[str]:
     proc = git(
-        ["diff", "--name-only", "--diff-filter=AR", f"origin/{name}...origin/{DEFAULT}"],
+        ["diff", "--name-only", "--diff-filter=AR", f"origin/{name}...origin/{base}"],
         check=False,
     )
+    if proc.returncode != 0:
+        detail = proc.stderr.strip() or "git diff failed"
+        raise RuntimeError(detail)
     added = {ln.strip() for ln in proc.stdout.splitlines() if ln.strip()}
     return [p for p in REQUIRED if p in added]
 
 
-def vote_freshness(behind: int) -> tuple[str, str]:
+def vote_freshness(behind: int | None) -> tuple[str, str]:
+    if behind is None:
+        return "block", "Could not verify branch freshness; comparison unavailable."
     if behind == 0:
         return "pass", "Caught up with main."
     if behind < 40:
@@ -134,7 +155,9 @@ def vote_freshness(behind: int) -> tuple[str, str]:
     return "block", f"{behind} commits behind main."
 
 
-def vote_complete(missing: list[str]) -> tuple[str, str]:
+def vote_complete(missing: list[str] | None) -> tuple[str, str]:
+    if missing is None:
+        return "block", "Could not verify required files; comparison unavailable."
     if not missing:
         return "pass", "Required Buddy files present vs main."
     if len(missing) <= 2:
@@ -146,11 +169,28 @@ def vote_merge(pr: dict | None) -> tuple[str, str]:
     if not pr:
         return "warn", "No open pull request."
     state = pr.get("mergeable_state") or "unknown"
+    if pr.get("draft"):
+        return "block", "Draft PR; not eligible for merge."
     if state == "dirty":
-        return "block", "Conflicts with main. Conflict team required."
+        return "block", "Conflicts with its base branch. Human resolution required."
+    evidence = pr.get("_evidence") or {}
+    if evidence.get("baseComparisonStatus") != "verified":
+        return "block", "PR head/base comparison is unavailable; cannot verify the actual target branch."
+    if evidence.get("baseBehind") != 0:
+        return "block", f"PR head is {evidence.get('baseBehind')} commits behind its actual base."
+    if evidence.get("baseMissingRequired"):
+        return "block", "PR removes or renames required Buddy files from its actual base."
+    if not evidence.get("baseAhead"):
+        return "block", "PR has no verified commits ahead of its actual base."
+    check_state = evidence.get("checkState", "unavailable")
+    review_state = evidence.get("reviewState", "unavailable")
+    if check_state != "success":
+        return "block", f"CI evidence is not green ({check_state})."
+    if review_state != "approved":
+        return "block", f"Independent review is not approved ({review_state})."
     if state == "clean":
-        return "pass", "PR mergeable_state=clean."
-    return "warn", f"PR mergeable_state={state}."
+        return "pass", "Non-draft PR, clean merge state, passing checks, and approval."
+    return "block", f"GitHub mergeable_state={state}; mergeability is not verified."
 
 
 def score_votes(votes: list[dict]) -> tuple[int, str]:
@@ -166,7 +206,7 @@ def score_votes(votes: list[dict]) -> tuple[int, str]:
     return max(0, score), status
 
 
-def review(behind: int, missing: list[str], pr: dict | None) -> tuple[list[dict], int, str]:
+def review(behind: int | None, missing: list[str] | None, pr: dict | None) -> tuple[list[dict], int, str]:
     votes = []
     f_v, f_n = vote_freshness(behind)
     votes.append({"reviewer": "freshness", "vote": f_v, "note": f_n})
@@ -179,7 +219,9 @@ def review(behind: int, missing: list[str], pr: dict | None) -> tuple[list[dict]
         votes.append({"reviewer": "safety", "vote": "block", "note": "Money/Stripe path. No auto-edit."})
     else:
         votes.append({"reviewer": "safety", "vote": "pass", "note": "No payment-surface auto-edit."})
-    if "website/buddy.html" in missing:
+    if missing is None:
+        votes.append({"reviewer": "scope", "vote": "block", "note": "Could not verify required Buddy files; comparison unavailable."})
+    elif "website/buddy.html" in missing:
         votes.append({"reviewer": "scope", "vote": "block", "note": "Would drop original Buddy chat."})
     elif "website/wiring.html" in missing:
         votes.append({"reviewer": "scope", "vote": "warn", "note": "Predates the wiring map."})
@@ -206,8 +248,8 @@ def markdown_report(report: dict) -> str:
         "| Branch | Score | Status | Ahead | Behind | PR | Missing |",
         "|---|---:|---|---:|---:|---|---|",
     ]
-    for b in report["branches"][:80]:
-        missing = ", ".join(b["missingRequired"]) or "—"
+    for b in report["branches"]:
+        missing = "unverified (comparison unavailable)" if b.get("missingRequired") is None else ", ".join(b["missingRequired"]) or "—"
         pr = f"#{b['prNumber']}" if b.get("prNumber") else "—"
         lines.append(
             f"| `{b['name']}` | {b['score']} | {b['status']} | {b['ahead']} | {b['behind']} | {pr} | {missing} |"
@@ -249,11 +291,104 @@ def api_branches() -> list[dict]:
     return rows
 
 
-def api_ahead_behind_missing(name: str) -> tuple[int, int, list[str]]:
-    cmp = gh(f"/repos/{OWNER}/{REPO}/compare/{urllib.parse.quote(name, safe='')}...{DEFAULT}")
-    behind = int(cmp.get("ahead_by") or 0)
-    ahead = int(cmp.get("behind_by") or 0)
+def api_ahead_behind_missing(name: str, base: str = DEFAULT) -> tuple[int, int, list[str]]:
+    cmp = gh(f"/repos/{OWNER}/{REPO}/compare/{urllib.parse.quote(base, safe='')}...{urllib.parse.quote(name, safe='')}")
+    ahead = int(cmp.get("ahead_by") or 0)
+    behind = int(cmp.get("behind_by") or 0)
     return ahead, behind, missing_from(cmp.get("files") or [])
+
+
+
+def pr_evidence(pr: dict) -> dict:
+    """Collect real CI and review evidence; missing/unreadable evidence is never green."""
+    number = pr.get("number")
+    sha = (pr.get("head") or {}).get("sha")
+    checks = {"checkState": "unavailable", "checkSummary": {}, "reviewState": "unavailable",
+              "approvedReviews": 0, "changesRequestedReviews": 0, "reviewCount": 0}
+    if not number or not sha:
+        return checks
+    try:
+        check_payload = gh(f"/repos/{OWNER}/{REPO}/commits/{sha}/check-runs?per_page=100")
+        status_payload = gh(f"/repos/{OWNER}/{REPO}/commits/{sha}/status")
+        check_runs = check_payload.get("check_runs") if isinstance(check_payload, dict) else None
+        if not isinstance(check_runs, list):
+            raise RuntimeError("GitHub check-runs response was unavailable")
+        conclusions = [row.get("conclusion") for row in check_runs]
+        statuses = [row.get("status") for row in check_runs]
+        status_contexts = (status_payload or {}).get("statuses", []) if isinstance(status_payload, dict) else []
+        context_states = [row.get("state") for row in status_contexts]
+        failed = sum(1 for value in conclusions if value in {"failure", "timed_out", "cancelled", "action_required", "startup_failure", "stale"})
+        pending = sum(1 for value in statuses if value in {"queued", "in_progress", "pending"})
+        skipped = sum(1 for value in conclusions if value in {"skipped", "neutral"})
+        combined = (status_payload or {}).get("state") if isinstance(status_payload, dict) else None
+        if failed or combined in {"failure", "error"}:
+            check_state = "failure"
+        elif pending or combined == "pending":
+            check_state = "pending"
+        elif check_runs and all(value in {"success", "neutral"} for value in conclusions) and combined in {None, "success"}:
+            check_state = "success"
+        elif not check_runs and context_states and all(value == "success" for value in context_states):
+            check_state = "success"
+        elif skipped:
+            check_state = "incomplete"
+        else:
+            check_state = "unknown"
+        checks["checkState"] = check_state
+        checks["checkSummary"] = {"total": len(check_runs), "failed": failed, "pending": pending,
+                                  "skipped_or_neutral": skipped, "status_contexts": len(context_states),
+                                  "combined_status": combined}
+    except RuntimeError as exc:
+        checks["checkSummary"] = {"error": str(exc)[:240]}
+    try:
+        reviews = gh_pages(f"/repos/{OWNER}/{REPO}/pulls/{number}/reviews")
+        latest = {}
+        for row in reviews:
+            login = (row.get("user") or {}).get("login")
+            if not login or not row.get("submitted_at"):
+                continue
+            if login not in latest or row["submitted_at"] > latest[login].get("submitted_at", ""):
+                latest[login] = row
+        states = [row.get("state") for row in latest.values()]
+        approvals = states.count("APPROVED")
+        changes = states.count("CHANGES_REQUESTED")
+        checks["reviewCount"] = len(latest)
+        checks["approvedReviews"] = approvals
+        checks["changesRequestedReviews"] = changes
+        checks["reviewState"] = "changes_requested" if changes else ("approved" if approvals else "unreviewed")
+    except RuntimeError as exc:
+        checks["reviewState"] = "unavailable"
+        checks["reviewError"] = str(exc)[:240]
+    return checks
+
+
+
+def pr_base_comparison(pr: dict, use_git: bool) -> dict:
+    """Compare a PR head with its own base branch, never assume main."""
+    head = (pr.get("head") or {}).get("ref")
+    base = (pr.get("base") or {}).get("ref")
+    result = {"baseComparisonStatus": "unavailable", "baseAhead": None, "baseBehind": None,
+              "baseMissingRequired": None}
+    if not head or not base:
+        result["baseComparisonError"] = "PR head/base refs missing"
+        return result
+    try:
+        if use_git:
+            ahead, behind = local_ahead_behind(head, base)
+            missing = local_missing(head, base)
+        else:
+            comparison = gh(f"/repos/{OWNER}/{REPO}/compare/{urllib.parse.quote(base, safe='')}...{urllib.parse.quote(head, safe='')}")
+            files = comparison.get("files") or []
+            if len(files) >= 300:
+                raise RuntimeError("GitHub compare file list may be truncated at 300 entries")
+            ahead = int(comparison.get("ahead_by") or 0)
+            behind = int(comparison.get("behind_by") or 0)
+            missing_set = {row.get("filename") for row in files if row.get("status") in {"removed", "renamed"}}
+            missing = [path for path in REQUIRED if path in missing_set]
+        result.update({"baseComparisonStatus": "verified", "baseAhead": ahead,
+                       "baseBehind": behind, "baseMissingRequired": missing})
+    except RuntimeError as exc:
+        result["baseComparisonError"] = str(exc)[:240]
+    return result
 
 
 def public_report(report: dict) -> dict:
@@ -310,6 +445,9 @@ def main() -> int:
             full = gh(f"/repos/{OWNER}/{REPO}/pulls/{pr['number']}")
         except RuntimeError:
             full = pr
+        evidence = pr_evidence(full)
+        evidence.update(pr_base_comparison(full, use_git))
+        full["_evidence"] = evidence
         pr_by_ref[full["head"]["ref"]] = full
 
     records = []
@@ -317,16 +455,18 @@ def main() -> int:
     for br in branches:
         name = br["name"]
         pr = pr_by_ref.get(name)
+        comparison_error = None
         try:
             if use_git:
                 ahead, behind = local_ahead_behind(name)
                 missing = local_missing(name)
             else:
-                ahead, behind, missing = api_ahead_behind_missing(name)
+                ahead, behind, missing = api_ahead_behind_missing(name, DEFAULT)
         except RuntimeError as exc:
-            print(f"compare skip {name}: {exc}", file=sys.stderr)
-            ahead = behind = 0
-            missing = []
+            comparison_error = str(exc)
+            print(f"compare blocked {name}: {comparison_error}", file=sys.stderr)
+            ahead = behind = None
+            missing = None
 
         votes, score, status = review(behind, missing, pr)
         rec = {
@@ -336,19 +476,29 @@ def main() -> int:
             "updated": br.get("updated") or (pr or {}).get("updated_at"),
             "ahead": ahead,
             "behind": behind,
+            "comparisonStatus": "verified" if comparison_error is None else "unavailable",
+            "comparisonError": comparison_error,
             "missingRequired": missing,
             "prNumber": (pr or {}).get("number"),
             "prTitle": (pr or {}).get("title"),
             "prUrl": (pr or {}).get("html_url"),
             "mergeable": (pr or {}).get("mergeable"),
             "mergeableState": (pr or {}).get("mergeable_state"),
+            "checkState": ((pr or {}).get("_evidence") or {}).get("checkState"),
+            "checkSummary": ((pr or {}).get("_evidence") or {}).get("checkSummary"),
+            "reviewState": ((pr or {}).get("_evidence") or {}).get("reviewState"),
+            "approvedReviews": ((pr or {}).get("_evidence") or {}).get("approvedReviews", 0),
+            "changesRequestedReviews": ((pr or {}).get("_evidence") or {}).get("changesRequestedReviews", 0),
+            "prBaseComparisonStatus": ((pr or {}).get("_evidence") or {}).get("baseComparisonStatus"),
+            "prBaseAhead": ((pr or {}).get("_evidence") or {}).get("baseAhead"),
+            "prBaseBehind": ((pr or {}).get("_evidence") or {}).get("baseBehind"),
             "moneySensitive": bool(MONEY_RE.search((pr or {}).get("title") or "")),
             "votes": votes,
             "score": score,
             "status": status,
         }
         records.append(rec)
-        if pr and pr.get("mergeable_state") == "dirty":
+        if pr and (pr.get("mergeable_state") == "dirty" or (pr.get("_evidence") or {}).get("checkState") != "success" or (pr.get("_evidence") or {}).get("reviewState") != "approved" or pr.get("draft")):
             money = rec["moneySensitive"]
             conflicts.append(
                 {
@@ -376,6 +526,22 @@ def main() -> int:
         "watch": sum(1 for r in records if r["status"] == "watch"),
         "blocked": sum(1 for r in records if r["status"] == "blocked"),
         "branches": records,
+        "pullRequests": [
+            {
+                "number": pr.get("number"), "title": pr.get("title"), "url": pr.get("html_url"),
+                "draft": pr.get("draft"), "baseRef": (pr.get("base") or {}).get("ref"),
+                "headRef": (pr.get("head") or {}).get("ref"), "headSha": (pr.get("head") or {}).get("sha"),
+                "mergeable": pr.get("mergeable"), "mergeableState": pr.get("mergeable_state"),
+                **(pr.get("_evidence") or {}),
+                "mergeReady": (not pr.get("draft") and pr.get("mergeable_state") == "clean"
+                               and (pr.get("_evidence") or {}).get("baseComparisonStatus") == "verified"
+                               and (pr.get("_evidence") or {}).get("baseBehind") == 0
+                               and not (pr.get("_evidence") or {}).get("baseMissingRequired")
+                               and bool((pr.get("_evidence") or {}).get("baseAhead"))
+                               and (pr.get("_evidence") or {}).get("checkState") == "success"
+                               and (pr.get("_evidence") or {}).get("reviewState") == "approved"),
+            } for pr in prs
+        ],
         "conflictActions": conflicts,
         "note": "Inventory is not mastery. Auto-merge to main is off. Review team votes; conflict team never force-merges main.",
     }

@@ -10,6 +10,7 @@
     { href: 'professional-bootcamp.html', label: '🎓 Professional College' },
     { href: 'production-evidence.html', label: '🧾 Production Evidence' },
     { href: 'repository-guide.html', label: '📚 Start Here' },
+    { href: 'markdown-audit.html', label: '📝 Markdown Audit' },
     { href: 'buddy.html', label: '🧠 Buddy Bot' },
     { href: 'own-bootcamp.html', label: '🥾 Bootcamp' },
     { href: 'distill-course.html', label: 'Distill course' },
