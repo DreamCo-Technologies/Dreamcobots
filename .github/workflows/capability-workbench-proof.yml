@@ -1,0 +1,35 @@
+name: Capability workbench proof
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'website/capability-workbench*'
+      - 'buddy/capabilities/**'
+      - 'tools/build_pages_connection_index.py'
+      - 'tests/*capability*'
+      - '.github/workflows/capability-workbench-proof.yml'
+permissions:
+  contents: read
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Rebuild tracked file index
+        run: python3 tools/build_pages_connection_index.py
+      - name: Verify supervised runtime and learning boundaries
+        run: python3 -m unittest tests.test_observed_capability_runtime tests.test_build_pages_connection_index tests.test_fleet_runtime_permissions tests.test_check_buddy_distill_gate tests.test_buddy_local_bridge
+      - name: Verify workbench behavior and file links
+        run: node --test tests/capability-workbench.test.mjs
+      - name: Upload connection evidence
+        uses: actions/upload-artifact@v6
+        with:
+          name: pages-connection-evidence
+          path: website/data/pages-connection-index.json

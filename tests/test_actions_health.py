@@ -1,13 +1,20 @@
 import json
 import unittest
+from unittest.mock import patch
 
-from tools.audit_actions_health import MAX_MAJOR, OUT_JSON, PUBLIC_JSON, main
+from tools.audit_actions_health import MAX_MAJOR, OUT_JSON, OUT_MD, PUBLIC_JSON, main
 
 
 class ActionsHealthAuditTest(unittest.TestCase):
     def test_current_official_action_baseline_is_recognized(self) -> None:
         self.assertEqual(MAX_MAJOR["actions/checkout"], 7)
         self.assertEqual(MAX_MAJOR["actions/upload-pages-artifact"], 5)
+
+    def test_markdown_report_is_written_as_utf8(self) -> None:
+        with patch("tools.audit_actions_health.Path.write_text", autospec=True) as write_text:
+            main()
+
+        self.assertTrue(any(call.args[0] == OUT_MD and call.kwargs.get("encoding") == "utf-8" for call in write_text.call_args_list))
 
     def test_all_workflows_pass_the_static_health_gate(self) -> None:
         result = main()

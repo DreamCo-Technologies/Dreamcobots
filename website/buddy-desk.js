@@ -38,7 +38,7 @@
   function review(text) {
     const notes = [];
     if (/ghp_|github_pat_|sk-|hf_|AKIA/.test(text)) notes.push("A key-shaped string is in the text. Remove it before saving.");
-    if (/frontier model trained|beats gpt|beats claude/i.test(text)) notes.push("This claims a win or a trained frontier model. Do not ship that without a score.");
+    if (/frontier model trained|beats\s+(?:gpt|claude)/i.test(text)) notes.push("This claims a win or a trained frontier model. Do not ship that without a score.");
     if (/TODO|FIXME/.test(text)) notes.push("There is an unfinished note.");
     if (!notes.length) notes.push("No key, no unfinished note, and no unsupported win claim. This is not a full review.");
     return notes;

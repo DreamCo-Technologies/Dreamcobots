@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Buddy Professional Bootcamp</title>
+  <link rel="stylesheet" href="styles.css?v=41">
+  <link rel="stylesheet" href="professional-bootcamp.css?v=1">
+</head>
+<body>
+  <div id="nav-placeholder"></div><script src="nav.js"></script>
+  <main class="college-shell">
+    <header class="college-hero">
+      <p class="eyebrow">Learn · practice · benchmark · build</p>
+      <h1>Buddy Professional Bootcamp</h1>
+      <p>Build task skills from authorized demonstrations, test them on unseen work, and prepare model-training handoffs. Learning is off until the user opts in for a specific task.</p>
+      <div class="truth-row"><strong id="truth-status">Loading verified status…</strong><a href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/reports/PROFESSIONAL_BOOTCAMP.md">Evidence report</a><a href="https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/buddy/bootcamp/professional_training.py">Runtime contract</a></div>
+    </header>
+
+    <section class="college-section">
+      <h2>Choose a college track</h2>
+      <p>Each track follows the same evidence cycle. A track is a curriculum target, not a professional license or a mastery claim.</p>
+      <div id="tracks" class="track-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="college-section two-column">
+      <div>
+        <h2>Distill one task from a wrapper</h2>
+        <form id="task-form" class="college-form">
+          <label>Profession or role<input id="profession" required placeholder="Lab technician, teacher, developer…"></label>
+          <label>Task goal<input id="task-goal" required placeholder="Prepare a reproducible weekly report"></label>
+          <label>Wrapper or app<input id="wrapper" required placeholder="App and exact version"></label>
+          <label>Visible successful result<textarea id="task-result" required placeholder="What happened and how it was verified"></textarea></label>
+          <label>Your customization<textarea id="customization" required placeholder="How your version should differ or work better"></textarea></label>
+          <label class="check"><input id="task-consent" type="checkbox" required> I own or may use this task example, removed private data, and consent to use this example for training.</label>
+          <button class="btn btn-primary" type="submit">Build task example</button>
+        </form>
+      </div>
+      <div class="output-card">
+        <h3>Task packet</h3>
+        <pre id="task-output">No task captured. Nothing is recording in the background.</pre>
+        <button id="download-task" class="btn btn-outline" type="button" disabled>Download JSON</button>
+      </div>
+    </section>
+
+    <section class="college-section">
+      <h2>Benchmark performance before promotion</h2>
+      <p>Enter averaged scores from at least three repeated baseline, candidate, and hidden-holdout runs. This calculator does not run a model.</p>
+      <form id="benchmark-form" class="metric-grid">
+        <label>Baseline score %<input id="baseline" type="number" min="0" max="100" value="60" required></label>
+        <label>Candidate score %<input id="candidate" type="number" min="0" max="100" value="82" required></label>
+        <label>Hidden holdout %<input id="holdout" type="number" min="0" max="100" value="80" required></label>
+        <label>Largest regression %<input id="regression" type="number" min="0" max="100" value="1" required></label>
+        <label>Repeated runs<input id="repetitions" type="number" min="0" value="3" required></label>
+        <button class="btn btn-primary" type="submit">Check promotion</button>
+      </form>
+      <p id="benchmark-result" class="result-line">Waiting for benchmark evidence.</p>
+    </section>
+
+    <section class="college-section two-column">
+      <div>
+        <h2>Prepare a professional weight-training run</h2>
+        <form id="training-form" class="college-form">
+          <label>Base model and revision<input id="base-model" required placeholder="organization/model@commit"></label>
+          <label>Method<select id="method"><option>SFT</option><option>DPO</option><option>GRPO</option><option>reward_modeling</option><option>LoRA</option><option>QLoRA</option></select></label>
+          <label>Dataset manifest hash<input id="dataset-hash" required pattern="[a-fA-F0-9]{64}" placeholder="64-character SHA-256"></label>
+          <label>Hardware<input id="hardware" required placeholder="t4-small, l4x1, a10g-large…"></label>
+          <label>Maximum cost (USD)<input id="max-cost" type="number" min="0.01" step="0.01" required></label>
+          <label>Private output repository<input id="output-repo" required placeholder="owner/model-name"></label>
+          <label class="check"><input id="rights" type="checkbox" required> Base model and dataset rights verified</label>
+          <button class="btn btn-primary" type="submit">Build training handoff</button>
+        </form>
+      </div>
+      <div class="output-card">
+        <h3>Training handoff</h3>
+        <pre id="training-output">No job submitted and no weights trained.</pre>
+        <p><a href="hf-bootcamp.html">Review model and package options</a> · <a href="open-model-lab.html">Open Model Lab</a></p>
+      </div>
+    </section>
+
+    <section class="college-section two-column">
+      <div>
+        <h2>Jarvis-style gesture adapter contract</h2>
+        <p>This pad demonstrates commands without opening a camera. A real adapter must request camera permission, show a live indicator, apply confidence thresholds, and require confirmation for consequential actions.</p>
+        <div id="gesture-pad" class="gesture-pad" aria-label="Gesture command simulator"></div>
+        <p id="gesture-result" class="result-line">Camera off. Use the buttons to test command mapping.</p>
+      </div>
+      <div>
+        <h2>Productivity and income experiments</h2>
+        <ol>
+          <li>Measure time, cost, errors and human touches in the current workflow.</li>
+          <li>Suggest a smaller, lawful automation or new service offer.</li>
+          <li>Estimate demand, costs, margin, effort and downside.</li>
+          <li>Let the user approve outreach, publishing, spending and account actions.</li>
+          <li>Run a bounded test and keep the result, including failures.</li>
+        </ol>
+        <p>Buddy does not promise income or use spam, fake accounts, deceptive activity, platform evasion, unauthorized access, or automatic financial transactions.</p>
+        <a class="btn btn-outline" href="capability-workbench.html#practice">Open income practice</a>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="professional-bootcamp.js"></script>
+</body>
+</html>

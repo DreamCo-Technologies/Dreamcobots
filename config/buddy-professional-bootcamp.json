@@ -1,0 +1,54 @@
+{
+  "schema": "dreamco.buddy_professional_bootcamp.v1",
+  "status": "training_and_evaluation_contract_no_weights_trained",
+  "mission": "Turn consented task demonstrations into tested Buddy capabilities and optional model-training handoffs for work, school, personal life, science and engineering.",
+  "tracks": [
+    {"id": "software", "label": "Software and vibe coding", "practice": ["requirements", "implementation", "debugging", "testing", "deployment", "maintenance"]},
+    {"id": "reverse_engineering", "label": "Authorized reverse engineering", "practice": ["observe behavior", "map interfaces", "record inputs and outputs", "build a clean-room specification", "implement a customized alternative", "compare independently"]},
+    {"id": "research", "label": "Research", "practice": ["form a question", "find authoritative sources", "extract evidence", "compare claims", "reproduce analysis", "cite limitations"]},
+    {"id": "invention", "label": "Invention and product design", "practice": ["define need", "generate alternatives", "prior-art check", "prototype", "test", "document tradeoffs"]},
+    {"id": "business", "label": "Business operations", "practice": ["map workflow", "measure baseline", "assist task", "review result", "automate approved steps", "audit value"]},
+    {"id": "education", "label": "School and teaching", "practice": ["diagnose prerequisites", "teach", "guided practice", "unseen assessment", "remediate", "teach back"]},
+    {"id": "science", "label": "Science and data", "practice": ["hypothesis", "protocol", "data quality", "analysis", "replication", "peer review"]},
+    {"id": "robotics", "label": "Robotics and electronics", "practice": ["simulate", "hardware capability discovery", "safety envelope", "supervised trial", "fault recovery", "measured validation"]},
+    {"id": "biology", "label": "Biology and bioinformatics", "practice": ["question", "approved data", "method", "computational analysis", "uncertainty", "expert review"]},
+    {"id": "personal", "label": "Personal productivity", "practice": ["user goal", "routine map", "suggestion", "user choice", "assisted execution", "time-saved review"]}
+  ],
+  "task_learning": {
+    "default": "off",
+    "capture": "per_task_opt_in",
+    "allowed_inputs": ["user-authored task description", "approved wrapper metadata", "visible action/result events", "user correction", "verified outcome"],
+    "never_capture": ["passwords", "tokens", "payment credentials", "private keys", "hidden model reasoning", "unrelated screen content", "holdout answers"],
+    "retention": "user_selectable_and_revocable",
+    "distillation": ["redact", "verify rights", "separate train and holdout", "normalize task", "attach source and revision", "score baseline", "export only with training consent"]
+  },
+  "benchmarks": {
+    "dimensions": ["task_success", "quality", "safety", "latency", "cost", "human_touches", "accessibility", "reliability"],
+    "promotion": {"minimum_repetitions": 3, "minimum_holdout_score": 0.75, "minimum_absolute_improvement": 0.05, "maximum_regression": 0.02},
+    "rules": ["baseline before training", "unseen holdout", "independent grader where practical", "repeat failures are recorded", "regression suite before promotion", "no mastery claim from reading or one demonstration"]
+  },
+  "weight_training": {
+    "methods": ["SFT", "DPO", "GRPO", "reward_modeling", "LoRA", "QLoRA"],
+    "required": ["exact base model and revision", "base-model license approval", "dataset manifest and hash", "training rights", "train-validation-hidden-test split", "hardware and cost ceiling", "seed and hyperparameters", "checkpoint destination", "monitoring", "before-and-after benchmarks", "model card", "rollback plan"],
+    "preferred_weight_formats": ["safetensors", "GGUF"],
+    "public_repository_contains_weights": false,
+    "execution": "A training adapter and funded compute must be selected. Creating a manifest does not train weights."
+  },
+  "professional_use": {
+    "modes": ["observe", "suggest", "guide", "assist", "supervised_automation"],
+    "regulated_domains": "Human professionals retain decisions that require a license, diagnosis, safety certification or legal authority.",
+    "workplace_rule": "Employee or student monitoring requires clear notice, a defined purpose, minimum necessary collection and an accessible off switch.",
+    "replacement_rule": "Replace repetitive steps only after measuring the workflow and preserving review, exception handling and accountability."
+  },
+  "gesture_control": {
+    "status": "adapter_contract_only",
+    "commands": ["pause", "resume", "next", "back", "confirm", "cancel", "mute", "volume_up", "volume_down"],
+    "requirements": ["camera permission", "visible camera indicator", "on-device processing when available", "calibration", "confidence threshold", "confirmation for consequential actions", "keyboard, voice or touch fallback"]
+  },
+  "income_assistance": {
+    "allowed": ["find lawful opportunities", "compare demand", "estimate costs and margins", "draft an offer", "prepare a portfolio", "schedule an approved workflow", "measure results"],
+    "approval_required": ["contacting a person", "publishing", "accepting terms", "spending money", "moving money", "placing trades", "creating accounts", "submitting applications"],
+    "rule": "Suggestions are experiments with costs, effort, risk and evidence. Buddy does not promise earnings or use deceptive, spam, account-farming or platform-evasion tactics."
+  },
+  "truth": {"training_runs_completed": 0, "trained_weight_artifacts": 0, "gesture_camera_adapter_connected": false, "professional_deployments_verified": 0}
+}

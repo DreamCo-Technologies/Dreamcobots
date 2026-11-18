@@ -82,8 +82,12 @@ class FrontierClaimTrustGatesTest(unittest.TestCase):
             },
             "soak_requirements": {
                 "tick_path": "config/generated/sandbox-24h-tick.json",
+                "history_path": "config/generated/sandbox-24h-history.json",
                 "report_path": "reports/SANDBOX_24H.md",
                 "required_tick_status": "sandbox_tick_ok",
+                "minimum_successful_ticks": 24,
+                "minimum_elapsed_hours": 24,
+                "require_no_failed_ticks": True,
             },
             "claimable_assessment_path": "evidence/frontier/current-status.assessment.json",
         }
@@ -104,6 +108,10 @@ class FrontierClaimTrustGatesTest(unittest.TestCase):
                 json.dumps({"status": "sandbox_tick_ok"}), encoding="utf-8"
             )
             (root / "reports" / "SANDBOX_24H.md").write_text("# ok\n", encoding="utf-8")
+            (root / "config" / "generated" / "sandbox-24h-history.json").write_text(
+                json.dumps({"summary": {"successful_ticks": 24, "failed_ticks": 0, "elapsed_hours": 24, "complete": True, "status": "passed_24h"}}),
+                encoding="utf-8",
+            )
         site = "Buddy comparison desk.\n"
         if vanity:
             site = "Buddy is frontier-competitive today.\n"
