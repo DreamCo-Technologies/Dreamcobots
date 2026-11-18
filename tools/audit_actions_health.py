@@ -203,7 +203,7 @@ def main() -> int:
         if not item["errors"]:
             lines.append("- ✅ No static blockers found.")
         lines.append("")
-    OUT_MD.write_text("\n".join(lines))
+    OUT_MD.write_text("\n".join(lines), encoding="utf-8")
     print(json.dumps({"ok": critical == 0, "workflows": len(workflows), "critical_errors": critical, "warnings": warnings, "possible_duplicate_groups": len(duplicate_groups), "report": str(OUT_MD.relative_to(ROOT))}, indent=2))
     return 0 if critical == 0 else 1
 
