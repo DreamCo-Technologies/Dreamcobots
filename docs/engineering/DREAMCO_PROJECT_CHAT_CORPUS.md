@@ -196,3 +196,8 @@ For PR #17412 head SHA ca452a552ef2abaf9994f109cb50b87175709dd8, ten PR-triggere
 3. Review all 1,566 patch lines by hunk and changed path; compare with main and open PRs before proposing any selective port.
 4. Continue line-by-line requirement extraction from the 311-section directive and transcript, with stable DCR IDs and exact locators.
 5. Enumerate accessible Project conversations beyond the existing 15-item registry; unknown totals remain explicitly unknown.
+
+
+### Bootcamp version delta and v3 test follow-up
+
+Bootcamp v3 was separately materialized and inspected: 25 archive entries, CRC passed, 51,714 uncompressed bytes. It adds source_policy.py and model_router.py plus corresponding model-router tests compared with v2. Local isolated fixture tests: v3 23 passed. Cross-version shared files are identical by SHA-256 where checked: learning_pipeline.py, scheduler.py, the learning/scheduler tests, and the path bootcamp remain unchanged across v2-v5; model_router.py and source_policy.py appear in v3 and remain unchanged in v4-v5; v4 adds capability_manager.py and routing_policy.py with tests; v5 adds routing_evidence.py and tests. Test totals rise v2 15, v3 23, v4 35, v5 43. This is a staged prototype progression, not evidence that the code is integrated into Dreamcobots or production.
