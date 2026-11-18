@@ -1,0 +1,56 @@
+{
+  "schema": "dreamco.buddy_user_data_ownership.v1",
+  "default_owner": "the user who created or supplied the data, subject to third-party rights",
+  "default_access": "user_only",
+  "default_buddy_scopes": [],
+  "scope_choices": [
+    "private_study",
+    "private_retrieval_for_this_user",
+    "private_training_for_this_users_buddy",
+    "shared_fleet_training",
+    "publish_or_export",
+    "commercial_redistribution"
+  ],
+  "consent_rules": {
+    "explicit_opt_in_required_for_each_scope": true,
+    "private_training_does_not_imply_shared_training": true,
+    "shared_training_does_not_imply_publication_or_sale": true,
+    "consent_must_be_revocable_for_future_processing": true,
+    "consent_receipt_and_data_digest_required": true,
+    "owner_may_export_or_delete_workspace_data": true
+  },
+  "ownership_and_access": {
+    "user_ownership_transferred_to_dreamco": false,
+    "buddy_access_is_a_scoped_service_permission": true,
+    "joint_access_does_not_claim_joint_legal_ownership": true,
+    "third_party_ownership_and_license_conditions_are_preserved": true,
+    "user_workspace_isolation_required": true,
+    "default_shared_fleet_access": false
+  },
+  "training": {
+    "default_enabled": false,
+    "private_training_requires_separate_opt_in": true,
+    "shared_fleet_training_requires_separate_opt_in": true,
+    "external_dataset_training_requires_license_review": true,
+    "unknown_or_conflicting_rights_block_training": true,
+    "sensitive_personal_data_blocked_without_separate_approved_policy": true,
+    "raw_user_data_not_written_to_logs": true,
+    "raw_user_data_not_used_as_shared_memory": true
+  },
+  "derived_outputs": {
+    "user_created_dataset_remains_user_owned": true,
+    "user_may_export_study_records": true,
+    "buddy_position_is_labeled_as_evidence_based_hypothesis": true,
+    "position_retains_source_references_and_uncertainty": true,
+    "no_claim_of_ownership_over_third_party_source_material": true,
+    "user_output_rights_follow_applicable_law_and_provider_terms": true
+  },
+  "revocation": {
+    "stop_future_use": true,
+    "remove_source_from_future_retrieval_and_training_jobs": true,
+    "delete_user_workspace_copy_on_request": true,
+    "record_deletion_receipt_without_retaining_raw_content": true,
+    "already_released_shared_model_weights_require_separate_disclosed_remediation_policy": true
+  },
+  "truth_boundary": "This policy defines product behavior. It does not transfer legal ownership or replace a signed contract, third-party license, or jurisdiction-specific legal review."
+}

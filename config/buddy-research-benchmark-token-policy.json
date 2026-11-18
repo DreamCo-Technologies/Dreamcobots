@@ -1,0 +1,36 @@
+{
+  "schema": "dreamco.research_benchmark_token_policy.v1",
+  "taxonomy_source": "https://huggingface.co/tasks",
+  "taxonomy_refresh": "Read the current Hub catalog at run time; never treat this seed map as exhaustive.",
+  "category_benchmark_domains": {
+    "Multimodal": ["visual_question_answering", "video_understanding", "cross_modal_grounding", "embodied_scene_understanding"],
+    "Natural Language Processing": ["instruction_following", "dialogue_grounding", "language_reasoning", "multilingual_interaction"],
+    "Computer Vision": ["camera_perception", "gesture_recognition", "body_pose_and_action", "scene_understanding", "depth_and_3d"],
+    "Audio": ["speech_understanding", "speech_generation", "audio_event_perception", "spoken_human_robot_interaction"],
+    "Tabular": ["sensor_telemetry_quality", "robot_state_estimation", "structured_observation_reasoning"],
+    "Reinforcement Learning": ["robot_control", "human_feedback_control", "safe_policy_evaluation", "sim_to_real_transfer"]
+  },
+  "research_to_benchmark": {
+    "research_item_creates_candidate_only": true,
+    "never_marks_mastery_from_paper_or_model_card": true,
+    "requires": ["source_url", "source_date", "huggingface_category", "task_name", "evidence_type", "demonstrated_capability", "limitations", "proposed_test", "license_and_data_rights_review"],
+    "candidate_status": "needs_fixture_and_adapter_review",
+    "candidate_sources_are_not_training_data": true,
+    "holdout_answers_must_not_be_imported": true
+  },
+  "learning_points": {
+    "unit_name": "learning_points",
+    "transferable": false,
+    "cash_value": 0,
+    "crypto_or_blockchain_transfer": false,
+    "daily_brief_points": 0,
+    "research_reading_points": 0,
+    "candidate_creation_points": 0,
+    "mastery_award_points": 10,
+    "requires_owner_approval": true,
+    "minimum_repeated_runs": 3,
+    "every_run_must_pass": ["verified", "task_score_floor", "hidden_holdout", "regression", "safety", "native_success"],
+    "must_not_reward": ["reading_or_summarizing_a_source", "model_claims", "unverified_runs", "external_assistance_only", "failed_or_regressed_runs", "duplicated_awards"],
+    "award_scope": "one_user_one_capability_one_benchmark_version"
+  }
+}

@@ -20,9 +20,11 @@ class ConnectionIndexTests(unittest.TestCase):
             index = build(root)
             rows = {row["path"]: row for row in index["files"]}
             self.assertEqual(index["counts"], {"tracked_files": 5, "pages": 1})
+            self.assertEqual(index["source_base"], "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/")
             self.assertIn("website/data/pages-connection-index.json", rows)
             self.assertNotIn("private.txt", rows)
             self.assertEqual(rows["website/page.html"]["page"], "page.html")
             self.assertEqual(rows["website/site.js"]["kind"], "asset")
+            self.assertEqual(rows["website/page.html"]["source"], "website/page.html")
             self.assertIsNone(rows["notes.html"]["page"])
             self.assertNotIn("fixture", str(index))
