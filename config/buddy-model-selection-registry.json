@@ -2,8 +2,55 @@
   "schema": "dreamco.buddy_model_registry.v1",
   "weight_modification": false,
   "models": [
-    {"id": "local-note", "provider": "local", "task_types": ["plan", "research", "code"], "quality": null, "cost": null, "latency_ms": null, "reliability": null},
-    {"id": "hf-open-weight", "provider": "huggingface", "task_types": ["code", "data"], "quality": null, "cost": null, "latency_ms": null, "reliability": null},
-    {"id": "docs-only", "provider": "none", "task_types": ["review", "debug"], "quality": null, "cost": null, "latency_ms": null, "reliability": null}
+    {
+      "id": "local-note",
+      "provider": "local",
+      "task_types": ["plan", "research", "code"],
+      "quality": null,
+      "cost": null,
+      "latency_ms": null,
+      "reliability": null
+    },
+    {
+      "id": "gpt-5.4-mini",
+      "model_id": "gpt-5.4-mini",
+      "provider": "openai",
+      "task_types": ["plan", "research", "code", "debug", "review", "tool-routing"],
+      "tier": "premium",
+      "availability": "configuration_required",
+      "connection_status": "unverified",
+      "requires_per_request_paid_approval": true,
+      "fine_tuning_supported": false,
+      "weight_modification": false,
+      "benchmark_status": "not_run",
+      "price_usd_per_million_tokens": {
+        "input": 0.75,
+        "cached_input": 0.075,
+        "output": 4.5
+      },
+      "quality": null,
+      "cost": null,
+      "latency_ms": null,
+      "reliability": null,
+      "source": "https://developers.openai.com/api/docs/models/gpt-5.4-mini"
+    },
+    {
+      "id": "hf-open-weight",
+      "provider": "huggingface",
+      "task_types": ["code", "data"],
+      "quality": null,
+      "cost": null,
+      "latency_ms": null,
+      "reliability": null
+    },
+    {
+      "id": "docs-only",
+      "provider": "none",
+      "task_types": ["review", "debug"],
+      "quality": null,
+      "cost": null,
+      "latency_ms": null,
+      "reliability": null
+    }
   ]
 }
