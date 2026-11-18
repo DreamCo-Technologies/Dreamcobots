@@ -8,7 +8,9 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from hashlib import sha256
+from hmac import compare_digest
 import json
+from math import isfinite
 from statistics import mean
 from typing import Any, Iterable, Mapping
 
@@ -18,6 +20,13 @@ PRIVATE_FIELDS = frozenset({
     "hidden_reasoning", "chain_of_thought", "screen_capture", "holdout_answer",
 })
 ALLOWED_MODES = frozenset({"observe", "suggest", "guide", "assist", "supervised_automation"})
+# Closed schema: a hash verifies integrity, not whether an extra field is safe.
+# Unknown fields can carry private data or hidden evaluation labels.
+TRAINING_EXAMPLE_FIELDS = frozenset({
+    "schema", "task_id", "profession", "goal", "source", "source_revision",
+    "wrapper_id", "mode", "steps", "result", "user_correction",
+    "customization", "split", "example_sha256",
+})
 
 
 def _required_text(record: Mapping[str, Any], name: str) -> str:
@@ -42,8 +51,11 @@ def distill_task(record: Mapping[str, Any]) -> dict[str, Any]:
     if not isinstance(steps, list) or not steps or not all(isinstance(step, str) and step.strip() for step in steps):
         raise ValueError("steps must be a non-empty list of visible actions")
     mode = record.get("mode", "observe")
-    if mode not in ALLOWED_MODES:
+    if not isinstance(mode, str) or mode not in ALLOWED_MODES:
         raise ValueError("unsupported learning mode")
+    correction = record.get("user_correction", "")
+    if not isinstance(correction, str):
+        raise ValueError("user_correction must be plain text")
     candidate = {
         "schema": "dreamco.professional_task_example.v1",
         "task_id": _required_text(record, "task_id"),
@@ -55,7 +67,7 @@ def distill_task(record: Mapping[str, Any]) -> dict[str, Any]:
         "mode": mode,
         "steps": [step.strip() for step in steps],
         "result": _required_text(record, "result"),
-        "user_correction": str(record.get("user_correction", "")).strip(),
+        "user_correction": correction.strip(),
         "customization": _required_text(record, "customization"),
         "split": "train",
     }
@@ -76,10 +88,14 @@ class BenchmarkRun:
     def validate(self) -> None:
         for name in ("task_success", "quality", "safety", "regression"):
             value = getattr(self, name)
-            if not isinstance(value, (int, float)) or not 0 <= value <= 1:
-                raise ValueError(f"{name} must be between 0 and 1")
-        if self.latency_seconds < 0 or self.cost_usd < 0 or self.human_touches < 0:
-            raise ValueError("latency, cost and human touches cannot be negative")
+            if type(value) not in (int, float) or not isfinite(value) or not 0 <= value <= 1:
+                raise ValueError(f"{name} must be a finite number between 0 and 1")
+        for name in ("latency_seconds", "cost_usd"):
+            value = getattr(self, name)
+            if type(value) not in (int, float) or not isfinite(value) or value < 0:
+                raise ValueError(f"{name} must be a finite nonnegative number")
+        if type(self.human_touches) is not int or self.human_touches < 0:
+            raise ValueError("human_touches must be a nonnegative integer")
 
     @property
     def score(self) -> float:
@@ -91,7 +107,13 @@ class BenchmarkRun:
 def promotion_decision(
     baseline: Iterable[BenchmarkRun], candidate: Iterable[BenchmarkRun], holdout: Iterable[BenchmarkRun]
 ) -> dict[str, Any]:
-    """Apply the repository's three-run, holdout and regression promotion gate."""
+    """Score synthetic/in-memory metrics for review; never authorize weight promotion.
+
+    These records have no authenticated run IDs, independent holdout provenance,
+    immutable result receipts, or owner sign-off. Three Python objects are not
+    evidence of three independent evaluations. Promotion must occur in a
+    separate, evidence-verifying and owner-approved release gate.
+    """
     groups = [list(baseline), list(candidate), list(holdout)]
     if any(len(group) < 3 for group in groups):
         return {"promote": False, "reason": "minimum_repetitions_not_met"}
@@ -108,8 +130,18 @@ def promotion_decision(
         "regression": maximum_regression <= .02,
         "safety": min(run.safety for run in groups[1] + groups[2]) >= .75,
     }
+    score_gate_passed = all(checks.values())
     return {
-        "promote": all(checks.values()),
+        # Even perfect metrics can be synthetic, repeated or fabricated.
+        # Do not interpret a score threshold as permission to ship weights.
+        "promote": False,
+        "score_gate_passed": score_gate_passed,
+        "reason": (
+            "independent_evidence_and_owner_approval_required"
+            if score_gate_passed else "metric_gates_failed"
+        ),
+        "independent_holdout_verified": False,
+        "repetitions_independently_verified": False,
         "checks": checks,
         "baseline_score": round(baseline_score, 6),
         "candidate_score": round(candidate_score, 6),
@@ -124,17 +156,64 @@ def build_training_manifest(request: Mapping[str, Any], examples: Iterable[Mappi
     values = {name: request.get(name) for name in required}
     if any(value in (None, "") for value in values.values()):
         raise ValueError("training request is incomplete")
+    # A review manifest must never serialize nested or boolean metadata as if
+    # it were a pinned model, a license, or a private output repository.
+    for name in required:
+        if name != "max_cost_usd" and (
+            not isinstance(values[name], str) or not values[name].strip()
+        ):
+            raise ValueError(f"{name} must be nonempty plain text")
     if request.get("owner_approved") is not True:
         raise ValueError("owner approval is required")
     if request["method"] not in {"SFT", "DPO", "GRPO", "reward_modeling", "LoRA", "QLoRA"}:
         raise ValueError("unsupported training method")
-    if not isinstance(request["max_cost_usd"], (int, float)) or request["max_cost_usd"] <= 0:
-        raise ValueError("max_cost_usd must be positive")
+    budget = request["max_cost_usd"]
+    if type(budget) not in (int, float) or not isfinite(budget) or budget < 0:
+        raise ValueError("max_cost_usd must be a finite nonnegative number")
     rows = list(examples)
-    if not rows or any(row.get("schema") != "dreamco.professional_task_example.v1" for row in rows):
+    if not rows:
         raise ValueError("at least one distilled professional task example is required")
-    hashes = sorted(_required_text(row, "example_sha256") for row in rows)
-    dataset_hash = sha256("\n".join(hashes).encode()).hexdigest()
+    hashes = []
+    for index, row in enumerate(rows):
+        if not isinstance(row, Mapping) or row.get("schema") != "dreamco.professional_task_example.v1":
+            raise ValueError(f"example {index}: invalid distilled task schema")
+        if row.get("split") != "train":
+            raise ValueError(f"example {index}: evaluation/holdout rows cannot enter training")
+        supplied = {str(key).lower() for key in row}
+        if supplied & PRIVATE_FIELDS:
+            raise ValueError(f"example {index}: private or evaluation-only field present")
+        # A recomputed SHA-256 does not make an unrecognized payload safe.
+        unknown = set(row) - TRAINING_EXAMPLE_FIELDS
+        missing = TRAINING_EXAMPLE_FIELDS - set(row)
+        if unknown or missing:
+            raise ValueError(f"example {index}: unexpected or missing training fields")
+        if not isinstance(row.get("mode"), str) or row["mode"] not in ALLOWED_MODES:
+            raise ValueError(f"example {index}: unsupported learning mode")
+        for field in TRAINING_EXAMPLE_FIELDS - {"steps", "example_sha256"}:
+            if not isinstance(row[field], str):
+                raise ValueError(f"example {index}: {field} must be text")
+            if field not in {"user_correction"} and not row[field].strip():
+                raise ValueError(f"example {index}: {field} must not be blank")
+        steps = row["steps"]
+        if not isinstance(steps, list) or not steps or not all(
+            isinstance(step, str) and step.strip() for step in steps
+        ):
+            raise ValueError(f"example {index}: steps must be nonempty visible text")
+
+        digest = row.get("example_sha256")
+        if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+            raise ValueError(f"example {index}: invalid example_sha256")
+        payload = {key: value for key, value in row.items() if key != "example_sha256"}
+        try:
+            canonical = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"example {index}: invalid JSON fields") from exc
+        if not compare_digest(sha256(canonical).hexdigest(), digest):
+            raise ValueError(f"example {index}: content hash mismatch")
+        hashes.append(digest)
+    if len(hashes) != len(set(hashes)):
+        raise ValueError("duplicate distilled training examples")
+    dataset_hash = sha256("\n".join(sorted(hashes)).encode()).hexdigest()
     return {
         "schema": "dreamco.professional_training_handoff.v1",
         **values,
@@ -142,8 +221,18 @@ def build_training_manifest(request: Mapping[str, Any], examples: Iterable[Mappi
         "example_count": len(rows),
         "required_splits": ["train", "validation", "hidden_test"],
         "monitoring": "Trackio or equivalent run metrics",
-        "push_checkpoint_to_private_repo": True,
-        "preflight": ["validate dataset format", "estimate cost", "baseline hidden test", "confirm token can write output repository"],
+        # A repository path is not proof that the destination is private or
+        # writable. A handoff must never be mistaken for upload permission.
+        "push_checkpoint_to_private_repo": False,
+        "output_repo_privacy_verified": False,
+        "training_execution_authorized": False,
+        "preflight": [
+            "independently verify output repository privacy and access",
+            "independently verify base and dataset license rights",
+            "validate dataset format and consent evidence",
+            "estimate cost and obtain separate execution approval",
+            "baseline isolated hidden test",
+        ],
         "postflight": ["hidden test", "safety and capability regressions", "three repeated evaluations", "model card", "owner promotion review"],
         "weights_trained_by_this_function": False,
         "status": "ready_for_adapter_review",
@@ -152,5 +241,5 @@ def build_training_manifest(request: Mapping[str, Any], examples: Iterable[Mappi
 
 def public_summary(manifest: Mapping[str, Any]) -> dict[str, Any]:
     """Return fields safe for public evidence without dataset rows or credentials."""
-    keep = ("schema", "run_id", "method", "base_model", "base_revision", "hardware", "max_cost_usd", "dataset_sha256", "example_count", "status", "weights_trained_by_this_function")
+    keep = ("schema", "run_id", "method", "base_model", "base_revision", "hardware", "max_cost_usd", "dataset_sha256", "example_count", "status", "weights_trained_by_this_function", "output_repo_privacy_verified", "training_execution_authorized", "push_checkpoint_to_private_repo")
     return {name: manifest[name] for name in keep if name in manifest}
