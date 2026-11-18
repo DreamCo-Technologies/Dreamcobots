@@ -134,3 +134,65 @@ For each requirement preserve: exact user wording or faithful minimal excerpt; u
 8. Continue until all accessible source files and conversations have complete review status or an explicit inaccessible/blocked reason.
 
 **Completion rule:** This corpus is not complete until every accessible DreamCo conversation and source artifact has a recorded inventory entry, content-review status, extracted requirements, duplicate/overlap mapping, and traceability to implementation or an explicit blocker.
+
+
+## Follow-up forensic batch — 2026-11-18
+
+### Exact duplicate verification
+
+The two Master Directive files were materialized and SHA-256 compared. Pasted markdown(1).md and Pasted markdown(2).md are byte-for-byte identical: SHA-256 6544cdfbbb11db0a0389b63a0f0c5ae0c5f903e95fc8470209f3dd294b3ab89e; 108,560 bytes; 7,374 lines. Retain both Library IDs as separate provenance records, but process the shared content once. The unique directive has 311 numbered sections. Its scope includes the primary repo and six additional DreamCo repositories named for comparison; none should be blindly merged.
+
+The two unified patch files are also byte-for-byte identical: SHA-256 817c07ff73535569e95cc9aa58885ae3619404032f46a2514c63e89fee53ec19; 935,399 bytes. Retain both source IDs, but review the 1,566-line unique patch once. No patch has been applied.
+
+### Archive integrity and source review
+
+All ten ZIPs were inventoried. CRC checks passed; safe source files were extracted into an isolated inspection directory. Absolute-path and parent-traversal entries were excluded from extraction. Python bytecode/cache files were excluded from source review. A simple high-confidence credential-pattern scan did not flag likely API/private-key strings; this is not a substitute for a full secret scanner.
+
+Manifest highlights: Bootcamp v2 has 11 entries; v4 has 18 entries and adds routing policy, model router, capability manager, source policy and tests; v5 has 20 entries and adds routing evidence and tests; model-path and scheduler bundles contain Python bytecode caches; the v5 PR candidate has 22 entries; the Codex implementation has 144 entries including DreamCo modules, generated division/operations data, source requirements, tests, workflow and website pages; the handoff has four entries; the completion system has nine entries. The v3 archive is included in the ten-file inventory and requires the final delta review alongside the other versions.
+
+### Local fixture test results (not repository CI or production evidence)
+
+Tests were run from extracted source trees in the local isolated environment:
+
+| Artifact | Result | Interpretation |
+|---|---:|---|
+| Bootcamp v2 | 15 passed | Local fixture tests only |
+| Bootcamp v4 | 35 passed | Local fixture tests only |
+| Bootcamp v5 | 43 passed | Local fixture tests only |
+| v5 PR candidate | 43 passed with corrected package path | Initial root invocation failed import collection; package-root PYTHONPATH resolved collection |
+| Completion system | 3 passed with package root on PYTHONPATH | Read-only starter; receipt links are not independently validated |
+| Codex implementation | 15 passed | Local fixture tests only |
+
+These results do not prove integration with the live repository, real model providers, devices, training jobs, deployment, or production data. Do not promote any capability above sandbox_verified based solely on these tests. The v5 PR candidate README and PULL_REQUEST draft remain proposals, not an opened/merged PR.
+
+### Master directive content review
+
+The unique 7,374-line directive's 311 numbered sections were inventoried by heading. Topics include repository preservation, evidence taxonomy, Pages command center, Actions/control plane, repair and benchmark systems, Buddy Bootcamp, 100 learning strategies, model/provider integrations, 500-model benchmarking, ontology, bot/division systems, global learning, local Mac/desktop/device control, memory, autonomy/task execution, revenue/payments, connectors, website/app builders, research, simulations, real estate, vision, privacy, tenancy, security, production readiness, CI, model weights/distillation, marketplace, CRM/sales, cost controls, RAG, auditability, API/database design, customer provisioning, and implementation order. Heading inventory is complete; requirement-by-requirement extraction and live-code mapping remain in progress.
+
+### PR #17412 check snapshot
+
+For PR #17412 head SHA ca452a552ef2abaf9994f109cb50b87175709dd8, ten PR-triggered workflows completed successfully: CodeQL Security Scan, Superbot Repository Inventory, Dependency Review, Keep Green, Code Trust Gate, DreamCo PR Review Guardian, Benchmark Tracker, DreamCo PR Review Manifest, Buddy Preventive Engineering, and Repository Test Matrix. Dependabot auto-merge was skipped. This is a successful documentation-PR check snapshot only; it does not certify DreamCo production readiness or authorize merging.
+
+### Updated coverage counters
+
+| Measure | Current evidence |
+|---|---:|
+| Library files discovered | 30 |
+| Master Directive copies | 2; exact duplicate verified; heading inventory complete, detailed extraction in progress |
+| Patch files | 2; exact duplicate verified; patch application prohibited pending hunk-level comparison with live code |
+| ZIP archives | 10; manifests inspected; cross-version delta review remains |
+| Local fixture tests | v2 15, v4 35, v5 43, v5 candidate 43, completion system 3, Codex bundle 15 passed |
+| Media files | 13; visual/product relevance review pending |
+| DreamCo project conversations in existing registry | 15 |
+| Total DreamCo project conversations | UNKNOWN |
+| Requirements extracted from entire corpus | IN PROGRESS |
+| Requirements mapped to live code/tests/PRs | IN PROGRESS |
+| Fully reconciled source artifacts | IN PROGRESS; not certified complete |
+
+### Next deterministic work
+
+1. Compare Bootcamp v2-v5 and PR-candidate source files by path/hash; document actual deltas and select no implementation until live-main comparison is complete.
+2. Review the 144-file Codex bundle's source requirements, code, generated artifacts, certification output and website against live repository architecture.
+3. Review all 1,566 patch lines by hunk and changed path; compare with main and open PRs before proposing any selective port.
+4. Continue line-by-line requirement extraction from the 311-section directive and transcript, with stable DCR IDs and exact locators.
+5. Enumerate accessible Project conversations beyond the existing 15-item registry; unknown totals remain explicitly unknown.
