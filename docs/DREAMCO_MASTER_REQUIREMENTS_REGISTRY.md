@@ -27,7 +27,6 @@ This registry is the source of truth for mapping each project conversation to it
 | CHAT-12 | GitHub and Copilot Setup | [Open checklist](conversation-checklists/CHAT-12-github-and-copilot-setup.md) |
 | CHAT-13 | MomMap App Concept | [Open checklist](conversation-checklists/CHAT-13-mommap-app-concept.md) |
 | CHAT-14 | Buddy Master Teacher and Benchmarks | [Open checklist](conversation-checklists/CHAT-14-buddy-master-teacher-and-benchmarks.md) |
-
 | CHAT-15 | Buddy OS — Universal AI Model Routing, Customization & Repository Engineering | [Open checklist](conversation-checklists/CHAT-15-buddy-os-universal-model-routing-customization-repository-engineering.md) |
 
 ## Canonical requirement IDs
@@ -91,7 +90,7 @@ A branch-health report found in the primary repository reports 476 branches, 64 
 
 ## Work queue
 
-1. Reconcile all 14 conversations against their original source messages.
+1. Reconcile all **15 conversations** against their original source messages.
 2. Inventory all five repositories, default branches, branches, and open PRs.
 3. Map existing issues and PRs to CHAT-ID × D01–D14.
 4. Identify exact duplicate requests and duplicate implementations.
@@ -104,8 +103,7 @@ A branch-health report found in the primary repository reports 476 branches, 64 
 
 ## Current status
 
-All 196 conversation-requirement pairs are **unverified / not yet reconciled**. This registry and the per-conversation checklists are tracking artifacts; they do not assert that the underlying product work is complete.
-
+All **210 conversation-requirement pairs (15 conversations × D01–D14)** are **unverified / not yet reconciled**. This registry and the per-conversation checklists are tracking artifacts; they do not assert that the underlying product work is complete.
 
 ## Tracking artifacts created in this change
 
@@ -115,11 +113,9 @@ All 196 conversation-requirement pairs are **unverified / not yet reconciled**. 
 - Checklist file verification: fetched successfully from the tracking branch after creation.
 - Registry file verification: fetched successfully from the tracking branch after creation.
 
-
 ## Per-conversation file verification
 
 All 14 independent checklist files were fetched successfully from the tracking branch after creation. Each contains its own 14 unchecked requirements and traceability fields.
-
 
 ## CHAT-15 expanded Buddy OS requirements
 
