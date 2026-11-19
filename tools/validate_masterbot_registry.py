@@ -20,8 +20,11 @@ def validate():
         raise ValueError("Every MasterBot needs dashboard, command center, prospectus, queue and mission references.")
     if data.get("training_policy",{}).get("per_masterbot_dedicated_lane") is not True:
         raise ValueError("Each MasterBot must own a dedicated logical training lane.")
-    if data.get("matrix_policy",{}).get("max_parallel") != 5:
-        raise ValueError("Matrix parallelism must remain bounded at five.")
+    matrix=data.get("matrix_policy",{})
+    if matrix.get("max_parallel") != 5 or matrix.get("lanes_per_tick") != 5:
+        raise ValueError("Five lanes per tick and max-parallel five are required.")
+    if matrix.get("matrix_size") != 65 or matrix.get("full_fleet_cycle_minutes") != 65:
+        raise ValueError("All 65 logical lanes must rotate through a 65-minute cycle.")
     return data
 
 def main():
