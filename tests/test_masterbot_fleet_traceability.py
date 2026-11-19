@@ -2,6 +2,7 @@ import json, subprocess, sys, tempfile, unittest
 from pathlib import Path
 from tools.audit_markdown_requirement_traceability import extract
 from tools.validate_masterbot_registry import validate
+from tools.select_masterbot_rotation import select
 
 class DreamCoFleetAndTraceabilityTests(unittest.TestCase):
     def test_registry_is_exactly_45_domain_and_20_platform(self):
@@ -31,10 +32,24 @@ class DreamCoFleetAndTraceabilityTests(unittest.TestCase):
         self.assertGreaterEqual(len(boot["sandbox_modes"]),10)
         self.assertTrue(boot["mastery_policy"]["self_report_is_not_evidence"])
 
+    def test_rotation_selects_five_lanes_and_covers_all_65_in_thirteen_ticks(self):
+        start=datetime(2026,1,1,0,0,tzinfo=timezone.utc)
+        selected=[]
+        for tick in range(13):
+            at=datetime.fromtimestamp(start.timestamp()+300*tick,timezone.utc)
+            result=select(at,5)
+            self.assertEqual(len(result["masterbots"]),5)
+            self.assertEqual(len(set(result["masterbots"])),5)
+            selected.extend(result["masterbots"])
+        self.assertEqual(len(selected),65)
+        self.assertEqual(len(set(selected)),65)
+
     def test_public_manifest_matches_canonical_registry(self):
         from tools.generate_masterbot_public_manifest import build
         public=json.loads(Path("website/data/masterbot-fleet.json").read_text())
         self.assertEqual(public,build())
         self.assertEqual(public["summary"]["total"],65)
+        self.assertEqual(public["summary"]["lanesPerTick"],5)
+        self.assertEqual(public["summary"]["fleetCycleMinutes"],65)
 
 if __name__=="__main__": unittest.main()
