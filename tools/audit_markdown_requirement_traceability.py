@@ -18,44 +18,60 @@ def tracked_specs():
 def extract():
     rows=[]
     seen={}
+    def add(rel,section,number,kind,label):
+        label=label.strip()
+        if not label or label in {"---","***"}: return
+        identity=f"{rel}::{kind}::{label}"
+        occurrence=seen.get(identity,0)+1
+        seen[identity]=occurrence
+        key=hashlib.sha256(f"{identity}::{occurrence}".encode()).hexdigest()[:16]
+        rows.append({"requirement_id":"REQ-"+key,"source_path":rel,"line":number,"section":section,"kind":kind,"occurrence":occurrence,"requirement":label})
     for path in tracked_specs():
         rel=path.relative_to(ROOT).as_posix()
         text=path.read_text(encoding="utf-8",errors="replace")
         current="(document)"
         in_fence=False
+        paragraph=[]
+        paragraph_line=None
+        def flush_paragraph():
+            nonlocal paragraph,paragraph_line
+            if paragraph:
+                add(rel,current,paragraph_line,"paragraph"," ".join(paragraph))
+            paragraph=[]
+            paragraph_line=None
         for number,line in enumerate(text.splitlines(),1):
-            if line.strip().startswith(("\x60\x60\x60","~~~")):
+            if line.strip().startswith(("\\x60\\x60\\x60","~~~")):
+                flush_paragraph()
                 in_fence=not in_fence
                 continue
             if in_fence: continue
             h=HEADING.match(line)
             if h:
+                flush_paragraph()
                 current=h.group(1).strip()
-                kind="heading"
-                label=current
+                add(rel,current,number,"heading",current)
+                continue
+            task=TASK.match(line)
+            bullet=LIST.match(line)
+            table=TABLE.match(line)
+            if task:
+                flush_paragraph()
+                add(rel,current,number,"task",task.group(2))
+            elif bullet and not bullet.group(1).startswith("["):
+                flush_paragraph()
+                add(rel,current,number,"list_item",bullet.group(1))
+            elif table:
+                flush_paragraph()
+                cell_text=table.group(1).replace("|","").replace("-","").replace(":","").strip()
+                if cell_text:
+                    add(rel,current,number,"table_row"," | ".join(part.strip() for part in table.group(1).split("|")))
+            elif not line.strip():
+                flush_paragraph()
             else:
-                task=TASK.match(line)
-                bullet=LIST.match(line)
-                table=TABLE.match(line)
-                if task:
-                    kind="task"
-                    label=task.group(2).strip()
-                elif bullet and not bullet.group(1).startswith("["):
-                    kind="list_item"
-                    label=bullet.group(1).strip()
-                elif table and not set(table.group(1).replace("|","").replace("-","").replace(":","").strip())==set():
-                    kind="table_row"
-                    label=" | ".join(part.strip() for part in table.group(1).split("|"))
-                else:
-                    continue
-            if not label or label in {"---","***"}: continue
-            identity=f"{rel}::{kind}::{label}"
-            occurrence=seen.get(identity,0)+1
-            seen[identity]=occurrence
-            key=hashlib.sha256(f"{identity}::{occurrence}".encode()).hexdigest()[:16]
-            rows.append({"requirement_id":"REQ-"+key,"source_path":rel,"line":number,"section":current,"kind":kind,"occurrence":occurrence,"requirement":label})
+                if paragraph_line is None: paragraph_line=number
+                paragraph.append(line.strip())
+        flush_paragraph()
     return rows
-
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--out-dir",type=Path,default=OUT)
