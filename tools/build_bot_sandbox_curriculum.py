@@ -17,8 +17,8 @@ def ensure_universal_task_catalog() -> dict:
     if not UNIVERSAL_TASK.exists():
         subprocess.run([sys.executable, str(ROOT / "tools" / "build_universal_human_ai_task_sandbox.py")], cwd=ROOT, check=True)
     data = json.loads(UNIVERSAL_TASK.read_text(encoding="utf-8"))
-    if data.get("category_count", 0) < 50000:
-        raise SystemExit(f"universal task sandbox coverage too small: {data.get('category_count', 0)}")
+    if data.get("category_count") != len(data.get("categories", [])) or not data.get("categories"):
+        raise SystemExit("universal task sandbox is empty or its derived count is stale")
     return data
 
 

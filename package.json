@@ -35,6 +35,8 @@
     "buddy:dependencies": "python3 tools/check_repository_dependencies.py",
     "buddy:connections": "python3 tools/generate_buddy_connection_catalog.py --check",
     "buddy:resource-connections": "python3 tools/generate_resource_connection_catalog.py --check",
+    "buddy:additional-taxonomies": "python3 tools/validate_buddy_additional_taxonomy_registry.py --check",
+    "buddy:category-systems": "python3 tools/validate_buddy_category_system_registry.py --check && npm run buddy:additional-taxonomies && python3 tools/validate_vibe_coding_taxonomy.py && npm run buddy:task-taxonomies",
     "buddy:expert-mode": "python3 tools/generate_buddy_expert_mode.py --check",
     "test:expert-mode": "python3 tools/generate_resource_connection_catalog.py && python3 tools/generate_buddy_expert_mode.py && node --import tsx --test tests/expert-mode-policy.test.ts tests/buddy-expert-mode-page.test.mjs && node --check website/buddy-expert-mode.js && node --check website/buddy-invention-lab.js",
     "test:professional-bootcamp": "python3 tools/generate_professional_bootcamp.py --check && python3 -m unittest tests.test_professional_training && node --test tests/professional-bootcamp-page.test.mjs && node --check website/professional-bootcamp.js",
@@ -79,7 +81,14 @@
     "test:repository": "npm run buddy:ai-organizations && npm run buddy:repository-audit && npm run buddy:command-center:data && npm run buddy:learning-os-connections && npm run buddy:fleet-quality && npm run buddy:fleet:e2e && npm run buddy:search && npm run buddy:defense && npm run buddy:success && npm run buddy:demand-ontology && npm run buddy:model-progress && npm run buddy:benchmark-index && npm run buddy:dependencies && npm run check && npm run test:governed && npm run test:actions-page && npm run buddy:creative-studio && npm run buddy:behavior && npm run buddy:self-improvement && npm run buddy:media-quality && npm run buddy:connected-life && npm run buddy:practice && npm run buddy:site:check && npm run buddy:deployment-cost-check && npm run build",
     "fleet:regen": "bash tools/regen_fleet_truth.sh",
     "fleet:check": "python3 tools/generate_bot_manifests.py --check && python3 tools/build_actions_prospectus.py --check --check-buttons && python3 tools/build_file_prospectus.py --check",
-    "buddy:command-center:refresh": "python3 tools/generate_command_center_data.py && python3 tools/generate_command_center_data.py --check"
+    "buddy:command-center:refresh": "python3 tools/generate_command_center_data.py && python3 tools/generate_command_center_data.py --check",
+    "buddy:technology-radar": "python3 tools/refresh_buddy_technology_radar.py --check",
+    "refresh:technology-radar": "python3 tools/refresh_buddy_technology_radar.py --refresh",
+    "test:technology-radar": "python3 -m unittest tests.test_buddy_technology_radar",
+    "buddy:markdown-gaps": "python3 tools/audit_markdown_implementation_gaps.py --check",
+    "refresh:markdown-gaps": "python3 tools/audit_markdown_implementation_gaps.py --write",
+    "test:markdown-gaps": "python3 -m unittest tests.test_markdown_implementation_gaps",
+    "buddy:task-taxonomies": "python3 tools/validate_buddy_task_taxonomy_registry.py --check"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Trace DreamCo Markdown plans to implementation, tests, workflows and missing code paths.">
+  <title>Markdown Implementation Gaps | DreamCo Buddy</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .gap-shell{max-width:1400px;margin:0 auto;padding:24px 18px 64px}
+    .gap-intro{max-width:920px;color:var(--text2);margin:8px 0 22px}
+    .gap-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:20px 0}
+    .gap-metric,.gap-card{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:14px}
+    .gap-metric strong{display:block;font-size:1.5rem}.gap-metric span,.gap-muted{font-size:.82rem;color:var(--text2)}
+    .gap-controls{display:grid;grid-template-columns:minmax(220px,1fr) minmax(180px,260px);gap:10px;margin:18px 0}
+    .gap-controls input,.gap-controls select{width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--border2);border-radius:8px;background:var(--bg2);color:var(--text)}
+    .gap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px}
+    .gap-card h3{font-size:1rem;margin:0 0 8px;overflow-wrap:anywhere}.gap-card p{font-size:.82rem;color:var(--text2)}
+    .gap-pill{display:inline-block;border:1px solid var(--border2);border-radius:99px;padding:3px 8px;margin:2px;font-size:.68rem;color:var(--text2)}
+    .gap-paths{font-size:.78rem;overflow-wrap:anywhere}.gap-paths a{color:var(--primary2)}
+    .gap-status{margin:12px 0;color:var(--text2);font-size:.82rem}
+    @media(max-width:760px){.gap-controls{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="gap-shell">
+    <p class="actions-kicker">DreamCo Buddy · Traceability</p>
+    <h1>Markdown-to-Implementation Gaps</h1>
+    <p class="gap-intro">This audit scans every tracked Markdown file and maps its linked repository paths to implementation, tests, workflows, and configuration. A document is not proof that its promised feature exists. A code reference is not proof that it works. Only run-specific evidence can promote a capability.</p>
+    <div id="gap-metrics" class="gap-metrics" aria-live="polite"></div>
+    <div class="gap-controls">
+      <input id="gap-search" type="search" placeholder="Search Markdown file, claim, or linked path" aria-label="Search Markdown gap audit">
+      <select id="gap-filter" aria-label="Filter gap status"><option value="all">All gap statuses</option></select>
+    </div>
+    <p id="gap-status" class="gap-status">Loading latest Markdown audit…</p>
+    <div id="gap-results" class="gap-grid"></div>
+  </main>
+  <script src="nav.js"></script>
+  <script src="markdown-gap-audit.js" defer></script>
+</body>
+</html>

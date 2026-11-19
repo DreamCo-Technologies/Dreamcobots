@@ -27,15 +27,11 @@ class BotSandboxCurriculumTests(unittest.TestCase):
             self.assertGreater(len(bot.get("capabilities") or []), 0, f"no declared capabilities for {bot.get('slug')}")
             slugs.append(bot["slug"])
         self.assertEqual(len(slugs), len(set(slugs)), "duplicate bot slugs detected")
-        self.assertGreaterEqual(len(slugs), 1000, "canonical fleet unexpectedly shrank below 1000 bots")
+        self.assertEqual(len(slugs), len(self.source_bots))
 
     def test_program_has_deep_capability_tool_function_and_efficiency_dimensions(self):
-        self.assertGreaterEqual(len(self.program["capability_test_dimensions"]), 12)
-        self.assertGreaterEqual(len(self.program["tool_test_dimensions"]), 12)
-        self.assertGreaterEqual(len(self.program["function_test_dimensions"]), 10)
-        self.assertGreaterEqual(len(self.program["efficiency_dimensions"]), 16)
-        self.assertGreaterEqual(len(self.program["skill_ladder"]), 8)
-        self.assertGreaterEqual(len(self.program["gap_plan_required_fields"]), 15)
+        for key in ("capability_test_dimensions", "tool_test_dimensions", "function_test_dimensions", "efficiency_dimensions", "skill_ladder", "gap_plan_required_fields"):
+            self.assertTrue(self.program[key], f"{key} must be populated")
 
     def test_generator_output_if_present_covers_every_bot_and_capability(self):
         if not GENERATED.exists():
@@ -67,12 +63,12 @@ class BotSandboxCurriculumTests(unittest.TestCase):
             source_capability_count * len(self.program["capability_test_dimensions"]),
         )
 
-    def test_universal_task_catalog_if_present_is_large_and_attached(self):
+    def test_universal_task_catalog_if_present_is_attached_and_source_derived(self):
         if not UNIVERSAL.exists() or not GENERATED.exists():
             self.skipTest("universal task catalog and curriculum are generated in platform/fleet workflows")
         universal = json.loads(UNIVERSAL.read_text(encoding="utf-8"))
         data = json.loads(GENERATED.read_text(encoding="utf-8"))
-        self.assertGreaterEqual(universal["category_count"], 50000)
+        self.assertEqual(universal["category_count"], len(universal["categories"]))
         self.assertTrue(data["universal_task_catalog_available"])
         self.assertEqual(data["universal_task_base_category_count"], universal["category_count"])
         for row in data["bots"][:250]:

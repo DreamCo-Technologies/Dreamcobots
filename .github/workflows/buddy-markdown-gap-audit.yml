@@ -1,0 +1,45 @@
+name: Buddy Markdown Implementation Gap Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 7 * * *"
+  push:
+    paths:
+      - "**/*.md"
+      - "config/buddy/markdown-implementation-gap-policy.json"
+      - "tools/audit_markdown_implementation_gaps.py"
+      - ".github/workflows/buddy-markdown-gap-audit.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: buddy-markdown-gap-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Generate Markdown-to-code gap inventory
+        run: python3 tools/audit_markdown_implementation_gaps.py --write
+      - name: Verify generated audit
+        run: |
+          python3 tools/audit_markdown_implementation_gaps.py --check
+          python3 -m unittest tests.test_markdown_implementation_gaps
+      - name: Publish current gap inventory
+        run: |
+          git diff --exit-code config/generated/markdown-implementation-gap-audit.json website/data/markdown-implementation-gap-audit.json reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md && exit 0
+          git config user.name "DreamCo Buddy"
+          git config user.email "buddy@dreamco.local"
+          git add config/generated/markdown-implementation-gap-audit.json website/data/markdown-implementation-gap-audit.json reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md
+          git commit -m "audit: refresh Markdown implementation gap inventory"
+          git push
