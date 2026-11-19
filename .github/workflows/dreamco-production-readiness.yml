@@ -1,0 +1,54 @@
+name: DreamCo Production Readiness Master List
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/5 * * * *"
+    - cron: "13 14 * * *"
+  pull_request:
+    paths:
+      - "**/*.md"
+      - "**/*.mdx"
+      - "governance/**"
+      - "config/masterbot-65-registry.json"
+      - "tools/dreamco_production_readiness.py"
+      - ".github/workflows/**"
+  push:
+    branches: [main]
+    paths:
+      - "**/*.md"
+      - "**/*.mdx"
+      - "governance/**"
+      - "config/masterbot-65-registry.json"
+      - "tools/dreamco_production_readiness.py"
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+concurrency:
+  group: dreamco-production-readiness-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build daily missing-work master list
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python tools/dreamco_production_readiness.py
+      - name: Validate readiness contracts
+        run: python -m unittest tests/test_dreamco_production_readiness.py
+      - name: Upload master list and routing inventory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-production-readiness-${{ github.run_id }}
+          path: artifacts/dreamco-reconciliation/
+          if-no-files-found: error
+          retention-days: 90
