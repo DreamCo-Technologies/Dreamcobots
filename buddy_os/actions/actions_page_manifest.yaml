@@ -149,8 +149,10 @@ masterbot_fleet_contract:
   platform_masterbots: 20
   dedicated_logical_training_lane_per_masterbot: true
   matrix:
-    jobs: 65
+    logical_lanes: 65
+    lanes_per_tick: 5
     max_parallel: 5
+    full_fleet_cycle_minutes: 65
     schedule: "*/5 * * * *"
     bounded_runner_minutes_per_lane: 4
     no_quota_bypass: true
