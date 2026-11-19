@@ -47,10 +47,15 @@ class DreamCoFleetAndTraceabilityTests(unittest.TestCase):
 
     def test_public_manifest_matches_canonical_registry(self):
         from tools.generate_masterbot_public_manifest import build
+        from tools.generate_buddy_bootcamp_public_manifest import build as build_bootcamp
         public=json.loads(Path("website/data/masterbot-fleet.json").read_text())
         self.assertEqual(public,build())
         self.assertEqual(public["summary"]["total"],65)
         self.assertEqual(public["summary"]["lanesPerTick"],5)
         self.assertEqual(public["summary"]["fleetCycleMinutes"],65)
+        boot_public=json.loads(Path("website/data/buddy-bootcamp.json").read_text())
+        self.assertEqual(boot_public,build_bootcamp())
+        self.assertTrue(Path("website/buddy-bootcamp.html").is_file())
+        self.assertTrue(Path("website/buddy-bootcamp.js").is_file())
 
 if __name__=="__main__": unittest.main()
