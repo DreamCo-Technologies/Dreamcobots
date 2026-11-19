@@ -22,7 +22,7 @@ on:
         default: true
         type: boolean
   schedule:
-    - cron: "17 6 * * *"
+    - cron: "*/5 * * * *"
   push:
     branches: [main]
     paths:
@@ -36,6 +36,8 @@ on:
 
 permissions:
   contents: read
+  actions: read
+  pull-requests: read
 
 concurrency:
   group: dreamco-control-plane-${{ github.ref }}
@@ -61,11 +63,22 @@ jobs:
           python-version: "3.12"
       - name: Run selected control-plane audit
         run: python tools/dreamco_daily_scan.py --action "${{ inputs.action || 'daily-scan' }}"
-      - name: Upload scan report
+      - name: Build master goal and directive progress index
+        run: python tools/generate_master_directive_status.py
+      - name: Snapshot open pull requests and latest CI status
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: python tools/build_fleet_status.py
+      - name: Upload goal, repository, PR, and CI tracking snapshot
         uses: actions/upload-artifact@v7
         with:
-          name: dreamco-daily-scan-${{ github.run_id }}
-          path: artifacts/daily-scan/
+          name: dreamco-goal-pulse-${{ github.run_id }}
+          path: |
+            artifacts/daily-scan/
+            website/data/master-directive-status.json
+            reports/FLEET_STATUS.md
           if-no-files-found: error
           retention-days: 30
 
