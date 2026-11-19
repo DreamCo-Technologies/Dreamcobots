@@ -77,6 +77,9 @@ jobs:
           python3 tools/build_actions_prospectus.py
       - name: Run deployment preflight
         run: |
+          python3 tools/validate_masterbot_registry.py
+          python3 tools/generate_masterbot_public_manifest.py --check
+          python3 tools/audit_markdown_requirement_traceability.py
           python3 tools/generate_buddy_model_router.py --check
           node tools/check_buddy_model_benchmarks.mjs
           node tools/check_buddy_demand_ontology.mjs
@@ -108,6 +111,9 @@ jobs:
           test -s website/manufacturer-marketplace.html
           test -s website/data/manufacturer-marketplace.json
           test -s website/data/repository-master-map.json
+          test -s website/data/masterbot-fleet.json
+          test -s website/masterbot-control-center.html
+          test -s website/masterbot-control-center.js
           test -s website/data/actions-health-report.json
           test -s website/data/actions-live-health.json
           test -s website/data/master-directive-status.json
@@ -138,6 +144,8 @@ jobs:
           node --check website/open-model-lab.js
           node --check website/test-center.js
           node --check website/actions.js
+          node --check website/actions-masterbot-fleet.js
+          node --check website/masterbot-control-center.js
           node --check website/page-actions.js
           node --check website/nav.js
           node --check website/service-worker.js
@@ -166,6 +174,7 @@ jobs:
         with:
           path: website
   deploy:
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 20
