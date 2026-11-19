@@ -117,6 +117,7 @@ jobs:
           python3 tools/validate_masterbot_registry.py
           python3 tools/select_masterbot_rotation.py --count 5
           python3 tools/generate_masterbot_public_manifest.py --check
+          python3 tools/generate_buddy_bootcamp_public_manifest.py --check
           python3 tools/audit_markdown_requirement_traceability.py
           python3 tools/generate_buddy_model_router.py --check
           node tools/check_buddy_model_benchmarks.mjs
@@ -150,6 +151,9 @@ jobs:
           test -s website/data/manufacturer-marketplace.json
           test -s website/data/repository-master-map.json
           test -s website/data/masterbot-fleet.json
+          test -s website/buddy-bootcamp.html
+          test -s website/buddy-bootcamp.js
+          test -s website/data/buddy-bootcamp.json
           test -s website/masterbot-control-center.html
           test -s website/masterbot-control-center.js
           test -s website/data/actions-health-report.json
@@ -183,6 +187,7 @@ jobs:
           node --check website/test-center.js
           node --check website/actions.js
           node --check website/actions-masterbot-fleet.js
+          node --check website/buddy-bootcamp.js
           node --check website/masterbot-control-center.js
           node --check website/page-actions.js
           node --check website/nav.js
