@@ -17,6 +17,7 @@ def tracked_specs():
 
 def extract():
     rows=[]
+    seen={}
     for path in tracked_specs():
         rel=path.relative_to(ROOT).as_posix()
         text=path.read_text(encoding="utf-8",errors="replace")
@@ -48,8 +49,11 @@ def extract():
                 else:
                     continue
             if not label or label in {"---","***"}: continue
-            key=hashlib.sha256(f"{rel}::{kind}::{label}".encode()).hexdigest()[:16]
-            rows.append({"requirement_id":"REQ-"+key,"source_path":rel,"line":number,"section":current,"kind":kind,"requirement":label})
+            identity=f"{rel}::{kind}::{label}"
+            occurrence=seen.get(identity,0)+1
+            seen[identity]=occurrence
+            key=hashlib.sha256(f"{identity}::{occurrence}".encode()).hexdigest()[:16]
+            rows.append({"requirement_id":"REQ-"+key,"source_path":rel,"line":number,"section":current,"kind":kind,"occurrence":occurrence,"requirement":label})
     return rows
 
 def main():
