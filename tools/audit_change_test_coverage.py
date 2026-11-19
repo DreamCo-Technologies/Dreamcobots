@@ -84,8 +84,13 @@ def high_risk_test_evidence(words: list[str], tests: list[str]) -> list[str]:
     return [test for test in tests if any(alias in test.lower() for alias in wanted)]
 
 
-def added_skip_markers(base: str, head: str) -> list[str]:
-    proc = subprocess.run(["git", "diff", "--unified=0", base, head, "--", "tests/"], cwd=ROOT, capture_output=True, text=True)
+def added_skip_markers(base: str, head: str, test_paths: list[str]) -> list[str]:
+    proc = subprocess.run(
+        ["git", "diff", "--unified=0", base, head, "--", *test_paths],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
     if proc.returncode:
         raise SystemExit(proc.stderr)
     markers = POLICY.get("skip_markers", [])
@@ -111,7 +116,7 @@ def main() -> int:
     tests = [path for status, path in status_rows if status != "D" and any(path.startswith(prefix) for prefix in test_paths)]
     deleted_tests = [path for status, path in status_rows if status == "D" and any(path.startswith(prefix) for prefix in test_paths)]
     executable = [path for status, path in status_rows if status != "D" and Path(path).suffix in exts and not any(path.startswith(prefix) for prefix in test_paths)]
-    skip_hits = added_skip_markers(args.base, args.head) if executable else []
+    skip_hits = added_skip_markers(args.base, args.head, test_paths) if executable else []
 
     rows = []
     blockers = []
