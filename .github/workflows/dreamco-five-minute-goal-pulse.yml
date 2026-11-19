@@ -1,4 +1,4 @@
-name: DreamCo Five-Minute Goal and Division Pulse
+name: DreamCo Five-Minute Rotating Operations
 
 on:
   schedule:
@@ -10,11 +10,11 @@ permissions:
 
 concurrency:
   group: dreamco-five-minute-goal-pulse
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  goal-division-pulse:
-    name: Repository divisions, Markdown goals and evidence inventory
+  rotating-operations:
+    name: Inventory every specification and advance one workstream
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -26,32 +26,38 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - name: Generate master directive progress
-        run: python3 tools/generate_master_directive_status.py
-      - name: Generate repository and division source map
-        run: python3 tools/generate_dreamco_repository_master_map.py
-      - name: Generate repository-wide test registry
-        run: python3 tools/generate_repository_test_registry.py
-      - name: Run repository goal and capability scan
-        run: python3 tools/dreamco_daily_scan.py --action daily-scan
-      - name: Verify invention hub and specialist page contracts
-        run: |
-          python3 tools/build_bot_profile_pages.py
-          python3 tools/build_invention_hub.py
-          node --test tests/invention-hub.test.mjs
-      - name: Publish pulse summary
+      - name: Verify deterministic rotation scheduler
+        run: python3 -m unittest tests/test_dreamco_rotating_operations.py
+      - name: Inventory every tracked Markdown specification and run the current lane
+        run: python3 tools/dreamco_rotating_operations.py
+      - name: Publish rotation summary
         if: always()
         run: |
-          echo "## DreamCo five-minute goal and division pulse" >> "$GITHUB_STEP_SUMMARY"
-          echo "This run inventories documented goals, division sources, repository capabilities, test registrations and invention/profile page contracts." >> "$GITHUB_STEP_SUMMARY"
-          echo "File presence and generated pages are not runtime-route, benchmark, or production verification." >> "$GITHUB_STEP_SUMMARY"
-          if [ -d artifacts/daily-scan ]; then find artifacts/daily-scan -maxdepth 2 -type f -print >> "$GITHUB_STEP_SUMMARY"; fi
-      - name: Retain evidence snapshot
+          echo "## DreamCo five-minute rotating operations" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f artifacts/dreamco-rotation/latest.json ]; then
+            python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          p=json.loads(Path("artifacts/dreamco-rotation/latest.json").read_text())
+          print(f"- Lane: **{p['lane']['title']}** (`{p['lane']['id']}`)")
+          print(f"- Markdown/MDX specifications inventoried: **{p['specification_inventory']['count']}**")
+          print(f"- Commands passed: **{p['summary']['passed']}**")
+          print(f"- Failed or blocked: **{p['summary']['failed_or_blocked']}**")
+          print(f"- Commit: `{p['commit']}`")
+          print(f"- Model training executed: **{p['safety']['model_training_executed']}**")
+          print(f"- Production deployment performed: **{p['safety']['production_deployment_performed']}**")
+          PY
+          else
+            echo "Rotation report was not produced; inspect the failed scheduler step." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "A successful inventory or catalog check is not proof of runtime, benchmark, or production readiness." >> "$GITHUB_STEP_SUMMARY"
+      - name: Retain complete rotation evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dreamco-five-minute-goal-pulse-${{ github.run_id }}
+          name: dreamco-rotation-${{ github.run_id }}
           path: |
+            artifacts/dreamco-rotation/
             artifacts/daily-scan/
             config/generated/
             reports/
