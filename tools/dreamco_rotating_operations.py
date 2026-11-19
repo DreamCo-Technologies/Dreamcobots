@@ -34,12 +34,15 @@ LANES: list[dict[str, Any]] = [
         ["python3", "tools/generate_buddy_benchmark_index.py"],
     ]},
     {"id": "training-governance", "title": "Training queues, dataset governance and distillation readiness", "commands": [
-        ["python3", "tools/generate_buddy_learning_strategies.py", "--check"],
-        ["python3", "tools/execute_benchmark_training_queue.py", "--help"],
+        ["python3", "-m", "py_compile", "tools/build_benchmark_training_queue.py"],
+        ["python3", "-m", "py_compile", "tools/execute_benchmark_training_queue.py"],
+        ["python3", "-m", "py_compile", "tools/buddy_masterbot_training_lane.py"],
     ]},
     {"id": "user-learning", "title": "User bootcamp, learning paths and model-lab education", "commands": [
         ["python3", "-m", "py_compile", "buddy/bootcamp/professional_training.py"],
         ["python3", "-m", "py_compile", "buddy/builder/self_training.py"],
+        ["node", "--check", "website/open-model-lab.js"],
+        ["node", "--check", "website/buddy-learning-lab.js"],
     ]},
     {"id": "division-fleet", "title": "Divisions, bot fleet, profiles and capability contracts", "commands": [
         ["python3", "tools/build_bot_profile_pages.py"],
