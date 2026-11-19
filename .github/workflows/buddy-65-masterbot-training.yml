@@ -36,8 +36,12 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Validate canonical registry and generated public manifest
+        run: |
+          python3 tools/validate_masterbot_registry.py
+          python3 tools/generate_masterbot_public_manifest.py --check
       - id: registry
-        name: Validate 45 domain and 20 platform MasterBots
+        name: Export 45 domain and 20 platform MasterBots as matrix
         run: python3 tools/validate_masterbot_registry.py --github-output "$GITHUB_OUTPUT"
 
   masterbot-lanes:
