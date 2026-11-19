@@ -8,6 +8,12 @@ The report inventories tracked Markdown/MDX requirements, approved chat exports,
 
 Each finding includes a stable ID, source/provenance, severity, owner/workstream where known, dependency references, evidence age, recommended next action, and verification state. It distinguishes missing, disconnected, broken, unverified, blocked, regressed, and verified.
 
+## Current implementation boundary
+
+The current runner performs a complete paginated read-only GitHub Pull Requests API inventory when the workflow token is available. It records normalized PR metadata and marks the inventory BLOCKED when authentication, API access, response validation, or pagination is incomplete. It does not yet claim complete issue, branch, commit, deployment, or external-provider inventories. Those resource classes remain explicit follow-up work until each has a source adapter and evidence-backed contract test.
+
+The current route inventory is path-based discovery. It does not yet generate an executable end-to-end test for every discovered service, API route, integration, database, monitor, backup, security control, and benchmark. Each such route remains DISCOVERED_NOT_RUNTIME_VERIFIED until an authorized test actually exercises it and stores timestamped evidence.
+
 ## Routing and workflow tests
 
 A resource route is a directed edge from a capability/resource to its owning service, workflow, API entrypoint, test, runtime evidence, and operational fallback. A route is not healthy merely because a YAML file mentions a name. Required route tests must exercise:
