@@ -1,15 +1,15 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-19T15:41:15Z
+Generated: 2026-11-19T17:52:06Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1633
-- Actionable claim lines detected: 11603
-- Documents with missing path references: 106
-- Documents without implementation references: 1561
+- Markdown documents scanned: 1634
+- Actionable claim lines detected: 11613
+- Documents with missing path references: 107
+- Documents without implementation references: 1562
 - Documents with implementation references but no test references: 59
 - Documents with inventory count claims: 102
 - Inventory count claims requiring review: 371
@@ -13460,6 +13460,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: None detected
 - Missing paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_ALWAYS_ON_RECONCILIATION.md
+
+- Status: broken_path_references
+- Actionable claim lines: 10
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: artifacts/dreamco-reconciliation/production-readiness-master-list.json, artifacts/dreamco-reconciliation/resource-routing-inventory.json
+- Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_BEGINNER_FIRST_PRODUCT_EXPERIENCE.md
