@@ -1,45 +1,35 @@
-name: 65 Division Benchmark Orchestrator
+name: Legacy 65-Division Benchmark Registry Audit
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "*/30 * * * *"
+  pull_request:
+    paths:
+      - "config/masterbot-65-registry.json"
+      - "config/benchmark-65-loop.json"
+      - "tools/validate_masterbot_registry.py"
+      - "tools/audit_markdown_requirement_traceability.py"
 permissions:
   contents: read
-concurrency:
-  group: dreamco-benchmark-orchestrator
-  cancel-in-progress: false
 jobs:
-  plan:
+  registry-audit:
+    name: Validate real registry and requirement inventory
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-    steps:
-      - id: matrix
-        shell: bash
-        run: |
-          python - <<'PY' >> "$GITHUB_OUTPUT"
-          import json
-          print('matrix='+json.dumps({'division':list(range(1,66))}))
-          PY
-  benchmark:
-    needs: plan
-    strategy:
-      fail-fast: false
-      max-parallel: 20
-      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
-      - name: Record benchmark work item
-        env:
-          DIVISION: ${{ matrix.division }}
-        run: |
-          mkdir -p benchmark-results
-          cat > "benchmark-results/division-${DIVISION}.json" <<EOF
-          {"division":${DIVISION},"status":"scheduled","next":"connect-to-real-benchmark-runner","policy":"continuous-gap-closure","evidence":"not-yet-measured"}
-          EOF
-      - uses: actions/upload-artifact@v4
         with:
-          name: benchmark-division-${{ matrix.division }}
-          path: benchmark-results/division-${{ matrix.division }}.json
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Validate canonical 65-MasterBot registry
+        run: python3 tools/validate_masterbot_registry.py
+      - name: Audit Markdown requirements
+        run: python3 tools/audit_markdown_requirement_traceability.py
+      - name: Preserve actual audit evidence (not placeholder benchmark results)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-registry-audit-${{ github.run_id }}
+          path: artifacts/requirement-traceability/
+          if-no-files-found: warn
+          retention-days: 30
