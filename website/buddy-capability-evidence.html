@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Buddy Verified Capabilities | DreamCo</title><link rel="stylesheet" href="styles.css"></head>
+<body><div id="nav-placeholder"></div><script src="nav.js"></script>
+<main class="container"><h1>Buddy Capability Evidence</h1>
+<p>Verify what Buddy can demonstrate. A listed feature or test contract does not establish mastery.</p>
+<section class="card"><h2>Evidence summary</h2><p id="status" role="status">Loading published evidence…</p><div id="counts"></div></section>
+<section class="card"><h2>Benchmark programs</h2><div id="programs"></div></section>
+<section class="card"><h2>Code-study verification</h2><p id="code-study">No independent evidence loaded.</p></section>
+<section class="card"><h2>How to verify</h2><p>Read the underlying report and review GitHub Actions and independent benchmark artifacts. Missing results mean unknown, not failed.</p>
+<p><a href="../reports/BUDDY_BENCHMARK_INDEX.md">Source benchmark report</a> · <a href="https://github.com/DreamCo-Technologies/Dreamcobots/actions">GitHub Actions</a> · <a href="https://github.com/DreamCo-Technologies/Dreamcobots/pulls">Pull requests</a></p></section></main>
+<script>
+const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+(async () => {
+ try {
+  const response = await fetch('data/buddy-mastery-evidence.json', {cache:'no-store'});
+  if (!response.ok) throw new Error('Evidence file not published');
+  const data = await response.json();
+  document.getElementById('status').textContent = 'Source: ' + data.source + ' | Generated: ' + data.generated_at + ' | Static report, not a live probe';
+  document.getElementById('counts').innerHTML = Object.entries(data.counts || {}).map(([k,v])=>'<p><strong>'+escapeHTML(k.replaceAll('_',' '))+':</strong> '+escapeHTML(v === null ? 'Unknown' : v)+'</p>').join('');
+  document.getElementById('programs').innerHTML = (data.programs || []).map(p=>'<article><h3>'+escapeHTML(p.name)+'</h3><p>'+escapeHTML(p.area)+' — '+escapeHTML(p.reported_status)+'</p><p><strong>Mastery:</strong> Not independently verified</p></article>').join('') || '<p>No program entries found in source report.</p>';
+  document.getElementById('code-study').textContent = 'Worldwide code study: NOT VERIFIED. External repositories studied: '+(data.external_repositories_studied ?? 'Unknown')+'. Code files studied: '+(data.code_files_studied ?? 'Unknown')+'. Coding mastery: NOT VERIFIED.';
+ } catch(e) {
+  document.getElementById('status').textContent = 'Evidence unavailable. Do not infer mastery. '+e.message;
+ }
+})();
+</script></body></html>
