@@ -7,7 +7,9 @@ ROOT=Path(__file__).resolve().parents[1]
 MAP=ROOT/"config/requirement-evidence-map.json"
 OUT=ROOT/"artifacts/requirement-traceability"
 HEADING=re.compile(r"^#{1,6}\s+(.+?)\s*#*\s*$")
-TASK=re.compile(r"^\s*[-*] \[([ xX])\]\s+(.+)$")
+TASK=re.compile(r"^\s*[-*+] \[([ xX])\]\s+(.+)$")
+LIST=re.compile(r"^\s*(?:[-*+] |\d+[.)] )(.+)$")
+TABLE=re.compile(r"^\s*\|(.+)\|\s*$")
 
 def tracked_specs():
     raw=subprocess.run(["git","ls-files","-z"],cwd=ROOT,check=True,capture_output=True).stdout
@@ -19,7 +21,12 @@ def extract():
         rel=path.relative_to(ROOT).as_posix()
         text=path.read_text(encoding="utf-8",errors="replace")
         current="(document)"
+        in_fence=False
         for number,line in enumerate(text.splitlines(),1):
+            if line.strip().startswith(("\x60\x60\x60","~~~")):
+                in_fence=not in_fence
+                continue
+            if in_fence: continue
             h=HEADING.match(line)
             if h:
                 current=h.group(1).strip()
@@ -27,9 +34,20 @@ def extract():
                 label=current
             else:
                 task=TASK.match(line)
-                if not task: continue
-                kind="task"
-                label=task.group(2).strip()
+                bullet=LIST.match(line)
+                table=TABLE.match(line)
+                if task:
+                    kind="task"
+                    label=task.group(2).strip()
+                elif bullet and not bullet.group(1).startswith("["):
+                    kind="list_item"
+                    label=bullet.group(1).strip()
+                elif table and not set(table.group(1).replace("|","").replace("-","").replace(":","").strip())==set():
+                    kind="table_row"
+                    label=" | ".join(part.strip() for part in table.group(1).split("|"))
+                else:
+                    continue
+            if not label or label in {"---","***"}: continue
             key=hashlib.sha256(f"{rel}::{kind}::{label}".encode()).hexdigest()[:16]
             rows.append({"requirement_id":"REQ-"+key,"source_path":rel,"line":number,"section":current,"kind":kind,"requirement":label})
     return rows
