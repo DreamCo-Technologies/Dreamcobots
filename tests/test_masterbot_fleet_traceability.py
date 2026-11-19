@@ -25,6 +25,7 @@ class DreamCoFleetAndTraceabilityTests(unittest.TestCase):
         self.assertIn("Path existence is not a passing test",source)
         self.assertIn("list_item",source)
         self.assertIn("table_row",source)
+        self.assertIn('"paragraph"',source)
 
     def test_bootcamp_has_eight_levels_and_sandbox_modes(self):
         boot=json.loads(Path("config/buddy-bootcamp-65.json").read_text())
