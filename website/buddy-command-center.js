@@ -19,6 +19,38 @@
     ['Professional Training','Map tasks to skills, subjects and evidence.']
   ];
 
+  async function loadMasterBotContext() {
+    const name = new URLSearchParams(window.location.search).get('masterbot');
+    if (!name) return;
+    try {
+      const response = await fetch('data/masterbot-fleet.json', { cache: 'no-store' });
+      if (!response.ok) throw new Error('MasterBot fleet manifest unavailable');
+      const data = await response.json();
+      const bot = (data.masterbots || []).find((item) => item.name.toLowerCase() === name.toLowerCase());
+      if (!bot) throw new Error('MasterBot is not in the canonical registry');
+      const header = document.querySelector('.actions-header');
+      const panel = document.createElement('div');
+      panel.className = 'cc-note';
+      const title = document.createElement('strong');
+      title.textContent = `MasterBot focus: ${bot.name} · ${bot.type} · lane ${bot.lane_id}`;
+      const description = document.createElement('p');
+      description.textContent = bot.mission;
+      const link = document.createElement('a');
+      link.href = `masterbot-control-center.html?id=${encodeURIComponent(bot.name)}`;
+      link.textContent = 'Open this MasterBot dashboard and prospectus';
+      panel.append(title, description, link);
+      header?.after(panel);
+      const taskPrompt = `Work in the context of MasterBot ${bot.name}. Mission: ${bot.mission} Focus on its registered capability gaps and require benchmark evidence.`;
+      task.placeholder = taskPrompt;
+    } catch (error) {
+      const header = document.querySelector('.actions-header');
+      const panel = document.createElement('p');
+      panel.className = 'cc-status warn';
+      panel.textContent = `MasterBot context unavailable: ${error.message}`;
+      header?.after(panel);
+    }
+  }
+
   async function loadCommandCenterData() {
     const dataStatus = $('cc-data-status');
     const metrics = $('cc-metrics');
@@ -111,6 +143,7 @@
   });
 
   renderCaps();
+  loadMasterBotContext();
   loadCommandCenterData();
   const prior = JSON.parse(localStorage.getItem(historyKey) || '[]');
   if (prior.length) log.textContent += prior.slice(-20).map(x => `[${x.stamp}] ${x.line}`).join('\n') + '\n';
