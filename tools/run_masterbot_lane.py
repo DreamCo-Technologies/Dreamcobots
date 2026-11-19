@@ -19,6 +19,7 @@ def main():
     ap.add_argument("--state-dir",type=Path)
     ap.add_argument("--max-items",type=int,default=1)
     ap.add_argument("--budget-seconds",type=int,default=45)
+    ap.add_argument("--github-output",type=Path)
     args=ap.parse_args()
     if not 1<=args.max_items<=3 or not 5<=args.budget_seconds<=90:
         raise SystemExit("Bounds: max-items 1..3, budget-seconds 5..90.")
@@ -54,5 +55,9 @@ def main():
       "previous_checkpoint_sequence":previous.get("sequence",0)
     }
     state_path.write_text(json.dumps(checkpoint,indent=2)+"\n",encoding="utf-8")
+    if args.github_output:
+        with args.github_output.open("a",encoding="utf-8") as f:
+            f.write("selected_gaps="+str(len(selected))+"\n")
+            f.write("checkpoint_status="+checkpoint["execution"]["status"]+"\n")
     print(json.dumps({"masterbot":bot["name"],"lane":bot["lane_id"],"eligible_gaps":len(gaps),"selected":len(selected),"executed":0,"checkpoint":str(state_path)},indent=2))
 if __name__=="__main__": main()
