@@ -9,6 +9,9 @@ on:
       - "website/actions.js"
       - "website/actions.css"
       - "website/actions-masterbot-fleet.js"
+      - "website/buddy-bootcamp.html"
+      - "website/buddy-bootcamp.js"
+      - "website/data/buddy-bootcamp.json"
       - "website/masterbot-control-center.html"
       - "website/masterbot-control-center.js"
       - "website/buddy-command-center.js"
@@ -90,6 +93,7 @@ jobs:
         run: |
           node --check website/actions.js
           node --check website/actions-masterbot-fleet.js
+          node --check website/buddy-bootcamp.js
           node --check website/masterbot-control-center.js
           node --check website/buddy-command-center.js
           node --check website/nav.js
@@ -101,6 +105,9 @@ jobs:
           test -s website/actions.js
           test -s website/actions.css
           test -s website/actions-masterbot-fleet.js
+          test -s website/buddy-bootcamp.html
+          test -s website/buddy-bootcamp.js
+          test -s website/data/buddy-bootcamp.json
           test -s website/masterbot-control-center.html
           test -s website/masterbot-control-center.js
           test -s website/data/masterbot-fleet.json
