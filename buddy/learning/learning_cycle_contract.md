@@ -24,3 +24,16 @@ Minimize external inference over time by increasing verified native solve rate, 
 ## Failure behavior
 
 If evidence is incomplete, mark the result `unverified` rather than green. If a regression or safety gate fails, do not promote. Preserve the failed attempt as learning evidence and create a follow-up regression candidate.
+
+
+## Promotion evidence contract
+
+A promotion requires more than a successful boolean or the presence of a source file. Every promoted event must retain:
+
+- a non-empty evidence-artifact reference list;
+- the exact execution run ID and 40-character source commit SHA;
+- the pre-intervention baseline reference;
+- an independent holdout result reference that was not used for training or tuning;
+- regression and safety result references.
+
+A repository inventory, catalog row, workflow definition, passing controller unit test, or generated success-shaped JSON record is not an executed benchmark. Inventory-only events remain diagnostic learning candidates and must never be promoted. Model-weight or adapter claims additionally require a separate authorized training manifest and checkpoint hash; this evidence runner does not train weights.
