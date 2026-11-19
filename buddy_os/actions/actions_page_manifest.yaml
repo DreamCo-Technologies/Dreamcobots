@@ -1,4 +1,4 @@
-version: 2
+version: 3
 name: buddy-actions-page-manifest
 purpose: single manifest describing every capability family the Actions page should expose
 
@@ -141,3 +141,73 @@ truth_states:
   - blocked
   - degraded
   - unknown
+
+masterbot_fleet_contract:
+  canonical_registry: config/masterbot-65-registry.json
+  canonical_count: 65
+  domain_masterbots: 45
+  platform_masterbots: 20
+  dedicated_logical_training_lane_per_masterbot: true
+  matrix:
+    jobs: 65
+    max_parallel: 5
+    schedule: "*/5 * * * *"
+    bounded_runner_minutes_per_lane: 4
+    no_quota_bypass: true
+    no_manufactured_work: true
+  checkpoint:
+    runner: tools/run_masterbot_lane.py
+    persist_per_masterbot: true
+    mastery_requires_repeatable_benchmark_evidence: true
+  traceability:
+    source_inventory: all_tracked_markdown_and_mdx
+    auditor: tools/audit_markdown_requirement_traceability.py
+    mapping_registry: config/requirement-evidence-map.json
+    dimensions:
+      - source_specification_and_heading
+      - implementation_paths
+      - test_paths
+      - runtime_route_paths
+      - benchmark_evidence_paths
+    path_presence_is_not_verification: true
+  bootcamp:
+    config: config/buddy-bootcamp-65.json
+    levels: 8
+    sandbox_modes:
+      - training
+      - practice
+      - coach
+      - challenge
+      - repair_lab
+      - exam_prep
+      - benchmark_simulation
+      - adversarial
+      - time_trial
+      - resource_limited
+      - tool_limited
+      - multi_agent
+      - human_vs_buddy
+      - buddy_vs_buddy
+      - masterbot_vs_masterbot
+  actions_page:
+    expose_all_65_masterbots: true
+    per_masterbot_views:
+      - dashboard
+      - command_center
+      - prospectus
+      - training_queue
+      - sandbox_controls
+      - benchmark_controls
+      - mastery_history
+      - gap_queue
+      - sub_bot_roster
+      - resource_registry
+      - runtime_telemetry
+    expose:
+      - 45_domain_masterbots
+      - 20_platform_masterbots
+      - training_controls
+      - bootcamp
+      - sandbox
+      - gap_closure
+      - capacity_telemetry
