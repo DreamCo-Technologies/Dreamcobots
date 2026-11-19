@@ -41,6 +41,7 @@ jobs:
       - name: Build daily missing-work master list
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
         run: python tools/dreamco_production_readiness.py
       - name: Validate readiness contracts
         run: python -m unittest tests/test_dreamco_production_readiness.py
