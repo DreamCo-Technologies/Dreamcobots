@@ -27,7 +27,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Verify deterministic rotation scheduler
-        run: python3 -m unittest tests/test_dreamco_rotating_operations.py
+        run: python3 -m unittest discover -s tests -p 'test_dreamco_rotating_operations.py'
       - name: Inventory every tracked Markdown specification and run the current lane
         run: python3 tools/dreamco_rotating_operations.py
       - name: Publish rotation summary
