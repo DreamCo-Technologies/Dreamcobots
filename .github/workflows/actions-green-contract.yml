@@ -10,6 +10,7 @@ on:
       - "tools/validate_masterbot_registry.py"
       - "tools/select_masterbot_rotation.py"
       - "tools/generate_masterbot_public_manifest.py"
+      - "tools/generate_buddy_bootcamp_public_manifest.py"
       - "tools/audit_markdown_requirement_traceability.py"
       - "tools/run_masterbot_lane.py"
       - "tests/test_masterbot_fleet_traceability.py"
@@ -31,6 +32,7 @@ jobs:
           python3 tools/validate_masterbot_registry.py
           python3 tools/select_masterbot_rotation.py --count 5
           python3 tools/generate_masterbot_public_manifest.py --check
+          python3 tools/generate_buddy_bootcamp_public_manifest.py --check
           python3 -m unittest discover -s tests -p "test_masterbot_fleet_traceability.py"
       - name: Audit Markdown requirement traceability
         run: python3 tools/audit_markdown_requirement_traceability.py
