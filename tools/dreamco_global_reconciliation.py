@@ -33,7 +33,8 @@ def tracked_markdown() -> list[Path]:
                   and not (set(p.relative_to(ROOT).parts) & IGNORE))
 
 def extract_requirements(path: Path) -> list[dict]:
-    rel = path.relative_to(ROOT).as_posix()
+    try: rel = path.relative_to(ROOT).as_posix()
+    except ValueError: rel = path.as_posix()
     try: lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
     except OSError: return []
     rows, section = [], ""
