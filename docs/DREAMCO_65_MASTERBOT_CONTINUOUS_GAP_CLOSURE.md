@@ -23,10 +23,12 @@ If no eligible gap exists, no adapter is approved, or runner capacity is unavail
 
 ## GitHub Actions capacity policy
 
-- Canonical matrix size: 65 MasterBots.
-- Bounded matrix parallelism: max-parallel 5.
+- Canonical logical lane count: 65 MasterBots.
+- Each five-minute tick selects five consecutive lanes fairly from the canonical 65-entry registry.
+- Bounded matrix parallelism: max-parallel 5; at most five MasterBot jobs are active in this workflow at once.
+- The complete fleet rotation takes 13 ticks, approximately 65 minutes under the best-effort GitHub schedule.
 - Each lane has a four-minute hard job timeout and a 45-second logical work budget.
-- Five-minute cron is best-effort; GitHub may delay or queue scheduled runs.
+- Five-minute cron is best-effort; GitHub may delay or queue scheduled runs. The 65-minute full-fleet cycle is therefore a target, not a real-time guarantee.
 - The matrix does not bypass concurrency, quotas, rate limits, or public runner controls.
 - No paid model API or GPU is called by the checkpoint-only workflow.
 - No credentials are read from public repository content or written into artifacts.
