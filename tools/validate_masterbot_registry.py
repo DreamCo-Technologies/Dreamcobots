@@ -32,6 +32,6 @@ def main():
     data=validate()
     payload=json.dumps([b["name"] for b in data["masterbots"]],separators=(",",":"))
     if args.github_output:
-        with args.github_output.open("a",encoding="utf-8") as f: f.write("masterbots="+payload+"\\n")
+        with args.github_output.open("a",encoding="utf-8") as f: f.write("masterbots="+payload+"\n")
     print(json.dumps({"masterbots":65,"domain_masterbots":45,"platform_masterbots":20,"max_parallel":5}))
 if __name__=="__main__": main()
