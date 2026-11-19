@@ -1,107 +1,139 @@
-name: Buddy 65 MasterBot Training Lanes
+name: Buddy 65 MasterBot Continuous Gap-Closure Lanes
+
 on:
+  schedule:
+    - cron: "*/5 * * * *"
   workflow_dispatch:
   pull_request:
     paths:
-      - '.github/workflows/buddy-65-masterbot-training.yml'
-      - 'config/masterbot-65-registry.json'
-      - 'tools/buddy_masterbot_training_lane.py'
-  schedule:
-    - cron: '17 */6 * * *'
+      - ".github/workflows/buddy-65-masterbot-training.yml"
+      - "config/masterbot-65-registry.json"
+      - "config/benchmark-65-loop.json"
+      - "tools/validate_masterbot_registry.py"
+      - "tools/run_masterbot_lane.py"
+      - "tools/audit_markdown_requirement_traceability.py"
+      - "config/requirement-evidence-map.json"
+
+permissions:
+  contents: read
+  actions: read
+
 concurrency:
   group: buddy-65-masterbot-training
   cancel-in-progress: false
-permissions:
-  contents: read
+
 jobs:
-  masterbot-training:
-    name: Train ${{ matrix.masterbot }}
+  registry:
+    name: Validate canonical 65-MasterBot registry
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      max-parallel: 20
-      matrix:
-        masterbot:
-          - CommandCore
-          - DreamSalesPro
-          - DreamFinance
-          - DreamRealEstate
-          - DreamAIInfra
-          - DreamRetail
-          - DreamProServices
-          - DreamData
-          - DreamGlobal
-          - DreamAutomation
-          - DreamContent
-          - DreamTrade
-          - DreamFlow
-          - DreamMarket
-          - DreamEmpire
-          - GameTitan
-          - DreamInfluence
-          - DreamDecision
-          - DreamOps
-          - DreamPlanetary
-          - DreamEntFinance
-          - DreamCustIntel
-          - DreamLegal
-          - DreamCyber
-          - DreamHealth
-          - DreamEducation
-          - DreamConstruction
-          - DreamTransport
-          - DreamFood
-          - DreamScience
-          - DreamArts
-          - DreamProtection
-          - DreamAgriculture
-          - DreamMaintenance
-          - DreamProduction
-          - DreamSocial
-          - DreamAdmin
-          - DreamCrypto
-          - DreamPayments
-          - DreamBizLaunch
-          - DreamCodeLab
-          - DreamLoans
-          - DreamPersonalCare
-          - DreamMilitary
-          - DreamAgents
-          - DreamResearch
-          - DreamBenchmark
-          - DreamKnowledge
-          - DreamEvolution
-          - DreamIntegration
-          - DreamReason
-          - DreamWorld
-          - DreamVision
-          - DreamVoice
-          - DreamHuman
-          - DreamSecurity
-          - DreamProduct
-          - DreamOperations
-          - DreamStrategy
-          - DreamExperiment
-          - DreamSimulation
-          - DreamDiscovery
-          - DreamQuality
-          - DreamResource
-          - DreamFuture
+    timeout-minutes: 3
+    outputs:
+      masterbots: ${{ steps.registry.outputs.masterbots }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - uses: actions/setup-python@v7
         with:
-          python-version: '3.12'
-      - name: Run bounded MasterBot training lane
+          python-version: "3.12"
+      - id: registry
+        name: Validate 45 domain and 20 platform MasterBots
+        run: python3 tools/validate_masterbot_registry.py --github-output "$GITHUB_OUTPUT"
+
+  masterbot-lanes:
+    name: "MasterBot lane · ${{ matrix.masterbot }}"
+    needs: registry
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        masterbot: ${{ fromJson(needs.registry.outputs.masterbots) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Restore this MasterBot's latest logical checkpoint
+        uses: actions/cache@v4
+        with:
+          path: .masterbot-state/${{ matrix.masterbot }}/
+          key: masterbot-state-${{ matrix.masterbot }}-${{ github.run_id }}
+          restore-keys: |
+            masterbot-state-${{ matrix.masterbot }}-
+      - name: Create or advance bounded training checkpoint
         env:
-          MASTERBOT_NAME: ${{ matrix.masterbot }}
-        run: python tools/buddy_masterbot_training_lane.py
-      - name: Publish lane checkpoint
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: |
+          python3 tools/run_masterbot_lane.py \
+            --masterbot "${{ matrix.masterbot }}" \
+            --state-dir ".masterbot-state/${{ matrix.masterbot }}" \
+            --max-items 1 \
+            --budget-seconds 45
+      - name: Preserve MasterBot checkpoint and evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: masterbot-checkpoint-${{ matrix.masterbot }}-${{ github.run_id }}
-          path: artifacts/masterbot-training/${{ matrix.masterbot }}/latest-checkpoint.json
-          if-no-files-found: error
-          retention-days: 3
+          path: .masterbot-state/${{ matrix.masterbot }}/latest-checkpoint.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  requirement-traceability:
+    name: Markdown requirement to code, test, runtime and benchmark traceability
+    needs: registry
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Validate canonical registry and run fleet tests
+        run: |
+          python3 tools/validate_masterbot_registry.py
+          python3 -m unittest discover -s tests -p "test_masterbot_fleet_traceability.py"
+      - name: Audit every tracked Markdown requirement
+        run: python3 tools/audit_markdown_requirement_traceability.py
+      - name: Preserve traceability report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-requirement-traceability-${{ github.run_id }}
+          path: artifacts/requirement-traceability/
+          if-no-files-found: warn
+          retention-days: 30
+
+  bootcamp-contract:
+    name: Buddy Bootcamp eight-level curriculum contract
+    needs: registry
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Validate Bootcamp curriculum and sandbox modes
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          boot=json.loads(Path("config/buddy-bootcamp-65.json").read_text())
+          reg=json.loads(Path("config/masterbot-65-registry.json").read_text())
+          assert len(boot["levels"]) == 8
+          assert [x["id"] for x in boot["levels"]] == list(range(1,9))
+          assert len(boot["sandbox_modes"]) >= 10
+          assert boot["masterbot_registry"] == "config/masterbot-65-registry.json"
+          assert len(reg["masterbots"]) == 65
+          assert boot["mastery_policy"]["self_report_is_not_evidence"] is True
+          print(json.dumps({"levels":len(boot["levels"]),"sandbox_modes":len(boot["sandbox_modes"]),"masterbots":len(reg["masterbots"])}))
+          PY
