@@ -40,7 +40,7 @@ def extract():
             paragraph=[]
             paragraph_line=None
         for number,line in enumerate(text.splitlines(),1):
-            if line.strip().startswith(("\\x60\\x60\\x60","~~~")):
+            if line.strip().startswith(('\x60\x60\x60',"~~~")):
                 flush_paragraph()
                 in_fence=not in_fence
                 continue
