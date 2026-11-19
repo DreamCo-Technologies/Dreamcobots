@@ -1,0 +1,16 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const {plan}=require('../website/account-control.js');
+const account={id:'acct-1',ownerId:'alice',providerTarget:'example',providerVerified:true,connectionState:'authenticated',grantedScopes:['read','configure','delete','create']};
+const base={userId:'alice',account,providerCapabilities:['read','configure','delete','create']};
+const approval=action=>({userId:'alice',accountId:'acct-1',action,exactTarget:'example',approved:true,expiresAt:Date.now()+60000});
+test('read-only scoped authorized account may be planned',()=>assert.equal(plan({...base,action:'read'}).allowed,true));
+test('cross-user account access is denied',()=>assert.equal(plan({...base,userId:'bob',action:'read'}).allowed,false));
+test('unsupported adapter action denied',()=>assert.equal(plan({...base,action:'connect'}).allowed,false));
+test('write without exact approval denied',()=>assert.equal(plan({...base,action:'configure'}).allowed,false));
+test('wrong target approval denied',()=>assert.equal(plan({...base,action:'configure',approval:{...approval('configure'),exactTarget:'other'}}).allowed,false));
+test('expired approval denied',()=>assert.equal(plan({...base,action:'configure',approval:{...approval('configure'),expiresAt:Date.now()-1}}).allowed,false));
+test('valid exact approval permits planning but not execution',()=>{const result=plan({...base,action:'configure',approval:approval('configure')});assert.equal(result.allowed,true);assert.equal(result.execution,'never_executed_by_planner');});
+test('account creation requires official signup handoff',()=>assert.ok(plan({...base,action:'create',approval:approval('create')}).reasons.includes('official_signup_and_verification_handoff_required')));
+test('deletion requires separate provider confirmation',()=>assert.ok(plan({...base,action:'delete',approval:approval('delete')}).reasons.includes('provider_specific_deletion_confirmation_required')));
+test('unverified account denied',()=>assert.equal(plan({...base,action:'read',account:{...account,providerVerified:false}}).allowed,false));

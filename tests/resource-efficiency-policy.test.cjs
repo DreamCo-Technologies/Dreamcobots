@@ -1,0 +1,13 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+globalThis.DreamCoResourceMath=require('../website/resource-efficiency-core.js');
+const {evaluate}=require('../website/resource-efficiency-policy.js');
+const p={data:'approved',unit:'tokens',free:100,workload:120,rate:1,reliability:99};
+test('public read-only planning is eligible',()=>assert.deepEqual(evaluate(p,{dataClass:'public',unit:'tokens'}),{eligible:true,reasons:[]}));
+test('sensitive data cannot be sent to cloud',()=>assert.ok(evaluate(p,{dataClass:'sensitive'}).reasons.includes('sensitive_data_requires_local')));
+test('internal data requires explicit cloud approval',()=>assert.ok(evaluate(p,{dataClass:'internal'}).reasons.includes('internal_cloud_approval_required')));
+test('external writes need exact action approval',()=>assert.ok(evaluate(p,{dataClass:'public',externalWrite:true}).reasons.includes('external_write_requires_exact_approval')));
+test('unverified providers cannot execute live jobs',()=>assert.ok(evaluate(p,{dataClass:'public',requiresLiveConnection:true}).reasons.includes('verified_connection_required')));
+test('unit mismatch is blocked',()=>assert.ok(evaluate(p,{dataClass:'public',unit:'gigabytes'}).reasons.includes('incompatible_usage_units')));
+test('budget exceeding estimate is blocked',()=>assert.ok(evaluate(p,{dataClass:'public',maxMonthlyCost:10}).reasons.includes('budget_exceeded_or_invalid')));
+test('approval required profiles fail closed',()=>assert.equal(evaluate({...p,data:'review'},{dataClass:'public'}).eligible,false));

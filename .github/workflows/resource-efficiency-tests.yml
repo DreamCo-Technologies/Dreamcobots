@@ -1,0 +1,34 @@
+name: Resource efficiency unit tests
+on:
+  pull_request:
+    paths:
+      - 'website/resource-efficiency*'
+      - 'tests/resource-efficiency*.test.cjs'
+      - 'tests/resource-router.test.cjs'
+      - 'website/resource-router.js'
+      - 'website/account-control.js'
+      - 'tests/account-control.test.cjs'
+      - 'website/account-permission-center*'
+      - '.github/workflows/resource-efficiency-tests.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test resource math
+        run: node --test tests/resource-efficiency.test.cjs tests/resource-efficiency-policy.test.cjs tests/resource-router.test.cjs tests/account-control.test.cjs
+      - name: Validate browser script syntax
+        run: |
+          node --check website/resource-efficiency-core.js
+          node --check website/resource-efficiency-policy.js
+          node --check website/resource-router.js
+          node --check website/account-control.js
+          node --check website/account-permission-center.js
+          node --check website/resource-efficiency.js

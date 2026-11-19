@@ -1,0 +1,15 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const math=require('../website/resource-efficiency-core.js');
+globalThis.DreamCoResourceMath=math;
+const policy=require('../website/resource-efficiency-policy.js');
+const {plan}=require('../website/resource-router.js');
+const resource=(id,ownerId,extra={})=>({id,ownerId,capabilities:['inference'],data:'approved',free:100,workload:50,rate:1,reliability:99,...extra});
+const job={capability:'inference',dataClass:'public'};
+test('isolation: another user resource never appears',()=>{const x=plan({userId:'a',resources:[resource('other','b')],job,policy,math});assert.equal(x.status,'blocked');assert.deepEqual(x.candidates,[]);});
+test('only capability-matched resources appear',()=>{const x=plan({userId:'a',resources:[resource('storage','a',{capabilities:['storage']})],job,policy,math});assert.deepEqual(x.candidates,[]);});
+test('free eligible resources rank before paid resources',()=>{const x=plan({userId:'a',resources:[resource('paid','a',{free:0}),resource('free','a')],job,policy,math});assert.equal(x.selectedResourceId,'free');assert.equal(x.status,'candidate_only');});
+test('sensitive jobs cannot route to cloud',()=>{const x=plan({userId:'a',resources:[resource('cloud','a')],job:{...job,dataClass:'sensitive'},policy,math});assert.equal(x.status,'blocked');});
+test('unverified live connections cannot be selected',()=>{const x=plan({userId:'a',resources:[resource('not-live','a')],job:{...job,requiresLiveConnection:true},policy,math});assert.equal(x.status,'blocked');});
+test('no execution is claimed from a candidate',()=>{const x=plan({userId:'a',resources:[resource('local','a',{data:'local'})],job,policy,math});assert.equal(x.status,'candidate_only');assert.equal(x.reason,'requires_runtime_verification_and_approval');});
+test('invalid job fails closed',()=>assert.equal(plan({userId:'a',resources:[],job:{},policy,math}).status,'blocked'));

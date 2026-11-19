@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DreamCo Resource Efficiency Planner</title><link rel="stylesheet" href="styles.css">
+<style>main{max-width:1050px;margin:auto;padding:32px 16px}.panel{background:#15191f;border:1px solid #39404a;border-radius:12px;padding:18px;margin:16px 0}label{display:block;margin:10px 0}input,select{background:#0c1015;color:white;border:1px solid #697382;padding:9px;border-radius:6px;max-width:100%;box-sizing:border-box}input[type=number]{width:120px}table{width:100%;border-collapse:collapse}td,th{padding:9px;text-align:left;border-bottom:1px solid #444}button{cursor:pointer;padding:10px;margin:4px}#results{overflow-x:auto}.note{color:#f4d48a}</style></head><body>
+<div id="nav-placeholder"></div><script src="nav.js"></script><main><h1>Resource Efficiency Planner</h1>
+<p>Compare the capacity, cost and reliability of your own provider accounts before assigning DreamCo jobs. All calculations happen in this browser. No passwords, API keys or account balances are requested or sent.</p>
+<p class="note">Planning estimates only: not a live account connection, automatic scheduler, provider health check, or production deployment.</p>
+<section class="panel"><h2>Add a provider profile</h2><form id="profile-form">
+<label>Provider name <input id="provider" required maxlength="80" placeholder="Local Mac / Hugging Face / cloud"></label>
+<label>Resource type <select id="kind"><option>Local compute</option><option>Cloud compute</option><option>Model inference</option><option>Storage</option><option>Research API</option><option>Workflow automation</option></select></label>
+<label>Free monthly quota (units) <input id="free" type="number" min="0" step="any" value="0" required></label>
+<label>Estimated monthly workload (same units) <input id="workload" type="number" min="0" step="any" value="0" required></label>
+<label>Paid cost per unit after free quota (USD) <input id="rate" type="number" min="0" step="any" value="0" required></label>
+<label>Estimated reliability (%) <input id="reliability" type="number" min="0" max="100" step="any" value="99" required></label>
+<label>Data handling <select id="data"><option value="local">Local-only permitted</option><option value="approved">Cloud approved for non-sensitive workloads</option><option value="review">Needs data approval</option></select></label>
+<button type="submit">Add profile and calculate</button></form></section>
+<section class="panel"><h2>Provider comparison</h2><p id="summary" role="status"></p><div id="results"></div><button id="export" type="button">Export plan as JSON</button><button id="clear" type="button">Clear local profiles</button></section>
+<p>Next step for live management: authenticate each provider through an official OAuth/API adapter, read actual quotas and usage from the backend, then route jobs only after permissions, budgets and health checks pass. <a href="resource-connection-center.html">Review resource connections</a>.</p>
+</main><script src="resource-efficiency-core.js"></script><script src="resource-efficiency.js"></script></body></html>
