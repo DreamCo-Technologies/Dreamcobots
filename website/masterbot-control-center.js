@@ -20,7 +20,7 @@ function render(){
 }
 fetch(DATA).then(r=>{if(!r.ok)throw Error("Fleet manifest unavailable");return r.json();}).then(data=>{
  fleet=data.masterbots||[];
- $("fleet-metrics").innerHTML=[["MasterBots",data.summary.total],["Domain",data.summary.domain],["Platform",data.summary.platform],["Max parallel",data.summary.maxParallel]].map(([k,v])=>`<div class="metric"><span class="muted">${esc(k)}</span><strong>${esc(v)}</strong></div>`).join("");
+ $("fleet-metrics").innerHTML=[["MasterBots",data.summary.total],["Domain",data.summary.domain],["Platform",data.summary.platform],["Lanes per tick",data.summary.lanesPerTick],["Max parallel",data.summary.maxParallel],["Fleet cycle",data.summary.fleetCycleMinutes+" min"]].map(([k,v])=>`<div class="metric"><span class="muted">${esc(k)}</span><strong>${esc(v)}</strong></div>`).join("");
  $("selected-summary").textContent=data.policy.training;
  render();
  $("search").addEventListener("input",render);$("kind").addEventListener("change",render);
