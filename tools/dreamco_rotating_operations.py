@@ -23,6 +23,7 @@ LANES: list[dict[str, Any]] = [
     {"id": "specifications", "title": "Markdown specifications and master goals", "commands": [
         ["python3", "tools/generate_master_directive_status.py"],
         ["python3", "tools/generate_dreamco_repository_master_map.py"],
+        ["python3", "tools/audit_markdown_requirement_traceability.py"],
     ]},
     {"id": "buddy-core", "title": "Buddy OS and Dream Brain learning architecture", "commands": [
         ["python3", "tools/build_buddy_learning_os_connection_graph.py"],
@@ -37,6 +38,8 @@ LANES: list[dict[str, Any]] = [
         ["python3", "-m", "py_compile", "tools/build_benchmark_training_queue.py"],
         ["python3", "-m", "py_compile", "tools/execute_benchmark_training_queue.py"],
         ["python3", "-m", "py_compile", "tools/buddy_masterbot_training_lane.py"],
+        ["python3", "tools/validate_masterbot_registry.py"],
+        ["python3", "tools/generate_masterbot_public_manifest.py", "--check"],
     ]},
     {"id": "user-learning", "title": "User bootcamp, learning paths and model-lab education", "commands": [
         ["python3", "-m", "py_compile", "buddy/bootcamp/professional_training.py"],
