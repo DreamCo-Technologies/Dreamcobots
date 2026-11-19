@@ -1,0 +1,13 @@
+{
+  "schema":"dreamco.production_readiness_policy.v1",
+  "timezone":"America/Chicago",
+  "cadence":{"reconciliation_tick_minutes":5,"masterbot_rotation_minutes":65,"masterbot_batch_size":5,"masterbot_max_parallel":5,"full_inventory_minutes":60,"daily_master_list":true},
+  "traceability":["source","checklist","requirement_id","workstream","issue","pull_request","implementation","test","runtime_route","benchmark_evidence","verified_status"],
+  "truth_states":["SOURCE_ONLY","REQUIREMENT_CAPTURED","MAPPED","IMPLEMENTED","TESTED","RUNTIME_VERIFIED","BENCHMARK_VERIFIED","BLOCKED","REGRESSED","SUPERSEDED"],
+  "resource_classes":["source","repository","markdown_requirement","chat_export","pull_request","issue","branch","commit","code","test","workflow","runtime_service","api_route","database","secret_reference","integration","model","masterbot","capability","benchmark","deployment","monitor","backup","recovery_runbook","security_control","dependency"],
+  "production_gates":["source_coverage","requirements_mapped","implementation_linked","tests_pass","workflow_pass","runtime_route_verified","integration_contract_verified","security_scan_pass","dependency_health","secret_reference_configured","observability_live","backup_and_restore_verified","rollback_tested","deployment_preflight_pass","benchmark_holdout_pass_when_applicable","production_isolation_verified","owner_approval"],
+  "repair":{"generate_reviewable_patch_artifacts":true,"auto_apply":false,"auto_merge":false,"semantic_conflict_resolution":"human_review_required","preserve_newer_base":true},
+  "production_side_effects":"disabled_by_default",
+  "chat_ingestion":"owner-approved exports only; GitHub Actions cannot read private ChatGPT history",
+  "completion_rule":"Missing, failed, stale, or unknown required evidence is BLOCKED; never infer readiness from file existence or checkpoint creation."
+}
