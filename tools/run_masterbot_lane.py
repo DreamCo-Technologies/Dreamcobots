@@ -53,6 +53,6 @@ def main():
       "safety":{"paid_services_called":False,"credentials_read":False,"production_side_effects":False,"automatic_model_promotion":False,"quota_bypass":False,"manufactured_work":False},
       "previous_checkpoint_sequence":previous.get("sequence",0)
     }
-    state_path.write_text(json.dumps(checkpoint,indent=2)+"\\n",encoding="utf-8")
+    state_path.write_text(json.dumps(checkpoint,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({"masterbot":bot["name"],"lane":bot["lane_id"],"eligible_gaps":len(gaps),"selected":len(selected),"executed":0,"checkpoint":str(state_path)},indent=2))
 if __name__=="__main__": main()
