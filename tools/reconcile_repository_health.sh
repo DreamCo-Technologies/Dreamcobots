@@ -14,6 +14,8 @@ npm audit --audit-level=high
 
 echo "==> Regenerate repository and Pages source-of-truth artifacts"
 FULL=1 bash tools/regen_fleet_truth.sh
+python3 tools/generate_command_center_data.py
+python3 tools/generate_master_directive_status.py
 
 echo "==> Run fleet and prospectus regression tests"
 python3 -m pytest -q -p no:cacheprovider \
