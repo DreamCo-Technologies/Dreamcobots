@@ -20,7 +20,7 @@ jobs:
       - name: Connect workflows and benchmarks
         run: python buddy/learning/workflow_benchmark_readiness.py
       - name: Validate learning controller
-        run: python -m unittest buddy.learning.registered_runner_test buddy.learning.workflow_benchmark_readiness_test
+        run: python -m unittest buddy.learning.continuous_learning_controller_test buddy.learning.registered_runner_test buddy.learning.workflow_benchmark_readiness_test
       - name: Run registered evidence runner
         shell: bash
         run: |
