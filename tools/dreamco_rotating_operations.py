@@ -46,6 +46,8 @@ LANES: list[dict[str, Any]] = [
         ["python3", "-m", "py_compile", "buddy/builder/self_training.py"],
         ["node", "--check", "website/open-model-lab.js"],
         ["node", "--check", "website/buddy-learning-lab.js"],
+        ["node", "--check", "website/buddy-bootcamp.js"],
+        ["python3", "tools/generate_buddy_bootcamp_public_manifest.py", "--check"],
     ]},
     {"id": "division-fleet", "title": "Divisions, bot fleet, profiles and capability contracts", "commands": [
         ["python3", "tools/build_bot_profile_pages.py"],
