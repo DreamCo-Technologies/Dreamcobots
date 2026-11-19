@@ -12,7 +12,7 @@ def build():
     bots=reg["masterbots"]
     return {
       "schema":"dreamco.masterbot_public_fleet.v1",
-      "summary":{"total":len(bots),"domain":sum(b["type"]=="domain" for b in bots),"platform":sum(b["type"]=="platform" for b in bots),"maxParallel":reg["matrix_policy"]["max_parallel"],"schedule":"Every five minutes (GitHub best-effort)"},
+      "summary":{"total":len(bots),"domain":sum(b["type"]=="domain" for b in bots),"platform":sum(b["type"]=="platform" for b in bots),"maxParallel":reg["matrix_policy"]["max_parallel"],"lanesPerTick":reg["matrix_policy"]["lanes_per_tick"],"fleetCycleMinutes":reg["matrix_policy"]["full_fleet_cycle_minutes"],"schedule":"Every five minutes (GitHub best-effort)"},
       "policy":{"training":"24x7 logical gap-closure; execute only when eligible work and runner capacity exist.","evidence":"No mastery claim without repeatable benchmark evidence.","capacity":"Bounded public Actions capacity; no quota bypass or manufactured work."},
       "bootcamp":{"url":"buddy-bootcamp.html","config":"../config/buddy-bootcamp-65.json","levels":8},
       "workflow":"https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-65-masterbot-training.yml",
