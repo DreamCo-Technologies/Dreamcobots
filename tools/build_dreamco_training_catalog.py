@@ -25,6 +25,8 @@ def main() -> int:
     datasets = load_json("website/data/free-datasets.json") or {}
     platforms = load_json("website/data/open-platforms.json") or {}
     courses = load_json("benchmarks/study_courses/course_catalog.json") or {}
+    lesson_library = load_json("data/dreamco_training/lessons/universal_task_mastery_lessons_v1.json") or {}
+    original_lessons = lesson_library.get("lessons", [])
     study_packs = []
     for path in sorted((ROOT / "study_packs").glob("*/index.json")):
         pack = json.loads(path.read_text(encoding="utf-8"))
@@ -58,6 +60,7 @@ def main() -> int:
         "study_packs": len(study_packs),
         "versioned_data_packages": len(packages),
         "dreamco_original_training_records": 0,
+        "dreamco_original_lesson_drafts": len(original_lessons),
         "train_eligible_assets": 0,
     }
     catalog["external_dataset_index"] = [
@@ -93,6 +96,20 @@ def main() -> int:
         }
         for row in courses.get("courses", [])
     ]
+    catalog["original_lesson_index"] = [
+        {
+            "lesson_id": row.get("lesson_id"),
+            "module_id": row.get("module_id"),
+            "title": row.get("title"),
+            "domain": row.get("domain"),
+            "skills": row.get("skills", []),
+            "review_status": lesson_library.get("review_status", "unknown"),
+            "training_eligibility": lesson_library.get("training_eligibility", "unknown"),
+            "ownership": lesson_library.get("ownership_class", "unknown"),
+        }
+        for row in original_lessons
+    ]
+    catalog["lesson_library_status"] = lesson_library.get("review_status", "not_present")
     catalog["study_pack_index"] = study_packs
     catalog["data_package_index"] = packages
     catalog["generation_status"] = "indexed_from_repository_manifests"

@@ -1,0 +1,123 @@
+{
+  "schema": "dreamco.owned_learning_fabric.v1",
+  "name": "DreamCo Learning Fabric",
+  "mission": "Transform repository knowledge, approved public resources, user-authorized inputs, and verified task outcomes into an original DreamCo learning catalog that Buddy can route into task execution.",
+  "catalog_roots": [
+    "data/dreamco_training/",
+    "buddy/bootcamp/",
+    "buddy/learning/",
+    "buddy/accounts/",
+    "buddy/frontier/",
+    "buddy_os/learning/",
+    "buddy_os/integration/",
+    "buddy_os/benchmarks/",
+    "benchmarks/",
+    "study_packs/",
+    "config/",
+    "docs/",
+    "bots/",
+    "attached_assets/"
+  ],
+  "existing_canonical_registries": [
+    "config/unified-repository-learning-registry.json",
+    "config/buddy-1000-source-bootcamp.json",
+    "config/buddy-training-data-provenance-policy.json",
+    "config/buddy-learning-source-adapters.json",
+    "config/buddy_benchmark_dataset_factory.json",
+    "config/buddy_benchmark_task_registry.json",
+    "config/onet-priority-curriculum.json",
+    "config/onet-sandbox-dataset-spec.json",
+    "config/universal-model-training-library-data-pack-program.json",
+    "buddy/bootcamp/learning_source_catalog.yaml",
+    "buddy/bootcamp/resource_registry.yaml",
+    "buddy/learning/study_data_schema.json",
+    "benchmarks/source_registry.yaml",
+    "benchmarks/study_courses/course_catalog.json"
+  ],
+  "asset_classes": [
+    "dreamco_owned",
+    "dreamco_commissioned_with_assignment",
+    "licensed_for_use",
+    "open_license_with_conditions",
+    "public_domain_or_publicly_reusable",
+    "third_party_reference_only",
+    "synthetic_generated_by_dreamco",
+    "user_contributed_with_permission",
+    "unknown_do_not_publish"
+  ],
+  "default_asset_class": "unknown_do_not_publish",
+  "catalog_layers": [
+    "source_registry",
+    "repository_asset_inventory",
+    "rights_and_provenance_ledger",
+    "skill_and_occupation_taxonomy",
+    "original_lesson_library",
+    "original_practice_and_project_library",
+    "benchmark_and_holdout_library",
+    "verified_failure_and_repair_library",
+    "execution_evidence_ledger",
+    "model_training_data_manifests"
+  ],
+  "original_perspective_pipeline": [
+    "inventory_repository_assets_without_assuming_training_rights",
+    "deduplicate_by_content_hash_and_canonical_source",
+    "record_creator_owner_license_source_version_and_collection_date",
+    "map_assets_to_skills_capabilities_occupations_and_benchmarks",
+    "extract_facts_only_from_permitted_material",
+    "compare_multiple_independent_views_and_record_disagreements",
+    "write_original_dreamco_explanations_in_our_own_structure_and_voice",
+    "create_new_examples_labs_projects_and_assessments",
+    "run_quality_attribution_privacy_and_license_checks",
+    "split_train_validation_transfer_and_locked_holdout_sets",
+    "publish_versioned_manifest_and_evidence",
+    "route_approved_learning_packets_to_buddy"
+  ],
+  "personal_perspective_contract": {
+    "must_synthesize_multiple_views": true,
+    "must_distinguish_fact_inference_and_opinion": true,
+    "must_record_conflicting_sources": true,
+    "must_include_original_examples": true,
+    "must_include_failure_modes_and_verification": true,
+    "must_not_copy_course_lessons_or_proprietary_exercises": true,
+    "must_not_claim_third_party_assets_as_dreamco_owned": true,
+    "must_not_treat_source_reading_as_mastery": true
+  },
+  "runtime_integration": {
+    "task_intake": "buddy/bootcamp/task_learning_router.py",
+    "resource_selection": "buddy/learning/study_resource_scheduler.py",
+    "learning_job_planning": "buddy/frontier/learning_orchestrator.py",
+    "evidence_validation": "buddy/learning/continuous_learning_controller.py",
+    "runtime_connection_graph": "buddy_os/integration/learning_os_connection_graph.py",
+    "execution_packet_contract": "dreamco.learning_execution_request.v1",
+    "completion_event_contract": "dreamco.learning_execution_result.v1",
+    "require_runtime_verified_connector": true,
+    "no_implicit_external_fetch": true,
+    "no_implicit_paid_compute": true
+  },
+  "training_data_policy": {
+    "training_eligible_only_after_rights_review": true,
+    "client_data_default": "exclude",
+    "secrets_and_credentials": "never_ingest",
+    "raw_third_party_course_content": "reference_only_unless_explicit_reuse_rights_exist",
+    "locked_holdout": "never_train_on",
+    "deduplicate_before_dataset_build": true,
+    "version_every_dataset": true,
+    "record_transformation_and_generator_version": true
+  },
+  "model_training_state": {
+    "weights_trained_by_this_fabric": false,
+    "adapters_trained_by_this_fabric": false,
+    "training_jobs_launched": false,
+    "status": "catalog_and_runtime_contract_definition"
+  },
+  "promotion_gates": [
+    "rights_and_provenance_pass",
+    "quality_review_pass",
+    "privacy_and_security_pass",
+    "originality_review_pass",
+    "dataset_split_integrity_pass",
+    "sandbox_task_pass",
+    "unseen_transfer_pass",
+    "regression_and_safety_pass"
+  ]
+}
