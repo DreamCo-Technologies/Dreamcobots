@@ -8,6 +8,7 @@ on:
       - "**/*.md"
       - "**/*.mdx"
       - "tools/dreamco_global_reconciliation.py"
+      - "tools/dreamco_pr_reconcile.py"
       - "governance/dreamco-chat-sources/**"
       - "governance/dreamco-requirement-evidence.json"
       - ".github/workflows/dreamco-global-reconciliation.yml"
@@ -41,6 +42,11 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: python tools/dreamco_global_reconciliation.py
+      - name: Audit open pull request divergence and merge-tree conflicts (read-only)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python tools/dreamco_pr_reconcile.py
       - name: Upload reconciliation inventory
         if: always()
         uses: actions/upload-artifact@v4
