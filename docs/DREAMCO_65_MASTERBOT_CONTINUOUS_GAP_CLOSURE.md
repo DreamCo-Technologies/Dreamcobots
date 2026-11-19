@@ -37,7 +37,7 @@ If no eligible gap exists, no adapter is approved, or runner capacity is unavail
 
 ## Requirement-to-evidence traceability
 
-tools/audit_markdown_requirement_traceability.py inventories tracked Markdown and MDX headings, checklists, list items and table rows. Stable requirement IDs include the source path and content label. config/requirement-evidence-map.json is the explicit mapping register.
+tools/audit_markdown_requirement_traceability.py inventories tracked Markdown and MDX headings, prose paragraphs, checklists, list items and table rows. Stable requirement IDs include the source path and content label. config/requirement-evidence-map.json is the explicit mapping register.
 
 For each requirement, the auditor records:
 - originating specification and line;
