@@ -1,0 +1,51 @@
+name: DreamCo Global Reconciliation
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 13 * * *"
+  pull_request:
+    paths:
+      - "**/*.md"
+      - "**/*.mdx"
+      - "tools/dreamco_global_reconciliation.py"
+      - "governance/dreamco-chat-sources/**"
+      - "governance/dreamco-requirement-evidence.json"
+      - ".github/workflows/dreamco-global-reconciliation.yml"
+  push:
+    branches: [main]
+    paths:
+      - "**/*.md"
+      - "**/*.mdx"
+      - "tools/dreamco_global_reconciliation.py"
+      - "governance/dreamco-chat-sources/**"
+      - "governance/dreamco-requirement-evidence.json"
+permissions:
+  contents: read
+  pull-requests: read
+concurrency:
+  group: dreamco-global-reconciliation-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Inventory Markdown, approved chats, and all pull requests
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python tools/dreamco_global_reconciliation.py
+      - name: Upload reconciliation inventory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-global-reconciliation
+          path: artifacts/dreamco-reconciliation/
+          if-no-files-found: error
+          retention-days: 30
