@@ -22,5 +22,19 @@ class DreamCoFleetAndTraceabilityTests(unittest.TestCase):
         source=Path("tools/audit_markdown_requirement_traceability.py").read_text()
         self.assertIn("evidence_artifacts_present_requires_review",source)
         self.assertIn("Path existence is not a passing test",source)
+        self.assertIn("list_item",source)
+        self.assertIn("table_row",source)
+
+    def test_bootcamp_has_eight_levels_and_sandbox_modes(self):
+        boot=json.loads(Path("config/buddy-bootcamp-65.json").read_text())
+        self.assertEqual([x["id"] for x in boot["levels"]],list(range(1,9)))
+        self.assertGreaterEqual(len(boot["sandbox_modes"]),10)
+        self.assertTrue(boot["mastery_policy"]["self_report_is_not_evidence"])
+
+    def test_public_manifest_matches_canonical_registry(self):
+        from tools.generate_masterbot_public_manifest import build
+        public=json.loads(Path("website/data/masterbot-fleet.json").read_text())
+        self.assertEqual(public,build())
+        self.assertEqual(public["summary"]["total"],65)
 
 if __name__=="__main__": unittest.main()
