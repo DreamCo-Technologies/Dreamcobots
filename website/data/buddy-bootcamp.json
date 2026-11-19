@@ -1,0 +1,94 @@
+{
+  "schema": "dreamco.buddy_bootcamp_public.v1",
+  "name": "Buddy Bootcamp",
+  "levels": [
+    {
+      "id": 1,
+      "name": "Foundation",
+      "gate": "Understand task, policy and baseline."
+    },
+    {
+      "id": 2,
+      "name": "Guided Practice",
+      "gate": "Follow lessons and worked examples."
+    },
+    {
+      "id": 3,
+      "name": "Independent Practice",
+      "gate": "Solve new exercises with limited hints."
+    },
+    {
+      "id": 4,
+      "name": "Adversarial Practice",
+      "gate": "Handle edge cases, ambiguity and safe failure."
+    },
+    {
+      "id": 5,
+      "name": "Benchmark Preparation",
+      "gate": "Practice on non-held-out tasks."
+    },
+    {
+      "id": 6,
+      "name": "Benchmark Trial",
+      "gate": "Run a held-out benchmark under recorded conditions."
+    },
+    {
+      "id": 7,
+      "name": "Mastery Verification",
+      "gate": "Pass repeat, transfer and regression checks."
+    },
+    {
+      "id": 8,
+      "name": "Maintenance",
+      "gate": "Spaced review, drift checks and periodic revalidation."
+    }
+  ],
+  "sandbox_modes": [
+    "training",
+    "practice",
+    "coach",
+    "challenge",
+    "repair_lab",
+    "exam_prep",
+    "benchmark_simulation",
+    "adversarial",
+    "time_trial",
+    "resource_limited",
+    "tool_limited",
+    "multi_agent",
+    "human_vs_buddy",
+    "buddy_vs_buddy",
+    "masterbot_vs_masterbot"
+  ],
+  "mastery_policy": {
+    "minimum_evidence": [
+      "baseline",
+      "post_training",
+      "held_out_pass",
+      "repeat_pass",
+      "transfer_pass",
+      "regression_pass"
+    ],
+    "regression_check_required": true,
+    "self_report_is_not_evidence": true,
+    "training_activity_is_not_mastery": true,
+    "production_side_effects": false
+  },
+  "user_privacy": {
+    "per_user_workspace_isolation": true,
+    "private_data_shared_for_training_only_with_explicit_consent": true,
+    "license_and_provenance_required": true
+  },
+  "daily_loop": [
+    "refresh_gap_inventory",
+    "rank_by_expected_benchmark_gain_per_runner_minute",
+    "allocate_available_capacity",
+    "study_permitted_sources",
+    "practice",
+    "sandbox",
+    "benchmark",
+    "record_evidence",
+    "close_or_requeue_gap",
+    "refresh_dashboard"
+  ]
+}
