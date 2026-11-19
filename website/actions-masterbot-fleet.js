@@ -14,7 +14,7 @@ function render(){
 fetch("data/masterbot-fleet.json").then(r=>{if(!r.ok)throw Error("Fleet manifest unavailable");return r.json();}).then(data=>{
  bots=data.masterbots||[];
  const summary=data.summary||{};
- $("masterbot-fleet-summary").innerHTML=[["Total MasterBots",summary.total],["Domain MasterBots",summary.domain],["Platform MasterBots",summary.platform],["Matrix max parallel",summary.maxParallel]].map(([k,v])=>`<div><span>${esc(k)}</span><strong>${esc(v)}</strong></div>`).join("");
+ $("masterbot-fleet-summary").innerHTML=[["Total MasterBots",summary.total],["Domain MasterBots",summary.domain],["Platform MasterBots",summary.platform],["Lanes per five-minute tick",summary.lanesPerTick],["Matrix max parallel",summary.maxParallel],["Full fleet cycle",summary.fleetCycleMinutes+" min"]].map(([k,v])=>`<div><span>${esc(k)}</span><strong>${esc(v)}</strong></div>`).join("");
  $("masterbot-fleet-search").addEventListener("input",render);
  $("masterbot-fleet-filter").addEventListener("change",render);
  render();
