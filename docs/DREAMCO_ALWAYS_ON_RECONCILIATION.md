@@ -29,7 +29,7 @@ The inventory generator can identify missing evidence links. It must not fabrica
 
 ## Always-on cadence
 
-A five-minute scheduled GitHub Actions tick processes a bounded queue. GitHub schedules are best-effort, not real-time guarantees; the dashboard reports last successful tick, queue age and stale status. A full inventory runs hourly and a daily master list is uploaded as an artifact. A separate 65-MasterBot rotation uses batches of five, nominally completing a cycle in 65 minutes. The canonical registry must be the source of the matrix; do not duplicate a second hard-coded list.
+The workflow is scheduled every five minutes plus a daily run. GitHub schedules are best-effort, not real-time guarantees. **Current implementation performs a full repository scan on each scheduled invocation; it does not yet process an incremental queue or implement a separate hourly full-scan tier.** The daily master list is uploaded as an artifact. The policy's 65-minute / 13-batch / five-lane rotation is a target design, not proof of a live training schedule: the existing MasterBot workflow remains separately scheduled and must be connected to the canonical registry and evidence queue before this target can be called operational. The dashboard must show last successful run and staleness rather than promise exact timing.
 
 ## 65 MasterBots and Actions Control Center
 
