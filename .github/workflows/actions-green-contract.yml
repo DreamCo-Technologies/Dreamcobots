@@ -7,6 +7,13 @@ on:
       - "config/masterbot-65-registry.json"
       - "tools/validate_actions_page_contract.py"
       - "tools/generate_division_runtime_contracts.py"
+      - "tools/validate_masterbot_registry.py"
+      - "tools/generate_masterbot_public_manifest.py"
+      - "tools/audit_markdown_requirement_traceability.py"
+      - "tools/run_masterbot_lane.py"
+      - "tests/test_masterbot_fleet_traceability.py"
+      - "config/buddy-bootcamp-65.json"
+      - "website/data/masterbot-fleet.json"
       - "config/local-buddy-model.yaml"
 permissions:
   contents: read
@@ -18,6 +25,13 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Validate canonical MasterBot registry and public manifest
+        run: |
+          python3 tools/validate_masterbot_registry.py
+          python3 tools/generate_masterbot_public_manifest.py --check
+          python3 -m unittest discover -s tests -p "test_masterbot_fleet_traceability.py"
+      - name: Audit Markdown requirement traceability
+        run: python3 tools/audit_markdown_requirement_traceability.py
       - name: Validate Actions operating contract
         run: python3 tools/validate_actions_page_contract.py
       - name: Generate 65 division runtime contracts
