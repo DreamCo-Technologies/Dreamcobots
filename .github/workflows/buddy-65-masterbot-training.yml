@@ -127,6 +127,7 @@ jobs:
           python-version: "3.12"
       - name: Validate Bootcamp curriculum and sandbox modes
         run: |
+          python3 tools/generate_buddy_bootcamp_public_manifest.py --check
           python3 - <<'PY'
           import json
           from pathlib import Path
