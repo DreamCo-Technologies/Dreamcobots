@@ -7,7 +7,36 @@ on:
       - main
       - buddy-rebuild-v2
       - codex/master-capability-pages
-      - codex/inventions-hub
+    paths:
+      - "website/**"
+      - "tools/build_buddy_public_site.py"
+      - "tools/build_invention_hub.py"
+      - "tools/build_repository_library.py"
+      - "tools/build_bot_profile_pages.py"
+      - "tools/optimize_static_payload.py"
+      - "tests/invention-hub.test.mjs"
+      - "tests/test_invention_branding_provenance.py"
+      - "tools/audit_actions_health.py"
+      - "tools/audit_actions_live.py"
+      - "tools/build_actions_prospectus.py"
+      - "tools/problem_registry.py"
+      - "tools/auto_repair_policy.py"
+      - "tools/build_manufacturer_marketplace_catalog.py"
+      - "tools/check_deployment_cost_policy.py"
+      - "tools/generate_buddy_model_router.py"
+      - "tools/check_buddy_model_benchmarks.mjs"
+      - "tools/generate_buddy_distribution_catalog.py"
+      - "tools/generate_repository_test_registry.py"
+      - "tools/generate_dreamco_repository_master_map.py"
+      - "tools/generate_master_directive_status.py"
+      - "tools/generate_command_center_data.py"
+      - "tools/generate_resource_connection_catalog.py"
+      - "tools/generate_buddy_expert_mode.py"
+      - "command-center/data/**"
+      - "docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md"
+      - "config/**"
+      - ".github/workflows/deploy-buddy-pages.yml"
+  pull_request:
     paths:
       - "website/**"
       - "tools/build_buddy_public_site.py"
