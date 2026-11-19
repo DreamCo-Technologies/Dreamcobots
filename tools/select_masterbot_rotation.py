@@ -4,7 +4,10 @@ from __future__ import annotations
 import argparse,json
 from datetime import datetime,timezone
 from pathlib import Path
-from validate_masterbot_registry import validate
+try:
+    from .validate_masterbot_registry import validate
+except ImportError:
+    from validate_masterbot_registry import validate
 
 def select(at:datetime,count:int):
     data=validate()
