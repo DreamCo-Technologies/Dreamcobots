@@ -17,7 +17,7 @@ def _query_for(name:str)->str:
     if tags:
         return " ".join(tags[:3])
     value=re.sub(r"(?<=[a-z])(?=[A-Z])"," ",name)
-    value=re.sub(r"^Dream\\s*","",value,flags=re.I)
+    value=re.sub(r"^Dream\s*","",value,flags=re.I)
     return value.strip() or name
 
 def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|None=None,limit:int=3)->dict[str,Any]:
