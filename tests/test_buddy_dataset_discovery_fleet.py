@@ -1,6 +1,7 @@
 import unittest
 from buddy.datasets.license_policy import assess_training_candidate,normalize_license
-from buddy.datasets.discovery_fleet import _query_for
+from buddy.datasets.discovery_fleet import _query_for,run_discovery_fleet
+from unittest.mock import patch
 from buddy.datasets.hub import DatasetHub
 class DatasetLicensePolicyTests(unittest.TestCase):
  def candidate(self):
@@ -36,6 +37,20 @@ class DatasetLicensePolicyTests(unittest.TestCase):
    rows=hub.external_candidates(masterbot_id=41)
    self.assertEqual(len(rows),1)
    self.assertFalse(rows[0]["metadata"].get("training_approved",False))
+ def test_fleet_persists_and_routes_candidates_to_each_selected_lane(self):
+  import tempfile
+  candidate={"source":"zenodo","id":"record-1","name":"Example data",
+   "url":"https://zenodo.org/records/1","license":"CC0-1.0",
+   "rights_status":"UNVERIFIED_REQUIRES_RECORD_AND_FILE_LICENSE_REVIEW"}
+  response={"results":[candidate],"model_results":[],"source_errors":{}}
+  with tempfile.TemporaryDirectory() as temp:
+   hub=DatasetHub(temp)
+   with patch("buddy.datasets.discovery_fleet.discover",return_value=response):
+    result=run_discovery_fleet(hub=hub,lanes_per_run=2,offset=0,limit=1)
+   self.assertEqual(len(result["lanes_scanned"]),2)
+   self.assertEqual(result["candidates_recorded"],2)
+   self.assertEqual(len(hub.external_candidates(limit=10)),2)
+   self.assertEqual({x["masterbot_id"] for x in hub.external_candidates(limit=10)},{1,2})
  def test_all_masterbots_have_query_fallback(self):
   self.assertTrue(_query_for("DreamFinance"))
   self.assertTrue(_query_for("DreamUnknownDivision"))
