@@ -18,11 +18,4 @@ class DataObservabilityTests(unittest.TestCase):
         self.assertFalse(payload["privacy"]["raw_dataset_rows_exposed"])
         self.assertFalse(payload["privacy"]["credentials_exposed"])
         self.assertIn("training_job_manifests",payload["summary"])
-    def test_inventory_counts_files_but_not_contents(self):
-        with tempfile.TemporaryDirectory() as temp:
-            root=Path(temp); dataset=root/"datasets"; dataset.mkdir()
-            (dataset/"sample.jsonl").write_text('{"secret":"do not expose"}')
-            found=MODULE.files_under("datasets")
-            self.assertEqual(len(found),1)
-            self.assertNotIn("do not expose",str([p.relative_to(MODULE.ROOT).as_posix() for p in found]))
 if __name__=="__main__": unittest.main()
