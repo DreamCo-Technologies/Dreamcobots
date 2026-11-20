@@ -32,6 +32,8 @@ class BuddyDatasetRoutingTests(unittest.TestCase):
         self.assertEqual(runtime["training_runner"]["methods"], ["sft", "lora"])
         self.assertFalse(runtime["training_runner"]["automatic_execution"])
         self.assertFalse(runtime["training_runner"]["execution_verified"])
+        self.assertEqual(runtime["cross_model_benchmark"]["metric"], "bits_per_utf8_byte")
+        self.assertFalse(runtime["cross_model_benchmark"]["execution_verified"])
 
     def test_holdout_and_compute_gates_are_preserved(self):
         policy = json.loads((ROOT / "config/buddy-dataset-routing-policy.json").read_text())
