@@ -65,3 +65,28 @@ Dependencies can change this ordering, but safety gates cannot be bypassed.
 ## Current honest status
 
 This system adds a canonical seed registry and an automated validator/reporting workflow. Historical import, full repository traceability, live end-to-end execution, benchmarks, and production verification remain open until evidence is attached. Scheduled automation runs only after the workflow is merged into the default branch; a pull-request run validates the change but does not activate the schedule on the default branch.
+
+
+## Division-wide mastery engine
+
+The division engine reads `config/masterbot-65-registry.json` and refuses to build a fleet if the canonical count is not exactly 65 or if IDs/names are duplicated. It builds one isolated logical lane per MasterBot and assigns shared platform goals plus domain-relevant workstreams. The keyword routing is an initial routing heuristic; it must be reconciled against the authoritative 45-division taxonomy and actual capability ownership before it can be treated as final.
+
+Each lane has:
+- Stable MasterBot/division identity and assigned canonical goal IDs
+- Explicit goal dependency map and ordered task DAG
+- Traceability anchors for implementation files, tests, runtime routes, and benchmark definitions
+- A visible missing-evidence list; anchor paths are not treated as verified completion
+- A bounded task runner that executes registry validation, shared regression tests, and the existing sandbox-first lane planner
+- A run record with commit SHA, task outcomes, evidence hash, and next actions
+
+The scheduled division workflow runs twice daily and uses a bounded matrix (maximum five concurrent lanes). GitHub schedules are best-effort, not a 24/7 compute guarantee. A separate division contract benchmark is retained as JSON evidence. That existing benchmark checks structural contracts; it is not a per-division model-quality benchmark and does not prove that weights changed.
+
+Goal dependencies currently encode a proposed execution order. Historical reconciliation and repository health precede orchestration, bot registry, model routing, learning, privacy/integration, and expansion work. The dependency map must be reviewed as implementation evidence becomes available.
+
+## Promotion requirements
+
+A candidate is only eligible for human review when numeric baseline and candidate scores exist, candidate score does not regress, held-out and regression checks pass, provenance and data rights are verified, a tested commit SHA is recorded, and a reviewer approves. Eligibility does not deploy or change production weights. Production release continues to require separate human approval and rollback evidence.
+
+## Current implementation boundary
+
+The new engine connects all 65 registry entries to logical lanes, goal routing, dependency metadata, shared regression execution, the existing lane planner, benchmark execution, and evidence artifacts. It does **not** yet implement every domain capability, execute every historical requirement, prove every runtime route, run domain-specific held-out benchmarks for all 65 divisions, or train/merge model weights. Those remain explicit gaps in each lane's traceability record. No division should be described as mastered until its own capability-level evidence is complete.
