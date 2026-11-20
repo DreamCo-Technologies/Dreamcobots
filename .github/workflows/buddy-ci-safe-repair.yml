@@ -1,0 +1,82 @@
+name: Buddy CI Safe Generated-Artifact Repair
+
+on:
+  push:
+    branches-ignore: [main]
+    paths:
+      - "tools/build_buddy_dataset_routes.py"
+      - "tools/build_division_model_fleet.py"
+      - "tools/build_pages_connection_index.py"
+      - "tools/build_actions_prospectus.py"
+      - "tools/build_file_prospectus.py"
+      - "config/buddy-dataset-routing-policy.json"
+      - "config/division-model-competitiveness-policy.json"
+      - "config/masterbot-65-registry.json"
+      - ".github/workflows/buddy-ci-safe-repair.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: buddy-ci-safe-repair-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  regenerate-and-verify:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out the current repair branch without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Regenerate only allowlisted deterministic indexes and registries
+        run: |
+          set -euo pipefail
+          python tools/build_buddy_dataset_routes.py
+          python tools/build_division_model_fleet.py
+          python tools/build_pages_connection_index.py
+          python tools/build_actions_prospectus.py
+          python tools/build_file_prospectus.py
+      - name: Verify generated outputs and Buddy repair-learning tests
+        run: |
+          set -euo pipefail
+          python tools/build_division_model_fleet.py --check
+          python tools/validate_buddy_engineering_capabilities.py
+          python tools/validate_dreamco_mastery_registry.py
+          python -m unittest tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_failure_learning
+          git diff --check
+      - name: Detect allowlisted generated changes
+        id: changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add             artifacts/buddy-dataset-hub/dataset-routes.json             artifacts/division-model-fleet/division-model-fleet.json             config/buddy/run-with-buddy.generated.json             config/generated/actions-prospectus.json             config/generated/file-prospectus             website/data/actions-prospectus.json             website/data/run-prospectus.json             website/data/run-prospectus-bots.json             website/data/pages-connection-index.json
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No allowlisted generated artifacts needed repair."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --cached --stat
+          fi
+      - name: Commit and push verified generated repairs to this branch
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPAIR_BRANCH: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(ci): regenerate verified DreamCo indexes"
+          AUTH="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          git -c core.hooksPath=/dev/null \
+              -c http.extraheader="AUTHORIZATION: basic $AUTH" \
+              push "https://github.com/$GITHUB_REPOSITORY.git" "HEAD:refs/heads/$REPAIR_BRANCH"
