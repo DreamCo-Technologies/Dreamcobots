@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-20T22:13:14Z
+Generated: 2026-11-20T23:25:31Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1644
-- Actionable claim lines detected: 11686
-- Documents with missing path references: 107
-- Documents without implementation references: 1567
+- Markdown documents scanned: 1647
+- Actionable claim lines detected: 11721
+- Documents with missing path references: 108
+- Documents without implementation references: 1570
 - Documents with implementation references but no test references: 62
-- Documents with inventory count claims: 106
-- Inventory count claims requiring review: 376
+- Documents with inventory count claims: 107
+- Inventory count claims requiring review: 377
 
 ## Fixed-count claims requiring review
 
@@ -99,6 +99,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/BUDDY_GITHUB_COMPETITOR_MASTER_PLAN.md:171 — This repository already contains substantial infrastructure for the direction, including Buddy success/governance systems, benchmark tracking, model progress tooling, local repository integration, self-repair tooling, and dedicated Buddy pages. The generated success program curre
 - docs/BUDDY_GITHUB_COMPETITOR_MASTER_PLAN.md:171 — This repository already contains substantial infrastructure for the direction, including Buddy success/governance systems, benchmark tracking, model progress tooling, local repository integration, self-repair tooling, and dedicated Buddy pages. The generated success program curre
 - docs/BUDDY_PLATFORM_READINESS_SCORECARD.md:96 — All 18 categories in `docs/BUDDY_GITHUB_COMPETITOR_MASTER_PLAN.md` have current evidence.
+- docs/BUDDY_REPOSITORY_REPAIR_DATASETS_BENCHMARKS_AND_DISTILLATION.md:58 — These are routing defaults, not a claim that the whole 65-to-45 division mapping is finalized.
 - docs/BUDDY_RESOURCE_COVERAGE_FRAMEWORK.md:454 — The inspected `AI_MODEL_CATEGORIES` list has 20 categories:
 - docs/BUDDY_RESOURCE_COVERAGE_FRAMEWORK.md:543 — - all 23 resource-registry IDs represented;
 - docs/BUDDY_RESOURCE_COVERAGE_FRAMEWORK.md:1521 — ## 8.2 Category isolation and collaboration rules
@@ -12917,6 +12918,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/BUDDY_CI_REPAIR_DATASETS_DATABASES_BENCHMARKS_AND_DISTILLATION.md
+
+- Status: broken_path_references
+- Actionable claim lines: 10
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: github/workflows/buddy-ci-safe-repair.yml, github/workflows/buddy-failure-learning-regression.yml
+- Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/BUDDY_CONTINUOUS_LEARNING_OPERATING_MODEL.md
 
 - Status: test_reference_missing
@@ -12941,6 +12952,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 - Status: implementation_reference_missing
 - Actionable claim lines: 8
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_DATASET_HUB_RUNTIME_IMPLEMENTATION.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 18
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
@@ -13231,6 +13252,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 - Status: implementation_reference_missing
 - Actionable claim lines: 11
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_REPOSITORY_REPAIR_DATASETS_BENCHMARKS_AND_DISTILLATION.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 7
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
