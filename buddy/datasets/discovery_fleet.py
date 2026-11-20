@@ -1,6 +1,6 @@
 """Bounded autonomous metadata discovery and per-MasterBot routing fleet."""
 from __future__ import annotations
-import json,re
+import json,re,os
 from datetime import datetime,timezone
 from pathlib import Path
 from typing import Any
@@ -30,7 +30,7 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
     catalog=hub or DatasetHub()
     report={"schema":"dreamco.dataset_discovery_fleet.v1","created_at":datetime.now(timezone.utc).isoformat(),
         "masterbot_count":65,"lanes_scanned":[],"candidates_recorded":0,"source_errors":{},
-        "network_enabled":True,"files_downloaded":False,"training_approved":False,"weights_trained":False}
+        "network_enabled":os.environ.get("DREAMCO_ALLOW_SOURCE_NETWORK")=="1","files_downloaded":False,"training_approved":False,"weights_trained":False}
     for bot in selected:
         query=_query_for(bot["name"])
         found=discover(query,limit=limit)
