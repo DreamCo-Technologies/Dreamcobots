@@ -12,6 +12,8 @@ on:
       - "tools/buddy_conversation_learning_policy.py"
       - "tests/test_buddy_failure_learning.py"
       - "tests/test_buddy_conversation_learning_policy.py"
+      - "tests/test_buddy_universal_learning_governance.py"
+      - "config/buddy-conversation-learning-governance.json"
       - "tests/test_actions_health.py"
       - "package.json"
   pull_request:
@@ -85,6 +87,7 @@ jobs:
           python3 -m unittest tests.test_actions_health
           python3 -m unittest tests.test_buddy_failure_learning
           python3 -m unittest tests.test_buddy_conversation_learning_policy
+          python3 -m unittest tests.test_buddy_universal_learning_governance
           python3 -m unittest tests.test_pages_feature_audit
           if [ -f package-lock.json ]; then npm ci --ignore-scripts; fi
           npm run test:actions-page
