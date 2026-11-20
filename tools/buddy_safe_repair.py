@@ -11,9 +11,11 @@ def repair_plan(observation:dict)->list[list[str]]:
  workflow=str(observation.get("workflow","")).lower()
  job=str(observation.get("job","")).lower()
  if kind=="generated-index":
+  context=" ".join((workflow,job,step))
   if "division" in workflow or "fleet" in job:
    return [[sys.executable,"tools/build_division_model_fleet.py"]]
-  return [[sys.executable,"tools/build_buddy_dataset_routes.py"]]
+  if "dataset" in context or "route" in context:
+   return [[sys.executable,"tools/build_buddy_dataset_routes.py"]]
  return []
 
 def run_safe_repair(observation:dict,root:Path)->dict:
