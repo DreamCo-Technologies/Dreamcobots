@@ -57,8 +57,12 @@ async function render() {
   if (current === "Data") {
     let data;
     try {
-      const response = await fetch("data/data-observability.json", { cache: "no-store" });
-      if (!response.ok) throw new Error("Data snapshot unavailable");
+      let response;
+      for (const path of ["data/command-center/data-observability.json", "command-center/data/data-observability.json"]) {
+        response = await fetch(path, { cache: "no-store" });
+        if (response.ok) break;
+      }
+      if (!response || !response.ok) throw new Error("Data snapshot unavailable");
       data = await response.json();
     } catch {
       app.innerHTML = '<div class="card"><h2>Data observability</h2><p class="warn">No current snapshot. Run the command-center generator and publish its artifacts.</p></div>';
