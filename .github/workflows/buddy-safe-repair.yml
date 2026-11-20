@@ -40,24 +40,27 @@ jobs:
               core.setOutput("found", "false");
               return;
             }
-            const field = (label) => {
-              const match = (issue.body || "").match(new RegExp("^- " + label + ": \\\\*\\\\*(.*?)\\\\*\\\\*", "m"));
-              return match ? match[1].trim() : "";
+            const body = issue.body || "";
+            const boldField = (label) => {
+              const prefix = "- " + label + ": **";
+              const line = body.split("\n").find(x => x.startsWith(prefix));
+              return line ? line.slice(prefix.length).replace(/\*\*$/, "").trim() : "";
             };
-            const branchMatch = (issue.body || "").match(/^- Branch: ([A-Za-z0-9._/-]+)$/m);
-            const branch = branchMatch && branchMatch[1];
-            if (!branch || branch.includes("..") || branch.startsWith("/")) {
+            const branchLine = body.split("\n").find(x => x.startsWith("- Branch: "));
+            const branch = branchLine ? branchLine.slice("- Branch: ".length).trim() : "";
+            if (!/^[A-Za-z0-9._/-]+$/.test(branch) || branch.includes("..") || branch.startsWith("/")) {
               core.warning("Incident has no safe target branch; leaving it for manual triage.");
               core.setOutput("found", "false");
               return;
             }
+            const runLine = body.split("\n").find(x => x.startsWith("- Run: "));
             core.setOutput("found", "true");
             core.setOutput("issue_number", String(issue.number));
             core.setOutput("branch", branch);
-            core.setOutput("workflow", field("Workflow"));
-            core.setOutput("job", field("Job"));
-            core.setOutput("failed_step", field("Failed step\\\\(s\\\\)") || field("Failed step(s)"));
-            core.setOutput("run_url", ((issue.body || "").match(/^- Run: (https:\\/\\/\\S+)$/m) || [])[1] || "");
+            core.setOutput("workflow", boldField("Workflow"));
+            core.setOutput("job", boldField("Job"));
+            core.setOutput("failed_step", boldField("Failed step(s)"));
+            core.setOutput("run_url", runLine ? runLine.slice("- Run: ".length).trim() : "");
       - name: Checkout incident branch
         if: steps.incident.outputs.found == 'true'
         uses: actions/checkout@v4
