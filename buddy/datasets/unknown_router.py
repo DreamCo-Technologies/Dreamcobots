@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 from .hub import DatasetHub
 from .sources import discover
+from .license_policy import assess_training_candidate
 
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY = ROOT / "config/masterbot-65-registry.json"
@@ -59,6 +60,8 @@ def route_problem(problem: str, hub: DatasetHub | None = None, external: bool | 
     routed_masterbot = int(ranked[0]["masterbot_id"]) if ranked else 62
     recorded = 0
     for candidate in outside["results"] + outside.get("model_results", []):
+        candidate = {**candidate, "ai_training_allowed": False, "content_rights_verified": False, "privacy_review": "PENDING"}
+        candidate["license_assessment"] = assess_training_candidate(candidate)
         catalog.record_external_candidate(candidate, routed_masterbot, clean)
         recorded += 1
     status = "CANDIDATES_FOUND_REQUIRES_REVIEW" if local or outside["results"] or ranked else "MISSING_DATA_RESEARCH_REQUIRED"
