@@ -53,7 +53,7 @@ def route_problem(problem: str, hub: DatasetHub | None = None, external: bool = 
     local = (hub or DatasetHub()).search(clean, limit=15)
     outside = discover(clean, limit=5) if external else {"query": clean, "results": [], "source_errors": {"network": "Not requested"}, "downloaded_files": False, "training_approved": False}
     status = "CANDIDATES_FOUND_REQUIRES_REVIEW" if local or outside["results"] or ranked else "MISSING_DATA_RESEARCH_REQUIRED"
-    return {
+    result = {
         "schema": "dreamco.unknown_problem_route.v1", "problem": clean,
         "capability_gap": "UNCLASSIFIED_REQUIRES_SPECIALIST_REVIEW",
         "masterbot_candidates": ranked[:5], "local_dataset_candidates": local,
@@ -65,3 +65,5 @@ def route_problem(problem: str, hub: DatasetHub | None = None, external: bool = 
         ],
         "claims": {"problem_solved": False, "datasets_downloaded": False, "weights_trained": False, "mastery_awarded": False}
     }
+    result["research_task_id"] = (hub or DatasetHub()).enqueue_research_task(result)
+    return result
