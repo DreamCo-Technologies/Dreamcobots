@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-20T16:20:54Z
+Generated: 2026-11-20T20:27:27Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1633
-- Actionable claim lines detected: 11603
+- Markdown documents scanned: 1636
+- Actionable claim lines detected: 11627
 - Documents with missing path references: 106
-- Documents without implementation references: 1561
-- Documents with implementation references but no test references: 59
-- Documents with inventory count claims: 102
-- Inventory count claims requiring review: 371
+- Documents without implementation references: 1562
+- Documents with implementation references but no test references: 61
+- Documents with inventory count claims: 103
+- Inventory count claims requiring review: 372
 
 ## Fixed-count claims requiring review
 
@@ -83,6 +83,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.2/sample/occupation_cards.md:308 — ## 53-6031.00 Automotive and Watercraft Service Attendants
 - docs/BUDDY_1000_SOURCE_BOT_TRAINING_GROUND.md:34 — Buddy must not treat all 1000 sources equally. At task time it ranks sources using:
 - docs/BUDDY_1000_SOURCE_BOT_TRAINING_GROUND.md:79 — - Do not use 1000 sources for a problem that only needs two authoritative sources.
+- docs/BUDDY_14_DAY_MODEL_GROWTH_PLAN.md:5 — **Not a promise:** frontier GPT-5 capability, a production-ready 25M model, or a full DreamCo fleet certification cannot be guaranteed by a date. Completion is evidence-gated.
 - docs/BUDDY_24H_GAP_CLOSURE.md:9 — - Target throughput: 1,000 source-learning jobs per week.
 - docs/BUDDY_65_MASTERBOT_OPERATING_SYSTEM.md:10 — - **65 Division MasterBots** — domain owners. The 65-division registry in the product/repository is the source of truth for names and ownership; this document does not invent replacement division names.
 - docs/BUDDY_ACTIONS_ENGINE.md:5 — Make the Actions page the operational command center for Buddy: a goal-driven execution system that plans, previews, executes, verifies, observes, recovers and learns from work across the 46 Division Superbots, capability registry, device fabric and external tools.
@@ -12662,6 +12663,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/BUDDY_14_DAY_MODEL_GROWTH_PLAN.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 4
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/BUDDY_24H_GAP_CLOSURE.md
 
 - Status: implementation_reference_missing
@@ -12902,6 +12913,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/BUDDY_CONTINUOUS_LEARNING_OPERATING_MODEL.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: tools/buddy_masterbot_training_lane.py
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/BUDDY_CONTROL_PLANE.md
 
 - Status: broken_path_references
@@ -13050,6 +13071,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: None detected
 - Missing paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_GPT_STYLE_MODEL_BOOTCAMP.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 18
+- Implementation paths: buddy/bootcamp/buddy_bootcamp.yaml, buddy/learning/study_methods.py, tools/bootcamp_lesson_planner.py
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_GREEN_BY_TONIGHT_RUNBOOK.md
