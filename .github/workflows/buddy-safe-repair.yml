@@ -35,7 +35,17 @@ jobs:
             const {data: issues} = await github.rest.issues.listForRepo({
               owner, repo, state: "open", labels: "buddy-auto-triage", per_page: 30
             });
-            const issue = issues.find(x => !x.pull_request);
+            const issue = issues.find(x => {
+              if (x.pull_request) return false;
+              const body = x.body || "";
+              const value = (label) => {
+                const prefix = "- " + label + ": **";
+                const line = body.split("\\n").find(y => y.startsWith(prefix));
+                return line ? line.slice(prefix.length).replace(/\\*\\*$/, "").trim() : "";
+              };
+              const context = [value("Workflow"), value("Job"), value("Failed step(s)")].join(" ");
+              return /dataset route|route index|division.*fleet|generated artifact/i.test(context);
+            });
             if (!issue) {
               core.setOutput("found", "false");
               return;
