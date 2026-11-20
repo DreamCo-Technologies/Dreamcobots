@@ -217,6 +217,10 @@ class DatasetHub:
 
     def record_external_candidate(self, candidate: dict[str, Any], masterbot_id: int, query: str) -> str:
         from urllib.parse import urlparse
+        registry = json.loads((ROOT / "config/masterbot-65-registry.json").read_text(encoding="utf-8"))
+        valid_masterbots = {int(item["id"]) for item in registry.get("divisions", [])}
+        if int(masterbot_id) not in valid_masterbots:
+            raise DatasetPolicyError("External candidates must route to a canonical MasterBot ID")
         source = str(candidate.get("source", "")).strip()
         source_id = str(candidate.get("id", "")).strip()
         url = str(candidate.get("url", "")).strip()
