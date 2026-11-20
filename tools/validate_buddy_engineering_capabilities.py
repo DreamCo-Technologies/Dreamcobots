@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "config/buddy-engineering-capability-contract.json"
-REQUIRED = {"vibe_coding", "reverse_engineering", "model_distillation", "model_weight_training"}
+REQUIRED = {"vibe_coding", "reverse_engineering", "model_distillation", "model_weight_training", "physical_product_design", "hardware_software_prototyping", "three_dimensional_invention", "startup_creation"}
 
 def validate() -> dict:
     data = json.loads(CONTRACT.read_text(encoding="utf-8"))
