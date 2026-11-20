@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 from .hub import DatasetHub
 from .sources import discover,inspect_huggingface_dataset_card,SourceAccessError
+from .license_policy import assess_training_candidate
 from .unknown_router import ALIASES
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -36,13 +37,16 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
         found=discover(query,limit=limit)
         recorded=0
         for candidate in found["results"]+found["model_results"]:
-            candidate={**candidate,"rights_assessment":"UNVERIFIED_DISCOVERY_ONLY"}
+            candidate={**candidate,"rights_assessment":"UNVERIFIED_DISCOVERY_ONLY","ai_training_allowed":False,"content_rights_verified":False,"privacy_review":"PENDING"}
             if candidate.get("source")=="huggingface":
                 try:
                     card=inspect_huggingface_dataset_card(str(candidate.get("id","")))
                     candidate["dataset_card_summary"]={k:card.get(k) for k in ("card_sha256","license","tags","task_categories","language","rights_status")}
+                    candidate["license"]=card.get("license") or candidate.get("license")
+                    candidate["dataset_card_ai_training_claim"]=card.get("ai_training_allowed")
                 except (SourceAccessError,ValueError) as exc:
                     candidate["dataset_card_inspection_error"]=type(exc).__name__
+            candidate["license_assessment"]=assess_training_candidate(candidate)
             catalog.record_external_candidate(candidate,int(bot["id"]),query)
             recorded+=1
         report["candidates_recorded"]+=recorded
