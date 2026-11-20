@@ -130,6 +130,12 @@ class DatasetHub:
         if approved and not str(card.get("rights_evidence", "")).strip():
             raise DatasetPolicyError("Training approval requires a rights-evidence reference")
         if approved:
+            registry = json.loads((ROOT / "config/masterbot-65-registry.json").read_text(encoding="utf-8"))
+            valid_ids = {int(item["id"]) for item in registry.get("divisions", [])}
+            primary = card.get("primary_masterbot_id")
+            collaborators = card.get("collaborating_masterbot_ids", [])
+            if primary not in valid_ids or any(int(item) not in valid_ids for item in collaborators):
+                raise DatasetPolicyError("Training datasets require a canonical primary MasterBot owner and valid collaborators")
             splits = card.get("split_manifest") or {}
             import re as _re
             for split_name in ("train_sha256", "validation_sha256", "test_sha256"):
