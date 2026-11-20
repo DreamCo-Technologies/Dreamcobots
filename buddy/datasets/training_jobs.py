@@ -9,6 +9,8 @@ from pathlib import Path
 from typing import Any
 from .hub import DatasetHub, DatasetPolicyError
 
+ROOT = Path(__file__).resolve().parents[2]
+
 def create_training_job(dataset_hub: DatasetHub, dataset_id: str, masterbot_id: int,
                         model_id: str, base_model_revision: str, compute_approval_id: str = "",
                         model_license: str = "", model_license_url: str = "",
@@ -29,8 +31,10 @@ def create_training_job(dataset_hub: DatasetHub, dataset_id: str, masterbot_id: 
         raise DatasetPolicyError("Pinned train, validation, and isolated test split hashes are required")
     if not compute_approval_id.strip():
         raise DatasetPolicyError("An explicit compute budget approval ID is required")
-    if not 1 <= int(masterbot_id) <= 65:
-        raise DatasetPolicyError("A canonical MasterBot ID from 1 to 65 is required")
+    registry = json.loads((ROOT / "config/masterbot-65-registry.json").read_text(encoding="utf-8"))
+    valid_masterbots = {int(item["id"]) for item in registry.get("divisions", [])}
+    if int(masterbot_id) not in valid_masterbots:
+        raise DatasetPolicyError("MasterBot ID is not present in the canonical registry")
     if not model_id.strip() or not re.fullmatch(r"[0-9a-f]{40}", base_model_revision.strip()):
         raise DatasetPolicyError("Pin model ID and a 40-character immutable base-model commit SHA")
     if not model_license.strip() or not model_license_url.startswith("https://") or model_license_status != "VERIFIED" or not model_license_evidence.strip():
