@@ -1,0 +1,53 @@
+name: Buddy Continuous Learning Planner
+
+on:
+  schedule:
+    - cron: "15 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-continuous-learning-planner
+  cancel-in-progress: false
+
+jobs:
+  plan-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate continuous learning policy
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(Path("config/buddy-continuous-learning-policy.json").read_text())
+          assert p["enabled"] is True
+          assert p["mode"] == "CONTINUOUS_GOVERNED_LEARNING"
+          assert p["availability"]["guarantees_24x7_compute"] is False
+          assert p["gates"]["unknown_dataset_rights"] == "BLOCK"
+          assert p["gates"]["proprietary_gpt5_weights"] == "FORBIDDEN"
+          print("Continuous-learning policy validation passed.")
+          PY
+      - name: Generate next 14-day training plan
+        run: |
+          python tools/bootcamp_lesson_planner.py \
+            config/buddy-gpt-style-model-training-units.json \
+            --days 14 \
+            --output buddy-continuous-learning-plan.json
+      - name: Run Bootcamp planner tests
+        run: python -m pytest -q tests/test_bootcamp_lesson_planner.py
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-continuous-learning-plan
+          path: buddy-continuous-learning-plan.json
+          if-no-files-found: error
+          retention-days: 30
