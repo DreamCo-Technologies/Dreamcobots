@@ -20,8 +20,8 @@ class BuddyDatasetRoutingTests(unittest.TestCase):
 
     def test_unknown_problem_fallback_is_defined(self):
         policy = json.loads((ROOT / "config/buddy-dataset-routing-policy.json").read_text())
-        self.assertIn("search_local_dreamco_dataset_index", policy["unknown_problem_router"]["sequence"])
-        self.assertIn("search_authorized_huggingface_catalog", policy["unknown_problem_router"]["sequence"])
+        self.assertIn("search_persistent_local_dreamco_dataset_hub", policy["unknown_problem_router"]["sequence"])
+        self.assertIn("search_authorized_huggingface_dataset_and_model_catalogs", policy["unknown_problem_router"]["sequence"])
         self.assertTrue(policy["unknown_problem_router"]["never_claim_unknown_solved_without_holdout_evidence"])
 
     def test_dataset_hub_connectors_and_training_runner_are_declared(self):
