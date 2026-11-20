@@ -1,0 +1,68 @@
+{
+  "schema": "dreamco.user_data_and_subscription_control.v1",
+  "status": "POLICY_AND_CONTRACTS_ONLY_RUNTIME_INTEGRATION_REQUIRED",
+  "owner": "individual_user",
+  "default_decision": "DENY_UNTIL_EXPLICIT_PURPOSE_SPECIFIC_OPT_IN",
+  "principles": {
+    "no_sale_or_sharing_by_default": true,
+    "no_cross_company_reuse_by_default": true,
+    "no_ai_training_by_default": true,
+    "no_targeted_advertising_by_default": true,
+    "no_data_brokerage_by_default": true,
+    "no_bundled_consent": true,
+    "no_prechecked_controls": true,
+    "withdrawal_is_as_easy_as_opt_in": true,
+    "service_delivery_is_not_consent_for_unrelated_purposes": true
+  },
+  "independent_company_purposes": [
+    "service_delivery", "analytics", "personalization", "targeted_advertising",
+    "sale", "sharing", "data_brokerage", "ai_training", "model_evaluation",
+    "research", "automated_decisions", "cross_company_profiling"
+  ],
+  "consent_receipt": [
+    "user_id", "company_or_controller", "purpose", "data_categories",
+    "recipient_or_recipient_class", "retention_period", "jurisdiction",
+    "consent_state", "timestamp", "policy_version", "source", "withdrawal_state"
+  ],
+  "withdrawal": {
+    "block_future_processing_in_dreamco": true,
+    "revoke_connector_scopes_when_supported": true,
+    "queue_provider_deletion_or_opt_out_request": true,
+    "record_provider_response_and_deadline": true,
+    "do_not_claim_external_opt_out_or_deletion_without_provider_evidence": true
+  },
+  "buddy_study_sources": {
+    "source_types": [
+      "official_account_export", "authorized_connector", "user_upload", "public_web",
+      "github_repository", "email", "calendar", "cloud_storage", "documents",
+      "database", "api", "photos", "audio", "video", "social_account", "commerce_account"
+    ],
+    "requires_owner_authority": true,
+    "requires_source_specific_scope": true,
+    "read_only_first": true,
+    "requires_rights_review_for_restricted_or_third_party_material": true,
+    "must_not_bypass_login_paywall_captcha_or_access_controls": true,
+    "no_password_collection": true,
+    "each_source_has_expiry_and_revoke_control": true,
+    "training_is_a_separate_use_from_study_or_retrieval": true
+  },
+  "subscriptions": {
+    "user_can_view_all_linked_subscriptions": true,
+    "user_can_opt_out_of_optional_renewals_and_addons": true,
+    "user_can_request_pause_or_cancel": true,
+    "require_exact_account_and_subscription_ownership": true,
+    "require_clear_price_currency_billing_interval_and_renewal_date": true,
+    "require_fresh_approval_before_purchase_or_plan_upgrade": true,
+    "never_cancel_or_change_another_persons_subscription": true,
+    "provider_confirmation_required_for_completed_status": true,
+    "no_hidden_fees_or_dark_patterns": true
+  },
+  "security": {
+    "tenant_isolation": true,
+    "least_privilege": true,
+    "append_only_consent_audit": true,
+    "idempotent_revocation": true,
+    "reauthorization_after_scope_change": true,
+    "fail_closed_on_missing_identity_or_consent": true
+  }
+}
