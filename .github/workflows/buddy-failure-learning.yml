@@ -1,0 +1,100 @@
+name: Buddy Failure Detection and Learning
+
+on:
+  workflow_run:
+    workflows: ["*"]
+    types: [completed]
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  issues: write
+  contents: read
+
+concurrency:
+  group: buddy-failure-learning-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.name != 'Buddy Failure Detection and Learning'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Normalize failed workflow jobs and retain canonical incidents
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const marker = "buddy-failure-fingerprint:";
+            const ensureLabel = async (name, color, description) => {
+              try {
+                await github.rest.issues.createLabel({owner, repo, name, color, description});
+              } catch (error) {
+                if (error.status !== 422) throw error;
+              }
+            };
+            await ensureLabel("buddy-incident", "B60205", "Canonical incident detected by Buddy failure learning");
+            await ensureLabel("buddy-auto-triage", "1D76DB", "Eligible for bounded, isolated automated diagnosis");
+            const runs = context.eventName === "workflow_run"
+              ? [context.payload.workflow_run]
+              : (await github.rest.actions.listWorkflowRunsForRepo({
+                  owner, repo, per_page: 50, status: "completed"
+                })).data.workflow_runs;
+            const seen = new Set();
+            for (const run of runs) {
+              if (!run || run.name === "Buddy Failure Detection and Learning" || run.conclusion !== "failure") continue;
+              const jobs = (await github.rest.actions.listJobsForWorkflowRun({
+                owner, repo, run_id: run.id, per_page: 100
+              })).data.jobs;
+              for (const job of jobs.filter(j => j.conclusion === "failure")) {
+                const failedSteps = (job.steps || []).filter(s => s.conclusion === "failure").map(s => s.name);
+                const step = failedSteps.join(", ") || "unknown failed step";
+                const raw = [owner + "/" + repo, run.name, job.name, step].join("|").toLowerCase().replace(/\\s+/g, " ").trim();
+                const digest = require("crypto").createHash("sha256").update(raw).digest("hex").slice(0, 24);
+                if (seen.has(digest)) continue;
+                seen.add(digest);
+                const fingerprintMarker = marker + digest;
+                const query = `repo:${owner}/${repo} is:issue is:open label:buddy-incident "${fingerprintMarker}"`;
+                const matches = await github.rest.search.issuesAndPullRequests({q: query, per_page: 5});
+                const body = [
+                  "## Detected workflow failure",
+                  "",
+                  `- Workflow: **${run.name}**`,
+                  `- Job: **${job.name}**`,
+                  `- Failed step(s): **${step}**`,
+                  `- Run: ${run.html_url}`,
+                  `- Commit: ${run.head_sha}`,
+                  `- Branch: ${run.head_branch}`,
+                  `- Conclusion: ${run.conclusion}`,
+                  "",
+                  `<!-- ${fingerprintMarker} -->`,
+                  "",
+                  "### Required handling",
+                  "1. Inspect the job logs and reproduce the failure where possible.",
+                  "2. Compare with prior incidents sharing this fingerprint.",
+                  "3. Propose the smallest repair in an isolated branch/PR.",
+                  "4. Run the original failing check and relevant regression gates.",
+                  "5. Add a reusable lesson only after verified success.",
+                  "",
+                  "A retry alone is not a repair. Do not weaken tests, security controls, or resource budgets."
+                ].join("\n");
+                if (matches.data.items.length) {
+                  const issue = matches.data.items[0];
+                  await github.rest.issues.createComment({
+                    owner, repo, issue_number: issue.number,
+                    body: `Recurrence observed: workflow run ${run.html_url}. Job: ${job.name}. Failed step: ${step}. Commit: ${run.head_sha}.\n\n${fingerprintMarker}`
+                  });
+                } else {
+                  await github.rest.issues.create({
+                    owner, repo,
+                    title: `[Buddy Incident] ${run.name}: ${job.name} (${digest})`,
+                    body,
+                    labels: ["buddy-incident", "buddy-auto-triage"]
+                  });
+                }
+              }
+            }
