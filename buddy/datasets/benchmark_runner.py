@@ -17,8 +17,8 @@ def validate_benchmark_job(job:dict,approval_id:str)->tuple[Path,list[dict]]:
  if not card or card.get("rights_status")!="VERIFIED" or not card.get("training_approved") or card.get("holdout"):
   raise BenchmarkExecutionError("Dataset card no longer authorizes this benchmark")
  card_hash=hashlib.sha256(json.dumps(card,sort_keys=True).encode()).hexdigest()
- if card_hash!=job.get("dataset_card_sha256") or card.get("content_sha256")!=job.get("dataset_sha256"):
-  raise BenchmarkExecutionError("Dataset card or object provenance changed")
+ if card_hash!=job.get("dataset_card_sha256") or card.get("content_sha256")!=job.get("dataset_sha256") or card.get("split_manifest")!=job.get("split_manifest"):
+  raise BenchmarkExecutionError("Dataset card, split manifest, or object provenance changed")
  allowed={int(card.get("primary_masterbot_id"))}|{int(x) for x in card.get("collaborating_masterbot_ids",[])}
  if int(job["masterbot_id"]) not in allowed: raise BenchmarkExecutionError("Benchmark dataset is not assigned to this MasterBot")
  obj=(hub/job["dataset_object_path"]).resolve()
