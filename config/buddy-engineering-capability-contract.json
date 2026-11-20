@@ -1,0 +1,185 @@
+{
+  "schema": "dreamco.buddy_engineering_capabilities.v1",
+  "version": "1.0.0",
+  "objective": "Define executable, evidence-backed Buddy capabilities for vibe coding, authorized reverse engineering, model distillation, and model-weight training across all canonical MasterBot lanes.",
+  "capabilities": {
+    "vibe_coding": {
+      "status": "CONTRACT_DEFINED_RUNTIME_INTEGRATION_REQUIRED",
+      "inputs": [
+        "natural_language_goal",
+        "repository_context",
+        "acceptance_criteria",
+        "constraints"
+      ],
+      "stages": [
+        "clarify_and_scope",
+        "inspect_repository_and_dependencies",
+        "create_implementation_plan",
+        "map_requirements_to_files_tests_routes_benchmarks",
+        "generate_or_edit_code_in_isolated_branch",
+        "run_static_analysis_and_unit_tests",
+        "run_integration_and_end_to_end_tests",
+        "review_security_and_dependencies",
+        "produce_diff_and_evidence_manifest",
+        "open_pull_request_for_review"
+      ],
+      "required_outputs": [
+        "implementation_plan",
+        "changed_files_and_diff",
+        "test_results",
+        "security_findings",
+        "traceability_manifest",
+        "rollback_plan"
+      ],
+      "autonomy": "may_prepare_changes_and_pull_requests; merge_and_production_release_require_explicit_approval"
+    },
+    "reverse_engineering": {
+      "status": "CONTRACT_DEFINED_SANDBOX_ADAPTERS_REQUIRED",
+      "authorized_inputs": [
+        "user_owned_source_code",
+        "user_authorized_repositories",
+        "documented_public_apis",
+        "user_supplied_binaries_or_archives",
+        "authorized_ui_sessions_and_workflows"
+      ],
+      "stages": [
+        "verify_authority_and_scope",
+        "inventory_artifacts_and_dependencies",
+        "map_components_data_flows_and_interfaces",
+        "observe_documented_or_authorized_behavior",
+        "derive_specification_and_compatibility_tests",
+        "build_clean_room_implementation_when_required",
+        "compare_behavior_and_accessibility",
+        "document_unknowns_and_provenance"
+      ],
+      "prohibited": [
+        "bypass_authentication_or_access_controls",
+        "credential_extraction",
+        "exploit_unauthorized_systems",
+        "copy_protected_source_code_or_trade_secrets_without_rights",
+        "evade_technical_protection_measures"
+      ],
+      "required_outputs": [
+        "scope_and_authority_record",
+        "architecture_map",
+        "interface_contracts",
+        "behavioral_test_suite",
+        "provenance_manifest",
+        "known_gaps_and_risks"
+      ]
+    },
+    "model_distillation": {
+      "status": "CONTRACT_DEFINED_TRAINING_BACKEND_REQUIRED",
+      "teacher_sources": [
+        "approved_open_weight_teacher",
+        "licensed_teacher_api_outputs",
+        "user_owned_or_explicitly_licensed_instruction_data",
+        "human_verified_demonstrations"
+      ],
+      "stages": [
+        "verify_teacher_license_and_output_rights",
+        "define_student_capability_and_evaluation",
+        "build_provenance_tagged_dataset",
+        "deduplicate_and_filter_quality",
+        "split_train_validation_private_holdout",
+        "generate_teacher_targets",
+        "train_student_or_adapter_in_sandbox",
+        "evaluate_against_teacher_and_baseline",
+        "run_safety_and_regression_suites",
+        "package_reproducible_checkpoint_and_model_card"
+      ],
+      "required_outputs": [
+        "teacher_and_student_identity",
+        "dataset_card_and_hashes",
+        "rights_manifest",
+        "training_config_and_seed",
+        "checkpoint_hash",
+        "baseline_and_candidate_scores",
+        "private_holdout_report",
+        "cost_and_resource_report"
+      ],
+      "holdout_excluded_from_training": true
+    },
+    "model_weight_training": {
+      "status": "CONTRACT_DEFINED_TRAINING_BACKEND_REQUIRED",
+      "supported_methods": [
+        "LoRA",
+        "QLoRA",
+        "supervised_fine_tuning",
+        "continued_pretraining",
+        "full_fine_tuning",
+        "from_scratch_research"
+      ],
+      "stages": [
+        "select_license_compatible_base_model",
+        "establish_reproducible_baseline",
+        "verify_dataset_rights_and_consent",
+        "pin_data_splits_and_tokenizer",
+        "estimate_and_approve_compute",
+        "train_in_isolated_reproducible_job",
+        "evaluate_checkpoint_on_private_holdout",
+        "run_general_safety_and_regression_tests",
+        "compare_cost_latency_memory_and_quality",
+        "create_signed_model_card_and_artifact_manifest",
+        "request_independent_promotion_review"
+      ],
+      "required_outputs": [
+        "base_model_revision_and_license",
+        "dataset_provenance_and_split_hashes",
+        "training_job_config_and_logs",
+        "checkpoint_and_tokenizer_hashes",
+        "baseline_candidate_and_holdout_scores",
+        "safety_regression_results",
+        "resource_cost_report",
+        "rollback_and_promotion_record"
+      ],
+      "paid_compute_requires_explicit_approval": true,
+      "production_weight_updates_require_separate_explicit_approval": true
+    }
+  },
+  "shared_requirements": {
+    "lanes": "one independently tracked engineering and model-evaluation lane per canonical MasterBot; authoritative 45-domain crosswalk must be reconciled before domain ownership is claimed",
+    "execution": "real task runners with dependency-aware scheduling, bounded retries, resource quotas, idempotency, cancellation, and durable run records",
+    "evidence": "every completion links source revision, exact command, environment, logs, artifact hashes, test results, benchmark version, and reviewer",
+    "security": "least privilege, isolated sandboxes, secret redaction, dependency and license checks, no production credentials in untrusted jobs",
+    "learning": "retrieval and procedural memory are distinct from model-weight updates; source access never implies training consent",
+    "promotion": "human review required for merge, deployment, shared model promotion, and production weight changes",
+    "truthfulness": "planned, configured, executed, passed, and mastered are distinct states; never label a capability operational without runtime evidence"
+  },
+  "acceptance_gates": {
+    "vibe_coding": [
+      "change_is_in_scoped_branch",
+      "requirements_trace_to_code_and_tests",
+      "unit_and_integration_tests_pass",
+      "security_review_passes",
+      "diff_and_rollback_recorded"
+    ],
+    "reverse_engineering": [
+      "authority_and_scope_verified",
+      "architecture_and_interfaces_documented",
+      "behavioral_tests_reproduced",
+      "provenance_and_legal_review_pass"
+    ],
+    "model_distillation": [
+      "teacher_and_dataset_rights_verified",
+      "holdout_isolation_verified",
+      "checkpoint_reproducible",
+      "student_improves_registered_metric",
+      "safety_and_general_regressions_pass"
+    ],
+    "model_weight_training": [
+      "compute_and_data_approved",
+      "baseline_and_candidate_comparable",
+      "private_holdout_pass",
+      "artifact_hashes_and_training_logs_present",
+      "independent_review_approved"
+    ]
+  },
+  "non_goals": [
+    "no claim that these contracts alone implement execution backends",
+    "no automatic merge or deployment",
+    "no unrestricted reverse engineering",
+    "no training on private conversations without separate purpose-specific opt-in",
+    "no automatic production weight replacement"
+  ]
+}
