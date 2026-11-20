@@ -13,6 +13,7 @@
 - Unknown-problem routing across the local catalog, optional external dataset/model metadata, and specialist MasterBot candidates. Every investigation is persisted in the Dataset Hub research-task queue.
 - Reproducible SFT/LoRA training manifests bound to the canonical 65-MasterBot registry, verified dataset and base-model license evidence, immutable base-model commit SHA, split hashes, and an explicit compute approval reference.
 - An opt-in local Transformers runner that verifies the live dataset card and object hashes, measures the base model on validation data, runs SFT or LoRA, evaluates validation and the isolated test split after training, and saves a local artifact.
+- A cross-model benchmark manifest and runner that compares a pinned baseline, trained candidate and license-verified open-weight alternatives on the same MasterBot's isolated test split using bits per UTF-8 byte, throughput and latency. It requires explicit compute approval and execution flags; it does not train or promote models.
 
 ## Storage and dataset cards
 
@@ -64,7 +65,21 @@ The runner requires torch and transformers; LoRA additionally requires peft. Cac
 
 The runner evaluates the base model on validation data, trains the requested SFT/LoRA job, then evaluates validation and the isolated test split and saves a local model artifact plus metrics. It does not publish, merge, deploy or promote production weights. This PR has not executed a training run. CI compiles the runner and tests policy/hash validation only; it does not download model weights or consume GPU/paid compute.
 
-Language-model loss before/after fine-tuning is an initial training metric, not a complete model-competitiveness benchmark. A separate independent benchmark suite must measure general and division-specific tasks, private holdouts, regression and safety before mastery or promotion.
+Bits per UTF-8 byte is a comparable language-modeling metric across tokenizers, but it is not a complete domain task benchmark. The cross-model runner does not yet measure all task suites, safety, reliability, memory/cost or end-to-end agent workflows. A separate independent benchmark suite must measure those dimensions and private holdouts before mastery or promotion.
+
+## Cross-model benchmark creation
+
+Create a reviewed request JSON with dataset_id, dataset_hub_path, masterbot_id, compute_approval_id, and a candidates array. Each candidate requires model_id, immutable 40-character revision, license, license_url, license_status=VERIFIED, license_evidence, and role (exactly one baseline plus one or more trained_candidate/open_weight_alternative entries).
+
+Create the benchmark manifest:
+
+    python tools/create_buddy_model_benchmark.py --request benchmark-request.json
+
+Execute only after explicit approval:
+
+    python tools/run_buddy_model_benchmark.py --job artifacts/buddy-model-benchmarks/JOB.json --compute-approval-id APPROVAL_ID --execute-approved
+
+Model downloads additionally require --allow-model-download and DREAMCO_ALLOW_MODEL_DOWNLOAD=1. The runner uses the same per-MasterBot held-out examples for each candidate and does not train, deploy or promote models. CI tests manifest and holdout validation only; no models are downloaded or benchmarked by CI.
 
 ## Remaining production work
 
