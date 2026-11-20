@@ -41,6 +41,10 @@ jobs:
           python-version: "3.13"
       - name: Static audit of every local workflow
         run: python3 tools/audit_actions_health.py
+      - name: Regenerate dependent Actions prospectus from the fresh health report
+        run: python3 tools/build_actions_prospectus.py
+      - name: Regenerate repository file prospectus from the current checkout
+        run: python3 tools/build_file_prospectus.py
       - name: Static audit diagnostics
         if: always()
         run: |
