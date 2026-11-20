@@ -1,0 +1,59 @@
+"""Bounded autonomous metadata discovery and per-MasterBot routing fleet."""
+from __future__ import annotations
+import json,re
+from datetime import datetime,timezone
+from pathlib import Path
+from typing import Any
+from .hub import DatasetHub
+from .sources import discover,inspect_huggingface_dataset_card,SourceAccessError
+from .unknown_router import ALIASES
+
+ROOT=Path(__file__).resolve().parents[2]
+REGISTRY=ROOT/"config/masterbot-65-registry.json"
+
+def _query_for(name:str)->str:
+    tags=ALIASES.get(name)
+    if tags:
+        return " ".join(tags[:3])
+    value=re.sub(r"(?<=[a-z])(?=[A-Z])"," ",name)
+    value=re.sub(r"^Dream\\s*","",value,flags=re.I)
+    return value.strip() or name
+
+def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|None=None,limit:int=3)->dict[str,Any]:
+    if not 1<=lanes_per_run<=65: raise ValueError("lanes_per_run must be between 1 and 65")
+    if not 1<=limit<=10: raise ValueError("per-source result limit must be between 1 and 10")
+    registry=json.loads(REGISTRY.read_text(encoding="utf-8"))
+    bots=registry.get("divisions",[])
+    if len(bots)!=65: raise ValueError("Canonical registry must contain exactly 65 MasterBots")
+    if offset is None: offset=(datetime.now(timezone.utc).date().toordinal()*lanes_per_run)%65
+    selected=[bots[(offset+i)%65] for i in range(lanes_per_run)]
+    catalog=hub or DatasetHub()
+    report={"schema":"dreamco.dataset_discovery_fleet.v1","created_at":datetime.now(timezone.utc).isoformat(),
+        "masterbot_count":65,"lanes_scanned":[],"candidates_recorded":0,"source_errors":{},
+        "network_enabled":True,"files_downloaded":False,"training_approved":False,"weights_trained":False}
+    for bot in selected:
+        query=_query_for(bot["name"])
+        found=discover(query,limit=limit)
+        recorded=0
+        for candidate in found["results"]+found["model_results"]:
+            candidate={**candidate,"rights_assessment":"UNVERIFIED_DISCOVERY_ONLY"}
+            if candidate.get("source")=="huggingface":
+                try:
+                    card=inspect_huggingface_dataset_card(str(candidate.get("id","")))
+                    candidate["dataset_card_summary"]={k:card.get(k) for k in ("card_sha256","license","tags","task_categories","language","rights_status")}
+                except (SourceAccessError,ValueError) as exc:
+                    candidate["dataset_card_inspection_error"]=type(exc).__name__
+            catalog.record_external_candidate(candidate,int(bot["id"]),query)
+            recorded+=1
+        report["candidates_recorded"]+=recorded
+        for source,error in found["source_errors"].items():
+            report["source_errors"][source]=report["source_errors"].get(source,0)+1
+        report["lanes_scanned"].append({"masterbot_id":bot["id"],"masterbot":bot["name"],
+            "query":query,"candidate_count":recorded,"status":"DISCOVERY_ONLY_RIGHTS_UNVERIFIED"})
+    report["next_offset"]=(offset+lanes_per_run)%65
+    report["catalog_stats"]=catalog.stats()
+    report["limitations"]=["Metadata discovery only; no dataset files downloaded",
+        "Public listing or license tag does not establish AI-training rights",
+        "Source coverage is bounded and rate-limited; it is not exhaustive",
+        "Training still requires dataset quality, privacy, rights, compute and approval gates"]
+    return report
