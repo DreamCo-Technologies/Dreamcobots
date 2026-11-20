@@ -21,6 +21,8 @@ on:
       - "website/repository-*.css"
       - "website/*.html"
       - "command-center/data/**"
+      - "command-center/app.js"
+      - "command-center/styles.css"
       - "website/data/command-center/**"
       - ".github/workflows/**"
   push:
@@ -55,6 +57,15 @@ jobs:
         run: python3 tools/build_command_center_data_observability.py --check
       - name: Verify command-center route and controls
         run: node --test tests/command-center-page.test.mjs
+      - name: Upload generated data observability snapshots
+        uses: actions/upload-artifact@v7
+        with:
+          name: command-center-data-observability-${{ github.run_id }}
+          path: |
+            command-center/data/data-observability.json
+            website/data/command-center/data-observability.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Verify JSON syntax
         run: |
           for file in command-center/data/*.json website/data/command-center/*.json; do
