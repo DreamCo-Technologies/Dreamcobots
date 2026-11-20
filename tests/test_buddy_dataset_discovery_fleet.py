@@ -1,6 +1,7 @@
 import unittest
 from buddy.datasets.license_policy import assess_training_candidate,normalize_license
 from buddy.datasets.discovery_fleet import _query_for
+from buddy.datasets.hub import DatasetHub
 class DatasetLicensePolicyTests(unittest.TestCase):
  def candidate(self):
   return {"source":"huggingface","id":"org/dataset","url":"https://huggingface.co/datasets/org/dataset",
@@ -24,6 +25,17 @@ class DatasetLicensePolicyTests(unittest.TestCase):
   self.assertEqual(assess_training_candidate(item)["status"],"BLOCKED_CONTENT_RIGHTS_UNVERIFIED")
  def test_aliases_normalize(self):
   self.assertEqual(normalize_license("Apache 2.0"),"Apache-2.0")
+ def test_discovered_candidate_is_persisted_and_routed(self):
+  import tempfile
+  with tempfile.TemporaryDirectory() as temp:
+   hub=DatasetHub(temp)
+   key=hub.record_external_candidate({"source":"huggingface","id":"org/sample",
+    "url":"https://huggingface.co/datasets/org/sample","license":"cc-by-4.0",
+    "rights_status":"UNVERIFIED"} ,41,"code")
+   self.assertTrue(key)
+   rows=hub.external_candidates(masterbot_id=41)
+   self.assertEqual(len(rows),1)
+   self.assertFalse(rows[0]["metadata"].get("training_approved",False))
  def test_all_masterbots_have_query_fallback(self):
   self.assertTrue(_query_for("DreamFinance"))
   self.assertTrue(_query_for("DreamUnknownDivision"))
