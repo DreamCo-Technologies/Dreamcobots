@@ -73,3 +73,40 @@ The capability contract and its validation tests define the required behavior an
 - trained checkpoints or proven competitive division models.
 
 Those are separate engineering milestones. Each must be demonstrated with real execution records before Buddy labels it operational.
+
+
+## 7. Physical product invention and product engineering
+
+Buddy should turn a user problem or concept into a documented product-development program: customer discovery, requirements, concept alternatives, engineering tradeoffs, architecture, materials, component selection, costed bill of materials, prototype plan, measured tests, iteration, and manufacturing/service documentation.
+
+Track ownership, contributor rights, licenses, prior-art research, and invention-disclosure timing. Do not promise patentability or freedom to operate; legal conclusions belong to qualified IP counsel.
+
+## 8. Hardware and software prototypes
+
+Coordinate mechanical, electrical/electronics, embedded firmware, sensors, actuators, robotics/control, IoT, mobile/web applications, cloud services, and edge computing. Maintain schematics, wiring diagrams, component specifications, firmware/software revisions, build instructions, test fixtures, measurement logs, failure analysis, and reproducible revision history.
+
+Hardware safety is a first-class gate: component voltage/current/power/thermal limits, battery and radio requirements, protective interlocks, environmental conditions, and regulated/life-critical use require appropriate qualified review. Simulations and generated schematics are not proof of a safe physical prototype.
+
+## 9. 3D design and invention
+
+Convert sketches and descriptions into parametric CAD plans, dimensioned drawings, assemblies, tolerance checks, material choices, and manufacturing-ready exports where supported. For additive manufacturing prepare STL/3MF, slicer settings, material/time/cost estimates, and printability checks; for machining or other fabrication prepare appropriate neutral geometry and process documentation.
+
+Retain editable source files where available, versioned exports, assumptions, dimensions, tolerances, and physical prototype measurements. A rendered model or mesh is not automatically a validated engineering part.
+
+## 10. Start a business from idea to launch
+
+Guide a founder through customer/problem discovery, competitor and market research, demand validation, business model, pricing, unit economics, startup budget, cash runway, funding options, supplier/vendor discovery, permits and insurance research, branding, website, MVP, sales, operations, bookkeeping, customer support, and a 30/60/90-day execution plan.
+
+Assemble practical resource directories for funding and grants, loans, incubators, mentors, makerspaces, equipment, software, materials, suppliers, contract manufacturers, testing labs, contractors, distribution, insurance, and compliance. Each lead must include source, location, last-checked date, eligibility, price or estimate, lead time, and verification status. Grants, loans, and business outcomes are never guaranteed.
+
+Buddy may draft applications, plans, quotes, and outreach. It must not submit applications, purchase equipment, sign contracts, form legal entities, or make external commitments without explicit approval. Legal, tax, accounting, and regulated-industry questions require qualified professional review.
+
+## 11. Resource discovery and end-to-end execution
+
+A unified project workspace links the idea, requirements, research, design files, software repository, bill of materials, suppliers, budget, prototype runs, tests, risks, funding leads, launch tasks, and operational KPIs. A dependency-aware queue advances work while surfacing blockers, stale quotes, missing approvals, and unverified assumptions.
+
+Resource recommendations must be sourced and dated. Distinguish estimates from quotes, leads from confirmed availability, simulations from physical test results, and drafted documents from submitted or approved applications.
+
+## Additional implementation status
+
+These product, hardware, CAD, and startup capabilities are specified as contracts and acceptance gates. CAD kernels, EDA tools, simulation packages, hardware lab integrations, sourcing databases, funding-resource connectors, business formation workflows, and real prototype facilities still need separate adapters and execution evidence.
