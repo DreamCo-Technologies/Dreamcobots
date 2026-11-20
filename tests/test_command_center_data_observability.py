@@ -10,6 +10,12 @@ SPEC=importlib.util.spec_from_file_location("data_observability",ROOT/"tools"/"b
 MODULE=importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(MODULE)
 
 class DataObservabilityTests(unittest.TestCase):
+    def test_both_command_centers_render_data_observability_tab(self):
+        for relative in ("command-center/app.js", "website/command-center/app.js"):
+            source=(ROOT/relative).read_text(encoding="utf-8")
+            self.assertIn('"Data"', source)
+            self.assertIn("data-observability.json", source)
+            self.assertIn("Training requests", source)
     def test_snapshot_has_source_and_training_coverage_without_private_rows(self):
         payload=MODULE.build()
         self.assertEqual(payload["schema"],"dreamco.command_center.data_observability.v1")
