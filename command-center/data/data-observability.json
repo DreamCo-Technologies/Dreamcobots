@@ -1,81 +1,9 @@
 {
-  "schema": "dreamco.command_center.data_observability.v1",
-  "generated_from": "repository inventory and optional local SQLite aggregate",
-  "privacy": {
-    "raw_dataset_rows_exposed": false,
-    "credentials_exposed": false,
-    "private_cards_exposed": false,
-    "model_weight_files_exposed": false
-  },
-  "summary": {
-    "repository_dataset_files": 41,
-    "dataset_cards_or_manifests": 2,
-    "dreamco_knowledge_packages": 1,
-    "training_job_manifests": 0,
-    "unknown_problem_route_artifacts": 0,
-    "model_artifact_files": 0,
-    "runtime_catalog_available": false,
-    "external_sources_with_metadata_adapters": 4,
-    "database_adapter_families": 2
-  },
-  "runtime_catalog": {
-    "available": false,
-    "dataset_versions": null,
-    "datasets": null,
-    "training_approved_versions": null,
-    "holdout_versions": null
-  },
-  "sources": [
-    {
-      "id": "dreamco_knowledge",
-      "name": "DreamCo knowledge packages",
-      "files": 28,
-      "status": "repository_inventory"
-    },
-    {
-      "id": "study_packs",
-      "name": "Study packs and curriculum",
-      "files": 13,
-      "status": "repository_inventory"
-    },
-    {
-      "id": "repository_datasets",
-      "name": "Repository dataset folders",
-      "files": 0,
-      "status": "repository_inventory"
-    },
-    {
-      "id": "huggingface",
-      "name": "Hugging Face datasets and model metadata",
-      "files": 0,
-      "status": "metadata_adapter_network_opt_in"
-    },
-    {
-      "id": "openml",
-      "name": "OpenML metadata",
-      "files": 0,
-      "status": "metadata_adapter_network_opt_in"
-    },
-    {
-      "id": "uci",
-      "name": "UCI repository metadata",
-      "files": 0,
-      "status": "metadata_adapter_network_opt_in"
-    },
-    {
-      "id": "github",
-      "name": "Authorized GitHub repositories",
-      "files": 0,
-      "status": "scoped_metadata_and_file_adapter"
-    },
-    {
-      "id": "sqlite_postgres",
-      "name": "Authorized database snapshots",
-      "files": 0,
-      "status": "read_only_allowlisted_adapter"
-    }
-  ],
   "datasets": {
+    "cards": [
+      "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.1/manifest.json",
+      "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.2/manifest.json"
+    ],
     "files": [
       "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.1/ATTRIBUTION.md",
       "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.1/LICENSE",
@@ -119,20 +47,9 @@
       "study_packs/datasets/lessons/03_streaming/example_streaming.py",
       "study_packs/datasets/sources.json"
     ],
-    "cards": [
-      "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.1/manifest.json",
-      "data/dreamco_knowledge/packages/DP-ONET-OCC-SYN/0.0.2/manifest.json"
-    ],
     "truncated": false
   },
-  "training": {
-    "job_manifests": [],
-    "executed_jobs": 0,
-    "weights_updated_by_manifest_builder": 0
-  },
-  "unknown_problems": {
-    "route_artifacts": []
-  },
+  "generated_from": "repository inventory and optional local SQLite aggregate",
   "model_artifacts": {
     "count": 0,
     "paths": [],
@@ -143,5 +60,88 @@
     "External adapters do not prove successful authentication or source availability.",
     "Private production databases require authenticated runtime telemetry.",
     "Training manifests are requests, not completed training; model and benchmark evidence must come from registered runners."
-  ]
+  ],
+  "privacy": {
+    "credentials_exposed": false,
+    "model_weight_files_exposed": false,
+    "private_cards_exposed": false,
+    "raw_dataset_rows_exposed": false
+  },
+  "runtime_catalog": {
+    "available": false,
+    "dataset_versions": null,
+    "datasets": null,
+    "holdout_versions": null,
+    "training_approved_versions": null
+  },
+  "schema": "dreamco.command_center.data_observability.v1",
+  "sources": [
+    {
+      "files": 28,
+      "id": "dreamco_knowledge",
+      "name": "DreamCo knowledge packages",
+      "status": "repository_inventory"
+    },
+    {
+      "files": 13,
+      "id": "study_packs",
+      "name": "Study packs and curriculum",
+      "status": "repository_inventory"
+    },
+    {
+      "files": 0,
+      "id": "repository_datasets",
+      "name": "Repository dataset folders",
+      "status": "repository_inventory"
+    },
+    {
+      "files": 0,
+      "id": "huggingface",
+      "name": "Hugging Face datasets and model metadata",
+      "status": "metadata_adapter_network_opt_in"
+    },
+    {
+      "files": 0,
+      "id": "openml",
+      "name": "OpenML metadata",
+      "status": "metadata_adapter_network_opt_in"
+    },
+    {
+      "files": 0,
+      "id": "uci",
+      "name": "UCI repository metadata",
+      "status": "metadata_adapter_network_opt_in"
+    },
+    {
+      "files": 0,
+      "id": "github",
+      "name": "Authorized GitHub repositories",
+      "status": "scoped_metadata_and_file_adapter"
+    },
+    {
+      "files": 0,
+      "id": "sqlite_postgres",
+      "name": "Authorized database snapshots",
+      "status": "read_only_allowlisted_adapter"
+    }
+  ],
+  "summary": {
+    "database_adapter_families": 2,
+    "dataset_cards_or_manifests": 2,
+    "dreamco_knowledge_packages": 1,
+    "external_sources_with_metadata_adapters": 4,
+    "model_artifact_files": 0,
+    "repository_dataset_files": 41,
+    "runtime_catalog_available": false,
+    "training_job_manifests": 0,
+    "unknown_problem_route_artifacts": 0
+  },
+  "training": {
+    "executed_jobs": 0,
+    "job_manifests": [],
+    "weights_updated_by_manifest_builder": 0
+  },
+  "unknown_problems": {
+    "route_artifacts": []
+  }
 }
