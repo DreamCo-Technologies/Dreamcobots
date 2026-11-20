@@ -23,7 +23,6 @@ concurrency:
 
 jobs:
   ingest:
-    if: github.event_name != 'workflow_run' || (github.event.workflow_run.name != 'Buddy Failure Detection and Learning' && !contains(github.event.workflow_run.path, 'buddy-failure-learning.yml'))
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
