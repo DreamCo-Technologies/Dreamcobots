@@ -42,7 +42,20 @@ def search_uci(query: str, limit: int = 10) -> list[dict]:
     params = urllib.parse.urlencode({"search": query, "skip": 0, "take": max(1, min(limit, 30))})
     data = _get_json("https://archive.ics.uci.edu/api/datasets?" + params)
     rows = data.get("data", data if isinstance(data, list) else [])
-    return [{"source": "uci", "id": str(x.get("ID") or x.get("id")), "name": x.get("Name") or x.get("name"), "url": x.get("Link") or x.get("url"), "license": x.get("License") or x.get("license"), "rights_status": "UNVERIFIED_REQUIRES_TERMS_REVIEW"} for x in rows if x.get("ID") or x.get("id")]
+    found = []
+    for x in rows if isinstance(rows, list) else []:
+        rid = x.get("ID") or x.get("id")
+        if not rid:
+            continue
+        link = str(x.get("Link") or x.get("url") or f"https://archive.ics.uci.edu/dataset/{rid}")
+        if link.startswith("http://"):
+            link = "https://" + link[len("http://"):]
+        if not link.startswith("https://"):
+            link = f"https://archive.ics.uci.edu/dataset/{rid}"
+        found.append({"source":"uci","id":str(rid),"name":x.get("Name") or x.get("name"),
+            "url":link,"license":x.get("License") or x.get("license"),
+            "rights_status":"UNVERIFIED_REQUIRES_TERMS_REVIEW"})
+    return found
 
 def search_github(query: str, limit: int = 10) -> list[dict]:
     params = urllib.parse.urlencode({"q": query + " in:name,description", "per_page": max(1, min(limit, 30))})
