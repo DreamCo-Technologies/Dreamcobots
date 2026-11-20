@@ -71,9 +71,9 @@ class DatasetHubRuntimeTests(unittest.TestCase):
     def test_training_manifest_validates_exact_content_and_split_hashes(self):
         with tempfile.TemporaryDirectory() as temp:
             rows = [
-                {"split":"train","text":"Teach a simple Python loop."},
-                {"split":"validation","text":"Explain a SQL query."},
-                {"split":"test","text":"Describe a safe deployment."},
+                {"split":"train","masterbot_id":41,"text":"Teach a simple Python loop."},
+                {"split":"validation","masterbot_id":41,"text":"Explain a SQL query."},
+                {"split":"test","masterbot_id":41,"text":"Describe a safe deployment."},
             ]
             sample = Path(temp) / "splits.jsonl"
             sample.write_text("".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
