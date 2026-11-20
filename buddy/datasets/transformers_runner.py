@@ -49,6 +49,9 @@ def validate_job(job: dict, approval_id: str) -> tuple[Path,list[dict]]:
     card_hash=hashlib.sha256(json.dumps(dataset_card,sort_keys=True).encode()).hexdigest()
     if card_hash != job.get("dataset_card_sha256") or dataset_card.get("content_sha256") != job.get("dataset_sha256"):
         raise TrainingExecutionError("Dataset card or provenance changed after job creation")
+    allowed_masterbots = {int(dataset_card.get("primary_masterbot_id"))} | {int(item) for item in dataset_card.get("collaborating_masterbot_ids", [])}
+    if int(job.get("masterbot_id", -1)) not in allowed_masterbots:
+        raise TrainingExecutionError("Training job is not assigned to the dataset's MasterBot owner or collaborator")
     object_path=(hub / job["dataset_object_path"]).resolve()
     if dataset_card.get("object_path") != job["dataset_object_path"]:
         raise TrainingExecutionError("Training job object path differs from the approved dataset card")
