@@ -49,8 +49,8 @@ def validate_job(job: dict, approval_id: str) -> tuple[Path,list[dict]]:
     if not dataset_card or dataset_card.get("training_approved") is not True or dataset_card.get("rights_status") != "VERIFIED" or dataset_card.get("holdout"):
         raise TrainingExecutionError("Dataset Hub card no longer authorizes training")
     card_hash=hashlib.sha256(json.dumps(dataset_card,sort_keys=True).encode()).hexdigest()
-    if card_hash != job.get("dataset_card_sha256") or dataset_card.get("content_sha256") != job.get("dataset_sha256"):
-        raise TrainingExecutionError("Dataset card or provenance changed after job creation")
+    if card_hash != job.get("dataset_card_sha256") or dataset_card.get("content_sha256") != job.get("dataset_sha256") or dataset_card.get("split_manifest") != job.get("split_manifest"):
+        raise TrainingExecutionError("Dataset card, split manifest, or provenance changed after job creation")
     allowed_masterbots = {int(dataset_card.get("primary_masterbot_id"))} | {int(item) for item in dataset_card.get("collaborating_masterbot_ids", [])}
     if int(job.get("masterbot_id", -1)) not in allowed_masterbots:
         raise TrainingExecutionError("Training job is not assigned to the dataset's MasterBot owner or collaborator")
