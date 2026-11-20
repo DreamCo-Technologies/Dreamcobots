@@ -2,6 +2,7 @@
 from __future__ import annotations
 import json
 import os
+import re
 import urllib.parse
 import urllib.request
 from typing import Any
@@ -149,15 +150,16 @@ def fetch_authorized_github_file(owner: str, repo: str, path: str, revision: str
     token = os.environ.get("GITHUB_TOKEN")
     if os.environ.get("DREAMCO_ALLOW_SOURCE_NETWORK") != "1" or not token:
         raise SourceAccessError("Explicit source-network opt-in and GITHUB_TOKEN are required")
-    parts = [owner, repo, path, revision]
-    if any(not x or x in {".", ".."} for x in parts):
-        raise ValueError("Owner, repository, path, and revision must be explicit")
+    if not re.fullmatch(r"[A-Za-z0-9_.-]{1,100}", owner) or not re.fullmatch(r"[A-Za-z0-9_.-]{1,100}", repo):
+        raise ValueError("GitHub owner and repository names are invalid")
+    if not path or any(part in {".", ".."} for part in path.split("/")) or not revision:
+        raise ValueError("GitHub file path and revision must be explicit and traversal-free")
     encoded_path = urllib.parse.quote(path, safe="/")
     url = f"https://api.github.com/repos/{owner}/{repo}/contents/{encoded_path}?ref=" + urllib.parse.quote(revision, safe="")
     data = _get_json(url)
     import base64
-    if data.get("type") != "file" or not data.get("content"):
-        raise SourceAccessError("The selected GitHub path is not a readable text file")
+    if data.get("type") != "file" or not data.get("content") or int(data.get("size") or 0) > 1_000_000:
+        raise SourceAccessError("The selected GitHub path is not a readable text file within the 1 MB limit")
     try:
         content = base64.b64decode(data["content"]).decode("utf-8")
     except Exception as exc:
