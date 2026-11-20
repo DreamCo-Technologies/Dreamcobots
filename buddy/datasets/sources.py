@@ -128,7 +128,7 @@ def inspect_huggingface_dataset_card(dataset_id: str) -> dict:
         if len(parts)>2:
             for line in parts[1].splitlines():
                 if ":" in line and not line.lstrip().startswith("#"):
-                    key,value=line.split(":",1);front[key.strip().lower()]=value.strip().strip('"\\'')
+                    key,value=line.split(":",1);front[key.strip().lower()]=value.strip().strip("\"'")
     return {"source":"huggingface_dataset_card","id":dataset_id,
         "url":"https://huggingface.co/datasets/"+dataset_id,
         "card_sha256":hashlib.sha256(raw).hexdigest(),"card_bytes":len(raw),
