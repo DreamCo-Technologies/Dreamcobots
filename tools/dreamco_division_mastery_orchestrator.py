@@ -140,10 +140,12 @@ def build_plan():
                 g["id"]: {
                     **TRACEABILITY_ANCHORS.get(g["id"], {"implementation_paths": [], "test_paths": [], "runtime_routes": [], "benchmark": "discovery_required"}),
                     "traceability_status": "partial_inventory_not_verified",
-                    "missing": ["implementation_paths" if not TRACEABILITY_ANCHORS.get(g["id"], {}).get("implementation_paths") else None,
-                                "test_paths" if not TRACEABILITY_ANCHORS.get(g["id"], {}).get("test_paths") else None,
-                                "runtime_routes" if not TRACEABILITY_ANCHORS.get(g["id"], {}).get("runtime_routes") else None,
-                                "benchmark_evidence"] if item is not None]
+                    "missing": [item for item in [
+                        "implementation_paths" if not TRACEABILITY_ANCHORS.get(g["id"], {}).get("implementation_paths") else None,
+                        "test_paths" if not TRACEABILITY_ANCHORS.get(g["id"], {}).get("test_paths") else None,
+                        "runtime_routes" if not TRACEABILITY_ANCHORS.get(g["id"], {}).get("runtime_routes") else None,
+                        "benchmark_evidence"
+                    ] if item is not None]
                 } for g in assigned
             },
             "task_dag": TASK_DAG,
