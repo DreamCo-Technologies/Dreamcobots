@@ -15,7 +15,7 @@ class DatasetHubRuntimeTests(unittest.TestCase):
     def test_versioned_persistent_card_and_content_hash(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp); sample=root/"sample.jsonl"
-            sample.write_text('{"instruction":"Explain a Python function","output":"A reusable block of code."}\\n{"instruction":"Explain SQL joins","output":"Combine related rows."}\\n',encoding="utf-8")
+            sample.write_text('{"instruction":"Explain a Python function","output":"A reusable block of code."}\n{"instruction":"Explain SQL joins","output":"Combine related rows."}\n',encoding="utf-8")
             hub=DatasetHub(root/"hub")
             one=hub.register(CARD,sample)
             two=hub.register({**CARD,"dataset_id":one["dataset_id"]},sample)
@@ -26,7 +26,7 @@ class DatasetHubRuntimeTests(unittest.TestCase):
 
     def test_discovery_metadata_does_not_authorize_ingestion(self):
         with tempfile.TemporaryDirectory() as temp:
-            sample=Path(temp)/"x.jsonl"; sample.write_text('{"x":1}\\n')
+            sample=Path(temp)/"x.jsonl"; sample.write_text('{"x":1}\n')
             hub=DatasetHub(Path(temp)/"hub")
             with self.assertRaises(DatasetPolicyError):
                 hub.register({**CARD,"training_approved":False},sample)
@@ -41,7 +41,7 @@ class DatasetHubRuntimeTests(unittest.TestCase):
 
     def test_quality_flags_pii(self):
         with tempfile.TemporaryDirectory() as temp:
-            sample=Path(temp)/"x.jsonl"; sample.write_text('{"email":"person@example.com"}\\n')
+            sample=Path(temp)/"x.jsonl"; sample.write_text('{"email":"person@example.com"}\n')
             with self.assertRaises(DatasetPolicyError):
                 DatasetHub(Path(temp)/"hub").register(CARD,sample)
 
@@ -55,7 +55,7 @@ class DatasetHubRuntimeTests(unittest.TestCase):
 
     def test_training_job_requires_compute_approval_and_never_executes(self):
         with tempfile.TemporaryDirectory() as temp:
-            sample=Path(temp)/"x.jsonl"; sample.write_text('{"instruction":"Do a task","output":"Complete it safely."}\\n')
+            sample=Path(temp)/"x.jsonl"; sample.write_text('{"instruction":"Do a task","output":"Complete it safely."}\n')
             hub=DatasetHub(Path(temp)/"hub"); card=hub.register(CARD,sample)
             with self.assertRaises(DatasetPolicyError):
                 create_training_job(hub,card["dataset_id"],41,"buddy-student","base@sha")
