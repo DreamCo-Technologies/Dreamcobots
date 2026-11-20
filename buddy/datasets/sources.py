@@ -48,11 +48,86 @@ def search_github(query: str, limit: int = 10) -> list[dict]:
     data = _get_json("https://api.github.com/search/repositories?" + params)
     return [{"source": "github", "id": x.get("full_name"), "name": x.get("name"), "url": x.get("html_url"), "license": (x.get("license") or {}).get("spdx_id"), "default_branch": x.get("default_branch"), "rights_status": "UNVERIFIED_REQUIRES_LICENSE_AND_CONTENT_REVIEW"} for x in data.get("items", [])]
 
-def discover(query: str, limit: int = 8) -> dict:
+
+def search_zenodo(query: str, limit: int = 10) -> list[dict]:
+    params = urllib.parse.urlencode({"q": query, "size": max(1, min(limit, 30))})
+    data = _get_json("https://zenodo.org/api/records?" + params)
+    rows = data.get("hits", {}).get("hits", [])
+    found = []
+    for item in rows:
+        meta = item.get("metadata", {})
+        license_meta = meta.get("license") or {}
+        license_id = license_meta.get("id") if isinstance(license_meta, dict) else str(license_meta or "")
+        rid = str(item.get("id") or "")
+        if rid:
+            found.append({"source":"zenodo","id":rid,"name":meta.get("title"),
+                "url":item.get("links",{}).get("self_html") or f"https://zenodo.org/records/{rid}",
+                "license":license_id,"version":meta.get("version"),"publication_date":meta.get("publication_date"),
+                "rights_status":"UNVERIFIED_REQUIRES_RECORD_AND_FILE_LICENSE_REVIEW"})
+    return found
+
+def search_datagov(query: str, limit: int = 10) -> list[dict]:
+    params = urllib.parse.urlencode({"q": query, "rows": max(1, min(limit, 30))})
+    data = _get_json("https://catalog.data.gov/api/3/action/package_search?" + params)
+    rows = data.get("result", {}).get("results", [])
+    return [{"source":"data_gov","id":str(x.get("id") or x.get("name")),
+        "name":x.get("title"),"url":x.get("url") or f"https://catalog.data.gov/dataset/{x.get('name')}",
+        "license":x.get("license_title") or x.get("license_id"),
+        "organization":(x.get("organization") or {}).get("title"),
+        "rights_status":"UNVERIFIED_REQUIRES_RESOURCE_LEVEL_LICENSE_REVIEW"} for x in rows if x.get("id") or x.get("name")]
+
+def search_kaggle(query: str, limit: int = 10) -> list[dict]:
+    username, key = os.environ.get("KAGGLE_USERNAME"), os.environ.get("KAGGLE_KEY")
+    if not username or not key:
+        raise SourceAccessError("Kaggle discovery requires operator-provided KAGGLE_USERNAME and KAGGLE_KEY")
+    params = urllib.parse.urlencode({"search":query,"page":1,"pageSize":max(1,min(limit,30))})
+    request = urllib.request.Request("https://www.kaggle.com/api/v1/datasets/list?"+params,
+        headers={"User-Agent":"DreamCo-Buddy-DatasetDiscovery/1.0","Authorization":"Basic "+
+            __import__("base64").b64encode(f"{username}:{key}".encode()).decode()},method="GET")
+    try:
+        with urllib.request.urlopen(request,timeout=12) as response:
+            data=json.loads(response.read(2_000_000).decode("utf-8"))
+    except Exception as exc:
+        raise SourceAccessError(f"Kaggle metadata discovery failed: {type(exc).__name__}") from exc
+    return [{"source":"kaggle","id":str(x.get("ref") or x.get("id")),
+        "name":x.get("title"),"url":"https://www.kaggle.com/datasets/"+str(x.get("ref") or ""),
+        "license":x.get("licenseName"),"last_updated":x.get("lastUpdated"),
+        "rights_status":"UNVERIFIED_REQUIRES_DATASET_TERMS_AND_FILE_REVIEW"} for x in data if x.get("ref") or x.get("id")]
+
+def inspect_huggingface_dataset_card(dataset_id: str) -> dict:
+    if not dataset_id or "/" not in dataset_id:
+        raise ValueError("A fully qualified Hugging Face dataset ID is required")
+    url="https://huggingface.co/datasets/"+urllib.parse.quote(dataset_id,safe="/")+"/raw/main/README.md"
+    request=urllib.request.Request(url,headers={"User-Agent":"DreamCo-Buddy-DatasetDiscovery/1.0"},method="GET")
+    if os.environ.get("DREAMCO_ALLOW_SOURCE_NETWORK")!="1":
+        raise SourceAccessError("Set DREAMCO_ALLOW_SOURCE_NETWORK=1 for dataset-card inspection")
+    try:
+        with urllib.request.urlopen(request,timeout=12) as response:
+            raw=response.read(1_000_000)
+            text=raw.decode("utf-8")
+    except Exception as exc:
+        raise SourceAccessError(f"Dataset-card inspection failed: {type(exc).__name__}") from exc
+    import hashlib
+    front={}
+    if text.startswith("---"):
+        parts=text.split("---",2)
+        if len(parts)>2:
+            for line in parts[1].splitlines():
+                if ":" in line and not line.lstrip().startswith("#"):
+                    key,value=line.split(":",1);front[key.strip().lower()]=value.strip().strip('"\\'')
+    return {"source":"huggingface_dataset_card","id":dataset_id,
+        "url":"https://huggingface.co/datasets/"+dataset_id,
+        "card_sha256":hashlib.sha256(raw).hexdigest(),"card_bytes":len(raw),
+        "license":front.get("license"),"tags":front.get("tags"),
+        "task_categories":front.get("task_categories"),"language":front.get("language"),
+        "card_front_matter":front,"rights_status":"UNVERIFIED_REQUIRES_FULL_CARD_CONTENT_AND_LICENSE_REVIEW",
+        "raw_card_persisted":False}
+
+def discover(query: str, limit: int = 8, include_kaggle: bool = True) -> dict:
     if len((query or "").strip()) < 2:
         raise ValueError("A meaningful search query is required")
     results, errors = [], {}
-    for name, fn in (("huggingface", search_huggingface), ("openml", search_openml), ("uci", search_uci), ("github", search_github)):
+    for name, fn in (("huggingface", search_huggingface), ("openml", search_openml), ("uci", search_uci), ("github", search_github), ("zenodo", search_zenodo), ("data_gov", search_datagov)) + ((("kaggle", search_kaggle),) if include_kaggle else ()):
         try:
             results.extend(fn(query, limit))
         except SourceAccessError as exc:
