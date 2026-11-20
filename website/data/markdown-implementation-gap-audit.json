@@ -1,20 +1,20 @@
 {
   "schema": "dreamco.buddy.markdown_implementation_gap_audit.v1",
-  "generated_at": "2026-11-20T20:35:40Z",
+  "generated_at": "2026-11-20T21:48:54Z",
   "inventory_mode": "all_tracked_markdown_files",
-  "document_count": 1637,
-  "actionable_claim_lines": 11640,
-  "documents_with_count_claims": 103,
-  "numeric_inventory_claim_count": 372,
+  "document_count": 1640,
+  "actionable_claim_lines": 11654,
+  "documents_with_count_claims": 104,
+  "numeric_inventory_claim_count": 373,
   "gap_status_counts": {
     "broken_path_references": 107,
-    "implementation_and_test_paths_referenced_not_verified": 3,
-    "implementation_reference_missing": 1399,
+    "implementation_and_test_paths_referenced_not_verified": 4,
+    "implementation_reference_missing": 1401,
     "reference_only": 85,
     "test_reference_missing": 43
   },
   "documents_with_missing_paths": 107,
-  "documents_without_implementation_references": 1561,
+  "documents_without_implementation_references": 1563,
   "documents_without_test_references": 62,
   "documents": [
     {
@@ -23944,6 +23944,24 @@
       "execution_verified": false
     },
     {
+      "path": "docs/BUDDY_PERSONAL_MEMORY_SHARED_LEARNING_AND_PERSONALITY.md",
+      "title": "Buddy: Personal Memory, Shared Learning, and Natural Interaction",
+      "sha256": "9fb5e0036128e639ee468c915b1c67c4078a4c0688f1bc35e3b72039cce2d0fe",
+      "actionable_claim_lines": 1,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/BUDDY_PLATFORM_READINESS_SCORECARD.md",
       "title": "Buddy Platform Readiness Scorecard",
       "sha256": "c8560123cf37ca71ca518643897e740ba17c3096350efc6f506b0c55e457a1a1",
@@ -24316,7 +24334,7 @@
     {
       "path": "docs/BUDDY_UNIVERSAL_LEARNING_ENGINE.md",
       "title": "Buddy Universal Learning Engine",
-      "sha256": "61ec52530da13bd4c6cf8901f60ea3cc2137d0a1f4fb0f5428cb11fd4f528ba0",
+      "sha256": "5199ba9d502c34da372afa5ba9f6953e0d45140929e605eab6e83dd42b03a233",
       "actionable_claim_lines": 17,
       "numeric_inventory_claims": [],
       "count_claim_review_required": false,
@@ -24329,6 +24347,40 @@
       "documentation_paths": [],
       "gap_status": "implementation_reference_missing",
       "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/BUDDY_USER_DATA_OWNERSHIP_AND_SUBSCRIPTION_CONTROL.md",
+      "title": "User Data Ownership, Company Consent, Source Study, and Subscription Control",
+      "sha256": "f428a753a21447bade0ba80d22c4b7737f4543c545c3eacc9f4d95641f7d1e2d",
+      "actionable_claim_lines": 6,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [
+        "config/user-data-and-subscription-control-policy.json",
+        "server/connection-policy.ts",
+        "server/data-rights-policy.ts",
+        "server/user-control-center-policy.ts",
+        "shared/personal-buddy-training-contract.ts",
+        "tests/task-and-data-policy.test.ts"
+      ],
+      "missing_paths": [],
+      "implementation_paths": [
+        "server/connection-policy.ts",
+        "server/data-rights-policy.ts",
+        "server/user-control-center-policy.ts",
+        "shared/personal-buddy-training-contract.ts"
+      ],
+      "test_paths": [
+        "tests/task-and-data-policy.test.ts"
+      ],
+      "workflow_paths": [],
+      "configuration_paths": [
+        "config/user-data-and-subscription-control-policy.json"
+      ],
+      "documentation_paths": [],
+      "gap_status": "implementation_and_test_paths_referenced_not_verified",
+      "next_action": "Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.",
       "execution_verified": false
     },
     {
@@ -25027,6 +25079,37 @@
       "documentation_paths": [],
       "gap_status": "broken_path_references",
       "next_action": "Repair or explicitly supersede the missing repository path references.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/DREAMCO_MASTERY_CONTINUITY_SYSTEM.md",
+      "title": "DreamCo Mastery Continuity System",
+      "sha256": "b7282d9b322d51e482c7c643c965d80737e4504a827f95d3446075a1a08da4a1",
+      "actionable_claim_lines": 7,
+      "numeric_inventory_claims": [
+        {
+          "line": 92,
+          "match": "65 divisions",
+          "excerpt": "The new engine connects all 65 registry entries to logical lanes, goal routing, dependency metadata, shared regression execution, the existing lane planner, benchmark execution, and evidence artifacts. It does **not** yet implement every domain capability, execute every historica",
+          "review_required": true
+        }
+      ],
+      "count_claim_review_required": true,
+      "referenced_paths": [
+        "config/dreamco-mastery-continuity-registry.json",
+        "config/masterbot-65-registry.json"
+      ],
+      "missing_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [
+        "config/dreamco-mastery-continuity-registry.json",
+        "config/masterbot-65-registry.json"
+      ],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
       "execution_verified": false
     },
     {

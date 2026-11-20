@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-20T20:35:40Z
+Generated: 2026-11-20T21:48:54Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1637
-- Actionable claim lines detected: 11640
+- Markdown documents scanned: 1640
+- Actionable claim lines detected: 11654
 - Documents with missing path references: 107
-- Documents without implementation references: 1561
+- Documents without implementation references: 1563
 - Documents with implementation references but no test references: 62
-- Documents with inventory count claims: 103
-- Inventory count claims requiring review: 372
+- Documents with inventory count claims: 104
+- Inventory count claims requiring review: 373
 
 ## Fixed-count claims requiring review
 
@@ -122,6 +122,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md:3733 — 1,000 resources
 - docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md:6957 — simple task → 1 model
 - docs/DREAMCO_DELIVERY_PLAN.md:35 — The canonical registry has 1,051 profiles. Fifty additional growth profiles now have separate catalog entries and shared sandbox task routes. Their original descriptions, capability lists and source files remain preserved. The 262 historical source records include these 50 and th
+- docs/DREAMCO_MASTERY_CONTINUITY_SYSTEM.md:92 — The new engine connects all 65 registry entries to logical lanes, goal routing, dependency metadata, shared regression execution, the existing lane planner, benchmark execution, and evidence artifacts. It does **not** yet implement every domain capability, execute every historica
 - docs/DREAMCO_MASTER_ROADMAP_2026.md:26 — ### 1–15 Workflow Organization & Dashboard
 - docs/DREAMCO_MASTER_ROADMAP_2026.md:26 — ### 1–15 Workflow Organization & Dashboard
 - docs/DREAMCO_MASTER_ROADMAP_2026.md:44 — ### 16–30 CI/CD & Deployment
@@ -13163,6 +13164,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/BUDDY_PERSONAL_MEMORY_SHARED_LEARNING_AND_PERSONALITY.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/BUDDY_PLATFORM_READINESS_SCORECARD.md
 
 - Status: implementation_reference_missing
@@ -13291,6 +13302,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: None detected
 - Missing paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_USER_DATA_OWNERSHIP_AND_SUBSCRIPTION_CONTROL.md
+
+- Status: implementation_and_test_paths_referenced_not_verified
+- Actionable claim lines: 6
+- Implementation paths: server/connection-policy.ts, server/data-rights-policy.ts, server/user-control-center-policy.ts, shared/personal-buddy-training-contract.ts
+- Test paths: tests/task-and-data-policy.test.ts
+- Missing paths: None detected
+- Next action: Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_USER_TESTING_CATALOG.md
@@ -13591,6 +13612,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: None detected
 - Missing paths: github/workflows/dreamco-global-reconciliation.yml
 - Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_MASTERY_CONTINUITY_SYSTEM.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 7
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_MASTER_PLAN.md
