@@ -9,7 +9,9 @@ on:
       - "tools/audit_actions_health.py"
       - "tools/audit_actions_live.py"
       - "tools/buddy_failure_learning.py"
+      - "tools/buddy_conversation_learning_policy.py"
       - "tests/test_buddy_failure_learning.py"
+      - "tests/test_buddy_conversation_learning_policy.py"
       - "tests/test_actions_health.py"
       - "package.json"
   pull_request:
@@ -80,6 +82,7 @@ jobs:
         run: |
           python3 -m unittest tests.test_actions_health
           python3 -m unittest tests.test_buddy_failure_learning
+          python3 -m unittest tests.test_buddy_conversation_learning_policy
           python3 -m unittest tests.test_pages_feature_audit
           if [ -f package-lock.json ]; then npm ci --ignore-scripts; fi
           npm run test:actions-page
