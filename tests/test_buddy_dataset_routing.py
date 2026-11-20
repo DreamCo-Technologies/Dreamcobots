@@ -35,6 +35,17 @@ class BuddyDatasetRoutingTests(unittest.TestCase):
         self.assertEqual(runtime["cross_model_benchmark"]["metric"], "bits_per_utf8_byte")
         self.assertFalse(runtime["cross_model_benchmark"]["execution_verified"])
 
+    def test_daily_discovery_and_legal_use_gates_are_declared(self):
+        policy = json.loads((ROOT / "config/buddy-dataset-routing-policy.json").read_text())
+        discovery = policy["automatic_discovery"]
+        self.assertTrue(discovery["enabled"])
+        self.assertEqual(discovery["lanes_per_daily_run"], 5) if "lanes_per_daily_run" in discovery else self.assertIn("five", discovery["schedule"])
+        self.assertIn("Zenodo", " ".join(discovery["sources"]))
+        self.assertFalse(discovery["download_files"])
+        legal = policy["legal_use_policy"]
+        self.assertFalse(legal["auto_approval"])
+        self.assertIn("explicit_ai_training_permission", legal["required_for_training_candidate"])
+
     def test_holdout_and_compute_gates_are_preserved(self):
         policy = json.loads((ROOT / "config/buddy-dataset-routing-policy.json").read_text())
         self.assertEqual(policy["hard_gates"]["benchmark_holdout"], "EVALUATION_ONLY_NEVER_TRAIN")
