@@ -10,6 +10,7 @@ import os
 import re
 from pathlib import Path
 from typing import Any
+from .hub import DatasetHub
 
 class TrainingExecutionError(RuntimeError):
     pass
@@ -42,7 +43,15 @@ def validate_job(job: dict, approval_id: str) -> tuple[Path,list[dict]]:
     if job.get("training_method") not in {"sft","lora"}:
         raise TrainingExecutionError("Unsupported training method")
     hub=Path(job["dataset_hub_path"]).resolve()
+    dataset_card=DatasetHub(hub).get(job["dataset_id"],int(job["dataset_version"]))
+    if not dataset_card or dataset_card.get("training_approved") is not True or dataset_card.get("rights_status") != "VERIFIED" or dataset_card.get("holdout"):
+        raise TrainingExecutionError("Dataset Hub card no longer authorizes training")
+    card_hash=hashlib.sha256(json.dumps(dataset_card,sort_keys=True).encode()).hexdigest()
+    if card_hash != job.get("dataset_card_sha256") or dataset_card.get("content_sha256") != job.get("dataset_sha256"):
+        raise TrainingExecutionError("Dataset card or provenance changed after job creation")
     object_path=(hub / job["dataset_object_path"]).resolve()
+    if dataset_card.get("object_path") != job["dataset_object_path"]:
+        raise TrainingExecutionError("Training job object path differs from the approved dataset card")
     if hub not in object_path.parents or not object_path.is_file():
         raise TrainingExecutionError("Dataset object is missing or outside the dataset hub")
     if hashlib.sha256(object_path.read_bytes()).hexdigest()!=job.get("dataset_sha256"):
