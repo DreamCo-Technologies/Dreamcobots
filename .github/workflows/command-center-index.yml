@@ -56,8 +56,11 @@ jobs:
         run: python3 tools/build_command_center_data_observability.py
       - name: Verify data observability snapshot is current
         run: python3 tools/build_command_center_data_observability.py --check
-      - name: Verify command-center route and controls
-        run: node --test tests/command-center-page.test.mjs
+      - name: Verify command-center route, controls, and JavaScript syntax
+        run: |
+          node --check command-center/app.js
+          node --check website/command-center/app.js
+          node --test tests/command-center-page.test.mjs
       - name: Upload generated data observability snapshots
         uses: actions/upload-artifact@v7
         with:
