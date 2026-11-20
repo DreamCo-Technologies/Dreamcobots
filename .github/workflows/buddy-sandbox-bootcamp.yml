@@ -23,7 +23,7 @@ on:
       - 'buddy/datasets/transformers_runner.py'
       - 'buddy/datasets/training_jobs.py'
       - 'tools/run_buddy_training_job.py'
-      - 'tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py'
+      - 'tools/create_buddy_training_job.py'
       - 'tools/build_dreamco_training_examples.py'
       - 'tests/test_dreamco_original_training_examples.py'
       - 'tools/register_buddy_dataset.py'
@@ -49,7 +49,7 @@ jobs:
         with:
           python-version: '3.13'
       - name: Compile sandbox, bootcamp, and learning modules
-        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py
+        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py
       - name: Run safe sandbox smoke test
         run: |
           python - <<'PY'
