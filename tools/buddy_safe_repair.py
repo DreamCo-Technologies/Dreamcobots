@@ -3,7 +3,7 @@
 from __future__ import annotations
 import argparse,json,subprocess,sys
 from pathlib import Path
-from tools.buddy_failure_learning import classify
+from tools.buddy_failure_learning import classify,route_masterbots
 
 def repair_plan(observation:dict)->list[list[str]]:
  kind=classify(observation)
@@ -26,8 +26,9 @@ def repair_plan(observation:dict)->list[list[str]]:
 
 def run_safe_repair(observation:dict,root:Path)->dict:
  commands=repair_plan(observation)
- result={"schema":"dreamco.safe_repair_result.v1","failure_class":classify(observation),
-  "commands":commands,"executed":False,"success":False,"changed_files":[],"requires_human_review":True}
+ kind=classify(observation); bots=route_masterbots(kind)
+ result={"schema":"dreamco.safe_repair_result.v1","failure_class":kind,
+  "primary_masterbot_id":bots[0],"collaborating_masterbot_ids":bots[1:],"commands":commands,"executed":False,"success":False,"changed_files":[],"requires_human_review":True}
  if not commands:
   result["status"]="NO_ALLOWLISTED_AUTOMATIC_REPAIR";return result
  for command in commands:
