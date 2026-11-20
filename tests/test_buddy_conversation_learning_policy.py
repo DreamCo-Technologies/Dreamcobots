@@ -5,6 +5,11 @@ class BuddyConversationLearningPolicyTests(unittest.TestCase):
     def test_personal_memory_requires_opt_in_and_user_scope(self):
         c={"scope":"personal_memory","content_form":"structured_preference","personal_memory_opt_in":True,"user_id":"user-1","retention_days":90}
         self.assertEqual(evaluate_candidate(c,POLICY)["decision"],"ALLOW_CANDIDATE")
+    def test_sensitive_personal_memory_requires_separate_opt_in(self):
+        c={"scope":"personal_memory","content_form":"structured_preference","personal_memory_opt_in":True,"user_id":"u1","retention_days":30,"contains_sensitive_data":True}
+        self.assertIn("sensitive_memory_opt_in_required",evaluate_candidate(c,POLICY)["reasons"])
+        c["sensitive_memory_opt_in"]=True
+        self.assertEqual(evaluate_candidate(c,POLICY)["decision"],"ALLOW_CANDIDATE")
     def test_raw_transcript_is_never_accepted(self):
         c={"scope":"personal_memory","content_form":"raw_transcript","raw_transcript":True,"personal_memory_opt_in":True,"user_id":"u1","retention_days":30}
         r=evaluate_candidate(c,POLICY); self.assertEqual(r["decision"],"DENY"); self.assertIn("raw_transcript_prohibited",r["reasons"])
