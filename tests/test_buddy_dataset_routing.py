@@ -39,7 +39,8 @@ class BuddyDatasetRoutingTests(unittest.TestCase):
         policy = json.loads((ROOT / "config/buddy-dataset-routing-policy.json").read_text())
         discovery = policy["automatic_discovery"]
         self.assertTrue(discovery["enabled"])
-        self.assertEqual(discovery["lanes_per_daily_run"], 5) if "lanes_per_daily_run" in discovery else self.assertIn("five", discovery["schedule"])
+        self.assertEqual(discovery["lanes_per_daily_run"], 5)
+        self.assertEqual(discovery["full_rotation_daily_runs"], 13)
         self.assertIn("Zenodo", " ".join(discovery["sources"]))
         self.assertFalse(discovery["download_files"])
         legal = policy["legal_use_policy"]
