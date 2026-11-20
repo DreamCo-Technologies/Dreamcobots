@@ -1,0 +1,108 @@
+name: DreamCo Division Mastery Engine
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "config/masterbot-65-registry.json"
+      - "config/dreamco-mastery-continuity-registry.json"
+      - "tools/dreamco_division_mastery_orchestrator.py"
+      - "tools/buddy_masterbot_training_lane.py"
+      - "tools/validate_dreamco_mastery_registry.py"
+      - "tests/test_dreamco_division_mastery_orchestrator.py"
+      - ".github/workflows/dreamco-division-mastery-engine.yml"
+  schedule:
+    - cron: "41 13 * * *"
+    - cron: "41 1 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-division-mastery-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - id: plan
+        name: Build and validate 65-division dependency-aware queue
+        run: |
+          MATRIX=$(python tools/dreamco_division_mastery_orchestrator.py --matrix)
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          python -m unittest tests.test_dreamco_division_mastery_orchestrator
+          python tools/validate_dreamco_mastery_registry.py
+
+  benchmark:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Run division capability contract benchmark
+        run: npm run buddy:daily-division-benchmarks -- --concurrency=8
+      - name: Record benchmark run as contract evidence only
+        if: always()
+        run: |
+          mkdir -p artifacts/division-mastery
+          printf '{"kind":"structural_contract_benchmark","run_id":"%s","commit":"%s","note":"This is not proof of model training or production mastery."}\n' "$GITHUB_RUN_ID" "$GITHUB_SHA" > artifacts/division-mastery/benchmark-run-metadata.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: division-contract-benchmark-${{ github.run_id }}
+          path: artifacts/division-mastery/benchmark-run-metadata.json
+          if-no-files-found: warn
+          retention-days: 90
+
+  division-lanes:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run dependency-gated safe tasks for this division
+        env:
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          python tools/dreamco_division_mastery_orchestrator.py \
+            --run-lane \
+            --division-id "${{ matrix.division_id }}" \
+            --run-id "$GITHUB_RUN_ID" \
+            --commit-sha "$GITHUB_SHA"
+      - name: Preserve division-specific evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: division-mastery-${{ matrix.division_id }}-${{ github.run_id }}
+          path: |
+            artifacts/division-mastery/division-${{ matrix.division_id }}/run-${{ github.run_id }}.json
+            artifacts/masterbot-training/
+            reports/DREAMCO_MASTERY_DAILY_QUEUE.md
+          if-no-files-found: warn
+          retention-days: 90
