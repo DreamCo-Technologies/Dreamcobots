@@ -10,7 +10,7 @@ from buddy.datasets.unknown_router import route_problem
 from buddy.datasets.training_jobs import create_training_job
 from buddy.datasets.transformers_runner import validate_job, TrainingExecutionError, _split_hash
 
-CARD = {"name":"DreamCo authored coding lessons","owner":"DreamCo Technologies","license":"DreamCo internal authored asset","license_url":"https://example.invalid/internal-license","source_url":"https://github.com/DreamCo-Technologies/Dreamcobots","data_plane":"dreamco_owned_training","rights_status":"VERIFIED","training_approved":True,"rights_evidence":"approved-authorship-register:fixture-001","split_manifest":{"train_sha256":"a"*64,"validation_sha256":"b"*64,"test_sha256":"c"*64},"holdout":False}
+CARD = {"name":"DreamCo authored coding lessons","owner":"DreamCo Technologies","license":"DreamCo internal authored asset","license_url":"https://example.invalid/internal-license","source_url":"https://github.com/DreamCo-Technologies/Dreamcobots","data_plane":"dreamco_owned_training","rights_status":"VERIFIED","training_approved":True,"rights_evidence":"approved-authorship-register:fixture-001","primary_masterbot_id":41,"collaborating_masterbot_ids":[],"split_manifest":{"train_sha256":"a"*64,"validation_sha256":"b"*64,"test_sha256":"c"*64},"holdout":False}
 
 class DatasetHubRuntimeTests(unittest.TestCase):
     def test_versioned_persistent_card_and_content_hash(self):
