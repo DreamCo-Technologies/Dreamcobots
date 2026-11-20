@@ -1,11 +1,23 @@
 {
-  "schema": "dreamco.buddy_continuous_learning_policy.v1",
+  "schema": "dreamco.buddy_continuous_learning_policy.v2",
   "mode": "CONTINUOUS_GOVERNED_LEARNING",
   "enabled": true,
   "cadence": {
     "scheduler_cron": "15 */6 * * *",
+    "lane_runs_per_division_per_day": 4,
     "daily_review_utc": "0 2 * * *",
-    "benchmark_review_utc": "0 4 * * 1"
+    "benchmark_review_utc": "0 4 * * 1",
+    "cycle_scope": "ALL_CANONICAL_DIVISIONS_EVERY_SCHEDULED_CYCLE"
+  },
+  "fleet": {
+    "registry_source": "config/masterbot-65-registry.json",
+    "expected_division_count": 65,
+    "require_registry_count_match": true,
+    "every_division_gets_lane": true,
+    "matrix_execution": true,
+    "max_parallel_lanes": 5,
+    "queue_policy": "PRIORITY_FAIR_SHARE_RETRY_FAILED_LANES",
+    "no_division_starvation": true
   },
   "lanes": {
     "dedicated_logical_lane_per_masterbot": true,
@@ -17,13 +29,19 @@
       "benchmark_catalog",
       "model_registry",
       "lesson_memory",
-      "audit_log"
+      "audit_log",
+      "cross_run_learning_bus",
+      "shared_capability_gap_queue"
     ],
+    "shared_run_context": "Consume approved lessons, benchmark deltas, reusable fixes and unresolved gaps from prior division runs and other DreamCo workflows.",
+    "cross_division_exchange": "Share versioned lesson metadata, capability patterns, test fixtures and verified fixes; never merge raw datasets or model weights across lanes without separate rights, isolation and approval checks.",
     "parallelism": "bounded_by_runner_capacity_and_resource_budget"
   },
   "cycle": [
-    "inventory_capability_gaps",
-    "select_highest_priority_verified_gap",
+    "load_canonical_65_division_registry",
+    "inventory_each_division_capability_gaps",
+    "ingest_approved_cross_run_learning_events",
+    "select_highest_priority_verified_gap_per_lane",
     "retrieve_approved_sources",
     "generate_lesson_and_practice",
     "run_isolated_sandbox",
@@ -31,8 +49,10 @@
     "evaluate_held_out_transfer",
     "run_regression_and_safety_suites",
     "record_lineage_and_artifact_hashes",
+    "publish_reusable_verified_lessons_to_shared_bus",
     "promote_candidate_or_rollback",
-    "publish_daily_gap_report"
+    "requeue_unresolved_gaps",
+    "publish_fleet_and_daily_gap_report"
   ],
   "expansion_policy": {
     "add_capabilities_only_with_tests": true,
@@ -58,7 +78,8 @@
     "scheduled_execution": "REQUIRES_ENABLED_GITHUB_ACTIONS_OR_EXTERNAL_WORKER",
     "guarantees_24x7_compute": false,
     "pause_on_resource_or_security_alert": true,
-    "resume_requires_health_check": true
+    "resume_requires_health_check": true,
+    "actual_model_weight_training": "NOT_ENABLED_BY_THIS_PLANNER_WORKFLOW"
   },
   "evidence": {
     "required_per_run": [
@@ -79,7 +100,8 @@
     ],
     "immutable_run_history": true,
     "daily_gap_report": true,
-    "weekly_model_card_review": true
+    "weekly_model_card_review": true,
+    "cross_run_ledger": true
   },
   "status": "POLICY_DEFINED_NOT_DEPLOYED"
 }
