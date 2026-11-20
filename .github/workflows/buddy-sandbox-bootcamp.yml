@@ -23,7 +23,10 @@ on:
       - 'buddy/datasets/transformers_runner.py'
       - 'buddy/datasets/training_jobs.py'
       - 'tools/run_buddy_training_job.py'
-      - 'tools/create_buddy_training_job.py'
+      - 'tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py'
+      - 'tools/build_dreamco_training_examples.py'
+      - 'tests/test_dreamco_original_training_examples.py'
+      - 'tools/register_buddy_dataset.py'
 
 permissions:
   contents: read
@@ -58,7 +61,7 @@ jobs:
       - name: Build DreamCo dataset discovery routes
         run: python tools/build_buddy_dataset_routes.py
       - name: Test 65 MasterBot dataset routing and training gates
-        run: python -m unittest tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime tests.test_buddy_database_sources
+        run: python -m unittest tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime tests.test_buddy_database_sources tests.test_dreamco_original_training_examples
       - name: Smoke test local unknown-problem routing
         run: python tools/route_buddy_unknown_problem.py --problem 'Build a SQL database analytics pipeline' --out artifacts/buddy-dataset-hub/ci-unknown-route.json
       - name: Validate curriculum JSON
