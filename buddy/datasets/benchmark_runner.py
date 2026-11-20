@@ -48,15 +48,17 @@ def execute_benchmark(job_path:str|Path,approval_id:str,output_root:str|Path,all
  except ImportError as exc: raise BenchmarkExecutionError("torch and transformers are required for model benchmarks") from exc
  results=[]
  for candidate in job["candidates"]:
-  start=time.perf_counter()
+  load_start=time.perf_counter()
   try:
    tokenizer=AutoTokenizer.from_pretrained(candidate["model_id"],revision=candidate["revision"],local_files_only=not allow_model_download)
    model=AutoModelForCausalLM.from_pretrained(candidate["model_id"],revision=candidate["revision"],local_files_only=not allow_model_download)
+   load_seconds=time.perf_counter()-load_start
    model.eval()
    if tokenizer.pad_token is None: tokenizer.pad_token=tokenizer.eos_token
    total_nll=0.0;total_bytes=0;total_tokens=0
    device="cuda" if torch.cuda.is_available() else "cpu";model.to(device)
    if device=="cuda": torch.cuda.reset_peak_memory_stats()
+   eval_start=time.perf_counter()
    with torch.no_grad():
     for row in rows:
      text=row.get("text") or f"Instruction: {row.get('instruction','')} Response: {row.get('output','')}"
@@ -67,10 +69,10 @@ def execute_benchmark(job_path:str|Path,approval_id:str,output_root:str|Path,all
      count=input_ids.shape[1]-1
      total_nll+=float(outputs.loss.detach().cpu())*count
      total_tokens+=count;total_bytes+=len(text.encode("utf-8"))
-   elapsed=time.perf_counter()-start
+   elapsed=time.perf_counter()-eval_start
    result={"model_id":candidate["model_id"],"revision":candidate["revision"],"role":candidate["role"],
     "bits_per_utf8_byte":total_nll/math.log(2)/max(1,total_bytes),"tokens":total_tokens,
-    "bytes":total_bytes,"seconds":elapsed,"tokens_per_second":total_tokens/max(elapsed,1e-9),
+    "bytes":total_bytes,"load_seconds":load_seconds,"evaluation_seconds":elapsed,"tokens_per_second":total_tokens/max(elapsed,1e-9),
     "device":device,"peak_cuda_memory_bytes":torch.cuda.max_memory_allocated() if device=="cuda" else None,
     "status":"SCORED"}
   except Exception as exc:
