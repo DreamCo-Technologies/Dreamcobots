@@ -136,14 +136,14 @@ class DatasetHub:
             quality = _quality(source)
             content_hash = sha256_file(source)
             suffix = source.suffix.lower()
+            if quality["pii_review_required"] or quality["duplicate_rate"] > float(card.get("max_duplicate_rate", 0.01)):
+                raise DatasetPolicyError("Quality gate failed; source was not added to the approved object store")
             target = self.objects / f"{content_hash}{suffix}"
             if not target.exists():
                 temp = target.with_suffix(target.suffix + ".tmp")
                 shutil.copyfile(source, temp)
                 temp.replace(target)
             object_path = str(target.relative_to(self.home))
-            if quality["pii_review_required"] or quality["duplicate_rate"] > float(card.get("max_duplicate_rate", 0.01)):
-                raise DatasetPolicyError("Quality gate failed; file retained in quarantine object store, not registered as trainable")
         dataset_id = str(card.get("dataset_id") or "dset-" + uuid.uuid4().hex[:16])
         with self._connect() as db:
             prior = db.execute("SELECT MAX(version) AS v FROM datasets WHERE dataset_id=?", (dataset_id,)).fetchone()
