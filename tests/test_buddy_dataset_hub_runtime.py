@@ -76,7 +76,7 @@ class DatasetHubRuntimeTests(unittest.TestCase):
                 {"split":"test","text":"Describe a safe deployment."},
             ]
             sample = Path(temp) / "splits.jsonl"
-            sample.write_text("".join(json.dumps(row) + "\\n" for row in rows), encoding="utf-8")
+            sample.write_text("".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
             split_manifest = {f"{name}_sha256": _split_hash(rows, name) for name in ("train","validation","test")}
             hub = DatasetHub(Path(temp) / "hub")
             card = hub.register({**CARD,"split_manifest":split_manifest},sample)
