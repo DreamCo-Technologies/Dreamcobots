@@ -21,7 +21,8 @@ class DivisionMasteryOrchestratorTests(unittest.TestCase):
         plan = module.build_plan()
         for lane in plan["lanes"]:
             self.assertEqual(lane["task_dag"][1]["depends_on"], ["registry_validation"])
-            self.assertEqual(lane["task_dag"][-1]["depends_on"], ["division_lane_plan", "division_contract_benchmark"])
+            self.assertEqual(lane["task_dag"][2]["depends_on"], ["registry_validation", "platform_regression_suite"])
+            self.assertEqual(lane["task_dag"][-1]["depends_on"], ["division_lane_plan", "division_contract_benchmark", "platform_regression_suite"])
             self.assertTrue(lane["goal_dependency_map"])
             self.assertTrue(all("traceability_status" in item for item in lane["goal_traceability"].values()))
 
