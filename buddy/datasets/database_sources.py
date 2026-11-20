@@ -64,7 +64,7 @@ def snapshot_sqlite(db_path: str | Path, sql: str, params: tuple = (), *,
 def snapshot_postgres(sql: str, params: tuple = (), *, authorization_ref: str,
                       approved_query_sha256: str, output_path: str | Path,
                       row_limit: int = 1000) -> dict[str, Any]:
-    query = _validate(sql, authorization_ref, approved_query_sha256, row_limit)
+    query = _validate(sql, params, authorization_ref, approved_query_sha256, row_limit)
     dsn = os.environ.get("DREAMCO_POSTGRES_DSN")
     if not dsn:
         raise DatabaseSourceError("DREAMCO_POSTGRES_DSN is not configured")
@@ -83,5 +83,5 @@ def snapshot_postgres(sql: str, params: tuple = (), *, authorization_ref: str,
         for row in rows:
             handle.write(json.dumps(dict(zip(names, row)), ensure_ascii=False, default=str) + "\n")
     return {"rows_exported":len(rows),"columns":names,"authorization_ref":authorization_ref,
-            "query_sha256":query_hash(query),"source_kind":"postgres_read_only",
+            "query_sha256":query_hash(query, params),"source_kind":"postgres_read_only",
             "output":str(out),"credentials_stored":False,"query_only":True}
