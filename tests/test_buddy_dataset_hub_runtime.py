@@ -59,7 +59,7 @@ class DatasetHubRuntimeTests(unittest.TestCase):
             hub=DatasetHub(Path(temp)/"hub"); card=hub.register(CARD,sample)
             with self.assertRaises(DatasetPolicyError):
                 create_training_job(hub,card["dataset_id"],41,"buddy-student","0123456789abcdef0123456789abcdef01234567")
-            job=create_training_job(hub,card["dataset_id"],41,"buddy-student","base@sha","budget-approval-fixture",Path(temp)/"jobs")
+            job=create_training_job(hub,card["dataset_id"],41,"buddy-student","0123456789abcdef0123456789abcdef01234567","budget-approval-fixture",Path(temp)/"jobs")
             self.assertEqual(job["execution_status"],"NOT_EXECUTED")
             self.assertFalse(job["weights_updated"])
 
