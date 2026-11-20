@@ -22,15 +22,17 @@ GOALS = ROOT / "config/dreamco-mastery-continuity-registry.json"
 OUT = ROOT / "artifacts/division-mastery"
 ALLOWED_TASKS = {
     "registry_validation": [sys.executable, "tools/validate_dreamco_mastery_registry.py"],
+    "platform_regression_suite": [sys.executable, "-m", "unittest", "tests.test_dreamco_division_mastery_orchestrator", "tests.test_buddy_failure_learning", "tests.test_buddy_conversation_learning_policy"],
     "division_lane_plan": [sys.executable, "tools/buddy_masterbot_training_lane.py"],
 }
 # Dependencies are explicit and topologically ordered. Division-specific
 # implementation tasks remain blocked until their code/test/runtime evidence is mapped.
 TASK_DAG = [
     {"id": "registry_validation", "depends_on": [], "kind": "safe_audit"},
-    {"id": "division_lane_plan", "depends_on": ["registry_validation"], "kind": "sandbox_plan"},
+    {"id": "platform_regression_suite", "depends_on": ["registry_validation"], "kind": "shared_regression_tests"},
+    {"id": "division_lane_plan", "depends_on": ["registry_validation", "platform_regression_suite"], "kind": "sandbox_plan"},
     {"id": "division_contract_benchmark", "depends_on": ["registry_validation"], "kind": "benchmark_contract"},
-    {"id": "evidence_review", "depends_on": ["division_lane_plan", "division_contract_benchmark"], "kind": "promotion_gate"},
+    {"id": "evidence_review", "depends_on": ["division_lane_plan", "division_contract_benchmark", "platform_regression_suite"], "kind": "promotion_gate"},
 ]
 ROUTES = {
     "DCO-001": ["DreamCo", "Buddy"],
@@ -141,7 +143,7 @@ def build_plan():
                     "missing": ["implementation_paths" if not TRACEABILITY_ANCHORS.get(g["id"], {}).get("implementation_paths") else None,
                                 "test_paths" if not TRACEABILITY_ANCHORS.get(g["id"], {}).get("test_paths") else None,
                                 "runtime_routes" if not TRACEABILITY_ANCHORS.get(g["id"], {}).get("runtime_routes") else None,
-                                "benchmark_evidence"]
+                                "benchmark_evidence"] if item is not None]
                 } for g in assigned
             },
             "task_dag": TASK_DAG,
@@ -149,6 +151,7 @@ def build_plan():
                 "registry_validation": "runnable",
                 "division_lane_plan": "runnable_after_registry_validation",
                 "division_contract_benchmark": "runnable_after_registry_validation",
+                "platform_regression_suite": "runnable_after_registry_validation",
                 "evidence_review": "blocked_until_independent_evidence"
             },
             "next_action": "run_allowlisted_sandbox_lane_and_collect_benchmark_evidence",
@@ -192,7 +195,7 @@ def run_lane(division_id: str, run_id: str, commit_sha: str):
     env["MASTERBOT_NAME"] = division["name"]
     env["GITHUB_RUN_ID"] = run_id
     env["GITHUB_RUN_ATTEMPT"] = os.environ.get("GITHUB_RUN_ATTEMPT", "1")
-    for task_id in ("registry_validation", "division_lane_plan"):
+    for task_id in ("registry_validation", "platform_regression_suite", "division_lane_plan"):
         command = ALLOWED_TASKS[task_id]
         completed = subprocess.run(command, cwd=ROOT, env=env, text=True, capture_output=True, check=False)
         results.append({
@@ -214,6 +217,7 @@ def run_lane(division_id: str, run_id: str, commit_sha: str):
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "task_results": results,
         "task_graph_status": "blocked_on_failed_dependency" if any(x["status"] != "passed" for x in results) else "safe_tasks_passed",
+        "shared_regression_status": next((x["status"] for x in results if x["task_id"] == "platform_regression_suite"), "not_run"),
         "benchmark_status": "not_measured_by_lane_planner",
         "weights_trained": False,
         "production_promotion": "not_authorized",
