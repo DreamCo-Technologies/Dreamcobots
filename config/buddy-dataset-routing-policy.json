@@ -191,6 +191,23 @@
       "minimum_verified_events_per_masterbot": 3,
       "candidate_card_default_training_approved": false,
       "status": "CANDIDATE_GENERATION_ONLY_REQUIRES_FINAL_HUMAN_REVIEW"
+    },
+    "cross_model_benchmark": {
+      "job_creator": "buddy/datasets/benchmark_jobs.py",
+      "runner": "buddy/datasets/benchmark_runner.py",
+      "create_cli": "tools/create_buddy_model_benchmark.py",
+      "execute_cli": "tools/run_buddy_model_benchmark.py",
+      "metric": "bits_per_utf8_byte",
+      "candidates": [
+        "one_pinned_baseline",
+        "trained_candidate",
+        "license_verified_open_weight_alternatives"
+      ],
+      "holdout": "same isolated per-MasterBot test split for every candidate",
+      "requires_explicit_compute_approval": true,
+      "automatic_execution": false,
+      "execution_verified": false,
+      "limitation": "Language-modeling score is not a complete domain-task, safety, reliability, latency-cost, or agentic benchmark"
     }
   }
 }
