@@ -1,4 +1,4 @@
-"""Create reproducible training job requests; never launch compute from this module."""
+"""Create reproducible training job requests for the registered local Transformers runner."""
 from __future__ import annotations
 import hashlib
 import json
@@ -11,6 +11,9 @@ from .hub import DatasetHub, DatasetPolicyError
 
 def create_training_job(dataset_hub: DatasetHub, dataset_id: str, masterbot_id: int,
                         model_id: str, base_model_revision: str, compute_approval_id: str = "",
+                        model_license: str = "", model_license_url: str = "",
+                        model_license_status: str = "UNKNOWN", model_license_evidence: str = "",
+                        training_method: str = "sft", max_steps: int = 100,
                         output_dir: str | Path = "artifacts/buddy-training-jobs") -> dict[str, Any]:
     card = dataset_hub.get(dataset_id)
     if not card:
@@ -26,18 +29,30 @@ def create_training_job(dataset_hub: DatasetHub, dataset_id: str, masterbot_id: 
         raise DatasetPolicyError("Pinned train, validation, and isolated test split hashes are required")
     if not compute_approval_id.strip():
         raise DatasetPolicyError("An explicit compute budget approval ID is required")
+    if not 1 <= int(masterbot_id) <= 65:
+        raise DatasetPolicyError("A canonical MasterBot ID from 1 to 65 is required")
     if not model_id.strip() or not re.fullmatch(r"[0-9a-f]{40}", base_model_revision.strip()):
         raise DatasetPolicyError("Pin model ID and a 40-character immutable base-model commit SHA")
+    if not model_license.strip() or not model_license_url.startswith("https://") or model_license_status != "VERIFIED" or not model_license_evidence.strip():
+        raise DatasetPolicyError("The base model license, HTTPS terms URL, verified status, and evidence reference are required")
+    if training_method not in {"sft", "lora"}:
+        raise DatasetPolicyError("Supported first-run methods are sft and lora")
+    if not 1 <= int(max_steps) <= 100000:
+        raise DatasetPolicyError("max_steps must be between 1 and 100000")
     payload = {
         "schema": "dreamco.model_training_job.v1", "job_id": "train-" + uuid.uuid4().hex[:16],
         "created_at": datetime.now(timezone.utc).isoformat(), "dataset_id": dataset_id,
-        "dataset_version": card["version"], "dataset_sha256": card.get("content_sha256"),
+        "dataset_version": card["version"], "dataset_sha256": card["content_sha256"],
+        "dataset_hub_path": str(dataset_hub.home.resolve()), "dataset_object_path": card["object_path"],
         "masterbot_id": masterbot_id, "model_id": model_id,
-        "base_model_revision": base_model_revision, "compute_approval_id": compute_approval_id, "split_manifest": splits,
-        "status": "APPROVED_REQUEST_PENDING_REGISTERED_RUNNER",
+        "base_model_revision": base_model_revision, "model_license": model_license,
+        "model_license_url": model_license_url, "model_license_status": model_license_status,
+        "model_license_evidence": model_license_evidence, "compute_approval_id": compute_approval_id,
+        "training_method": training_method, "training_config": {"max_steps": int(max_steps), "per_device_train_batch_size": 1, "gradient_accumulation_steps": 4, "learning_rate": 0.0002, "max_seq_length": 512, "seed": 42},
+        "split_manifest": splits, "dataset_card_sha256": hashlib.sha256(json.dumps(card, sort_keys=True).encode()).hexdigest(),
+        "status": "APPROVED_REQUEST_READY_FOR_EXPLICIT_RUN",
         "execution_status": "NOT_EXECUTED", "weights_updated": False,
-        "reproducibility": {"dataset_card_sha256": hashlib.sha256(json.dumps(card, sort_keys=True).encode()).hexdigest(),
-            "split_manifest_required": True, "seed_required": True, "tokenizer_revision_required": True,
+        "reproducibility": {"split_manifest_required": True, "seed_required": True, "tokenizer_revision_required": True,
             "holdout_isolation_required": True, "benchmark_before_and_after_required": True},
         "promotion": {"production_weight_update": False, "requires_independent_review": True,
             "requires_separate_explicit_approval": True}
