@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-20T21:48:54Z
+Generated: 2026-11-20T22:13:14Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1640
-- Actionable claim lines detected: 11654
+- Markdown documents scanned: 1644
+- Actionable claim lines detected: 11686
 - Documents with missing path references: 107
-- Documents without implementation references: 1563
+- Documents without implementation references: 1567
 - Documents with implementation references but no test references: 62
-- Documents with inventory count claims: 104
-- Inventory count claims requiring review: 373
+- Documents with inventory count claims: 106
+- Inventory count claims requiring review: 376
 
 ## Fixed-count claims requiring review
 
@@ -109,6 +109,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/BUDDY_RESOURCE_MAP.md:53 — | - | `github_discussions` | GitHub Discussions on Dreamcobots (enabled, 6 categories, 0 threads) | A possible public Q&A and feedback channel for Buddy users and evals. | **needs_owner_decision** | - |
 - docs/BUDDY_RESOURCE_MAP.md:73 — ## Grok teammate lanes (box-local roster, about 112 bots)
 - docs/BUDDY_USER_TESTING_CATALOG.md:19 — | 45 divisions | Repository coverage exists | READY-USER | Test one primary workflow per division |
+- docs/BUDDY_VIBE_CODING_REVERSE_ENGINEERING_DISTILLATION_AND_TRAINING.md:58 — The 65 MasterBot registry and 45-domain taxonomy must be reconciled using an authoritative crosswalk. Until then, do not invent ownership or claim all 45 divisions have a verified mapping.
 - docs/CONVERSATION_SYSTEM_INTEGRATION_SPEC.md:41 — ## 8. 65 division dashboards
 - docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md:215 — One benchmark workflow succeeding does NOT prove all 500 models were benchmarked.
 - docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md:475 — Do NOT manually create 1,000 pages.
@@ -122,6 +123,8 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md:3733 — 1,000 resources
 - docs/DREAMCO_BUDDY_MASTER_CODEX_DIRECTIVE.md:6957 — simple task → 1 model
 - docs/DREAMCO_DELIVERY_PLAN.md:35 — The canonical registry has 1,051 profiles. Fifty additional growth profiles now have separate catalog entries and shared sandbox task routes. Their original descriptions, capability lists and source files remain preserved. The 262 historical source records include these 50 and th
+- docs/DREAMCO_DIVISION_MODEL_COMPETITIVENESS.md:50 — This PR adds the policy and a deterministic fleet-profile builder. It does not train 65 models, provision GPUs, create provider credentials, or prove model competitiveness. The first execution target is to generate all 65 model profiles, then reconcile the authoritative 45-domain
+- docs/DREAMCO_DIVISION_MODEL_COMPETITIVENESS.md:50 — This PR adds the policy and a deterministic fleet-profile builder. It does not train 65 models, provision GPUs, create provider credentials, or prove model competitiveness. The first execution target is to generate all 65 model profiles, then reconcile the authoritative 45-domain
 - docs/DREAMCO_MASTERY_CONTINUITY_SYSTEM.md:92 — The new engine connects all 65 registry entries to logical lanes, goal routing, dependency metadata, shared regression execution, the existing lane planner, benchmark execution, and evidence artifacts. It does **not** yet implement every domain capability, execute every historica
 - docs/DREAMCO_MASTER_ROADMAP_2026.md:26 — ### 1–15 Workflow Organization & Dashboard
 - docs/DREAMCO_MASTER_ROADMAP_2026.md:26 — ### 1–15 Workflow Organization & Dashboard
@@ -12934,6 +12937,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/BUDDY_DATASET_HUB_AND_UNKNOWN_PROBLEM_ROUTER.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 8
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/BUDDY_DEVICE_FABRIC.md
 
 - Status: implementation_reference_missing
@@ -13294,6 +13307,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/BUDDY_UNIVERSAL_LEARNING_AND_MASTERY_LOOP.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 4
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/BUDDY_UNIVERSAL_LEARNING_ENGINE.md
 
 - Status: implementation_reference_missing
@@ -13328,6 +13351,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 - Status: implementation_reference_missing
 - Actionable claim lines: 7
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_VIBE_CODING_REVERSE_ENGINEERING_DISTILLATION_AND_TRAINING.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 16
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
@@ -13582,6 +13615,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: None detected
 - Missing paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_DIVISION_MODEL_COMPETITIVENESS.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 4
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_ENGINEERING_OPERATING_SYSTEM.md
