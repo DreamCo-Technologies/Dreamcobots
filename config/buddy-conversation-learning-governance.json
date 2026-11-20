@@ -1,0 +1,91 @@
+{
+  "schema": "dreamco.buddy_conversation_learning_governance.v1",
+  "version": "1.0.0",
+  "status": "POLICY_DEFINED_RUNTIME_INTEGRATION_REQUIRED",
+  "principles": {
+    "private_by_default": true,
+    "conversation_is_not_automatically_training_data": true,
+    "personal_memory_and_global_learning_are_separate": true,
+    "raw_transcripts_never_enter_shared_learning": true,
+    "consent_is_purpose_specific_and_revocable": true,
+    "unknown_rights_or_consent_means_deny": true
+  },
+  "separate_opt_ins": {
+    "personal_memory": "Remember selected facts/preferences for this user only.",
+    "product_improvement": "Contribute de-identified aggregate patterns to improve DreamCo.",
+    "cross_user_sharing": "Share an eligible de-identified lesson across users.",
+    "foundation_model_training": "Consider a rights-cleared derived example for separately reviewed model training."
+  },
+  "content_rules": {
+    "accepted_candidate_forms": [
+      "structured_preference",
+      "user_correction",
+      "task_outcome",
+      "verified_procedure",
+      "aggregate_pattern"
+    ],
+    "raw_transcript_allowed": false,
+    "credentials_allowed": false,
+    "sensitive_data_default": "exclude_from_shared_learning",
+    "third_party_personal_data_default": "exclude_from_shared_learning",
+    "children_data_default": "exclude_from_shared_learning"
+  },
+  "personal_memory": {
+    "requires_explicit_opt_in": true,
+    "tenant_scope": "single_user",
+    "default_retention_days": 90,
+    "maximum_retention_days": 365,
+    "user_controls": [
+      "view",
+      "correct",
+      "export",
+      "delete",
+      "disable_learning"
+    ],
+    "never_promote_as_fact_without_validation": true
+  },
+  "cross_user_learning": {
+    "requires_product_improvement_opt_in": true,
+    "requires_cross_user_sharing_opt_in": true,
+    "requires_deidentification": true,
+    "minimum_cohort_size": 20,
+    "requires_sensitive_data_absent": true,
+    "requires_third_party_data_absent": true,
+    "allowed_output": "generalized_pattern_or_verified_procedure_only",
+    "raw_user_ids_or_conversation_ids_allowed": false,
+    "per_user_private_memory_must_never_be_shared": true
+  },
+  "foundation_model_training": {
+    "enabled_by_default": false,
+    "requires_separate_explicit_opt_in": true,
+    "requires_rights_and_provenance_evidence": true,
+    "requires_deidentification_and_privacy_review": true,
+    "requires_human_review": true,
+    "requires_dataset_card_and_withdrawal_path": true,
+    "paid_compute_requires_separate_budget_approval": true
+  },
+  "revocation": {
+    "stop_future_ingestion": true,
+    "remove_retrieval_access": true,
+    "queue_deletion_from_eligible_stores": true,
+    "record_completion_evidence": true,
+    "already_released_aggregate_or_model_artifacts": "Follow documented legal, technical, and contractual withdrawal limits; never promise impossible retroactive unlearning."
+  },
+  "human_like_experience": {
+    "identity": "Consistent transparent AI assistant; never claim to be human.",
+    "memory": "Retrieve relevant user-approved context and confirm uncertain or stale facts.",
+    "continuity": "Track open commitments, project state, decisions, and next steps with timestamps.",
+    "communication": "Adapt warmth, directness, detail, and format to user preferences.",
+    "emotional_attunement": "Acknowledge feelings without diagnosing, manipulating, or encouraging dependency.",
+    "honesty": "State uncertainty, distinguish memory from inference, and never fabricate experiences or actions.",
+    "agency": "Ask before consequential external actions and respect user corrections.",
+    "repair": "Admit mistakes, explain the correction, and record verified lessons."
+  },
+  "quality_gates": {
+    "every_memory_has_source_scope_timestamp_and_confidence": true,
+    "stale_memories_are_revalidated": true,
+    "contradictions_are_flagged_not_silently_overwritten": true,
+    "cross_user_lessons_are_tested_before_promotion": true,
+    "benchmark_data_is_excluded_from_training_unless_authorized": true
+  }
+}
