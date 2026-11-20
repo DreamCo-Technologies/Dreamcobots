@@ -41,6 +41,13 @@ jobs:
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
           python -m unittest tests.test_dreamco_division_mastery_orchestrator
           python tools/validate_dreamco_mastery_registry.py
+      - name: Preserve canonical division queue
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamco-division-mastery-queue-${{ github.run_id }}
+          path: artifacts/division-mastery/division-mastery-queue.json
+          if-no-files-found: error
+          retention-days: 90
 
   benchmark:
     needs: prepare
@@ -56,7 +63,9 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Run division capability contract benchmark
-        run: npm run buddy:daily-division-benchmarks -- --concurrency=8
+        run: |
+          mkdir -p artifacts/division-mastery
+          npx tsx tools/run_daily_division_benchmarks.ts --concurrency=8 > artifacts/division-mastery/division-contract-benchmark.json
       - name: Record benchmark run as contract evidence only
         if: always()
         run: |
@@ -66,7 +75,9 @@ jobs:
         if: always()
         with:
           name: division-contract-benchmark-${{ github.run_id }}
-          path: artifacts/division-mastery/benchmark-run-metadata.json
+          path: |
+            artifacts/division-mastery/benchmark-run-metadata.json
+            artifacts/division-mastery/division-contract-benchmark.json
           if-no-files-found: warn
           retention-days: 90
 
