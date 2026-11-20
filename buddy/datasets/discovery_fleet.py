@@ -4,7 +4,7 @@ import json,re,os
 from datetime import datetime,timezone
 from pathlib import Path
 from typing import Any
-from .hub import DatasetHub
+from .hub import DatasetHub,DatasetPolicyError
 from .sources import discover,inspect_huggingface_dataset_card,SourceAccessError
 from .license_policy import assess_training_candidate
 from .unknown_router import ALIASES
@@ -48,8 +48,11 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
                 except (SourceAccessError,ValueError) as exc:
                     candidate["dataset_card_inspection_error"]=type(exc).__name__
             candidate["license_assessment"]=assess_training_candidate(candidate)
-            catalog.record_external_candidate(candidate,int(bot["id"]),query)
-            recorded+=1
+            try:
+                catalog.record_external_candidate(candidate,int(bot["id"]),query)
+                recorded+=1
+            except DatasetPolicyError as exc:
+                report["source_errors"]["candidate_validation"]=report["source_errors"].get("candidate_validation",0)+1
         report["candidates_recorded"]+=recorded
         for source,error in found["source_errors"].items():
             report["source_errors"][source]=report["source_errors"].get(source,0)+1
