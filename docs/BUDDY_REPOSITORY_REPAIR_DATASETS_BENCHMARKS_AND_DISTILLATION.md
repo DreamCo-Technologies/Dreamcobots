@@ -61,7 +61,13 @@ A retry is not a repair. Do not turn an unverified fix into training data. The f
 
 ## 5. GitHub Actions operating policy
 
-GitHub Actions should:
+GitHub Actions now includes a scheduled failure detector and a separate safe-repair worker:
+- Buddy Failure Detection and Learning polls completed workflow runs every 15 minutes, groups recurring failures by fingerprint, and creates/updates canonical incident issues.
+- Buddy Safe Repository Repair polls eligible incident issues every 30 minutes and runs only exact allowlisted deterministic artifact rebuilds (currently the DreamCo dataset-route index or division-model fleet generator) in an isolated branch.
+- If tracked generated artifacts change, it opens a repair PR. It does not merge that PR.
+- All other failure classes remain in the diagnosis queue for a specialist MasterBot and human-reviewed repair.
+
+The general operating policy is:
 - detect failed workflows and preserve incident evidence;
 - run reproducible diagnostics and targeted tests;
 - apply only narrowly allowlisted, deterministic repairs in an isolated branch;
@@ -75,4 +81,4 @@ Actions must not silently change security policy, permissions, billing, migratio
 
 Implemented in this repository branch: Dataset Hub local catalog and candidate routing, metadata discovery adapters, conservative license triage, training-job request validation, model benchmark scaffolding, failure fingerprint/classification, MasterBot routing and verified-lesson candidate gates.
 
-Not yet proven by these definitions: production-grade shared object storage, exhaustive internet dataset discovery, every external connector, continuous GPU training, production model-weight updates, a fully autonomous code-repair agent, or mastered specialist models. GitHub Actions run results and actual training artifacts must establish those facts.
+Not yet proven by these definitions: production-grade shared object storage, exhaustive internet dataset discovery, every external connector, continuous GPU training, production model-weight updates, general-purpose autonomous code repair beyond the two allowlisted artifact rebuilds, or mastered specialist models. GitHub Actions run results and actual training artifacts must establish those facts.
