@@ -69,16 +69,17 @@ async function render() {
       return;
     }
     const s = data.summary || {};
-    app.innerHTML = \`<div class="grid">
-      <div class="card"><h2>Dataset files</h2><p class="ok">\${s.repository_dataset_files ?? 0}</p></div>
-      <div class="card"><h2>Dataset cards</h2><p>\${s.dataset_cards_or_manifests ?? 0}</p></div>
-      <div class="card"><h2>Training requests</h2><p>\${s.training_job_manifests ?? 0}</p><p class="warn">Requests are not completed training</p></div>
-      <div class="card"><h2>Model artifacts</h2><p>\${s.model_artifact_files ?? 0}</p></div>
-      <div class="card"><h2>Unknown problem routes</h2><p>\${s.unknown_problem_route_artifacts ?? 0}</p></div>
-      <div class="card"><h2>Runtime catalog</h2><p>\${s.runtime_catalog_available ? "Available to generator" : "Not present in snapshot environment"}</p></div>
+    const safe = (value) => String(value ?? "").replace(/[&<>"\']/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[char]));
+    app.innerHTML = `<div class="grid">
+      <div class="card"><h2>Dataset files</h2><p class="ok">${s.repository_dataset_files ?? 0}</p></div>
+      <div class="card"><h2>Dataset cards</h2><p>${s.dataset_cards_or_manifests ?? 0}</p></div>
+      <div class="card"><h2>Training requests</h2><p>${s.training_job_manifests ?? 0}</p><p class="warn">Requests are not completed training</p></div>
+      <div class="card"><h2>Model artifacts</h2><p>${s.model_artifact_files ?? 0}</p></div>
+      <div class="card"><h2>Unknown problem routes</h2><p>${s.unknown_problem_route_artifacts ?? 0}</p></div>
+      <div class="card"><h2>Runtime catalog</h2><p>${s.runtime_catalog_available ? "Available to generator" : "Not present in snapshot environment"}</p></div>
     </div>
-    <div class="card"><h2>Data sources</h2><p>Adapter presence is not proof of a live connection.</p><div class="grid">\${(data.sources || []).map(x => \`<div class="card"><strong>\${x.kind}</strong><p>\${x.files} repository files</p><p>\${x.status}</p></div>\`).join("")}</div></div>
-    <div class="card"><h2>Governance and coverage</h2><p>Raw dataset rows, credentials and private cards are excluded from this public snapshot.</p><p>Training requests, model artifacts and benchmark outcomes are reported separately.</p><ul>\${(data.observability_gaps || []).map(x => \`<li>\${x}</li>\`).join("")}</ul></div>\`;
+    <div class="card"><h2>Data sources</h2><p>Adapter presence is not proof of a live connection.</p><div class="grid">${(data.sources || []).map(x => `<div class="card"><strong>${safe(x.kind)}</strong><p>${safe(x.files)} repository files</p><p>${safe(x.status)}</p></div>`).join("")}</div></div>
+    <div class="card"><h2>Governance and coverage</h2><p>Raw dataset rows, credentials and private cards are excluded from this public snapshot.</p><p>Training requests, model artifacts and benchmark outcomes are reported separately.</p><ul>${(data.observability_gaps || []).map(x => `<li>${safe(x)}</li>`).join("")}</ul></div>`;
   }
   if (current === "Buddy") {
     app.innerHTML = `<form id="chat"><textarea id="msg" rows="4" placeholder="Ask Buddy to route a task"></textarea><button class="primary">Send</button></form><div class="log" id="log"></div>`;
