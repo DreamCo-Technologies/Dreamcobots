@@ -3,7 +3,7 @@ name: Buddy Sandbox Bootcamp
 on:
   workflow_dispatch:
   schedule:
-    # Weekday off-peak system timer: compile + sandbox smoke only.
+    # Weekday off-peak index build + sandbox smoke; no external downloads or training.
     - cron: "23 8 * * 1-5"
   push:
     paths:
@@ -11,6 +11,11 @@ on:
       - 'buddy/bootcamp/**'
       - 'buddy/learning/**'
       - 'config/buddy-study-resources-*.json'
+      - 'config/buddy-dataset-routing-policy.json'
+      - 'config/masterbot-65-registry.json'
+      - 'website/data/free-datasets.json'
+      - 'tools/build_buddy_dataset_routes.py'
+      - 'tests/test_buddy_dataset_routing.py'
 
 permissions:
   contents: read
@@ -32,8 +37,8 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: '3.13'
-      - name: Compile sandbox and bootcamp modules
-        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning
+      - name: Compile sandbox, bootcamp, and learning modules
+        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning tools/build_buddy_dataset_routes.py
       - name: Run safe sandbox smoke test
         run: |
           python - <<'PY'
@@ -42,8 +47,12 @@ jobs:
           assert result.passed and result.score == 1.0
           print(result)
           PY
+      - name: Build DreamCo dataset discovery routes
+        run: python tools/build_buddy_dataset_routes.py
+      - name: Test 65 MasterBot dataset routing and training gates
+        run: python -m unittest tests.test_buddy_dataset_routing
       - name: Validate curriculum JSON
-        # Scheduled timer runs the sandbox smoke only; curriculum validation stays on push/dispatch.
+        # Scheduled timer still validates the dataset route policy; broader study catalog validation runs on push/dispatch.
         if: github.event_name != 'schedule'
         run: |
           python - <<'PY'
@@ -75,3 +84,11 @@ jobs:
           assert total <= target, f'Expected no more than target catalog size {target}, found {total}'
           print(f'validated {total} unique study resources toward target {target}')
           PY
+      - name: Preserve dataset routing artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-dataset-routes-${{ github.run_id }}
+          path: artifacts/buddy-dataset-hub/dataset-routes.json
+          if-no-files-found: warn
+          retention-days: 90
