@@ -47,7 +47,11 @@ jobs:
       - name: Verify generated outputs and Buddy repair-learning tests
         run: |
           set -euo pipefail
+          python tools/build_buddy_dataset_routes.py --check
           python tools/build_division_model_fleet.py --check
+          python tools/build_pages_connection_index.py --check
+          python tools/build_actions_prospectus.py --check
+          python tools/build_file_prospectus.py --check
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
           python -m unittest tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_failure_learning
@@ -57,7 +61,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git add             artifacts/buddy-dataset-hub/dataset-routes.json             artifacts/division-model-fleet/division-model-fleet.json             config/buddy/run-with-buddy.generated.json             config/generated/actions-prospectus.json             config/generated/file-prospectus             website/data/actions-prospectus.json             website/data/run-prospectus.json             website/data/run-prospectus-bots.json             website/data/pages-connection-index.json
+          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/buddy/run-with-buddy.generated.json config/generated/actions-prospectus.json config/generated/file-prospectus website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json; do
+            if [ -e "$path" ]; then git add -A -- "$path"; fi
+          done
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No allowlisted generated artifacts needed repair."
@@ -77,6 +83,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore(ci): regenerate verified DreamCo indexes"
           AUTH="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
-          git -c core.hooksPath=/dev/null \
-              -c http.extraheader="AUTHORIZATION: basic $AUTH" \
-              push "https://github.com/$GITHUB_REPOSITORY.git" "HEAD:refs/heads/$REPAIR_BRANCH"
+          git -c core.hooksPath=/dev/null -c http.extraheader="AUTHORIZATION: basic $AUTH" push "https://github.com/$GITHUB_REPOSITORY.git" "HEAD:refs/heads/$REPAIR_BRANCH"
