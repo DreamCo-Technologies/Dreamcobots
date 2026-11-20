@@ -48,8 +48,10 @@ class DatasetHubRuntimeTests(unittest.TestCase):
     def test_network_is_off_by_default(self):
         old=os.environ.pop("DREAMCO_ALLOW_SOURCE_NETWORK",None)
         try:
-            with self.assertRaises(SourceAccessError):
-                discover("transformer")
+            result = discover("transformer")
+            self.assertEqual(result["results"], [])
+            self.assertEqual(result["model_results"], [])
+            self.assertTrue(result["source_errors"])
         finally:
             if old is not None: os.environ["DREAMCO_ALLOW_SOURCE_NETWORK"]=old
 
