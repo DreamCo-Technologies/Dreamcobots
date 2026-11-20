@@ -133,3 +133,96 @@ test("personality learning is selective and private training needs separate cons
     privateModelTrainingEnabled: true,
   }), /separate explicit opt-in/);
 });
+
+import assert from "node:assert/strict";
+import test from "node:test";
+import {
+  companyDataConsentRequestSchema,
+  createCompanyDataConsentPlan,
+  buddyStudySourceRequestSchema,
+  createBuddyStudySourcePlan,
+  userSubscriptionControlRequestSchema,
+  createUserSubscriptionControlPlan,
+} from "../server/user-control-center-policy";
+
+const companyBase = {
+  companyOrController: "Example Platform",
+  purpose: "sale" as const,
+  dataCategories: ["profile" as const, "purchases" as const],
+  recipientOrRecipientClass: "data marketplace partners",
+  retentionDays: 180,
+  jurisdiction: "United States",
+  explicitUserAction: true as const,
+  userAuthenticated: true as const,
+  policyVersion: "1.0.0",
+};
+
+test("company sale consent is purpose-specific, explicit, and auditable", () => {
+  const parsed = companyDataConsentRequestSchema.parse({ ...companyBase, decision: "opt_out", });
+  const receipt = createCompanyDataConsentPlan(parsed);
+  assert.equal(receipt.purpose, "sale");
+  assert.equal(receipt.decision, "opt_out");
+  assert.equal(receipt.effectiveInsideDreamCo, true);
+  assert.equal(receipt.externalProviderAction, "not_submitted");
+});
+
+test("consent cannot be bundled or submitted without explicit authenticated action", () => {
+  assert.equal(companyDataConsentRequestSchema.safeParse({ ...companyBase, decision: "opt_in", explicitUserAction: false }).success, false);
+  assert.equal(companyDataConsentRequestSchema.safeParse({ ...companyBase, decision: "opt_in", userAuthenticated: false }).success, false);
+});
+
+test("Buddy can study authorized sources in read-only mode, not bypass access controls", () => {
+  const input = buddyStudySourceRequestSchema.parse({
+    sourceName: "My GitHub project",
+    sourceType: "github_repository",
+    sourceUrl: "https://github.com/example/project",
+    sourceReference: "github:example/project",
+    ownerAuthorized: true,
+    rightsConfirmed: true,
+    requestedScopes: ["contents:read", "issues:read"],
+    studyPurposes: ["retrieval", "summarize", "evaluation"],
+    trainingOptIn: false,
+    noAccessControlBypass: true,
+    noRawCredentials: true,
+  });
+  const plan = createBuddyStudySourcePlan(input);
+  assert.equal(plan.accessMode, "read_only");
+  assert.equal(plan.trainingOptIn, false);
+  assert.equal(plan.dataRead, false);
+  assert.equal(plan.userCanRevoke, true);
+});
+
+test("Buddy source import rejects unapproved ownership and credential collection", () => {
+  const result = buddyStudySourceRequestSchema.safeParse({
+    sourceName: "Private mailbox",
+    sourceType: "email",
+    sourceUrl: "https://mail.example.com",
+    sourceReference: "mailbox:primary",
+    ownerAuthorized: false,
+    rightsConfirmed: true,
+    requestedScopes: ["mail.read"],
+    studyPurposes: ["summarize"],
+    noAccessControlBypass: true,
+    noRawCredentials: true,
+  });
+  assert.equal(result.success, false);
+});
+
+test("subscription changes require exact user approval and never claim provider execution", () => {
+  const base = {
+    provider: "DreamCo",
+    subscriptionReference: "sub_owner_123",
+    accountOwnerId: "account-owner-1",
+    price: 19.99,
+    currency: "USD",
+    billingInterval: "monthly" as const,
+    nextRenewalAt: "2026-12-01T00:00:00.000Z",
+    authenticatedOwner: true as const,
+  };
+  assert.equal(userSubscriptionControlRequestSchema.safeParse({ ...base, action: "cancel" }).success, false);
+  const input = userSubscriptionControlRequestSchema.parse({ ...base, action: "cancel", exactUserApproval: true });
+  const plan = createUserSubscriptionControlPlan(input);
+  assert.equal(plan.status, "awaiting_provider_execution");
+  assert.equal(plan.completed, false);
+  assert.equal(plan.noPaymentOrCancellationExecuted, true);
+});
