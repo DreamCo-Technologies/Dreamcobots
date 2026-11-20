@@ -1,16 +1,16 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-20T20:27:27Z
+Generated: 2026-11-20T20:35:40Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1636
-- Actionable claim lines detected: 11627
-- Documents with missing path references: 106
-- Documents without implementation references: 1562
-- Documents with implementation references but no test references: 61
+- Markdown documents scanned: 1637
+- Actionable claim lines detected: 11640
+- Documents with missing path references: 107
+- Documents without implementation references: 1561
+- Documents with implementation references but no test references: 62
 - Documents with inventory count claims: 103
 - Inventory count claims requiring review: 372
 
@@ -13003,6 +13003,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/BUDDY_FAILURE_DETECTION_RECOVERY_LEARNING.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 13
+- Implementation paths: tools/buddy_failure_learning.py
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/BUDDY_FRONTIER_EVALUATION_HARNESS.md
 
 - Status: implementation_reference_missing
@@ -13185,12 +13195,12 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 ### docs/BUDDY_REPAIR_ORCHESTRATOR_IMPLEMENTATION_PLAN.md
 
-- Status: implementation_reference_missing
+- Status: broken_path_references
 - Actionable claim lines: 10
-- Implementation paths: None detected
-- Test paths: None detected
-- Missing paths: None detected
-- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Implementation paths: tools/buddy_failure_learning.py
+- Test paths: tests/test_buddy_failure_learning.py
+- Missing paths: github/workflows/buddy-failure-learning.yml
+- Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_REPAIR_ORCHESTRATOR_SPEC.md

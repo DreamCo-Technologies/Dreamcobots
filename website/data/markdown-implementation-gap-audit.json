@@ -1,21 +1,21 @@
 {
   "schema": "dreamco.buddy.markdown_implementation_gap_audit.v1",
-  "generated_at": "2026-11-20T20:27:27Z",
+  "generated_at": "2026-11-20T20:35:40Z",
   "inventory_mode": "all_tracked_markdown_files",
-  "document_count": 1636,
-  "actionable_claim_lines": 11627,
+  "document_count": 1637,
+  "actionable_claim_lines": 11640,
   "documents_with_count_claims": 103,
   "numeric_inventory_claim_count": 372,
   "gap_status_counts": {
-    "broken_path_references": 106,
+    "broken_path_references": 107,
     "implementation_and_test_paths_referenced_not_verified": 3,
-    "implementation_reference_missing": 1400,
+    "implementation_reference_missing": 1399,
     "reference_only": 85,
-    "test_reference_missing": 42
+    "test_reference_missing": 43
   },
-  "documents_with_missing_paths": 106,
-  "documents_without_implementation_references": 1562,
-  "documents_without_test_references": 61,
+  "documents_with_missing_paths": 107,
+  "documents_without_implementation_references": 1561,
+  "documents_without_test_references": 62,
   "documents": [
     {
       "path": ".agents/memory/MEMORY.md",
@@ -23582,6 +23582,28 @@
       "execution_verified": false
     },
     {
+      "path": "docs/BUDDY_FAILURE_DETECTION_RECOVERY_LEARNING.md",
+      "title": "Buddy Failure Detection, Recovery, and Learning System",
+      "sha256": "a750dd83ff4804cd1969955eb22371ee5d5d23acfc6ecdf6982304f3aa96313f",
+      "actionable_claim_lines": 13,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [
+        "tools/buddy_failure_learning.py"
+      ],
+      "missing_paths": [],
+      "implementation_paths": [
+        "tools/buddy_failure_learning.py"
+      ],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "test_reference_missing",
+      "next_action": "Add focused tests and acceptance evidence for the referenced implementation.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/BUDDY_FRONTIER_EVALUATION_HARNESS.md",
       "title": "Buddy Frontier Evaluation Harness",
       "sha256": "1c76f7c08faaab48ed09c98c4f3e2b7e31b76b3f81b2779a9bb44ea16e947545",
@@ -23985,19 +24007,28 @@
     {
       "path": "docs/BUDDY_REPAIR_ORCHESTRATOR_IMPLEMENTATION_PLAN.md",
       "title": "Buddy Repair Orchestrator Implementation Plan",
-      "sha256": "e4c0d9f86b5ed2c4736631909b7578b88f9c8e4e985013bc19ab2cf6f5bd90a5",
+      "sha256": "21658da10549da76a61952d9519fcdba223642b8ca01a9d009defe7723d2711b",
       "actionable_claim_lines": 10,
       "numeric_inventory_claims": [],
       "count_claim_review_required": false,
-      "referenced_paths": [],
-      "missing_paths": [],
-      "implementation_paths": [],
-      "test_paths": [],
+      "referenced_paths": [
+        "tests/test_buddy_failure_learning.py",
+        "tools/buddy_failure_learning.py"
+      ],
+      "missing_paths": [
+        "github/workflows/buddy-failure-learning.yml"
+      ],
+      "implementation_paths": [
+        "tools/buddy_failure_learning.py"
+      ],
+      "test_paths": [
+        "tests/test_buddy_failure_learning.py"
+      ],
       "workflow_paths": [],
       "configuration_paths": [],
       "documentation_paths": [],
-      "gap_status": "implementation_reference_missing",
-      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "gap_status": "broken_path_references",
+      "next_action": "Repair or explicitly supersede the missing repository path references.",
       "execution_verified": false
     },
     {
