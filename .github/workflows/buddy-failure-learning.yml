@@ -85,7 +85,7 @@ jobs:
                 if (matches.data.items.length) {
                   const issue = matches.data.items[0];
                   const priorComments = issue.comments ? (await github.rest.issues.listComments({owner, repo, issue_number: issue.number, per_page: 100})).data : [];
-                  const alreadyRecorded = priorComments.some(comment => comment.body.includes(`run_id: ${run.id}`));
+                  const alreadyRecorded = (issue.body || "").includes(`Run ID: ${run.id}`) || priorComments.some(comment => comment.body.includes(`run_id: ${run.id}`));
                   if (issue.state === "closed") {
                     await github.rest.issues.update({owner, repo, issue_number: issue.number, state: "open"});
                   }
