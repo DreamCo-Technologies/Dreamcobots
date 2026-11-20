@@ -1,0 +1,127 @@
+{
+  "schema": "dreamco.buddy_dataset_routing_policy.v1",
+  "version": "1.0.0",
+  "status": "ROUTING_CONTRACT_AND_LOCAL_INDEX_BUILDER",
+  "objective": "Build a DreamCo-owned dataset and training workflow inspired by Hugging Face Hub capabilities: discover, catalog, evaluate, route, version, and use eligible data to train Buddy and division specialist models.",
+  "architecture": {
+    "hub": "DreamCo Dataset Hub: versioned manifests, dataset cards, provenance, license/consent, quality scores, split hashes, lineage, and withdrawal records.",
+    "source_registry": [
+      "Hugging Face Hub datasets and models",
+      "GitHub repositories and releases",
+      "Kaggle datasets where terms permit",
+      "OpenML",
+      "UCI Machine Learning Repository",
+      "government/open data portals and official APIs",
+      "academic papers and supplementary datasets",
+      "DreamCo-owned repositories, docs, tests, task traces, synthetic fixtures, and user-contributed assets with permission"
+    ],
+    "planes": [
+      "public_reference_and_retrieval",
+      "DreamCo_owned_training",
+      "licensed_training",
+      "user_contributed_opt_in_training",
+      "evaluation_only_holdout"
+    ],
+    "routing": "Route candidate datasets by verified taxonomy tags, task/capability labels, and MasterBot owner; preserve source lineage and do not infer rights from a URL or listing."
+  },
+  "division_routing": {
+    "canonical_masterbots": 65,
+    "every_masterbot_gets_dedicated_dataset_lane": true,
+    "authoritative_45_division_crosswalk": "UNRESOLVED_DO_NOT_INVENT",
+    "initial_category_match": "HEURISTIC_DISCOVERY_ONLY",
+    "shared_foundation_categories": [
+      "language",
+      "reasoning",
+      "instruction_following",
+      "code",
+      "math",
+      "data",
+      "tool_use",
+      "safety"
+    ],
+    "secondary_collaboration_allowed": true,
+    "one_primary_owner_per_asset": true
+  },
+  "unknown_problem_router": {
+    "enabled": true,
+    "sequence": [
+      "classify_unknown_and_missing_capability",
+      "search_local_dreamco_dataset_index",
+      "search_authorized_huggingface_catalog",
+      "search_approved_open_dataset_registries",
+      "search_dreamco_repositories_and_docs",
+      "search_authorized_databases_and_apis",
+      "compare_candidates_by_relevance_quality_freshness_license_cost_and_access",
+      "sandbox_inspect_small_sample",
+      "create_provenance_manifest",
+      "route_to_primary_masterbot_and_collaborators",
+      "add_new_benchmark_or_fixture",
+      "retest_and_record_resolution"
+    ],
+    "if_no_match": "Create a missing-data research task, identify candidate sources, record uncertainty, and ask for approval when rights, access, cost, or sensitive data are unclear.",
+    "never_claim_unknown_solved_without_holdout_evidence": true
+  },
+  "training_lifecycle": [
+    "discovered",
+    "cataloged",
+    "metadata_verified",
+    "rights_verified",
+    "quality_reviewed",
+    "training_approved",
+    "split_and_hash_pinned",
+    "sandbox_training",
+    "evaluated",
+    "independently_reviewed",
+    "eligible_for_promotion"
+  ],
+  "hard_gates": {
+    "unknown_license": "BLOCK_TRAINING",
+    "dataset_card_missing": "BLOCK_TRAINING",
+    "personal_or_third_party_data_without_specific_authority": "BLOCK_TRAINING",
+    "benchmark_holdout": "EVALUATION_ONLY_NEVER_TRAIN",
+    "duplicate_or_contaminated_splits": "BLOCK_TRAINING",
+    "paid_compute": "REQUIRES_EXPLICIT_BUDGET_APPROVAL",
+    "production_weight_update": "REQUIRES_SEPARATE_EXPLICIT_APPROVAL_AND_REVIEW",
+    "external_source_access": "RESPECT_AUTHENTICATION_TERMS_RATE_LIMITS_AND_ACCESS_CONTROLS"
+  },
+  "quality_checks": [
+    "schema_and_format",
+    "license_and_terms",
+    "provenance_and_owner",
+    "PII_and_sensitive_content",
+    "deduplication",
+    "contamination_and_benchmark_leakage",
+    "label_quality",
+    "coverage_and_balance",
+    "freshness",
+    "train_validation_holdout_isolation",
+    "dataset_hash_and_revision",
+    "reproducible_loader"
+  ],
+  "training_methods": [
+    "retrieval_before_finetuning",
+    "continued_pretraining_when_justified",
+    "supervised_finetuning",
+    "LoRA",
+    "QLoRA",
+    "preference_optimization",
+    "teacher_student_distillation_only_when_terms_allow",
+    "from_scratch_research_separately_approved"
+  ],
+  "model_targets": [
+    "Buddy foundation/student models",
+    "65 MasterBot specialist model profiles",
+    "division adapters and retrieval corpora",
+    "task-specific small models and embeddings"
+  ],
+  "ownership": "DreamCo-created datasets may be marked DreamCo-owned only with documented authorship/assignment. Third-party datasets retain their own license and attribution; transformed data does not automatically become DreamCo-owned.",
+  "defaults": {
+    "download_external_data": false,
+    "train_on_discovery_catalog": false,
+    "network_in_default_ci": false,
+    "weight_training_in_default_ci": false,
+    "auto_merge": false,
+    "auto_deploy": false,
+    "automatic_production_weight_updates": false
+  }
+}
