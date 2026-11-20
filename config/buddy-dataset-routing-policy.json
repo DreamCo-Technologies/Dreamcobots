@@ -1,7 +1,7 @@
 {
   "schema": "dreamco.buddy_dataset_routing_policy.v1",
   "version": "1.0.0",
-  "status": "ROUTING_CONTRACT_AND_LOCAL_INDEX_BUILDER",
+  "status": "LOCAL_HUB_AND_APPROVAL_GATED_TRAINING_RUNNER_ADDED",
   "objective": "Build a DreamCo-owned dataset and training workflow inspired by Hugging Face Hub capabilities: discover, catalog, evaluate, route, version, and use eligible data to train Buddy and division specialist models.",
   "architecture": {
     "hub": "DreamCo Dataset Hub: versioned manifests, dataset cards, provenance, license/consent, quality scores, split hashes, lineage, and withdrawal records.",
@@ -46,17 +46,17 @@
     "enabled": true,
     "sequence": [
       "classify_unknown_and_missing_capability",
-      "search_local_dreamco_dataset_index",
-      "search_authorized_huggingface_catalog",
-      "search_approved_open_dataset_registries",
-      "search_dreamco_repositories_and_docs",
-      "search_authorized_databases_and_apis",
+      "search_persistent_local_dreamco_dataset_hub",
+      "search_authorized_huggingface_dataset_and_model_catalogs",
+      "search_openml_uci_and_github_metadata",
+      "search_authorized_github_file_and_database_connectors",
       "compare_candidates_by_relevance_quality_freshness_license_cost_and_access",
-      "sandbox_inspect_small_sample",
-      "create_provenance_manifest",
-      "route_to_primary_masterbot_and_collaborators",
+      "sandbox_inspect_authorized_sample",
+      "create_provenance_manifest_and_versioned_dataset_card",
+      "route_to_canonical_primary_masterbot_and_collaborators",
+      "persist_open_research_task",
       "add_new_benchmark_or_fixture",
-      "retest_and_record_resolution"
+      "retest_unknown_problem"
     ],
     "if_no_match": "Create a missing-data research task, identify candidate sources, record uncertainty, and ask for approval when rights, access, cost, or sensitive data are unclear.",
     "never_claim_unknown_solved_without_holdout_evidence": true
@@ -122,6 +122,59 @@
     "weight_training_in_default_ci": false,
     "auto_merge": false,
     "auto_deploy": false,
-    "automatic_production_weight_updates": false
+    "automatic_production_weight_updates": false,
+    "network_metadata_discovery": false,
+    "authorized_github_file_read": false,
+    "database_snapshots": false,
+    "local_training_execution": false
+  },
+  "runtime_components": {
+    "dataset_hub": {
+      "catalog": "SQLite",
+      "cards": "versioned JSON",
+      "objects": "content-addressed local files",
+      "formats": [
+        "csv",
+        "jsonl"
+      ],
+      "production_shared_storage": "NOT_IMPLEMENTED"
+    },
+    "source_adapters": {
+      "huggingface_datasets": "opt-in metadata search",
+      "huggingface_models": "opt-in metadata search",
+      "openml": "opt-in metadata search",
+      "uci": "opt-in metadata search",
+      "github_public_search": "opt-in metadata search",
+      "github_authorized_file_read": "explicit network opt-in plus GITHUB_TOKEN",
+      "sqlite": "read-only snapshots with exact query hash allowlist",
+      "postgresql": "optional psycopg read-only snapshots"
+    },
+    "unknown_problem_router": {
+      "persistent_queue": true,
+      "entrypoint": "buddy/datasets/unknown_router.py",
+      "cli": "tools/route_buddy_unknown_problem.py",
+      "status": "LOCAL_ROUTING_AND_RESEARCH_TASK_PERSISTENCE"
+    },
+    "training_runner": {
+      "entrypoint": "buddy/datasets/transformers_runner.py",
+      "job_creator": "tools/create_buddy_training_job.py",
+      "executor": "tools/run_buddy_training_job.py",
+      "methods": [
+        "sft",
+        "lora"
+      ],
+      "requires": [
+        "verified_dataset_rights",
+        "verified_base_model_license",
+        "canonical_masterbot_owner",
+        "immutable_base_model_commit",
+        "pinned_train_validation_test_hashes",
+        "compute_approval_id",
+        "explicit_execute_flag"
+      ],
+      "automatic_execution": false,
+      "ci_training": false,
+      "execution_verified": false
+    }
   }
 }
