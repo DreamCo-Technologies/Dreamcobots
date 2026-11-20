@@ -1,0 +1,85 @@
+{
+  "schema": "dreamco.buddy_continuous_learning_policy.v1",
+  "mode": "CONTINUOUS_GOVERNED_LEARNING",
+  "enabled": true,
+  "cadence": {
+    "scheduler_cron": "15 */6 * * *",
+    "daily_review_utc": "0 2 * * *",
+    "benchmark_review_utc": "0 4 * * 1"
+  },
+  "lanes": {
+    "dedicated_logical_lane_per_masterbot": true,
+    "registry_source": "canonical_masterbot_registry",
+    "lane_isolation": "separate_run_state_and_evidence_per_masterbot",
+    "shared_services": [
+      "source_registry",
+      "dataset_rights_gate",
+      "benchmark_catalog",
+      "model_registry",
+      "lesson_memory",
+      "audit_log"
+    ],
+    "parallelism": "bounded_by_runner_capacity_and_resource_budget"
+  },
+  "cycle": [
+    "inventory_capability_gaps",
+    "select_highest_priority_verified_gap",
+    "retrieve_approved_sources",
+    "generate_lesson_and_practice",
+    "run_isolated_sandbox",
+    "evaluate_targeted_benchmark",
+    "evaluate_held_out_transfer",
+    "run_regression_and_safety_suites",
+    "record_lineage_and_artifact_hashes",
+    "promote_candidate_or_rollback",
+    "publish_daily_gap_report"
+  ],
+  "expansion_policy": {
+    "add_capabilities_only_with_tests": true,
+    "add_models_only_with_license_and_adapter_contract": true,
+    "add_tools_only_with_permission_and_contract_tests": true,
+    "add_data_only_with_provenance_and_rights": true,
+    "preserve_previous_known_good_checkpoint": true
+  },
+  "gates": {
+    "unknown_dataset_rights": "BLOCK",
+    "missing_source_provenance": "BLOCK",
+    "missing_consent_or_license": "BLOCK",
+    "production_weight_updates": "REQUIRE_EXPLICIT_APPROVAL",
+    "paid_compute": "REQUIRE_EXPLICIT_BUDGET_APPROVAL",
+    "production_deployment": "REQUIRE_REVIEW_AND_ROLLBACK",
+    "private_mail_and_customer_data": "DENY_BY_DEFAULT",
+    "proprietary_gpt5_weights": "FORBIDDEN",
+    "benchmark_regression": "DO_NOT_PROMOTE",
+    "repeated_failure": "QUARANTINE_AND_CREATE_REMEDIATION_LESSON"
+  },
+  "availability": {
+    "logical_training_program": "CONTINUOUS",
+    "scheduled_execution": "REQUIRES_ENABLED_GITHUB_ACTIONS_OR_EXTERNAL_WORKER",
+    "guarantees_24x7_compute": false,
+    "pause_on_resource_or_security_alert": true,
+    "resume_requires_health_check": true
+  },
+  "evidence": {
+    "required_per_run": [
+      "run_id",
+      "masterbot_id",
+      "source_refs",
+      "dataset_manifest",
+      "config_hash",
+      "seed",
+      "environment",
+      "test_results",
+      "benchmark_before",
+      "benchmark_after",
+      "holdout_result",
+      "regression_result",
+      "artifact_hash",
+      "decision"
+    ],
+    "immutable_run_history": true,
+    "daily_gap_report": true,
+    "weekly_model_card_review": true
+  },
+  "status": "POLICY_DEFINED_NOT_DEPLOYED"
+}
