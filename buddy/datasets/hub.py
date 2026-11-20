@@ -114,6 +114,11 @@ class DatasetHub:
         missing = [key for key in required if not str(card.get(key, "")).strip()]
         if missing:
             raise DatasetPolicyError("Missing dataset card fields: " + ", ".join(missing))
+        from urllib.parse import urlparse
+        for field in ("license_url", "source_url"):
+            parsed = urlparse(str(card[field]))
+            if parsed.scheme != "https" or not parsed.netloc:
+                raise DatasetPolicyError(f"{field} must be an HTTPS URL")
         plane = str(card["data_plane"])
         if plane not in ALLOWED_PLANES:
             raise DatasetPolicyError("Unknown data plane")
@@ -124,6 +129,12 @@ class DatasetHub:
             raise DatasetPolicyError("Training requires verified rights and a training-eligible data plane")
         if approved and not str(card.get("rights_evidence", "")).strip():
             raise DatasetPolicyError("Training approval requires a rights-evidence reference")
+        if approved:
+            splits = card.get("split_manifest") or {}
+            import re as _re
+            for split_name in ("train_sha256", "validation_sha256", "test_sha256"):
+                if not _re.fullmatch(r"[0-9a-f]{64}", str(splits.get(split_name, ""))):
+                    raise DatasetPolicyError("Training approval requires pinned train, validation, and isolated test split hashes")
         content_hash = None
         object_path = None
         quality = None
@@ -136,7 +147,7 @@ class DatasetHub:
             quality = _quality(source)
             content_hash = sha256_file(source)
             suffix = source.suffix.lower()
-            if quality["pii_review_required"] or quality["duplicate_rate"] > float(card.get("max_duplicate_rate", 0.01)):
+            if quality["row_count"] == 0 or quality["pii_review_required"] or quality["duplicate_rate"] > float(card.get("max_duplicate_rate", 0.01)):
                 raise DatasetPolicyError("Quality gate failed; source was not added to the approved object store")
             target = self.objects / f"{content_hash}{suffix}"
             if not target.exists():
@@ -145,6 +156,8 @@ class DatasetHub:
                 temp.replace(target)
             object_path = str(target.relative_to(self.home))
         dataset_id = str(card.get("dataset_id") or "dset-" + uuid.uuid4().hex[:16])
+        if not re.fullmatch(r"[A-Za-z0-9._-]{3,100}", dataset_id):
+            raise DatasetPolicyError("Dataset ID contains unsupported path characters")
         with self._connect() as db:
             prior = db.execute("SELECT MAX(version) AS v FROM datasets WHERE dataset_id=?", (dataset_id,)).fetchone()
             version = int(prior["v"] or 0) + 1
