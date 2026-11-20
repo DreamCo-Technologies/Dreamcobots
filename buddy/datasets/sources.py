@@ -121,7 +121,7 @@ def inspect_huggingface_dataset_card(dataset_id: str) -> dict:
         "card_sha256":hashlib.sha256(raw).hexdigest(),"card_bytes":len(raw),
         "license":front.get("license"),"tags":front.get("tags"),
         "task_categories":front.get("task_categories"),"language":front.get("language"),
-        "card_front_matter":front,"rights_status":"UNVERIFIED_REQUIRES_FULL_CARD_CONTENT_AND_LICENSE_REVIEW",
+        "card_front_matter":front,"ai_training_allowed":front.get("ai_training_allowed"),"rights_status":"UNVERIFIED_REQUIRES_FULL_CARD_CONTENT_AND_LICENSE_REVIEW",
         "raw_card_persisted":False}
 
 def discover(query: str, limit: int = 8, include_kaggle: bool = True) -> dict:
