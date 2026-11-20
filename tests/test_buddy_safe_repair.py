@@ -5,6 +5,8 @@ class BuddySafeRepairTests(unittest.TestCase):
  def test_generated_dataset_index_has_exact_allowlisted_rebuild(self):
   p=repair_plan({"workflow":"Buddy Dataset Hub","job":"route-build","failed_step":"generated index mismatch"})
   self.assertEqual(p,[[sys.executable,"tools/build_buddy_dataset_routes.py"]])
+ def test_unrelated_generated_index_failure_is_not_guessed(self):
+  self.assertEqual(repair_plan({"workflow":"Repository Inventory","job":"inventory","failed_step":"generated index mismatch"}),[])
  def test_division_fleet_rebuild_is_narrowly_allowlisted(self):
   p=repair_plan({"workflow":"DreamCo Division Mastery Engine","job":"division fleet","failed_step":"generated index mismatch"})
   self.assertEqual(p,[[sys.executable,"tools/build_division_model_fleet.py"]])
