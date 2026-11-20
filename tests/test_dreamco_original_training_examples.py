@@ -21,6 +21,9 @@ class DreamCoOriginalTrainingExamplesTests(unittest.TestCase):
   result=build([event(2),event(3),event(4),bad])
   self.assertEqual(len(result["rows"]),3)
   self.assertEqual(len(result["rejected_source_events"]),1)
+ def test_mixed_masterbot_ownership_is_rejected(self):
+  with self.assertRaises(ValueError):
+   build([event(1,41),event(2,42),event(3,43)])
  def test_personal_data_is_rejected(self):
   bad=event(1);bad["task"]="Send a message to person@example.com"
   with self.assertRaises(ValueError):
