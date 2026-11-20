@@ -72,7 +72,7 @@ def search_datagov(query: str, limit: int = 10) -> list[dict]:
     data = _get_json("https://catalog.data.gov/api/3/action/package_search?" + params)
     rows = data.get("result", {}).get("results", [])
     return [{"source":"data_gov","id":str(x.get("id") or x.get("name")),
-        "name":x.get("title"),"url":x.get("url") or f"https://catalog.data.gov/dataset/{x.get('name')}",
+        "name":x.get("title"),"url":f"https://catalog.data.gov/dataset/{x.get('name')}",
         "license":x.get("license_title") or x.get("license_id"),
         "organization":(x.get("organization") or {}).get("title"),
         "rights_status":"UNVERIFIED_REQUIRES_RESOURCE_LEVEL_LICENSE_REVIEW"} for x in rows if x.get("id") or x.get("name")]
