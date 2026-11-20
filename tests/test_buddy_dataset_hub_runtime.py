@@ -68,6 +68,27 @@ class DatasetHubRuntimeTests(unittest.TestCase):
             with self.assertRaises(TrainingExecutionError):
                 validate_job(json.loads(Path(job["manifest_path"]).read_text()),"wrong-approval")
 
+    def test_training_manifest_validates_exact_content_and_split_hashes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            rows = [
+                {"split":"train","text":"Teach a simple Python loop."},
+                {"split":"validation","text":"Explain a SQL query."},
+                {"split":"test","text":"Describe a safe deployment."},
+            ]
+            sample = Path(temp) / "splits.jsonl"
+            sample.write_text("".join(json.dumps(row) + "\\n" for row in rows), encoding="utf-8")
+            split_manifest = {f"{name}_sha256": _split_hash(rows, name) for name in ("train","validation","test")}
+            hub = DatasetHub(Path(temp) / "hub")
+            card = hub.register({**CARD,"split_manifest":split_manifest},sample)
+            job = create_training_job(hub,card["dataset_id"],41,"buddy-student",
+                "0123456789abcdef0123456789abcdef01234567","budget-approval-fixture",
+                "apache-2.0","https://example.com/license","VERIFIED","model-license-review-001",
+                output_dir=Path(temp)/"jobs")
+            manifest = json.loads(Path(job["manifest_path"]).read_text())
+            object_path, checked_rows = validate_job(manifest,"budget-approval-fixture")
+            self.assertEqual(object_path.name,Path(card["object_path"]).name)
+            self.assertEqual(len(checked_rows),3)
+
     def test_problem_routes_to_specialist_candidates_without_claiming_mastery(self):
         with tempfile.TemporaryDirectory() as temp:
             result=route_problem("Build a SQL database analytics pipeline",DatasetHub(temp))
