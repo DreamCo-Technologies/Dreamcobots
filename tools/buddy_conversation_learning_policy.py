@@ -15,8 +15,12 @@ def evaluate_candidate(candidate: dict[str, Any], policy: dict[str, Any]) -> dic
     if form not in ALLOWED_FORMS: reasons.append("unsupported_or_unreviewed_content_form")
     if candidate.get("contains_credentials") is True: reasons.append("credentials_prohibited")
     if candidate.get("contains_child_data") is True: reasons.append("child_data_excluded")
-    if candidate.get("contains_sensitive_data") is True and scope != "personal_memory": reasons.append("sensitive_data_excluded_from_shared_learning")
-    if candidate.get("contains_third_party_personal_data") is True and scope != "personal_memory": reasons.append("third_party_data_excluded_from_shared_learning")
+    if candidate.get("contains_sensitive_data") is True:
+        if scope != "personal_memory": reasons.append("sensitive_data_excluded_from_shared_learning")
+        elif candidate.get("sensitive_memory_opt_in") is not True: reasons.append("sensitive_memory_opt_in_required")
+    if candidate.get("contains_third_party_personal_data") is True:
+        if scope != "personal_memory": reasons.append("third_party_data_excluded_from_shared_learning")
+        elif candidate.get("third_party_permission") is not True: reasons.append("third_party_permission_required")
     if scope == "personal_memory":
         if candidate.get("personal_memory_opt_in") is not True: reasons.append("personal_memory_opt_in_required")
         if not candidate.get("user_id"): reasons.append("user_scope_required")
