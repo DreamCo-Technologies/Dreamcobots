@@ -24,6 +24,15 @@ class BuddyDatasetRoutingTests(unittest.TestCase):
         self.assertIn("search_authorized_huggingface_catalog", policy["unknown_problem_router"]["sequence"])
         self.assertTrue(policy["unknown_problem_router"]["never_claim_unknown_solved_without_holdout_evidence"])
 
+    def test_dataset_hub_connectors_and_training_runner_are_declared(self):
+        policy = json.loads((ROOT / "config/buddy-dataset-routing-policy.json").read_text())
+        runtime = policy["runtime_components"]
+        self.assertEqual(runtime["dataset_hub"]["catalog"], "SQLite")
+        self.assertEqual(runtime["source_adapters"]["huggingface_models"], "opt-in metadata search")
+        self.assertEqual(runtime["training_runner"]["methods"], ["sft", "lora"])
+        self.assertFalse(runtime["training_runner"]["automatic_execution"])
+        self.assertFalse(runtime["training_runner"]["execution_verified"])
+
     def test_holdout_and_compute_gates_are_preserved(self):
         policy = json.loads((ROOT / "config/buddy-dataset-routing-policy.json").read_text())
         self.assertEqual(policy["hard_gates"]["benchmark_holdout"], "EVALUATION_ONLY_NEVER_TRAIN")
