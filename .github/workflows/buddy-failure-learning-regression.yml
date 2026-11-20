@@ -39,4 +39,4 @@ jobs:
       - name: Compile Buddy failure-learning code
         run: python -m compileall -q buddy/learning tools/buddy_failure_learning.py tests/test_buddy_failure_learning.py
       - name: Test failure classification, safe repair policy and verified lessons
-        run: python -m unittest tests.test_buddy_failure_learning
+        run: python -m unittest tests.test_buddy_failure_learning tests.test_buddy_safe_repair
