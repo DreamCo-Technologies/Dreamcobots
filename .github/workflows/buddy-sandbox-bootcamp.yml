@@ -10,12 +10,14 @@ on:
       - 'buddy/sandbox/**'
       - 'buddy/bootcamp/**'
       - 'buddy/learning/**'
+      - 'buddy/datasets/**'
       - 'config/buddy-study-resources-*.json'
       - 'config/buddy-dataset-routing-policy.json'
       - 'config/masterbot-65-registry.json'
       - 'website/data/free-datasets.json'
       - 'tools/build_buddy_dataset_routes.py'
       - 'tests/test_buddy_dataset_routing.py'
+      - 'tests/test_buddy_dataset_hub_runtime.py'
 
 permissions:
   contents: read
@@ -38,7 +40,7 @@ jobs:
         with:
           python-version: '3.13'
       - name: Compile sandbox, bootcamp, and learning modules
-        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning tools/build_buddy_dataset_routes.py
+        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets tools/build_buddy_dataset_routes.py
       - name: Run safe sandbox smoke test
         run: |
           python - <<'PY'
@@ -50,7 +52,7 @@ jobs:
       - name: Build DreamCo dataset discovery routes
         run: python tools/build_buddy_dataset_routes.py
       - name: Test 65 MasterBot dataset routing and training gates
-        run: python -m unittest tests.test_buddy_dataset_routing
+        run: python -m unittest tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime
       - name: Validate curriculum JSON
         # Scheduled timer still validates the dataset route policy; broader study catalog validation runs on push/dispatch.
         if: github.event_name != 'schedule'
