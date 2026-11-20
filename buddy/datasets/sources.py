@@ -57,4 +57,37 @@ def discover(query: str, limit: int = 8) -> dict:
             results.extend(fn(query, limit))
         except SourceAccessError as exc:
             errors[name] = str(exc)
-    return {"query": query, "results": results, "source_errors": errors, "downloaded_files": False, "training_approved": False}
+    models = []
+    try:
+        models = search_huggingface_models(query, limit)
+    except SourceAccessError as exc:
+        errors["huggingface_models"] = str(exc)
+    return {"query": query, "results": results, "model_results": models, "source_errors": errors, "downloaded_files": False, "training_approved": False}
+
+def search_huggingface_models(query: str, limit: int = 10) -> list[dict]:
+    params = urllib.parse.urlencode({"search": query, "limit": max(1, min(limit, 30))}, safe="/")
+    data = _get_json("https://huggingface.co/api/models?" + params)
+    return [{"source": "huggingface_model", "id": x.get("id"), "url": "https://huggingface.co/" + str(x.get("id")), "last_modified": x.get("lastModified"), "downloads": x.get("downloads"), "likes": x.get("likes"), "pipeline_tag": x.get("pipeline_tag"), "tags": x.get("tags", []), "license": next((t.split(":",1)[1] for t in x.get("tags",[]) if str(t).startswith("license:")), None), "rights_status": "UNVERIFIED_REQUIRES_MODEL_CARD_AND_LICENSE_REVIEW"} for x in data if x.get("id")]
+
+def fetch_authorized_github_file(owner: str, repo: str, path: str, revision: str = "HEAD") -> dict:
+    """Read one file from a repository visible to the supplied GitHub token; never persist it."""
+    token = os.environ.get("GITHUB_TOKEN")
+    if os.environ.get("DREAMCO_ALLOW_SOURCE_NETWORK") != "1" or not token:
+        raise SourceAccessError("Explicit source-network opt-in and GITHUB_TOKEN are required")
+    parts = [owner, repo, path, revision]
+    if any(not x or x in {".", ".."} for x in parts):
+        raise ValueError("Owner, repository, path, and revision must be explicit")
+    encoded_path = urllib.parse.quote(path, safe="/")
+    url = f"https://api.github.com/repos/{owner}/{repo}/contents/{encoded_path}?ref=" + urllib.parse.quote(revision, safe="")
+    data = _get_json(url)
+    import base64
+    if data.get("type") != "file" or not data.get("content"):
+        raise SourceAccessError("The selected GitHub path is not a readable text file")
+    try:
+        content = base64.b64decode(data["content"]).decode("utf-8")
+    except Exception as exc:
+        raise SourceAccessError("The selected GitHub file is not UTF-8 text") from exc
+    return {"source": "authorized_github_file", "repository": f"{owner}/{repo}", "path": path,
+            "revision": revision, "blob_sha": data.get("sha"), "size": data.get("size"),
+            "downloaded_to_memory_only": True, "persisted": False, "content": content}
+
