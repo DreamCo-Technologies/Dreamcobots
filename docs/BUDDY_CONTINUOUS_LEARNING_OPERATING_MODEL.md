@@ -2,34 +2,34 @@
 
 ## Fleet scope
 
-The canonical source of truth is `config/masterbot-65-registry.json`. Every scheduled fleet cycle builds its matrix from that registry and requires exactly 65 unique division records. No hand-maintained partial list is allowed. Each division gets an isolated run record and a fair-share place in the queue.
+The canonical source of truth is `config/masterbot-65-registry.json`. The workflow validates exactly 65 unique division records before scheduling any lane. Each division has isolated run state and evidence, while sharing approved lesson metadata, benchmark learnings and reusable fixes.
 
-## Cadence
+## Cadence and fair-share rotation
 
-GitHub Actions is configured to start a fleet cycle every six hours, 24 hours a day, seven days a week. Each cycle fans out to all 65 division lanes, with parallelism capped at five jobs to respect runner capacity and avoid overwhelming the repository. This is four scheduled lane invocations per division per day when GitHub Actions is enabled and not delayed or quota-limited. Manual runs are also supported.
+A unique GitHub Actions workflow run is scheduled every five minutes. Each five-minute run selects one division from the canonical 65-division registry using a round-robin index derived from the workflow run number. Across 65 scheduled ticks, every division receives a turn; at the nominal cadence that is one turn per division about every 325 minutes (5 hours 25 minutes). A separate six-hour schedule runs a full 65-division sweep, and manual or pull-request validation runs the full matrix.
 
-GitHub scheduled workflows are best-effort, not a guaranteed clock or persistent compute service. The schedule can be delayed, disabled, skipped by platform limits, or stopped by repository settings. For stronger 24/7 execution, DreamCo must deploy and monitor a persistent queue/worker with approved compute and budget.
+This avoids launching 65 parallel lanes every five minutes, which would create 18,720 lane jobs per day before retries and would overwhelm ordinary hosted-runner quotas. GitHub Actions schedules are best-effort and may be delayed, disabled, or skipped. The five-minute schedule is an intended cadence, not a guaranteed real-time SLA. For stronger always-on execution, deploy and monitor a persistent queue/worker with approved compute and budget.
 
 ## Each division's learning loop
 
-1. Load its own gap queue, last checkpoint and benchmark profile.
+1. Load its gap queue, last checkpoint and benchmark profile.
 2. Read eligible shared lessons and reusable verified fixes from other DreamCo runs.
 3. Select a prioritized gap and approved learning sources.
 4. Study, practice and run isolated sandbox tasks.
 5. Run targeted, held-out, safety and regression checks.
 6. Store evidence, source lineage, config and artifact hashes.
 7. Publish only reusable, verified lesson metadata and benchmark learnings to the shared cross-run bus.
-8. Requeue unresolved work and start again in the next cycle.
+8. Requeue unresolved work for a future rotation.
 
 ## Mixing learning across runs
 
 All divisions participate in a shared learning bus. Approved lesson metadata, capability-gap patterns, benchmark deltas, reusable test fixtures and verified fixes can be shared across divisions and other DreamCo runs. Every item retains source run, division, version and evidence references.
 
-This is not blind pooling. Raw datasets, credentials, private mail, customer records and model weights are not copied between lanes by default. Each consumer lane rechecks provenance, license, consent, data isolation and compatibility. Weight sharing or production updates require their own explicit approval and evaluation gates.
+This is not blind pooling. Raw datasets, credentials, private mail, customer records and model weights are not copied between lanes by default. Each consumer lane rechecks provenance, license, consent, data isolation and compatibility. Weight sharing or production updates require separate explicit approval and evaluation gates.
 
 ## What the current workflow actually executes
 
-The existing `tools/buddy_masterbot_training_lane.py` creates a sandbox-first checkpoint and next-action record for each MasterBot. The fleet workflow runs that coordinator and aggregates the 65 run records into a cross-division learning queue. This is orchestration and evidence generation; it is not yet a model-training engine, optimizer loop, persistent worker, or proof that model weights changed.
+The existing `tools/buddy_masterbot_training_lane.py` creates a sandbox-first checkpoint and next-action record for each MasterBot. The fleet workflow runs that coordinator and, on full-fleet sweeps, aggregates the division run records into a cross-division learning queue. This is orchestration and evidence generation; it is not yet a model-training engine, optimizer loop, persistent worker, or proof that model weights changed.
 
 To claim actual continuous model training, each lane still needs a connected training executor, approved datasets and compute, durable checkpoint storage, benchmark adapters, monitoring, and tested promotion/rollback. Until those are deployed, status remains `POLICY_DEFINED_NOT_DEPLOYED`.
 
@@ -44,4 +44,4 @@ To claim actual continuous model training, each lane still needs a connected tra
 
 ## Evidence
 
-Each lane records its MasterBot ID, run ID/attempt, timestamp, lifecycle, source references, next actions and non-mastery status. The fleet aggregation records which divisions reported and which were missing. Do not call a division trained, mastered or healthy merely because its scheduled job produced a checkpoint.
+Each lane records its MasterBot ID, run ID/attempt, timestamp, lifecycle, source references, next actions and non-mastery status. Full-fleet aggregation records which divisions reported and which were missing. Do not call a division trained, mastered or healthy merely because its scheduled job produced a checkpoint.
