@@ -53,6 +53,9 @@ def build(events:list[dict],masterbot_registry:Path=REGISTRY)->dict:
    "masterbot":valid[owner],"task":task,"lesson":lesson,"criteria":criteria,"test_evidence":evidence})
  if len(accepted)<3:
   raise ValueError(f"At least three independently verified, rights-cleared work records are required; found {len(accepted)}")
+ owners={item["masterbot_id"] for item in accepted}
+ if len(owners)!=1:
+  raise ValueError("Build one dataset per MasterBot lane; mixed-division datasets are rejected")
  accepted.sort(key=lambda x:_sha(x["event_id"]))
  rows=[]
  for index,event in enumerate(accepted):
@@ -80,8 +83,10 @@ def main()->int:
  parser.add_argument("--card-out",required=True)
  parser.add_argument("--name",default="DreamCo Verified Engineering Lessons")
  parser.add_argument("--license-url",required=True)
+ parser.add_argument("--masterbot-id",required=True,type=int)
  args=parser.parse_args()
  events=[json.loads(line) for line in Path(args.events).read_text(encoding="utf-8").splitlines() if line.strip()]
+ events=[event for event in events if event.get("primary_masterbot_id")==args.masterbot_id]
  result=build(events)
  out=Path(args.out); out.parent.mkdir(parents=True,exist_ok=True)
  out.write_text("".join(json.dumps(row,ensure_ascii=False)+"\n" for row in result["rows"]),encoding="utf-8")
@@ -89,8 +94,8 @@ def main()->int:
   "license":"DreamCo internal authored synthesis - pending human review","license_url":args.license_url,
   "source_url":"https://github.com/DreamCo-Technologies/Dreamcobots",
   "data_plane":"dreamco_owned_training","rights_status":"PENDING_HUMAN_REVIEW","training_approved":False,
-  "primary_masterbot_id":result["primary_masterbot_ids"][0] if len(result["primary_masterbot_ids"])==1 else None,
-  "collaborating_masterbot_ids":result["primary_masterbot_ids"][1:],
+  "primary_masterbot_id":args.masterbot_id,
+  "collaborating_masterbot_ids":[],
   "split_manifest":result["split_manifest"],"source_event_count":result["accepted_source_events"],
   "candidate_data_path":str(out),"review_required":True}
  Path(args.card_out).write_text(json.dumps(card,indent=2)+"\n",encoding="utf-8")
