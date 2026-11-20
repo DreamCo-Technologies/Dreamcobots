@@ -16,6 +16,12 @@ def repair_plan(observation:dict)->list[list[str]]:
    return [[sys.executable,"tools/build_division_model_fleet.py"]]
   if "dataset" in context or "route" in context:
    return [[sys.executable,"tools/build_buddy_dataset_routes.py"]]
+  if "pages" in context and "connection" in context:
+   return [[sys.executable,"tools/build_pages_connection_index.py"]]
+  if "actions" in context and "prospectus" in context:
+   return [[sys.executable,"tools/build_actions_prospectus.py"]]
+  if "file" in context and "prospectus" in context:
+   return [[sys.executable,"tools/build_file_prospectus.py"]]
  return []
 
 def run_safe_repair(observation:dict,root:Path)->dict:
@@ -31,8 +37,8 @@ def run_safe_repair(observation:dict,root:Path)->dict:
    "stdout_tail":proc.stdout[-4000:],"stderr_tail":proc.stderr[-4000:]})
   if proc.returncode:
    result["status"]="REPAIR_COMMAND_FAILED";return result
- status=subprocess.run(["git","status","--porcelain"],cwd=root,text=True,capture_output=True,check=True).stdout
- result["changed_files"]=[line[3:] for line in status.splitlines() if len(line)>3]
+ status=subprocess.run(["git","status","--porcelain","--untracked-files=all"],cwd=root,text=True,capture_output=True,check=True).stdout
+ result["changed_files"]=[line[3:] for line in status.splitlines() if len(line)>3 and not line[3:].startswith("artifacts/buddy-safe-repair/")]
  result["success"]=True
  result["status"]="REPAIR_CANDIDATE_READY_FOR_PR" if result["changed_files"] else "REPAIR_RAN_NO_CHANGES"
  return result
