@@ -9,6 +9,7 @@
 - Opt-in metadata discovery for Hugging Face datasets and models, OpenML, UCI, and GitHub repository search.
 - An authorized GitHub file reader requiring both DREAMCO_ALLOW_SOURCE_NETWORK=1 and GITHUB_TOKEN. It reads one UTF-8 file into memory; it does not automatically persist it.
 - Read-only SQLite and optional PostgreSQL snapshot adapters. They require an authorization reference, exact approved SQL SHA-256, explicit bounded LIMIT, and a read-only transaction. Credentials are environment-only.
+- A verified-work example builder that synthesizes original instruction/response examples from human-reviewed, rights-cleared DreamCo commits, tests, PRs, workflow results, and lessons. It requires at least three verified records per MasterBot lane, keeps train/validation/test splits, rejects personal or third-party copied content, and emits a candidate card that is not training-approved.
 - Unknown-problem routing across the local catalog, optional external dataset/model metadata, and specialist MasterBot candidates. Every investigation is persisted in the Dataset Hub research-task queue.
 - Reproducible SFT/LoRA training manifests bound to the canonical 65-MasterBot registry, verified dataset and base-model license evidence, immutable base-model commit SHA, split hashes, and an explicit compute approval reference.
 - An opt-in local Transformers runner that verifies the live dataset card and object hashes, measures the base model on validation data, runs SFT or LoRA, evaluates validation and the isolated test split after training, and saves a local artifact.
@@ -32,6 +33,20 @@ Database snapshots require an explicit authorization reference and a query hash 
 CSV and JSONL are the first supported local ingestion formats. Duplicate and empty-row checks are structural. Basic email, US phone and SSN patterns flag data for review; this is not a complete PII detector or a redaction system. Schema meaning, label correctness, class balance, representativeness, benchmark contamination and domain-specific safety require additional validators and human review.
 
 Training-eligible datasets require a verified rights status, evidence reference, primary MasterBot owner, valid collaborators, and SHA-256 hashes for train, validation and isolated test splits. The test split is never used for training or in-training model selection.
+
+## Creating original DreamCo training data
+
+Prepare a JSONL file of reviewed evidence records. Each record must include event_id, source_url, evidence_type, verified=true, human_reviewed=true, training_allowed=true, rights_status=VERIFIED, contains_personal_data=false, third_party_content_included=false, primary_masterbot_id, task, verified_lesson, acceptance_criteria, and test_evidence.
+
+Build a separate candidate dataset for one MasterBot lane (at least three independently verified records):
+
+    python tools/build_dreamco_training_examples.py --events verified-work.jsonl --masterbot-id 41 --out candidates/dreamcodelab.jsonl --card-out candidates/dreamcodelab-card.json --license-url https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/LICENSE
+
+Review the generated data and card. The builder deliberately sets training_approved=false and rights_status=PENDING_HUMAN_REVIEW. Only after the rights/ownership and content review should an authorized operator update the card with verified evidence and explicit training approval, then register it:
+
+    python tools/register_buddy_dataset.py --card candidates/dreamcodelab-card-reviewed.json --file candidates/dreamcodelab.jsonl
+
+The generator creates original summaries and practice examples; it does not ingest raw conversation logs, copy third-party source text, or train weights.
 
 ## Training job creation and execution
 
