@@ -120,7 +120,6 @@ def execute_job(job_path: str | Path, approval_id: str, output_root: str | Path,
     trainer=Trainer(model=model,args=TrainingArguments(**args_kwargs),train_dataset=train_ds,
         eval_dataset=validation_ds,data_collator=DataCollatorForLanguageModeling(tokenizer=tokenizer,mlm=False))
     baseline_validation=trainer.evaluate(validation_ds,metric_key_prefix="baseline_validation")
-    baseline_holdout=trainer.evaluate(test_ds,metric_key_prefix="baseline_holdout")
     train_result=trainer.train()
     validation=trainer.evaluate(validation_ds,metric_key_prefix="validation")
     holdout=trainer.evaluate(test_ds,metric_key_prefix="holdout")
@@ -130,7 +129,7 @@ def execute_job(job_path: str | Path, approval_id: str, output_root: str | Path,
         "model_id":job["model_id"],"base_model_revision":job["base_model_revision"],
         "dataset_id":job["dataset_id"],"dataset_sha256":job["dataset_sha256"],
         "training_method":job["training_method"],"global_step":train_result.global_step,
-        "baseline_validation_metrics":baseline_validation,"baseline_holdout_metrics":baseline_holdout,
+        "baseline_validation_metrics":baseline_validation,
         "train_metrics":train_result.metrics,"validation_metrics":validation,"holdout_metrics":holdout,
         "artifact_dir":str(output/"model"),"weights_trained":True,
         "production_promoted":False,"requires_independent_benchmark_and_review":True}
