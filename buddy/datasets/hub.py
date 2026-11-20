@@ -106,6 +106,14 @@ class DatasetHub:
             db.execute("""CREATE TABLE IF NOT EXISTS research_tasks (
                 task_id TEXT PRIMARY KEY, problem TEXT NOT NULL, status TEXT NOT NULL,
                 payload_json TEXT NOT NULL, created_at TEXT NOT NULL)""")
+            db.execute("""CREATE TABLE IF NOT EXISTS external_candidates (
+                candidate_key TEXT NOT NULL, masterbot_id INTEGER NOT NULL,
+                source TEXT NOT NULL, source_id TEXT NOT NULL, url TEXT NOT NULL,
+                name TEXT, license TEXT, rights_status TEXT NOT NULL,
+                metadata_json TEXT NOT NULL, query TEXT NOT NULL,
+                first_seen_at TEXT NOT NULL, last_seen_at TEXT NOT NULL,
+                PRIMARY KEY(candidate_key, masterbot_id))""")
+            db.execute("CREATE INDEX IF NOT EXISTS idx_external_candidate_source ON external_candidates(source, source_id)")
 
     def _connect(self):
         db = sqlite3.connect(self.db_path)
@@ -207,6 +215,39 @@ class DatasetHub:
             return None
         return json.loads((self.home / row["card_path"]).read_text(encoding="utf-8"))
 
+    def record_external_candidate(self, candidate: dict[str, Any], masterbot_id: int, query: str) -> str:
+        from urllib.parse import urlparse
+        source = str(candidate.get("source", "")).strip()
+        source_id = str(candidate.get("id", "")).strip()
+        url = str(candidate.get("url", "")).strip()
+        parsed = urlparse(url)
+        if not source or not source_id or parsed.scheme != "https" or not parsed.netloc:
+            raise DatasetPolicyError("External candidates require a source ID and HTTPS URL")
+        key = hashlib.sha256(f"{source}:{source_id}".encode("utf-8")).hexdigest()
+        now = utcnow()
+        safe = {k: v for k, v in candidate.items() if k not in {"content", "token", "authorization"}}
+        with self._connect() as db:
+            db.execute("""INSERT INTO external_candidates
+                (candidate_key,masterbot_id,source,source_id,url,name,license,rights_status,metadata_json,query,first_seen_at,last_seen_at)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+                ON CONFLICT(candidate_key,masterbot_id) DO UPDATE SET
+                name=excluded.name,license=excluded.license,rights_status=excluded.rights_status,
+                metadata_json=excluded.metadata_json,query=excluded.query,last_seen_at=excluded.last_seen_at""",
+                (key,int(masterbot_id),source,source_id,url,str(candidate.get("name") or candidate.get("id") or ""),
+                 str(candidate.get("license") or ""),str(candidate.get("rights_status") or "UNVERIFIED"),
+                 json.dumps(safe,ensure_ascii=False),str(query),now,now))
+        return key
+
+    def external_candidates(self, masterbot_id: int | None = None, limit: int = 100) -> list[dict[str, Any]]:
+        with self._connect() as db:
+            if masterbot_id is None:
+                rows = db.execute("SELECT * FROM external_candidates ORDER BY last_seen_at DESC LIMIT ?",
+                    (max(1,min(limit,500)),)).fetchall()
+            else:
+                rows = db.execute("SELECT * FROM external_candidates WHERE masterbot_id=? ORDER BY last_seen_at DESC LIMIT ?",
+                    (int(masterbot_id),max(1,min(limit,500)))).fetchall()
+        return [{**dict(row),"metadata":json.loads(row["metadata_json"])} for row in rows]
+
     def enqueue_research_task(self, payload: dict[str, Any]) -> str:
         task_id = "research-" + uuid.uuid4().hex[:16]
         created = utcnow()
@@ -222,8 +263,12 @@ class DatasetHub:
         return [{"task_id": row["task_id"], "problem": row["problem"], "status": row["status"],
             "created_at": row["created_at"], "route": json.loads(row["payload_json"])} for row in rows]
 
+    def _external_candidate_count(self) -> int:
+        with self._connect() as db:
+            return int(db.execute("SELECT COUNT(*) FROM external_candidates").fetchone()[0])
+
     def stats(self) -> dict[str, Any]:
         with self._connect() as db:
             rows = db.execute("SELECT COUNT(*) AS versions, COUNT(DISTINCT dataset_id) AS datasets, SUM(training_approved) AS approved, SUM(holdout) AS holdouts FROM datasets").fetchone()
             tasks = db.execute("SELECT COUNT(*) AS pending FROM research_tasks WHERE status='OPEN'").fetchone()
-        return {"dataset_versions": rows["versions"], "datasets": rows["datasets"], "training_approved_versions": rows["approved"] or 0, "holdout_versions": rows["holdouts"] or 0, "pending_research_tasks": tasks["pending"], "storage": str(self.home)}
+        return {"dataset_versions": rows["versions"], "datasets": rows["datasets"], "training_approved_versions": rows["approved"] or 0, "holdout_versions": rows["holdouts"] or 0, "pending_research_tasks": tasks["pending"], "external_discovery_routes": self._external_candidate_count(), "storage": str(self.home)}
