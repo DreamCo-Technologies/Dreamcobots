@@ -89,10 +89,12 @@ jobs:
                   if (issue.state === "closed") {
                     await github.rest.issues.update({owner, repo, issue_number: issue.number, state: "open"});
                   }
-                  await github.rest.issues.createComment({
-                    owner, repo, issue_number: issue.number,
-                    body: `Recurrence observed: workflow run ${run.html_url}. Job: ${job.name}. Failed step: ${step}. Commit: ${run.head_sha}.\n\n${fingerprintMarker}`
-                  });
+                  if (!alreadyRecorded) {
+                    await github.rest.issues.createComment({
+                      owner, repo, issue_number: issue.number,
+                      body: `Recurrence observed: workflow run ${run.html_url}. Job: ${job.name}. Failed step: ${step}. Commit: ${run.head_sha}. run_id: ${run.id}\n\n${fingerprintMarker}`
+                    });
+                  }
                 } else {
                   await github.rest.issues.create({
                     owner, repo,
