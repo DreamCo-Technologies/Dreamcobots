@@ -24,13 +24,14 @@ def evaluate_candidate(candidate: dict[str, Any], policy: dict[str, Any]) -> dic
         if not isinstance(days, int) or days < 1 or days > 365: reasons.append("retention_out_of_bounds")
     elif scope in {"product_aggregate", "cross_user_shared"}:
         if candidate.get("product_improvement_opt_in") is not True: reasons.append("product_improvement_opt_in_required")
+        if candidate.get("deidentified") is not True: reasons.append("deidentification_required")
+        cohort = candidate.get("cohort_size", 0)
+        if not isinstance(cohort, int) or cohort < policy["cross_user_learning"]["minimum_cohort_size"]: reasons.append("minimum_cohort_not_met")
+        if candidate.get("user_id") or candidate.get("conversation_id"): reasons.append("direct_identifiers_prohibited_in_shared_record")
         if scope == "cross_user_shared":
             if candidate.get("cross_user_sharing_opt_in") is not True: reasons.append("cross_user_sharing_opt_in_required")
-            if candidate.get("deidentified") is not True: reasons.append("deidentification_required")
-            if candidate.get("cohort_size", 0) < policy["cross_user_learning"]["minimum_cohort_size"]: reasons.append("minimum_cohort_not_met")
             if candidate.get("contains_sensitive_data") is True: reasons.append("sensitive_data_excluded_from_shared_learning")
             if candidate.get("contains_third_party_personal_data") is True: reasons.append("third_party_data_excluded_from_shared_learning")
-            if candidate.get("user_id") or candidate.get("conversation_id"): reasons.append("direct_identifiers_prohibited_in_shared_record")
             if form not in {"aggregate_pattern", "verified_procedure"}: reasons.append("shared_learning_requires_generalized_lesson")
     elif scope == "foundation_model_training":
         gates = {"foundation_model_training_opt_in":"separate_model_training_opt_in_required","rights_evidence":"rights_and_provenance_evidence_required","deidentified":"deidentification_required","privacy_review_passed":"privacy_review_required","human_review_passed":"human_review_required","dataset_card_present":"dataset_card_required","withdrawal_path_present":"withdrawal_path_required"}
