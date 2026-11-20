@@ -57,7 +57,7 @@ def route_problem(problem: str, hub: DatasetHub | None = None, external: bool = 
         "schema": "dreamco.unknown_problem_route.v1", "problem": clean,
         "capability_gap": "UNCLASSIFIED_REQUIRES_SPECIALIST_REVIEW",
         "masterbot_candidates": ranked[:5], "local_dataset_candidates": local,
-        "external_metadata_candidates": outside["results"], "source_errors": outside["source_errors"],
+        "external_metadata_candidates": outside["results"], "external_model_candidates": outside.get("model_results", []), "source_errors": outside["source_errors"],
         "status": status, "next_actions": [
             "verify_primary_masterbot_and_collaborators", "review_source_license_terms_and_access",
             "inspect_authorized_sample", "create_versioned_dataset_card_and_quality_report",
