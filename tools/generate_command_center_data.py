@@ -40,7 +40,6 @@ GENERATED_NAMES = [
     "workflows.json",
     "system-health.json",
     "release-readiness.json",
-    "data-observability.json",
     "index.json",
 ]
 IGNORED_PARTS = {".git", ".pytest_cache", "node_modules", "dist", ".cache", "__pycache__"}
@@ -342,61 +341,6 @@ def build_repository_browser() -> dict[str, Any]:
 
 
 
-def build_data_observability() -> dict[str, Any]:
-    """Publish a privacy-safe inventory of datasets, models, training and source coverage."""
-    def files_under(relative: str, suffixes: tuple[str, ...] = ()) -> list[Path]:
-        root = ROOT / relative
-        if not root.exists():
-            return []
-        return sorted(path for path in root.rglob("*") if path.is_file()
-            and not any(part in IGNORED_PARTS for part in path.relative_to(ROOT).parts)
-            and (not suffixes or path.suffix.lower() in suffixes)
-            and not SECRET_NAME.search(path.relative_to(ROOT).as_posix()))
-
-    roots = ["data/dreamco_knowledge/packages", "study_packs/datasets", "datasets", "data/datasets"]
-    dataset_files = sorted({p for root in roots for p in files_under(root)})
-    cards = [p for p in dataset_files if p.name.lower() in {"manifest.json", "dataset_card.json", "card.json"}]
-    training_jobs = files_under("artifacts/buddy-training-jobs", (".json",))
-    unknown_routes = files_under("artifacts/buddy-dataset-hub", (".json",))
-    model_paths = [p.relative_to(ROOT).as_posix() for root in ("models", "artifacts/models", "artifacts/model-registry")
-        for p in files_under(root) if p.suffix.lower() in {".safetensors", ".bin", ".gguf", ".onnx", ".pt", ".pth", ".json"}]
-    sources = [
-        {"id":"dreamco_knowledge","kind":"DreamCo knowledge packages","paths":["data/dreamco_knowledge/packages"],"files":len(files_under("data/dreamco_knowledge/packages")),"status":"repository_inventory"},
-        {"id":"study_packs","kind":"Study packs and curriculum","paths":["study_packs/datasets"],"files":len(files_under("study_packs/datasets")),"status":"repository_inventory"},
-        {"id":"repository_datasets","kind":"Repository dataset folders","paths":["datasets","data/datasets"],"files":len(files_under("datasets"))+len(files_under("data/datasets")),"status":"repository_inventory"},
-        {"id":"huggingface","kind":"Hugging Face datasets and model metadata","paths":["buddy/datasets/sources.py"],"files":0,"status":"metadata_adapter_network_opt_in"},
-        {"id":"openml","kind":"OpenML metadata","paths":["buddy/datasets/sources.py"],"files":0,"status":"metadata_adapter_network_opt_in"},
-        {"id":"uci","kind":"UCI metadata","paths":["buddy/datasets/sources.py"],"files":0,"status":"metadata_adapter_network_opt_in"},
-        {"id":"github","kind":"Authorized GitHub repositories","paths":["buddy/datasets/sources.py"],"files":0,"status":"scoped_metadata_and_file_adapter"},
-        {"id":"sqlite_postgres","kind":"Authorized database snapshots","paths":["buddy/datasets/database_sources.py"],"files":0,"status":"read_only_allowlisted_adapter"},
-    ]
-    runtime = {"available":False,"dataset_versions":None,"datasets":None,"training_approved_versions":None,"holdout_versions":None}
-    catalog = ROOT / ".dreamco/dataset-hub/catalog.sqlite3"
-    if catalog.is_file():
-        try:
-            import sqlite3
-            with sqlite3.connect(f"file:{catalog}?mode=ro",uri=True) as db:
-                row=db.execute("SELECT COUNT(*),COUNT(DISTINCT dataset_id),SUM(training_approved),SUM(holdout) FROM datasets").fetchone()
-            runtime={"available":True,"dataset_versions":row[0],"datasets":row[1],"training_approved_versions":row[2] or 0,"holdout_versions":row[3] or 0}
-        except (sqlite3.Error,OSError):
-            runtime={"available":True,"read_status":"unavailable_or_schema_mismatch"}
-    generator_sources=[ROOT/x for x in ["tools/generate_command_center_data.py","buddy/datasets/hub.py","buddy/datasets/sources.py","buddy/datasets/database_sources.py"]]
-    return artifact("dreamco.command_center.data_observability.v1",generator_sources+dataset_files+training_jobs+unknown_routes,
-        snapshot_scope="repository_inventory_plus_optional_local_runtime_catalog",
-        privacy={"raw_dataset_rows_exposed":False,"credentials_exposed":False,"private_cards_exposed":False,"model_weight_files_exposed":False},
-        summary={"repository_dataset_files":len(dataset_files),"dataset_cards_or_manifests":len(cards),
-            "dreamco_knowledge_packages":len(list((ROOT/"data/dreamco_knowledge/packages").glob("*"))) if (ROOT/"data/dreamco_knowledge/packages").exists() else 0,
-            "training_job_manifests":len(training_jobs),"unknown_problem_route_artifacts":len(unknown_routes),
-            "model_artifact_files":len(model_paths),"runtime_catalog_available":runtime["available"],
-            "external_sources_with_metadata_adapters":4,"database_adapter_families":2},
-        runtime_catalog=runtime,sources=sources,
-        datasets={"files":[p.relative_to(ROOT).as_posix() for p in dataset_files[:500]],"cards":[p.relative_to(ROOT).as_posix() for p in cards[:250]],"truncated":len(dataset_files)>500},
-        training={"job_manifests":[p.relative_to(ROOT).as_posix() for p in training_jobs[:250]],"executed_jobs":0,"weights_updated_by_manifest_builder":0},
-        unknown_problems={"route_artifacts":[p.relative_to(ROOT).as_posix() for p in unknown_routes[:250]]},
-        model_artifacts={"count":len(model_paths),"paths":model_paths[:100],"truncated":len(model_paths)>100},
-        observability_gaps=["Public Pages data is a generated snapshot, not live telemetry.","External adapter definitions do not prove source availability or successful authentication.","Connected private production databases require authenticated runtime telemetry.","Training manifests are requests, not completed jobs; model and benchmark evidence must come from registered runners."],
-        status="implemented_snapshot_inventory",evidence_refs=["tools/generate_command_center_data.py","buddy/datasets/hub.py","tests/test_command_center_data.py"])
-
 def build_bundle() -> dict[str, dict[str, Any]]:
     files = repository_files()
     registry = read_json(REGISTRY)
@@ -414,7 +358,6 @@ def build_bundle() -> dict[str, dict[str, Any]]:
         "capabilities.json": capabilities,
         "benchmarks.json": build_benchmarks(),
         "workflows.json": build_workflows(),
-        "data-observability.json": build_data_observability(),
     }
     status_counts = Counter()
     for payload in payloads.values():
@@ -464,9 +407,6 @@ def build_bundle() -> dict[str, dict[str, Any]]:
             "capabilities": capabilities["summary"]["unique_capabilities"],
             "benchmark_programs": payloads["benchmarks.json"]["summary"]["registered_benchmark_programs"],
             "workflows": payloads["workflows.json"]["summary"]["workflow_definitions"],
-            "dataset_files": payloads["data-observability.json"]["summary"]["repository_dataset_files"],
-            "dataset_cards": payloads["data-observability.json"]["summary"]["dataset_cards_or_manifests"],
-            "training_job_manifests": payloads["data-observability.json"]["summary"]["training_job_manifests"],
         },
         artifacts=entries,
     )
