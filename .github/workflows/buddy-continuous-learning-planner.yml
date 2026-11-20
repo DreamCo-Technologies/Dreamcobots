@@ -1,6 +1,13 @@
 name: Buddy Continuous Learning Planner
 
 on:
+  pull_request:
+    paths:
+      - "config/buddy-continuous-learning-policy.json"
+      - "config/buddy-gpt-style-model-training-units.json"
+      - "tools/bootcamp_lesson_planner.py"
+      - "tests/test_bootcamp_lesson_planner.py"
+      - ".github/workflows/buddy-continuous-learning-planner.yml"
   schedule:
     - cron: "15 */6 * * *"
   workflow_dispatch:
