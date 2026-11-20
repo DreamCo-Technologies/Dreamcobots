@@ -15,11 +15,12 @@ from typing import Any
 class DatabaseSourceError(ValueError):
     pass
 
-def query_hash(sql: str) -> str:
+def query_hash(sql: str, params: tuple = ()) -> str:
     normalized = " ".join(sql.split())
-    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+    payload = json.dumps({"sql": normalized, "params": params}, sort_keys=True, ensure_ascii=False, default=str)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
-def _validate(sql: str, authorization_ref: str, approved_query_sha256: str, limit: int) -> str:
+def _validate(sql: str, params: tuple, authorization_ref: str, approved_query_sha256: str, limit: int) -> str:
     normalized = " ".join((sql or "").strip().split())
     if not authorization_ref.strip():
         raise DatabaseSourceError("An authorization reference is required")
@@ -32,14 +33,14 @@ def _validate(sql: str, authorization_ref: str, approved_query_sha256: str, limi
     found = re.search(r"\bLIMIT\s+(\d+)\b", normalized, re.I)
     if not found or int(found.group(1)) > max(1, min(limit, 1000)):
         raise DatabaseSourceError("Query LIMIT exceeds the configured row cap")
-    if query_hash(normalized) != approved_query_sha256:
+    if query_hash(normalized, params) != approved_query_sha256:
         raise DatabaseSourceError("Query hash is not in the caller's approved allowlist")
     return normalized
 
 def snapshot_sqlite(db_path: str | Path, sql: str, params: tuple = (), *,
                     authorization_ref: str, approved_query_sha256: str,
                     output_path: str | Path, row_limit: int = 1000) -> dict[str, Any]:
-    query = _validate(sql, authorization_ref, approved_query_sha256, row_limit)
+    query = _validate(sql, params, authorization_ref, approved_query_sha256, row_limit)
     path = Path(db_path).resolve()
     if not path.is_file():
         raise DatabaseSourceError("SQLite source database not found")
@@ -57,7 +58,7 @@ def snapshot_sqlite(db_path: str | Path, sql: str, params: tuple = (), *,
         for row in rows:
             handle.write(json.dumps(dict(zip(names, row)), ensure_ascii=False, default=str) + "\n")
     return {"rows_exported":len(rows),"columns":names,"authorization_ref":authorization_ref,
-            "query_sha256":query_hash(query),"source_kind":"sqlite_read_only","output":str(out),
+            "query_sha256":query_hash(query, params),"source_kind":"sqlite_read_only","output":str(out),
             "credentials_stored":False,"query_only":True}
 
 def snapshot_postgres(sql: str, params: tuple = (), *, authorization_ref: str,
