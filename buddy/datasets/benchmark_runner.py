@@ -33,7 +33,7 @@ def validate_benchmark_job(job:dict,approval_id:str)->tuple[Path,list[dict]]:
  candidates=job.get("candidates",[])
  if len(candidates)<2 or sum(1 for x in candidates if x.get("role")=="baseline")!=1: raise BenchmarkExecutionError("Benchmark must have exactly one baseline and one alternative")
  for x in candidates:
-  if x.get("license_status")!="VERIFIED" or not x.get("license_evidence") or not re.fullmatch(r"[0-9a-f]{40}",str(x.get("revision",""))):
+  if x.get("license_status")!="VERIFIED" or not x.get("license_evidence") or not x.get("license") or not str(x.get("license_url","")).startswith("https://") or not re.fullmatch(r"[0-9a-f]{40}",str(x.get("revision",""))):
    raise BenchmarkExecutionError("Candidate license evidence or immutable revision is invalid")
  return obj,test
 
