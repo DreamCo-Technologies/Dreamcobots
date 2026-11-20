@@ -8,9 +8,14 @@ on:
       - "config/dreamco-mastery-continuity-registry.json"
       - "config/division-model-competitiveness-policy.json"
       - "config/buddy-engineering-capability-contract.json"
+      - "config/buddy-dataset-routing-policy.json"
+      - "website/data/free-datasets.json"
       - "docs/BUDDY_VIBE_CODING_REVERSE_ENGINEERING_DISTILLATION_AND_TRAINING.md"
+      - "docs/BUDDY_DATASET_HUB_AND_UNKNOWN_PROBLEM_ROUTER.md"
       - "tools/validate_buddy_engineering_capabilities.py"
       - "tests/test_buddy_engineering_capability_contract.py"
+      - "tools/build_buddy_dataset_routes.py"
+      - "tests/test_buddy_dataset_routing.py"
       - "tools/build_division_model_fleet.py"
       - "tests/test_division_model_fleet.py"
       - "tools/dreamco_division_mastery_orchestrator.py"
@@ -46,16 +51,19 @@ jobs:
         run: |
           MATRIX=$(python tools/dreamco_division_mastery_orchestrator.py --matrix)
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
-          python -m unittest tests.test_dreamco_division_mastery_orchestrator tests.test_division_model_fleet tests.test_buddy_engineering_capability_contract
+          python -m unittest tests.test_dreamco_division_mastery_orchestrator tests.test_division_model_fleet tests.test_buddy_engineering_capability_contract tests.test_buddy_dataset_routing
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
           python tools/build_division_model_fleet.py --check
           python tools/build_division_model_fleet.py
-      - name: Preserve canonical division queue
+          python tools/build_buddy_dataset_routes.py
+      - name: Preserve canonical division and dataset queues
         uses: actions/upload-artifact@v4
         with:
           name: dreamco-division-mastery-queue-${{ github.run_id }}
-          path: artifacts/division-mastery/division-mastery-queue.json
+          path: |
+            artifacts/division-mastery/division-mastery-queue.json
+            artifacts/buddy-dataset-hub/dataset-routes.json
           if-no-files-found: error
           retention-days: 90
 
