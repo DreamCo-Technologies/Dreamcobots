@@ -44,6 +44,7 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
                     candidate["dataset_card_summary"]={k:card.get(k) for k in ("card_sha256","license","tags","task_categories","language","rights_status")}
                     candidate["license"]=card.get("license") or candidate.get("license")
                     candidate["dataset_card_ai_training_claim"]=card.get("ai_training_allowed")
+                    candidate["ai_training_allowed"]=str(card.get("ai_training_allowed","")).strip().lower() in {"true","yes"}
                 except (SourceAccessError,ValueError) as exc:
                     candidate["dataset_card_inspection_error"]=type(exc).__name__
             candidate["license_assessment"]=assess_training_candidate(candidate)
