@@ -103,6 +103,9 @@ class DatasetHub:
                 PRIMARY KEY(dataset_id, version))""")
             db.execute("CREATE INDEX IF NOT EXISTS idx_dataset_sha ON datasets(content_sha256)")
             db.execute("CREATE INDEX IF NOT EXISTS idx_dataset_name ON datasets(name)")
+            db.execute("""CREATE TABLE IF NOT EXISTS research_tasks (
+                task_id TEXT PRIMARY KEY, problem TEXT NOT NULL, status TEXT NOT NULL,
+                payload_json TEXT NOT NULL, created_at TEXT NOT NULL)""")
 
     def _connect(self):
         db = sqlite3.connect(self.db_path)
@@ -204,7 +207,23 @@ class DatasetHub:
             return None
         return json.loads((self.home / row["card_path"]).read_text(encoding="utf-8"))
 
+    def enqueue_research_task(self, payload: dict[str, Any]) -> str:
+        task_id = "research-" + uuid.uuid4().hex[:16]
+        created = utcnow()
+        with self._connect() as db:
+            db.execute("INSERT INTO research_tasks VALUES (?,?,?,?,?)",
+                (task_id, str(payload.get("problem", "")), "OPEN", json.dumps(payload, ensure_ascii=False), created))
+        return task_id
+
+    def research_tasks(self, status: str = "OPEN", limit: int = 50) -> list[dict[str, Any]]:
+        with self._connect() as db:
+            rows = db.execute("SELECT * FROM research_tasks WHERE status=? ORDER BY created_at DESC LIMIT ?",
+                (status, max(1, min(limit, 200)))).fetchall()
+        return [{"task_id": row["task_id"], "problem": row["problem"], "status": row["status"],
+            "created_at": row["created_at"], "route": json.loads(row["payload_json"])} for row in rows]
+
     def stats(self) -> dict[str, Any]:
         with self._connect() as db:
             rows = db.execute("SELECT COUNT(*) AS versions, COUNT(DISTINCT dataset_id) AS datasets, SUM(training_approved) AS approved, SUM(holdout) AS holdouts FROM datasets").fetchone()
-        return {"dataset_versions": rows["versions"], "datasets": rows["datasets"], "training_approved_versions": rows["approved"] or 0, "holdout_versions": rows["holdouts"] or 0, "storage": str(self.home)}
+            tasks = db.execute("SELECT COUNT(*) AS pending FROM research_tasks WHERE status='OPEN'").fetchone()
+        return {"dataset_versions": rows["versions"], "datasets": rows["datasets"], "training_approved_versions": rows["approved"] or 0, "holdout_versions": rows["holdouts"] or 0, "pending_research_tasks": tasks["pending"], "storage": str(self.home)}
