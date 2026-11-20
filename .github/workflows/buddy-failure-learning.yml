@@ -6,6 +6,11 @@ on:
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/buddy-failure-learning.yml"
+      - "tools/buddy_failure_learning.py"
+      - "tests/test_buddy_failure_learning.py"
 
 permissions:
   actions: read
@@ -18,7 +23,7 @@ concurrency:
 
 jobs:
   ingest:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.name != 'Buddy Failure Detection and Learning'
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.name != 'Buddy Failure Detection and Learning' && !contains(github.event.workflow_run.path, 'buddy-failure-learning.yml'))
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -45,7 +50,7 @@ jobs:
                 })).data.workflow_runs;
             const seen = new Set();
             for (const run of runs) {
-              if (!run || run.name === "Buddy Failure Detection and Learning" || run.conclusion !== "failure") continue;
+              if (!run || run.name === "Buddy Failure Detection and Learning" || (run.path || "").includes("buddy-failure-learning.yml") || run.conclusion !== "failure") continue;
               const jobs = (await github.rest.actions.listJobsForWorkflowRun({
                 owner, repo, run_id: run.id, per_page: 100
               })).data.jobs;
