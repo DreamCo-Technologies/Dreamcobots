@@ -26,7 +26,7 @@ def _get_json(url: str, timeout: int = 12) -> Any:
         raise SourceAccessError(f"Metadata discovery failed: {type(exc).__name__}") from exc
 
 def search_huggingface(query: str, limit: int = 10) -> list[dict]:
-    params = urllib.parse.urlencode({"search": query, "limit": max(1, min(limit, 30)}, safe="/")
+    params = urllib.parse.urlencode({"search": query, "limit": max(1, min(limit, 30))}, safe="/")
     data = _get_json("https://huggingface.co/api/datasets?" + params)
     return [{"source": "huggingface", "id": x.get("id"), "url": "https://huggingface.co/datasets/" + str(x.get("id")), "last_modified": x.get("lastModified"), "downloads": x.get("downloads"), "likes": x.get("likes"), "tags": x.get("tags", []), "license": next((t.split(":",1)[1] for t in x.get("tags",[]) if str(t).startswith("license:")), None), "rights_status": "UNVERIFIED_REQUIRES_DATASET_CARD_REVIEW"} for x in data if x.get("id")]
 
