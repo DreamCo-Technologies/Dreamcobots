@@ -37,8 +37,8 @@ def validate_job(job: dict, approval_id: str) -> tuple[Path,list[dict]]:
         raise TrainingExecutionError("Compute approval ID does not match the job")
     if not re.fullmatch(r"[0-9a-f]{40}",str(job.get("base_model_revision",""))):
         raise TrainingExecutionError("Base model revision is not immutable")
-    if not job.get("model_license") or not str(job.get("model_license_url","")).startswith("https://"):
-        raise TrainingExecutionError("Model license metadata is missing")
+    if not job.get("model_license") or not str(job.get("model_license_url","")).startswith("https://") or job.get("model_license_status") != "VERIFIED" or not job.get("model_license_evidence"):
+        raise TrainingExecutionError("Verified model license evidence is missing")
     if job.get("training_method") not in {"sft","lora"}:
         raise TrainingExecutionError("Unsupported training method")
     hub=Path(job["dataset_hub_path"]).resolve()
