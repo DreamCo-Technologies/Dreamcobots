@@ -35,6 +35,9 @@ def create_training_job(dataset_hub: DatasetHub, dataset_id: str, masterbot_id: 
     valid_masterbots = {int(item["id"]) for item in registry.get("divisions", [])}
     if int(masterbot_id) not in valid_masterbots:
         raise DatasetPolicyError("MasterBot ID is not present in the canonical registry")
+    allowed_owners = {int(card.get("primary_masterbot_id"))} | {int(item) for item in card.get("collaborating_masterbot_ids", [])}
+    if int(masterbot_id) not in allowed_owners:
+        raise DatasetPolicyError("Dataset is not assigned to this MasterBot lane")
     if not model_id.strip() or not re.fullmatch(r"[0-9a-f]{40}", base_model_revision.strip()):
         raise DatasetPolicyError("Pin model ID and a 40-character immutable base-model commit SHA")
     if not model_license.strip() or not model_license_url.startswith("https://") or model_license_status != "VERIFIED" or not model_license_evidence.strip():
