@@ -21,8 +21,28 @@ class DivisionMasteryOrchestratorTests(unittest.TestCase):
         plan = module.build_plan()
         for lane in plan["lanes"]:
             self.assertEqual(lane["task_dag"][1]["depends_on"], ["registry_validation"])
-            self.assertEqual(lane["task_dag"][-1]["task_status"] if "task_status" in lane["task_dag"][-1] else "blocked",
-                             "blocked")
+            self.assertEqual(lane["task_dag"][-1]["depends_on"], ["division_lane_plan", "division_contract_benchmark"])
+            self.assertTrue(lane["goal_dependency_map"])
+            self.assertTrue(all("traceability_status" in item for item in lane["goal_traceability"].values()))
+
+    def test_goal_dependency_graph_is_acyclic(self):
+        plan = module.build_plan()
+        dependencies = plan["goal_dependency_map"]
+        visiting = set()
+        visited = set()
+        def visit(goal_id):
+            if goal_id in visiting:
+                return False
+            if goal_id in visited:
+                return True
+            visiting.add(goal_id)
+            for dependency in dependencies.get(goal_id, []):
+                if not visit(dependency):
+                    return False
+            visiting.remove(goal_id)
+            visited.add(goal_id)
+            return True
+        self.assertTrue(all(visit(goal_id) for goal_id in dependencies))
 
     def test_promotion_requires_all_evidence_and_no_regression(self):
         good = {
