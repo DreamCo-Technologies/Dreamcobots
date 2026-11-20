@@ -4,6 +4,8 @@ on:
   workflow_run:
     workflows:
       - Buddy Actions Test Lab
+      - Buddy CI Safe Generated-Artifact Repair
+      - Buddy Failure Learning Regression
       - DreamCo Control Center
       - Actions Health
       - Actions Failure Sweep
@@ -39,7 +41,7 @@ permissions:
 
 concurrency:
   group: actions-failure-watch
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   capture:

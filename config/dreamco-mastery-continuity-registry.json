@@ -1,0 +1,312 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "dreamco-master-goal-registry",
+  "purpose": "Preserve every historical DreamCo goal, approved plan, requirement, dependency, and unfinished task until evidence-backed mastery or an explicit user-directed disposition.",
+  "defaults": {
+    "status": "catalogued",
+    "priority": "untriaged",
+    "execution": "continuous_review",
+    "completion_claims_require_evidence": true,
+    "preserve_history": true,
+    "additive_changes_only": true,
+    "production_safety_hold": true,
+    "auto_merge": false,
+    "auto_deploy": false,
+    "auto_spend": false,
+    "auto_change_credentials": false,
+    "bypass_protections": false
+  },
+  "mastery_lifecycle": [
+    "catalogued",
+    "specified",
+    "implemented",
+    "sandbox_verified",
+    "benchmark_verified",
+    "regression_verified",
+    "production_verified",
+    "mastered"
+  ],
+  "evidence_requirements": {
+    "implemented": [
+      "implementation_reference",
+      "owner_or_maintainer"
+    ],
+    "sandbox_verified": [
+      "reproducible_test_command",
+      "passing_test_evidence",
+      "environment"
+    ],
+    "benchmark_verified": [
+      "benchmark_definition",
+      "baseline",
+      "measured_result",
+      "acceptance_threshold"
+    ],
+    "regression_verified": [
+      "regression_suite",
+      "passing_run_id",
+      "tested_commit_sha"
+    ],
+    "production_verified": [
+      "approved_deployment_reference",
+      "health_evidence",
+      "rollback_plan",
+      "human_release_approval"
+    ],
+    "mastered": [
+      "all_prior_gates_passed",
+      "sustained_success_window",
+      "monitoring_owner",
+      "no_open_critical_findings"
+    ]
+  },
+  "operating_rules": [
+    "Never delete a historical goal merely because it is duplicated; link duplicates to one canonical implementation while preserving source references.",
+    "Never mark a goal mastered from documentation, file counts, mock output, or an unverified assistant claim.",
+    "Reopen mastered goals when regressions, drift, new requirements, or failed monitoring appear.",
+    "Continue the next safe, dependency-unblocked task; keep blocked work visible with its blocker and required decision.",
+    "Run read-only audits and local tests automatically; require human approval for production releases, destructive changes, paid compute, billing, credentials, permissions, and external data actions.",
+    "User approval of a plan does not authorize merge, deployment, spending, or safety bypass.",
+    "Historical conversation and PR reconciliation remains an explicit workstream until every discovered requirement has a source reference and disposition."
+  ],
+  "workstreams": [
+    {
+      "id": "DCO-001",
+      "name": "Historical plan and conversation reconciliation",
+      "scope": "Import every DreamCo/Buddy goal, approval, requirement, branch, PR, tool, capability, and unfinished task from historical conversations and repository artifacts.",
+      "priority": "critical",
+      "status": "catalogued",
+      "acceptance": [
+        "source inventory",
+        "deduplicated canonical goal records",
+        "no lost requirements",
+        "conflicts and superseded decisions preserved",
+        "every goal linked to implementation/tests/runtime/benchmark evidence"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-002",
+      "name": "Repository health and production readiness",
+      "scope": "Repository structure, dependencies, security, secrets, CI, branch protection, deployment isolation, recovery, documentation, and production-readiness evidence.",
+      "priority": "critical",
+      "status": "catalogued",
+      "acceptance": [
+        "all workflows audited",
+        "critical failures resolved",
+        "dependency and security checks pass",
+        "reproducible builds",
+        "rollback and recovery tested",
+        "production isolation independently verified"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-003",
+      "name": "Buddy OS orchestration and end-to-end execution",
+      "scope": "Buddy routing, tool gateway, approval layer, task execution, retries, observability, command centers, and safe integrations.",
+      "priority": "critical",
+      "status": "catalogued",
+      "acceptance": [
+        "real end-to-end tasks pass",
+        "permission checks enforced",
+        "failures recover safely",
+        "runtime traces and audit evidence available"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-004",
+      "name": "Dream Brain memory and knowledge",
+      "scope": "Persistent memory, knowledge graph, hybrid search, retrieval, provenance, correction, retention, deletion, and user controls.",
+      "priority": "high",
+      "status": "catalogued",
+      "acceptance": [
+        "retrieval benchmark",
+        "source provenance",
+        "tenant isolation",
+        "user view/correct/export/delete controls",
+        "privacy regression suite"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-005",
+      "name": "MasterBot and bot ecosystem registry",
+      "scope": "Canonical 65-MasterBot registry, 45 domain divisions, 1,051+ specialist bot inventory, capability contracts, runtime routes, certification, and per-MasterBot logical training lanes.",
+      "priority": "high",
+      "status": "catalogued",
+      "acceptance": [
+        "canonical registry reconciled",
+        "every bot has capability contract",
+        "routes and tests mapped",
+        "certification evidence",
+        "inventory counts reconciled against repository"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-006",
+      "name": "Model routing, catalog, and benchmarks",
+      "scope": "500-model/provider/resource inventory, provider adapters, model selection, policy-aware routing, benchmark harness, evaluation, certification, and fallback.",
+      "priority": "high",
+      "status": "catalogued",
+      "acceptance": [
+        "model inventory provenance",
+        "provider permission enforcement",
+        "repeatable benchmark suite",
+        "measured routing quality/cost/latency",
+        "fallback and regression tests"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-007",
+      "name": "Buddy continuous learning and mastery",
+      "scope": "24x7 logical learning policy, dedicated lane per MasterBot, benchmark-gap closure, lesson memory, failure recurrence, rollback, and human approval gates.",
+      "priority": "high",
+      "status": "catalogued",
+      "acceptance": [
+        "measurable benchmark-gap reduction",
+        "learning provenance",
+        "no unapproved production weight changes",
+        "regression and rollback proof",
+        "per-lane health report"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-008",
+      "name": "Buddy model engineering and training",
+      "scope": "Tokenizer, transformer, efficient attention/MoE, optimization, pretraining, SFT/adapters, reward/evaluation loops, multimodal vision, checkpoints, and independent graduation.",
+      "priority": "high",
+      "status": "catalogued",
+      "acceptance": [
+        "reproducible baseline",
+        "dataset rights/provenance",
+        "compute budget approval",
+        "checkpoint integrity",
+        "independent held-out benchmark"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-009",
+      "name": "User data ownership, privacy, and consent",
+      "scope": "Purpose-specific opt-in/out, company permissions, connected source study, cross-user learning, data rights, auditability, revocation, deletion propagation, and subscription control.",
+      "priority": "critical",
+      "status": "catalogued",
+      "acceptance": [
+        "authenticated controls",
+        "durable consent receipts",
+        "tenant isolation",
+        "provider confirmation tracking",
+        "withdrawal tests",
+        "no silent sale/share/training"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-010",
+      "name": "Universal integrations and resource routing",
+      "scope": "Authorized GitHub, Gmail, cloud, database, APIs, app connectors, routing workflows, integration contracts, credential scopes, and end-to-end tests.",
+      "priority": "high",
+      "status": "catalogued",
+      "acceptance": [
+        "connector inventory",
+        "least-privilege scopes",
+        "contract tests",
+        "revoke and expiry tests",
+        "real sandbox end-to-end verification"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-011",
+      "name": "Command centers, dashboards, and GitHub Pages",
+      "scope": "Live repository status, bot/model/learning dashboards, operational metrics, evidence registry, Pages feature audits, and data freshness.",
+      "priority": "medium",
+      "status": "catalogued",
+      "acceptance": [
+        "live source-backed data",
+        "freshness indicators",
+        "correct status semantics",
+        "dashboard contract tests",
+        "Pages deployment evidence"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-012",
+      "name": "Builder automation, marketplace, and revenue systems",
+      "scope": "Automation builder, opportunity hunter, offer launcher, affiliate/referral workflows, freelance arbitrage, real-estate research, digital products, and marketplace tiers.",
+      "priority": "medium",
+      "status": "catalogued",
+      "acceptance": [
+        "user-approved business rules",
+        "sandboxed workflows",
+        "disclosure/compliance checks",
+        "measured conversion and unit economics",
+        "billing and cancellation safeguards"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-013",
+      "name": "Robotics, vision, and embodied AI research",
+      "scope": "Vision, multimodal perception, embodied-agent research, hardware/resource discovery, simulation, and safety evaluation.",
+      "priority": "medium",
+      "status": "catalogued",
+      "acceptance": [
+        "research provenance",
+        "simulation tests",
+        "safety evaluation",
+        "hardware-independent reproducibility"
+      ],
+      "continuous": true
+    },
+    {
+      "id": "DCO-014",
+      "name": "Governance, security, recovery, and operations",
+      "scope": "Council/review processes, approval matrix, audit logs, threat modeling, incident response, backups, restore drills, and policy enforcement.",
+      "priority": "critical",
+      "status": "catalogued",
+      "acceptance": [
+        "security review",
+        "policy tests",
+        "auditable approvals",
+        "restore drill evidence",
+        "incident and rollback runbooks"
+      ],
+      "continuous": true
+    }
+  ],
+  "historical_reconciliation": {
+    "status": "required",
+    "source_sets": [
+      "historical ChatGPT conversations",
+      "all DreamCo repository branches",
+      "open and closed pull requests",
+      "issues and discussions",
+      "workflow definitions and run history",
+      "docs and Markdown specifications",
+      "bot/model/tool registries",
+      "generated dashboards and reports"
+    ],
+    "required_mapping": [
+      "goal_id",
+      "source_reference",
+      "requirement",
+      "implementation_paths",
+      "tests",
+      "runtime_routes",
+      "benchmark",
+      "dependencies",
+      "risk",
+      "status",
+      "evidence",
+      "next_action"
+    ],
+    "note": "Seed workstreams summarize known historical plans; they are not proof that every historical item has been imported. Reconciliation must keep running until the source inventory is complete."
+  }
+}

@@ -1,0 +1,403 @@
+{
+  "schema": "dreamco.buddy_engineering_capabilities.v1",
+  "version": "1.1.0",
+  "objective": "Define evidence-backed Buddy capabilities for software engineering, authorized reverse engineering, model distillation and weight training, physical product invention, hardware/software prototyping, 3D design, and end-to-end startup creation across all canonical MasterBot lanes.",
+  "capabilities": {
+    "vibe_coding": {
+      "status": "CONTRACT_DEFINED_RUNTIME_INTEGRATION_REQUIRED",
+      "inputs": [
+        "natural_language_goal",
+        "repository_context",
+        "acceptance_criteria",
+        "constraints"
+      ],
+      "stages": [
+        "clarify_and_scope",
+        "inspect_repository_and_dependencies",
+        "create_implementation_plan",
+        "map_requirements_to_files_tests_routes_benchmarks",
+        "generate_or_edit_code_in_isolated_branch",
+        "run_static_analysis_and_unit_tests",
+        "run_integration_and_end_to_end_tests",
+        "review_security_and_dependencies",
+        "produce_diff_and_evidence_manifest",
+        "open_pull_request_for_review"
+      ],
+      "required_outputs": [
+        "implementation_plan",
+        "changed_files_and_diff",
+        "test_results",
+        "security_findings",
+        "traceability_manifest",
+        "rollback_plan"
+      ],
+      "autonomy": "may_prepare_changes_and_pull_requests; merge_and_production_release_require_explicit_approval"
+    },
+    "reverse_engineering": {
+      "status": "CONTRACT_DEFINED_SANDBOX_ADAPTERS_REQUIRED",
+      "authorized_inputs": [
+        "user_owned_source_code",
+        "user_authorized_repositories",
+        "documented_public_apis",
+        "user_supplied_binaries_or_archives",
+        "authorized_ui_sessions_and_workflows"
+      ],
+      "stages": [
+        "verify_authority_and_scope",
+        "inventory_artifacts_and_dependencies",
+        "map_components_data_flows_and_interfaces",
+        "observe_documented_or_authorized_behavior",
+        "derive_specification_and_compatibility_tests",
+        "build_clean_room_implementation_when_required",
+        "compare_behavior_and_accessibility",
+        "document_unknowns_and_provenance"
+      ],
+      "prohibited": [
+        "bypass_authentication_or_access_controls",
+        "credential_extraction",
+        "exploit_unauthorized_systems",
+        "copy_protected_source_code_or_trade_secrets_without_rights",
+        "evade_technical_protection_measures"
+      ],
+      "required_outputs": [
+        "scope_and_authority_record",
+        "architecture_map",
+        "interface_contracts",
+        "behavioral_test_suite",
+        "provenance_manifest",
+        "known_gaps_and_risks"
+      ]
+    },
+    "model_distillation": {
+      "status": "CONTRACT_DEFINED_TRAINING_BACKEND_REQUIRED",
+      "teacher_sources": [
+        "approved_open_weight_teacher",
+        "licensed_teacher_api_outputs",
+        "user_owned_or_explicitly_licensed_instruction_data",
+        "human_verified_demonstrations"
+      ],
+      "stages": [
+        "verify_teacher_license_and_output_rights",
+        "define_student_capability_and_evaluation",
+        "build_provenance_tagged_dataset",
+        "deduplicate_and_filter_quality",
+        "split_train_validation_private_holdout",
+        "generate_teacher_targets",
+        "train_student_or_adapter_in_sandbox",
+        "evaluate_against_teacher_and_baseline",
+        "run_safety_and_regression_suites",
+        "package_reproducible_checkpoint_and_model_card"
+      ],
+      "required_outputs": [
+        "teacher_and_student_identity",
+        "dataset_card_and_hashes",
+        "rights_manifest",
+        "training_config_and_seed",
+        "checkpoint_hash",
+        "baseline_and_candidate_scores",
+        "private_holdout_report",
+        "cost_and_resource_report"
+      ],
+      "holdout_excluded_from_training": true
+    },
+    "model_weight_training": {
+      "status": "CONTRACT_DEFINED_TRAINING_BACKEND_REQUIRED",
+      "supported_methods": [
+        "LoRA",
+        "QLoRA",
+        "supervised_fine_tuning",
+        "continued_pretraining",
+        "full_fine_tuning",
+        "from_scratch_research"
+      ],
+      "stages": [
+        "select_license_compatible_base_model",
+        "establish_reproducible_baseline",
+        "verify_dataset_rights_and_consent",
+        "pin_data_splits_and_tokenizer",
+        "estimate_and_approve_compute",
+        "train_in_isolated_reproducible_job",
+        "evaluate_checkpoint_on_private_holdout",
+        "run_general_safety_and_regression_tests",
+        "compare_cost_latency_memory_and_quality",
+        "create_signed_model_card_and_artifact_manifest",
+        "request_independent_promotion_review"
+      ],
+      "required_outputs": [
+        "base_model_revision_and_license",
+        "dataset_provenance_and_split_hashes",
+        "training_job_config_and_logs",
+        "checkpoint_and_tokenizer_hashes",
+        "baseline_candidate_and_holdout_scores",
+        "safety_regression_results",
+        "resource_cost_report",
+        "rollback_and_promotion_record"
+      ],
+      "paid_compute_requires_explicit_approval": true,
+      "production_weight_updates_require_separate_explicit_approval": true
+    },
+    "physical_product_design": {
+      "status": "CONTRACT_DEFINED_PRODUCT_ENGINEERING_RUNTIME_REQUIRED",
+      "inputs": [
+        "problem_or_opportunity",
+        "target_users",
+        "use_environment",
+        "performance_requirements",
+        "budget_and_constraints",
+        "accessibility_and_sustainability_goals"
+      ],
+      "stages": [
+        "discover_user_problem_and_validate_demand",
+        "research_existing_solutions_and_prior_art",
+        "define_product_requirements_and_acceptance_tests",
+        "generate_multiple_concepts_and_tradeoff_matrix",
+        "select_architecture_and_materials",
+        "create_system_block_diagrams_and_component_specs",
+        "build_costed_bill_of_materials",
+        "create_prototype_and_test_plan",
+        "run_usability_performance_durability_and_safety_tests",
+        "iterate_design_from_measured_failures",
+        "prepare_manufacturing_and_service_documentation"
+      ],
+      "required_outputs": [
+        "product_requirements_document",
+        "concept_and_tradeoff_records",
+        "architecture_and_interface_specs",
+        "bill_of_materials_with_sources_and_alternatives",
+        "prototype_plan",
+        "test_protocols_and_results",
+        "risk_and_hazard_register",
+        "manufacturing_and_service_pack",
+        "revision_and_evidence_history"
+      ]
+    },
+    "hardware_software_prototyping": {
+      "status": "CONTRACT_DEFINED_LAB_AND_HARDWARE_ADAPTERS_REQUIRED",
+      "domains": [
+        "mechanical",
+        "electrical_and_electronics",
+        "embedded_firmware",
+        "sensors_and_actuators",
+        "robotics_and_control",
+        "IoT_and_connectivity",
+        "mobile_and_web_companion_software",
+        "cloud_and_edge_services"
+      ],
+      "stages": [
+        "capture_system_requirements",
+        "partition_hardware_firmware_software",
+        "select_components_and_interfaces",
+        "simulate_circuit_mechanical_or_control_behavior",
+        "design_prototype_pcb_enclosure_and_firmware",
+        "create_virtual_or_bench_test_fixture",
+        "assemble_prototype_from_approved_parts",
+        "flash_and_configure_firmware_in_isolated_lab",
+        "run_functional_environmental_and_interoperability_tests",
+        "record_measurements_and_failure_modes",
+        "revise_and_version_design",
+        "prepare_reproducible_build_and_test_instructions"
+      ],
+      "required_outputs": [
+        "system_architecture",
+        "schematics_and_wiring_diagrams",
+        "component_selection_and_datasheets",
+        "firmware_and_software_revisions",
+        "prototype_build_instructions",
+        "test_fixture_and_protocol",
+        "measurement_logs",
+        "failure_analysis",
+        "revisioned_design_files",
+        "safety_review"
+      ],
+      "safety_controls": [
+        "verify voltage_current_power_and_thermal_limits",
+        "isolate_mains_voltage_and_high_energy_systems_for_qualified_review",
+        "use_current_limited_supplies_and_protective_equipment_where_appropriate",
+        "do_not_bypass_interlocks_or_protective_mechanisms",
+        "require_qualified_review_for_regulated_or_life_critical_systems",
+        "verify_radio_electrical_battery_and_environmental_compliance_before_sale"
+      ]
+    },
+    "three_dimensional_invention": {
+      "status": "CONTRACT_DEFINED_CAD_AND_MESHFAB_ADAPTERS_REQUIRED",
+      "inputs": [
+        "concept_sketches_or_description",
+        "dimensions_and_tolerances",
+        "materials",
+        "load_and_environment",
+        "manufacturing_method",
+        "printer_or_machine_constraints"
+      ],
+      "stages": [
+        "translate_concept_to_parametric_dimensions",
+        "create_2d_drawings_and_3d_geometry",
+        "check_clearances_tolerances_and_assemblies",
+        "simulate_fit_strength_or_motion_when_supported",
+        "select_material_and_fabrication_process",
+        "prepare_mesh_and_manufacturing_exports",
+        "slice_and_estimate_print_time_material_and_cost",
+        "review_orientation_supports_and_failure_risks",
+        "prototype_and_measure_real_part",
+        "compare_as_built_to_design",
+        "revise_CAD_and_release_versioned_files"
+      ],
+      "required_outputs": [
+        "editable_parametric_CAD_source_when_supported",
+        "STEP_or_equivalent_neutral_solid_export",
+        "STL_or_3MF_mesh_when_printing",
+        "dimensioned_technical_drawings",
+        "material_and_process_specification",
+        "tolerance_and_fit_report",
+        "slicer_profile_and_build_estimate",
+        "prototype_measurement_report",
+        "revision_history"
+      ],
+      "validation": [
+        "mesh_manifold_and_scale_check",
+        "wall_thickness_and_clearance_check",
+        "printability_or_machinability_check",
+        "load_and_material_assumptions_documented",
+        "human_review_for_structural_or_safety_critical_parts"
+      ]
+    },
+    "startup_creation": {
+      "status": "CONTRACT_DEFINED_BUSINESS_EXECUTION_CONNECTORS_REQUIRED",
+      "stages": [
+        "capture_founder_goal_and_constraints",
+        "identify_customer_problem_and_target_segment",
+        "research_market_competitors_and_substitutes",
+        "validate_demand_with_interviews_surveys_or_pilot",
+        "define_value_proposition_and_business_model",
+        "estimate_market_size_with_explicit_assumptions",
+        "build_pricing_unit_economics_and_cash_flow_scenarios",
+        "choose_entity_and_jurisdiction_research_path",
+        "identify_permits_licenses_insurance_and_tax_questions",
+        "research_grants_loans_incentives_and_eligibility",
+        "source_suppliers_contractors_tools_and_distribution",
+        "build_brand_positioning_website_and_sales_assets",
+        "create_mvp_and_launch_plan",
+        "set_up_operations_customer_support_and_bookkeeping_plan",
+        "track_launch_metrics_and_iterate"
+      ],
+      "required_outputs": [
+        "customer_and_problem_brief",
+        "market_and_competitor_research_with_sources",
+        "validated_demand_evidence",
+        "business_model_canvas",
+        "assumption_driven_financial_model",
+        "startup_budget_and_cash_runway",
+        "funding_and_resource_opportunity_register",
+        "legal_tax_and_regulatory_question_checklist",
+        "supplier_and_vendor_shortlist",
+        "go_to_market_and_sales_plan",
+        "MVP_or_prototype_plan",
+        "operating_playbooks",
+        "KPI_dashboard_specification",
+        "90_day_execution_roadmap"
+      ],
+      "resource_categories": [
+        "funding_and_grants",
+        "loans_and_microfinance",
+        "incubators_and_accelerators",
+        "mentors_and_professional_services",
+        "workspace_and_makerspaces",
+        "equipment_and_software",
+        "materials_and_suppliers",
+        "contract_manufacturers",
+        "testing_and_certification_labs",
+        "talent_and_contractors",
+        "distribution_and_marketplaces",
+        "insurance_and_compliance",
+        "government_and_local_business_resources"
+      ],
+      "safeguards": [
+        "never_guarantee_grant_or_loan_eligibility_or_approval",
+        "verify_deadlines_eligibility_geography_amount_and_source_date",
+        "show_total_costs_recurring_fees_assumptions_and_conflicts",
+        "no_applications_contracts_purchases_or_obligations_without_explicit_approval",
+        "identify_legal_tax_accounting_and_regulated_industry_issues_for_qualified_review",
+        "protect_confidential_business_plans_and_invention_disclosures"
+      ]
+    }
+  },
+  "shared_requirements": {
+    "lanes": "one independently tracked engineering and model-evaluation lane per canonical MasterBot; authoritative 45-domain crosswalk must be reconciled before domain ownership is claimed",
+    "execution": "real task runners with dependency-aware scheduling, bounded retries, resource quotas, idempotency, cancellation, and durable run records",
+    "evidence": "every completion links source revision, exact command, environment, logs, artifact hashes, test results, benchmark version, and reviewer",
+    "security": "least privilege, isolated sandboxes, secret redaction, dependency and license checks, no production credentials in untrusted jobs",
+    "learning": "retrieval and procedural memory are distinct from model-weight updates; source access never implies training consent",
+    "promotion": "human review required for merge, deployment, shared model promotion, and production weight changes",
+    "truthfulness": "planned, configured, executed, passed, and mastered are distinct states; never label a capability operational without runtime evidence",
+    "resource_discovery": "For every product, prototype, or startup plan, discover and compare relevant tools, parts, suppliers, software, facilities, funding, grants, expertise, and service providers; record source, location, availability date, price or estimate, eligibility, lead time, and verification status. Do not invent availability, prices, funding, or endorsements.",
+    "prototype_validation": "Use measurable requirements, test plans, recorded results, failure analysis, versioned design artifacts, and explicit readiness gates; simulations do not substitute for physical testing.",
+    "invention_and_business_rights": "Track ownership, contributor agreements, licenses, open-source and hardware licenses, confidentiality, prior-art research, and invention disclosure timing. Do not claim patentability or freedom to operate; route legal conclusions to qualified counsel."
+  },
+  "acceptance_gates": {
+    "vibe_coding": [
+      "change_is_in_scoped_branch",
+      "requirements_trace_to_code_and_tests",
+      "unit_and_integration_tests_pass",
+      "security_review_passes",
+      "diff_and_rollback_recorded"
+    ],
+    "reverse_engineering": [
+      "authority_and_scope_verified",
+      "architecture_and_interfaces_documented",
+      "behavioral_tests_reproduced",
+      "provenance_and_legal_review_pass"
+    ],
+    "model_distillation": [
+      "teacher_and_dataset_rights_verified",
+      "holdout_isolation_verified",
+      "checkpoint_reproducible",
+      "student_improves_registered_metric",
+      "safety_and_general_regressions_pass"
+    ],
+    "model_weight_training": [
+      "compute_and_data_approved",
+      "baseline_and_candidate_comparable",
+      "private_holdout_pass",
+      "artifact_hashes_and_training_logs_present",
+      "independent_review_approved"
+    ],
+    "physical_product_design": [
+      "customer_problem_and_requirements_documented",
+      "concept_tradeoffs_and_bom_reviewed",
+      "prototype_test_plan_defined",
+      "measured_tests_and_failure_analysis_recorded",
+      "safety_and_compliance_risks_reviewed"
+    ],
+    "hardware_software_prototyping": [
+      "hardware_firmware_software_interfaces_documented",
+      "component_datasheets_and_limits_verified",
+      "prototype_build_is_reproducible",
+      "bench_and_interoperability_tests_recorded",
+      "electrical_mechanical_and_operational_safety_review_passes"
+    ],
+    "three_dimensional_invention": [
+      "editable_source_and_exports_versioned",
+      "dimensions_tolerances_and_materials_documented",
+      "geometry_and_fabrication_checks_pass",
+      "physical_prototype_measured_when_required",
+      "structural_safety_claims_independently_reviewed"
+    ],
+    "startup_creation": [
+      "customer_problem_and_segment_evidence_recorded",
+      "market_claims_cited_and_assumptions_visible",
+      "unit_economics_and_cash_scenarios_reviewed",
+      "funding_and_resource_leads_verified",
+      "legal_tax_and_regulatory_questions_identified",
+      "launch_plan_and_success_metrics_defined"
+    ]
+  },
+  "non_goals": [
+    "no claim that these contracts alone implement execution backends",
+    "no automatic merge or deployment",
+    "no unrestricted reverse engineering",
+    "no training on private conversations without separate purpose-specific opt-in",
+    "no automatic production weight replacement",
+    "no claim that CAD, simulation, or generated designs are physically validated until tested",
+    "no claim of patentability, regulatory approval, grant eligibility, or guaranteed business success",
+    "no purchase, contract, funding application, company formation, or external commitment without explicit approval"
+  ]
+}

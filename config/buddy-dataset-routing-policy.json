@@ -1,0 +1,290 @@
+{
+  "schema": "dreamco.buddy_dataset_routing_policy.v1",
+  "version": "1.1.0",
+  "status": "AUTONOMOUS_ROTATING_PUBLIC_DISCOVERY_AND_PERSISTENT_MASTERBOT_ROUTING_ADDED",
+  "objective": "Build a DreamCo-owned dataset and training workflow inspired by Hugging Face Hub capabilities: discover, catalog, evaluate, route, version, and use eligible data to train Buddy and division specialist models.",
+  "architecture": {
+    "hub": "DreamCo Dataset Hub: versioned manifests, dataset cards, provenance, license/consent, quality scores, split hashes, lineage, and withdrawal records.",
+    "source_registry": [
+      "Hugging Face Hub datasets and models",
+      "GitHub repositories and releases",
+      "Kaggle datasets where terms permit",
+      "OpenML",
+      "UCI Machine Learning Repository",
+      "government/open data portals and official APIs",
+      "academic papers and supplementary datasets",
+      "DreamCo-owned repositories, docs, tests, task traces, synthetic fixtures, and user-contributed assets with permission",
+      "Zenodo records and supplementary research data",
+      "Data.gov catalog and linked federal open-data resources",
+      "Kaggle datasets through operator-authenticated API where terms permit"
+    ],
+    "planes": [
+      "public_reference_and_retrieval",
+      "DreamCo_owned_training",
+      "licensed_training",
+      "user_contributed_opt_in_training",
+      "evaluation_only_holdout"
+    ],
+    "routing": "Route candidate datasets by verified taxonomy tags, task/capability labels, and MasterBot owner; preserve source lineage and do not infer rights from a URL or listing."
+  },
+  "division_routing": {
+    "canonical_masterbots": 65,
+    "every_masterbot_gets_dedicated_dataset_lane": true,
+    "authoritative_45_division_crosswalk": "UNRESOLVED_DO_NOT_INVENT",
+    "initial_category_match": "HEURISTIC_DISCOVERY_ONLY",
+    "shared_foundation_categories": [
+      "language",
+      "reasoning",
+      "instruction_following",
+      "code",
+      "math",
+      "data",
+      "tool_use",
+      "safety"
+    ],
+    "secondary_collaboration_allowed": true,
+    "one_primary_owner_per_asset": true
+  },
+  "unknown_problem_router": {
+    "enabled": true,
+    "sequence": [
+      "classify_unknown_and_missing_capability",
+      "search_persistent_local_dreamco_dataset_hub",
+      "search_authorized_huggingface_dataset_and_model_catalogs",
+      "search_openml_uci_and_github_metadata",
+      "search_authorized_github_file_and_database_connectors",
+      "compare_candidates_by_relevance_quality_freshness_license_cost_and_access",
+      "sandbox_inspect_authorized_sample",
+      "create_provenance_manifest_and_versioned_dataset_card",
+      "route_to_canonical_primary_masterbot_and_collaborators",
+      "persist_open_research_task",
+      "add_new_benchmark_or_fixture",
+      "retest_unknown_problem"
+    ],
+    "if_no_match": "Create a missing-data research task, identify candidate sources, record uncertainty, and ask for approval when rights, access, cost, or sensitive data are unclear.",
+    "never_claim_unknown_solved_without_holdout_evidence": true
+  },
+  "training_lifecycle": [
+    "discovered",
+    "cataloged",
+    "metadata_verified",
+    "rights_verified",
+    "quality_reviewed",
+    "training_approved",
+    "split_and_hash_pinned",
+    "sandbox_training",
+    "evaluated",
+    "independently_reviewed",
+    "eligible_for_promotion"
+  ],
+  "hard_gates": {
+    "unknown_license": "BLOCK_TRAINING",
+    "dataset_card_missing": "BLOCK_TRAINING",
+    "personal_or_third_party_data_without_specific_authority": "BLOCK_TRAINING",
+    "benchmark_holdout": "EVALUATION_ONLY_NEVER_TRAIN",
+    "duplicate_or_contaminated_splits": "BLOCK_TRAINING",
+    "paid_compute": "REQUIRES_EXPLICIT_BUDGET_APPROVAL",
+    "production_weight_update": "REQUIRES_SEPARATE_EXPLICIT_APPROVAL_AND_REVIEW",
+    "external_source_access": "RESPECT_AUTHENTICATION_TERMS_RATE_LIMITS_AND_ACCESS_CONTROLS"
+  },
+  "quality_checks": [
+    "schema_and_format",
+    "license_and_terms",
+    "provenance_and_owner",
+    "PII_and_sensitive_content",
+    "deduplication",
+    "contamination_and_benchmark_leakage",
+    "label_quality",
+    "coverage_and_balance",
+    "freshness",
+    "train_validation_holdout_isolation",
+    "dataset_hash_and_revision",
+    "reproducible_loader"
+  ],
+  "training_methods": [
+    "retrieval_before_finetuning",
+    "continued_pretraining_when_justified",
+    "supervised_finetuning",
+    "LoRA",
+    "QLoRA",
+    "preference_optimization",
+    "teacher_student_distillation_only_when_terms_allow",
+    "from_scratch_research_separately_approved"
+  ],
+  "model_targets": [
+    "Buddy foundation/student models",
+    "65 MasterBot specialist model profiles",
+    "division adapters and retrieval corpora",
+    "task-specific small models and embeddings"
+  ],
+  "ownership": "DreamCo-created datasets may be marked DreamCo-owned only with documented authorship/assignment. Third-party datasets retain their own license and attribution; transformed data does not automatically become DreamCo-owned.",
+  "defaults": {
+    "download_external_data": false,
+    "train_on_discovery_catalog": false,
+    "network_in_default_ci": false,
+    "weight_training_in_default_ci": false,
+    "auto_merge": false,
+    "auto_deploy": false,
+    "automatic_production_weight_updates": false,
+    "network_metadata_discovery": false,
+    "authorized_github_file_read": false,
+    "database_snapshots": false,
+    "local_training_execution": false,
+    "automatic_external_file_downloads": false,
+    "automatic_training_from_discovery": false
+  },
+  "runtime_components": {
+    "dataset_hub": {
+      "catalog": "SQLite",
+      "cards": "versioned JSON",
+      "objects": "content-addressed local files",
+      "formats": [
+        "csv",
+        "jsonl"
+      ],
+      "production_shared_storage": "NOT_IMPLEMENTED"
+    },
+    "source_adapters": {
+      "huggingface_datasets": "opt-in metadata search",
+      "huggingface_models": "opt-in metadata search",
+      "openml": "opt-in metadata search",
+      "uci": "opt-in metadata search",
+      "github_public_search": "opt-in metadata search",
+      "github_authorized_file_read": "explicit network opt-in plus GITHUB_TOKEN",
+      "sqlite": "read-only snapshots with exact query hash allowlist",
+      "postgresql": "optional psycopg read-only snapshots",
+      "zenodo": "public metadata search",
+      "data_gov": "public catalog metadata search",
+      "kaggle": "metadata search with operator-provided API credentials"
+    },
+    "unknown_problem_router": {
+      "persistent_queue": true,
+      "entrypoint": "buddy/datasets/unknown_router.py",
+      "cli": "tools/route_buddy_unknown_problem.py",
+      "status": "LOCAL_ROUTING_AND_RESEARCH_TASK_PERSISTENCE"
+    },
+    "training_runner": {
+      "entrypoint": "buddy/datasets/transformers_runner.py",
+      "job_creator": "tools/create_buddy_training_job.py",
+      "executor": "tools/run_buddy_training_job.py",
+      "methods": [
+        "sft",
+        "lora"
+      ],
+      "requires": [
+        "verified_dataset_rights",
+        "verified_base_model_license",
+        "canonical_masterbot_owner",
+        "immutable_base_model_commit",
+        "pinned_train_validation_test_hashes",
+        "compute_approval_id",
+        "explicit_execute_flag"
+      ],
+      "automatic_execution": false,
+      "ci_training": false,
+      "execution_verified": false
+    },
+    "dreamco_original_examples": {
+      "builder": "tools/build_dreamco_training_examples.py",
+      "registration": "tools/register_buddy_dataset.py",
+      "source_requirements": [
+        "verified_work_evidence",
+        "human_reviewed",
+        "explicit_training_permission",
+        "verified_rights",
+        "no_personal_data",
+        "no_third_party_content"
+      ],
+      "per_lane_dataset": true,
+      "minimum_verified_events_per_masterbot": 3,
+      "candidate_card_default_training_approved": false,
+      "status": "CANDIDATE_GENERATION_ONLY_REQUIRES_FINAL_HUMAN_REVIEW"
+    },
+    "cross_model_benchmark": {
+      "job_creator": "buddy/datasets/benchmark_jobs.py",
+      "runner": "buddy/datasets/benchmark_runner.py",
+      "create_cli": "tools/create_buddy_model_benchmark.py",
+      "execute_cli": "tools/run_buddy_model_benchmark.py",
+      "metric": "bits_per_utf8_byte",
+      "candidates": [
+        "one_pinned_baseline",
+        "trained_candidate",
+        "license_verified_open_weight_alternatives"
+      ],
+      "holdout": "same isolated per-MasterBot test split for every candidate",
+      "requires_explicit_compute_approval": true,
+      "automatic_execution": false,
+      "execution_verified": false,
+      "limitation": "Language-modeling score is not a complete domain-task, safety, reliability, latency-cost, or agentic benchmark"
+    },
+    "autonomous_discovery_fleet": {
+      "runner": "buddy/datasets/discovery_fleet.py",
+      "cli": "tools/run_buddy_dataset_discovery.py",
+      "persistence": "DatasetHub.external_candidates",
+      "lanes_per_daily_run": 5,
+      "full_rotation_runs": 13,
+      "status": "SCHEDULED_METADATA_DISCOVERY_NO_FILE_DOWNLOADS"
+    },
+    "license_triage": {
+      "module": "buddy/datasets/license_policy.py",
+      "auto_training_approval": false,
+      "status": "CONSERVATIVE_CANDIDATE_TRIAGE_ONLY"
+    }
+  },
+  "automatic_discovery": {
+    "enabled": true,
+    "schedule": "daily rotating scan across five of 65 MasterBot lanes per run; full cycle every 13 daily runs",
+    "sources": [
+      "Hugging Face datasets and models",
+      "OpenML",
+      "UCI",
+      "GitHub repository metadata",
+      "Zenodo",
+      "Data.gov",
+      "Kaggle when operator credentials are configured"
+    ],
+    "persistence": "SQLite external_candidates catalog plus versioned discovery artifacts and scheduled workflow cache",
+    "behavior": [
+      "discover public metadata",
+      "deduplicate and persist candidates",
+      "route candidates to canonical MasterBot lanes",
+      "inspect Hugging Face dataset-card front matter when available",
+      "attach conservative license triage",
+      "create research tasks for missing data"
+    ],
+    "network": "only scheduled workflow or explicitly enabled runtime with DREAMCO_ALLOW_SOURCE_NETWORK=1",
+    "download_files": false,
+    "train_weights": false,
+    "exhaustive": false,
+    "rate_limits": "bounded per-source result counts and five MasterBot lanes per scheduled run",
+    "lanes_per_daily_run": 5,
+    "full_rotation_daily_runs": 13
+  },
+  "legal_use_policy": {
+    "license_triage_module": "buddy/datasets/license_policy.py",
+    "allowlisted_identifiers": [
+      "CC0-1.0",
+      "CC-BY-4.0",
+      "CC-BY-3.0",
+      "MIT",
+      "Apache-2.0",
+      "BSD-2-Clause",
+      "BSD-3-Clause",
+      "Unlicense",
+      "0BSD"
+    ],
+    "required_for_training_candidate": [
+      "allowlisted_exact_license",
+      "explicit_ai_training_permission",
+      "verified_rights_in_every_included_file",
+      "privacy_review_passed",
+      "source_provenance",
+      "quality_and_dedup_checks",
+      "split_isolation",
+      "canonical_masterbot_owner"
+    ],
+    "restrictive_or_unknown": "block training and retain only metadata/reference route until terms are reviewed",
+    "auto_approval": false,
+    "note": "Automated license triage is not legal advice and does not approve a dataset. A public listing, license tag, or repository-level license does not prove rights in all included files or AI-training permission."
+  }
+}

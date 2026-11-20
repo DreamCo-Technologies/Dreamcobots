@@ -9,6 +9,11 @@ on:
       - "tools/normalize_legacy_portfolios.py"
       - "config/**"
       - "tools/generate_command_center_data.py"
+      - "tools/build_command_center_data_observability.py"
+      - "tests/test_command_center_data_observability.py"
+      - "buddy/datasets/**"
+      - "artifacts/buddy-training-jobs/**"
+      - "artifacts/buddy-dataset-hub/**"
       - "tests/test_command_center_data.py"
       - "tests/test_repository_browser.py"
       - "tools/connect_repository_pages.py"
@@ -16,6 +21,9 @@ on:
       - "website/repository-*.css"
       - "website/*.html"
       - "command-center/data/**"
+      - "command-center/app.js"
+      - "website/command-center/app.js"
+      - "command-center/styles.css"
       - "website/data/command-center/**"
       - ".github/workflows/**"
   push:
@@ -38,14 +46,30 @@ jobs:
           python-version: "3.13"
       - name: Verify generator tests
         run: |
-          python3 -m unittest tests.test_command_center_data tests.test_repository_browser tests.test_legacy_portfolios tests.test_branch_health_public_report
+          python3 -m unittest tests.test_command_center_data tests.test_command_center_data_observability tests.test_repository_browser tests.test_legacy_portfolios tests.test_branch_health_public_report
           python3 tools/connect_repository_pages.py --check
       - name: Regenerate derived command-center data
         run: python3 tools/generate_command_center_data.py
       - name: Verify generated data is current
         run: python3 tools/generate_command_center_data.py --check
-      - name: Verify command-center route and controls
-        run: node --test tests/command-center-page.test.mjs
+      - name: Generate data observability snapshot
+        run: python3 tools/build_command_center_data_observability.py
+      - name: Verify data observability snapshot is current
+        run: python3 tools/build_command_center_data_observability.py --check
+      - name: Verify command-center route, controls, and JavaScript syntax
+        run: |
+          node --check command-center/app.js
+          node --check website/command-center/app.js
+          node --test tests/command-center-page.test.mjs
+      - name: Upload generated data observability snapshots
+        uses: actions/upload-artifact@v7
+        with:
+          name: command-center-data-observability-${{ github.run_id }}
+          path: |
+            command-center/data/data-observability.json
+            website/data/command-center/data-observability.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Verify JSON syntax
         run: |
           for file in command-center/data/*.json website/data/command-center/*.json; do

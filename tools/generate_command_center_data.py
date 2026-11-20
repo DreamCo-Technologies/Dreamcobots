@@ -340,6 +340,7 @@ def build_repository_browser() -> dict[str, Any]:
     }
 
 
+
 def build_bundle() -> dict[str, dict[str, Any]]:
     files = repository_files()
     registry = read_json(REGISTRY)

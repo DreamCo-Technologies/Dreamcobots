@@ -28,6 +28,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          gh label create buddy-incident --repo "$GITHUB_REPOSITORY" --color B60205 --description "Canonical GitHub Actions incident" --force
           mkdir -p sweep
           created_range="$(date -u -d '24 hours ago' '+%Y-%m-%d')..$(date -u '+%Y-%m-%d')"
           success=0
@@ -82,12 +83,18 @@ jobs:
             [ -z "$run_id" ] && continue
             existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "Actions run $run_id in:title" --json number --jq '.[0].number // empty')
             [ -n "$existing" ] && continue
-            run=$(gh run view "$run_id" --repo "$GITHUB_REPOSITORY" --json workflowName,conclusion,url,headSha,event)
-            workflow=$(printf '%s' "$run" | jq -r '.workflowName'); conclusion=$(printf '%s' "$run" | jq -r '.conclusion'); url=$(printf '%s' "$run" | jq -r '.url'); sha=$(printf '%s' "$run" | jq -r '.headSha'); event=$(printf '%s' "$run" | jq -r '.event')
+            run=$(gh run view "$run_id" --repo "$GITHUB_REPOSITORY" --json workflowName,conclusion,url,headSha,event,headBranch)
+            jobs=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id/jobs?per_page=100")
+            workflow=$(printf '%s' "$run" | jq -r '.workflowName'); conclusion=$(printf '%s' "$run" | jq -r '.conclusion'); url=$(printf '%s' "$run" | jq -r '.url'); sha=$(printf '%s' "$run" | jq -r '.headSha'); event=$(printf '%s' "$run" | jq -r '.event'); branch=$(printf '%s' "$run" | jq -r '.headBranch')
+            failed_job=$(printf '%s' "$jobs" | jq -r '[.jobs[] | select(.conclusion == "failure" or .conclusion == "timed_out")] | .[0].name // "unknown-job"')
+            failed_step=$(printf '%s' "$jobs" | jq -r '[.jobs[] | select(.conclusion == "failure" or .conclusion == "timed_out") | .steps[]? | select(.conclusion == "failure" or .conclusion == "timed_out")] | .[0].name // "unknown-step"')
             cat > sweep/issue.md <<EOF
           A GitHub Actions run needs repair.
 
           - Workflow: **$workflow**
+          - Job: **$failed_job**
+          - Failed step(s): **$failed_step**
+          - Branch: $branch
           - Conclusion: **$conclusion**
           - Event: **$event**
           - Commit: \`$sha\`
@@ -95,7 +102,7 @@ jobs:
 
           **Repair rule:** inspect the first failing job/step, reproduce the smallest root cause, fix without weakening tests, then rerun the affected suite. Preserve blocked/owner-action states when verification cannot be completed.
           EOF
-            gh issue create --repo "$GITHUB_REPOSITORY" --title "Actions run $run_id failed: $workflow" --body-file sweep/issue.md
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "Actions run $run_id failed: $workflow" --body-file sweep/issue.md --label buddy-incident
           done < sweep/ids.txt
       - name: Save sweep evidence
         if: always()

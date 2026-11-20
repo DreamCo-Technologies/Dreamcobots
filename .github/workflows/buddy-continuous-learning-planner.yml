@@ -1,0 +1,115 @@
+name: Buddy Continuous Learning Fleet
+
+on:
+  pull_request:
+    paths:
+      - "config/buddy-continuous-learning-policy.json"
+      - "config/masterbot-65-registry.json"
+      - "tools/buddy_masterbot_training_lane.py"
+      - "tools/aggregate_masterbot_training_runs.py"
+      - ".github/workflows/buddy-continuous-learning-planner.yml"
+  schedule:
+    - cron: "*/5 * * * *"
+    - cron: "15 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-continuous-learning-fleet-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prepare-fleet:
+    runs-on: ubuntu-latest
+    outputs:
+      divisions: ${{ steps.matrix.outputs.divisions }}
+      mode: ${{ steps.matrix.outputs.mode }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: matrix
+        name: Build fair-share matrix from canonical registry
+        env:
+          SCHEDULE: ${{ github.event.schedule || '' }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os
+          from pathlib import Path
+          registry=json.loads(Path("config/masterbot-65-registry.json").read_text())
+          divisions=registry.get("divisions", [])
+          expected=registry.get("canonical_count")
+          assert expected == 65, f"Expected canonical_count=65, got {expected}"
+          assert len(divisions) == expected, f"Registry has {len(divisions)} divisions"
+          assert len({d["name"] for d in divisions}) == expected, "Duplicate division names"
+          assert all("id" in d and "name" in d for d in divisions), "Incomplete division record"
+          schedule=os.environ.get("SCHEDULE","")
+          if schedule == "*/5 * * * *":
+              # A distinct lane is selected on every five-minute workflow run.
+              # Over 65 runs the round-robin gives every canonical division a turn.
+              index=(int(os.environ["RUN_NUMBER"])-1) % len(divisions)
+              selected=[divisions[index]]
+              mode="FIVE_MINUTE_ROTATING_LANE"
+          else:
+              selected=divisions
+              mode="FULL_FLEET_SWEEP"
+          print("divisions=" + json.dumps(selected, separators=(",", ":")))
+          print("mode=" + mode)
+          PY
+
+  train-each-division:
+    needs: prepare-fleet
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        division: ${{ fromJSON(needs.prepare-fleet.outputs.divisions) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run isolated division learning lane
+        env:
+          MASTERBOT_NAME: ${{ matrix.division.name }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: python tools/buddy_masterbot_training_lane.py
+      - name: Preserve division run evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: masterbot-lane-${{ matrix.division.name }}-${{ github.run_id }}
+          path: artifacts/masterbot-training/${{ matrix.division.name }}/latest-checkpoint.json
+          if-no-files-found: error
+          retention-days: 30
+
+  cross-division-learning:
+    needs: [prepare-fleet, train-each-division]
+    if: ${{ always() && (github.event_name != 'schedule' || github.event.schedule != '*/5 * * * *') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download full-sweep division run records
+        uses: actions/download-artifact@v4
+        with:
+          pattern: masterbot-lane-*
+          path: artifacts/masterbot-training
+          merge-multiple: false
+      - name: Build shared cross-run learning queue
+        run: |
+          python tools/aggregate_masterbot_training_runs.py \
+            --input artifacts/masterbot-training \
+            --output artifacts/cross-division-learning-queue.json
+      - name: Upload fleet learning ledger
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-cross-division-learning-ledger-${{ github.run_id }}
+          path: artifacts/cross-division-learning-queue.json
+          if-no-files-found: error
+          retention-days: 90

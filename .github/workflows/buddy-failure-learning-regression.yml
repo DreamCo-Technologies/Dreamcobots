@@ -1,0 +1,44 @@
+name: Buddy Failure Learning Regression
+
+on:
+  push:
+    branches-ignore: [main]
+    paths:
+      - "tools/buddy_failure_learning.py"
+      - "tests/test_buddy_failure_learning.py"
+      - "tools/buddy_safe_repair.py"
+      - "tests/test_buddy_safe_repair.py"
+      - "buddy/learning/action_failure_learning.py"
+      - "buddy/learning/continuous_learning_controller.py"
+      - ".github/workflows/buddy-failure-learning-regression.yml"
+  pull_request:
+    paths:
+      - "tools/buddy_failure_learning.py"
+      - "tests/test_buddy_failure_learning.py"
+      - "buddy/learning/action_failure_learning.py"
+      - "buddy/learning/continuous_learning_controller.py"
+      - ".github/workflows/buddy-failure-learning-regression.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-failure-learning-regression-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile Buddy failure-learning code
+        run: python -m compileall -q buddy/learning tools/buddy_failure_learning.py tests/test_buddy_failure_learning.py
+      - name: Test failure classification, safe repair policy and verified lessons
+        run: python -m unittest tests.test_buddy_failure_learning tests.test_buddy_safe_repair

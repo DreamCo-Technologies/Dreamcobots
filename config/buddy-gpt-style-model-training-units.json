@@ -1,0 +1,236 @@
+{
+  "schema": "dreamco.buddy_training_units.v1",
+  "track_id": "ai_ml.gpt_style_model_engineering",
+  "version": "1.0.0",
+  "status": "DEFINED_NOT_TRAINED",
+  "training_policy": {
+    "permitted_sources_only": true,
+    "provenance_required": true,
+    "dataset_rights_required": true,
+    "unknown_rights": "BLOCKED",
+    "holdout_isolated": true,
+    "proprietary_model_weights_forbidden": true,
+    "weight_updates_authorized": false,
+    "paid_compute_authorized": false
+  },
+  "source_refs": [
+    {
+      "id": "FCC-25M-2026-10-08",
+      "url": "https://www.freecodecamp.org/news/build-and-train-a-25m-parameter-llm-from-scratch-on-your-cpu/",
+      "date": "2026-10-08",
+      "role": "curriculum_reference",
+      "training_data_authorized": false
+    },
+    {
+      "id": "FCC-GLM53-2026-11-14",
+      "url": "https://www.freecodecamp.org/news/build-and-train-a-glm-53-flash-model-from-scratch-with-python/",
+      "date": "2026-11-14",
+      "role": "curriculum_reference",
+      "training_data_authorized": false
+    },
+    {
+      "id": "VUK-GPT5-VIDEO-2025-08-07",
+      "url": "https://www.youtube.com/watch?v=xzCJpWliUE0",
+      "date": "2025-08-07",
+      "role": "educational_architecture_walkthrough",
+      "training_data_authorized": false
+    },
+    {
+      "id": "VUK-GPT5-REPO",
+      "url": "https://github.com/vukrosic/gpt5-from-scratch",
+      "date": "unknown",
+      "license": "MIT (repository code only; verify current LICENSE before reuse)",
+      "role": "optional_code_study_reference",
+      "training_data_authorized": false
+    },
+    {
+      "id": "FCC-TRAIN-LLM-2025-04-10",
+      "url": "https://www.freecodecamp.org/news/train-your-own-llm",
+      "date": "2025-04-10",
+      "role": "fine_tuning_reference",
+      "training_data_authorized": false
+    }
+  ],
+  "units": [
+    {
+      "capability_id": "GPTS-01",
+      "objective": "Reproducible tiny GPT baseline",
+      "lesson": "Build a next-token model with explicit tensor shapes, embeddings, logits and cross-entropy; prove the loop can overfit a tiny fixed batch.",
+      "practice": "A minimal forward/backward training loop with deterministic seed and shape assertions.",
+      "sandbox_task": "Train on synthetic token sequences; verify loss falls and gradients are finite.",
+      "transfer_task": "Change sequence length and verify causal behavior remains correct.",
+      "rubric": "Tiny-batch loss reduction; finite gradients; deterministic config; no leakage.",
+      "benchmark": "Fixed tiny-batch overfit and causal-mask suite.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "VUK-GPT5-VIDEO-2025-08-07",
+        "FCC-TRAIN-LLM-2025-04-10"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-02",
+      "objective": "Byte-level tokenization and dataset pipeline",
+      "lesson": "Explain bytes versus tokens, special tokens, packing, truncation, deduplication and split isolation.",
+      "practice": "Build tokenizer round-trip and dataset manifest checks.",
+      "sandbox_task": "Use synthetic text fixtures and test UTF-8 edge cases, padding, truncation and packing.",
+      "transfer_task": "Transfer to a held-out text fixture with Unicode and repeated spans.",
+      "rubric": "Round-trip, no cross-split duplicate, manifest provenance and tokenizer hash.",
+      "benchmark": "Tokenizer contract and dataset quality gate.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "VUK-GPT5-VIDEO-2025-08-07",
+        "FCC-TRAIN-LLM-2025-04-10"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-03",
+      "objective": "Transformer core and backpropagation",
+      "lesson": "Implement causal multi-head attention, positional encoding/RoPE, residuals, normalization and feed-forward layers.",
+      "practice": "Trace shapes and gradients through one transformer block.",
+      "sandbox_task": "Run attention-mask, gradient and tiny-batch overfit tests.",
+      "transfer_task": "Change context length and verify no future-token leakage.",
+      "rubric": "Finite gradients, causal isolation, shape invariants, reproducibility.",
+      "benchmark": "Transformer unit and numerical tests.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "VUK-GPT5-VIDEO-2025-08-07",
+        "FCC-TRAIN-LLM-2025-04-10"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-04",
+      "objective": "Efficient attention and mixture of experts",
+      "lesson": "Compare full, linear and sparse attention; explain KV cache, GQA, MoE routing and tied embeddings.",
+      "practice": "Implement one small efficient-attention or MoE component behind a feature flag.",
+      "sandbox_task": "Use deterministic synthetic tensors to test routing and cache invariants.",
+      "transfer_task": "Evaluate on held-out sequence lengths and skewed routing inputs.",
+      "rubric": "Correctness before speed; memory and latency measured; no ungrounded architecture claims.",
+      "benchmark": "Attention/MoE contract tests and microbenchmark.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "VUK-GPT5-VIDEO-2025-08-07",
+        "FCC-TRAIN-LLM-2025-04-10"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-05",
+      "objective": "Optimization and compute profiling",
+      "lesson": "Compare AdamW baseline with optional Muon experiment; teach warmup, cosine decay, clipping, weight decay, AMP and accumulation.",
+      "practice": "Create a reproducible experiment config and profiler report.",
+      "sandbox_task": "Run CPU-safe microbenchmarks; use GPU only if available and authorized.",
+      "transfer_task": "Repeat with changed batch/accumulation and compare stable metrics.",
+      "rubric": "Seed/config pinned; tokens/sec, peak memory, loss and cost recorded.",
+      "benchmark": "Optimizer ablation and profiler report.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "VUK-GPT5-VIDEO-2025-08-07",
+        "FCC-TRAIN-LLM-2025-04-10"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-06",
+      "objective": "Pretraining, curriculum and evaluation",
+      "lesson": "Build train/validation/test separation, curriculum/interleaving, checkpoints, perplexity and multi-seed analysis.",
+      "practice": "Create a training manifest and baseline scorecard.",
+      "sandbox_task": "Train only on approved toy or rights-cleared data; inspect generated samples.",
+      "transfer_task": "Evaluate on isolated held-out data and a second seed.",
+      "rubric": "No leakage; checkpoint hash; sample review; uncertainty and baseline reported.",
+      "benchmark": "Held-out language-model evaluation.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "VUK-GPT5-VIDEO-2025-08-07",
+        "FCC-TRAIN-LLM-2025-04-10"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-07",
+      "objective": "SFT, adapters and reward-based post-training",
+      "lesson": "Explain SFT, LoRA/QLoRA, preference optimization and reward loops; identify reward hacking risks.",
+      "practice": "Prepare a rights-cleared synthetic SFT fixture and reward-test harness.",
+      "sandbox_task": "Run a mocked grader; test reward exploitation and shortcut behavior.",
+      "transfer_task": "Transfer to unseen unit-test tasks without training on holdout.",
+      "rubric": "Rights cleared; train/eval split clean; reward robustness measured; no false success claim.",
+      "benchmark": "SFT data validation and reward-hacking suite.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "VUK-GPT5-VIDEO-2025-08-07",
+        "FCC-TRAIN-LLM-2025-04-10"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-08",
+      "objective": "Multimodal tokens and vision patches",
+      "lesson": "Explain image patches, vision encoders, 2D RoPE and text/image token boundaries.",
+      "practice": "Build a tiny synthetic image-patch encoder exercise.",
+      "sandbox_task": "Use generated geometric images only; test patch count and modality boundaries.",
+      "transfer_task": "Evaluate on held-out geometric patterns.",
+      "rubric": "Correct patch dimensions, modality isolation and safety checks.",
+      "benchmark": "Vision encoder shape/contract tests.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "VUK-GPT5-VIDEO-2025-08-07",
+        "FCC-TRAIN-LLM-2025-04-10"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-09",
+      "objective": "Buddy routing, registry and dataset lineage",
+      "lesson": "Connect model identity, adapter metadata, database source-of-truth, routing permissions and dataset lineage.",
+      "practice": "Define a model-run manifest and a read-only route decision fixture.",
+      "sandbox_task": "Test allowlists, unavailable sources, stale cache and retry/idempotency using mocks.",
+      "transfer_task": "Transfer to a second synthetic provider and schema version.",
+      "rubric": "No unapproved writes; provenance complete; failover and audit decisions inspectable.",
+      "benchmark": "Registry schema, routing and lineage contract tests.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "VUK-GPT5-VIDEO-2025-08-07",
+        "FCC-TRAIN-LLM-2025-04-10"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    },
+    {
+      "capability_id": "GPTS-10",
+      "objective": "Independent graduation and model card",
+      "lesson": "Evaluate repeatability, holdout transfer, regression, safety, latency, throughput, memory and cost.",
+      "practice": "Produce a complete model card and evidence packet.",
+      "sandbox_task": "Run pinned suite and adversarial fixtures in isolated sandbox.",
+      "transfer_task": "Independent reviewer reruns the suite from recorded artifacts.",
+      "rubric": "Repeat pass, held-out transfer, no regression, fresh evidence and explicit limitations.",
+      "benchmark": "Graduation suite and reproducibility audit.",
+      "provenance": [
+        "FCC-25M-2026-10-08",
+        "FCC-GLM53-2026-11-14",
+        "VUK-GPT5-VIDEO-2025-08-07",
+        "FCC-TRAIN-LLM-2025-04-10"
+      ],
+      "status": "DEFINED_NOT_EXECUTED",
+      "weights_trained": false
+    }
+  ]
+}
