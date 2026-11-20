@@ -10,6 +10,9 @@ on:
       - "config/buddy-engineering-capability-contract.json"
       - "config/buddy-dataset-routing-policy.json"
       - "buddy/datasets/**"
+      - "tests/test_buddy_cross_model_benchmark.py"
+      - "tools/create_buddy_model_benchmark.py"
+      - "tools/run_buddy_model_benchmark.py"
       - "tests/test_buddy_dataset_hub_runtime.py"
       - "tests/test_buddy_database_sources.py"
       - "tools/route_buddy_unknown_problem.py"
@@ -61,7 +64,7 @@ jobs:
         run: |
           MATRIX=$(python tools/dreamco_division_mastery_orchestrator.py --matrix)
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
-          python -m unittest tests.test_dreamco_division_mastery_orchestrator tests.test_division_model_fleet tests.test_buddy_engineering_capability_contract tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime tests.test_buddy_database_sources tests.test_dreamco_original_training_examples
+          python -m unittest tests.test_dreamco_division_mastery_orchestrator tests.test_division_model_fleet tests.test_buddy_engineering_capability_contract tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime tests.test_buddy_database_sources tests.test_dreamco_original_training_examples tests.test_buddy_cross_model_benchmark
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
           python tools/build_division_model_fleet.py --check
