@@ -40,8 +40,8 @@ jobs:
               const body = x.body || "";
               const value = (label) => {
                 const prefix = "- " + label + ": **";
-                const line = body.split("\\n").find(y => y.startsWith(prefix));
-                return line ? line.slice(prefix.length).replace(/\\*\\*$/, "").trim() : "";
+                const line = body.split(String.fromCharCode(10)).find(y => y.startsWith(prefix));
+                return line ? line.slice(prefix.length, line.endsWith("**") ? -2 : undefined).trim() : "";
               };
               const context = [value("Workflow"), value("Job"), value("Failed step(s)")].join(" ");
               return /dataset route|route index|division.*fleet|generated artifact/i.test(context);
