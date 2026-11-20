@@ -22,6 +22,8 @@ def _load_rows(path: Path) -> list[dict]:
         row=json.loads(line)
         if not isinstance(row,dict) or row.get("split") not in {"train","validation","test"}:
             raise TrainingExecutionError("Every JSONL record must be an object with train/validation/test split")
+        if not isinstance(row.get("masterbot_id"), int):
+            raise TrainingExecutionError("Every row must carry its canonical primary MasterBot ID")
         if not (row.get("text") or (row.get("instruction") and row.get("output"))):
             raise TrainingExecutionError("Each row needs text or instruction/output fields")
         rows.append(row)
@@ -66,7 +68,12 @@ def validate_job(job: dict, approval_id: str) -> tuple[Path,list[dict]]:
             raise TrainingExecutionError(f"{split} split hash mismatch")
         if not any(row["split"]==split for row in rows):
             raise TrainingExecutionError(f"{split} split is empty")
-    return object_path,rows
+    target_masterbot=int(job["masterbot_id"])
+    lane_rows=[row for row in rows if row["masterbot_id"]==target_masterbot]
+    for split in ("train","validation","test"):
+        if not any(row["split"]==split for row in lane_rows):
+            raise TrainingExecutionError(f"MasterBot {target_masterbot} has no {split} examples")
+    return object_path,lane_rows
 
 def execute_job(job_path: str | Path, approval_id: str, output_root: str | Path,
                 allow_model_download: bool=False) -> dict[str,Any]:
