@@ -2,7 +2,6 @@ name: Buddy Failure Detection and Learning
 
 on:
   workflow_run:
-    workflows: ["*"]
     types: [completed]
   schedule:
     - cron: "*/15 * * * *"
@@ -58,7 +57,7 @@ jobs:
                 if (seen.has(digest)) continue;
                 seen.add(digest);
                 const fingerprintMarker = marker + digest;
-                const query = `repo:${owner}/${repo} is:issue is:open label:buddy-incident "${fingerprintMarker}"`;
+                const query = `repo:${owner}/${repo} is:issue label:buddy-incident in:body "${fingerprintMarker}"`;
                 const matches = await github.rest.search.issuesAndPullRequests({q: query, per_page: 5});
                 const body = [
                   "## Detected workflow failure",
@@ -84,6 +83,9 @@ jobs:
                 ].join("\n");
                 if (matches.data.items.length) {
                   const issue = matches.data.items[0];
+                  if (issue.state === "closed") {
+                    await github.rest.issues.update({owner, repo, issue_number: issue.number, state: "open"});
+                  }
                   await github.rest.issues.createComment({
                     owner, repo, issue_number: issue.number,
                     body: `Recurrence observed: workflow run ${run.html_url}. Job: ${job.name}. Failed step: ${step}. Commit: ${run.head_sha}.\n\n${fingerprintMarker}`
