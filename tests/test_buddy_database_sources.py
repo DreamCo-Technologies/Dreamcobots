@@ -20,6 +20,22 @@ class DatabaseSourceTests(unittest.TestCase):
             self.assertTrue(result["query_only"])
             self.assertEqual(len((root/"snapshot.jsonl").read_text().splitlines()),2)
 
+    def test_parameter_values_are_part_of_the_approval_hash(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp); db=root/"source.db"
+            connection=sqlite3.connect(db)
+            connection.execute("CREATE TABLE examples (id INTEGER, text TEXT)")
+            connection.executemany("INSERT INTO examples VALUES (?,?)",[(1,"one"),(2,"two")])
+            connection.commit(); connection.close()
+            sql="SELECT id, text FROM examples WHERE id=? LIMIT 10"
+            approved=query_hash(sql,(1,))
+            result=snapshot_sqlite(db,sql,(1,),authorization_ref="approved-query-1",
+                approved_query_sha256=approved,output_path=root/"snapshot.jsonl")
+            self.assertEqual(result["rows_exported"],1)
+            with self.assertRaises(DatabaseSourceError):
+                snapshot_sqlite(db,sql,(2,),authorization_ref="approved-query-1",
+                    approved_query_sha256=approved,output_path=root/"other.jsonl")
+
     def test_write_queries_and_unapproved_queries_are_blocked(self):
         with tempfile.TemporaryDirectory() as temp:
             db=Path(temp)/"source.db"; sqlite3.connect(db).close()
