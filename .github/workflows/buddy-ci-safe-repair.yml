@@ -9,26 +9,46 @@ on:
       - "tools/build_pages_connection_index.py"
       - "tools/build_actions_prospectus.py"
       - "tools/build_file_prospectus.py"
+      - "tools/buddy_safe_repair.py"
+      - "tools/buddy_failure_learning.py"
       - "config/buddy-dataset-routing-policy.json"
       - "config/division-model-competitiveness-policy.json"
       - "config/masterbot-65-registry.json"
       - ".github/workflows/buddy-ci-safe-repair.yml"
+  workflow_run:
+    workflows:
+      - "DreamCo Division Mastery Engine"
+      - "Buddy Sandbox Bootcamp"
+      - "Actions Health"
+      - "Keep Green"
+      - "Repository Test Matrix"
+      - "DreamCo Core Health"
+    types: [completed]
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: write
+  pull-requests: write
 
 concurrency:
-  group: buddy-ci-safe-repair-${{ github.ref }}
+  group: buddy-ci-safe-repair-${{ github.event.workflow_run.id || github.ref }}
   cancel-in-progress: false
 
 jobs:
   regenerate-and-verify:
-    if: github.ref != 'refs/heads/main'
+    if: (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.head_branch == 'main') || (github.event_name != 'workflow_run' && github.ref != 'refs/heads/main')
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - name: Check out the current repair branch without persisted credentials
+      - name: Check out trusted default branch for failure-triggered repairs
+        if: github.event_name == 'workflow_run'
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Check out the current non-main repair branch
+        if: github.event_name != 'workflow_run'
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
@@ -36,7 +56,37 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Regenerate only allowlisted deterministic indexes and registries
+      - name: Normalize failed job into a safe repair observation
+        if: github.event_name == 'workflow_run'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const run = context.payload.workflow_run;
+            const result = await github.rest.actions.listJobsForWorkflowRun({
+              owner: context.repo.owner, repo: context.repo.repo,
+              run_id: run.id, per_page: 100
+            });
+            const failed = result.data.jobs.find(job => job.conclusion === "failure");
+            const failedStep = failed && (failed.steps || []).find(step => step.conclusion === "failure");
+            const observation = {
+              repository: context.repo.owner + "/" + context.repo.repo,
+              workflow: run.name || "",
+              job: failed ? failed.name : "",
+              failed_step: failedStep ? failedStep.name : "",
+              error_signature: failedStep ? failedStep.name : "failed run without a failed step",
+              commit: run.head_sha || "",
+              run_id: String(run.id),
+              source_run_url: run.html_url || ""
+            };
+            fs.mkdirSync("artifacts/buddy-safe-repair", {recursive: true});
+            fs.writeFileSync("artifacts/buddy-safe-repair/observation.json", JSON.stringify(observation, null, 2) + "\n");
+            core.setOutput("has_failed_job", failed ? "true" : "false");
+      - name: Run exact allowlisted repair for a failed default-branch workflow
+        if: github.event_name == 'workflow_run'
+        run: python tools/buddy_safe_repair.py --observation artifacts/buddy-safe-repair/observation.json --out artifacts/buddy-safe-repair/result.json
+      - name: Regenerate allowlisted deterministic indexes on non-main branches
+        if: github.event_name != 'workflow_run'
         run: |
           set -euo pipefail
           python tools/build_buddy_dataset_routes.py
@@ -44,7 +94,7 @@ jobs:
           python tools/build_pages_connection_index.py
           python tools/build_actions_prospectus.py
           python tools/build_file_prospectus.py
-      - name: Verify generated outputs and Buddy repair-learning tests
+      - name: Verify repaired indexes and Buddy repair-learning tests
         run: |
           set -euo pipefail
           python tools/build_buddy_dataset_routes.py --check
@@ -54,7 +104,7 @@ jobs:
           python tools/build_file_prospectus.py --check
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
-          python -m unittest tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_failure_learning
+          python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator
           git diff --check
       - name: Detect allowlisted generated changes
         id: changes
@@ -71,16 +121,33 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
             git diff --cached --stat
           fi
-      - name: Commit and push verified generated repairs to this branch
+      - name: Commit and publish verified generated repairs
         if: steps.changes.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          REPAIR_BRANCH: ${{ github.ref_name }}
+          EVENT_NAME: ${{ github.event_name }}
+          REPAIR_BRANCH: ${{ github.event_name == 'workflow_run' && format('buddy/ci-repair-{0}', github.event.workflow_run.id) || github.ref_name }}
         shell: bash
         run: |
           set -euo pipefail
+          if [ "$EVENT_NAME" = "workflow_run" ]; then
+            git switch -c "$REPAIR_BRANCH"
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore(ci): regenerate verified DreamCo indexes"
+          git commit -m "chore(ci): apply verified allowlisted DreamCo repair"
           AUTH="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
           git -c core.hooksPath=/dev/null -c http.extraheader="AUTHORIZATION: basic $AUTH" push "https://github.com/$GITHUB_REPOSITORY.git" "HEAD:refs/heads/$REPAIR_BRANCH"
+          if [ "$EVENT_NAME" = "workflow_run" ]; then
+            gh pr create --repo "$GITHUB_REPOSITORY" --base main --head "$REPAIR_BRANCH" \
+              --title "Buddy safe CI repair for run ${{ github.event.workflow_run.id }}" \
+              --body "This PR contains only allowlisted deterministic generated-index repairs. Original failing run: ${{ github.event.workflow_run.html_url }}. Review the diff and CI evidence before merging."
+          fi
+      - name: Preserve repair evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-safe-repair-${{ github.run_id }}
+          path: artifacts/buddy-safe-repair/
+          if-no-files-found: warn
+          retention-days: 30
