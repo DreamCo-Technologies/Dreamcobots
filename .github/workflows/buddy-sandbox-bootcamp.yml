@@ -12,6 +12,9 @@ on:
       - 'buddy/bootcamp/**'
       - 'buddy/learning/**'
       - 'buddy/datasets/**'
+      - 'tests/test_buddy_cross_model_benchmark.py'
+      - 'tools/create_buddy_model_benchmark.py'
+      - 'tools/run_buddy_model_benchmark.py'
       - 'config/buddy-study-resources-*.json'
       - 'config/buddy-dataset-routing-policy.json'
       - 'config/masterbot-65-registry.json'
@@ -50,7 +53,7 @@ jobs:
         with:
           python-version: '3.13'
       - name: Compile sandbox, bootcamp, and learning modules
-        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py
+        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py tools/create_buddy_model_benchmark.py tools/run_buddy_model_benchmark.py
       - name: Run safe sandbox smoke test
         run: |
           python - <<'PY'
@@ -62,7 +65,7 @@ jobs:
       - name: Build DreamCo dataset discovery routes
         run: python tools/build_buddy_dataset_routes.py
       - name: Test 65 MasterBot dataset routing and training gates
-        run: python -m unittest tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime tests.test_buddy_database_sources tests.test_dreamco_original_training_examples
+        run: python -m unittest tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime tests.test_buddy_database_sources tests.test_dreamco_original_training_examples tests.test_buddy_cross_model_benchmark
       - name: Smoke test local unknown-problem routing
         run: python tools/route_buddy_unknown_problem.py --problem 'Build a SQL database analytics pipeline' --out artifacts/buddy-dataset-hub/ci-unknown-route.json
       - name: Validate curriculum JSON
