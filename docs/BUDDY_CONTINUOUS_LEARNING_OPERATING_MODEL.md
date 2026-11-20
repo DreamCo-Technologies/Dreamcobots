@@ -1,46 +1,47 @@
-# Buddy Continuous Learning and Expansion
+# Buddy Always-On, All-Division Learning
 
-## Permanent operating objective
+## Fleet scope
 
-Buddy's learning program is continuous. The 14-day plan is the first delivery sprint and graduation checkpoint, not the end of learning. After graduation, the same governed cycle repeats indefinitely while the repository's scheduler/worker is enabled and healthy.
+The canonical source of truth is `config/masterbot-65-registry.json`. Every scheduled fleet cycle builds its matrix from that registry and requires exactly 65 unique division records. No hand-maintained partial list is allowed. Each division gets an isolated run record and a fair-share place in the queue.
 
-## Continuous cycle
+## Cadence
 
-1. Inventory the canonical MasterBot registry and capability map.
-2. Keep a dedicated logical learning lane and run history for each MasterBot.
-3. Rank capability gaps by impact, evidence confidence, and estimated cost.
-4. Select only approved sources; retain URLs, publication metadata, licenses and provenance.
-5. Create a lesson, practice tasks, and sandbox fixtures.
-6. Run isolated tests and held-out transfer tasks.
-7. Run safety, regression, and reproducibility checks.
-8. Save run manifest, metrics, logs and artifact/checkpoint hashes.
-9. Promote only if the candidate improves the pinned benchmark without unacceptable regression; otherwise roll back and create a remediation lesson.
-10. Publish a daily missing-capabilities report and weekly benchmark/model-card review.
-11. Start the next cycle; do not stop because a curriculum has been completed.
+GitHub Actions is configured to start a fleet cycle every six hours, 24 hours a day, seven days a week. Each cycle fans out to all 65 division lanes, with parallelism capped at five jobs to respect runner capacity and avoid overwhelming the repository. This is four scheduled lane invocations per division per day when GitHub Actions is enabled and not delayed or quota-limited. Manual runs are also supported.
 
-## Growth dimensions
+GitHub scheduled workflows are best-effort, not a guaranteed clock or persistent compute service. The schedule can be delayed, disabled, skipped by platform limits, or stopped by repository settings. For stronger 24/7 execution, DreamCo must deploy and monitor a persistent queue/worker with approved compute and budget.
 
-- Knowledge: versioned, rights-cleared retrieval and lesson memory.
-- Skills: tested tool use, coding, reasoning and specialist capabilities.
-- Models: optional adapter or weight training only after license, data, compute, safety and approval gates pass.
-- Ecosystem: new MasterBots, tools, providers and routes only after registry, permissions, contract tests and rollback support exist.
+## Each division's learning loop
 
-## Dedicated MasterBot lanes
+1. Load its own gap queue, last checkpoint and benchmark profile.
+2. Read eligible shared lessons and reusable verified fixes from other DreamCo runs.
+3. Select a prioritized gap and approved learning sources.
+4. Study, practice and run isolated sandbox tasks.
+5. Run targeted, held-out, safety and regression checks.
+6. Store evidence, source lineage, config and artifact hashes.
+7. Publish only reusable, verified lesson metadata and benchmark learnings to the shared cross-run bus.
+8. Requeue unresolved work and start again in the next cycle.
 
-Each MasterBot receives an independent queue, lesson history, benchmark profile, run manifest and remediation backlog. Shared services include source governance, dataset-rights checks, benchmark definitions, artifact registry and audit logs. Shared failures must not silently corrupt every lane. Parallel jobs are bounded by available runners and approved resource budgets.
+## Mixing learning across runs
 
-## Always-on does not mean uncontrolled
+All divisions participate in a shared learning bus. Approved lesson metadata, capability-gap patterns, benchmark deltas, reusable test fixtures and verified fixes can be shared across divisions and other DreamCo runs. Every item retains source run, division, version and evidence references.
 
-The learning program remains active. Individual jobs may pause for resource exhaustion, provider outage, security alerts, rights uncertainty, benchmark regression or human approval. Unknown data rights block training. Private mail, customer records, credentials and production secrets are denied as training inputs by default. No proprietary GPT-5 weights are assumed or copied. No production model weights or paid compute are authorized by this policy.
+This is not blind pooling. Raw datasets, credentials, private mail, customer records and model weights are not copied between lanes by default. Each consumer lane rechecks provenance, license, consent, data isolation and compatibility. Weight sharing or production updates require their own explicit approval and evaluation gates.
 
-## Scheduling and deployment
+## What the current workflow actually executes
 
-The proposed GitHub Actions schedule is every six hours with a daily report and weekly benchmark review. A schedule only runs while GitHub Actions is enabled and its runner/quota is available. This policy and schedule do not themselves create a continuously running compute service. Actual model training requires a separately deployed worker, approved compute, datasets and monitoring.
+The existing `tools/buddy_masterbot_training_lane.py` creates a sandbox-first checkpoint and next-action record for each MasterBot. The fleet workflow runs that coordinator and aggregates the 65 run records into a cross-division learning queue. This is orchestration and evidence generation; it is not yet a model-training engine, optimizer loop, persistent worker, or proof that model weights changed.
 
-## Required run evidence
+To claim actual continuous model training, each lane still needs a connected training executor, approved datasets and compute, durable checkpoint storage, benchmark adapters, monitoring, and tested promotion/rollback. Until those are deployed, status remains `POLICY_DEFINED_NOT_DEPLOYED`.
 
-Every run must record a unique run ID, MasterBot ID, source references, dataset manifest and rights status, configuration hash, seed, environment, tests, before/after benchmark scores, held-out transfer score, regression result, artifact hash and promotion/rollback decision.
+## Safety and quality gates
 
-## Operating status
+- Unknown data rights or missing provenance block use.
+- Private mail, customer data, credentials and production secrets are denied by default.
+- Proprietary GPT-5 weights are not assumed available or permitted.
+- Paid compute and production weight updates require separate explicit approval.
+- A benchmark regression prevents promotion; preserve the last known-good checkpoint.
+- Resource, security or provider-health alerts pause affected work and require a health check before resuming.
 
-POLICY_DEFINED_NOT_DEPLOYED until the scheduled workflow, persistent storage, runner health, model registry integration and end-to-end evidence are verified. Do not claim 24/7 model training from a cron schedule alone.
+## Evidence
+
+Each lane records its MasterBot ID, run ID/attempt, timestamp, lifecycle, source references, next actions and non-mastery status. The fleet aggregation records which divisions reported and which were missing. Do not call a division trained, mastered or healthy merely because its scheduled job produced a checkpoint.
