@@ -49,6 +49,40 @@ ROUTES = {
     "DCO-014": ["Security", "Legal", "Compliance", "Governance", "DevOps"],
 }
 PRIORITY = {"critical": 0, "high": 1, "medium": 2, "low": 3, "untriaged": 4}
+GOAL_DEPENDENCIES = {
+    "DCO-001": [],
+    "DCO-002": ["DCO-001"],
+    "DCO-003": ["DCO-002"],
+    "DCO-004": ["DCO-001", "DCO-003"],
+    "DCO-005": ["DCO-001", "DCO-002"],
+    "DCO-006": ["DCO-005"],
+    "DCO-007": ["DCO-005", "DCO-006"],
+    "DCO-008": ["DCO-006", "DCO-007"],
+    "DCO-009": ["DCO-002"],
+    "DCO-010": ["DCO-002", "DCO-009"],
+    "DCO-011": ["DCO-002", "DCO-003"],
+    "DCO-012": ["DCO-009", "DCO-010"],
+    "DCO-013": ["DCO-006", "DCO-014"],
+    "DCO-014": ["DCO-002"]
+}
+# Known implementation anchors are references to inspect, not claims that
+# the whole workstream is complete. Empty discovery fields remain explicit.
+TRACEABILITY_ANCHORS = {
+    "DCO-001": {"implementation_paths": ["tools/dreamco_division_mastery_orchestrator.py", "tools/validate_dreamco_mastery_registry.py"], "test_paths": ["tests/test_dreamco_division_mastery_orchestrator.py"], "runtime_routes": [], "benchmark": "historical-reconciliation-completeness"},
+    "DCO-002": {"implementation_paths": ["tools/audit_actions_health.py", ".github/workflows/actions-health.yml"], "test_paths": ["tests/test_actions_health.py"], "runtime_routes": [], "benchmark": "workflow-health-and-production-isolation"},
+    "DCO-003": {"implementation_paths": [], "test_paths": [], "runtime_routes": [], "benchmark": "buddy-end-to-end-task-success"},
+    "DCO-004": {"implementation_paths": [], "test_paths": [], "runtime_routes": [], "benchmark": "dream-brain-retrieval-quality-and-rights"},
+    "DCO-005": {"implementation_paths": ["config/masterbot-65-registry.json", "tools/buddy_masterbot_training_lane.py"], "test_paths": [], "runtime_routes": [], "benchmark": "bot-capability-contract-and-certification"},
+    "DCO-006": {"implementation_paths": [], "test_paths": [], "runtime_routes": [], "benchmark": "model-quality-cost-latency-and-fallback"},
+    "DCO-007": {"implementation_paths": ["config/buddy-continuous-learning-policy.json", "tools/aggregate_masterbot_training_runs.py"], "test_paths": [], "runtime_routes": [], "benchmark": "per-masterbot-benchmark-gap-closure"},
+    "DCO-008": {"implementation_paths": ["tools/run_daily_division_benchmarks.ts"], "test_paths": [], "runtime_routes": [], "benchmark": "held-out-model-training-and-generalization"},
+    "DCO-009": {"implementation_paths": ["config/user-data-and-subscription-control-policy.json", "server/user-control-center-policy.ts"], "test_paths": ["tests/task-and-data-policy.test.ts"], "runtime_routes": [], "benchmark": "consent-revocation-and-tenant-isolation"},
+    "DCO-010": {"implementation_paths": [], "test_paths": [], "runtime_routes": [], "benchmark": "connector-contract-and-revocation"},
+    "DCO-011": {"implementation_paths": [], "test_paths": [], "runtime_routes": [], "benchmark": "dashboard-freshness-and-data-correctness"},
+    "DCO-012": {"implementation_paths": [], "test_paths": [], "runtime_routes": [], "benchmark": "workflow-unit-economics-and-policy-compliance"},
+    "DCO-013": {"implementation_paths": [], "test_paths": [], "runtime_routes": [], "benchmark": "simulation-transfer-and-safety"},
+    "DCO-014": {"implementation_paths": [], "test_paths": [], "runtime_routes": [], "benchmark": "security-regression-and-recovery-drills"}
+}
 
 
 def load_inputs():
@@ -86,6 +120,10 @@ def route_goals(division, goals):
 
 def build_plan():
     divisions, goals = load_inputs()
+    known_goal_ids = {g["id"] for g in goals}
+    for goal_id, deps in GOAL_DEPENDENCIES.items():
+        if goal_id not in known_goal_ids or any(dep not in known_goal_ids for dep in deps):
+            raise ValueError(f"Unknown goal dependency in {goal_id}: {deps}")
     lanes = []
     for division in divisions:
         assigned = route_goals(division, goals)
@@ -95,6 +133,17 @@ def build_plan():
             "lane_id": f"masterbot-{division['id']}",
             "goal_ids": [g["id"] for g in assigned],
             "priority_order": [g["id"] for g in assigned],
+            "goal_dependency_map": {g["id"]: GOAL_DEPENDENCIES.get(g["id"], []) for g in assigned},
+            "goal_traceability": {
+                g["id"]: {
+                    **TRACEABILITY_ANCHORS.get(g["id"], {"implementation_paths": [], "test_paths": [], "runtime_routes": [], "benchmark": "discovery_required"}),
+                    "traceability_status": "partial_inventory_not_verified",
+                    "missing": ["implementation_paths" if not TRACEABILITY_ANCHORS.get(g["id"], {}).get("implementation_paths") else None,
+                                "test_paths" if not TRACEABILITY_ANCHORS.get(g["id"], {}).get("test_paths") else None,
+                                "runtime_routes" if not TRACEABILITY_ANCHORS.get(g["id"], {}).get("runtime_routes") else None,
+                                "benchmark_evidence"]
+                } for g in assigned
+            },
             "task_dag": TASK_DAG,
             "task_status": {
                 "registry_validation": "runnable",
@@ -112,6 +161,8 @@ def build_plan():
         "division_lanes": len(lanes),
         "unique_goal_count": len(goals),
         "task_dag": TASK_DAG,
+        "goal_dependency_map": GOAL_DEPENDENCIES,
+        "traceability_policy": "Paths are discovery anchors only; no implementation, test, runtime route, or benchmark is marked verified without run evidence.",
         "dependency_policy": "A task runs only after all dependencies succeed; failed/unknown dependencies block descendants.",
         "cross_division_exchange": "Versioned verified lesson metadata, test fixtures, benchmark deltas, and reusable fixes only; each consumer rechecks rights and compatibility.",
         "raw_private_data_pooling": False,
