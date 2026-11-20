@@ -8,7 +8,7 @@
 - Dataset training gates for rights evidence, data plane, canonical primary MasterBot ownership, collaborator routing, and pinned train/validation/test split hashes.
 - Opt-in metadata discovery for Hugging Face datasets and models, OpenML, UCI, and GitHub repository search.
 - An authorized GitHub file reader requiring both DREAMCO_ALLOW_SOURCE_NETWORK=1 and GITHUB_TOKEN. It reads one UTF-8 file into memory; it does not automatically persist it.
-- Read-only SQLite and optional PostgreSQL snapshot adapters. They require an authorization reference, exact approved SQL SHA-256, explicit bounded LIMIT, and a read-only transaction. Credentials are environment-only.
+- Read-only SQLite and optional PostgreSQL snapshot adapters. They require an authorization reference, exact approved SQL-and-parameter SHA-256, explicit bounded LIMIT, and a read-only transaction. Credentials are environment-only.
 - A verified-work example builder that synthesizes original instruction/response examples from human-reviewed, rights-cleared DreamCo commits, tests, PRs, workflow results, and lessons. It requires at least three verified records per MasterBot lane, keeps train/validation/test splits, rejects personal or third-party copied content, and emits a candidate card that is not training-approved.
 - Unknown-problem routing across the local catalog, optional external dataset/model metadata, and specialist MasterBot candidates. Every investigation is persisted in the Dataset Hub research-task queue.
 - Reproducible SFT/LoRA training manifests bound to the canonical 65-MasterBot registry, verified dataset and base-model license evidence, immutable base-model commit SHA, split hashes, and an explicit compute approval reference.
