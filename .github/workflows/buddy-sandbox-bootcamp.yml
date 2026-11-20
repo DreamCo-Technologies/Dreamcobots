@@ -3,8 +3,8 @@ name: Buddy Sandbox Bootcamp
 on:
   workflow_dispatch:
   schedule:
-    # Weekday off-peak index build + sandbox smoke; no external downloads or training.
-    - cron: "23 8 * * 1-5"
+    # Daily rotating public metadata discovery; no dataset downloads or training.
+    - cron: "23 8 * * *"
   push:
     paths:
       - '.github/workflows/buddy-sandbox-bootcamp.yml'
@@ -31,6 +31,10 @@ on:
       - 'tools/build_dreamco_training_examples.py'
       - 'tests/test_dreamco_original_training_examples.py'
       - 'tools/register_buddy_dataset.py'
+      - 'buddy/datasets/discovery_fleet.py'
+      - 'buddy/datasets/license_policy.py'
+      - 'tools/run_buddy_dataset_discovery.py'
+      - 'tests/test_buddy_dataset_discovery_fleet.py'
 
 permissions:
   contents: read
@@ -53,7 +57,15 @@ jobs:
         with:
           python-version: '3.13'
       - name: Compile sandbox, bootcamp, and learning modules
-        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py tools/create_buddy_model_benchmark.py tools/run_buddy_model_benchmark.py
+        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py buddy/datasets/discovery_fleet.py buddy/datasets/license_policy.py tools/run_buddy_dataset_discovery.py tools/create_buddy_model_benchmark.py tools/run_buddy_model_benchmark.py
+      - name: Restore rotating Dataset Hub catalog
+        if: github.event_name == 'schedule'
+        uses: actions/cache@v4
+        with:
+          path: .dreamco/dataset-hub
+          key: dreamco-dataset-hub-${{ runner.os }}-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            dreamco-dataset-hub-${{ runner.os }}-${{ github.ref_name }}-
       - name: Run safe sandbox smoke test
         run: |
           python - <<'PY'
@@ -65,7 +77,7 @@ jobs:
       - name: Build DreamCo dataset discovery routes
         run: python tools/build_buddy_dataset_routes.py
       - name: Test 65 MasterBot dataset routing and training gates
-        run: python -m unittest tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime tests.test_buddy_database_sources tests.test_dreamco_original_training_examples tests.test_buddy_cross_model_benchmark
+        run: python -m unittest tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime tests.test_buddy_database_sources tests.test_dreamco_original_training_examples tests.test_buddy_dataset_discovery_fleet tests.test_buddy_cross_model_benchmark
       - name: Smoke test local unknown-problem routing
         run: python tools/route_buddy_unknown_problem.py --problem 'Build a SQL database analytics pipeline' --out artifacts/buddy-dataset-hub/ci-unknown-route.json
       - name: Validate curriculum JSON
@@ -101,11 +113,19 @@ jobs:
           assert total <= target, f'Expected no more than target catalog size {target}, found {total}'
           print(f'validated {total} unique study resources toward target {target}')
           PY
+      - name: Discover public datasets across rotating MasterBot lanes
+        if: github.event_name == 'schedule'
+        env:
+          DREAMCO_ALLOW_SOURCE_NETWORK: '1'
+        run: python tools/run_buddy_dataset_discovery.py --lanes-per-run 5 --limit 3
       - name: Preserve dataset routing artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: buddy-dataset-routes-${{ github.run_id }}
-          path: artifacts/buddy-dataset-hub/dataset-routes.json
+          path: |
+            artifacts/buddy-dataset-hub/dataset-routes.json
+            artifacts/buddy-dataset-hub/discovery-fleet.json
+            .dreamco/dataset-hub/
           if-no-files-found: warn
           retention-days: 90
