@@ -29,8 +29,8 @@ A training job request requires a rights-approved dataset, a non-holdout split, 
 ## Next adapters
 
 - Encrypted object storage and managed metadata database for shared production use.
-- Authenticated private GitHub repository ingestion through least-privilege connector scopes.
-- Database adapters for approved read-only SQL snapshots, query allowlists and row/column minimization.
+- Persistent authenticated GitHub file ingestion with least-privilege connector scopes, file-size limits, provenance and review queue.
+- Hardened managed database connectors, column allowlists, sensitive-field minimization, row-level policies and encrypted storage.
 - Hugging Face dataset card/revision fetch and license/terms review workflow.
 - OpenML/UCI full metadata and citation/license capture.
 - Parquet/Arrow streaming, schema-aware validation, semantic deduplication and domain-specific labeling.
