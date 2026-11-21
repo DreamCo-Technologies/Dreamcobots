@@ -3,9 +3,12 @@ import json
 import os
 import tempfile
 import unittest
+import subprocess
+import sys
 from pathlib import Path
 from buddy.datasets.hub import DatasetHub, DatasetPolicyError
-from buddy.datasets.sources import discover, SourceAccessError
+from buddy.datasets.sources import discover, SourceAccessError, _get_json
+from unittest.mock import patch
 from buddy.datasets.unknown_router import route_problem
 from buddy.datasets.training_jobs import create_training_job
 from buddy.datasets.transformers_runner import validate_job, TrainingExecutionError, _split_hash
@@ -45,6 +48,15 @@ class DatasetHubRuntimeTests(unittest.TestCase):
             sample=Path(temp)/"x.jsonl"; sample.write_text('{"email":"person@example.com"}\n')
             with self.assertRaises(DatasetPolicyError):
                 DatasetHub(Path(temp)/"hub").register(CARD,sample)
+
+    def test_metadata_fetch_rejects_lookalike_hosts_before_network_access(self):
+        with patch.dict(os.environ, {"DREAMCO_ALLOW_SOURCE_NETWORK": "1", "GITHUB_TOKEN": "test-token"}):
+            with self.assertRaises(SourceAccessError):
+                _get_json("https://api.github.com.evil.example/search/repositories")
+            with self.assertRaises(SourceAccessError):
+                _get_json("http://api.github.com/search/repositories")
+            with self.assertRaises(SourceAccessError):
+                _get_json("https://evil.example/api.github.com/search/repositories")
 
     def test_network_is_off_by_default(self):
         old=os.environ.pop("DREAMCO_ALLOW_SOURCE_NETWORK",None)
@@ -88,6 +100,24 @@ class DatasetHubRuntimeTests(unittest.TestCase):
             object_path, checked_rows = validate_job(manifest,"budget-approval-fixture")
             self.assertEqual(object_path.name,Path(card["object_path"]).name)
             self.assertEqual(len(checked_rows),3)
+
+    def test_unknown_problem_cli_runs_without_pythonpath_configuration(self):
+        root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "route.json"
+            env = os.environ.copy()
+            env["DREAMCO_DATASET_HOME"] = str(Path(temp) / "hub")
+            env.pop("DREAMCO_ALLOW_SOURCE_NETWORK", None)
+            subprocess.run(
+                [sys.executable, str(root / "tools/route_buddy_unknown_problem.py"),
+                 "--problem", "Build a SQL database analytics pipeline",
+                 "--out", str(output)],
+                cwd=root, env=env, check=True, capture_output=True, text=True,
+            )
+            result = json.loads(output.read_text(encoding="utf-8"))
+            self.assertTrue(result["masterbot_candidates"])
+            self.assertFalse(result["claims"]["problem_solved"])
+            self.assertFalse(result["claims"]["weights_trained"])
 
     def test_problem_routes_to_specialist_candidates_without_claiming_mastery(self):
         with tempfile.TemporaryDirectory() as temp:

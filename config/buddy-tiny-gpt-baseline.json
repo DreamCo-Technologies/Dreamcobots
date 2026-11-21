@@ -1,0 +1,42 @@
+{
+  "schema": "dreamco.buddy.tiny_gpt_baseline_config.v1",
+  "model_id": "dreamco/buddy-tiny-gpt-baseline",
+  "model_status": "UNTRAINED_RANDOM_INITIALIZATION",
+  "architecture": "decoder_only_transformer",
+  "tokenizer": "utf8_byte_level_256",
+  "config": {
+    "vocab_size": 256,
+    "block_size": 32,
+    "n_layer": 2,
+    "n_head": 2,
+    "n_embd": 32,
+    "dropout": 0.0
+  },
+  "runtime": {
+    "device": "cpu",
+    "seed": 42,
+    "torch_version": "2.10.0",
+    "network_access": false
+  },
+  "training": {
+    "training_enabled": false,
+    "weight_updates_authorized": false,
+    "paid_compute_authorized": false,
+    "checkpoint_writes_enabled": false
+  },
+  "evaluation": {
+    "dataset_card": "config/buddy-tiny-gpt-synthetic-data-card.json",
+    "baseline_only": true,
+    "causal_mask_required": true,
+    "finite_gradient_test_required": true,
+    "deterministic_seed_test_required": true
+  },
+  "promotion": {
+    "status": "BLOCKED_NOT_TRAINED",
+    "production_route_enabled": false,
+    "requires_rights_review": true,
+    "requires_separate_explicit_training_authorization": true,
+    "requires_heldout_benchmark": true,
+    "requires_independent_review": true
+  }
+}
