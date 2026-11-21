@@ -14,6 +14,12 @@ on:
       - 'tools/run_buddy_gpt_baseline.py'
       - 'tests/test_buddy_gpt_baseline.py'
       - 'tests/test_buddy_dataset_source_auth.py'
+      - 'tools/bootcamp_lesson_planner.py'
+      - 'tests/test_bootcamp_lesson_planner.py'
+      - 'tools/dreamco_division_mastery_orchestrator.py'
+      - 'tests/test_dreamco_division_mastery_orchestrator.py'
+      - 'tools/build_division_model_fleet.py'
+      - 'tests/test_division_model_fleet.py'
   push:
     paths:
       - '.github/workflows/buddy-sandbox-bootcamp.yml'
@@ -27,6 +33,12 @@ on:
       - 'tools/run_buddy_gpt_baseline.py'
       - 'tests/test_buddy_gpt_baseline.py'
       - 'tests/test_buddy_dataset_source_auth.py'
+      - 'tools/bootcamp_lesson_planner.py'
+      - 'tests/test_bootcamp_lesson_planner.py'
+      - 'tools/dreamco_division_mastery_orchestrator.py'
+      - 'tests/test_dreamco_division_mastery_orchestrator.py'
+      - 'tools/build_division_model_fleet.py'
+      - 'tests/test_division_model_fleet.py'
       - 'tests/test_buddy_cross_model_benchmark.py'
       - 'tools/create_buddy_model_benchmark.py'
       - 'tools/run_buddy_model_benchmark.py'
@@ -82,7 +94,7 @@ jobs:
       - name: Run reproducible tiny GPT forward-pass baseline
         run: python tools/run_buddy_gpt_baseline.py --config config/buddy-tiny-gpt-baseline.json --output-dir artifacts/buddy-gpt-baseline
       - name: Test tiny GPT baseline and safe dataset token scoping
-        run: python -m unittest tests.test_buddy_gpt_baseline tests.test_buddy_dataset_source_auth
+        run: python -m unittest tests.test_buddy_gpt_baseline tests.test_buddy_dataset_source_auth tests.test_bootcamp_lesson_planner tests.test_dreamco_division_mastery_orchestrator tests.test_division_model_fleet
       - name: Restore rotating Dataset Hub catalog
         if: github.event_name == 'schedule'
         uses: actions/cache@v4
