@@ -2,6 +2,25 @@ name: Buddy Sandbox Bootcamp
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/buddy-sandbox-bootcamp.yml'
+      - 'buddy/modeling/**'
+      - 'buddy/datasets/**'
+      - 'buddy/modeling/**'
+      - 'tests/test_tiny_gpt_baseline.py'
+      - 'tools/run_tiny_gpt_baseline.py'
+      - 'requirements-buddy-gpt.txt'
+      - 'config/buddy-tiny-gpt-*.json'
+      - 'docs/BUDDY_TINY_GPT_BASELINE.md'
+      - 'docs/BUDDY_14_DAY_MODEL_GROWTH_PLAN.md'
+      - 'tests/test_tiny_gpt_baseline.py'
+      - 'tests/test_buddy_dataset_hub_runtime.py'
+      - 'tools/run_tiny_gpt_baseline.py'
+      - 'requirements-buddy-gpt.txt'
+      - 'config/buddy-tiny-gpt-*.json'
+      - 'docs/BUDDY_TINY_GPT_BASELINE.md'
+      - 'docs/BUDDY_14_DAY_MODEL_GROWTH_PLAN.md'
   schedule:
     # Daily rotating public metadata discovery; no dataset downloads or training.
     - cron: "23 8 * * *"
@@ -62,8 +81,11 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: '3.13'
-      - name: Compile sandbox, bootcamp, and learning modules
-        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py buddy/datasets/discovery_fleet.py buddy/datasets/license_policy.py tools/run_buddy_dataset_discovery.py tools/create_buddy_model_benchmark.py tools/run_buddy_model_benchmark.py
+      - name: Install pinned CPU PyTorch for GPT baseline checks
+        if: github.event_name != 'schedule'
+        run: python -m pip install --disable-pip-version-check --no-cache-dir --index-url https://download.pytorch.org/whl/cpu -r requirements-buddy-gpt.txt
+      - name: Compile sandbox, bootcamp, learning, and model modules
+        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets buddy/modeling tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py buddy/datasets/discovery_fleet.py buddy/datasets/license_policy.py tools/run_buddy_dataset_discovery.py tools/create_buddy_model_benchmark.py tools/run_buddy_model_benchmark.py tools/run_tiny_gpt_baseline.py
       - name: Restore rotating Dataset Hub catalog
         if: github.event_name == 'schedule'
         uses: actions/cache@v4
@@ -80,6 +102,19 @@ jobs:
           assert result.passed and result.score == 1.0
           print(result)
           PY
+      - name: Run deterministic GPT baseline tests and evaluation-only report
+        if: github.event_name != 'schedule'
+        run: |
+          python -m unittest tests.test_tiny_gpt_baseline
+          python tools/run_tiny_gpt_baseline.py --output artifacts/buddy-gpt-baseline/baseline.json
+      - name: Preserve GPT baseline evidence
+        if: always() && github.event_name != 'schedule'
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-tiny-gpt-baseline-${{ github.run_id }}
+          path: artifacts/buddy-gpt-baseline/baseline.json
+          if-no-files-found: warn
+          retention-days: 90
       - name: Build DreamCo dataset discovery routes
         run: python tools/build_buddy_dataset_routes.py
       - name: Test 65 MasterBot dataset routing and training gates
