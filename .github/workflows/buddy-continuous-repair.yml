@@ -128,10 +128,6 @@ jobs:
             - No direct push to main, merge, production deployment, model training, or weight update is performed.
 
             Review the workflow run and artifacts before merging.
-          labels: |
-            automation
-            ci
-            buddy
 
       - name: Open or update a human-triage issue if verification fails
         if: failure()
@@ -169,6 +165,5 @@ jobs:
                 repo: context.repo.repo,
                 title,
                 body,
-                labels: ["automation", "ci", "needs-triage"]
               });
             }
