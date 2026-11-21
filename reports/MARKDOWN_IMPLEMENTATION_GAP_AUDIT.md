@@ -1,13 +1,13 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-20T23:25:31Z
+Generated: 2026-11-21T14:56:44Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1647
-- Actionable claim lines detected: 11721
+- Markdown documents scanned: 1648
+- Actionable claim lines detected: 11728
 - Documents with missing path references: 108
 - Documents without implementation references: 1570
 - Documents with implementation references but no test references: 62
@@ -12670,12 +12670,12 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 ### docs/BUDDY_14_DAY_MODEL_GROWTH_PLAN.md
 
-- Status: implementation_reference_missing
-- Actionable claim lines: 4
-- Implementation paths: None detected
+- Status: test_reference_missing
+- Actionable claim lines: 8
+- Implementation paths: buddy/gpt_baseline/tiny_gpt.py, tools/run_buddy_gpt_baseline.py
 - Test paths: None detected
 - Missing paths: None detected
-- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_24H_GAP_CLOSURE.md
@@ -13120,12 +13120,12 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 ### docs/BUDDY_GPT_STYLE_MODEL_BOOTCAMP.md
 
-- Status: test_reference_missing
-- Actionable claim lines: 18
-- Implementation paths: buddy/bootcamp/buddy_bootcamp.yaml, buddy/learning/study_methods.py, tools/bootcamp_lesson_planner.py
-- Test paths: None detected
+- Status: implementation_and_test_paths_referenced_not_verified
+- Actionable claim lines: 19
+- Implementation paths: buddy/bootcamp/buddy_bootcamp.yaml, buddy/gpt_baseline/tiny_gpt.py, buddy/learning/study_methods.py, tools/bootcamp_lesson_planner.py, tools/run_buddy_gpt_baseline.py
+- Test paths: tests/test_buddy_gpt_baseline.py
 - Missing paths: None detected
-- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Next action: Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_GREEN_BY_TONIGHT_RUNBOOK.md
@@ -13312,6 +13312,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 - Status: implementation_reference_missing
 - Actionable claim lines: 16
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_TINY_GPT_BASELINE_MODEL_CARD.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 2
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
