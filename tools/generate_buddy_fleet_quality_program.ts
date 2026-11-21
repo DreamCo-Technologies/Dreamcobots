@@ -323,7 +323,7 @@ export function writeFleetQualityProgram({ check = false } = {}) {
   const publicCatalog = publicProgram(program);
   const outputs = [
     [GENERATED_PATH, stableJson(program)],
-    [PUBLIC_PATH, `window.BUDDY_FLEET_QUALITY_PROGRAM={summary:{},bots:[],quality_workers:[],release_pipeline:[]};\nwindow.BUDDY_FLEET_QUALITY_PROGRAM_READY=fetch(${JSON.stringify(PUBLIC_DATA_URL)},{cache:"no-store"}).then(response=>{if(!response.ok)throw new Error("Fleet quality data unavailable: "+response.status);return response.json();}).then(data=>(window.BUDDY_FLEET_QUALITY_PROGRAM=data)).catch(()=>window.BUDDY_FLEET_QUALITY_PROGRAM);\n`],
+    [PUBLIC_PATH, `window.BUDDY_FLEET_QUALITY_PROGRAM=${JSON.stringify({summary:publicCatalog.summary,bots:[],quality_workers:publicCatalog.quality_workers,release_pipeline:publicCatalog.release_pipeline})};\nwindow.BUDDY_FLEET_QUALITY_PROGRAM_READY=fetch(${JSON.stringify(PUBLIC_DATA_URL)},{cache:"no-store"}).then(response=>{if(!response.ok)throw new Error("Fleet quality data unavailable: "+response.status);return response.json();}).then(data=>(window.BUDDY_FLEET_QUALITY_PROGRAM=data)).catch(()=>window.BUDDY_FLEET_QUALITY_PROGRAM);\n`],
     [REPORT_PATH, report(program)],
   ] as const;
   if (check) {
