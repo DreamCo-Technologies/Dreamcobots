@@ -73,6 +73,9 @@ jobs:
       - name: Typecheck
         run: npm run check
 
+      - name: Install workflow prospectus parser
+        run: python3 -m pip install PyYAML
+
       - name: Actions and repository static health
         run: |
           python3 tools/audit_actions_health.py
