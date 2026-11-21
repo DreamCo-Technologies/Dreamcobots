@@ -89,6 +89,9 @@ def build_evidence(config_path: str | Path, commit_sha: str | None = None) -> tu
         },
         "run": {
             "commit_sha": commit_sha or os.environ.get("GITHUB_SHA", "local-uncommitted"),
+            "workflow_sha": os.environ.get("GITHUB_SHA", "local-uncommitted"),
+            "run_id": os.environ.get("GITHUB_RUN_ID"),
+            "event_name": os.environ.get("GITHUB_EVENT_NAME", "local"),
             "python_version": platform.python_version(),
             "platform": platform.platform(),
             "run_config_sha256": run_config_sha,
