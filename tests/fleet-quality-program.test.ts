@@ -67,7 +67,7 @@ test("Test Center exposes and exports each bot learning path", () => {
   assert.match(html, /Every profile has its own ordered learning path/);
   assert.match(html, /<span>Learning paths<\/span>/);
   assert.match(html, /buddy-fleet-quality-program\.js\?v=2/);
-  assert.match(script, /Separate learning path/);
+  assert.match(script, /BUDDY_FLEET_QUALITY_PROGRAM_READY/);\n  assert.match(script, /Separate learning path/);
   assert.match(script, /Competitor benchmark suite/);
   assert.match(script, /learningPathPolicy: quality\.learning_path_policy/);
   assert.match(script, /capability\.benchmark_id/);
