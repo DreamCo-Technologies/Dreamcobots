@@ -1,20 +1,20 @@
 {
   "schema": "dreamco.buddy.markdown_implementation_gap_audit.v1",
-  "generated_at": "2026-11-21T14:54:22Z",
+  "generated_at": "2026-11-21T14:56:44Z",
   "inventory_mode": "all_tracked_markdown_files",
   "document_count": 1648,
-  "actionable_claim_lines": 11723,
+  "actionable_claim_lines": 11728,
   "documents_with_count_claims": 107,
   "numeric_inventory_claim_count": 377,
   "gap_status_counts": {
     "broken_path_references": 108,
-    "implementation_and_test_paths_referenced_not_verified": 4,
-    "implementation_reference_missing": 1408,
+    "implementation_and_test_paths_referenced_not_verified": 5,
+    "implementation_reference_missing": 1407,
     "reference_only": 85,
     "test_reference_missing": 43
   },
   "documents_with_missing_paths": 108,
-  "documents_without_implementation_references": 1571,
+  "documents_without_implementation_references": 1570,
   "documents_without_test_references": 62,
   "documents": [
     {
@@ -22765,8 +22765,8 @@
     {
       "path": "docs/BUDDY_14_DAY_MODEL_GROWTH_PLAN.md",
       "title": "Buddy 14-Day Model Growth and Expansion Plan",
-      "sha256": "42c81687a9c536523ede5946541531c6dc3c3800471d5b372125bd5952deec52",
-      "actionable_claim_lines": 4,
+      "sha256": "13c16762959b26981e513bd490044a2f39e03ff4fba69a0cfc440932314cd6b7",
+      "actionable_claim_lines": 8,
       "numeric_inventory_claims": [
         {
           "line": 5,
@@ -22776,15 +22776,24 @@
         }
       ],
       "count_claim_review_required": true,
-      "referenced_paths": [],
+      "referenced_paths": [
+        "buddy/gpt_baseline/tiny_gpt.py",
+        "config/buddy-tiny-gpt-baseline.json",
+        "tools/run_buddy_gpt_baseline.py"
+      ],
       "missing_paths": [],
-      "implementation_paths": [],
+      "implementation_paths": [
+        "buddy/gpt_baseline/tiny_gpt.py",
+        "tools/run_buddy_gpt_baseline.py"
+      ],
       "test_paths": [],
       "workflow_paths": [],
-      "configuration_paths": [],
+      "configuration_paths": [
+        "config/buddy-tiny-gpt-baseline.json"
+      ],
       "documentation_paths": [],
-      "gap_status": "implementation_reference_missing",
-      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "gap_status": "test_reference_missing",
+      "next_action": "Add focused tests and acceptance evidence for the referenced implementation.",
       "execution_verified": false
     },
     {
@@ -23812,32 +23821,41 @@
     {
       "path": "docs/BUDDY_GPT_STYLE_MODEL_BOOTCAMP.md",
       "title": "Buddy Bootcamp: GPT-Style Model Engineering Track",
-      "sha256": "078950506cad226bea2827cd75d29aaf2570d6b75e3c6407c2ab22587e705a49",
-      "actionable_claim_lines": 18,
+      "sha256": "fdd5baa8e3fbf8fd305d2db6526192a3c5dde284143a76ebfb9ba7c92d50c9f8",
+      "actionable_claim_lines": 19,
       "numeric_inventory_claims": [],
       "count_claim_review_required": false,
       "referenced_paths": [
         "buddy/bootcamp/buddy_bootcamp.yaml",
+        "buddy/gpt_baseline/tiny_gpt.py",
         "buddy/learning/study_methods.py",
         "config/buddy-bootcamp-curriculum-v1.json",
         "config/buddy-bootcamp-program.json",
-        "tools/bootcamp_lesson_planner.py"
+        "config/buddy-tiny-gpt-baseline.json",
+        "tests/test_buddy_gpt_baseline.py",
+        "tools/bootcamp_lesson_planner.py",
+        "tools/run_buddy_gpt_baseline.py"
       ],
       "missing_paths": [],
       "implementation_paths": [
         "buddy/bootcamp/buddy_bootcamp.yaml",
+        "buddy/gpt_baseline/tiny_gpt.py",
         "buddy/learning/study_methods.py",
-        "tools/bootcamp_lesson_planner.py"
+        "tools/bootcamp_lesson_planner.py",
+        "tools/run_buddy_gpt_baseline.py"
       ],
-      "test_paths": [],
+      "test_paths": [
+        "tests/test_buddy_gpt_baseline.py"
+      ],
       "workflow_paths": [],
       "configuration_paths": [
         "config/buddy-bootcamp-curriculum-v1.json",
-        "config/buddy-bootcamp-program.json"
+        "config/buddy-bootcamp-program.json",
+        "config/buddy-tiny-gpt-baseline.json"
       ],
       "documentation_paths": [],
-      "gap_status": "test_reference_missing",
-      "next_action": "Add focused tests and acceptance evidence for the referenced implementation.",
+      "gap_status": "implementation_and_test_paths_referenced_not_verified",
+      "next_action": "Run the linked tests and attach CI, benchmark, regression, and runtime evidence before promotion.",
       "execution_verified": false
     },
     {
