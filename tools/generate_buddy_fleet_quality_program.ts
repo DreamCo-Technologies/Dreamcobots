@@ -31,6 +31,7 @@ const SOURCE_PATH = resolve(ROOT, "config", "buddy-fleet-quality-program.json");
 const GENERATED_PATH = resolve(ROOT, "config", "generated", "buddy_fleet_quality_program.json");
 const PUBLIC_PATH = resolve(ROOT, "website", "data", "buddy-fleet-quality-program.js");
 const REPORT_PATH = resolve(ROOT, "reports", "BUDDY_FLEET_QUALITY_PROGRAM.md");
+const PUBLIC_DATA_URL = "https://raw.githubusercontent.com/DreamCo-Technologies/Dreamcobots/main/config/generated/buddy_fleet_quality_program.json";
 
 function digest(value: string) {
   return createHash("sha256").update(value).digest("hex").slice(0, 20);
@@ -322,7 +323,7 @@ export function writeFleetQualityProgram({ check = false } = {}) {
   const publicCatalog = publicProgram(program);
   const outputs = [
     [GENERATED_PATH, stableJson(program)],
-    [PUBLIC_PATH, `window.BUDDY_FLEET_QUALITY_PROGRAM=${JSON.stringify(publicCatalog)};\n`],
+    [PUBLIC_PATH, `window.BUDDY_FLEET_QUALITY_PROGRAM={summary:{},bots:[],quality_workers:[],release_pipeline:[]};\nwindow.BUDDY_FLEET_QUALITY_PROGRAM_READY=fetch(${JSON.stringify(PUBLIC_DATA_URL)},{cache:"no-store"}).then(response=>{if(!response.ok)throw new Error("Fleet quality data unavailable: "+response.status);return response.json();}).then(data=>(window.BUDDY_FLEET_QUALITY_PROGRAM=data)).catch(()=>window.BUDDY_FLEET_QUALITY_PROGRAM);\n`],
     [REPORT_PATH, report(program)],
   ] as const;
   if (check) {
