@@ -4,7 +4,7 @@ from tools.build_dreamco_training_examples import build
 def event(n,owner=41):
  return {"event_id":f"event-{n}","source_url":f"https://github.com/DreamCo-Technologies/Dreamcobots/commit/{n:040d}",
   "evidence_type":"verified_test","verified":True,"human_reviewed":True,"training_allowed":True,
-  "rights_status":"VERIFIED","contains_personal_data":False,"third_party_content_included":False,
+  "rights_status":"VERIFIED","contains_secrets":False,"contains_personal_data":False,"third_party_content_included":False,
   "primary_masterbot_id":owner,"task":f"Implement capability number {n} with dependency-aware routing",
   "verified_lesson":"The verified implementation validates inputs, records evidence, and retests the capability.",
   "acceptance_criteria":["the route is deterministic","the evidence is reproducible"],
