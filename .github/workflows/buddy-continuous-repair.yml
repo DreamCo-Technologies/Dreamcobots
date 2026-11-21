@@ -1,0 +1,169 @@
+name: Buddy Continuous Repair
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Continuous health/repair sweep, hourly throughout the day.
+    - cron: "17 * * * *"
+  workflow_run:
+    workflows:
+      - Actions Health
+      - Keep Green
+      - DreamCo Core Health
+      - Fleet Runtime Truth
+      - Buddy Failure Learning Regression
+      - Buddy Sandbox Bootcamp
+      - Repository Test Matrix
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: read
+
+concurrency:
+  group: buddy-continuous-repair
+  cancel-in-progress: false
+
+jobs:
+  safe-repair:
+    name: Diagnose, safely repair, and verify
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout protected default branch
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install audit and test dependencies
+        run: |
+          python3 -m pip install --quiet pyyaml pytest
+          if [ -f package-lock.json ]; then npm ci --ignore-scripts; fi
+
+      - name: Record failed workflow context
+        if: github.event_name == 'workflow_run'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FAILED_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          mkdir -p reports/continuous-repair
+          gh run view "$FAILED_RUN_ID" --json name,conclusion,headSha,htmlUrl,jobs             > "reports/continuous-repair/failed-run-$FAILED_RUN_ID.json"
+
+      - name: Capture current Actions state
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 tools/audit_actions_live.py
+
+      - name: Refresh deterministic repository evidence
+        run: python3 tools/refresh_repository_evidence.py
+
+      - name: Verify repair-learning and Actions health
+        run: |
+          python3 -m unittest tests.test_actions_health
+          python3 -m unittest tests.test_buddy_failure_learning
+          python3 -m pytest -q tests/test_pages_feature_audit.py tests/test_file_prospectus.py
+
+      - name: Verify public Actions page
+        run: npm run test:actions-page
+
+      - name: Summarize repair scope
+        if: always()
+        run: |
+          {
+            echo "## Buddy Continuous Repair"
+            echo "- Trigger: ${{ github.event_name }}"
+            echo "- Hourly schedule: enabled"
+            echo "- Failed workflow run: ${{ github.event.workflow_run.html_url || 'not applicable' }}"
+            echo "- Repair boundary: deterministic evidence refresh and regression-verified changes only"
+            echo "- Production deployment and direct pushes to main: disabled"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Save diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: buddy-continuous-repair-${{ github.run_id }}
+          path: |
+            reports/continuous-repair/**
+            reports/ACTIONS_HEALTH_REPORT.md
+            reports/ACTIONS_LIVE_HEALTH.md
+            config/generated/actions-health-report.json
+            config/generated/actions-live-health.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Open a repair pull request for verified changes
+        if: success()
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ github.token }}
+          base: main
+          branch: bot/buddy-continuous-repair
+          delete-branch: false
+          commit-message: "fix(ci): refresh verified repository evidence"
+          title: "fix(ci): Buddy continuous safe repairs"
+          body: |
+            ## Automated safe repair
+
+            This pull request was created by the hourly Buddy Continuous Repair workflow.
+
+            - Rebuilt deterministic repository and Actions evidence.
+            - Ran Actions health, failure-learning, Pages feature, file-prospectus, and Actions-page regression tests.
+            - Only verified generated/evidence changes are proposed.
+            - No direct push to main, merge, production deployment, model training, or weight update is performed.
+
+            Review the workflow run and artifacts before merging.
+
+      - name: Open or update a human-triage issue if verification fails
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = "[Buddy Auto-Repair] Human review required";
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const failedRun = context.payload.workflow_run?.html_url || "Scheduled health sweep";
+            const body = [
+              "The continuous repair loop could not complete its safe repair and verification sequence.",
+              "",
+              `- Repair run: ${runUrl}`,
+              `- Triggering failed workflow: ${failedRun}`,
+              "- The loop does not bypass failing tests, alter protected production state, or merge its own changes.",
+              "- Inspect the run log and uploaded diagnostics, repair the root cause, and rerun the checks."
+            ].join("\n");
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              per_page: 100
+            });
+            const existing = open.data.find(issue => issue.title === title && !issue.pull_request);
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+              });
+            }
