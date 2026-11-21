@@ -15,7 +15,16 @@ def _get_json(url: str, timeout: int = 12) -> Any:
         raise SourceAccessError("Set DREAMCO_ALLOW_SOURCE_NETWORK=1 for explicit metadata discovery")
     headers = {"User-Agent": "DreamCo-Buddy-DatasetDiscovery/1.0", "Accept": "application/json"}
     token = os.environ.get("GITHUB_TOKEN")
-    if "api.github.com" in url and token:
+    try:
+        parsed_url = urllib.parse.urlsplit(url)
+        is_exact_github_api = (
+            parsed_url.scheme == "https"
+            and parsed_url.hostname == "api.github.com"
+            and parsed_url.port in (None, 443)
+        )
+    except ValueError:
+        is_exact_github_api = False
+    if is_exact_github_api and token:
         headers["Authorization"] = f"Bearer {token}"
     request = urllib.request.Request(url, headers=headers, method="GET")
     try:
