@@ -1,13 +1,13 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-21T14:26:56Z
+Generated: 2026-11-21T14:38:43Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
 - Markdown documents scanned: 1649
-- Actionable claim lines detected: 11721
+- Actionable claim lines detected: 11724
 - Documents with missing path references: 108
 - Documents without implementation references: 1572
 - Documents with implementation references but no test references: 62
@@ -12672,7 +12672,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/BUDDY_14_DAY_MODEL_GROWTH_PLAN.md
 
 - Status: implementation_reference_missing
-- Actionable claim lines: 4
+- Actionable claim lines: 6
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
@@ -13321,8 +13321,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 ### docs/BUDDY_TINY_GPT_BASELINE.md
 
-- Status: reference_only
-- Actionable claim lines: 0
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
