@@ -106,7 +106,7 @@ jobs:
       - name: Test Buddy failure classification and verified-lesson safeguards
         run: python -m unittest tests.test_buddy_failure_learning tests.test_buddy_safe_repair
       - name: Smoke test local unknown-problem routing
-        run: python tools/route_buddy_unknown_problem.py --problem 'Build a SQL database analytics pipeline' --out artifacts/buddy-dataset-hub/ci-unknown-route.json
+        run: PYTHONPATH=. python tools/route_buddy_unknown_problem.py --problem 'Build a SQL database analytics pipeline' --out artifacts/buddy-dataset-hub/ci-unknown-route.json
       - name: Validate curriculum JSON
         # Scheduled timer still validates the dataset route policy; broader study catalog validation runs on push/dispatch.
         if: github.event_name != 'schedule'
