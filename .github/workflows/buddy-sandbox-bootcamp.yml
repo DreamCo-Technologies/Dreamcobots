@@ -92,7 +92,7 @@ jobs:
       - name: Compile sandbox, bootcamp, learning, and tiny GPT modules
         run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets buddy/gpt_baseline tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py buddy/datasets/discovery_fleet.py buddy/datasets/license_policy.py tools/run_buddy_dataset_discovery.py tools/create_buddy_model_benchmark.py tools/run_buddy_model_benchmark.py tools/run_buddy_gpt_baseline.py
       - name: Run reproducible tiny GPT forward-pass baseline
-        run: python tools/run_buddy_gpt_baseline.py --config config/buddy-tiny-gpt-baseline.json --output-dir artifacts/buddy-gpt-baseline
+        run: python tools/run_buddy_gpt_baseline.py --config config/buddy-tiny-gpt-baseline.json --output-dir artifacts/buddy-gpt-baseline --commit-sha "${{ github.event.pull_request.head.sha || github.sha }}"
       - name: Test tiny GPT baseline and safe dataset token scoping
         run: python -m unittest tests.test_buddy_gpt_baseline tests.test_buddy_dataset_source_auth tests.test_bootcamp_lesson_planner tests.test_dreamco_division_mastery_orchestrator tests.test_division_model_fleet
       - name: Restore rotating Dataset Hub catalog
