@@ -56,11 +56,11 @@ def _valid_source_metadata(event:dict,source_url:str)->bool:
  if fingerprint and not re.fullmatch(r"[0-9a-f]{24,64}",fingerprint):
   return False
  run_id=_text(event.get("run_id"))
- if run_id and not re.fullmatch(r"\\d{1,20}",run_id):
+ if run_id and not re.fullmatch(r"\d{1,20}",run_id):
   return False
  return True
 def _redact_run_reference(value:str)->str:
- return re.sub(r"(?i)\\b(?:github\\s+actions\\s+)?(?:workflow\\s+)?run\\s*[:#]?\\s*\\d{8,}\\b","[workflow-run-reference]",value)
+ return re.sub(r"(?i)\b(?:github\s+actions\s+)?(?:workflow\s+)?run\s*[:#]?\s*\d{8,}\b","[workflow-run-reference]",value)
 def _split_rows(rows:list[dict])->dict[str,str]:
  result={}
  for split in ("train","validation","test"):
@@ -90,7 +90,7 @@ def build(events:list[dict],masterbot_registry:Path=REGISTRY)->dict:
    rejected.append({"event_id":eid,"reason":"acceptance criteria and verified test evidence are required"}); continue
   # Provenance hashes, canonical repository URLs, and numeric run IDs are
   # structured metadata. Validate them above; scan only human-authored text.
-  source_text="\\n".join(_redact_run_reference(value) for value in [task,lesson,*criteria,*evidence])
+  source_text="\n".join(_redact_run_reference(value) for value in [task,lesson,*criteria,*evidence])
   if any(pattern.search(source_text) for pattern in PII.values()):
    rejected.append({"event_id":eid,"reason":"basic PII pattern detected in training text"}); continue
   accepted.append({"event_id":eid,"source_url":source,"source_commit":_text(event.get("source_commit")),
