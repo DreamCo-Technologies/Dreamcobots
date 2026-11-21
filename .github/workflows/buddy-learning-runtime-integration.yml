@@ -1,0 +1,25 @@
+name: Buddy Learning Runtime Integration
+on:
+  pull_request:
+    paths:
+      - 'buddy/learning/evidence_acquisition.py'
+      - 'buddy/learning/runtime_bridge.py'
+      - 'tests/test_buddy_evidence_acquisition.py'
+      - 'tests/test_buddy_learning_runtime_bridge.py'
+      - '.github/workflows/buddy-learning-runtime-integration.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Offline learning and runtime integration tests
+        run: |
+          python -m unittest discover -s tests -p 'test_buddy_evidence_acquisition.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_learning_runtime_bridge.py' -v
