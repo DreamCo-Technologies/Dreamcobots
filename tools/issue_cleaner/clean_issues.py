@@ -8,12 +8,11 @@ Designed for repos flooded with auto-filed CI failure issues.
 Rules (safe-by-default):
 1. CI per-run issues ("Actions run <id> failed: <workflow>")
    - Group by workflow name
-   - Keep the newest KEEP_PER_WORKFLOW open issues per workflow
-   - Close older ones as not_planned (superseded)
+   - Report older tickets as possible supersession candidates; do not close
 2. Root-cause issues ("DreamCo failure root cause [key]: ...")
-   - Keep newest per root-cause key; close older duplicates
+   - Report possible duplicates without closing
 3. Never close human issues unless they match explicit CI auto patterns
-4. Apply triage labels to survivors when missing
+4. Preserve all issues, labels, and comments; no GitHub mutations
 
 Env:
   GITHUB_REPOSITORY  owner/repo (required)
@@ -38,7 +37,7 @@ from typing import Any
 
 BATCH_SIZE = int(os.environ.get("BATCH_SIZE", "500"))
 KEEP_PER_WORKFLOW = int(os.environ.get("KEEP_PER_WORKFLOW", "2"))
-DRY_RUN = os.environ.get("DRY_RUN", "0") == "1"
+DRY_RUN = True  # Fail closed: supersession is not verified issue resolution.
 REPO = os.environ.get("GITHUB_REPOSITORY", "")
 TOKEN = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN") or ""
 
@@ -81,6 +80,8 @@ class Stats:
     scanned: int = 0
     closed_superseded_ci: int = 0
     closed_dup_root: int = 0
+    would_close_superseded_ci: int = 0
+    would_close_dup_root: int = 0
     labeled: int = 0
     skipped_human: int = 0
     errors: int = 0
@@ -101,15 +102,8 @@ def gh_json(args: list[str]) -> Any:
 
 
 def gh_run(args: list[str]) -> None:
-    env = os.environ.copy()
-    if TOKEN:
-        env["GH_TOKEN"] = TOKEN
-    if DRY_RUN:
-        print(f"[DRY_RUN] gh {' '.join(args)}")
-        return
-    r = subprocess.run(["gh", *args], capture_output=True, text=True, env=env)
-    if r.returncode != 0:
-        raise RuntimeError(f"gh {' '.join(args)} failed: {r.stderr.strip()}")
+    """Never execute a GitHub mutation from automated issue cleanup."""
+    print(f"[READ_ONLY] suppressed gh {' '.join(args)}")
 
 
 def fetch_open_issues(limit: int) -> list[Issue]:
@@ -154,46 +148,15 @@ def fetch_open_issues(limit: int) -> list[Issue]:
 
 
 def close_issue(num: int, reason: str, comment: str) -> None:
-    body = comment.strip()
-    try:
-        gh_run(
-            [
-                "issue",
-                "comment",
-                str(num),
-                "--repo",
-                REPO,
-                "--body",
-                body,
-            ]
-        )
-        gh_run(
-            [
-                "issue",
-                "close",
-                str(num),
-                "--repo",
-                REPO,
-                "--reason",
-                reason,
-            ]
-        )
-    except RuntimeError as e:
-        if "reason" in str(e).lower():
-            gh_run(["issue", "close", str(num), "--repo", REPO])
-        else:
-            raise
+    """Prevent closure without a separate evidence-backed review workflow."""
+    raise PermissionError(
+        "Automatic issue closure disabled: newer failures do not prove resolution"
+    )
 
 
 def ensure_labels(num: int, current: list[str], wanted: list[str]) -> bool:
-    missing = [w for w in wanted if w not in current]
-    if not missing:
-        return False
-    args = ["issue", "edit", str(num), "--repo", REPO]
-    for lb in missing:
-        args.extend(["--add-label", lb])
-    gh_run(args)
-    return True
+    """Read-only scan; labels are not changed."""
+    return False
 
 
 def classify(issue: Issue) -> str:
@@ -262,14 +225,8 @@ def main() -> int:
                 "_Closed automatically to reduce noise. "
                 "Reopen if this run still needs a unique repair._"
             )
-            try:
-                close_issue(issue.number, "not_planned", comment)
-                stats.closed_superseded_ci += 1
-                print(f"Closed superseded CI #{issue.number} ({workflow})")
-            except Exception as e:
-                print(f"close #{issue.number}: {e}", file=sys.stderr)
-                stats.errors += 1
-            time.sleep(0.15)
+            stats.would_close_superseded_ci += 1
+            print(f"Preserved CI #{issue.number} ({workflow}); would supersede with #{newer}")
 
     for key, group in root_by_key.items():
         group.sort(key=lambda i: i.created_dt, reverse=True)
@@ -288,14 +245,8 @@ def main() -> int:
                 f"`{key}`.\n\nCanonical issue: #{keep[0].number}. "
                 "Closing this duplicate."
             )
-            try:
-                close_issue(issue.number, "duplicate", comment)
-                stats.closed_dup_root += 1
-                print(f"Closed dup root-cause #{issue.number}")
-            except Exception as e:
-                print(f"close #{issue.number}: {e}", file=sys.stderr)
-                stats.errors += 1
-            time.sleep(0.15)
+            stats.would_close_dup_root += 1
+            print(f"Preserved root-cause #{issue.number}; possible duplicate of #{keep[0].number}")
 
     for issue in others:
         stats.kept += 1
@@ -310,6 +261,8 @@ def main() -> int:
         "scanned": stats.scanned,
         "closed_superseded_ci": stats.closed_superseded_ci,
         "closed_dup_root": stats.closed_dup_root,
+        "would_close_superseded_ci": stats.would_close_superseded_ci,
+        "would_close_dup_root": stats.would_close_dup_root,
         "labeled": stats.labeled,
         "skipped_human": stats.skipped_human,
         "kept": stats.kept,
@@ -328,6 +281,8 @@ def main() -> int:
             f"- Scanned: **{stats.scanned}**",
             f"- Closed superseded CI: **{stats.closed_superseded_ci}**",
             f"- Closed duplicate root-cause: **{stats.closed_dup_root}**",
+            f"- Would supersede (preserved): **{stats.would_close_superseded_ci}**",
+            f"- Possible duplicate (preserved): **{stats.would_close_dup_root}**",
             f"- Labeled: **{stats.labeled}**",
             f"- Kept open: **{stats.kept}**",
             f"- Skipped (human signal): **{stats.skipped_human}**",
@@ -335,8 +290,8 @@ def main() -> int:
             f"- Dry run: **{DRY_RUN}**",
             f"- CI workflows in batch: **{len(ci_by_workflow)}**",
             "",
-            f"Keeps the newest {KEEP_PER_WORKFLOW} open CI-failure issues "
-            "per workflow; closes older auto-filed tickets as superseded.",
+            f"Reports the newest {KEEP_PER_WORKFLOW} CI-failure issues per workflow. "
+            "All historical issue records remain open until verified resolution.",
         ]
         with open(summary_path, "a", encoding="utf-8") as f:
             f.write("\n".join(lines) + "\n")

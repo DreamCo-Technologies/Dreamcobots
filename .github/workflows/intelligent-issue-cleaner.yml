@@ -1,17 +1,22 @@
 name: Intelligent Issue Cleaner
 
-# Processes up to 500 open issues every hour.
-# Closes superseded auto-filed CI failure tickets; keeps newest signal per workflow.
+# Read-only review of up to 500 open issues each hour.
+# Never closes or labels issues without independently verified resolution evidence.
 
 on:
+  pull_request:
+    paths:
+      - "tools/issue_cleaner/**"
+      - "tests/test_issue_cleaner_read_only.py"
+      - ".github/workflows/intelligent-issue-cleaner.yml"
   schedule:
     - cron: "17 * * * *"
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Set to true to log actions without closing issues"
+        description: "Read-only; mutations are disabled regardless of this input"
         required: false
-        default: "false"
+        default: "true"
       batch_size:
         description: "Max issues to scan this run"
         required: false
@@ -23,7 +28,7 @@ on:
 
 permissions:
   contents: read
-  issues: write
+  issues: read
 
 concurrency:
   group: intelligent-issue-cleaner
@@ -38,7 +43,7 @@ jobs:
       GITHUB_REPOSITORY: ${{ github.repository }}
       BATCH_SIZE: ${{ github.event.inputs.batch_size || '500' }}
       KEEP_PER_WORKFLOW: ${{ github.event.inputs.keep_per_workflow || '2' }}
-      DRY_RUN: ${{ github.event.inputs.dry_run == 'true' && '1' || '0' }}
+      DRY_RUN: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -47,6 +52,9 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+
+      - name: Verify issue-preservation regression
+        run: python3 -m unittest tests.test_issue_cleaner_read_only
 
       - name: Run intelligent cleaner
         run: python3 tools/issue_cleaner/clean_issues.py
