@@ -10,12 +10,37 @@ from typing import Any
 class SourceAccessError(RuntimeError):
     pass
 
+
+ALLOWED_METADATA_HOSTS = {
+    "huggingface.co",
+    "www.openml.org",
+    "archive.ics.uci.edu",
+    "api.github.com",
+    "zenodo.org",
+    "catalog.data.gov",
+}
+
+
 def _get_json(url: str, timeout: int = 12) -> Any:
     if os.environ.get("DREAMCO_ALLOW_SOURCE_NETWORK") != "1":
         raise SourceAccessError("Set DREAMCO_ALLOW_SOURCE_NETWORK=1 for explicit metadata discovery")
+    try:
+        parsed = urllib.parse.urlsplit(url)
+        hostname = (parsed.hostname or "").lower().rstrip(".")
+        port = parsed.port
+    except ValueError as exc:
+        raise SourceAccessError("Metadata source URL is malformed") from exc
+    if (
+        parsed.scheme != "https"
+        or hostname not in ALLOWED_METADATA_HOSTS
+        or parsed.username
+        or parsed.password
+        or port not in (None, 443)
+    ):
+        raise SourceAccessError("Metadata source URL is not in the HTTPS host allowlist")
     headers = {"User-Agent": "DreamCo-Buddy-DatasetDiscovery/1.0", "Accept": "application/json"}
     token = os.environ.get("GITHUB_TOKEN")
-    if "api.github.com" in url and token:
+    if hostname == "api.github.com" and token:
         headers["Authorization"] = f"Bearer {token}"
     request = urllib.request.Request(url, headers=headers, method="GET")
     try:
