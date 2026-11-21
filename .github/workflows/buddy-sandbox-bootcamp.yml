@@ -12,6 +12,8 @@ on:
       - 'tools/run_tiny_gpt_baseline.py'
       - 'requirements-buddy-gpt.txt'
       - 'config/buddy-tiny-gpt-*.json'
+      - 'config/buddy-model-registry.json'
+      - 'tests/test_buddy_model_registry.py'
       - 'docs/BUDDY_TINY_GPT_BASELINE.md'
       - 'docs/BUDDY_14_DAY_MODEL_GROWTH_PLAN.md'
       - 'tests/test_tiny_gpt_baseline.py'
@@ -105,7 +107,7 @@ jobs:
       - name: Run deterministic GPT baseline tests and evaluation-only report
         if: github.event_name != 'schedule'
         run: |
-          python -m unittest tests.test_tiny_gpt_baseline
+          python -m unittest tests.test_tiny_gpt_baseline tests.test_buddy_model_registry
           python tools/run_tiny_gpt_baseline.py --output artifacts/buddy-gpt-baseline/baseline.json
       - name: Preserve GPT baseline evidence
         if: always() && github.event_name != 'schedule'
