@@ -73,6 +73,10 @@ def _eligibility_reasons(model: dict[str, Any], capability: str) -> list[str]:
     lineage = model.get("lineage", {})
     if lineage.get("dataset_rights_status") != "VERIFIED":
         reasons.append("dataset_rights_not_verified")
+    if lineage.get("model_license_status") != "VERIFIED":
+        reasons.append("model_license_not_verified")
+    if not str(lineage.get("model_license_url", "")).startswith("https://") or not lineage.get("model_license_evidence"):
+        reasons.append("model_license_evidence_missing")
     if not lineage.get("training_authorization_id"):
         reasons.append("separate_training_authorization_missing")
     if not lineage.get("training_run_id") or not COMMIT_RE.fullmatch(str(lineage.get("base_model_revision", ""))):
@@ -83,11 +87,21 @@ def _eligibility_reasons(model: dict[str, Any], capability: str) -> list[str]:
     if not evidence:
         reasons.append("benchmark_evidence_missing")
     for item in evidence:
+        if not isinstance(item, dict) or not item.get("benchmark_id"):
+            reasons.append("benchmark_identity_missing")
+            continue
         if not isinstance(item.get("baseline_score"), (int, float)) or not isinstance(item.get("candidate_score"), (int, float)):
             reasons.append("benchmark_scores_missing")
             continue
-        if item["candidate_score"] < item["baseline_score"]:
+        direction = item.get("score_direction")
+        if direction not in {"higher_is_better", "lower_is_better"}:
+            reasons.append("benchmark_score_direction_missing")
+        elif direction == "higher_is_better" and item["candidate_score"] < item["baseline_score"]:
             reasons.append("benchmark_regression")
+        elif direction == "lower_is_better" and item["candidate_score"] > item["baseline_score"]:
+            reasons.append("benchmark_regression")
+        if not isinstance(item.get("routing_weight", 1.0), (int, float)) or item.get("routing_weight", 1.0) <= 0:
+            reasons.append("benchmark_routing_weight_invalid")
         for key in ("holdout_passed", "regression_passed", "provenance_verified",
                     "dataset_rights_verified", "independent_review_approved"):
             if item.get(key) is not True:
@@ -107,7 +121,20 @@ def route_model(registry: dict[str, Any], capability: str) -> dict[str, Any]:
         if reasons:
             blocked.append({"model_id": model["model_id"], "reasons": reasons})
             continue
-        score = max(float(item["candidate_score"]) for item in model["benchmark_evidence"])
+        weighted_improvements = []
+        for item in model["benchmark_evidence"]:
+            baseline = float(item["baseline_score"])
+            candidate = float(item["candidate_score"])
+            denominator = max(abs(baseline), 1e-9)
+            improvement = (
+                (candidate - baseline) / denominator
+                if item["score_direction"] == "higher_is_better"
+                else (baseline - candidate) / denominator
+            )
+            weight = float(item.get("routing_weight", 1.0))
+            weighted_improvements.append((max(0.0, improvement), weight))
+        total_weight = sum(weight for _, weight in weighted_improvements)
+        score = sum(value * weight for value, weight in weighted_improvements) / total_weight
         candidates.append((score, model["model_id"]))
     if not candidates:
         return {
@@ -124,7 +151,7 @@ def route_model(registry: dict[str, Any], capability: str) -> dict[str, Any]:
         "status": "ELIGIBLE_FOR_ROUTING",
         "capability": capability,
         "selected_model_id": model_id,
-        "benchmark_score": score,
+        "weighted_relative_improvement": score,
         "blocked_candidates": blocked,
         "production_side_effects": False,
     }
