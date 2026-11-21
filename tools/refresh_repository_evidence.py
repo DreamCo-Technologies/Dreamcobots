@@ -32,6 +32,9 @@ def main() -> int:
     else:
         raise SystemExit("File prospectus did not converge after three passes.")
 
+    # File-prospectus generation can change source inventories consumed by the
+    # public run cards. Rebuild Actions cards after that convergence, then verify.
+    run("tools/build_actions_prospectus.py")
     # Recheck all derived outputs after the final generator has completed.
     run("tools/build_actions_prospectus.py", "--check", "--check-buttons")
     run("tools/audit_pages_features.py", "--check", "--check-regressions")
