@@ -1,5 +1,5 @@
 import unittest
-from tools.buddy_failure_learning import classify,fingerprint,recommend,update_memory,route_masterbots,build_training_candidate
+from tools.buddy_failure_learning import classify,fingerprint,recommend,update_memory,route_masterbots,build_training_candidate,build_training_event
 class BuddyFailureLearningTests(unittest.TestCase):
  def setUp(self):
   self.observation={"repository":"DreamCo-Technologies/Dreamcobots","workflow":"Actions Health",
@@ -33,6 +33,25 @@ class BuddyFailureLearningTests(unittest.TestCase):
   self.assertEqual(row["primary_masterbot_id"],41)
   v["contains_secrets"]=True
   with self.assertRaises(ValueError):build_training_candidate(self.observation,v)
+ def test_verified_repair_exports_dataset_builder_event_with_provenance(self):
+  v={"original_failure":True,"regressions":True,"human_reviewed":True,"training_allowed":True,
+   "rights_status":"VERIFIED","contains_secrets":False,"contains_personal_data":False,
+   "third_party_content_included":False,"root_cause":"relative link escaped public site",
+   "repair":"use canonical GitHub report URL","evidence":["workflow run 44846614900"],
+   "source_url":"https://github.com/DreamCo-Technologies/Dreamcobots/commit/"+
+    "0"*40,"commit_sha":"0"*40,"run_id":"44846614900",
+   "acceptance_criteria":["public-site link check passes"],"test_evidence":["Buddy Pages Link Check passed"]}
+  event=build_training_event(self.observation,v)
+  self.assertEqual(event["evidence_type"],"verified_bug_fix")
+  self.assertFalse(event["training_approved"]);self.assertFalse(event["weights_trained"])
+  self.assertEqual(event["primary_masterbot_id"],41)
+ def test_training_event_rejects_unverified_rights_or_missing_provenance(self):
+  v={"original_failure":True,"regressions":True,"human_reviewed":True,"training_allowed":True,
+   "rights_status":"PENDING","contains_secrets":False,"contains_personal_data":False,
+   "third_party_content_included":False,"root_cause":"cause","repair":"fix","evidence":["run"],
+   "source_url":"https://github.com/example/repo","commit_sha":"0"*40,"run_id":"1",
+   "acceptance_criteria":["check"],"test_evidence":["passed"]}
+  with self.assertRaises(ValueError):build_training_event(self.observation,v)
  def test_data_and_benchmark_route_to_specialists(self):
   self.assertEqual(route_masterbots("data"),[7,41]);self.assertEqual(route_masterbots("benchmark"),[47,63])
 if __name__=="__main__":unittest.main()
