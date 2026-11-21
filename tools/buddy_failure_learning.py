@@ -119,7 +119,7 @@ def build_training_event(observation:dict[str,Any],verification:dict[str,Any])->
      or parts[3].lower()!=commit):
   raise ValueError("Training evidence must use the canonical DreamCo commit URL matching source_commit.")
  run_id=str(verification["run_id"]).strip()
- if not re.fullmatch(r"\\d{1,20}",run_id):
+ if not re.fullmatch(r"\d{1,20}",run_id):
   raise ValueError("Verification run ID must be numeric metadata.")
  criteria=[str(x).strip() for x in verification.get("acceptance_criteria",[]) if str(x).strip()]
  evidence=[str(x).strip() for x in verification.get("test_evidence",[]) if str(x).strip()]
