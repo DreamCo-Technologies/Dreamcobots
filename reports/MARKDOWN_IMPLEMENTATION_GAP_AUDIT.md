@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-20T23:25:31Z
+Generated: 2026-11-21T14:26:56Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1647
+- Markdown documents scanned: 1649
 - Actionable claim lines detected: 11721
 - Documents with missing path references: 108
-- Documents without implementation references: 1570
+- Documents without implementation references: 1572
 - Documents with implementation references but no test references: 62
-- Documents with inventory count claims: 107
-- Inventory count claims requiring review: 377
+- Documents with inventory count claims: 108
+- Inventory count claims requiring review: 378
 
 ## Fixed-count claims requiring review
 
@@ -109,6 +109,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/BUDDY_RESOURCE_MAP.md:41 — | 9 | `github_actions` | GitHub Actions on Dreamcobots (146 workflows registered, GitHub-hosted runners, 0 self-hosted) | Scheduled and dispatchable compute for checks, catalogs, benchmarks and Pages builds. GITHUB_TOKEN is available to every workflow. | **connected** | - |
 - docs/BUDDY_RESOURCE_MAP.md:53 — | - | `github_discussions` | GitHub Discussions on Dreamcobots (enabled, 6 categories, 0 threads) | A possible public Q&A and feedback channel for Buddy users and evals. | **needs_owner_decision** | - |
 - docs/BUDDY_RESOURCE_MAP.md:73 — ## Grok teammate lanes (box-local roster, about 112 bots)
+- docs/BUDDY_TINY_GPT_BASELINE.md:35 — - Days 3–4 model skeleton and causal transformer block: implemented; shape, finite-gradient, unchanged-weight, and causal-leakage tests pass locally.
 - docs/BUDDY_USER_TESTING_CATALOG.md:19 — | 45 divisions | Repository coverage exists | READY-USER | Test one primary workflow per division |
 - docs/BUDDY_VIBE_CODING_REVERSE_ENGINEERING_DISTILLATION_AND_TRAINING.md:58 — The 65 MasterBot registry and 45-domain taxonomy must be reconciled using an authoritative crosswalk. Until then, do not invent ownership or claim all 45 divisions have a verified mapping.
 - docs/CONVERSATION_SYSTEM_INTEGRATION_SPEC.md:41 — ## 8. 65 division dashboards
@@ -13318,6 +13319,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/BUDDY_TINY_GPT_BASELINE.md
+
+- Status: reference_only
+- Actionable claim lines: 0
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/BUDDY_TOOL_SKILL_CATALOG.md
 
 - Status: implementation_reference_missing
@@ -15122,6 +15133,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 - Status: implementation_reference_missing
 - Actionable claim lines: 5
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### models/buddy-tiny-gpt/README.md
+
+- Status: reference_only
+- Actionable claim lines: 0
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
