@@ -1,5 +1,5 @@
 import unittest
-from tools.buddy_failure_learning import classify,fingerprint,recommend,update_memory,route_masterbots,build_training_candidate
+from tools.buddy_failure_learning import classify,fingerprint,recommend,update_memory,route_masterbots,build_training_candidate,build_training_event
 class BuddyFailureLearningTests(unittest.TestCase):
  def setUp(self):
   self.observation={"repository":"DreamCo-Technologies/Dreamcobots","workflow":"Actions Health",
@@ -35,4 +35,29 @@ class BuddyFailureLearningTests(unittest.TestCase):
   with self.assertRaises(ValueError):build_training_candidate(self.observation,v)
  def test_data_and_benchmark_route_to_specialists(self):
   self.assertEqual(route_masterbots("data"),[7,41]);self.assertEqual(route_masterbots("benchmark"),[47,63])
+ def _verified_event_inputs(self,run_id="123"):
+  return {"original_failure":True,"regressions":True,"human_reviewed":True,"training_allowed":True,
+   "rights_status":"VERIFIED","contains_secrets":False,"contains_personal_data":False,
+   "third_party_content_included":False,"root_cause":"The health inventory omitted YAML workflow definitions.",
+   "repair":"Include both .yml and .yaml files in the canonical workflow inventory.",
+   "source_url":"https://github.com/DreamCo-Technologies/Dreamcobots/commit/"+"a"*40,
+   "source_commit":"a"*40,"run_id":run_id,
+   "acceptance_criteria":["The report count matches both YAML extensions."],
+   "test_evidence":["GitHub Actions run 44866516527 passed the Actions inventory contract."]}
+ def test_verified_repair_exports_dataset_builder_compatible_candidate(self):
+  from tools.build_dreamco_training_examples import build
+  events=[build_training_event(self.observation,self._verified_event_inputs(str(i))) for i in (1,2,3)]
+  self.assertEqual(events[0]["schema"],"dreamco.verified_repair_training_event.v1")
+  self.assertEqual(events[0]["event_id"],build_training_event(self.observation,self._verified_event_inputs("1"))["event_id"])
+  candidate=build(events)
+  self.assertEqual(candidate["accepted_source_events"],3)
+  self.assertFalse(candidate["training_approved"])
+  self.assertFalse(candidate["weights_trained"])
+ def test_training_event_rejects_unverified_rights_and_missing_evidence(self):
+  verification=self._verified_event_inputs()
+  verification["rights_status"]="PENDING"
+  with self.assertRaises(ValueError):build_training_event(self.observation,verification)
+  verification=self._verified_event_inputs()
+  verification["test_evidence"]=[]
+  with self.assertRaises(ValueError):build_training_event(self.observation,verification)
 if __name__=="__main__":unittest.main()
