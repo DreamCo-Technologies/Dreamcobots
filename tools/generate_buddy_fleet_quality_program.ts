@@ -218,76 +218,6 @@ function stableJson(value: unknown) {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
 
-function publicProgram(program: ReturnType<typeof buildFleetQualityProgram>) {
-  return {
-    schema: program.schema,
-    catalog_reviewed_on: program.catalog_reviewed_on,
-    stale_after_days: program.stale_after_days,
-    truth_policy: program.truth_policy,
-    summary: program.summary,
-    benchmark_dimensions: program.benchmark_dimensions,
-    competitor_discovery: program.competitor_discovery,
-    quality_workers: program.quality_workers,
-    release_pipeline: program.release_pipeline,
-    dependency_gates: program.dependency_gates,
-    continuous_learning: program.continuous_learning,
-    learning_path_policy: program.learning_path_policy,
-    efficiency_budgets: program.efficiency_budgets,
-    bots: program.bots.map((bot) => ({
-      bot_id: bot.bot_id,
-      display_name: bot.display_name,
-      division: bot.division,
-      category: bot.category,
-      quality_plan_id: bot.quality_plan_id,
-      evidence: bot.evidence,
-      production_status: bot.production_status,
-      build_plan: {
-        completed_phases: bot.build_plan.completed_phases,
-        remaining_phases: bot.build_plan.remaining_phases,
-        next_actions: bot.build_plan.next_actions,
-      },
-      learning_path: {
-        path_id: bot.learning_path.path_id,
-        curriculum_version: bot.learning_path.curriculum_version,
-        training_goal: bot.learning_path.training_goal,
-        module_count: bot.learning_path.module_count,
-        stages: bot.learning_path.stages,
-        graduation_status: bot.learning_path.graduation_status,
-      },
-      competitor_benchmark: {
-        suite_id: bot.competitor_benchmark.suite_id,
-        baseline: bot.competitor_benchmark.baseline,
-        benchmark_count: bot.competitor_benchmark.benchmark_count,
-        candidate_limit_per_capability: bot.competitor_benchmark.candidate_limit_per_capability,
-        current_candidates_verified: bot.competitor_benchmark.current_candidates_verified,
-        live_results_completed: bot.competitor_benchmark.live_results_completed,
-        current_ranking_claimed: bot.competitor_benchmark.current_ranking_claimed,
-        status: bot.competitor_benchmark.status,
-      },
-      benchmark_plan: {
-        current_competitor_ranking_claimed: bot.benchmark_plan.current_competitor_ranking_claimed,
-        candidate_limit_per_capability: bot.benchmark_plan.candidate_limit_per_capability,
-        live_network_default: bot.benchmark_plan.live_network_default,
-        paid_runs_require_per_run_approval: bot.benchmark_plan.paid_runs_require_per_run_approval,
-        capabilities: bot.benchmark_plan.capabilities.map((capability) => ({
-          capability_test_id: capability.capability_test_id,
-          name: capability.name,
-          fixture_id: capability.fixture_id,
-          module_id: capability.learning_module_id,
-          learning_order: capability.learning_order,
-          benchmark_id: capability.competitor_benchmark_id,
-          repository_contract_status: capability.repository_contract_status,
-          repository_evidence: capability.repository_evidence,
-          competitor_discovery_status: capability.competitor_discovery_status,
-          live_competitor_benchmark_status: capability.live_competitor_benchmark_status,
-          live_end_to_end_status: capability.live_end_to_end_status,
-        })),
-      },
-      buddy_prompts: bot.buddy_prompts,
-    })),
-  };
-}
-
 function report(program: ReturnType<typeof buildFleetQualityProgram>) {
   const lines = [
     "# Buddy Fleet Quality Program",
@@ -320,7 +250,6 @@ function report(program: ReturnType<typeof buildFleetQualityProgram>) {
 
 export function writeFleetQualityProgram({ check = false } = {}) {
   const program = buildFleetQualityProgram();
-  const publicCatalog = publicProgram(program);
   const outputs = [
     [GENERATED_PATH, stableJson(program)],
     [PUBLIC_PATH, `window.BUDDY_FLEET_QUALITY_PROGRAM=${JSON.stringify({summary:publicCatalog.summary,bots:[],quality_workers:publicCatalog.quality_workers,release_pipeline:publicCatalog.release_pipeline})};\nwindow.BUDDY_FLEET_QUALITY_PROGRAM_READY=fetch(${JSON.stringify(PUBLIC_DATA_URL)},{cache:"no-store"}).then(response=>{if(!response.ok)throw new Error("Fleet quality data unavailable: "+response.status);return response.json();}).then(data=>(window.BUDDY_FLEET_QUALITY_PROGRAM=data)).catch(()=>window.BUDDY_FLEET_QUALITY_PROGRAM);\n`],
