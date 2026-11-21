@@ -41,6 +41,7 @@ GENERATED_NAMES = [
     "system-health.json",
     "release-readiness.json",
     "index.json",
+    "data-observability.json",
 ]
 IGNORED_PARTS = {".git", ".pytest_cache", "node_modules", "dist", ".cache", "__pycache__"}
 SECRET_NAME = re.compile(r"(^|/)(\.env($|\.)|.*\.(pem|p12|pfx|key)$|id_(rsa|ed25519)$)", re.I)
@@ -347,6 +348,7 @@ def build_bundle() -> dict[str, dict[str, Any]]:
     bots, divisions, capabilities = build_fleet(registry)
     sys.path.insert(0, str(ROOT))
     from tools.normalize_legacy_portfolios import build_legacy_portfolios
+    from tools.build_command_center_data_observability import build as build_data_observability
     legacy = build_legacy_portfolios(ROOT, registry)
     payloads = {
         "repository-inventory.json": build_repository_inventory(files),
@@ -358,6 +360,7 @@ def build_bundle() -> dict[str, dict[str, Any]]:
         "capabilities.json": capabilities,
         "benchmarks.json": build_benchmarks(),
         "workflows.json": build_workflows(),
+        "data-observability.json": build_data_observability(),
     }
     status_counts = Counter()
     for payload in payloads.values():
