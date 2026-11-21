@@ -80,8 +80,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python3 tools/audit_actions_live.py
-      - name: Install pytest for function-style Pages feature tests
-        run: python3 -m pip install --quiet pytest
+      - name: Install evidence refresh and Pages test dependencies
+        run: python3 -m pip install --quiet pyyaml pytest
       - name: Verify Actions-page contracts
         if: always()
         run: |
