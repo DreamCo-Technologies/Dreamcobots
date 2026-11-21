@@ -69,7 +69,7 @@ The 14-day milestone passes only when the repository can reproduce the small-mod
 | Days 3–4 causal transformer skeleton | IMPLEMENTED_LOCAL_TESTS_PASS | Tensor shape, causal future-token isolation, finite gradients, and unchanged-parameter tests pass. No optimizer step or weight update occurred. |
 | Days 5–7 optimizer, profiling, pretraining, checkpoint, repeat training | BLOCKED_NOT_AUTHORIZED | No separate explicit weight-training authorization or compute approval was supplied. No training, optimizer step, checkpoint, paid compute, or model download was performed. |
 | Days 8–10 SFT, reward loop, multimodal exercise | NOT_STARTED | Depends on approved data/model rights, a separate training authorization, and core baseline evidence. |
-| Days 11–12 Buddy registry, lineage, routing, benchmark-gap closure | NEXT_PHASE | The baseline report includes preliminary model and dataset lineage identifiers. Full canonical registry integration, provider allowlists/fallback, domain benchmark fixtures, and before/after gap closure remain open. |
+| Days 11–12 Buddy registry, lineage, routing, benchmark-gap closure | PARTIAL_LOCAL_TESTS_PASS_CI_PENDING | Added a read-only model registry, explicit baseline lineage record, safe route decision gate, and benchmark contract. The untrained baseline is registered but not routable. Full runtime integration, provider allowlists/fallback, capability-quality benchmark runs, and before/after gap closure remain open. |
 | Days 13–14 independent graduation and hardening | PENDING | Requires CI artifacts, repeatable evidence packet, security checks, second-seed evaluation, and independent review. |
 
 ### Baseline implementation boundary
@@ -81,3 +81,10 @@ The follow-up Bootcamp workflow now runs the deterministic baseline tests and st
 ### Deadline assessment
 
 The December 4, 2026 target remains feasible only as a narrowed engineering milestone: reproducible tiny baseline, tokenizer/data-contract checks, Bootcamp evidence pipeline, read-only model registry/lineage/routing contracts, and a small independent benchmark suite. It is not feasible to promise a trained 25M-parameter model, 65 competitive specialist models, full DreamCo fleet mastery, or production readiness by that date under the current no-paid-compute/no-weight-update constraints. Those outcomes remain explicitly out of scope unless separately authorized and supported by rights-cleared data and compute.
+
+
+### Registry and benchmark contract follow-up
+
+A read-only `buddy-model-registry.json` now records the tiny GPT model identity, code/model-card/data-card references, untrained lifecycle state, absent training run, absent weight artifact, and disabled route. The registry validator rejects duplicate model IDs and inconsistent trained-weight metadata. The route resolver requires a trained artifact hash, dataset-card hash and verified rights, a separate training authorization ID, immutable base-model revision, a run ID, non-regressing benchmark scores, holdout/regression/provenance checks, and independent review approval. The baseline is intentionally returned as `BLOCKED_NO_ELIGIBLE_MODEL`.
+
+The benchmark contract separates engineering correctness checks (tokenizer, causality, gradients, repeatability, JSON evidence) from capability-quality benchmarks. Capability-quality scores remain null and promotion remains blocked. Passing engineering tests does not establish language quality or model mastery.
