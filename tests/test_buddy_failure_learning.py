@@ -54,8 +54,7 @@ class BuddyFailureLearningTests(unittest.TestCase):
   self.assertFalse(candidate["training_approved"])
   self.assertFalse(candidate["weights_trained"])
   events[0]["contains_secrets"]=True
-  rejected=build(events)
-  self.assertEqual(rejected["accepted_source_events"],2)
+  with self.assertRaises(ValueError):build(events)
  def test_training_event_rejects_unverified_rights_and_missing_evidence(self):
   verification=self._verified_event_inputs()
   verification["rights_status"]="PENDING"
