@@ -76,6 +76,7 @@ jobs:
       - name: Actions and repository static health
         run: |
           python3 tools/audit_actions_health.py
+          python3 tools/build_actions_prospectus.py
           python3 tools/generate_repository_test_registry.py
           python3 tools/generate_repository_test_registry.py --check
 
