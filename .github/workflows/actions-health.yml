@@ -51,10 +51,13 @@ jobs:
         run: python3 tools/audit_actions_health.py
       - name: Regenerate dependent Actions prospectus from the fresh health report
         run: python3 tools/build_actions_prospectus.py
-      - name: Regenerate repository file prospectus from the current checkout
-        run: python3 tools/build_file_prospectus.py
       - name: Regenerate Pages feature audit from the current checkout
         run: python3 tools/audit_pages_features.py
+      - name: Converge repository file prospectus from the current checkout
+        run: |
+          python3 tools/build_file_prospectus.py
+          python3 tools/build_file_prospectus.py
+          python3 tools/build_file_prospectus.py --check
       - name: Static audit diagnostics
         if: always()
         run: |
@@ -90,7 +93,7 @@ jobs:
           python3 -m unittest tests.test_buddy_failure_learning
           python3 -m unittest tests.test_buddy_conversation_learning_policy
           python3 -m unittest tests.test_buddy_universal_learning_governance
-          python3 -m pytest -q tests/test_pages_feature_audit.py
+          python3 -m pytest -q tests/test_pages_feature_audit.py tests/test_file_prospectus.py
           if [ -f package-lock.json ]; then npm ci --ignore-scripts; fi
           npm run test:actions-page
       - name: Add reports to summary
