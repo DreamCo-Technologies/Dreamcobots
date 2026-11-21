@@ -70,7 +70,7 @@ def workflow_signature(item: dict) -> str | None:
 
 
 def main() -> int:
-    workflows = sorted(WORKFLOWS.glob("*.yml")) + sorted(WORKFLOWS.glob("*.yaml"))
+    workflows = sorted({*WORKFLOWS.glob("*.yml"), *WORKFLOWS.glob("*.yaml")})
     findings: list[dict] = []
     critical = 0
     for path in workflows:
