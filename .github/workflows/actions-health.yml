@@ -8,6 +8,7 @@ on:
       - ".github/workflows/**"
       - "tools/audit_actions_health.py"
       - "tools/audit_actions_live.py"
+      - "tools/refresh_repository_evidence.py"
       - "tools/buddy_failure_learning.py"
       - "tools/buddy_conversation_learning_policy.py"
       - "tests/test_buddy_failure_learning.py"
@@ -47,17 +48,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - name: Static audit of every local workflow
-        run: python3 tools/audit_actions_health.py
-      - name: Regenerate dependent Actions prospectus from the fresh health report
-        run: python3 tools/build_actions_prospectus.py
-      - name: Regenerate Pages feature audit from the current checkout
-        run: python3 tools/audit_pages_features.py
-      - name: Converge repository file prospectus from the current checkout
-        run: |
-          python3 tools/build_file_prospectus.py
-          python3 tools/build_file_prospectus.py
-          python3 tools/build_file_prospectus.py --check
+      - name: Refresh deterministic repository evidence
+        run: python3 tools/refresh_repository_evidence.py
       - name: Static audit diagnostics
         if: always()
         run: |
