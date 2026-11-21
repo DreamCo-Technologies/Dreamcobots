@@ -37,3 +37,8 @@ The initial loss is only a random-initialization reference on a synthetic fixtur
 - Days 8–10 SFT, reward loop, multimodal exercise: not started.
 - Days 11–12 Buddy registry/lineage/routing and benchmark-gap closure: next integration phase; current report contains preliminary model/dataset lineage identifiers only.
 - Days 13–14 independent rerun, security/reliability review, graduation: pending CI artifacts and independent review.
+
+
+## Registry and routing status
+
+The baseline has a read-only registry entry in `config/buddy-model-registry.json`. Its training run, weight artifact, verified dataset rights, and benchmark evidence are intentionally absent, so Buddy's route resolver must return `BLOCKED_NO_ELIGIBLE_MODEL`. The engineering benchmark contract is in `config/buddy-tiny-gpt-benchmark-contract.json`; capability-quality scoring remains `NOT_RUN`. Passing the baseline tests does not enable production routing.
