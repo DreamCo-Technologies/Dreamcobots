@@ -222,7 +222,7 @@ def workflow_records(health: dict[str, Any], operators: list[str], curated: dict
             doc = _load_yaml(text)
         except Exception as exc:  # malformed workflow: still gets a card, never a button
             doc = {}
-            parse_error = type(exc).__name__
+            parse_error = f"{type(exc).__name__}: {exc}"
         else:
             parse_error = None
         finding = by_file.get(path.name, {})
@@ -592,7 +592,7 @@ def check_buttons(cards_payload: dict[str, Any], registry: dict[str, Any], bot_p
             continue
         problems += card_problems(card)
         if bool(job["triggerable"]) != bool(card["trigger"]["triggerable"]):
-            problems.append(f"registry job {job['id']}: triggerable disagrees with its card")
+            problems.append(f"registry job {job['id']}: triggerable disagrees with its card (registry={bool(job['triggerable'])}, card={bool(card['trigger']['triggerable'])}, blocked_reason={card['trigger'].get('blocked_reason')!r})")
     plane = read_json(CONTROL_PLANE)
     if plane:
         for job in plane.get("jobs", []):
