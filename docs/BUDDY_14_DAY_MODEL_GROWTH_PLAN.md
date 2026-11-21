@@ -58,3 +58,23 @@ Do not equate adding parameters, documents, bots or prompts with improved capabi
 ## Definition of done
 
 The 14-day milestone passes only when the repository can reproduce the small-model baseline, the Bootcamp planner generates the 14-day schedule, tests validate the growth loop and safety gates, Buddy can record and retrieve versioned lesson/evaluation evidence, and an independent rerun confirms benchmark results. If training-data rights or compute remain unavailable, the model-weight-training milestone is explicitly blocked while the curriculum, tests and non-weight knowledge/skill growth components can still be completed.
+
+
+## Execution record — 2026-11-21 (Day 1)
+
+**Implementation status:** baseline harness added; CI evidence is pending. This record does not mark the GPT-style training unit as mastered.
+
+- Added `buddy/gpt_baseline/tiny_gpt.py`: a dependency-free one-block causal decoder with byte-level tokenization, deterministic parameter initialization, causal self-attention, residual MLP, and next-byte cross-entropy measurement.
+- Added a pinned configuration in `config/buddy-tiny-gpt-baseline.json` using only three original synthetic fixtures.
+- Added `tools/run_buddy_gpt_baseline.py` to emit a model card and evidence manifest containing the configuration hash, initialization hash, fixture hashes, untrained validation/test losses, Python/platform profile, and commit SHA.
+- Added deterministic tests for UTF-8 round-trip, forward shapes, finite logits, causal isolation, seed reproducibility, and no-weight-update behavior.
+- Connected the baseline runner, tests, and 90-day evidence artifact to Buddy Sandbox Bootcamp CI.
+- Fixed the dataset-discovery GitHub token guard to send authorization only to the exact HTTPS `api.github.com` origin, with deterministic lookalike-host tests. Also removed three unused test imports reported by the prior PR review.
+
+**Evidence boundary:** this is a reproducible, untrained forward-pass reference model. It is not a 25M model, a trained assistant, a useful-capability score, or a checkpoint. No optimizer was run, no weights were updated, no external dataset was downloaded, no course/private/customer data was used, and no paid compute was used. Unit 01's tiny-batch overfit requirement remains blocked pending separate explicit weight-update authorization; Day 2–14 work must preserve that gate.
+
+**PR lineage:** PR #17633 was merged on 2026-11-20 (merge commit `6cae4f2d02f577c2a71e041433879de446306a52`). Its original branch is no longer available. This continuation is isolated on `buddy-growth-sprint/2026-11-21-day1-baseline`, created from the then-current `main` head `63c2a460760f9d3ef5dad65c88acf35ee6cfb2da`; no merge or deployment is part of this continuation.
+
+**Next gates:** obtain a passing Bootcamp CI run and retain its baseline artifact; implement Day 2 tokenizer/data contracts without ingesting external content; then build the trainable tiny causal model skeleton while keeping all weight-update commands disabled until separately authorized.
+
+**December 4 scope assessment:** the repository-engineering milestone remains achievable if it is scoped to a reproducible small decoder baseline, executable Bootcamp evidence capture, deterministic registry/lineage/routing contracts, and benchmark-gap reporting. A trained 25M model, SFT/LoRA run, or production weight update is not currently a committed deliverable because data/model rights and separate training authorization are absent. If those gates remain closed, report the model-training portion as blocked rather than treating a forward-only baseline as trained.
