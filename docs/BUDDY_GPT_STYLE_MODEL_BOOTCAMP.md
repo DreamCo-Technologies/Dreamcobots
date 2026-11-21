@@ -90,3 +90,17 @@ Unknown or restricted dataset rights mean **BLOCKED**. No paid compute, paid API
 - Lesson planner: `tools/bootcamp_lesson_planner.py`.
 - Learning procedures: `buddy/learning/study_methods.py` (currently explicitly reports `weights_trained: false`).
 - Follow-up implementation: connect these units to the Bootcamp lesson planner/engine and add deterministic tests before claiming executable or tested status.
+
+
+## Day 1 implementation
+
+The repository now contains a forward-only tiny decoder baseline:
+- Implementation: `buddy/gpt_baseline/tiny_gpt.py`
+- Pinned configuration and synthetic fixtures: `config/buddy-tiny-gpt-baseline.json`
+- Evidence runner: `tools/run_buddy_gpt_baseline.py`
+- Deterministic tests: `tests/test_buddy_gpt_baseline.py`
+- Model card: `docs/BUDDY_TINY_GPT_BASELINE_MODEL_CARD.md`
+
+The model has byte-level tokenization, one causal self-attention block, a residual MLP, and a next-byte output head. Initialization is deterministic. The runner measures validation and test cross-entropy without changing parameters and records hashes, runtime profile, and commit identity. Buddy Sandbox Bootcamp CI runs the tests and retains the evidence artifact.
+
+**This is not a trained model.** No optimizer, weight update, checkpoint, external dataset, course material, private/customer content, paid compute, or model promotion is involved. The unit's tiny-batch-overfit requirement remains uncompleted until separate explicit authorization for weight updates is provided and all dataset/model rights gates pass.
