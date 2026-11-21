@@ -6,6 +6,7 @@ import json
 import re
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 ROOT=Path(__file__).resolve().parents[1]
 REGISTRY=ROOT/"config/masterbot-65-registry.json"
@@ -19,6 +20,47 @@ def _sha(value:str)->str:
  return hashlib.sha256(value.encode("utf-8")).hexdigest()
 def _text(value:Any)->str:
  return " ".join(str(value or "").split())
+def _valid_source_url(value:str)->bool:
+ try:
+  parsed=urlsplit(value)
+  port=parsed.port
+ except ValueError:
+  return False
+ if parsed.scheme!="https" or parsed.hostname!="github.com" or port not in (None,443):
+  return False
+ if parsed.username or parsed.password or parsed.query or parsed.fragment:
+  return False
+ parts=[part for part in parsed.path.split("/") if part]
+ if len(parts)<3 or parts[:2]!=["DreamCo-Technologies","Dreamcobots"] or any(part in {".",".."} for part in parts):
+  return False
+ kind=parts[2]
+ if kind=="commit":
+  return len(parts)==4 and re.fullmatch(r"[0-9a-f]{40}",parts[3],re.I) is not None
+ if kind in {"pull","issues"}:
+  return len(parts)==4 and parts[3].isdigit()
+ if kind=="actions":
+  return len(parts)==5 and parts[3]=="runs" and parts[4].isdigit()
+ if kind in {"blob","tree"}:
+  return len(parts)>=5 and parts[3] not in {"", ".", ".."}
+ return False
+def _valid_source_metadata(event:dict,source_url:str)->bool:
+ if not _valid_source_url(source_url):
+  return False
+ commit=_text(event.get("source_commit")).lower()
+ if commit and not re.fullmatch(r"[0-9a-f]{40}",commit):
+  return False
+ parts=[part for part in urlsplit(source_url).path.split("/") if part]
+ if parts[2]=="commit" and commit and parts[3].lower()!=commit:
+  return False
+ fingerprint=_text(event.get("source_fingerprint")).lower()
+ if fingerprint and not re.fullmatch(r"[0-9a-f]{24,64}",fingerprint):
+  return False
+ run_id=_text(event.get("run_id"))
+ if run_id and not re.fullmatch(r"\d{1,20}",run_id):
+  return False
+ return True
+def _redact_run_reference(value:str)->str:
+ return re.sub(r"(?i)\b(?:github\s+actions\s+)?(?:workflow\s+)?run\s*[:#]?\s*\d{8,}\b","[workflow-run-reference]",value)
 def _split_rows(rows:list[dict])->dict[str,str]:
  result={}
  for split in ("train","validation","test"):
@@ -34,23 +76,27 @@ def build(events:list[dict],masterbot_registry:Path=REGISTRY)->dict:
   kind=_text(event.get("evidence_type"))
   task=_text(event.get("task")); lesson=_text(event.get("verified_lesson"))
   owner=event.get("primary_masterbot_id")
-  if not eid or not source.startswith("https://") or kind not in ALLOWED_TYPES:
-   rejected.append({"event_id":eid,"reason":"missing ID, HTTPS evidence source, or approved evidence type"}); continue
+  if not eid or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}",eid) or not _valid_source_metadata(event,source) or kind not in ALLOWED_TYPES:
+   rejected.append({"event_id":eid,"reason":"missing/invalid ID, non-canonical evidence source, invalid provenance metadata, or unapproved evidence type"}); continue
   if event.get("verified") is not True or event.get("human_reviewed") is not True or event.get("training_allowed") is not True or event.get("rights_status")!="VERIFIED":
    rejected.append({"event_id":eid,"reason":"verification, human review, explicit training permission, or rights verification missing"}); continue
   if event.get("contains_secrets") is not False or event.get("contains_personal_data") is not False or event.get("third_party_content_included") is not False:
    rejected.append({"event_id":eid,"reason":"secrets, personal data, or unlicensed third-party content is not allowed in generated examples"}); continue
   if not isinstance(owner,int) or owner not in valid or len(task)<12 or len(lesson)<30:
    rejected.append({"event_id":eid,"reason":"invalid MasterBot owner or insufficient original task/lesson"}); continue
-  source_text=json.dumps(event,ensure_ascii=False)
-  if any(pattern.search(source_text) for pattern in PII.values()):
-   rejected.append({"event_id":eid,"reason":"basic PII pattern detected"}); continue
   criteria=[_text(x) for x in event.get("acceptance_criteria",[]) if _text(x)]
   evidence=[_text(x) for x in event.get("test_evidence",[]) if _text(x)]
   if not criteria or not evidence:
    rejected.append({"event_id":eid,"reason":"acceptance criteria and verified test evidence are required"}); continue
-  accepted.append({"event_id":eid,"source_url":source,"evidence_type":kind,"masterbot_id":owner,
-   "masterbot":valid[owner],"task":task,"lesson":lesson,"criteria":criteria,"test_evidence":evidence})
+  # Provenance hashes, canonical repository URLs, and numeric run IDs are
+  # structured metadata. Validate them above; scan only human-authored text.
+  source_text="\n".join(_redact_run_reference(value) for value in [task,lesson,*criteria,*evidence])
+  if any(pattern.search(source_text) for pattern in PII.values()):
+   rejected.append({"event_id":eid,"reason":"basic PII pattern detected in training text"}); continue
+  accepted.append({"event_id":eid,"source_url":source,"source_commit":_text(event.get("source_commit")),
+   "source_fingerprint":_text(event.get("source_fingerprint")),"run_id":_text(event.get("run_id")),
+   "evidence_type":kind,"masterbot_id":owner,"masterbot":valid[owner],
+   "task":task,"lesson":lesson,"criteria":criteria,"test_evidence":evidence})
  if len(accepted)<3:
   raise ValueError(f"At least three independently verified, rights-cleared work records are required; found {len(accepted)}")
  owners={item["masterbot_id"] for item in accepted}
@@ -62,9 +108,9 @@ def build(events:list[dict],masterbot_registry:Path=REGISTRY)->dict:
   split="test" if index==len(accepted)-1 else "validation" if index==len(accepted)-2 else "train"
   instruction=f"How should {event['masterbot']} handle this verified task: {event['task']}?"
   output=" ".join([
-   event["lesson"],
-   "Acceptance criteria: "+"; ".join(event["criteria"])+".",
-   "Verified evidence: "+"; ".join(event["test_evidence"])+"."
+   _redact_run_reference(event["lesson"]),
+   "Acceptance criteria: "+"; ".join(_redact_run_reference(x) for x in event["criteria"])+".",
+   "Verified evidence: "+"; ".join(_redact_run_reference(x) for x in event["test_evidence"])+"."
   ])
   rows.append({"text":"### Instruction:\n"+instruction+"\n### Response:\n"+output,
    "split":split,"masterbot_id":event["masterbot_id"],"source_event_id":event["event_id"],

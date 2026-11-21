@@ -32,4 +32,28 @@ class DreamCoOriginalTrainingExamplesTests(unittest.TestCase):
   bad=event(1,999)
   with self.assertRaises(ValueError):
    build([bad,event(2),event(3)])
+ def test_validated_provenance_hashes_are_not_scanned_as_free_text(self):
+  sha="a1234567890b1234567890c1234567890d123456"
+  events=[event(1),event(2),event(3)]
+  for row in events:
+   row["source_commit"]=sha
+   row["source_url"]=f"https://github.com/DreamCo-Technologies/Dreamcobots/commit/{sha}"
+   row["source_fingerprint"]="a1234567890ba1234567890b"
+   row["run_id"]="44866516527"
+  result=build(events)
+  self.assertEqual(result["accepted_source_events"],3)
+  self.assertTrue(all(row["source_commit"]==sha for row in result["rows"]))
+ def test_phone_in_training_text_is_still_rejected(self):
+  bad=event(1);bad["verified_lesson"] += " Contact 555-123-4567 for details."
+  with self.assertRaises(ValueError):
+   build([bad,event(2),event(3)])
+ def test_noncanonical_or_mismatched_provenance_is_rejected(self):
+  bad=event(1);bad["source_url"]="https://example.com/DreamCo-Technologies/Dreamcobots/commit/"+"1"*40
+  result=build([event(2),event(3),event(4),bad])
+  self.assertEqual(result["accepted_source_events"],3)
+  self.assertEqual(len(result["rejected_source_events"]),1)
+  bad=event(5);bad["source_commit"]="f"*40
+  result=build([event(6),event(7),event(8),bad])
+  self.assertEqual(result["accepted_source_events"],3)
+  self.assertEqual(len(result["rejected_source_events"]),1)
 if __name__=="__main__":unittest.main()

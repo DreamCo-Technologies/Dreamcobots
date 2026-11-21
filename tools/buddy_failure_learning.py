@@ -2,6 +2,7 @@
 """Failure classification, MasterBot routing, and verified lesson candidates for Buddy."""
 from __future__ import annotations
 import argparse,hashlib,json,re
+from urllib.parse import urlsplit
 from pathlib import Path
 from typing import Any
 
@@ -106,8 +107,20 @@ def build_training_event(observation:dict[str,Any],verification:dict[str,Any])->
  if not re.fullmatch(r"[0-9a-f]{40}",commit):
   raise ValueError("Source commit must be an immutable 40-character SHA.")
  source_url=str(verification["source_url"]).strip()
- if not source_url.startswith("https://"):
-  raise ValueError("Training evidence must use an HTTPS source URL.")
+ try:
+  parsed=urlsplit(source_url)
+  port=parsed.port
+ except ValueError:
+  raise ValueError("Training evidence must use a canonical DreamCo GitHub commit URL.")
+ parts=[part for part in parsed.path.split("/") if part]
+ if (parsed.scheme!="https" or parsed.hostname!="github.com" or port not in (None,443)
+     or parsed.username or parsed.password or parsed.query or parsed.fragment
+     or len(parts)!=4 or parts[:3]!=["DreamCo-Technologies","Dreamcobots","commit"]
+     or parts[3].lower()!=commit):
+  raise ValueError("Training evidence must use the canonical DreamCo commit URL matching source_commit.")
+ run_id=str(verification["run_id"]).strip()
+ if not re.fullmatch(r"\d{1,20}",run_id):
+  raise ValueError("Verification run ID must be numeric metadata.")
  criteria=[str(x).strip() for x in verification.get("acceptance_criteria",[]) if str(x).strip()]
  evidence=[str(x).strip() for x in verification.get("test_evidence",[]) if str(x).strip()]
  if not criteria or not evidence:
@@ -119,9 +132,10 @@ def build_training_event(observation:dict[str,Any],verification:dict[str,Any])->
  lesson=" ".join([f"Root cause: {verification['root_cause']}",f"Verified repair: {verification['repair']}","Evidence: "+"; ".join(map(str,verification.get("evidence",[])))])
  if len(task)<12 or len(lesson)<30:
   raise ValueError("Training task and verified lesson must contain substantive detail.")
- event_id="repair-"+hashlib.sha256(f"{fingerprint({**observation,'failure_class':kind})}:{commit}:{verification['run_id']}".encode()).hexdigest()
+ source_fingerprint=fingerprint({**observation,"failure_class":kind})
+ event_id="repair-"+hashlib.sha256(f"{source_fingerprint}:{commit}:{run_id}".encode()).hexdigest()
  return {"schema":"dreamco.verified_repair_training_event.v1","event_id":event_id,
-  "evidence_type":"verified_bug_fix","source_url":source_url,"source_commit":commit,"run_id":str(verification["run_id"]),
+  "evidence_type":"verified_bug_fix","source_url":source_url,"source_commit":commit,"source_fingerprint":source_fingerprint,"run_id":run_id,
   "primary_masterbot_id":owner,"collaborating_masterbot_ids":collaborators,"task":task,"verified_lesson":lesson,
   "acceptance_criteria":criteria,"test_evidence":evidence,"verified":True,"human_reviewed":True,
   "training_allowed":True,"rights_status":"VERIFIED","contains_secrets":False,
