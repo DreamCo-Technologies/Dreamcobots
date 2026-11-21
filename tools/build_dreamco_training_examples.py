@@ -38,8 +38,8 @@ def build(events:list[dict],masterbot_registry:Path=REGISTRY)->dict:
    rejected.append({"event_id":eid,"reason":"missing ID, HTTPS evidence source, or approved evidence type"}); continue
   if event.get("verified") is not True or event.get("human_reviewed") is not True or event.get("training_allowed") is not True or event.get("rights_status")!="VERIFIED":
    rejected.append({"event_id":eid,"reason":"verification, human review, explicit training permission, or rights verification missing"}); continue
-  if event.get("contains_personal_data") is not False or event.get("third_party_content_included") is not False:
-   rejected.append({"event_id":eid,"reason":"personal data or unlicensed third-party content is not allowed in generated examples"}); continue
+  if event.get("contains_secrets") is not False or event.get("contains_personal_data") is not False or event.get("third_party_content_included") is not False:
+   rejected.append({"event_id":eid,"reason":"secrets, personal data, or unlicensed third-party content is not allowed in generated examples"}); continue
   if not isinstance(owner,int) or owner not in valid or len(task)<12 or len(lesson)<30:
    rejected.append({"event_id":eid,"reason":"invalid MasterBot owner or insufficient original task/lesson"}); continue
   source_text=json.dumps(event,ensure_ascii=False)

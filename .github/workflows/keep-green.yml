@@ -65,6 +65,12 @@ jobs:
       - name: Install dependencies when package-lock exists
         run: npm ci --ignore-scripts
         if: hashFiles('package-lock.json') != ''
+      - name: Install workflow prospectus parser
+        run: python3 -m pip install PyYAML
+      - name: Refresh Actions workflow inventory and prospectus
+        run: |
+          python3 tools/audit_actions_health.py
+          python3 tools/build_actions_prospectus.py
       - name: Run Actions page test suite
         run: npm run test:actions-page
 
