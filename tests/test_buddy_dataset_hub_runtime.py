@@ -3,6 +3,8 @@ import json
 import os
 import tempfile
 import unittest
+import subprocess
+import sys
 from pathlib import Path
 from buddy.datasets.hub import DatasetHub, DatasetPolicyError
 from buddy.datasets.sources import discover, SourceAccessError, _get_json
@@ -98,6 +100,24 @@ class DatasetHubRuntimeTests(unittest.TestCase):
             object_path, checked_rows = validate_job(manifest,"budget-approval-fixture")
             self.assertEqual(object_path.name,Path(card["object_path"]).name)
             self.assertEqual(len(checked_rows),3)
+
+    def test_unknown_problem_cli_runs_without_pythonpath_configuration(self):
+        root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "route.json"
+            env = os.environ.copy()
+            env["DREAMCO_DATASET_HOME"] = str(Path(temp) / "hub")
+            env.pop("DREAMCO_ALLOW_SOURCE_NETWORK", None)
+            subprocess.run(
+                [sys.executable, str(root / "tools/route_buddy_unknown_problem.py"),
+                 "--problem", "Build a SQL database analytics pipeline",
+                 "--out", str(output)],
+                cwd=root, env=env, check=True, capture_output=True, text=True,
+            )
+            result = json.loads(output.read_text(encoding="utf-8"))
+            self.assertTrue(result["masterbot_candidates"])
+            self.assertFalse(result["claims"]["problem_solved"])
+            self.assertFalse(result["claims"]["weights_trained"])
 
     def test_problem_routes_to_specialist_candidates_without_claiming_mastery(self):
         with tempfile.TemporaryDirectory() as temp:
