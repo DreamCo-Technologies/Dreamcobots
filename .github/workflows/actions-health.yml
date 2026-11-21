@@ -81,6 +81,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python3 tools/audit_actions_live.py
+      - name: Install pytest for function-style Pages feature tests
+        run: python3 -m pip install --quiet pytest
       - name: Verify Actions-page contracts
         if: always()
         run: |
@@ -88,7 +90,7 @@ jobs:
           python3 -m unittest tests.test_buddy_failure_learning
           python3 -m unittest tests.test_buddy_conversation_learning_policy
           python3 -m unittest tests.test_buddy_universal_learning_governance
-          python3 -m unittest tests.test_pages_feature_audit
+          python3 -m pytest -q tests/test_pages_feature_audit.py
           if [ -f package-lock.json ]; then npm ci --ignore-scripts; fi
           npm run test:actions-page
       - name: Add reports to summary
