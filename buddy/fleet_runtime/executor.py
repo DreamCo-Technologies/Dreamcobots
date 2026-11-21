@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import math
 from pathlib import Path
 from typing import Any
 
@@ -31,6 +32,44 @@ def guardrail(text: str) -> dict[str, Any]:
     verdict = _guardrail_review(text)
     return {"allowed": bool(verdict.get("allowed")), "reasons": verdict.get("reasons", []),
             "source": "buddy.safety.guardrails"}
+
+
+
+def _strict_bool(value: Any, field: str, default: bool = False) -> bool:
+    if value is None:
+        if default:
+            return default
+        raise ValueError(f"{field} must be a JSON boolean")
+    if type(value) is not bool:
+        raise ValueError(f"{field} must be a JSON boolean")
+    return value
+
+
+def _nonnegative_number(value: Any, field: str, default: float = 0.0) -> float:
+    if value is None:
+        value = default
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(f"{field} must be a finite non-negative number")
+    number = float(value)
+    if not math.isfinite(number) or number < 0:
+        raise ValueError(f"{field} must be a finite non-negative number")
+    return number
+
+
+def _string_tuple(value: Any, field: str, default: tuple[str, ...] = ()) -> tuple[str, ...]:
+    if value is None:
+        value = default
+    if not isinstance(value, (list, tuple)) or any(not isinstance(item, str) or not item.strip() for item in value):
+        raise ValueError(f"{field} must be a list of non-empty strings")
+    return tuple(value)
+
+
+def _optional_string(value: Any, field: str) -> str | None:
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise ValueError(f"{field} must be a string")
+    return value
 
 
 class FleetExecutor:
@@ -109,6 +148,93 @@ class FleetExecutor:
             if not in_guard["allowed"]:
                 return self._finish(manifest, task, "guardrail_blocked", "none", permission,
                                     {"input": in_guard}, None, None, stamp)
+            learning_packet = None
+            learning_request = (task.get("input") or {}).get("learning_request")
+            if learning_request is not None:
+                if not isinstance(learning_request, dict):
+                    return self._finish(manifest, task, "learning_blocked", "none", permission,
+                                        {"input": in_guard}, None,
+                                        {"type": "invalid_learning_request", "message": "input.learning_request must be an object."}, stamp)
+                try:
+                    from buddy.bootcamp.live_learning_bridge import prepare_learning_execution
+                    from buddy.bootcamp.task_learning_router import LearningResource, TaskRequest
+
+                    raw_resources = learning_request.get("resources", [])
+                    if not isinstance(raw_resources, list):
+                        raise ValueError("resources must be a list of resource objects")
+                    resources = []
+                    for index, raw in enumerate(raw_resources):
+                        if not isinstance(raw, dict):
+                            raise ValueError(f"resources[{index}] must be an object")
+                        item = dict(raw)
+                        item["skills"] = _string_tuple(item.get("skills", ()), f"resources[{index}].skills")
+                        item["modes"] = _string_tuple(item.get("modes", ("read", "practice")), f"resources[{index}].modes")
+                        for flag in ("requires_account", "supports_execution", "license_review_required"):
+                            if flag in item:
+                                item[flag] = _strict_bool(item[flag], f"resources[{index}].{flag}")
+                        for number_field in ("quality", "cost_per_hour_usd"):
+                            if number_field in item:
+                                item[number_field] = _nonnegative_number(item[number_field], f"resources[{index}].{number_field}")
+                        resources.append(LearningResource(**item))
+                    request_text = learning_request.get("request", task.get("objective", ""))
+                    preferred_mode = learning_request.get("preferred_mode", "practice")
+                    if not isinstance(request_text, str) or not request_text.strip():
+                        raise ValueError("request must be a non-empty string")
+                    if not isinstance(preferred_mode, str) or not preferred_mode.strip():
+                        raise ValueError("preferred_mode must be a non-empty string")
+                    learning_task = TaskRequest(
+                        request=request_text,
+                        skills=_string_tuple(learning_request.get("skills", ()), "skills"),
+                        preferred_mode=preferred_mode,
+                        max_cost_per_hour_usd=_nonnegative_number(
+                            learning_request.get("max_cost_per_hour_usd", 0.0), "max_cost_per_hour_usd"),
+                        allow_paid=_strict_bool(learning_request.get("allow_paid", False), "allow_paid"),
+                        allow_external_access=_strict_bool(
+                            learning_request.get("allow_external_access", False), "allow_external_access"),
+                    )
+                    request_id = learning_request.get("request_id", task.get("task_id", "learning-request"))
+                    task_id = learning_request.get("task_id", task.get("task_id", "learning-task"))
+                    sandbox_profile = learning_request.get("sandbox_profile", "fleet-runtime-sandbox")
+                    for value, field in ((request_id, "request_id"), (task_id, "task_id"),
+                                         (sandbox_profile, "sandbox_profile")):
+                        if not isinstance(value, str) or not value.strip():
+                            raise ValueError(f"{field} must be a non-empty string")
+                    learning_packet = prepare_learning_execution(
+                        learning_task, resources,
+                        request_id=request_id,
+                        task_id=task_id,
+                        sandbox_profile=sandbox_profile,
+                        allowed_tools=_string_tuple(learning_request.get("allowed_tools", ()), "allowed_tools"),
+                        source_rights_refs=_string_tuple(
+                            learning_request.get("source_rights_refs", ()), "source_rights_refs"),
+                        original_lesson_id=_optional_string(
+                            learning_request.get("original_lesson_id"), "original_lesson_id"),
+                        practice_task_ids=_string_tuple(
+                            learning_request.get("practice_task_ids", ()), "practice_task_ids"),
+                        benchmark_ids=_string_tuple(learning_request.get("benchmark_ids", ()), "benchmark_ids"),
+                        compute_budget_usd=_nonnegative_number(
+                            learning_request.get("compute_budget_usd", 0.0), "compute_budget_usd"),
+                        time_budget_seconds=int(_nonnegative_number(
+                            learning_request.get("time_budget_seconds", 300), "time_budget_seconds")),
+                        approval_requirements=_string_tuple(
+                            learning_request.get("approval_requirements", ()), "approval_requirements"),
+                    )
+                except (TypeError, ValueError, KeyError) as exc:
+                    return self._finish(manifest, task, "learning_blocked", "none", permission,
+                                        {"input": in_guard}, None,
+                                        {"type": "invalid_learning_request", "class": type(exc).__name__}, stamp)
+                if learning_packet.get("status") == "blocked":
+                    return self._finish(manifest, task, "learning_blocked", "none", permission,
+                                        {"input": in_guard}, learning_packet, None, stamp)
+                if learning_packet.get("status") == "awaiting_user_approval":
+                    return self._finish(manifest, task, "approval_required", "none", permission,
+                                        {"input": in_guard}, learning_packet, None, stamp)
+                task.setdefault("input", {})["learning_execution"] = learning_packet
+                if engine_name == "workflow":
+                    route_steps = learning_packet.get("route", {}).get("course_plan", [])
+                    existing_steps = task["input"].get("steps") or []
+                    task["input"]["steps"] = route_steps + existing_steps
+
             profile = dict(self.profiles["model_router"][manifest["model_router"]])
             if manifest.get("model_alias") and profile.get("mode") != "offline_only":
                 profile["live_alias"] = manifest["model_alias"]
@@ -129,6 +255,9 @@ class FleetExecutor:
             if output_errors:
                 return self._finish(manifest, task, "error", mode, permission, guards, result,
                                     {"type": "invalid_output", "message": "; ".join(output_errors[:5])}, stamp)
+            if learning_packet is not None:
+                result = dict(result)
+                result["learning_execution"] = learning_packet
             status = "ok" if result.get("status") == "ok" else result.get("status", "ok")
             return self._finish(manifest, task, status, mode, permission, guards, result, None, stamp)
         except Exception as exc:  # error_handling profile: structured, never raises

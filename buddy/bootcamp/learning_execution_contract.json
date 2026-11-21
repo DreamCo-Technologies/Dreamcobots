@@ -1,0 +1,83 @@
+{
+  "schema": "dreamco.learning_execution_contract.v1",
+  "request_event": "dreamco.learning_execution_request.v1",
+  "result_event": "dreamco.learning_execution_result.v1",
+  "producer": "dreamco_learning_fabric",
+  "consumer": "buddy_task_execution_runtime",
+  "required_request_fields": [
+    "request_id",
+    "user_goal",
+    "task_id",
+    "required_capabilities",
+    "selected_resources",
+    "source_rights_refs",
+    "original_lesson_id",
+    "practice_task_ids",
+    "benchmark_ids",
+    "execution_mode",
+    "sandbox_profile",
+    "allowed_tools",
+    "approval_requirements",
+    "data_policy",
+    "compute_budget",
+    "time_budget",
+    "expected_artifacts",
+    "acceptance_criteria",
+    "rollback_plan"
+  ],
+  "required_result_fields": [
+    "request_id",
+    "run_id",
+    "status",
+    "artifact_refs",
+    "tests_and_benchmarks",
+    "scores",
+    "holdout_result",
+    "regression_result",
+    "safety_result",
+    "provenance_refs",
+    "model_and_tool_versions",
+    "latency",
+    "compute_cost",
+    "external_assistance",
+    "failure_signatures"
+  ],
+  "optional_result_fields": [
+    "training_job_id",
+    "checkpoint_refs",
+    "adapter_refs",
+    "dataset_manifest_id"
+  ],
+  "authorization": {
+    "must_use_existing_buddy_task_authorization": true,
+    "must_use_existing_tool_policy": true,
+    "must_use_existing_sandbox": true,
+    "must_write_audit_event": true,
+    "external_account_access_requires_explicit_consent": true,
+    "paid_compute_requires_explicit_approval": true,
+    "production_write_requires_existing_approval_policy": true
+  },
+  "execution_states": [
+    "proposed",
+    "awaiting_user_approval",
+    "queued",
+    "running",
+    "succeeded",
+    "failed",
+    "blocked",
+    "cancelled"
+  ],
+  "evidence_rules": {
+    "route_ready_is_not_execution": true,
+    "lesson_created_is_not_execution": true,
+    "external_model_success_is_not_native_mastery": true,
+    "no_evidence_means_unverified": true,
+    "training_job_id_requires_real_trainer_run": true,
+    "weight_or_adapter_claim_requires_artifact_reference": true
+  },
+  "training_state": {
+    "weights_trained": false,
+    "adapters_trained": false,
+    "training_jobs_launched": false
+  }
+}
