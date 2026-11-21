@@ -29,6 +29,9 @@ def eligible_candidate():
             "dataset_card": "config/test-data-card.json",
             "dataset_card_sha256": SHA,
             "dataset_rights_status": "VERIFIED",
+            "model_license_status": "VERIFIED",
+            "model_license_url": "https://example.com/model-license",
+            "model_license_evidence": "model-license-review-123",
             "training_authorization_id": "approval-123",
             "training_run_id": "run-123",
             "base_model_revision": COMMIT,
@@ -43,6 +46,8 @@ def eligible_candidate():
             "benchmark_id": "heldout-causal-lm-v1",
             "baseline_score": 0.70,
             "candidate_score": 0.82,
+            "score_direction": "higher_is_better",
+            "routing_weight": 1.0,
             "holdout_passed": True,
             "regression_passed": True,
             "provenance_verified": True,
@@ -71,7 +76,7 @@ class BuddyModelRegistryTests(unittest.TestCase):
         decision = route_model(registry, "causal_language_modeling")
         self.assertEqual(decision["status"], "ELIGIBLE_FOR_ROUTING")
         self.assertEqual(decision["selected_model_id"], "dreamco/test-candidate")
-        self.assertEqual(decision["benchmark_score"], 0.82)
+        self.assertAlmostEqual(decision["weighted_relative_improvement"], (0.82 - 0.70) / 0.70)
         self.assertFalse(decision["production_side_effects"])
 
     def test_missing_training_authorization_blocks_routing(self):
@@ -89,6 +94,25 @@ class BuddyModelRegistryTests(unittest.TestCase):
                                "causal_language_modeling")
         self.assertEqual(decision["status"], "BLOCKED_NO_ELIGIBLE_MODEL")
         self.assertIn("benchmark_regression", decision["blocked_candidates"][0]["reasons"])
+
+    def test_lower_is_better_benchmark_uses_correct_direction(self):
+        candidate = eligible_candidate()
+        evidence = candidate["benchmark_evidence"][0]
+        evidence["score_direction"] = "lower_is_better"
+        evidence["baseline_score"] = 0.20
+        evidence["candidate_score"] = 0.16
+        decision = route_model({"schema": "dreamco.buddy.model_registry.v1", "models": [candidate]},
+                               "causal_language_modeling")
+        self.assertEqual(decision["status"], "ELIGIBLE_FOR_ROUTING")
+        self.assertAlmostEqual(decision["weighted_relative_improvement"], 0.20)
+
+    def test_unverified_model_license_blocks_routing(self):
+        candidate = eligible_candidate()
+        candidate["lineage"]["model_license_status"] = "UNKNOWN"
+        decision = route_model({"schema": "dreamco.buddy.model_registry.v1", "models": [candidate]},
+                               "causal_language_modeling")
+        self.assertEqual(decision["status"], "BLOCKED_NO_ELIGIBLE_MODEL")
+        self.assertIn("model_license_not_verified", decision["blocked_candidates"][0]["reasons"])
 
     def test_duplicate_model_ids_are_rejected(self):
         candidate = eligible_candidate()
