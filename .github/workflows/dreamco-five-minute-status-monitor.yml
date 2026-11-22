@@ -20,7 +20,7 @@ jobs:
   status:
     name: Summarize active repository checks
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 5
     steps:
       - name: Inspect recent workflow runs
         uses: actions/github-script@v7
@@ -49,6 +49,30 @@ jobs:
             const successCount = completed.filter(run => run.conclusion === "success").length;
             const skippedCount = completed.filter(run => run.conclusion === "skipped").length;
             const cancelledCount = completed.filter(run => run.conclusion === "cancelled").length;
+            // Expand every active workflow run into its individual jobs and steps.
+            // Paginate job results so large matrix workflows are not silently truncated.
+            const activeDetails = [];
+            for (const run of active) {
+              const jobs = [];
+              for (let page = 1; page <= 10; page += 1) {
+                const { data } = await github.rest.actions.listJobsForWorkflowRun({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  run_id: run.id,
+                  per_page: 100,
+                  page
+                });
+                const pageJobs = data.jobs || [];
+                jobs.push(...pageJobs);
+                if (pageJobs.length < 100) break;
+              }
+              const jobCounts = {};
+              for (const job of jobs) {
+                const state = job.status === "completed" ? (job.conclusion || "completed") : job.status;
+                jobCounts[state] = (jobCounts[state] || 0) + 1;
+              }
+              activeDetails.push({ run, jobs, jobCounts });
+            }
             const lines = [
               "## DreamCo five-minute status monitor",
               "",
@@ -56,13 +80,17 @@ jobs:
               `Recent workflow runs inspected (all branches, last 24 hours): **${runs.length}** (up to 1,000 runs checked)`,
               `Active: **${active.length}** · Successful: **${successCount}** · Skipped: **${skippedCount}** · Cancelled: **${cancelledCount}** · Failed: **${failedRuns.length}**`,
               "",
-              "### Active runs",
-              ...(active.length ? active.slice(0, 20).map(run => `- ${run.name} (${run.head_branch}) — ${run.status} ([run](${run.html_url}))`) : ["- None in the inspected window."]),
-              "",
+              "### Active runs and per-job progress",
+              ...(activeDetails.length ? activeDetails.flatMap(({ run, jobs, jobCounts }) => [
+                `#### ${run.name} — ${run.status} (${run.head_branch}) ([run](${run.html_url}))`,
+                `Jobs inspected: ${jobs.length} · ${Object.entries(jobCounts).map(([state, count]) => `${state}: ${count}`).join(" · ") || "No jobs reported yet"}`,
+                ...(jobs.length ? jobs.map(job => `- ${job.name}: ${job.status}${job.conclusion ? ` / ${job.conclusion}` : ""}${job.html_url ? ` ([job](${job.html_url}))` : ""}`) : ["- Jobs have not been published by GitHub yet."]),
+                ""
+              ]) : ["- None in the inspected window."]),
               "### Recent failures",
               ...(failedRuns.length ? failedRuns.slice(0, 15).map(run => `- ${run.name} (${run.head_branch}) — ${run.conclusion} ([run](${run.html_url}))`) : ["- None in the inspected window."]),
               ...(failedRuns.length > 15 ? [`- Plus ${failedRuns.length - 15} additional failures not expanded here.`] : []),
               "",
-              "> Monitoring only: this workflow does not rewrite code, retry failed jobs, certify Buddy capabilities, or deploy. Failure triage remains handled by the event-driven failure watcher and reviewed repair PRs."
+              "> Scope: workflow runs across all branches created in the last 24 hours (up to 1,000 runs), with every active run expanded into paginated job-level status. Completed-run failures are listed above. This workflow is monitoring only: it does not rewrite code, retry failed jobs, certify Buddy capabilities, or deploy. Failure triage remains handled by the event-driven failure watcher and reviewed repair PRs."
             ];
             await core.summary.addRaw(lines.join("\n")).write();
