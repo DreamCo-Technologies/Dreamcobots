@@ -5,41 +5,113 @@ on:
   schedule:
     - cron: "41 7 * * *"
   push:
+    branches: [main]
     paths:
       - "**/*.md"
+      - "**/*.mdx"
       - "config/buddy/markdown-implementation-gap-policy.json"
       - "tools/audit_markdown_implementation_gaps.py"
       - ".github/workflows/buddy-markdown-gap-audit.yml"
+      - "tests/test_markdown_gap_audit_workflow_safety.py"
+  pull_request:
+    paths:
+      - "**/*.md"
+      - "**/*.mdx"
+      - "config/buddy/markdown-implementation-gap-policy.json"
+      - "tools/audit_markdown_implementation_gaps.py"
+      - ".github/workflows/buddy-markdown-gap-audit.yml"
+      - "tests/test_markdown_gap_audit_workflow_safety.py"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: buddy-markdown-gap-audit
+  group: buddy-markdown-gap-audit-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  audit:
+  validate:
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main')
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
         with:
-          persist-credentials: true
+          persist-credentials: false
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - name: Generate Markdown-to-code gap inventory
-        run: python3 tools/audit_markdown_implementation_gaps.py --write
-      - name: Verify generated audit
+      - name: Validate committed Markdown audit evidence
         run: |
           python3 tools/audit_markdown_implementation_gaps.py --check
-          python3 -m unittest tests.test_markdown_implementation_gaps
-      - name: Publish current gap inventory
+          python3 -m unittest tests.test_markdown_implementation_gaps tests.test_markdown_gap_audit_workflow_safety
+
+  generate:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Generate and validate Markdown-to-code gap inventory
         run: |
-          git diff --exit-code config/generated/markdown-implementation-gap-audit.json website/data/markdown-implementation-gap-audit.json reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md && exit 0
-          git config user.name "DreamCo Buddy"
-          git config user.email "buddy@dreamco.local"
-          git add config/generated/markdown-implementation-gap-audit.json website/data/markdown-implementation-gap-audit.json reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md
-          git commit -m "audit: refresh Markdown implementation gap inventory"
-          git push
+          python3 tools/audit_markdown_implementation_gaps.py --write
+          python3 tools/audit_markdown_implementation_gaps.py --check
+          python3 -m unittest tests.test_markdown_implementation_gaps tests.test_markdown_gap_audit_workflow_safety
+      - name: Upload generated audit candidate
+        uses: actions/upload-artifact@v7
+        with:
+          name: markdown-gap-audit-${{ github.run_id }}
+          path: |
+            config/generated/markdown-implementation-gap-audit.json
+            website/data/markdown-implementation-gap-audit.json
+            reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md
+          if-no-files-found: error
+          retention-days: 14
+
+  propose:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    needs: generate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v7
+        with:
+          name: markdown-gap-audit-${{ github.run_id }}
+          path: .
+      - name: Open or update a reviewable PR for generated evidence
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: automation/markdown-gap-audit
+          delete-branch: false
+          add-paths: |
+            config/generated/markdown-implementation-gap-audit.json
+            website/data/markdown-implementation-gap-audit.json
+            reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md
+          commit-message: "audit: refresh Markdown implementation gap inventory"
+          title: "audit: refresh Markdown implementation gap inventory"
+          body: |
+            ## Automated Markdown evidence refresh
+
+            This PR contains generated Markdown-to-code gap evidence from the read-only audit job.
+
+            - All tracked Markdown files are scanned by the canonical audit tool.
+            - The source and public-safe Pages JSON copies are generated from the same report.
+            - The workflow does not push to main; changes are proposed on this review branch.
+            - Merge only after the generated diff and checks are reviewed.
