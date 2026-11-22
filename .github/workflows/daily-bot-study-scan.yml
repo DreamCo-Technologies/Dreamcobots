@@ -3,6 +3,12 @@ name: Daily bot study scan
 on:
   push:
     branches: [main]
+  pull_request:
+    paths:
+      - "tools/daily_bot_study_scan.py"
+      - "tools/compile_md_bots.py"
+      - "tests/test_daily_bot_study_scan.py"
+      - ".github/workflows/daily-bot-study-scan.yml"
   workflow_dispatch:
   schedule:
     - cron: "30 11 * * *"
