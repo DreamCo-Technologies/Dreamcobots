@@ -2,6 +2,11 @@ name: Evidence gate
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - "buddy/builder/**"
+      - "tests/test_evidence_gate.py"
+      - ".github/workflows/evidence-gate.yml"
   schedule:
     - cron: "30 15 * * *"
 
