@@ -3,6 +3,11 @@
 from __future__ import annotations
 import argparse,json,subprocess,sys
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from tools.buddy_failure_learning import classify,route_masterbots
 
 def repair_plan(observation:dict)->list[list[str]]:
@@ -46,7 +51,7 @@ def run_safe_repair(observation:dict,root:Path)->dict:
 
 def main():
  p=argparse.ArgumentParser();p.add_argument("--observation",required=True);p.add_argument("--out",default="artifacts/buddy-safe-repair/result.json")
- a=p.parse_args();root=Path(__file__).resolve().parents[1]
+ a=p.parse_args();root=ROOT
  obs=json.loads(Path(a.observation).read_text(encoding="utf-8"))
  result=run_safe_repair(obs,root)
  out=root/a.out;out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
