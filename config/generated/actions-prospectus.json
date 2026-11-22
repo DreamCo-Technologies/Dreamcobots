@@ -5,25 +5,25 @@
     "website/data/actions-health-report.json"
   ],
   "summary": {
-    "workflows": 113,
-    "static_passing_workflows": 113,
+    "workflows": 125,
+    "static_passing_workflows": 125,
     "static_failing_workflows": 0,
     "runtime_passing_workflows": 0,
     "runtime_failing_workflows": 0,
-    "runtime_unknown_workflows": 113,
+    "runtime_unknown_workflows": 125,
     "possible_duplicate_groups": 0,
     "possible_duplicate_workflows": 0,
-    "workflows_with_benchmark_commands": 36,
+    "workflows_with_benchmark_commands": 40,
     "goal_counts": {
-      "Buddy automation": 27,
+      "Buddy automation": 31,
       "benchmarks": 14,
       "build and release": 4,
-      "deployment": 3,
+      "deployment": 4,
       "evidence data": 6,
-      "repository health": 7,
-      "repository operations": 43,
+      "repository health": 8,
+      "repository operations": 46,
       "security": 2,
-      "verification": 7
+      "verification": 10
     },
     "control_areas": 9,
     "declared_goals": [
@@ -37,7 +37,7 @@
       "security",
       "verification"
     ],
-    "benchmarked_workflows": 36
+    "benchmarked_workflows": 40
   },
   "controls": [
     {
@@ -73,7 +73,7 @@
       "success": "All applicable doctor checks pass with evidence.",
       "fallback": "Leave failed checks visible and produce owner-action guidance.",
       "progress": "configured",
-      "workflow_count": 113
+      "workflow_count": 125
     },
     {
       "id": "test",
@@ -108,7 +108,7 @@
       "success": "Applicable tests pass; blocked tests are explicitly reported.",
       "fallback": "Run focused tests and record blocker.",
       "progress": "configured",
-      "workflow_count": 113
+      "workflow_count": 125
     },
     {
       "id": "lint",
@@ -142,7 +142,7 @@
       "success": "Configured quality gates pass.",
       "fallback": "Identify exact files/rules requiring repair.",
       "progress": "configured",
-      "workflow_count": 113
+      "workflow_count": 125
     },
     {
       "id": "security",
@@ -177,7 +177,7 @@
       "success": "No unreviewed blocking findings.",
       "fallback": "Block promotion and create owner-action item.",
       "progress": "configured",
-      "workflow_count": 113
+      "workflow_count": 125
     },
     {
       "id": "benchmark",
@@ -212,7 +212,7 @@
       "success": "Results meet the registered benchmark threshold with repeat evidence.",
       "fallback": "Mark unverified or blocked; never fabricate a score.",
       "progress": "configured",
-      "workflow_count": 113
+      "workflow_count": 125
     },
     {
       "id": "repair",
@@ -248,7 +248,7 @@
       "success": "Repair is verified by evidence and recurrence falls or remains absent.",
       "fallback": "Escalate genuine owner blocker.",
       "progress": "configured",
-      "workflow_count": 113
+      "workflow_count": 125
     },
     {
       "id": "pages",
@@ -283,7 +283,7 @@
       "success": "Required public datasets exist, validate, and render.",
       "fallback": "Keep stale/missing datasets visibly flagged.",
       "progress": "configured",
-      "workflow_count": 113
+      "workflow_count": 125
     },
     {
       "id": "bundle",
@@ -318,7 +318,7 @@
       "success": "Supported package builds and launches under its documented permissions.",
       "fallback": "Publish exact build blocker; do not claim the package is bug-free.",
       "progress": "configured",
-      "workflow_count": 113
+      "workflow_count": 125
     },
     {
       "id": "refresh",
@@ -354,7 +354,7 @@
       "success": "Current public run evidence is loaded and timestamped.",
       "fallback": "Use static evidence and mark live state unavailable.",
       "progress": "configured",
-      "workflow_count": 113
+      "workflow_count": 125
     }
   ],
   "duplicate_candidate_groups": [],
@@ -549,9 +549,10 @@
       "goal": "repository health",
       "purpose": "Keep the repository inspectable and maintainable",
       "what_happens": [
-        "Static audit of every local workflow",
-        "Static audit diagnostics",
+        "Install evidence refresh and Pages test dependencies",
         "Live audit of GitHub Actions state",
+        "Refresh deterministic repository evidence",
+        "Static audit diagnostics",
         "Verify Actions-page contracts",
         "Add reports to summary",
         "Save complete Actions health evidence"
@@ -562,7 +563,6 @@
       ],
       "benchmark_commands": [
         "npm run test:actions-page",
-        "tools/audit_actions_health.py",
         "tools/audit_actions_live.py"
       ],
       "triggers": [
@@ -1564,6 +1564,61 @@
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
+      "workflow": ".github/workflows/buddy-ci-safe-repair.yml",
+      "name": "Buddy CI Safe Generated-Artifact Repair",
+      "goal": "verification",
+      "purpose": "Catch regressions before release",
+      "what_happens": [
+        "Check out trusted default branch for failure-triggered repairs",
+        "Check out the current non-main repair branch",
+        "Normalize failed job into a safe repair observation",
+        "Run exact allowlisted repair for a failed default-branch workflow",
+        "Regenerate allowlisted deterministic indexes on non-main branches",
+        "Verify repaired indexes and Buddy repair-learning tests",
+        "Detect allowlisted generated changes",
+        "Commit and publish verified generated repairs",
+        "Preserve repair evidence"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "push",
+        "workflow completion"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-ci-safe-repair.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-python@v5 -> v7",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_ci_safe_repair",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
       "workflow": ".github/workflows/buddy-command-router.yml",
       "name": "Buddy Command Router",
       "goal": "Buddy automation",
@@ -1602,6 +1657,119 @@
       "possible_duplicates": [],
       "progress": "configured",
       "prospectus_card": "data/run-prospectus.json#wf_buddy_command_router",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/buddy-continuous-learning-planner.yml",
+      "name": "Buddy Continuous Learning Fleet",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
+      "what_happens": [
+        "Run isolated division learning lane",
+        "Preserve division run evidence",
+        "Download full-sweep division run records",
+        "Build shared cross-run learning queue",
+        "Upload fleet learning ledger"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "pull request",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-continuous-learning-planner.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 3,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 3,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-python@v5 -> v7",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-python@v5 -> v7",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_continuous_learning_planner",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/buddy-continuous-repair.yml",
+      "name": "Buddy Continuous Repair",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
+      "what_happens": [
+        "Checkout protected default branch",
+        "Set up Python",
+        "Set up Node",
+        "Install audit and test dependencies",
+        "Record failed workflow context",
+        "Capture current Actions state",
+        "Refresh deterministic repository evidence",
+        "Verify repair-learning and Actions health",
+        "Verify public Actions page",
+        "Summarize repair scope",
+        "Save diagnostics",
+        "Open a repair pull request for verified changes",
+        "Open or update a human-triage issue if verification fails"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [
+        "npm run test:actions-page",
+        "tools/audit_actions_live.py"
+      ],
+      "triggers": [
+        "manual",
+        "schedule",
+        "issues",
+        "workflow completion"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-continuous-repair.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_continuous_repair",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1695,6 +1863,51 @@
       "possible_duplicates": [],
       "progress": "configured",
       "prospectus_card": "data/run-prospectus.json#wf_buddy_distill_gate",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/buddy-failure-learning-regression.yml",
+      "name": "Buddy Failure Learning Regression",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
+      "what_happens": [
+        "Compile Buddy failure-learning code",
+        "Test failure classification, safe repair policy and verified lessons"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "push",
+        "pull request"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-failure-learning-regression.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-python@v5 -> v7"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_failure_learning_regression",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -1833,6 +2046,49 @@
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
+      "workflow": ".github/workflows/buddy-learning-income-tests.yml",
+      "name": "Buddy Learning Income Engine Tests",
+      "goal": "verification",
+      "purpose": "Catch regressions before release",
+      "what_happens": [
+        "Run isolated unit tests"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "push",
+        "pull request"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-learning-income-tests.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": false,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-python@v5 -> v7"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_learning_income_tests",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
       "workflow": ".github/workflows/buddy-learning-proof.yml",
       "name": "Buddy Learning Proof",
       "goal": "Buddy automation",
@@ -1925,6 +2181,52 @@
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
+      "workflow": ".github/workflows/buddy-markdown-gap-audit.yml",
+      "name": "Buddy Markdown Implementation Gap Audit",
+      "goal": "repository health",
+      "purpose": "Keep the repository inspectable and maintainable",
+      "what_happens": [
+        "Generate Markdown-to-code gap inventory",
+        "Verify generated audit",
+        "Publish current gap inventory"
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [
+        "tools/audit_markdown_implementation_gaps.py"
+      ],
+      "triggers": [
+        "manual",
+        "push",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-markdown-gap-audit.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_markdown_gap_audit",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
       "workflow": ".github/workflows/buddy-os-contracts.yml",
       "name": "Buddy OS Contract Verification",
       "goal": "Buddy automation",
@@ -2014,6 +2316,51 @@
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
+      "workflow": ".github/workflows/buddy-pages-mastery-evidence.yml",
+      "name": "Buddy Pages Mastery Evidence",
+      "goal": "deployment",
+      "purpose": "Publish and verify the public Buddy experience",
+      "what_happens": [
+        "Builds public assets, checks generated evidence, and prepares a governed deployment."
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "pull request"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-pages-mastery-evidence.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-python@v5 -> v7",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_pages_mastery_evidence",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
       "workflow": ".github/workflows/buddy-preventive-engineering.yml",
       "name": "Buddy Preventive Engineering",
       "goal": "Buddy automation",
@@ -2071,9 +2418,67 @@
       "what_happens": [
         "Checkout",
         "Setup Python",
-        "Compile sandbox and bootcamp modules",
+        "Compile sandbox, bootcamp, learning, and tiny GPT modules",
+        "Run reproducible tiny GPT forward-pass baseline",
+        "Test tiny GPT baseline and safe dataset token scoping",
+        "Restore rotating Dataset Hub catalog",
         "Run safe sandbox smoke test",
-        "Validate curriculum JSON"
+        "Build DreamCo dataset discovery routes",
+        "Test 65 MasterBot dataset routing and training gates",
+        "Test Buddy failure classification and verified-lesson safeguards",
+        "Smoke test local unknown-problem routing",
+        "Validate curriculum JSON",
+        "Discover public datasets across rotating MasterBot lanes",
+        "Preserve dataset routing artifact",
+        "Preserve tiny GPT baseline evidence"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "push",
+        "pull request",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-sandbox-bootcamp.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_sandbox_bootcamp",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/buddy-technology-radar.yml",
+      "name": "Buddy Living AI and Technology Radar",
+      "goal": "Buddy automation",
+      "purpose": "Operate one governed Buddy capability",
+      "what_happens": [
+        "Refresh public AI and technology sources",
+        "Validate the refreshed index and Pages mirror",
+        "Commit new discoveries without deleting history"
       ],
       "outputs": [
         "GitHub Actions run log"
@@ -2084,7 +2489,7 @@
         "push",
         "schedule"
       ],
-      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-sandbox-bootcamp.yml",
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/buddy-technology-radar.yml",
       "static_status": "static_checks_passed",
       "runtime_status": "unknown_until_run_evidence_loaded",
       "errors": [],
@@ -2106,7 +2511,7 @@
       "duplicate_candidate_group": null,
       "possible_duplicates": [],
       "progress": "configured",
-      "prospectus_card": "data/run-prospectus.json#wf_buddy_sandbox_bootcamp",
+      "prospectus_card": "data/run-prospectus.json#wf_buddy_technology_radar",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -2410,12 +2815,17 @@
       "purpose": "Keep generated registries and dashboards current",
       "what_happens": [
         "Verify generator tests",
+        "Regenerate derived command-center data",
         "Verify generated data is current",
-        "Verify command-center route and controls",
+        "Generate data observability snapshot",
+        "Verify data observability snapshot is current",
+        "Verify command-center route, controls, and JavaScript syntax",
+        "Upload generated data observability snapshots",
         "Verify JSON syntax"
       ],
       "outputs": [
-        "GitHub Actions run log"
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
       ],
       "benchmark_commands": [],
       "triggers": [
@@ -2434,7 +2844,7 @@
         "concurrency_declared": false,
         "job_timeouts_declared": 1,
         "runner_jobs": 1,
-        "artifacts_declared": false
+        "artifacts_declared": true
       },
       "upgrades": [
         "Publish machine-readable evidence for every run.",
@@ -2500,14 +2910,17 @@
       "goal": "repository operations",
       "purpose": "Operate Consolidation Integrity Gate as a bounded DreamCo repository workflow",
       "what_happens": [
-        "Validate canonical 65 registry",
+        "Validate current division registry",
         "Validate Actions contract",
+        "Validate Buddy category-system registry",
         "Validate consolidation map"
       ],
       "outputs": [
         "GitHub Actions run log"
       ],
-      "benchmark_commands": [],
+      "benchmark_commands": [
+        "tools/audit_markdown_implementation_gaps.py"
+      ],
       "triggers": [
         "manual",
         "pull request"
@@ -2630,7 +3043,9 @@
       "goal": "Buddy automation",
       "purpose": "Operate one governed Buddy capability",
       "what_happens": [
-        "Scan bots, missing files, and study plans"
+        "Compile Markdown bot catalog into sandbox runtime",
+        "Scan bots, missing files, and study plans",
+        "Verify daily scan contract"
       ],
       "outputs": [
         "GitHub Actions run log"
@@ -2638,6 +3053,7 @@
       "benchmark_commands": [],
       "triggers": [
         "manual",
+        "push",
         "schedule"
       ],
       "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/daily-bot-study-scan.yml",
@@ -3086,7 +3502,9 @@
         "Checkout",
         "Setup Python",
         "Run selected control-plane audit",
-        "Upload scan report",
+        "Build master goal and directive progress index",
+        "Snapshot open pull requests and latest CI status",
+        "Upload goal, repository, PR, and CI tracking snapshot",
         "Checkout",
         "Setup Python",
         "Verify control-plane contracts",
@@ -3138,6 +3556,7 @@
         "Setup Python",
         "Install dependencies",
         "Typecheck",
+        "Install workflow prospectus parser",
         "Actions and repository static health",
         "Bot fleet contract",
         "Governed regression tests",
@@ -3257,6 +3676,113 @@
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
+      "workflow": ".github/workflows/dreamco-division-mastery-engine.yml",
+      "name": "DreamCo Division Mastery Engine",
+      "goal": "repository operations",
+      "purpose": "Operate DreamCo Division Mastery Engine as a bounded DreamCo repository workflow",
+      "what_happens": [
+        "Preserve canonical division and dataset queues",
+        "Run division capability contract benchmark",
+        "Record benchmark run as contract evidence only",
+        "Run dependency-gated safe tasks for this division",
+        "Preserve division-specific evidence"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [
+        "tools/run_daily_division_benchmarks.ts"
+      ],
+      "triggers": [
+        "manual",
+        "pull request",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/dreamco-division-mastery-engine.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 3,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 2,
+        "runner_jobs": 3,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-python@v5 -> v7",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-node@v4 -> v7",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-python@v5 -> v7",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dreamco_division_mastery_engine",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/dreamco-global-reconciliation.yml",
+      "name": "DreamCo Global Reconciliation",
+      "goal": "verification",
+      "purpose": "Catch regressions before release",
+      "what_happens": [
+        "Inventory Markdown, approved chats, and all pull requests",
+        "Audit open pull request divergence and merge-tree conflicts (read-only)",
+        "Upload reconciliation inventory"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "push",
+        "pull request",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/dreamco-global-reconciliation.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-python@v5 -> v7",
+        "upgrade recommendation: actions/upload-artifact@v4 -> v6"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dreamco_global_reconciliation",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
       "workflow": ".github/workflows/dreamco-live-dashboard.yml",
       "name": "DreamCo Live Dashboard",
       "goal": "repository operations",
@@ -3303,6 +3829,52 @@
       "possible_duplicates": [],
       "progress": "configured",
       "prospectus_card": "data/run-prospectus.json#wf_dreamco_live_dashboard",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/dreamco-mastery-continuity.yml",
+      "name": "DreamCo Mastery Continuity",
+      "goal": "repository operations",
+      "purpose": "Operate DreamCo Mastery Continuity as a bounded DreamCo repository workflow",
+      "what_happens": [
+        "Validate canonical goal registry and build daily queue",
+        "Publish daily queue summary",
+        "Preserve queue evidence"
+      ],
+      "outputs": [
+        "GitHub Actions run log",
+        "declared downloadable or deployment artifact"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "push",
+        "pull request",
+        "schedule"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/dreamco-mastery-continuity.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": true,
+        "job_timeouts_declared": 1,
+        "runner_jobs": 1,
+        "artifacts_declared": true
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes."
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dreamco_mastery_continuity",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3462,6 +4034,49 @@
       "possible_duplicates": [],
       "progress": "configured",
       "prospectus_card": "data/run-prospectus.json#wf_dreamco_unified_system",
+      "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
+    },
+    {
+      "workflow": ".github/workflows/dreamco-verified-goals-contract.yml",
+      "name": "DreamCo Verified Goals Contract",
+      "goal": "repository operations",
+      "purpose": "Operate DreamCo Verified Goals Contract as a bounded DreamCo repository workflow",
+      "what_happens": [
+        "Executes the named workflow steps and records the GitHub Actions result."
+      ],
+      "outputs": [
+        "GitHub Actions run log"
+      ],
+      "benchmark_commands": [],
+      "triggers": [
+        "manual",
+        "pull request"
+      ],
+      "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/dreamco-verified-goals-contract.yml",
+      "static_status": "static_checks_passed",
+      "runtime_status": "unknown_until_run_evidence_loaded",
+      "errors": [],
+      "warnings": [],
+      "runner_jobs": 1,
+      "controls": {
+        "permissions_declared": true,
+        "concurrency_declared": false,
+        "job_timeouts_declared": 0,
+        "runner_jobs": 1,
+        "artifacts_declared": false
+      },
+      "upgrades": [
+        "Publish machine-readable evidence for every run.",
+        "Keep external writes behind explicit authorization and bounded policy.",
+        "Preserve failures and regressions instead of converting unknown states into passes.",
+        "upgrade recommendation: actions/checkout@v4 -> v7",
+        "upgrade recommendation: actions/setup-python@v5 -> v7"
+      ],
+      "possible_duplicate": false,
+      "duplicate_candidate_group": null,
+      "possible_duplicates": [],
+      "progress": "configured",
+      "prospectus_card": "data/run-prospectus.json#wf_dreamco_verified_goals_contract",
       "investor_note": "Static configuration is inspectable. Operational evidence is required before claiming workflow health, product readiness, or model mastery."
     },
     {
@@ -3650,6 +4265,7 @@
       "what_happens": [
         "Install test dependencies",
         "Manifest drift check",
+        "Refresh deterministic repository evidence for this exact checkout",
         "Runtime, generator, auditor and link-check tests",
         "Actions workflow count drift (health report must cover every workflow file)",
         "Every Run button has a prospectus (and prospectus outputs are current)",
@@ -3672,7 +4288,6 @@
         "declared downloadable or deployment artifact"
       ],
       "benchmark_commands": [
-        "tools/audit_actions_health.py",
         "tools/audit_pages_features.py",
         "tools/check_deployment_cost_policy.py",
         "tools/check_website_links.py",
@@ -3714,8 +4329,10 @@
       "goal": "repository operations",
       "purpose": "Operate Frontier Claim Trust Gate as a bounded DreamCo repository workflow",
       "what_happens": [
+        "Restore latest successful 24-hour sandbox evidence",
         "Deploy-mode trust check (fail on vanity while gates red)",
         "Unit tests",
+        "Restore latest successful 24-hour sandbox evidence",
         "Strict require-all-gates (hard-fail until claimable)"
       ],
       "outputs": [
@@ -3805,6 +4422,7 @@
       "triggers": [
         "manual",
         "push",
+        "pull request",
         "schedule"
       ],
       "github_url": "https://github.com/DreamCo-Technologies/Dreamcobots/actions/workflows/full-system-certification.yml",
@@ -4198,8 +4816,11 @@
       "what_happens": [
         "Validate Actions page contract",
         "Validate Python syntax for touched intelligence code",
+        "Regenerate derived Pages connection index for JSON validation",
         "Validate JSON files",
         "Install dependencies when package-lock exists",
+        "Install workflow prospectus parser",
+        "Refresh Actions workflow inventory and prospectus",
         "Run Actions page test suite",
         "Require all gates to pass"
       ],
@@ -4207,7 +4828,8 @@
         "GitHub Actions run log"
       ],
       "benchmark_commands": [
-        "npm run test:actions-page"
+        "npm run test:actions-page",
+        "tools/audit_actions_health.py"
       ],
       "triggers": [
         "manual",
@@ -5594,7 +6216,9 @@
       "what_happens": [
         "Verify complete PR inventory",
         "Classify PRs without losing coverage",
-        "Check report generation"
+        "Check report generation",
+        "Unit-test Pages index fail-closed validation",
+        "Validate actual Pages index"
       ],
       "outputs": [
         "GitHub Actions run log"
