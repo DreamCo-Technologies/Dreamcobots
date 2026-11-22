@@ -56,4 +56,13 @@ class DreamCoOriginalTrainingExamplesTests(unittest.TestCase):
   result=build([event(6),event(7),event(8),bad])
   self.assertEqual(result["accepted_source_events"],3)
   self.assertEqual(len(result["rejected_source_events"]),1)
+ def test_secrets_and_missing_secret_attestation_are_rejected(self):
+  bad=event(1);bad["contains_secrets"]=True
+  result=build([event(2),event(3),event(4),bad])
+  self.assertEqual(result["accepted_source_events"],3)
+  self.assertEqual(len(result["rejected_source_events"]),1)
+  missing=event(5);del missing["contains_secrets"]
+  result=build([event(6),event(7),event(8),missing])
+  self.assertEqual(result["accepted_source_events"],3)
+  self.assertEqual(len(result["rejected_source_events"]),1)
 if __name__=="__main__":unittest.main()
