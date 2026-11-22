@@ -8,6 +8,7 @@ on:
       - "tools/build_division_model_fleet.py"
       - "tools/build_pages_connection_index.py"
       - "tools/build_actions_prospectus.py"
+      - "tools/audit_actions_health.py"
       - "tools/build_file_prospectus.py"
       - "tools/buddy_safe_repair.py"
       - "tools/buddy_failure_learning.py"
@@ -115,6 +116,7 @@ jobs:
           python tools/build_buddy_dataset_routes.py
           python tools/build_division_model_fleet.py
           python tools/build_pages_connection_index.py
+          python tools/audit_actions_health.py
           python tools/build_actions_prospectus.py
           python tools/build_file_prospectus.py
       - name: Verify repaired indexes and Buddy repair-learning tests
@@ -134,7 +136,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/buddy/run-with-buddy.generated.json config/generated/actions-prospectus.json config/generated/file-prospectus website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json; do
+          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/buddy/run-with-buddy.generated.json config/generated/actions-health-report.json reports/ACTIONS_HEALTH_REPORT.md website/data/actions-health-report.json config/generated/actions-prospectus.json config/generated/file-prospectus website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json; do
             if [ -e "$path" ]; then git add -A -- "$path"; fi
           done
           if git diff --cached --quiet; then
