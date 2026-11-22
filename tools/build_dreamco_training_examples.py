@@ -114,7 +114,9 @@ def build(events:list[dict],masterbot_registry:Path=REGISTRY)->dict:
   ])
   rows.append({"text":"### Instruction:\n"+instruction+"\n### Response:\n"+output,
    "split":split,"masterbot_id":event["masterbot_id"],"source_event_id":event["event_id"],
-   "source_url":event["source_url"],"evidence_type":event["evidence_type"],
+   "source_url":event["source_url"],"source_commit":event["source_commit"],
+   "source_fingerprint":event["source_fingerprint"],"run_id":event["run_id"],
+   "evidence_type":event["evidence_type"],
    "derivation":"original_synthesis_from_verified_DreamCo_work"})
  return {"schema":"dreamco.original_training_candidate.v1","generated_by":"DreamCo verified-work example builder",
   "accepted_source_events":len(accepted),"rejected_source_events":rejected,"rows":rows,
