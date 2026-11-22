@@ -58,6 +58,8 @@ jobs:
 
       - name: Verify repository and Pages contracts
         run: |
+          python3 tools/build_file_prospectus.py --check
+          git diff --exit-code -- config/generated/actions-health-report.json website/data/actions-health-report.json reports/ACTIONS_HEALTH_REPORT.md
           python3 tools/generate_repository_test_registry.py --check
           npm run test:actions-page
           node --check website/system-map.js
