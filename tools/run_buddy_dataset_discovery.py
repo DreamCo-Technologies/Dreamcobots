@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 """Run a bounded rotating public dataset discovery scan across MasterBot lanes."""
 from __future__ import annotations
-import argparse,json
+import argparse,json,sys
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from buddy.datasets.discovery_fleet import run_discovery_fleet
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--lanes-per-run",type=int,default=5)
