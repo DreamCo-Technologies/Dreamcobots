@@ -134,7 +134,7 @@ jobs:
           python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_actions_health
           # The Actions-health unit test refreshes its Markdown/JSON reports; rebuild the prospectus after that mutation.
           python tools/build_file_prospectus.py
-          python -m unittest tests.test_file_prospectus
+          python -m pytest -q tests/test_file_prospectus.py
           python tools/build_file_prospectus.py --check
           git diff --check
       - name: Detect allowlisted generated changes
