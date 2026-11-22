@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Generate a prospectus for every file in the repository.
+"""Generate a prospectus for every non-output file in the repository.
+
+The generated prospectus directory is excluded from its own inventory to prevent
+self-referential shard/index drift.
 
 Output: ``config/generated/file-prospectus/index.json`` plus one compact,
 columnar shard per top-level folder (``config/generated/file-prospectus/<shard>.json``).
@@ -96,7 +99,8 @@ REFERENCE_SCAN_TYPES = {"python", "typescript", "typescript-react", "javascript"
 def list_files() -> list[str]:
     out = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"], cwd=ROOT,
                          capture_output=True, text=True, check=True).stdout
-    files = sorted({p for p in out.split("\0") if p and (ROOT / p).is_file()})
+    output_prefix = OUT_DIR.relative_to(ROOT).as_posix() + "/"
+    files = sorted({p for p in out.split("\0") if p and not p.startswith(output_prefix) and (ROOT / p).is_file()})
     return files
 
 
