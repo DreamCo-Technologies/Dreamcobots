@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 """Run Buddy's unknown-problem router and persist a reviewable research task."""
 from __future__ import annotations
-import argparse, json
+import argparse, json, sys
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from buddy.datasets.unknown_router import route_problem
 
 def main() -> int:
