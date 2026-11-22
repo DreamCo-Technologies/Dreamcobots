@@ -33,6 +33,10 @@ def test_every_repository_file_has_exactly_one_prospectus():
             assert rec["purpose"].startswith("auto-summary:")
 
 
+def test_generated_prospectus_does_not_index_its_own_outputs():
+    assert not any(path.startswith("config/generated/file-prospectus/") for path in bfp.list_files())
+
+
 def test_no_per_file_markdown_blobs():
     out = ROOT / "config/generated/file-prospectus"
     assert not list(out.glob("*.md")) and len(list(out.glob("*.json"))) == len(INDEX["shards"]) + 1
