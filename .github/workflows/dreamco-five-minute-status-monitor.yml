@@ -27,14 +27,20 @@ jobs:
         with:
           script: |
             const cutoff = Date.now() - 24 * 60 * 60 * 1000;
-            const { data } = await github.rest.actions.listWorkflowRunsForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              per_page: 100
-            });
-            const runs = data.workflow_runs
-              .filter(run => run.name !== "DreamCo Five-Minute Status Monitor")
-              .filter(run => Date.parse(run.created_at) >= cutoff);
+            const runs = [];
+            // Read up to 1,000 recent runs; stop paging once we pass the 24-hour window.
+            for (let page = 1; page <= 10; page += 1) {
+              const { data } = await github.rest.actions.listWorkflowRunsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                per_page: 100,
+                page
+              });
+              const pageRuns = data.workflow_runs || [];
+              const recent = pageRuns.filter(run => Date.parse(run.created_at) >= cutoff);
+              runs.push(...recent.filter(run => run.name !== "DreamCo Five-Minute Status Monitor"));
+              if (pageRuns.length < 100 || recent.length < pageRuns.length) break;
+            }
             const active = runs.filter(run => ["queued", "in_progress", "waiting", "requested"].includes(run.status));
             const failedRuns = runs.filter(run =>
               ["failure", "timed_out", "action_required", "startup_failure"].includes(run.conclusion)
@@ -47,7 +53,7 @@ jobs:
               "## DreamCo five-minute status monitor",
               "",
               `Checked at: ${new Date().toISOString()}`,
-              `Recent workflow runs inspected (all branches, last 24 hours): **${runs.length}** (API page limit: 100)`,
+              `Recent workflow runs inspected (all branches, last 24 hours): **${runs.length}** (up to 1,000 runs checked)`,
               `Active: **${active.length}** · Successful: **${successCount}** · Skipped: **${skippedCount}** · Cancelled: **${cancelledCount}** · Failed: **${failedRuns.length}**`,
               "",
               "### Active runs",
