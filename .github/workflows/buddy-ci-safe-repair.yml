@@ -121,6 +121,7 @@ jobs:
           python tools/build_pages_connection_index.py
           python tools/audit_actions_health.py
           python tools/build_actions_prospectus.py
+          python tools/build_file_prospectus.py
       - name: Verify repaired indexes and Buddy repair-learning tests
         run: |
           set -euo pipefail
@@ -132,8 +133,6 @@ jobs:
           python tools/validate_dreamco_mastery_registry.py
           python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_actions_health tests.test_file_prospectus
           git diff --check
-          # Build the file prospectus last: earlier checks can create/remove transient generated files.
-          python tools/build_file_prospectus.py
           python tools/build_file_prospectus.py --check
       - name: Detect allowlisted generated changes
         id: changes
