@@ -9,6 +9,10 @@ on:
     paths:
       - '.github/workflows/buddy-sandbox-bootcamp.yml'
       - 'buddy/gpt_baseline/**'
+      - 'config/buddy-gpt-day2-synthetic-data.json'
+      - 'docs/BUDDY_14_DAY_MODEL_GROWTH_PLAN.md'
+      - 'tools/prepare_buddy_synthetic_splits.py'
+      - 'tests/test_buddy_gpt_data_pipeline.py'
       - 'config/buddy-tiny-gpt-baseline.json'
       - 'docs/BUDDY_TINY_GPT_BASELINE_MODEL_CARD.md'
       - 'tools/run_buddy_gpt_baseline.py'
@@ -28,6 +32,10 @@ on:
       - 'buddy/learning/**'
       - 'buddy/datasets/**'
       - 'buddy/gpt_baseline/**'
+      - 'config/buddy-gpt-day2-synthetic-data.json'
+      - 'docs/BUDDY_14_DAY_MODEL_GROWTH_PLAN.md'
+      - 'tools/prepare_buddy_synthetic_splits.py'
+      - 'tests/test_buddy_gpt_data_pipeline.py'
       - 'config/buddy-tiny-gpt-baseline.json'
       - 'docs/BUDDY_TINY_GPT_BASELINE_MODEL_CARD.md'
       - 'tools/run_buddy_gpt_baseline.py'
@@ -90,11 +98,13 @@ jobs:
         with:
           python-version: '3.13'
       - name: Compile sandbox, bootcamp, learning, and tiny GPT modules
-        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets buddy/gpt_baseline tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py buddy/datasets/discovery_fleet.py buddy/datasets/license_policy.py tools/run_buddy_dataset_discovery.py tools/create_buddy_model_benchmark.py tools/run_buddy_model_benchmark.py tools/run_buddy_gpt_baseline.py
+        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets buddy/gpt_baseline tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py buddy/datasets/discovery_fleet.py buddy/datasets/license_policy.py tools/run_buddy_dataset_discovery.py tools/create_buddy_model_benchmark.py tools/run_buddy_model_benchmark.py tools/run_buddy_gpt_baseline.py tools/prepare_buddy_synthetic_splits.py
       - name: Run reproducible tiny GPT forward-pass baseline
         run: python tools/run_buddy_gpt_baseline.py --config config/buddy-tiny-gpt-baseline.json --output-dir artifacts/buddy-gpt-baseline --commit-sha "${{ github.event.pull_request.head.sha || github.sha }}"
-      - name: Test tiny GPT baseline and safe dataset token scoping
-        run: python -m unittest tests.test_buddy_gpt_baseline tests.test_buddy_dataset_source_auth tests.test_bootcamp_lesson_planner tests.test_dreamco_division_mastery_orchestrator tests.test_division_model_fleet
+      - name: Prepare deterministic synthetic Day 2 data splits
+        run: python tools/prepare_buddy_synthetic_splits.py --config config/buddy-gpt-day2-synthetic-data.json --output-dir artifacts/buddy-gpt-day2-data-pipeline --commit-sha "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Test tiny GPT baseline, Day 2 data pipeline, and safe dataset token scoping
+        run: python -m unittest tests.test_buddy_gpt_baseline tests.test_buddy_gpt_data_pipeline tests.test_buddy_dataset_source_auth tests.test_bootcamp_lesson_planner tests.test_dreamco_division_mastery_orchestrator tests.test_division_model_fleet
       - name: Restore rotating Dataset Hub catalog
         if: github.event_name == 'schedule'
         uses: actions/cache@v4
@@ -166,6 +176,14 @@ jobs:
             artifacts/buddy-dataset-hub/dataset-routes.json
             artifacts/buddy-dataset-hub/discovery-fleet.json
             .dreamco/dataset-hub/
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Preserve Day 2 synthetic data-pipeline evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-gpt-day2-data-pipeline-${{ github.run_id }}
+          path: artifacts/buddy-gpt-day2-data-pipeline/
           if-no-files-found: warn
           retention-days: 90
       - name: Preserve tiny GPT baseline evidence
