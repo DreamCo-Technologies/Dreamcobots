@@ -1,6 +1,5 @@
 """Guardrails for the Markdown audit automation's write boundary."""
 from pathlib import Path
-import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
