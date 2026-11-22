@@ -49,6 +49,11 @@ jobs:
           python3 tools/generate_buddy_platform_expansion.py
           node --import tsx tools/generate_buddy_success_program.ts
 
+      - name: Generate current Actions health report and prospectus
+        run: |
+          python3 tools/audit_actions_health.py
+          python3 tools/build_actions_prospectus.py
+
       - name: Generate repository master inventory
         run: python3 tools/generate_dreamco_repository_master_map.py
 
@@ -94,5 +99,9 @@ jobs:
           path: |
             website/data/repository-master-map.json
             config/generated/repository-master-map.json
+            website/data/actions-health-report.json
+            website/data/actions-prospectus.json
+            config/generated/actions-health-report.json
+            config/generated/actions-prospectus.json
           if-no-files-found: warn
           retention-days: 14
