@@ -1,0 +1,60 @@
+name: DreamCo Five-Minute Status Monitor
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: dreamco-five-minute-status-monitor
+  cancel-in-progress: true
+
+jobs:
+  status:
+    name: Summarize active repository checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Inspect recent workflow runs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branchNames = new Set(["main", "fix/system-watch-refresh-actions-contracts-20261122"]);
+            const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+            const { data } = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100
+            });
+            const runs = data.workflow_runs
+              .filter(run => branchNames.has(run.head_branch))
+              .filter(run => run.name !== "DreamCo Five-Minute Status Monitor")
+              .filter(run => Date.parse(run.created_at) >= cutoff);
+            const active = runs.filter(run => ["queued", "in_progress", "waiting", "requested"].includes(run.status));
+            const failed = runs.filter(run =>
+              ["failure", "timed_out", "action_required", "startup_failure"].includes(run.conclusion)
+            ).slice(0, 15);
+            const completed = runs.filter(run => run.status === "completed");
+            const successCount = completed.filter(run => run.conclusion === "success").length;
+            const skippedCount = completed.filter(run => run.conclusion === "skipped").length;
+            const cancelledCount = completed.filter(run => run.conclusion === "cancelled").length;
+            const lines = [
+              "## DreamCo five-minute status monitor",
+              "",
+              `Checked at: ${new Date().toISOString()}`,
+              `Runs inspected in the last 24 hours: **${runs.length}** (main + repair branch)`,
+              `Active: **${active.length}** · Successful: **${successCount}** · Skipped: **${skippedCount}** · Cancelled: **${cancelledCount}** · Failed: **${failed.length}**`,
+              "",
+              "### Active runs",
+              ...(active.length ? active.slice(0, 20).map(run => `- ${run.name} — ${run.status} ([run](${run.html_url}))`) : ["- None in the inspected window."]),
+              "",
+              "### Recent failures",
+              ...(failed.length ? failed.map(run => `- ${run.name} — ${run.conclusion} ([run](${run.html_url}))`) : ["- None in the inspected window."]),
+              "",
+              "> Monitoring only: this workflow does not rewrite code, retry failed jobs, certify Buddy capabilities, or deploy. Failure triage remains handled by the event-driven failure watcher and reviewed repair PRs."
+            ];
+            await core.summary.addRaw(lines.join("\n")).write();
