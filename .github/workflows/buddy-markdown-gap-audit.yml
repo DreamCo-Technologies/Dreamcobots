@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: buddy-markdown-gap-audit
@@ -25,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          persist-credentials: true
+          persist-credentials: false
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
@@ -35,11 +36,19 @@ jobs:
         run: |
           python3 tools/audit_markdown_implementation_gaps.py --check
           python3 -m unittest tests.test_markdown_implementation_gaps
-      - name: Publish current gap inventory
-        run: |
-          git diff --exit-code config/generated/markdown-implementation-gap-audit.json website/data/markdown-implementation-gap-audit.json reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md && exit 0
-          git config user.name "DreamCo Buddy"
-          git config user.email "buddy@dreamco.local"
-          git add config/generated/markdown-implementation-gap-audit.json website/data/markdown-implementation-gap-audit.json reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md
-          git commit -m "audit: refresh Markdown implementation gap inventory"
-          git push
+      - name: Propose current gap inventory
+        if: success() && github.ref == 'refs/heads/main'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ github.token }}
+          base: main
+          branch: bot/markdown-gap-audit
+          delete-branch: false
+          commit-message: "audit: refresh Markdown implementation gap inventory"
+          title: "audit: refresh Markdown implementation gap inventory"
+          body: |
+            ## Generated Markdown implementation-gap inventory
+
+            This pull request contains only the verified outputs of the Markdown-to-code audit.
+            The audit and regression tests passed before this proposal was opened.
+            Missing implementation, test, and runtime evidence remains explicitly unverified.
