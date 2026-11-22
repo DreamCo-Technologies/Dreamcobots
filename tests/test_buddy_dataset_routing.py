@@ -1,11 +1,18 @@
 import json
 import unittest
 from pathlib import Path
-from tools.build_buddy_dataset_routes import build
+from tools.build_buddy_dataset_routes import build, equivalent_payload
 
 ROOT = Path(__file__).resolve().parents[1]
 
 class BuddyDatasetRoutingTests(unittest.TestCase):
+    def test_check_ignores_only_the_informational_generated_timestamp(self):
+        expected = {"schema": "dreamco.buddy_dataset_routes.v1", "generated_at": "2026-01-01T00:00:00+00:00", "routes": []}
+        same_data_new_timestamp = {**expected, "generated_at": "2026-11-22T17:00:00+00:00"}
+        self.assertTrue(equivalent_payload(same_data_new_timestamp, expected))
+        changed_data = {**same_data_new_timestamp, "routes": [{"masterbot_id": 1}]}
+        self.assertFalse(equivalent_payload(changed_data, expected))
+
     def test_all_65_masterbots_receive_a_lane(self):
         result = build()
         self.assertEqual(result["masterbot_count"], 65)
