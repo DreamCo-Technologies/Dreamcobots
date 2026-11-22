@@ -109,6 +109,14 @@ def build() -> dict:
         "automatic_weight_updates": False
     }
 
+def equivalent_payload(actual: dict, expected: dict) -> bool:
+    """Compare generated route data while ignoring its informational build timestamp."""
+    actual_data = dict(actual)
+    expected_data = dict(expected)
+    actual_data.pop("generated_at", None)
+    expected_data.pop("generated_at", None)
+    return actual_data == expected_data
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
@@ -116,7 +124,13 @@ def main() -> int:
     payload = build()
     encoded = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
     if args.check:
-        if not OUT.exists() or OUT.read_text(encoding="utf-8") != encoded:
+        if not OUT.exists():
+            raise SystemExit(f"Dataset route artifact is missing: {OUT.relative_to(ROOT)}")
+        try:
+            existing = json.loads(OUT.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise SystemExit(f"Dataset route artifact is unreadable: {exc}") from exc
+        if not equivalent_payload(existing, payload):
             raise SystemExit(f"Dataset route artifact is stale: {OUT.relative_to(ROOT)}")
     else:
         OUT.parent.mkdir(parents=True, exist_ok=True)
