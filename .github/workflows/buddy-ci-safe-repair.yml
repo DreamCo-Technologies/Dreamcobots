@@ -144,9 +144,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/buddy/run-with-buddy.generated.json config/generated/actions-health-report.json reports/ACTIONS_HEALTH_REPORT.md website/data/actions-health-report.json config/generated/actions-prospectus.json config/generated/file-prospectus website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json; do
+          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/buddy/run-with-buddy.generated.json reports/ACTIONS_HEALTH_REPORT.md website/data/actions-health-report.json config/generated/actions-prospectus.json config/generated/file-prospectus website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json; do
             if [ -e "$path" ]; then git add -A -- "$path"; fi
           done
+          # This generated report is intentionally ignored by repository policy but is an explicit repair artifact.
+          if [ -e config/generated/actions-health-report.json ]; then
+            git add -f -- config/generated/actions-health-report.json
+          fi
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No allowlisted generated artifacts needed repair."
