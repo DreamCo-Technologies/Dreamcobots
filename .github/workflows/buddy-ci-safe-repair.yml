@@ -131,9 +131,12 @@ jobs:
           python tools/build_actions_prospectus.py --check
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
-          python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_actions_health tests.test_file_prospectus
-          git diff --check
+          python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_actions_health
+          # The Actions-health unit test refreshes its Markdown/JSON reports; rebuild the prospectus after that mutation.
+          python tools/build_file_prospectus.py
+          python -m unittest tests.test_file_prospectus
           python tools/build_file_prospectus.py --check
+          git diff --check
       - name: Detect allowlisted generated changes
         id: changes
         shell: bash
