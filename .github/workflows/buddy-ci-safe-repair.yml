@@ -154,7 +154,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/generated/file-prospectus config/buddy/run-with-buddy.generated.json config/generated/actions-prospectus.json config/generated/file-prospectus website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json; do
+          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/generated/file-prospectus config/buddy/run-with-buddy.generated.json config/generated/actions-prospectus.json website/data/actions-health-report.json website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json; do
             if [ -e "$path" ]; then git add -A -- "$path"; fi
           done
           if git diff --cached --quiet; then
