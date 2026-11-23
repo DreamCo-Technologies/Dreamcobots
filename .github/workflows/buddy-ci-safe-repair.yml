@@ -13,6 +13,8 @@ on:
       - "tools/buddy_failure_learning.py"
       - "tests/test_buddy_failure_learning.py"
       - "tests/test_buddy_safe_repair.py"
+      - "tests/test_buddy_dataset_route_check.py"
+      - "tests/test_file_prospectus_inventory.py"
       - "config/buddy-dataset-routing-policy.json"
       - "config/division-model-competitiveness-policy.json"
       - "config/masterbot-65-registry.json"
@@ -127,14 +129,14 @@ jobs:
           python tools/build_file_prospectus.py --check
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
-          python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator
+          python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_dataset_route_check tests.test_file_prospectus_inventory
           git diff --check
       - name: Detect allowlisted generated changes
         id: changes
         shell: bash
         run: |
           set -euo pipefail
-          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/buddy/run-with-buddy.generated.json config/generated/actions-prospectus.json config/generated/file-prospectus website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json; do
+          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/generated/file-prospectus config/buddy/run-with-buddy.generated.json config/generated/actions-prospectus.json config/generated/file-prospectus website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json; do
             if [ -e "$path" ]; then git add -A -- "$path"; fi
           done
           if git diff --cached --quiet; then

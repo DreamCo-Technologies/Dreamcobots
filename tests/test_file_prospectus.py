@@ -18,6 +18,10 @@ def test_committed_index_is_current():
     assert bfp.main(["--check"]) == 0
 
 
+def test_generated_prospectus_shards_are_not_self_indexed():
+    assert not any(p.startswith("config/generated/file-prospectus/") for p in bfp.list_files())
+
+
 def test_every_repository_file_has_exactly_one_prospectus():
     rows = []
     for shard in INDEX["shards"]:
