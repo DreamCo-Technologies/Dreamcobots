@@ -47,7 +47,7 @@ def build_index(limit: int = 500) -> dict:
         if not re.fullmatch(r"[0-9a-f]{40}", sha):
             continue
         files_raw = run_git(["diff-tree", "--no-commit-id", "--name-only",
-                             "-r", sha])
+                             "-m", "-r", sha])
         paths = sorted({p.strip() for p in files_raw.splitlines() if p.strip()})
         if not paths:
             continue
