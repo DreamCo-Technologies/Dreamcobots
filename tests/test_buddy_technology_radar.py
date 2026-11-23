@@ -12,8 +12,12 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
         validate_policy(POLICY)
         catalog = json.loads((ROOT / "config/generated/buddy-technology-radar.json").read_text(encoding="utf-8"))
         validate_catalog(catalog)
-        self.assertEqual(catalog["summary"]["sources_pending"], len(catalog["source_runs"]))
-        self.assertTrue(all(run["status"] in {"seeded_from_web_search", "not_yet_checked"} for run in catalog["source_runs"]))
+        runs = catalog["source_runs"]
+        self.assertEqual(catalog["summary"]["sources_total"], len(runs))
+        self.assertEqual(catalog["summary"]["sources_succeeded"], sum(run["status"] == "success" for run in runs))
+        self.assertEqual(catalog["summary"]["sources_failed"], sum(run["status"] == "failed" for run in runs))
+        self.assertEqual(catalog["summary"]["sources_pending"], sum(run["status"] not in {"success", "failed"} for run in runs))
+        self.assertTrue(all(run["status"] in {"success", "failed", "seeded_from_web_search", "not_yet_checked"} for run in runs))
 
     def test_feed_parser_accepts_rss_and_atom(self):
         rss = b"""<rss><channel><item><title>New AI coding agent</title><link>https://example.com/a</link><description>Build software with agents</description><pubDate>Sun, 08 Nov 2026 12:00:00 GMT</pubDate></item></channel></rss>"""
