@@ -8,7 +8,32 @@ permissions:
   contents: read
 
 jobs:
+  detect-dependency-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.filter.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Detect dependency manifest or lockfile changes
+        id: filter
+        shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          git diff --name-only "origin/$BASE_REF...HEAD" > changed-files.txt
+          if grep -E '(^|/)(package\.json|package-lock\.json|npm-shrinkwrap\.json|requirements[^/]*\.txt|pyproject\.toml|poetry\.lock|Pipfile(\.lock)?|Cargo\.(toml|lock)|go\.(mod|sum)|Gemfile\.lock|composer\.lock)$' changed-files.txt; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No dependency manifests or lockfiles changed; dependency review is not applicable."
+          fi
+
   dependency-review:
+    needs: detect-dependency-changes
+    if: needs.detect-dependency-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -18,3 +43,4 @@ jobs:
         with:
           fail-on-severity: high
           comment-summary-in-pr: always
+          repo-token: ${{ github.token }}
