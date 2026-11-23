@@ -1,7 +1,12 @@
+import json
+import os
+import tempfile
 import unittest
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 
+from tools import audit_actions_live as live
 from tools.audit_actions_live import build_workflow_rows, collect_recent_runs
 
 
@@ -32,6 +37,21 @@ class ActionsLiveHealthTests(unittest.TestCase):
         row = build_workflow_rows(workflows, runs, {"alpha.yml"}, self.cutoff)[0]
         self.assertEqual(row["recent_30d_runs"], 0)
         self.assertIsNone(row["latest_run"])
+
+    def test_rate_limit_writes_explicit_unavailable_report_without_claiming_success(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with patch.object(live, "OUT_JSON", root / "live.json"), \
+                 patch.object(live, "PUBLIC_JSON", root / "public.json"), \
+                 patch.object(live, "OUT_MD", root / "live.md"), \
+                 patch.dict(os.environ, {"GITHUB_REPOSITORY": "owner/repo"}), \
+                 patch("tools.audit_actions_live.api", side_effect=live.LiveAuditUnavailable("GitHub API 403 rate limit")):
+                self.assertEqual(live.main(), 0)
+            payload = json.loads((root / "live.json").read_text(encoding="utf-8"))
+            self.assertEqual(payload["status"], "unavailable")
+            self.assertFalse(payload["run_window_coverage_complete"])
+            self.assertIn("no run is inferred", payload["run_window_note"])
+            self.assertIn("UNAVAILABLE", (root / "live.md").read_text(encoding="utf-8"))
 
     def test_run_collection_pages_until_cutoff_is_covered(self):
         recent = [
