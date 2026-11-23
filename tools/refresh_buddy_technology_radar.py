@@ -300,7 +300,7 @@ def merge_catalog(existing: dict[str, Any], discovered: list[dict[str, Any]], so
 
 
 
-PUBLIC_PROVIDER_PATTERN = re.compile("re" + "plit|" + r"\\b" + "ibm" + r"\\b|wa" + "tson", re.IGNORECASE)
+PUBLIC_PROVIDER_PATTERN = re.compile("re" + "plit|" + r"\b" + "ibm" + r"\\b|wa" + "tson", re.IGNORECASE)
 
 
 def apply_public_catalog_policy(catalog: dict[str, Any]) -> dict[str, Any]:
