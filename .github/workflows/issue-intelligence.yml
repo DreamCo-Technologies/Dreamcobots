@@ -36,7 +36,7 @@ jobs:
               continue
             fi
             gh label create "$name" --color "$color" --description "$description" || true
-            existing="$(printf '%s\\n%s' "$existing" "$name")"
+            existing="$(printf '%s\n%s' "$existing" "$name")"
           done <<'LABELS'
           ci-failure|B60205|GitHub Actions failure
           severity:high|D73A4A|High severity CI issue
