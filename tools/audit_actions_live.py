@@ -169,13 +169,13 @@ def main() -> int:
         }
         for output in (OUT_JSON, PUBLIC_JSON):
             output.parent.mkdir(parents=True, exist_ok=True)
-            output.write_text(json.dumps(payload, indent=2) + "\\n", encoding="utf-8")
+            output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
         OUT_MD.parent.mkdir(parents=True, exist_ok=True)
         OUT_MD.write_text(
             "# GitHub Actions Live Health\\n\\n"
             "**Status: UNAVAILABLE**\\n\\n"
             + payload["unavailable_reason"] + "\\n\\n"
-            + payload["truth_boundary"] + "\\n",
+            + payload["truth_boundary"] + "\n",
             encoding="utf-8",
         )
         print(json.dumps({"ok": True, "status": "unavailable", "warning": payload["unavailable_reason"]}, indent=2))
