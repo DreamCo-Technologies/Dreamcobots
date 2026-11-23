@@ -122,7 +122,7 @@ def matches_existing(payload: dict, existing_text: str) -> bool:
         return False
     expected = dict(payload)
     expected["generated_at"] = existing.get("generated_at")
-    return existing_text == json.dumps(expected, indent=2, ensure_ascii=False) + "\\n"
+    return existing_text == json.dumps(expected, indent=2, ensure_ascii=False) + "\n"
 
 
 def main() -> int:
