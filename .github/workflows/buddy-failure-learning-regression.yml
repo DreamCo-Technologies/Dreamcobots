@@ -8,6 +8,8 @@ on:
       - "tests/test_buddy_failure_learning.py"
       - "tools/buddy_safe_repair.py"
       - "tests/test_buddy_safe_repair.py"
+      - "tools/study_buddy_repair_history.py"
+      - "tests/test_study_buddy_repair_history.py"
       - "buddy/learning/action_failure_learning.py"
       - "buddy/learning/continuous_learning_controller.py"
       - ".github/workflows/buddy-failure-learning-regression.yml"
@@ -15,6 +17,8 @@ on:
     paths:
       - "tools/buddy_failure_learning.py"
       - "tests/test_buddy_failure_learning.py"
+      - "tools/study_buddy_repair_history.py"
+      - "tests/test_study_buddy_repair_history.py"
       - "buddy/learning/action_failure_learning.py"
       - "buddy/learning/continuous_learning_controller.py"
       - ".github/workflows/buddy-failure-learning-regression.yml"
@@ -24,7 +28,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: buddy-failure-learning-regression-${{ github.ref }}
+  group: buddy-failure-learning-regression-\${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -39,6 +43,6 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile Buddy failure-learning code
-        run: python -m compileall -q buddy/learning tools/buddy_failure_learning.py tests/test_buddy_failure_learning.py
-      - name: Test failure classification, safe repair policy and verified lessons
-        run: python -m unittest tests.test_buddy_failure_learning tests.test_buddy_safe_repair
+        run: python -m compileall -q buddy/learning tools/buddy_failure_learning.py tools/study_buddy_repair_history.py tests/test_buddy_failure_learning.py tests/test_study_buddy_repair_history.py
+      - name: Test failure classification, safe repair policy, verified lessons and historical study
+        run: python -m unittest tests.test_buddy_failure_learning tests.test_buddy_safe_repair tests.test_study_buddy_repair_history
