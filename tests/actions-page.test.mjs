@@ -40,7 +40,7 @@ test('Actions prospectus explains every workflow without turning static checks i
   assert.equal(prospectus.workflow_count, report.workflow_count);
   // Drift guard: the committed report must cover every live workflow file
   // (it once said 91 while .github/workflows had 103).
-  const liveWorkflows = readdirSync(new URL('../.github/workflows/', import.meta.url)).filter((f) => /\.ya?ml$/.test(f)).length;
+  const liveWorkflows = readdirSync(new URL('../.github/workflows/', import.meta.url), { withFileTypes: true }).filter((entry) => entry.isFile() && /\.ya?ml$/.test(entry.name)).length;
   assert.equal(report.workflow_count, liveWorkflows);
   assert.equal(prospectus.workflow_catalog_url, 'data/actions-health-report.json');
   assert.equal(repositoryProspectus.workflows.length, report.workflow_count);
