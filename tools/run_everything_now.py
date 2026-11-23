@@ -76,7 +76,7 @@ def write_snapshot(mode, step_count, results, in_progress, allow_blocked=False):
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     REPORT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(payload, indent=2) + "\\n")
+    OUT.write_text(json.dumps(payload, indent=2) + "\n")
     lines = [
         "# Run Everything Now",
         "",
@@ -100,7 +100,7 @@ def write_snapshot(mode, step_count, results, in_progress, allow_blocked=False):
             lines.append(f"- `{result['name']}`: {detail}")
     if failures:
         lines += ["", "## First root-cause candidate", "", f"`{failures[0]['name']}`", "", "```text", (failures[0]['stderr_tail'] or failures[0]['stdout_tail'])[-3000:], "```"]
-    REPORT.write_text("\\n".join(lines) + "\\n")
+    REPORT.write_text("\n".join(lines) + "\n")
     return payload
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -115,7 +115,7 @@ def main() -> int:
     results = []
     write_snapshot(args.mode, len(steps), results, True, args.allow_blocked)
     for index, (name, command) in enumerate(steps, start=1):
-        print(f'\\n[run-everything] {name}: {" ".join(command)}', flush=True)
+        print(f'\n[run-everything] {name}: {" ".join(command)}', flush=True)
         results.append(run(name, command, args.allow_blocked))
         write_snapshot(args.mode, len(steps), results, index < len(steps), args.allow_blocked)
     payload = write_snapshot(args.mode, len(steps), results, False, args.allow_blocked)
