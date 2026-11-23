@@ -72,3 +72,8 @@ class ActionsLiveHealthTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+    def test_safe_repair_stages_generated_actions_health_report(self):
+        source = (ROOT / ".github" / "workflows" / "buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
+        self.assertIn("website/data/actions-health-report.json", source)
+        self.assertEqual(source.count("config/generated/file-prospectus"), 1)
