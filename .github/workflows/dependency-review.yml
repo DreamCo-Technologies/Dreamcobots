@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Detect dependency manifest or lockfile changes
+      - name: Detect dependency manifests, lockfiles, and workflow action references
         id: filter
         shell: bash
         env:
@@ -24,23 +24,53 @@ jobs:
         run: |
           set -euo pipefail
           git diff --name-only "origin/$BASE_REF...HEAD" > changed-files.txt
-          if grep -E '(^|/)(package\.json|package-lock\.json|npm-shrinkwrap\.json|requirements[^/]*\.txt|pyproject\.toml|poetry\.lock|Pipfile(\.lock)?|Cargo\.(toml|lock)|go\.(mod|sum)|Gemfile\.lock|composer\.lock)$' changed-files.txt; then
+          if grep -Eq "(^|/)(package\\.json|package-lock\\.json|npm-shrinkwrap\\.json|yarn\\.lock|pnpm-lock\\.yaml|bun\\.lockb?|uv\\.lock|requirements[^/]*\\.txt|pyproject\\.toml|poetry\\.lock|Pipfile(\\.lock)?|Cargo\\.(toml|lock)|go\\.(mod|sum)|Gemfile(\\.lock)?|composer\\.(json|lock)|pom\\.xml|build\\.gradle(\\.kts)?|gradle\\.lockfile|[^/]+\\.(csproj|fsproj|vbproj|sln|nuspec))$|^\\.github/workflows/.*\\.ya?ml$" changed-files.txt; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No dependency manifests or lockfiles changed; dependency review is not applicable."
+            echo "No supported dependency manifests, lockfiles, or workflow action references changed."
           fi
 
   dependency-review:
     needs: detect-dependency-changes
-    if: needs.detect-dependency-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - name: Review dependency changes
+        id: review
+        if: needs.detect-dependency-changes.outputs.changed == 'true'
         uses: actions/dependency-review-action@v5
         with:
           fail-on-severity: high
           comment-summary-in-pr: always
           repo-token: ${{ github.token }}
+      - name: Verify dependency review evidence or explicit not-applicable state
+        if: always()
+        env:
+          DETECTOR_RESULT: ${{ needs.detect-dependency-changes.result }}
+          DEPENDENCY_CHANGES: ${{ needs.detect-dependency-changes.outputs.changed }}
+          REVIEW_OUTCOME: ${{ steps.review.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$DETECTOR_RESULT" != "success" ]]; then
+            echo "Dependency-change detection did not succeed." >&2
+            exit 1
+          fi
+          case "$DEPENDENCY_CHANGES" in
+            true)
+              if [[ "$REVIEW_OUTCOME" != "success" ]]; then
+                echo "Dependency review evidence is missing or unsuccessful: $REVIEW_OUTCOME" >&2
+                exit 1
+              fi
+              echo "Dependency review completed successfully."
+              ;;
+            false)
+              echo "Dependency review not applicable: no supported dependency or workflow-action inputs changed."
+              ;;
+            *)
+              echo "Dependency applicability is unknown; failing closed." >&2
+              exit 1
+              ;;
+          esac
