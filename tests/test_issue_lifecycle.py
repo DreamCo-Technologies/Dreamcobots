@@ -13,22 +13,48 @@ class IssueLifecycleTests(unittest.TestCase):
             ["ci-failure", "severity:high", "status:fixing"],
         )
 
-    def test_resolved_requires_successful_matching_workflow_and_branch(self):
-        original = {"workflow_id": 10, "head_branch": "main"}
-        candidate = {"workflow_id": 10, "head_branch": "main", "status": "completed", "conclusion": "success"}
+    def test_resolved_requires_later_successful_matching_workflow_and_branch(self):
+        original = {"workflow_id": 10, "head_branch": "main", "status": "completed", "conclusion": "failure", "run_started_at": "2026-11-23T10:00:00Z"}
+        candidate = {"workflow_id": 10, "head_branch": "main", "status": "completed", "conclusion": "success", "run_started_at": "2026-11-23T10:10:00Z"}
         validate_evidence("resolved", "original run", original, candidate)
 
+    def test_resolved_rejects_older_successful_run(self):
+        original = {"workflow_id": 10, "head_branch": "main", "status": "completed", "conclusion": "failure", "run_started_at": "2026-11-23T10:00:00Z"}
+        candidate = {"workflow_id": 10, "head_branch": "main", "status": "completed", "conclusion": "success", "run_started_at": "2026-11-23T09:59:00Z"}
+        with self.assertRaisesRegex(ValueError, "start after the original failed run"):
+            validate_evidence("resolved", "original run", original, candidate)
+
+    def test_resolved_rejects_original_run_that_did_not_fail(self):
+        original = {"workflow_id": 10, "head_branch": "main", "status": "completed", "conclusion": "success", "run_started_at": "2026-11-23T10:00:00Z"}
+        candidate = {"workflow_id": 10, "head_branch": "main", "status": "completed", "conclusion": "success", "run_started_at": "2026-11-23T10:10:00Z"}
+        with self.assertRaisesRegex(ValueError, "original run to be a completed failure"):
+            validate_evidence("resolved", "original run", original, candidate)
+
+    def test_resolved_rejects_missing_timestamps(self):
+        original = {"workflow_id": 10, "head_branch": "main", "status": "completed", "conclusion": "failure"}
+        candidate = {"workflow_id": 10, "head_branch": "main", "status": "completed", "conclusion": "success"}
+        with self.assertRaisesRegex(ValueError, "requires timestamps"):
+            validate_evidence("resolved", "original run", original, candidate)
+
     def test_resolved_rejects_failed_replacement_run(self):
-        original = {"workflow_id": 10, "head_branch": "main"}
-        candidate = {"workflow_id": 10, "head_branch": "main", "status": "completed", "conclusion": "failure"}
+        original = {"workflow_id": 10, "head_branch": "main", "status": "completed", "conclusion": "failure", "run_started_at": "2026-11-23T10:00:00Z"}
+        candidate = {"workflow_id": 10, "head_branch": "main", "status": "completed", "conclusion": "failure", "run_started_at": "2026-11-23T10:10:00Z"}
         with self.assertRaises(ValueError):
             validate_evidence("resolved", "original run", original, candidate)
 
     def test_resolved_rejects_unrelated_workflow(self):
-        original = {"workflow_id": 10, "head_branch": "main"}
-        candidate = {"workflow_id": 11, "head_branch": "main", "status": "completed", "conclusion": "success"}
+        original = {"workflow_id": 10, "head_branch": "main", "status": "completed", "conclusion": "failure", "run_started_at": "2026-11-23T10:00:00Z"}
+        candidate = {"workflow_id": 11, "head_branch": "main", "status": "completed", "conclusion": "success", "run_started_at": "2026-11-23T10:10:00Z"}
         with self.assertRaises(ValueError):
             validate_evidence("resolved", "original run", original, candidate)
+
+    def test_issue_lifecycle_workflow_declares_dispatch_inputs_in_the_correct_event(self):
+        source = (ROOT / ".github/workflows/issue-lifecycle.yml").read_text(encoding="utf-8")
+        dispatch = source.split("  push:", 1)[0]
+        self.assertIn("  workflow_dispatch:\n    inputs:", dispatch)
+        self.assertNotIn("    inputs:", source.split("  push:", 1)[1])
+        self.assertNotIn("|| true", source)
+        self.assertIn("Failed to create or verify required lifecycle label", source)
 
     def test_failure_watch_uses_event_payload_and_survives_api_rate_limits(self):
         source = (ROOT / ".github/workflows/actions-failure-watch.yml").read_text(encoding="utf-8")
