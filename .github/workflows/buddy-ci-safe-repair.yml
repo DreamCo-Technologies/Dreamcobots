@@ -8,6 +8,7 @@ on:
       - "tools/build_division_model_fleet.py"
       - "tools/build_pages_connection_index.py"
       - "tools/build_actions_prospectus.py"
+      - "tools/audit_actions_health.py"
       - "tools/build_file_prospectus.py"
       - "tools/buddy_safe_repair.py"
       - "tools/buddy_failure_learning.py"
@@ -19,6 +20,15 @@ on:
       - "config/division-model-competitiveness-policy.json"
       - "config/masterbot-65-registry.json"
       - ".github/workflows/buddy-ci-safe-repair.yml"
+      - ".github/workflows/issue-lifecycle.yml"
+      - ".github/workflows/issue-intelligence.yml"
+      - ".github/workflows/actions-failure-watch.yml"
+      - ".github/workflows/buddy-continuous-repair.yml"
+      - ".github/workflows/greenkeeper-root-cause.yml"
+      - ".github/workflows/greenkeeper-orchestrator.yml"
+      - "tools/issue_lifecycle.py"
+      - "tools/issue_intelligence.py"
+      - "tests/test_issue_lifecycle.py"
   workflow_run:
     workflows:
       - "DreamCo Division Mastery Engine"
@@ -117,6 +127,7 @@ jobs:
           python tools/build_buddy_dataset_routes.py
           python tools/build_division_model_fleet.py
           python tools/build_pages_connection_index.py
+          python tools/audit_actions_health.py
           python tools/build_actions_prospectus.py
           python tools/build_file_prospectus.py
       - name: Verify repaired indexes and Buddy repair-learning tests
@@ -129,7 +140,7 @@ jobs:
           python tools/build_file_prospectus.py --check
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
-          python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_dataset_route_check tests.test_file_prospectus_inventory
+          python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_dataset_route_check tests.test_file_prospectus_inventory tests.test_issue_lifecycle
           git diff --check
       - name: Detect allowlisted generated changes
         id: changes
