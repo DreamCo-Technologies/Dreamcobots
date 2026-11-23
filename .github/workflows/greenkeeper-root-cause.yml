@@ -11,8 +11,8 @@ permissions:
   actions: read
 
 concurrency:
-  group: greenkeeper-root-cause-${{ github.ref }}
-  cancel-in-progress: true
+  group: greenkeeper-root-cause-${{ github.event.workflow_run.id || github.run_id }}
+  cancel-in-progress: false
 
 jobs:
   analyze:
