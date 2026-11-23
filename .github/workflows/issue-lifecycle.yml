@@ -1,0 +1,55 @@
+name: Issue Lifecycle Status
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: GitHub issue number
+        required: true
+        type: number
+      status:
+        description: Lifecycle state
+        required: true
+        type: choice
+        options:
+          - new
+          - investigating
+          - fixing
+          - retest
+          - blocked
+          - resolved
+      evidence_run_id:
+        description: Matching workflow run ID (required for retest/resolved)
+        required: false
+        type: string
+
+permissions:
+  actions: read
+  issues: write
+
+concurrency:
+  group: issue-lifecycle-${{ inputs.issue_number }}
+  cancel-in-progress: false
+
+jobs:
+  transition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Validate and apply issue lifecycle status
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          args=(--issue-number "${{ inputs.issue_number }}" --status "${{ inputs.status }}")
+          if [ -n "${{ inputs.evidence_run_id }}" ]; then
+            args+=(--evidence-run-id "${{ inputs.evidence_run_id }}")
+          fi
+          python3 tools/issue_lifecycle.py "${args[@]}"
