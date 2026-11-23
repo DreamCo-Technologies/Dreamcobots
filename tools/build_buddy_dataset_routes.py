@@ -109,6 +109,17 @@ def build() -> dict:
         "automatic_weight_updates": False
     }
 
+def matches_existing(payload: dict, existing_text: str) -> bool:
+    """Compare generated content while preserving its original generation timestamp."""
+    try:
+        existing = json.loads(existing_text)
+    except (TypeError, ValueError):
+        return False
+    expected = dict(payload)
+    expected["generated_at"] = existing.get("generated_at")
+    return existing_text == json.dumps(expected, indent=2, ensure_ascii=False) + "\n"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
@@ -116,7 +127,7 @@ def main() -> int:
     payload = build()
     encoded = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
     if args.check:
-        if not OUT.exists() or OUT.read_text(encoding="utf-8") != encoded:
+        if not OUT.exists() or not matches_existing(payload, OUT.read_text(encoding="utf-8")):
             raise SystemExit(f"Dataset route artifact is stale: {OUT.relative_to(ROOT)}")
     else:
         OUT.parent.mkdir(parents=True, exist_ok=True)
