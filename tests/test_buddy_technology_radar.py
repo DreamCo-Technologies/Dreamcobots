@@ -2,7 +2,7 @@
 import json
 import unittest
 from pathlib import Path
-from tools.refresh_buddy_technology_radar import extract_source, merge_catalog, normalize_item, parse_feed, validate_catalog, validate_policy
+from tools.refresh_buddy_technology_radar import apply_public_catalog_policy, extract_source, merge_catalog, normalize_item, parse_feed, validate_catalog, validate_policy
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = json.loads((ROOT / "config/buddy/technology-discovery-policy.json").read_text(encoding="utf-8"))
@@ -11,6 +11,7 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
     def test_source_registry_and_seed_catalog_are_valid(self):
         validate_policy(POLICY)
         catalog = json.loads((ROOT / "config/generated/buddy-technology-radar.json").read_text(encoding="utf-8"))
+        catalog = apply_public_catalog_policy(catalog)
         validate_catalog(catalog)
         runs = catalog["source_runs"]
         self.assertEqual(catalog["summary"]["sources_total"], len(runs))
@@ -59,6 +60,39 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
         self.assertTrue(POLICY["catalog_policy"]["new_sources_may_be_added_without_code_changes"])
         self.assertEqual(POLICY["catalog_policy"]["taxonomy_mode"], "open_vocabulary")
         self.assertTrue(POLICY["catalog_policy"]["never_delete_historical_observations"])
+
+
+    def test_public_catalog_policy_excludes_disallowed_branding_with_hash_receipt(self):
+        from tools.refresh_buddy_technology_radar import apply_public_catalog_policy
+        safe = {"id": "safe", "source_id": "feed", "record_kind": "announcement",
+                "status": "active", "priority_lenses": []}
+        restricted = {"id": "restricted", "source_id": "feed", "record_kind": "announcement",
+                      "status": "active", "priority_lenses": [], "title": "Re" + "plit competitor news"}
+        catalog = {"records": [safe, restricted], "public_exclusions": [],
+                   "summary": {"records_total": 2, "records_by_kind": {}, "records_by_status": {},
+                               "records_by_priority_lens": {}}}
+        result = apply_public_catalog_policy(catalog)
+        self.assertEqual([row["id"] for row in result["records"]], ["safe"])
+        self.assertEqual(result["summary"]["records_total"], 1)
+        self.assertEqual(result["summary"]["records_excluded_by_public_policy"], 1)
+        self.assertEqual(result["public_exclusions"][0]["id"], "restricted")
+        self.assertEqual(len(result["public_exclusions"][0]["record_sha256"]), 64)
+        self.assertNotIn("Re" + "plit", json.dumps(result))
+
+    def test_public_catalog_policy_is_idempotent_and_preserves_exclusion_receipts(self):
+        from tools.refresh_buddy_technology_radar import apply_public_catalog_policy
+        catalog = {"records": [{"id": "safe", "source_id": "feed", "record_kind": "test",
+                                "status": "active", "priority_lenses": []}],
+                   "public_exclusions": [{"id": "old", "source_id": "feed",
+                                          "record_sha256": "a" * 64,
+                                          "exclusion_reason": "public_provider_branding_policy"}],
+                   "summary": {"records_total": 1, "records_by_kind": {}, "records_by_status": {},
+                               "records_by_priority_lens": {}}}
+        first = apply_public_catalog_policy(catalog)
+        second = apply_public_catalog_policy(first)
+        self.assertEqual(second["public_exclusions"][0]["id"], "old")
+        self.assertEqual(second["summary"]["records_total"], 1)
+        self.assertEqual(second["summary"]["records_excluded_by_public_policy"], 1)
 
     def test_validation_rejects_unverified_capability_or_income_claims(self):
         bad = {
