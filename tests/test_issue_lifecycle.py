@@ -30,6 +30,13 @@ class IssueLifecycleTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_evidence("resolved", "original run", original, candidate)
 
+    def test_failure_watch_uses_event_payload_and_survives_api_rate_limits(self):
+        source = (ROOT / ".github/workflows/actions-failure-watch.yml").read_text(encoding="utf-8")
+        self.assertNotIn('gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID"', source)
+        self.assertIn("if gh api --paginate", source)
+        self.assertIn('availability: "unavailable"', source)
+        self.assertIn("Job metadata unavailable:", source)
+
     def test_workflow_run_handlers_use_per_event_concurrency_keys(self):
         paths = [
             ".github/workflows/actions-failure-watch.yml",
