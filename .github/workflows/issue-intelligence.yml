@@ -30,22 +30,28 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          for spec in \
-            'ci-failure:B60205:GitHub Actions failure' \
-            'severity:high:D73A4A:High severity CI issue' \
-            'severity:medium:FBCA04:Medium severity CI issue' \
-            'severity:low:0E8A16:Low severity CI issue' \
-            'ci:dependency:5319E7:Dependency failure' \
-            'ci:test:5319E7:Test failure' \
-            'ci:lint:5319E7:Lint failure' \
-            'ci:build:5319E7:Build failure' \
-            'ci:configuration:5319E7:Configuration failure' \
-            'ci:permissions:5319E7:Permissions failure' \
-            'ci:timeout:5319E7:Timeout failure' \
-            'ci:workflow:5319E7:Workflow failure'; do
-            IFS=: read -r name color description <<< "$spec"
+          while IFS='|' read -r name color description; do
             gh label create "$name" --color "$color" --description "$description" --force || true
-          done
+          done <<'LABELS'
+          ci-failure|B60205|GitHub Actions failure
+          severity:high|D73A4A|High severity CI issue
+          severity:medium|FBCA04|Medium severity CI issue
+          severity:low|0E8A16|Low severity CI issue
+          ci:dependency|5319E7|Dependency failure
+          ci:test|5319E7|Test failure
+          ci:lint|5319E7|Lint failure
+          ci:build|5319E7|Build failure
+          ci:configuration|5319E7|Configuration failure
+          ci:permissions|5319E7|Permissions failure
+          ci:timeout|5319E7|Timeout failure
+          ci:workflow|5319E7|Workflow failure
+          status:new|1D76DB|New issue awaiting triage
+          status:investigating|FBCA04|Root cause investigation in progress
+          status:fixing|D93F0B|A repair is being implemented
+          status:retest|5319E7|Repair is undergoing verification
+          status:blocked|B60205|Blocked pending an owner action or dependency
+          status:resolved|0E8A16|Verified resolved with passing evidence
+          LABELS
       - name: Run failure triage
         env:
           GH_TOKEN: ${{ github.token }}
