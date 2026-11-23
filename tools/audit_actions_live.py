@@ -24,6 +24,10 @@ PUBLIC_JSON = ROOT / "website" / "data" / "actions-live-health.json"
 PER_PAGE = 100
 MAX_RUN_PAGES = 12
 
+class LiveAuditUnavailable(RuntimeError):
+    """GitHub API access is unavailable, commonly due to installation rate limits."""
+
+
 TARGETS = {
     "dreamcobots_workflows.yml",
     "observability.yml",
@@ -72,7 +76,7 @@ def api(path: str) -> dict:
                 print(f"GitHub API rate/abuse limit ({exc.code}); retrying in {delay}s", flush=True)
                 time.sleep(delay)
                 continue
-            raise RuntimeError(f"GitHub API {exc.code} for {path}: {body[:600]}") from exc
+            raise LiveAuditUnavailable(f"GitHub API {exc.code} for {path}: {body[:600]}") from exc
     raise RuntimeError(f"GitHub API retries exhausted for {path}")
 
 
@@ -142,10 +146,42 @@ def build_workflow_rows(workflows: list[dict], runs: list[dict], local: set[str]
 
 def main() -> int:
     repo = os.environ.get("GITHUB_REPOSITORY", "DreamCo-Technologies/Dreamcobots")
-    workflows = api(f"/repos/{repo}/actions/workflows?per_page=100").get("workflows", [])
+    try:
+        workflows = api(f"/repos/{repo}/actions/workflows?per_page=100").get("workflows", [])
+        cutoff = datetime.now(timezone.utc) - timedelta(days=30)
+        runs, pages, coverage_complete = collect_recent_runs(repo, cutoff)
+    except LiveAuditUnavailable as exc:
+        generated_at = datetime.now(timezone.utc).isoformat()
+        payload = {
+            "schema": "dreamco.actions_live_health.v2",
+            "status": "unavailable",
+            "generated_at": generated_at,
+            "repository": repo,
+            "workflow_count_from_github": None,
+            "run_records_sampled": 0,
+            "run_pages_sampled": 0,
+            "run_window_coverage_complete": False,
+            "run_window_note": "Live GitHub Actions state was not available; no run is inferred to be passing or failing.",
+            "unavailable_reason": str(exc),
+            "target_workflows": [],
+            "all_workflows": [],
+            "truth_boundary": "Live run state is unavailable. Do not interpret this report as evidence that Actions runs passed; use the GitHub Actions page directly.",
+        }
+        for output in (OUT_JSON, PUBLIC_JSON):
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(json.dumps(payload, indent=2) + "\\n", encoding="utf-8")
+        OUT_MD.parent.mkdir(parents=True, exist_ok=True)
+        OUT_MD.write_text(
+            "# GitHub Actions Live Health\\n\\n"
+            "**Status: UNAVAILABLE**\\n\\n"
+            + payload["unavailable_reason"] + "\\n\\n"
+            + payload["truth_boundary"] + "\\n",
+            encoding="utf-8",
+        )
+        print(json.dumps({"ok": True, "status": "unavailable", "warning": payload["unavailable_reason"]}, indent=2))
+        return 0
+
     local = {p.name for p in (ROOT / ".github" / "workflows").glob("*.yml")} | {p.name for p in (ROOT / ".github" / "workflows").glob("*.yaml")}
-    cutoff = datetime.now(timezone.utc) - timedelta(days=30)
-    runs, pages, coverage_complete = collect_recent_runs(repo, cutoff)
     rows = build_workflow_rows(workflows, runs, local, cutoff)
 
     target_rows = [row for row in rows if row["targeted"]]
