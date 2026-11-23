@@ -110,7 +110,12 @@ def build() -> dict:
     }
 
 def matches_existing(payload: dict, existing_text: str) -> bool:
-    """Compare generated content while preserving its original generation timestamp."""
+    """Compare generated content while preserving its original generation timestamp.
+
+    ``generated_at`` is intentionally volatile metadata. Comparing a freshly
+    generated timestamp makes every --check fail even when every route is
+    byte-for-byte equivalent apart from that field.
+    """
     try:
         existing = json.loads(existing_text)
     except (TypeError, ValueError):
