@@ -2,10 +2,6 @@ name: Issue Lifecycle Status
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/issue-lifecycle.yml"
     inputs:
       issue_number:
         description: GitHub issue number
@@ -26,15 +22,19 @@ on:
         description: Matching workflow run ID (required for retest/resolved)
         required: false
         type: string
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/issue-lifecycle.yml"
 
-# Safety invariant: lifecycle labels never close an issue; resolved requires matching successful workflow evidence.
+# Lifecycle labels never close an issue; resolved requires later successful evidence.
 
 permissions:
   actions: read
   issues: write
 
 concurrency:
-  group: issue-lifecycle-${{ inputs.issue_number }}
+  group: issue-lifecycle-${{ github.event.inputs.issue_number || github.run_id }}
   cancel-in-progress: false
 
 jobs:
@@ -59,7 +59,13 @@ jobs:
             if grep -Fxq "$name" <<< "$existing"; then
               continue
             fi
-            gh label create "$name" --repo "$GH_REPO" --color "$color" --description "$description" || true
+            if ! gh label create "$name" --repo "$GH_REPO" --color "$color" --description "$description"; then
+              existing="$(gh api "repos/$GH_REPO/labels?per_page=100" --paginate --jq '.[].name')"
+              if ! grep -Fxq "$name" <<< "$existing"; then
+                echo "Failed to create or verify required lifecycle label: $name" >&2
+                exit 1
+              fi
+            fi
             existing="$(printf '%s\n%s' "$existing" "$name")"
           done <<'LABELS'
           status:new|1D76DB|New issue awaiting triage
