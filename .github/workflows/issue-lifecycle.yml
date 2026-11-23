@@ -2,6 +2,10 @@ name: Issue Lifecycle Status
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/issue-lifecycle.yml"
     inputs:
       issue_number:
         description: GitHub issue number
@@ -66,6 +70,7 @@ jobs:
           status:resolved|0E8A16|Verified resolved with passing evidence
           LABELS
       - name: Validate and apply issue lifecycle status
+        if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
