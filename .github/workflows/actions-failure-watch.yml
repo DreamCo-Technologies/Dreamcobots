@@ -40,7 +40,7 @@ permissions:
   issues: read
 
 concurrency:
-  group: actions-failure-watch
+  group: actions-failure-watch-${{ github.event.workflow_run.id || github.run_id }}
   cancel-in-progress: false
 
 jobs:
