@@ -17,7 +17,10 @@ class DependencyReviewScopeTests(unittest.TestCase):
 
     def test_dependency_review_job_runs_and_records_explicit_not_applicable(self):
         text = WORKFLOW.read_text(encoding="utf-8")
-        self.assertNotIn("    if: needs.detect-dependency-changes.outputs.changed == 'true'", text)
+        job_lines = text.splitlines()
+        job_index = job_lines.index("  dependency-review:")
+        self.assertEqual(job_lines[job_index + 1], "    needs: detect-dependency-changes")
+        self.assertEqual(job_lines[job_index + 2], "    runs-on: ubuntu-latest")
         self.assertIn("id: review", text)
         self.assertIn("if: needs.detect-dependency-changes.outputs.changed == 'true'", text)
         self.assertIn("Verify dependency review evidence or explicit not-applicable state", text)
