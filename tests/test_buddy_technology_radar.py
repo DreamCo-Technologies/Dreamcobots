@@ -60,6 +60,39 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
         self.assertEqual(POLICY["catalog_policy"]["taxonomy_mode"], "open_vocabulary")
         self.assertTrue(POLICY["catalog_policy"]["never_delete_historical_observations"])
 
+
+    def test_public_catalog_policy_excludes_disallowed_branding_with_hash_receipt(self):
+        from tools.refresh_buddy_technology_radar import apply_public_catalog_policy
+        safe = {"id": "safe", "source_id": "feed", "record_kind": "announcement",
+                "status": "active", "priority_lenses": []}
+        restricted = {"id": "restricted", "source_id": "feed", "record_kind": "announcement",
+                      "status": "active", "priority_lenses": [], "title": "Replit competitor news"}
+        catalog = {"records": [safe, restricted], "public_exclusions": [],
+                   "summary": {"records_total": 2, "records_by_kind": {}, "records_by_status": {},
+                               "records_by_priority_lens": {}}}
+        result = apply_public_catalog_policy(catalog)
+        self.assertEqual([row["id"] for row in result["records"]], ["safe"])
+        self.assertEqual(result["summary"]["records_total"], 1)
+        self.assertEqual(result["summary"]["records_excluded_by_public_policy"], 1)
+        self.assertEqual(result["public_exclusions"][0]["id"], "restricted")
+        self.assertEqual(len(result["public_exclusions"][0]["record_sha256"]), 64)
+        self.assertNotIn("Replit", json.dumps(result))
+
+    def test_public_catalog_policy_is_idempotent_and_preserves_exclusion_receipts(self):
+        from tools.refresh_buddy_technology_radar import apply_public_catalog_policy
+        catalog = {"records": [{"id": "safe", "source_id": "feed", "record_kind": "test",
+                                "status": "active", "priority_lenses": []}],
+                   "public_exclusions": [{"id": "old", "source_id": "feed",
+                                          "record_sha256": "a" * 64,
+                                          "exclusion_reason": "public_provider_branding_policy"}],
+                   "summary": {"records_total": 1, "records_by_kind": {}, "records_by_status": {},
+                               "records_by_priority_lens": {}}}
+        first = apply_public_catalog_policy(catalog)
+        second = apply_public_catalog_policy(first)
+        self.assertEqual(second["public_exclusions"][0]["id"], "old")
+        self.assertEqual(second["summary"]["records_total"], 1)
+        self.assertEqual(second["summary"]["records_excluded_by_public_policy"], 1)
+
     def test_validation_rejects_unverified_capability_or_income_claims(self):
         bad = {
             "schema": "dreamco.buddy.technology_radar.v1",
