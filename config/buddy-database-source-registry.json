@@ -1,0 +1,217 @@
+{
+  "schema": "dreamco.database_source_registry.v1",
+  "version": "1.0.0",
+  "status": "DOCUMENTED_NOT_CONNECTED",
+  "purpose": "Inventory database and retrieval sources without asserting authentication, connection, health, backup, or production readiness.",
+  "policy": {
+    "routable_lifecycle_states": [
+      "CONNECTED",
+      "TESTED",
+      "PRODUCTION"
+    ],
+    "classification_order": [
+      "public",
+      "internal",
+      "confidential",
+      "restricted"
+    ],
+    "cost_order": [
+      "free",
+      "low",
+      "medium",
+      "high"
+    ],
+    "consistency_order": [
+      "eventual",
+      "strong"
+    ],
+    "require_connected_connector": true,
+    "require_healthy_source": true,
+    "write_requires_approval_id": true,
+    "write_requires_idempotency_key": true,
+    "write_requires_transaction_support": true,
+    "automatic_write_failover": false
+  },
+  "source_of_truth_rules": {
+    "operational_application_state": "PostgreSQL via server/db.ts and shared/schema.ts; DATABASE_URL is required but its runtime value and connectivity were not inspected.",
+    "dataset_metadata_catalog": "Local SQLite via buddy/datasets/hub.py; default path is code-configured but database-file presence was not checked.",
+    "approved_dataset_snapshots": "Read-only SQLite and optional PostgreSQL snapshots via buddy/datasets/database_sources.py; not a general database router.",
+    "retrieval_backends": "config/rag-backend-catalog.json is a catalog of candidates, not connection evidence."
+  },
+  "sources": [
+    {
+      "source_id": "dreamco-app-postgres",
+      "provider": "node-postgres",
+      "engine": "postgresql",
+      "environment": "application",
+      "owner": "DreamCo platform",
+      "purpose": "Operational application state",
+      "schema_version": "shared/schema.ts plus migrations/",
+      "max_data_classification": "internal",
+      "permitted_operations": [],
+      "planned_operations": [
+        "read",
+        "write"
+      ],
+      "data_types": [
+        "operational_state"
+      ],
+      "query_capabilities": [
+        "sql_select",
+        "transactional_write"
+      ],
+      "freshness_seconds": null,
+      "consistency": "unknown",
+      "latency_ms": null,
+      "cost_tier": "unknown",
+      "residency_regions": [],
+      "retention": "Not verified in this scan",
+      "credential_status": "DATABASE_URL required; value not inspected",
+      "connector_status": "NOT_VERIFIED",
+      "health": "UNKNOWN",
+      "backup_restore_status": "NOT_VERIFIED",
+      "lifecycle_state": "CONFIGURED",
+      "write_enabled": false,
+      "supports_idempotency": false,
+      "transaction_support": false,
+      "write_approval_refs": [],
+      "source_code": [
+        "server/db.ts",
+        "drizzle.config.ts",
+        "shared/schema.ts"
+      ]
+    },
+    {
+      "source_id": "dreamco-dataset-hub-sqlite",
+      "provider": "local",
+      "engine": "sqlite",
+      "environment": "local",
+      "owner": "Buddy dataset platform",
+      "purpose": "Dataset cards, versions, candidate metadata, research tasks",
+      "schema_version": "Defined by buddy/datasets/hub.py",
+      "max_data_classification": "internal",
+      "permitted_operations": [],
+      "planned_operations": [
+        "read",
+        "write"
+      ],
+      "data_types": [
+        "dataset_metadata",
+        "research_tasks"
+      ],
+      "query_capabilities": [
+        "sql_select",
+        "transactional_write"
+      ],
+      "freshness_seconds": null,
+      "consistency": "unknown",
+      "latency_ms": null,
+      "cost_tier": "free",
+      "residency_regions": [],
+      "retention": "Not verified in this scan",
+      "credential_status": "NOT_APPLICABLE",
+      "connector_status": "NOT_VERIFIED",
+      "health": "UNKNOWN",
+      "backup_restore_status": "NOT_VERIFIED",
+      "lifecycle_state": "CONFIGURED",
+      "write_enabled": false,
+      "supports_idempotency": false,
+      "transaction_support": false,
+      "write_approval_refs": [],
+      "runtime_path": ".dreamco/dataset-hub/catalog.sqlite3",
+      "source_code": [
+        "buddy/datasets/hub.py"
+      ]
+    },
+    {
+      "source_id": "dreamco-postgres-readonly-snapshot",
+      "provider": "psycopg",
+      "engine": "postgresql",
+      "environment": "optional-external-snapshot",
+      "owner": "Dataset engineering",
+      "purpose": "Explicitly authorized read-only dataset snapshots",
+      "schema_version": "Caller supplied",
+      "max_data_classification": "internal",
+      "permitted_operations": [],
+      "planned_operations": [
+        "read"
+      ],
+      "data_types": [
+        "dataset_snapshot"
+      ],
+      "query_capabilities": [
+        "sql_select"
+      ],
+      "freshness_seconds": null,
+      "consistency": "unknown",
+      "latency_ms": null,
+      "cost_tier": "unknown",
+      "residency_regions": [],
+      "retention": "Caller controlled; not verified",
+      "credential_status": "DREAMCO_POSTGRES_DSN required; value not inspected",
+      "connector_status": "NOT_VERIFIED",
+      "health": "UNKNOWN",
+      "backup_restore_status": "NOT_APPLICABLE",
+      "lifecycle_state": "DOCUMENTED",
+      "write_enabled": false,
+      "supports_idempotency": false,
+      "transaction_support": false,
+      "write_approval_refs": [],
+      "source_code": [
+        "buddy/datasets/database_sources.py"
+      ]
+    },
+    {
+      "source_id": "dreamco-rag-backend-catalog",
+      "provider": "DreamCo config catalog",
+      "engine": "vector-backend-catalog",
+      "environment": "catalog-only",
+      "owner": "Buddy retrieval platform",
+      "purpose": "Catalog of local, FAISS, Chroma, Qdrant, Weaviate, Milvus, pgvector, and Pinecone options",
+      "schema_version": "config/rag-backend-catalog.json",
+      "max_data_classification": "public",
+      "permitted_operations": [],
+      "planned_operations": [
+        "read"
+      ],
+      "data_types": [
+        "embeddings",
+        "retrieval_index"
+      ],
+      "query_capabilities": [
+        "vector_search",
+        "keyword_search"
+      ],
+      "freshness_seconds": null,
+      "consistency": "unknown",
+      "latency_ms": null,
+      "cost_tier": "unknown",
+      "residency_regions": [],
+      "retention": "Not verified",
+      "credential_status": "NOT_VERIFIED",
+      "connector_status": "CATALOG_ONLY",
+      "health": "UNKNOWN",
+      "backup_restore_status": "NOT_VERIFIED",
+      "lifecycle_state": "DISCOVERED",
+      "write_enabled": false,
+      "supports_idempotency": false,
+      "transaction_support": false,
+      "write_approval_refs": [],
+      "source_code": [
+        "config/rag-backend-catalog.json"
+      ]
+    }
+  ],
+  "unverified_candidates": [
+    {
+      "provider": "Supabase",
+      "status": "NOT_FOUND_IN_ACTIVE_PACKAGE_DEPENDENCIES_OR_CONNECTION_CODE",
+      "note": "No @supabase/supabase-js dependency found in package.json scan."
+    },
+    {
+      "provider": "Firebase/Firestore",
+      "status": "NOT_FOUND_IN_ACTIVE_PACKAGE_DEPENDENCIES_OR_CONNECTION_CODE",
+      "note": "Firebase specialist documentation exists, but no firebase-admin SDK dependency was found in package.json scan."
+    }
+  ]
+}

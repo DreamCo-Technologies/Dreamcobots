@@ -15,6 +15,9 @@ on:
       - "tools/run_buddy_model_benchmark.py"
       - "tests/test_buddy_dataset_hub_runtime.py"
       - "tests/test_buddy_database_sources.py"
+      - "tests/test_buddy_database_router.py"
+      - "config/buddy-database-source-registry.json"
+      - "docs/BUDDY_DATABASE_ROUTING_CONTRACT.md"
       - "tools/route_buddy_unknown_problem.py"
       - "tools/run_buddy_training_job.py"
       - "tools/create_buddy_training_job.py"
@@ -74,7 +77,7 @@ jobs:
         run: |
           MATRIX=$(python tools/dreamco_division_mastery_orchestrator.py --matrix)
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
-          python -m unittest tests.test_dreamco_division_mastery_orchestrator tests.test_division_model_fleet tests.test_buddy_engineering_capability_contract tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime tests.test_buddy_database_sources tests.test_dreamco_original_training_examples tests.test_buddy_dataset_discovery_fleet tests.test_buddy_cross_model_benchmark tests.test_buddy_failure_learning tests.test_buddy_safe_repair
+          python -m unittest tests.test_dreamco_division_mastery_orchestrator tests.test_division_model_fleet tests.test_buddy_engineering_capability_contract tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime tests.test_buddy_database_sources tests.test_buddy_database_router tests.test_dreamco_original_training_examples tests.test_buddy_dataset_discovery_fleet tests.test_buddy_cross_model_benchmark tests.test_buddy_failure_learning tests.test_buddy_safe_repair
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
           python tools/build_division_model_fleet.py --check
