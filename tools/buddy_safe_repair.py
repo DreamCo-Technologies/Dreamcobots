@@ -10,8 +10,12 @@ def repair_plan(observation:dict)->list[list[str]]:
  step=str(observation.get("failed_step","")).lower()
  workflow=str(observation.get("workflow","")).lower()
  job=str(observation.get("job","")).lower()
+ if workflow=="buddy ci safe generated-artifact repair" and ("verify repaired indexes" in step or "detect allowlisted generated changes" in step):
+  return [[sys.executable,"tools/build_buddy_dataset_routes.py"],[sys.executable,"tools/build_division_model_fleet.py"],[sys.executable,"tools/build_pages_connection_index.py"],[sys.executable,"tools/build_actions_prospectus.py"],[sys.executable,"tools/build_file_prospectus.py"]]
  if kind=="generated-index":
   context=" ".join((workflow,job,step))
+  if "buddy ci safe generated-artifact repair" in workflow:
+   return [[sys.executable,"tools/build_buddy_dataset_routes.py"],[sys.executable,"tools/build_division_model_fleet.py"],[sys.executable,"tools/build_pages_connection_index.py"],[sys.executable,"tools/build_actions_prospectus.py"],[sys.executable,"tools/build_file_prospectus.py"]]
   if "division" in workflow or "fleet" in job:
    return [[sys.executable,"tools/build_division_model_fleet.py"]]
   if "dataset" in context or "route" in context:
