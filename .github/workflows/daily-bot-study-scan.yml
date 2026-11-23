@@ -32,3 +32,5 @@ jobs:
         run: python3 tools/daily_bot_study_scan.py --check
       - name: Verify daily scan contract
         run: python3 -m unittest tests.test_daily_bot_study_scan
+
+# A nonzero --check result means required files are missing; open study tasks remain backlog telemetry.
