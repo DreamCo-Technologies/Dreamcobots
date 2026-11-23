@@ -1,9 +1,33 @@
 import unittest
-from tools.buddy_failure_learning import classify,fingerprint,recommend,update_memory,route_masterbots,build_training_candidate,build_training_event
+from tools.buddy_failure_learning import classify,fingerprint,recommend,update_memory,route_masterbots,build_training_candidate,build_training_event,historical_candidates
 class BuddyFailureLearningTests(unittest.TestCase):
  def setUp(self):
   self.observation={"repository":"DreamCo-Technologies/Dreamcobots","workflow":"Actions Health",
    "job":"contract-tests","failed_step":"validate generated prospectus","error_signature":"inventory mismatch"}
+ def test_historical_candidates_are_ranked_but_never_verified_or_auto_applied(self):
+  index={"records":[
+   {"commit":"a"*40,"subject":"fix generated inventory mismatch","search_terms":["generated","inventory","mismatch"],
+    "changed_paths":["tools/inventory.py"],"test_paths":["tests/test_inventory.py"],
+    "verified_fix":False,"training_eligible":False},
+   {"commit":"b"*40,"subject":"unrelated documentation","search_terms":["documentation"],
+    "changed_paths":["README.md"],"test_paths":[],"verified_fix":False,"training_eligible":False},
+   {"commit":"c"*40,"subject":"unsafe candidate","search_terms":["inventory","mismatch"],
+    "changed_paths":["tools/x.py"],"verified_fix":True,"training_eligible":True}
+  ]}
+  candidates=historical_candidates(self.observation,index)
+  self.assertEqual(len(candidates),1)
+  self.assertEqual(candidates[0]["commit"],"a"*40)
+  self.assertFalse(candidates[0]["verified_fix"])
+  self.assertFalse(candidates[0]["training_eligible"])
+  self.assertFalse(candidates[0]["auto_apply_allowed"])
+ def test_recommendation_exposes_historical_leads_without_changing_risk_policy(self):
+  index={"records":[{"commit":"d"*40,"subject":"inventory mismatch repair",
+   "search_terms":["inventory","mismatch"],"changed_paths":["tools/inventory.py"],
+   "test_paths":["tests/test_inventory.py"],"verified_fix":False,"training_eligible":False}]}
+  plan=recommend(self.observation,{"incidents":[]},index)
+  self.assertTrue(plan["automatic_code_change_allowed"])
+  self.assertEqual(plan["historical_candidates"][0]["commit"],"d"*40)
+  self.assertFalse(plan["historical_candidates"][0]["auto_apply_allowed"])
  def test_fingerprint_ignores_run_and_commit_identifiers(self):
   self.assertEqual(fingerprint({**self.observation,"run_id":12,"commit":"abc"}),
    fingerprint({**self.observation,"run_id":99,"commit":"def"}))
