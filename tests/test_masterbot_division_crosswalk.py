@@ -19,24 +19,11 @@ class MasterBotDivisionCrosswalkTests(unittest.TestCase):
         self.assertNotIn("memberDirectory", names)
 
     def test_only_exact_identity_matches_are_proposed(self):
-        bots = {"canonical_count": 65, "divisions": [
-            {"id": 1, "name": "DreamFinance"},
-            {"id": 2, "name": "UnmappedMasterBot"},
-        ]}
-        # This unit fixture intentionally tests the matching rule independently
-        # from the production registry's 65-entry invariant.
-        original = module.build_crosswalk
-        try:
-            module.build_crosswalk = lambda doc, domains: original(
-                {"canonical_count": 65, "divisions": [
-                    {"id": i + 1, "name": name} for i, name in enumerate(
-                        ["DreamFinance"] + [f"Unmapped{i}" for i in range(64)]
-                    )
-                ]}, domains
-            )
-            result = module.build_crosswalk(bots, ["DreamFinance", "DreamHealth"])
-        finally:
-            module.build_crosswalk = original
+        bots = [{"id": i + 1, "name": name} for i, name in enumerate(
+            ["DreamFinance"] + [f"Unmapped{i}" for i in range(64)]
+        )]
+        result = module.build_crosswalk({"canonical_count": 65, "divisions": bots},
+                                        ["DreamFinance", "DreamHealth"])
         self.assertEqual(result["domains"][0]["mapping_status"], "proposed_exact_name_match")
         self.assertEqual(result["domains"][0]["masterbot_id"], 1)
         self.assertEqual(result["domains"][1]["mapping_status"], "unresolved")
