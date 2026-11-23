@@ -8,6 +8,7 @@ import os
 import re
 import subprocess
 import sys
+from datetime import datetime
 
 STATUSES = {"new", "investigating", "fixing", "retest", "blocked", "resolved"}
 ACTIVE_RUN_STATES = {"queued", "pending", "in_progress", "waiting", "requested"}
@@ -48,10 +49,24 @@ def validate_evidence(status: str, issue_body: str, original_run: dict | None, c
         raise ValueError("Replacement evidence must come from the same branch as the original failure.")
     if status == "retest" and candidate_run.get("status") not in ACTIVE_RUN_STATES:
         raise ValueError("Retest status requires a matching workflow run that is still active or queued.")
-    if status == "resolved" and not (
-        candidate_run.get("status") == "completed" and candidate_run.get("conclusion") == "success"
-    ):
-        raise ValueError("Resolved status requires a completed, successful replacement run.")
+    if status == "resolved":
+        if original_run.get("status") != "completed" or original_run.get("conclusion") != "failure":
+            raise ValueError("Resolved status requires the original run to be a completed failure.")
+        if not (
+            candidate_run.get("status") == "completed" and candidate_run.get("conclusion") == "success"
+        ):
+            raise ValueError("Resolved status requires a completed, successful replacement run.")
+        original_started = original_run.get("run_started_at") or original_run.get("created_at")
+        candidate_started = candidate_run.get("run_started_at") or candidate_run.get("created_at")
+        if not original_started or not candidate_started:
+            raise ValueError("Resolved status requires timestamps for the original and replacement runs.")
+        try:
+            original_time = datetime.fromisoformat(original_started.replace("Z", "+00:00"))
+            candidate_time = datetime.fromisoformat(candidate_started.replace("Z", "+00:00"))
+        except (AttributeError, TypeError, ValueError) as exc:
+            raise ValueError("Resolved status requires valid run timestamps.") from exc
+        if candidate_time <= original_time:
+            raise ValueError("Replacement evidence must start after the original failed run.")
 
 
 def main() -> int:
