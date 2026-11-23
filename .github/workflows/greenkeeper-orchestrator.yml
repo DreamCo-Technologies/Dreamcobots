@@ -13,8 +13,8 @@ permissions:
   actions: read
 
 concurrency:
-  group: greenkeeper-orchestrator-${{ github.ref }}
-  cancel-in-progress: true
+  group: greenkeeper-orchestrator-${{ github.event.workflow_run.id || github.run_id }}
+  cancel-in-progress: false
 
 jobs:
   health-plan:
