@@ -30,8 +30,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          existing="$(gh api "repos/$GITHUB_REPOSITORY/labels?per_page=100" --paginate --jq '.[].name')"
           while IFS='|' read -r name color description; do
-            gh label create "$name" --color "$color" --description "$description" --force || true
+            if grep -Fxq "$name" <<< "$existing"; then
+              continue
+            fi
+            gh label create "$name" --color "$color" --description "$description" || true
+            existing="$(printf '%s\\n%s' "$existing" "$name")"
           done <<'LABELS'
           ci-failure|B60205|GitHub Actions failure
           severity:high|D73A4A|High severity CI issue
