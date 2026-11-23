@@ -23,7 +23,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: buddy-continuous-repair
+  group: buddy-continuous-repair-${{ github.event.workflow_run.id || github.run_id }}
   cancel-in-progress: false
 
 jobs:

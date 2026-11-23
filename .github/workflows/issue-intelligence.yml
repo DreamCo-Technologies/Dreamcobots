@@ -11,7 +11,7 @@ permissions:
   issues: write
 
 concurrency:
-  group: issue-intelligence
+  group: issue-intelligence-${{ github.event.workflow_run.id || github.run_id }}
   cancel-in-progress: false
 
 jobs:
@@ -25,27 +25,15 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Ensure issue labels
+      - name: Ensure status:new label exists
         env:
           GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
-          for spec in \
-            'ci-failure:B60205:GitHub Actions failure' \
-            'severity:high:D73A4A:High severity CI issue' \
-            'severity:medium:FBCA04:Medium severity CI issue' \
-            'severity:low:0E8A16:Low severity CI issue' \
-            'ci:dependency:5319E7:Dependency failure' \
-            'ci:test:5319E7:Test failure' \
-            'ci:lint:5319E7:Lint failure' \
-            'ci:build:5319E7:Build failure' \
-            'ci:configuration:5319E7:Configuration failure' \
-            'ci:permissions:5319E7:Permissions failure' \
-            'ci:timeout:5319E7:Timeout failure' \
-            'ci:workflow:5319E7:Workflow failure'; do
-            IFS=: read -r name color description <<< "$spec"
-            gh label create "$name" --color "$color" --description "$description" --force || true
-          done
+          if ! gh api "repos/$GITHUB_REPOSITORY/labels?per_page=100" --paginate --jq '.[].name' | grep -Fxq "status:new"; then
+            gh label create "status:new" --color "1D76DB" --description "New issue awaiting triage"
+          fi
       - name: Run failure triage
         env:
           GH_TOKEN: ${{ github.token }}

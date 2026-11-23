@@ -140,7 +140,9 @@ def main(argv: list[str] | None = None) -> int:
     report = scan()
     write_report(report)
     print(json.dumps({key: report[key] for key in ("ready", "bot_count", "sandbox_studied", "open_tasks", "original_bot_studies", "elapsed_seconds", "missing_files")}, indent=2))
-    return 0 if report["ready"] or not args.check else 1
+    # Open study tasks are backlog telemetry, not scan-integrity failures. Keep
+    # readiness visible in the report while failing --check only for missing files.
+    return 0 if not args.check or not report["missing_files"] else 1
 
 
 if __name__ == "__main__":

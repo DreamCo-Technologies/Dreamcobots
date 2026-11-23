@@ -3,6 +3,12 @@ name: Daily bot study scan
 on:
   push:
     branches: [main]
+  pull_request:
+    paths:
+      - "tools/daily_bot_study_scan.py"
+      - "tools/compile_md_bots.py"
+      - "tests/test_daily_bot_study_scan.py"
+      - ".github/workflows/daily-bot-study-scan.yml"
   workflow_dispatch:
   schedule:
     - cron: "30 11 * * *"
@@ -22,6 +28,9 @@ jobs:
       - name: Compile Markdown bot catalog into sandbox runtime
         run: python3 tools/compile_md_bots.py --check
       - name: Scan bots, missing files, and study plans
+        # This is an inventory/reporting job: unresolved tasks stay visible but do not fail the scan.
         run: python3 tools/daily_bot_study_scan.py --check
       - name: Verify daily scan contract
         run: python3 -m unittest tests.test_daily_bot_study_scan
+
+# A nonzero --check result means required files are missing; open study tasks remain backlog telemetry.

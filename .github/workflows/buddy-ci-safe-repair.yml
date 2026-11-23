@@ -8,7 +8,15 @@ on:
       - "tools/build_division_model_fleet.py"
       - "tools/build_pages_connection_index.py"
       - "tools/build_actions_prospectus.py"
+      - "tools/audit_actions_health.py"
+      - "tools/audit_actions_live.py"
+      - ".github/workflows/dependency-review.yml"
+      - "tests/test_dependency_review_scope.py"
+      - "tests/test_actions_live_health.py"
       - "tools/build_file_prospectus.py"
+      - "tools/daily_bot_study_scan.py"
+      - "tests/test_daily_bot_study_scan.py"
+      - ".github/workflows/daily-bot-study-scan.yml"
       - "tools/buddy_safe_repair.py"
       - "tools/buddy_failure_learning.py"
       - "tests/test_buddy_failure_learning.py"
@@ -19,6 +27,15 @@ on:
       - "config/division-model-competitiveness-policy.json"
       - "config/masterbot-65-registry.json"
       - ".github/workflows/buddy-ci-safe-repair.yml"
+      - ".github/workflows/issue-lifecycle.yml"
+      - ".github/workflows/issue-intelligence.yml"
+      - ".github/workflows/actions-failure-watch.yml"
+      - ".github/workflows/buddy-continuous-repair.yml"
+      - ".github/workflows/greenkeeper-root-cause.yml"
+      - ".github/workflows/greenkeeper-orchestrator.yml"
+      - "tools/issue_lifecycle.py"
+      - "tools/issue_intelligence.py"
+      - "tests/test_issue_lifecycle.py"
   workflow_run:
     workflows:
       - "DreamCo Division Mastery Engine"
@@ -117,6 +134,7 @@ jobs:
           python tools/build_buddy_dataset_routes.py
           python tools/build_division_model_fleet.py
           python tools/build_pages_connection_index.py
+          python tools/audit_actions_health.py
           python tools/build_actions_prospectus.py
           python tools/build_file_prospectus.py
       - name: Verify repaired indexes and Buddy repair-learning tests
@@ -129,14 +147,14 @@ jobs:
           python tools/build_file_prospectus.py --check
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
-          python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_dataset_route_check tests.test_file_prospectus_inventory
+          python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_dataset_route_check tests.test_file_prospectus_inventory tests.test_issue_lifecycle tests.test_actions_live_health tests.test_daily_bot_study_scan tests.test_dependency_review_scope
           git diff --check
       - name: Detect allowlisted generated changes
         id: changes
         shell: bash
         run: |
           set -euo pipefail
-          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/generated/file-prospectus config/buddy/run-with-buddy.generated.json config/generated/actions-prospectus.json config/generated/file-prospectus website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json; do
+          for path in artifacts/buddy-dataset-hub/dataset-routes.json artifacts/division-model-fleet config/generated/file-prospectus config/buddy/run-with-buddy.generated.json config/generated/actions-prospectus.json website/data/actions-health-report.json website/data/actions-prospectus.json website/data/run-prospectus.json website/data/run-prospectus-bots.json website/data/pages-connection-index.json; do
             if [ -e "$path" ]; then git add -A -- "$path"; fi
           done
           if git diff --cached --quiet; then

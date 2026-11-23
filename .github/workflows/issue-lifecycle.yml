@@ -1,0 +1,89 @@
+name: Issue Lifecycle Status
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: GitHub issue number
+        required: true
+        type: number
+      status:
+        description: Lifecycle state
+        required: true
+        type: choice
+        options:
+          - new
+          - investigating
+          - fixing
+          - retest
+          - blocked
+          - resolved
+      evidence_run_id:
+        description: Matching workflow run ID (required for retest/resolved)
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/issue-lifecycle.yml"
+
+# Lifecycle labels never close an issue; resolved requires later successful evidence.
+
+permissions:
+  actions: read
+  issues: write
+
+concurrency:
+  group: issue-lifecycle-${{ github.event.inputs.issue_number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  transition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Ensure lifecycle labels exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          existing="$(gh api "repos/$GH_REPO/labels?per_page=100" --paginate --jq '.[].name')"
+          while IFS='|' read -r name color description; do
+            if grep -Fxq "$name" <<< "$existing"; then
+              continue
+            fi
+            if ! gh label create "$name" --repo "$GH_REPO" --color "$color" --description "$description"; then
+              existing="$(gh api "repos/$GH_REPO/labels?per_page=100" --paginate --jq '.[].name')"
+              if ! grep -Fxq "$name" <<< "$existing"; then
+                echo "Failed to create or verify required lifecycle label: $name" >&2
+                exit 1
+              fi
+            fi
+            existing="$(printf '%s\n%s' "$existing" "$name")"
+          done <<'LABELS'
+          status:new|1D76DB|New issue awaiting triage
+          status:investigating|FBCA04|Root cause investigation in progress
+          status:fixing|D93F0B|A repair is being implemented
+          status:retest|5319E7|Repair is undergoing verification
+          status:blocked|B60205|Blocked pending an owner action or dependency
+          status:resolved|0E8A16|Verified resolved with passing evidence
+          LABELS
+      - name: Validate and apply issue lifecycle status
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          args=(--issue-number "${{ inputs.issue_number }}" --status "${{ inputs.status }}")
+          if [ -n "${{ inputs.evidence_run_id }}" ]; then
+            args+=(--evidence-run-id "${{ inputs.evidence_run_id }}")
+          fi
+          python3 tools/issue_lifecycle.py "${args[@]}"

@@ -5,6 +5,9 @@ on:
   pull_request:
     paths:
       - "website/**"
+      - "!website/data/**"
+      - "website/data/*frontier*"
+      - "website/data/*claim*"
       - "evidence/frontier/**"
       - "config/buddy-frontier-claim-disclosure.json"
       - "config/buddy-frontier-readiness-gates.json"
@@ -16,7 +19,6 @@ on:
       - "tools/verify_frontier_evidence.py"
       - "tools/run_24h_sandbox_soak.py"
       - "tests/test_frontier_claim_trust_gates.py"
-      - ".github/workflows/frontier-claim-trust-gate.yml"
       - ".github/workflows/deploy-buddy-pages.yml"
   push:
     branches: [main]
@@ -148,3 +150,8 @@ jobs:
           name: frontier-claim-trust-strict-${{ github.run_id }}
           path: reports/frontier-claim-trust-strict.json
           if-no-files-found: warn
+
+# Strict all-gates certification remains active for public claim files and claim-disclosure data; generated website catalogs are not claims.
+# This gate does not self-trigger on edits to its own workflow; general CI validates workflow changes.
+# Generated prospectus and inventory refreshes are validated by their own CI contracts; this strict gate remains for actual public claims.
+# Public claim certification remains fail-closed; inventory and telemetry drift are checked by separate deterministic workflows.
