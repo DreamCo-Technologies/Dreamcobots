@@ -172,9 +172,9 @@ def main() -> int:
             output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
         OUT_MD.parent.mkdir(parents=True, exist_ok=True)
         OUT_MD.write_text(
-            "# GitHub Actions Live Health\\n\\n"
-            "**Status: UNAVAILABLE**\\n\\n"
-            + payload["unavailable_reason"] + "\\n\\n"
+            "# GitHub Actions Live Health\n\n"
+            "**Status: UNAVAILABLE**\n\n"
+            + payload["unavailable_reason"] + "\n\n"
             + payload["truth_boundary"] + "\n",
             encoding="utf-8",
         )
