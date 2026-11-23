@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from tools.generate_buddy_bot_calculators import CONFIG_OUT, TEMPLATES, WEB_OUT, build_registry, stable_json
+from tools.generate_buddy_bot_calculators import CONFIG_OUT, TEMPLATES, WEB_OUT, build_registry, compact_web_json, stable_json
 
 
 class BuddyBotCalculatorTests(unittest.TestCase):
@@ -55,7 +55,7 @@ class BuddyBotCalculatorTests(unittest.TestCase):
         ))
         expected = stable_json(self.registry)
         self.assertEqual(CONFIG_OUT.read_text(encoding="utf-8"), expected)
-        self.assertEqual(WEB_OUT.read_text(encoding="utf-8"), expected)
+        self.assertEqual(WEB_OUT.read_text(encoding="utf-8"), compact_web_json(self.registry))
         self.assertEqual(json.loads(expected)["schema"], "dreamco.bot_calculator_registry.v1")
 
 
