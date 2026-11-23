@@ -299,6 +299,47 @@ def merge_catalog(existing: dict[str, Any], discovered: list[dict[str, Any]], so
     }
 
 
+
+PUBLIC_PROVIDER_PATTERN = re.compile(r"replit|\\bibm\\b|watson", re.IGNORECASE)
+
+
+def apply_public_catalog_policy(catalog: dict[str, Any]) -> dict[str, Any]:
+    """Exclude disallowed provider-branded records while retaining hashed audit metadata."""
+    retained = []
+    exclusions = {item["id"]: item for item in catalog.get("public_exclusions", []) if item.get("id")}
+    for record in catalog.get("records", []):
+        encoded = json.dumps(record, ensure_ascii=False, sort_keys=True)
+        if PUBLIC_PROVIDER_PATTERN.search(encoded):
+            exclusions[record["id"]] = {
+                "id": record["id"],
+                "source_id": record.get("source_id"),
+                "record_sha256": hashlib.sha256(encoded.encode("utf-8")).hexdigest(),
+                "exclusion_reason": "public_provider_branding_policy",
+            }
+        else:
+            retained.append(record)
+    catalog["records"] = retained
+    catalog["public_exclusions"] = sorted(exclusions.values(), key=lambda item: item["id"])
+    kinds: dict[str, int] = {}
+    statuses: dict[str, int] = {}
+    lenses: dict[str, int] = {}
+    for record in retained:
+        kind = record.get("record_kind", "unknown")
+        status = record.get("status", "unknown")
+        kinds[kind] = kinds.get(kind, 0) + 1
+        statuses[status] = statuses.get(status, 0) + 1
+        for lens in record.get("priority_lenses", []):
+            lenses[lens] = lenses.get(lens, 0) + 1
+    catalog["summary"].update({
+        "records_total": len(retained),
+        "records_by_kind": dict(sorted(kinds.items())),
+        "records_by_status": dict(sorted(statuses.items())),
+        "records_by_priority_lens": dict(sorted(lenses.items())),
+        "records_excluded_by_public_policy": len(catalog["public_exclusions"]),
+    })
+    return catalog
+
+
 def validate_policy(policy: dict[str, Any]) -> None:
     sources = policy.get("sources")
     if not isinstance(sources, list) or not sources:
@@ -364,6 +405,8 @@ def validate_catalog(catalog: dict[str, Any]) -> None:
             raise ValueError(f"unsupported evidence class for {item.get('id')}")
         if item.get("verified_capability") is not False or item.get("income_claim_verified") is not False:
             raise ValueError(f"unverified record cannot claim capability or income proof: {item.get('id')}")
+        if PUBLIC_PROVIDER_PATTERN.search(json.dumps(item, ensure_ascii=False)):
+            raise ValueError(f"public provider branding is not allowed in catalog record: {item.get('id')}")
         if item.get("status") not in {"active", "stale_not_seen_in_latest_successful_refresh"}:
             raise ValueError(f"invalid lifecycle state for {item.get('id')}")
 
@@ -387,11 +430,12 @@ def main() -> int:
             discovered.extend(records)
             source_runs.append(run)
         catalog = merge_catalog(existing, discovered, source_runs, now_iso())
+        catalog = apply_public_catalog_policy(catalog)
         validate_catalog(catalog)
         OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
         OUTPUT_PATH.write_text(json.dumps(catalog, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         WEB_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-        WEB_OUTPUT_PATH.write_text(json.dumps(catalog, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        WEB_OUTPUT_PATH.write_text(json.dumps(catalog, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
         POLICY_MIRROR_PATH.parent.mkdir(parents=True, exist_ok=True)
         POLICY_MIRROR_PATH.write_text(json.dumps(policy, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     else:
