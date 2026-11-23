@@ -24,7 +24,7 @@ jobs:
         run: |
           set -euo pipefail
           git diff --name-only "origin/$BASE_REF...HEAD" > changed-files.txt
-          if grep -Eq "(^|/)(package\\.json|package-lock\\.json|npm-shrinkwrap\\.json|yarn\\.lock|pnpm-lock\\.yaml|bun\\.lockb?|uv\\.lock|requirements[^/]*\\.txt|pyproject\\.toml|poetry\\.lock|Pipfile(\\.lock)?|Cargo\\.(toml|lock)|go\\.(mod|sum)|Gemfile(\\.lock)?|composer\\.(json|lock)|pom\\.xml|build\\.gradle(\\.kts)?|gradle\\.lockfile|[^/]+\\.(csproj|fsproj|vbproj|sln|nuspec))$|^\\.github/workflows/.*\\.ya?ml$" changed-files.txt; then
+          if grep -Eq "(^|/)(package\.json|package-lock\.json|npm-shrinkwrap\.json|yarn\.lock|pnpm-lock\.yaml|bun\.lockb?|uv\.lock|requirements[^/]*\.txt|pyproject\.toml|poetry\.lock|Pipfile(\.lock)?|Cargo\.(toml|lock)|go\.(mod|sum)|Gemfile(\.lock)?|composer\.(json|lock)|pom\.xml|build\.gradle(\.kts)?|gradle\.lockfile|[^/]+\.(csproj|fsproj|vbproj|sln|nuspec))$|^\.github/workflows/.*\.ya?ml$" changed-files.txt; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
