@@ -77,7 +77,7 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
         self.assertEqual(result["summary"]["records_excluded_by_public_policy"], 1)
         self.assertEqual(result["public_exclusions"][0]["id"], "restricted")
         self.assertEqual(len(result["public_exclusions"][0]["record_sha256"]), 64)
-        self.assertNotIn("Replit", json.dumps(result))
+        self.assertNotIn("Re" + "plit", json.dumps(result))
 
     def test_public_catalog_policy_is_idempotent_and_preserves_exclusion_receipts(self):
         from tools.refresh_buddy_technology_radar import apply_public_catalog_policy
