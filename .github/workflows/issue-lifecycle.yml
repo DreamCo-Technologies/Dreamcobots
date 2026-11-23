@@ -42,6 +42,22 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Ensure lifecycle labels exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          while IFS='|' read -r name color description; do
+            gh label create "$name" --repo "$GH_REPO" --color "$color" --description "$description" --force || true
+          done <<'LABELS'
+          status:new|1D76DB|New issue awaiting triage
+          status:investigating|FBCA04|Root cause investigation in progress
+          status:fixing|D93F0B|A repair is being implemented
+          status:retest|5319E7|Repair is undergoing verification
+          status:blocked|B60205|Blocked pending an owner action or dependency
+          status:resolved|0E8A16|Verified resolved with passing evidence
+          LABELS
       - name: Validate and apply issue lifecycle status
         env:
           GH_TOKEN: ${{ github.token }}
