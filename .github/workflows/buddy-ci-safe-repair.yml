@@ -126,7 +126,7 @@ jobs:
             core.setOutput("has_failed_job", failed ? "true" : "false");
       - name: Run exact allowlisted repair for a failed default-branch workflow
         if: github.event_name == 'workflow_run'
-        run: python tools/buddy_safe_repair.py --observation artifacts/buddy-safe-repair/observation.json --out artifacts/buddy-safe-repair/result.json
+        run: python -m tools.buddy_safe_repair --observation artifacts/buddy-safe-repair/observation.json --out artifacts/buddy-safe-repair/result.json
       - name: Regenerate allowlisted deterministic indexes on non-main branches
         if: github.event_name != 'workflow_run'
         run: |
