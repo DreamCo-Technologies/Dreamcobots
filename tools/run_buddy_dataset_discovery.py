@@ -3,6 +3,12 @@
 from __future__ import annotations
 import argparse,json
 from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from buddy.datasets.discovery_fleet import run_discovery_fleet
 def main():
     parser=argparse.ArgumentParser()
