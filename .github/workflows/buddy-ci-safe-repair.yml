@@ -9,6 +9,9 @@ on:
       - "tools/build_pages_connection_index.py"
       - "tools/build_actions_prospectus.py"
       - "tools/build_file_prospectus.py"
+      - "tools/daily_bot_study_scan.py"
+      - "tests/test_daily_bot_study_scan.py"
+      - ".github/workflows/daily-bot-study-scan.yml"
       - "tools/buddy_safe_repair.py"
       - "tools/buddy_failure_learning.py"
       - "tests/test_buddy_failure_learning.py"
@@ -129,7 +132,7 @@ jobs:
           python tools/build_file_prospectus.py --check
           python tools/validate_buddy_engineering_capabilities.py
           python tools/validate_dreamco_mastery_registry.py
-          python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_dataset_route_check tests.test_file_prospectus_inventory
+          python -m unittest tests.test_buddy_safe_repair tests.test_buddy_failure_learning tests.test_buddy_dataset_routing tests.test_division_model_fleet tests.test_dreamco_division_mastery_orchestrator tests.test_buddy_dataset_route_check tests.test_file_prospectus_inventory tests.test_daily_bot_study_scan
           git diff --check
       - name: Detect allowlisted generated changes
         id: changes
