@@ -97,7 +97,9 @@ def list_files() -> list[str]:
     out = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"], cwd=ROOT,
                          capture_output=True, text=True, check=True).stdout
     files = sorted({p for p in out.split("\0") if p and (ROOT / p).is_file()})
-    return files
+    # Exclude this generated directory so index.json and config.json cannot
+    # recursively describe one another and drift on every regeneration.
+    return [p for p in files if not p.startswith("config/generated/file-prospectus/")]
 
 
 def file_type(path: str) -> str:
