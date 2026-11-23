@@ -1,4 +1,7 @@
 import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
 
 from tools.issue_lifecycle import transition_labels, validate_evidence
 
@@ -26,6 +29,20 @@ class IssueLifecycleTests(unittest.TestCase):
         candidate = {"workflow_id": 11, "head_branch": "main", "status": "completed", "conclusion": "success"}
         with self.assertRaises(ValueError):
             validate_evidence("resolved", "original run", original, candidate)
+
+    def test_workflow_run_handlers_use_per_event_concurrency_keys(self):
+        paths = [
+            ".github/workflows/actions-failure-watch.yml",
+            ".github/workflows/issue-intelligence.yml",
+            ".github/workflows/buddy-continuous-repair.yml",
+            ".github/workflows/greenkeeper-root-cause.yml",
+            ".github/workflows/greenkeeper-orchestrator.yml",
+        ]
+        for relative in paths:
+            with self.subTest(workflow=relative):
+                source = (ROOT / relative).read_text(encoding="utf-8")
+                self.assertIn("${{ github.event.workflow_run.id || github.run_id }}", source)
+                self.assertIn("cancel-in-progress: false", source)
 
     def test_retest_requires_active_matching_run(self):
         original = {"workflow_id": 10, "head_branch": "main"}
