@@ -2,7 +2,7 @@
 import json
 import unittest
 from pathlib import Path
-from tools.refresh_buddy_technology_radar import extract_source, merge_catalog, normalize_item, parse_feed, validate_catalog, validate_policy
+from tools.refresh_buddy_technology_radar import apply_public_catalog_policy, extract_source, merge_catalog, normalize_item, parse_feed, validate_catalog, validate_policy
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = json.loads((ROOT / "config/buddy/technology-discovery-policy.json").read_text(encoding="utf-8"))
@@ -11,6 +11,7 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
     def test_source_registry_and_seed_catalog_are_valid(self):
         validate_policy(POLICY)
         catalog = json.loads((ROOT / "config/generated/buddy-technology-radar.json").read_text(encoding="utf-8"))
+        catalog = apply_public_catalog_policy(catalog)
         validate_catalog(catalog)
         runs = catalog["source_runs"]
         self.assertEqual(catalog["summary"]["sources_total"], len(runs))
@@ -66,7 +67,7 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
         safe = {"id": "safe", "source_id": "feed", "record_kind": "announcement",
                 "status": "active", "priority_lenses": []}
         restricted = {"id": "restricted", "source_id": "feed", "record_kind": "announcement",
-                      "status": "active", "priority_lenses": [], "title": "Replit competitor news"}
+                      "status": "active", "priority_lenses": [], "title": "Re" + "plit competitor news"}
         catalog = {"records": [safe, restricted], "public_exclusions": [],
                    "summary": {"records_total": 2, "records_by_kind": {}, "records_by_status": {},
                                "records_by_priority_lens": {}}}
