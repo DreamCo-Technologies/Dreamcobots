@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Sequence
 
 ROOT = Path(__file__).resolve().parents[1]
-TEST_PATTERN = re.compile(r"(^|/)(tests?/|test_[^/]+|[^/]+_test\\.)")
+TEST_PATTERN = re.compile(r"(^|/)(tests?/|test_[^/]+|[^/]+_test\.)")
 CLASS_RULES = {
     "python": (".py",),
     "javascript": (".js", ".jsx", ".ts", ".tsx"),
@@ -52,7 +52,7 @@ def build_index(limit: int = 500) -> dict:
         if not paths:
             continue
         tests = [p for p in paths if TEST_PATTERN.search(p)]
-        subject_clean = re.sub(r"\\s+", " ", subject).strip()[:240]
+        subject_clean = re.sub(r"\s+", " ", subject).strip()[:240]
         records.append({
             "commit": sha,
             "subject": subject_clean,
@@ -60,7 +60,7 @@ def build_index(limit: int = 500) -> dict:
             "test_paths": tests,
             "areas": classify_paths(paths),
             "search_terms": sorted(set(
-                re.findall(r"[a-z0-9][a-z0-9_.-]{2,}", 
+                re.findall(r"[a-z0-9][a-z0-9_.-]{2,}",
                            (subject_clean + " " + " ".join(paths)).lower()
                 ))),
             "learning_state": "HISTORICAL_CANDIDATE_REQUIRES_VERIFICATION",
@@ -90,7 +90,7 @@ def main() -> int:
         parser.error("--limit must be between 1 and 5000")
     payload = build_index(args.limit)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(payload, indent=2) + "\\n", encoding="utf-8")
+    args.output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"ok": True, "records": payload["record_count"],
                       "output": str(args.output)}, sort_keys=True))
     return 0
