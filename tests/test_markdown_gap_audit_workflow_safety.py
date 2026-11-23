@@ -14,6 +14,8 @@ class MarkdownGapAuditWorkflowSafetyTests(unittest.TestCase):
         self.assertIn("branch: automation/markdown-gap-audit", text)
         self.assertIn("base: main", text)
         self.assertIn("delete-branch: false", text)
+        self.assertIn("group: buddy-markdown-gap-audit-${{ github.run_id }}", text)
+        self.assertIn("cancel-in-progress: false", text)
 
     def test_only_publish_job_has_write_permissions(self):
         text = WORKFLOW.read_text(encoding="utf-8")
