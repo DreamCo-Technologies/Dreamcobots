@@ -69,11 +69,12 @@ class ActionsLiveHealthTests(unittest.TestCase):
         self.assertTrue(covered)
         self.assertEqual(mocked.call_count, 2)
 
+    def test_safe_repair_stages_generated_actions_health_report(self):
+        root = Path(__file__).resolve().parents[1]
+        source = (root / ".github" / "workflows" / "buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
+        self.assertIn("website/data/actions-health-report.json", source)
+        self.assertEqual(source.count("config/generated/file-prospectus"), 1)
+
 
 if __name__ == "__main__":
     unittest.main()
-
-    def test_safe_repair_stages_generated_actions_health_report(self):
-        source = (ROOT / ".github" / "workflows" / "buddy-ci-safe-repair.yml").read_text(encoding="utf-8")
-        self.assertIn("website/data/actions-health-report.json", source)
-        self.assertEqual(source.count("config/generated/file-prospectus"), 1)
