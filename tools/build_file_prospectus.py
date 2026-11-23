@@ -97,7 +97,10 @@ def list_files() -> list[str]:
     out = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"], cwd=ROOT,
                          capture_output=True, text=True, check=True).stdout
     files = sorted({p for p in out.split("\0") if p and (ROOT / p).is_file()})
-    return files
+    # The prospectus cannot index its own generated shards: config.json contains
+    # the index.json row and index.json describes config.json, creating a
+    # self-referential output that changes on every regeneration.
+    return [p for p in files if not p.startswith("config/generated/file-prospectus/")]
 
 
 def file_type(path: str) -> str:
