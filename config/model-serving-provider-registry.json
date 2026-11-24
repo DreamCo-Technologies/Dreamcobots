@@ -1,0 +1,23 @@
+{
+  "schema": "dreamco.model_serving_provider_registry.v1",
+  "version": "1.0.0",
+  "status": "POLICY_CONTRACT_ONLY_NO_PROVIDER_MARKED_CONNECTED",
+  "default_policy": {
+    "enabled_by_default": false,
+    "require_per_request_approval": true,
+    "require_https": true,
+    "require_model_allowlist": true,
+    "require_data_classification_gate": true,
+    "store_prompts_or_completions": false,
+    "allow_automatic_provider_failover": false,
+    "allow_training_on_provider_outputs_by_default": false
+  },
+  "providers": [
+    {"provider_id":"openai","protocol":"openai_compatible_chat_completions","lifecycle_state":"BLOCKED","enabled":false,"base_url_env":"OPENAI_BASE_URL","api_key_env":"OPENAI_API_KEY","allowed_models":[],"data_classification_max":"internal","output_training_permission":"UNKNOWN","requirements":["verify account terms","approve data processing","pin model allowlist","run live health and regression tests"]},
+    {"provider_id":"anthropic","protocol":"native_anthropic_messages","lifecycle_state":"BLOCKED","enabled":false,"base_url_env":"ANTHROPIC_BASE_URL","api_key_env":"ANTHROPIC_API_KEY","allowed_models":[],"data_classification_max":"internal","output_training_permission":"UNKNOWN","requirements":["implement native protocol adapter","verify account terms","run live health and regression tests"]},
+    {"provider_id":"google_gemini","protocol":"native_gemini_generate_content","lifecycle_state":"BLOCKED","enabled":false,"base_url_env":"GEMINI_BASE_URL","api_key_env":"GEMINI_API_KEY","allowed_models":[],"data_classification_max":"internal","output_training_permission":"UNKNOWN","requirements":["implement native protocol adapter","verify account terms","run live health and regression tests"]},
+    {"provider_id":"openrouter","protocol":"openai_compatible_chat_completions","lifecycle_state":"BLOCKED","enabled":false,"base_url_env":"OPENROUTER_BASE_URL","api_key_env":"OPENROUTER_API_KEY","allowed_models":[],"data_classification_max":"public","output_training_permission":"UNKNOWN","requirements":["review per-model provider terms","pin model allowlist","run live health and regression tests"]},
+    {"provider_id":"local_openai_compatible","protocol":"openai_compatible_chat_completions","lifecycle_state":"BLOCKED","enabled":false,"base_url_env":"LOCAL_MODEL_BASE_URL","api_key_env":"LOCAL_MODEL_API_KEY","allowed_models":[],"data_classification_max":"restricted","output_training_permission":"ALLOWED","requirements":["verify host ownership and network boundary","pin model artifact and tokenizer hashes","run isolation and benchmark tests"]}
+  ],
+  "promotion_evidence_required": ["provider_terms_review_ref","secret_reference_configured_without_secret_in_registry","endpoint_tls_and_identity_check","provider_health_check_timestamp","model_allowlist_and_revision_evidence","data_classification_and_retention_approval","latency_cost_and_error_rate_baseline","redaction_and_prompt_nonretention_test","domain_benchmark_and_safety_regression_results","rollback_and_provider_disable_test"]
+}
