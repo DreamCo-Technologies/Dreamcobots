@@ -66,6 +66,7 @@ def apply_division_lifecycle_migrations(approval_id:str,expected_migration_sha25
                     if owner[0]!=schema or owner[1] is not False or owner[2] is not False or owner[3] is not True:
                         raise DivisionMigrationError(f"division_schema_owner_or_membership_invalid:{schema}")
                     quoted=f'"{schema}"'
+                    cursor.execute(f"SET LOCAL ROLE {quoted}")
                     cursor.execute(f"""CREATE TABLE IF NOT EXISTS {quoted}.schema_migrations (
                         version text PRIMARY KEY,migration_sha256 char(64) NOT NULL,
                         applied_at timestamptz NOT NULL DEFAULT now())""")
@@ -75,6 +76,7 @@ def apply_division_lifecycle_migrations(approval_id:str,expected_migration_sha25
                         if str(existing[0]).strip()!=actual_hash:
                             raise DivisionMigrationError(f"migration_hash_conflict:{schema}")
                         skipped+=1
+                        cursor.execute("RESET ROLE")
                         continue
                     template=path.read_text(encoding="utf-8").replace("{schema}",quoted)
                     for statement in template.split(";"):
@@ -85,11 +87,12 @@ def apply_division_lifecycle_migrations(approval_id:str,expected_migration_sha25
                     cursor.execute("SELECT set_config('dreamco.masterbot_id',%s,true)",(str(masterbot_id),))
                     cursor.execute(f"""INSERT INTO {quoted}.audit_events
                         (event_id,masterbot_id,actor_ref,approval_ref,event_type,payload)
-                        VALUES (%s,%s,current_user,%s,%s,%s::jsonb)""",
+                        VALUES (%s,%s,session_user,%s,%s,%s::jsonb)""",
                         ("migration-"+uuid.uuid4().hex,masterbot_id,approval_id,
                          "DIVISION_LIFECYCLE_SCHEMA_MIGRATION_APPLIED",
                          json.dumps({"migration_version":MIGRATION_VERSION,"migration_sha256":actual_hash})))
                     applied+=1
+                    cursor.execute("RESET ROLE")
     except DivisionMigrationError:
         raise
     except Exception as exc:
