@@ -48,7 +48,11 @@ class PostgresTrainingQueueTests(unittest.TestCase):
   self.assertEqual(leased["manifest"]["masterbot_id"],1)
   sql="\n".join(q for q,_p in self.connection.cursor_obj.executed)
   self.assertIn("FOR UPDATE SKIP LOCKED",sql)
-  self.assertIn("JOB_LEASED",sql)
+  lease_events=[
+   params for query,params in self.connection.cursor_obj.executed
+   if "INSERT INTO" in query and "queue_events" in query and params
+  ]
+  self.assertTrue(any(params[3]=="JOB_LEASED" for params in lease_events))
  def test_heartbeat_and_complete_require_active_lease_and_training_evidence(self):
   self.assertTrue(self.queue.heartbeat(1,"train-0123456789abcdef","worker-01",300))
   with self.assertRaisesRegex(TrainingQueueError,"result_v2"):
