@@ -153,6 +153,14 @@ class ObjectStoreHealthTests(unittest.TestCase):
                         backup_bucket="dreamco-backup",
                     )
 
+    def test_bucket_and_prefix_inputs_must_be_strings(self):
+        with self.assertRaisesRegex(ObjectStoreError, "must_be_strings"):
+            run_object_store_healthcheck(
+                client=FakeS3(),
+                primary_bucket=123,
+                backup_bucket="dreamco-backup",
+            )
+
     def test_canary_flag_must_be_boolean(self):
         with self.assertRaisesRegex(ObjectStoreError, "allow_canary_must_be_boolean"):
             run_object_store_healthcheck(
