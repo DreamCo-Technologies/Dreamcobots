@@ -53,12 +53,12 @@ def _safe_source_url(value: str) -> bool:
 def _split_manifest(rows: list[dict]) -> dict[str, Any]:
     manifest: dict[str, Any] = {}
     for split in ("train", "validation", "test"):
-        serialized = "".join(_canonical(row) + "\n" for row in rows if row["split"] == split)
+        serialized = "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\n" for row in rows if row["split"] == split)
         manifest[split] = {
             "row_count": sum(row["split"] == split for row in rows),
             "sha256": _sha(serialized),
         }
-    manifest["all_rows_sha256"] = _sha("".join(_canonical(row) + "\n" for row in rows))
+    manifest["all_rows_sha256"] = _sha("".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\n" for row in rows))
     return manifest
 
 
@@ -207,7 +207,7 @@ def main() -> int:
         for line in Path(args.events).read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
-    events = [event for event in events if event.get("primary_masterbot_id") == args.masterbot_id]
+    events = [event for event in events if isinstance(event, dict) and event.get("primary_masterbot_id") == args.masterbot_id]
     result = build(events)
 
     output_path = Path(args.out)
