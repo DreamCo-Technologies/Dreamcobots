@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 from buddy.learning.model_foundry import (
-    SCHEMA, build_parallel_plan, validate_manifest
+    SCHEMA, STRATEGY_PROFILES, build_parallel_plan, validate_manifest
 )
 
 
@@ -70,6 +70,15 @@ class ModelFoundryRightsTests(unittest.TestCase):
         self.assertEqual([row["division_id"] for row in plan["include"]], [1, 2])
         self.assertEqual(plan["include"][0]["strategy"], "domain_adaptive_pretraining")
         self.assertEqual(plan["include"][1]["strategy"], "code_and_tool_sequence_modeling")
+
+    def test_training_profiles_use_distinct_experiment_settings(self):
+        self.assertGreaterEqual(len(STRATEGY_PROFILES), 8)
+        settings = {(p["sequence_length"], p["batch_size"], p["learning_rate"]) for p in STRATEGY_PROFILES.values()}
+        self.assertGreater(len(settings), 1)
+
+    def test_unsupported_training_strategy_is_blocked(self):
+        bad = {**self.entry, "training_strategy": "unknown_or_unimplemented"}
+        self.assertEqual(validate_manifest({"schema": SCHEMA, "datasets": [bad]}, self.root), [])
 
     def test_duplicate_dataset_ids_are_rejected(self):
         with self.assertRaisesRegex(ValueError, "unique"):
