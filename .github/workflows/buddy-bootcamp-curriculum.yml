@@ -23,7 +23,15 @@ on:
       - "buddy/learning/freecodecamp_source.py"
       - "tests/test_freecodecamp_source_routes.py"
       - "buddy/learning/study_artifact_cleanup.py"
-      - "tests/test_study_artifact_cleanup.py"\n      - "tools/validate_original_lesson.py"\n      - "tests/test_original_lesson.py"\n      - "buddy/bootcamp/sources/original-lesson.schema.json"\n      - "buddy/bootcamp/templates/original-lesson.md"
+      - "tests/test_study_artifact_cleanup.py"
+      - "tools/validate_original_lesson.py"
+      - "tests/test_original_lesson.py"
+      - "buddy/bootcamp/sources/original-lesson.schema.json"
+      - "buddy/bootcamp/templates/original-lesson.md"
+      - "tools/validate_original_lesson.py"
+      - "tests/test_original_lesson.py"
+      - "buddy/bootcamp/sources/original-lesson.schema.json"
+      - "buddy/bootcamp/templates/original-lesson.md"
   push:
     branches: [main]
     paths:
@@ -76,7 +84,8 @@ jobs:
           python tools/build_freecodecamp_routes.py
           python tools/build_freecodecamp_routes.py --check
           python -m unittest discover -s tests -p 'test_freecodecamp_source_routes.py' -v
-          python -m unittest discover -s tests -p 'test_study_artifact_cleanup.py' -v\n          python -m unittest discover -s tests -p 'test_original_lesson.py' -v
+          python -m unittest discover -s tests -p 'test_study_artifact_cleanup.py' -v
+          python -m unittest discover -s tests -p 'test_original_lesson.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
       - name: Commit discovered catalog back to this pull request branch
         if: github.event_name == 'pull_request'
