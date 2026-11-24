@@ -84,17 +84,17 @@ def _normalize(value: str) -> str:
 
 def load_domain_profiles() -> dict[str, dict]:
     source = DOMAIN_SOURCE.read_text(encoding="utf-8")
-    pattern = re.compile(r"^  ([A-Za-z][A-Za-z0-9]+): \\{\\n([\\s\\S]*?)^  \\},?$", re.MULTILINE)
+    pattern = re.compile(r"^  ([A-Za-z][A-Za-z0-9]+): \{\n([\s\S]*?)^  \},?$", re.MULTILINE)
     profiles = {}
     for match in pattern.finditer(source):
         name, body = match.group(1), match.group(2)
         if "purpose:" not in body or "focusAreas:" not in body:
             continue
         def scalar(field: str) -> str:
-            found = re.search(rf'{field}:\\s*"([^"]+)"', body)
+            found = re.search(rf'{field}:\s*"([^"]+)"', body)
             return found.group(1) if found else ""
-        focus = re.search(r"focusAreas:\\s*\\[(.*?)\\]", body, re.DOTALL)
-        serves = re.search(r"serves:\\s*\\[(.*?)\\]", body, re.DOTALL)
+        focus = re.search(r"focusAreas:\s*\[(.*?)\]", body, re.DOTALL)
+        serves = re.search(r"serves:\s*\[(.*?)\]", body, re.DOTALL)
         profiles[name] = {
             "purpose": scalar("purpose"),
             "serves": re.findall(r'"([^"]+)"', serves.group(1)) if serves else [],
@@ -288,7 +288,7 @@ def main() -> int:
         return 0
     OUT.mkdir(parents=True, exist_ok=True)
     target = OUT / "division-model-fleet.json"
-    target.write_text(json.dumps(manifest, indent=2) + "\\n", encoding="utf-8")
+    target.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"profile_count": manifest["profile_count"], "domain_division_model_count": manifest["domain_division_model_count"], "shared_platform_specialist_model_count": manifest["shared_platform_specialist_model_count"], "output": str(target), "trained_model_count": 0, "mastered_model_count": 0}, indent=2))
     return 0
 
