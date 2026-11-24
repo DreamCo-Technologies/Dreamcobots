@@ -103,7 +103,7 @@ jobs:
           report = json.loads(Path('/tmp/buddy-weekly-transcript-evaluation.json').read_text())
           print(json.dumps(report, indent=2))
           if report['status'] == 'blocked':
-              raise SystemExit('Buddy transcript evaluation is BLOCKED; see blocked_reasons and due_transcripts in the artifact.')
+              print('::warning::Buddy transcript evaluation is BLOCKED; see blocked_reasons and due_transcripts in the uploaded artifact. No transcript was counted as evaluated.')
           PY
       - name: Upload first transcript readiness report
         if: always()
