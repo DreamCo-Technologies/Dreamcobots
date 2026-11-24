@@ -96,6 +96,8 @@ def build_report(policy: dict[str, Any], manifest_path: Path, ledger_path: Path,
                 "status": "due_not_evaluated",
             })
 
+    if not transcripts:
+        blocked.append("no_authorized_transcripts_registered")
     if transcripts:
         blocked.append("real_buddy_evaluation_adapter_not_registered")
     status = "blocked" if blocked else ("all_transcripts_evaluated" if not due else "evaluation_due")
@@ -108,7 +110,7 @@ def build_report(policy: dict[str, Any], manifest_path: Path, ledger_path: Path,
         "evaluated_count": len(transcripts) - len(due),
         "due_count": len(due),
         "coverage_target": 1.0,
-        "coverage": 1.0 if not transcripts else (len(transcripts) - len(due)) / len(transcripts),
+        "coverage": None if not transcripts else (len(transcripts) - len(due)) / len(transcripts),
         "blocked_reasons": blocked,
         "due_transcripts": due,
         "synthetic_evaluations_created": 0,
