@@ -1,7 +1,10 @@
 import json
 import unittest
+import sys
+import tempfile
 from pathlib import Path
-from tools.build_dreamco_training_factory import FILES, build_factory_plan, _load, _hash
+from unittest.mock import patch
+from tools.build_dreamco_training_factory import FILES, build_factory_plan, _load, _hash, main as build_main
 
 class DreamCoTrainingFactoryTests(unittest.TestCase):
     @classmethod
@@ -31,6 +34,16 @@ class DreamCoTrainingFactoryTests(unittest.TestCase):
         configs["taxonomy_routes"]["routes"].pop()
         with self.assertRaisesRegex(ValueError, "65 routes"):
             build_factory_plan(configs)
+
+    def test_cli_writes_parseable_plan_json(self):
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "plan.json"
+            with patch("sys.argv", ["builder", "--out", str(output)]):
+                self.assertEqual(build_main(), 0)
+            result = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(result["coverage"]["masterbots"], 65)
+            self.assertFalse(result["truth_boundary"]["weights_trained"])
+            self.assertTrue(output.read_bytes().endswith(bytes([10])))
 
     def test_no_data_or_training_is_claimed(self):
         plan = build_factory_plan(self.configs)
