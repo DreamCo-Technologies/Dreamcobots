@@ -1,4 +1,5 @@
 import json
+import os
 import tempfile
 import unittest
 import sys
@@ -8,6 +9,7 @@ from pathlib import Path
 from tools.build_dreamco_bootcamp_seed_data import build_candidate, build_dataset_card, load_jsonl, main as build_main
 from buddy.datasets.hub import DatasetHub, DatasetPolicyError
 from buddy.datasets.training_jobs import create_training_job
+from buddy.datasets.ingestion_worker import create_ingestion_job, execute_ingestion_job
 
 
 def registry():
@@ -137,6 +139,35 @@ class BootcampSeedDataTests(unittest.TestCase):
             )
             with self.assertRaisesRegex(DatasetPolicyError, "File ingestion is disabled"):
                 hub.register(card, source_file=candidate)
+
+    def test_reviewed_seed_candidate_ingests_with_matching_split_hashes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            rows, manifest = build_candidate(examples(), 4, registry())
+            candidate = Path(temp) / "candidate.jsonl"
+            candidate.write_text(
+                "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\\n" for row in rows),
+                encoding="utf-8",
+            )
+            card = build_dataset_card(manifest, str(candidate))
+            card.update({
+                "rights_status": "VERIFIED",
+                "rights_evidence": "owner-review-fixture-001",
+                "training_approved": True,
+                "ai_training_allowed": True,
+                "content_rights_verified": True,
+                "owner_assignment_verified": True,
+                "contributor_rights_verified": True,
+                "owner_approval_id": "OWNER-APPROVAL-FIXTURE-001",
+                "privacy_review": "PASSED",
+            })
+            hub = DatasetHub(Path(temp) / "hub")
+            job = create_ingestion_job(card, candidate, "INGESTION-APPROVAL-FIXTURE", Path(temp) / "jobs")
+            with patch.dict(os.environ, {"DREAMCO_ALLOW_DATASET_INGESTION": "1"}, clear=True):
+                result = execute_ingestion_job(job["manifest_path"], "INGESTION-APPROVAL-FIXTURE", hub=hub)
+            self.assertEqual(result["status"], "INGESTED_PENDING_BENCHMARK")
+            self.assertEqual(result["split_manifest"], manifest["split_manifest"])
+            self.assertEqual(result["rows_validated"], len(rows))
+            self.assertFalse(result["training_started"])
 
     def test_jsonl_loader_rejects_invalid_rows(self):
         with tempfile.TemporaryDirectory() as temp:
