@@ -10,18 +10,27 @@
 
 Preserve the engineering value of historical and active pull requests while preventing duplicate implementation, unsafe merges, lost decisions, and false completion claims. Every source PR must remain traceable to its original number, branch, commit SHA, changed files, review discussion, checks, and resulting integration.
 
-## Repository-wide inventory snapshot
+## Repository-wide inventory snapshots
 
-The paginated GitHub pull-request listing returned 699 PR records across seven non-empty pages:
+### 2026-11-24 refresh
+
+The paginated GitHub REST listing returned **800 unique PR records** across eight non-empty pages (100 per page); pages 9 and 10 were empty.
 
 | State at inventory time | Count |
 |---|---:|
-| Open | 61 |
-| Merged | 423 |
-| Closed, not merged | 215 |
-| Total | 699 |
+| Open | 77 |
+| Closed | 723 |
+| Merged (subset of closed) | 498 |
+| Closed, not merged | 225 |
+| Total | 800 |
 
-These are a point-in-time metadata inventory only. They do not mean 699 PRs have been read, diff-reviewed, tested, or reconciled. The listing was sorted by updated time; a durable historical pass must retain page/cursor and PR-number coverage, and re-check PRs whose heads or checks change.
+Machine-readable snapshot: `docs/engineering/pr-inventory-snapshots/2026-11-24.json`. It records each PR's number, title, state, merged/draft status, head/base branch and SHA, author handle, timestamps, labels, URL, and explicit pending forensic-review fields. All 800 are marked **METADATA_ONLY_NOT_FORENSICALLY_REVIEWED**; changed-file patches, commits, comments, review threads, linked issues and exact-head checks remain to be processed in deterministic batches. No PR is marked fully reviewed by this inventory pass.
+
+### 2026-11-18 historical snapshot
+
+The earlier paginated listing returned 699 PR records across seven non-empty pages: 61 open, 423 merged, and 215 closed-unmerged. This remains a historical point-in-time record, not the current count.
+
+Both snapshots are metadata inventories only. They do not mean the PRs have been read, diff-reviewed, tested, or reconciled. The listing is sorted by updated time; the machine-readable records preserve PR-number coverage, and each PR must be rechecked when its head SHA, review state, or checks change.
 
 ## Targeted first-pass candidates
 
