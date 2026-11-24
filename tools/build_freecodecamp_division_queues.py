@@ -59,7 +59,10 @@ def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.casefold()).strip("-")
 
 def _division_categories(name: str, subject_terms: list[str], known: set[str]) -> tuple[set[str], bool]:
-    raw = " ".join([name, *subject_terms])\n    raw = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", raw)\n    raw = re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", raw)\n    haystack = raw.casefold().replace("dream", " ")
+    raw = " ".join([name, *subject_terms])
+    raw = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", raw)
+    raw = re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", raw)
+    haystack = raw.casefold().replace("dream", " ")
     selected = set()
     for alias, categories in ALIASES.items():
         if alias in haystack:
