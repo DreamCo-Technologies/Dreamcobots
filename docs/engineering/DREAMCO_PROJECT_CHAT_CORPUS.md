@@ -248,7 +248,7 @@ The user subsequently approved the daily engineering plan and explicitly added T
 | Source ID | User-originated requirement | Canonical requirement ID | Repository mapping | Status |
 |---|---|---|---|---|
 | `SRC-CURRENT-2026-11-24-TOLKIEN-01` | Add Tolkien training/study to Buddy's curriculum | `REQ-TOLKIEN-STUDY-CURRICULUM` | PR #18214: `config/buddy-study-resources-1101-1200-expansion.json`, `docs/BUDDY_TOLKIEN_STUDY_TRACK.md`, `docs/UNIVERSAL_STUDY_RESOURCE_EXPANSION.md` | Curriculum defined; rights-gated; not completed by Buddy |
-| `SRC-CURRENT-2026-11-24-FCC-01` | Study freeCodeCamp datasets/resource metadata and transcripts | `REQ-FREECODECAMP-METADATA-TRANSCRIPTS` | PR #18207: catalog sync, division queues/routes, weekly transcript readiness | Metadata workflow implemented in branch; no media/transcript download; approved transcript manifest and real Buddy evaluator missing |
+| `SRC-CURRENT-2026-11-24-FCC-01` | Study freeCodeCamp datasets/resource metadata and transcripts | `REQ-FREECODECAMP-METADATA-TRANSCRIPTS` | PR #18216 (clean-base port; source PR #18207 closed as superseded): catalog sync, division queues/routes, weekly transcript readiness | Metadata workflow implemented in branch; no media/transcript download; approved transcript manifest and real Buddy evaluator missing |
 | `SRC-CURRENT-2026-11-24-RESOURCES-01` | Add as many useful study resources as possible | `REQ-EXPAND-STUDY-RESOURCE-CATALOG` | PR #18214: 1101–1200 expansion; 100 resource pointers; Tolkien scholarly lane | 100 resource pointers cataloged; no bulk ingestion or blanket training approval |
 
 #### Tolkien curriculum evidence and rights boundary
