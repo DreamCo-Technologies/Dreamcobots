@@ -29,8 +29,9 @@ jobs:
       - name: Test license gate, hashes and 65-division planner
         run: python -m unittest discover -s tests -p 'test_model_foundry.py' -v
   plan:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, dreamco-private-training]
+    environment: dreamco-private-training
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
       eligible: ${{ steps.plan.outputs.eligible }}
@@ -51,6 +52,7 @@ jobs:
     needs: plan
     if: github.event_name == 'workflow_dispatch' && needs.plan.outputs.eligible != '0'
     runs-on: [self-hosted, dreamco-private-training]
+    environment: dreamco-private-training
     timeout-minutes: 240
     strategy:
       fail-fast: false
