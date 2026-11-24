@@ -1,3 +1,5 @@
+import hashlib
+import json
 import unittest
 
 from tools.build_dreamco_training_examples import build
