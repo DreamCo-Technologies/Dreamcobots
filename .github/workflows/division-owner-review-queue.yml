@@ -6,12 +6,18 @@ on:
       - ".github/workflows/division-owner-review-queue.yml"
       - "tools/build_division_owner_review_queue.py"
       - "config/generated/division-resource-readiness-map.json"
+      - "config/generated/division-reconciliation.json"
+      - "config/division-reconciliation-policy.json"
+      - "website/data/masterbot-homepage-featured.json"
   pull_request:
     paths:
       - ".github/workflows/division-owner-review-queue.yml"
       - "tools/build_division_owner_review_queue.py"
       - "tests/test_division_owner_review_queue.py"
       - "config/generated/division-resource-readiness-map.json"
+      - "config/generated/division-reconciliation.json"
+      - "config/division-reconciliation-policy.json"
+      - "website/data/masterbot-homepage-featured.json"
   schedule:
     - cron: "41 8 * * *"
 permissions:
@@ -48,5 +54,5 @@ jobs:
           commit-message: "chore: refresh division owner review queue"
           title: "chore: refresh division owner review queue"
           body: |
-            Generated from the current division resource readiness map.
-            No domain mappings are inferred or approved by this workflow.
+            Generated from the current division resource readiness map and division reconciliation.
+            Shared platform roles are not assigned a primary domain. Supplemental collaborator links remain proposed and unapproved.
