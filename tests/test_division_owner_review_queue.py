@@ -1,43 +1,160 @@
-import json,tempfile,unittest
+import json
+import tempfile
+import unittest
 from pathlib import Path
+
 from tools.build_division_owner_review_queue import (
- OwnerReviewQueueError,build_owner_review_queue,validate_owner_review_queue)
+    OwnerReviewQueueError,
+    build_owner_review_queue,
+    validate_owner_review_queue,
+)
+
+ROOT = Path(__file__).resolve().parents[1]
+
 
 class DivisionOwnerReviewQueueTests(unittest.TestCase):
- def test_current_source_preserves_all_unresolved_owner_decisions(self):
-  root=Path(__file__).resolve().parents[1]
-  queue=build_owner_review_queue(root/"config/generated/division-resource-readiness-map.json")
-  validate_owner_review_queue(queue)
-  self.assertEqual(queue["counts"]["pending_masterbot_mappings"],20)
-  self.assertEqual(queue["counts"]["unassigned_domain_profiles"],10)
-  self.assertTrue(all(x["no_mapping_inferred"] for x in queue["masterbot_domain_decisions"]))
- def test_builds_pending_queue_without_guessing(self):
-  source={"owner_review":{"masterbot_domain_decisions":[
-   {"masterbot_id":1,"masterbot_name":"Alpha","primary_domain_id":None,
-    "candidate_domain_ids":[],"resource_bundle_id":"division-resource-001",
-    "decision":"PENDING_OWNER_REVIEW","owner_approval":None,"evidence":[]}],
-   "unassigned_domain_profiles":[{"domain_id":"alpha-domain","domain_name":"Alpha Domain",
-    "candidate_masterbot_ids":[],"standalone_resource_bundle_id":"domain-resource-alpha",
-    "decision":"PENDING_OWNER_REVIEW","owner_approval":None,"evidence":[]}]}}
-  with tempfile.TemporaryDirectory() as tmp:
-   path=Path(tmp)/"map.json";path.write_text(json.dumps(source))
-   queue=build_owner_review_queue(path)
-  validate_owner_review_queue(queue)
-  self.assertIsNone(queue["masterbot_domain_decisions"][0]["proposed_primary_domain_id"])
-  self.assertEqual(queue["unassigned_domain_profiles"][0]["candidate_masterbot_ids"],[])
- def test_rejects_owner_approval_in_pending_queue(self):
-  queue={"schema":"dreamco.division_owner_review_queue.v1",
-   "counts":{"pending_masterbot_mappings":1,"unassigned_domain_profiles":0},
-   "masterbot_domain_decisions":[{"decision":"PENDING_OWNER_REVIEW","no_mapping_inferred":True,
-    "owner_approval":{"approval_id":"fake"}}],"unassigned_domain_profiles":[]}
-  with self.assertRaisesRegex(OwnerReviewQueueError,"separate_signed_decision"):
-   validate_owner_review_queue(queue)
- def test_rejects_inferred_mapping(self):
-  queue={"schema":"dreamco.division_owner_review_queue.v1",
-   "counts":{"pending_masterbot_mappings":1,"unassigned_domain_profiles":0},
-   "masterbot_domain_decisions":[{"decision":"APPROVED","no_mapping_inferred":False}],
-   "unassigned_domain_profiles":[]}
-  with self.assertRaisesRegex(OwnerReviewQueueError,"inferred_assignment"):
-   validate_owner_review_queue(queue)
+    def test_current_source_classifies_shared_platform_roles_without_domain_assignment(self):
+        queue = build_owner_review_queue(
+            ROOT / "config/generated/division-resource-readiness-map.json",
+            ROOT / "config/generated/division-reconciliation.json",
+        )
+        validate_owner_review_queue(queue)
+        self.assertEqual(queue["counts"]["pending_masterbot_mappings"], 0)
+        self.assertEqual(queue["counts"]["shared_platform_role_confirmations"], 20)
+        self.assertEqual(queue["counts"]["unassigned_domain_profiles"], 10)
+        self.assertEqual(queue["counts"]["proposed_supplemental_collaborator_links"], 10)
+        self.assertEqual(
+            [row["masterbot_id"] for row in queue["shared_platform_masterbots"]],
+            list(range(46, 66)),
+        )
+        self.assertTrue(all(row["primary_domain_owner"] is None for row in queue["shared_platform_masterbots"]))
+        self.assertTrue(all(row["no_domain_owner_inferred"] for row in queue["shared_platform_masterbots"]))
+        self.assertTrue(all(row["owner_approval"] is None for row in queue["shared_platform_masterbots"]))
+        self.assertTrue(all(len(row["candidate_masterbot_ids"]) == 1 for row in queue["unassigned_domain_profiles"]))
+        self.assertTrue(all(row["no_mapping_inferred"] for row in queue["unassigned_domain_profiles"]))
 
-if __name__=="__main__": unittest.main()
+    def test_builds_pending_domain_and_supplemental_queues_without_guessing(self):
+        source = {
+            "routes": [{"masterbot_id": 1, "masterbot_name": "Alpha", "resource_bundle_id": "division-resource-001"}],
+            "owner_review": {
+                "masterbot_domain_decisions": [{
+                    "masterbot_id": 1, "masterbot_name": "Alpha", "primary_domain_id": None,
+                    "candidate_domain_ids": [], "resource_bundle_id": "division-resource-001",
+                    "decision": "PENDING_OWNER_REVIEW", "owner_approval": None, "evidence": [],
+                }],
+                "unassigned_domain_profiles": [{
+                    "domain_id": "alpha-domain", "domain_name": "Alpha Domain",
+                    "candidate_masterbot_ids": [], "standalone_resource_bundle_id": "domain-resource-alpha",
+                    "decision": "PENDING_OWNER_REVIEW", "owner_approval": None, "evidence": [],
+                }],
+            },
+        }
+        reconciliation = {"shared_platform_masterbots": [], "promoted_supplemental_divisions": []}
+        with tempfile.TemporaryDirectory() as tmp:
+            source_path = Path(tmp) / "map.json"
+            reconciliation_path = Path(tmp) / "reconciliation.json"
+            source_path.write_text(json.dumps(source))
+            reconciliation_path.write_text(json.dumps(reconciliation))
+            queue = build_owner_review_queue(source_path, reconciliation_path)
+        validate_owner_review_queue(queue)
+        self.assertEqual(queue["counts"]["pending_masterbot_mappings"], 1)
+        self.assertEqual(queue["counts"]["shared_platform_role_confirmations"], 0)
+        self.assertIsNone(queue["masterbot_domain_decisions"][0]["proposed_primary_domain_id"])
+        self.assertEqual(queue["unassigned_domain_profiles"][0]["candidate_masterbot_ids"], [])
+
+    def test_rejects_shared_platform_identity_without_resource_lineage(self):
+        source = {
+            "routes": [],
+            "owner_review": {
+                "masterbot_domain_decisions": [{
+                    "masterbot_id": 46, "masterbot_name": "DreamResearch",
+                    "primary_domain_id": None, "candidate_domain_ids": [],
+                    "resource_bundle_id": "division-resource-046",
+                    "decision": "PENDING_OWNER_REVIEW", "owner_approval": None, "evidence": [],
+                }],
+                "unassigned_domain_profiles": [],
+            },
+        }
+        reconciliation = {
+            "shared_platform_masterbots": [{
+                "id": 46, "name": "DreamResearch", "purpose": "Research",
+                "kind": "shared_platform_service",
+                "ownership_status": "shared_platform_not_a_domain_division",
+                "primary_domain_owner": None, "available_to_all_domain_divisions": True,
+            }],
+            "promoted_supplemental_divisions": [],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            source_path = Path(tmp) / "map.json"
+            reconciliation_path = Path(tmp) / "reconciliation.json"
+            source_path.write_text(json.dumps(source))
+            reconciliation_path.write_text(json.dumps(reconciliation))
+            with self.assertRaisesRegex(OwnerReviewQueueError, "missing_resource_or_crosswalk"):
+                build_owner_review_queue(source_path, reconciliation_path)
+
+    def test_rejects_owner_approval_in_pending_queue(self):
+        queue = {
+            "schema": "dreamco.division_owner_review_queue.v1",
+            "counts": {
+                "pending_masterbot_mappings": 1,
+                "shared_platform_role_confirmations": 0,
+                "unassigned_domain_profiles": 0,
+                "proposed_supplemental_collaborator_links": 0,
+            },
+            "masterbot_domain_decisions": [{
+                "decision": "PENDING_OWNER_REVIEW", "no_mapping_inferred": True,
+                "owner_approval": {"approval_id": "fake"},
+            }],
+            "shared_platform_masterbots": [],
+            "unassigned_domain_profiles": [],
+        }
+        with self.assertRaisesRegex(OwnerReviewQueueError, "separate_signed_decision"):
+            validate_owner_review_queue(queue)
+
+    def test_rejects_inferred_mapping(self):
+        queue = {
+            "schema": "dreamco.division_owner_review_queue.v1",
+            "counts": {
+                "pending_masterbot_mappings": 1,
+                "shared_platform_role_confirmations": 0,
+                "unassigned_domain_profiles": 0,
+                "proposed_supplemental_collaborator_links": 0,
+            },
+            "masterbot_domain_decisions": [{"decision": "APPROVED", "no_mapping_inferred": False}],
+            "shared_platform_masterbots": [],
+            "unassigned_domain_profiles": [],
+        }
+        with self.assertRaisesRegex(OwnerReviewQueueError, "inferred_assignment"):
+            validate_owner_review_queue(queue)
+
+    def test_rejects_primary_domain_assignment_for_shared_platform_role(self):
+        queue = {
+            "schema": "dreamco.division_owner_review_queue.v1",
+            "counts": {
+                "pending_masterbot_mappings": 0,
+                "shared_platform_role_confirmations": 1,
+                "unassigned_domain_profiles": 0,
+                "proposed_supplemental_collaborator_links": 0,
+            },
+            "masterbot_domain_decisions": [],
+            "shared_platform_masterbots": [{
+                "masterbot_id": 46,
+                "decision": "SHARED_PLATFORM_ROLE_REQUIRES_OWNER_CONFIRMATION",
+                "no_domain_owner_inferred": True,
+                "primary_domain_owner": "DreamFinance",
+                "owner_approval": None,
+                "kind": "shared_platform_service",
+                "ownership_status": "shared_platform_not_a_domain_division",
+                "available_to_all_domain_divisions": True,
+                "purpose": "Research",
+                "evidence": ["config/generated/division-reconciliation.json"],
+                "resource_bundle_id": "division-resource-046",
+            }],
+            "unassigned_domain_profiles": [],
+        }
+        with self.assertRaisesRegex(OwnerReviewQueueError, "invalid_or_unapproved_shared_platform"):
+            validate_owner_review_queue(queue)
+
+
+if __name__ == "__main__":
+    unittest.main()
