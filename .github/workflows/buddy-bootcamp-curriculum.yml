@@ -55,6 +55,21 @@ jobs:
         run: |
           python tools/sync_freecodecamp_catalog.py --check
           python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
+      - name: Commit discovered catalog back to this pull request branch
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BRANCH: ${{ github.head_ref }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add buddy/bootcamp/sources/freecodecamp/catalog.json
+          if git diff --cached --quiet; then
+            echo "Catalog is unchanged."
+          else
+            git commit -m "chore(bootcamp): add discovered freeCodeCamp video catalog"
+            git push origin "HEAD:$PR_BRANCH"
+          fi
       - name: Build and validate curriculum
         run: |
           python tools/build_buddy_bootcamp_curriculum.py
