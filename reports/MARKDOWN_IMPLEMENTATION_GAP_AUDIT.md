@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T04:24:23Z
+Generated: 2026-11-24T05:03:02Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1660
-- Actionable claim lines detected: 11826
+- Markdown documents scanned: 1667
+- Actionable claim lines detected: 11865
 - Documents with missing path references: 109
-- Documents without implementation references: 1578
-- Documents with implementation references but no test references: 66
-- Documents with inventory count claims: 108
-- Inventory count claims requiring review: 378
+- Documents without implementation references: 1583
+- Documents with implementation references but no test references: 68
+- Documents with inventory count claims: 110
+- Inventory count claims requiring review: 383
 
 ## Fixed-count claims requiring review
 
@@ -95,6 +95,10 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md:9086 — - **Mission:** Dedicated 211 source priority subsystem for "official agency APIs/data feeds".
 - docs/BUDDY_ADDITIONAL_TAXONOMY_SYSTEMS.md:9103 — - **Mission:** Dedicated 211 source priority subsystem for "verified nonprofit/service-provider sources".
 - docs/BUDDY_AUTOMATIC_BOT_ONBOARDING.md:55 — The classifier compares the bot against the canonical 46 divisions and existing capabilities. A high-confidence match is assigned automatically. Ambiguous matches become review items while remaining visible.
+- docs/BUDDY_BOOTCAMP_65_DIVISION_CURRICULUM.md:7 — - 65 division-specific curriculum lanes and independent model artifact namespaces.
+- docs/BUDDY_BOOTCAMP_65_DIVISION_CURRICULUM.md:8 — - All 37 task families from the repository's refreshable Hugging Face task taxonomy.
+- docs/BUDDY_BOOTCAMP_65_DIVISION_CURRICULUM.md:9 — - All 10 capability packs from the HF capability download map.
+- docs/BUDDY_BOOTCAMP_65_DIVISION_CURRICULUM.md:10 — - 12 dataset discovery dimensions and 9 model discovery dimensions.
 - docs/BUDDY_BOOTCAMP_AND_TRUST_FRAMEWORK.md:45 — The 500 model slots form a diverse review team rather than a single unquestioning agent. Roles include monitoring, training, evaluation, building, security, alignment, research, product, documentation, and red-team review.
 - docs/BUDDY_GITHUB_COMPETITOR_MASTER_PLAN.md:171 — This repository already contains substantial infrastructure for the direction, including Buddy success/governance systems, benchmark tracking, model progress tooling, local repository integration, self-repair tooling, and dedicated Buddy pages. The generated success program curre
 - docs/BUDDY_GITHUB_COMPETITOR_MASTER_PLAN.md:171 — This repository already contains substantial infrastructure for the direction, including Buddy success/governance systems, benchmark tracking, model progress tooling, local repository integration, self-repair tooling, and dedicated Buddy pages. The generated success program curre
@@ -126,6 +130,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/DREAMCO_DELIVERY_PLAN.md:35 — The canonical registry has 1,051 profiles. Fifty additional growth profiles now have separate catalog entries and shared sandbox task routes. Their original descriptions, capability lists and source files remain preserved. The 262 historical source records include these 50 and th
 - docs/DREAMCO_DIVISION_MODEL_COMPETITIVENESS.md:50 — This PR adds the policy and a deterministic fleet-profile builder. It does not train 65 models, provision GPUs, create provider credentials, or prove model competitiveness. The first execution target is to generate all 65 model profiles, then reconcile the authoritative 45-domain
 - docs/DREAMCO_DIVISION_MODEL_COMPETITIVENESS.md:50 — This PR adds the policy and a deterministic fleet-profile builder. It does not train 65 models, provision GPUs, create provider credentials, or prove model competitiveness. The first execution target is to generate all 65 model profiles, then reconcile the authoritative 45-domain
+- docs/DREAMCO_INDEPENDENT_DIVISION_MODEL_LIFECYCLE.md:3 — The canonical MasterBot registry defines 65 divisions. This lifecycle gives every division a distinct versioned model identity, weights directory, checkpoint directory, tokenizer snapshot, dataset lane, benchmark record and serving identity. The registry is a specification: it de
 - docs/DREAMCO_MASTERY_CONTINUITY_SYSTEM.md:92 — The new engine connects all 65 registry entries to logical lanes, goal routing, dependency metadata, shared regression execution, the existing lane planner, benchmark execution, and evidence artifacts. It does **not** yet implement every domain capability, execute every historica
 - docs/DREAMCO_MASTER_ROADMAP_2026.md:26 — ### 1–15 Workflow Organization & Dashboard
 - docs/DREAMCO_MASTER_ROADMAP_2026.md:26 — ### 1–15 Workflow Organization & Dashboard
@@ -12869,6 +12874,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/BUDDY_BOOTCAMP_65_DIVISION_CURRICULUM.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/BUDDY_BOOTCAMP_AND_TRUST_FRAMEWORK.md
 
 - Status: implementation_reference_missing
@@ -13679,10 +13694,40 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/DREAMCO_DIVISION_BENCHMARK_EVIDENCE_GATES.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 7
+- Implementation paths: buddy/benchmarks/division_benchmark_executor.py
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_DIVISION_DOMAIN_OWNER_REVIEW.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/DREAMCO_DIVISION_MODEL_COMPETITIVENESS.md
 
 - Status: implementation_reference_missing
 - Actionable claim lines: 4
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_DIVISION_MODEL_EVIDENCE_GATE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 9
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
@@ -13729,6 +13774,26 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/DREAMCO_GOVERNED_DATASET_INGESTION.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 7
+- Implementation paths: buddy/datasets/license_policy.py
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_INDEPENDENT_DIVISION_MODEL_LIFECYCLE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 7
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/DREAMCO_MASTERY_CONTINUITY_SYSTEM.md
 
 - Status: implementation_reference_missing
@@ -13757,6 +13822,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: None detected
 - Missing paths: framework/global_ai_sources_flow.py
 - Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_POSTGRES_DIVISION_LIFECYCLE_MIGRATION.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 6
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_POSTGRES_DIVISION_PROBE.md
