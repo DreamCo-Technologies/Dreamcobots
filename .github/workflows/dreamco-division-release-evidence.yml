@@ -1,0 +1,31 @@
+name: DreamCo Division Release Evidence Gate
+on:
+  pull_request:
+    paths:
+      - "buddy/models/division_release_gate.py"
+      - "buddy/datasets/transformers_runner.py"
+      - "tests/test_buddy_division_release_gate.py"
+      - "docs/DREAMCO_DIVISION_MODEL_EVIDENCE_GATE.md"
+      - ".github/workflows/dreamco-division-release-evidence.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/models/division_release_gate.py"
+      - "buddy/datasets/transformers_runner.py"
+      - "tests/test_buddy_division_release_gate.py"
+      - "docs/DREAMCO_DIVISION_MODEL_EVIDENCE_GATE.md"
+permissions:
+  contents: read
+jobs:
+  division-release-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run release gate tests
+        run: python -m unittest discover -s tests -p 'test_buddy_division_release_gate.py' -v
+      - name: Compile evidence and training modules
+        run: python -m py_compile buddy/models/division_release_gate.py buddy/datasets/transformers_runner.py
