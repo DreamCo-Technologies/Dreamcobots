@@ -975,6 +975,223 @@
       ],
       "completion_rule": "A lesson is complete only after an original learner-authored artifact, source citations, provenance check and rubric result are recorded. Catalog discovery alone is not learning evidence.",
       "truth_boundary": "This is a study curriculum, not a licensed Tolkien corpus, transcript collection, model-training dataset, or claim that Buddy has completed the lessons."
+    },
+    {
+      "track_id": "database-and-dataset-engineering",
+      "title": "Production Database Routing and Dataset Engineering",
+      "status": "CURRICULUM_DEFINED_REFERENCE_ONLY",
+      "purpose": "Teach Buddy how to design, evaluate and safely route production data systems across relational databases, embedded stores, document databases, caches, vector/search systems, object storage and analytical data lakes; govern dataset discovery and lineage.",
+      "learning_outcomes": [
+        "Model relational data with primary/foreign keys, constraints, normalization and intentional denormalization.",
+        "Explain transactions, ACID properties, isolation levels, concurrency, locking, WAL, backups and recovery.",
+        "Design indexes, query plans, partitioning, connection pooling and caching based on measured workload evidence.",
+        "Compare PostgreSQL, SQLite, Supabase, Firestore, Redis, DuckDB and Iceberg by task, consistency, freshness, latency, cost and permissions.",
+        "Specify source-of-truth rules, read/write routing, failover, retries, idempotency, transaction boundaries and cache invalidation.",
+        "Combine keyword, relational and vector retrieval with provenance and access-control filters.",
+        "Assess dataset cards, schemas, splits, licenses, privacy, contamination, duplication, imbalance and quality before any use.",
+        "Connect dataset hashes, transformations, tokenizer/model versions, splits, compute runs, checkpoints and evaluation evidence into reproducible lineage."
+      ],
+      "lesson_sequence": [
+        {
+          "lesson": 1,
+          "topic": "Relational modeling and normalization",
+          "lab": "Design a synthetic multi-tenant schema with primary/foreign keys, constraints and migration tests",
+          "sources": [
+            1149,
+            1151
+          ]
+        },
+        {
+          "lesson": 2,
+          "topic": "Transactions, isolation and concurrency",
+          "lab": "Use synthetic fixtures to test commit/rollback, isolation anomalies, locking and idempotent retries",
+          "sources": [
+            1149,
+            1150
+          ]
+        },
+        {
+          "lesson": 3,
+          "topic": "Indexes, query plans and performance",
+          "lab": "Compare sequential scans and indexed queries; record EXPLAIN plans, latency and row counts",
+          "sources": [
+            1149,
+            1150,
+            1154
+          ]
+        },
+        {
+          "lesson": 4,
+          "topic": "Database technology selection",
+          "lab": "Build a decision matrix for PostgreSQL, SQLite, Supabase, Firestore, Redis, DuckDB and Iceberg",
+          "sources": [
+            1149,
+            1150,
+            1151,
+            1152,
+            1153,
+            1154,
+            1155
+          ]
+        },
+        {
+          "lesson": 5,
+          "topic": "Buddy data-source routing policy",
+          "lab": "Implement synthetic read routing by freshness, consistency, sensitivity, permission, latency and cost; reject unapproved writes",
+          "sources": [
+            1151,
+            1152,
+            1153,
+            1154,
+            1155
+          ]
+        },
+        {
+          "lesson": 6,
+          "topic": "Hybrid keyword and vector retrieval",
+          "lab": "Prototype PostgreSQL full-text plus pgvector/Qdrant/OpenSearch retrieval with citations and ACL filters",
+          "sources": [
+            1149,
+            1151
+          ]
+        },
+        {
+          "lesson": 7,
+          "topic": "Dataset discovery and rights review",
+          "lab": "Catalog 10 metadata-only dataset candidates with source, license, privacy, quality and intended-use fields",
+          "sources": [
+            1109,
+            1110,
+            1111,
+            1112,
+            1113,
+            1114,
+            1116,
+            1117
+          ]
+        },
+        {
+          "lesson": 8,
+          "topic": "Dataset quality, splits and contamination",
+          "lab": "Run synthetic deduplication, schema, imbalance, leakage and holdout checks without importing restricted data",
+          "sources": [
+            1110,
+            1111,
+            1125,
+            1126,
+            1127,
+            1128
+          ]
+        },
+        {
+          "lesson": 9,
+          "topic": "Data lineage and reproducible experiments",
+          "lab": "Create a lineage record linking dataset hash, transforms, splits, tokenizer, model, run and evaluation IDs",
+          "sources": [
+            1111,
+            1167,
+            1169
+          ]
+        },
+        {
+          "lesson": 10,
+          "topic": "Routing and dataset governance capstone",
+          "lab": "Test source-of-truth, failover, permission boundaries, backup/restore and lineage using synthetic fixtures",
+          "sources": [
+            1143,
+            1149,
+            1150,
+            1151,
+            1152,
+            1153,
+            1154,
+            1155,
+            1109,
+            1110
+          ]
+        }
+      ],
+      "source_ids": [
+        1109,
+        1110,
+        1111,
+        1112,
+        1113,
+        1114,
+        1116,
+        1117,
+        1125,
+        1126,
+        1127,
+        1128,
+        1143,
+        1149,
+        1150,
+        1151,
+        1152,
+        1153,
+        1154,
+        1155,
+        1167,
+        1169
+      ],
+      "additional_primary_references": [
+        {
+          "name": "PostgreSQL Full Text Search",
+          "url": "https://www.postgresql.org/docs/current/textsearch.html",
+          "purpose": "Keyword retrieval, ranking and text-search configuration",
+          "rights_status": "documentation_study_only"
+        },
+        {
+          "name": "pgvector",
+          "url": "https://github.com/pgvector/pgvector",
+          "purpose": "Vector similarity search in PostgreSQL",
+          "rights_status": "documentation_study_only"
+        },
+        {
+          "name": "Qdrant Documentation",
+          "url": "https://qdrant.tech/documentation/",
+          "purpose": "Vector database concepts, filtering and retrieval",
+          "rights_status": "documentation_study_only"
+        },
+        {
+          "name": "OpenSearch Documentation",
+          "url": "https://docs.opensearch.org/latest/",
+          "purpose": "Search engine indexing and hybrid retrieval",
+          "rights_status": "documentation_study_only"
+        },
+        {
+          "name": "SQLite FTS5",
+          "url": "https://www.sqlite.org/fts5.html",
+          "purpose": "Embedded full-text search",
+          "rights_status": "documentation_study_only"
+        }
+      ],
+      "rights_and_safety": {
+        "production_database_access_authorized": false,
+        "live_database_writes_authorized": false,
+        "production_migrations_authorized": false,
+        "bulk_dataset_download_authorized": false,
+        "private_or_paid_dataset_ingestion_authorized": false,
+        "model_weight_training_authorized": false,
+        "synthetic_fixtures_allowed": true,
+        "metadata_and_documentation_study_only": true,
+        "per_dataset_license_and_terms_review_required": true,
+        "unknown_rights_status": "BLOCKED"
+      },
+      "assessment": [
+        "schema_and_constraint_correctness",
+        "transaction_and_concurrency_reasoning",
+        "query_plan_and_performance_measurement",
+        "routing_decision_quality",
+        "least_privilege_and_write_safety",
+        "failover_and_idempotency",
+        "dataset_provenance_and_rights",
+        "split_leakage_and_holdout_integrity",
+        "lineage_completeness_and_reproducibility"
+      ],
+      "completion_rule": "A lesson is complete only after an original artifact, deterministic test output, source citations and reviewer-approved evidence are recorded. No production database or dataset writes are permitted by this study track.",
+      "truth_boundary": "Curriculum and references only. This track does not prove Buddy has connected to a database, ingested datasets, executed migrations, or trained model weights."
     }
   ]
 }
