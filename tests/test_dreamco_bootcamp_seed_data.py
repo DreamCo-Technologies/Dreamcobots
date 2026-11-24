@@ -1,9 +1,11 @@
 import json
 import tempfile
 import unittest
+import sys
+from unittest.mock import patch
 from pathlib import Path
 
-from tools.build_dreamco_bootcamp_seed_data import build_candidate, build_dataset_card, load_jsonl
+from tools.build_dreamco_bootcamp_seed_data import build_candidate, build_dataset_card, load_jsonl, main as build_main
 
 
 def registry():
@@ -72,6 +74,22 @@ class BootcampSeedDataTests(unittest.TestCase):
         data[0]["source"]["external_text_included"] = True
         with self.assertRaisesRegex(ValueError, "external text"):
             build_candidate(data, 4, registry())
+
+    def test_cli_writes_parseable_manifest_and_card_json(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            output = root / "candidate.jsonl"
+            manifest = root / "manifest.json"
+            card = root / "card.json"
+            with patch("sys.argv", ["builder", "--masterbot-id", "1", "--out", str(output),
+                                   "--manifest-out", str(manifest), "--card-out", str(card)]):
+                self.assertEqual(build_main(), 0)
+            manifest_data = json.loads(manifest.read_text(encoding="utf-8"))
+            card_data = json.loads(card.read_text(encoding="utf-8"))
+            self.assertFalse(manifest_data["training_started"])
+            self.assertFalse(card_data["training_approved"])
+            self.assertTrue(manifest.read_bytes().endswith(b"\\n"))
+            self.assertTrue(card.read_bytes().endswith(b"\\n"))
 
     def test_jsonl_loader_rejects_invalid_rows(self):
         with tempfile.TemporaryDirectory() as temp:
