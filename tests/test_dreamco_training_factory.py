@@ -57,6 +57,16 @@ class DreamCoTrainingFactoryTests(unittest.TestCase):
         self.assertEqual(plan["source_families"], source_ids)
         self.assertEqual(plan["coverage"]["source_families"], 9)
 
+    def test_training_method_support_is_not_overstated(self):
+        root = Path(__file__).resolve().parents[1]
+        contract = json.loads((root / "config/dreamco-first-party-training-factory.json").read_text(encoding="utf-8"))
+        support = contract["training_method_support"]
+        self.assertEqual(support["SFT"], "SUPPORTED_BY_CURRENT_TRAINING_JOB_CONTRACT")
+        self.assertEqual(support["LoRA"], "SUPPORTED_BY_CURRENT_TRAINING_JOB_CONTRACT")
+        self.assertEqual(support["QLoRA"], "PLANNED_NOT_SUPPORTED_BY_CURRENT_FIRST_RUN_RUNNER")
+        self.assertFalse(contract["internal_owned_data_policy"]["public_license"])
+        self.assertIn("owner_approval_id", contract["internal_owned_data_policy"]["required"])
+
     def test_no_data_or_training_is_claimed(self):
         plan = build_factory_plan(self.configs)
         self.assertEqual(plan["truth_boundary"]["weights_trained"], False)
