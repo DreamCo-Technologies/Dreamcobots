@@ -6,7 +6,7 @@ The PostgreSQL probe is the first runtime integration gate for the 65 MasterBot 
 
 ## Run
 
-Set `DREAMCO_POSTGRES_DSN` in the execution environment (never commit it), then run:
+Set `DREAMCO_POSTGRES_DSN` in the execution environment (never commit it), or use the application `DATABASE_URL` as a fallback. Both values are read only from process environment variables and are never emitted. Then run:
 
 ```bash
 python -m buddy.datasets.postgres_probe --output artifacts/database/postgres-probe.json
@@ -16,7 +16,7 @@ The optional `psycopg` dependency must be installed in the worker environment. T
 
 ## Evidence statuses
 
-- `BLOCKED`: no DSN is configured; no connection is attempted.
+- `BLOCKED`: neither `DREAMCO_POSTGRES_DSN` nor `DATABASE_URL` is configured; no connection is attempted.
 - `CONNECTED_SCHEMAS_VERIFIED`: connection and all 65 expected logical namespaces were verified.
 - `CONNECTED_SCHEMA_INCOMPLETE`: connection succeeded, but one or more expected namespaces are absent.
 - `ERROR`: the probe could not safely complete.
