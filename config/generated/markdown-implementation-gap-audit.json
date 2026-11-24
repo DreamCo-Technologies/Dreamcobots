@@ -1,11 +1,11 @@
 {
   "schema": "dreamco.buddy.markdown_implementation_gap_audit.v1",
-  "generated_at": "2026-11-24T16:15:58Z",
+  "generated_at": "2026-11-24T16:26:07Z",
   "inventory_mode": "all_tracked_markdown_files",
   "document_count": 1675,
-  "actionable_claim_lines": 11938,
+  "actionable_claim_lines": 11942,
   "documents_with_count_claims": 112,
-  "numeric_inventory_claim_count": 397,
+  "numeric_inventory_claim_count": 398,
   "gap_status_counts": {
     "broken_path_references": 113,
     "implementation_and_test_paths_referenced_not_verified": 5,
@@ -28124,8 +28124,8 @@
     {
       "path": "docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md",
       "title": "DreamCo Project Conversation and Source-Corpus Reconciliation",
-      "sha256": "e0c1d008b25bc425605c8bfa16b590e50f5007388520ba9a5d524cb3386ec2a7",
-      "actionable_claim_lines": 18,
+      "sha256": "e4d771580037eb554eee52c7a56395dfd5373a8bf5eba282d20ad10e2c72471f",
+      "actionable_claim_lines": 21,
       "numeric_inventory_claims": [
         {
           "line": 23,
@@ -28152,7 +28152,9 @@
         "buddy/datasets/hub.py",
         "buddy/datasets/postgres_catalog.py",
         "config/buddy-database-source-registry.json",
-        "docs/engineering/pr-inventory-snapshots/2026-11-24.json"
+        "config/generated/markdown-implementation-gap-audit.json",
+        "docs/engineering/pr-inventory-snapshots/2026-11-24.json",
+        "website/data/markdown-implementation-gap-audit.json"
       ],
       "missing_paths": [
         "config/buddy-study-resources-1101-1200-expansion.json"
@@ -28160,12 +28162,14 @@
       "implementation_paths": [
         "buddy/datasets/database_router.py",
         "buddy/datasets/hub.py",
-        "buddy/datasets/postgres_catalog.py"
+        "buddy/datasets/postgres_catalog.py",
+        "website/data/markdown-implementation-gap-audit.json"
       ],
       "test_paths": [],
       "workflow_paths": [],
       "configuration_paths": [
-        "config/buddy-database-source-registry.json"
+        "config/buddy-database-source-registry.json",
+        "config/generated/markdown-implementation-gap-audit.json"
       ],
       "documentation_paths": [
         "docs/engineering/pr-inventory-snapshots/2026-11-24.json"
@@ -28177,8 +28181,8 @@
     {
       "path": "docs/engineering/PR_RECONCILIATION_LEDGER.md",
       "title": "DreamCo Pull Request Reconciliation Ledger",
-      "sha256": "197bedeae4c6d52ba1b693d19899e9ed63d82ba3f0bf9b294cc288f95e6a9f26",
-      "actionable_claim_lines": 25,
+      "sha256": "578153b6486d12c34565624b962efde898b7864cf4d030ef43edee360cb368fd",
+      "actionable_claim_lines": 26,
       "numeric_inventory_claims": [
         {
           "line": 15,
@@ -28220,6 +28224,12 @@
           "line": 185,
           "match": "100 resource",
           "excerpt": "- The 100 resource records (IDs 1101–1200) are identical across both branches. The 727 unique dataset candidates and 1,783 route rows are also identical by candidate ID; PR #18214 replaces the ambiguous `catalog_train_flag` with `source_catalog_train_hint` and explicitly sets `tr",
+          "review_required": true
+        },
+        {
+          "line": 190,
+          "match": "### 2026-11",
+          "excerpt": "### 2026-11-24 clean-base Bootcamp port — PR #18207 to PR #18216",
           "review_required": true
         }
       ],

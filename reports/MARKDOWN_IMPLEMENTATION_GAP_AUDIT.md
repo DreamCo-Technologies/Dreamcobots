@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T16:15:58Z
+Generated: 2026-11-24T16:26:07Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
 - Markdown documents scanned: 1675
-- Actionable claim lines detected: 11938
+- Actionable claim lines detected: 11942
 - Documents with missing path references: 113
 - Documents without implementation references: 1588
 - Documents with implementation references but no test references: 69
 - Documents with inventory count claims: 112
-- Inventory count claims requiring review: 397
+- Inventory count claims requiring review: 398
 
 ## Fixed-count claims requiring review
 
@@ -199,6 +199,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/engineering/PR_RECONCILIATION_LEDGER.md:153 — - **PR #18207 — freeCodeCamp Buddy Bootcamp integration:** `NEEDS_FIXES` + `NEEDS_REBASE`. Current head `197e8897ccb35263a8938bc70095f68576920e22`; base `9c1a7e109bc26bc5adc3bd4766baa547a6ac2c7c`; GitHub reports `mergeable_state=dirty`. Eleven review threads were returned; eight
 - docs/engineering/PR_RECONCILIATION_LEDGER.md:182 — ### 2026-11-24 targeted duplicate reconciliation — PR #18212 and PR #18214
 - docs/engineering/PR_RECONCILIATION_LEDGER.md:185 — - The 100 resource records (IDs 1101–1200) are identical across both branches. The 727 unique dataset candidates and 1,783 route rows are also identical by candidate ID; PR #18214 replaces the ambiguous `catalog_train_flag` with `source_catalog_train_hint` and explicitly sets `tr
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:190 — ### 2026-11-24 clean-base Bootcamp port — PR #18207 to PR #18216
 - docs/top-200-ideas-set-02.md:5 — ## 201–225 Systems & architecture
 - docs/top-200-ideas-set-02.md:5 — ## 201–225 Systems & architecture
 - docs/top-200-ideas-set-02.md:32 — ## 226–250 Memory & cognition
@@ -14941,8 +14942,8 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md
 
 - Status: broken_path_references
-- Actionable claim lines: 18
-- Implementation paths: buddy/datasets/database_router.py, buddy/datasets/hub.py, buddy/datasets/postgres_catalog.py
+- Actionable claim lines: 21
+- Implementation paths: buddy/datasets/database_router.py, buddy/datasets/hub.py, buddy/datasets/postgres_catalog.py, website/data/markdown-implementation-gap-audit.json
 - Test paths: None detected
 - Missing paths: config/buddy-study-resources-1101-1200-expansion.json
 - Next action: Repair or explicitly supersede the missing repository path references.
@@ -14951,7 +14952,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/engineering/PR_RECONCILIATION_LEDGER.md
 
 - Status: broken_path_references
-- Actionable claim lines: 25
+- Actionable claim lines: 26
 - Implementation paths: tools/audit_markdown_implementation_gaps.py, website/data/bot-calculators.json, website/data/bot-fleet-catalog.json, website/data/buddy-technology-radar.json, website/data/command-center/capabilities.json, website/data/dreamco-search-index.js
 - Test paths: tests/test_buddy_resource_registry.py
 - Missing paths: buddy/bootcamp/training_methods_hub.py, github/workflows/buddy-continuous-repair.yml, github/workflows/buddy-training-methods-hub.yml, github/workflows/command-center-index.yml, github/workflows/keep-green.yml, tests/test_buddy_training_methods_hub.py, tools/build_dreamco_training_factory.py
