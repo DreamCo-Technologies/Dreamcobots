@@ -5,6 +5,14 @@ on:
   pull_request:
     paths:
       - "config/masterbot-65-registry.json"
+      - "config/bots/bot-manifests.generated.json"
+      - "config/bots/teammate-lanes.json"
+      - "config/supplemental-portfolio-capability-charters.json"
+      - "money_os/**"
+      - "tools/build_buddy_fleet_execution_map.py"
+      - "tools/build_live_revenue_readiness.py"
+      - "tests/test_buddy_fleet_execution_map.py"
+      - "tests/test_live_revenue_readiness_coverage.py"
       - "shared/division-production-contract.ts"
       - "tools/build_masterbot_division_crosswalk.py"
       - "tests/test_masterbot_division_crosswalk.py"
@@ -89,6 +97,8 @@ jobs:
           python tools/build_division_model_fleet.py --check
           python tools/build_division_model_fleet.py
           python tools/build_buddy_dataset_routes.py
+          python tools/build_buddy_fleet_execution_map.py
+          python -m unittest tests.test_buddy_fleet_execution_map tests.test_live_revenue_readiness_coverage
       - name: Preserve canonical division and dataset queues
         uses: actions/upload-artifact@v4
         with:
