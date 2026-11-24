@@ -38,7 +38,7 @@ class BootcampSeedDataTests(unittest.TestCase):
         self.assertFalse(manifest["training_approved"])
         self.assertFalse(manifest["training_started"])
         self.assertEqual(len(manifest["candidate_sha256"]), 64)
-        self.assertIn("\\n", rows[0]["text"])
+        self.assertIn("\n", rows[0]["text"])
         card = build_dataset_card(manifest, "candidate.jsonl")
         self.assertFalse(card["training_approved"])
         self.assertEqual(card["rights_status"], "PENDING_HUMAN_REVIEW")
