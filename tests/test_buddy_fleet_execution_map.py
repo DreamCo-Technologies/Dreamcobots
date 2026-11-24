@@ -95,7 +95,7 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
 
     def test_all_supplemental_specialists_have_distinct_commercial_routes(self):
         supplemental = [bot for bot in self.bots if bot["supplemental_portfolio"]]
-        self.assertEqual(len(supplemental), 50)
+        self.assertEqual(len(supplemental), 69)
         for bot in supplemental:
             plan = bot["commercial_plan"]
             self.assertTrue(plan.get("candidate"), bot["slug"])
@@ -129,7 +129,7 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
     def test_threejs_profiles_are_assigned_to_dream3d_not_left_unassigned(self):
         threejs = [row for row in self.bots if row["slug"].startswith("threejs-")]
         self.assertEqual(len(threejs), 19)
-        self.assertTrue(all(row["source_division"] == "UNASSIGNED" for row in threejs))
+        self.assertTrue(all(row["source_division"] == "Dream3D" for row in threejs))
         self.assertTrue(all(row["supplemental_portfolio"] == "Dream3D" for row in threejs))
         self.assertTrue(all(row["canonical_owner_division"] == "DreamCodeLab" for row in threejs))
         self.assertTrue(all(row["specialist_bot_scope"] for row in threejs))
