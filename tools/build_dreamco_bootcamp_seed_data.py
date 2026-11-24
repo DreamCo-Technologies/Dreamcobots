@@ -42,6 +42,15 @@ def _canonical_rows(rows: list[dict[str, Any]]) -> bytes:
     )
 
 
+def _split_sha256(rows: list[dict[str, Any]], split: str) -> str:
+    # Must match buddy.datasets.transformers_runner._split_hash exactly.
+    payload = "".join(
+        json.dumps(row, sort_keys=True, ensure_ascii=False) + "\\n"
+        for row in rows if row["split"] == split
+    )
+    return _sha_bytes(payload.encode("utf-8"))
+
+
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
     rows = []
     for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
@@ -141,7 +150,7 @@ def build_candidate(
         raise ValueError("duplicate example detected")
     payload_bytes = _canonical_rows(rows)
     split_hashes = {
-        f"{split}_sha256": _sha_bytes(_canonical_rows([row for row in rows if row["split"] == split]))
+        f"{split}_sha256": _split_sha256(rows, split)
         for split in ("train", "validation", "test")
     }
     manifest = {
