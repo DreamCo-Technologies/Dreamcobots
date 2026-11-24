@@ -1,7 +1,12 @@
-import unittest,sys
+import unittest,sys,subprocess
 from pathlib import Path
 from tools.buddy_safe_repair import repair_plan,run_safe_repair
 class BuddySafeRepairTests(unittest.TestCase):
+ def test_repair_module_imports_from_repository_root(self):
+  root=Path(__file__).resolve().parents[1]
+  result=subprocess.run([sys.executable,"-m","tools.buddy_safe_repair","--help"],cwd=root,text=True,capture_output=True,check=False)
+  self.assertEqual(result.returncode,0,result.stderr)
+  self.assertIn("--observation",result.stdout)
  def test_generated_dataset_index_has_exact_allowlisted_rebuild(self):
   p=repair_plan({"workflow":"Buddy Dataset Hub","job":"route-build","failed_step":"generated index mismatch"})
   self.assertEqual(p,[[sys.executable,"tools/build_buddy_dataset_routes.py"]])

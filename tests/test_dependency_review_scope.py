@@ -11,7 +11,7 @@ class DependencyReviewScopeTests(unittest.TestCase):
         text = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("detect-dependency-changes:", text)
         self.assertIn('git diff --name-only "origin/$BASE_REF...HEAD"', text)
-        for pattern in ("yarn\\\\.lock", "pnpm-lock\\\\.yaml", "Gemfile", "composer\\\\.(json|lock)", "^\\\\.github/workflows/.*\\\\.ya?ml$"):
+        for pattern in ("yarn\\.lock", "pnpm-lock\\.yaml", "Gemfile", "composer\\.(json|lock)", "^\\.github/workflows/.*\\.ya?ml$"):
             with self.subTest(pattern=pattern):
                 self.assertIn(pattern, text)
 

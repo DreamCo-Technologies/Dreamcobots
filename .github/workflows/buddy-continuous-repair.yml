@@ -62,7 +62,7 @@ jobs:
           FAILED_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           mkdir -p reports/continuous-repair
-          gh run view "$FAILED_RUN_ID" --json name,conclusion,headSha,htmlUrl,jobs             > "reports/continuous-repair/failed-run-$FAILED_RUN_ID.json"
+          gh run view "$FAILED_RUN_ID" --json name,conclusion,headSha,url,jobs             > "reports/continuous-repair/failed-run-$FAILED_RUN_ID.json"
 
       - name: Capture current Actions state
         env:
