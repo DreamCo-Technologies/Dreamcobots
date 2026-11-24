@@ -18,7 +18,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: buddy-continuous-learning-fleet-${{ github.ref }}-${{ github.event.schedule == '*/5 * * * *' && 'rotating' || 'full' }}
+  group: buddy-continuous-learning-fleet-${{ github.ref }}-${{ github.event_name == 'pull_request' && 'pr' || (github.event.schedule == '*/5 * * * *' && 'rotating' || 'full') }}
   cancel-in-progress: false
 
 jobs:
@@ -34,6 +34,7 @@ jobs:
         env:
           SCHEDULE: ${{ github.event.schedule || '' }}
           RUN_NUMBER: ${{ github.run_number }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           python - <<'PY' >> "$GITHUB_OUTPUT"
           import json, os
@@ -46,12 +47,18 @@ jobs:
           assert len({d["name"] for d in divisions}) == expected, "Duplicate division names"
           assert all("id" in d and "name" in d for d in divisions), "Incomplete division record"
           schedule=os.environ.get("SCHEDULE","")
+          event=os.environ.get("EVENT_NAME","")
           if schedule == "*/5 * * * *":
               # A distinct lane is selected on every five-minute workflow run.
               # Over 65 runs the round-robin gives every canonical division a turn.
               index=(int(os.environ["RUN_NUMBER"])-1) % len(divisions)
               selected=[divisions[index]]
               mode="FIVE_MINUTE_ROTATING_LANE"
+          elif event == "pull_request":
+              # PRs validate one deterministic lane; full 65-division sweeps
+              # remain on the six-hour schedule and manual dispatch.
+              selected=[divisions[0]]
+              mode="PULL_REQUEST_CONTRACT_SAMPLE"
           else:
               selected=divisions
               mode="FULL_FLEET_SWEEP"
@@ -89,7 +96,7 @@ jobs:
 
   cross-division-learning:
     needs: [prepare-fleet, prepare-each-division-plan]
-    if: ${{ always() && (github.event_name != 'schedule' || github.event.schedule != '*/5 * * * *') }}
+    if: ${{ always() && github.event_name != 'pull_request' && (github.event_name != 'schedule' || github.event.schedule != '*/5 * * * *') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
