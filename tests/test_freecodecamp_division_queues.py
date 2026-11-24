@@ -5,6 +5,13 @@ class FreeCodeCampDivisionQueueTests(unittest.TestCase):
     def setUp(self):
         self.catalog = {
             "schema": "dreamco.freecodecamp_catalog.v1",
+            "inventory_status": "complete",
+            "inventory": {
+                "enumerator": "yt-dlp", "enumerator_version": "2026.11.23",
+                "expected_entry_count": 3, "observed_entry_count": 3,
+                "null_entry_count": 0, "duplicate_video_id_count": 0,
+                "complete": True, "completeness_basis": "test fixture",
+            },
             "rights_policy": {"media_download_enabled": False, "transcript_ingestion_enabled": False, "model_training_requires_review": True},
             "categories": [{"id": x} for x in ["computer_science_and_fundamentals", "python_and_automation", "cybersecurity_and_privacy", "databases_and_sql", "javascript_and_typescript"]],
             "videos": [
@@ -39,6 +46,13 @@ class FreeCodeCampDivisionQueueTests(unittest.TestCase):
         estate = result["divisions"][0]
         self.assertIn("databases_and_sql", estate["target_categories"])
         self.assertEqual(estate["queue_status"], "subject_routed")
+
+    def test_partial_catalog_cannot_create_division_queues(self):
+        catalog = dict(self.catalog)
+        catalog["inventory_status"] = "partial"
+        catalog["inventory"] = {**self.catalog["inventory"], "complete": False}
+        with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory"):
+            build_queues(catalog, self.registry, limit=10)
 
     def test_no_queue_item_is_authorized_for_training_or_media_ingestion(self):
         result = build_queues(self.catalog, self.registry, limit=10)
