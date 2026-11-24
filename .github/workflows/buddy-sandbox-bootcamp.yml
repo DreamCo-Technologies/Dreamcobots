@@ -44,6 +44,12 @@ on:
       - 'tools/run_buddy_model_benchmark.py'
       - 'config/buddy-study-resources-*.json'
       - 'config/buddy-dataset-routing-policy.json'
+      - 'config/huggingface-task-taxonomy.json'
+      - 'config/generated/division-huggingface-taxonomy-map.json'
+      - 'schemas/division-huggingface-taxonomy-map.schema.json'
+      - 'tools/build_division_huggingface_taxonomy_map.py'
+      - 'tests/test_division_huggingface_taxonomy_map.py'
+      - 'docs/architecture/DREAMCO_HUGGINGFACE_DIVISION_TAXONOMY.md'
       - 'config/masterbot-65-registry.json'
       - 'website/data/free-datasets.json'
       - 'tools/build_buddy_dataset_routes.py'
@@ -111,6 +117,10 @@ jobs:
           assert result.passed and result.score == 1.0
           print(result)
           PY
+      - name: Validate the 65-lane Hugging Face taxonomy map
+        run: |
+          python tools/build_division_huggingface_taxonomy_map.py --check
+          python -m unittest tests.test_division_huggingface_taxonomy_map
       - name: Build DreamCo dataset discovery routes
         run: python tools/build_buddy_dataset_routes.py
       - name: Test 65 MasterBot dataset routing and training gates
