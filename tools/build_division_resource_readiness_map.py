@@ -91,7 +91,7 @@ def main():
     hashes={k:git_blob_sha(v) for k,v in texts.items()}
     payload=build(docs["masterbot_registry"],docs["taxonomy_map"],docs["domain_crosswalk"],
         docs["hf_capability_packs"],docs["buddy_model_router"],hashes)
-    encoded=json.dumps(payload,indent=2,ensure_ascii=False)+"\n"
+    encoded=json.dumps(payload,ensure_ascii=False,separators=(",",":"))+"\n"
     review_payload={"schema":"dreamco.masterbot_domain_owner_review.v1",
         "status":"pending_owner_review_no_guessed_mappings",
         "source":"config/generated/masterbot-55-domain-crosswalk.json",
