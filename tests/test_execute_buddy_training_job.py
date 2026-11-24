@@ -59,6 +59,9 @@ class TrainingEvidencePackagingTests(unittest.TestCase):
         bad=dict(self.result);bad["checkpoint_sha256"]="x"
         with self.assertRaisesRegex(TrainingWorkerError,"checkpoint manifest"):
             package_training_evidence(bad,self.root/"evidence-b")
+        bad=dict(self.result);bad["checkpoint_sha256"]="0"*64
+        with self.assertRaisesRegex(TrainingWorkerError,"does not match"):
+            package_training_evidence(bad,self.root/"evidence-c")
 
     def test_changed_weight_file_is_rejected(self):
         (self.weights/"adapter.bin").write_bytes(b"tampered")
