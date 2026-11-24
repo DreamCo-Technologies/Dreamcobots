@@ -22,12 +22,14 @@ def select_next_for_division(division_id: int, gaps: Iterable[Capability], *, pa
     videos = resources_for_division(division_id, path)
     resources = [Resource(id=i, name=v["title"], category=" ".join(v.get("categories", [])), url=v["url"]) for i, v in enumerate(videos)]
     selected = choose_next(resources, gaps, recent=recent)
-    return videos[selected.id] if selected is not None else None
+    return selected
 
 def plan_next_lesson(division_id: int, capability: Capability, *, path=DEFAULT_ROUTES, recent: set[int] | None = None):
-    video = select_next_for_division(division_id, [capability], path=path, recent=recent)
-    if video is None:
+    selected = select_next_for_division(division_id, [capability], path=path, recent=recent)
+    if selected is None:
         return None
+    videos = resources_for_division(division_id, path)
+    video = videos[selected.id]
     return {
         "division_id": division_id, "video_id": video["video_id"], "source": "freeCodeCamp.org",
         "source_url": video["url"], "title": video["title"], "categories": list(video.get("categories", [])),

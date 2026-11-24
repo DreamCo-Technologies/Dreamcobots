@@ -65,7 +65,7 @@ def build_routes(catalog,registry,domain_profiles=None,lessons_per_domain=5):
  if lessons_per_domain<1: raise ValueError("lessons_per_domain must be at least 1")
  divisions=registry.get("divisions",[])
  if len(divisions)!=65 or len({x.get("id") for x in divisions})!=65:
-  raise ValueError("canonical registry must contain exactly 65 unique divisions")
+  raise ValueError("routes must cover all 65 divisions; canonical registry requires 65 unique records")
  routed=[]; seen=set()
  for v in catalog.get("videos",[]):
   vid=str(v.get("video_id","")).strip(); title=str(v.get("title","")).strip(); url=str(v.get("url","")).strip()
