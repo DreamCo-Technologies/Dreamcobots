@@ -26,3 +26,7 @@ Use run_division_object_store_healthcheck(masterbot_id, ...) to place canaries u
 - This adapter does not provision buckets, configure IAM, set encryption policies, or install lifecycle rules.
 - A live successful result is required before a division can pass the object-storage release gate.
 - The health-check prefix should be covered by lifecycle retention so generated canary objects expire under the approved retention policy.
+
+## Per-division dataset uploads
+
+Use upload_division_dataset(masterbot_id, dataset_id, dataset_version, source_file, content_sha256, upload_approval_id). It requires DREAMCO_ALLOW_DATASET_OBJECT_UPLOAD=1, a verified source SHA-256, and an approval reference. Objects are written under divisions/NNN/datasets/DATASET_ID/vVERSION/HASH.jsonl, with version ID, object metadata, encryption, size, and readback hash verified before returning PERSISTED evidence. It never writes into another division's prefix. This adapter currently uploads the object; the separate ingestion orchestrator must still persist the returned object reference into the per-division PostgreSQL catalog before the dataset can be considered production-persistent.
