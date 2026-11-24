@@ -45,7 +45,7 @@ class ProviderRuntimeTests(unittest.TestCase):
         self.assertEqual(captured["auth"],"Bearer secret")
         self.assertEqual(captured["body"]["model"],"gpt-5.4-mini")
     def test_provider_data_classification_is_enforced(self):
-        with patch.dict(os.environ, {}, clear=True):
+        with patch.dict(os.environ, {"DREAMCO_OPENROUTER_ALLOWED_MODELS":"vendor/model"}, clear=True):
             with self.assertRaisesRegex(ModelServingError, "classification"):
                 chat_completion("openrouter", "vendor/model", [{"role":"user","content":"public"}], paid_approval_id="A")
             with self.assertRaisesRegex(ModelServingError, "credential_not_configured"):
