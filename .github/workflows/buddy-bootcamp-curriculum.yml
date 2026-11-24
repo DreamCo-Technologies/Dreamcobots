@@ -161,6 +161,19 @@ jobs:
           path: /tmp/buddy-weekly-transcript-evaluation.json
           if-no-files-found: warn
           retention-days: 90
+      - name: Upload generated study artifacts for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-bootcamp-study-artifacts
+          path: |
+            buddy/bootcamp/sources/freecodecamp/catalog.json
+            config/generated/freecodecamp-division-learning-queues.json
+            config/generated/freecodecamp-source-routes.json
+            config/generated/daily-lesson-production-plan.json
+            config/generated/buddy-bootcamp-curriculum.json
+          if-no-files-found: warn
+          retention-days: 14
       - name: Build and validate curriculum
         run: |
           python tools/build_buddy_bootcamp_curriculum.py
