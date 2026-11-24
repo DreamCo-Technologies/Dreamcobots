@@ -2,6 +2,7 @@
 """Failure classification, MasterBot routing, and verified lesson candidates for Buddy."""
 from __future__ import annotations
 import argparse,hashlib,json,re
+from urllib.parse import urlsplit
 from pathlib import Path
 from typing import Any
 
@@ -29,7 +30,7 @@ def classify(observation:dict[str,Any])->str:
  rules=[
   ("security",("secret","permission","codeql","vulnerability","unauthorized")),
   ("dependency-major",("dependency","lockfile","package version","pip resolver")),
-  ("generated-index",("prospectus","generated index","inventory mismatch","stale generated","dataset route","route index","division model fleet","generated artifact","verify repaired indexes","stale shard","index drift")),
+  ("generated-index",("prospectus","generated index","inventory mismatch","stale generated","dataset route","route index","division model fleet","generated artifact")),
   ("documentation",("markdown","link check","documentation")),
   ("deployment",("deploy","pages","release")),
   ("database",("database","migration","sql","postgres","sqlite")),
@@ -43,37 +44,7 @@ def classify(observation:dict[str,Any])->str:
  return "unknown"
 def route_masterbots(kind:str)->list[int]:
  return ROUTES.get(kind,ROUTES["unknown"])
-def historical_candidates(observation:dict[str,Any],index:dict[str,Any],limit:int=5)->list[dict[str,Any]]:
- """Return ranked history leads only; never mark or apply them as verified fixes."""
- if limit<1:return []
- query=" ".join(_clean(observation.get(k)) for k in
-  ("workflow","job","failed_step","error_signature","failure_class"))
- terms=set(re.findall(r"[a-z0-9][a-z0-9_.-]{2,}",query.lower()))
- ranked=[]
- for record in index.get("records",[]):
-  if record.get("verified_fix") is not False or record.get("training_eligible") is not False:
-   continue
-  record_terms=set(record.get("search_terms",[]))
-  overlap=terms & record_terms
-  if not overlap:continue
-  score=len(overlap)
-  ranked.append((score,record))
- ranked.sort(key=lambda item:(-item[0],item[1].get("commit", "")))
- return [{
-  "commit":record.get("commit",""),
-  "subject":record.get("subject",""),
-  "changed_paths":record.get("changed_paths",[]),
-  "test_paths":record.get("test_paths",[]),
-  "match_score":score,
-  "learning_state":"HISTORICAL_CANDIDATE_REQUIRES_VERIFICATION",
-  "verified_fix":False,
-  "training_eligible":False,
-  "investigation_only":True,
-  "auto_apply_allowed":False,
- } for score,record in ranked[:limit]]
-
-def recommend(observation:dict[str,Any],memory:dict[str,Any],
-              historical_index:dict[str,Any]|None=None)->dict[str,Any]:
+def recommend(observation:dict[str,Any],memory:dict[str,Any])->dict[str,Any]:
  kind=classify(observation);key=fingerprint({**observation,"failure_class":kind})
  prior=next((x for x in memory.get("incidents",[]) if x.get("fingerprint")==key),None)
  verified=prior.get("verified_lesson") if prior else None
@@ -86,8 +57,7 @@ def recommend(observation:dict[str,Any],memory:dict[str,Any],
   "recommended_action":"reapply_verified_lesson_in_isolated_branch" if verified and auto else
    ("run_read_only_diagnostics_and_open_repair_pr" if auto else "escalate_for_human_approval_before_changes"),
   "automatic_code_change_allowed":bool(auto),"requires_human_approval":bool(gated or not auto),
-  "must_verify":["original_failure","targeted_regression","dependent_checks"],
-  "historical_candidates":historical_candidates({**observation,"failure_class":kind},historical_index or {})}
+  "must_verify":["original_failure","targeted_regression","dependent_checks"]}
 def update_memory(memory:dict[str,Any],observation:dict[str,Any],verification:dict[str,Any])->dict[str,Any]:
  if verification.get("original_failure") is not True or verification.get("regressions") is not True:
   raise ValueError("A lesson can only be stored after original failure and regression checks pass.")
@@ -137,8 +107,20 @@ def build_training_event(observation:dict[str,Any],verification:dict[str,Any])->
  if not re.fullmatch(r"[0-9a-f]{40}",commit):
   raise ValueError("Source commit must be an immutable 40-character SHA.")
  source_url=str(verification["source_url"]).strip()
- if not source_url.startswith("https://"):
-  raise ValueError("Training evidence must use an HTTPS source URL.")
+ try:
+  parsed=urlsplit(source_url)
+  port=parsed.port
+ except ValueError:
+  raise ValueError("Training evidence must use a canonical DreamCo GitHub commit URL.")
+ parts=[part for part in parsed.path.split("/") if part]
+ if (parsed.scheme!="https" or parsed.hostname!="github.com" or port not in (None,443)
+     or parsed.username or parsed.password or parsed.query or parsed.fragment
+     or len(parts)!=4 or parts[:3]!=["DreamCo-Technologies","Dreamcobots","commit"]
+     or parts[3].lower()!=commit):
+  raise ValueError("Training evidence must use the canonical DreamCo commit URL matching source_commit.")
+ run_id=str(verification["run_id"]).strip()
+ if not re.fullmatch(r"\d{1,20}",run_id):
+  raise ValueError("Verification run ID must be numeric metadata.")
  criteria=[str(x).strip() for x in verification.get("acceptance_criteria",[]) if str(x).strip()]
  evidence=[str(x).strip() for x in verification.get("test_evidence",[]) if str(x).strip()]
  if not criteria or not evidence:
@@ -150,9 +132,10 @@ def build_training_event(observation:dict[str,Any],verification:dict[str,Any])->
  lesson=" ".join([f"Root cause: {verification['root_cause']}",f"Verified repair: {verification['repair']}","Evidence: "+"; ".join(map(str,verification.get("evidence",[])))])
  if len(task)<12 or len(lesson)<30:
   raise ValueError("Training task and verified lesson must contain substantive detail.")
- event_id="repair-"+hashlib.sha256(f"{fingerprint({**observation,'failure_class':kind})}:{commit}:{verification['run_id']}".encode()).hexdigest()
+ source_fingerprint=fingerprint({**observation,"failure_class":kind})
+ event_id="repair-"+hashlib.sha256(f"{source_fingerprint}:{commit}:{run_id}".encode()).hexdigest()
  return {"schema":"dreamco.verified_repair_training_event.v1","event_id":event_id,
-  "evidence_type":"verified_bug_fix","source_url":source_url,"source_commit":commit,"run_id":str(verification["run_id"]),
+  "evidence_type":"verified_bug_fix","source_url":source_url,"source_commit":commit,"source_fingerprint":source_fingerprint,"run_id":run_id,
   "primary_masterbot_id":owner,"collaborating_masterbot_ids":collaborators,"task":task,"verified_lesson":lesson,
   "acceptance_criteria":criteria,"test_evidence":evidence,"verified":True,"human_reviewed":True,
   "training_allowed":True,"rights_status":"VERIFIED","contains_secrets":False,
@@ -161,10 +144,9 @@ def build_training_event(observation:dict[str,Any],verification:dict[str,Any])->
   "training_approved":False,"weights_trained":False}
 def main()->int:
  parser=argparse.ArgumentParser();parser.add_argument("--observation",required=True)
- parser.add_argument("--memory",default=str(DEFAULT_MEMORY));parser.add_argument("--historical-index");parser.add_argument("--output",required=True)
+ parser.add_argument("--memory",default=str(DEFAULT_MEMORY));parser.add_argument("--output",required=True)
  args=parser.parse_args();obs=json.loads(Path(args.observation).read_text())
  path=Path(args.memory);memory=json.loads(path.read_text()) if path.exists() else {"incidents":[]}
- history=json.loads(Path(args.historical_index).read_text()) if args.historical_index else {}
- result=recommend(obs,memory,history);Path(args.output).write_text(json.dumps(result,indent=2)+"\n")
+ result=recommend(obs,memory);Path(args.output).write_text(json.dumps(result,indent=2)+"\n")
  print(json.dumps(result,sort_keys=True));return 0
 if __name__=="__main__":raise SystemExit(main())
