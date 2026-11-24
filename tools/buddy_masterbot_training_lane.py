@@ -1,34 +1,81 @@
-"""Safe bounded training-lane coordinator for DreamCo's canonical MasterBots."""
+"""Emit a plan-only record for a canonical MasterBot; this does not train weights."""
 from __future__ import annotations
-import json, os
+
+import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[1]
-REGISTRY=ROOT/"config"/"masterbot-65-registry.json"
-OUT=ROOT/"artifacts"/"masterbot-training"
-def main()->int:
-    name=os.environ.get("MASTERBOT_NAME","")
-    if not name: raise SystemExit("MASTERBOT_NAME is required")
-    registry=json.loads(REGISTRY.read_text(encoding="utf-8"))
-    bots=registry.get("divisions") or registry.get("masterbots") or []
-    bot=next((x for x in bots if x.get("name")==name),None)
-    if bot is None: raise SystemExit(f"Unknown MasterBot: {name}")
-    checkpoint={
-      "schema":"dreamco.masterbot_training_checkpoint.v2",
-      "created_at":datetime.now(timezone.utc).isoformat(),
-      "run_id":os.environ.get("GITHUB_RUN_ID","local"),
-      "run_attempt":os.environ.get("GITHUB_RUN_ATTEMPT","1"),
-      "masterbot_id":bot["id"],"masterbot":bot["name"],
-      "mode":"sandbox_first","status":"PLAN_ONLY_NOT_EXECUTED",
-      "lifecycle":registry.get("training_lifecycle",[]),
-      "shared_learning_inputs":["approved_lesson_metadata","verified_benchmark_deltas","reusable_test_fixtures","verified_fixes_from_other_dreamco_runs"],
-      "shareable_lesson_refs":[],
-      "next_actions":["load this division's capability-gap inventory","ingest eligible shared lesson metadata from prior runs","select highest-value unresolved gap","run baseline","study authorized sources","practice in isolation","run benchmark and held-out transfer","record measurable evidence","publish verified reusable lesson metadata","requeue unresolved/regressed gaps"],
-      "raw_dataset_pooling":False,"automatic_weight_merging":False,
-      "weights_trained":False,"production_side_effects":"disabled",
-      "mastery_claim":"not_claimed_without_evidence"
+
+ROOT = Path(__file__).resolve().parents[1]
+REGISTRY = ROOT / "config" / "masterbot-65-registry.json"
+OUT = ROOT / "artifacts" / "masterbot-training"
+
+
+def build_plan(bot: dict, *, run_id: str, run_attempt: str) -> dict:
+    """Build explicit plan-only evidence without invoking a model or compute worker."""
+    return {
+        "schema": "dreamco.masterbot_training_plan.v1",
+        "artifact_kind": "PLAN_ONLY_NOT_A_MODEL_CHECKPOINT",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "run_id": run_id,
+        "run_attempt": run_attempt,
+        "masterbot_id": bot["id"],
+        "masterbot": bot["name"],
+        "mode": "sandbox_first",
+        "status": "PLAN_ONLY_NOT_EXECUTED",
+        "lifecycle": [],
+        "shared_learning_inputs": [
+            "approved_lesson_metadata",
+            "verified_benchmark_deltas",
+            "reusable_test_fixtures",
+            "verified_fixes_from_other_dreamco_runs",
+        ],
+        "shareable_lesson_refs": [],
+        "next_actions": [
+            "load_this_division_capability_gap_inventory",
+            "ingest_rights_cleared_shared_lesson_metadata",
+            "select_highest_priority_unresolved_gap",
+            "run_a_pinned_baseline",
+            "study_authorized_sources",
+            "practice_in_an_isolated_sandbox",
+            "run_domain_and_held_out_benchmarks",
+            "record_lineage_and_reproducibility_evidence",
+            "publish_verified_reusable_lesson_metadata",
+            "requeue_unresolved_or_regressed_gaps",
+        ],
+        "raw_dataset_pooling": False,
+        "automatic_weight_merging": False,
+        "weights_trained": False,
+        "training_job_executed": False,
+        "compute_consumed": False,
+        "production_side_effects": "disabled",
+        "mastery_claim": "not_claimed_without_evidence",
     }
-    dest=OUT/bot["name"]; dest.mkdir(parents=True,exist_ok=True)
-    (dest/"latest-checkpoint.json").write_text(json.dumps(checkpoint,indent=2)+"\n",encoding="utf-8")
-    print(json.dumps(checkpoint,indent=2)); return 0
-if __name__=="__main__": raise SystemExit(main())
+
+
+def main() -> int:
+    name = os.environ.get("MASTERBOT_NAME", "").strip()
+    if not name:
+        raise SystemExit("MASTERBOT_NAME is required")
+
+    registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+    bots = registry.get("divisions") or registry.get("masterbots") or []
+    bot = next((item for item in bots if item.get("name") == name), None)
+    if bot is None:
+        raise SystemExit(f"Unknown MasterBot: {name}")
+
+    plan = build_plan(
+        bot,
+        run_id=os.environ.get("GITHUB_RUN_ID", "local"),
+        run_attempt=os.environ.get("GITHUB_RUN_ATTEMPT", "1"),
+    )
+    destination = OUT / bot["name"]
+    destination.mkdir(parents=True, exist_ok=True)
+    output = destination / "latest-plan.json"
+    output.write_text(json.dumps(plan, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(plan, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
