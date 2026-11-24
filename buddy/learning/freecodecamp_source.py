@@ -35,7 +35,10 @@ def resources_for_division(division_id: int, path: Path = ROUTES) -> list[Resour
 def select_next_for_division(division_id: int, gaps: Iterable[Capability], *, recent: set[int] | None = None,
                              path: Path = ROUTES) -> Resource | None:
     resources = resources_for_division(division_id, path)
-    return choose_next(resources, gaps, recent=recent)
+    # choose_next evaluates gaps once per candidate; materialize generators so
+    # every candidate receives the same complete gap set.
+    gap_list = list(gaps)
+    return choose_next(resources, gap_list, recent=recent)
 
 def route_summary(path: Path = ROUTES) -> dict:
     payload = load_routes(path)
