@@ -14,7 +14,7 @@ Original Buddy chrome plus the desks from the latest Grok chat. Static HTML. No 
 
 - [Original Buddy chat](website/buddy.html)
 - [Buddy Bootcamp](website/own-bootcamp.html) — our curriculum; [HF packages](website/hf-bootcamp.html), [step wrappers](website/bootcamp-wrappers.html); [DreamCo Model Foundry roadmap](buddy/bootcamp/sources/DREAMCO_MODEL_FOUNDRY_ROADMAP.md); [first-party training data license template](licenses/DREAMCO-FIRST-PARTY-TRAINING-DATA-LICENSE-TEMPLATE.md)
-- [Model picker](website/models.html) — plus [Open Model Lab](website/open-model-lab.html)
+- [Model picker](website/models.html) — plus [Open Model Lab](website/open-model-lab.html) and [Pretrained Model Store](website/pretrained-model-store.html) — catalog foundation, hardware estimator, and rights/evaluation gates
 - [Living AI & Technology Radar](website/technology-radar.html) — current discoveries across AI models, vibe coding, coding agents, remote work, and home-business tools
 - [Markdown → Code Gap Audit](website/markdown-gap-audit.html) — maps all tracked Markdown requirements to code, tests, workflows, and missing paths
 - [Category Systems](website/category-systems.html) — source-derived taxonomy systems and evidence states
