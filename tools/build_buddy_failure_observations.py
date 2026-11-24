@@ -76,7 +76,7 @@ def main() -> int:
     memory = json.loads(args.memory.read_text(encoding="utf-8")) if args.memory and args.memory.exists() else {"incidents": []}
     report = build_report(run, history, memory)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(report, indent=2) + "\\n", encoding="utf-8")
+    args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"ok": True, "observations": report["observation_count"],
                       "output": str(args.output)}, sort_keys=True))
     return 0
