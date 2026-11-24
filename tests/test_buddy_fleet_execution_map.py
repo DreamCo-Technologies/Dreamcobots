@@ -94,6 +94,19 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
             self.assertTrue(plan.get("verified_revenue_event_types"), bot["slug"])
             self.assertFalse(plan["live_actions_allowed"])
 
+    def test_unassigned_profiles_are_visible_in_discovery_review_queue(self):
+        queue = self.payload["division_review_queue"]
+        self.assertEqual(len(queue), self.payload["counts"]["unresolved_owner_count"])
+        self.assertGreater(len(queue), 0)
+        for item in queue:
+            bot = next(row for row in self.bots if row["slug"] == item["slug"])
+            self.assertEqual(bot["canonical_owner_division"], "DreamDiscovery")
+            self.assertEqual(bot["division_route"]["status"], "discovery_review_required")
+            self.assertTrue(bot["division_review"]["owner_approval_required"])
+        threejs = [row for row in queue if row["slug"].startswith("threejs-")]
+        self.assertEqual(len(threejs), 19)
+        self.assertTrue(all(row["suggested_domains"] == ["DreamCodeLab", "DreamArts"] for row in threejs))
+
     def test_all_bots_can_access_shared_platform_masterbots(self):
         expected = list(range(46, 66))
         for bot in self.bots:
