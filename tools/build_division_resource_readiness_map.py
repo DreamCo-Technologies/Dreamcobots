@@ -73,19 +73,21 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
             namespace=linked["logical_database_namespace"]
             lane_id=linked["dataset_discovery_lane_id"]
             capabilities=linked["capability_pack_ids"]
+            search_queries=tax_routes[masterbot_id]["search_queries"]
             route_type="linked_to_masterbot_resource_bundle"
         else:
             bundle_id=f"domain-resource-{domain['domain_id']}"
             namespace=f"dreamco_domain_{domain['domain_id']}"
             lane_id=f"domain-discovery-{domain['domain_id']}"
             capabilities=["pack.instruct","pack.reason","pack.safety"]
+            search_queries=[f"{domain['domain_name']} dataset",f"{domain['domain_name']} machine learning",f"{domain['domain_name']} benchmark"]
             route_type="standalone_domain_resource_bundle"
         domain_routes.append({
             "domain_id":domain["domain_id"],"domain_name":domain["domain_name"],
             "masterbot_id":masterbot_id,"masterbot_name":domain.get("masterbot_name"),
             "route_type":route_type,"resource_bundle_id":bundle_id,
             "readiness_status":"requirements_defined_not_provisioned",
-            "logical_database_namespace":namespace,"dataset_discovery_lane_id":lane_id,
+            "logical_database_namespace":namespace,"dataset_discovery_lane_id":lane_id,"dataset_search_queries":search_queries,
             "capability_pack_ids":capabilities,"dataset_rights_status":"UNVERIFIED_DISCOVERY_ONLY",
             "dataset_training_approved":False,"owner_review_required":True,
             "mapping_status":domain.get("mapping_status"),"owner_approval":domain.get("owner_approval")
