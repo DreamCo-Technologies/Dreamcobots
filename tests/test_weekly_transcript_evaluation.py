@@ -21,6 +21,24 @@ class WeeklyTranscriptEvaluationTests(unittest.TestCase):
         self.assertTrue(report["blocked_reasons"])
         self.assertEqual(report["synthetic_evaluations_created"], 0)
 
+    def test_empty_authorized_manifest_is_blocked_not_passed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            manifest = root / "manifest.json"
+            manifest.write_text(json.dumps({
+                "schema": "dreamco.authorized_transcript_manifest.v1",
+                "status": "no_authorized_transcripts_registered",
+                "transcripts": []
+            }))
+            report = build_report(POLICY, manifest, root / "ledger.json", date(2026, 11, 24))
+        self.assertEqual(report["status"], "blocked")
+        self.assertEqual(report["transcript_count"], 0)
+        self.assertEqual(report["evaluated_count"], 0)
+        self.assertEqual(report["due_count"], 0)
+        self.assertIsNone(report["coverage"])
+        self.assertIn("no_authorized_transcripts_registered", report["blocked_reasons"])
+        self.assertEqual(report["synthetic_evaluations_created"], 0)
+
     def test_every_approved_transcript_is_due_without_weekly_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
