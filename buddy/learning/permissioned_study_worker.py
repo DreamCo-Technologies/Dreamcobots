@@ -14,7 +14,7 @@ from urllib.parse import urlparse
 from buddy.learning.study_artifact_cleanup import study_download_workspace
 
 _ALLOWED = {"open_official_page", "download_media", "ingest_transcript", "derive_original_lesson"}
-_RESTRICTED = {"download_media", "ingest_transcript"}
+_REQUIRES_APPROVAL = {"download_media", "ingest_transcript", "derive_original_lesson"}
 
 
 @dataclass(frozen=True)
@@ -46,12 +46,13 @@ def validate_authorization(auth: StudyAuthorization) -> None:
         raise PermissionError(f"unknown study operations: {sorted(unknown)}")
     if auth.review_status not in {"pending", "approved", "restricted", "rejected", "public_metadata_only"}:
         raise PermissionError("invalid rights review status")
-    if auth.review_status in {"restricted", "rejected"} and auth.allowed_operations:
+    if auth.review_status in {"restricted", "rejected"}:
         raise PermissionError("restricted or rejected sources cannot be studied")
-    if auth.review_status != "approved" and set(auth.allowed_operations) & _RESTRICTED:
-        raise PermissionError("media and transcript operations require explicit approved rights evidence")
-    if set(auth.allowed_operations) & _RESTRICTED and not auth.evidence_ref:
-        raise PermissionError("media and transcript permissions require a rights evidence reference")
+    requested = set(auth.allowed_operations) & _REQUIRES_APPROVAL
+    if requested and auth.review_status != "approved":
+        raise PermissionError("content derivation, media, and transcript operations require explicit approved rights review")
+    if requested and not auth.evidence_ref:
+        raise PermissionError("content derivation, media, and transcript permissions require a rights evidence reference")
 
 
 def run_study_attempt(
