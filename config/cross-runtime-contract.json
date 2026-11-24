@@ -1,0 +1,81 @@
+{
+  "schema": "dreamco.cross_runtime_contract.v1",
+  "status": "CONTRACT_DEFINED_IMPLEMENTATION_PENDING",
+  "source_of_truth": {
+    "repository": "DreamCo-Technologies/Dreamcobots",
+    "branch": "main",
+    "owns": ["division_registry", "task_contracts", "dataset_manifests", "tokenizer_specs", "model_lineage", "benchmark_definitions", "governance_policy", "release_evidence"]
+  },
+  "implementations": [
+    {
+      "id": "python-reference",
+      "repository": "DreamCo-Technologies/Dreamcobots",
+      "language": "python",
+      "role": "reference_orchestration_training_and_evaluation",
+      "required": true
+    },
+    {
+      "id": "apple-native",
+      "repository": "ireanjordan24/dreamcobots",
+      "language": "c",
+      "role": "apple_silicon_runtime_and_competing_inference_implementation",
+      "required": true
+    }
+  ],
+  "shared_contracts": [
+    "division_identity_and_version",
+    "task_request_and_response",
+    "model_provider_capability_manifest",
+    "tokenizer_identity_and_revision",
+    "dataset_provenance_rights_and_split_hashes",
+    "training_job_and_compute_approval",
+    "checkpoint_manifest_and_sha256",
+    "benchmark_case_and_scorecard",
+    "run_event_and_failure_taxonomy",
+    "release_gate_and_rollback"
+  ],
+  "competition": {
+    "selection": "best_eligible_model_per_task",
+    "hard_gates": ["task_capability_match", "license_and_data_rights", "privacy_and_security", "tool_and_modality_support", "minimum_quality_threshold", "reproducible_evidence"],
+    "ranking_dimensions": ["quality", "reliability", "safety", "latency", "throughput", "memory", "cost"],
+    "policy": "quality_and_safety_gates_first_then_configured_multi_objective_ranking",
+    "fallback_required": true,
+    "benchmark_suite_version_required": true,
+    "no_unverified_claims": true
+  },
+  "training": {
+    "tokenizer_training": "approved_dataset_and_rights_review_required",
+    "weight_training": "pinned_base_model_tokenizer_dataset_recipe_and_compute_approval_required",
+    "checkpoint": "content_addressed_and_hash_verified",
+    "promotion": "private_holdout_benchmark_and_release_review_required",
+    "scheduled_planning_is_not_training": true
+  },
+  "integration": {
+    "sync_direction": "main_repository_contract_to_both_implementations",
+    "mac_repository_must_not_become_an_independent_source_of_truth": true,
+    "chat_context": "only_explicitly_approved_exported_decisions_and_requirements_are_committed",
+    "no_credentials_or_private_chat_transcripts_in_git": true,
+    "submodule_policy": "pin_reviewed_main_repository_commit_and_test_compatibility",
+    "no_history_rewrite_or_blind_bulk_merge": true
+  },
+  "completion_order": [
+    "inventory_both_repositories_all_branches_pull_requests_workflows_and_unique_features",
+    "reconcile_all_existing_python_pull_request_work",
+    "close_unresolved_mappings_and_dependency_gaps_with_owner_review",
+    "connect_real_database_storage_queue_and_runner_services_with_evidence",
+    "execute_tokenizer_training_and_weight_training_only_on_approved_compute",
+    "run_private_holdout_safety_and_regression_benchmarks",
+    "complete_release_gates_and_recovery_tests",
+    "freeze_versioned_shared_contracts",
+    "implement_and_test_apple_c_runtime",
+    "run_python_vs_c_competition_on_identical_tasks_and_hardware",
+    "select_best_eligible_model_per_task_and_publish_evidence"
+  ],
+  "truth_rules": {
+    "planned_is_not_running": true,
+    "workflow_success_is_not_model_training": true,
+    "specification_is_not_a_trained_model": true,
+    "benchmark_pass_is_scoped_to_exact_revisions_and_environment": true,
+    "production_promotion_requires_explicit_release_gate": true
+  }
+}
