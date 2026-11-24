@@ -61,7 +61,8 @@ class DatasetIngestionWorkerTests(unittest.TestCase):
   self.assertEqual(result["postgres_catalog"]["status"],"PERSISTED")
   manifest=postgres.manifests[0][1]
   self.assertTrue(manifest["object_path"].startswith("dreamco/masterbot-001/datasets/"))
-  self.assertEqual(manifest["local_object_path"],store.uploads[0][0].relative_to(self.hub.home).as_posix())
+  self.assertTrue(store.uploads[0][0].is_file())
+  self.assertEqual(manifest["local_object_path"],self.hub.get("fixture.dataset")["object_path"])
   self.assertFalse(result["training_started"])
  def test_postgres_catalog_cannot_be_used_without_object_storage(self):
   with patch.dict(os.environ,{"DREAMCO_ALLOW_DATASET_INGESTION":"1"},clear=True):
