@@ -82,6 +82,26 @@ def validate_catalogs(root: Path = ROOT) -> dict:
                         raise ValueError(f"Tolkien rights gate must keep {flag}=false")
                 if rights.get("unknown_rights_status") != "BLOCKED":
                     raise ValueError("Tolkien study track must block unknown rights")
+            if track.get("track_id") == "database-and-dataset-engineering":
+                rights = track.get("rights_and_safety") or {}
+                lessons = track.get("lesson_sequence") or []
+                source_ids = track.get("source_ids") or []
+                if len(lessons) != 10 or not source_ids:
+                    raise ValueError("database and dataset track requires ten lessons and source references")
+                if any(source_id not in {row[0] for row in rows} for source_id in source_ids):
+                    raise ValueError("database and dataset track references unknown study resources")
+                for flag in (
+                    "production_database_access_authorized",
+                    "live_database_writes_authorized",
+                    "production_migrations_authorized",
+                    "bulk_dataset_download_authorized",
+                    "private_or_paid_dataset_ingestion_authorized",
+                    "model_weight_training_authorized",
+                ):
+                    if rights.get(flag) is not False:
+                        raise ValueError(f"database/dataset rights gate must keep {flag}=false")
+                if rights.get("unknown_rights_status") != "BLOCKED":
+                    raise ValueError("database and dataset track must block unknown rights")
     else:
         raise ValueError("required study resource expansion 1101-1200 is missing")
 
