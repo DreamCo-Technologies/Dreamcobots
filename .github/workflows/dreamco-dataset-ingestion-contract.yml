@@ -1,0 +1,27 @@
+name: DreamCo Dataset Ingestion Contract
+on:
+  pull_request:
+    paths:
+      - "buddy/datasets/ingestion_worker.py"
+      - "tests/test_buddy_dataset_ingestion_worker.py"
+      - "docs/DREAMCO_GOVERNED_DATASET_INGESTION.md"
+      - ".github/workflows/dreamco-dataset-ingestion-contract.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/datasets/ingestion_worker.py"
+      - "tests/test_buddy_dataset_ingestion_worker.py"
+      - "docs/DREAMCO_GOVERNED_DATASET_INGESTION.md"
+permissions:
+  contents: read
+jobs:
+  ingestion-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run ingestion worker tests
+        run: python -m unittest discover -s tests -p 'test_buddy_dataset_ingestion_worker.py' -v
