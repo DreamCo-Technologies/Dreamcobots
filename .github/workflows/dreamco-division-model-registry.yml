@@ -1,0 +1,28 @@
+name: DreamCo Division Model Registry
+on:
+  pull_request:
+    paths:
+      - "buddy/models/division_model_registry.py"
+      - "config/division-model-lifecycle-policy.json"
+      - "tests/test_division_model_registry.py"
+      - "docs/DREAMCO_INDEPENDENT_DIVISION_MODEL_LIFECYCLE.md"
+      - ".github/workflows/dreamco-division-model-registry.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/models/division_model_registry.py"
+      - "config/division-model-lifecycle-policy.json"
+      - "tests/test_division_model_registry.py"
+permissions:
+  contents: read
+jobs:
+  division-model-registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate all 65 division model identities
+        run: python -m unittest discover -s tests -p 'test_division_model_registry.py' -v
