@@ -14,7 +14,8 @@ def main()->int:
     bot=next((x for x in bots if x.get("name")==name),None)
     if bot is None: raise SystemExit(f"Unknown MasterBot: {name}")
     checkpoint={
-      "schema":"dreamco.masterbot_training_checkpoint.v2",
+      "schema":"dreamco.masterbot_training_plan.v1",
+      "artifact_kind":"PLAN_ONLY_NOT_A_MODEL_CHECKPOINT",
       "created_at":datetime.now(timezone.utc).isoformat(),
       "run_id":os.environ.get("GITHUB_RUN_ID","local"),
       "run_attempt":os.environ.get("GITHUB_RUN_ATTEMPT","1"),
@@ -29,6 +30,6 @@ def main()->int:
       "mastery_claim":"not_claimed_without_evidence"
     }
     dest=OUT/bot["name"]; dest.mkdir(parents=True,exist_ok=True)
-    (dest/"latest-checkpoint.json").write_text(json.dumps(checkpoint,indent=2)+"\n",encoding="utf-8")
+    (dest/"latest-plan.json").write_text(json.dumps(checkpoint,indent=2)+"\n",encoding="utf-8")
     print(json.dumps(checkpoint,indent=2)); return 0
 if __name__=="__main__": raise SystemExit(main())
