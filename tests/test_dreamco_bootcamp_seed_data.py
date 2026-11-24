@@ -140,7 +140,7 @@ class BootcampSeedDataTests(unittest.TestCase):
         card = build_dataset_card(manifest, "candidate.jsonl")
         with tempfile.TemporaryDirectory() as temp:
             source = Path(temp) / "candidate.jsonl"
-            source.write_text("".join(json.dumps(row) + "\\n" for row in rows), encoding="utf-8")
+            source.write_text("".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
             hub = DatasetHub(home=Path(temp) / "hub")
             with self.assertRaisesRegex(DatasetPolicyError, "disabled until an operator"):
                 hub.register(card, source_file=source)
@@ -160,7 +160,7 @@ class BootcampSeedDataTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             source = root / "candidate.jsonl"
-            source.write_text("".join(json.dumps(row) + "\\n" for row in rows), encoding="utf-8")
+            source.write_text("".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
             hub = DatasetHub(home=root / "hub")
             registered = hub.register(card, source_file=source)
             self.assertEqual(registered["training_status"], "APPROVED_PENDING_TRAINING")
