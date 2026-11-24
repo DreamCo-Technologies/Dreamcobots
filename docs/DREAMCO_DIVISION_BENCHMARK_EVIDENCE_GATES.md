@@ -4,7 +4,7 @@ This package separates benchmark planning from benchmark execution and certifica
 
 ## Required evidence
 
-Every division model benchmark plan pins the canonical MasterBot ID, division model name/version, immutable trained-weight SHA-256, training dataset hash, and a different evaluation-only holdout dataset hash. It also requires a rights-review reference and explicit evaluation approval.
+Every division model benchmark plan pins the canonical MasterBot ID, division model name/version, immutable trained-weight SHA-256, base-model ID and revision, training method, verified base-model license evidence, training dataset hash, and a different evaluation-only holdout dataset hash. It also requires a rights-review reference and explicit evaluation approval.
 
 A complete evidence bundle contains at least three independent runs with unique run IDs and seeds. Each run is tied to a commit SHA, workflow run ID, evaluator identity, exact weight hash, and exact holdout hash. The required suites are:
 - domain-task quality;
