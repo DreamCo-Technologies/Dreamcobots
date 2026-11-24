@@ -1,0 +1,30 @@
+name: DreamCo Division Evidence Gate
+
+on:
+  pull_request:
+    paths:
+      - "buddy/models/evidence_gate.py"
+      - "tests/test_buddy_division_evidence_gate.py"
+      - "docs/DREAMCO_DIVISION_EVIDENCE_GATES.md"
+      - ".github/workflows/dreamco-division-evidence-gate.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/models/evidence_gate.py"
+      - "tests/test_buddy_division_evidence_gate.py"
+      - "docs/DREAMCO_DIVISION_EVIDENCE_GATES.md"
+
+permissions:
+  contents: read
+
+jobs:
+  division-evidence-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run evidence gate tests
+        run: python -m unittest discover -s tests -p 'test_buddy_division_evidence_gate.py' -v
