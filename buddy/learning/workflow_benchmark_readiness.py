@@ -55,33 +55,46 @@ def inventory() -> dict:
 
 
 def build_events(found: dict) -> dict:
+    """Create inventory-only events; file presence is never execution evidence."""
     events = []
     for path in found["workflows"]:
         events.append({
             "event_id": "workflow:" + path,
             "event_type": "tool_outcome",
-            "capability": "workflow_connection",
-            "success": True,
+            "capability": "workflow_inventory",
+            "success": False,
             "verified": False,
             "regression_passed": False,
-            "safety_passed": True,
+            "safety_passed": False,
             "external_assistance": False,
+            "event_status": "inventory_only",
+            "evidence_refs": [],
+            "run_id": "",
+            "commit_sha": "",
+            "baseline_ref": "",
+            "holdout_ref": "",
+            "regression_ref": "",
+            "safety_ref": "",
             "source": path,
         })
     for path in found["benchmarks"]:
-        local_sandbox = path in {
-            "benchmarks/america_gov/sandbox.py",
-            "benchmarks/resource_mastery/sandbox.py",
-        }
         events.append({
             "event_id": "benchmark:" + path,
             "event_type": "benchmark",
-            "capability": "repository_benchmark",
-            "success": local_sandbox,
-            "verified": local_sandbox,
-            "regression_passed": local_sandbox,
-            "safety_passed": True,
+            "capability": "benchmark_inventory",
+            "success": False,
+            "verified": False,
+            "regression_passed": False,
+            "safety_passed": False,
             "external_assistance": False,
+            "event_status": "inventory_only",
+            "evidence_refs": [],
+            "run_id": "",
+            "commit_sha": "",
+            "baseline_ref": "",
+            "holdout_ref": "",
+            "regression_ref": "",
+            "safety_ref": "",
             "source": path,
         })
     return {"schema": "dreamco.workflow_benchmark_events.v1", "events": events}
