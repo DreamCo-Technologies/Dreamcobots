@@ -11,8 +11,9 @@ class OriginalLessonTests(unittest.TestCase):
             "worked_examples":[{"problem":"Convert a temperature value.","solution":"Define a conversion function.","reasoning":"A named operation can be tested independently."}],
             "practice":[{"prompt":"Write a formatter.","expected_artifact":"A tested function.","difficulty":"guided"},{"prompt":"Build a reusable validator.","expected_artifact":"A tested validator.","difficulty":"independent"}],
             "assessment":{"questions":["What is a parameter?","What is a return value?","Why test a function?"],"answer_key":["An input name.","The result sent back.","To verify behavior."],"benchmark_spec":"Run unseen input/output cases."},
+            "authorship":{"authoring_entity":"DreamCo","created_at":"2026-11-24T00:00:00Z","human_contribution":"Human reviewed the lesson outline, examples, and technical accuracy.","human_owner_confirmation":"pending","revision_history_ref":None},
             "provenance":{"source_name":"freeCodeCamp.org","source_url":"https://www.freecodecamp.org/","retrieved_at":"2026-11-24T00:00:00Z","source_usage":"inspiration_only","rights_review_ref":None},
-            "rights":{"review_status":"pending","source_material_copied":False,"training_allowed":False}
+            "rights":{"review_status":"pending","owner_label":"DreamCo","ownership_claim_status":"pending_review","third_party_material_included":False,"source_material_copied":False,"training_allowed":False}
         }
     def test_valid_original_lesson(self):
         self.assertEqual(validate_lesson(self.lesson()), [])
@@ -22,6 +23,14 @@ class OriginalLessonTests(unittest.TestCase):
     def test_rejects_training_without_separate_approval(self):
         item=self.lesson(); item["rights"]["training_allowed"]=True
         self.assertTrue(any("training remains disabled" in x for x in validate_lesson(item)))
+
+    def test_rejects_unrecorded_ownership_or_third_party_material(self):
+        item=self.lesson(); item["rights"]["third_party_material_included"]=True
+        self.assertTrue(any("third-party material" in x for x in validate_lesson(item)))
+        item=self.lesson(); item["rights"]["ownership_claim_status"]="confirmed"
+        item["authorship"]["human_owner_confirmation"]="pending"
+        self.assertEqual(validate_lesson(item), [])
+
     def test_rejects_incomplete_assessment(self):
         item=self.lesson(); item["assessment"]["questions"]=[]
         self.assertTrue(any("three questions" in x for x in validate_lesson(item)))
