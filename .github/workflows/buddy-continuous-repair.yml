@@ -18,8 +18,7 @@ on:
     types: [completed]
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
   issues: write
   actions: read
 
@@ -112,7 +111,8 @@ jobs:
             echo "- Hourly schedule: enabled"
             echo "- Failed workflow run: ${{ github.event.workflow_run.html_url || 'not applicable' }}"
             echo "- Repair boundary: deterministic evidence refresh and regression-verified changes only"
-            echo "- Production deployment and direct pushes to main: disabled"
+            echo "- Production deployment, automated branch writes, force-pushes, and PR creation: disabled"
+            echo "- Successful evidence refreshes remain available as workflow artifacts for owner-reviewed PR preparation"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Save diagnostics
@@ -128,28 +128,6 @@ jobs:
             config/generated/actions-live-health.json
           if-no-files-found: warn
           retention-days: 30
-
-      - name: Open a repair pull request for verified changes
-        if: success()
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ github.token }}
-          base: main
-          branch: bot/buddy-continuous-repair
-          delete-branch: false
-          commit-message: "fix(ci): refresh verified repository evidence"
-          title: "fix(ci): Buddy continuous safe repairs"
-          body: |
-            ## Automated safe repair
-
-            This pull request was created by the hourly Buddy Continuous Repair workflow.
-
-            - Rebuilt deterministic repository and Actions evidence.
-            - Ran Actions health, failure-learning, Pages feature, file-prospectus, and Actions-page regression tests.
-            - Only verified generated/evidence changes are proposed.
-            - No direct push to main, merge, production deployment, model training, or weight update is performed.
-
-            Review the workflow run and artifacts before merging.
 
       - name: Open or update a human-triage issue if verification fails
         if: failure()
