@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from tools.build_buddy_dataset_routes import matches_existing
+from tools.build_buddy_dataset_routes import matches_existing, build
 
 
 class DatasetRouteCheckTests(unittest.TestCase):
@@ -19,6 +19,16 @@ class DatasetRouteCheckTests(unittest.TestCase):
 
     def test_malformed_existing_artifact_is_stale(self):
         self.assertFalse(matches_existing({"generated_at": "now"}, "not json"))
+
+    def test_catalog_train_hint_never_becomes_training_eligibility(self):
+        payload = build()
+        self.assertEqual(payload["masterbot_count"], 65)
+        for route in payload["routes"]:
+            for candidate in route["candidates"]:
+                self.assertIn("source_catalog_train_hint", candidate)
+                self.assertFalse(candidate["training_eligible"])
+                self.assertEqual(candidate["training_status"], "DISCOVERY_ONLY_NOT_TRAINING_APPROVED")
+                self.assertEqual(candidate["rights_status"], "UNVERIFIED_DATASET_CARD_AND_TERMS_REQUIRED")
 
 
 if __name__ == "__main__":
