@@ -255,6 +255,18 @@ The user subsequently approved the daily engineering plan and explicitly added T
 
 The Tolkien lane contains eight lessons covering philology, historical linguistics, comparative mythology, literary architecture, archival provenance, digital humanities, scholarly reception and a cited capstone. It uses catalog resources 1176–1189 and requires original learner-authored artifacts and rubric evidence. The Estate's published guidance identifies restrictions around text quotations, artwork, invented languages/scripts, public readings and derivative uses; the track therefore blocks copyrighted primary-text ingestion, audiobook/transcript downloads, protected-language/script reproduction, derivative generation from protected characters/settings/stories, and model-weight training. Unknown rights remain BLOCKED. See [Tolkien Estate guidance](https://www.tolkienestate.com/frequently-asked-questions-and-links/) and [Marquette Tolkien Collection guidance](https://www.db.mu.edu/library/archives/Mss/JRRT/about.php).
 
+#### FreeCodeCamp first-run artifact evidence
+
+The successful `generate-curriculum` job in workflow run **45432752067** uploaded artifact `buddy-bootcamp-study-artifacts` (artifact ID `14937879223`, SHA-256 `11ada2c43e1da84b9a9d4369357f9fe8505341ad8006ba1b8adc1ded62d98846`). The artifact contains four generated JSON files and reports:
+
+- **1,741** FreeCodeCamp channel video metadata entries, with yt-dlp `2026.11.23`; upstream playlist count and observed entries both equal 1,741, with 0 null entries and 0 duplicate video IDs. The inventory is marked complete for metadata enumeration.
+- **22** catalog topic categories; no video/audio/transcript payloads were downloaded.
+- **65** division routes; every division can discover the shared catalog. Each division queue contains 30 candidate lesson references; queue status is not watched/studied evidence.
+- **325** daily lesson-production slots (5 × 65); `created_lessons=0`, `validated_lessons=0`, and status `target_planned_not_completed`. All 325 slots are `queued_not_created`.
+- Every queue item remains `rights_status=review_required`, `transcript_ingestion_allowed=false`, and `training_eligible=false`.
+
+The weekly transcript readiness job in the same workflow run produced artifact ID `14939004920`: status `blocked`, reason `approved_transcript_manifest_missing`, transcript_count 0, evaluated_count 0, due_count 0, coverage null. This is not a successful Buddy transcript evaluation; no transcript files or approved manifest exist in the main tree.
+
 #### Dataset discovery counts from the current route artifact
 
 The main dataset-routing artifact records 2,976 catalog dataset rows, 727 unique dataset candidates, 1,783 MasterBot-lane candidate rows across 65 routes. Every candidate remains `UNVERIFIED_DATASET_CARD_AND_TERMS_REQUIRED` and `DISCOVERY_ONLY_NOT_TRAINING_APPROVED`; 0 are rights-cleared or training-approved by this artifact. These are catalog counts, not datasets inspected, ingested, or trained on. The route generator was updated on the study-resource PR branch to rename the ambiguous `catalog_train_flag` to `source_catalog_train_hint` and explicitly emit `training_eligible: false`; the generated 1,783 candidate rows were updated with the same fail-closed meaning.
