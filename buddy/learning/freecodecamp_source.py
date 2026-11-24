@@ -8,7 +8,9 @@ from typing import Iterable
 from buddy.learning.study_resource_scheduler import Capability, Resource, choose_next, study_plan
 
 ROOT = Path(__file__).resolve().parents[2]
-ROUTES = ROOT / "config/generated/freecodecamp-source-routes.json"
+CATALOG = ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json"
+REGISTRY = ROOT / "config/masterbot-65-registry.json"
+ROUTES = CATALOG
 
 def stable_resource_id(video_id: str) -> int:
     """Return a deterministic scheduler ID that survives catalog reordering."""
@@ -19,7 +21,36 @@ def stable_resource_id(video_id: str) -> int:
 
 
 def load_routes(path: Path = ROUTES) -> dict:
+    """Load the canonical catalog directly; accept generated routes for compatibility/tests."""
     payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("schema") == "dreamco.freecodecamp_catalog.v1":
+        videos = payload.get("videos")
+        inventory = payload.get("inventory") or {}
+        registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+        divisions = registry.get("divisions", [])
+        if (
+            payload.get("inventory_status") != "complete"
+            or not isinstance(videos, list)
+            or not videos
+            or payload.get("video_count") != len(videos)
+            or inventory.get("complete") is not True
+            or inventory.get("expected_entry_count") != len(videos)
+            or inventory.get("observed_entry_count") != len(videos)
+            or inventory.get("null_entry_count") != 0
+            or inventory.get("duplicate_video_id_count") != 0
+            or len(divisions) != 65
+        ):
+            raise ValueError("freeCodeCamp catalog is not a verified complete inventory")
+        return {
+            "schema": "dreamco.freecodecamp_runtime_catalog.v1",
+            "division_count": 65,
+            "catalog_video_count": len(videos),
+            "divisions": [
+                {"division_id": int(row["id"]), "available_video_count": len(videos)}
+                for row in divisions
+            ],
+            "videos": videos,
+        }
     if payload.get("schema") != "dreamco.freecodecamp_source_routes.v1" or payload.get("division_count") != 65:
         raise ValueError("invalid or incomplete freeCodeCamp source routes")
     inventory = payload.get("source_inventory") or {}
