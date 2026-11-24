@@ -82,6 +82,7 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
             self.assertNotEqual(bot["source_division"], bot["canonical_owner_division"])
             self.assertTrue(bot["specialist_capability_domain"])
             self.assertTrue(bot["specialist_bot_scope"])
+            self.assertEqual(bot["specialist_bot_scope"]["exact_capability_overlap_with_canonical_owner"], [])
 
     def test_all_supplemental_specialists_have_distinct_commercial_routes(self):
         supplemental = [bot for bot in self.bots if bot["supplemental_portfolio"]]
