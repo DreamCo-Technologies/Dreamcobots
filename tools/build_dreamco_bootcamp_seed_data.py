@@ -45,7 +45,7 @@ def _canonical_rows(rows: list[dict[str, Any]]) -> bytes:
 def _split_sha256(rows: list[dict[str, Any]], split: str) -> str:
     # Must match buddy.datasets.transformers_runner._split_hash exactly.
     payload = "".join(
-        json.dumps(row, sort_keys=True, ensure_ascii=False) + "\\n"
+        json.dumps(row, sort_keys=True, ensure_ascii=False) + "\n"
         for row in rows if row["split"] == split
     )
     return _sha_bytes(payload.encode("utf-8"))
