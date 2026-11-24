@@ -82,6 +82,16 @@ def build_queues(catalog: dict[str, Any], registry: dict[str, Any], limit: int =
     divisions = registry.get("divisions")
     if not isinstance(videos, list) or not videos:
         raise ValueError("non-empty freeCodeCamp catalog required")
+    inventory = catalog.get("inventory") or {}
+    if (
+        catalog.get("inventory_status") != "complete"
+        or inventory.get("complete") is not True
+        or inventory.get("expected_entry_count") != len(videos)
+        or inventory.get("observed_entry_count") != len(videos)
+        or inventory.get("null_entry_count") != 0
+        or inventory.get("duplicate_video_id_count") != 0
+    ):
+        raise ValueError("verified complete freeCodeCamp inventory required before division queue generation")
     if not isinstance(divisions, list) or len(divisions) != 65:
         raise ValueError("canonical 65-division registry required")
     known = {row["id"] for row in categories}
@@ -130,6 +140,8 @@ def build_queues(catalog: dict[str, Any], registry: dict[str, Any], limit: int =
     return {
         "schema": "dreamco.freecodecamp_division_learning_queues.v1",
         "source_catalog_generated_at": catalog.get("generated_at"),
+        "source_inventory_status": catalog.get("inventory_status"),
+        "source_inventory": inventory,
         "division_count": len(rows),
         "catalog_video_count": len(videos),
         "queue_limit_per_division": limit,
@@ -142,6 +154,13 @@ def validate(payload: dict[str, Any]) -> None:
     rows = payload.get("divisions", [])
     if payload.get("schema") != "dreamco.freecodecamp_division_learning_queues.v1" or len(rows) != 65:
         raise ValueError("exactly 65 division queues are required")
+    source_inventory = payload.get("source_inventory") or {}
+    if (
+        payload.get("source_inventory_status") != "complete"
+        or source_inventory.get("complete") is not True
+        or source_inventory.get("observed_entry_count") != payload.get("catalog_video_count")
+    ):
+        raise ValueError("division queues must retain verified complete source inventory evidence")
     ids = [row["division_id"] for row in rows]
     if len(set(ids)) != 65:
         raise ValueError("division IDs must be unique")
