@@ -18,12 +18,12 @@ OUTPUT = ROOT / "config/generated/division-huggingface-taxonomy-map.json"
 BASE_PACKS = ["pack.instruct", "pack.reason", "pack.safety"]
 PACK_KEYWORDS = {
     "pack.code": ["code", "cyber", "automation", "agents", "infra", "integration", "simulation", "security", "ai", "software"],
-    "pack.embed": ["data", "knowledge", "research", "resource", "market", "finance", "customer", "discovery", "global", "education", "legal", "realestate", "science"],
+    "pack.embed": ["data", "knowledge", "research", "resource", "market", "finance", "customer", "cust intel", "discovery", "global", "education", "legal", "real estate", "science"],
     "pack.rerank": ["market", "retail", "product", "customer", "resource", "discovery", "search", "decision", "sales", "trade"],
-    "pack.vision": ["vision", "arts", "construction", "production", "agriculture", "realestate", "planetary", "simulation", "food", "maintenance", "transport", "design"],
+    "pack.vision": ["vision", "arts", "construction", "production", "agriculture", "real estate", "planetary", "simulation", "food", "maintenance", "transport", "design"],
     "pack.speech": ["voice", "content", "social", "influence", "human", "education", "arts", "audio"],
     "pack.translate": ["global", "world", "trade", "market", "education", "language", "international"],
-    "pack.summarize": ["content", "research", "knowledge", "legal", "admin", "strategy", "education", "proservices", "document", "science"],
+    "pack.summarize": ["content", "research", "knowledge", "legal", "admin", "strategy", "education", "pro services", "document", "science"],
 }
 PACK_TASKS = {
     "pack.instruct": ["text-generation", "text2text-generation"],
@@ -45,7 +45,7 @@ def norm(value: str) -> str:
 
 def git_blob_sha(text: str) -> str:
     raw = text.encode("utf-8")
-    return hashlib.sha1(f"blob {len(raw)}\\0".encode("ascii") + raw).hexdigest()
+    return hashlib.sha1(f"blob {len(raw)}\0".encode("ascii") + raw).hexdigest()
 
 
 def build_map(masterbots: dict, crosswalk: dict, hf_packs: dict, taxonomy: dict,
@@ -172,7 +172,7 @@ def main() -> int:
         source_docs["hf_capability_packs"], source_docs["hf_task_taxonomy"],
         source_docs["dataset_routing_policy"], source_hashes
     )
-    encoded = json.dumps(payload, indent=2, ensure_ascii=False) + "\\n"
+    encoded = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
     if args.check:
         if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8") != encoded:
             raise SystemExit("Hugging Face division taxonomy map is stale; regenerate it")
