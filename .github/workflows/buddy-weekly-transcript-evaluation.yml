@@ -1,5 +1,12 @@
 name: Buddy Weekly Transcript Evaluation
 on:
+  pull_request:
+    paths:
+      - ".github/workflows/buddy-weekly-transcript-evaluation.yml"
+      - "config/buddy-weekly-transcript-evaluation.json"
+      - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
+      - "tools/build_weekly_transcript_evaluation.py"
+      - "tests/test_weekly_transcript_evaluation.py"
   schedule:
     - cron: "0 6 * * 1"
   workflow_dispatch:
