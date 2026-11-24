@@ -20,6 +20,8 @@ The sync enumerates public video metadata with yt-dlp's flat-playlist mode. It d
 
 If YouTube changes its public channel interface or rate-limits enumeration, the sync fails visibly rather than reporting an incomplete inventory as complete.
 
+The committed catalog is currently a legacy partial snapshot (1,740 rows, without an upstream playlist-count proof). The latest CI discovery artifact verified 1,741 rows; the refreshed artifact is not yet committed to this branch. Runtime loading rejects the partial snapshot until a complete inventory is committed.
+
 ## Subject taxonomy
 
 Videos can have multiple tags across these tracks:
