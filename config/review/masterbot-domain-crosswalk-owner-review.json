@@ -1,6 +1,14 @@
 {
   "schema": "dreamco.masterbot_domain_owner_review.v2",
   "status": "pending_owner_review_no_guessed_mappings",
+  "source_refs": [
+    "config/generated/masterbot-45-domain-crosswalk.json",
+    "config/generated/masterbot-55-domain-crosswalk.json",
+    "config/generated/division-reconciliation.json",
+    "config/division-reconciliation-policy.json",
+    "shared/division-production-contract.ts",
+    "config/masterbot-65-registry.json"
+  ],
   "counts": {
     "unresolved_masterbot_mappings": 20,
     "unassigned_domain_profiles": 10,
@@ -10,6 +18,17 @@
     "shared_platform_masterbots": 20
   },
   "instructions": "Owner review only. Preserve all 45 original core domains, all ten promoted supplemental domains, and all 65 canonical MasterBots. Exact-name crosswalk matches remain proposals until an authorized owner records reviewer, evidence, decision date, and approval. Keep the 20 shared-platform MasterBots (IDs 46-65) as cross-domain services; do not force them into a primary domain. Empty candidate arrays and null approvals are intentional. Never infer ownership from names, keywords, or generic capability similarity. Resource bundles and shared service availability do not establish ownership, execution, mastery, or production readiness.",
+  "domain_taxonomy": {
+    "original_core_divisions": 45,
+    "promoted_supplemental_divisions": 10,
+    "total_domain_divisions": 55,
+    "shared_platform_masterbot_ids": {
+      "first": 46,
+      "last": 65,
+      "count": 20
+    },
+    "policy": "The 20 shared-platform MasterBots are cross-domain services available to all 55 domain divisions; they are not additional domain divisions and receive no primary domain owner through this record."
+  },
   "masterbot_domain_decisions": [
     {
       "masterbot_id": 46,
@@ -423,24 +442,5 @@
         "shared/division-production-contract.ts"
       ]
     }
-  ],
-  "source_refs": [
-    "config/generated/masterbot-45-domain-crosswalk.json",
-    "config/generated/masterbot-55-domain-crosswalk.json",
-    "config/generated/division-reconciliation.json",
-    "config/division-reconciliation-policy.json",
-    "shared/division-production-contract.ts",
-    "config/masterbot-65-registry.json"
-  ],
-  "domain_taxonomy": {
-    "original_core_divisions": 45,
-    "promoted_supplemental_divisions": 10,
-    "total_domain_divisions": 55,
-    "shared_platform_masterbot_ids": {
-      "first": 46,
-      "last": 65,
-      "count": 20
-    },
-    "policy": "The 20 shared-platform MasterBots are cross-domain services available to all 55 domain divisions; they are not additional domain divisions and receive no primary domain owner through this record."
-  }
+  ]
 }
