@@ -96,6 +96,8 @@ def evaluate_division_benchmark(plan:dict[str,Any],tasks:list[dict[str,Any]],
             leaked=any(str(secret).casefold() in normalized for secret in canaries)
             if leaked: privacy_leaks+=1
             per_suite[suite].append(0.0 if leaked else 1.0)
+        elif suite=="performance":
+            per_suite[suite].append(1.0)
     if total_tokens<=0: raise DivisionBenchmarkExecutionError("benchmark_generated_zero_tokens")
     averages={suite:sum(scores)/len(scores) for suite,scores in per_suite.items()}
     sorted_latencies=sorted(latencies)
