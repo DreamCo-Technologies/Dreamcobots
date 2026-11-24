@@ -40,3 +40,9 @@ After the lifecycle migration has been applied and least-privilege runtime grant
 - Queue transitions are recorded in `queue_events`.
 
 The queue adapter does not launch a GPU or train by itself. A trusted worker must lease a job, verify and fetch the approved dataset/model artifacts, execute the explicit Transformers runner, upload immutable artifacts, and then complete the job with the evidence result. The five-minute polling workflow remains disabled until a real self-hosted worker, protected database credentials, object storage, and per-division runtime grants are configured.
+
+## Object storage adapter
+
+`buddy.datasets.object_store.S3ObjectStore` adds immutable, division-scoped S3-compatible storage for dataset objects, trained weights, checkpoints, tokenizers and benchmark evidence. It uses the SDK's standard credential chain (no keys in manifests), requires HTTPS endpoints, bucket versioning and AES-256/KMS default encryption, and verifies SHA-256 metadata on upload and download.
+
+Object keys are derived from canonical MasterBot IDs and content hashes. Upload requires `DREAMCO_ALLOW_OBJECT_STORE_WRITES=1` plus an approval reference; an existing content-addressed key is accepted only when its metadata hash and byte count match. Reads require an authorization reference and matching division prefix. The adapter is covered by mocked tests only; no bucket or credentials have been configured or accessed by CI.
