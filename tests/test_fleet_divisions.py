@@ -21,15 +21,22 @@ from buddy.fleet_runtime.divisions import build_division_manifests, division_smo
 DIVISIONS = {d["name"]: d for d in json.loads((ROOT / "config/bots/division-manifests.generated.json").read_text())["divisions"]}
 APP_DIVISIONS = sorted({json.loads(p.read_text())["division"] for p in (ROOT / "App_bots").glob("*.json")
                         if json.loads(p.read_text()).get("bots")})
+CANONICAL_DIVISIONS = sorted(DIVISIONS)
 
 
-def test_every_app_bots_division_has_a_manifest():
+def test_every_source_division_is_reconciled_to_45_canonical_manifests():
     assert len(APP_DIVISIONS) == 55
-    assert set(APP_DIVISIONS) <= set(DIVISIONS)
-    for name in APP_DIVISIONS:
+    assert len(CANONICAL_DIVISIONS) == 45
+    crosswalk = json.loads((ROOT / "config/generated/masterbot-45-domain-crosswalk.json").read_text())
+    assert set(CANONICAL_DIVISIONS) == {row["domain_name"] for row in crosswalk["domains"]}
+    for name in CANONICAL_DIVISIONS:
         d = DIVISIONS[name]
-        assert d["bots"] > 0 and d["smoke_bots"] and f"App_bots/{name}.json" in d["sources"], name
+        assert d["bots"] > 0 and d["smoke_bots"], name
         assert d["triggerable"] is True, name
+    charters = json.loads((ROOT / "config/supplemental-portfolio-capability-charters.json").read_text())
+    for portfolio in charters["portfolios"]:
+        owner = portfolio["owner"]
+        assert f"App_bots/{portfolio['portfolio']}.json" in DIVISIONS[owner]["sources"]
 
 
 def test_division_manifests_are_generated_not_hand_edited():
@@ -39,7 +46,7 @@ def test_division_manifests_are_generated_not_hand_edited():
     assert (ROOT / "config/bots/division-manifests.generated.json").read_text() == text
 
 
-@pytest.mark.parametrize("name", APP_DIVISIONS)
+@pytest.mark.parametrize("name", CANONICAL_DIVISIONS)
 def test_division_smoke_runs_its_own_bots_end_to_end_offline(name):
     executor = FleetExecutor(env={}, customizations={})
     result = division_smoke(executor, DIVISIONS[name])
@@ -76,7 +83,8 @@ def test_auditor_reports_a_state_for_every_division():
     assert set(states) == set(DIVISIONS)
     for name in APP_DIVISIONS:
         assert states[name]["state"] == "TESTED" and states[name]["smoke_passed"], name
-    assert states["UNASSIGNED"]["state"] == "SPEC_ONLY"
+    assert "UNASSIGNED" not in states
+    assert "GrokTeammates" not in states
     assert sum(status["summary"]["divisions_by_state"].values()) == len(DIVISIONS)
 
 
@@ -87,9 +95,9 @@ def test_every_division_has_a_complete_prospectus_card_and_run_job():
     by_id = {c["id"]: c for c in cards["divisions"]}
     for name in DIVISIONS:
         assert bap.card_problems(by_id["division:" + name]) == [], name
-    for name in APP_DIVISIONS:
+    for name in CANONICAL_DIVISIONS:
         assert by_id["division:" + name]["trigger"]["command"] == f"/buddy run fleet_division_run division={name}"
-    assert by_id["division:UNASSIGNED"]["trigger"]["triggerable"] is False
+    assert "division:UNASSIGNED" not in by_id
     registry = json.loads((ROOT / "config/buddy/run-with-buddy.generated.json").read_text())
     job = next(j for j in registry["jobs"] if j["id"] == "fleet_division_run")
     assert job["workflow"] == "fleet-bot-run.yml" and job["risk_tier"] == "read_only"
@@ -127,7 +135,7 @@ def test_division_disable_reaches_runtime_but_never_money_bots():
 
 def test_division_job_refuses_unassigned_and_disabled_and_runs_otherwise(tmp_path, capsys):
     ns = lambda name, out=None: argparse.Namespace(cmd="division-job", name=name, out=out)  # noqa: E731
-    assert run_divisions(FleetExecutor(env={}, customizations={}), ns("UNASSIGNED")) == 3
+    assert run_divisions(FleetExecutor(env={}, customizations={}), ns("UNASSIGNED")) == 2
     assert run_divisions(FleetExecutor(env={}, customizations={"division:DreamContent": {"enabled": False}}), ns("DreamContent")) == 3
     assert run_divisions(FleetExecutor(env={}, customizations={}), ns("NoSuchDivision")) == 2
     out = tmp_path / "d.json"
