@@ -48,6 +48,23 @@ class FreeCodeCampCatalogTests(unittest.TestCase):
             self.assertFalse(row["transcript_ingestion_allowed"])
             self.assertFalse(row["model_training_allowed"])
 
+    def test_topic_routing_uses_tokens_not_substring_accidents(self):
+        registry={"divisions":[{"id":1,"name":"DreamAIInfra"},{"id":2,"name":"DreamRetail"},
+            {"id":3,"name":"DreamMaintenance"},{"id":4,"name":"DreamResearch"},
+            {"id":5,"name":"DreamData"},{"id":6,"name":"DreamCyber"}]}
+        catalog={"videos":[{"video_id":"ai","title":"AI agents","url":"https://www.youtube.com/watch?v=ai","categories":["ai_ml"]},
+            {"video_id":"db","title":"PostgreSQL vector search","url":"https://www.youtube.com/watch?v=db","categories":["databases_and_data_engineering"]},
+            {"video_id":"cyber","title":"Cybersecurity basics","url":"https://www.youtube.com/watch?v=cyber","categories":["cybersecurity_and_privacy"]}]}
+        result=build_routes(catalog,{"divisions":registry["divisions"]+[{"id":i,"name":f"Other{i}"} for i in range(7,66)]})
+        routed={x["video_id"]:x for x in result["videos"]}
+        self.assertIn(1,routed["ai"]["specialty_division_ids"])
+        self.assertIn(4,routed["ai"]["specialty_division_ids"])
+        self.assertNotIn(2,routed["ai"]["specialty_division_ids"])
+        self.assertNotIn(3,routed["ai"]["specialty_division_ids"])
+        self.assertIn(5,routed["db"]["specialty_division_ids"])
+        self.assertIn(6,routed["cyber"]["specialty_division_ids"])
+        self.assertEqual(routed["ai"]["routing_semantics"],"topic_relevance_not_primary_domain_ownership")
+
     def test_daily_lesson_plan_targets_five_per_55_domains_and_reports_blocked_slots(self):
         entries=parse_feed(ATOM_FIXTURE)
         catalog=merge_catalog({},entries,generated_at="2026-11-24T00:00:00+00:00")

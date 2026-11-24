@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Build FreeCodeCamp metadata routes and a five-lesson/day plan for 55 domains."""
-import argparse, json
+import argparse, json, re
 from pathlib import Path
 
 CATEGORY_TERMS = {
@@ -19,16 +19,26 @@ def categorize_text(title, description=""):
  text=f"{title} {description}".casefold()
  return [k for k,terms in CATEGORY_TERMS.items() if any(t in text for t in terms)] or ["other_or_unclassified"]
 
+CATEGORY_DIVISION_TOKENS = {
+ "python_and_automation":{"python","automation","code","flow","agents"},
+ "cybersecurity_and_privacy":{"cyber","security","protection"},
+ "web_development":{"code","web","product","integration"},
+ "ai_ml":{"ai","ml","research","vision","reason","benchmark","simulation"},
+ "data_science":{"data","science","research","benchmark"},
+ "databases_and_data_engineering":{"data","database","knowledge","integration","search","research"},
+ "cloud_devops":{"infra","ops","operations","resource","integration"},
+ "game_development":{"game","arts","simulation","vision"},
+ "computer_science":{"code","education","research","knowledge","benchmark"},
+}
+
 def _specialty_ids(categories, divisions):
+ wanted=set().union(*(CATEGORY_DIVISION_TOKENS.get(category,set()) for category in categories))
  ids=[]
- for d in divisions:
-  name=str(d.get("name","")).casefold()
-  if any(term in name for category in categories for term in CATEGORY_TERMS.get(category,())):
-   ids.append(int(d["id"]))
-  elif "cybersecurity_and_privacy" in categories and any(x in name for x in ("cyber","security")):
-   ids.append(int(d["id"]))
-  elif "ai_ml" in categories and any(x in name for x in ("ai","ml","research")):
-   ids.append(int(d["id"]))
+ for division in divisions:
+  name=str(division.get("name",""))
+  tokens={part.casefold() for part in re.findall(r"[A-Z]+(?=[A-Z][a-z]|\\b)|[A-Z]?[a-z]+|[0-9]+",name)}
+  if tokens & wanted:
+   ids.append(int(division["id"]))
  return sorted(set(ids))
 
 def _daily_plan(profiles,videos,quota):
@@ -75,7 +85,7 @@ def build_routes(catalog,registry,domain_profiles=None,lessons_per_domain=5):
   seen.add(vid); cats=list(v.get("categories") or categorize_text(title,v.get("description","")))
   specialty=_specialty_ids(cats,divisions)
   routed.append({**v,"categories":cats,"specialty_division_ids":specialty,
-   "routing_status":"specialty_and_shared" if specialty else "shared_only","shared_catalog_access":True,
+   "routing_status":"specialty_and_shared" if specialty else "shared_only","routing_semantics":"topic_relevance_not_primary_domain_ownership","shared_catalog_access":True,
    "rights_status":v.get("rights_status","review_required"),"media_download_allowed":False,
    "transcript_ingestion_allowed":False,"model_training_allowed":False,
    "transcript_status":v.get("transcript_status","not_ingested_rights_gate")})
