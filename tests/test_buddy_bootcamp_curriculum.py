@@ -12,9 +12,10 @@ class BuddyBootcampCurriculumTests(unittest.TestCase):
   cls.packs=json.loads((ROOT/"config/hf-capability-download-map.json").read_text())
   cls.division_map=json.loads((ROOT/"config/generated/division-huggingface-taxonomy-map.json").read_text())
   cls.serving=json.loads((ROOT/"config/buddy-model-serving-policy.json").read_text())
+  cls.source_registry=json.loads((ROOT/"config/dreamco-training-source-registry.json").read_text())
  def build(self):
   return build_curriculum(self.masterbots,self.tasks,self.packs,self.division_map,self.serving,
-   {"fixture":"0"*64})
+   {"fixture":"0"*64},self.source_registry)
  def test_curriculum_covers_all_65_divisions_37_tasks_and_10_packs(self):
   payload=self.build();validate_curriculum(payload)
   self.assertEqual(payload["coverage"]["divisions"],65)
@@ -41,6 +42,38 @@ class BuddyBootcampCurriculumTests(unittest.TestCase):
   self.assertEqual(payload["status"],"CURRICULUM_SPECIFIED_NOT_TRAINED")
   self.assertIn("NOT_A_CLAIM",payload["teacher_model_role"]["status"])
   self.assertTrue(all(x["model"]["status"]=="SPECIFIED_NOT_TRAINED" for x in payload["divisions"]))
+ def test_structured_task_metadata_and_nine_source_families_are_preserved(self):
+  payload=self.build()
+  self.assertEqual(payload["coverage"]["training_source_families"],9)
+  tasks={item["task_family"]:item for item in payload["global_task_families"]}
+  self.assertEqual(tasks["image-classification"]["modality"],"image")
+  self.assertEqual(tasks["image-classification"]["pipeline_tag"],"image-classification")
+  self.assertEqual(tasks["reinforcement-learning"]["family"],"reinforcement_learning")
+  self.assertEqual(len(payload["training_resource_catalog"]["source_families"]),9)
+  for division in payload["divisions"]:
+   self.assertEqual(len(division["resources"]["training_source_family_ids"]),9)
+   self.assertFalse(division["resources"]["private_division_data_shared"])
+   self.assertFalse(division["resources"]["private_holdouts_shared"])
+
+ def test_missing_training_source_family_is_rejected(self):
+  sources=json.loads(json.dumps(self.source_registry))
+  sources["source_families"]=[x for x in sources["source_families"] if x["id"]!="teacher_outputs"]
+  with self.assertRaisesRegex(ValueError,"all nine unique governed source families"):
+   build_curriculum(self.masterbots,self.tasks,self.packs,self.division_map,self.serving,
+    {"fixture":"0"*64},sources)
+
+ def test_structured_taxonomy_duplicate_and_missing_ids_are_rejected(self):
+  tasks=json.loads(json.dumps(self.tasks))
+  tasks["task_families"][1]["id"]=tasks["task_families"][0]["id"]
+  with self.assertRaisesRegex(ValueError,"unique Hugging Face task family IDs"):
+   build_curriculum(self.masterbots,tasks,self.packs,self.division_map,self.serving,
+    {"fixture":"0"*64},self.source_registry)
+  tasks=json.loads(json.dumps(self.tasks))
+  del tasks["task_families"][0]["id"]
+  with self.assertRaisesRegex(ValueError,"stable id"):
+   build_curriculum(self.masterbots,tasks,self.packs,self.division_map,self.serving,
+    {"fixture":"0"*64},self.source_registry)
+
  def test_unknown_capability_pack_is_rejected(self):
   division_map=json.loads(json.dumps(self.division_map))
   division_map["routes"][0]["capability_pack_ids"].append("pack.unknown")
