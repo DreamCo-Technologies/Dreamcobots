@@ -180,6 +180,7 @@ def build_dataset_card(manifest: dict[str, Any], candidate_path: str) -> dict[st
         "owner": "DreamCo Technologies - pending assignment review",
         "license": "UNASSIGNED_PENDING_HUMAN_REVIEW",
         "license_url": "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/config/buddy-training-data-provenance-policy.json",
+        "license_url_status": "POLICY_REFERENCE_NOT_A_DATASET_LICENSE",
         "source_url": "https://github.com/DreamCo-Technologies/Dreamcobots",
         "data_plane": "dreamco_owned_training",
         "rights_status": "PENDING_HUMAN_REVIEW",
