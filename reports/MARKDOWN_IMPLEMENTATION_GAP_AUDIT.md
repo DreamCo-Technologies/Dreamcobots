@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-22T15:37:59Z
+Generated: 2026-11-24T04:24:23Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1648
-- Actionable claim lines detected: 11729
-- Documents with missing path references: 108
-- Documents without implementation references: 1570
-- Documents with implementation references but no test references: 62
-- Documents with inventory count claims: 107
-- Inventory count claims requiring review: 377
+- Markdown documents scanned: 1660
+- Actionable claim lines detected: 11826
+- Documents with missing path references: 109
+- Documents without implementation references: 1578
+- Documents with implementation references but no test references: 66
+- Documents with inventory count claims: 108
+- Inventory count claims requiring review: 378
 
 ## Fixed-count claims requiring review
 
@@ -167,6 +167,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/VIBE_CODING_CATEGORY_MAP.md:57 — ## 41–50: Civic, professional, industrial and physical-world systems
 - docs/adr/0001-superbot-operating-model.md:8 — DreamCo has grown into a large ecosystem of divisions, bot profiles, workflows, tools, experiments, notes and product surfaces. The repository's README currently describes 1,051+ bot profiles across 45 divisions, while the owner has identified additional bot material outside the 
 - docs/adr/0001-superbot-operating-model.md:8 — DreamCo has grown into a large ecosystem of divisions, bot profiles, workflows, tools, experiments, notes and product surfaces. The repository's README currently describes 1,051+ bot profiles across 45 divisions, while the owner has identified additional bot material outside the 
+- docs/architecture/PROPRIETARY_DIVISION_MODEL_PROGRAM.md:64 — B. Pilot 3 divisions with distinct modalities/domains; prove reproducible small-model fine-tuning and independent deployment.
 - docs/benchmarks/BENCHMARKS_801_1000.md:181 — - **977 agent recovery benchmark** — recovery from failed tasks.
 - docs/benchmarks/BENCHMARKS_801_1000.md:182 — - **978 agent planning benchmark** — long-horizon execution.
 - docs/benchmarks/BENCHMARKS_801_1000.md:187 — - **983 skill-tree benchmark** — capability organization.
@@ -12528,6 +12529,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### database/migrations/README_DIVISION_DATASET_CATALOG.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 9
+- Implementation paths: buddy/datasets/postgres_catalog.py
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/500_MODEL_RESEARCH.md
 
 - Status: implementation_reference_missing
@@ -12946,6 +12957,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: tests/test_buddy_control_plane.py
 - Missing paths: github/workflows/buddy-command-router.yml
 - Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_DATABASE_ROUTING_CONTRACT.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_DATASET_HUB_AND_UNKNOWN_PROBLEM_ROUTER.md
@@ -13668,6 +13689,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/DREAMCO_DIVISION_SCHEMA_PROVISIONING.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 4
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/DREAMCO_ENGINEERING_OPERATING_SYSTEM.md
 
 - Status: test_reference_missing
@@ -13726,6 +13757,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: None detected
 - Missing paths: framework/global_ai_sources_flow.py
 - Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_POSTGRES_DIVISION_PROBE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_REBUILD_V2.md
@@ -13956,6 +13997,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: None detected
 - Missing paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/MASTERBOT_45_DOMAIN_CROSSWALK.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 0
+- Implementation paths: shared/division-production-contract.ts
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/MASTER_PLAN.md
@@ -14438,6 +14489,46 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/architecture/DREAMCO_DIVISION_RESOURCE_READINESS.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 5
+- Implementation paths: buddy/resources/division_resource_router.py
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/architecture/DREAMCO_FIRST_PARTY_MODEL_FACTORY_AND_BUDDY_BOOTCAMP.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 17
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/architecture/DREAMCO_HUGGINGFACE_DIVISION_TAXONOMY.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/architecture/PROPRIETARY_DIVISION_MODEL_PROGRAM.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 19
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/benchmark-candidate-selection.md
 
 - Status: implementation_reference_missing
@@ -14776,6 +14867,26 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: tests/test_buddy_srs_sm2.py
 - Missing paths: tests/test_sm2.py
 - Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/product/DREAMCO_DATASET_STUDIO_AND_MARKETPLACE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 12
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/product/DREAMCO_MODEL_STUDIO_AND_MARKETPLACE.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 20
+- Implementation paths: buddy_os/actions/model_marketplace_contract.yaml
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/public_development/BUDDY_PUBLIC_DEVELOPMENT.md
@@ -15435,6 +15546,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Implementation paths: buddy/frontier/plan_status.py, buddy/media/consent.py, buddy/media/core.py, buddy/media/provenance.py, dreamco_platform/games/harness.py, tools/buddy_source_selector.py, tools/dreamco_file_converter.py, tools/video_evidence_validator.py, tools/video_package_compiler.py, tools/video_scan_fast.py, tools/video_scan_manifest.py, website/data/plan-status.json
 - Test paths: tests/test_buddy_game_lab.py
 - Missing paths: config/buddy_video_*.json, schemas/source_provenance_record.schema.json, tools/validate_source_provenance.py
+- Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### reports/ACTIONS_LIVE_HEALTH.md
+
+- Status: broken_path_references
+- Actionable claim lines: 6
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: github/workflows/all-bot-sandbox-campaign.yml, github/workflows/auto-merge-intake.yml, github/workflows/benchmark-mastery-distillation.yml, github/workflows/buddy-bootcamp-resource-categories.yml, github/workflows/buddy-custom-training-rewards.yml, github/workflows/buddy-daily-capability-gap-lab.yml, github/workflows/buddy-evidence-acquisition-tests.yml, github/workflows/buddy-failure-learning.yml, github/workflows/buddy-inhouse-capability-certification.yml, github/workflows/buddy-learning-runtime-integration.yml, github/workflows/buddy-navigation-bootcamp.yml, github/workflows/buddy-preventive-site-audit.yml, github/workflows/buddy-production-evidence-preflight.yml, github/workflows/buddy-provider-learning-libraries.yml, github/workflows/buddy-recovery-systems.yml, github/workflows/buddy-safe-repair.yml, github/workflows/buddy-self-build.yml, github/workflows/buddy-task-store-tests.yml, github/workflows/buddy-teacher-coverage-audit.yml, github/workflows/buddy-training-methods-hub.yml, github/workflows/buddy-training-taxonomy.yml, github/workflows/ci-automation.yml, github/workflows/ci.yml, github/workflows/codex-scan-only.yml, github/workflows/compatibility-repair-apply.yml, github/workflows/consolidated-evidence.yml, github/workflows/dependency-security-repair.yml, github/workflows/dreamco-build.yml, github/workflows/dreamco-five-minute-status-monitor.yml
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
