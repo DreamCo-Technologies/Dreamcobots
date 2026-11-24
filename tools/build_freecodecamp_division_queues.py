@@ -154,14 +154,14 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
         "source_inventory": inventory,
         "domain_count": len(rows),
         "catalog_video_count": len(videos),
-        "queue_limit_per_division": limit,
+        "queue_limit_per_domain": limit,
         "rights_policy": catalog["rights_policy"],
-        "divisions": rows,
+        "domains": rows,
         "truth_boundary": "Queues prioritize study candidates only. Rights review and independent learning evidence are required before training or mastery claims.",
     }
 
 def validate(payload: dict[str, Any]) -> None:
-    rows = payload.get("divisions", [])
+    rows = payload.get("domains", [])
     if payload.get("schema") != "dreamco.freecodecamp_division_learning_queues.v1" or len(rows) != 55:
         raise ValueError("exactly 55 domain queues are required")
     source_inventory = payload.get("source_inventory") or {}
@@ -209,7 +209,7 @@ def main() -> int:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(rendered, encoding="utf-8")
     print(json.dumps({"ok": True, "domains": 55, "catalog_videos": len(catalog["videos"]),
-                      "queued_items": sum(row["queue_count"] for row in payload["divisions"]),
+                      "queued_items": sum(row["queue_count"] for row in payload["domains"]),
                       "subject_routed": sum(row["queue_status"] == "subject_routed" for row in payload["divisions"]),
                       "foundation_only": sum(row["queue_status"] != "subject_routed" for row in payload["divisions"])}, indent=2))
     return 0
