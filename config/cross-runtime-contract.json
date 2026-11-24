@@ -104,7 +104,8 @@
       "same_prompts_and_tool_permissions",
       "same_dataset_and_benchmark_versions",
       "same_quality_and_safety_gates",
-      "hardware_and_environment_recorded_and_comparable"
+      "hardware_and_environment_recorded_and_comparable",
+      "the same versioned conformance suite is executed for Python, C and Swift in the eventual unified Apple-repository CI view; execution remains gated until Python-first completion"
     ],
     "fallback_required": true,
     "benchmark_suite_version_required": true,
@@ -226,7 +227,19 @@
     "chat_context": "only_explicitly_approved_exported_decisions_and_requirements_are_committed",
     "no_credentials_or_private_chat_transcripts_in_git": true,
     "submodule_policy": "pin_reviewed_main_repository_commit_and_test_compatibility",
-    "no_history_rewrite_or_blind_bulk_merge": true
+    "no_history_rewrite_or_blind_bulk_merge": true,
+    "apple_repository_ci": {
+      "role": "The private Apple repository may host the eventual unified three-candidate CI/conformance dashboard and safe, read-only monitoring of canonical Python repository runs. It must not become the source of truth or silently re-execute privileged Python training.",
+      "candidates": [
+        "python-reference",
+        "apple-c",
+        "apple-swift"
+      ],
+      "phase_gate": "Do not activate three-candidate parity campaigns, clone implementations, or comparative scoring until the canonical Python repository completion gate is satisfied and approved.",
+      "before_gate": "Only safe, explicitly allowlisted status/contract-validation jobs may be mirrored or monitored from the Apple repository. Canonical Python CI and training remain owned by the main repository. No duplicate training, deployment, secret exposure, or runner privilege escalation.",
+      "after_gate": "Run conformance/build/test jobs for Python, C and Swift from a version-pinned contract and fixtures. Preserve per-candidate build/test results and hardware-cohort evidence. Python's training artifacts remain canonical and shared as approved immutable artifacts.",
+      "safety": "Least-privilege GitHub App/token, read-only cross-repository status where possible, pinned actions, untrusted-PR isolation, no secrets to fork PRs, bounded concurrency and budgets, audit logs."
+    }
   },
   "completion_order": [
     "inventory_python_and_apple_repositories_all_relevant_branches_pull_requests_workflows_submodules_and_unique_features",
