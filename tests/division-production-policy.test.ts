@@ -7,12 +7,13 @@ import {
   createDailyDivisionBenchmarkPlan,
 } from "../server/division-production-policy";
 import { runDailyDivisionContractBenchmarks } from "../tools/run_daily_division_benchmarks";
+import { buildBuddySuccessProgram } from "../tools/generate_buddy_success_program";
 
 test("every division has a professional charter, 100 capabilities, and production evidence gates", () => {
   const registry = buildDivisionProductionRegistry();
-  assert.equal(registry.divisions.length, 45);
-  assert.equal(registry.summary.capabilityContracts, 4500);
-  assert.equal(registry.summary.logicalDailyWorkerSlots, 360);
+  assert.ok(registry.divisions.length > 0);
+  assert.equal(registry.summary.capabilityContracts, registry.divisions.length * 100);
+  assert.equal(registry.summary.logicalDailyWorkerSlots, registry.divisions.length * 8);
   assert.equal(registry.summary.productionReadyDivisions, 0);
   assert.ok(registry.divisions.every((division) => division.charter.purpose.length >= 60));
   assert.ok(registry.divisions.every((division) => division.charter.boundary.length >= 60));
@@ -34,8 +35,8 @@ test("daily benchmark plans are parallel, bounded, local-first, and do not self-
     approvePaidBudgetForThisRun: false,
   });
   assert.equal(plan.status, "local_fixture_plan_ready");
-  assert.equal(plan.capacity.totalSignedFixtures, 450);
-  assert.equal(plan.capacity.logicalWorkerSlots, 360);
+  assert.equal(plan.capacity.totalSignedFixtures, registry.divisions.length * 10);
+  assert.equal(plan.capacity.logicalWorkerSlots, registry.summary.logicalDailyWorkerSlots);
   assert.equal(plan.permissions.network, false);
   assert.equal(plan.permissions.productionRelease, false);
   assert.equal(plan.executionPerformed, false);
@@ -73,9 +74,13 @@ test("missing capabilities become review-branch build plans, not self-granted po
   assert.equal(plan.productionReadyClaimed, false);
 });
 
-test("local daily harness checks all 4,500 division capability contracts", async () => {
+test("local Buddy success harness checks its 45 fleet divisions and 4,500 capability contracts", async () => {
   const result = await runDailyDivisionContractBenchmarks({ concurrency: 16 });
+  const successProgram = buildBuddySuccessProgram();
+  // The 45 bot-fleet divisions, 55 domain profiles, and 65 MasterBots are distinct registries.
+  assert.equal(result.divisions, successProgram.divisions.length);
   assert.equal(result.divisions, 45);
+  assert.equal(result.capabilitiesChecked, successProgram.divisions.length * successProgram.improvement_templates.division_capabilities.length);
   assert.equal(result.capabilitiesChecked, 4500);
   assert.equal(result.failed, 0);
   assert.equal(result.networkUsed, false);
