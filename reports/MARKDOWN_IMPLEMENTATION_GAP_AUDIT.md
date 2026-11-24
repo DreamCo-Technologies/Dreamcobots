@@ -1,13 +1,13 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T06:48:26Z
+Generated: 2026-11-24T07:08:40Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
 - Markdown documents scanned: 1676
-- Actionable claim lines detected: 11932
+- Actionable claim lines detected: 11935
 - Documents with missing path references: 112
 - Documents without implementation references: 1590
 - Documents with implementation references but no test references: 69
@@ -13796,7 +13796,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/DREAMCO_FIRST_PARTY_TRAINING_DATA_FACTORY.md
 
 - Status: implementation_reference_missing
-- Actionable claim lines: 4
+- Actionable claim lines: 7
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
