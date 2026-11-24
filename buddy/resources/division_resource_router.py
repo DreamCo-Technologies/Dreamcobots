@@ -30,15 +30,28 @@ def load_resource_routes()->dict[int,dict[str,Any]]:
         raise ValueError("expected exactly 65 unique division resource routes")
     return indexed
 
-def plan_resource_route(division_id:int,task_type:str,data_classification:str="public",
+def plan_resource_route(division_id:int|None=None,task_type:str="instruction",data_classification:str="public",
                         external_provider_consent:bool=False,paid_use_approved:bool=False,
                         configured_provider_ids:list[str]|None=None,
-                        available_local_model_ids:list[str]|None=None)->dict[str,Any]:
-    routes=load_resource_routes()
-    if division_id not in routes:
-        raise KeyError(f"unknown MasterBot division id: {division_id}")
-    route=routes[division_id]
+                        available_local_model_ids:list[str]|None=None,
+                        domain_id:str|None=None)->dict[str,Any]:
     payload=json.loads(RESOURCE_MAP.read_text(encoding="utf-8"))
+    if domain_id is not None:
+        if division_id is not None:
+            raise ValueError("provide either division_id or domain_id, not both")
+        domain_routes={row["domain_id"]:row for row in payload.get("domain_routes",[])}
+        if domain_id not in domain_routes:
+            raise KeyError(f"unknown domain resource route: {domain_id}")
+        route=domain_routes[domain_id]
+        route_division_id=route.get("masterbot_id")
+        route_name=route["domain_name"]
+    else:
+        routes=load_resource_routes()
+        if division_id is None or division_id not in routes:
+            raise KeyError(f"unknown MasterBot division id: {division_id}")
+        route=routes[division_id]
+        route_division_id=division_id
+        route_name=route["masterbot_name"]
     pack=TASK_PACKS.get(task_type.casefold(),"pack.instruct")
     seed_catalog=payload["resource_templates"]["teacher_models"]["seed_models_by_capability_pack"]
     candidates=list(dict.fromkeys(model_id for capability in route["capability_pack_ids"] if capability==pack for model_id in seed_catalog.get(capability,[])))
@@ -65,7 +78,8 @@ def plan_resource_route(division_id:int,task_type:str,data_classification:str="p
         reason="No verified live model route is available; return a safe plan or request human setup rather than pretending a model is connected."
     return {
         "schema":"dreamco.model_resource_route_plan.v1",
-        "division_id":division_id,"division_name":route["masterbot_name"],
+        "division_id":route_division_id,"domain_id":domain_id,"division_name":route_name,
+        "route_type":route.get("route_type","masterbot_resource_bundle"),
         "resource_bundle_id":route["resource_bundle_id"],"task_type":task_type,"capability_pack_id":pack,
         "readiness_status":route["readiness_status"],"local_candidate_models":local,
         "catalog_candidate_models":candidates,
