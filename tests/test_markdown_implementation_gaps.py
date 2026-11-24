@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tools.audit_markdown_implementation_gaps import analyze_document, candidate_paths
+from tools.audit_markdown_implementation_gaps import analyze_document, candidate_paths, render_report
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = json.loads((ROOT / "config/buddy/markdown-implementation-gap-policy.json").read_text(encoding="utf-8"))
@@ -44,6 +44,33 @@ class MarkdownImplementationGapTests(unittest.TestCase):
         row = analyze_document("README.md", "We have 1,051 bots across 45 divisions.", POLICY, ROOT)
         self.assertTrue(row["count_claim_review_required"])
         self.assertGreaterEqual(len(row["numeric_inventory_claims"]), 2)
+
+    def test_generated_report_strips_trailing_whitespace(self):
+        data = {
+            "generated_at": "2026-11-24T00:00:00Z",
+            "document_count": 1,
+            "actionable_claim_lines": 1,
+            "documents_with_missing_paths": 0,
+            "documents_without_implementation_references": 1,
+            "documents_without_test_references": 0,
+            "documents_with_count_claims": 1,
+            "numeric_inventory_claim_count": 1,
+            "documents": [{
+                "numeric_inventory_claims": [{"line": 1, "excerpt": "copied excerpt  "}],
+                "path": "docs/example.md",
+                "gap_status": "reference_only",
+                "actionable_claim_lines": 1,
+                "implementation_paths": [],
+                "test_paths": [],
+                "missing_paths": [],
+                "next_action": "Review evidence."
+            }],
+            "truth_boundary": "Reference mapping only."
+        }
+        report = render_report(data)
+        self.assertTrue(report.endswith("\\n"))
+        self.assertTrue(all(line == line.rstrip() for line in report.splitlines()))
+        self.assertIn("- docs/example.md:1 — copied excerpt", report)
 
     def test_no_fixed_document_or_reference_ceiling(self):
         self.assertIsNone(POLICY["fixed_document_ceiling"])
