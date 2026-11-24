@@ -14,15 +14,15 @@ Preserve the engineering value of historical and active pull requests while prev
 
 ### 2026-11-24 refresh
 
-The paginated GitHub REST listing returned **800 unique PR records** across eight non-empty pages (100 per page); pages 9 and 10 were empty.
+The paginated GitHub REST listing returned **801 unique PR records** across eight non-empty pages (100 per page), plus the newly created PR #18216; pages 9 and 10 were empty.
 
 | State at inventory time | Count |
 |---|---:|
-| Open | 77 |
-| Closed | 723 |
+| Open | 76 |
+| Closed | 725 |
 | Merged (subset of closed) | 498 |
-| Closed, not merged | 225 |
-| Total | 800 |
+| Closed, not merged | 227 |
+| Total | 801 |
 
 Machine-readable snapshot: `docs/engineering/pr-inventory-snapshots/2026-11-24.json`. It records each PR's number, title, state, merged/draft status, head/base branch and SHA, author handle, timestamps, labels, URL, and explicit pending forensic-review fields. All 800 are marked **METADATA_ONLY_NOT_FORENSICALLY_REVIEWED**; changed-file patches, commits, comments, review threads, linked issues and exact-head checks remain to be processed in deterministic batches. No PR is marked fully reviewed by this inventory pass.
 
@@ -185,3 +185,14 @@ Continue full forensic review from the newest unreviewed PRs, prioritizing #1820
 - The 100 resource records (IDs 1101–1200) are identical across both branches. The 727 unique dataset candidates and 1,783 route rows are also identical by candidate ID; PR #18214 replaces the ambiguous `catalog_train_flag` with `source_catalog_train_hint` and explicitly sets `training_eligible: false`.
 - PR #18214 adds the Tolkien eight-lesson scholarly curriculum, rights-gated documentation, validator enforcement, and regression tests. No unique resource IDs or unique source paths from #18212 were found.
 - PR #18212 was closed with a comment linking to #18214. This is duplicate cleanup only; PR #18214 remains draft and has not passed its current-head CI/review gates. No merge or deployment was performed.
+
+
+### 2026-11-24 clean-base Bootcamp port — PR #18207 to PR #18216
+
+- PR #18207 was closed as **DUPLICATE_OR_SUPERSEDED** after its 138-ahead/3-behind branch reported `mergeable_state=dirty`.
+- PR #18216 was created from current main SHA `adc02c1ed95e225d33870ff696808bf95de67234` on `feature/buddy-bootcamp-freecodecamp-clean-20261124`.
+- Exact content reconciliation: 33 changed paths in source PR #18207, 33 in target PR #18216, **33/33 identical file blob SHAs**, 0 missing/extra paths. Compare reports 33 commits ahead, 0 behind; PR #18216 is mergeable.
+- PR #18207 was closed with a comment linking to #18216. No code was discarded, merged or deployed.
+- PR #18216 remains draft. Its current-head checks are in progress; the initial focused Bootcamp run found 8/8 catalog tests and 7/7 queue tests passing, plus 13/14 route tests passing. The one failure was a test-fixture omission (`video_count`); it was fixed in head commit `028f3d0c3138e66a9cd54280cc81ba1b7c463083`. Re-run evidence is pending.
+- The weekly transcript report artifact on PR #18216 is `BLOCKED`: transcript_count=0, evaluated_count=0, due_count=0, coverage=null, reason=`approved_transcript_manifest_missing`.
+- The Markdown audit check fails because three generated evidence files are stale against the new Markdown docs; see the PR #18216 blocker record. No merge is permitted until current-head checks and the audit evidence are reconciled.
