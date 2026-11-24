@@ -12,23 +12,27 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-REGISTRY = ROOT / "config/masterbot-65-registry.json"
+CROSSWALK = ROOT / "config/generated/masterbot-55-domain-crosswalk.json"
 OUTPUT = ROOT / "config/generated/daily-lesson-production-plan.json"
 
 
-def build_plan(registry: dict, day: str, lessons_per_division: int = 5, queues: dict | None = None) -> dict:
+def build_plan(crosswalk: dict, day: str, lessons_per_domain: int = 5, queues: dict | None = None) -> dict:
     try:
         date.fromisoformat(day)
     except ValueError as exc:
         raise ValueError("day must be an ISO date") from exc
-    divisions = registry.get("divisions")
-    if not isinstance(divisions, list) or len(divisions) != 65:
-        raise ValueError("canonical registry must contain exactly 65 divisions")
-    ids = [row.get("id") for row in divisions]
-    if sorted(ids) != list(range(1, 66)):
-        raise ValueError("division IDs must be unique and cover 1 through 65")
-    if not isinstance(lessons_per_division, int) or not 1 <= lessons_per_division <= 20:
-        raise ValueError("lessons_per_division must be between 1 and 20")
+    domains = crosswalk.get("domains")
+    if not isinstance(domains, list) or len(domains) != 55:
+        raise ValueError("canonical crosswalk must contain exactly 55 domain divisions")
+    ids = [row.get("domain_id") for row in domains]
+    if len(set(ids)) != 55 or any(not isinstance(value, str) or not value for value in ids):
+        raise ValueError("domain IDs must be unique and non-empty")
+    if sum(row.get("mapping_status") == "proposed_exact_name_match" for row in domains) != 45:
+        raise ValueError("crosswalk must contain 45 core domain proposals")
+    if sum(row.get("mapping_status") == "unresolved" for row in domains) != 10:
+        raise ValueError("crosswalk must preserve 10 supplemental domain profiles")
+    if not isinstance(lessons_per_domain, int) or not 1 <= lessons_per_domain <= 20:
+        raise ValueError("lessons_per_domain must be between 1 and 20")
 
     queue_by_division = {}
     if queues is not None:
@@ -36,18 +40,18 @@ def build_plan(registry: dict, day: str, lessons_per_division: int = 5, queues: 
         queue_rows = queues.get("divisions")
         if (
             queues.get("schema") != "dreamco.freecodecamp_division_learning_queues.v1"
-            or queues.get("division_count") != 65
+            or queues.get("domain_count") != 55
             or queues.get("source_inventory_status") != "complete"
             or inventory.get("complete") is not True
             or inventory.get("observed_entry_count") != queues.get("catalog_video_count")
             or not isinstance(queue_rows, list)
-            or len(queue_rows) != 65
+            or len(queue_rows) != 55
         ):
             raise ValueError("daily plan requires verified complete 65-division source queues")
         for row in queue_rows:
-            division_id = row.get("division_id")
+            domain_id = row.get("domain_id")
             items = row.get("items")
-            if division_id in queue_by_division or not isinstance(items, list):
+            if domain_id in queue_by_division or not isinstance(items, list):
                 raise ValueError("division queues must have unique IDs and item lists")
             ids = [item.get("video_id") for item in items]
             if len(ids) != len(set(ids)) or any(not video_id for video_id in ids):
@@ -60,18 +64,21 @@ def build_plan(registry: dict, day: str, lessons_per_division: int = 5, queues: 
                     or item.get("training_eligible") is not False
                 ):
                     raise ValueError("daily study candidates must remain rights-review-only and non-training")
-            queue_by_division[division_id] = items
-        if sorted(queue_by_division) != list(range(1, 66)):
-            raise ValueError("division queues must cover IDs 1 through 65")
+            queue_by_division[domain_id] = items
+        if set(queue_by_division) != set(ids):
+            raise ValueError("domain queues must cover all 55 domain IDs exactly")
 
     slots = []
-    for division in sorted(divisions, key=lambda row: row["id"]):
-        candidates = queue_by_division.get(division["id"], []) if queues is not None else []
-        for ordinal in range(1, lessons_per_division + 1):
+    for domain in sorted(domains, key=lambda row: row["domain_id"]):
+        candidates = queue_by_division.get(domain["domain_id"], []) if queues is not None else []
+        for ordinal in range(1, lessons_per_domain + 1):
             slot = {
-                "slot_id": f"{day}-division-{division['id']:02d}-lesson-{ordinal:02d}",
-                "division_id": division["id"],
-                "division_name": division["name"],
+                "slot_id": f"{day}-domain-{domain['domain_id']}-lesson-{ordinal:02d}",
+                "domain_id": domain["domain_id"],
+                "domain_name": domain["domain_name"],
+                "masterbot_id": domain.get("masterbot_id"),
+                "mapping_status": domain.get("mapping_status"),
+                "owner_review_required": domain.get("review_required", True),
                 "lesson_number": ordinal,
                 "status": "queued_not_created",
                 "completion_requires": [
@@ -86,7 +93,7 @@ def build_plan(registry: dict, day: str, lessons_per_division: int = 5, queues: 
             }
             if queues is not None:
                 if ordinal > len(candidates):
-                    raise ValueError(f"division {division['id']} has fewer candidates than daily lesson slots")
+                    raise ValueError(f"domain {domain['domain_id']} has fewer candidates than daily lesson slots")
                 candidate = candidates[ordinal - 1]
                 slot["candidate"] = {
                     "video_id": candidate["video_id"],
@@ -104,8 +111,10 @@ def build_plan(registry: dict, day: str, lessons_per_division: int = 5, queues: 
     return {
         "schema": "dreamco.daily_lesson_production_plan.v1",
         "day_utc": day,
-        "target_lessons_per_division": lessons_per_division,
-        "division_count": len(divisions),
+        "target_lessons_per_domain": lessons_per_domain,
+        "domain_count": len(domains),
+        "masterbot_count": 65,
+        "shared_platform_masterbot_count": 20,
         "daily_target": len(slots),
         "created_lessons": 0,
         "validated_lessons": 0,
@@ -124,13 +133,13 @@ def build_plan(registry: dict, day: str, lessons_per_division: int = 5, queues: 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--day", default=datetime.now(timezone.utc).date().isoformat())
-    parser.add_argument("--lessons-per-division", type=int, default=5)
+    parser.add_argument("--lessons-per-domain", type=int, default=5)
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--queues", type=Path, help="Verified division queue JSON produced by build_freecodecamp_division_queues.py")
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     queues = json.loads(args.queues.read_text(encoding="utf-8")) if args.queues else None
-    plan = build_plan(json.loads(REGISTRY.read_text(encoding="utf-8")), args.day, args.lessons_per_division, queues=queues)
+    plan = build_plan(json.loads(CROSSWALK.read_text(encoding="utf-8")), args.day, args.lessons_per_domain, queues=queues)
     rendered = json.dumps(plan, indent=2) + "\n"
     if args.check:
         if not args.output.exists() or args.output.read_text(encoding="utf-8") != rendered:
@@ -138,7 +147,7 @@ def main() -> None:
     else:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(rendered, encoding="utf-8")
-    print(json.dumps({k: plan[k] for k in ("day_utc", "division_count", "target_lessons_per_division", "daily_target", "status")}, indent=2))
+    print(json.dumps({k: plan[k] for k in ("day_utc", "domain_count", "target_lessons_per_domain", "daily_target", "status")}, indent=2))
 
 
 if __name__ == "__main__":
