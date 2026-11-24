@@ -9,6 +9,8 @@ on:
       - "config/masterbot-65-registry.json"
       - "config/generated/masterbot-45-domain-crosswalk.json"
       - "tools/build_buddy_fleet_execution_map.py"
+      - "tools/build_live_revenue_readiness.py"
+      - "tests/test_live_revenue_readiness_coverage.py"
       - "tests/test_buddy_fleet_execution_map.py"
       - ".github/workflows/buddy-fleet-execution-map.yml"
   push:
@@ -42,7 +44,9 @@ jobs:
       - name: Build deterministic full-fleet plan
         run: python tools/build_buddy_fleet_execution_map.py
       - name: Validate every bot and specialist portfolio
-        run: python -m unittest tests.test_buddy_fleet_execution_map
+        run: |
+          python -m unittest tests.test_buddy_fleet_execution_map
+          python -m unittest tests.test_live_revenue_readiness_coverage
       - name: Upload plan evidence
         uses: actions/upload-artifact@v7
         with:
