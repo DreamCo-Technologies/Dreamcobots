@@ -193,10 +193,22 @@ def main():
         **payload["owner_review"]}
     review_encoded=json.dumps(review_payload,indent=2,ensure_ascii=False)+"\n"
     if args.check:
-        if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8")!=encoded:
-            raise SystemExit("Division resource readiness map is stale; regenerate it")
-        if not OWNER_REVIEW.exists() or OWNER_REVIEW.read_text(encoding="utf-8")!=review_encoded:
-            raise SystemExit("MasterBot/domain owner-review queue is stale; regenerate it")
+        if not OUTPUT.exists():
+            raise SystemExit("Division resource readiness map is missing; regenerate it")
+        actual=OUTPUT.read_text(encoding="utf-8")
+        if actual!=encoded:
+            mismatch=next((i for i,(a,b) in enumerate(zip(actual,encoded)) if a!=b),min(len(actual),len(encoded)))
+            left=max(0,mismatch-100);right=mismatch+180
+            raise SystemExit("Division resource readiness map is stale at byte "
+                f"{mismatch}; actual={actual[left:right]!r}; expected={encoded[left:right]!r}")
+        if not OWNER_REVIEW.exists():
+            raise SystemExit("MasterBot/domain owner-review queue is missing; regenerate it")
+        actual_review=OWNER_REVIEW.read_text(encoding="utf-8")
+        if actual_review!=review_encoded:
+            mismatch=next((i for i,(a,b) in enumerate(zip(actual_review,review_encoded)) if a!=b),min(len(actual_review),len(review_encoded)))
+            left=max(0,mismatch-100);right=mismatch+180
+            raise SystemExit("MasterBot/domain owner-review queue is stale at byte "
+                f"{mismatch}; actual={actual_review[left:right]!r}; expected={review_encoded[left:right]!r}")
     else:
         OUTPUT.parent.mkdir(parents=True,exist_ok=True)
         OWNER_REVIEW.parent.mkdir(parents=True,exist_ok=True)
