@@ -31,10 +31,11 @@ CREATE POLICY division_dataset_catalog_isolation
 
 Run the DDL separately for all 65 schemas only after Phase 2B provisioning has
 been reviewed and the schema owners/least-privilege service roles are confirmed.
-Do not grant broad cross-division access. The runtime role must be granted only
-the required table privileges within its authorized division schema, and the
-application must set `dreamco.masterbot_id` transaction-locally from its
-authenticated server-side identity (never from an untrusted client field).
+Do not grant broad cross-division access. The runtime catalog adapter is division-scoped. Configure one least-privilege DSN per lane using DREAMCO_POSTGRES_DSN_MASTERBOT_001 through DREAMCO_POSTGRES_DSN_MASTERBOT_065. Each credential must have access only to its matching schema/table. Construct PostgresDatasetCatalog(masterbot_id=NNN) for that lane; the adapter resolves only that division's environment variable. A direct DSN is accepted only when the adapter is permanently bound to one canonical masterbot_id, and the adapter rejects attempts to use it for another division.
+
+Do not use the shared DREAMCO_POSTGRES_DSN or DATABASE_URL bootstrap credentials for runtime dataset catalog writes. Those remain reserved for operator-approved read-only probes or schema provisioning. Do not put credentials in the source registry, manifests, artifacts, or logs.
+
+The application must derive the MasterBot identity from authenticated server-side routing, never from an untrusted client field. The database role must have only the required table privileges within its authorized division schema; the RLS policy is an additional defense, not a substitute for per-division credentials.
 
 ## Data and lifecycle contract
 
