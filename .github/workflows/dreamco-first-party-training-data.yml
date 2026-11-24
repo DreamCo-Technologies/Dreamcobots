@@ -78,3 +78,10 @@ jobs:
               assert manifest["split_counts"]["test"] > 0
           print(json.dumps({"ok": True, "isolated_division_candidates": 65, "training_started": False}))
           PY
+      - name: Preserve generated candidate datasets and manifests
+        uses: actions/upload-artifact@v6
+        with:
+          name: dreamco-bootcamp-candidates-${{ github.sha }}
+          path: ${{ runner.temp }}/dreamco-bootcamp-candidates/
+          if-no-files-found: error
+          retention-days: 30
