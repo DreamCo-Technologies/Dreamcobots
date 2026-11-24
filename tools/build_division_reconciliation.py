@@ -126,7 +126,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    rendered = json.dumps(build_reconciliation(), indent=2, ensure_ascii=False) + "\\n"
+    rendered = json.dumps(build_reconciliation(), indent=2, ensure_ascii=False) + "\n"
     if args.check:
         if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != rendered:
             raise SystemExit("Division reconciliation artifact is stale; regenerate and review it.")
