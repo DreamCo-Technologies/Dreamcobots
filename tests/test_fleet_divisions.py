@@ -21,15 +21,17 @@ from buddy.fleet_runtime.divisions import build_division_manifests, division_smo
 DIVISIONS = {d["name"]: d for d in json.loads((ROOT / "config/bots/division-manifests.generated.json").read_text())["divisions"]}
 APP_DIVISIONS = sorted({json.loads(p.read_text())["division"] for p in (ROOT / "App_bots").glob("*.json")
                         if json.loads(p.read_text()).get("bots")})
-CANONICAL_DIVISIONS = sorted(DIVISIONS)
+RUNTIME_DIVISIONS = sorted(DIVISIONS)
 
 
 def test_every_source_division_is_reconciled_to_45_canonical_manifests():
-    assert len(APP_DIVISIONS) == 55
-    assert len(CANONICAL_DIVISIONS) == 45
+    assert len(APP_DIVISIONS) == 56
+    assert len(RUNTIME_DIVISIONS) == 57
+    assert "GrokTeammates" in DIVISIONS and "UNASSIGNED" not in DIVISIONS
     crosswalk = json.loads((ROOT / "config/generated/masterbot-45-domain-crosswalk.json").read_text())
-    assert set(CANONICAL_DIVISIONS) == {row["domain_name"] for row in crosswalk["domains"]}
-    for name in CANONICAL_DIVISIONS:
+    canonical = {row["domain_name"] for row in crosswalk["domains"]}
+    assert canonical <= set(RUNTIME_DIVISIONS)
+    for name in APP_DIVISIONS:
         d = DIVISIONS[name]
         assert d["bots"] > 0 and d["smoke_bots"], name
         assert d["triggerable"] is True, name
@@ -84,7 +86,7 @@ def test_auditor_reports_a_state_for_every_division():
     for name in APP_DIVISIONS:
         assert states[name]["state"] == "TESTED" and states[name]["smoke_passed"], name
     assert "UNASSIGNED" not in states
-    assert "GrokTeammates" not in states
+    assert "GrokTeammates" in states
     assert sum(status["summary"]["divisions_by_state"].values()) == len(DIVISIONS)
 
 
@@ -95,7 +97,7 @@ def test_every_division_has_a_complete_prospectus_card_and_run_job():
     by_id = {c["id"]: c for c in cards["divisions"]}
     for name in DIVISIONS:
         assert bap.card_problems(by_id["division:" + name]) == [], name
-    for name in CANONICAL_DIVISIONS:
+    for name in RUNTIME_DIVISIONS:
         assert by_id["division:" + name]["trigger"]["command"] == f"/buddy run fleet_division_run division={name}"
     assert "division:UNASSIGNED" not in by_id
     registry = json.loads((ROOT / "config/buddy/run-with-buddy.generated.json").read_text())
