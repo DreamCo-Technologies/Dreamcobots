@@ -36,6 +36,7 @@ class OllamaRuntimeTests(unittest.TestCase):
         ]
         runtime = OllamaLocalRuntime()
         self.assertEqual(runtime.list_models()["models"][0]["name"], "buddy-test")
+        self.assertEqual(open_url.call_args_list[0][0][0].get_method(), "GET")
         shown = runtime.show_model("buddy-test")
         self.assertEqual(shown["parameter_count"], 45000000)
         self.assertTrue(shown["license_metadata_present"])
