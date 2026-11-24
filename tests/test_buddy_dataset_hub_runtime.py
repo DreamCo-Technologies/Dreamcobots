@@ -10,7 +10,7 @@ from buddy.datasets.unknown_router import route_problem
 from buddy.datasets.training_jobs import create_training_job
 from buddy.datasets.transformers_runner import validate_job, TrainingExecutionError, _split_hash
 
-CARD = {"name":"DreamCo authored coding lessons","owner":"DreamCo Technologies","license":"DreamCo internal authored asset","license_url":"https://example.invalid/internal-license","source_url":"https://github.com/DreamCo-Technologies/Dreamcobots","data_plane":"dreamco_owned_training","rights_status":"VERIFIED","training_approved":True,"rights_evidence":"approved-authorship-register:fixture-001","primary_masterbot_id":41,"collaborating_masterbot_ids":[],"split_manifest":{"train_sha256":"a"*64,"validation_sha256":"b"*64,"test_sha256":"c"*64},"holdout":False}
+CARD = {"name":"DreamCo authored coding lessons","owner":"DreamCo Technologies","license":"DREAMCO_INTERNAL_OWNED","license_url":"https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/config/buddy-training-data-provenance-policy.json","license_url_status":"INTERNAL_POLICY_REFERENCE_NOT_A_PUBLIC_LICENSE","source":"dreamco_authored","source_id":"dreamco.authored.coding.lessons.v1","source_url":"https://github.com/DreamCo-Technologies/Dreamcobots","ai_training_allowed":True,"content_rights_verified":True,"owner_assignment_verified":True,"contributor_rights_verified":True,"owner_approval_id":"OWNER-APPROVAL-FIXTURE-001","privacy_review":"PASSED","data_plane":"dreamco_owned_training","rights_status":"VERIFIED","training_approved":True,"rights_evidence":"approved-authorship-register:fixture-001","primary_masterbot_id":41,"collaborating_masterbot_ids":[],"split_manifest":{"train_sha256":"a"*64,"validation_sha256":"b"*64,"test_sha256":"c"*64},"holdout":False}
 
 class DatasetHubRuntimeTests(unittest.TestCase):
     def test_versioned_persistent_card_and_content_hash(self):
@@ -31,6 +31,22 @@ class DatasetHubRuntimeTests(unittest.TestCase):
             hub=DatasetHub(Path(temp)/"hub")
             with self.assertRaises(DatasetPolicyError):
                 hub.register({**CARD,"training_approved":False},sample)
+
+    def test_internal_license_requires_owner_and_contributor_rights(self):
+        with tempfile.TemporaryDirectory() as temp:
+            sample=Path(temp)/"x.jsonl"
+            sample.write_text('{"instruction":"Explain a function","output":"A reusable code block."}\\n',encoding="utf-8")
+            hub=DatasetHub(Path(temp)/"hub")
+            with self.assertRaisesRegex(DatasetPolicyError,"INTERNAL_OWNERSHIP_OR_CONTRIBUTOR_RIGHTS"):
+                hub.register({**CARD,"owner_assignment_verified":False},sample)
+
+    def test_internal_license_cannot_be_reused_for_third_party_source(self):
+        with tempfile.TemporaryDirectory() as temp:
+            sample=Path(temp)/"x.jsonl"
+            sample.write_text('{"instruction":"Explain a function","output":"A reusable code block."}\\n',encoding="utf-8")
+            hub=DatasetHub(Path(temp)/"hub")
+            with self.assertRaisesRegex(DatasetPolicyError,"INTERNAL_OWNERSHIP_OR_CONTRIBUTOR_RIGHTS"):
+                hub.register({**CARD,"source":"huggingface"},sample)
 
     def test_unknown_license_and_holdout_are_blocked(self):
         with tempfile.TemporaryDirectory() as temp:
