@@ -14,6 +14,8 @@ on:
       - "buddy/bootcamp/sources/freecodecamp/**"
       - "tools/sync_freecodecamp_catalog.py"
       - "tests/test_freecodecamp_catalog.py"
+      - "tools/build_freecodecamp_division_queues.py"
+      - "tests/test_freecodecamp_division_queues.py"
   push:
     branches: [main]
     paths:
@@ -28,6 +30,8 @@ on:
       - "buddy/bootcamp/sources/freecodecamp/**"
       - "tools/sync_freecodecamp_catalog.py"
       - "tests/test_freecodecamp_catalog.py"
+      - "tools/build_freecodecamp_division_queues.py"
+      - "tests/test_freecodecamp_division_queues.py"
   schedule:
     - cron: "17 9 * * *"
 permissions:
@@ -55,6 +59,9 @@ jobs:
         run: |
           python tools/sync_freecodecamp_catalog.py --check
           python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
+          python tools/build_freecodecamp_division_queues.py
+          python tools/build_freecodecamp_division_queues.py --check
+          python -m unittest discover -s tests -p 'test_freecodecamp_division_queues.py' -v
       - name: Commit discovered catalog back to this pull request branch
         if: github.event_name == 'pull_request'
         env:
@@ -86,6 +93,7 @@ jobs:
           add-paths: |
             config/generated/buddy-bootcamp-curriculum.json
             buddy/bootcamp/sources/freecodecamp/catalog.json
+            config/generated/freecodecamp-division-learning-queues.json
           commit-message: "chore: refresh Buddy Bootcamp curriculum"
           title: "chore: refresh Buddy Bootcamp curriculum"
           body: |
