@@ -193,6 +193,88 @@ class DatasetHub:
                 str(card_path.relative_to(self.home)), json.dumps(quality), card_doc["created_at"]))
         return card_doc
 
+
+    def register_evaluation_holdout(self, card: dict[str, Any], source_file: str | Path,
+                                    max_bytes: int = 512 * 1024 * 1024) -> dict[str, Any]:
+        """Register an evaluation-only JSONL holdout that training jobs cannot consume."""
+        required = ("name", "owner", "license", "license_url", "source_url", "rights_status",
+                    "rights_evidence", "primary_masterbot_id")
+        missing = [key for key in required if not str(card.get(key, "")).strip()]
+        if missing:
+            raise DatasetPolicyError("Missing holdout card fields: " + ", ".join(missing))
+        if card.get("data_plane") != "evaluation_only_holdout" or card.get("holdout") is not True:
+            raise DatasetPolicyError("Private evaluation data must use the evaluation_only_holdout plane")
+        if card.get("training_approved") is not False:
+            raise DatasetPolicyError("Evaluation holdouts must explicitly set training_approved=false")
+        if card.get("evaluation_approved") is not True or card.get("rights_status") != "VERIFIED":
+            raise DatasetPolicyError("Evaluation requires explicit approval and verified rights")
+        if card.get("privacy_review") != "PASSED":
+            raise DatasetPolicyError("A passed privacy review is required for evaluation holdouts")
+        if not str(card.get("rights_evidence", "")).strip():
+            raise DatasetPolicyError("A rights evidence reference is required")
+        from urllib.parse import urlparse
+        for field in ("license_url", "source_url"):
+            parsed = urlparse(str(card[field]))
+            if parsed.scheme != "https" or not parsed.netloc:
+                raise DatasetPolicyError(f"{field} must be an HTTPS URL")
+        registry = json.loads((ROOT / "config/masterbot-65-registry.json").read_text(encoding="utf-8"))
+        valid_ids = {int(item["id"]) for item in registry.get("divisions", [])}
+        masterbot_id = card.get("primary_masterbot_id")
+        if isinstance(masterbot_id, bool) or not isinstance(masterbot_id, int) or masterbot_id not in valid_ids:
+            raise DatasetPolicyError("Holdout requires a canonical primary MasterBot ID")
+        source = Path(source_file).expanduser().resolve()
+        if not source.is_file() or source.suffix.lower() != ".jsonl":
+            raise DatasetPolicyError("Evaluation holdouts require a staged JSONL file")
+        if source.stat().st_size > max_bytes:
+            raise DatasetPolicyError("Evaluation holdout exceeds configured size limit")
+        rows = []
+        for number, line in enumerate(source.read_text(encoding="utf-8").splitlines(), 1):
+            if not line.strip():
+                continue
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError as exc:
+                raise DatasetPolicyError(f"Invalid holdout JSONL line {number}") from exc
+            if (not isinstance(row, dict) or row.get("masterbot_id") != masterbot_id
+                    or row.get("split") != "test" or not str(row.get("task_id", "")).strip()
+                    or not str(row.get("prompt", "")).strip()
+                    or not str(row.get("expected", "")).strip()
+                    or row.get("metric") not in {"exact_match", "token_f1"}):
+                raise DatasetPolicyError("Every holdout row must be a test-only task owned by its MasterBot with prompt, expected answer, and supported metric")
+            rows.append(row)
+        if not rows:
+            raise DatasetPolicyError("Evaluation holdout is empty")
+        quality = _quality(source)
+        if quality["pii_review_required"] or quality["duplicate_rate"] > float(card.get("max_duplicate_rate", 0.01)):
+            raise DatasetPolicyError("Evaluation holdout quality/privacy pattern gate failed")
+        content_hash = sha256_file(source)
+        canonical = "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\n" for row in rows)
+        split_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+        dataset_id = str(card.get("dataset_id") or "holdout-" + uuid.uuid4().hex[:16])
+        if not re.fullmatch(r"[A-Za-z0-9._-]{3,100}", dataset_id):
+            raise DatasetPolicyError("Dataset ID contains unsupported path characters")
+        target = self.objects / f"{content_hash}.jsonl"
+        if not target.exists():
+            temp = target.with_suffix(".jsonl.tmp")
+            shutil.copyfile(source, temp)
+            temp.replace(target)
+        object_path = str(target.relative_to(self.home))
+        with self._connect() as db:
+            prior = db.execute("SELECT MAX(version) AS v FROM datasets WHERE dataset_id=?", (dataset_id,)).fetchone()
+            version = int(prior["v"] or 0) + 1
+            card_doc = {**card, "dataset_id": dataset_id, "version": version,
+                "content_sha256": content_hash, "object_path": object_path, "quality": quality,
+                "split_manifest": {"test_sha256": split_hash}, "created_at": utcnow(),
+                "training_status": "BLOCKED_EVALUATION_ONLY"}
+            card_path = self.cards / f"{dataset_id}.v{version}.json"
+            card_path.write_text(json.dumps(card_doc, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+            db.execute("""INSERT INTO datasets VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", (
+                dataset_id, version, str(card["name"]), str(card["owner"]), str(card["license"]),
+                str(card["license_url"]), str(card["source_url"]), "evaluation_only_holdout", "VERIFIED",
+                0, 1, content_hash, object_path, str(card_path.relative_to(self.home)),
+                json.dumps(quality), card_doc["created_at"]))
+        return card_doc
+
     def search(self, query: str, limit: int = 20) -> list[dict[str, Any]]:
         terms = [x for x in re.findall(r"[a-z0-9_-]+", query.lower()) if len(x) > 1]
         with self._connect() as db:
