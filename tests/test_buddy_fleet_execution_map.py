@@ -22,7 +22,7 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
             self.assertTrue(bot["buddy_execution"]["learning_route"])
             self.assertTrue(bot["buddy_execution"]["benchmark_route"])
             self.assertTrue(bot["division_route"]["primary_masterbot_id"])
-            if bot["division_route"]["status"] == "shared_teammate_lane":
+            if bot["division_route"]["status"] == "proposed_shared_teammate_platform_route":
                 self.assertIsNone(bot["canonical_owner_division"])
                 self.assertEqual(bot["shared_workforce_group"], "GrokTeammates")
             else:
@@ -105,7 +105,8 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
         self.assertEqual(len(teammates), 112)
         self.assertEqual(self.payload["counts"]["shared_teammate_profiles"], 112)
         for bot in teammates:
-            self.assertEqual(bot["division_route"]["status"], "shared_teammate_lane")
+            self.assertEqual(bot["division_route"]["status"], "proposed_shared_teammate_platform_route")
+            self.assertEqual(bot["division_route"]["route_scope"], "non_privileged_planning_only_until_owner_approval")
             self.assertIn(bot["division_route"]["primary_masterbot_id"], range(46, 66))
             self.assertTrue(bot["teammate_lane_route"]["description"])
             self.assertEqual(bot["source_paths"], ["config/bots/teammate-lanes.json"])
