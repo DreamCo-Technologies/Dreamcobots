@@ -1,0 +1,27 @@
+name: DreamCo Model Provider Runtime
+on:
+  pull_request:
+    paths:
+      - "buddy/models/**"
+      - "config/buddy-model-serving-policy.json"
+      - "tests/test_buddy_model_provider_runtime.py"
+      - ".github/workflows/dreamco-model-provider-runtime.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/models/**"
+      - "config/buddy-model-serving-policy.json"
+      - "tests/test_buddy_model_provider_runtime.py"
+permissions:
+  contents: read
+jobs:
+  provider-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run provider runtime contract tests
+        run: python -m unittest discover -s tests -p 'test_buddy_model_provider_runtime.py' -v
