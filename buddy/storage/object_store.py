@@ -150,12 +150,17 @@ def run_object_store_healthcheck(
     prefix: str | None = None,
 ) -> dict[str, Any]:
     """Inspect two buckets; optionally prove a generated cross-bucket restore."""
-    primary = (primary_bucket or os.environ.get("DREAMCO_OBJECT_STORE_BUCKET", "")).strip()
-    backup = (backup_bucket or os.environ.get("DREAMCO_OBJECT_STORE_BACKUP_BUCKET", "")).strip()
-    key_prefix = (
-        prefix
-        or os.environ.get("DREAMCO_OBJECT_STORE_HEALTHCHECK_PREFIX", "dreamco/healthchecks")
-    ).strip()
+    primary_value = primary_bucket if primary_bucket is not None else os.environ.get("DREAMCO_OBJECT_STORE_BUCKET", "")
+    backup_value = backup_bucket if backup_bucket is not None else os.environ.get("DREAMCO_OBJECT_STORE_BACKUP_BUCKET", "")
+    prefix_value = (
+        prefix if prefix is not None
+        else os.environ.get("DREAMCO_OBJECT_STORE_HEALTHCHECK_PREFIX", "dreamco/healthchecks")
+    )
+    if not all(isinstance(value, str) for value in (primary_value, backup_value, prefix_value)):
+        raise ObjectStoreError("bucket_names_and_prefix_must_be_strings")
+    primary = primary_value.strip()
+    backup = backup_value.strip()
+    key_prefix = prefix_value.strip()
 
     if not BUCKET_RE.fullmatch(primary) or not BUCKET_RE.fullmatch(backup) or primary == backup:
         raise ObjectStoreError("distinct_valid_primary_and_backup_buckets_are_required")
