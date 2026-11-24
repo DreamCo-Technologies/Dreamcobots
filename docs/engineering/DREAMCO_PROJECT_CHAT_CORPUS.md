@@ -303,10 +303,16 @@ The failure is a traceability/evidence refresh blocker, not proof that the new M
 
 The original FreeCodeCamp PR #18207 (source head `80a0749cd8adfb5e67d4dc143d5612177a86e573`) was closed as superseded after all 33 changed paths were ported to PR #18216 from current main. The new PR's per-file blob SHA comparison confirmed **33/33 identical files**, with no missing or extra paths; it is 33 commits ahead and 0 behind main. PR #18216 remains draft pending current-head CI, Markdown audit artifact refresh, and the approved-transcript/evaluator prerequisite.
 
-The first clean-base Bootcamp CI run found:
-- FreeCodeCamp catalog tests: 8/8 passed.
-- Division queue tests: 7/7 passed.
-- Runtime route tests: 13/14 passed; the one failure was a fixture missing `video_count`, corrected in head commit `028f3d0c3138e66a9cd54280cc81ba1b7c463083`. Re-run is pending.
+The first clean-base Bootcamp CI run exposed a test-fixture omission (`video_count`) in the direct-catalog runtime test. The fixture was corrected in head commit `028f3d0c3138e66a9cd54280cc81ba1b7c463083`. The subsequent `generate-curriculum` job passed **67/67 focused tests**: catalog 8/8, division queues 7/7, runtime routes 14/14, cleanup 4/4, permission worker 8/8, daily plan 3/3, original lesson 5/5, learning evidence 6/6, weekly report rules 4/4, and curriculum 8/8.
+- Current study artifact: run 45436272080, artifact ID `14939999424`, SHA-256 `fe1064eef3a290be4ac97b926c57ca99aa33bd37326c52cac3f2a0e4dc4be4ab`. It verifies 1,741/1,741 metadata entries, 0 null entries, 0 duplicate IDs, 65 divisions, 30 candidate references per division, 325 daily slots, 0 created lessons and 0 validated lessons. The committed catalog remains a partial 1,740-row snapshot; the 1,741-row artifact has not been committed.
 - Weekly transcript report artifact: `BLOCKED`, 0 transcripts, 0 evaluated, 0 due, null coverage, reason `approved_transcript_manifest_missing`.
 
 These are test and artifact facts only. No Buddy transcript learning, transcript ingestion, model-weight training, or production deployment occurred.
+
+
+### Current-head integration blockers on PR #18216
+
+- Repository Test Matrix: 18 passed, 1 failed, 11 skipped. The only failure is the repository-wide static-site budget: 55.17 MiB versus a 52 MiB maximum. This PR does not modify `website/`; the largest current public data files include technology radar 9.109 MiB, DreamSearch index 3.352 MiB, fleet catalog 3.132 MiB, command-center capabilities 2.384 MiB and calculators 2.324 MiB. This is a baseline build-size blocker, not a Bootcamp regression.
+- Buddy Markdown Implementation Gap Audit: fails because `config/generated/markdown-implementation-gap-audit.json`, `website/data/markdown-implementation-gap-audit.json`, and `reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md` are stale relative to the new Markdown files in this PR.
+- CodeQL, Dependency Review, Workers build, Buddy benchmark smoke, Command Center data contract, Actions page tests, DreamCo Core Health and PR review manifest completed successfully. Broad benchmark lanes remain pending or also fail on the same deployment-cost gate.
+- PR #18216 remains mergeable at GitHub level but not merge-ready; no merge or deployment was performed.
