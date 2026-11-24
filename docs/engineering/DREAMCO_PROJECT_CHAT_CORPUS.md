@@ -230,7 +230,7 @@ Add the current user message as a source record without inventing a conversation
 - **Database routing:** main contains `buddy/datasets/database_router.py`, `config/buddy-database-source-registry.json`, `buddy/datasets/hub.py`, and `buddy/datasets/postgres_catalog.py`. The router is policy-only and never connects or executes SQL. The registry contains four source records and is `DOCUMENTED_NOT_CONNECTED`; none is eligible for routing. Supabase and Firebase/Firestore are listed as unverified candidates, not connected services.
 - **Dataset inventory:** two logical repository dataset records are present: the O*NET Occupation Synthesis Pack (versions 0.0.1 skeleton and 0.0.2 44-row sample) and the Computer Science 11.0701 career-pathway candidate. The O*NET 0.0.2 asset gate is `approved_for_private_use`, but its overall quality report is partial, the dataset evaluation scorecard and benchmark are not run, and there are no train/validation/holdout splits. The CS candidate also has a private-use gate outcome but its source asset is not present under the candidate package path and its file integrity is not verified. Counts: **2 discovered/cataloged logical records; 2 private-use gate outcomes (one with an asset-integrity warning); 0 fully quality-approved; 0 training-ready; 0 used in an actual training run.** Do not interpret private-use approval as training approval.
 - **Markdown coverage:** the main Git tree contains **1,676 `.md` files and 0 `.mdx` files**. The automated audit generated on the PR #18210 branch at `2026-11-24T14:49:35Z` scanned **1,675 documents**; the only excluded file is the generated report itself (`reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md`, self-exclusion). It detected 11,924 actionable claim lines, 112 documents with missing path references, 1,590 without implementation references, 68 with implementation references but no test references, and 389 inventory-count claims requiring review. Nine repository Markdown documents were also read directly in this pass. This automated path/claim scan does not prove runtime behavior; requirement-to-code/test verification remains outstanding. Main's collector still uses `*.md`; PR #18210 adds `*.mdx` support, and its safe-repair suite passed 75 scoped tests.
-- **PR traceability:** current all-state GitHub listing has 795 PR records across eight pages; full forensic review remains 0. See the companion PR ledger's 2026-11-24 update.
+- **PR traceability:** current all-state GitHub listing has 800 PR records across eight non-empty pages; full forensic review remains 0. See the companion PR ledger's 2026-11-24 update.
 
 ### Gmail project signals
 
@@ -239,3 +239,26 @@ The DreamCo/GitHub/Buddy search returned 50 relevant thread results; four releva
 ### Remaining corpus work
 
 Continue deterministic line-range processing for the two large Master Codex directive files; compare patch hashes and inspect both patches; inventory each ZIP safely before reading contents; inspect the 13 media assets where they correspond to source-backed requirements; retrieve full historical conversation sources and stable message locators beyond CHAT-01…CHAT-15; map every extracted requirement to current code, tests, PRs, commits, and runtime evidence. Corpus coverage remains partial and must not be marked complete.
+
+
+### Follow-up approvals and study-scope additions — 2026-11-24
+
+The user subsequently approved the daily engineering plan and explicitly added Tolkien study, freeCodeCamp metadata/transcript study, and expansion of the study-resource catalog. Preserve these as distinct user-originated requirements rather than treating them as assistant suggestions:
+
+| Source ID | User-originated requirement | Canonical requirement ID | Repository mapping | Status |
+|---|---|---|---|---|
+| `SRC-CURRENT-2026-11-24-TOLKIEN-01` | Add Tolkien training/study to Buddy's curriculum | `REQ-TOLKIEN-STUDY-CURRICULUM` | PR #18214: `config/buddy-study-resources-1101-1200-expansion.json`, `docs/BUDDY_TOLKIEN_STUDY_TRACK.md`, `docs/UNIVERSAL_STUDY_RESOURCE_EXPANSION.md` | Curriculum defined; rights-gated; not completed by Buddy |
+| `SRC-CURRENT-2026-11-24-FCC-01` | Study freeCodeCamp datasets/resource metadata and transcripts | `REQ-FREECODECAMP-METADATA-TRANSCRIPTS` | PR #18207: catalog sync, division queues/routes, weekly transcript readiness | Metadata workflow implemented in branch; no media/transcript download; approved transcript manifest and real Buddy evaluator missing |
+| `SRC-CURRENT-2026-11-24-RESOURCES-01` | Add as many useful study resources as possible | `REQ-EXPAND-STUDY-RESOURCE-CATALOG` | PR #18214: 1101–1200 expansion; 100 resource pointers; Tolkien scholarly lane | 100 resource pointers cataloged; no bulk ingestion or blanket training approval |
+
+#### Tolkien curriculum evidence and rights boundary
+
+The Tolkien lane contains eight lessons covering philology, historical linguistics, comparative mythology, literary architecture, archival provenance, digital humanities, scholarly reception and a cited capstone. It uses catalog resources 1176–1189 and requires original learner-authored artifacts and rubric evidence. The Estate's published guidance identifies restrictions around text quotations, artwork, invented languages/scripts, public readings and derivative uses; the track therefore blocks copyrighted primary-text ingestion, audiobook/transcript downloads, protected-language/script reproduction, derivative generation from protected characters/settings/stories, and model-weight training. Unknown rights remain BLOCKED. See [Tolkien Estate guidance](https://www.tolkienestate.com/frequently-asked-questions-and-links/) and [Marquette Tolkien Collection guidance](https://www.db.mu.edu/library/archives/Mss/JRRT/about.php).
+
+#### Dataset discovery counts from the current route artifact
+
+The main dataset-routing artifact records 2,976 catalog dataset rows, 727 unique dataset candidates, 1,783 MasterBot-lane candidate rows across 65 routes. Every candidate remains `UNVERIFIED_DATASET_CARD_AND_TERMS_REQUIRED` and `DISCOVERY_ONLY_NOT_TRAINING_APPROVED`; 0 are rights-cleared or training-approved by this artifact. These are catalog counts, not datasets inspected, ingested, or trained on. The route generator was updated on the study-resource PR branch to rename the ambiguous `catalog_train_flag` to `source_catalog_train_hint` and explicitly emit `training_eligible: false`; the generated 1,783 candidate rows were updated with the same fail-closed meaning.
+
+#### PR snapshot pointer
+
+The 2026-11-24 PR metadata inventory is now persisted at `docs/engineering/pr-inventory-snapshots/2026-11-24.json`: 800 PRs, 77 open, 723 closed, 498 merged and 225 closed-unmerged. Every record is explicitly metadata-only; 0 have completed full forensic review. See `docs/engineering/PR_RECONCILIATION_LEDGER.md`.
