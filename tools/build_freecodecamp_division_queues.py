@@ -170,7 +170,7 @@ def validate(payload: dict[str, Any]) -> None:
         or source_inventory.get("complete") is not True
         or source_inventory.get("observed_entry_count") != payload.get("catalog_video_count")
     ):
-        raise ValueError("division queues must retain verified complete source inventory evidence")
+        raise ValueError("domain queues must retain verified complete source inventory evidence")
     ids = [row["domain_id"] for row in rows]
     if len(set(ids)) != 55:
         raise ValueError("domain IDs must be unique")
@@ -204,14 +204,14 @@ def main() -> int:
     rendered = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
     if args.check:
         if not args.out.exists() or args.out.read_text(encoding="utf-8") != rendered:
-            raise SystemExit("division queues are stale; regenerate them")
+            raise SystemExit("domain queues are stale; regenerate them")
     else:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(rendered, encoding="utf-8")
     print(json.dumps({"ok": True, "domains": 55, "catalog_videos": len(catalog["videos"]),
                       "queued_items": sum(row["queue_count"] for row in payload["domains"]),
-                      "subject_routed": sum(row["queue_status"] == "subject_routed" for row in payload["divisions"]),
-                      "foundation_only": sum(row["queue_status"] != "subject_routed" for row in payload["divisions"])}, indent=2))
+                      "subject_routed": sum(row["queue_status"] == "subject_routed" for row in payload["domains"]),
+                      "foundation_only": sum(row["queue_status"] != "subject_routed" for row in payload["domains"])}, indent=2))
     return 0
 
 if __name__ == "__main__":
