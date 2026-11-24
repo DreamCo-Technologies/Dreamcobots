@@ -1419,7 +1419,7 @@
       "goal": "Buddy automation",
       "purpose": "Operate one governed Buddy capability",
       "what_happens": [
-        "Run bounded MasterBot training lane",
+        "Generate plan-only MasterBot lane evidence",
         "Publish lane checkpoint"
       ],
       "outputs": [
@@ -1758,7 +1758,7 @@
       "goal": "Buddy automation",
       "purpose": "Operate one governed Buddy capability",
       "what_happens": [
-        "Run isolated division learning lane",
+        "Generate plan-only division learning evidence",
         "Preserve division run evidence",
         "Download full-sweep division run records",
         "Build shared cross-run learning queue",
@@ -2283,7 +2283,7 @@
         "Validate committed Markdown audit evidence",
         "Generate and validate Markdown-to-code gap inventory",
         "Upload generated audit candidate",
-        "Open or update a reviewable PR for generated evidence"
+        "Publish manual-review instructions"
       ],
       "outputs": [
         "GitHub Actions run log",
@@ -2303,12 +2303,12 @@
       "runtime_status": "unknown_until_run_evidence_loaded",
       "errors": [],
       "warnings": [],
-      "runner_jobs": 3,
+      "runner_jobs": 2,
       "controls": {
         "permissions_declared": true,
         "concurrency_declared": true,
-        "job_timeouts_declared": 3,
-        "runner_jobs": 3,
+        "job_timeouts_declared": 2,
+        "runner_jobs": 2,
         "artifacts_declared": true
       },
       "upgrades": [
@@ -2827,6 +2827,7 @@
       ],
       "benchmark_commands": [
         "npm run test:repository",
+        "tools/audit_actions_health.py",
         "tools/audit_change_test_coverage.py",
         "tools/audit_trusted_code_delivery.py",
         "tools/generate_buddy_benchmark_index.py",
@@ -4799,7 +4800,7 @@
         "Refresh canonical generated registries before checks",
         "Inventory repository, runtime bindings, capabilities, and learning systems",
         "Discover every registered benchmark suite and model/provider",
-        "Execute every applicable suite for every catalogued model/provider",
+        "Record dedicated 500-model execution readiness",
         "Build complete model \u00d7 benchmark-suite prospectus matrix",
         "Execute learning and evidence-driven gap-closure cycle",
         "Run benchmark-policy and repository regression tests",
@@ -4814,7 +4815,8 @@
       ],
       "benchmark_commands": [
         "tools/generate_buddy_benchmark_index.py",
-        "tools/generate_repository_test_registry.py"
+        "tools/generate_repository_test_registry.py",
+        "tools/run_500_model_benchmarks.py"
       ],
       "triggers": [
         "manual",
@@ -6558,6 +6560,7 @@
         "Refresh generated verification contracts",
         "Generate repository master inventory",
         "Reconcile generated repository test registry after all generators",
+        "Refresh Actions health inventory and prospectus",
         "Verify repository and Pages contracts",
         "Write system watch summary",
         "Save inventory evidence"
@@ -6568,6 +6571,7 @@
       ],
       "benchmark_commands": [
         "npm run test:actions-page",
+        "tools/audit_actions_health.py",
         "tools/generate_repository_test_registry.py"
       ],
       "triggers": [

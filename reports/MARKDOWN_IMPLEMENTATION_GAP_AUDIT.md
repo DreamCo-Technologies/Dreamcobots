@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T06:27:35Z
+Generated: 2026-11-24T15:21:53Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1674
-- Actionable claim lines detected: 11916
+- Markdown documents scanned: 1676
+- Actionable claim lines detected: 11933
 - Documents with missing path references: 112
-- Documents without implementation references: 1589
-- Documents with implementation references but no test references: 68
-- Documents with inventory count claims: 112
-- Inventory count claims requiring review: 389
+- Documents without implementation references: 1590
+- Documents with implementation references but no test references: 69
+- Documents with inventory count claims: 113
+- Inventory count claims requiring review: 390
 
 ## Fixed-count claims requiring review
 
@@ -173,6 +173,7 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/THREE_RUNTIME_TRACEABILITY_LEDGER.md:95 — | [#14849](https://github.com/DreamCo-Technologies/Dreamcobots/pull/14849) | fix(ci): regenerate pages feature audit for 223 pages (was 205) | Review pending |
 - docs/UNIVERSAL_BOT_RUNTIME_CONTRACT.md:8 — DreamCo has ~1,120 bot profiles (`bots/*.md`, `App_bots/<Division>.json`,
 - docs/UNIVERSAL_BOT_RUNTIME_CONTRACT.md:21 — | 3 | capabilities | ≥1 bot-specific capability. Tier packaging (“Advanced analytics dashboard”, “Priority email support”, “API access”…) is dropped and counted in `tier_features_dropped` |
+- docs/UNIVERSAL_STUDY_RESOURCE_EXPANSION.md:22 — The 100-ID range is reserved for an expansion batch. This first commit seeds 100 resources:
 - docs/UNMERGEABLE_PR_RECONCILIATION_2026-08-12.md:53 — Preserves the core #476 Pages capability of routing browser `/api`, `/ws`, and `/socket` traffic to a configured HTTPS/WSS backend while leaving normal local development behavior unchanged.
 - docs/VIBE_CODING_CATEGORY_MAP.md:44 — ## 31–40: XR, simulation, infrastructure, data and productivity
 - docs/VIBE_CODING_CATEGORY_MAP.md:57 — ## 41–50: Civic, professional, industrial and physical-world systems
@@ -13583,7 +13584,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/CROSS_REPOSITORY_COMPLETION_AND_COMPETITION.md
 
 - Status: broken_path_references
-- Actionable claim lines: 10
+- Actionable claim lines: 17
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: github/workflows/dreamco-c-runtime.yml
@@ -13694,6 +13695,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 - Status: implementation_reference_missing
 - Actionable claim lines: 24
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_CONTINUOUS_LEARNING_EXECUTION_TRUTH.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
@@ -14578,6 +14589,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: None detected
 - Missing paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/UNIVERSAL_STUDY_RESOURCE_EXPANSION.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 9
+- Implementation paths: buddy/datasets/discovery_fleet.py, buddy/datasets/license_policy.py, buddy/learning/study_resource_scheduler.py
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/UNMERGEABLE_PR_RECONCILIATION_2026-08-12.md
