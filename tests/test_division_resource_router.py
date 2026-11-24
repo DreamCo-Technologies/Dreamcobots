@@ -22,6 +22,18 @@ class DivisionResourceRouterTests(unittest.TestCase):
   result=plan_resource_route(4,"coding","unclassified",True,True,["openai"])
   self.assertTrue(result["sensitive_data"])
   self.assertEqual(result["eligible_external_connectors"],[])
+ def test_mapped_and_unassigned_domain_routes_resolve_without_guessing_owners(self):
+  mapped=plan_resource_route(None,"instruction",domain_id="dreamfinance")
+  self.assertEqual(mapped["route_type"],"linked_to_masterbot_resource_bundle")
+  self.assertEqual(mapped["division_id"],1)
+  self.assertEqual(mapped["resource_bundle_id"],"division-resource-001")
+  standalone=plan_resource_route(None,"instruction",domain_id="dreamaffiliate")
+  self.assertEqual(standalone["route_type"],"standalone_domain_resource_bundle")
+  self.assertIsNone(standalone["division_id"])
+  self.assertEqual(standalone["resource_bundle_id"],"domain-resource-dreamaffiliate")
+ def test_unknown_domain_is_rejected(self):
+  with self.assertRaises(KeyError):
+   plan_resource_route(None,"instruction",domain_id="madeupdomain")
  def test_unknown_division_is_rejected(self):
   with self.assertRaises(KeyError):
    plan_resource_route(999,"coding")
