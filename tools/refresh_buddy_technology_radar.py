@@ -472,7 +472,7 @@ def main() -> int:
         OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
         OUTPUT_PATH.write_text(json.dumps(catalog, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         WEB_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-        WEB_OUTPUT_PATH.write_text(json.dumps(build_public_projection(catalog), ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+        WEB_OUTPUT_PATH.write_text(json.dumps(build_public_projection(catalog, int(policy.get("public_site", {}).get("maximum_records", 500))), ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
         POLICY_MIRROR_PATH.parent.mkdir(parents=True, exist_ok=True)
         POLICY_MIRROR_PATH.write_text(json.dumps(policy, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     else:
@@ -480,7 +480,7 @@ def main() -> int:
             raise SystemExit("technology radar output or Pages mirror is missing; run --refresh")
         catalog = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
         mirror = json.loads(WEB_OUTPUT_PATH.read_text(encoding="utf-8"))
-        if build_public_projection(catalog) != mirror:
+        if build_public_projection(catalog, int(policy.get("public_site", {}).get("maximum_records", 500))) != mirror:
             raise SystemExit("technology radar Pages projection is stale")
         if not POLICY_MIRROR_PATH.exists() or json.loads(POLICY_MIRROR_PATH.read_text(encoding="utf-8")) != policy:
             raise SystemExit("technology discovery policy Pages mirror is stale")
