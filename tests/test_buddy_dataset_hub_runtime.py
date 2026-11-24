@@ -35,7 +35,7 @@ class DatasetHubRuntimeTests(unittest.TestCase):
     def test_internal_license_requires_owner_and_contributor_rights(self):
         with tempfile.TemporaryDirectory() as temp:
             sample=Path(temp)/"x.jsonl"
-            sample.write_text('{"instruction":"Explain a function","output":"A reusable code block."}\\n',encoding="utf-8")
+            sample.write_text('{"instruction":"Explain a function","output":"A reusable code block."}\n',encoding="utf-8")
             hub=DatasetHub(Path(temp)/"hub")
             with self.assertRaisesRegex(DatasetPolicyError,"INTERNAL_OWNERSHIP_OR_CONTRIBUTOR_RIGHTS"):
                 hub.register({**CARD,"owner_assignment_verified":False},sample)
@@ -43,7 +43,7 @@ class DatasetHubRuntimeTests(unittest.TestCase):
     def test_internal_license_cannot_be_reused_for_third_party_source(self):
         with tempfile.TemporaryDirectory() as temp:
             sample=Path(temp)/"x.jsonl"
-            sample.write_text('{"instruction":"Explain a function","output":"A reusable code block."}\\n',encoding="utf-8")
+            sample.write_text('{"instruction":"Explain a function","output":"A reusable code block."}\n',encoding="utf-8")
             hub=DatasetHub(Path(temp)/"hub")
             with self.assertRaisesRegex(DatasetPolicyError,"INTERNAL_OWNERSHIP_OR_CONTRIBUTOR_RIGHTS"):
                 hub.register({**CARD,"source":"huggingface"},sample)
