@@ -14,6 +14,18 @@ on:
       - "data/dreamco_training/**"
       - "tools/build_dreamco_bootcamp_seed_data.py"
       - "tests/test_dreamco_bootcamp_seed_data.py"
+      - "config/dreamco-training-source-registry.json"
+      - "config/dreamco-first-party-training-factory.json"
+      - "config/buddy-dataset-routing-policy.json"
+      - "config/buddy-training-data-provenance-policy.json"
+      - "config/buddy-bootcamp-program.json"
+      - "config/buddy-bootcamp-curriculum-v1.json"
+      - "config/generated/division-resource-readiness-map.json"
+      - "config/dreamco-mastery-continuity-registry.json"
+      - "tools/build_dreamco_training_factory.py"
+      - "tests/test_dreamco_training_factory.py"
+      - "tools/build_dreamco_training_examples.py"
+      - "tests/test_dreamco_original_training_examples.py"
   push:
     branches: [main]
     paths:
@@ -24,6 +36,18 @@ on:
       - "config/hf-capability-download-map.json"
       - "config/generated/division-huggingface-taxonomy-map.json"
       - "config/buddy-model-serving-policy.json"
+      - "config/dreamco-training-source-registry.json"
+      - "config/dreamco-first-party-training-factory.json"
+      - "config/buddy-dataset-routing-policy.json"
+      - "config/buddy-training-data-provenance-policy.json"
+      - "config/buddy-bootcamp-program.json"
+      - "config/buddy-bootcamp-curriculum-v1.json"
+      - "config/generated/division-resource-readiness-map.json"
+      - "config/dreamco-mastery-continuity-registry.json"
+      - "tools/build_dreamco_training_factory.py"
+      - "tests/test_dreamco_training_factory.py"
+      - "tools/build_dreamco_training_examples.py"
+      - "tests/test_dreamco_original_training_examples.py"
   schedule:
     - cron: "17 9 * * *"
 permissions:
@@ -49,6 +73,9 @@ jobs:
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_bootcamp_seed_data.py' -v
+          python -m unittest discover -s tests -p 'test_dreamco_training_factory.py' -v
+          python -m unittest discover -s tests -p 'test_dreamco_original_training_examples.py' -v
+          python -m py_compile tools/build_dreamco_bootcamp_seed_data.py tools/build_dreamco_training_factory.py tools/build_dreamco_training_examples.py
       - name: Propose generated curriculum
         if: github.event_name != 'pull_request'
         uses: peter-evans/create-pull-request@v7
