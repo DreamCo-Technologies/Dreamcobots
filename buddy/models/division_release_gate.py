@@ -107,7 +107,7 @@ def validate_division_release(bundle_path:str|Path,evidence_root:str|Path|None=N
             and training.get("tokenizer_revision") and COMMIT.fullmatch(str(training.get("base_model_revision","")))
             and SHA.fullmatch(checkpoint_sha) and training.get("tested_commit_sha")==tested_commit):
         reasons.append("training: completed run, pinned base/tokenizer, matching dataset, checkpoint hash, and tested commit are required")
-    checkpoint_root_value=training.get("checkpoint_root")
+    checkpoint_root_value=bundle.get("checkpoint_root")
     checkpoint_files=training.get("checkpoint_files")
     if not isinstance(checkpoint_files,list) or not checkpoint_files or not checkpoint_root_value:
         reasons.append("training: checkpoint file manifest and copied checkpoint directory are required")
