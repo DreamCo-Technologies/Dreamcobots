@@ -134,7 +134,7 @@ def main():
         "source":"config/generated/masterbot-55-domain-crosswalk.json",
         "counts":{"unresolved_masterbot_mappings":len(payload["owner_review"]["masterbot_domain_decisions"]),
             "unassigned_domain_profiles":len(payload["owner_review"]["unassigned_domain_profiles"])},
-        "instructions":"Please assign only with authoritative ownership evidence. Empty candidate arrays are intentional; do not infer a mapping from similar names. Record reviewer, evidence, decision date and approval.",
+        "instructions":"Please assign only with authoritative ownership evidence. Empty candidate arrays are intentional; do not infer a mapping from similar names. Record reviewer, evidence, decision date and approval. Resource bundles exist independently of ownership decisions.",
         **payload["owner_review"]}
     review_encoded=json.dumps(review_payload,indent=2,ensure_ascii=False)+"\n"
     if args.check:
