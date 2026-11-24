@@ -111,6 +111,18 @@ learning_sources:
     training_requires: [owner_attestation, license_evidence, training_permission, commercial_model_use_permission, derivative_model_permission, dataset_sha256, division_scope, training_strategy]
     current_capabilities: [random_initialization, byte_level_tokenizer, next_token_cross_entropy, train_validation_holdout_splits, checkpoint_resume, provenance_hashes]
     planned_capabilities: [hybrid_linear_sparse_attention, mixture_of_experts, image_patch_multimodality, code_execution_reward_loop, multi_seed_significance]
+  - id: pretrained_model_marketplace
+    name: DreamCo Pretrained Model Store
+    catalog: config/marketplace/pretrained-model-catalog.json
+    schema: config/marketplace/pretrained-model-catalog.schema.json
+    validator: tools/validate_pretrained_model_catalog.py
+    storefront: website/pretrained-model-store.html
+    parameter_count_limit: null
+    purchase_entitlement: planned_not_enabled
+    source_data_distribution: prohibited
+    model_release_requires: [weights_sha256, tokenizer_sha256, training_run_id, dataset_provenance, rights_approval, commercial_model_use_permission, evaluation_report, model_card, license_id]
+    local_inference_compute: buyer_owned
+    hosted_inference_billing: separate_usage_metered
 metrics:
   - benchmark_score_delta
   - native_pass_rate
