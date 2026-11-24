@@ -58,7 +58,8 @@ def build_report(policy: dict[str, Any], manifest_path: Path, ledger_path: Path,
     week = iso_week(today)
     blocked: list[str] = []
     transcripts: list[dict[str, Any]] = []
-    if not manifest_path.exists():
+    manifest_present = manifest_path.exists()
+    if not manifest_present:
         blocked.append("approved_transcript_manifest_missing")
     else:
         transcripts = validate_manifest(read_json(manifest_path))
@@ -96,7 +97,7 @@ def build_report(policy: dict[str, Any], manifest_path: Path, ledger_path: Path,
                 "status": "due_not_evaluated",
             })
 
-    if not transcripts:
+    if manifest_present and not transcripts:
         blocked.append("no_authorized_transcripts_registered")
     if transcripts:
         blocked.append("real_buddy_evaluation_adapter_not_registered")
