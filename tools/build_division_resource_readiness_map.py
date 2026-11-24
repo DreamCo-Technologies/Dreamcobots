@@ -63,6 +63,33 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
                 "owner_review_required":True,"owner_approval":mapping.get("owner_approval"),
                 "unresolved":mapping.get("mapping_status")=="unresolved"}
         })
+    masterbot_routes={row["masterbot_id"]:row for row in routes}
+    domain_routes=[]
+    for domain in crosswalk["domains"]:
+        masterbot_id=domain.get("masterbot_id")
+        linked=masterbot_routes.get(masterbot_id) if masterbot_id is not None else None
+        if linked:
+            bundle_id=linked["resource_bundle_id"]
+            namespace=linked["logical_database_namespace"]
+            lane_id=linked["dataset_discovery_lane_id"]
+            capabilities=linked["capability_pack_ids"]
+            route_type="linked_to_masterbot_resource_bundle"
+        else:
+            bundle_id=f"domain-resource-{domain['domain_id']}"
+            namespace=f"dreamco_domain_{domain['domain_id']}"
+            lane_id=f"domain-discovery-{domain['domain_id']}"
+            capabilities=["pack.instruct","pack.reason","pack.safety"]
+            route_type="standalone_domain_resource_bundle"
+        domain_routes.append({
+            "domain_id":domain["domain_id"],"domain_name":domain["domain_name"],
+            "masterbot_id":masterbot_id,"masterbot_name":domain.get("masterbot_name"),
+            "route_type":route_type,"resource_bundle_id":bundle_id,
+            "readiness_status":"requirements_defined_not_provisioned",
+            "logical_database_namespace":namespace,"dataset_discovery_lane_id":lane_id,
+            "capability_pack_ids":capabilities,"dataset_rights_status":"UNVERIFIED_DISCOVERY_ONLY",
+            "dataset_training_approved":False,"owner_review_required":True,
+            "mapping_status":domain.get("mapping_status"),"owner_approval":domain.get("owner_approval")
+        })
     unresolved_bots=[{"masterbot_id":x["masterbot_id"],"masterbot_name":x["masterbot_name"],
         "primary_domain_id":None,"primary_domain_name":None,"candidate_domain_ids":[],
         "decision":"PENDING_OWNER_REVIEW","review_required":True,"owner_approval":None,
@@ -74,9 +101,10 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
     return {"schema":"dreamco.division_resource_readiness_map.v1",
         "status":"requirements_defined_not_provisioned","source_of_truth":"config/masterbot-65-registry.json",
         "counts":{"masterbots":len(routes),"domain_divisions":len(crosswalk["domains"]),
-            "unresolved_masterbot_mappings":len(unresolved_bots),"unassigned_domain_profiles":len(unresolved_domains)},
+            "unresolved_masterbot_mappings":len(unresolved_bots),"unassigned_domain_profiles":len(unresolved_domains),"domain_resource_routes":len(domain_routes),
+            "standalone_domain_resource_bundles":sum(x["route_type"]=="standalone_domain_resource_bundle" for x in domain_routes)},
         "source_blob_shas":source_blob_shas,"resource_contract":RESOURCE_CONTRACT,
-        "machine_learning_practices":ML_PRACTICES,"resource_templates":templates,"routes":routes,
+        "machine_learning_practices":ML_PRACTICES,"resource_templates":templates,"routes":routes,"domain_routes":domain_routes,
         "owner_review":{"masterbot_domain_decisions":unresolved_bots,"unassigned_domain_profiles":unresolved_domains},
         "truth":"This map defines resource requirements and candidate references. It does not provision databases, download datasets, connect providers, allocate GPUs, run training, certify teacher models, or prove any division model exists. All unresolved crosswalk mappings remain unassigned until owner approval."}
 
