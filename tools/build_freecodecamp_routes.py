@@ -45,7 +45,8 @@ def _daily_plan(profiles,videos,quota):
    if slot < len(candidates):
     v=candidates[slot]; planned+=1
     lessons.append({"lesson_number":slot+1,"video_id":v["video_id"],"title":v["title"],"source_url":v["url"],
-      "categories":v.get("categories",[]),"routing_scope":"specialty" if mid in v.get("specialty_division_ids",[]) else "shared_foundation",\n      "transcript_status":v.get("transcript_status","not_ingested_rights_gate"),
+      "categories":v.get("categories",[]),"routing_scope":"specialty" if mid in v.get("specialty_division_ids",[]) else "shared_foundation",
+      "transcript_status":v.get("transcript_status","not_ingested_rights_gate"),
       "status":"queued_not_studied","execution_status":"PLAN_ONLY_NOT_EXECUTED","media_download_allowed":False,
       "transcript_ingestion_allowed":False,"model_training_allowed":False})
    else:
