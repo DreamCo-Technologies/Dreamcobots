@@ -23,8 +23,7 @@ on:
   schedule:
     - cron: "17 9 * * *"
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 concurrency:
   group: buddy-bootcamp-curriculum
   cancel-in-progress: false
@@ -44,18 +43,21 @@ jobs:
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
-      - name: Propose generated curriculum
-        if: github.event_name != 'pull_request'
-        uses: peter-evans/create-pull-request@v7
+      - name: Upload generated curriculum evidence
+        if: success() && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          branch: automation/buddy-bootcamp-curriculum
-          delete-branch: false
-          add-paths: config/generated/buddy-bootcamp-curriculum.json
-          commit-message: "chore: refresh Buddy Bootcamp curriculum"
-          title: "chore: refresh Buddy Bootcamp curriculum"
-          body: |
-            Generated curriculum from the canonical 65-division registry, HF task taxonomy,
-            capability packs, and division discovery map. No datasets are downloaded and
-            no training or model promotion is performed.
+          name: buddy-bootcamp-curriculum-${{ github.run_id }}
+          path: config/generated/buddy-bootcamp-curriculum.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish manual-review instructions
+        if: success() && github.event_name != 'pull_request'
+        run: |
+          {
+            echo "## Buddy Bootcamp curriculum artifact ready"
+            echo "- The generated 65-division curriculum is available in the workflow artifact."
+            echo "- No dataset downloads, training, certification, or model promotion occurred."
+            echo "- This workflow is read-only because repository Actions policy does not permit automated pull-request creation."
+            echo "- Review the artifact and create a human-reviewed pull request if the generated file should be committed."
+          } >> "$GITHUB_STEP_SUMMARY"
