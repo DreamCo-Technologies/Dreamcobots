@@ -53,7 +53,8 @@ class S3ObjectStore:
 
     def _validate_key(self,key:str,masterbot_id:int)->None:
         prefix=f"dreamco/masterbot-{masterbot_id:03d}/"
-        if not isinstance(key,str) or not key.startswith(prefix) or ".." in key.split("/") or key.startswith("/"):
+        segments=key.split("/") if isinstance(key,str) else []
+        if not isinstance(key,str) or not key.startswith(prefix) or any(part in {"",".",".."} for part in segments) or key.startswith("/"):
             raise ObjectStoreError("object_key_must_be_inside_the_requested_division_prefix")
 
     def _validate_bucket_controls(self)->None:
