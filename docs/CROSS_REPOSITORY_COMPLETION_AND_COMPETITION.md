@@ -85,3 +85,24 @@ Every source is reviewed individually. Discovery is not permission to download o
 ## Interim three-candidate verification location
 
 Until the Python-first completion gate is met, the private Apple repository hosts a read-only daily/manual verification workflow at `ireanjordan24/dreamcobots/.github/workflows/three-runtime-safe-verification.yml`. It checks out the canonical Python repository and runs focused Python contract/mastery validation, runs the existing CMake/CTest suite on Ubuntu and macOS, and runs the Swift macOS Xcode test scheme. The workflow is a verification harness only; it does not train models, deploy services, grant data access, or certify production readiness. Its first run must be inspected and any workflow or build failures repaired. The Python repository remains canonical and the Apple repository is not permitted to redefine Python goal status.
+
+
+## Apple repository CI role (deferred activation)
+
+The private `ireanjordan24/dreamcobots` repository may host the eventual unified CI/conformance view for all three candidates: canonical Python, Apple C, and Apple Swift. This is a CI/reporting location, not a transfer of source-of-truth ownership. The main Python repository remains authoritative for code, training, dataset/tokenizer/model lineage, shared contracts, benchmark definitions, governance, and release evidence.
+
+**Before Python-first completion:** keep canonical Python workflows in the main repository. The Apple repository may run only explicitly allowlisted, safe, read-only contract/status checks against pinned commits. Do not mirror privileged training, deployment, or secret-bearing workflows; do not trigger duplicate training; do not expose credentials to untrusted pull requests; do not grant broader runner permissions.
+
+**After Python-first completion and explicit release approval:** activate a version-pinned three-candidate CI matrix in the Apple repository. Run Python, C, and Swift conformance/build/test jobs against identical shared fixtures and approved model/tokenizer artifacts. Keep separate candidate identities, build logs, tests, and benchmark evidence. Apply equal declared resource budgets within each hardware cohort; laptop and GitHub-hosted results remain separate cohorts unless calibrated.
+
+The deferred three-candidate CI must include:
+- Python reference contract and regression conformance
+- C runtime build, unit/integration tests, ABI and memory-safety checks
+- Swift app/provider/orchestration build, unit/UI tests and contract conformance
+- shared task-packet and model/tokenizer artifact compatibility
+- routing correctness and capability/eligibility policy tests
+- latency percentiles, throughput, quality, reliability, safety, memory, compute-time, cost and energy where measurable
+- timeout, cancellation, fallback, recovery and evidence-integrity tests
+- complete reporting of successful, failed, skipped, cancelled and timed-out jobs
+
+A green Apple-repository dashboard does not replace the canonical Python repository's own required green runs and release gates.
