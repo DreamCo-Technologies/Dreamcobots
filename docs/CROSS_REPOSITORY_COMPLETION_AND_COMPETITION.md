@@ -59,3 +59,24 @@ Approved requirements, decisions, and completion status from ChatGPT conversatio
 ## Current state
 
 This contract records the intended three-candidate architecture and ordering. It does not claim that all three implementations are complete, that live services are connected, that model training has run, that a Mac runner is executing jobs, or that runtime competition has occurred. A passing contract validator proves only that the specification is structurally consistent.
+
+
+## Fair compute and anti-cheating protocol
+
+No C/Swift clone, runtime implementation campaign, or comparative competition begins until the canonical Python repository has no unresolved critical CI failures, all required Python runs are green, every goal has an owner and evidence-backed status, Buddy and Bootcamp meet their readiness gates, and the user approves the release checkpoint. A transient green run is not enough: the required run set and observation window must be declared, and failures/cancellations must be reconciled.
+
+Each later candidate receives the same predeclared per-case resource budget within a hardware cohort: wall-clock time, CPU time, GPU time where available, memory, concurrency, warmups, measured repetitions, retry allowance, timeout behavior, network policy, cache state, and benchmark seeds. Candidate commits, build flags, model/tokenizer/data hashes, and harness versions are frozen before the campaign. Every attempt—including failures, timeouts, cancellations, and unfavorable scores—is retained. Hidden holdouts and independent scoring prevent candidates from tuning against evaluation labels.
+
+The owner laptop and GitHub-hosted runners are distinct hardware cohorts. They receive equal declared budgets within their respective cohorts, but their results are not directly ranked against each other unless a documented calibration method supports it. Record exact hardware, OS, runner image, compiler/runtime, power mode, CPU/GPU utilization, peak memory, latency percentiles, throughput, thermal state when available, energy when measurable, and cost. No implementation receives extra compute time or retries because of its language or repository.
+
+## Shared discovery, isolated division data
+
+Use a hybrid data architecture. Buddy has one shared, searchable resource catalog for dataset/model/teacher/tokenizer/benchmark metadata, rights evidence, provenance, freshness, quality, privacy classification, and compatibility. Catalog visibility does not grant permission to read raw data.
+
+Each division owns its dataset versions, train/validation/test manifests, private holdouts, derived examples, model weights, checkpoints, tokenizer snapshots, database namespace, object-store prefix, and access grants. Cross-division reuse is allowed only for explicitly approved, rights-cleared data or derived artifacts with source/recipient division, purpose, transformation, approval, immutable hashes, and expiry recorded. Shared common corpora may be mounted read-only by multiple divisions, but each division's splits and holdouts remain isolated. Never mix private holdouts into training or expose raw private data by default.
+
+## Vendor-neutral Buddy training-resource catalog
+
+Buddy Bootcamp must teach resource discovery, license/rights review, data preparation, tokenizer training, model training, evaluation, deployment, safety, and reproducibility across multiple source families—not only Hugging Face. Catalog candidates may include Hugging Face Hub, ModelScope, Kaggle, Papers with Code, OpenML, UCI, institutional research repositories, Wikimedia, Common Crawl, government open-data portals, explicitly licensed GitHub repositories, owner-authorized internal datasets, pinned local teacher models, approved hosted model APIs, and DreamCo-owned teacher checkpoints. Training frameworks and compute resources may include PyTorch, Transformers, PEFT, Accelerate, DeepSpeed, FSDP, JAX, MLX, and ONNX Runtime.
+
+Every source is reviewed individually. Discovery is not permission to download or train. Verify dataset/model license, intended training and derivative-use rights, privacy, attribution, source provenance, freshness, quality, contamination, teacher output-use and distillation rights, provider retention, model revision, and compute budget. Buddy chooses the best eligible data/model resources per task using evidence, not popularity or catalog size.
