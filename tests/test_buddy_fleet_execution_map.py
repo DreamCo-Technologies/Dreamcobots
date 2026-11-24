@@ -83,6 +83,16 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
             self.assertTrue(bot["specialist_capability_domain"])
             self.assertTrue(bot["specialist_bot_scope"])
 
+    def test_all_supplemental_specialists_have_distinct_commercial_routes(self):
+        supplemental = [bot for bot in self.bots if bot["supplemental_portfolio"]]
+        self.assertEqual(len(supplemental), 50)
+        for bot in supplemental:
+            plan = bot["commercial_plan"]
+            self.assertTrue(plan.get("candidate"), bot["slug"])
+            self.assertTrue(plan.get("revenue_lane"), bot["slug"])
+            self.assertTrue(plan.get("verified_revenue_event_types"), bot["slug"])
+            self.assertFalse(plan["live_actions_allowed"])
+
     def test_all_bots_can_access_shared_platform_masterbots(self):
         expected = list(range(46, 66))
         for bot in self.bots:
