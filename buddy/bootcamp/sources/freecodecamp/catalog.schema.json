@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.example/schemas/freecodecamp-video-catalog.schema.json",
+  "title": "DreamCo freeCodeCamp video catalog",
+  "type": "object",
+  "required": [
+    "schema",
+    "source",
+    "generated_at",
+    "inventory_status",
+    "video_count",
+    "categories",
+    "videos",
+    "rights_policy"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.freecodecamp_catalog.v1"
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "name",
+        "channel_url",
+        "channel_id"
+      ],
+      "properties": {
+        "name": {
+          "const": "freeCodeCamp.org"
+        },
+        "channel_url": {
+          "const": "https://www.youtube.com/@freecodecamp"
+        },
+        "channel_id": {
+          "const": "UC8butISFwT-Wl7EV0hUK0BQ"
+        },
+        "learning_platform": {
+          "const": "https://www.freecodecamp.org/"
+        }
+      }
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "inventory_status": {
+      "enum": [
+        "complete",
+        "partial",
+        "not_run"
+      ]
+    },
+    "video_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "keywords"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "division_routing": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "videos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "video_id",
+          "title",
+          "url",
+          "categories",
+          "discovery_source",
+          "rights_status",
+          "learning_status"
+        ],
+        "properties": {
+          "video_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string"
+          },
+          "duration_seconds": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "upload_date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "discovery_source": {
+            "const": "public_channel_metadata"
+          },
+          "rights_status": {
+            "const": "review_required"
+          },
+          "learning_status": {
+            "const": "not_studied"
+          },
+          "all_divisions_foundation": {
+            "const": true
+          }
+        }
+      }
+    },
+    "rights_policy": {
+      "type": "object",
+      "required": [
+        "media_download_enabled",
+        "transcript_ingestion_enabled",
+        "model_training_requires_review"
+      ],
+      "properties": {
+        "media_download_enabled": {
+          "const": false
+        },
+        "transcript_ingestion_enabled": {
+          "const": false
+        },
+        "model_training_requires_review": {
+          "const": true
+        }
+      }
+    }
+  }
+}
