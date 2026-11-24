@@ -1,48 +1,59 @@
 {
-  "schema": "dreamco.division_reconciliation_policy.v1",
-  "version": "1.0.0",
+  "schema": "dreamco.division_reconciliation_policy.v2",
+  "version": "2.0.0",
   "canonical_division_source": "shared/division-production-contract.ts",
-  "canonical_division_count": 45,
-  "supplemental_portfolios": {
+  "core_division_count": 45,
+  "total_domain_division_count": 55,
+  "additional_divisions": {
     "DreamAffiliate": {
-      "target": "DreamSalesPro",
-      "reason": "Affiliate offers, partnerships, and sales operations"
+      "portfolio": "App_bots/DreamAffiliate.json",
+      "related_domain": "DreamSalesPro",
+      "proposed_collaborator_masterbot_id": 3
     },
     "DreamAgency": {
-      "target": "DreamProServices",
-      "reason": "Client services, agency delivery, and retainers"
+      "portfolio": "App_bots/DreamAgency.json",
+      "related_domain": "DreamProServices",
+      "proposed_collaborator_masterbot_id": 6
     },
     "DreamFoundry": {
-      "target": "DreamAIInfra",
-      "reason": "Model building, RAG, evaluation, and model operations"
+      "portfolio": "App_bots/DreamFoundry.json",
+      "related_domain": "DreamAIInfra",
+      "proposed_collaborator_masterbot_id": 4
     },
     "DreamFranchise": {
-      "target": "DreamBizLaunch",
-      "reason": "Franchise packaging and business launch operations"
+      "portfolio": "App_bots/DreamFranchise.json",
+      "related_domain": "DreamBizLaunch",
+      "proposed_collaborator_masterbot_id": 40
     },
     "DreamIntegrations": {
-      "target": "DreamCodeLab",
-      "reason": "API, webhook, and software integration engineering"
+      "portfolio": "App_bots/DreamIntegrations.json",
+      "related_domain": "DreamCodeLab",
+      "proposed_collaborator_masterbot_id": 41
     },
     "DreamLicensing": {
-      "target": "DreamLegal",
-      "reason": "Licensing, rights, royalties, and compliance"
+      "portfolio": "App_bots/DreamLicensing.json",
+      "related_domain": "DreamLegal",
+      "proposed_collaborator_masterbot_id": 23
     },
     "DreamRobotics": {
-      "target": "DreamAIInfra",
-      "reason": "Robotics intelligence, simulation, and AI systems"
+      "portfolio": "App_bots/DreamRobotics.json",
+      "related_domain": "DreamAIInfra",
+      "proposed_collaborator_masterbot_id": 4
     },
     "DreamSaaS": {
-      "target": "DreamAutomation",
-      "reason": "SaaS workflow, onboarding, and operational automation"
+      "portfolio": "App_bots/DreamSaaS.json",
+      "related_domain": "DreamAutomation",
+      "proposed_collaborator_masterbot_id": 9
     },
     "DreamStreaming": {
-      "target": "DreamContent",
-      "reason": "Streaming and channel content production"
+      "portfolio": "App_bots/DreamStreaming.json",
+      "related_domain": "DreamContent",
+      "proposed_collaborator_masterbot_id": 11
     },
     "DreamTravel": {
-      "target": "DreamTransport",
-      "reason": "Travel planning and transportation logistics"
+      "portfolio": "App_bots/DreamTravel.json",
+      "related_domain": "DreamTransport",
+      "proposed_collaborator_masterbot_id": 28
     }
   },
   "platform_masterbots": {
@@ -50,13 +61,44 @@
     "last_id": 65,
     "kind": "shared_platform_service",
     "available_to_all_domain_divisions": true,
-    "primary_domain_assignment": null,
-    "rule": "Platform MasterBots provide shared capabilities to domain divisions on demand; they are not additional business divisions and do not take primary domain ownership."
+    "rule": "Platform MasterBots provide shared capabilities across all 55 domain divisions. They are not additional business divisions."
+  },
+  "division_versatility_contract": {
+    "inherited_operations": [
+      "discover",
+      "intake",
+      "research",
+      "design",
+      "build",
+      "simulate",
+      "evaluate",
+      "integrate",
+      "operate",
+      "improve"
+    ],
+    "required_profile_fields": [
+      "purpose",
+      "serves",
+      "outcome",
+      "boundary",
+      "focusAreas"
+    ],
+    "minimum_bot_profiles_per_added_division": 5,
+    "required_evidence": [
+      "App_bots portfolio",
+      "website/data/bot-fleet manifest",
+      "website/data/bot-capability-tests manifest"
+    ],
+    "owner_collaboration_status": "proposed_requires_owner_review",
+    "production_ready_default": false
   },
   "safeguards": [
-    "Keep exactly 45 canonical business divisions from the production contract.",
-    "Preserve all ten supplemental source portfolios and their original identities while routing their capabilities to one canonical owner.",
-    "Keep MasterBots 46-65 as shared platform services available across the 45 domain divisions.",
-    "Do not infer production readiness, benchmark mastery, or model training from a structural mapping."
+    "Preserve all 45 original domain divisions unchanged.",
+    "Promote ten existing supplemental portfolios as ten additional first-class domain divisions; do not collapse their identities into existing divisions.",
+    "Keep all existing five-bot portfolios, fleet manifests, and capability-test manifests attached to their original division names.",
+    "All 55 divisions inherit the same ten discover-to-improve operating stages.",
+    "The ten related MasterBot links are proposed collaborators only and require owner review.",
+    "MasterBots 46-65 remain shared platform specialists available across all 55 divisions.",
+    "Structural inclusion is not evidence of live integrations, training, benchmark mastery, or production readiness."
   ]
 }
