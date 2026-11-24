@@ -60,7 +60,11 @@
     "immutable_split_hashes",
     "base_model_and_tokenizer_revision",
     "compute_approval",
-    "independent_evaluation"
+    "independent_evaluation",
+    "owner_assignment_verification",
+    "contributor_rights_verification",
+    "internal_owner_approval_id",
+    "rights_evidence_reference"
   ],
   "training_methods": [
     "retrieval_and_tool_use_first",
@@ -107,5 +111,28 @@
     "rights_status": "PENDING_HUMAN_REVIEW",
     "training_permission": "NOT_GRANTED",
     "training_started": false
+  },
+  "training_method_support": {
+    "retrieval_and_tool_use_first": "IMPLEMENTED_NON_WEIGHT_UPDATE",
+    "SFT": "SUPPORTED_BY_CURRENT_TRAINING_JOB_CONTRACT",
+    "LoRA": "SUPPORTED_BY_CURRENT_TRAINING_JOB_CONTRACT",
+    "QLoRA": "PLANNED_NOT_SUPPORTED_BY_CURRENT_FIRST_RUN_RUNNER",
+    "teacher_student_distillation": "POLICY_ONLY_REQUIRES_TEACHER_OUTPUT_RIGHTS_AND_APPROVAL",
+    "from_scratch_research": "SEPARATE_RESEARCH_PROGRAM_NOT_PROVISIONED"
+  },
+  "internal_owned_data_policy": {
+    "identifier": "DREAMCO_INTERNAL_OWNED",
+    "public_license": false,
+    "default_status": "BLOCKED_PENDING_OWNER_ASSIGNMENT_AND_RIGHTS_REVIEW",
+    "required": [
+      "owner_assignment_verified",
+      "contributor_rights_verified",
+      "owner_approval_id",
+      "rights_evidence",
+      "ai_training_allowed",
+      "content_rights_verified",
+      "privacy_review_PASSED",
+      "pinned_source_provenance"
+    ]
   }
 }
