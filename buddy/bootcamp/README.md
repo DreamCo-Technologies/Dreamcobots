@@ -38,7 +38,7 @@ python tools/build_freecodecamp_division_queues.py --check
 python -m unittest discover -s tests -p 'test_freecodecamp_division_queues.py' -v
 ```
 
-The generated `config/generated/freecodecamp-division-learning-queues.json` contains up to 30 ranked candidates per division by default. Each division receives shared technical foundations plus explicitly mapped specialty tracks. A division without a defensible specialty mapping receives a foundation-only queue and remains flagged for owner review; the planner does not invent a specialty.
+The generated division queue contains up to 30 ranked candidate references per division by default and is retained as a GitHub Actions review artifact rather than a committed 45,000-line duplicate snapshot. Each division receives shared technical foundations plus explicitly mapped specialty tracks. A division without a defensible specialty mapping receives a foundation-only queue and remains flagged for owner review; the planner does not invent a specialty.
 
 Every queued item starts as `queued_not_studied`. Rights review remains required, and media/transcript ingestion and training eligibility remain false. A queue item can advance only after authorized study material is turned into an original lesson or notes, a sandbox exercise is completed, and targeted, holdout, and regression evidence is recorded. Queue generation itself never changes a model or grants mastery.
 
@@ -48,15 +48,15 @@ Learning evidence is evaluated by `tools/validate_freecodecamp_learning_evidence
 
 ## Complete freeCodeCamp routing into Buddy's live study scheduler
 
-The full source-route manifest is generated with `python tools/build_freecodecamp_routes.py`. It keeps one route record for every discovered video and grants all 65 divisions catalog access; subject tags add specialty recommendations without hiding the shared catalog. Unclassified items remain discoverable through a review lane.
+The full source-route manifest is generated with `python tools/build_freecodecamp_routes.py` for audit/review artifacts. It keeps one route record for every discovered video and grants all 65 divisions catalog access; subject tags add specialty recommendations without hiding the shared catalog. Unclassified items remain discoverable through a review lane.
 
-Buddy's runtime adapter is `buddy.learning.freecodecamp_source`:
+Buddy's runtime adapter is `buddy.learning.freecodecamp_source`. It reads the canonical FreeCodeCamp catalog directly and validates the complete inventory plus the 65-division registry; it does not depend on a committed generated route snapshot.
 
 - `resources_for_division(division_id)` returns every catalog candidate for that division.
 - `select_next_for_division(division_id, capability_gaps, recent=...)` delegates next-lesson selection to the existing evidence-driven study scheduler.
 - Each resource points to the original official source and prescribes original notes, sandbox practice, target benchmark, holdout, and regression steps.
 
-This is a real route into the scheduler, not an automatic video-watching claim. The scheduler selects a lesson; a worker or learner must open the official source and complete the study and practice steps. Video/audio downloads, transcript ingestion, and model training remain disabled unless separately authorized. The CI workflow regenerates and validates the complete route manifest and runs the adapter tests.
+This is a real route into the scheduler, not an automatic video-watching claim. The scheduler selects a lesson; a worker or learner must open the official source and complete the study and practice steps. Video/audio downloads, transcript ingestion, and model training remain disabled unless separately authorized. The CI workflow regenerates and validates the complete route manifest as an artifact and runs the adapter tests. The committed catalog remains partial until the 1,741-entry verified refresh is reviewed and committed; runtime study remains fail-closed while it is partial.
 
 
 ## Temporary study-download cleanup
