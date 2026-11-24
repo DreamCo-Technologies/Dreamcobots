@@ -67,6 +67,9 @@ def build_routes(catalog: dict[str, Any], registry: dict[str, Any]) -> dict[str,
         raise ValueError("canonical 65-division registry with exactly 65 divisions required")
     if not isinstance(videos, list) or not videos:
         raise ValueError("non-empty source catalog required")
+    video_ids = [video.get("video_id") for video in videos if isinstance(video, dict)]
+    if len(video_ids) != len(videos) or len(set(video_ids)) != len(video_ids):
+        raise ValueError("duplicate or invalid video_id in source catalog")
     inventory = catalog.get("inventory") or {}
     if (
         catalog.get("inventory_status") != "complete"
