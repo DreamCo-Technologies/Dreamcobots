@@ -18,6 +18,7 @@ FILES = {
     "taxonomy_routes": ROOT / "config/generated/division-huggingface-taxonomy-map.json",
     "resource_map": ROOT / "config/generated/division-resource-readiness-map.json",
     "dataset_policy": ROOT / "config/buddy-dataset-routing-policy.json",
+    "source_registry": ROOT / "config/dreamco-training-source-registry.json",
     "provenance_policy": ROOT / "config/buddy-training-data-provenance-policy.json",
     "source_registry": ROOT / "config/dreamco-training-source-registry.json",
     "bootcamp": ROOT / "config/buddy-bootcamp-program.json",
@@ -51,6 +52,7 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
     if set(taxonomy_by_id) != bot_ids or set(resources_by_id) != bot_ids:
         raise ValueError("all route IDs must match the canonical MasterBot registry")
     policy = configs["dataset_policy"]
+    source_registry = configs["source_registry"]
     bootcamp = configs["bootcamp"]
     source_records = configs["source_registry"].get("source_families", [])
     source_ids = [record.get("id") for record in source_records if isinstance(record, dict)]
@@ -60,6 +62,23 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
     planes = policy["architecture"]["planes"]
     shared = policy["division_routing"]["shared_foundation_categories"]
     source_types = list(dict.fromkeys(source_types))
+    source_family_records = source_registry.get("source_families", [])
+    source_family_ids = [item.get("id") for item in source_family_records]
+    if not source_family_ids or any(not isinstance(item, str) or not item for item in source_family_ids):
+        raise ValueError("source registry requires stable source-family IDs")
+    if len(source_family_ids) != len(set(source_family_ids)):
+        raise ValueError("source registry source-family IDs must be unique")
+    adapter_coverage = source_registry.get("adapter_coverage", {})
+    active_adapters = adapter_coverage.get("metadata_discovery_implemented", {})
+    if not isinstance(active_adapters, dict) or not active_adapters:
+        raise ValueError("source registry must distinguish implemented metadata adapters")
+    from buddy.datasets import sources as dataset_sources
+    for source_id, function_names in active_adapters.items():
+        if not isinstance(function_names, list) or not function_names:
+            raise ValueError(f"metadata adapter list is invalid for {source_id}")
+        for function_name in function_names:
+            if not callable(getattr(dataset_sources, function_name, None)):
+                raise ValueError(f"source registry adapter {source_id}:{function_name} is not implemented")
     lanes = []
     for bot in sorted(bots, key=lambda x: int(x["id"])):
         mid = int(bot["id"])
@@ -114,10 +133,20 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
             "task_families": len(tasks),
             "division_task_assignments": len(lanes) * len(tasks),
             "bootcamp_levels": len(bootcamp.get("curriculum_levels", [])),
-            "source_families": len(source_types),
+            "source_families": len(source_family_records),
+            "source_catalog_items": len(source_types),
+            "implemented_metadata_adapters": sum(len(items) for items in active_adapters.values()),
             "data_planes": len(planes),
         },
         "source_families": source_types,
+        "source_registry": {
+            "version": source_registry.get("version"),
+            "source_family_ids": source_family_ids,
+            "implemented_metadata_adapters": active_adapters,
+            "catalogued_reference_only": adapter_coverage.get("catalogued_reference_only", []),
+            "external_file_download": adapter_coverage.get("external_file_download"),
+            "external_training_ingestion": adapter_coverage.get("external_training_ingestion"),
+        },
         "data_planes": planes,
         "bootcamp": {
             "name": bootcamp.get("name", "Buddy Bootcamp"),
