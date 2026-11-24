@@ -46,6 +46,7 @@ class BootcampSeedDataTests(unittest.TestCase):
         card = build_dataset_card(manifest, "candidate.jsonl")
         self.assertFalse(card["training_approved"])
         self.assertEqual(card["rights_status"], "PENDING_HUMAN_REVIEW")
+        self.assertEqual(card["license_url_status"], "POLICY_REFERENCE_NOT_A_DATASET_LICENSE")
         self.assertEqual(card["primary_masterbot_id"], 4)
 
     def test_rejects_duplicate_ids_and_missing_splits(self):
