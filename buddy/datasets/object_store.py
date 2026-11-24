@@ -97,7 +97,7 @@ class S3ObjectStore:
             existing=None
         if existing is not None:
             metadata=existing.get("Metadata",{})
-            if metadata.get("sha256")!=actual or int(existing.get("ContentLength",-1))!=path.stat().st_size:
+            if metadata.get("sha256")!=actual or metadata.get("masterbot_id")!=str(masterbot_id) or int(existing.get("ContentLength",-1))!=path.stat().st_size:
                 raise ObjectStoreError("immutable_object_key_conflict")
             return {"status":"ALREADY_PRESENT","bucket":self.bucket,"key":key,
                 "sha256":actual,"bytes":path.stat().st_size,"version_id":existing.get("VersionId"),
