@@ -1,0 +1,57 @@
+name: Buddy Bot Manifest Refresh
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/buddy-bot-manifest-refresh.yml"
+      - "tools/generate_bot_manifests.py"
+      - "buddy/fleet_runtime/**"
+      - "App_bots/**"
+      - "bots/**"
+      - "server/seed-bots.ts"
+      - "config/generated/bots.catalog.json"
+  schedule:
+    - cron: "23 8 * * *"
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: buddy-bot-manifest-refresh
+  cancel-in-progress: false
+jobs:
+  generate-and-propose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Regenerate deterministic bot and division manifests
+        run: |
+          set -euo pipefail
+          python3 tools/generate_bot_manifests.py
+          python3 tools/generate_bot_manifests.py --check
+      - name: Validate generated bot manifests
+        run: |
+          python3 -m unittest tests.test_division_model_manifest tests.test_division_model_fleet -v
+      - name: Propose generated manifests for review
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: automation/bot-manifest-refresh
+          delete-branch: false
+          add-paths: |
+            config/bots/bot-manifests.generated.json
+            config/bots/division-manifests.generated.json
+          commit-message: "chore: refresh generated bot and division manifests"
+          title: "chore: refresh generated bot and division manifests"
+          body: |
+            ## Generated bot manifest refresh
+
+            This PR contains deterministic outputs from tools/generate_bot_manifests.py.
+            The workflow runs the generator, verifies --check, and validates the resulting
+            division manifests. Review the generated diff and CI before merging.

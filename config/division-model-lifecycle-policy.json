@@ -1,0 +1,15 @@
+{
+ "schema":"dreamco.division_model_lifecycle_policy.v1",
+ "canonical_division_count":65,
+ "default_model_version":"0.1.0",
+ "identity":"dreamco/{division-slug}-mini",
+ "artifact_isolation":{"weights":"artifacts/division-models/{masterbot-id}-{division-slug}/v{version}/weights","checkpoints":"artifacts/division-models/{masterbot-id}-{division-slug}/v{version}/checkpoints","tokenizer":"artifacts/division-models/{masterbot-id}-{division-slug}/v{version}/tokenizer"},
+ "tokenizer_policy":"Each division saves its own tokenizer snapshot pinned to the selected base model revision.",
+ "base_model_policy":{"immutable_revision_required":true,"license_review_required":true,"hardware_fit_required":true,"owner_approval_required":true,"shared_base_weights_allowed":true,"shared_trained_division_artifacts_forbidden":true},
+ "training":{"methods":["sft","lora"],"compute_approval_required":true,"dataset_rights_and_privacy_review_required":true,"pinned_train_validation_test_hashes_required":true,"deterministic_seed_required":true,"checkpointing_required":true,"baseline_validation_required":true,"private_holdout_evaluation_required":true},
+ "teacher_models":{"buddy_role":"teacher coordinator, curriculum planner and evidence reviewer; not a claim of a separate trained frontier model","teacher_revision_and_terms_required":true,"paid_provider_call_approval_required":true,"teacher_output_training_rights_required":true,"teacher_output_quality_filter_required":true},
+ "benchmarks":{"baseline_comparison_required":true,"domain_task_suite_required":true,"general_capability_suite_required":true,"safety_and_privacy_suite_required":true,"cost_latency_memory_measurements_required":true,"private_holdout_must_never_be_used_for_training":true},
+ "runtime":{"separate_division_endpoint_identity_required":true,"deployment_requires_benchmark_certification":true,"health_probe_required":true,"rollback_to_previous_version_required":true,"production_default_enabled":false},
+ "evidence_states":["SPECIFIED_NOT_TRAINED","DATA_READY","TRAINED_UNVALIDATED","BENCHMARKED","CERTIFIED","DEPLOYED","ROLLED_BACK"],
+ "promotion":{"no_self_certification":true,"requires_immutable_weight_and_checkpoint_hashes":true,"requires_independent_review":true,"requires_explicit_production_approval":true}
+}

@@ -1,4 +1,4 @@
-"""Create reproducible training job requests for the registered local Transformers runner."""
+"""Create reproducible training job requests for registered division models."""
 from __future__ import annotations
 import hashlib
 import json
@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from .hub import DatasetHub, DatasetPolicyError
+from buddy.models.division_model_registry import get_division_model_identity
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -46,21 +47,30 @@ def create_training_job(dataset_hub: DatasetHub, dataset_id: str, masterbot_id: 
         raise DatasetPolicyError("Supported first-run methods are sft and lora")
     if not 1 <= int(max_steps) <= 100000:
         raise DatasetPolicyError("max_steps must be between 1 and 100000")
+    identity = get_division_model_identity(int(masterbot_id))
     payload = {
         "schema": "dreamco.model_training_job.v1", "job_id": "train-" + uuid.uuid4().hex[:16],
         "created_at": datetime.now(timezone.utc).isoformat(), "dataset_id": dataset_id,
         "dataset_version": card["version"], "dataset_sha256": card["content_sha256"],
         "dataset_hub_path": str(dataset_hub.home.resolve()), "dataset_object_path": card["object_path"],
-        "masterbot_id": masterbot_id, "model_id": model_id,
+        "masterbot_id": int(masterbot_id), "model_id": model_id,
+        "division_model": {"model_name": identity["model_name"], "model_version": identity["model_version"],
+            "division_slug": identity["division_slug"], "artifact_root": identity["artifacts"]["root"],
+            "tokenizer_strategy": identity["tokenizer"]["strategy"],
+            "database_schema": identity["data"]["database_schema"]},
         "base_model_revision": base_model_revision, "model_license": model_license,
         "model_license_url": model_license_url, "model_license_status": model_license_status,
         "model_license_evidence": model_license_evidence, "compute_approval_id": compute_approval_id,
-        "training_method": training_method, "training_config": {"max_steps": int(max_steps), "per_device_train_batch_size": 1, "gradient_accumulation_steps": 4, "learning_rate": 0.0002, "max_seq_length": 512, "seed": 42},
+        "training_method": training_method, "training_config": {"max_steps": int(max_steps),
+            "per_device_train_batch_size": 1, "gradient_accumulation_steps": 4,
+            "learning_rate": 0.0002, "max_seq_length": 512, "seed": 42,
+            "checkpointing": {"save_strategy": "steps", "save_total_limit": 3}},
         "split_manifest": splits, "dataset_card_sha256": hashlib.sha256(json.dumps(card, sort_keys=True).encode()).hexdigest(),
         "status": "APPROVED_REQUEST_READY_FOR_EXPLICIT_RUN",
         "execution_status": "NOT_EXECUTED", "weights_updated": False,
-        "reproducibility": {"split_manifest_required": True, "seed_required": True, "tokenizer_revision_required": True,
-            "holdout_isolation_required": True, "benchmark_before_and_after_required": True},
+        "reproducibility": {"split_manifest_required": True, "seed_required": True,
+            "tokenizer_revision_required": True, "holdout_isolation_required": True,
+            "benchmark_before_and_after_required": True, "checkpoint_hashes_required": True},
         "promotion": {"production_weight_update": False, "requires_independent_review": True,
             "requires_separate_explicit_approval": True}
     }
