@@ -15,7 +15,7 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
             "categories": [{"id": x} for x in ["python_and_automation", "cybersecurity_and_privacy", "other_or_unclassified"]],
             "videos": [
                 {"video_id": "v1", "title": "Python", "url": "https://www.youtube.com/watch?v=v1", "categories": ["python_and_automation"], "rights_status": "review_required", "learning_status": "not_studied"},
-                {"video_id": "v2", "title": "Unclassified", "url": "https://www.youtube.com/watch?v=v2", "categories": ["other_or_unclassified"], "rights_status": "review_required", "learning_status": "not_studied},
+                {"video_id": "v2", "title": "Cybersecurity", "url": "https://www.youtube.com/watch?v=v2", "categories": ["cybersecurity_and_privacy"], "rights_status": "review_required", "learning_status": "not_studied},
             ],
         }
         self.registry = {"divisions": [{"id": i, "name": "DreamCyber" if i == 1 else f"DreamDivision{i}"} for i in range(1, 66)]}
@@ -32,7 +32,8 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
         python = next(x for x in result["videos"] if x["video_id"] == "v1")
         self.assertEqual(python["specialty_division_ids"], [])
         cyber = next(x for x in result["videos"] if x["video_id"] == "v2")
-        self.assertEqual(cyber["routing_status"], "unclassified_review")
+        self.assertEqual(cyber["specialty_division_ids"], [1])
+        self.assertEqual(cyber["routing_status"], "specialty_and_shared")
 
     def test_training_media_and_transcript_gates_remain_closed(self):
         result = build_routes(self.catalog, self.registry)
