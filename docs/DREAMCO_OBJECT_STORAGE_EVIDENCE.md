@@ -19,7 +19,7 @@ The runtime identity needs bucket configuration read access plus narrowly scoped
 - The backup bucket must have a lifecycle retention period.
 - The opt-in canary writes a tiny generated object to the primary bucket, reads it back, copies it to the separate backup bucket, reads the backup, restores it to a new primary key, and verifies the restored bytes.
 
-The result emits the evidence fields consumed by the division release gate. Missing bucket configuration returns BLOCKED. Without explicit canary opt-in, the result is CONFIGURED_NOT_VALIDATED and backup_restore_test remains NOT_RUN.
+Use run_division_object_store_healthcheck(masterbot_id, ...) to place canaries under a per-division prefix such as divisions/007. IDs are validated against the canonical 1–65 range. The result emits the evidence fields consumed by the division release gate. Missing bucket configuration returns BLOCKED. Without explicit canary opt-in, the result is CONFIGURED_NOT_VALIDATED and backup_restore_test remains NOT_RUN.
 
 ## Limitations
 - A cross-bucket canary restore is not a full disaster-recovery exercise and does not prove cross-account or cross-region resilience.
