@@ -6,6 +6,12 @@ on:
       - ".github/workflows/division-owner-review-queue.yml"
       - "tools/build_division_owner_review_queue.py"
       - "config/generated/division-resource-readiness-map.json"
+  pull_request:
+    paths:
+      - ".github/workflows/division-owner-review-queue.yml"
+      - "tools/build_division_owner_review_queue.py"
+      - "tests/test_division_owner_review_queue.py"
+      - "config/generated/division-resource-readiness-map.json"
   schedule:
     - cron: "41 8 * * *"
 permissions:
@@ -21,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || 'main' }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -31,6 +37,7 @@ jobs:
           python tools/build_division_owner_review_queue.py --check
           python -m unittest discover -s tests -p 'test_division_owner_review_queue.py' -v
       - name: Propose updated review queue
+        if: github.event_name != 'pull_request'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
