@@ -37,25 +37,19 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
     if len(crosswalk.get("domains",[]))!=55 or len(crosswalk.get("masterbots",[]))!=65:
         raise ValueError("expected the 55-domain / 65-MasterBot crosswalk")
     templates={
-        "database":DATABASE,"datasets":DATASETS,"teacher_models":TEACHER,
+        "database":DATABASE,"datasets":DATASETS,
+        "teacher_models":{**TEACHER,"seed_models_by_capability_pack":packs.get("seed_models",{})},
         "reverse_engineering":REVERSE_ENGINEERING,"distillation":DISTILLATION,
-        "model_routing":MODEL_ROUTING,"compute":COMPUTE,"evaluation":EVALUATION,
-        "operations":OPERATIONS
-    }
-    templates["model_routing"]={**templates["model_routing"],
-        "provider_connector_inventory":[{"id":x["id"],"mode":x["mode"],
+        "model_routing":{**MODEL_ROUTING,"provider_connector_inventory":[{"id":x["id"],"mode":x["mode"],
             "implementation_status":x["implementation_status"],"availability":x["availability"]}
-            for x in router.get("connectors",[])]}
+            for x in router.get("connectors",[])]},
+        "compute":COMPUTE,"evaluation":EVALUATION,"operations":OPERATIONS
+    }
     routes=[]
     for bot in bots:
         tax=tax_routes[bot["id"]]
-        candidates=[]
-        for pack_id in tax["capability_pack_ids"]:
-            for model_id in packs.get("seed_models",{}).get(pack_id,[]):
-                if not any(row["model_id"]==model_id and row["source_capability_pack"]==pack_id for row in candidates):
-                    candidates.append({"model_id":model_id,"source_capability_pack":pack_id,
-                        "status":"catalog_candidate_not_validated","license_review_required":True,
-                        "training_or_distillation_permission":"UNVERIFIED"})
+        candidates=list(dict.fromkeys(model_id for pack_id in tax["capability_pack_ids"]
+            for model_id in packs.get("seed_models",{}).get(pack_id,[])))
         mapping=tax["domain_crosswalk"]
         routes.append({
             "masterbot_id":bot["id"],"masterbot_name":bot["name"],
@@ -64,13 +58,10 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
             "resource_template_ids":list(templates.keys()),
             "logical_database_namespace":f"dreamco_division_{bot['id']:03d}",
             "dataset_discovery_lane_id":tax["lane_id"],
-            "dataset_search_queries":tax["search_queries"],
             "dataset_rights_status":"UNVERIFIED_DISCOVERY_ONLY",
             "dataset_training_approved":False,
-            "subject_terms":tax["subject_terms"],
-            "task_pipeline_tags":tax["candidate_pipeline_tags"],
             "capability_pack_ids":tax["capability_pack_ids"],
-            "teacher_model_candidates":candidates,
+            "teacher_model_candidate_ids":candidates,
             "domain_mapping":{"mapping_status":mapping.get("mapping_status"),
                 "domain_id":mapping.get("domain_id"),"domain_name":mapping.get("domain_name"),
                 "owner_review_required":True,"owner_approval":mapping.get("owner_approval"),
