@@ -27,6 +27,19 @@ class DivisionResourceReadinessTests(unittest.TestCase):
    self.assertTrue(route["logical_database_namespace"])
    self.assertTrue(route["dataset_discovery_lane_id"])
    self.assertFalse(route["dataset_training_approved"])
+
+ def test_all_55_domain_profiles_receive_linked_or_standalone_resource_bundles(self):
+  result=self.payload()
+  domains=result["domain_routes"]
+  self.assertEqual(len(domains),55)
+  self.assertEqual(len({x["domain_id"] for x in domains}),55)
+  linked=[x for x in domains if x["route_type"]=="linked_to_masterbot_resource_bundle"]
+  standalone=[x for x in domains if x["route_type"]=="standalone_domain_resource_bundle"]
+  self.assertEqual(len(linked),45)
+  self.assertEqual(len(standalone),10)
+  self.assertTrue(all(x["resource_bundle_id"] for x in domains))
+  self.assertTrue(all(x["dataset_training_approved"] is False for x in domains))
+  self.assertTrue(all(x["masterbot_id"] is None for x in standalone))
  def test_teacher_models_are_candidates_not_certified_or_approved(self):
   result=self.payload()
   self.assertGreaterEqual(len(result["machine_learning_practices"]),20)
