@@ -28,3 +28,15 @@ The apply path validates all 65 schemas and roles before committing DDL, records
 ## Current truth
 
 The migration is code and tests only until an operator runs it against a real PostgreSQL instance with approved credentials. CI uses mocks and does not create production tables. Object storage, live worker credentials, application-role grants, backup/restore verification and real RLS tests remain separate deployment gates.
+
+## Durable training queue contract
+
+After the lifecycle migration has been applied and least-privilege runtime grants/RLS have been verified, `buddy.datasets.postgres_training_queue.PostgresTrainingQueue` provides a division-scoped queue:
+- `enqueue` requires a valid training job manifest, matching compute approval, and idempotency key.
+- `lease_next` uses `FOR UPDATE SKIP LOCKED`, lease expiry, and bounded attempts so multiple workers do not claim the same job.
+- `heartbeat` renews only the active worker's unexpired lease.
+- `complete` accepts only a versioned training result with the matching MasterBot ID and trained-weight evidence.
+- `fail` records a sanitized error type, applies exponential retry delay, and moves exhausted jobs to `DEAD_LETTER`.
+- Queue transitions are recorded in `queue_events`.
+
+The queue adapter does not launch a GPU or train by itself. A trusted worker must lease a job, verify and fetch the approved dataset/model artifacts, execute the explicit Transformers runner, upload immutable artifacts, and then complete the job with the evidence result. The five-minute polling workflow remains disabled until a real self-hosted worker, protected database credentials, object storage, and per-division runtime grants are configured.
