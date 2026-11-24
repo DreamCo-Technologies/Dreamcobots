@@ -177,3 +177,11 @@ Continue full forensic review from the newest unreviewed PRs, prioritizing #1820
 - **PR #18210:** Safe Generated-Artifact Repair run [#45418365990](https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/45418365990) completed successfully with 75 scoped tests, including the Markdown audit test module. The generated audit report was refreshed. Current-head checks are two successes and one skipped; the dedicated Markdown workflow remains approval-gated on the latest head.
 - **PR #18211:** Safe Generated-Artifact Repair run [#45419452352](https://github.com/DreamCo-Technologies/Dreamcobots/actions/runs/45419452352) completed successfully with 74 scoped tests and refreshed the generated audit artifacts. Current-head checks still include an in-progress analysis check and a skipped check; this does not establish a full-project pass.
 - These safe-repair suites are targeted tests, not full DreamCo CI and not model benchmarks. GitHub's `action_required` runs remain approval-gated; this pass did not approve them or bypass repository policy.
+
+
+### 2026-11-24 targeted duplicate reconciliation — PR #18212 and PR #18214
+
+- PR #18212 was closed as **DUPLICATE_OR_SUPERSEDED** after comparing both changed-file inventories and source contents. It changed 16 paths; PR #18214 changed 21 paths and contains all 16 common paths plus five additional implementation/test/documentation files.
+- The 100 resource records (IDs 1101–1200) are identical across both branches. The 727 unique dataset candidates and 1,783 route rows are also identical by candidate ID; PR #18214 replaces the ambiguous `catalog_train_flag` with `source_catalog_train_hint` and explicitly sets `training_eligible: false`.
+- PR #18214 adds the Tolkien eight-lesson scholarly curriculum, rights-gated documentation, validator enforcement, and regression tests. No unique resource IDs or unique source paths from #18212 were found.
+- PR #18212 was closed with a comment linking to #18214. This is duplicate cleanup only; PR #18214 remains draft and has not passed its current-head CI/review gates. No merge or deployment was performed.
