@@ -28,3 +28,10 @@ jobs:
         run: python tools/build_division_45m_model_blueprints.py --check
       - name: Test exact parameter counting and all 65 divisions
         run: python -m unittest discover -s tests -p 'test_division_45m_model_blueprints.py' -v
+      - name: Upload 65 division architecture blueprints
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-division-45m-model-blueprints
+          path: config/generated/division-45m-model-blueprints.json
+          if-no-files-found: error
+          retention-days: 90
