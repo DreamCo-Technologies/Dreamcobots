@@ -2,6 +2,7 @@ import json,tempfile,unittest
 from pathlib import Path
 from buddy.datasets.hub import DatasetHub,DatasetPolicyError
 from buddy.datasets.private_holdout_jobs import create_private_holdout_job
+from buddy.datasets.training_jobs import create_training_job
 from buddy.datasets.private_holdout_runner import PrivateHoldoutBenchmarkError,score_prediction,validate_private_holdout_job
 
 def holdout_card():
@@ -44,6 +45,11 @@ class PrivateHoldoutTests(unittest.TestCase):
  def test_holdout_cannot_be_registered_as_training_data(self):
   bad=holdout_card();bad["training_approved"]=True
   with self.assertRaises(DatasetPolicyError): self.hub.register_evaluation_holdout(bad,self.source)
+  with self.assertRaisesRegex(DatasetPolicyError,"not approved for training"):
+   create_training_job(self.hub,self.card["dataset_id"],1,"example/model","a"*40,
+     compute_approval_id="compute-1",model_license="Apache-2.0",
+     model_license_url="https://example.org/model-license",model_license_status="VERIFIED",
+     model_license_evidence="model-review-1")
  def test_owner_mismatch_and_data_tampering_are_rejected(self):
   job=create_private_holdout_job(self.hub,self.card["dataset_id"],1,self.candidates,"compute-1",self.root/"jobs")
   payload=json.loads(Path(job["manifest_path"]).read_text());payload["masterbot_id"]=2
