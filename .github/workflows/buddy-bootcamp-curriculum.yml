@@ -10,6 +10,10 @@ on:
       - "config/hf-capability-download-map.json"
       - "config/generated/division-huggingface-taxonomy-map.json"
       - "config/buddy-model-serving-policy.json"
+      - "buddy/bootcamp/buddy_bootcamp.yaml"
+      - "buddy/bootcamp/sources/freecodecamp/**"
+      - "tools/sync_freecodecamp_catalog.py"
+      - "tests/test_freecodecamp_catalog.py"
   push:
     branches: [main]
     paths:
@@ -20,6 +24,10 @@ on:
       - "config/hf-capability-download-map.json"
       - "config/generated/division-huggingface-taxonomy-map.json"
       - "config/buddy-model-serving-policy.json"
+      - "buddy/bootcamp/buddy_bootcamp.yaml"
+      - "buddy/bootcamp/sources/freecodecamp/**"
+      - "tools/sync_freecodecamp_catalog.py"
+      - "tests/test_freecodecamp_catalog.py"
   schedule:
     - cron: "17 9 * * *"
 permissions:
@@ -39,6 +47,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Install freeCodeCamp metadata enumerator
+        run: python -m pip install --disable-pip-version-check yt-dlp
+      - name: Discover freeCodeCamp channel videos and categorize
+        run: python tools/sync_freecodecamp_catalog.py
+      - name: Validate freeCodeCamp catalog and tests
+        run: |
+          python tools/sync_freecodecamp_catalog.py --check
+          python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
       - name: Build and validate curriculum
         run: |
           python tools/build_buddy_bootcamp_curriculum.py
