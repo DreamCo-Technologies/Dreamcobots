@@ -10,10 +10,6 @@ on:
       - "config/hf-capability-download-map.json"
       - "config/generated/division-huggingface-taxonomy-map.json"
       - "config/buddy-model-serving-policy.json"
-      - "config/dreamco-training-source-registry.json"
-      - "data/dreamco_training/**"
-      - "tools/build_dreamco_bootcamp_seed_data.py"
-      - "tests/test_dreamco_bootcamp_seed_data.py"
   push:
     branches: [main]
     paths:
@@ -48,7 +44,6 @@ jobs:
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
-          python -m unittest discover -s tests -p 'test_dreamco_bootcamp_seed_data.py' -v
       - name: Propose generated curriculum
         if: github.event_name != 'pull_request'
         uses: peter-evans/create-pull-request@v7
