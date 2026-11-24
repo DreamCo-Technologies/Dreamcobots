@@ -45,7 +45,7 @@ class BuddyBootcampCurriculumTests(unittest.TestCase):
  def test_structured_task_metadata_and_nine_source_families_are_preserved(self):
   payload=self.build()
   self.assertEqual(payload["coverage"]["training_source_families"],9)
-  tasks={item["task_family"]:item for item in payload["global_task_families"]}
+  tasks={item["task_family"]["id"]:item for item in payload["global_task_families"]}
   self.assertEqual(tasks["image-classification"]["modality"],"image")
   self.assertEqual(tasks["image-classification"]["pipeline_tag"],"image-classification")
   self.assertEqual(tasks["reinforcement-learning"]["family"],"reinforcement_learning")
