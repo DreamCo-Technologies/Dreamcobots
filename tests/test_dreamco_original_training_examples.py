@@ -32,6 +32,7 @@ class DreamCoOriginalTrainingExamplesTests(unittest.TestCase):
   bad=event(1,999)
   with self.assertRaises(ValueError):
    build([bad,event(2),event(3)])
+
  def test_validated_provenance_hashes_are_not_scanned_as_free_text(self):
   sha="a1234567890b1234567890c1234567890d123456"
   events=[event(1),event(2),event(3)]
@@ -45,8 +46,7 @@ class DreamCoOriginalTrainingExamplesTests(unittest.TestCase):
   self.assertTrue(all(row["source_commit"]==sha for row in result["rows"]))
  def test_phone_in_training_text_is_still_rejected(self):
   bad=event(1);bad["verified_lesson"] += " Contact 555-123-4567 for details."
-  with self.assertRaises(ValueError):
-   build([bad,event(2),event(3)])
+  with self.assertRaises(ValueError):build([bad,event(2),event(3)])
  def test_noncanonical_or_mismatched_provenance_is_rejected(self):
   bad=event(1);bad["source_url"]="https://example.com/DreamCo-Technologies/Dreamcobots/commit/"+"1"*40
   result=build([event(2),event(3),event(4),bad])
