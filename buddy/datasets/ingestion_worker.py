@@ -98,9 +98,16 @@ def execute_ingestion_job(job_path:str|Path,approval_id:str,*,hub:DatasetHub|Non
     candidate={"source":card.get("source"),"id":card.get("source_id"),"url":card.get("source_url"),
       "license":card.get("license"),"ai_training_allowed":card.get("ai_training_allowed") is True,
       "content_rights_verified":card.get("content_rights_verified") is True,
-      "privacy_review":card.get("privacy_review")}
+      "privacy_review":card.get("privacy_review"),
+      "owner_assignment_verified":card.get("owner_assignment_verified") is True,
+      "contributor_rights_verified":card.get("contributor_rights_verified") is True,
+      "owner_approval_id":card.get("owner_approval_id"),
+      "rights_evidence":card.get("rights_evidence")}
     rights=assess_training_candidate(candidate)
-    if rights["status"]!="PERMISSIVE_LICENSE_TRAINING_CANDIDATE_REQUIRES_DATA_QUALITY_AND_FINAL_REVIEW":
+    allowed_rights_statuses={
+      "PERMISSIVE_LICENSE_TRAINING_CANDIDATE_REQUIRES_DATA_QUALITY_AND_FINAL_REVIEW",
+      "INTERNAL_OWNED_TRAINING_CANDIDATE_REQUIRES_DATA_QUALITY_AND_FINAL_REVIEW"}
+    if rights["status"] not in allowed_rights_statuses:
         raise DatasetIngestionError("dataset_rights_or_privacy_gate_failed")
     if card.get("rights_status")!="VERIFIED" or not str(card.get("rights_evidence","")).strip():
         raise DatasetIngestionError("final_rights_verification_evidence_required")
