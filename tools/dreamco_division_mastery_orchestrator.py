@@ -18,6 +18,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DIVISIONS = ROOT / "config/masterbot-65-registry.json"
+RESOURCE_MAP = ROOT / "config/generated/division-resource-readiness-map.json"
 GOALS = ROOT / "config/dreamco-mastery-continuity-registry.json"
 OUT = ROOT / "artifacts/division-mastery"
 ALLOWED_TASKS = {
@@ -104,6 +105,16 @@ def load_inputs():
     return divisions, goals
 
 
+def load_resource_routes():
+    payload = json.loads(RESOURCE_MAP.read_text(encoding="utf-8"))
+    if payload.get("status") != "requirements_defined_not_provisioned":
+        raise ValueError("Division resource map must preserve honest readiness status")
+    routes = {int(row["masterbot_id"]): row for row in payload.get("routes", [])}
+    if len(routes) != 65:
+        raise ValueError("Expected exactly 65 unique division resource bundles")
+    return payload, routes
+
+
 def route_goals(division, goals):
     name = division["name"].lower()
     selected = []
@@ -122,6 +133,9 @@ def route_goals(division, goals):
 
 def build_plan():
     divisions, goals = load_inputs()
+    resource_payload, resource_routes = load_resource_routes()
+    if {int(d["id"]) for d in divisions} != set(resource_routes):
+        raise ValueError("Division resource bundles do not match the canonical MasterBot registry")
     known_goal_ids = {g["id"] for g in goals}
     for goal_id, deps in GOAL_DEPENDENCIES.items():
         if goal_id not in known_goal_ids or any(dep not in known_goal_ids for dep in deps):
@@ -129,10 +143,16 @@ def build_plan():
     lanes = []
     for division in divisions:
         assigned = route_goals(division, goals)
+        resource = resource_routes[int(division["id"])]
         lanes.append({
             "division_id": division["id"],
             "division_name": division["name"],
             "lane_id": f"masterbot-{division['id']}",
+            "resource_bundle_id": resource["resource_bundle_id"],
+            "resource_readiness_status": resource["readiness_status"],
+            "logical_database_namespace": resource["logical_database_namespace"],
+            "dataset_discovery_lane_id": resource["dataset_discovery_lane_id"],
+            "capability_pack_ids": resource["capability_pack_ids"],
             "goal_ids": [g["id"] for g in assigned],
             "priority_order": [g["id"] for g in assigned],
             "goal_dependency_map": {g["id"]: GOAL_DEPENDENCIES.get(g["id"], []) for g in assigned},
@@ -163,6 +183,8 @@ def build_plan():
         "schema": "dreamco.division_mastery_queue.v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "expected_divisions": 65,
+        "resource_bundle_count": len(resource_routes),
+        "resource_readiness_status": resource_payload["status"],
         "division_lanes": len(lanes),
         "unique_goal_count": len(goals),
         "task_dag": TASK_DAG,
@@ -190,6 +212,8 @@ def run_lane(division_id: str, run_id: str, commit_sha: str):
     division = next((d for d in divisions if str(d["id"]) == str(division_id)), None)
     if division is None:
         raise ValueError(f"Unknown division ID: {division_id}")
+    resource_payload, resource_routes = load_resource_routes()
+    resource = resource_routes[int(division_id)]
     lane_dir = OUT / f"division-{division_id}"
     lane_dir.mkdir(parents=True, exist_ok=True)
     results = []
@@ -214,6 +238,11 @@ def run_lane(division_id: str, run_id: str, commit_sha: str):
         "schema": "dreamco.division_lane_evidence.v1",
         "division_id": division["id"],
         "division_name": division["name"],
+        "resource_bundle_id": resource["resource_bundle_id"],
+        "resource_readiness_status": resource["readiness_status"],
+        "logical_database_namespace": resource["logical_database_namespace"],
+        "dataset_discovery_lane_id": resource["dataset_discovery_lane_id"],
+        "capability_pack_ids": resource["capability_pack_ids"],
         "run_id": run_id,
         "commit_sha": commit_sha,
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -224,6 +253,7 @@ def run_lane(division_id: str, run_id: str, commit_sha: str):
         "weights_trained": False,
         "production_promotion": "not_authorized",
         "mastery_status": "not_claimed",
+        "resource_templates": list(resource_payload["resource_templates"].keys()),
         "evidence_hash": hashlib.sha256(json.dumps(results, sort_keys=True).encode()).hexdigest(),
         "next_actions": [
             "Run the independent division contract benchmark and capability-specific held-out benchmark.",
