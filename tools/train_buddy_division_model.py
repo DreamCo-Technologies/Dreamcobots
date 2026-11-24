@@ -22,7 +22,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     dataset_path = args.dataset_path.resolve()
-    data_root = (ROOT / "data/authorized").resolve()
+    data_root = Path(__import__("os").environ.get("DREAMCO_AUTHORIZED_DATA_ROOT", str(Path.home() / "DreamCo-private-data"))).resolve()
     if data_root not in dataset_path.parents:
         raise SystemExit("dataset path must be inside data/authorized")
     manifest_path = ROOT / "config/authorized-training-datasets/manifest.json"
