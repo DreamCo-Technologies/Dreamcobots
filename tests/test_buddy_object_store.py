@@ -132,6 +132,16 @@ class ObjectStoreHealthTests(unittest.TestCase):
                 backup_bucket="dreamco-primary",
             )
 
+    def test_invalid_s3_bucket_name_forms_are_rejected(self):
+        for invalid in ("dreamco..primary", "dreamco.-backup", "192.168.1.1"):
+            with self.subTest(bucket=invalid):
+                with self.assertRaisesRegex(ObjectStoreError, "distinct_valid"):
+                    run_object_store_healthcheck(
+                        client=FakeS3(),
+                        primary_bucket=invalid,
+                        backup_bucket="dreamco-backup",
+                    )
+
     def test_invalid_prefix_is_rejected_before_any_write(self):
         client = FakeS3()
         with self.assertRaisesRegex(ObjectStoreError, "prefix_is_invalid"):
