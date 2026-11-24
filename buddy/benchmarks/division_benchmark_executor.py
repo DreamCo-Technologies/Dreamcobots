@@ -141,7 +141,8 @@ def run_local_division_benchmark(plan_path:str|Path,holdout_path:str|Path,approv
     if (base_model_id!=plan.get("base_model_id") or base_model_revision!=plan.get("base_model_revision")
         or training_method!=plan.get("training_method")):
         raise DivisionBenchmarkExecutionError("base_model_and_training_method_do_not_match_pinned_plan")
-    if not plan.get("base_model_license") or not plan.get("base_model_license_evidence"):
+    if (not plan.get("base_model_license") or not str(plan.get("base_model_license_url","")).startswith("https://")
+        or plan.get("base_model_license_status")!="VERIFIED" or not plan.get("base_model_license_evidence")):
         raise DivisionBenchmarkExecutionError("verified_base_model_license_evidence_missing")
     holdout=Path(holdout_path).resolve()
     if not holdout.is_file(): raise DivisionBenchmarkExecutionError("holdout_file_missing")
