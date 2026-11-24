@@ -198,13 +198,20 @@ def main() -> int:
     parser.add_argument("--masterbot-id", type=int, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--manifest-out", type=Path, required=True)
+    parser.add_argument("--card-out", type=Path, required=True)
     args = parser.parse_args()
     registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
-    rows, manifest = build_candidate(load_jsonl(args.source), args.masterbot_id, registry)
+    examples = load_jsonl(args.source)
+    rows, manifest = build_candidate(examples, args.masterbot_id, registry)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.manifest_out.parent.mkdir(parents=True, exist_ok=True)
+    args.card_out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_bytes(_canonical_rows(rows))
-    args.manifest_out.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    manifest["candidate_path"] = str(args.out)
+    manifest["candidate_sha256"] = _sha_bytes(args.out.read_bytes())
+    card = build_dataset_card(manifest, str(args.out))
+    args.manifest_out.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+    args.card_out.write_text(json.dumps(card, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
     print(json.dumps({
         "dataset_id": manifest["dataset_id"],
         "examples": manifest["example_count"],
