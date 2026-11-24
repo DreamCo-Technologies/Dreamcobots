@@ -104,7 +104,7 @@ class PostgresProbeTests(unittest.TestCase):
     def test_cli_output_file_is_valid_json_with_a_real_newline(self):
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp) / "evidence.json"
-            with patch("sys.argv", ["postgres_probe", "--output", str(output)]):
+            with patch("sys.argv", ["postgres_probe", "--output", str(output)]), patch.dict("os.environ", {"DREAMCO_POSTGRES_DSN": "", "DATABASE_URL": ""}):
                 self.assertEqual(main(), 2)
             raw = output.read_text(encoding="utf-8")
             self.assertTrue(raw.endswith("\n"))
