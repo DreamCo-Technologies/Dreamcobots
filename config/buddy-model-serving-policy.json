@@ -11,12 +11,59 @@
     "credentials_in_evidence": false,
     "training_on_provider_outputs": false,
     "model_downloads": false,
-    "production_promotion_from_inference_alone": false
+    "production_promotion_from_inference_alone": false,
+    "data_classification_enforced": true,
+    "provider_output_training_requires_explicit_permission": true,
+    "provider_output_training_default": false,
+    "provider_output_training_allowed_only_when": "provider terms and account-level controls are explicitly verified and a separate owner approval is recorded",
+    "default_request_data_classification": "public"
   },
   "providers": [
-    {"provider_id":"openai","endpoint":"https://api.openai.com/v1/chat/completions","secret_env":"OPENAI_API_KEY","model_allowlist":["gpt-5.4-mini","gpt-5.4","gpt-4.1-mini"],"implementation":"buddy.models.provider_runtime.chat_completion","paid":true},
-    {"provider_id":"openrouter","endpoint":"https://openrouter.ai/api/v1/chat/completions","secret_env":"OPENROUTER_API_KEY","model_allowlist":"dynamic_catalog_model_id_validated_by_explicit_approval","implementation":"buddy.models.provider_runtime.chat_completion","paid":true}
+    {
+      "provider_id": "openai",
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "secret_env": "OPENAI_API_KEY",
+      "model_allowlist": [
+        "gpt-5.4-mini",
+        "gpt-5.4",
+        "gpt-4.1-mini"
+      ],
+      "implementation": "buddy.models.provider_runtime.chat_completion",
+      "paid": true,
+      "data_classification_max": "public",
+      "output_training_permission": "UNKNOWN"
+    },
+    {
+      "provider_id": "openrouter",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "secret_env": "OPENROUTER_API_KEY",
+      "model_allowlist": "explicit_environment_allowlist",
+      "implementation": "buddy.models.provider_runtime.chat_completion",
+      "paid": true,
+      "data_classification_max": "public",
+      "output_training_permission": "UNKNOWN",
+      "model_allowlist_env": "DREAMCO_OPENROUTER_ALLOWED_MODELS"
+    }
   ],
-  "required_evidence_per_call": ["provider_id","model_id","paid_approval_id","request_timestamp","latency_ms","token_usage_when_returned","success_or_redacted_error_type"],
-  "next_adapters": ["Anthropic native messages protocol","Google Gemini native generateContent protocol","Hugging Face Inference Endpoints","AWS Bedrock identity-based adapter","local OpenAI-compatible runtime with loopback-only endpoint policy"]
+  "required_evidence_per_call": [
+    "provider_id",
+    "model_id",
+    "paid_approval_id",
+    "request_timestamp",
+    "latency_ms",
+    "token_usage_when_returned",
+    "success_or_redacted_error_type",
+    "request_id",
+    "data_classification",
+    "output_training_permission",
+    "training_use_authorized"
+  ],
+  "next_adapters": [
+    "Anthropic native messages protocol",
+    "Google Gemini native generateContent protocol",
+    "Hugging Face Inference Endpoints",
+    "AWS Bedrock identity-based adapter",
+    "local OpenAI-compatible runtime with loopback-only endpoint policy"
+  ],
+  "truth_boundary": "Provider credentials and contractual data controls remain unverified until a real, owner-approved provider connection test is recorded. Public-only classification is the conservative default. Provider outputs are not approved for training or distillation while output_training_permission is UNKNOWN."
 }
