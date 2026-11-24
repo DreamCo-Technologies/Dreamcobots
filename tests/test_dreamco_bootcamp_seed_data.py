@@ -6,7 +6,8 @@ from unittest.mock import patch
 from pathlib import Path
 
 from tools.build_dreamco_bootcamp_seed_data import build_candidate, build_dataset_card, load_jsonl
-from buddy.datasets.hub import DatasetHub, DatasetPolicyError, main as build_main
+from buddy.datasets.hub import DatasetHub, DatasetPolicyError
+from buddy.datasets.training_jobs import create_training_job, main as build_main
 
 
 def registry():
@@ -144,6 +145,39 @@ class BootcampSeedDataTests(unittest.TestCase):
             with self.assertRaisesRegex(DatasetPolicyError, "disabled until an operator"):
                 hub.register(card, source_file=source)
             self.assertEqual(list((Path(temp) / "hub" / "objects").iterdir()), [])
+
+    def test_fixture_only_approved_candidate_can_create_unexecuted_job_manifest(self):
+        rows, manifest = build_candidate(examples(), 4, registry())
+        card = build_dataset_card(manifest, "candidate.jsonl")
+        card.update({
+            "license": "Fixture-only verified rights for pipeline test",
+            "rights_status": "VERIFIED",
+            "rights_evidence": "fixture-only-not-a-real-approval",
+            "training_approved": True,
+            "owner_assignment_review_required": False,
+            "privacy_review": "PASSED",
+        })
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            source = root / "candidate.jsonl"
+            source.write_text("".join(json.dumps(row) + "\\n" for row in rows), encoding="utf-8")
+            hub = DatasetHub(home=root / "hub")
+            registered = hub.register(card, source_file=source)
+            self.assertEqual(registered["training_status"], "APPROVED_PENDING_TRAINING")
+            job = create_training_job(
+                hub, registered["dataset_id"], 4, "fixture/base-model", "a" * 40,
+                compute_approval_id="fixture-compute-approval",
+                model_license="Apache-2.0",
+                model_license_url="https://example.org/model-license",
+                model_license_status="VERIFIED",
+                model_license_evidence="fixture-only-model-license-review",
+                tested_commit_sha="b" * 40,
+                output_dir=root / "jobs",
+            )
+            self.assertEqual(job["execution_status"], "NOT_EXECUTED")
+            self.assertFalse(job["weights_updated"])
+            self.assertFalse(job["promotion"]["production_weight_update"])
+            self.assertEqual(job["masterbot_id"], 4)
 
     def test_jsonl_loader_rejects_invalid_rows(self):
         with tempfile.TemporaryDirectory() as temp:
