@@ -6,7 +6,6 @@ videos, ingest transcripts, train weights, or claim learning/mastery.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 from pathlib import Path
@@ -127,7 +126,7 @@ def build_queues(catalog: dict[str, Any], registry: dict[str, Any], limit: int =
         })
     return {
         "schema": "dreamco.freecodecamp_division_learning_queues.v1",
-        "source_catalog_sha256": hashlib.sha256(json.dumps({"videos": videos, "categories": categories}, sort_keys=True).encode()).hexdigest(),
+        "source_catalog_generated_at": catalog.get("generated_at"),
         "division_count": len(rows),
         "catalog_video_count": len(videos),
         "queue_limit_per_division": limit,
