@@ -19,6 +19,8 @@ DreamCo retains 45 canonical business divisions. The ten supplemental portfolios
 
 Each specialist portfolio has five existing bot identities. The charter expands each bot into an implementable scope, including capability requirements, approved source classes, monetization options, and the evidence event that would count as a realized outcome. Existing canonical divisions retain their primary ownership. Collaborator links are secondary, not a second owner.
 
+The repository also has 112 GrokTeammates profiles. These are shared workforce lanes, not additional business divisions; each is routed to a platform MasterBot based on its lane description while remaining available across domain divisions. Nineteen Three.js Markdown-only profiles remain in an explicit UNASSIGNED review queue, with DreamCodeLab and DreamArts suggested for owner review. The generated division-manifest count of 57 therefore represents 45 canonical domains + 10 specialist portfolios + 1 shared teammate group + 1 unassigned review bucket, not 57 equivalent business divisions.
+
 ## Full catalog execution map
 
 config/generated/buddy-fleet-execution-map.json is generated from the complete config/bots/bot-manifests.generated.json catalog, not just the App_bots directory. Every profile receives:
