@@ -33,6 +33,13 @@ class FreeCodeCampDivisionQueueTests(unittest.TestCase):
         self.assertEqual(food["queue_status"], "foundation_only_owner_mapping_pending")
         self.assertTrue(all(x["assignment_status"] == "queued_not_studied" for x in food["items"]))
 
+    def test_camel_case_division_name_routes_real_estate_specialty(self):
+        registry = {"divisions": [{"id": i, "name": "DreamRealEstate" if i == 1 else f"DreamDivision{i}"} for i in range(1, 66)]}
+        result = build_queues(self.catalog, registry, limit=10)
+        estate = result["divisions"][0]
+        self.assertIn("databases_and_sql", estate["target_categories"])
+        self.assertEqual(estate["queue_status"], "subject_routed")
+
     def test_no_queue_item_is_authorized_for_training_or_media_ingestion(self):
         result = build_queues(self.catalog, self.registry, limit=10)
         for division in result["divisions"]:
