@@ -18,6 +18,7 @@ DreamCo retains 45 canonical business divisions. The ten supplemental portfolios
 | DreamTravel | DreamTransport | Traveler journey planning and support |
 
 Each specialist portfolio has five existing bot identities. The charter expands each bot into an implementable scope, including capability requirements, approved source classes, monetization options, and the evidence event that would count as a realized outcome. Existing canonical divisions retain their primary ownership. Collaborator links are secondary, not a second owner.
+Primary MasterBot matches are proposed from exact domain identity or teammate-lane evidence and remain non-privileged until owner approval. No proposed mapping grants production, payment, deployment or model-training authority.
 
 The repository also has 112 GrokTeammates profiles. These are shared workforce lanes, not additional business divisions; each is routed to a platform MasterBot based on its lane description while remaining available across domain divisions. Nineteen Three.js Markdown-only profiles remain in an explicit UNASSIGNED review queue, with DreamCodeLab and DreamArts suggested for owner review. The generated division-manifest count of 57 therefore represents 45 canonical domains + 10 specialist portfolios + 1 shared teammate group + 1 unassigned review bucket, not 57 equivalent business divisions.
 
@@ -25,7 +26,7 @@ The repository also has 112 GrokTeammates profiles. These are shared workforce l
 
 config/generated/buddy-fleet-execution-map.json is generated from the complete config/bots/bot-manifests.generated.json catalog, not just the App_bots directory. Every profile receives:
 
-- one canonical division owner or a DreamDiscovery review route;
+- one canonical division owner, a shared GrokTeammates workforce route, or a DreamDiscovery review route;
 - one primary MasterBot route, plus access to shared platform MasterBots 46–65;
 - a Buddy governed-queue, learning, benchmark and failure-recovery route;
 - source paths, declared integrations and capability lineage;
