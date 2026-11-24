@@ -8,6 +8,8 @@ on:
       - "tests/test_buddy_failure_learning.py"
       - "tools/buddy_safe_repair.py"
       - "tests/test_buddy_safe_repair.py"
+      - "tools/build_buddy_failure_observations.py"
+      - "tests/test_build_buddy_failure_observations.py"
       - "tools/study_buddy_repair_history.py"
       - "tests/test_study_buddy_repair_history.py"
       - "buddy/learning/action_failure_learning.py"
@@ -17,6 +19,8 @@ on:
     paths:
       - "tools/buddy_failure_learning.py"
       - "tests/test_buddy_failure_learning.py"
+      - "tools/build_buddy_failure_observations.py"
+      - "tests/test_build_buddy_failure_observations.py"
       - "tools/study_buddy_repair_history.py"
       - "tests/test_study_buddy_repair_history.py"
       - "buddy/learning/action_failure_learning.py"
@@ -43,6 +47,6 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile Buddy failure-learning code
-        run: python -m compileall -q buddy/learning tools/buddy_failure_learning.py tools/study_buddy_repair_history.py tests/test_buddy_failure_learning.py tests/test_study_buddy_repair_history.py
+        run: python -m compileall -q buddy/learning tools/buddy_failure_learning.py tools/study_buddy_repair_history.py tools/build_buddy_failure_observations.py tests/test_buddy_failure_learning.py tests/test_build_buddy_failure_observations.py tests/test_study_buddy_repair_history.py
       - name: Test failure classification, safe repair policy, verified lessons and historical study
-        run: python -m unittest tests.test_buddy_failure_learning tests.test_buddy_safe_repair tests.test_study_buddy_repair_history
+        run: python -m unittest tests.test_buddy_failure_learning tests.test_buddy_safe_repair tests.test_study_buddy_repair_history tests.test_build_buddy_failure_observations

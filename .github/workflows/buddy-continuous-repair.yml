@@ -12,6 +12,7 @@ on:
       - DreamCo Core Health
       - Fleet Runtime Truth
       - Buddy Failure Learning Regression
+      - Buddy Learning Regression
       - Buddy Sandbox Bootcamp
       - Repository Test Matrix
     types: [completed]
@@ -62,7 +63,28 @@ jobs:
           FAILED_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           mkdir -p reports/continuous-repair
-          gh run view "$FAILED_RUN_ID" --json name,conclusion,headSha,url,jobs             > "reports/continuous-repair/failed-run-$FAILED_RUN_ID.json"
+          gh run view "$FAILED_RUN_ID" --json databaseId,name,conclusion,headSha,url,jobs             > "reports/continuous-repair/failed-run-$FAILED_RUN_ID.json"
+
+      - name: Index repair history and diagnose failed jobs
+        if: github.event_name == 'workflow_run'
+        env:
+          FAILED_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          mkdir -p reports/continuous-repair
+          python3 tools/study_buddy_repair_history.py --limit 500 --output reports/continuous-repair/historical-repair-index.json
+          python3 -m tools.build_buddy_failure_observations \
+            --run "reports/continuous-repair/failed-run-$FAILED_RUN_ID.json" \
+            --repository "$GITHUB_REPOSITORY" \
+            --historical-index reports/continuous-repair/historical-repair-index.json \
+            --memory artifacts/failure-learning-memory.json \
+            --output reports/continuous-repair/historical-diagnosis.json
+          {
+            echo "## Buddy historical repair diagnosis"
+            echo "- Failed run: $FAILED_RUN_ID"
+            echo "- Historical matches are investigation-only and cannot be applied automatically."
+            echo "- No incident memory or training data is written by this step."
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Capture current Actions state
         env:
@@ -75,7 +97,7 @@ jobs:
       - name: Verify repair-learning and Actions health
         run: |
           python3 -m unittest tests.test_actions_health
-          python3 -m unittest tests.test_buddy_failure_learning
+          python3 -m unittest tests.test_buddy_failure_learning tests.test_build_buddy_failure_observations
           python3 -m pytest -q tests/test_pages_feature_audit.py tests/test_file_prospectus.py
 
       - name: Verify public Actions page
