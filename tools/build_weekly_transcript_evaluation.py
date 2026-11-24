@@ -8,7 +8,6 @@ before any item can be marked evaluated.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from datetime import date, datetime, timezone
 from pathlib import Path
