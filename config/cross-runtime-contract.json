@@ -108,7 +108,33 @@
     ],
     "fallback_required": true,
     "benchmark_suite_version_required": true,
-    "no_unverified_claims": true
+    "no_unverified_claims": true,
+    "compute_fairness": {
+      "policy": "equal_declared_compute_budget_per_candidate_and_benchmark_case; no candidate may receive extra attempts, parallelism, retries, cache advantage, or privileged data",
+      "budgets": "Each benchmark suite declares wall_clock_limit_seconds, cpu_time_limit_seconds, gpu_time_limit_seconds_when_available, memory_limit_bytes, energy_limit_when_measurable, concurrency, retry_limit, warmup_count, measured_repetitions, and timeout_behavior before any candidate run.",
+      "environments": [
+        {
+          "id": "owner-laptop",
+          "description": "Verified local laptop runner; record exact hardware, OS, power mode, runtime/compiler, memory, thermal state and available accelerator."
+        },
+        {
+          "id": "github-hosted",
+          "description": "Pinned GitHub-hosted runner image and instance class; record actual runner metadata and available accelerators."
+        }
+      ],
+      "comparison": "Compare candidates directly only inside a matched hardware cohort. Laptop and GitHub results are separate cohorts unless a documented calibration method justifies normalization. Allocate the same declared time and resource caps to every candidate within each cohort.",
+      "anti_cheating": [
+        "Freeze candidate commit SHA, build flags, model/tokenizer/data hashes, benchmark version and configuration before each campaign.",
+        "Use identical task packets, prompt/tool context, input order policy, seeds, evaluation split, quality/safety gates and output limits.",
+        "Predeclare warmups, measured repetitions, retry policy, timeouts, cache policy, concurrency and network access.",
+        "Separate cold-start and warm-cache results; never mix them in one score.",
+        "Use hidden holdouts and independent scoring; candidate code cannot read evaluator labels or modify score aggregation.",
+        "No manual per-candidate tuning after seeing holdout results; changes require a new versioned campaign.",
+        "Publish all eligible, failed, timed-out and cancelled attempts; do not omit unfavorable runs.",
+        "Capture runner image, CPU/GPU model, RAM, compiler/runtime versions, power/thermal state when available, utilization, peak memory, throughput, latency percentiles, energy where measurable, cost and logs."
+      ],
+      "selection": "No candidate wins by language, repository, hardware brand, or parameter count. Hard gates first, then multi-objective score with uncertainty and reproducible evidence."
+    }
   },
   "training": {
     "tokenizer_training": "approved_dataset_and_rights_review_required",
@@ -116,7 +142,82 @@
     "checkpoint": "content_addressed_and_hash_verified",
     "promotion": "private_holdout_benchmark_and_release_review_required",
     "scheduled_planning_is_not_training": true,
-    "training_authority": "canonical_python_training_pipeline; runtimes consume only approved, versioned artifacts unless separately certified"
+    "training_authority": "canonical_python_training_pipeline; runtimes consume only approved, versioned artifacts unless separately certified",
+    "resource_catalog": {
+      "purpose": "Vendor-neutral discovery and governed access to AI training, evaluation, teacher, tokenizer and compute resources; discovery never implies download or training permission.",
+      "source_families": [
+        {
+          "family": "open_model_and_dataset_hubs",
+          "examples": [
+            "Hugging Face Hub",
+            "ModelScope",
+            "Kaggle Datasets"
+          ],
+          "review": "Per-model and per-dataset license, terms, provenance and intended-use review required."
+        },
+        {
+          "family": "research_and_benchmark_repositories",
+          "examples": [
+            "Papers with Code",
+            "OpenML",
+            "UCI Machine Learning Repository",
+            "academic institutional repositories"
+          ],
+          "review": "Verify dataset terms, research restrictions, benchmark license and train/evaluation contamination."
+        },
+        {
+          "family": "open_knowledge_and_web_corpora",
+          "examples": [
+            "Wikimedia projects",
+            "Common Crawl",
+            "government open-data portals"
+          ],
+          "review": "Verify source-specific license, privacy, robots/collection constraints, attribution and derivative-use rights."
+        },
+        {
+          "family": "code_and_technical_corpora",
+          "examples": [
+            "GitHub repositories with explicit compatible licenses",
+            "official documentation and standards repositories"
+          ],
+          "review": "Respect repository licenses, source attribution, secrets/PII screening and code provenance."
+        },
+        {
+          "family": "approved_enterprise_and_user_owned_data",
+          "examples": [
+            "owner-authorized internal datasets",
+            "consented task demonstrations"
+          ],
+          "review": "Require ownership/authority, purpose-specific consent, retention, revocation and tenant isolation."
+        },
+        {
+          "family": "teacher_models_and_providers",
+          "examples": [
+            "pinned local open-weight models",
+            "approved hosted model APIs",
+            "DreamCo-owned teacher checkpoints"
+          ],
+          "review": "Pin immutable revisions; verify output-use, distillation, retention, classification and provider terms."
+        },
+        {
+          "family": "compute_and_training_frameworks",
+          "examples": [
+            "PyTorch",
+            "Transformers",
+            "PEFT",
+            "Accelerate",
+            "DeepSpeed",
+            "FSDP",
+            "MLX",
+            "JAX",
+            "ONNX Runtime"
+          ],
+          "review": "Pin versions, verify hardware compatibility, license, reproducibility, isolation and budget."
+        }
+      ],
+      "ingestion_gate": "Discover metadata → owner rights/privacy review → staged immutable manifest → quality/PII/contamination checks → approved storage → explicit compute approval → training/evaluation. No crawler or adapter may auto-download or train by discovery alone.",
+      "ranking": "Rank resources by task relevance, rights certainty, provenance, quality, freshness, representativeness, privacy class, contamination risk, format, tokenizer/model compatibility, compute cost and reproducibility."
+    }
   },
   "integration": {
     "sync_direction": "main_repository_contract_to_all_three_implementations",
@@ -135,6 +236,8 @@
     "execute_tokenizer_training_and_weight_training_only_on_approved_compute",
     "run_private_holdout_safety_and_regression_benchmarks",
     "complete_release_gates_and_recovery_tests",
+    "complete_and_verify_python_repository_runs_and_goals_with_no_unresolved_critical_failures_or_unowned_blockers",
+    "complete_buddy_operational_readiness_and_bootcamp_resource_catalog_and_curriculum",
     "freeze_versioned_shared_contracts",
     "implement_and_test_apple_c_runtime_after_python_completion",
     "preserve_and_adapt_apple_swift_runtime_to_shared_contract_after_python_completion",
@@ -148,6 +251,32 @@
     "benchmark_pass_is_scoped_to_exact_revisions_and_environment": true,
     "production_promotion_requires_explicit_release_gate": true,
     "native_language_does_not_imply_better_performance": true,
-    "incomparable_hardware_results_must_not_be_ranked_as_direct_wins": true
+    "incomparable_hardware_results_must_not_be_ranked_as_direct_wins": true,
+    "all_required_runs_green_before_cross_runtime_clone": true,
+    "no_candidate_receives_extra_compute_or_hidden_benchmark_advantage": true,
+    "data_discovery_does_not_grant_data_access_or_training_rights": true
+  },
+  "data_governance": {
+    "strategy": "shared_discovery_catalog_with_division_owned_data_lanes",
+    "shared_catalog": {
+      "contents": [
+        "dataset metadata and source references",
+        "verified license and training-use rights evidence",
+        "provenance and freshness",
+        "quality and contamination assessments",
+        "approved teacher/model registry",
+        "tokenizer/model compatibility metadata",
+        "benchmark and evaluation resource references"
+      ],
+      "access": "Shared metadata is discoverable by Buddy; raw data is not implicitly shared."
+    },
+    "division_isolation": {
+      "default": "Each division owns its dataset versions, train/validation/test manifests, private holdouts, derived examples, checkpoints, weights, tokenizer snapshots, database namespace, object-store prefix and access grants.",
+      "cross_division_reuse": "Only explicitly approved, rights-cleared datasets or derived artifacts may be shared. Record source division, recipient division, purpose, transformation, approval, hashes and expiry.",
+      "forbidden": "No default cross-division raw private-data access, private-holdout reuse, secret transfer, or mixing train/evaluation splits across divisions."
+    },
+    "shared_corpora": "A centrally curated, rights-cleared common corpus may be mounted read-only by multiple divisions using immutable version/hash references; division-specific transformations and splits remain separately versioned.",
+    "buddy_access": "Buddy queries the shared catalog and selects only sources/models whose rights, privacy classification, domain fit, freshness, quality and compute constraints satisfy the task. Access to bytes requires an authorized data-plane grant.",
+    "privacy": "Tenant/division isolation and purpose-specific user consent remain mandatory; metadata visibility never grants content access."
   }
 }
