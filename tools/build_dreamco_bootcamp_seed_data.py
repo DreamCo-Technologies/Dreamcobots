@@ -37,7 +37,7 @@ def _sha_bytes(value: bytes) -> str:
 
 def _canonical_rows(rows: list[dict[str, Any]]) -> bytes:
     return b"".join(
-        (json.dumps(row, sort_keys=True, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8")
+        (json.dumps(row, sort_keys=True, ensure_ascii=False) + "\n").encode("utf-8")
         for row in rows
     )
 
