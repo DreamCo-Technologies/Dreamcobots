@@ -62,6 +62,25 @@ def create_benchmark_plan(masterbot_id:int,model_name:str,model_version:str,
     plan["plan_path"]=str(path)
     return plan
 
+
+def assemble_benchmark_evidence(plan:dict[str,Any],runs:list[dict[str,Any]])->dict[str,Any]:
+    """Build the exact gate envelope from independently persisted run records."""
+    if plan.get("schema")!="dreamco.division_benchmark_plan.v1":
+        raise DivisionBenchmarkError("invalid_benchmark_plan")
+    if not isinstance(runs,list) or len(runs)<int(plan.get("required_independent_runs",3)):
+        raise DivisionBenchmarkError("insufficient_independent_benchmark_runs")
+    for run in runs:
+        if not isinstance(run,dict) or run.get("schema")!="dreamco.division_benchmark_run.v1":
+            raise DivisionBenchmarkError("every_benchmark_run_must_be_a_completed_run_record")
+        if run.get("plan_id")!=plan.get("plan_id"):
+            raise DivisionBenchmarkError("benchmark_run_plan_id_mismatch")
+    return {"schema":"dreamco.division_benchmark_evidence.v1","plan_id":plan["plan_id"],
+      "masterbot_id":plan["masterbot_id"],"model_name":plan["model_name"],
+      "model_version":plan["model_version"],"weights_sha256":plan["weights_sha256"],
+      "holdout_dataset_sha256":plan["holdout_dataset_sha256"],
+      "holdout_rights_evidence":plan["holdout_rights_evidence"],
+      "private_holdout_used_for_training":False,"runs":runs}
+
 def validate_benchmark_evidence(plan:dict[str,Any],evidence:dict[str,Any])->dict[str,Any]:
     issues=[]
     if plan.get("schema")!="dreamco.division_benchmark_plan.v1": issues.append("invalid_plan_schema")
