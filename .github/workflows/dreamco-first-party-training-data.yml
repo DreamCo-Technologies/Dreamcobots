@@ -1,0 +1,80 @@
+name: DreamCo First-Party Training Data Factory
+
+on:
+  pull_request:
+    paths:
+      - "data/dreamco_training/**"
+      - "config/dreamco-training-source-registry.json"
+      - "schemas/dreamco-training-example.schema.json"
+      - "tools/build_dreamco_bootcamp_seed_data.py"
+      - "tests/test_dreamco_bootcamp_seed_data.py"
+      - ".github/workflows/dreamco-first-party-training-data.yml"
+  push:
+    branches: [main]
+    paths:
+      - "data/dreamco_training/**"
+      - "config/dreamco-training-source-registry.json"
+      - "schemas/dreamco-training-example.schema.json"
+      - "tools/build_dreamco_bootcamp_seed_data.py"
+      - "tests/test_dreamco_bootcamp_seed_data.py"
+      - ".github/workflows/dreamco-first-party-training-data.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-first-party-training-data-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate-corpus-and-division-lanes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout immutable commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile builder and tests
+        run: python -m py_compile tools/build_dreamco_bootcamp_seed_data.py tests/test_dreamco_bootcamp_seed_data.py
+      - name: Run governance and reproducibility tests
+        run: python -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
+      - name: Materialize all 65 isolated common-foundation candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/dreamco-bootcamp-candidates"
+          mkdir -p "$out"
+          for masterbot_id in $(seq 1 65); do
+            lane=$(printf "%03d" "$masterbot_id")
+            python tools/build_dreamco_bootcamp_seed_data.py \
+              --masterbot-id "$masterbot_id" \
+              --out "$out/masterbot-${lane}.jsonl" \
+              --manifest-out "$out/masterbot-${lane}.manifest.json" \
+              --card-out "$out/masterbot-${lane}.card.json"
+          done
+          python - "$out" <<'PY'
+          import json, pathlib, sys
+          root = pathlib.Path(sys.argv[1])
+          manifests = sorted(root.glob("masterbot-*.manifest.json"))
+          cards = sorted(root.glob("masterbot-*.card.json"))
+          assert len(manifests) == 65, len(manifests)
+          assert len(cards) == 65, len(cards)
+          for manifest_path, card_path in zip(manifests, cards):
+              manifest = json.loads(manifest_path.read_text())
+              card = json.loads(card_path.read_text())
+              assert manifest["training_approved"] is False
+              assert manifest["training_started"] is False
+              assert manifest["rights_status"] == "PENDING_HUMAN_REVIEW"
+              assert card["training_approved"] is False
+              assert card["primary_masterbot_id"] == manifest["primary_masterbot_id"]
+              assert manifest["split_counts"]["train"] > 0
+              assert manifest["split_counts"]["validation"] > 0
+              assert manifest["split_counts"]["test"] > 0
+          print(json.dumps({"ok": True, "isolated_division_candidates": 65, "training_started": False}))
+          PY
