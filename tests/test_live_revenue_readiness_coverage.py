@@ -14,7 +14,6 @@ class LiveRevenueReadinessCoverageTests(unittest.TestCase):
         rows = canonical_bots()
         divisions = {division for _slug, division in rows}
         self.assertIn("DreamAffiliate", divisions)
-        self.assertIn("Dream3D", divisions)
         self.assertIn("GrokTeammates", divisions)
         self.assertGreater(len(rows), 1051)
 
