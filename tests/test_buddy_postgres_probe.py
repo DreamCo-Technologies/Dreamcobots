@@ -4,7 +4,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock
 
 from buddy.datasets.postgres_probe import PostgresProbeError, load_expected_namespaces, probe_postgres
 
@@ -38,12 +38,12 @@ class PostgresProbeTests(unittest.TestCase):
     def test_success_verifies_all_namespaces_using_read_only_probe(self):
         with tempfile.TemporaryDirectory() as temp:
             mapping = resource_map(Path(temp) / "map.json")
-            cursor = Mock()
+            cursor = MagicMock()
             cursor.fetchone.return_value = ("dreamco", "dreamco_probe")
             cursor.fetchall.return_value = [(f"dreamco_division_{i:03d}",) for i in range(1, 66)]
-            connection = Mock()
+            connection = MagicMock()
             connection.cursor.return_value.__enter__.return_value = cursor
-            connect = Mock()
+            connect = MagicMock()
             connect.return_value.__enter__.return_value = connection
 
             result = probe_postgres(dsn="postgresql://redacted", resource_map_path=mapping, connect=connect)
