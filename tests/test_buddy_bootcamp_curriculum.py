@@ -41,6 +41,25 @@ class BuddyBootcampCurriculumTests(unittest.TestCase):
   self.assertEqual(payload["status"],"CURRICULUM_SPECIFIED_NOT_TRAINED")
   self.assertIn("NOT_A_CLAIM",payload["teacher_model_role"]["status"])
   self.assertTrue(all(x["model"]["status"]=="SPECIFIED_NOT_TRAINED" for x in payload["divisions"]))
+ def test_task_families_preserve_structured_records_and_stable_ids(self):
+  payload=self.build()
+  families=payload["global_task_families"]
+  self.assertEqual(len(families),37)
+  self.assertTrue(all(isinstance(row["task_family"],dict) for row in families))
+  self.assertEqual(len({row["task_family"]["id"] for row in families}),37)
+
+ def test_duplicate_task_family_ids_are_rejected(self):
+  tasks=json.loads(json.dumps(self.tasks))
+  tasks["task_families"][1]["id"]=tasks["task_families"][0]["id"]
+  with self.assertRaisesRegex(ValueError,"unique Hugging Face task family IDs"):
+   build_curriculum(self.masterbots,tasks,self.packs,self.division_map,self.serving)
+
+ def test_missing_task_family_ids_are_rejected(self):
+  tasks=json.loads(json.dumps(self.tasks))
+  del tasks["task_families"][0]["id"]
+  with self.assertRaisesRegex(ValueError,"stable id"):
+   build_curriculum(self.masterbots,tasks,self.packs,self.division_map,self.serving)
+
  def test_unknown_capability_pack_is_rejected(self):
   division_map=json.loads(json.dumps(self.division_map))
   division_map["routes"][0]["capability_pack_ids"].append("pack.unknown")
