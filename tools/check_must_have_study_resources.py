@@ -58,6 +58,30 @@ def validate_catalogs(root: Path = ROOT) -> dict:
         for flag in ("automatic_download", "automatic_transcript_download", "automatic_training_approval"):
             if expansion.get(flag) is not False:
                 raise ValueError(f"study expansion must keep {flag}=false")
+        tracks = expansion.get("specialized_study_tracks", [])
+        if not isinstance(tracks, list):
+            raise ValueError("specialized_study_tracks must be a list")
+        for track in tracks:
+            if track.get("track_id") == "tolkien":
+                rights = track.get("rights_and_safety") or {}
+                lessons = track.get("lesson_sequence") or []
+                source_ids = track.get("source_ids") or []
+                if len(lessons) != 8 or not source_ids:
+                    raise ValueError("Tolkien study track requires eight lessons and source references")
+                if any(source_id not in {row[0] for row in rows} for source_id in source_ids):
+                    raise ValueError("Tolkien study track references unknown study resources")
+                for flag in (
+                    "primary_tolkien_texts_training_eligible",
+                    "copyrighted_text_or_audio_ingestion_authorized",
+                    "transcript_or_audiobook_download_authorized",
+                    "invented_language_or_script_reproduction_authorized",
+                    "character_setting_or_story_derivative_generation_authorized",
+                    "model_weight_training_authorized",
+                ):
+                    if rights.get(flag) is not False:
+                        raise ValueError(f"Tolkien rights gate must keep {flag}=false")
+                if rights.get("unknown_rights_status") != "BLOCKED":
+                    raise ValueError("Tolkien study track must block unknown rights")
     else:
         raise ValueError("required study resource expansion 1101-1200 is missing")
 
