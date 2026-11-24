@@ -138,7 +138,7 @@ def main() -> int:
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     result = build_reconciliation()
-    rendered = json.dumps(result, indent=2, ensure_ascii=False) + "\\n"
+    rendered = json.dumps(result, indent=2, ensure_ascii=False) + "\n"
     if args.check:
         if not OUTPUT.is_file() or OUTPUT.read_text(encoding="utf-8") != rendered:
             raise SystemExit("Division reconciliation artifact is stale; regenerate and review it.")
