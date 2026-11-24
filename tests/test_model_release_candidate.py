@@ -24,7 +24,7 @@ class ModelReleaseCandidateTests(unittest.TestCase):
             "model_id": "buddy-division-01-scratch",
             "division_id": 1,
             "dataset_id": "owned-fixture",
-            "dataset_sha256": "a" * 64,
+            "dataset_sha256": digest(self.dataset),
             "architecture": {"family": "decoder_only_transformer"},
             "weights_sha256": digest(self.checkpoint),
             "tokenizer_sha256": digest(self.tokenizer),
@@ -42,7 +42,7 @@ class ModelReleaseCandidateTests(unittest.TestCase):
         self.evaluation.write_text(json.dumps({
             "status": "PASSED",
             "holdout_independent": True,
-            "dataset_sha256": "a" * 64,
+            "dataset_sha256": digest(self.dataset),
             "checkpoint_sha256": digest(self.checkpoint),
             "suite_id": "dreamco-smoke-v1",
             "report_id": "eval-0001"
