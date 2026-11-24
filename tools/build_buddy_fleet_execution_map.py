@@ -216,6 +216,15 @@ def build() -> dict[str, Any]:
     if len(portfolio_by_name) != 10:
         raise ValueError("Expected ten specialist portfolio charters")
     source_bots = load_source_bots()
+    canonical_owner_capabilities: dict[str, set[str]] = defaultdict(set)
+    for source_rows_for_slug in source_bots.values():
+        for source_row in source_rows_for_slug:
+            source_owner = str(source_row.get("_source_division", ""))
+            if norm(source_owner) in domain_by_key:
+                canonical_owner = domain_by_key[norm(source_owner)]
+                canonical_owner_capabilities[canonical_owner].update(
+                    norm(capability) for capability in source_row.get("capabilities", []) if str(capability).strip()
+                )
     registry = json.loads(MONEY_REGISTRY.read_text(encoding="utf-8"))
     lanes = load_lane_index(json.loads(REVENUE_LANES.read_text(encoding="utf-8")))
     sources = json.loads(OPPORTUNITY_SOURCES.read_text(encoding="utf-8"))
@@ -240,6 +249,11 @@ def build() -> dict[str, Any]:
         if charter:
             owner = charter["owner"]
             specialist = next((item for item in charter["bots"] if item[0] == slug), None)
+            if specialist is None:
+                raise ValueError(f"Supplemental bot {slug} has no specialist capability charter")
+            exact_overlap = [cap for cap in specialist[2] if norm(cap) in canonical_owner_capabilities[owner]]
+            if exact_overlap:
+                raise ValueError(f"Specialist scope duplicates canonical owner capabilities for {slug}: {exact_overlap}")
         elif norm(bot.get("division", "")) in domain_by_key:
             owner = domain_by_key[norm(bot.get("division", ""))]
             specialist = None
@@ -282,6 +296,8 @@ def build() -> dict[str, Any]:
                 "approved_source_types": specialist[3],
                 "monetization_options": specialist[4],
                 "verified_revenue_event": specialist[5],
+                "exact_capability_overlap_with_canonical_owner": [],
+                "scope_differentiation": "Specialist-only capability lane; canonical owner retains general domain responsibility.",
             } if specialist else None,
             "capabilities": capabilities,
             "source_paths": bot.get("sources", []),
