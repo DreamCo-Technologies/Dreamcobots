@@ -46,6 +46,13 @@ on:
       - 'config/buddy-dataset-routing-policy.json'
       - 'config/huggingface-task-taxonomy.json'
       - 'config/generated/division-huggingface-taxonomy-map.json'
+      - 'config/generated/division-resource-readiness-map.json'
+      - 'schemas/division-resource-readiness-map.schema.json'
+      - 'tools/build_division_resource_readiness_map.py'
+      - 'tests/test_division_resource_readiness.py'
+      - 'buddy/resources/division_resource_router.py'
+      - 'config/review/masterbot-domain-crosswalk-owner-review.json'
+      - 'docs/architecture/DREAMCO_DIVISION_RESOURCE_READINESS.md'
       - 'schemas/division-huggingface-taxonomy-map.schema.json'
       - 'tools/build_division_huggingface_taxonomy_map.py'
       - 'tests/test_division_huggingface_taxonomy_map.py'
@@ -121,6 +128,11 @@ jobs:
         run: |
           python tools/build_division_huggingface_taxonomy_map.py --check
           python -m unittest tests.test_division_huggingface_taxonomy_map
+      - name: Validate all 65 division resource bundles
+        run: |
+          python tools/build_division_resource_readiness_map.py --check
+          python -m unittest tests.test_division_resource_readiness
+          python -m unittest tests.test_buddy_dataset_discovery_fleet
       - name: Build DreamCo dataset discovery routes
         run: python tools/build_buddy_dataset_routes.py
       - name: Test 65 MasterBot dataset routing and training gates
