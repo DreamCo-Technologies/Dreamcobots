@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 ROOT=Path(__file__).resolve().parents[1]
-REGISTRY=ROOT/"config/masterbot-65-registry.json"
+REGISTRY=ROOT/"config/masterbot-75-registry.json"
 ALLOWED_TYPES={"verified_commit","verified_test","approved_pr","approved_workflow","verified_bug_fix","original_lesson","approved_synthetic"}
 PII={
  "email":re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b",re.I),
