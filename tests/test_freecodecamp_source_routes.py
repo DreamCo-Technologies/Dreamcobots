@@ -4,7 +4,8 @@ import unittest
 from pathlib import Path
 
 from tools.build_freecodecamp_routes import build_routes, validate
-from buddy.learning.freecodecamp_source import resources_for_division, select_next_for_division, plan_next_lesson\nfrom buddy.learning.study_resource_scheduler import Capability
+from buddy.learning.freecodecamp_source import resources_for_division, select_next_for_division, plan_next_lesson
+from buddy.learning.study_resource_scheduler import Capability
 
 class FreeCodeCampSourceRouteTests(unittest.TestCase):
     def setUp(self):
