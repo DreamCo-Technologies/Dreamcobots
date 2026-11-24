@@ -120,3 +120,26 @@ Never copy a full transcript or course lesson into a DreamCo course. Preserve at
 - freeCodeCamp, [Create a Large Language Model from Scratch with Python](https://www.youtube.com/watch?v=UU1WVnMk4E8)
 - freeCodeCamp, [Train Your Own LLM](https://www.youtube.com/watch?v=9Ge0sMm65jo)
 - freeCodeCamp, [GLM-5.3-Flash model architecture and training course](https://www.youtube.com/watch?v=-gfgQfw2g_E)
+
+
+## Implemented adapter and architecture details
+
+The technology radar now includes a Hugging Face Datasets API discovery source in addition to model listings, preserving a bounded metadata allowlist (license label, language, task categories, size categories, gated flag, downloads, likes, revision timestamp and tags). Every discovery record is explicitly marked `UNVERIFIED_DISCOVERY_ONLY` and `training_approved: false`. Dataset-card metadata is a triage signal; the actual license, repository terms, provenance and intended use still require review. CI tests the metadata extraction using fixtures; the connected Hugging Face search service may rate-limit requests, so refresh failures must preserve the last good catalog.
+
+The Ollama adapter is `buddy.learning.ollama_runtime.OllamaLocalRuntime`. It accepts only local loopback HTTP endpoints, lists models, inspects model metadata and runs non-streaming chat inference. It deliberately does not expose pull, create, delete or push operations. Its output records prompt/response hashes, latency and token counters without claiming training. Tests use a mocked local API; a green test is not proof that Ollama is installed or running on the user's device.
+
+### Reference 45M-class architecture blueprint
+
+The architecture generator `tools/build_division_45m_model_blueprints.py` builds one design-only configuration per canonical division. The reference configuration is:
+- 384 hidden width, 19 decoder blocks, 6 attention heads (64 dimensions/head)
+- 1,536 SwiGLU intermediate width, 512-token vocabulary and 1,024-token context
+- fused Q/K/V plus output projection, RoPE, pre-norm RMSNorm, no linear biases
+- tied token embeddings and language-model head
+
+For this explicit no-bias architecture, the count is:
+
+`vocab × hidden + layers × (4 × hidden² + 3 × hidden × intermediate + 2 × hidden) + hidden`
+
+That yields **45,038,208 trainable parameters** per blueprint, about 45.038M. The generator validates all 65 division IDs and uploads a JSON blueprint artifact. This is an architecture calculation—not a trained model, not a 45M weight file, and not evidence of GPT-5-level capability. The output intentionally leaves tokenizer/weight hashes and authorized dataset manifests empty and sets training approval false.
+
+The separate Ollama and blueprint workflows validate the adapter contract and exact parameter arithmetic. They do not incur GPU charges or start a training run.
