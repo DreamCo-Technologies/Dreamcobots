@@ -5,7 +5,6 @@ from pathlib import Path
 from buddy.learning.permissioned_study_worker import StudyAuthorization, run_study_attempt
 from typing import Iterable
 from buddy.learning.study_resource_scheduler import Capability, Resource, choose_next, study_plan
-from buddy.learning.study_artifact_cleanup import study_download_workspace
 
 ROOT = Path(__file__).resolve().parents[2]
 ROUTES = ROOT / "config/generated/freecodecamp-source-routes.json"
@@ -23,7 +22,6 @@ def resources_for_division(division_id: int, path: Path = ROUTES) -> list[Resour
     division = next((d for d in payload["divisions"] if d["division_id"] == division_id), None)
     if division is None or division["available_video_count"] != payload["catalog_video_count"]:
         raise ValueError("division route is incomplete")
-    specialty_ids = set(division["specialty_video_ids"])
     resources = []
     for index, video in enumerate(payload["videos"], 1):
         categories = tuple(video["categories"])
