@@ -22,4 +22,4 @@ The weekly workflow can build a due-work report from the manifest and ledger. It
 
 ## Current integration state
 
-The freeCodeCamp catalog is metadata-only. It does not provide transcript text, and no transcript corpus or real Buddy transcript-evaluation adapter is currently registered by this change. Therefore this policy establishes the weekly acceptance contract; it does not claim that transcript evaluations have already run.
+The freeCodeCamp catalog is metadata-only. The canonical manifest now exists at `config/authorized-transcripts/manifest.json`, but it intentionally contains zero approved transcript assets. The real Buddy transcript-evaluation adapter is also not registered. Therefore weekly status remains **BLOCKED** with zero evaluations until the owner supplies rights evidence for specific transcript files and a real Buddy evaluator is connected. The empty manifest is not a successful evaluation result.
