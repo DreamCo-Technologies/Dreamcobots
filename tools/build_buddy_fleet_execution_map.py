@@ -420,8 +420,8 @@ def build() -> dict[str, Any]:
         elif is_teammate:
             owner = teammate_owner_by_slug.get(slug, "DreamDiscovery")
             specialist = None
-        elif norm(bot.get("division", "")) in domain_by_key:
-            owner = domain_by_key[norm(bot.get("division", ""))]
+        elif norm(bot.get("primary_domain_owner") or bot.get("division", "")) in domain_by_key:
+            owner = domain_by_key[norm(bot.get("primary_domain_owner") or bot.get("division", ""))]
             specialist = None
         else:
             owner = "DreamDiscovery"
@@ -467,7 +467,8 @@ def build() -> dict[str, Any]:
         record = {
             "slug": slug,
             "name": bot.get("name") or slug,
-            "source_division": source_division or bot.get("division"),
+            "source_division": source_division or bot.get("source_division") or bot.get("division"),
+            "execution_division": bot.get("division"),
             "canonical_owner_division": owner,
             "shared_workforce_group": "GrokTeammates" if is_teammate else None,
             "teammate_lane_route": {"shared_masterbot_id": shared_teammate_masterbot_id, "route": teammate_route, "description": teammate.get("description")} if is_teammate else None,
@@ -502,6 +503,7 @@ def build() -> dict[str, Any]:
                 "route_scope": "non_privileged_planning_only_until_owner_approval" if route_status != "discovery_review_required" else "discovery_only",
                 "primary_masterbot_id": masterbot_id,
                 "primary_masterbot_name": master["divisions"][masterbot_id - 1]["name"] if masterbot_id else None,
+                "execution_division": bot.get("division"),
                 "primary_domain_owner": owner,
                 "shared_workforce_group": "GrokTeammates" if is_teammate else None,
                 "teammate_route_rule": teammate_route,
@@ -550,6 +552,7 @@ def build() -> dict[str, Any]:
             "manifest_bot_profiles": len(records),
             "canonical_business_divisions": 45,
             "supplemental_specialist_portfolios": len(portfolio_by_name),
+            "execution_division_labels": len(set(row["execution_division"] for row in records)),
             "bots_in_supplemental_portfolios": supplemental_count,
             "profiles_with_app_bots_source": app_bot_count,
             "profiles_without_app_bots_source": len(records) - app_bot_count,
@@ -569,6 +572,7 @@ def build() -> dict[str, Any]:
             "money_os_catalog_entries_with_buddy_routes": len(money_os_catalog),
         },
         "division_profile_counts": dict(sorted(division_counts.items())),
+        "execution_division_profile_counts": dict(sorted(Counter(row["execution_division"] for row in records).items())),
         "revenue_lane_candidate_counts": dict(sorted(revenue_lanes_count.items())),
         "portfolio_charters": [
             {"portfolio": row["portfolio"], "canonical_owner": row["owner"],
