@@ -50,6 +50,13 @@ class ProviderRuntimeTests(unittest.TestCase):
                 chat_completion("openrouter", "vendor/model", [{"role":"user","content":"public"}], paid_approval_id="A")
             with self.assertRaisesRegex(ModelServingError, "credential_not_configured"):
                 chat_completion("openrouter", "vendor/model", [{"role":"user","content":"public"}], paid_approval_id="A", data_classification="public")
+    def test_openrouter_requires_explicit_model_allowlist(self):
+        with patch.dict(os.environ, {}, clear=True):
+            with self.assertRaisesRegex(ModelServingError, "not_allowlisted"):
+                chat_completion("openrouter", "vendor/model", [{"role":"user","content":"public"}], paid_approval_id="A", data_classification="public")
+        with patch.dict(os.environ, {"DREAMCO_OPENROUTER_ALLOWED_MODELS":"vendor/model"}, clear=True):
+            with self.assertRaisesRegex(ModelServingError, "credential_not_configured"):
+                chat_completion("openrouter", "vendor/model", [{"role":"user","content":"public"}], paid_approval_id="A", data_classification="public")
     def test_invalid_message_and_token_limits_are_rejected(self):
         with patch.dict(os.environ, {"OPENAI_API_KEY":"secret"}, clear=True):
             with self.assertRaises(ModelServingError):
