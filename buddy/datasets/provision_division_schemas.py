@@ -28,10 +28,14 @@ class DivisionProvisioningError(RuntimeError):
 
 def _inspect(cursor: Any, namespaces: list[str]) -> dict[str, Any]:
     cursor.execute(
-        "SELECT rolname, rolsuper, rolcanlogin FROM pg_catalog.pg_roles WHERE rolname = ANY(%s)",
+        "SELECT rolname, rolsuper, rolcanlogin, pg_catalog.pg_has_role(current_user, rolname, 'MEMBER') "
+        "FROM pg_catalog.pg_roles WHERE rolname = ANY(%s)",
         (namespaces,),
     )
-    roles = {row[0]: {"superuser": bool(row[1]), "can_login": bool(row[2])} for row in cursor.fetchall()}
+    roles = {
+        row[0]: {"superuser": bool(row[1]), "can_login": bool(row[2]), "operator_is_member": bool(row[3])}
+        for row in cursor.fetchall()
+    }
     cursor.execute(
         "SELECT n.nspname, r.rolname FROM pg_catalog.pg_namespace AS n "
         "JOIN pg_catalog.pg_roles AS r ON r.oid = n.nspowner "
@@ -47,6 +51,10 @@ def _inspect(cursor: Any, namespaces: list[str]) -> dict[str, Any]:
         "existing_schema_owners": owners,
         "missing_owner_roles": missing_roles,
         "unsafe_owner_roles": unsafe_roles,
+        "missing_owner_memberships": sorted(
+            name for name in set(namespaces) - set(owners)
+            if name in roles and not roles[name]["operator_is_member"]
+        ),
         "schema_owner_mismatches": owner_mismatches,
         "missing_schemas": sorted(set(namespaces) - set(owners)),
     }
@@ -101,7 +109,7 @@ def provision_division_schemas(
             with connection.cursor() as cursor:
                 inventory = _inspect(cursor, namespaces)
                 blocked = any(inventory[key] for key in (
-                    "missing_owner_roles", "unsafe_owner_roles", "schema_owner_mismatches"
+                    "missing_owner_roles", "unsafe_owner_roles", "missing_owner_memberships", "schema_owner_mismatches"
                 ))
                 if blocked:
                     status = "BLOCKED"
@@ -130,6 +138,7 @@ def provision_division_schemas(
             "preexisting_owner_roles": len(inventory["roles"]),
             "missing_owner_roles": inventory["missing_owner_roles"],
             "unsafe_owner_roles": inventory["unsafe_owner_roles"],
+            "missing_owner_memberships": inventory["missing_owner_memberships"],
             "existing_schemas": len(inventory["existing_schema_owners"]),
             "missing_schemas": inventory["missing_schemas"],
             "schema_owner_mismatches": inventory["schema_owner_mismatches"],
