@@ -1,4 +1,4 @@
-"""Build deterministic, rights-gated freeCodeCamp study queues for all 65 divisions.
+"""Build deterministic, rights-gated freeCodeCamp study queues for all 55 domain divisions.
 
 This creates curriculum assignments from public metadata only. It does not watch
 videos, ingest transcripts, train weights, or claim learning/mastery.
@@ -13,7 +13,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json"
-REGISTRY = ROOT / "config/masterbot-65-registry.json"
+CROSSWALK = ROOT / "config/generated/masterbot-55-domain-crosswalk.json"
 OUTPUT = ROOT / "config/generated/freecodecamp-division-learning-queues.json"
 FOUNDATION = {
     "computer_science_and_fundamentals",
@@ -74,12 +74,12 @@ def _division_categories(name: str, subject_terms: list[str], known: set[str]) -
             selected.add(category_id)
     return selected, bool(selected)
 
-def build_queues(catalog: dict[str, Any], registry: dict[str, Any], limit: int = 30) -> dict[str, Any]:
+def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int = 30) -> dict[str, Any]:
     if catalog.get("schema") != "dreamco.freecodecamp_catalog.v1":
         raise ValueError("unsupported freeCodeCamp catalog schema")
     videos = catalog.get("videos")
     categories = catalog.get("categories")
-    divisions = registry.get("divisions")
+    domains = crosswalk.get("domains")
     if not isinstance(videos, list) or not videos:
         raise ValueError("non-empty freeCodeCamp catalog required")
     inventory = catalog.get("inventory") or {}
@@ -92,13 +92,20 @@ def build_queues(catalog: dict[str, Any], registry: dict[str, Any], limit: int =
         or inventory.get("duplicate_video_id_count") != 0
     ):
         raise ValueError("verified complete freeCodeCamp inventory required before division queue generation")
-    if not isinstance(divisions, list) or len(divisions) != 65:
-        raise ValueError("canonical 65-division registry required")
+    if not isinstance(domains, list) or len(domains) != 55:
+        raise ValueError("canonical 55-domain crosswalk required")
+    domain_ids = [row.get("domain_id") for row in domains]
+    if len(set(domain_ids)) != 55 or any(not isinstance(x, str) or not x for x in domain_ids):
+        raise ValueError("55 domain profiles must have unique non-empty IDs")
+    mapped = [row for row in domains if row.get("mapping_status") == "proposed_exact_name_match"]
+    unassigned = [row for row in domains if row.get("mapping_status") == "unresolved"]
+    if len(mapped) != 45 or len(unassigned) != 10:
+        raise ValueError("crosswalk must preserve 45 core domains and 10 supplemental profiles")
     known = {row["id"] for row in categories}
     rows = []
-    for division in sorted(divisions, key=lambda row: int(row["id"])):
-        division_id = int(division["id"])
-        name = division["name"]
+    for domain in sorted(domains, key=lambda row: row["domain_id"]):
+        domain_id = domain["domain_id"]
+        name = domain["domain_name"]
         subject_terms = [name, name.replace("Dream", "")]
         targeted, has_mapping = _division_categories(name, subject_terms, known)
         required = FOUNDATION | targeted
@@ -116,8 +123,11 @@ def build_queues(catalog: dict[str, Any], registry: dict[str, Any], limit: int =
         scored.sort(key=lambda item: (-item[0], item[1].get("upload_date") or "", item[1]["video_id"]))
         selected = scored[:limit]
         rows.append({
-            "division_id": division_id,
-            "division_name": name,
+            "domain_id": domain_id,
+            "domain_name": name,
+            "masterbot_id": domain.get("masterbot_id"),
+            "mapping_status": domain.get("mapping_status"),
+            "owner_review_required": domain.get("review_required", True),
             "queue_status": "subject_routed" if has_mapping else "foundation_only_owner_mapping_pending",
             "target_categories": sorted(targeted),
             "shared_foundation_categories": sorted(FOUNDATION & known),
@@ -142,7 +152,7 @@ def build_queues(catalog: dict[str, Any], registry: dict[str, Any], limit: int =
         "source_catalog_generated_at": catalog.get("generated_at"),
         "source_inventory_status": catalog.get("inventory_status"),
         "source_inventory": inventory,
-        "division_count": len(rows),
+        "domain_count": len(rows),
         "catalog_video_count": len(videos),
         "queue_limit_per_division": limit,
         "rights_policy": catalog["rights_policy"],
@@ -152,8 +162,8 @@ def build_queues(catalog: dict[str, Any], registry: dict[str, Any], limit: int =
 
 def validate(payload: dict[str, Any]) -> None:
     rows = payload.get("divisions", [])
-    if payload.get("schema") != "dreamco.freecodecamp_division_learning_queues.v1" or len(rows) != 65:
-        raise ValueError("exactly 65 division queues are required")
+    if payload.get("schema") != "dreamco.freecodecamp_division_learning_queues.v1" or len(rows) != 55:
+        raise ValueError("exactly 55 domain queues are required")
     source_inventory = payload.get("source_inventory") or {}
     if (
         payload.get("source_inventory_status") != "complete"
@@ -161,9 +171,13 @@ def validate(payload: dict[str, Any]) -> None:
         or source_inventory.get("observed_entry_count") != payload.get("catalog_video_count")
     ):
         raise ValueError("division queues must retain verified complete source inventory evidence")
-    ids = [row["division_id"] for row in rows]
-    if len(set(ids)) != 65:
-        raise ValueError("division IDs must be unique")
+    ids = [row["domain_id"] for row in rows]
+    if len(set(ids)) != 55:
+        raise ValueError("domain IDs must be unique")
+    if sum(row.get("mapping_status") == "proposed_exact_name_match" for row in rows) != 45:
+        raise ValueError("exactly 45 core domain proposals must be retained")
+    if sum(row.get("mapping_status") == "unresolved" for row in rows) != 10:
+        raise ValueError("exactly 10 supplemental domains must remain unresolved until owner review")
     for row in rows:
         if row["queue_count"] != len(row["items"]):
             raise ValueError("queue_count does not match item count")
@@ -184,8 +198,8 @@ def main() -> int:
     if not 1 <= args.limit <= 100:
         raise SystemExit("--limit must be between 1 and 100")
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
-    registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
-    payload = build_queues(catalog, registry, args.limit)
+    crosswalk = json.loads(CROSSWALK.read_text(encoding="utf-8"))
+    payload = build_queues(catalog, crosswalk, args.limit)
     validate(payload)
     rendered = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
     if args.check:
@@ -194,7 +208,7 @@ def main() -> int:
     else:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(rendered, encoding="utf-8")
-    print(json.dumps({"ok": True, "divisions": 65, "catalog_videos": len(catalog["videos"]),
+    print(json.dumps({"ok": True, "domains": 55, "catalog_videos": len(catalog["videos"]),
                       "queued_items": sum(row["queue_count"] for row in payload["divisions"]),
                       "subject_routed": sum(row["queue_status"] == "subject_routed" for row in payload["divisions"]),
                       "foundation_only": sum(row["queue_status"] != "subject_routed" for row in payload["divisions"])}, indent=2))
