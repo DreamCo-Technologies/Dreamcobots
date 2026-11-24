@@ -132,8 +132,12 @@ class PostgresTrainingQueue:
         schema=f'"{schema_name(masterbot_id)}"'
         if not isinstance(result,dict) or result.get("schema")!="dreamco.model_training_result.v2":
             raise TrainingQueueError("verified_training_result_v2_required")
-        if result.get("masterbot_id")!=masterbot_id or result.get("weights_trained") is not True:
-            raise TrainingQueueError("training_result_division_or_weight_evidence_invalid")
+        if result.get("job_id")!=job_id or result.get("masterbot_id")!=masterbot_id or result.get("weights_trained") is not True:
+            raise TrainingQueueError("training_result_job_division_or_weight_evidence_invalid")
+        hashes=result.get("artifact_hashes") or {}
+        for key in ("weights_directory_sha256","checkpoints_directory_sha256","tokenizer_directory_sha256"):
+            if not re.fullmatch(r"[0-9a-f]{64}",str(hashes.get(key,""))):
+                raise TrainingQueueError(f"training_result_missing_{key}")
         serialized=json.dumps(result,sort_keys=True,ensure_ascii=False)
         digest=hashlib.sha256(serialized.encode()).hexdigest()
         with self._connect(self.dsn,connect_timeout=5) as connection:
