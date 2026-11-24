@@ -50,6 +50,10 @@ class BuddyBootcampCurriculumTests(unittest.TestCase):
   self.assertEqual(tasks["image-classification"]["pipeline_tag"],"image-classification")
   self.assertEqual(tasks["reinforcement-learning"]["family"],"reinforcement_learning")
   self.assertEqual(len(payload["training_resource_catalog"]["source_families"]),9)
+  methods={item["method"]:item["implementation_status"] for item in payload["training_resource_catalog"]["training_method_execution"]}
+  self.assertEqual(methods["sft"],"CODE_PATH_PRESENT_NOT_EXECUTED")
+  self.assertEqual(methods["lora"],"CODE_PATH_PRESENT_NOT_EXECUTED")
+  self.assertEqual(methods["teacher_student_distillation"],"NOT_IMPLEMENTED_AND_OUTPUT_RIGHTS_GATED")
   for division in payload["divisions"]:
    self.assertEqual(len(division["resources"]["training_source_family_ids"]),9)
    self.assertFalse(division["resources"]["private_division_data_shared"])
