@@ -13,8 +13,9 @@ class LiveRevenueReadinessCoverageTests(unittest.TestCase):
     def test_readiness_includes_markdown_and_other_non_app_bots(self):
         rows = canonical_bots()
         divisions = {division for _slug, division in rows}
-        self.assertIn("DreamSalesPro", divisions)
-        self.assertNotIn("DreamAffiliate", divisions)
+        self.assertIn("DreamAffiliate", divisions)
+        self.assertIn("Dream3D", divisions)
+        self.assertIn("GrokTeammates", divisions)
         self.assertGreater(len(rows), 1051)
 
 
