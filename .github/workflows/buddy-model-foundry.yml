@@ -4,6 +4,7 @@ on:
     paths:
       - "buddy/learning/model_foundry.py"
       - "tools/build_division_training_matrix.py"
+      - "tools/train_buddy_division_model.py"
       - "config/authorized-training-datasets/manifest.json"
       - "config/masterbot-65-registry.json"
       - "tests/test_model_foundry.py"
@@ -15,8 +16,19 @@ concurrency:
   group: buddy-model-foundry-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  plan:
+  test:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test license gate, hashes and 65-division planner
+        run: python -m unittest discover -s tests -p 'test_model_foundry.py' -v
+  plan:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: [self-hosted, dreamco-private-training]
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
       eligible: ${{ steps.plan.outputs.eligible }}
@@ -26,22 +38,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Build rights-checked 65-division matrix
+      - name: Build rights-checked 65-division matrix on private runner
         id: plan
         run: python tools/build_division_training_matrix.py
-      - name: Test rights gate and parallel planner
-        run: python -m unittest discover -s tests -p 'test_model_foundry.py' -v
-      - name: Upload division training plan
-        uses: actions/upload-artifact@v4
-        with:
-          name: buddy-division-training-plan
-          path: config/generated/division-training-plan.json
-          retention-days: 90
+      - name: Print coverage without exposing dataset contents
+        run: |
+          echo "Eligible division jobs: ${{ steps.plan.outputs.eligible }}"
+          echo "Blocked pending authorized local datasets: ${{ steps.plan.outputs.blocked }}"
   train:
     needs: plan
-    if: needs.plan.outputs.eligible != '0'
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+    if: github.event_name == 'workflow_dispatch' && needs.plan.outputs.eligible != '0'
+    runs-on: [self-hosted, dreamco-private-training]
+    timeout-minutes: 240
     strategy:
       fail-fast: false
       max-parallel: 4
@@ -53,21 +61,19 @@ jobs:
           python-version: "3.11"
       - name: Install CPU training runtime
         run: python -m pip install --upgrade pip torch
+      - name: Create owner-controlled checkpoint directory
+        run: mkdir -p "$HOME/DreamCo-models"
       - name: Train division model from random initialization
-        run: >-
-          python tools/train_buddy_division_model.py
-          --division-id "${{ matrix.division_id }}"
-          --dataset-id "${{ matrix.dataset_id }}"
-          --dataset-path "${{ matrix.dataset_path }}"
-          --seed "${{ matrix.seed }}"
-          --steps 100
-          --output "artifacts/division-${{ matrix.division_id }}.pt"
-      - name: Upload experimental checkpoint and provenance
-        uses: actions/upload-artifact@v4
-        with:
-          name: buddy-division-${{ matrix.division_id }}-experimental-checkpoint
-          path: |
-            artifacts/division-${{ matrix.division_id }}.pt
-            artifacts/division-${{ matrix.division_id }}.pt.json
-          if-no-files-found: error
-          retention-days: 90
+        run: |
+          python tools/train_buddy_division_model.py \
+            --division-id "${{ matrix.division_id }}" \
+            --dataset-id "${{ matrix.dataset_id }}" \
+            --dataset-path "${{ matrix.dataset_path }}" \
+            --strategy "${{ matrix.strategy }}" \
+            --seed "${{ matrix.seed }}" \
+            --steps 100 \
+            --output "$HOME/DreamCo-models/division-${{ matrix.division_id }}.pt"
+      - name: Record local-only completion receipt
+        run: |
+          sha256sum "$HOME/DreamCo-models/division-${{ matrix.division_id }}.pt"
+          cat "$HOME/DreamCo-models/division-${{ matrix.division_id }}.pt.json"
