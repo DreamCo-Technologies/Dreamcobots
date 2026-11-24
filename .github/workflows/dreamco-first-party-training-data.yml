@@ -11,6 +11,10 @@ on:
       - "config/dreamco-first-party-training-factory.json"
       - "tests/test_buddy_dataset_research_metadata_adapters.py"
       - "buddy/datasets/sources.py"
+      - "buddy/datasets/license_policy.py"
+      - "buddy/datasets/ingestion_worker.py"
+      - "tests/test_buddy_dataset_license_policy.py"
+      - "tests/test_buddy_dataset_ingestion_worker.py"
       - "tools/build_dreamco_training_factory.py"
       - "tests/test_dreamco_training_factory.py tests/test_buddy_dataset_research_metadata_adapters.py"
       - ".github/workflows/dreamco-first-party-training-data.yml"
@@ -54,6 +58,8 @@ jobs:
         run: python -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
           python -m unittest discover -s tests -p "test_dreamco_training_factory.py" -v
           python -m unittest discover -s tests -p "test_buddy_dataset_research_metadata_adapters.py" -v
+          python -m unittest discover -s tests -p "test_buddy_dataset_license_policy.py" -v
+          python -m unittest discover -s tests -p "test_buddy_dataset_ingestion_worker.py" -v
       - name: Materialize all 65 isolated common-foundation candidates
         shell: bash
         run: |
