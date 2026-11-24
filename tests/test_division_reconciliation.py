@@ -3,7 +3,6 @@ import unittest
 from pathlib import Path
 
 from tools.build_division_reconciliation import build_reconciliation, load_domain_names
-from tools.normalize_legacy_portfolios import DIVISION_ALIASES
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -13,49 +12,52 @@ class DivisionReconciliationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.result = build_reconciliation()
 
-    def test_exactly_45_canonical_business_divisions_remain(self):
+    def test_45_original_and_10_additional_domains_are_first_class(self):
         names = load_domain_names((ROOT / "shared/division-production-contract.ts").read_text(encoding="utf-8"))
-        self.assertEqual(len(names), 45)
-        self.assertEqual(len(self.result["domain_divisions"]), 45)
-        self.assertEqual(self.result["counts"]["canonical_division_total_after_reconciliation"], 45)
-        self.assertEqual(len({row["id"] for row in self.result["domain_divisions"]}), 45)
+        self.assertEqual(len(names), 55)
+        self.assertEqual(len(self.result["domain_divisions"]), 55)
+        self.assertEqual(self.result["counts"]["original_core_divisions"], 45)
+        self.assertEqual(self.result["counts"]["promoted_supplemental_divisions"], 10)
+        self.assertEqual(self.result["counts"]["total_domain_divisions"], 55)
+        self.assertEqual(len({row["id"] for row in self.result["domain_divisions"]}), 55)
 
-    def test_all_ten_supplemental_portfolios_have_one_canonical_owner(self):
-        rows = self.result["supplemental_portfolio_aliases"]
-        self.assertEqual(len(rows), 10)
-        self.assertEqual(set(DIVISION_ALIASES), {row["source_portfolio"] for row in rows})
+    def test_all_ten_additional_divisions_keep_their_own_five_bot_portfolios(self):
+        rows = self.result["promoted_supplemental_divisions"]
+        expected = {
+            "DreamAffiliate", "DreamAgency", "DreamFoundry", "DreamFranchise",
+            "DreamIntegrations", "DreamLicensing", "DreamRobotics", "DreamSaaS",
+            "DreamStreaming", "DreamTravel",
+        }
+        self.assertEqual({row["name"] for row in rows}, expected)
+        self.assertEqual(sum(row["bot_profile_count"] for row in rows), 50)
         for row in rows:
-            self.assertTrue((ROOT / row["source_path"]).is_file())
-            self.assertTrue((ROOT / row["target_path"]).is_file())
-            self.assertFalse(row["counts_as_new_division"])
-            self.assertTrue(row["preserve_source_identity"])
-            self.assertIn(row["canonical_division"], {d["name"] for d in self.result["domain_divisions"]})
+            self.assertEqual(row["kind"], "first_class_domain_division")
+            self.assertGreaterEqual(row["bot_profile_count"], 5)
+            self.assertTrue((ROOT / row["source_portfolio"]).is_file())
+            self.assertTrue((ROOT / row["fleet_manifest"]).is_file())
+            self.assertTrue((ROOT / row["capability_test_manifest"]).is_file())
+            self.assertEqual(row["masterbot_link_status"], "proposed_requires_owner_review")
+            self.assertFalse(row["production_ready"])
 
-    def test_all_20_platform_masterbots_are_shared_services_not_divisions(self):
+    def test_every_division_inherits_the_same_ten_operating_capabilities(self):
+        expected = ["discover", "intake", "research", "design", "build", "simulate", "evaluate", "integrate", "operate", "improve"]
+        for row in self.result["domain_divisions"]:
+            self.assertEqual(row["capability_operations"], expected)
+            self.assertEqual(row["shared_platform_masterbot_ids"], list(range(46, 66)))
+
+    def test_all_20_platform_masterbots_remain_shared_services(self):
         rows = self.result["shared_platform_masterbots"]
         self.assertEqual([row["id"] for row in rows], list(range(46, 66)))
         self.assertTrue(all(row["kind"] == "shared_platform_service" for row in rows))
         self.assertTrue(all(row["available_to_all_domain_divisions"] for row in rows))
         self.assertTrue(all(row["primary_domain_owner"] is None for row in rows))
-        domain_names = {row["name"] for row in self.result["domain_divisions"]}
-        self.assertTrue(domain_names.isdisjoint({row["name"] for row in rows}))
-
-    def test_every_canonical_division_can_call_each_shared_platform_lane(self):
-        platform_ids = list(range(46, 66))
-        for domain in self.result["domain_divisions"]:
-            self.assertEqual(domain["shared_platform_masterbot_ids"], platform_ids)
+        names = {row["name"] for row in self.result["domain_divisions"]}
+        self.assertTrue(names.isdisjoint({row["name"] for row in rows}))
 
     def test_generated_artifact_is_deterministic_and_current(self):
         import tools.build_division_reconciliation as builder
         rendered = json.dumps(self.result, indent=2, ensure_ascii=False) + "\n"
         self.assertEqual(builder.OUTPUT.read_text(encoding="utf-8"), rendered)
-
-    def test_policy_contains_no_unmapped_or_duplicate_supplemental_sources(self):
-        rows = self.result["supplemental_portfolio_aliases"]
-        sources = [row["source_portfolio"] for row in rows]
-        self.assertEqual(len(sources), len(set(sources)))
-        self.assertEqual(self.result["counts"]["supplemental_source_portfolios"], 10)
-        self.assertEqual(self.result["counts"]["shared_platform_masterbots"], 20)
 
 
 if __name__ == "__main__":
