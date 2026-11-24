@@ -335,3 +335,8 @@ The study-resource PR #18214 now includes a second specialized study track, `dat
 It references the existing resource catalog (PostgreSQL, SQLite, Supabase, Firebase, Redis, DuckDB, Iceberg, Hugging Face Datasets, UCI, OpenML, Data.gov, corpus methodology and evaluation resources) and adds official docs for PostgreSQL full-text search, pgvector, Qdrant, OpenSearch and SQLite FTS5. It disables production DB access, live writes, production migrations, bulk dataset downloads, private/paid dataset ingestion and model-weight training. Unknown rights remain BLOCKED.
 
 The study-resource validator now enforces 10 lessons, valid source IDs and all safety flags; a regression test checks the rights boundary. The Bootcamp workflow path filter and focused tests were extended to cover this track. The earlier run for PR #18214 passed 14/14 tests before this addition; the current head test run is pending.
+
+
+### Candidate-backed daily lesson slots — 2026-11-24
+
+The clean-base FreeCodeCamp PR #18216 now extends `tools/build_daily_lesson_plan.py` to accept the verified 65-division queue artifact. It assigns the top five candidate video metadata records to each division's five daily slots (325 total), preserving stable video IDs, title, URL, categories and priority score. Every candidate is forced to remain `rights_status=review_required`, `media_download_allowed=false`, `transcript_ingestion_allowed=false`, and `training_eligible=false`. Partial inventories, missing/duplicate IDs, and unsafe permission flags are rejected. The plan remains `queued_not_created`; it does not claim 325 authored lessons or any Buddy mastery. Synthetic regression fixtures verify 325 slots and the fail-closed boundary. Current-head CI run 45438151347 is queued; results are pending.
