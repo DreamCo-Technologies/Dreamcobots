@@ -43,9 +43,11 @@ class PostgresCatalogTests(unittest.TestCase):
             PostgresDatasetCatalog(dsn="postgresql://shared", connect=MagicMock())
 
     def test_adapter_cannot_cross_division_boundary(self):
-        catalog = PostgresDatasetCatalog(dsn="postgresql://division-001", masterbot_id=1, connect=MagicMock())
+        connect = MagicMock()
+        catalog = PostgresDatasetCatalog(dsn="postgresql://division-001", masterbot_id=1, connect=connect)
         with self.assertRaisesRegex(PostgresCatalogError, "different MasterBot"):
             catalog.get(2, "demo.dataset", 1)
+        connect.assert_not_called()
 
     def test_environment_resolver_uses_division_specific_dsn(self):
         cursor = MagicMock()
@@ -57,6 +59,21 @@ class PostgresCatalogTests(unittest.TestCase):
         with patch.dict("os.environ", {"DREAMCO_POSTGRES_DSN_MASTERBOT_001":"postgresql://division-001"}, clear=True):
             catalog = PostgresDatasetCatalog(masterbot_id=1, connect=connect)
             catalog.register(1, manifest())
+        self.assertEqual(connect.call_args.args[0], "postgresql://division-001")
+
+    def test_get_uses_division_specific_environment_dsn(self):
+        payload = manifest(training_approved=False)
+        digest = hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+        cursor = MagicMock()
+        cursor.fetchone.return_value = (payload, digest)
+        connection = MagicMock()
+        connection.cursor.return_value.__enter__.return_value = cursor
+        connect = MagicMock()
+        connect.return_value.__enter__.return_value = connection
+        with patch.dict("os.environ", {"DREAMCO_POSTGRES_DSN_MASTERBOT_001":"postgresql://division-001"}, clear=True):
+            catalog = PostgresDatasetCatalog(masterbot_id=1, connect=connect)
+            result = catalog.get(1, "demo.dataset", 1)
+        self.assertEqual(result["dataset_id"], "demo.dataset")
         self.assertEqual(connect.call_args.args[0], "postgresql://division-001")
 
     def test_training_manifest_requires_rights_and_owner(self):
