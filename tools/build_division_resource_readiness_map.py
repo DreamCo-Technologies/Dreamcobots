@@ -12,6 +12,8 @@ PACKS=ROOT/"config/hf-capability-download-map.json"
 ROUTER=ROOT/"config/buddy-model-router.json"
 OUTPUT=ROOT/"config/generated/division-resource-readiness-map.json"
 OWNER_REVIEW=ROOT/"config/review/masterbot-domain-crosswalk-owner-review.json"
+CONVERSATION_APPROVAL=ROOT/"config/review/division-owner-conversation-approval.json"
+RECONCILIATION=ROOT/"config/generated/division-reconciliation.json"
 
 RESOURCE_CONTRACT=json.loads(r'''{"id":"dreamco.division.resource_bundle.v1","truth_status":"requirements_defined_not_provisioned","architecture":"Shared DreamCo infrastructure with isolated per-division namespaces, model identities, dataset lanes, authorization scopes, metrics, and rollback pointers.","model_strategy":"Start with shared, license-reviewed base models plus division-specific adapters or compact specialists. Each division still owns a distinct versioned model identity, checkpoint lineage, benchmark suite, endpoint identity, and release record. Do not claim 65 separately pretrained foundation models.","baseline_requirements":["persistent operational database namespace and schema migrations","versioned dataset catalog, object storage, provenance and rights manifests","teacher and student model candidate catalog with pinned revisions and license review","domain-specific ML curriculum and reproducible sandbox labs","authorized reverse-engineering workflow and clean-room specification practice","rights-cleared teacher-student distillation pipeline","task, privacy, quality, cost and latency-aware model resource routing","domain benchmarks, protected holdouts, safety and regression evaluation","compute planning, resource metering, run observability and rollback"],"readiness_states":["requirements_defined_not_provisioned","configured","connected","validated","certified"],"promotion_rule":"A resource becomes connected or certified only after a real integration test and evidence artifact. A catalog candidate, config entry, or successful workflow alone is not proof of availability."}''')
 ML_PRACTICES=json.loads(r'''["problem framing and measurable success criteria","data collection, provenance and consent","data validation, deduplication and quality profiling","label design, annotation agreement and inter-rater reliability","train-validation-test split design and leakage prevention","supervised learning and baseline selection","unsupervised learning and clustering","self-supervised and contrastive learning","feature engineering and representation learning","classification, regression and ranking","recommendation and retrieval","time-series forecasting and anomaly detection","calibration, uncertainty and out-of-distribution detection","neural network optimization and regularization","transformers, attention and sequence modeling","computer vision and OCR","speech recognition, audio understanding and synthesis","multimodal learning and fusion","reinforcement learning and simulation","RAG, embeddings, reranking and knowledge grounding","SFT, LoRA and QLoRA with rights-cleared data","teacher-student response and preference distillation","quantization, pruning and inference optimization","cross-validation, ablations and statistical confidence","robustness, adversarial testing, fairness and subgroup analysis","MLOps, reproducibility, model registry and experiment tracking","drift monitoring, scheduled evaluation and retraining gates","privacy, tenant isolation and secure ML supply chain","model serving, autoscaling, latency and cost optimization","model cards, licensing, governance and incident response"]''')
@@ -49,6 +51,7 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
     for bot in bots:
         tax=tax_routes[bot["id"]]
         mapping=tax["domain_crosswalk"]
+        shared_platform_service=46<=bot["id"]<=65
         routes.append({
             "masterbot_id":bot["id"],"masterbot_name":bot["name"],
             "resource_bundle_id":f"division-resource-{bot['id']:03d}",
@@ -58,10 +61,12 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
             "dataset_rights_status":"UNVERIFIED_DISCOVERY_ONLY",
             "dataset_training_approved":False,
             "capability_pack_ids":tax["capability_pack_ids"],
-            "domain_mapping":{"mapping_status":mapping.get("mapping_status"),
-                "domain_id":mapping.get("domain_id"),"domain_name":mapping.get("domain_name"),
-                "owner_review_required":True,"owner_approval":mapping.get("owner_approval"),
-                "unresolved":mapping.get("mapping_status")=="unresolved"}
+            "domain_mapping":{"mapping_status":"shared_platform_service_no_primary_domain" if shared_platform_service else mapping.get("mapping_status"),
+                "domain_id":None if shared_platform_service else mapping.get("domain_id"),
+                "domain_name":None if shared_platform_service else mapping.get("domain_name"),
+                "owner_review_required":not shared_platform_service,"owner_approval":mapping.get("owner_approval"),
+                "unresolved":False if shared_platform_service else mapping.get("mapping_status")=="unresolved",
+                "shared_platform_service":shared_platform_service}
         })
     masterbot_routes={row["masterbot_id"]:row for row in routes}
     domain_routes=[]
@@ -92,30 +97,60 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
             "dataset_training_approved":False,"owner_review_required":True,
             "mapping_status":domain.get("mapping_status"),"owner_approval":domain.get("owner_approval")
         })
-    unresolved_bots=[{"masterbot_id":x["masterbot_id"],"masterbot_name":x["masterbot_name"],
-        "primary_domain_id":None,"primary_domain_name":None,"candidate_domain_ids":[],
-        "resource_bundle_id":f"division-resource-{x['masterbot_id']:03d}",
-        "resource_readiness_status":"requirements_defined_not_provisioned",
-        "decision":"PENDING_OWNER_REVIEW","review_required":True,"owner_approval":None,
-        "evidence":x.get("evidence",[])} for x in crosswalk["masterbots"] if x.get("mapping_status")=="unresolved"]
+    approval=json.loads(CONVERSATION_APPROVAL.read_text(encoding="utf-8"))
+    proposed=[x for x in crosswalk["masterbots"] if x.get("mapping_status")=="proposed_exact_name_match"]
+    unresolved=[x for x in crosswalk["masterbots"] if x.get("mapping_status")=="unresolved"]
+    shared_ids=approval["shared_platform_services"]["masterbot_ids"]
+    if shared_ids!=list(range(46,66)) or [x["masterbot_id"] for x in unresolved]!=shared_ids:
+        raise ValueError("IDs 46-65 must remain the complete shared-platform service set")
+    if len(proposed)!=45 or len(approval["exact_name_matches"])!=45:
+        raise ValueError("Expected 45 exact-name proposals and matching explicit user approval record")
+    if len(approval["supplemental_collaborators"])!=10:
+        raise ValueError("Expected ten user-approved supplemental collaborator proposals")
+    proposed_by_id={x["masterbot_id"]:x for x in approval["exact_name_matches"]}
+    proposed_exact_name_matches=[]
+    for item in proposed:
+        decision=proposed_by_id.get(item["masterbot_id"])
+        if not decision or decision["domain_id"]!=item.get("primary_domain_id"):
+            raise ValueError("Conversation approval record does not match exact-name crosswalk")
+        proposed_exact_name_matches.append({**item,"decision":"PROPOSED_EXACT_NAME_MATCH",
+            "user_approval_status":decision["decision"],"owner_approval":None,
+            "github_identity_attestation_required":True})
+    shared_platform_services=[{"masterbot_id":x["masterbot_id"],"masterbot_name":x["masterbot_name"],
+        "primary_domain_id":None,"primary_domain_name":None,
+        "decision":"SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+        "availability":"all_55_domain_divisions","user_approval_status":"ACCEPTED_BY_USER_IN_CHAT",
+        "owner_approval":None,"resource_bundle_id":f"division-resource-{x['masterbot_id']:03d}"}
+        for x in unresolved]
+    unresolved_bots=[]
+    collaborator_by_domain={x["domain_id"]:x for x in approval["supplemental_collaborators"]}
     unresolved_domains=[{"domain_id":x["domain_id"],"domain_name":x["domain_name"],
         "candidate_masterbot_ids":[],
         "standalone_resource_bundle_id":f"domain-resource-{x['domain_id']}",
         "logical_database_namespace":f"dreamco_domain_{x['domain_id']}",
         "dataset_discovery_lane_id":f"domain-discovery-{x['domain_id']}",
         "resource_readiness_status":"requirements_defined_not_provisioned",
-        "decision":"PENDING_OWNER_REVIEW","review_required":True,
+        "decision":"PENDING_GITHUB_IDENTITY_ATTESTATION","review_required":True,
+        "user_approval_status":"APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+        "proposed_collaborator_masterbot_id":collaborator_by_domain[x["domain_id"]]["proposed_collaborator_masterbot_id"],
         "owner_approval":None,"evidence":x.get("evidence",[])}
         for x in crosswalk["domains"] if x.get("mapping_status")=="unresolved"]
     return {"schema":"dreamco.division_resource_readiness_map.v1",
         "status":"requirements_defined_not_provisioned","source_of_truth":"config/masterbot-65-registry.json",
         "counts":{"masterbots":len(routes),"domain_divisions":len(crosswalk["domains"]),
-            "unresolved_masterbot_mappings":len(unresolved_bots),"unassigned_domain_profiles":len(unresolved_domains),"domain_resource_routes":len(domain_routes),
+            "unresolved_masterbot_mappings":len(unresolved_bots),
+            "proposed_exact_name_matches":len(proposed_exact_name_matches),
+            "shared_platform_masterbots":len(shared_platform_services),
+            "unassigned_domain_profiles":len(unresolved_domains),"domain_resource_routes":len(domain_routes),
             "standalone_domain_resource_bundles":sum(x["route_type"]=="standalone_domain_resource_bundle" for x in domain_routes)},
         "source_blob_shas":source_blob_shas,"resource_contract":RESOURCE_CONTRACT,
         "machine_learning_practices":ML_PRACTICES,"resource_templates":templates,"routes":routes,"domain_routes":domain_routes,
-        "owner_review":{"masterbot_domain_decisions":unresolved_bots,"unassigned_domain_profiles":unresolved_domains},
-        "truth":"This map defines resource requirements and candidate references. It does not provision databases, download datasets, connect providers, allocate GPUs, run training, certify teacher models, or prove any division model exists. All unresolved crosswalk mappings remain unassigned until owner approval."}
+        "owner_review":{"masterbot_domain_decisions":unresolved_bots,
+            "proposed_exact_name_matches":proposed_exact_name_matches,
+            "shared_platform_services":shared_platform_services,
+            "unassigned_domain_profiles":unresolved_domains,
+            "conversation_approval_record":"config/review/division-owner-conversation-approval.json"},
+        "truth":"This map defines resource requirements and user-approved proposals. The approval is conversational and awaits GitHub identity attestation; it does not provision resources, approve training, or prove mastery or production readiness."}
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
@@ -129,19 +164,54 @@ def main():
     payload=build(docs["masterbot_registry"],docs["taxonomy_map"],docs["domain_crosswalk"],
         docs["hf_capability_packs"],docs["buddy_model_router"],hashes)
     encoded=json.dumps(payload,ensure_ascii=False,separators=(",",":"))+"\n"
-    review_payload={"schema":"dreamco.masterbot_domain_owner_review.v1",
-        "status":"pending_owner_review_no_guessed_mappings",
-        "source":"config/generated/masterbot-55-domain-crosswalk.json",
+    reconciliation=json.loads(RECONCILIATION.read_text(encoding="utf-8"))
+    reconciliation_counts=reconciliation["counts"]
+    platform_ids=[row["id"] for row in reconciliation["shared_platform_masterbots"]]
+    if platform_ids != list(range(46,66)):
+        raise SystemExit("Shared platform MasterBot identities must remain exactly 46-65")
+    review_payload={"schema":"dreamco.masterbot_domain_owner_review.v3",
+        "status":"user_approved_proposals_pending_github_identity_attestation",
+        "source_refs":[
+            "config/generated/masterbot-45-domain-crosswalk.json",
+            "config/generated/masterbot-55-domain-crosswalk.json",
+            "config/generated/division-reconciliation.json",
+            "config/division-reconciliation-policy.json",
+            "config/review/division-owner-conversation-approval.json",
+            "shared/division-production-contract.ts",
+            "config/masterbot-65-registry.json"
+        ],
         "counts":{"unresolved_masterbot_mappings":len(payload["owner_review"]["masterbot_domain_decisions"]),
-            "unassigned_domain_profiles":len(payload["owner_review"]["unassigned_domain_profiles"])},
-        "instructions":"Please assign only with authoritative ownership evidence. Empty candidate arrays are intentional; do not infer a mapping from similar names. Record reviewer, evidence, decision date and approval. Resource bundles exist independently of ownership decisions.",
+            "proposed_exact_name_matches":len(payload["owner_review"]["proposed_exact_name_matches"]),
+            "unassigned_domain_profiles":len(payload["owner_review"]["unassigned_domain_profiles"]),
+            "original_core_domain_profiles":reconciliation_counts["original_core_divisions"],
+            "promoted_supplemental_domain_profiles":reconciliation_counts["promoted_supplemental_divisions"],
+            "total_domain_profiles":reconciliation_counts["total_domain_divisions"],
+            "shared_platform_masterbots":len(payload["owner_review"]["shared_platform_services"])},
+        "instructions":"The user explicitly approved the 45 exact-name proposals, ten supplemental collaborator proposals, and shared-platform classification in chat on 2026-11-24. This conversational approval is recorded, but GitHub identity has not been independently attested. Preserve the approval provenance and do not represent it as a signed GitHub review. Keep MasterBots 46-65 as shared platform services with no primary domain owner. Do not infer any other mapping. Resource bundles remain requirements-defined, not provisioned; no training, mastery, or production readiness is implied.",
+        "domain_taxonomy":{"original_core_divisions":reconciliation_counts["original_core_divisions"],
+            "promoted_supplemental_divisions":reconciliation_counts["promoted_supplemental_divisions"],
+            "total_domain_divisions":reconciliation_counts["total_domain_divisions"],
+            "shared_platform_masterbot_ids":{"first":min(platform_ids),"last":max(platform_ids),"count":len(platform_ids)},
+            "policy":"The 20 shared-platform MasterBots are cross-domain services available to all 55 domain divisions; they are not additional domain divisions and receive no primary domain owner through this record."},
         **payload["owner_review"]}
     review_encoded=json.dumps(review_payload,indent=2,ensure_ascii=False)+"\n"
     if args.check:
-        if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8")!=encoded:
-            raise SystemExit("Division resource readiness map is stale; regenerate it")
-        if not OWNER_REVIEW.exists() or OWNER_REVIEW.read_text(encoding="utf-8")!=review_encoded:
-            raise SystemExit("MasterBot/domain owner-review queue is stale; regenerate it")
+        if not OUTPUT.exists():
+            raise SystemExit("Division resource readiness map is missing; regenerate it")
+        actual=OUTPUT.read_text(encoding="utf-8")
+        if actual!=encoded:
+            mismatch=next((i for i,(a,b) in enumerate(zip(actual,encoded)) if a!=b),min(len(actual),len(encoded)))
+            left=max(0,mismatch-100);right=mismatch+180
+            raise SystemExit("Division resource readiness map is stale at byte "
+                f"{mismatch}; actual={actual[left:right]!r}; expected={encoded[left:right]!r}")
+        if not OWNER_REVIEW.exists():
+            raise SystemExit("MasterBot/domain owner-review queue is missing; regenerate it")
+        actual_review=OWNER_REVIEW.read_text(encoding="utf-8")
+        if actual_review!=review_encoded:
+            mismatch=next((i for i,(a,b) in enumerate(zip(actual_review,review_encoded)) if a!=b),min(len(actual_review),len(review_encoded)))
+            left=max(0,mismatch-100);right=mismatch+180
+            raise SystemExit("MasterBot/domain owner-review queue is stale at byte "
+                f"{mismatch}; actual={actual_review[left:right]!r}; expected={review_encoded[left:right]!r}")
     else:
         OUTPUT.parent.mkdir(parents=True,exist_ok=True)
         OWNER_REVIEW.parent.mkdir(parents=True,exist_ok=True)
