@@ -53,7 +53,10 @@ class PostgresTrainingQueueTests(unittest.TestCase):
   self.assertTrue(self.queue.heartbeat(1,"train-0123456789abcdef","worker-01",300))
   with self.assertRaisesRegex(TrainingQueueError,"result_v2"):
    self.queue.complete(1,"train-0123456789abcdef","worker-01",{"schema":"wrong"})
-  result={"schema":"dreamco.model_training_result.v2","masterbot_id":1,"weights_trained":True}
+  result={"schema":"dreamco.model_training_result.v2","job_id":"train-0123456789abcdef",
+   "masterbot_id":1,"weights_trained":True,"artifact_hashes":{
+    "weights_directory_sha256":"a"*64,"checkpoints_directory_sha256":"b"*64,
+    "tokenizer_directory_sha256":"c"*64}}
   completed=self.queue.complete(1,"train-0123456789abcdef","worker-01",result)
   self.assertEqual(completed["status"],"COMPLETED")
   self.assertEqual(len(completed["result_sha256"]),64)
