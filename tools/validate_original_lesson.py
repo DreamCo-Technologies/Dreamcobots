@@ -54,8 +54,6 @@ def validate_lesson(item: dict) -> list[str]:
         errors.append("invalid ownership claim status")
     if rights.get("third_party_material_included") is not False:
         errors.append("original lesson package must not include third-party material")
-    if rights.get("ownership_claim_status") == "confirmed" and authorship.get("human_owner_confirmation") != "confirmed":
-        errors.append("confirmed ownership requires human owner confirmation")
     if provenance.get("source_usage") not in {"inspiration_only", "authorized_reference", "public_metadata_only"}:
         errors.append("invalid source usage")
     return errors

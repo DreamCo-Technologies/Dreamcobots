@@ -13,7 +13,7 @@
     const remote = records.filter(x => x.record_kind === 'remote_job').length;
     const matched = records.filter(x => (x.priority_lenses || []).length).length;
     $('radar-metrics').innerHTML = [
-      ['Discoveries retained', records.length],
+      ['Discoveries retained', catalog.archive_summary?.records_total ?? records.length],
       ['Active in latest scan', active],
       ['Remote-work leads', remote],
       ['Priority matches', matched],
@@ -43,7 +43,7 @@
       if (!query) return true;
       return [item.title,item.summary,item.source_name,item.source_id,item.record_kind,item.url,...(item.priority_lenses || [])].join(' ').toLowerCase().includes(query);
     });
-    $('radar-status').textContent = 'Showing ' + rows.length.toLocaleString() + ' of ' + (catalog.records || []).length.toLocaleString() + ' retained discoveries. The list grows and changes as sources refresh.';
+    $('radar-status').textContent = 'Showing ' + rows.length.toLocaleString() + ' of ' + (catalog.archive_summary?.records_total ?? (catalog.records || []).length).toLocaleString() + ' retained discoveries. This public view shows the newest ' + Number(catalog.public_projection?.record_limit || (catalog.records || []).length).toLocaleString() + '; the full archive remains in the repository.';
     $('radar-results').innerHTML = rows.map(item => '<article class="radar-card">' +
       '<div class="radar-pills"><span class="radar-pill">' + esc(item.record_kind) + '</span><span class="radar-pill">' + esc(item.source_trust_tier) + '</span><span class="radar-pill">' + esc(item.status) + '</span></div>' +
       '<h3>' + esc(item.title) + '</h3><p>' + esc(item.summary || 'No summary supplied by source.') + '</p>' +

@@ -10,8 +10,36 @@ on:
       - "config/hf-capability-download-map.json"
       - "config/generated/division-huggingface-taxonomy-map.json"
       - "config/buddy-model-serving-policy.json"
+      - "buddy/bootcamp/buddy_bootcamp.yaml"
+      - "buddy/bootcamp/sources/freecodecamp/**"
+      - "tools/sync_freecodecamp_catalog.py"
+      - "tests/test_freecodecamp_catalog.py"
+      - "tools/build_freecodecamp_division_queues.py"
+      - "tests/test_freecodecamp_division_queues.py"
+      - "tools/validate_freecodecamp_learning_evidence.py"
+      - "tests/test_freecodecamp_learning_evidence.py"
+      - "buddy/bootcamp/sources/freecodecamp/learning-evidence.schema.json"
+      - "tools/build_freecodecamp_routes.py"
+      - "buddy/learning/freecodecamp_source.py"
+      - "tests/test_freecodecamp_source_routes.py"
+      - "buddy/learning/study_artifact_cleanup.py"
+      - "tests/test_study_artifact_cleanup.py"
+      - "buddy/learning/permissioned_study_worker.py"
+      - "tests/test_permissioned_study_worker.py"
+      - "tools/build_daily_lesson_plan.py"
+      - "tests/test_daily_lesson_plan.py"
+      - "tools/validate_original_lesson.py"
+      - "tests/test_original_lesson.py"
+      - "buddy/bootcamp/sources/original-lesson.schema.json"
+      - "buddy/bootcamp/templates/original-lesson.md"
+      - "config/buddy-weekly-transcript-evaluation.json"
+      - "config/authorized-transcripts/manifest.json"
+      - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
+      - "tools/build_weekly_transcript_evaluation.py"
+      - "tests/test_weekly_transcript_evaluation.py"
+      - ".github/workflows/buddy-weekly-transcript-evaluation.yml"
   push:
-    branches: [main]
+    branches: [main, feature/buddy-bootcamp-freecodecamp-2026]
     paths:
       - ".github/workflows/buddy-bootcamp-curriculum.yml"
       - "tools/build_buddy_bootcamp_curriculum.py"
@@ -20,42 +48,135 @@ on:
       - "config/hf-capability-download-map.json"
       - "config/generated/division-huggingface-taxonomy-map.json"
       - "config/buddy-model-serving-policy.json"
-  schedule:
-    - cron: "17 9 * * *"
+      - "buddy/bootcamp/buddy_bootcamp.yaml"
+      - "buddy/bootcamp/sources/freecodecamp/**"
+      - "tools/sync_freecodecamp_catalog.py"
+      - "tests/test_freecodecamp_catalog.py"
+      - "tools/build_freecodecamp_division_queues.py"
+      - "tests/test_freecodecamp_division_queues.py"
+      - "tools/validate_freecodecamp_learning_evidence.py"
+      - "tests/test_freecodecamp_learning_evidence.py"
+      - "buddy/bootcamp/sources/freecodecamp/learning-evidence.schema.json"
+      - "tools/build_freecodecamp_routes.py"
+      - "buddy/learning/freecodecamp_source.py"
+      - "tests/test_freecodecamp_source_routes.py"
+      - "buddy/learning/study_artifact_cleanup.py"
+      - "tests/test_study_artifact_cleanup.py"
+      - "buddy/learning/permissioned_study_worker.py"
+      - "tests/test_permissioned_study_worker.py"
+      - "tools/build_daily_lesson_plan.py"
+      - "tests/test_daily_lesson_plan.py"
+      - ".github/workflows/buddy-daily-lesson-target.yml"
+      - "tools/validate_original_lesson.py"
+      - "tests/test_original_lesson.py"
+      - "buddy/bootcamp/sources/original-lesson.schema.json"
+      - "buddy/bootcamp/templates/original-lesson.md"
+      - "config/buddy-weekly-transcript-evaluation.json"
+      - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
+      - "tools/build_weekly_transcript_evaluation.py"
+      - "tests/test_weekly_transcript_evaluation.py"
+      - ".github/workflows/buddy-weekly-transcript-evaluation.yml"
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 concurrency:
-  group: buddy-bootcamp-curriculum
-  cancel-in-progress: false
+  group: buddy-bootcamp-curriculum-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
+  weekly-transcript-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test weekly transcript coverage rules
+        run: python -m unittest discover -s tests -p 'test_weekly_transcript_evaluation.py' -v
+      - name: Build first transcript readiness report
+        run: python tools/build_weekly_transcript_evaluation.py --output /tmp/buddy-weekly-transcript-evaluation.json
+      - name: Print transcript readiness blockers
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('/tmp/buddy-weekly-transcript-evaluation.json').read_text())
+          print(json.dumps(report, indent=2))
+          if report['status'] == 'blocked':
+              print('::warning::Buddy transcript evaluation is BLOCKED; see blocked_reasons and due_transcripts in the uploaded artifact. No transcript was counted as evaluated.')
+          PY
+      - name: Upload first transcript readiness report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-weekly-transcript-evaluation-first-run
+          path: /tmp/buddy-weekly-transcript-evaluation.json
+          if-no-files-found: warn
+          retention-days: 90
+
   generate-curriculum:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || 'main' }}
+          ref: ${{ github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Install freeCodeCamp metadata enumerator
+        run: python -m pip install --disable-pip-version-check 'yt-dlp==2026.11.23'
+      - name: Validate committed freeCodeCamp catalog before refresh
+        run: |
+          if [ -f buddy/bootcamp/sources/freecodecamp/catalog.json ]; then
+            python tools/sync_freecodecamp_catalog.py --check
+          else
+            echo "No committed catalog yet; first discovery will create it."
+          fi
+      - name: Discover freeCodeCamp channel videos and categorize
+        run: python tools/sync_freecodecamp_catalog.py
+      - name: Validate freeCodeCamp catalog and tests
+        run: |
+          python tools/sync_freecodecamp_catalog.py --check
+          python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
+          python tools/build_freecodecamp_division_queues.py --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
+          python tools/build_freecodecamp_division_queues.py --check --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
+          python -m unittest discover -s tests -p 'test_freecodecamp_division_queues.py' -v
+          python tools/build_freecodecamp_routes.py --out "$RUNNER_TEMP/freecodecamp-source-routes.json"
+          python tools/build_freecodecamp_routes.py --check --out "$RUNNER_TEMP/freecodecamp-source-routes.json"
+          python -m unittest discover -s tests -p 'test_freecodecamp_source_routes.py' -v
+          python -m unittest discover -s tests -p 'test_study_artifact_cleanup.py' -v
+          python -m unittest discover -s tests -p 'test_permissioned_study_worker.py' -v
+          python tools/build_daily_lesson_plan.py --queues "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
+          python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
+          python -m unittest discover -s tests -p 'test_original_lesson.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
+          python -m unittest discover -s tests -p 'test_weekly_transcript_evaluation.py' -v
+          python tools/build_weekly_transcript_evaluation.py --output /tmp/buddy-weekly-transcript-evaluation.json
+      - name: Publish first weekly transcript coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-weekly-transcript-evaluation-first-run
+          path: /tmp/buddy-weekly-transcript-evaluation.json
+          if-no-files-found: warn
+          retention-days: 90
       - name: Build and validate curriculum
         run: |
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
-      - name: Propose generated curriculum
-        if: github.event_name != 'pull_request'
-        uses: peter-evans/create-pull-request@v7
+      - name: Upload generated study artifacts for review
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          branch: automation/buddy-bootcamp-curriculum
-          delete-branch: false
-          add-paths: config/generated/buddy-bootcamp-curriculum.json
-          commit-message: "chore: refresh Buddy Bootcamp curriculum"
-          title: "chore: refresh Buddy Bootcamp curriculum"
-          body: |
-            Generated curriculum from the canonical 65-division registry, HF task taxonomy,
-            capability packs, and division discovery map. No datasets are downloaded and
-            no training or model promotion is performed.
+          name: buddy-bootcamp-study-artifacts
+          path: |
+            buddy/bootcamp/sources/freecodecamp/catalog.json
+            ${{ runner.temp }}/freecodecamp-division-learning-queues.json
+            ${{ runner.temp }}/freecodecamp-source-routes.json
+            config/generated/daily-lesson-production-plan.json
+            config/generated/buddy-bootcamp-curriculum.json
+          if-no-files-found: warn
+          retention-days: 14

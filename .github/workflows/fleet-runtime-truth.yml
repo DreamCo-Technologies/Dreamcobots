@@ -108,6 +108,11 @@ jobs:
         run: python3 -m buddy.fleet_runtime smoke --all
       - name: Division smoke (every division runs at least one of its bots end to end, offline)
         run: python3 -m buddy.fleet_runtime division-smoke --all
+      - name: Build bounded public technology radar projection
+        run: |
+          python3 tools/refresh_buddy_technology_radar.py --project
+          python3 tools/refresh_buddy_technology_radar.py --check
+          python3 -m unittest tests.test_buddy_technology_radar
       - name: Pages size budget (config/buddy-deployment-cost-policy.json)
         run: python3 tools/check_deployment_cost_policy.py
       - name: Pages feature audit (advertised features must be wired; no new stub/broken pages)

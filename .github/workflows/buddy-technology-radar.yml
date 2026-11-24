@@ -4,10 +4,17 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "17 */6 * * *"
+  pull_request:
+    paths:
+      - "config/buddy/technology-discovery-policy.json"
+      - "tools/refresh_buddy_technology_radar.py"
+      - "tests/test_buddy_technology_radar.py"
+      - ".github/workflows/buddy-technology-radar.yml"
   push:
     paths:
       - "config/buddy/technology-discovery-policy.json"
       - "tools/refresh_buddy_technology_radar.py"
+      - "tests/test_buddy_technology_radar.py"
       - ".github/workflows/buddy-technology-radar.yml"
 
 permissions:
@@ -35,6 +42,7 @@ jobs:
           python3 tools/refresh_buddy_technology_radar.py --check
           python3 -m unittest tests.test_buddy_technology_radar
       - name: Commit new discoveries without deleting history
+        if: github.event_name != 'pull_request'
         run: |
           git diff --exit-code config/generated/buddy-technology-radar.json website/data/buddy-technology-radar.json && exit 0
           git config user.name "DreamCo Buddy"

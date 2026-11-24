@@ -125,6 +125,7 @@ def normalize_item(source: dict[str, Any], raw: dict[str, Any], observed_at: str
     url = safe_url(raw.get("url"))
     summary = clean_text(raw.get("summary"))
     external_id = str(raw.get("external_id") or "")
+    metadata = raw.get("metadata") if isinstance(raw.get("metadata"), dict) else {}
     if not title:
         return None
     identity = url or external_id or title.casefold()
@@ -154,6 +155,9 @@ def normalize_item(source: dict[str, Any], raw: dict[str, Any], observed_at: str
         "evidence_class": "discovery_lead_not_verified",
         "verified_capability": False,
         "income_claim_verified": False,
+        "metadata": metadata,
+        "rights_status": "UNVERIFIED_DISCOVERY_ONLY",
+        "training_approved": False,
     }
 
 
@@ -208,7 +212,12 @@ def extract_source(source: dict[str, Any], content: bytes, observed_at: str, pol
             summary = get_path(item, source.get("summary_field")) if source.get("summary_field") else ""
             published = get_path(item, source.get("date_field")) if source.get("date_field") else None
             external_id = get_path(item, source.get("id_field")) if source.get("id_field") else None
-            raw_items.append({"title": title, "url": url, "summary": summary, "published_at": published, "external_id": external_id})
+            metadata = {
+                key: get_path(item, field_path)
+                for key, field_path in source.get("metadata_fields", {}).items()
+                if get_path(item, field_path) is not None
+            }
+            raw_items.append({"title": title, "url": url, "summary": summary, "published_at": published, "external_id": external_id, "metadata": metadata})
     else:
         raise ValueError(f"Unsupported source kind: {source.get('kind')}")
     output = []
@@ -340,6 +349,43 @@ def apply_public_catalog_policy(catalog: dict[str, Any]) -> dict[str, Any]:
     return catalog
 
 
+def build_public_projection(catalog: dict[str, Any], record_limit: int = 500) -> dict[str, Any]:
+    """Create a bounded Pages view while retaining the complete canonical archive in config/."""
+    if record_limit < 1:
+        raise ValueError("public technology radar record limit must be positive")
+    projection = dict(catalog)
+    archive_summary = dict(catalog.get("summary", {}))
+    records = list(catalog.get("records", []))
+    public_records = records[:record_limit]
+    kinds: dict[str, int] = {}
+    statuses: dict[str, int] = {}
+    lenses: dict[str, int] = {}
+    for record in public_records:
+        kind = record.get("record_kind", "unknown")
+        status = record.get("status", "unknown")
+        kinds[kind] = kinds.get(kind, 0) + 1
+        statuses[status] = statuses.get(status, 0) + 1
+        for lens in record.get("priority_lenses", []):
+            lenses[lens] = lenses.get(lens, 0) + 1
+    projection["records"] = public_records
+    projection["archive_summary"] = archive_summary
+    projection["summary"] = {
+        **archive_summary,
+        "records_total": len(public_records),
+        "records_by_kind": dict(sorted(kinds.items())),
+        "records_by_status": dict(sorted(statuses.items())),
+        "records_by_priority_lens": dict(sorted(lenses.items())),
+    }
+    projection["public_projection"] = {
+        "mode": "newest_records_bounded_view",
+        "record_limit": record_limit,
+        "records_included": len(public_records),
+        "archive_records_total": len(records),
+        "complete_archive_path": "config/generated/buddy-technology-radar.json",
+    }
+    return projection
+
+
 def validate_policy(policy: dict[str, Any]) -> None:
     sources = policy.get("sources")
     if not isinstance(sources, list) or not sources:
@@ -416,10 +462,21 @@ def main() -> int:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--refresh", action="store_true", help="fetch configured public sources and update the living index")
     mode.add_argument("--check", action="store_true", help="validate existing index and published mirror without network calls")
+    mode.add_argument("--project", action="store_true", help="rebuild only the bounded Pages projection from the canonical archive without network calls")
     args = parser.parse_args()
     policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
     validate_policy(policy)
-    if args.refresh:
+    if args.project:
+        if not OUTPUT_PATH.exists():
+            raise SystemExit("canonical technology radar archive is missing")
+        catalog = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
+        validate_catalog(catalog)
+        projection = build_public_projection(catalog, int(policy.get("public_site", {}).get("maximum_records", 500)))
+        WEB_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        WEB_OUTPUT_PATH.write_text(json.dumps(projection, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+        POLICY_MIRROR_PATH.parent.mkdir(parents=True, exist_ok=True)
+        POLICY_MIRROR_PATH.write_text(json.dumps(policy, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    elif args.refresh:
         existing = json.loads(OUTPUT_PATH.read_text(encoding="utf-8")) if OUTPUT_PATH.exists() else {
             "schema": "dreamco.buddy.technology_radar.v1", "records": []
         }
@@ -435,7 +492,7 @@ def main() -> int:
         OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
         OUTPUT_PATH.write_text(json.dumps(catalog, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         WEB_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-        WEB_OUTPUT_PATH.write_text(json.dumps(catalog, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+        WEB_OUTPUT_PATH.write_text(json.dumps(build_public_projection(catalog, int(policy.get("public_site", {}).get("maximum_records", 500))), ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
         POLICY_MIRROR_PATH.parent.mkdir(parents=True, exist_ok=True)
         POLICY_MIRROR_PATH.write_text(json.dumps(policy, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     else:
@@ -443,8 +500,8 @@ def main() -> int:
             raise SystemExit("technology radar output or Pages mirror is missing; run --refresh")
         catalog = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
         mirror = json.loads(WEB_OUTPUT_PATH.read_text(encoding="utf-8"))
-        if catalog != mirror:
-            raise SystemExit("technology radar Pages mirror is stale")
+        if build_public_projection(catalog, int(policy.get("public_site", {}).get("maximum_records", 500))) != mirror:
+            raise SystemExit("technology radar Pages projection is stale")
         if not POLICY_MIRROR_PATH.exists() or json.loads(POLICY_MIRROR_PATH.read_text(encoding="utf-8")) != policy:
             raise SystemExit("technology discovery policy Pages mirror is stale")
         validate_catalog(catalog)

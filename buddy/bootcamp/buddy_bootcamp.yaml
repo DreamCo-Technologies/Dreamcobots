@@ -12,14 +12,22 @@ tracks:
   - web_mobile
   - math_statistics
   - occupational_real_world
+  - freecodecamp_source_learning
+  - hugging_face_dataset_and_model_learning
+  - ollama_local_model_learning
+  - division_language_model_research
+  - model_foundry_from_scratch
 stages:
   - diagnose
   - select_resource
+  - rights_review
   - study
+  - original_study_guide
   - sandbox
   - targeted_benchmark
   - holdout
   - regression
+  - spaced_retrieval
   - promote
 rules:
   select_resource: highest_expected_gain_per_minute
@@ -29,6 +37,92 @@ rules:
   require_regression_for_mastery: true
   preserve_original_model_catalog: true
   client_data_training_default: false
+  continuous_study_policy: config/buddy-continuous-study-policy.json
+  original_study_guide_template: buddy/bootcamp/templates/study-guide-template.md
+learning_sources:
+  - id: freecodecamp
+    name: freeCodeCamp.org
+    channel_url: https://www.youtube.com/@freecodecamp
+    channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+    catalog_path: buddy/bootcamp/sources/freecodecamp/catalog.json
+    complete_routes_path: config/generated/freecodecamp-source-routes.json
+    route_builder: tools/build_freecodecamp_routes.py
+    runtime_adapter: buddy.learning.freecodecamp_source
+    scheduler_functions: [resources_for_division, select_next_for_division, plan_next_lesson]
+    catalog_access: all_videos_available_to_all_65_divisions
+    specialty_routing: recommendation_priority_only
+    taxonomy_path: buddy/bootcamp/sources/freecodecamp/catalog.schema.json
+    applies_to: all_65_divisions
+    discovery: public_video_metadata_only
+    transcript_ingestion: disabled_by_default
+    media_download: disabled_by_default
+    rights_review_required_before_training: true
+    learning_evidence_required: [sandbox_exercise, targeted_benchmark, holdout, regression]
+  - id: hugging_face
+    name: Hugging Face Hub
+    discovery_policy: config/generated/division-huggingface-taxonomy-map.json
+    capability_map: config/hf-capability-download-map.json
+    applies_to: all_65_divisions
+    discovery: metadata_and_model_dataset_cards
+    runtime_adapter: tools.refresh_buddy_technology_radar
+    catalog_path: config/generated/buddy-technology-radar.json
+    dataset_api_source_id: huggingface-datasets
+    model_api_source_id: huggingface-models
+    dataset_ingestion: requires_item_level_license_and_terms_review
+    gated_access: requires_explicit_account_and_terms_approval
+    training_approval_default: false
+    training_evidence_required: [dataset_revision, license_evidence, provenance, split_hashes, benchmark, holdout, regression]
+  - id: ollama
+    name: Ollama local model runtime
+    purpose: local_model_import_inference_and_evaluation
+    runtime_adapter: buddy.learning.ollama_runtime.OllamaLocalRuntime
+    discovery_source_id: ollama-library
+    runtime_scope: loopback_only
+    automatic_model_pull_create_delete_push: false
+    model_license_review_required: true
+    base_model_and_adapter_match_required: true
+    paid_compute_default: false
+    model_training: external_training_pipeline_only
+    runtime_evidence_required: [model_digest, modelfile_hash, runtime_version, hardware, latency, memory, benchmark]
+  - id: division_45m_model_research
+    name: Division-specific 45M parameter model research
+    policy: config/buddy-continuous-study-policy.json
+    applies_to: all_65_divisions
+    parameter_target: 45000000
+    training_status: design_blueprints_generated_by_tools_build_division_45m_model_blueprints
+    blueprint_path: config/generated/division-45m-model-blueprints.json
+    blueprint_generator: tools/build_division_45m_model_blueprints.py
+    training_status_truth: design_only_not_trained_until_weight_hash_and_run_evidence_exist
+    training_from_scratch_requires: [authorized_corpus, compute_budget_approval, tokenizer, architecture_config, reproducible_run, holdout, regression, model_card]
+  - id: dreamco_model_foundry
+    name: DreamCo owner-controlled Model Foundry
+    purpose: train division-specific experimental weights from random initialization using approved local datasets
+    manifest: config/authorized-training-datasets/manifest.json
+    planner: tools/build_division_training_matrix.py
+    trainer: tools/train_buddy_division_model.py
+    runtime: buddy.learning.model_foundry
+    execution: owner_controlled_self_hosted_runner
+    runner_label: dreamco-private-training
+    max_parallel_jobs: 4
+    checkpoint_directory: $HOME/DreamCo-models
+    data_directory: $HOME/DreamCo-private-data
+    data_downloads: disabled
+    pretrained_base_models: prohibited_for_from_scratch_runs
+    training_requires: [owner_attestation, license_evidence, training_permission, commercial_model_use_permission, derivative_model_permission, dataset_sha256, division_scope, training_strategy]
+    current_capabilities: [random_initialization, byte_level_tokenizer, next_token_cross_entropy, train_validation_holdout_splits, checkpoint_resume, provenance_hashes]
+    planned_capabilities: [hybrid_linear_sparse_attention, mixture_of_experts, image_patch_multimodality, code_execution_reward_loop, multi_seed_significance]
+  - id: pretrained_model_marketplace
+    name: DreamCo Pretrained Model Store
+    catalog: config/marketplace/pretrained-model-catalog.json
+    schema: config/marketplace/pretrained-model-catalog.schema.json
+    validator: tools/validate_pretrained_model_catalog.py
+    storefront: website/pretrained-model-store.html
+    parameter_count_limit: null
+    purchase_entitlement: planned_not_enabled
+    source_data_distribution: prohibited
+    model_release_requires: [weights_sha256, tokenizer_sha256, training_run_id, dataset_provenance, rights_approval, commercial_model_use_permission, evaluation_report, model_card, license_id]
+    local_inference_compute: buyer_owned
+    hosted_inference_billing: separate_usage_metered
 metrics:
   - benchmark_score_delta
   - native_pass_rate
@@ -38,3 +132,7 @@ metrics:
   - retries
   - regression_failures
   - capability_mastery_count
+  - transcript_weekly_coverage
+  - dataset_rights_coverage
+  - model_parameter_count
+  - model_training_compute_cost

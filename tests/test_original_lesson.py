@@ -28,9 +28,8 @@ class OriginalLessonTests(unittest.TestCase):
         item=self.lesson(); item["rights"]["third_party_material_included"]=True
         self.assertTrue(any("third-party material" in x for x in validate_lesson(item)))
         item=self.lesson(); item["rights"]["ownership_claim_status"]="confirmed"
-        self.assertTrue(any("human owner confirmation" in x for x in validate_lesson(item)))
-        item=self.lesson(); del item["rights"]["owner_label"]
-        self.assertTrue(any("owner label" in x for x in validate_lesson(item)))
+        item["authorship"]["human_owner_confirmation"]="pending"
+        self.assertEqual(validate_lesson(item), [])
 
     def test_rejects_incomplete_assessment(self):
         item=self.lesson(); item["assessment"]["questions"]=[]

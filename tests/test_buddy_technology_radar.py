@@ -2,7 +2,7 @@
 import json
 import unittest
 from pathlib import Path
-from tools.refresh_buddy_technology_radar import apply_public_catalog_policy, extract_source, merge_catalog, normalize_item, parse_feed, validate_catalog, validate_policy
+from tools.refresh_buddy_technology_radar import apply_public_catalog_policy, build_public_projection, extract_source, merge_catalog, normalize_item, parse_feed, validate_catalog, validate_policy
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = json.loads((ROOT / "config/buddy/technology-discovery-policy.json").read_text(encoding="utf-8"))
@@ -32,6 +32,47 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
         rows = extract_source(source, content, "2026-11-08T00:00:00Z", POLICY)
         self.assertEqual(rows[0]["title"], "AI tools directory")
         self.assertIn("Vibe coding", rows[0]["summary"])
+
+    def test_huggingface_dataset_metadata_is_preserved_without_training_approval(self):
+        source = {
+            "id": "huggingface-datasets",
+            "name": "Hugging Face Datasets API",
+            "kind": "json_collection",
+            "url": "https://huggingface.co/api/datasets?limit=1",
+            "title_field": "id",
+            "url_template": "https://huggingface.co/datasets/{id}",
+            "id_field": "id",
+            "metadata_fields": {
+                "license": "cardData.license",
+                "task_categories": "cardData.task_categories",
+                "gated": "gated",
+                "downloads": "downloads",
+                "last_modified": "lastModified",
+            },
+            "trust_tier": "catalog",
+            "record_kind": "dataset",
+        }
+        payload = json.dumps([{
+            "id": "example/code-data",
+            "cardData": {"license": "mit", "task_categories": ["text-generation"]},
+            "gated": False,
+            "downloads": 42,
+            "lastModified": "2026-11-20T00:00:00Z",
+        }]).encode()
+        rows = extract_source(source, payload, "2026-11-24T00:00:00Z", POLICY)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["metadata"]["license"], "mit")
+        self.assertEqual(rows[0]["metadata"]["task_categories"], ["text-generation"])
+        self.assertFalse(rows[0]["training_approved"])
+        self.assertEqual(rows[0]["rights_status"], "UNVERIFIED_DISCOVERY_ONLY")
+
+    def test_huggingface_dataset_and_ollama_sources_are_registered(self):
+        sources = {source["id"]: source for source in POLICY["sources"]}
+        self.assertIn("huggingface-datasets", sources)
+        self.assertIn("ollama-library", sources)
+        self.assertEqual(sources["huggingface-datasets"]["record_kind"], "dataset")
+        self.assertEqual(sources["ollama-library"]["record_kind"], "local_model_catalog")
+
 
     def test_priority_lenses_are_discovered_without_fixed_category_count(self):
         source = {"id": "fixture", "name": "Fixture", "url": "https://example.com/feed", "trust_tier": "test"}
@@ -93,6 +134,36 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
         self.assertEqual(second["public_exclusions"][0]["id"], "old")
         self.assertEqual(second["summary"]["records_total"], 1)
         self.assertEqual(second["summary"]["records_excluded_by_public_policy"], 1)
+
+    def test_public_projection_bounds_pages_without_truncating_canonical_archive(self):
+        records = [
+            {"id": str(index), "record_kind": "announcement", "status": "active",
+             "priority_lenses": ["vibe_coding"] if index % 2 == 0 else []}
+            for index in range(5)
+        ]
+        catalog = {
+            "schema": "dreamco.buddy.technology_radar.v1",
+            "records": records,
+            "source_runs": [],
+            "summary": {
+                "records_total": 5, "sources_total": 0, "sources_succeeded": 0,
+                "sources_failed": 0, "sources_pending": 0,
+                "records_by_kind": {"announcement": 5},
+                "records_by_status": {"active": 5},
+                "records_by_priority_lens": {"vibe_coding": 3},
+            },
+        }
+        public = build_public_projection(catalog, record_limit=2)
+        self.assertEqual(len(catalog["records"]), 5)
+        self.assertEqual([row["id"] for row in public["records"]], ["0", "1"])
+        self.assertEqual(public["summary"]["records_total"], 2)
+        self.assertEqual(public["archive_summary"]["records_total"], 5)
+        self.assertEqual(public["public_projection"]["archive_records_total"], 5)
+        self.assertEqual(public["public_projection"]["record_limit"], 2)
+
+    def test_public_projection_rejects_nonpositive_limit(self):
+        with self.assertRaises(ValueError):
+            build_public_projection({"records": [], "summary": {}}, record_limit=0)
 
     def test_validation_rejects_unverified_capability_or_income_claims(self):
         bad = {

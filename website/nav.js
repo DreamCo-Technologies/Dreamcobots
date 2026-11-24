@@ -17,6 +17,7 @@
     { href: 'study-notes.html', label: 'Study notes' },
     { href: 'distill-benchmarks.html', label: 'Distill benchmarks' },
     { href: 'models.html', label: '🤖 Model Picker' },
+    { href: 'pretrained-model-store.html', label: '🛒 Pretrained Model Store' },
     { href: 'demand-routing-tests.html', label: 'Demand routing tests' },
     { href: 'hf-bootcamp.html', label: '📦 Packages' },
     { href: 'bots.html', label: '🛰️ Fleet' },

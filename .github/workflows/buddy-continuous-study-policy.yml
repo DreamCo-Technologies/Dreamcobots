@@ -1,0 +1,28 @@
+name: Buddy Continuous Study Policy
+on:
+  pull_request:
+    paths:
+      - "config/buddy-continuous-study-policy.json"
+      - "config/masterbot-65-registry.json"
+      - "tools/validate_buddy_continuous_study_policy.py"
+      - "tests/test_buddy_continuous_study_policy.py"
+      - ".github/workflows/buddy-continuous-study-policy.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: buddy-continuous-study-policy-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate continuous study policy
+        run: python tools/validate_buddy_continuous_study_policy.py
+      - name: Run policy tests
+        run: python -m unittest tests.test_buddy_continuous_study_policy -v
