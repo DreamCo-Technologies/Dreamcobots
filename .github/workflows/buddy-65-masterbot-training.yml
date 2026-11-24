@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run plan-only regression tests
-        run: python -m unittest tests.test_buddy_masterbot_training_lane -v
+        run: python -m unittest discover -s tests -p 'test_buddy_masterbot_training_lane.py' -v
       - name: Generate one representative division plan
         env:
           MASTERBOT_NAME: DreamFinance
