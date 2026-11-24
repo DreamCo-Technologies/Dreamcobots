@@ -286,3 +286,27 @@ The FreeCodeCamp PR diff was reduced from 75,767 additions to 5,539 additions (9
 - enabling branch-scoped cancellation of superseded Bootcamp CI runs.
 
 This is measured PR diff-size reduction only. No CI runtime or compute-cost improvement has yet been measured. The committed catalog remains partial (legacy 1,740 entries); the successful CI discovery artifact contained 1,741 entries, so runtime remains fail-closed until the refreshed complete inventory is committed.
+
+
+### Markdown audit evidence refresh — 2026-11-24
+
+The PR-branch Markdown audit artifact generated at 16:15 UTC on `docs/daily-audit-ledger-2026-11-24` reports 1,675 Markdown documents scanned, 11,938 actionable claim lines, 113 documents with missing path references, 1,588 without implementation references, 69 with implementation references but no test references, and 397 fixed-count claims requiring review. The main-branch baseline generated at 06:27 UTC reported 1,674 scanned documents, 11,916 actionable lines, 112 missing-path documents, 1,589 without implementation references, 68 with implementation but no test references, and 389 fixed-count claims requiring review. The 16:15 PR-branch report is the more recent snapshot, but the new FreeCodeCamp PR adds additional Markdown files and its audit check correctly detects stale generated files. Current exact scan coverage for the clean-base PR is therefore **not yet verified**; the 1,675 figure is the earlier audit branch's scan, not the final PR's.
+
+The current audit check fails on the clean-base Bootcamp PR because these generated artifacts are stale against its Markdown changes:
+- `config/generated/markdown-implementation-gap-audit.json`
+- `website/data/markdown-implementation-gap-audit.json`
+- `reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md`
+
+The failure is a traceability/evidence refresh blocker, not proof that the new Markdown content is incorrect. The repository's audit workflow intentionally generates review artifacts on main and does not push them or create PRs automatically. No direct main write was attempted.
+
+### Clean-base FreeCodeCamp integration
+
+The original FreeCodeCamp PR #18207 (source head `80a0749cd8adfb5e67d4dc143d5612177a86e573`) was closed as superseded after all 33 changed paths were ported to PR #18216 from current main. The new PR's per-file blob SHA comparison confirmed **33/33 identical files**, with no missing or extra paths; it is 33 commits ahead and 0 behind main. PR #18216 remains draft pending current-head CI, Markdown audit artifact refresh, and the approved-transcript/evaluator prerequisite.
+
+The first clean-base Bootcamp CI run found:
+- FreeCodeCamp catalog tests: 8/8 passed.
+- Division queue tests: 7/7 passed.
+- Runtime route tests: 13/14 passed; the one failure was a fixture missing `video_count`, corrected in head commit `028f3d0c3138e66a9cd54280cc81ba1b7c463083`. Re-run is pending.
+- Weekly transcript report artifact: `BLOCKED`, 0 transcripts, 0 evaluated, 0 due, null coverage, reason `approved_transcript_manifest_missing`.
+
+These are test and artifact facts only. No Buddy transcript learning, transcript ingestion, model-weight training, or production deployment occurred.
