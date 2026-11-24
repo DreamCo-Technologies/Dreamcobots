@@ -53,7 +53,8 @@ jobs:
           npm ci
           python3 -m pip install --disable-pip-version-check openpyxl soundfile pillow scipy psutil PyYAML
           python3 -m pip install --disable-pip-version-check -r requirements-buddy-learning.txt
-          python3 -m pip install --disable-pip-version-check -r requirements-media.txt || echo "media stack skipped: version conflict"
+          # Media/voice generation dependencies are isolated in their own workflow;
+          # they are not required for model catalog or benchmark-contract validation.
       - name: Validate benchmark, learning, tracking, and prospectus contracts
         run: |
           python3 - <<'PY'
@@ -86,10 +87,24 @@ jobs:
           python3 tools/run_optional_script.py tools/build_benchmark_registry.py
           python3 tools/run_optional_script.py tools/build_capability_registry.py
           python3 tools/run_optional_script.py tools/build_model_prospectus_catalog.py
-      - name: Execute every applicable suite for every catalogued model/provider
+      - name: Execute only the dedicated 500-model benchmark runner
         env:
           REQUESTED_MODE: ${{ github.event.inputs.mode || 'standard' }}
-        run: python3 tools/run_optional_script.py --fallback tools/run_everything_now.py tools/run_500_model_benchmarks.py --mode "$REQUESTED_MODE"
+        run: |
+          if [ -f tools/run_500_model_benchmarks.py ]; then
+            python3 tools/run_500_model_benchmarks.py --mode "$REQUESTED_MODE"
+            printf '{"status":"EXECUTED","runner":"tools/run_500_model_benchmarks.py","mode":"%s","paid_calls_enabled":false}\\n' "$REQUESTED_MODE" > website/data/benchmark-execution-status.json
+          else
+            echo "BLOCKED: dedicated 500-model execution runner is not implemented. No provider calls or training were started; all matrix rows remain unverified."
+            printf '{"status":"BLOCKED_RUNNER_NOT_IMPLEMENTED","runner":null,"mode":"%s","paid_calls_enabled":false,"training_started":false,"reason":"No dedicated benchmark runner exists; unrelated full-system certification is not a benchmark fallback."}\\n' "$REQUESTED_MODE" > website/data/benchmark-execution-status.json
+            {
+              echo "## Benchmark execution blocked"
+              echo "- Dedicated 500-model runner is not implemented."
+              echo "- No paid provider calls or model training were started."
+              echo "- The 7,500 model/suite catalog rows remain unverified."
+              echo "- Implement and verify the dedicated runner before claiming benchmark execution."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Build complete model × benchmark-suite prospectus matrix
         if: always()
         run: python3 tools/build_500_model_prospectus_matrix.py
@@ -105,7 +120,13 @@ jobs:
         if: always()
         run: |
           python3 -m unittest tests.test_recovery_ontology_workforce_runtime tests.test_universal_capability_benchmark_policy tests.test_global_government_system tests.test_buddy_government_operating_system
-          python3 -m pytest -q --disable-warnings --maxfail=20
+          if [ -f study_packs/career_pathways/raw/task_statements.csv ]; then
+            python3 -m pytest -q --disable-warnings --maxfail=20
+          else
+            echo "Career Pathways generated-data test pack is blocked: raw/task_statements.csv is not present in this checkout."
+            python3 -m pytest -q --disable-warnings --maxfail=20 --ignore=study_packs/career_pathways/tests
+            echo "SKIPPED: study_packs/career_pathways/tests (source data not provisioned; not counted as passing coverage)." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Validate full matrix coverage without inventing results
         if: always()
         run: |
@@ -153,6 +174,9 @@ jobs:
             print(f'- Matrix rows: **{d["matrix_rows"]}**')
             print(f'- Passing evidence rows: **{d["verified_rows"]}**')
             print(f'- Unverified rows: **{d["unverified_rows"]}**')
+          status_path=Path('website/data/benchmark-execution-status.json')
+          status=json.loads(status_path.read_text()) if status_path.exists() else {'status':'UNKNOWN'}
+          print(f'- Dedicated execution status: **{status.get("status")}**')
           print('- Missing, blocked, stale, or unverified evidence is never converted to a pass.')
           print('- Buddy native mastery is distinct from external-model-assisted results.')
           PY
