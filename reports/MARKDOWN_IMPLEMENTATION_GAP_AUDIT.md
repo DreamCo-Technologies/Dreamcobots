@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T05:03:02Z
+Generated: 2026-11-24T06:27:35Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1667
-- Actionable claim lines detected: 11865
-- Documents with missing path references: 109
-- Documents without implementation references: 1583
+- Markdown documents scanned: 1674
+- Actionable claim lines detected: 11916
+- Documents with missing path references: 112
+- Documents without implementation references: 1589
 - Documents with implementation references but no test references: 68
-- Documents with inventory count claims: 110
-- Inventory count claims requiring review: 383
+- Documents with inventory count claims: 112
+- Inventory count claims requiring review: 389
 
 ## Fixed-count claims requiring review
 
@@ -130,6 +130,10 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/DREAMCO_DELIVERY_PLAN.md:35 — The canonical registry has 1,051 profiles. Fifty additional growth profiles now have separate catalog entries and shared sandbox task routes. Their original descriptions, capability lists and source files remain preserved. The 262 historical source records include these 50 and th
 - docs/DREAMCO_DIVISION_MODEL_COMPETITIVENESS.md:50 — This PR adds the policy and a deterministic fleet-profile builder. It does not train 65 models, provision GPUs, create provider credentials, or prove model competitiveness. The first execution target is to generate all 65 model profiles, then reconcile the authoritative 45-domain
 - docs/DREAMCO_DIVISION_MODEL_COMPETITIVENESS.md:50 — This PR adds the policy and a deterministic fleet-profile builder. It does not train 65 models, provision GPUs, create provider credentials, or prove model competitiveness. The first execution target is to generate all 65 model profiles, then reconcile the authoritative 45-domain
+- docs/DREAMCO_DIVISION_MODEL_LIFECYCLE.md:7 — Each of the 65 division records has:
+- docs/DREAMCO_DIVISION_MODEL_LIFECYCLE.md:18 — The planner runs every five minutes and rotates a fair-share division lane. A six-hour full-fleet sweep preflights all 65 divisions. These are orchestration and evidence cycles, not a command to retrain every model every five minutes.
+- docs/DREAMCO_DIVISION_MODEL_LIFECYCLE.md:35 — The existing taxonomy map covers 37 task families and 10 capability packs across 65 MasterBots, with 55 proposed domain routes. Twenty MasterBot-to-domain mappings and ten standalone domain profiles remain pending owner review. They are deliberately not guessed or auto-assigned.
+- docs/DREAMCO_DIVISION_MODEL_LIFECYCLE.md:35 — The existing taxonomy map covers 37 task families and 10 capability packs across 65 MasterBots, with 55 proposed domain routes. Twenty MasterBot-to-domain mappings and ten standalone domain profiles remain pending owner review. They are deliberately not guessed or auto-assigned.
 - docs/DREAMCO_INDEPENDENT_DIVISION_MODEL_LIFECYCLE.md:3 — The canonical MasterBot registry defines 65 divisions. This lifecycle gives every division a distinct versioned model identity, weights directory, checkpoint directory, tokenizer snapshot, dataset lane, benchmark record and serving identity. The registry is a specification: it de
 - docs/DREAMCO_MASTERY_CONTINUITY_SYSTEM.md:92 — The new engine connects all 65 registry entries to logical lanes, goal routing, dependency metadata, shared regression execution, the existing lane planner, benchmark execution, and evidence artifacts. It does **not** yet implement every domain capability, execute every historica
 - docs/DREAMCO_MASTER_ROADMAP_2026.md:26 — ### 1–15 Workflow Organization & Dashboard
@@ -165,13 +169,15 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/SUPERBOT_MIGRATION_PLAN.md:15 — └── 45 Division Superbots
 - docs/SUPERBOT_MIGRATION_PLAN.md:24 — ### 45 Division Superbots
 - docs/SUPERBOT_MIGRATION_PLAN.md:110 — - 45 Division Superbots are canonical.
+- docs/THREE_RUNTIME_TRACEABILITY_LEDGER.md:19 — | #18168 | Buddy Bootcamp curriculum for all 65 divisions | Merged | Verify curriculum coverage and that each learning path is backed by approved data/resources, not just catalog entries |
+- docs/THREE_RUNTIME_TRACEABILITY_LEDGER.md:95 — | [#14849](https://github.com/DreamCo-Technologies/Dreamcobots/pull/14849) | fix(ci): regenerate pages feature audit for 223 pages (was 205) | Review pending |
 - docs/UNIVERSAL_BOT_RUNTIME_CONTRACT.md:8 — DreamCo has ~1,120 bot profiles (`bots/*.md`, `App_bots/<Division>.json`,
 - docs/UNIVERSAL_BOT_RUNTIME_CONTRACT.md:21 — | 3 | capabilities | ≥1 bot-specific capability. Tier packaging (“Advanced analytics dashboard”, “Priority email support”, “API access”…) is dropped and counted in `tier_features_dropped` |
 - docs/UNMERGEABLE_PR_RECONCILIATION_2026-08-12.md:53 — Preserves the core #476 Pages capability of routing browser `/api`, `/ws`, and `/socket` traffic to a configured HTTPS/WSS backend while leaving normal local development behavior unchanged.
 - docs/VIBE_CODING_CATEGORY_MAP.md:44 — ## 31–40: XR, simulation, infrastructure, data and productivity
 - docs/VIBE_CODING_CATEGORY_MAP.md:57 — ## 41–50: Civic, professional, industrial and physical-world systems
-- docs/adr/0001-superbot-operating-model.md:8 — DreamCo has grown into a large ecosystem of divisions, bot profiles, workflows, tools, experiments, notes and product surfaces. The repository's README currently describes 1,051+ bot profiles across 45 divisions, while the owner has identified additional bot material outside the 
-- docs/adr/0001-superbot-operating-model.md:8 — DreamCo has grown into a large ecosystem of divisions, bot profiles, workflows, tools, experiments, notes and product surfaces. The repository's README currently describes 1,051+ bot profiles across 45 divisions, while the owner has identified additional bot material outside the 
+- docs/adr/0001-superbot-operating-model.md:8 — DreamCo has grown into a large ecosystem of divisions, bot profiles, workflows, tools, experiments, notes and product surfaces. The repository's README currently describes 1,051+ bot profiles across 45 divisions, while the owner has identified additional bot material outside the
+- docs/adr/0001-superbot-operating-model.md:8 — DreamCo has grown into a large ecosystem of divisions, bot profiles, workflows, tools, experiments, notes and product surfaces. The repository's README currently describes 1,051+ bot profiles across 45 divisions, while the owner has identified additional bot material outside the
 - docs/architecture/PROPRIETARY_DIVISION_MODEL_PROGRAM.md:64 — B. Pilot 3 divisions with distinct modalities/domains; prove reproducible small-model fine-tuning and independent deployment.
 - docs/benchmarks/BENCHMARKS_801_1000.md:181 — - **977 agent recovery benchmark** — recovery from failed tasks.
 - docs/benchmarks/BENCHMARKS_801_1000.md:182 — - **978 agent planning benchmark** — long-horizon execution.
@@ -281,14 +287,14 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - reports/DATA_PACKAGE_LICENSE_QA_REVIEW.md:63 — | S21 | NCES CIP 2020 resources (CIP–SOC crosswalk) | https://nces.ed.gov/ipeds/cipcode/resources.aspx?y=56 | 2026-10-05 (file: https://nces.ed.gov/ipeds/cipcode/Files/CIP2020_SOC2018_Crosswalk.xlsx, HTTP 200) |
 - reports/DATA_PACKAGE_WEEK1_EVIDENCE.md:125 — - `python3 tools/build_universal_work_ai_catalog.py` ran in the worktree: **ok**, about 15 s, 1,016 occupations, 18,796 tasks, 26,683,062 bytes.
 - reports/DATA_PACKAGE_WEEK1_EVIDENCE.md:129 — - **31.0 compatibility:** a scratch run in `/tmp` of the unmodified tool against `db_31_0_excel.zip` (sha256 `c63ad00a…1b04`) worked: 1,016 occupations, 18,838 tasks.
-- reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:11 — - **PRs:** 50 owner PRs since 09-20: 45 open, 4 merged (#9173, #11988, #12057, #12059; none delivered by a Grok bot), 1 closed. Only **#9576** is fully green and MERGEABLE/CLEAN. #9575 is mergeable but has 20 non-passing checks, so it is **not** green. CONFLICTING: #8847, #8925, 
+- reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:11 — - **PRs:** 50 owner PRs since 09-20: 45 open, 4 merged (#9173, #11988, #12057, #12059; none delivered by a Grok bot), 1 closed. Only **#9576** is fully green and MERGEABLE/CLEAN. #9575 is mergeable but has 20 non-passing checks, so it is **not** green. CONFLICTING: #8847, #8925,
 - reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:12 — - **Main CI:** 31/41 workflows green on their latest run. Three of the reds come from one line in `website/work-desk.html` (see action 1).
 - reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:20 — | Security / API auth | 15 | **7.4%** (2/27) | Mutating + sensitive HTTP routes (P0 class) that carry an inbound auth guard. Rescan of main @95178f3 with Grok-Prod-API-Surface's scan_routes.py (regex extended to recognize billingOwnerAuthorized): 247 routes, 156 mutating, 27 muta
 - reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:21 — | Fleet bots production_ready | 15 | **0.0%** (0/1101) | config/generated/bot-production-readiness.json on main: stats.bots=1101, production_ready_true=0. That file lists 56 division records; the owner's count is 55. | — |
 - reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:28 — | Edu curriculum | 5 | **0.0%** (0/11) | One first deliverable per Edu bot (11 bots) landed on main: 0. | 54.5% (6/11) — If #12436, #12441, #12922, #13183, #13188 and #13187 merge. |
-- reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:29 — | Repo self-running automation | 5 | **37.5%** (9/24) | 12 bot-job families in reports/REPO_AUTONOMOUS_SYSTEMS_PLAN.md × 2: (a) has a cron schedule on main, 9/12 verified by grepping .github/workflows (missing: Bootcamp = dispatch only, Pages = no cron, O*NET = no workflow); (b) 
-- reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:36 — 1. #9573 is now the isolated CI fix and is being updated live (last push 10-03 9:39 AM CT, 30 files). It rephrases the website/work-desk.html sentence that trips the public-site preflight, adds the Gap Closure noop lane, drops the drizzle-kit esm-loader override, and regenerates 
-- reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:41 — 6. Review the 18 PRs opened 10-03 9:22–9:36 AM CT (#13177–#13194). They carry the local work of 24 bots. PR-specific failures to fix first: #13180 smoke; #13181 smoke; #13185 audit; #13188 smoke; #13190 Buddy quick verification. #13194 should fix the Grok Owner Systems workflow, 
+- reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:29 — | Repo self-running automation | 5 | **37.5%** (9/24) | 12 bot-job families in reports/REPO_AUTONOMOUS_SYSTEMS_PLAN.md × 2: (a) has a cron schedule on main, 9/12 verified by grepping .github/workflows (missing: Bootcamp = dispatch only, Pages = no cron, O*NET = no workflow); (b)
+- reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:36 — 1. #9573 is now the isolated CI fix and is being updated live (last push 10-03 9:39 AM CT, 30 files). It rephrases the website/work-desk.html sentence that trips the public-site preflight, adds the Gap Closure noop lane, drops the drizzle-kit esm-loader override, and regenerates
+- reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:41 — 6. Review the 18 PRs opened 10-03 9:22–9:36 AM CT (#13177–#13194). They carry the local work of 24 bots. PR-specific failures to fix first: #13180 smoke; #13181 smoke; #13185 audit; #13188 smoke; #13190 Buddy quick verification. #13194 should fix the Grok Owner Systems workflow,
 - reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:42 — 7. Unblock the 23 bots that still have local-only work and no PR: HF-Diffusers, HF-Mastery-Coach, HF-Safetensors-License, HF-Tokenizers, Buddy-Capability-Packager, Buddy-Debug-Arena, Buddy-Logic-Reasoner, Buddy-RCA-Trainer, Buddy-ToolUse-Arena, OS-Agents-ProcTable, Prod-API-Surfa
 - reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:43 — 8. Workflow volume: open a PR for origin branch ops/workflow-schedule-demotions (8 schedule-demotion commits, no PR yet) and set a consolidation target. Main has 91 workflow files, 56 of them scheduled, and about 47% of runs were cancelled on 09-28.
 - reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:51 — ### HF swarm — 21 bots (8 complete, 6 in progress, 2 blocked, 5 no output)
@@ -296,8 +302,8 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:77 — ### Buddy frontier sets — 30 bots (5 complete, 9 in progress, 7 blocked, 9 no output)
 - reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:112 — ### Buddy OS — 10 bots (2 complete, 2 in progress, 3 blocked, 3 no output)
 - reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:127 — ### Prod connectivity — 10 bots (4 complete, 4 in progress, 2 blocked, 0 no output)
-- reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:140 — | <a name="bot-grok-prod-resource-graph"></a>**Grok-Prod-Resource-Graph** | Own resource graph: every catalogued resource→owner bot→Pages→workflow→evidence. Close disconnected nodes. | Resource graph: 1051 bots. 8 named on Pages, 26 with per-bot evidence, 0 fully connected. Box: 
-- reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:140 — | <a name="bot-grok-prod-resource-graph"></a>**Grok-Prod-Resource-Graph** | Own resource graph: every catalogued resource→owner bot→Pages→workflow→evidence. Close disconnected nodes. | Resource graph: 1051 bots. 8 named on Pages, 26 with per-bot evidence, 0 fully connected. Box: 
+- reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:140 — | <a name="bot-grok-prod-resource-graph"></a>**Grok-Prod-Resource-Graph** | Own resource graph: every catalogued resource→owner bot→Pages→workflow→evidence. Close disconnected nodes. | Resource graph: 1051 bots. 8 named on Pages, 26 with per-bot evidence, 0 fully connected. Box:
+- reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:140 — | <a name="bot-grok-prod-resource-graph"></a>**Grok-Prod-Resource-Graph** | Own resource graph: every catalogued resource→owner bot→Pages→workflow→evidence. Close disconnected nodes. | Resource graph: 1051 bots. 8 named on Pages, 26 with per-bot evidence, 0 fully connected. Box:
 - reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:142 — ### Edu — 11 bots (4 complete, 3 in progress, 1 blocked, 3 no output)
 - reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:158 — ### Plan owners — 29 bots (9 complete, 7 in progress, 8 blocked, 5 no output)
 - reports/FLEET_MASSIVE_UPDATE_2026-10-03.md:163 — | <a name="bot-grok-65-masterbot-os-lead"></a>**Grok-65-MasterBot-OS-Lead** | Own plan-65-masterbot-os. 65 MasterBot OS production readiness — runtime, routing, cert evidence per MasterBot. | 65 MasterBot OS readiness audit: 65 divisions, 102/102 routable, 5 tests pass. No per-Ma
@@ -337,9 +343,9 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - reports/branch-health-daily.md:112 — - #14849 fix(ci): regenerate pages feature audit for 223 pages (was 205) — `needs_human`: Conflicts. Conflict team may update-from-main or open a resolution PR.
 - reports/branch-health-daily.md:115 — - #8925 Pages mirrors: Goals, desks, sources, learn, devices, OS — `needs_human`: Conflicts. Conflict team may update-from-main or open a resolution PR.
 - reports/branch-health-daily.md:116 — - #14397 pages: link eight orphaned product pages in nav and sitemap — `needs_human`: Conflicts. Conflict team may update-from-main or open a resolution PR.
-- study_packs/career_pathways/README.md:10 — - `practice_tasks_authored.json`: 162 practice tasks for the 27 authored majors. Each cites an O*NET 31.0 Task ID and O*NET-SOC code and has an original-wording paraphrase of the task's intent, an occupation-specific scenario prompt, a 3-criterion rubric for that scenario, and a 
-- study_packs/career_pathways/README.md:35 — - Practice tasks reference an O*NET 31.0 Task ID and O*NET-SOC code. O*NET task text is not reproduced: tests check that no run of 5 or more words from any O*NET 31.0 task statement, Job Zone reference text, or occupation description appears in the authored fields or in the plan 
-- study_packs/career_pathways/README.md:35 — - Practice tasks reference an O*NET 31.0 Task ID and O*NET-SOC code. O*NET task text is not reproduced: tests check that no run of 5 or more words from any O*NET 31.0 task statement, Job Zone reference text, or occupation description appears in the authored fields or in the plan 
+- study_packs/career_pathways/README.md:10 — - `practice_tasks_authored.json`: 162 practice tasks for the 27 authored majors. Each cites an O*NET 31.0 Task ID and O*NET-SOC code and has an original-wording paraphrase of the task's intent, an occupation-specific scenario prompt, a 3-criterion rubric for that scenario, and a
+- study_packs/career_pathways/README.md:35 — - Practice tasks reference an O*NET 31.0 Task ID and O*NET-SOC code. O*NET task text is not reproduced: tests check that no run of 5 or more words from any O*NET 31.0 task statement, Job Zone reference text, or occupation description appears in the authored fields or in the plan
+- study_packs/career_pathways/README.md:35 — - Practice tasks reference an O*NET 31.0 Task ID and O*NET-SOC code. O*NET task text is not reproduced: tests check that no run of 5 or more words from any O*NET 31.0 task statement, Job Zone reference text, or occupation description appears in the authored fields or in the plan
 - study_packs/career_pathways/docs/DATA_DICTIONARY.md:151 — | `tasks[].onet_task_id` | O*NET 31.0 Task ID (integer) from Task Statements; resolves to a task of onet_soc_code. |
 - study_packs/career_pathways/docs/DATA_DICTIONARY.md:330 — | `practice_tasks[].onet_task_id` | O*NET 31.0 Task ID (integer) from Task Statements; resolves to a task of onet_soc_code. |
 - study_packs/career_pathways/study_plans/03.0104_environmental_science.md:73 — ## Practice tasks (DreamCo-original scenario prompts tied to O*NET 31.0 task IDs)
@@ -12537,7 +12543,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### database/migrations/README_DIVISION_DATASET_CATALOG.md
 
 - Status: test_reference_missing
-- Actionable claim lines: 9
+- Actionable claim lines: 8
 - Implementation paths: buddy/datasets/postgres_catalog.py
 - Test paths: None detected
 - Missing paths: None detected
@@ -13574,6 +13580,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/CROSS_REPOSITORY_COMPLETION_AND_COMPETITION.md
+
+- Status: broken_path_references
+- Actionable claim lines: 10
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: github/workflows/dreamco-c-runtime.yml
+- Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/CUSTOMER_PRODUCTION_RUNBOOK.md
 
 - Status: implementation_reference_missing
@@ -13632,6 +13648,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: None detected
 - Missing paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_APPROVED_TRAINING_EXECUTION.md
+
+- Status: broken_path_references
+- Actionable claim lines: 4
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: artifacts/buddy-training-jobs/*.json
+- Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_BEGINNER_FIRST_PRODUCT_EXPERIENCE.md
@@ -13734,6 +13760,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/DREAMCO_DIVISION_MODEL_LIFECYCLE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 3
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/DREAMCO_DIVISION_SCHEMA_PROVISIONING.md
 
 - Status: implementation_reference_missing
@@ -13824,6 +13860,26 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/DREAMCO_NATIVE_TEACHER_MODEL_ADAPTERS.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 3
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_OBJECT_STORAGE_EVIDENCE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 5
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/DREAMCO_POSTGRES_DIVISION_LIFECYCLE_MIGRATION.md
 
 - Status: implementation_reference_missing
@@ -13838,6 +13894,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 - Status: implementation_reference_missing
 - Actionable claim lines: 2
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_PRIVATE_HOLDOUT_BENCHMARKS.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 7
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
@@ -14472,6 +14538,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: None detected
 - Missing paths: None detected
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/THREE_RUNTIME_TRACEABILITY_LEDGER.md
+
+- Status: broken_path_references
+- Actionable claim lines: 20
+- Implementation paths: buddy/datasets/postgres_catalog.py, buddy/models/provider_runtime.py, buddy/storage/object_store.py
+- Test paths: tests/test_buddy_postgres_catalog.py
+- Missing paths: github/workflows/dreamco-c-runtime.yml
+- Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/UNIFIED_500_MODEL_BENCHMARK_OPERATING_PLAN.md
