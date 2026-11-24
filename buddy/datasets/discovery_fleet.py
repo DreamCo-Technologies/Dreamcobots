@@ -86,7 +86,7 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
                 "division_resources":{"resource_bundle_id":resource_profile["resource_bundle_id"],
                     "readiness_status":resource_profile["readiness_status"],
                     "database_namespace":resource_profile["logical_database_namespace"],
-                    "teacher_model_candidate_ids":resource_profile["teacher_model_candidate_ids"],
+                    "teacher_model_candidate_ids":[model for pack in resource_profile["capability_pack_ids"] for model in json.loads(RESOURCE_MAP.read_text(encoding="utf-8"))["resource_templates"]["teacher_models"]["seed_models_by_capability_pack"].get(pack,[])],
                     "model_routing_status":resource_profile["model_routing"]["status"],
                     "resource_truth":"requirements_defined_not_provisioned"}}
             if candidate.get("source")=="huggingface":
