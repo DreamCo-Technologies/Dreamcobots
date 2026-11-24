@@ -465,6 +465,8 @@ def main() -> int:
         projection = build_public_projection(catalog, int(policy.get("public_site", {}).get("maximum_records", 500)))
         WEB_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
         WEB_OUTPUT_PATH.write_text(json.dumps(projection, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+        POLICY_MIRROR_PATH.parent.mkdir(parents=True, exist_ok=True)
+        POLICY_MIRROR_PATH.write_text(json.dumps(policy, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     elif args.refresh:
         existing = json.loads(OUTPUT_PATH.read_text(encoding="utf-8")) if OUTPUT_PATH.exists() else {
             "schema": "dreamco.buddy.technology_radar.v1", "records": []
