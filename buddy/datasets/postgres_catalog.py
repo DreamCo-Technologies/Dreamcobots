@@ -134,12 +134,17 @@ class PostgresDatasetCatalog:
             raise PostgresCatalogError("invalid dataset_id")
         if isinstance(version, bool) or not isinstance(version, int) or version < 1:
             raise PostgresCatalogError("version must be a positive integer")
+        # Resolve the same division-scoped identity used by writes. This prevents
+        # reads from silently using a shared/None DSN or crossing MasterBot lanes.
+        dsn = self._dsn_for(masterbot_id)
         try:
-            with self._connect(self.dsn, connect_timeout=5) as connection:
+            with self._connect(dsn, connect_timeout=5) as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(f'''SELECT manifest, manifest_sha256 FROM "{schema}".dataset_catalog
                         WHERE dataset_id = %s AND version = %s''', (dataset_id, version))
                     row = cursor.fetchone()
+        except PostgresCatalogError:
+            raise
         except Exception as exc:
             raise PostgresCatalogError(f"PostgreSQL dataset catalog read failed ({type(exc).__name__})") from exc
         if row is None:
