@@ -22,14 +22,15 @@ def resource_map(path: Path) -> Path:
     return path
 
 
-def db_mocks(*, missing_roles=None, unsafe_roles=None, existing_schemas=None, wrong_owners=None):
+def db_mocks(*, missing_roles=None, unsafe_roles=None, no_membership=None, existing_schemas=None, wrong_owners=None):
     missing_roles = set(missing_roles or [])
     unsafe_roles = set(unsafe_roles or [])
+    no_membership = set(no_membership or [])
     existing_schemas = set(existing_schemas or [])
     wrong_owners = dict(wrong_owners or {})
     cursor = MagicMock()
     roles = [
-        (f"dreamco_division_{i:03d}", False, i in unsafe_roles)
+        (f"dreamco_division_{i:03d}", False, i in unsafe_roles, i not in no_membership)
         for i in range(1, 66)
         if i not in missing_roles
     ]
@@ -71,6 +72,14 @@ class DivisionSchemaProvisioningTests(unittest.TestCase):
             self.assertEqual(result["inventory"]["preexisting_owner_roles"], 65)
             self.assertFalse(result["ddl_executed"])
             self.assertEqual(cursor.execute.call_count, 2)
+
+    def test_blocks_when_operator_is_not_member_of_missing_schema_owner_role(self):
+        with tempfile.TemporaryDirectory() as temp:
+            mapping = resource_map(Path(temp) / "map.json")
+            connect, _ = db_mocks(no_membership={65})
+            result = provision_division_schemas(dsn="postgresql://test", resource_map_path=mapping, connect=connect)
+            self.assertEqual(result["status"], "BLOCKED")
+            self.assertEqual(result["inventory"]["missing_owner_memberships"], ["dreamco_division_065"])
 
     def test_rejects_login_or_superuser_owner_roles_and_owner_mismatch(self):
         with tempfile.TemporaryDirectory() as temp:
