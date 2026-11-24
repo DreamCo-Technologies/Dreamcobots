@@ -53,7 +53,8 @@ class DatasetLicensePolicyTests(unittest.TestCase):
    self.assertEqual({x["masterbot_id"] for x in hub.external_candidates(limit=10)},{1,2})
    for row in hub.external_candidates(limit=10):
     self.assertIn("dreamco_taxonomy",row["metadata"])
-    self.assertFalse(row["metadata"]["training_approved"])
+    self.assertFalse(row["metadata"]["ai_training_allowed"])
+    self.assertFalse(row["metadata"]["license_assessment"]["training_approved"])
     self.assertEqual(row["metadata"]["dreamco_taxonomy"]["routing_status"],"DISCOVERY_ONLY_NOT_TRAINING_APPROVED")
  def test_all_masterbots_have_query_fallback(self):
   self.assertTrue(_query_for("DreamFinance"))
