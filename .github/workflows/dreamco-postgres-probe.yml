@@ -31,4 +31,4 @@ jobs:
       - name: Run focused unit tests
         env:
           PYTHONPATH: .
-        run: python -m unittest tests.test_buddy_postgres_probe -v
+        run: python -m unittest discover -s tests -p 'test_buddy_postgres_probe.py' -v
