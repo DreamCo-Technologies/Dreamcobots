@@ -6,6 +6,8 @@ from unittest.mock import patch
 from pathlib import Path
 
 from tools.build_dreamco_bootcamp_seed_data import build_candidate, build_dataset_card, load_jsonl, main as build_main
+from buddy.datasets.hub import DatasetHub, DatasetPolicyError
+from buddy.datasets.training_jobs import create_training_job
 
 
 def registry():
@@ -109,6 +111,22 @@ class BootcampSeedDataTests(unittest.TestCase):
         data[1]["response"] = data[0]["response"]
         with self.assertRaisesRegex(ValueError, "duplicate prompt/response"):
             build_candidate(data, 4, registry())
+
+    def test_pending_seed_candidate_cannot_be_ingested_or_trained(self):
+        with tempfile.TemporaryDirectory() as temp:
+            rows, manifest = build_candidate(examples(), 4, registry())
+            card = build_dataset_card(manifest, "candidate.jsonl")
+            hub = DatasetHub(Path(temp) / "hub")
+            hub.register(card)
+            with self.assertRaisesRegex(DatasetPolicyError, "not approved for training"):
+                create_training_job(hub, manifest["dataset_id"], 4, "example/model", "a" * 40)
+            candidate = Path(temp) / "candidate.jsonl"
+            candidate.write_text(
+                "".join(json.dumps(row, ensure_ascii=False) + "\\n" for row in rows),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(DatasetPolicyError, "File ingestion is disabled"):
+                hub.register(card, source_file=candidate)
 
     def test_jsonl_loader_rejects_invalid_rows(self):
         with tempfile.TemporaryDirectory() as temp:
