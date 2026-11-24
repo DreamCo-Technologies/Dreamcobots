@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from .hub import DatasetHub
@@ -132,13 +133,39 @@ def execute_job(job_path: str | Path, approval_id: str, output_root: str | Path,
     holdout=trainer.evaluate(test_ds,metric_key_prefix="holdout")
     model.save_pretrained(output/"model")
     tokenizer.save_pretrained(output/"model")
-    result={"schema":"dreamco.model_training_result.v1","job_id":job["job_id"],
-        "model_id":job["model_id"],"base_model_revision":job["base_model_revision"],
-        "dataset_id":job["dataset_id"],"dataset_sha256":job["dataset_sha256"],
+    artifact_dir=output/"model"
+    artifact_files=[]
+    for artifact in sorted(artifact_dir.rglob("*")):
+        if artifact.is_symlink():
+            raise TrainingExecutionError("Model artifact directory contains a symlink")
+        if artifact.is_file():
+            artifact_files.append({"path":str(artifact.relative_to(artifact_dir)),
+                "sha256":hashlib.sha256(artifact.read_bytes()).hexdigest(),"bytes":artifact.stat().st_size})
+    if not artifact_files:
+        raise TrainingExecutionError("Training produced no checkpoint or tokenizer files")
+    artifact_manifest_hash=hashlib.sha256(json.dumps(artifact_files,sort_keys=True).encode()).hexdigest()
+    tested_commit=os.environ.get("GITHUB_SHA") or os.environ.get("DREAMCO_GIT_COMMIT")
+    if tested_commit and not re.fullmatch(r"[0-9a-f]{40}",tested_commit):
+        tested_commit=None
+    result={"schema":"dreamco.model_training_result.v1","execution_status":"COMPLETED",
+        "completed_at":datetime.now(timezone.utc).isoformat(),"job_id":job["job_id"],
+        "masterbot_id":job["masterbot_id"],"model_id":job["model_id"],
+        "base_model_revision":job["base_model_revision"],"tokenizer_revision":job["base_model_revision"],
+        "model_license":job["model_license"],"model_license_status":job["model_license_status"],
+        "model_license_evidence":job["model_license_evidence"],
+        "dataset_id":job["dataset_id"],"dataset_version":job["dataset_version"],
+        "dataset_sha256":job["dataset_sha256"],"split_manifest":job["split_manifest"],
         "training_method":job["training_method"],"global_step":train_result.global_step,
         "baseline_validation_metrics":baseline_validation,
         "train_metrics":train_result.metrics,"validation_metrics":validation,"holdout_metrics":holdout,
-        "artifact_dir":str(output/"model"),"weights_trained":True,
-        "production_promoted":False,"requires_independent_benchmark_and_review":True}
+        "artifact_dir":str(artifact_dir),"checkpoint_sha256":artifact_manifest_hash,
+        "checkpoint_files":artifact_files,"tested_commit_sha":tested_commit,
+        "weights_trained":True,"production_promoted":False,
+        "requires_independent_benchmark_and_review":True}
+    (output/"checkpoint-manifest.json").write_text(json.dumps({
+        "schema":"dreamco.checkpoint_manifest.v1","model_id":job["model_id"],
+        "masterbot_id":job["masterbot_id"],"base_model_revision":job["base_model_revision"],
+        "tokenizer_revision":job["base_model_revision"],"checkpoint_sha256":artifact_manifest_hash,
+        "files":artifact_files},indent=2)+"\n",encoding="utf-8")
     (output/"training-result.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
     return result
