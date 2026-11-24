@@ -38,7 +38,7 @@ class TrainingJobEvidenceTests(unittest.TestCase):
             job=create_training_job(hub,"finance.dataset",1,"base/model","a"*40,
               compute_approval_id="compute-1",model_license="Apache-2.0",
               model_license_url="https://example.org/license",model_license_status="VERIFIED",
-              model_license_evidence="review-1",tested_commit_sha="b"*40)
+              model_license_evidence="review-1",tested_commit_sha="b"*40,output_dir=Path(temp)/"jobs")
             self.assertEqual(job["tokenizer_revision"],"a"*40)
             self.assertEqual(job["tested_commit_sha"],"b"*40)
             self.assertEqual(job["division_model"]["database_schema"],"dreamco_division_001")
