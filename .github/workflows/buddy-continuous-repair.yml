@@ -110,7 +110,8 @@ jobs:
             echo "- Trigger: ${{ github.event_name }}"
             echo "- Hourly schedule: enabled"
             echo "- Failed workflow run: ${{ github.event.workflow_run.html_url || 'not applicable' }}"
-            echo "- Repair boundary: deterministic evidence refresh and regression-verified changes only\n            - PR creation: disabled by repository policy; verified changes are packaged for human review"
+            echo "- Repair boundary: deterministic evidence refresh and regression-verified changes only"
+            echo "- PR creation: disabled by repository policy; verified changes are packaged for human review"
             echo "- Production deployment and direct pushes to main: disabled"
           } >> "$GITHUB_STEP_SUMMARY"
 
