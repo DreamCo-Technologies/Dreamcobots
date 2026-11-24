@@ -1,0 +1,32 @@
+name: Cross-runtime contract
+
+on:
+  pull_request:
+    paths:
+      - "config/cross-runtime-contract.json"
+      - "docs/CROSS_REPOSITORY_COMPLETION_AND_COMPETITION.md"
+      - "tools/validate_cross_runtime_contract.py"
+      - "tests/test_cross_runtime_contract.py"
+      - ".github/workflows/cross-runtime-contract.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cross-runtime-contract-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate contract
+        run: python tools/validate_cross_runtime_contract.py
+      - name: Run focused tests
+        run: python -m unittest tests.test_cross_runtime_contract -v
