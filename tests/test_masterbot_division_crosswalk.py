@@ -10,12 +10,12 @@ spec.loader.exec_module(module)
 
 
 class MasterBotDivisionCrosswalkTests(unittest.TestCase):
-    def test_authoritative_domain_taxonomy_contains_exactly_45_domains(self):
+    def test_authoritative_domain_taxonomy_contains_55_domains(self):
         source = module.DOMAIN_SOURCE.read_text(encoding="utf-8")
         names = module.load_domain_names(source)
-        self.assertEqual(len(names), 45)
+        self.assertEqual(len(names), 55)
         self.assertIn("CommandCore", names)
-        self.assertNotIn("officialSources", names)
+        self.assertIn("DreamAffiliate", names)\n        self.assertIn("DreamAgency", names)\n        self.assertIn("DreamFoundry", names)\n        self.assertNotIn("officialSources", names)
         self.assertNotIn("memberDirectory", names)
 
     def test_only_exact_identity_matches_are_proposed(self):
@@ -35,7 +35,7 @@ class MasterBotDivisionCrosswalkTests(unittest.TestCase):
         domains = module.load_domain_names(module.DOMAIN_SOURCE.read_text(encoding="utf-8"))
         result = module.build_crosswalk(bots, domains)
         self.assertEqual(result["counts"]["masterbots"], 65)
-        self.assertEqual(result["counts"]["domain_divisions"], 45)
+        self.assertEqual(result["counts"]["domain_divisions"], 55)\n        self.assertEqual(result["counts"]["unresolved_domain_divisions"], 10)
         self.assertTrue(all(row["owner_approval"] is None for row in result["domains"]))
         self.assertTrue(all(row["review_required"] for row in result["masterbots"]))
 
