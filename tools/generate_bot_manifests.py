@@ -292,7 +292,7 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
         flags.add("division_conflict_seed")
     source_caps = base.get("capabilities") or (md or {}).get("capabilities", [])
     raw_caps = list(dict.fromkeys((specialist or {}).get("capabilities", []) + list(source_caps)))
-    caps = [c[:120] for c in raw_caps if c.strip().lower() not in TIER_BOILERPLATE]
+    caps = [c[:120] for c in raw_caps if c.strip().lower() not in TIER_BOILERPLATE][:MAX_CAPS]
     dropped = len(raw_caps) - len(caps)
     if not caps:
         flags.add("placeholder_no_specific_capabilities")
