@@ -171,6 +171,10 @@ jobs:
               exit 2
               ;;
           esac
+      - name: Validate full-fleet division, revenue and Buddy routes
+        run: |
+          python3 tools/build_buddy_fleet_execution_map.py
+          python3 -m unittest tests.test_buddy_fleet_execution_map tests.test_live_revenue_readiness_coverage
       - name: Build debug summary
         if: always()
         shell: bash
