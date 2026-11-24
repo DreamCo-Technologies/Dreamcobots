@@ -16,6 +16,7 @@ def main() -> int:
     parser.add_argument("--division-id", type=int, required=True, choices=range(1, 66))
     parser.add_argument("--dataset-id", required=True)
     parser.add_argument("--dataset-path", type=Path, required=True)
+    parser.add_argument("--strategy", required=True)
     parser.add_argument("--seed", type=int, required=True)
     parser.add_argument("--steps", type=int, default=100)
     parser.add_argument("--output", type=Path, required=True)
@@ -35,7 +36,7 @@ def main() -> int:
         raise SystemExit("BLOCKED: dataset is not rights-approved for this division")
     result = train_from_scratch(
         dataset_path, args.output, dataset_id=args.dataset_id,
-        division_id=args.division_id, seed=args.seed, steps=args.steps
+        division_id=args.division_id, strategy=args.strategy, seed=args.seed, steps=args.steps
     )
     print(json.dumps(result, indent=2))
     return 0
