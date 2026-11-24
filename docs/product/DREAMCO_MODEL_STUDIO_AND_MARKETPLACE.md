@@ -199,3 +199,73 @@ Failed or rights-uncertain jobs remain quarantined. Promotion requires reproduci
 ## Honest delivery status
 
 This specification adds product requirements and a staged build plan. It does not itself implement the Studio UI, training workers, checkout, marketplace sales, model downloads, or tenant-isolated serving. Those require code, migrations, provider integrations, security tests, and end-to-end verification.
+
+
+## First-party model strategy: DreamCo models are the product
+
+The strategic default is **DreamCo-owned model weights**, not permanent dependence on third-party chat APIs.
+
+### Temporary provider/wrapper role
+
+Third-party providers and models are temporary infrastructure:
+- use provider adapters for inference fallback, research, teacher feedback, and baseline comparisons only when the applicable terms permit the use;
+- isolate them behind a replaceable provider interface; never couple customer projects or division code to one provider's proprietary API;
+- mark every response and training artifact with its actual model/provider provenance;
+- allow administrators and customers to disable external fallback where appropriate;
+- do not describe an API wrapper, prompt template, RAG index, or routing configuration as a DreamCo-trained model.
+
+### DreamCo-first routing and replacement
+
+1. A request is routed to the best approved DreamCo first-party model for its category and task.
+2. If no DreamCo model is certified for that task, use an explicitly enabled compatible fallback or return a clear capability gap.
+3. When a DreamCo model passes the same quality, safety, privacy, latency, reliability, and cost gates, promote it as primary and demote the external provider to optional fallback.
+4. Track dependency share by division: first-party request share, external fallback share, quality gap, cost, latency, and failure rate.
+5. Do not switch production traffic solely because a training job completed; require evaluation and controlled rollout with rollback.
+
+### First-party training pipeline
+
+For every canonical DreamCo division:
+1. Define its task taxonomy, user needs, evaluation set, safety profile, and minimum viable model capability.
+2. Select an appropriate small base or initialize a student model. Pin exact weights, tokenizer, code, and licenses.
+3. Assemble rights-cleared data from DreamCo-created materials, customer-authorized datasets, public-domain/appropriately licensed corpora, and other sources whose terms permit the intended use.
+4. Teacher-generated examples may be used only after reviewing the teacher provider's current terms, output rights, and any distillation or competing-model restrictions. If prohibited or unclear, do not use those outputs for training.
+5. Filter and deduplicate, remove or protect personal/sensitive information, record provenance, and create held-out train/validation/test splits.
+6. Train a DreamCo student checkpoint or adapter using reproducible recipes and budget-capped compute.
+7. Evaluate on division-specific and general regression benchmarks, safety, privacy leakage, memorization, robustness, and cost/latency.
+8. Promote only after rights, benchmark, safety, and human approval gates pass. Store artifact hashes, model card, dataset manifest, recipe, and version.
+9. Repeat on a scheduled cadence only when new rights-cleared data or meaningful evaluation improvements justify it. Never retrain just to satisfy a timer.
+
+### Customer retraining and resale
+
+Customers may:
+- fine-tune a DreamCo first-party base or an eligible marketplace model in their own category;
+- keep the resulting version private;
+- deploy it for their own organization;
+- submit it to the marketplace for review and sale when they have the rights to license the resulting deliverable.
+
+A customer's tuned version is a distinct version with its own lineage, dataset manifest, model card, benchmarks, safety report, artifact hashes, and license compatibility record. Marketplace resale is opt-in and off by default. The customer must explicitly grant the distribution rights needed for the exact deliverable. DreamCo must verify the upstream base, tokenizer, training code, and dataset licenses before listing. A customer may own their original data and eligible contributions without acquiring rights to third-party base weights.
+
+### Model lineage and ownership labels
+
+Every model artifact must have one of these clear labels:
+- `dreamco_first_party`: trained by DreamCo from scratch or from a base whose terms allow the stated DreamCo ownership/licensing claim;
+- `dreamco_derivative`: DreamCo-trained adapter/checkpoint with disclosed upstream base and inherited obligations;
+- `customer_private_finetune`: customer-controlled tuned artifact, private by default;
+- `customer_marketplace_candidate`: customer-submitted artifact awaiting rights, safety, and quality review;
+- `third_party_hosted`: provider API access only; no DreamCo weights;
+- `retrieval_or_prompt_package`: configuration or knowledge retrieval, not a newly trained model.
+
+Never collapse these labels into a generic "owned model" badge.
+
+### Strategic success measures
+
+Track per division and across the fleet:
+- certified DreamCo model count and model versions;
+- first-party request share and third-party fallback share;
+- quality and safety parity against baselines;
+- training-data rights coverage and provenance completeness;
+- cost per successful task and inference latency;
+- customer retrained models, private deployments, approved marketplace listings, sales, refunds, and complaints;
+- percentage of models with reproducible builds and passing regression suites.
+
+The goal is to replace third-party dependence with a growing, independently governed DreamCo model family while retaining optional external fallback as a resilience choice—not as the core product.
