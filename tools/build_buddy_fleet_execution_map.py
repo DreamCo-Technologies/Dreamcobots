@@ -402,10 +402,10 @@ def build() -> dict[str, Any]:
             raise ValueError("Manifest contains a bot without a slug")
         source_rows = source_bots.get(slug, [])
         source = source_rows[0] if source_rows else {}
-        source_division = str(source.get("_source_division") or bot.get("division") or "").strip()
-        source_portfolio = source_division if source_division in portfolio_by_name else ("Dream3D" if slug.startswith("threejs-") else None)
+        source_division = str(bot.get("source_division") or source.get("_source_division") or bot.get("division") or "").strip()
+        source_portfolio = bot.get("supplemental_portfolio") or (source_division if source_division in portfolio_by_name else ("Dream3D" if slug.startswith("threejs-") else None))
         charter = portfolio_by_name.get(source_portfolio) if source_portfolio else None
-        is_teammate = source_division == "GrokTeammates"
+        is_teammate = bot.get("shared_workforce_group") == "GrokTeammates" or source_division == "GrokTeammates"
         teammate = teammate_lanes.get(slug) if is_teammate else None
         if is_teammate and teammate is None:
             raise ValueError(f"Grok teammate {slug} has no source lane record")
