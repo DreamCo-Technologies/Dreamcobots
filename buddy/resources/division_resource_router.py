@@ -38,10 +38,12 @@ def plan_resource_route(division_id:int,task_type:str,data_classification:str="p
     if division_id not in routes:
         raise KeyError(f"unknown MasterBot division id: {division_id}")
     route=routes[division_id]
+    payload=json.loads(RESOURCE_MAP.read_text(encoding="utf-8"))
     pack=TASK_PACKS.get(task_type.casefold(),"pack.instruct")
-    candidates=[x for x in route["teacher_models"]["candidate_models"] if x["source_capability_pack"]==pack]
+    seed_catalog=payload["resource_templates"]["teacher_models"]["seed_models_by_capability_pack"]
+    candidates=[model_id for model_id in seed_catalog.get(pack,[]) if model_id in route["teacher_model_candidate_ids"]]
     available=set(available_local_model_ids or [])
-    local=[x for x in candidates if x["model_id"] in available]
+    local=[model_id for model_id in candidates if model_id in available]
     classification=data_classification.casefold()
     sensitive=classification in SENSITIVE_CLASSES or classification not in {"public","non_sensitive","synthetic","open"}
     providers=set(configured_provider_ids or [])
@@ -65,8 +67,8 @@ def plan_resource_route(division_id:int,task_type:str,data_classification:str="p
         "schema":"dreamco.model_resource_route_plan.v1",
         "division_id":division_id,"division_name":route["masterbot_name"],
         "resource_bundle_id":route["resource_bundle_id"],"task_type":task_type,"capability_pack_id":pack,
-        "readiness_status":route["readiness_status"],"local_candidate_models":[x["model_id"] for x in local],
-        "catalog_candidate_models":[x["model_id"] for x in candidates],
+        "readiness_status":route["readiness_status"],"local_candidate_models":local,
+        "catalog_candidate_models":candidates,
         "eligible_external_connectors":eligible,"sensitive_data":sensitive,
         "external_provider_consent":external_provider_consent,"paid_use_approved":paid_use_approved,
         "execution_status":"PLAN_ONLY_NO_PROVIDER_CALL_MADE","reason":reason
