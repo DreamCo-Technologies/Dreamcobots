@@ -8,6 +8,7 @@ from typing import Any
 from . import engines, evidence, permissions
 from .customize import apply_customization, effective_customization, load_customizations
 from .contract import expand, load_manifests, validate, validate_bot_manifest, load_schema
+from .routing import resolve_route
 
 try:  # Reuse Buddy's shared guardrails; tolerate absence in stripped builds.
     from buddy.safety.guardrails import review as _guardrail_review
@@ -58,15 +59,18 @@ class FleetExecutor:
         return self._expanded[slug]
 
     def _finish(self, manifest, task, status, mode, permission, guards, result, error=None, stamp=False):
+        routing = resolve_route(manifest)
         record = evidence.run_record(manifest=manifest, task=task, status=status, mode=mode,
                                      permission=permission, guardrails=guards, result=result,
-                                     error=error, stamp=stamp)
+                                     routing=routing, error=error, stamp=stamp)
         out = {
             "status": status,
             "bot": manifest.get("slug"),
             "engine": manifest.get("engine"),
+            "division": manifest.get("division"),
             "mode": mode,
             "result": result,
+            "routing": routing,
             "live_external_action_taken": False,
             "evidence": record,
         }
