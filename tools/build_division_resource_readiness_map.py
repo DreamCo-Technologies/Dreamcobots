@@ -103,7 +103,7 @@ def main():
             "unassigned_domain_profiles":len(payload["owner_review"]["unassigned_domain_profiles"])},
         "instructions":"Please assign only with authoritative ownership evidence. Empty candidate arrays are intentional; do not infer a mapping from similar names. Record reviewer, evidence, decision date and approval.",
         **payload["owner_review"]}
-    review_encoded=json.dumps(review_payload,indent=2,ensure_ascii=False)+"\\n"
+    review_encoded=json.dumps(review_payload,indent=2,ensure_ascii=False)+"\n"
     if args.check:
         if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8")!=encoded:
             raise SystemExit("Division resource readiness map is stale; regenerate it")
