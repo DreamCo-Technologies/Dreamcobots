@@ -75,6 +75,25 @@ REGISTRY_LANE_MAP = {
     "compute_or_digital_assets": ("digital_asset_scout", "licensed_data"),
     "orchestration": ("enterprise_automation", "software_partners"),
 }
+REVENUE_EVENT_MAP = {
+    "affiliate": "commission_confirmed_by_network",
+    "lead_fee": "lead_accepted_or_qualified_by_buyer",
+    "qualified_lead": "lead_accepted_or_qualified_by_buyer",
+    "permitted_lead_fee": "lead_accepted_or_qualified_by_buyer",
+    "subscription": "successful_billing_event",
+    "monthly_fee": "successful_billing_event",
+    "service_fee": "invoice_paid",
+    "proposal_service": "invoice_paid",
+    "audit_fee": "invoice_paid",
+    "setup_fee": "invoice_paid",
+    "marketplace_fee": "completed_transaction_minus_refunds",
+    "brokerage_fee": "completed_transaction_minus_refunds",
+    "referral": "commission_confirmed_by_network",
+    "usage_fee": "metered_usage_billed",
+    "data_license": "licensed_delivery_paid",
+    "savings_share": "contractually_verified_savings_event",
+    "b2b_fee": "lead_accepted_or_qualified_by_buyer",
+}
 LANE_RULES = [
     (("affiliate", "partner", "commission"), "parts_arbitrage", "affiliate_offers"),
     (("rfp", "procurement", "government-contract", "grant"), "rfp_matcher", "grants_contracts"),
@@ -140,6 +159,7 @@ def revenue_route(bot: dict[str, Any], registry: dict[str, Any], lane_index: dic
         "revenue_lane": lane_id,
         "value_hypothesis": lane.get("value", "qualified opportunity or service outcome"),
         "monetization_options": monetization,
+        "verified_revenue_event_types": sorted({REVENUE_EVENT_MAP.get(option, "verified_contractual_payment_event") for option in monetization}),
         "approved_source_categories": approved_sources,
         "source_policy": "Use only authorized official feeds, licensed APIs, user-supplied data or explicitly approved connectors.",
         "workflow": [
