@@ -14,7 +14,7 @@ def stable_resource_id(video_id: str) -> int:
     """Return a deterministic scheduler ID that survives catalog reordering."""
     if not isinstance(video_id, str) or not video_id.strip():
         raise ValueError("video_id must be a non-empty string")
-    value = int.from_bytes(hashlib.sha256(video_id.encode("utf-8")).digest()[:4], "big") & 0x7FFFFFFF
+    value = int.from_bytes(hashlib.sha256(video_id.encode("utf-8")).digest()[:8], "big") & 0x7FFFFFFFFFFFFFFF
     return value or 1
 
 
@@ -22,6 +22,13 @@ def load_routes(path: Path = ROUTES) -> dict:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if payload.get("schema") != "dreamco.freecodecamp_source_routes.v1" or payload.get("division_count") != 65:
         raise ValueError("invalid or incomplete freeCodeCamp source routes")
+    inventory = payload.get("source_inventory") or {}
+    if (
+        payload.get("source_inventory_status") != "complete"
+        or inventory.get("complete") is not True
+        or inventory.get("observed_entry_count") != payload.get("catalog_video_count")
+    ):
+        raise ValueError("source routes do not contain verified complete catalog evidence")
     return payload
 
 def resources_for_division(division_id: int, path: Path = ROUTES) -> list[Resource]:
