@@ -31,3 +31,8 @@ Per-division health checks place canary objects beneath a prefix such as `divisi
 - The adapter does not upload training datasets or write references to PostgreSQL. Dataset persistence requires the separate governed ingestion path, a rights/PII approval, division-scoped database catalog persistence, and an independently verified storage grant.
 
 No bucket credentials, endpoints, or live-service claims are committed to this repository. A live canary remains blocked until the owner configures the approved secrets/variables and explicitly authorizes that operation.
+
+
+## Operational authorization
+
+Do not attach the live-canary opt-in to five-minute planners, scheduled fleet workflows, pull-request CI, or general-purpose Buddy tasks. A live canary must be a separately approved, bounded operation against owner-selected existing buckets. Keep the canary prefix isolated from dataset prefixes, record the approving operator and run ID in the evidence store, and verify that lifecycle retention will expire generated objects. The adapter's fake-client tests must remain the default CI path.
