@@ -310,11 +310,11 @@ def build() -> dict[str, Any]:
 
         if is_teammate:
             masterbot_id, teammate_route = teammate_masterbot_route(teammate)
-            route_status = "shared_teammate_lane"
+            route_status = "proposed_shared_teammate_platform_route"
         else:
             masterbot_id = master_by_domain.get(norm(owner)) if owner != "DreamDiscovery" else 62
             teammate_route = None
-            route_status = "mapped_to_canonical_domain" if owner != "DreamDiscovery" and masterbot_id else "discovery_review_required"
+            route_status = "proposed_domain_masterbot_match_requires_owner_review" if owner != "DreamDiscovery" and masterbot_id else "discovery_review_required"
         flags = list(bot.get("flags", []))
         if len(source_rows) > 1 or "duplicate_profile" in flags or slug in seen_slugs:
             duplicate_status = "duplicate_or_conflicting_profile_review"
@@ -378,6 +378,7 @@ def build() -> dict[str, Any]:
             "duplicate_review_status": duplicate_status,
             "division_route": {
                 "status": route_status,
+                "route_scope": "non_privileged_planning_only_until_owner_approval" if route_status != "discovery_review_required" else "discovery_only",
                 "primary_masterbot_id": masterbot_id,
                 "primary_masterbot_name": master["divisions"][masterbot_id - 1]["name"] if masterbot_id else None,
                 "primary_domain_owner": owner if not is_teammate else None,
@@ -386,6 +387,7 @@ def build() -> dict[str, Any]:
                 "shared_platform_masterbot_ids": shared_ids,
                 "unresolved_owner_goes_to": "DreamDiscovery" if route_status == "discovery_review_required" else None,
                 "owner_approval_required_for_remap": True,
+                "owner_approval_required_for_privileged_work": route_status != "discovery_review_required",
             },
             "buddy_execution": {
                 "orchestrator": "Buddy",
@@ -431,10 +433,10 @@ def build() -> dict[str, Any]:
             "profiles_without_app_bots_source": len(records) - app_bot_count,
             "revenue_candidates_with_plans": revenue_count,
             "internal_or_unclassified_profiles": len(records) - revenue_count,
-            "mapped_to_canonical_domain": status_counts["mapped_to_canonical_domain"],
+            "proposed_domain_masterbot_matches": status_counts["proposed_domain_masterbot_match_requires_owner_review"],
             "discovery_review_required": status_counts["discovery_review_required"],
             "unresolved_owner_count": status_counts["discovery_review_required"],
-            "shared_teammate_profiles": status_counts["shared_teammate_lane"],
+            "shared_teammate_profiles": status_counts["proposed_shared_teammate_platform_route"],
             "duplicate_capability_groups_for_review": len(duplicate_sets),
             "shared_platform_masterbots": len(shared_ids),
             "live_enabled_bots": 0,
