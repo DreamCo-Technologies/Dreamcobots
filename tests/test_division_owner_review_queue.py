@@ -63,25 +63,29 @@ class DivisionOwnerReviewQueueTests(unittest.TestCase):
         self.assertEqual(queue["unassigned_domain_profiles"][0]["candidate_masterbot_ids"], [])
 
     def test_rejects_shared_platform_identity_without_resource_lineage(self):
+        platform_rows = [{
+            "id": ident, "name": f"Platform{ident}", "purpose": "Documented shared capability",
+            "kind": "shared_platform_service",
+            "ownership_status": "shared_platform_not_a_domain_division",
+            "primary_domain_owner": None, "available_to_all_domain_divisions": True,
+        } for ident in range(46, 66)]
         source = {
-            "routes": [],
+            "routes": [{
+                "masterbot_id": ident, "masterbot_name": f"Platform{ident}",
+                "resource_bundle_id": f"division-resource-{ident:03d}",
+            } for ident in range(47, 66)],
             "owner_review": {
                 "masterbot_domain_decisions": [{
-                    "masterbot_id": 46, "masterbot_name": "DreamResearch",
+                    "masterbot_id": ident, "masterbot_name": f"Platform{ident}",
                     "primary_domain_id": None, "candidate_domain_ids": [],
-                    "resource_bundle_id": "division-resource-046",
+                    "resource_bundle_id": f"division-resource-{ident:03d}",
                     "decision": "PENDING_OWNER_REVIEW", "owner_approval": None, "evidence": [],
-                }],
+                } for ident in range(46, 66)],
                 "unassigned_domain_profiles": [],
             },
         }
         reconciliation = {
-            "shared_platform_masterbots": [{
-                "id": 46, "name": "DreamResearch", "purpose": "Research",
-                "kind": "shared_platform_service",
-                "ownership_status": "shared_platform_not_a_domain_division",
-                "primary_domain_owner": None, "available_to_all_domain_divisions": True,
-            }],
+            "shared_platform_masterbots": platform_rows,
             "promoted_supplemental_divisions": [],
         }
         with tempfile.TemporaryDirectory() as tmp:
