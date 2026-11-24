@@ -41,7 +41,16 @@ def build_curriculum(masterbots:dict,tasks:dict,packs:dict,division_map:dict,ser
     capability_packs=packs.get("packs",[])
     routes={int(x["masterbot_id"]):x for x in division_map.get("routes",[])}
     if len(divisions)!=65 or len(routes)!=65: raise ValueError("canonical 65-division registry and taxonomy map required")
-    if len(task_families)!=37 or len(set(task_families))!=37: raise ValueError("expected 37 unique Hugging Face task families")
+    task_ids = []
+    for family in task_families:
+        if not isinstance(family, dict):
+            raise ValueError("each Hugging Face task family must be a structured record")
+        task_id = family.get("id")
+        if not isinstance(task_id, str) or not task_id.strip():
+            raise ValueError("each Hugging Face task family must have a non-empty stable id")
+        task_ids.append(task_id.strip())
+    if len(task_families) != 37 or len(set(task_ids)) != 37:
+        raise ValueError("expected 37 unique Hugging Face task family IDs")
     if len(capability_packs)!=10 or len({x["id"] for x in capability_packs})!=10:
         raise ValueError("expected 10 unique Hugging Face capability packs")
     all_tasks=[{"task_family":family,"required_for_every_division":True,
