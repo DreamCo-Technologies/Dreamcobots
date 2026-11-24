@@ -28,10 +28,16 @@ PROVIDERS = {
 MODEL_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,180}$")
 CLASSIFICATION_LEVELS = {"public": 0, "internal": 1, "confidential": 2, "restricted": 3}
 
+def _approved_models(provider_id: str, provider: Provider) -> tuple[str, ...]:
+    if provider_id == "openrouter":
+        return tuple(x.strip() for x in os.environ.get("DREAMCO_OPENROUTER_ALLOWED_MODELS", "").split(",") if x.strip())
+    return provider.allowed_models
+
 def available_providers() -> list[dict[str, Any]]:
     return [{"provider_id": p.provider_id, "endpoint": p.endpoint,
              "credential_configured": bool(os.environ.get(p.secret_env)),
-             "paid": p.paid, "model_allowlist_enforced": bool(p.allowed_models),
+             "paid": p.paid, "model_allowlist_enforced": bool(_approved_models(p.provider_id, p)),
+             "approved_model_count": len(_approved_models(p.provider_id, p)),
              "data_classification_max": p.data_classification_max,
              "output_training_permission": p.output_training_permission}
             for p in PROVIDERS.values()]
@@ -46,7 +52,8 @@ def chat_completion(provider_id: str, model: str, messages: list[dict[str, str]]
         raise ModelServingError("provider_not_allowlisted")
     if not isinstance(model, str) or not MODEL_PATTERN.fullmatch(model):
         raise ModelServingError("invalid_model_id")
-    if provider.allowed_models and model not in provider.allowed_models:
+    allowed_models = _approved_models(provider_id, provider)
+    if not allowed_models or model not in allowed_models:
         raise ModelServingError("model_not_allowlisted_for_provider")
     if provider.paid and not paid_approval_id.strip():
         raise ModelServingError("paid_request_requires_approval_id")
