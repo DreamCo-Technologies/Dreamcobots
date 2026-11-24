@@ -1,9 +1,13 @@
+import json
 import unittest
+from pathlib import Path
 
 from buddy.fleet_runtime.contract import expand
 from buddy.fleet_runtime.executor import FleetExecutor
 from buddy.fleet_runtime.routing import resolve_route
 from tools.generate_bot_manifests import build
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class BuddyFleetRoutingTests(unittest.TestCase):
@@ -12,10 +16,7 @@ class BuddyFleetRoutingTests(unittest.TestCase):
         cls.collection = build()
         cls.bots = cls.collection["bots"]
         cls.by_slug = {row["slug"]: row for row in cls.bots}
-
-    def test_all_manifest_profiles_resolve_to_a_canonical_domain_masterbot(self):
-        self.assertEqual(len(self.bots), 1232)
-        domains = {
+        cls.domains = {
             "CommandCore", "DreamAIInfra", "DreamAdmin", "DreamAgents", "DreamAgriculture",
             "DreamArts", "DreamAutomation", "DreamBizLaunch", "DreamCodeLab", "DreamConstruction",
             "DreamContent", "DreamCrypto", "DreamCustIntel", "DreamCyber", "DreamData", "DreamDecision",
@@ -26,8 +27,15 @@ class BuddyFleetRoutingTests(unittest.TestCase):
             "DreamRetail", "DreamSalesPro", "DreamScience", "DreamSocial", "DreamTrade", "DreamTransport",
             "GameTitan",
         }
-        self.assertEqual({row["division"] for row in self.bots}, domains)
+
+    def test_all_manifest_profiles_resolve_to_a_canonical_domain_masterbot(self):
+        self.assertEqual(len(self.bots), 1232)
+        charters = json.loads((ROOT / "config/supplemental-portfolio-capability-charters.json").read_text())
+        portfolios = {row["portfolio"] for row in charters["portfolios"]}
+        expected_divisions = self.domains | portfolios | {"GrokTeammates"}
+        self.assertEqual({row["division"] for row in self.bots}, expected_divisions)
         for compact in self.bots:
+            self.assertIn(compact["primary_domain_owner"], self.domains)
             self.assertIn(compact["primary_masterbot_id"], range(1, 46))
             self.assertEqual(compact["division_route_status"], "proposed_domain_masterbot_match_requires_owner_review")
             self.assertTrue(compact["owner_approval_required"])
@@ -37,26 +45,33 @@ class BuddyFleetRoutingTests(unittest.TestCase):
         teammates = [row for row in self.bots if row.get("shared_workforce_group") == "GrokTeammates"]
         self.assertEqual(len(teammates), 112)
         for row in teammates:
-            self.assertIn(row["division"], {"DreamAIInfra", "DreamEducation", "DreamOps", "DreamCodeLab",
-                "CommandCore", "DreamContent", "DreamData", "DreamBizLaunch", "DreamProtection",
-                "DreamMarket", "DreamSalesPro", "DreamLegal", "DreamDecision", "GameTitan", "DreamAutomation"})
+            self.assertEqual(row["division"], "GrokTeammates")
+            self.assertEqual(row["source_division"], "GrokTeammates")
+            self.assertIn(row["primary_domain_owner"], self.domains)
             self.assertIn(row["primary_masterbot_id"], range(1, 46))
             self.assertIn(row["shared_teammate_masterbot_id"], range(46, 66))
             self.assertTrue(row["shared_teammate_masterbot_route"])
 
-    def test_all_69_specialist_profiles_are_owned_by_canonical_divisions(self):
+    def test_all_69_specialist_profiles_keep_distinct_portfolio_identity_and_owner(self):
         specialists = [row for row in self.bots if row.get("supplemental_portfolio")]
         self.assertEqual(len(specialists), 69)
         self.assertEqual(sum(1 for row in specialists if row["supplemental_portfolio"] == "Dream3D"), 19)
-        self.assertTrue(all(row["division"] in {bot["division"] for bot in self.bots} for row in specialists))
-        self.assertTrue(all(row["specialist_capability_domain"] for row in specialists))
+        for row in specialists:
+            self.assertEqual(row["division"], row["supplemental_portfolio"])
+            self.assertIn(row["primary_domain_owner"], self.domains)
+            self.assertTrue(row["specialist_capability_domain"])
 
-    def test_threejs_profiles_have_specialist_capabilities_in_runtime_content(self):
-        for slug in ("threejs-addons", "threejs-animation", "threejs-renderers", "threejs-tsl"):
-            compact = self.by_slug[slug]
+    def test_threejs_profiles_are_first_class_dream3d_profiles(self):
+        threejs = [row for row in self.bots if row["slug"].startswith("threejs-")]
+        self.assertEqual(len(threejs), 19)
+        for compact in threejs:
+            self.assertEqual(compact["division"], "Dream3D")
+            self.assertEqual(compact["source_division"], "Dream3D")
+            self.assertEqual(compact["primary_domain_owner"], "DreamCodeLab")
+            self.assertEqual(compact["supplemental_portfolio"], "Dream3D")
             full = expand(compact, self.collection)
-            self.assertEqual(full["division"], "DreamCodeLab")
-            self.assertEqual(full["supplemental_portfolio"], "Dream3D")
+            self.assertEqual(full["division"], "Dream3D")
+            self.assertEqual(full["primary_domain_owner"], "DreamCodeLab")
             self.assertGreaterEqual(len(full["capabilities"]), 5)
             self.assertTrue(any("Three.js" in cap or "threejs" in cap.lower() for cap in full["capabilities"]))
 
@@ -68,6 +83,7 @@ class BuddyFleetRoutingTests(unittest.TestCase):
         self.assertIn("routing", result)
         self.assertTrue(result["routing"]["route_valid"])
         self.assertEqual(result["routing"]["canonical_division"], "DreamCodeLab")
+        self.assertEqual(result["routing"]["execution_division"], "Dream3D")
         self.assertEqual(result["routing"]["supplemental_portfolio"], "Dream3D")
         self.assertTrue(result["routing"]["owner_approval_required"])
         self.assertFalse(result["routing"]["privileged_execution_enabled"])
@@ -81,13 +97,15 @@ class BuddyFleetRoutingTests(unittest.TestCase):
         route = result["routing"]
         self.assertTrue(route["route_valid"])
         self.assertEqual(route["canonical_division"], "DreamAIInfra")
+        self.assertEqual(route["execution_division"], "GrokTeammates")
         self.assertEqual(route["primary_masterbot_id"], 4)
         self.assertEqual(route["shared_teammate_masterbot_id"], 47)
         self.assertFalse(route["privileged_execution_enabled"])
 
     def test_invalid_masterbot_route_fails_closed(self):
         route = resolve_route({
-            "slug": "bad-route", "division": "DreamCodeLab", "primary_masterbot_id": 65,
+            "slug": "bad-route", "division": "DreamCodeLab", "primary_domain_owner": "DreamCodeLab",
+            "primary_masterbot_id": 65,
             "division_route_status": "proposed_domain_masterbot_match_requires_owner_review",
         })
         self.assertFalse(route["route_valid"])
