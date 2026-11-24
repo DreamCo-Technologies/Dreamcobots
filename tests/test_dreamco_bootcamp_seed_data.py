@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tools.build_dreamco_bootcamp_seed_data import build_candidate, load_jsonl
+from tools.build_dreamco_bootcamp_seed_data import build_candidate, build_dataset_card, load_jsonl
 
 
 def registry():
@@ -38,6 +38,11 @@ class BootcampSeedDataTests(unittest.TestCase):
         self.assertFalse(manifest["training_approved"])
         self.assertFalse(manifest["training_started"])
         self.assertEqual(len(manifest["candidate_sha256"]), 64)
+        self.assertIn("\\n", rows[0]["text"])
+        card = build_dataset_card(manifest, "candidate.jsonl")
+        self.assertFalse(card["training_approved"])
+        self.assertEqual(card["rights_status"], "PENDING_HUMAN_REVIEW")
+        self.assertEqual(card["primary_masterbot_id"], 4)
 
     def test_rejects_duplicate_ids_and_missing_splits(self):
         data = examples()
