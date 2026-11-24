@@ -7,6 +7,7 @@ import {
   createDailyDivisionBenchmarkPlan,
 } from "../server/division-production-policy";
 import { runDailyDivisionContractBenchmarks } from "../tools/run_daily_division_benchmarks";
+import { buildBuddySuccessProgram } from "../tools/generate_buddy_success_program";
 
 test("every division has a professional charter, 100 capabilities, and production evidence gates", () => {
   const registry = buildDivisionProductionRegistry();
@@ -73,10 +74,14 @@ test("missing capabilities become review-branch build plans, not self-granted po
   assert.equal(plan.productionReadyClaimed, false);
 });
 
-test("local daily harness checks all 4,500 division capability contracts", async () => {
+test("local Buddy success harness checks its 45 fleet divisions and 4,500 capability contracts", async () => {
   const result = await runDailyDivisionContractBenchmarks({ concurrency: 16 });
-  assert.equal(result.divisions, buildDivisionProductionRegistry().divisions.length);
-  assert.equal(result.capabilitiesChecked, buildDivisionProductionRegistry().divisions.length * 100);
+  const successProgram = buildBuddySuccessProgram();
+  // The 45 bot-fleet divisions, 55 domain profiles, and 65 MasterBots are distinct registries.
+  assert.equal(result.divisions, successProgram.divisions.length);
+  assert.equal(result.divisions, 45);
+  assert.equal(result.capabilitiesChecked, successProgram.divisions.length * successProgram.improvement_templates.division_capabilities.length);
+  assert.equal(result.capabilitiesChecked, 4500);
   assert.equal(result.failed, 0);
   assert.equal(result.networkUsed, false);
   assert.equal(result.paidServicesUsed, false);
