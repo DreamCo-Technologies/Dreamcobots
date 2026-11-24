@@ -24,7 +24,7 @@ APP_DIVISIONS = sorted({json.loads(p.read_text())["division"] for p in (ROOT / "
 RUNTIME_DIVISIONS = sorted(DIVISIONS)
 
 
-def test_every_source_division_is_reconciled_to_45_canonical_manifests():
+def test_every_source_division_is_reconciled_to_56_business_divisions_and_shared_workforce():
     assert len(APP_DIVISIONS) == 56
     assert len(RUNTIME_DIVISIONS) == 57
     assert "GrokTeammates" in DIVISIONS and "UNASSIGNED" not in DIVISIONS
@@ -37,8 +37,12 @@ def test_every_source_division_is_reconciled_to_45_canonical_manifests():
         assert d["triggerable"] is True, name
     charters = json.loads((ROOT / "config/supplemental-portfolio-capability-charters.json").read_text())
     for portfolio in charters["portfolios"]:
+        name = portfolio["portfolio"]
         owner = portfolio["owner"]
-        assert f"App_bots/{portfolio['portfolio']}.json" in DIVISIONS[owner]["sources"]
+        assert f"App_bots/{name}.json" in DIVISIONS[name]["sources"]
+        assert DIVISIONS[name]["primary_domain_owner"] == owner
+        assert DIVISIONS[name]["primary_masterbot_id"] is not None
+    assert len(DIVISIONS["GrokTeammates"]["owner_routes"]) > 1
 
 
 def test_division_manifests_are_generated_not_hand_edited():
