@@ -36,39 +36,45 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
         raise ValueError("resource map must match all 65 canonical MasterBots and taxonomy routes")
     if len(crosswalk.get("domains",[]))!=55 or len(crosswalk.get("masterbots",[]))!=65:
         raise ValueError("expected the 55-domain / 65-MasterBot crosswalk")
+    templates={
+        "database":DATABASE,"datasets":DATASETS,"teacher_models":TEACHER,
+        "reverse_engineering":REVERSE_ENGINEERING,"distillation":DISTILLATION,
+        "model_routing":MODEL_ROUTING,"compute":COMPUTE,"evaluation":EVALUATION,
+        "operations":OPERATIONS
+    }
+    templates["model_routing"]={**templates["model_routing"],
+        "provider_connector_inventory":[{"id":x["id"],"mode":x["mode"],
+            "implementation_status":x["implementation_status"],"availability":x["availability"]}
+            for x in router.get("connectors",[])]}
     routes=[]
     for bot in bots:
         tax=tax_routes[bot["id"]]
         candidates=[]
         for pack_id in tax["capability_pack_ids"]:
             for model_id in packs.get("seed_models",{}).get(pack_id,[]):
-                if not any(row["model_id"]==model_id for row in candidates):
+                if not any(row["model_id"]==model_id and row["source_capability_pack"]==pack_id for row in candidates):
                     candidates.append({"model_id":model_id,"source_capability_pack":pack_id,
                         "status":"catalog_candidate_not_validated","license_review_required":True,
                         "training_or_distillation_permission":"UNVERIFIED"})
         mapping=tax["domain_crosswalk"]
-        unresolved=mapping.get("mapping_status")=="unresolved"
         routes.append({
             "masterbot_id":bot["id"],"masterbot_name":bot["name"],
             "resource_bundle_id":f"division-resource-{bot['id']:03d}",
             "readiness_status":"requirements_defined_not_provisioned",
-            "subject_terms":tax["subject_terms"],"task_pipeline_tags":tax["candidate_pipeline_tags"],
+            "resource_template_ids":list(templates.keys()),
+            "logical_database_namespace":f"dreamco_division_{bot['id']:03d}",
+            "dataset_discovery_lane_id":tax["lane_id"],
+            "dataset_search_queries":tax["search_queries"],
+            "dataset_rights_status":"UNVERIFIED_DISCOVERY_ONLY",
+            "dataset_training_approved":False,
+            "subject_terms":tax["subject_terms"],
+            "task_pipeline_tags":tax["candidate_pipeline_tags"],
             "capability_pack_ids":tax["capability_pack_ids"],
-            "database":{**DATABASE,"logical_namespace":f"dreamco_division_{bot['id']:03d}"},
-            "datasets":{**DATASETS,"discovery_lane_id":tax["lane_id"],"search_queries":tax["search_queries"],
-                "rights_status":"UNVERIFIED_DISCOVERY_ONLY","training_approved":False},
-            "teacher_models":{**TEACHER,"candidate_models":candidates},
-            "machine_learning_practices":ML_PRACTICES,
-            "reverse_engineering":REVERSE_ENGINEERING,"distillation":DISTILLATION,
-            "model_routing":{**MODEL_ROUTING,"division_capabilities":tax["capability_pack_ids"],
-                "provider_connector_inventory":[{"id":x["id"],"mode":x["mode"],
-                    "implementation_status":x["implementation_status"],"availability":x["availability"]}
-                    for x in router.get("connectors",[])],
-                "first_party_model_preference":"only_when_certified_and_meets_task_quality_floor"},
-            "compute":COMPUTE,"evaluation":EVALUATION,"operations":OPERATIONS,
-            "domain_mapping":{"mapping_status":mapping.get("mapping_status"),"domain_id":mapping.get("domain_id"),
-                "domain_name":mapping.get("domain_name"),"owner_review_required":True,
-                "owner_approval":mapping.get("owner_approval"),"unresolved":unresolved}
+            "teacher_model_candidates":candidates,
+            "domain_mapping":{"mapping_status":mapping.get("mapping_status"),
+                "domain_id":mapping.get("domain_id"),"domain_name":mapping.get("domain_name"),
+                "owner_review_required":True,"owner_approval":mapping.get("owner_approval"),
+                "unresolved":mapping.get("mapping_status")=="unresolved"}
         })
     unresolved_bots=[{"masterbot_id":x["masterbot_id"],"masterbot_name":x["masterbot_name"],
         "primary_domain_id":None,"primary_domain_name":None,"candidate_domain_ids":[],
@@ -82,7 +88,8 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
         "status":"requirements_defined_not_provisioned","source_of_truth":"config/masterbot-65-registry.json",
         "counts":{"masterbots":len(routes),"domain_divisions":len(crosswalk["domains"]),
             "unresolved_masterbot_mappings":len(unresolved_bots),"unassigned_domain_profiles":len(unresolved_domains)},
-        "source_blob_shas":source_blob_shas,"resource_contract":RESOURCE_CONTRACT,"routes":routes,
+        "source_blob_shas":source_blob_shas,"resource_contract":RESOURCE_CONTRACT,
+        "machine_learning_practices":ML_PRACTICES,"resource_templates":templates,"routes":routes,
         "owner_review":{"masterbot_domain_decisions":unresolved_bots,"unassigned_domain_profiles":unresolved_domains},
         "truth":"This map defines resource requirements and candidate references. It does not provision databases, download datasets, connect providers, allocate GPUs, run training, certify teacher models, or prove any division model exists. All unresolved crosswalk mappings remain unassigned until owner approval."}
 
