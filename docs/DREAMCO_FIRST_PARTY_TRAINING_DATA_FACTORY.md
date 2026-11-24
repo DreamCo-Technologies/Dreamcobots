@@ -27,6 +27,19 @@ Metadata discovery adapters currently cover Hugging Face, OpenML, UCI, GitHub, Z
 - Cross-division collaboration requires an explicit owner grant and is recorded in the manifest.
 - Buddy can search the shared catalog and route only to resources its task and data classification are authorized to use.
 
+## Internal DreamCo-owned training path
+
+DreamCo-authored material can use the internal designation `DREAMCO_INTERNAL_OWNED`; this is **not a public license** and does not itself establish ownership. The ingestion policy requires all of the following before it can be considered:
+
+- verified creator/owner assignment and contributor rights
+- a recorded owner approval ID and rights-evidence reference
+- explicit AI-training permission and verified content rights
+- privacy review marked `PASSED`
+- a pinned source ID and HTTPS provenance URL
+- final DatasetHub approval, explicit ingestion approval, compute approval, base-model license verification and independent benchmarks
+
+The generated Bootcamp cards intentionally set these fields to false/pending. They cannot be ingested or trained until a human reviewer supplies the required evidence. Third-party data continues through the separate permissive-license and terms-review path.
+
 ## Training handoff
 
 1. Review authorship/assignment and approve each original lesson for the intended training purpose.
