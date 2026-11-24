@@ -20,7 +20,7 @@ def normalize(value: str) -> str:
 
 
 def load_domain_names(source: str) -> list[str]:
-    pattern = re.compile(r"^  ([A-Za-z][A-Za-z0-9]+): \\{\\n([\\s\\S]*?)^  \\},?$", re.MULTILINE)
+    pattern = re.compile(r"^  ([A-Za-z][A-Za-z0-9]+): \{\n([\s\S]*?)^  \},?$", re.MULTILINE)
     names = []
     for match in pattern.finditer(source):
         body = match.group(2)
