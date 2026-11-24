@@ -123,7 +123,8 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
             self.assertTrue(bot["canonical_owner_division"])
             self.assertTrue(bot["teammate_lane_route"]["description"])
             self.assertEqual(bot["teammate_lane_route"]["shared_masterbot_id"], bot["division_route"]["shared_teammate_masterbot_id"])
-            self.assertEqual(bot["source_paths"], ["config/bots/teammate-lanes.json"])
+            self.assertEqual(len(bot["source_paths"]), 1)
+            self.assertTrue(bot["source_paths"][0].startswith("config/bots/teammate-lanes.json#"))
 
     def test_threejs_profiles_are_assigned_to_dream3d_not_left_unassigned(self):
         threejs = [row for row in self.bots if row["slug"].startswith("threejs-")]
