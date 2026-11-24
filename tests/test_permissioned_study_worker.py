@@ -21,6 +21,10 @@ class PermissionedStudyWorkerTests(unittest.TestCase):
                 return {"lesson_status": "metadata_only"}
             result = run_study_attempt(auth, study, Path(tmp))
             self.assertTrue(result["temporary_workspace_erased"])
+            self.assertFalse(result["media_download_authorized"])
+            self.assertFalse(result["transcript_ingestion_authorized"])
+            self.assertNotIn("media_downloaded", result)
+            self.assertNotIn("transcript_ingested", result)
             self.assertFalse(any(Path(tmp).iterdir()))
 
     def test_unapproved_media_download_is_blocked_before_callback(self):
@@ -51,6 +55,8 @@ class PermissionedStudyWorkerTests(unittest.TestCase):
             self.assertTrue(result["temporary_workspace_erased"])
             self.assertFalse(captured[0].exists())
             self.assertFalse(result["model_training_allowed"])
+            self.assertTrue(result["media_download_authorized"])
+            self.assertNotIn("media_downloaded", result)
 
     def test_workspace_is_erased_when_callback_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
