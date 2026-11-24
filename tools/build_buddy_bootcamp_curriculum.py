@@ -64,7 +64,7 @@ def build_curriculum(masterbots:dict,tasks:dict,packs:dict,division_map:dict,ser
     if len(capability_packs)!=10 or len({x["id"] for x in capability_packs})!=10:
         raise ValueError("expected 10 unique Hugging Face capability packs")
     all_tasks=[{
-        "task_family":family["id"],"family":family.get("family"),"modality":family.get("modality"),
+        "task_family":family,"task_family_id":family["id"],"family":family.get("family"),"modality":family.get("modality"),
         "pipeline_tag":family.get("pipeline_tag"),"description":family.get("description",""),
         "task_id_status":family.get("task_id_status"),
         "required_for_every_division":True,
