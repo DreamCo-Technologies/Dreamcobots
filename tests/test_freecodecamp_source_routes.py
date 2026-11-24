@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 from tools.build_freecodecamp_routes import build_routes, validate
-from buddy.learning.freecodecamp_source import resources_for_division, select_next_for_division, plan_next_lesson
+from buddy.learning.freecodecamp_source import resources_for_division, select_next_for_division, plan_next_lesson, execute_study_plan\nfrom buddy.learning.permissioned_study_worker import StudyAuthorization
 from buddy.learning.study_resource_scheduler import Capability
 
 class FreeCodeCampSourceRouteTests(unittest.TestCase):
@@ -73,6 +73,39 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
             self.assertIn("run_targeted_benchmark", plan["steps"])
             self.assertEqual(plan["completion_status"], "queued_not_studied")
             self.assertFalse(plan["model_training_allowed"])
+
+    def test_study_plan_uses_permissioned_worker_and_erases_workspace(self):
+        payload = build_routes(self.catalog, self.registry)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "routes.json"
+            workspace_root = Path(tmp) / "work"
+            path.write_text(json.dumps(payload))
+            plan = plan_next_lesson(1, Capability(name="python", category="python_and_automation"), path=path)
+            auth = StudyAuthorization(
+                "freeCodeCamp.org", plan["source_url"], "public_metadata_only",
+                frozenset({"open_official_page"}),
+            )
+            captured = []
+            def study(ctx):
+                self.assertFalse(ctx.media_download_allowed)
+                (ctx.workspace / "temporary-note.tmp").write_text("scratch")
+                captured.append(ctx.workspace)
+                return {"status": "original_notes_and_exercise_pending"}
+            result = execute_study_plan(plan, auth, study, workspace_root)
+            self.assertEqual(result["completion_status"], "attempted_evidence_pending")
+            self.assertTrue(result["temporary_workspace_erased"])
+            self.assertFalse(captured[0].exists())
+            self.assertFalse(result["model_training_allowed"])
+
+    def test_study_plan_rejects_mismatched_authorization(self):
+        payload = build_routes(self.catalog, self.registry)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "routes.json"
+            path.write_text(json.dumps(payload))
+            plan = plan_next_lesson(1, Capability(name="python", category="python_and_automation"), path=path)
+            auth = StudyAuthorization("wrong source", plan["source_url"], "public_metadata_only")
+            with self.assertRaisesRegex(ValueError, "source does not match"):
+                execute_study_plan(plan, auth, lambda _ctx: None, Path(tmp) / "work")
 
     def test_scheduler_accepts_one_shot_gap_iterables(self):
         payload = build_routes(self.catalog, self.registry)
