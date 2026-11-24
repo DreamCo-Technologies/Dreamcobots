@@ -16,7 +16,7 @@ REGISTRY = ROOT / "config/masterbot-65-registry.json"
 OUTPUT = ROOT / "config/generated/daily-lesson-production-plan.json"
 
 
-def build_plan(registry: dict, day: str, lessons_per_division: int = 5) -> dict:
+def build_plan(registry: dict, day: str, lessons_per_division: int = 5, queues: dict | None = None) -> dict:
     try:
         date.fromisoformat(day)
     except ValueError as exc:
@@ -30,10 +30,45 @@ def build_plan(registry: dict, day: str, lessons_per_division: int = 5) -> dict:
     if not isinstance(lessons_per_division, int) or not 1 <= lessons_per_division <= 20:
         raise ValueError("lessons_per_division must be between 1 and 20")
 
+    queue_by_division = {}
+    if queues is not None:
+        inventory = queues.get("source_inventory") or {}
+        queue_rows = queues.get("divisions")
+        if (
+            queues.get("schema") != "dreamco.freecodecamp_division_learning_queues.v1"
+            or queues.get("division_count") != 65
+            or queues.get("source_inventory_status") != "complete"
+            or inventory.get("complete") is not True
+            or inventory.get("observed_entry_count") != queues.get("catalog_video_count")
+            or not isinstance(queue_rows, list)
+            or len(queue_rows) != 65
+        ):
+            raise ValueError("daily plan requires verified complete 65-division source queues")
+        for row in queue_rows:
+            division_id = row.get("division_id")
+            items = row.get("items")
+            if division_id in queue_by_division or not isinstance(items, list):
+                raise ValueError("division queues must have unique IDs and item lists")
+            ids = [item.get("video_id") for item in items]
+            if len(ids) != len(set(ids)) or any(not video_id for video_id in ids):
+                raise ValueError("division queue video IDs must be unique and present")
+            for item in items:
+                if (
+                    item.get("rights_status") != "review_required"
+                    or item.get("media_download_allowed") is not False
+                    or item.get("transcript_ingestion_allowed") is not False
+                    or item.get("training_eligible") is not False
+                ):
+                    raise ValueError("daily study candidates must remain rights-review-only and non-training")
+            queue_by_division[division_id] = items
+        if sorted(queue_by_division) != list(range(1, 66)):
+            raise ValueError("division queues must cover IDs 1 through 65")
+
     slots = []
     for division in sorted(divisions, key=lambda row: row["id"]):
+        candidates = queue_by_division.get(division["id"], []) if queues is not None else []
         for ordinal in range(1, lessons_per_division + 1):
-            slots.append({
+            slot = {
                 "slot_id": f"{day}-division-{division['id']:02d}-lesson-{ordinal:02d}",
                 "division_id": division["id"],
                 "division_name": division["name"],
@@ -48,7 +83,24 @@ def build_plan(registry: dict, day: str, lessons_per_division: int = 5) -> dict:
                     "holdout_pass",
                     "regression_pass",
                 ],
-            })
+            }
+            if queues is not None:
+                if ordinal > len(candidates):
+                    raise ValueError(f"division {division['id']} has fewer candidates than daily lesson slots")
+                candidate = candidates[ordinal - 1]
+                slot["candidate"] = {
+                    "video_id": candidate["video_id"],
+                    "title": candidate["title"],
+                    "url": candidate["url"],
+                    "categories": candidate.get("categories", []),
+                    "priority_score": candidate.get("priority_score"),
+                    "assignment_status": candidate["assignment_status"],
+                    "rights_status": candidate["rights_status"],
+                    "media_download_allowed": False,
+                    "transcript_ingestion_allowed": False,
+                    "training_eligible": False,
+                }
+            slots.append(slot)
     return {
         "schema": "dreamco.daily_lesson_production_plan.v1",
         "day_utc": day,
@@ -74,9 +126,11 @@ def main() -> None:
     parser.add_argument("--day", default=datetime.now(timezone.utc).date().isoformat())
     parser.add_argument("--lessons-per-division", type=int, default=5)
     parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--queues", type=Path, help="Verified division queue JSON produced by build_freecodecamp_division_queues.py")
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    plan = build_plan(json.loads(REGISTRY.read_text(encoding="utf-8")), args.day, args.lessons_per_division)
+    queues = json.loads(args.queues.read_text(encoding="utf-8")) if args.queues else None
+    plan = build_plan(json.loads(REGISTRY.read_text(encoding="utf-8")), args.day, args.lessons_per_division, queues=queues)
     rendered = json.dumps(plan, indent=2) + "\n"
     if args.check:
         if not args.output.exists() or args.output.read_text(encoding="utf-8") != rendered:
