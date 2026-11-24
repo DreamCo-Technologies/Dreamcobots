@@ -212,7 +212,8 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         if "optimizer_state_dict" in saved:
             optimizer.load_state_dict(saved["optimizer_state_dict"])
         resumed_steps = int(saved_meta.get("total_steps", saved_meta.get("steps", 0)))
-    generator = torch.Generator(device="cpu").manual_seed(seed)
+    torch.manual_seed(seed + resumed_steps)
+    generator = torch.Generator(device="cpu").manual_seed(seed + resumed_steps)
 
     def batch(source):
         starts = torch.randint(0, max(1, len(source) - sequence_length - 1), (batch_size,), generator=generator)
