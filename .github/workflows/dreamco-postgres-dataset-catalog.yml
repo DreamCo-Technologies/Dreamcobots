@@ -1,0 +1,30 @@
+name: DreamCo PostgreSQL Dataset Catalog
+
+on:
+  pull_request:
+    paths:
+      - "buddy/datasets/postgres_catalog.py"
+      - "tests/test_buddy_postgres_catalog.py"
+      - "database/migrations/README_DIVISION_DATASET_CATALOG.md"
+      - ".github/workflows/dreamco-postgres-dataset-catalog.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/datasets/postgres_catalog.py"
+      - "tests/test_buddy_postgres_catalog.py"
+      - "database/migrations/README_DIVISION_DATASET_CATALOG.md"
+
+permissions:
+  contents: read
+
+jobs:
+  postgres-catalog-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run isolated adapter tests
+        run: python -m unittest tests.test_buddy_postgres_catalog -v
