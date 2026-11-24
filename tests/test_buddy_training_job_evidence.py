@@ -54,7 +54,7 @@ class TrainingJobEvidenceTests(unittest.TestCase):
               "rights_status":"VERIFIED","holdout":False,"content_sha256":content_sha,
               "object_path":"objects/dataset.jsonl","split_manifest":split_manifest,
               "primary_masterbot_id":1,"collaborating_masterbot_ids":[]}
-            job={"schema":"dreamco.model_training_job.v1","execution_status":"NOT_EXECUTED",
+            job={"schema":"dreamco.model_training_job.v1","job_id":"train-1111111111111111","execution_status":"NOT_EXECUTED",
               "compute_approval_id":"compute-1","base_model_revision":"a"*40,
               "tokenizer_revision":"b"*40,"tested_commit_sha":"c"*40,
               "model_license":"Apache-2.0","model_license_url":"https://example.org/license",
