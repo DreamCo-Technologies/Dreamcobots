@@ -7,7 +7,8 @@ from pathlib import Path
 
 from tools.build_dreamco_bootcamp_seed_data import build_candidate, build_dataset_card, load_jsonl
 from buddy.datasets.hub import DatasetHub, DatasetPolicyError
-from buddy.datasets.training_jobs import create_training_job, main as build_main
+from buddy.datasets.training_jobs import create_training_job
+from buddy.datasets.transformers_runner import _split_hash, main as build_main
 
 
 def registry():
@@ -43,6 +44,8 @@ class BootcampSeedDataTests(unittest.TestCase):
         self.assertFalse(manifest["training_approved"])
         self.assertFalse(manifest["training_started"])
         self.assertEqual(len(manifest["candidate_sha256"]), 64)
+        for split in ("train", "validation", "test"):
+            self.assertEqual(manifest["split_manifest"][f"{split}_sha256"], _split_hash(rows, split))
         self.assertIn("\n", rows[0]["text"])
         card = build_dataset_card(manifest, "candidate.jsonl")
         self.assertFalse(card["training_approved"])
