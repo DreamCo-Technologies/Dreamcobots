@@ -69,6 +69,33 @@ class DatasetIngestionWorkerTests(unittest.TestCase):
    with self.assertRaisesRegex(DatasetIngestionError,"requires_approved_object_store"):
     execute_ingestion_job(self.job["manifest_path"],"approve-1",hub=self.hub,
      postgres_catalog=FakePostgresCatalog())
+ def test_ingests_dreamco_owned_data_only_with_explicit_owner_and_contributor_evidence(self):
+  card=sample_card()
+  card.update({"license":"DREAMCO_INTERNAL_OWNED","license_url":"https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/config/buddy-training-data-provenance-policy.json",
+   "source":"dreamco_authored","source_id":"dreamco.bootcamp.core.v1",
+   "ai_training_allowed":True,"content_rights_verified":True,"privacy_review":"PASSED",
+   "owner_assignment_verified":True,"contributor_rights_verified":True,
+   "owner_approval_id":"OWNER-APPROVAL-001"})
+  job=create_ingestion_job(card,self.source,"approve-internal",self.root/"jobs")
+  with patch.dict(os.environ,{"DREAMCO_ALLOW_DATASET_INGESTION":"1"},clear=True):
+   result=execute_ingestion_job(job["manifest_path"],"approve-internal",hub=self.hub)
+  self.assertEqual(result["status"],"INGESTED_PENDING_BENCHMARK")
+  self.assertEqual(result["rights_assessment"]["status"],
+   "INTERNAL_OWNED_TRAINING_CANDIDATE_REQUIRES_DATA_QUALITY_AND_FINAL_REVIEW")
+  self.assertFalse(result["training_started"])
+
+ def test_rejects_internal_owned_data_without_contributor_rights(self):
+  card=sample_card()
+  card.update({"license":"DREAMCO_INTERNAL_OWNED","source":"dreamco_authored",
+   "source_id":"dreamco.bootcamp.core.v1","ai_training_allowed":True,
+   "content_rights_verified":True,"privacy_review":"PASSED",
+   "owner_assignment_verified":True,"contributor_rights_verified":False,
+   "owner_approval_id":"OWNER-APPROVAL-001"})
+  job=create_ingestion_job(card,self.source,"approve-internal-bad",self.root/"jobs")
+  with patch.dict(os.environ,{"DREAMCO_ALLOW_DATASET_INGESTION":"1"},clear=True):
+   with self.assertRaisesRegex(DatasetIngestionError,"rights_or_privacy"):
+    execute_ingestion_job(job["manifest_path"],"approve-internal-bad",hub=self.hub)
+
  def test_rejects_unverified_rights(self):
   card=sample_card();card["ai_training_allowed"]=False
   job=create_ingestion_job(card,self.source,"approve-2",self.root/"jobs")
