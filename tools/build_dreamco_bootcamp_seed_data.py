@@ -96,8 +96,18 @@ def build_candidate(
             raise ValueError(f"{example_id}: at least two meaningful rubric checks are required")
         if not isinstance(tags, list) or not tags or not all(isinstance(x, str) and x.strip() for x in tags):
             raise ValueError(f"{example_id}: at least one subject tag is required")
-        if not isinstance(example.get("source"), dict) or example["source"].get("external_text_included") is not False:
-            raise ValueError(f"{example_id}: seed data must not include unreviewed external text")
+        source = example.get("source")
+        if (
+            not isinstance(source, dict)
+            or source.get("external_text_included") is not False
+            or not str(source.get("kind", "")).strip()
+            or not str(source.get("source_id", "")).strip()
+            or not str(source.get("source_version", "")).strip()
+        ):
+            raise ValueError(f"{example_id}: complete source provenance and no external text are required")
+        target_scope = example.get("target_scope", "shared_foundation_candidate")
+        if target_scope not in {"shared_foundation_candidate", "division_training_candidate"}:
+            raise ValueError(f"{example_id}: evaluation-only or unknown target scopes cannot enter a training candidate")
         if example.get("authoring") != REQUIRED_AUTHORING:
             raise ValueError(f"{example_id}: authoring and rights must remain pending human review")
         inspected = json.dumps(example, ensure_ascii=False)
@@ -119,7 +129,7 @@ def build_candidate(
             "tags": tags,
             "source": example["source"],
             "authoring": example["authoring"],
-            "target_scope": example.get("target_scope", "shared_foundation_candidate"),
+            "target_scope": target_scope,
         }
         rows.append(row)
         counts[split] += 1
@@ -150,7 +160,7 @@ def build_candidate(
         "example_count": len(rows),
         "module_count": len(modules),
         "module_ids": sorted(modules),
-        "data_plane": "dreamco_owned_training",
+        "data_plane": "candidate_pending_ownership_and_rights_review",
         "rights_status": "PENDING_HUMAN_REVIEW",
         "training_approved": False,
         "human_review_required": True,
@@ -181,7 +191,7 @@ def build_dataset_card(manifest: dict[str, Any], candidate_path: str) -> dict[st
         "license": "UNASSIGNED_PENDING_HUMAN_REVIEW",
         "license_url": "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/config/buddy-training-data-provenance-policy.json",
         "source_url": "https://github.com/DreamCo-Technologies/Dreamcobots",
-        "data_plane": "dreamco_owned_training",
+        "data_plane": "candidate_pending_ownership_and_rights_review",
         "rights_status": "PENDING_HUMAN_REVIEW",
         "rights_evidence": "",
         "training_approved": False,
