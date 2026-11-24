@@ -103,12 +103,17 @@ def execute_approved_training_job(job_manifest:str|Path,approval_id:str,evidence
     job=json.loads(Path(job_manifest).read_text(encoding="utf-8"))
     if not approval_id or approval_id!=job.get("compute_approval_id"):
         raise TrainingWorkerError("compute approval ID does not match the job manifest")
-    output_root=Path(evidence_root).resolve().parent/"training-run-output"
+    job_id=str(job.get("job_id",""))
+    if not re.fullmatch(r"train-[a-f0-9]{16}",job_id):
+        raise TrainingWorkerError("training job ID is not canonical")
+    output_root=Path(evidence_root).resolve().parent/f"training-run-output-{job_id}"
     try:
         result=execute_job(job_manifest,approval_id,output_root,allow_model_download=allow_model_download)
     except TrainingExecutionError as exc:
         raise TrainingWorkerError(str(exc)) from None
-    return package_training_evidence(result,evidence_root)
+    packaged=package_training_evidence(result,evidence_root)
+    shutil.rmtree(output_root,ignore_errors=True)
+    return packaged
 
 def main()->int:
     parser=argparse.ArgumentParser()
