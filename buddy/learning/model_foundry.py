@@ -74,8 +74,10 @@ def validate_manifest(manifest: dict[str, Any], data_root: Path) -> list[dict[st
         permissions = item.get("permissions") or {}
         required = (
             item.get("rights_status") == "APPROVED",
-            bool(item.get("owner") and item.get("owner_attestation_ref")),
-            bool(item.get("license_id") and item.get("license_evidence_ref")),
+            bool(item.get("owner") and item.get("owner_attestation_ref")
+                 and item.get("owner_attestation_path") and item.get("owner_attestation_sha256")),
+            bool(item.get("license_id") and item.get("license_evidence_ref")
+                 and item.get("license_evidence_path") and item.get("license_evidence_sha256")),
             permissions.get("training") is True,
             permissions.get("commercial_model_use") is True,
             permissions.get("derivative_models") is True,
@@ -83,6 +85,22 @@ def validate_manifest(manifest: dict[str, Any], data_root: Path) -> list[dict[st
             item.get("training_strategy") in STRATEGY_PROFILES,
         )
         if not all(required):
+            continue
+        evidence_ok = True
+        for path_key, hash_key, label in (
+            ("owner_attestation_path", "owner_attestation_sha256", "owner attestation"),
+            ("license_evidence_path", "license_evidence_sha256", "license evidence"),
+        ):
+            evidence_path = (root / str(item.get(path_key, ""))).resolve()
+            if evidence_path != root and root not in evidence_path.parents:
+                raise ValueError(f"{dataset_id}: {label} path escapes data root")
+            if not evidence_path.is_file():
+                evidence_ok = False
+                break
+            expected_evidence_hash = str(item.get(hash_key, "")).lower()
+            if len(expected_evidence_hash) != 64 or sha256_file(evidence_path) != expected_evidence_hash:
+                raise ValueError(f"{dataset_id}: {label} SHA-256 mismatch")
+        if not evidence_ok:
             continue
         relative = Path(str(item.get("local_path", "")))
         candidate = (root / relative).resolve()
