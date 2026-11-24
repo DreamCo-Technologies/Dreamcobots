@@ -20,7 +20,7 @@ def resource_map(path: Path, *, count: int = 65, duplicate: bool = False) -> Pat
 
 class PostgresProbeTests(unittest.TestCase):
     def test_missing_dsn_is_blocked_without_connecting(self):
-        connect = Mock()
+        connect = MagicMock()
         result = probe_postgres(dsn="", connect=connect)
         self.assertEqual(result["status"], "BLOCKED")
         self.assertFalse(result["credentials_emitted"])
@@ -59,12 +59,12 @@ class PostgresProbeTests(unittest.TestCase):
     def test_missing_namespace_is_incomplete_not_provisioned(self):
         with tempfile.TemporaryDirectory() as temp:
             mapping = resource_map(Path(temp) / "map.json")
-            cursor = Mock()
+            cursor = MagicMock()
             cursor.fetchone.return_value = ("dreamco", "probe")
             cursor.fetchall.return_value = [(f"dreamco_division_{i:03d}",) for i in range(1, 65)]
-            connection = Mock()
+            connection = MagicMock()
             connection.cursor.return_value.__enter__.return_value = cursor
-            connect = Mock()
+            connect = MagicMock()
             connect.return_value.__enter__.return_value = connection
 
             result = probe_postgres(dsn="postgresql://secret", resource_map_path=mapping, connect=connect)
