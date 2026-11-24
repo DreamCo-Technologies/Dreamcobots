@@ -114,20 +114,6 @@ jobs:
             echo "- Production deployment and direct pushes to main: disabled"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Save diagnostics
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: buddy-continuous-repair-${{ github.run_id }}
-          path: |
-            reports/continuous-repair/**
-            reports/ACTIONS_HEALTH_REPORT.md
-            reports/ACTIONS_LIVE_HEALTH.md
-            config/generated/actions-health-report.json
-            config/generated/actions-live-health.json
-          if-no-files-found: warn
-          retention-days: 30
-
       - name: Package verified changes for manual review
         if: success()
         shell: bash
@@ -153,6 +139,20 @@ jobs:
               echo "- Automatic PR creation remains disabled by repository policy."
             } >> "$GITHUB_STEP_SUMMARY"
           fi
+
+      - name: Save diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: buddy-continuous-repair-${{ github.run_id }}
+          path: |
+            reports/continuous-repair/**
+            reports/ACTIONS_HEALTH_REPORT.md
+            reports/ACTIONS_LIVE_HEALTH.md
+            config/generated/actions-health-report.json
+            config/generated/actions-live-health.json
+          if-no-files-found: warn
+          retention-days: 30
 
       - name: Open or update a human-triage issue if verification fails
         if: failure()
