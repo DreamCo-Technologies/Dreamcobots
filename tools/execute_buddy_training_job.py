@@ -20,8 +20,8 @@ def _hash_file(path:Path)->str:
             digest.update(chunk)
     return digest.hexdigest()
 
-def _verify_files(root:Path,files:list[dict[str,Any]])->None:
-    if not files: raise TrainingWorkerError("training artifact file manifest is empty")
+def _verify_files(root:Path,files:list[dict[str,Any]],require_nonempty:bool=True)->None:
+    if require_nonempty and not files: raise TrainingWorkerError("training artifact file manifest is empty")
     for item in files:
         relative=Path(str(item.get("path","")))
         if relative.is_absolute() or not relative.parts or ".." in relative.parts:
@@ -61,12 +61,12 @@ def package_training_evidence(result:dict[str,Any],evidence_root:str|Path)->dict
         source=Path(str(source_paths.get(name,""))).resolve()
         if not source.is_dir():
             raise TrainingWorkerError(f"{name} source directory is missing")
-        _verify_files(source,expected[name])
+        _verify_files(source,expected[name],require_nonempty=name!="checkpoints")
         if destination.exists():
             raise TrainingWorkerError(f"evidence destination already exists: {name}")
         destination.parent.mkdir(parents=True,exist_ok=True)
         shutil.copytree(source,destination)
-        _verify_files(destination,expected[name])
+        _verify_files(destination,expected[name],require_nonempty=name!="checkpoints")
     relative_weights=str(destinations["weights"].relative_to(root))
     evidence_result=dict(result)
     evidence_result["checkpoint_root"]=relative_weights
