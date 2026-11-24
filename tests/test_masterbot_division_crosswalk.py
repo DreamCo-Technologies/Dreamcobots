@@ -44,5 +44,41 @@ class MasterBotDivisionCrosswalkTests(unittest.TestCase):
         self.assertTrue(all(row["review_required"] for row in result["masterbots"]))
 
 
+    def test_owner_review_preserves_core_supplemental_and_shared_service_boundaries(self):
+        root = Path(__file__).resolve().parents[1]
+        review = json.loads((root / "config/review/masterbot-domain-crosswalk-owner-review.json").read_text(encoding="utf-8"))
+        reconciliation = json.loads((root / "config/generated/division-reconciliation.json").read_text(encoding="utf-8"))
+
+        self.assertEqual(review["schema"], "dreamco.masterbot_domain_owner_review.v2")
+        self.assertIn("config/generated/masterbot-45-domain-crosswalk.json", review["source_refs"])
+        self.assertIn("config/generated/masterbot-55-domain-crosswalk.json", review["source_refs"])
+        self.assertIn("config/generated/division-reconciliation.json", review["source_refs"])
+        self.assertEqual(review["domain_taxonomy"]["original_core_divisions"], 45)
+        self.assertEqual(review["domain_taxonomy"]["promoted_supplemental_divisions"], 10)
+        self.assertEqual(review["domain_taxonomy"]["total_domain_divisions"], 55)
+        self.assertEqual(review["domain_taxonomy"]["shared_platform_masterbot_ids"], {"first": 46, "last": 65, "count": 20})
+
+        decisions = review["masterbot_domain_decisions"]
+        self.assertEqual([row["masterbot_id"] for row in decisions], list(range(46, 66)))
+        self.assertTrue(all(row["primary_domain_id"] is None for row in decisions))
+        self.assertTrue(all(row["candidate_domain_ids"] == [] for row in decisions))
+        self.assertTrue(all(row["owner_approval"] is None and row["review_required"] for row in decisions))
+
+        supplemental = review["unassigned_domain_profiles"]
+        expected = {row["name"].casefold() for row in reconciliation["promoted_supplemental_divisions"]}
+        self.assertEqual({row["domain_name"].casefold() for row in supplemental}, expected)
+        self.assertTrue(all(row["owner_approval"] is None and row["review_required"] for row in supplemental))
+        self.assertEqual(reconciliation["counts"]["original_core_divisions"], 45)
+        self.assertEqual(reconciliation["counts"]["promoted_supplemental_divisions"], 10)
+        self.assertEqual(reconciliation["counts"]["total_domain_divisions"], 55)
+        self.assertEqual(reconciliation["counts"]["shared_platform_masterbots"], 20)
+
+    def test_owner_review_references_current_crosswalks_not_legacy_source_only(self):
+        root = Path(__file__).resolve().parents[1]
+        review = json.loads((root / "config/review/masterbot-domain-crosswalk-owner-review.json").read_text(encoding="utf-8"))
+        self.assertNotIn("source", review)
+        self.assertIn("config/generated/masterbot-45-domain-crosswalk.json", review["source_refs"])
+        self.assertIn("config/generated/division-reconciliation.json", review["source_refs"])
+
 if __name__ == "__main__":
     unittest.main()
