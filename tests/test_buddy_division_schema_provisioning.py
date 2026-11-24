@@ -91,6 +91,22 @@ class DivisionSchemaProvisioningTests(unittest.TestCase):
             self.assertEqual(result["inventory"]["unsafe_owner_roles"], ["dreamco_division_003"])
             self.assertEqual(result["inventory"]["schema_owner_mismatches"], ["dreamco_division_001"])
 
+    def test_apply_reports_already_provisioned_without_claiming_ddl(self):
+        with tempfile.TemporaryDirectory() as temp:
+            mapping = resource_map(Path(temp) / "map.json")
+            all_schemas = {f"dreamco_division_{i:03d}" for i in range(1, 66)}
+            connect, cursor = db_mocks(existing_schemas=all_schemas)
+            import hashlib
+            map_hash = hashlib.sha256(mapping.read_bytes()).hexdigest()
+            result = provision_division_schemas(
+                dsn="postgresql://test", resource_map_path=mapping, apply=True,
+                approval_id="APPROVAL-1", expected_resource_map_sha256=map_hash,
+                connect=connect, allow_apply=True,
+            )
+            self.assertEqual(result["status"], "ALREADY_PROVISIONED")
+            self.assertFalse(result["ddl_executed"])
+            self.assertEqual(cursor.execute.call_count, 2)
+
     def test_apply_requires_approval_map_pin_and_explicit_environment_opt_in(self):
         with tempfile.TemporaryDirectory() as temp:
             mapping = resource_map(Path(temp) / "map.json")
