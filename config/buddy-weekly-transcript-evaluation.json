@@ -1,0 +1,37 @@
+{
+  "schema": "dreamco.buddy_weekly_transcript_evaluation_policy.v1",
+  "cadence": "weekly",
+  "schedule_utc": "0 6 * * 1",
+  "requirement": "Every rights-approved transcript in the canonical transcript manifest must receive at least one real Buddy evaluation in each ISO week.",
+  "transcript_manifest": "config/authorized-transcripts/manifest.json",
+  "evaluation_ledger": "config/generated/buddy-transcript-evaluation-ledger.json",
+  "required_evidence": [
+    "transcript_id",
+    "transcript_sha256",
+    "rights_evidence_ref",
+    "buddy_model_id",
+    "buddy_model_version",
+    "evaluation_suite_version",
+    "started_at",
+    "completed_at",
+    "result",
+    "score",
+    "run_id"
+  ],
+  "allowed_results": [
+    "passed",
+    "failed",
+    "error"
+  ],
+  "fail_closed": true,
+  "rights_policy": {
+    "public_metadata_is_not_transcript_permission": true,
+    "transcript_ingestion_requires_explicit_rights_review": true,
+    "training_permission_is_separate": false
+  },
+  "execution_contract": {
+    "adapter": "must_be_registered_and_executable_before_any_transcript_is_marked_tested",
+    "no_synthetic_results": true,
+    "no_metadata_only_substitution": true
+  }
+}
