@@ -20,6 +20,14 @@ on:
       - "config/buddy-dataset-routing-policy.json"
       - "config/huggingface-task-taxonomy.json"
       - "config/generated/division-huggingface-taxonomy-map.json"
+      - "config/generated/division-resource-readiness-map.json"
+      - "schemas/division-resource-readiness-map.schema.json"
+      - "tools/build_division_resource_readiness_map.py"
+      - "tests/test_division_resource_readiness.py"
+      - "tests/test_division_resource_router.py"
+      - "buddy/resources/**"
+      - "config/review/masterbot-domain-crosswalk-owner-review.json"
+      - "docs/architecture/DREAMCO_DIVISION_RESOURCE_READINESS.md"
       - "schemas/division-huggingface-taxonomy-map.schema.json"
       - "tools/build_division_huggingface_taxonomy_map.py"
       - "tests/test_division_huggingface_taxonomy_map.py"
@@ -103,6 +111,8 @@ jobs:
           python tools/build_division_model_fleet.py
           python tools/build_division_huggingface_taxonomy_map.py --check
           python -m unittest tests.test_division_huggingface_taxonomy_map
+          python tools/build_division_resource_readiness_map.py --check
+          python -m unittest tests.test_division_resource_readiness tests.test_division_resource_router
           python tools/build_buddy_dataset_routes.py
       - name: Preserve canonical division and dataset queues
         uses: actions/upload-artifact@v4
@@ -111,6 +121,8 @@ jobs:
           path: |
             artifacts/division-mastery/division-mastery-queue.json
             artifacts/buddy-dataset-hub/dataset-routes.json
+            config/generated/division-resource-readiness-map.json
+            config/review/masterbot-domain-crosswalk-owner-review.json
           if-no-files-found: error
           retention-days: 90
 
