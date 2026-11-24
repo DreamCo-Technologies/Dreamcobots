@@ -63,6 +63,10 @@ learning_sources:
     capability_map: config/hf-capability-download-map.json
     applies_to: all_65_divisions
     discovery: metadata_and_model_dataset_cards
+    runtime_adapter: tools.refresh_buddy_technology_radar
+    catalog_path: config/generated/buddy-technology-radar.json
+    dataset_api_source_id: huggingface-datasets
+    model_api_source_id: huggingface-models
     dataset_ingestion: requires_item_level_license_and_terms_review
     gated_access: requires_explicit_account_and_terms_approval
     training_approval_default: false
@@ -70,6 +74,10 @@ learning_sources:
   - id: ollama
     name: Ollama local model runtime
     purpose: local_model_import_inference_and_evaluation
+    runtime_adapter: buddy.learning.ollama_runtime.OllamaLocalRuntime
+    discovery_source_id: ollama-library
+    runtime_scope: loopback_only
+    automatic_model_pull_create_delete_push: false
     model_license_review_required: true
     base_model_and_adapter_match_required: true
     paid_compute_default: false
@@ -80,7 +88,10 @@ learning_sources:
     policy: config/buddy-continuous-study-policy.json
     applies_to: all_65_divisions
     parameter_target: 45000000
-    training_status: research_plan_only
+    training_status: design_blueprints_generated_by_tools_build_division_45m_model_blueprints
+    blueprint_path: config/generated/division-45m-model-blueprints.json
+    blueprint_generator: tools/build_division_45m_model_blueprints.py
+    training_status_truth: design_only_not_trained_until_weight_hash_and_run_evidence_exist
     training_from_scratch_requires: [authorized_corpus, compute_budget_approval, tokenizer, architecture_config, reproducible_run, holdout, regression, model_card]
 metrics:
   - benchmark_score_delta
