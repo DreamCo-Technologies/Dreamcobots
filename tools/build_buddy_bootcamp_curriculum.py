@@ -10,6 +10,7 @@ TASKS=ROOT/"config/huggingface-task-taxonomy.json"
 PACKS=ROOT/"config/hf-capability-download-map.json"
 DIVISION_MAP=ROOT/"config/generated/division-huggingface-taxonomy-map.json"
 SERVING_POLICY=ROOT/"config/buddy-model-serving-policy.json"
+SOURCE_REGISTRY=ROOT/"config/dreamco-training-source-registry.json"
 OUTPUT=ROOT/"config/generated/buddy-bootcamp-curriculum.json"
 
 CORE_MODULES=[
@@ -35,18 +36,41 @@ def _slug(value:str)->str:
     return re.sub(r"[^a-z0-9]+","-",value.casefold()).strip("-")
 
 def build_curriculum(masterbots:dict,tasks:dict,packs:dict,division_map:dict,serving:dict,
-                     source_hashes:dict[str,str]|None=None)->dict[str,Any]:
+                     source_hashes:dict[str,str]|None=None,
+                     source_registry:dict[str,Any]|None=None)->dict[str,Any]:
     divisions=masterbots.get("divisions",[])
     task_families=tasks.get("task_families",[])
     capability_packs=packs.get("packs",[])
     routes={int(x["masterbot_id"]):x for x in division_map.get("routes",[])}
     if len(divisions)!=65 or len(routes)!=65: raise ValueError("canonical 65-division registry and taxonomy map required")
-    if len(task_families)!=37 or len(set(task_families))!=37: raise ValueError("expected 37 unique Hugging Face task families")
+    task_ids=[]
+    for family in task_families:
+        if not isinstance(family,dict):
+            raise ValueError("each Hugging Face task family must be a structured record")
+        task_id=family.get("id")
+        if not isinstance(task_id,str) or not task_id.strip():
+            raise ValueError("each Hugging Face task family must have a non-empty stable id")
+        task_ids.append(task_id.strip())
+    if len(task_families)!=37 or len(set(task_ids))!=37:
+        raise ValueError("expected 37 unique Hugging Face task family IDs")
+    source_registry=source_registry or {}
+    source_families=source_registry.get("source_families",[])
+    source_ids=[item.get("id") for item in source_families if isinstance(item,dict)]
+    required_source_families={"dreamco_original","official_technical_docs","public_dataset_catalogs",
+        "research_metadata","code_and_software","government_and_standards","user_contributed",
+        "teacher_outputs","evaluation_only"}
+    if not required_source_families.issubset(set(source_ids)) or len(source_ids)!=len(set(source_ids)):
+        raise ValueError("training source registry must contain all nine unique governed source families")
     if len(capability_packs)!=10 or len({x["id"] for x in capability_packs})!=10:
         raise ValueError("expected 10 unique Hugging Face capability packs")
-    all_tasks=[{"task_family":family,"required_for_every_division":True,
-        "discovery_source":"Hugging Face Hub task taxonomy","training_rights":"REVIEW_REQUIRED",
-        "training_status":"NOT_RUN"} for family in task_families]
+    all_tasks=[{
+        "task_family":family["id"],"family":family.get("family"),"modality":family.get("modality"),
+        "pipeline_tag":family.get("pipeline_tag"),"description":family.get("description",""),
+        "task_id_status":family.get("task_id_status"),
+        "required_for_every_division":True,
+        "discovery_source":"Hugging Face Hub task taxonomy",
+        "training_rights":"REVIEW_REQUIRED","training_status":"NOT_RUN"
+    } for family in task_families]
     pack_index={x["id"]:x for x in capability_packs}
     route_records=[]
     for division in sorted(divisions,key=lambda x:int(x["id"])):
@@ -78,6 +102,9 @@ def build_curriculum(masterbots:dict,tasks:dict,packs:dict,division_map:dict,ser
             "dataset_discovery_lane":route["lane_id"],"object_store_prefix":f"dreamco/masterbot-{mid:03d}/",
             "teacher_routing_policy":"buddy_teacher_coordinator",
             "training_methods":["sft","lora"],"benchmark_suite":"division-independent-v1",
+            "training_source_family_ids":sorted(required_source_families),
+            "shared_foundation_data_policy":"immutable_source_reference_materialized_per_division",
+            "private_division_data_shared":False,"private_holdouts_shared":False,
             "readiness":"REQUIREMENTS_DEFINED_NOT_PROVISIONED"},
           "lifecycle":{"dataset":"NOT_INGESTED","training":"NOT_RUN","benchmark":"NOT_RUN",
             "certification":"NOT_CERTIFIED","runtime":"NOT_DEPLOYED"}})
@@ -90,10 +117,16 @@ def build_curriculum(masterbots:dict,tasks:dict,packs:dict,division_map:dict,ser
         "teacher_outputs_are_untrusted":True,"paid_teacher_calls_require_per_request_approval":True,
         "teacher_output_training_rights_review_required":True},
       "coverage":{"divisions":65,"task_families":len(all_tasks),"capability_packs":len(capability_packs),
+        "training_source_families":len(source_families),
         "dataset_discovery_dimensions":tasks.get("dataset_discovery_dimensions",[]),
         "model_discovery_dimensions":tasks.get("model_discovery_dimensions",[]),
         "core_modules":len(CORE_MODULES),"division_task_coverage":65*len(all_tasks)},
       "global_task_families":all_tasks,"capability_pack_catalog":capability_packs,
+      "training_resource_catalog":{"source_families":source_families,
+        "discovery_adapters":source_registry.get("discovery_adapters",{}),
+        "quality_gates":source_registry.get("quality_gates",[]),
+        "training_methods":source_registry.get("training_methods",[]),
+        "division_policy":source_registry.get("division_policy",{})},
       "core_modules":CORE_MODULES,"divisions":route_records,
       "rights_policy":tasks.get("rights_policy",{}),
       "source_hashes":source_hashes or {},
@@ -105,12 +138,18 @@ def validate_curriculum(payload:dict[str,Any])->None:
         raise ValueError("curriculum must cover all 65 divisions")
     tasks=payload.get("global_task_families",[])
     if len(tasks)!=37: raise ValueError("curriculum must cover all 37 HF task families")
+    source_families=payload.get("training_resource_catalog",{}).get("source_families",[])
+    if len(source_families)!=9: raise ValueError("curriculum must cover all nine governed training source families")
     if payload.get("coverage",{}).get("capability_packs")!=10: raise ValueError("all 10 capability packs required")
     model_names=[x["model"]["model_name"] for x in payload["divisions"]]
     if len(set(model_names))!=65: raise ValueError("division model names must be unique")
     for division in payload["divisions"]:
         if len(division["curriculum"]["global_task_families"])!=37:
             raise ValueError("every division must receive all global task families")
+        if len(division["resources"].get("training_source_family_ids",[]))!=9:
+            raise ValueError("every division must receive the governed multi-source training catalog")
+        if division["resources"].get("private_division_data_shared") is not False or division["resources"].get("private_holdouts_shared") is not False:
+            raise ValueError("private division data and holdouts must remain isolated")
         if division["model"]["status"]!="SPECIFIED_NOT_TRAINED":
             raise ValueError("curriculum generation cannot fabricate model training status")
         if division["huggingface"]["owner_review_required"] and division["huggingface"]["owner_approval"] is None:
@@ -122,9 +161,10 @@ def main()->int:
     parser.add_argument("--check",action="store_true")
     parser.add_argument("--out",type=Path,default=OUTPUT)
     args=parser.parse_args()
-    inputs=[MASTERBOTS,TASKS,PACKS,DIVISION_MAP,SERVING_POLICY]
+    inputs=[MASTERBOTS,TASKS,PACKS,DIVISION_MAP,SERVING_POLICY,SOURCE_REGISTRY]
     hashes={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs}
-    payload=build_curriculum(*[_read(p) for p in inputs],source_hashes=hashes)
+    payload=build_curriculum(*[_read(p) for p in inputs[:5]],source_hashes=hashes,
+        source_registry=_read(SOURCE_REGISTRY))
     validate_curriculum(payload)
     rendered=json.dumps(payload,indent=2,ensure_ascii=False)+"\n"
     if args.check:
