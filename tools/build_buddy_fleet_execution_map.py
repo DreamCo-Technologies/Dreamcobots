@@ -49,6 +49,44 @@ def load_source_bots() -> dict[str, list[dict[str, Any]]]:
                 })
     return result
 
+def load_teammate_lanes() -> dict[str, dict[str, Any]]:
+    path = ROOT / "config/bots/teammate-lanes.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if data.get("division") != "GrokTeammates":
+        raise ValueError("Expected GrokTeammates shared workforce source")
+    lanes = {row["slug"]: row for row in data.get("lanes", [])}
+    if len(lanes) != 112:
+        raise ValueError(f"Expected 112 Grok teammate lanes, found {len(lanes)}")
+    return lanes
+
+def teammate_masterbot_route(lane: dict[str, Any]) -> tuple[int, str]:
+    text = " ".join(str(lane.get(k, "")) for k in ("slug", "name", "description")).casefold()
+    rules = [
+        (("security", "trust", "privacy", "permission", "safety"), 56, "security_and_trust"),
+        (("benchmark", "bench", "eval", "scorecard", "vs500"), 47, "benchmark_and_evaluation"),
+        (("teacher", "curriculum", "education", "bootcamp", "tutor", "study", "learning", "mastery"), 48, "learning_and_curriculum"),
+        (("model", "distill", "lora", "adapter", "training", "multimodal", "weights"), 49, "model_evolution"),
+        (("code", "debug", "regression", "github", "integration", "api", "tool-use", "tooluse"), 50, "integration_and_tooling"),
+        (("reasoning", "logic", "proof", "metacog"), 51, "reasoning"),
+        (("world", "global", "country", "commerce"), 52, "world_and_global"),
+        (("vision", "pages", "demo", "camera", "visual"), 53, "vision_and_interfaces"),
+        (("voice", "audio", "av", "speech"), 54, "voice_and_audio"),
+        (("human", "workforce", "career", "job", "people"), 55, "human_workforce"),
+        (("product", "merchant", "package", "marketplace", "monetiz"), 57, "product_and_commerce"),
+        (("operations", "scheduler", "workflow", "runtime", "queue", "issues", "pull request"), 58, "operations"),
+        (("strategy", "architect", "roadmap", "competitor"), 59, "strategy"),
+        (("experiment", "sandbox", "trial", "ablation"), 60, "experimentation"),
+        (("simulation", "simulator", "digital twin"), 61, "simulation"),
+        (("research", "source discovery", "study source"), 46, "research"),
+        (("quality", "production gate", "gap closure", "release"), 63, "quality_and_release"),
+        (("resource", "dataset", "huggingface", "hf-", "catalog", "oer"), 64, "resources_and_datasets"),
+        (("future", "foresight"), 65, "future"),
+    ]
+    for terms, masterbot_id, route_name in rules:
+        if any(term in text for term in terms):
+            return masterbot_id, route_name
+    return 62, "discovery_fallback"
+
 def load_lane_index(lanes: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return {row["id"]: row for row in lanes.get("lanes", [])}
 
@@ -136,7 +174,7 @@ LANE_RULES = [
 
 def revenue_route(bot: dict[str, Any], registry: dict[str, Any], lane_index: dict[str, dict[str, Any]],
                   source_categories: dict[str, Any]) -> dict[str, Any] | None:
-    text = " ".join(str(bot.get(k, "")) for k in ("slug", "name", "category", "division")).casefold()
+    text = " ".join(str(bot.get(k, "")) for k in ("slug", "name", "category", "division", "description")).casefold()
     slug = slug_norm(bot.get("slug", ""))
     registered = []
     for row in registry.get("bots", []):
@@ -217,6 +255,7 @@ def build() -> dict[str, Any]:
     if len(portfolio_by_name) != 10:
         raise ValueError("Expected ten specialist portfolio charters")
     source_bots = load_source_bots()
+    teammate_lanes = load_teammate_lanes()
     canonical_owner_capabilities: dict[str, set[str]] = defaultdict(set)
     for source_rows_for_slug in source_bots.values():
         for source_row in source_rows_for_slug:
@@ -247,6 +286,10 @@ def build() -> dict[str, Any]:
         source_division = str(source.get("_source_division") or bot.get("division") or "").strip()
         source_portfolio = source_division if source_division in portfolio_by_name else None
         charter = portfolio_by_name.get(source_portfolio) if source_portfolio else None
+        is_teammate = source_division == "GrokTeammates"
+        teammate = teammate_lanes.get(slug) if is_teammate else None
+        if is_teammate and teammate is None:
+            raise ValueError(f"Grok teammate {slug} has no source lane record")
         if charter:
             owner = charter["owner"]
             specialist = next((item for item in charter["bots"] if item[0] == slug), None)
@@ -255,6 +298,9 @@ def build() -> dict[str, Any]:
             exact_overlap = [cap for cap in specialist[2] if norm(cap) in canonical_owner_capabilities[owner]]
             if exact_overlap:
                 raise ValueError(f"Specialist scope duplicates canonical owner capabilities for {slug}: {exact_overlap}")
+        elif is_teammate:
+            owner = None
+            specialist = None
         elif norm(bot.get("division", "")) in domain_by_key:
             owner = domain_by_key[norm(bot.get("division", ""))]
             specialist = None
@@ -262,8 +308,13 @@ def build() -> dict[str, Any]:
             owner = "DreamDiscovery"
             specialist = None
 
-        masterbot_id = master_by_domain.get(norm(owner)) if owner != "DreamDiscovery" else 62
-        route_status = "mapped_to_canonical_domain" if owner != "DreamDiscovery" and masterbot_id else "discovery_review_required"
+        if is_teammate:
+            masterbot_id, teammate_route = teammate_masterbot_route(teammate)
+            route_status = "shared_teammate_lane"
+        else:
+            masterbot_id = master_by_domain.get(norm(owner)) if owner != "DreamDiscovery" else 62
+            teammate_route = None
+            route_status = "mapped_to_canonical_domain" if owner != "DreamDiscovery" and masterbot_id else "discovery_review_required"
         flags = list(bot.get("flags", []))
         if len(source_rows) > 1 or "duplicate_profile" in flags or slug in seen_slugs:
             duplicate_status = "duplicate_or_conflicting_profile_review"
@@ -276,7 +327,8 @@ def build() -> dict[str, Any]:
         signature = "|".join(sorted(norm(x) for x in signature_parts if x))
         duplicate_groups[(norm(owner), signature)].append(slug)
 
-        revenue = revenue_route(bot, registry, lanes, sources)
+        revenue_input = {**bot, "division": source_division, "description": (teammate or {}).get("description", source.get("description", ""))}
+        revenue = revenue_route(revenue_input, registry, lanes, sources)
         if revenue:
             revenue_lanes_count[revenue["revenue_lane"]] += 1
         capabilities = specialist[2] if specialist else [str(x) for x in source.get("capabilities", [])]
@@ -293,6 +345,8 @@ def build() -> dict[str, Any]:
             "name": bot.get("name") or slug,
             "source_division": source_division or bot.get("division"),
             "canonical_owner_division": owner,
+            "shared_workforce_group": "GrokTeammates" if is_teammate else None,
+            "teammate_lane_route": {"masterbot_id": masterbot_id, "route": teammate_route, "description": teammate.get("description")} if is_teammate else None,
             "supplemental_portfolio": source_portfolio,
             "specialist_capability_domain": charter["unique_domain"] if charter else None,
             "specialist_mission": charter["mission"] if charter else None,
@@ -323,8 +377,11 @@ def build() -> dict[str, Any]:
                 "status": route_status,
                 "primary_masterbot_id": masterbot_id,
                 "primary_masterbot_name": master["divisions"][masterbot_id - 1]["name"] if masterbot_id else None,
+                "primary_domain_owner": owner if not is_teammate else None,
+                "shared_workforce_group": "GrokTeammates" if is_teammate else None,
+                "teammate_route_rule": teammate_route,
                 "shared_platform_masterbot_ids": shared_ids,
-                "unresolved_owner_goes_to": "DreamDiscovery" if route_status != "mapped_to_canonical_domain" else None,
+                "unresolved_owner_goes_to": "DreamDiscovery" if route_status == "discovery_review_required" else None,
                 "owner_approval_required_for_remap": True,
             },
             "buddy_execution": {
@@ -347,7 +404,7 @@ def build() -> dict[str, Any]:
             "learning_status": "curriculum_and_evidence_required_not_trained_by_generation",
         }
         records.append(record)
-        division_counts[owner] += 1
+        division_counts[owner or "GrokTeammates shared workforce"] += 1
         status_counts[route_status] += 1
 
     duplicate_sets = [
@@ -374,6 +431,7 @@ def build() -> dict[str, Any]:
             "mapped_to_canonical_domain": status_counts["mapped_to_canonical_domain"],
             "discovery_review_required": status_counts["discovery_review_required"],
             "unresolved_owner_count": status_counts["discovery_review_required"],
+            "shared_teammate_profiles": status_counts["shared_teammate_lane"],
             "duplicate_capability_groups_for_review": len(duplicate_sets),
             "shared_platform_masterbots": len(shared_ids),
             "live_enabled_bots": 0,
