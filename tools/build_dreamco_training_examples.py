@@ -56,11 +56,11 @@ def _valid_source_metadata(event:dict,source_url:str)->bool:
  if fingerprint_value and not re.fullmatch(r"[0-9a-f]{24,64}",fingerprint_value):
   return False
  run_id=_text(event.get("run_id"))
- if run_id and not re.fullmatch(r"\\d{1,20}",run_id):
+ if run_id and not re.fullmatch(r"\d{1,20}",run_id):
   return False
  return True
 def _redact_run_reference(value:str)->str:
- return re.sub(r"(?i)\\b(?:github\\s+actions\\s+)?(?:workflow\\s+)?run\\s*[:#]?\\s*\\d{8,}\\b","[workflow-run-reference]",value)
+ return re.sub(r"(?i)\b(?:github\s+actions\s+)?(?:workflow\s+)?run\s*[:#]?\s*\d{8,}\b","[workflow-run-reference]",value)
 def _split_rows(rows:list[dict])->dict[str,str]:
  result={}
  for split in ("train","validation","test"):
@@ -109,7 +109,7 @@ def build(events:list[dict],masterbot_registry:Path=REGISTRY)->dict:
   output=" ".join([
    _redact_run_reference(event["lesson"]),
    "Acceptance criteria: "+"; ".join(_redact_run_reference(x) for x in event["criteria"])+".",
-   "Verified evidence: "+"; ".join(event["test_evidence"])+"."
+   "Verified evidence: "+"; ".join(_redact_run_reference(x) for x in event["test_evidence"])+"."
   ])
   rows.append({"text":"### Instruction:\n"+instruction+"\n### Response:\n"+output,
    "split":split,"masterbot_id":event["masterbot_id"],"source_event_id":event["event_id"],
