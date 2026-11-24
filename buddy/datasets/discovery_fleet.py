@@ -89,7 +89,7 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
                     "readiness_status":resource_profile["readiness_status"],
                     "database_namespace":resource_profile["logical_database_namespace"],
                     "teacher_model_candidate_ids":[model for pack in resource_profile["capability_pack_ids"] for model in teacher_models_by_pack.get(pack,[])],
-                    "model_routing_status":resource_profile["model_routing"]["status"],
+                    "model_routing_status":resource_payload["resource_templates"]["model_routing"]["status"],
                     "resource_truth":"requirements_defined_not_provisioned"}}
             if candidate.get("source")=="huggingface":
                 try:
