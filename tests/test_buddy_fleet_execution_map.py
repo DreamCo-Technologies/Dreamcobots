@@ -22,7 +22,11 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
             self.assertTrue(bot["buddy_execution"]["learning_route"])
             self.assertTrue(bot["buddy_execution"]["benchmark_route"])
             self.assertTrue(bot["division_route"]["primary_masterbot_id"])
-            self.assertTrue(bot["canonical_owner_division"])
+            if bot["division_route"]["status"] == "shared_teammate_lane":
+                self.assertIsNone(bot["canonical_owner_division"])
+                self.assertEqual(bot["shared_workforce_group"], "GrokTeammates")
+            else:
+                self.assertTrue(bot["canonical_owner_division"])
             self.assertEqual(bot["execution_plan_status"], "plan_only_not_runtime_proof")
 
     def test_every_revenue_candidate_has_a_complete_non_live_execution_plan(self):
@@ -96,10 +100,21 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
             self.assertTrue(plan.get("verified_revenue_event_types"), bot["slug"])
             self.assertFalse(plan["live_actions_allowed"])
 
+    def test_112_grok_teammates_are_shared_workers_with_platform_masterbot_routes(self):
+        teammates = [bot for bot in self.bots if bot["shared_workforce_group"] == "GrokTeammates"]
+        self.assertEqual(len(teammates), 112)
+        self.assertEqual(self.payload["counts"]["shared_teammate_profiles"], 112)
+        for bot in teammates:
+            self.assertEqual(bot["division_route"]["status"], "shared_teammate_lane")
+            self.assertIn(bot["division_route"]["primary_masterbot_id"], range(46, 66))
+            self.assertTrue(bot["teammate_lane_route"]["description"])
+            self.assertEqual(bot["source_paths"], ["config/bots/teammate-lanes.json"])
+
     def test_unassigned_profiles_are_visible_in_discovery_review_queue(self):
         queue = self.payload["division_review_queue"]
         self.assertEqual(len(queue), self.payload["counts"]["unresolved_owner_count"])
-        self.assertGreater(len(queue), 0)
+        self.assertEqual(len(queue), 19)
+        self.assertTrue(all(item["source_division"] == "UNASSIGNED" for item in queue))
         for item in queue:
             bot = next(row for row in self.bots if row["slug"] == item["slug"])
             self.assertEqual(bot["canonical_owner_division"], "DreamDiscovery")
