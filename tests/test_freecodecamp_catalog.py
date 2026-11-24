@@ -1,3 +1,4 @@
+import json
 import unittest
 
 from tools.sync_freecodecamp_catalog import (
@@ -5,6 +6,7 @@ from tools.sync_freecodecamp_catalog import (
     build_catalog,
     categorize,
     parse_discovery_payload,
+    render_catalog,
 )
 
 
@@ -66,6 +68,21 @@ class FreeCodeCampCatalogTests(unittest.TestCase):
         }])
         self.assertEqual(catalog["inventory_status"], "partial")
         self.assertFalse(catalog["inventory"]["complete"])
+
+    def test_catalog_renderer_compacts_video_rows_and_round_trips(self):
+        videos = [{
+            "video_id": "abc123", "title": "Learn Python",
+            "url": "https://www.youtube.com/watch?v=abc123",
+            "description": "", "duration_seconds": 42, "upload_date": None,
+            "categories": ["python_and_automation"],
+            "discovery_source": "public_channel_metadata",
+            "rights_status": "review_required", "learning_status": "not_studied",
+            "all_divisions_foundation": True,
+        }]
+        catalog = build_catalog(videos)
+        rendered = render_catalog(catalog)
+        self.assertEqual(json.loads(rendered), catalog)
+        self.assertEqual(sum(line.startswith('    {"video_id"') for line in rendered.splitlines()), 1)
 
     def test_catalog_truth_and_rights_boundaries(self):
         videos = [{
