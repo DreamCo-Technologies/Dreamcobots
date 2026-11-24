@@ -386,6 +386,7 @@ def build() -> dict[str, Any]:
     registry = json.loads(MONEY_REGISTRY.read_text(encoding="utf-8"))
     lanes = load_lane_index(json.loads(REVENUE_LANES.read_text(encoding="utf-8")))
     sources = json.loads(OPPORTUNITY_SOURCES.read_text(encoding="utf-8"))
+    money_os_catalog = build_money_os_catalog(registry, lanes, sources, master_by_domain, domain_by_key)
     monetization = json.loads(MONETIZATION.read_text(encoding="utf-8"))
     shared_ids = list(range(46, 66))
     records = []
@@ -563,6 +564,9 @@ def build() -> dict[str, Any]:
             "duplicate_capability_groups_for_review": len(duplicate_sets),
             "shared_platform_masterbots": len(shared_ids),
             "live_enabled_bots": 0,
+            "money_os_registry_entries": len(registry.get("bots", [])),
+            "new_money_os_registry_entries": len(registry.get("new_money_os_bots", [])),
+            "money_os_catalog_entries_with_buddy_routes": len(money_os_catalog),
         },
         "division_profile_counts": dict(sorted(division_counts.items())),
         "revenue_lane_candidate_counts": dict(sorted(revenue_lanes_count.items())),
@@ -585,6 +589,7 @@ def build() -> dict[str, Any]:
             "Every successful execution must write verifiable outcome evidence and a learning/benchmark event.",
         ],
         "bots": records,
+        "money_os_catalog": money_os_catalog,
         "division_review_queue": [
             {
                 "slug": row["slug"],
