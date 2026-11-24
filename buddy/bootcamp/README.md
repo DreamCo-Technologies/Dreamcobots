@@ -57,3 +57,24 @@ Buddy's runtime adapter is `buddy.learning.freecodecamp_source`:
 - Each resource points to the original official source and prescribes original notes, sandbox practice, target benchmark, holdout, and regression steps.
 
 This is a real route into the scheduler, not an automatic video-watching claim. The scheduler selects a lesson; a worker or learner must open the official source and complete the study and practice steps. Video/audio downloads, transcript ingestion, and model training remain disabled unless separately authorized. The CI workflow regenerates and validates the complete route manifest and runs the adapter tests.
+
+
+## Temporary study-download cleanup
+
+If an authorized study worker needs temporary files, it must create an attempt-scoped workspace with `buddy.learning.study_artifact_cleanup.study_download_workspace(base_dir)`. The context manager removes that workspace in a `finally` block after success, failure, or cancellation. It refuses paths outside the configured managed root and does not follow symlink workspaces.
+
+Example:
+
+```python
+from pathlib import Path
+from buddy.learning.study_artifact_cleanup import study_download_workspace
+
+with study_download_workspace(Path("/tmp/dreamco-study")) as workspace:
+    # Any permitted, temporary study files live only here.
+    run_authorized_study_step(workspace)
+# The workspace and its temporary files are erased here.
+```
+
+Keep learning evidence, provenance, benchmark results, and original learner-authored notes in the approved evidence store outside this temporary directory. Do not upload media or temporary study files as GitHub Actions artifacts or commit them to the repository. The current freeCodeCamp catalog workflow reads metadata only; it does not download lesson media. GitHub-hosted runner files are also discarded when each job's ephemeral runner is torn down.
+
+The cleanup helper is covered by tests for normal completion, exceptions, idempotence, and refusal to delete paths outside its managed workspace. A study worker must use this context manager for its temporary files; adding the helper does not imply that a video-watching worker is already running.
