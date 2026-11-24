@@ -1,10 +1,11 @@
 """Tests for the dynamic Markdown-to-implementation gap audit."""
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
 
-from tools.audit_markdown_implementation_gaps import analyze_document, candidate_paths, render_report
+from tools.audit_markdown_implementation_gaps import analyze_document, candidate_paths, render_report, tracked_markdown
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = json.loads((ROOT / "config/buddy/markdown-implementation-gap-policy.json").read_text(encoding="utf-8"))
@@ -71,6 +72,26 @@ class MarkdownImplementationGapTests(unittest.TestCase):
         self.assertTrue(report.endswith("\n"))
         self.assertTrue(all(line == line.rstrip() for line in report.splitlines()))
         self.assertIn("- docs/example.md:1 — copied excerpt", report)
+
+    def test_tracked_markdown_includes_md_and_mdx_and_respects_exclusions(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "config/buddy").mkdir(parents=True)
+            (root / "config/buddy/markdown-implementation-gap-policy.json").write_text(
+                json.dumps({
+                    "excluded_path_segments": ["node_modules"],
+                    "excluded_paths": ["docs/excluded.md"],
+                }),
+                encoding="utf-8",
+            )
+            for relative in ("README.md", "docs/page.mdx", "docs/excluded.md", "docs/notes.txt", "node_modules/ignored.mdx"):
+                path = root / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("fixture", encoding="utf-8")
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            subprocess.run(["git", "add", "."], cwd=root, check=True)
+            found = {path.relative_to(root).as_posix() for path in tracked_markdown(root)}
+            self.assertEqual(found, {"README.md", "docs/page.mdx"})
 
     def test_no_fixed_document_or_reference_ceiling(self):
         self.assertIsNone(POLICY["fixed_document_ceiling"])
