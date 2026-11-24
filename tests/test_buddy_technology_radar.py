@@ -33,6 +33,47 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
         self.assertEqual(rows[0]["title"], "AI tools directory")
         self.assertIn("Vibe coding", rows[0]["summary"])
 
+    def test_huggingface_dataset_metadata_is_preserved_without_training_approval(self):
+        source = {
+            "id": "huggingface-datasets",
+            "name": "Hugging Face Datasets API",
+            "kind": "json_collection",
+            "url": "https://huggingface.co/api/datasets?limit=1",
+            "title_field": "id",
+            "url_template": "https://huggingface.co/datasets/{id}",
+            "id_field": "id",
+            "metadata_fields": {
+                "license": "cardData.license",
+                "task_categories": "cardData.task_categories",
+                "gated": "gated",
+                "downloads": "downloads",
+                "last_modified": "lastModified",
+            },
+            "trust_tier": "catalog",
+            "record_kind": "dataset",
+        }
+        payload = json.dumps([{
+            "id": "example/code-data",
+            "cardData": {"license": "mit", "task_categories": ["text-generation"]},
+            "gated": False,
+            "downloads": 42,
+            "lastModified": "2026-11-20T00:00:00Z",
+        }]).encode()
+        rows = extract_source(source, payload, "2026-11-24T00:00:00Z", POLICY)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["metadata"]["license"], "mit")
+        self.assertEqual(rows[0]["metadata"]["task_categories"], ["text-generation"])
+        self.assertFalse(rows[0]["training_approved"])
+        self.assertEqual(rows[0]["rights_status"], "UNVERIFIED_DISCOVERY_ONLY")
+
+    def test_huggingface_dataset_and_ollama_sources_are_registered(self):
+        sources = {source["id"]: source for source in POLICY["sources"]}
+        self.assertIn("huggingface-datasets", sources)
+        self.assertIn("ollama-library", sources)
+        self.assertEqual(sources["huggingface-datasets"]["record_kind"], "dataset")
+        self.assertEqual(sources["ollama-library"]["record_kind"], "local_model_catalog")
+
+
     def test_priority_lenses_are_discovered_without_fixed_category_count(self):
         source = {"id": "fixture", "name": "Fixture", "url": "https://example.com/feed", "trust_tier": "test"}
         record = normalize_item(source, {"title": "Vibe coding for a home business", "url": "https://example.com/post", "summary": "AI app builder for remote work and freelancers"}, "2026-11-08T12:00:00Z", POLICY)
