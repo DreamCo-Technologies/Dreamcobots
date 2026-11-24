@@ -41,6 +41,22 @@ class BuddyBootcampCurriculumTests(unittest.TestCase):
   self.assertEqual(payload["status"],"CURRICULUM_SPECIFIED_NOT_TRAINED")
   self.assertIn("NOT_A_CLAIM",payload["teacher_model_role"]["status"])
   self.assertTrue(all(x["model"]["status"]=="SPECIFIED_NOT_TRAINED" for x in payload["divisions"]))
+ def test_taxonomy_records_preserve_ids_modality_and_pipeline_metadata(self):
+  payload=self.build()
+  records=payload["global_task_families"]
+  self.assertEqual(len(records),37)
+  by_id={x["task_family"]:x for x in records}
+  self.assertEqual(by_id["image-classification"]["modality"],"image")
+  self.assertEqual(by_id["image-classification"]["pipeline_tag"],"image-classification")
+  self.assertEqual(by_id["reinforcement-learning"]["family"],"reinforcement_learning")
+  self.assertIsNone(by_id["reinforcement-learning"]["pipeline_tag"])
+
+ def test_duplicate_task_family_ids_are_rejected(self):
+  tasks=json.loads(json.dumps(self.tasks))
+  tasks["task_families"][1]["id"]=tasks["task_families"][0]["id"]
+  with self.assertRaisesRegex(ValueError,"37 unique Hugging Face task-family IDs"):
+   build_curriculum(self.masterbots,tasks,self.packs,self.division_map,self.serving)
+
  def test_unknown_capability_pack_is_rejected(self):
   division_map=json.loads(json.dumps(self.division_map))
   division_map["routes"][0]["capability_pack_ids"].append("pack.unknown")
