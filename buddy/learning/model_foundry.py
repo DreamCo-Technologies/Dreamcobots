@@ -31,11 +31,22 @@ STRATEGIES = (
     "classification_and_extraction",
     "retrieval_and_grounded_generation",
     "time_series_and_forecasting",
-    "multimodal_representation_research",
     "simulation_and_planning",
     "safety_and_policy_modeling",
     "scientific_reasoning",
 )
+
+STRATEGY_PROFILES = {
+    "domain_adaptive_pretraining": {"sequence_length": 64, "batch_size": 8, "learning_rate": 3e-4},
+    "code_and_tool_sequence_modeling": {"sequence_length": 64, "batch_size": 4, "learning_rate": 2e-4},
+    "instruction_response_modeling": {"sequence_length": 64, "batch_size": 8, "learning_rate": 2e-4},
+    "classification_and_extraction": {"sequence_length": 32, "batch_size": 8, "learning_rate": 1.5e-4},
+    "retrieval_and_grounded_generation": {"sequence_length": 64, "batch_size": 4, "learning_rate": 2e-4},
+    "time_series_and_forecasting": {"sequence_length": 32, "batch_size": 8, "learning_rate": 1e-4},
+    "simulation_and_planning": {"sequence_length": 64, "batch_size": 4, "learning_rate": 2e-4},
+    "safety_and_policy_modeling": {"sequence_length": 64, "batch_size": 8, "learning_rate": 1e-4},
+    "scientific_reasoning": {"sequence_length": 64, "batch_size": 4, "learning_rate": 1.5e-4},
+}
 
 
 def sha256_file(path: Path) -> str:
@@ -133,6 +144,12 @@ def build_parallel_plan(registry: dict[str, Any], approved: list[dict[str, Any]]
 def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str,
                        division_id: int, strategy: str, seed: int, steps: int = 100) -> dict[str, Any]:
     """Train a small byte-level decoder-only model using PyTorch and local approved text."""
+    if strategy not in STRATEGY_PROFILES:
+        raise ValueError(f"unsupported training strategy: {strategy}")
+    profile = STRATEGY_PROFILES[strategy]
+    sequence_length = profile["sequence_length"]
+    batch_size = profile["batch_size"]
+    learning_rate = profile["learning_rate"]
     try:
         import torch
         from torch import nn
@@ -161,7 +178,7 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         def __init__(self):
             super().__init__()
             self.token = nn.Embedding(256, 128)
-            self.position = nn.Embedding(64, 128)
+            self.position = nn.Embedding(sequence_length, 128)
             layer = nn.TransformerEncoderLayer(
                 d_model=128, nhead=4, dim_feedforward=512, batch_first=True,
                 norm_first=True, activation="gelu"
@@ -180,13 +197,13 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
             return self.head(self.norm(hidden))
 
     model = TinyDecoder().to(device)  # fresh random initialization; no imported base weights
-    optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
     generator = torch.Generator(device="cpu").manual_seed(seed)
 
     def batch(source):
-        starts = torch.randint(0, max(1, len(source) - 65), (8,), generator=generator)
-        x = torch.stack([source[int(i):int(i) + 64] for i in starts])
-        y = torch.stack([source[int(i) + 1:int(i) + 65] for i in starts])
+        starts = torch.randint(0, max(1, len(source) - sequence_length - 1), (batch_size,), generator=generator)
+        x = torch.stack([source[int(i):int(i) + sequence_length] for i in starts])
+        y = torch.stack([source[int(i) + 1:int(i) + sequence_length + 1] for i in starts])
         return x, y
 
     model.train()
@@ -221,7 +238,9 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         "parameter_count": sum(parameter.numel() for parameter in model.parameters()),
         "initialization": "random",
         "optimizer": "AdamW",
-        "learning_rate": 3e-4,
+        "learning_rate": learning_rate,
+        "batch_size": batch_size,
+        "training_profile": profile,
         "seed": seed,
         "steps": steps,
         "train_bytes": len(train_data),
