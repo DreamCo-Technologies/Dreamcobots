@@ -316,3 +316,22 @@ These are test and artifact facts only. No Buddy transcript learning, transcript
 - Buddy Markdown Implementation Gap Audit: fails because `config/generated/markdown-implementation-gap-audit.json`, `website/data/markdown-implementation-gap-audit.json`, and `reports/MARKDOWN_IMPLEMENTATION_GAP_AUDIT.md` are stale relative to the new Markdown files in this PR.
 - CodeQL, Dependency Review, Workers build, Buddy benchmark smoke, Command Center data contract, Actions page tests, DreamCo Core Health and PR review manifest completed successfully. Broad benchmark lanes remain pending or also fail on the same deployment-cost gate.
 - PR #18216 remains mergeable at GitHub level but not merge-ready; no merge or deployment was performed.
+
+
+### Additional database and dataset engineering curriculum — 2026-11-24
+
+The study-resource PR #18214 now includes a second specialized study track, `database-and-dataset-engineering`, with ten lessons:
+1. relational modeling and normalization;
+2. transactions, isolation and concurrency;
+3. indexes, query plans and performance;
+4. PostgreSQL/SQLite/Supabase/Firestore/Redis/DuckDB/Iceberg comparison;
+5. Buddy read/write data-source routing;
+6. keyword + vector hybrid retrieval;
+7. dataset discovery and rights review;
+8. dataset quality, splits and contamination;
+9. dataset/model/run lineage;
+10. synthetic-fixture routing/governance capstone.
+
+It references the existing resource catalog (PostgreSQL, SQLite, Supabase, Firebase, Redis, DuckDB, Iceberg, Hugging Face Datasets, UCI, OpenML, Data.gov, corpus methodology and evaluation resources) and adds official docs for PostgreSQL full-text search, pgvector, Qdrant, OpenSearch and SQLite FTS5. It disables production DB access, live writes, production migrations, bulk dataset downloads, private/paid dataset ingestion and model-weight training. Unknown rights remain BLOCKED.
+
+The study-resource validator now enforces 10 lessons, valid source IDs and all safety flags; a regression test checks the rights boundary. The Bootcamp workflow path filter and focused tests were extended to cover this track. The earlier run for PR #18214 passed 14/14 tests before this addition; the current head test run is pending.
