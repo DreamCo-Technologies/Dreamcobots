@@ -161,6 +161,11 @@ jobs:
           path: /tmp/buddy-weekly-transcript-evaluation.json
           if-no-files-found: warn
           retention-days: 90
+      - name: Build and validate curriculum
+        run: |
+          python tools/build_buddy_bootcamp_curriculum.py
+          python tools/build_buddy_bootcamp_curriculum.py --check
+          python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
       - name: Upload generated study artifacts for review
         if: always()
         uses: actions/upload-artifact@v4
@@ -174,8 +179,3 @@ jobs:
             config/generated/buddy-bootcamp-curriculum.json
           if-no-files-found: warn
           retention-days: 14
-      - name: Build and validate curriculum
-        run: |
-          python tools/build_buddy_bootcamp_curriculum.py
-          python tools/build_buddy_bootcamp_curriculum.py --check
-          python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
