@@ -117,6 +117,8 @@ def run_object_store_healthcheck(*,client:Any=None,allow_canary:bool=False,
     try:
         put=client.put_object(Bucket=primary,Key=primary_key,Body=payload)
         version_id=put.get("VersionId")
+        if not version_id:
+            raise ObjectStoreError("primary_object_version_id_missing")
         head=client.head_object(Bucket=primary,Key=primary_key)
         if head.get("ServerSideEncryption") not in {"AES256","aws:kms","aws:kms:dsse"}:
             raise ObjectStoreError("primary_canary_object_encryption_not_verified")
