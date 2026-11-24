@@ -13,7 +13,8 @@
     "resource_templates",
     "routes",
     "owner_review",
-    "truth"
+    "truth",
+    "domain_routes"
   ],
   "properties": {
     "schema": {
@@ -49,6 +50,12 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 55
+        },
+        "domain_resource_routes": {
+          "const": 55
+        },
+        "standalone_domain_resource_bundles": {
+          "const": 10
         }
       },
       "additionalProperties": false
@@ -165,6 +172,47 @@
         "evaluation",
         "operations"
       ]
+    },
+    "domain_routes": {
+      "type": "array",
+      "minItems": 55,
+      "maxItems": 55,
+      "items": {
+        "type": "object",
+        "required": [
+          "domain_id",
+          "domain_name",
+          "route_type",
+          "resource_bundle_id",
+          "readiness_status",
+          "logical_database_namespace",
+          "dataset_discovery_lane_id",
+          "capability_pack_ids",
+          "dataset_training_approved",
+          "owner_review_required",
+          "mapping_status"
+        ],
+        "properties": {
+          "route_type": {
+            "enum": [
+              "linked_to_masterbot_resource_bundle",
+              "standalone_domain_resource_bundle"
+            ]
+          },
+          "readiness_status": {
+            "const": "requirements_defined_not_provisioned"
+          },
+          "dataset_training_approved": {
+            "const": false
+          },
+          "owner_review_required": {
+            "const": true
+          },
+          "dataset_rights_status": {
+            "const": "UNVERIFIED_DISCOVERY_ONLY"
+          }
+        }
+      }
     }
   },
   "additionalProperties": false
