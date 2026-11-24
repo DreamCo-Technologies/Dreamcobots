@@ -38,8 +38,14 @@ def validate(data: dict) -> list[str]:
     if not REQUIRED_SHARED.issubset(shared):
         errors.append("one or more required shared contracts are missing")
     order = data.get("completion_order", [])
-    if not order or order.index("implement_and_test_apple_c_runtime") < order.index("freeze_versioned_shared_contracts"):
-        errors.append("C runtime work must follow Python completion and contract freeze")
+    try:
+        freeze_index = order.index("freeze_versioned_shared_contracts")
+        c_index = order.index("implement_and_test_apple_c_runtime")
+    except (ValueError, AttributeError):
+        errors.append("completion order must include contract freeze and Apple C implementation")
+    else:
+        if c_index < freeze_index:
+            errors.append("C runtime work must follow Python completion and contract freeze")
     if data.get("competition", {}).get("selection") != "best_eligible_model_per_task":
         errors.append("competition must select the best eligible model per task")
     if data.get("training", {}).get("scheduled_planning_is_not_training") is not True:
