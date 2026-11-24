@@ -112,7 +112,10 @@ def execute_ingestion_job(job_path:str|Path,approval_id:str,*,hub:DatasetHub|Non
     digest=sha256_file(source)
     catalog=hub or DatasetHub()
     previous=catalog.get(dataset_id)
-    if previous and previous.get("content_sha256")==digest:
+    immutable_card_fields=("license","license_url","source_url","rights_status","rights_evidence",
+        "training_approved","data_plane","primary_masterbot_id","privacy_review","split_manifest")
+    same_metadata=bool(previous) and all(previous.get(key)==card.get(key) for key in immutable_card_fields)
+    if previous and previous.get("content_sha256")==digest and same_metadata:
         external=_persist_external(previous,catalog,masterbot_id,approval_id,object_store,postgres_catalog)
         return {"schema":"dreamco.dataset_ingestion_evidence.v1",
           "status":"ALREADY_INGESTED_PERSISTED" if external else "ALREADY_INGESTED",
