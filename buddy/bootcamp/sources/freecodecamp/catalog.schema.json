@@ -11,7 +11,8 @@
     "video_count",
     "categories",
     "videos",
-    "rights_policy"
+    "rights_policy",
+    "inventory"
   ],
   "properties": {
     "schema": {
@@ -161,6 +162,61 @@
           "const": true
         }
       }
+    },
+    "inventory": {
+      "type": "object",
+      "required": [
+        "enumerator",
+        "enumerator_version",
+        "expected_entry_count",
+        "observed_entry_count",
+        "null_entry_count",
+        "duplicate_video_id_count",
+        "complete",
+        "completeness_basis"
+      ],
+      "properties": {
+        "enumerator": {
+          "const": "yt-dlp"
+        },
+        "enumerator_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_entry_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "observed_entry_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "null_entry_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "duplicate_video_id_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "completeness_basis": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
     }
   }
 }
