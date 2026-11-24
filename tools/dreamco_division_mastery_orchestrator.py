@@ -17,7 +17,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DIVISIONS = ROOT / "config/masterbot-65-registry.json"
+DIVISIONS = ROOT / "config/masterbot-75-registry.json"
+CROSSWALK = ROOT / "config/generated/masterbot-55-domain-crosswalk.json"
 GOALS = ROOT / "config/dreamco-mastery-continuity-registry.json"
 OUT = ROOT / "artifacts/division-mastery"
 ALLOWED_TASKS = {
@@ -74,7 +75,7 @@ TRACEABILITY_ANCHORS = {
     "DCO-002": {"implementation_paths": ["tools/audit_actions_health.py", ".github/workflows/actions-health.yml"], "test_paths": ["tests/test_actions_health.py"], "runtime_routes": [], "benchmark": "workflow-health-and-production-isolation"},
     "DCO-003": {"implementation_paths": [], "test_paths": [], "runtime_routes": [], "benchmark": "buddy-end-to-end-task-success"},
     "DCO-004": {"implementation_paths": [], "test_paths": [], "runtime_routes": [], "benchmark": "dream-brain-retrieval-quality-and-rights"},
-    "DCO-005": {"implementation_paths": ["config/masterbot-65-registry.json", "tools/buddy_masterbot_training_lane.py"], "test_paths": [], "runtime_routes": [], "benchmark": "bot-capability-contract-and-certification"},
+    "DCO-005": {"implementation_paths": ["config/masterbot-75-registry.json", "tools/buddy_masterbot_training_lane.py"], "test_paths": [], "runtime_routes": [], "benchmark": "bot-capability-contract-and-certification"},
     "DCO-006": {"implementation_paths": [], "test_paths": [], "runtime_routes": [], "benchmark": "model-quality-cost-latency-and-fallback"},
     "DCO-007": {"implementation_paths": ["config/buddy-continuous-learning-policy.json", "tools/aggregate_masterbot_training_runs.py"], "test_paths": [], "runtime_routes": [], "benchmark": "per-masterbot-benchmark-gap-closure"},
     "DCO-008": {"implementation_paths": ["tools/run_daily_division_benchmarks.ts"], "test_paths": [], "runtime_routes": [], "benchmark": "held-out-model-training-and-generalization"},
@@ -89,14 +90,19 @@ TRACEABILITY_ANCHORS = {
 
 def load_inputs():
     division_doc = json.loads(DIVISIONS.read_text(encoding="utf-8"))
+    crosswalk = json.loads(CROSSWALK.read_text(encoding="utf-8"))
     goal_doc = json.loads(GOALS.read_text(encoding="utf-8"))
     divisions = division_doc.get("divisions", [])
-    if division_doc.get("canonical_count") != 65 or len(divisions) != 65:
-        raise ValueError(f"Expected 65 canonical MasterBots; found {len(divisions)}")
+    if division_doc.get("canonical_count") != 75 or len(divisions) != 75:
+        raise ValueError(f"Expected 75 MasterBots; found {len(divisions)}")
     ids = [str(d.get("id")) for d in divisions]
     names = [d.get("name") for d in divisions]
-    if len(set(ids)) != 65 or len(set(names)) != 65 or any(not n for n in names):
+    if len(set(ids)) != 75 or len(set(names)) != 75 or any(not n for n in names):
         raise ValueError("MasterBot registry has missing or duplicate IDs/names")
+    if crosswalk.get("counts", {}).get("owner_approved_domain_mappings") != 55:
+        raise ValueError("All 55 domain MasterBot routes must be owner-approved")
+    if crosswalk.get("counts", {}).get("shared_platform_masterbots") != 20:
+        raise ValueError("Expected 20 shared platform MasterBots")
     goals = goal_doc.get("workstreams", [])
     goal_ids = [g.get("id") for g in goals]
     if len(set(goal_ids)) != len(goal_ids):
@@ -162,7 +168,9 @@ def build_plan():
     return {
         "schema": "dreamco.division_mastery_queue.v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "expected_divisions": 65,
+        "expected_divisions": 75,
+        "domain_divisions": 55,
+        "shared_platform_masterbots": 20,
         "division_lanes": len(lanes),
         "unique_goal_count": len(goals),
         "task_dag": TASK_DAG,
