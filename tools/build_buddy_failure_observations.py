@@ -68,10 +68,13 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run", required=True, type=Path)
     parser.add_argument("--historical-index", required=True, type=Path)
-    parser.add_argument("--memory", type=Path)\n    parser.add_argument("--repository", default="")
+    parser.add_argument("--memory", type=Path)
+    parser.add_argument("--repository", default="")
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
-    run = json.loads(args.run.read_text(encoding="utf-8"))\n    if args.repository:\n        run["repository"] = args.repository
+    run = json.loads(args.run.read_text(encoding="utf-8"))
+    if args.repository:
+        run["repository"] = args.repository
     history = json.loads(args.historical_index.read_text(encoding="utf-8"))
     memory = json.loads(args.memory.read_text(encoding="utf-8")) if args.memory and args.memory.exists() else {"incidents": []}
     report = build_report(run, history, memory)
