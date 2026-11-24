@@ -46,7 +46,15 @@ class BootcampSeedDataTests(unittest.TestCase):
         card = build_dataset_card(manifest, "candidate.jsonl")
         self.assertFalse(card["training_approved"])
         self.assertEqual(card["rights_status"], "PENDING_HUMAN_REVIEW")
-        self.assertEqual(card["license_url_status"], "POLICY_REFERENCE_NOT_A_DATASET_LICENSE")
+        self.assertEqual(card["license_url_status"], "INTERNAL_POLICY_REFERENCE_NOT_A_PUBLIC_LICENSE")
+        self.assertEqual(card["license"], "DREAMCO_INTERNAL_OWNED")
+        self.assertEqual(card["source"], "dreamco_authored")
+        self.assertEqual(card["source_id"], "dreamco.bootcamp.core.v1")
+        self.assertFalse(card["ai_training_allowed"])
+        self.assertFalse(card["content_rights_verified"])
+        self.assertFalse(card["owner_assignment_verified"])
+        self.assertFalse(card["contributor_rights_verified"])
+        self.assertEqual(card["owner_approval_id"], "")
         self.assertEqual(card["primary_masterbot_id"], 4)
 
     def test_rejects_duplicate_ids_and_missing_splits(self):
