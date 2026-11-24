@@ -434,6 +434,49 @@
           "items": {
             "type": "string"
           }
+        },
+        "source_division": {
+          "type": "string"
+        },
+        "primary_masterbot_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65
+        },
+        "division_route_status": {
+          "enum": [
+            "proposed_domain_masterbot_match_requires_owner_review",
+            "discovery_review_required"
+          ]
+        },
+        "owner_approval_required": {
+          "type": "boolean"
+        },
+        "shared_platform_masterbot_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 46,
+            "maximum": 65
+          },
+          "uniqueItems": true
+        },
+        "supplemental_portfolio": {
+          "type": "string"
+        },
+        "specialist_capability_domain": {
+          "type": "string"
+        },
+        "shared_workforce_group": {
+          "const": "GrokTeammates"
+        },
+        "shared_teammate_masterbot_id": {
+          "type": "integer",
+          "minimum": 46,
+          "maximum": 65
+        },
+        "shared_teammate_masterbot_route": {
+          "type": "string"
         }
       }
     },
@@ -540,6 +583,49 @@
             "blocked_destructive",
             "spec_only"
           ]
+        },
+        "source_division": {
+          "type": "string"
+        },
+        "primary_masterbot_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65
+        },
+        "division_route_status": {
+          "enum": [
+            "proposed_domain_masterbot_match_requires_owner_review",
+            "discovery_review_required"
+          ]
+        },
+        "owner_approval_required": {
+          "type": "boolean"
+        },
+        "shared_platform_masterbot_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 46,
+            "maximum": 65
+          },
+          "uniqueItems": true
+        },
+        "supplemental_portfolio": {
+          "type": "string"
+        },
+        "specialist_capability_domain": {
+          "type": "string"
+        },
+        "shared_workforce_group": {
+          "const": "GrokTeammates"
+        },
+        "shared_teammate_masterbot_id": {
+          "type": "integer",
+          "minimum": 46,
+          "maximum": 65
+        },
+        "shared_teammate_masterbot_route": {
+          "type": "string"
         }
       }
     }
