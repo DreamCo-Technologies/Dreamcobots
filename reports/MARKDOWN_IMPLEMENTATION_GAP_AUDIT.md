@@ -1,15 +1,15 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T16:07:11Z
+Generated: 2026-11-24T16:30:41Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1677
-- Actionable claim lines detected: 11940
+- Markdown documents scanned: 1678
+- Actionable claim lines detected: 11948
 - Documents with missing path references: 112
-- Documents without implementation references: 1591
+- Documents without implementation references: 1592
 - Documents with implementation references but no test references: 69
 - Documents with inventory count claims: 113
 - Inventory count claims requiring review: 390
@@ -12979,6 +12979,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: tests/test_buddy_control_plane.py
 - Missing paths: github/workflows/buddy-command-router.yml
 - Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/BUDDY_DATABASE_AND_DATASET_STUDY_TRACK.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 8
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/BUDDY_DATABASE_ROUTING_CONTRACT.md
