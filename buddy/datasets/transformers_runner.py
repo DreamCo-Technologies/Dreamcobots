@@ -109,6 +109,8 @@ def execute_job(job_path: str | Path, approval_id: str, output_root: str | Path,
     job_path=Path(job_path)
     job=json.loads(job_path.read_text(encoding="utf-8"))
     object_path,rows=validate_job(job,approval_id)
+    tokenizer_revision=job.get("tokenizer_revision") or job.get("base_model_revision")
+    tested_commit_sha=os.environ.get("GITHUB_SHA") or job.get("tested_commit_sha","")
     if allow_model_download and os.environ.get("DREAMCO_ALLOW_MODEL_DOWNLOAD")!="1":
         raise TrainingExecutionError("Set DREAMCO_ALLOW_MODEL_DOWNLOAD=1 to authorize base-model download")
     try:
@@ -170,7 +172,7 @@ def execute_job(job_path: str | Path, approval_id: str, output_root: str | Path,
     holdout=trainer.evaluate(test_ds,metric_key_prefix="holdout")
     trainer.model.save_pretrained(weights_dir)
     tokenizer.save_pretrained(tokenizer_dir)
-    checkpoint_files=_hash_tree(checkpoint_dir)
+    training_checkpoint_files=_hash_tree(checkpoint_dir)
     weight_files=_hash_tree(weights_dir)
     tokenizer_files=_hash_tree(tokenizer_dir)
     checkpoint_files=weight_files
@@ -189,7 +191,7 @@ def execute_job(job_path: str | Path, approval_id: str, output_root: str | Path,
         "baseline_validation_metrics":baseline_validation,"train_metrics":train_result.metrics,
         "validation_metrics":validation,"holdout_metrics":holdout,
         "artifact_paths":{"weights":str(weights_dir),"checkpoints":str(checkpoint_dir),"tokenizer":str(tokenizer_dir)},
-        "artifact_hashes":{"weights":weight_files,"checkpoints":checkpoint_files,"tokenizer":tokenizer_files,
+        "artifact_hashes":{"weights":weight_files,"checkpoints":training_checkpoint_files,"tokenizer":tokenizer_files,
             "weights_directory_sha256":_directory_sha256(weights_dir),
             "checkpoints_directory_sha256":_directory_sha256(checkpoint_dir),
             "tokenizer_directory_sha256":_directory_sha256(tokenizer_dir)},
