@@ -1,0 +1,38 @@
+name: Buddy Study Resource Expansion Validation
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/buddy-study-resource-expansion.yml"
+      - "config/buddy-study-resources-*.json"
+      - "docs/BUDDY_TOLKIEN_STUDY_TRACK.md"
+      - "docs/BUDDY_DATABASE_AND_DATASET_STUDY_TRACK.md"
+      - "docs/UNIVERSAL_STUDY_RESOURCE_EXPANSION.md"
+      - "tools/check_must_have_study_resources.py"
+      - "tests/test_check_must_have_study_resources.py"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/buddy-study-resource-expansion.yml"
+      - "config/buddy-study-resources-*.json"
+      - "docs/BUDDY_TOLKIEN_STUDY_TRACK.md"
+      - "docs/BUDDY_DATABASE_AND_DATASET_STUDY_TRACK.md"
+      - "docs/UNIVERSAL_STUDY_RESOURCE_EXPANSION.md"
+      - "tools/check_must_have_study_resources.py"
+      - "tests/test_check_must_have_study_resources.py"
+permissions:
+  contents: read
+jobs:
+  validate-study-resources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate every study-resource catalog
+        run: python tools/check_must_have_study_resources.py
+      - name: Validate expansion JSON syntax
+        run: python -m json.tool config/buddy-study-resources-1101-1200-expansion.json > /dev/null
+      - name: Run catalog and specialized-track regression tests
+        run: python -m unittest discover -s tests -p 'test_check_must_have_study_resources.py' -v
