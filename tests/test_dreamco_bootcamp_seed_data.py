@@ -107,6 +107,14 @@ class BootcampSeedDataTests(unittest.TestCase):
             self.assertTrue(manifest.read_bytes().endswith(bytes([10])))
             self.assertTrue(card.read_bytes().endswith(bytes([10])))
 
+    def test_committed_bootcamp_seed_corpus_covers_all_core_modules(self):
+        root = Path(__file__).resolve().parents[1]
+        source = root / "data/dreamco_training/bootcamp/core_lessons.v1.jsonl"
+        rows = load_jsonl(source)
+        self.assertEqual(len(rows), 14)
+        self.assertEqual(len({row["module_id"] for row in rows}), 13)
+        self.assertEqual({row["split"] for row in rows}, {"train", "validation", "test"})
+
     def test_candidate_generation_is_reproducible_and_covers_all_65_lanes(self):
         data = examples()
         hashes = set()
