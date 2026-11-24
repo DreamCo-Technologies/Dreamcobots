@@ -57,8 +57,26 @@ class OllamaLocalRuntime:
         except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
             raise RuntimeError(f"local Ollama request failed: {type(exc).__name__}") from exc
 
+    def _get(self, path: str) -> dict:
+        request = Request(
+            f"{self.endpoint}{path}",
+            headers={"Accept": "application/json"},
+            method="GET",
+        )
+        try:
+            with urlopen(request, timeout=self.timeout_seconds) as response:  # noqa: S310 - endpoint is loopback-validated
+                raw = response.read(8 * 1024 * 1024 + 1)
+            if len(raw) > 8 * 1024 * 1024:
+                raise RuntimeError("Ollama response exceeded the 8 MiB safety limit")
+            parsed = json.loads(raw.decode("utf-8"))
+            if not isinstance(parsed, dict):
+                raise RuntimeError("Ollama returned a non-object response")
+            return parsed
+        except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
+            raise RuntimeError(f"local Ollama request failed: {type(exc).__name__}") from exc
+
     def list_models(self) -> dict:
-        return self._post("/api/tags", {})
+        return self._get("/api/tags")
 
     def show_model(self, model: str) -> dict:
         if not model.strip():
