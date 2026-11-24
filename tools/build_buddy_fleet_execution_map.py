@@ -282,6 +282,11 @@ def build() -> dict[str, Any]:
         if not capabilities:
             capabilities = [f"needs_capability_discovery:{bot.get('category') or 'unclassified'}"]
 
+        suggested_divisions = (
+            ["DreamCodeLab", "DreamArts"]
+            if slug.startswith("threejs-") and owner == "DreamDiscovery"
+            else []
+        )
         record = {
             "slug": slug,
             "name": bot.get("name") or slug,
@@ -306,6 +311,12 @@ def build() -> dict[str, Any]:
             "execution_ceiling": bot.get("ceiling"),
             "existing_run_policy": bot.get("run"),
             "profile_flags": flags,
+            "division_review": {
+                "required": route_status != "mapped_to_canonical_domain",
+                "suggested_domains_for_owner_review": suggested_divisions,
+                "suggestion_reason": "Three.js library component profiles appear to be developer tooling with 3D/visualization collaboration; placeholder descriptions prevent automatic primary ownership." if suggested_divisions else None,
+                "owner_approval_required": True,
+            },
             "duplicate_review_status": duplicate_status,
             "division_route": {
                 "status": route_status,
@@ -361,6 +372,7 @@ def build() -> dict[str, Any]:
             "internal_or_unclassified_profiles": len(records) - revenue_count,
             "mapped_to_canonical_domain": status_counts["mapped_to_canonical_domain"],
             "discovery_review_required": status_counts["discovery_review_required"],
+            "unresolved_owner_count": status_counts["discovery_review_required"],
             "duplicate_capability_groups_for_review": len(duplicate_sets),
             "shared_platform_masterbots": len(shared_ids),
             "live_enabled_bots": 0,
@@ -384,6 +396,16 @@ def build() -> dict[str, Any]:
             "Every successful execution must write verifiable outcome evidence and a learning/benchmark event.",
         ],
         "bots": records,
+        "division_review_queue": [
+            {
+                "slug": row["slug"],
+                "source_division": row["source_division"],
+                "suggested_domains": row["division_review"]["suggested_domains_for_owner_review"],
+                "flags": row["profile_flags"],
+                "source_paths": row["source_paths"],
+            }
+            for row in records if row["division_review"]["required"]
+        ],
         "duplicate_capability_groups": duplicate_sets,
         "truth_boundary": "This is a deterministic plan and routing map for the complete generated bot manifest. It does not prove runtime availability, integrations, customer demand, revenue, learning or production readiness.",
     }
