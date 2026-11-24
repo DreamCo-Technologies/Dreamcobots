@@ -55,8 +55,9 @@ class DivisionLifecycleMigrationTests(unittest.TestCase):
       dsn="postgresql://test",connect=connect)
   self.assertEqual(result["schemas_migrated"],65)
   self.assertEqual(result["status"],"APPLIED")
-  audit_inserts=[q for q,_p in connection.cursor_obj.executed if "DIVISION_LIFECYCLE_SCHEMA_MIGRATION_APPLIED" in q]
+  audit_inserts=[(q,p) for q,p in connection.cursor_obj.executed if "audit_events" in q and "INSERT INTO" in q]
   self.assertEqual(len(audit_inserts),65)
+  self.assertTrue(all(p[3]=="DIVISION_LIFECYCLE_SCHEMA_MIGRATION_APPLIED" for _q,p in audit_inserts))
   self.assertFalse(result["credentials_emitted"])
  def test_missing_schema_aborts_transaction(self):
   connection=FakeConnection()
