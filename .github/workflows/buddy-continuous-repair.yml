@@ -74,6 +74,7 @@ jobs:
           python3 tools/study_buddy_repair_history.py --limit 500 --output reports/continuous-repair/historical-repair-index.json
           python3 -m tools.build_buddy_failure_observations \
             --run "reports/continuous-repair/failed-run-$FAILED_RUN_ID.json" \
+            --repository "$GITHUB_REPOSITORY" \
             --historical-index reports/continuous-repair/historical-repair-index.json \
             --memory artifacts/failure-learning-memory.json \
             --output reports/continuous-repair/historical-diagnosis.json
