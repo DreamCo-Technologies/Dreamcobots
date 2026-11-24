@@ -84,6 +84,39 @@ concurrency:
   group: buddy-bootcamp-curriculum
   cancel-in-progress: false
 jobs:
+  weekly-transcript-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test weekly transcript coverage rules
+        run: python -m unittest discover -s tests -p 'test_weekly_transcript_evaluation.py' -v
+      - name: Build first transcript readiness report
+        run: python tools/build_weekly_transcript_evaluation.py --output /tmp/buddy-weekly-transcript-evaluation.json
+      - name: Print transcript readiness blockers
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('/tmp/buddy-weekly-transcript-evaluation.json').read_text())
+          print(json.dumps(report, indent=2))
+          if report['status'] == 'blocked':
+              raise SystemExit('Buddy transcript evaluation is BLOCKED; see blocked_reasons and due_transcripts in the artifact.')
+          PY
+      - name: Upload first transcript readiness report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-weekly-transcript-evaluation-first-run
+          path: /tmp/buddy-weekly-transcript-evaluation.json
+          if-no-files-found: warn
+          retention-days: 90
+
   generate-curriculum:
     runs-on: ubuntu-latest
     timeout-minutes: 15
