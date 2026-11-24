@@ -248,7 +248,7 @@ class DatasetHub:
         if quality["pii_review_required"] or quality["duplicate_rate"] > float(card.get("max_duplicate_rate", 0.01)):
             raise DatasetPolicyError("Evaluation holdout quality/privacy pattern gate failed")
         content_hash = sha256_file(source)
-        canonical = "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\\n" for row in rows)
+        canonical = "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\n" for row in rows)
         split_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
         dataset_id = str(card.get("dataset_id") or "holdout-" + uuid.uuid4().hex[:16])
         if not re.fullmatch(r"[A-Za-z0-9._-]{3,100}", dataset_id):
@@ -267,7 +267,7 @@ class DatasetHub:
                 "split_manifest": {"test_sha256": split_hash}, "created_at": utcnow(),
                 "training_status": "BLOCKED_EVALUATION_ONLY"}
             card_path = self.cards / f"{dataset_id}.v{version}.json"
-            card_path.write_text(json.dumps(card_doc, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+            card_path.write_text(json.dumps(card_doc, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
             db.execute("""INSERT INTO datasets VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", (
                 dataset_id, version, str(card["name"]), str(card["owner"]), str(card["license"]),
                 str(card["license_url"]), str(card["source_url"]), "evaluation_only_holdout", "VERIFIED",
