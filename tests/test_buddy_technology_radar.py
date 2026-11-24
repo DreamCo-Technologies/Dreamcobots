@@ -2,7 +2,7 @@
 import json
 import unittest
 from pathlib import Path
-from tools.refresh_buddy_technology_radar import apply_public_catalog_policy, extract_source, merge_catalog, normalize_item, parse_feed, validate_catalog, validate_policy
+from tools.refresh_buddy_technology_radar import apply_public_catalog_policy, build_public_projection, extract_source, merge_catalog, normalize_item, parse_feed, validate_catalog, validate_policy
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = json.loads((ROOT / "config/buddy/technology-discovery-policy.json").read_text(encoding="utf-8"))
@@ -93,6 +93,36 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
         self.assertEqual(second["public_exclusions"][0]["id"], "old")
         self.assertEqual(second["summary"]["records_total"], 1)
         self.assertEqual(second["summary"]["records_excluded_by_public_policy"], 1)
+
+    def test_public_projection_bounds_pages_without_truncating_canonical_archive(self):
+        records = [
+            {"id": str(index), "record_kind": "announcement", "status": "active",
+             "priority_lenses": ["vibe_coding"] if index % 2 == 0 else []}
+            for index in range(5)
+        ]
+        catalog = {
+            "schema": "dreamco.buddy.technology_radar.v1",
+            "records": records,
+            "source_runs": [],
+            "summary": {
+                "records_total": 5, "sources_total": 0, "sources_succeeded": 0,
+                "sources_failed": 0, "sources_pending": 0,
+                "records_by_kind": {"announcement": 5},
+                "records_by_status": {"active": 5},
+                "records_by_priority_lens": {"vibe_coding": 3},
+            },
+        }
+        public = build_public_projection(catalog, record_limit=2)
+        self.assertEqual(len(catalog["records"]), 5)
+        self.assertEqual([row["id"] for row in public["records"]], ["0", "1"])
+        self.assertEqual(public["summary"]["records_total"], 2)
+        self.assertEqual(public["archive_summary"]["records_total"], 5)
+        self.assertEqual(public["public_projection"]["archive_records_total"], 5)
+        self.assertEqual(public["public_projection"]["record_limit"], 2)
+
+    def test_public_projection_rejects_nonpositive_limit(self):
+        with self.assertRaises(ValueError):
+            build_public_projection({"records": [], "summary": {}}, record_limit=0)
 
     def test_validation_rejects_unverified_capability_or_income_claims(self):
         bad = {
