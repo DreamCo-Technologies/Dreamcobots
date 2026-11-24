@@ -37,6 +37,7 @@ class BootcampSeedDataTests(unittest.TestCase):
         self.assertTrue(all(row["masterbot_id"] == 4 for row in rows))
         self.assertEqual(manifest["split_counts"], {"train": 9, "validation": 2, "test": 2})
         self.assertEqual(manifest["rights_status"], "PENDING_HUMAN_REVIEW")
+        self.assertEqual(manifest["data_plane"], "candidate_pending_ownership_and_rights_review")
         self.assertFalse(manifest["training_approved"])
         self.assertFalse(manifest["training_started"])
         self.assertEqual(len(manifest["candidate_sha256"]), 64)
@@ -63,6 +64,16 @@ class BootcampSeedDataTests(unittest.TestCase):
         data = examples()
         data[0]["authoring"]["training_permission"] = "ALLOWED"
         with self.assertRaisesRegex(ValueError, "pending human review"):
+            build_candidate(data, 4, registry())
+
+    def test_rejects_holdout_scope_and_incomplete_source_provenance(self):
+        data = examples()
+        data[0]["target_scope"] = "evaluation_only_holdout"
+        with self.assertRaisesRegex(ValueError, "target scopes"):
+            build_candidate(data, 4, registry())
+        data = examples()
+        del data[0]["source"]["source_version"]
+        with self.assertRaisesRegex(ValueError, "complete source provenance"):
             build_candidate(data, 4, registry())
 
     def test_rejects_pii_and_external_text(self):
