@@ -42,13 +42,16 @@ def plan_resource_route(division_id:int,task_type:str,data_classification:str="p
     candidates=[x for x in route["teacher_models"]["candidate_models"] if x["source_capability_pack"]==pack]
     available=set(available_local_model_ids or [])
     local=[x for x in candidates if x["model_id"] in available]
-    sensitive=data_classification.casefold() in SENSITIVE_CLASSES
+    classification=data_classification.casefold()
+    sensitive=classification in SENSITIVE_CLASSES or classification not in {"public","non_sensitive","synthetic","open"}
     providers=set(configured_provider_ids or [])
     router=json.loads(MODEL_ROUTER.read_text(encoding="utf-8"))
     eligible=[]
     if external_provider_consent and paid_use_approved and not sensitive:
         for connector in router.get("connectors",[]):
-            if connector["id"] in providers and connector.get("mode")=="premium" and connector.get("implementation_status")=="adapter_implemented":
+            task_labels={task_type.casefold()}
+            if task_type.casefold()=="reasoning": task_labels.add("analysis")
+            if connector["id"] in providers and connector.get("mode")=="premium" and connector.get("implementation_status")=="adapter_implemented" and task_labels.intersection({x.casefold() for x in connector.get("task_types",[])}):
                 eligible.append(connector["id"])
     if sensitive:
         reason="Sensitive/private data: keep inference local or in a first-party approved boundary; no external provider route."
