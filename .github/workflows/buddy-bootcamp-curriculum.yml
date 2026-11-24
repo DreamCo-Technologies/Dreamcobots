@@ -75,11 +75,8 @@ on:
       - "tools/build_weekly_transcript_evaluation.py"
       - "tests/test_weekly_transcript_evaluation.py"
       - ".github/workflows/buddy-weekly-transcript-evaluation.yml"
-  schedule:
-    - cron: "17 9 * * *"
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 concurrency:
   group: buddy-bootcamp-curriculum
   cancel-in-progress: false
@@ -157,42 +154,8 @@ jobs:
           path: /tmp/buddy-weekly-transcript-evaluation.json
           if-no-files-found: warn
           retention-days: 90
-      - name: Commit discovered catalog back to this pull request branch
-        if: github.event_name == 'pull_request'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_BRANCH: ${{ github.head_ref }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add buddy/bootcamp/sources/freecodecamp/catalog.json config/generated/freecodecamp-division-learning-queues.json config/generated/freecodecamp-source-routes.json
-          if git diff --cached --quiet; then
-            echo "Catalog is unchanged."
-          else
-            git commit -m "chore(bootcamp): add discovered freeCodeCamp video catalog"
-            git push origin "HEAD:$PR_BRANCH"
-          fi
       - name: Build and validate curriculum
         run: |
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
-      - name: Propose generated curriculum
-        if: github.event_name == 'schedule'
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          branch: automation/buddy-bootcamp-curriculum
-          delete-branch: false
-          add-paths: |
-            config/generated/buddy-bootcamp-curriculum.json
-            buddy/bootcamp/sources/freecodecamp/catalog.json
-            config/generated/freecodecamp-division-learning-queues.json
-            config/generated/freecodecamp-source-routes.json
-          commit-message: "chore: refresh Buddy Bootcamp curriculum"
-          title: "chore: refresh Buddy Bootcamp curriculum"
-          body: |
-            Generated curriculum from the canonical 65-division registry, HF task taxonomy,
-            capability packs, and division discovery map. No datasets are downloaded and
-            no training or model promotion is performed.
