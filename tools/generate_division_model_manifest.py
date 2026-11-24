@@ -42,7 +42,7 @@ def build_manifest(registry: dict, source_text: str) -> dict:
             "serving": {"endpoint": None, "deployment_revision": None},
             "release_evidence": {"model_card": None, "license_review": None, "approval_record": None}
         })
-    git_blob = f"blob {len(source_text.encode('utf-8'))}\\0".encode("ascii") + source_text.encode("utf-8")
+    git_blob = f"blob {len(source_text.encode('utf-8'))}\0".encode("ascii") + source_text.encode("utf-8")
     return {
         "schema": "dreamco.division_model_manifest.v1",
         "status": "inventory_only_not_trained",
@@ -59,7 +59,7 @@ def main() -> int:
     args = parser.parse_args()
     source_text = SOURCE.read_text(encoding="utf-8")
     manifest = build_manifest(json.loads(source_text), source_text)
-    rendered = json.dumps(manifest, indent=2, ensure_ascii=False) + "\\n"
+    rendered = json.dumps(manifest, indent=2, ensure_ascii=False) + "\n"
     if args.check:
         if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8") != rendered:
             raise SystemExit("division model manifest is stale; run tools/generate_division_model_manifest.py")
