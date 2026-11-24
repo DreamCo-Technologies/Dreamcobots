@@ -127,6 +127,8 @@ def build_curriculum(masterbots:dict,tasks:dict,packs:dict,division_map:dict,ser
         "discovery_adapters":source_registry.get("discovery_adapters",{}),
         "quality_gates":source_registry.get("quality_gates",[]),
         "training_methods":source_registry.get("training_methods",[]),
+        "training_method_execution":source_registry.get("training_method_execution",[]),
+        "execution_truth_boundary":source_registry.get("execution_truth_boundary",""),
         "division_policy":source_registry.get("division_policy",{})},
       "core_modules":CORE_MODULES,"divisions":route_records,
       "rights_policy":tasks.get("rights_policy",{}),
