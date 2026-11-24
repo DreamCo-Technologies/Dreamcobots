@@ -92,6 +92,8 @@ jobs:
           python3 tools/generate_buddy_benchmark_index.py
           node --import tsx tools/generate_dreamco_search_index.ts
           node --import tsx tools/generate_buddy_success_program.ts
+          python3 tools/refresh_buddy_technology_radar.py --project
+          python3 tools/refresh_buddy_technology_radar.py --check
       - name: Regenerate gap plan
         run: python3 tools/plan_parallel_benchmark_gaps.py
       - name: Run lane-owned suites through universal verification
