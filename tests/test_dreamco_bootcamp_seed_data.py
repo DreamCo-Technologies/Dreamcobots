@@ -91,6 +91,18 @@ class BootcampSeedDataTests(unittest.TestCase):
             self.assertTrue(manifest.read_bytes().endswith(bytes([10])))
             self.assertTrue(card.read_bytes().endswith(bytes([10])))
 
+    def test_candidate_generation_is_reproducible_and_covers_all_65_lanes(self):
+        data = examples()
+        hashes = set()
+        for masterbot_id in range(1, 66):
+            first_rows, first_manifest = build_candidate(data, masterbot_id, registry())
+            second_rows, second_manifest = build_candidate(data, masterbot_id, registry())
+            self.assertEqual(first_manifest["candidate_sha256"], second_manifest["candidate_sha256"])
+            self.assertEqual(first_rows, second_rows)
+            self.assertEqual(first_manifest["primary_masterbot_id"], masterbot_id)
+            hashes.add(first_manifest["candidate_sha256"])
+        self.assertEqual(len(hashes), 65)
+
     def test_jsonl_loader_rejects_invalid_rows(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / "examples.jsonl"
