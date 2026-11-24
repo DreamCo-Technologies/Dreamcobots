@@ -39,12 +39,12 @@ test("GitHub and CodeLab overlaps with core slugs are still dropped, not thrown"
   assert.equal(bots.filter((bot) => bot.slug === GITHUB_BOTS[0].slug).length, 1);
 });
 
-test("every published catalog profile (1,101 across 55 divisions) keeps a runtime seed", () => {
+test("every published catalog profile (1,120 across 56 divisions) keeps a runtime seed", () => {
   const catalog = buildFleetCatalog();
   const runtimeSlugs = new Set(ALL_BOTS.map((bot) => bot.slug));
   const published = [...catalog.bots, ...catalog.supplemental_bots];
-  assert.equal(published.length, 1101);
-  assert.equal(catalog.divisions.length + catalog.supplemental_divisions.length, 55);
+  assert.equal(published.length, 1120);
+  assert.equal(catalog.divisions.length + catalog.supplemental_divisions.length, 56);
   assert.deepEqual(published.filter((bot) => !runtimeSlugs.has(bot.identity.slug)).map((bot) => bot.identity.slug), []);
   for (const bot of published) {
     const seed = ALL_BOTS.find((item) => item.slug === bot.identity.slug)!;
