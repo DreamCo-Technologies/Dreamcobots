@@ -31,12 +31,21 @@ class PostgresCatalogTests(unittest.TestCase):
             with self.assertRaises(PostgresCatalogError):
                 division_schema(value)
         with self.assertRaises(PostgresCatalogError):
-            PostgresDatasetCatalog(dsn="postgresql://safe", connect=lambda *_a, **_k: None).get(1, "x; DROP TABLE", 1)
+            PostgresDatasetCatalog(dsn="postgresql://safe", masterbot_id=1, connect=lambda *_a, **_k: None).get(1, "x; DROP TABLE", 1)
 
-    def test_requires_dsn(self):
-        with unittest.mock.patch.dict("os.environ", {}, clear=True):
-            with self.assertRaises(PostgresCatalogError):
-                PostgresDatasetCatalog(dsn="")
+    def test_requires_division_scoped_dsn(self):
+        catalog = PostgresDatasetCatalog(masterbot_id=1, connect=MagicMock(), dsn_resolver=lambda _id: None)
+        with self.assertRaisesRegex(PostgresCatalogError, "DSN_MASTERBOT_001"):
+            catalog.register(1, manifest())
+
+    def test_direct_dsn_requires_fixed_division_identity(self):
+        with self.assertRaisesRegex(PostgresCatalogError, "bound to one canonical"):
+            PostgresDatasetCatalog(dsn="postgresql://shared", connect=MagicMock())
+
+    def test_adapter_cannot_cross_division_boundary(self):
+        catalog = PostgresDatasetCatalog(dsn="postgresql://division-001", masterbot_id=1, connect=MagicMock())
+        with self.assertRaisesRegex(PostgresCatalogError, "different MasterBot"):
+            catalog.get(2, "demo.dataset", 1)
 
     def test_training_manifest_requires_rights_and_owner(self):
         for changed in (
@@ -46,7 +55,7 @@ class PostgresCatalogTests(unittest.TestCase):
             {"data_plane": "public_reference_and_retrieval"},
         ):
             with self.subTest(changed=changed), self.assertRaises(PostgresCatalogError):
-                PostgresDatasetCatalog(dsn="postgresql://safe", connect=lambda *_a, **_k: None).register(1, manifest(**changed))
+                PostgresDatasetCatalog(dsn="postgresql://safe", masterbot_id=1, connect=lambda *_a, **_k: None).register(1, manifest(**changed))
 
     def test_register_persists_metadata_and_redacts_credentials(self):
         cursor = MagicMock()
@@ -55,7 +64,7 @@ class PostgresCatalogTests(unittest.TestCase):
         connection.cursor.return_value.__enter__.return_value = cursor
         connect = MagicMock()
         connect.return_value.__enter__.return_value = connection
-        catalog = PostgresDatasetCatalog(dsn="postgresql://secret", connect=connect)
+        catalog = PostgresDatasetCatalog(dsn="postgresql://secret", masterbot_id=1, connect=connect)
         result = catalog.register(1, manifest(token="never-store", raw_data="never-store"))
         self.assertEqual(result["status"], "PERSISTED")
         self.assertFalse(result["credentials_emitted"])
@@ -70,7 +79,7 @@ class PostgresCatalogTests(unittest.TestCase):
         connection.cursor.return_value.__enter__.return_value = cursor
         connect = MagicMock()
         connect.return_value.__enter__.return_value = connection
-        catalog = PostgresDatasetCatalog(dsn="postgresql://safe", connect=connect)
+        catalog = PostgresDatasetCatalog(dsn="postgresql://safe", masterbot_id=1, connect=connect)
         with self.assertRaises(PostgresCatalogError):
             catalog.register(1, manifest())
 
@@ -83,7 +92,7 @@ class PostgresCatalogTests(unittest.TestCase):
         connection.cursor.return_value.__enter__.return_value = cursor
         connect = MagicMock()
         connect.return_value.__enter__.return_value = connection
-        result = PostgresDatasetCatalog(dsn="postgresql://safe", connect=connect).get(1, "demo.dataset", 1)
+        result = PostgresDatasetCatalog(dsn="postgresql://safe", masterbot_id=1, connect=connect).get(1, "demo.dataset", 1)
         self.assertEqual(result["dataset_id"], "demo.dataset")
 
     def test_get_rejects_tampered_manifest(self):
@@ -95,7 +104,7 @@ class PostgresCatalogTests(unittest.TestCase):
         connect = MagicMock()
         connect.return_value.__enter__.return_value = connection
         with self.assertRaises(PostgresCatalogError):
-            PostgresDatasetCatalog(dsn="postgresql://safe", connect=connect).get(1, "demo.dataset", 1)
+            PostgresDatasetCatalog(dsn="postgresql://safe", masterbot_id=1, connect=connect).get(1, "demo.dataset", 1)
 
 
 if __name__ == "__main__":
