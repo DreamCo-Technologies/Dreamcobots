@@ -126,6 +126,7 @@ REGISTRY_LANE_MAP = {
     "wealth_opportunities": ("business_acquisition", "business_marketplaces"),
     "compute_or_digital_assets": ("digital_asset_scout", "licensed_data"),
     "orchestration": ("enterprise_automation", "software_partners"),
+    "unclaimed_money": ("unclaimed_property", "unclaimed_money"),
 }
 REVENUE_EVENT_MAP = {
     "affiliate": "commission_confirmed_by_network",
@@ -237,6 +238,115 @@ def revenue_route(bot: dict[str, Any], registry: dict[str, Any], lane_index: dic
         "live_actions_allowed": False,
         "owner_live_enable_required": True,
     }
+
+MONEY_OS_LANE_ROUTES = {
+    "services": ("freelance_bid_intel", "professional_services", "DreamProServices"),
+    "grants_contracts": ("rfp_matcher", "grants_contracts", "DreamAdmin"),
+    "real_estate": ("business_acquisition", "property_opportunities", "DreamRealEstate"),
+    "settlements_claims": ("warranty_recall", "settlements", "DreamLegal"),
+    "unclaimed_money": ("unclaimed_property", "unclaimed_money", "DreamLoans"),
+    "lead_generation": ("local_service_leads", "professional_services", "DreamSalesPro"),
+    "revenue_orchestration": ("enterprise_automation", "software_partners", "DreamSalesPro"),
+    "software_services": ("enterprise_automation", "software_partners", "DreamCodeLab"),
+    "jobs": ("freelance_bid_intel", "jobs_gigs", "DreamPersonalCare"),
+    "wealth_opportunities": ("business_acquisition", "business_marketplaces", "DreamFinance"),
+    "compute_or_digital_assets": ("digital_asset_scout", "digital_assets", "DreamCrypto"),
+    "orchestration": ("enterprise_automation", "software_partners", "CommandCore"),
+    "price_drops": ("price_drops", "price_drops", "DreamLoans"),
+    "clearance_extreme_discount": ("price_drops", "price_drops", "DreamLoans"),
+    "coupons": ("price_drops", "coupons", "DreamLoans"),
+    "receipt_rewards": ("receipt_rewards", "receipts", "DreamPayments"),
+    "resale": ("resale_arbitrage", "resale", "DreamMarket"),
+    "cross_lane_scoring": ("revenue_intelligence", "software_partners", "DreamDecision"),
+}
+MONEY_OS_PROFILE_ALIASES = {
+    "government-contract-grant-bot": "gov-contract-bot",
+    "home-buyer-bot": "home-buyer-bot",
+    "legal-money-bot": "legal-money-bot",
+    "multi-source-lead-scraper": "lead-scraper",
+    "revenue-engine-bot": "revenue-engine",
+    "selenium-job-application-bot": "job-application-bot",
+    "mining-bot": "mining-monitor",
+    "deal-hunter": "deal-intelligence",
+    "penny-deal": "coupon-aggregator",
+    "coupon-stack": "coupon-aggregator",
+    "receipt-match": "receipt-scanner",
+    "settlement-finder": "legal-money-bot",
+    "profit-ranker": "revenue-impact-prioritizer",
+}
+
+def build_money_os_catalog(registry: dict[str, Any], lane_index: dict[str, dict[str, Any]],
+                           source_categories: dict[str, Any], master_by_domain: dict[str, int | None],
+                           domain_by_key: dict[str, str]) -> list[dict[str, Any]]:
+    """Retain every Money OS registry entry, including code modules without manifest aliases."""
+    catalog = []
+    entries = [
+        ("registered_money_os_bot", row, str(row.get("path", "")).split("/")[-1])
+        for row in registry.get("bots", [])
+    ] + [
+        ("new_money_os_bot", row, str(row.get("name", "")))
+        for row in registry.get("new_money_os_bots", [])
+    ]
+    seen = set()
+    for kind, row, raw_name in entries:
+        slug = slug_norm(raw_name)
+        if not slug or slug in seen:
+            raise ValueError(f"Missing or duplicate Money OS registry identity: {raw_name}")
+        seen.add(slug)
+        lane_key = str(row.get("lane", ""))
+        route = MONEY_OS_LANE_ROUTES.get(lane_key)
+        if not route:
+            raise ValueError(f"Money OS lane has no canonical route: {lane_key} ({slug})")
+        lane_id, source_group, owner = route
+        if norm(owner) not in domain_by_key:
+            raise ValueError(f"Money OS route owner is not a canonical division: {owner}")
+        lane = lane_index.get(lane_id)
+        if not lane:
+            raise ValueError(f"Money OS revenue lane is missing: {lane_id}")
+        approved_sources = source_categories.get("categories", {}).get(source_group, [])
+        if not approved_sources:
+            raise ValueError(f"Money OS source group is not configured: {source_group}")
+        monetization = lane.get("monetization", ["subscription"])
+        related_slug = MONEY_OS_PROFILE_ALIASES.get(slug)
+        catalog.append({
+            "slug": slug,
+            "name": raw_name,
+            "registry_kind": kind,
+            "registry_path": row.get("path"),
+            "registry_lane": lane_key,
+            "related_manifest_bot_slug": related_slug,
+            "profile_link_status": "linked_to_existing_manifest_profile" if related_slug else "registry_only_profile_link_review_required",
+            "canonical_owner_division": owner,
+            "primary_masterbot_id": master_by_domain.get(norm(owner)),
+            "buddy_orchestrator": "Buddy",
+            "buddy_queue": "dependency_aware_governed_task_queue",
+            "learning_route": "evidence_backed_reviewed_learning",
+            "benchmark_route": "money_os_lane_unit_economics_and_conversion_holdouts",
+            "revenue_plan": {
+                "revenue_lane": lane_id,
+                "value_hypothesis": lane.get("value", "verified customer opportunity or service outcome"),
+                "monetization_options": monetization,
+                "verified_revenue_event_types": sorted({REVENUE_EVENT_MAP.get(option, "verified_contractual_payment_event") for option in monetization}),
+                "approved_source_category": source_group,
+                "approved_source_types": approved_sources,
+                "workflow": [
+                    "discover from an authorized source",
+                    "verify rights, freshness, eligibility and source provenance",
+                    "score expected value, cost, margin, risk and confidence",
+                    "prepare a customer-specific offer and fulfillment plan",
+                    "simulate unit economics and downside",
+                    "obtain required owner approval before outreach, spend, contract or payment",
+                    "execute only through an approved connector with bounded permissions",
+                    "record accepted lead, paid invoice, commission, subscription or completed transaction evidence",
+                    "send outcome and failure evidence to Buddy for reviewed learning",
+                ],
+                "forecast_is_not_revenue": True,
+                "live_status": "plan_only",
+                "live_actions_allowed": False,
+                "owner_live_enable_required": True,
+            },
+        })
+    return catalog
 
 def build() -> dict[str, Any]:
     manifests = json.loads(MANIFESTS.read_text(encoding="utf-8"))
