@@ -231,7 +231,7 @@ def expand(compact: dict[str, Any], collection: dict[str, Any], with_content: bo
     if compact.get("seed_division"):
         manifest["seed_division"] = compact["seed_division"]
     for key in (
-        "source_division", "primary_masterbot_id", "division_route_status",
+        "source_division", "primary_domain_owner", "primary_masterbot_id", "division_route_status",
         "owner_approval_required", "shared_platform_masterbot_ids",
         "supplemental_portfolio", "specialist_capability_domain",
         "shared_workforce_group", "shared_teammate_masterbot_id",
