@@ -16,7 +16,7 @@ class WeeklyTranscriptEvaluationTests(unittest.TestCase):
             root = Path(tmp)
             report = build_report(POLICY, root / "missing.json", root / "ledger.json", date(2026, 11, 24))
         self.assertEqual(report["status"], "blocked")
-        self.assertEqual(report["coverage"], 1.0)
+        self.assertIsNone(report["coverage"])
         self.assertEqual(report["blocked_reasons"], ["approved_transcript_manifest_missing"])
         self.assertEqual(report["synthetic_evaluations_created"], 0)
 
