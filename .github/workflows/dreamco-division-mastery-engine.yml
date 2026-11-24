@@ -18,6 +18,12 @@ on:
       - "config/division-model-competitiveness-policy.json"
       - "config/buddy-engineering-capability-contract.json"
       - "config/buddy-dataset-routing-policy.json"
+      - "config/huggingface-task-taxonomy.json"
+      - "config/generated/division-huggingface-taxonomy-map.json"
+      - "schemas/division-huggingface-taxonomy-map.schema.json"
+      - "tools/build_division_huggingface_taxonomy_map.py"
+      - "tests/test_division_huggingface_taxonomy_map.py"
+      - "docs/architecture/DREAMCO_HUGGINGFACE_DIVISION_TAXONOMY.md"
       - "buddy/datasets/**"
       - "tests/test_buddy_cross_model_benchmark.py"
       - "tools/create_buddy_model_benchmark.py"
@@ -95,6 +101,8 @@ jobs:
           python tools/validate_dreamco_mastery_registry.py
           python tools/build_division_model_fleet.py --check
           python tools/build_division_model_fleet.py
+          python tools/build_division_huggingface_taxonomy_map.py --check
+          python -m unittest tests.test_division_huggingface_taxonomy_map
           python tools/build_buddy_dataset_routes.py
       - name: Preserve canonical division and dataset queues
         uses: actions/upload-artifact@v4

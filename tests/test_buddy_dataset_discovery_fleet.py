@@ -1,6 +1,6 @@
 import unittest
 from buddy.datasets.license_policy import assess_training_candidate,normalize_license
-from buddy.datasets.discovery_fleet import _query_for,run_discovery_fleet
+from buddy.datasets.discovery_fleet import _load_taxonomy_routes,_query_for,run_discovery_fleet
 from unittest.mock import patch
 from buddy.datasets.hub import DatasetHub
 class DatasetLicensePolicyTests(unittest.TestCase):
@@ -51,7 +51,20 @@ class DatasetLicensePolicyTests(unittest.TestCase):
    self.assertEqual(result["candidates_recorded"],2)
    self.assertEqual(len(hub.external_candidates(limit=10)),2)
    self.assertEqual({x["masterbot_id"] for x in hub.external_candidates(limit=10)},{1,2})
+   for row in hub.external_candidates(limit=10):
+    self.assertIn("dreamco_taxonomy",row["metadata"])
+    self.assertFalse(row["metadata"]["ai_training_allowed"])
+    self.assertFalse(row["metadata"]["license_assessment"]["training_approved"])
+    self.assertEqual(row["metadata"]["dreamco_taxonomy"]["routing_status"],"DISCOVERY_ONLY_NOT_TRAINING_APPROVED")
  def test_all_masterbots_have_query_fallback(self):
   self.assertTrue(_query_for("DreamFinance"))
   self.assertTrue(_query_for("DreamUnknownDivision"))
+ def test_taxonomy_map_covers_all_65_masterbots(self):
+  routes=_load_taxonomy_routes()
+  self.assertEqual(len(routes),65)
+  self.assertTrue(all(row["lane_id"] for row in routes.values()))
+  self.assertTrue(all(row["training_approved"] is False for row in routes.values()))
+ def test_taxonomy_queries_drive_discovery_and_are_persisted(self):
+  route=_load_taxonomy_routes()[1]
+  self.assertEqual(_query_for("DreamFinance",route),route["search_queries"][0])
 if __name__=="__main__":unittest.main()

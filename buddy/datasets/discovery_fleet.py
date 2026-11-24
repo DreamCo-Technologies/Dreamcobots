@@ -11,13 +11,30 @@ from .unknown_router import ALIASES
 
 ROOT=Path(__file__).resolve().parents[2]
 REGISTRY=ROOT/"config/masterbot-65-registry.json"
+TAXONOMY_MAP=ROOT/"config/generated/division-huggingface-taxonomy-map.json"
 
-def _query_for(name:str)->str:
+def _load_taxonomy_routes()->dict[int,dict[str,Any]]:
+    payload=json.loads(TAXONOMY_MAP.read_text(encoding="utf-8"))
+    if payload.get("status")!="discovery_only_requires_owner_and_rights_review":
+        raise ValueError("Hugging Face taxonomy map must remain discovery-only")
+    routes=payload.get("routes",[])
+    if len(routes)!=65:
+        raise ValueError("Hugging Face taxonomy map must cover all 65 MasterBots")
+    indexed={int(row["masterbot_id"]):row for row in routes}
+    if len(indexed)!=65:
+        raise ValueError("Hugging Face taxonomy map contains duplicate MasterBot routes")
+    return indexed
+
+def _query_for(name:str,taxonomy_route:dict[str,Any]|None=None)->str:
+    if taxonomy_route:
+        queries=taxonomy_route.get("search_queries",[])
+        if queries and str(queries[0]).strip():
+            return str(queries[0]).strip()
     tags=ALIASES.get(name)
     if tags:
         return " ".join(tags[:3])
     value=re.sub(r"(?<=[a-z])(?=[A-Z])"," ",name)
-    value=re.sub(r"^Dream\s*","",value,flags=re.I)
+    value=re.sub(r"^Dream\\s*","",value,flags=re.I)
     return value.strip() or name
 
 def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|None=None,limit:int=3)->dict[str,Any]:
@@ -26,6 +43,9 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
     registry=json.loads(REGISTRY.read_text(encoding="utf-8"))
     bots=registry.get("divisions",[])
     if len(bots)!=65: raise ValueError("Canonical registry must contain exactly 65 MasterBots")
+    taxonomy_routes=_load_taxonomy_routes()
+    if {int(bot["id"]) for bot in bots}!=set(taxonomy_routes):
+        raise ValueError("Hugging Face taxonomy lanes do not match canonical MasterBot IDs")
     if offset is None: offset=(datetime.now(timezone.utc).date().toordinal()*lanes_per_run)%65
     selected=[bots[(offset+i)%65] for i in range(lanes_per_run)]
     catalog=hub or DatasetHub()
@@ -33,11 +53,18 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
         "masterbot_count":65,"lanes_scanned":[],"candidates_recorded":0,"source_errors":{},
         "network_enabled":os.environ.get("DREAMCO_ALLOW_SOURCE_NETWORK")=="1","files_downloaded":False,"training_approved":False,"weights_trained":False}
     for bot in selected:
-        query=_query_for(bot["name"])
+        taxonomy_route=taxonomy_routes[int(bot["id"])]
+        query=_query_for(bot["name"],taxonomy_route)
         found=discover(query,limit=limit)
         recorded=0
         for candidate in found["results"]+found["model_results"]:
-            candidate={**candidate,"rights_assessment":"UNVERIFIED_DISCOVERY_ONLY","ai_training_allowed":False,"content_rights_verified":False,"privacy_review":"PENDING"}
+            candidate={**candidate,"rights_assessment":"UNVERIFIED_DISCOVERY_ONLY","ai_training_allowed":False,"content_rights_verified":False,"privacy_review":"PENDING",
+                "dreamco_taxonomy":{"lane_id":taxonomy_route["lane_id"],
+                    "subject_terms":taxonomy_route["subject_terms"],
+                    "capability_pack_ids":taxonomy_route["capability_pack_ids"],
+                    "candidate_pipeline_tags":taxonomy_route["candidate_pipeline_tags"],
+                    "domain_crosswalk":taxonomy_route["domain_crosswalk"],
+                    "routing_status":"DISCOVERY_ONLY_NOT_TRAINING_APPROVED"}}
             if candidate.get("source")=="huggingface":
                 try:
                     card=inspect_huggingface_dataset_card(str(candidate.get("id","")))
@@ -57,7 +84,9 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
         for source,error in found["source_errors"].items():
             report["source_errors"][source]=report["source_errors"].get(source,0)+1
         report["lanes_scanned"].append({"masterbot_id":bot["id"],"masterbot":bot["name"],
-            "query":query,"candidate_count":recorded,"status":"DISCOVERY_ONLY_RIGHTS_UNVERIFIED"})
+            "query":query,"candidate_count":recorded,"status":"DISCOVERY_ONLY_RIGHTS_UNVERIFIED",
+            "taxonomy_lane_id":taxonomy_route["lane_id"],
+            "candidate_pipeline_tags":taxonomy_route["candidate_pipeline_tags"]})
     report["next_offset"]=(offset+lanes_per_run)%65
     report["catalog_stats"]=catalog.stats()
     report["limitations"]=["Metadata discovery only; no dataset files downloaded",
