@@ -6,7 +6,7 @@ Give every canonical MasterBot a complete, auditable resource blueprint so a div
 
 ## Scope
 
-The generated map contains 65 unique division resource bundles. Each bundle defines:
+The generated map contains 65 MasterBot resource bundles and 55 domain-profile routes. Forty-five domain profiles reuse their explicitly proposed MasterBot resource bundle; the ten unassigned domain profiles receive their own standalone discovery/resource bundle without inventing an owner mapping. Each bundle defines:
 
 - **Databases:** an isolated logical namespace, shared PostgreSQL/pgvector/full-text platform options, SQLite sandbox, object storage, migrations, tenant controls and lineage tables.
 - **Datasets:** one taxonomy-driven discovery lane, subject queries, permitted source classes, provenance, rights, privacy, quality, split-hash and holdout requirements.
@@ -34,7 +34,7 @@ Distillation is only allowed when the exact teacher/provider terms permit use of
 
 ## Crosswalk owner review
 
-The crosswalk contains **20 unresolved MasterBot-to-domain mappings** and **10 unassigned domain profiles**. The owner-review file preserves both lists with empty candidate arrays. Similar names are not treated as evidence. An authorized owner must provide the mapping and supporting evidence before the canonical crosswalk changes.
+The crosswalk contains **20 unresolved MasterBot-to-domain mappings** and **10 unassigned domain profiles**. All 55 domain profiles now have resource routes: 45 reuse an explicitly mapped MasterBot bundle, while the 10 unassigned profiles receive separate domain-scoped bundles pending owner review. The owner-review file preserves both lists with empty candidate arrays. Similar names are not treated as evidence. An authorized owner must provide the mapping and supporting evidence before the canonical crosswalk changes.
 
 ## Truth and rollout
 
