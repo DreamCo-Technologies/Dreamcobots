@@ -32,6 +32,14 @@ class BuddyFailureLearningTests(unittest.TestCase):
   self.assertEqual(fingerprint({**self.observation,"run_id":12,"commit":"abc"}),
    fingerprint({**self.observation,"run_id":99,"commit":"def"}))
  def test_classifies_generated_index_failure(self):self.assertEqual(classify(self.observation),"generated-index")
+ def test_classifies_real_safe_repair_verification_step_as_generated_index(self):
+  observation={"repository":"DreamCo-Technologies/Dreamcobots",
+   "workflow":"Buddy CI Safe Generated-Artifact Repair","job":"regenerate-and-verify",
+   "failed_step":"Verify repaired indexes and Buddy repair-learning tests",
+   "error_signature":"Verify repaired indexes and Buddy repair-learning tests"}
+  self.assertEqual(classify(observation),"generated-index")
+  plan=recommend(observation,{"incidents":[]})
+  self.assertEqual(plan["primary_masterbot_id"],41)
  def test_safe_generated_index_can_use_bounded_automation(self):
   p=recommend(self.observation,{"incidents":[]});self.assertTrue(p["automatic_code_change_allowed"])
   self.assertFalse(p["requires_human_approval"]);self.assertEqual(p["primary_masterbot_id"],41)
