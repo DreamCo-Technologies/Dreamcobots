@@ -72,7 +72,7 @@ class TrainingJobEvidenceTests(unittest.TestCase):
             self.assertEqual(obj,source)
             self.assertEqual(len(lane),3)
             bad=dict(job);bad["tested_commit_sha"]=""
-            with patch("buddy.datasets.transformers_runner.DatasetHub") as hub_cls:
+            with patch("buddy.datasets.transformers_runner.DatasetHub") as hub_cls, patch.dict("os.environ", {"GITHUB_SHA": ""}):
                 hub_cls.return_value.get.return_value=card
                 with self.assertRaisesRegex(TrainingExecutionError,"tested commit SHA"):
                     validate_job(bad,"compute-1")
