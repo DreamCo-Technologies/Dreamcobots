@@ -37,7 +37,10 @@ def build_owner_review_queue(source_path:Path=SOURCE)->dict[str,Any]:
                 "domain_name":str(item["domain_name"]),
                 "candidate_masterbot_ids":list(item.get("candidate_masterbot_ids") or []),
                 "resource_bundle_id":item.get("standalone_resource_bundle_id"),
-                "decision":"PENDING_OWNER_REVIEW","owner_approval":item.get("owner_approval"),
+                "decision":item.get("decision") if item.get("decision") in {"PENDING_OWNER_REVIEW","PENDING_GITHUB_IDENTITY_ATTESTATION"} else "PENDING_OWNER_REVIEW",
+                "user_approval_status":item.get("user_approval_status"),
+                "proposed_collaborator_masterbot_id":item.get("proposed_collaborator_masterbot_id"),
+                "owner_approval":item.get("owner_approval"),
                 "evidence":list(item.get("evidence") or []),"no_mapping_inferred":True})
     pending.sort(key=lambda x:x["masterbot_id"])
     unassigned.sort(key=lambda x:x["domain_id"])
@@ -69,7 +72,7 @@ def validate_owner_review_queue(queue:dict[str,Any])->None:
         if item.get("decision")!="PROPOSED_EXACT_NAME_MATCH" or item.get("user_approval_status")!="APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION" or item.get("owner_approval") is not None:
             raise OwnerReviewQueueError("exact_name_proposal_approval_provenance_invalid")
     shared=queue.get("shared_platform_services",[])
-    if [x.get("masterbot_id") for x in shared] != list(range(46,66)) or any(x.get("primary_domain_id") is not None for x in shared):
+    if shared and ([x.get("masterbot_id") for x in shared] != list(range(46,66)) or any(x.get("primary_domain_id") is not None for x in shared)):
         raise OwnerReviewQueueError("shared_platform_services_must_remain_ids_46_to_65_without_primary_owner")
     for item in queue.get("masterbot_domain_decisions",[])+queue.get("unassigned_domain_profiles",[]):
         if item.get("decision") not in {"PENDING_OWNER_REVIEW","PENDING_GITHUB_IDENTITY_ATTESTATION"} or item.get("no_mapping_inferred") is not True:
