@@ -1,13 +1,13 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T16:27:15Z
+Generated: 2026-11-24T16:31:41Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
 - Markdown documents scanned: 1675
-- Actionable claim lines detected: 11945
+- Actionable claim lines detected: 11946
 - Documents with missing path references: 113
 - Documents without implementation references: 1588
 - Documents with implementation references but no test references: 69
@@ -14944,7 +14944,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md
 
 - Status: broken_path_references
-- Actionable claim lines: 24
+- Actionable claim lines: 25
 - Implementation paths: buddy/datasets/database_router.py, buddy/datasets/hub.py, buddy/datasets/postgres_catalog.py, website/data/markdown-implementation-gap-audit.json
 - Test paths: None detected
 - Missing paths: config/buddy-study-resources-1101-1200-expansion.json
