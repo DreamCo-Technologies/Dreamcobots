@@ -34,10 +34,14 @@ class GeneratorTests(unittest.TestCase):
         lanes = {lane["slug"] for lane in json.loads((ROOT / "config/bots/teammate-lanes.json").read_text())["lanes"]}
         self.assertEqual(set(self.by_slug), md | app | lanes)
 
-    def test_teammate_lanes_are_bots_with_engines(self):
+    def test_teammate_lanes_route_to_canonical_owners_and_keep_shared_masterbots(self):
         lanes = [b for b in self.collection["bots"] if "teammate_lane" in b["flags"]]
         self.assertEqual(len(lanes), 112)
-        self.assertTrue(all(b["division"] == "GrokTeammates" and b["engine"] != "unmapped" for b in lanes))
+        self.assertTrue(all(b["source_division"] == "GrokTeammates" and b["engine"] != "unmapped" for b in lanes))
+        self.assertTrue(all(b["division"] in gen.load_route_metadata()["domain_names"] for b in lanes))
+        self.assertTrue(all(b["shared_workforce_group"] == "GrokTeammates" for b in lanes))
+        self.assertTrue(all(b["primary_masterbot_id"] in range(1, 46) for b in lanes))
+        self.assertTrue(all(b["shared_teammate_masterbot_id"] in range(46, 66) for b in lanes))
         lanes_text = (ROOT / "config/bots/teammate-lanes.json").read_text()
         self.assertNotRegex(lanes_text, r'"(agent_?id|id|internal_id)"')
 
@@ -69,15 +73,18 @@ class GeneratorTests(unittest.TestCase):
         bot = self.by_slug["ad-copy"]
         self.assertGreater(bot["tier_features_dropped"], 0)
 
-    def test_md_only_bots_flagged(self):
+    def test_threejs_markdown_specs_are_specialized_and_owned_by_dreamcodelab(self):
         bot = self.by_slug["threejs-core"]
         self.assertIn("md_only", bot["flags"])
-        self.assertIn("division_missing", bot["flags"])
-        self.assertEqual(bot["division"], "UNASSIGNED")
+        self.assertEqual(bot["source_division"], "UNASSIGNED")
+        self.assertEqual(bot["division"], "DreamCodeLab")
+        self.assertEqual(bot["supplemental_portfolio"], "Dream3D")
+        self.assertEqual(bot["specialist_capability_domain"], "interactive_web_3d_and_real_time_rendering")
+        self.assertGreaterEqual(bot["caps"], 5)
 
     def test_seed_division_conflict_flagged(self):
         conflicts = [b for b in self.collection["bots"] if "division_conflict_seed" in b["flags"]]
-        self.assertTrue(all(b["seed_division"] != b["division"] for b in conflicts))
+        self.assertTrue(all(b["seed_division"] != b["source_division"] for b in conflicts))
 
     def test_live_action_bots_capped_at_plan_only(self):
         bot = self.by_slug["ach-processor"]
@@ -102,10 +109,15 @@ class GeneratorTests(unittest.TestCase):
         committed = gen.DIV_OUT.read_text(encoding="utf-8")
         self.assertEqual(committed, text)
         divisions = {d["name"]: d for d in json.loads(text)["divisions"]}
-        app = {json.loads(p.read_text())["division"] for p in gen.APP_BOTS.glob("*.json") if json.loads(p.read_text()).get("bots")}
-        self.assertTrue(app <= set(divisions))
-        for name in app:
+        canonical = set(gen.load_route_metadata()["domain_names"])
+        self.assertEqual(set(divisions), canonical)
+        self.assertEqual(len(divisions), 45)
+        for name in canonical:
             self.assertTrue(divisions[name]["smoke_bots"], name)
+        charters = json.loads(gen.SUPPLEMENTAL_CHARTERS.read_text())
+        for portfolio in charters["portfolios"]:
+            owner = portfolio["owner"]
+            self.assertTrue(any(path == f"App_bots/{portfolio['portfolio']}.json" for path in divisions[owner]["sources"]))
         seeds = gen.seed_division_counts()
         self.assertTrue(seeds)
         for name, count in seeds.items():
