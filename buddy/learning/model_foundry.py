@@ -140,8 +140,8 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         raise RuntimeError("PyTorch is required; install the optional training dependencies") from exc
 
     raw = dataset_path.read_bytes()
-    if len(raw) < 512:
-        raise ValueError("authorized dataset must contain at least 512 bytes")
+    if len(raw) < 1024:
+        raise ValueError("authorized dataset must contain at least 1024 bytes for isolated splits")
     if steps < 1 or steps > 10000:
         raise ValueError("steps must be between 1 and 10000")
     random.seed(seed)
@@ -149,10 +149,13 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
     torch.use_deterministic_algorithms(True, warn_only=True)
     device = torch.device("cpu")
     data = torch.tensor(list(raw), dtype=torch.long, device=device)
-    split = max(256, int(len(data) * 0.9))
-    if split >= len(data) - 64:
-        split = len(data) - 65
-    train_data, val_data = data[:split], data[split:]
+    train_end = int(len(data) * 0.8)
+    validation_end = int(len(data) * 0.9)
+    train_data = data[:train_end]
+    val_data = data[train_end:validation_end]
+    holdout_data = data[validation_end:]
+    if min(len(train_data), len(val_data), len(holdout_data)) < 65:
+        raise ValueError("dataset is too small for independent train/validation/holdout splits")
 
     class TinyDecoder(nn.Module):
         def __init__(self):
@@ -200,7 +203,11 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
     with torch.no_grad():
         x, y = batch(val_data)
         validation_loss = float(nn.functional.cross_entropy(
-            model(x).reshape(-1, 256), y.reshape(-1, 256)
+            model(x).reshape(-1, 256), y.reshape(-1)
+        ).item())
+        x, y = batch(holdout_data)
+        holdout_loss = float(nn.functional.cross_entropy(
+            model(x).reshape(-1, 256), y.reshape(-1)
         ).item())
     output_path.parent.mkdir(parents=True, exist_ok=True)
     metadata = {
@@ -217,7 +224,12 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         "learning_rate": 3e-4,
         "seed": seed,
         "steps": steps,
+        "train_bytes": len(train_data),
+        "validation_bytes": len(val_data),
+        "holdout_bytes": len(holdout_data),
+        "holdout_used_for_training": False,
         "validation_loss": validation_loss,
+        "holdout_loss": holdout_loss,
         "training_status": "trained_experimental_checkpoint_not_certified",
         "weights_sha256": None,
     }
