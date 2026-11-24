@@ -12,6 +12,7 @@ PACKS=ROOT/"config/hf-capability-download-map.json"
 ROUTER=ROOT/"config/buddy-model-router.json"
 OUTPUT=ROOT/"config/generated/division-resource-readiness-map.json"
 OWNER_REVIEW=ROOT/"config/review/masterbot-domain-crosswalk-owner-review.json"
+CONVERSATION_APPROVAL=ROOT/"config/review/division-owner-conversation-approval.json"
 RECONCILIATION=ROOT/"config/generated/division-reconciliation.json"
 
 RESOURCE_CONTRACT=json.loads(r'''{"id":"dreamco.division.resource_bundle.v1","truth_status":"requirements_defined_not_provisioned","architecture":"Shared DreamCo infrastructure with isolated per-division namespaces, model identities, dataset lanes, authorization scopes, metrics, and rollback pointers.","model_strategy":"Start with shared, license-reviewed base models plus division-specific adapters or compact specialists. Each division still owns a distinct versioned model identity, checkpoint lineage, benchmark suite, endpoint identity, and release record. Do not claim 65 separately pretrained foundation models.","baseline_requirements":["persistent operational database namespace and schema migrations","versioned dataset catalog, object storage, provenance and rights manifests","teacher and student model candidate catalog with pinned revisions and license review","domain-specific ML curriculum and reproducible sandbox labs","authorized reverse-engineering workflow and clean-room specification practice","rights-cleared teacher-student distillation pipeline","task, privacy, quality, cost and latency-aware model resource routing","domain benchmarks, protected holdouts, safety and regression evaluation","compute planning, resource metering, run observability and rollback"],"readiness_states":["requirements_defined_not_provisioned","configured","connected","validated","certified"],"promotion_rule":"A resource becomes connected or certified only after a real integration test and evidence artifact. A catalog candidate, config entry, or successful workflow alone is not proof of availability."}''')
@@ -93,30 +94,60 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
             "dataset_training_approved":False,"owner_review_required":True,
             "mapping_status":domain.get("mapping_status"),"owner_approval":domain.get("owner_approval")
         })
-    unresolved_bots=[{"masterbot_id":x["masterbot_id"],"masterbot_name":x["masterbot_name"],
-        "primary_domain_id":None,"primary_domain_name":None,"candidate_domain_ids":[],
-        "resource_bundle_id":f"division-resource-{x['masterbot_id']:03d}",
-        "resource_readiness_status":"requirements_defined_not_provisioned",
-        "decision":"PENDING_OWNER_REVIEW","review_required":True,"owner_approval":None,
-        "evidence":x.get("evidence",[])} for x in crosswalk["masterbots"] if x.get("mapping_status")=="unresolved"]
+    approval=json.loads(CONVERSATION_APPROVAL.read_text(encoding="utf-8"))
+    proposed=[x for x in crosswalk["masterbots"] if x.get("mapping_status")=="proposed_exact_name_match"]
+    unresolved=[x for x in crosswalk["masterbots"] if x.get("mapping_status")=="unresolved"]
+    shared_ids=approval["shared_platform_services"]["masterbot_ids"]
+    if shared_ids!=list(range(46,66)) or [x["masterbot_id"] for x in unresolved]!=shared_ids:
+        raise ValueError("IDs 46-65 must remain the complete shared-platform service set")
+    if len(proposed)!=45 or len(approval["exact_name_matches"])!=45:
+        raise ValueError("Expected 45 exact-name proposals and matching explicit user approval record")
+    if len(approval["supplemental_collaborators"])!=10:
+        raise ValueError("Expected ten user-approved supplemental collaborator proposals")
+    proposed_by_id={x["masterbot_id"]:x for x in approval["exact_name_matches"]}
+    proposed_exact_name_matches=[]
+    for item in proposed:
+        decision=proposed_by_id.get(item["masterbot_id"])
+        if not decision or decision["domain_id"]!=item.get("primary_domain_id"):
+            raise ValueError("Conversation approval record does not match exact-name crosswalk")
+        proposed_exact_name_matches.append({**item,"decision":"PROPOSED_EXACT_NAME_MATCH",
+            "user_approval_status":decision["decision"],"owner_approval":None,
+            "github_identity_attestation_required":True})
+    shared_platform_services=[{"masterbot_id":x["masterbot_id"],"masterbot_name":x["masterbot_name"],
+        "primary_domain_id":None,"primary_domain_name":None,
+        "decision":"SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+        "availability":"all_55_domain_divisions","user_approval_status":"ACCEPTED_BY_USER_IN_CHAT",
+        "owner_approval":None,"resource_bundle_id":f"division-resource-{x['masterbot_id']:03d}"}
+        for x in unresolved]
+    unresolved_bots=[]
+    collaborator_by_domain={x["domain_id"]:x for x in approval["supplemental_collaborators"]}
     unresolved_domains=[{"domain_id":x["domain_id"],"domain_name":x["domain_name"],
         "candidate_masterbot_ids":[],
         "standalone_resource_bundle_id":f"domain-resource-{x['domain_id']}",
         "logical_database_namespace":f"dreamco_domain_{x['domain_id']}",
         "dataset_discovery_lane_id":f"domain-discovery-{x['domain_id']}",
         "resource_readiness_status":"requirements_defined_not_provisioned",
-        "decision":"PENDING_OWNER_REVIEW","review_required":True,
+        "decision":"PENDING_GITHUB_IDENTITY_ATTESTATION","review_required":True,
+        "user_approval_status":"APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+        "proposed_collaborator_masterbot_id":collaborator_by_domain[x["domain_id"]]["proposed_collaborator_masterbot_id"],
         "owner_approval":None,"evidence":x.get("evidence",[])}
         for x in crosswalk["domains"] if x.get("mapping_status")=="unresolved"]
     return {"schema":"dreamco.division_resource_readiness_map.v1",
         "status":"requirements_defined_not_provisioned","source_of_truth":"config/masterbot-65-registry.json",
         "counts":{"masterbots":len(routes),"domain_divisions":len(crosswalk["domains"]),
-            "unresolved_masterbot_mappings":len(unresolved_bots),"unassigned_domain_profiles":len(unresolved_domains),"domain_resource_routes":len(domain_routes),
+            "unresolved_masterbot_mappings":len(unresolved_bots),
+            "proposed_exact_name_matches":len(proposed_exact_name_matches),
+            "shared_platform_masterbots":len(shared_platform_services),
+            "unassigned_domain_profiles":len(unresolved_domains),"domain_resource_routes":len(domain_routes),
             "standalone_domain_resource_bundles":sum(x["route_type"]=="standalone_domain_resource_bundle" for x in domain_routes)},
         "source_blob_shas":source_blob_shas,"resource_contract":RESOURCE_CONTRACT,
         "machine_learning_practices":ML_PRACTICES,"resource_templates":templates,"routes":routes,"domain_routes":domain_routes,
-        "owner_review":{"masterbot_domain_decisions":unresolved_bots,"unassigned_domain_profiles":unresolved_domains},
-        "truth":"This map defines resource requirements and candidate references. It does not provision databases, download datasets, connect providers, allocate GPUs, run training, certify teacher models, or prove any division model exists. All unresolved crosswalk mappings remain unassigned until owner approval."}
+        "owner_review":{"masterbot_domain_decisions":unresolved_bots,
+            "proposed_exact_name_matches":proposed_exact_name_matches,
+            "shared_platform_services":shared_platform_services,
+            "unassigned_domain_profiles":unresolved_domains,
+            "conversation_approval_record":"config/review/division-owner-conversation-approval.json"},
+        "truth":"This map defines resource requirements and user-approved proposals. The approval is conversational and awaits GitHub identity attestation; it does not provision resources, approve training, or prove mastery or production readiness."}
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)

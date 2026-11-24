@@ -16,6 +16,8 @@ def build_owner_review_queue(source_path:Path=SOURCE)->dict[str,Any]:
     source=json.loads(raw)
     review=source.get("owner_review") or {}
     pending=[]
+    proposed_matches=list(review.get("proposed_exact_name_matches",[]))
+    shared_services=list(review.get("shared_platform_services",[]))
     for item in review.get("masterbot_domain_decisions",[]):
         if item.get("decision")=="PENDING_OWNER_REVIEW" or item.get("primary_domain_id") is None:
             pending.append({"masterbot_id":int(item["masterbot_id"]),
@@ -44,12 +46,14 @@ def build_owner_review_queue(source_path:Path=SOURCE)->dict[str,Any]:
         raise OwnerReviewQueueError("owner_review_items_must_remain_pending_without_inferred_mapping")
     return {"schema":"dreamco.division_owner_review_queue.v1",
         "source_map_sha256":hashlib.sha256(raw).hexdigest(),
-        "masterbot_domain_decisions":pending,"unassigned_domain_profiles":unassigned,
-        "counts":{"pending_masterbot_mappings":len(pending),"unassigned_domain_profiles":len(unassigned)},
+        "masterbot_domain_decisions":pending,"proposed_exact_name_matches":proposed_matches,
+        "shared_platform_services":shared_services,"unassigned_domain_profiles":unassigned,
+        "counts":{"pending_masterbot_mappings":len(pending),"proposed_exact_name_matches":len(proposed_matches),
+            "shared_platform_masterbots":len(shared_services),"unassigned_domain_profiles":len(unassigned)},
         "policy":{"auto_assignment":False,"name_similarity_is_not_approval":True,
             "owner_approval_required":True,"evidence_reference_required":True,
             "training_or_model_promotion_blocked_until_mapping_review":True},
-        "truth_boundary":"This queue mirrors unresolved source decisions. It does not infer mappings, approve domains, or mark resource bundles provisioned."}
+        "truth_boundary":"This queue separates pending mappings, user-approved proposals awaiting GitHub identity attestation, and accepted shared-platform classifications. It does not provision resource bundles or prove model readiness."}
 
 def validate_owner_review_queue(queue:dict[str,Any])->None:
     if queue.get("schema")!="dreamco.division_owner_review_queue.v1":

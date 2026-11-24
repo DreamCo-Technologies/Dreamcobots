@@ -1,23 +1,25 @@
 {
-  "schema": "dreamco.masterbot_domain_owner_review.v2",
-  "status": "pending_owner_review_no_guessed_mappings",
+  "schema": "dreamco.masterbot_domain_owner_review.v3",
+  "status": "user_approved_proposals_pending_github_identity_attestation",
   "source_refs": [
     "config/generated/masterbot-45-domain-crosswalk.json",
     "config/generated/masterbot-55-domain-crosswalk.json",
     "config/generated/division-reconciliation.json",
     "config/division-reconciliation-policy.json",
+    "config/review/division-owner-conversation-approval.json",
     "shared/division-production-contract.ts",
     "config/masterbot-65-registry.json"
   ],
   "counts": {
-    "unresolved_masterbot_mappings": 20,
+    "unresolved_masterbot_mappings": 0,
+    "proposed_exact_name_matches": 45,
     "unassigned_domain_profiles": 10,
     "original_core_domain_profiles": 45,
     "promoted_supplemental_domain_profiles": 10,
     "total_domain_profiles": 55,
     "shared_platform_masterbots": 20
   },
-  "instructions": "Owner review only. Preserve all 45 original core domains, all ten promoted supplemental domains, and all 65 canonical MasterBots. Exact-name crosswalk matches remain proposals until an authorized owner records reviewer, evidence, decision date, and approval. Keep the 20 shared-platform MasterBots (IDs 46-65) as cross-domain services; do not force them into a primary domain. Empty candidate arrays and null approvals are intentional. Never infer ownership from names, keywords, or generic capability similarity. Resource bundles and shared service availability do not establish ownership, execution, mastery, or production readiness.",
+  "instructions": "The user explicitly approved the 45 exact-name proposals, ten supplemental collaborator proposals, and shared-platform classification in chat on 2026-11-24. This conversational approval is recorded, but GitHub identity has not been independently attested. Preserve the approval provenance and do not represent it as a signed GitHub review. Keep MasterBots 46-65 as shared platform services with no primary domain owner. Do not infer any other mapping. Resource bundles remain requirements-defined, not provisioned; no training, mastery, or production readiness is implied.",
   "domain_taxonomy": {
     "original_core_divisions": 45,
     "promoted_supplemental_divisions": 10,
@@ -29,266 +31,814 @@
     },
     "policy": "The 20 shared-platform MasterBots are cross-domain services available to all 55 domain divisions; they are not additional domain divisions and receive no primary domain owner through this record."
   },
-  "masterbot_domain_decisions": [
+  "masterbot_domain_decisions": [],
+  "proposed_exact_name_matches": [
+    {
+      "masterbot_id": 1,
+      "masterbot_name": "DreamFinance",
+      "primary_domain_id": "dreamfinance",
+      "primary_domain_name": "DreamFinance",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 2,
+      "masterbot_name": "DreamRealEstate",
+      "primary_domain_id": "dreamrealestate",
+      "primary_domain_name": "DreamRealEstate",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 3,
+      "masterbot_name": "DreamSalesPro",
+      "primary_domain_id": "dreamsalespro",
+      "primary_domain_name": "DreamSalesPro",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 4,
+      "masterbot_name": "DreamAIInfra",
+      "primary_domain_id": "dreamaiinfra",
+      "primary_domain_name": "DreamAIInfra",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 5,
+      "masterbot_name": "DreamRetail",
+      "primary_domain_id": "dreamretail",
+      "primary_domain_name": "DreamRetail",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 6,
+      "masterbot_name": "DreamProServices",
+      "primary_domain_id": "dreamproservices",
+      "primary_domain_name": "DreamProServices",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 7,
+      "masterbot_name": "DreamData",
+      "primary_domain_id": "dreamdata",
+      "primary_domain_name": "DreamData",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 8,
+      "masterbot_name": "DreamGlobal",
+      "primary_domain_id": "dreamglobal",
+      "primary_domain_name": "DreamGlobal",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 9,
+      "masterbot_name": "DreamAutomation",
+      "primary_domain_id": "dreamautomation",
+      "primary_domain_name": "DreamAutomation",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 10,
+      "masterbot_name": "DreamEmpire",
+      "primary_domain_id": "dreamempire",
+      "primary_domain_name": "DreamEmpire",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 11,
+      "masterbot_name": "DreamContent",
+      "primary_domain_id": "dreamcontent",
+      "primary_domain_name": "DreamContent",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 12,
+      "masterbot_name": "DreamTrade",
+      "primary_domain_id": "dreamtrade",
+      "primary_domain_name": "DreamTrade",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 13,
+      "masterbot_name": "DreamFlow",
+      "primary_domain_id": "dreamflow",
+      "primary_domain_name": "DreamFlow",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 14,
+      "masterbot_name": "DreamMarket",
+      "primary_domain_id": "dreammarket",
+      "primary_domain_name": "DreamMarket",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 15,
+      "masterbot_name": "CommandCore",
+      "primary_domain_id": "commandcore",
+      "primary_domain_name": "CommandCore",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 16,
+      "masterbot_name": "GameTitan",
+      "primary_domain_id": "gametitan",
+      "primary_domain_name": "GameTitan",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 17,
+      "masterbot_name": "DreamInfluence",
+      "primary_domain_id": "dreaminfluence",
+      "primary_domain_name": "DreamInfluence",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 18,
+      "masterbot_name": "DreamDecision",
+      "primary_domain_id": "dreamdecision",
+      "primary_domain_name": "DreamDecision",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 19,
+      "masterbot_name": "DreamOps",
+      "primary_domain_id": "dreamops",
+      "primary_domain_name": "DreamOps",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 20,
+      "masterbot_name": "DreamPlanetary",
+      "primary_domain_id": "dreamplanetary",
+      "primary_domain_name": "DreamPlanetary",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 21,
+      "masterbot_name": "DreamEntFinance",
+      "primary_domain_id": "dreamentfinance",
+      "primary_domain_name": "DreamEntFinance",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 22,
+      "masterbot_name": "DreamCustIntel",
+      "primary_domain_id": "dreamcustintel",
+      "primary_domain_name": "DreamCustIntel",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 23,
+      "masterbot_name": "DreamLegal",
+      "primary_domain_id": "dreamlegal",
+      "primary_domain_name": "DreamLegal",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 24,
+      "masterbot_name": "DreamCyber",
+      "primary_domain_id": "dreamcyber",
+      "primary_domain_name": "DreamCyber",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 25,
+      "masterbot_name": "DreamHealth",
+      "primary_domain_id": "dreamhealth",
+      "primary_domain_name": "DreamHealth",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 26,
+      "masterbot_name": "DreamEducation",
+      "primary_domain_id": "dreameducation",
+      "primary_domain_name": "DreamEducation",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 27,
+      "masterbot_name": "DreamConstruction",
+      "primary_domain_id": "dreamconstruction",
+      "primary_domain_name": "DreamConstruction",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 28,
+      "masterbot_name": "DreamTransport",
+      "primary_domain_id": "dreamtransport",
+      "primary_domain_name": "DreamTransport",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 29,
+      "masterbot_name": "DreamFood",
+      "primary_domain_id": "dreamfood",
+      "primary_domain_name": "DreamFood",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 30,
+      "masterbot_name": "DreamScience",
+      "primary_domain_id": "dreamscience",
+      "primary_domain_name": "DreamScience",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 31,
+      "masterbot_name": "DreamArts",
+      "primary_domain_id": "dreamarts",
+      "primary_domain_name": "DreamArts",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 32,
+      "masterbot_name": "DreamProtection",
+      "primary_domain_id": "dreamprotection",
+      "primary_domain_name": "DreamProtection",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 33,
+      "masterbot_name": "DreamAgriculture",
+      "primary_domain_id": "dreamagriculture",
+      "primary_domain_name": "DreamAgriculture",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 34,
+      "masterbot_name": "DreamMaintenance",
+      "primary_domain_id": "dreammaintenance",
+      "primary_domain_name": "DreamMaintenance",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 35,
+      "masterbot_name": "DreamProduction",
+      "primary_domain_id": "dreamproduction",
+      "primary_domain_name": "DreamProduction",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 36,
+      "masterbot_name": "DreamSocial",
+      "primary_domain_id": "dreamsocial",
+      "primary_domain_name": "DreamSocial",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 37,
+      "masterbot_name": "DreamAdmin",
+      "primary_domain_id": "dreamadmin",
+      "primary_domain_name": "DreamAdmin",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 38,
+      "masterbot_name": "DreamCrypto",
+      "primary_domain_id": "dreamcrypto",
+      "primary_domain_name": "DreamCrypto",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 39,
+      "masterbot_name": "DreamPayments",
+      "primary_domain_id": "dreampayments",
+      "primary_domain_name": "DreamPayments",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 40,
+      "masterbot_name": "DreamBizLaunch",
+      "primary_domain_id": "dreambizlaunch",
+      "primary_domain_name": "DreamBizLaunch",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 41,
+      "masterbot_name": "DreamCodeLab",
+      "primary_domain_id": "dreamcodelab",
+      "primary_domain_name": "DreamCodeLab",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 42,
+      "masterbot_name": "DreamLoans",
+      "primary_domain_id": "dreamloans",
+      "primary_domain_name": "DreamLoans",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 43,
+      "masterbot_name": "DreamPersonalCare",
+      "primary_domain_id": "dreampersonalcare",
+      "primary_domain_name": "DreamPersonalCare",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 44,
+      "masterbot_name": "DreamMilitary",
+      "primary_domain_id": "dreammilitary",
+      "primary_domain_name": "DreamMilitary",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    },
+    {
+      "masterbot_id": 45,
+      "masterbot_name": "DreamAgents",
+      "primary_domain_id": "dreamagents",
+      "primary_domain_name": "DreamAgents",
+      "mapping_status": "proposed_exact_name_match",
+      "collaborator_domain_ids": [],
+      "review_required": true,
+      "owner_approval": null,
+      "decision": "PROPOSED_EXACT_NAME_MATCH",
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "github_identity_attestation_required": true
+    }
+  ],
+  "shared_platform_services": [
     {
       "masterbot_id": 46,
       "masterbot_name": "DreamResearch",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-046",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-046"
     },
     {
       "masterbot_id": 47,
       "masterbot_name": "DreamBenchmark",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-047",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-047"
     },
     {
       "masterbot_id": 48,
       "masterbot_name": "DreamKnowledge",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-048",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-048"
     },
     {
       "masterbot_id": 49,
       "masterbot_name": "DreamEvolution",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-049",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-049"
     },
     {
       "masterbot_id": 50,
       "masterbot_name": "DreamIntegration",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-050",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-050"
     },
     {
       "masterbot_id": 51,
       "masterbot_name": "DreamReason",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-051",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-051"
     },
     {
       "masterbot_id": 52,
       "masterbot_name": "DreamWorld",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-052",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-052"
     },
     {
       "masterbot_id": 53,
       "masterbot_name": "DreamVision",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-053",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-053"
     },
     {
       "masterbot_id": 54,
       "masterbot_name": "DreamVoice",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-054",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-054"
     },
     {
       "masterbot_id": 55,
       "masterbot_name": "DreamHuman",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-055",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-055"
     },
     {
       "masterbot_id": 56,
       "masterbot_name": "DreamSecurity",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-056",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-056"
     },
     {
       "masterbot_id": 57,
       "masterbot_name": "DreamProduct",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-057",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-057"
     },
     {
       "masterbot_id": 58,
       "masterbot_name": "DreamOperations",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-058",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-058"
     },
     {
       "masterbot_id": 59,
       "masterbot_name": "DreamStrategy",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-059",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-059"
     },
     {
       "masterbot_id": 60,
       "masterbot_name": "DreamExperiment",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-060",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-060"
     },
     {
       "masterbot_id": 61,
       "masterbot_name": "DreamSimulation",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-061",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-061"
     },
     {
       "masterbot_id": 62,
       "masterbot_name": "DreamDiscovery",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-062",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-062"
     },
     {
       "masterbot_id": 63,
       "masterbot_name": "DreamQuality",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-063",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-063"
     },
     {
       "masterbot_id": 64,
       "masterbot_name": "DreamResource",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-064",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-064"
     },
     {
       "masterbot_id": 65,
       "masterbot_name": "DreamFuture",
       "primary_domain_id": null,
       "primary_domain_name": null,
-      "candidate_domain_ids": [],
-      "resource_bundle_id": "division-resource-065",
-      "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
-      "review_required": true,
+      "decision": "SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN",
+      "availability": "all_55_domain_divisions",
+      "user_approval_status": "ACCEPTED_BY_USER_IN_CHAT",
       "owner_approval": null,
-      "evidence": []
+      "resource_bundle_id": "division-resource-065"
     }
   ],
   "unassigned_domain_profiles": [
@@ -300,12 +850,14 @@
       "logical_database_namespace": "dreamco_domain_dreamaffiliate",
       "dataset_discovery_lane_id": "domain-discovery-dreamaffiliate",
       "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
+      "decision": "PENDING_GITHUB_IDENTITY_ATTESTATION",
       "review_required": true,
       "owner_approval": null,
       "evidence": [
         "shared/division-production-contract.ts"
-      ]
+      ],
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "proposed_collaborator_masterbot_id": 3
     },
     {
       "domain_id": "dreamagency",
@@ -315,12 +867,14 @@
       "logical_database_namespace": "dreamco_domain_dreamagency",
       "dataset_discovery_lane_id": "domain-discovery-dreamagency",
       "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
+      "decision": "PENDING_GITHUB_IDENTITY_ATTESTATION",
       "review_required": true,
       "owner_approval": null,
       "evidence": [
         "shared/division-production-contract.ts"
-      ]
+      ],
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "proposed_collaborator_masterbot_id": 6
     },
     {
       "domain_id": "dreamfoundry",
@@ -330,12 +884,14 @@
       "logical_database_namespace": "dreamco_domain_dreamfoundry",
       "dataset_discovery_lane_id": "domain-discovery-dreamfoundry",
       "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
+      "decision": "PENDING_GITHUB_IDENTITY_ATTESTATION",
       "review_required": true,
       "owner_approval": null,
       "evidence": [
         "shared/division-production-contract.ts"
-      ]
+      ],
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "proposed_collaborator_masterbot_id": 4
     },
     {
       "domain_id": "dreamfranchise",
@@ -345,12 +901,14 @@
       "logical_database_namespace": "dreamco_domain_dreamfranchise",
       "dataset_discovery_lane_id": "domain-discovery-dreamfranchise",
       "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
+      "decision": "PENDING_GITHUB_IDENTITY_ATTESTATION",
       "review_required": true,
       "owner_approval": null,
       "evidence": [
         "shared/division-production-contract.ts"
-      ]
+      ],
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "proposed_collaborator_masterbot_id": 40
     },
     {
       "domain_id": "dreamintegrations",
@@ -360,12 +918,14 @@
       "logical_database_namespace": "dreamco_domain_dreamintegrations",
       "dataset_discovery_lane_id": "domain-discovery-dreamintegrations",
       "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
+      "decision": "PENDING_GITHUB_IDENTITY_ATTESTATION",
       "review_required": true,
       "owner_approval": null,
       "evidence": [
         "shared/division-production-contract.ts"
-      ]
+      ],
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "proposed_collaborator_masterbot_id": 41
     },
     {
       "domain_id": "dreamlicensing",
@@ -375,12 +935,14 @@
       "logical_database_namespace": "dreamco_domain_dreamlicensing",
       "dataset_discovery_lane_id": "domain-discovery-dreamlicensing",
       "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
+      "decision": "PENDING_GITHUB_IDENTITY_ATTESTATION",
       "review_required": true,
       "owner_approval": null,
       "evidence": [
         "shared/division-production-contract.ts"
-      ]
+      ],
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "proposed_collaborator_masterbot_id": 23
     },
     {
       "domain_id": "dreamrobotics",
@@ -390,12 +952,14 @@
       "logical_database_namespace": "dreamco_domain_dreamrobotics",
       "dataset_discovery_lane_id": "domain-discovery-dreamrobotics",
       "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
+      "decision": "PENDING_GITHUB_IDENTITY_ATTESTATION",
       "review_required": true,
       "owner_approval": null,
       "evidence": [
         "shared/division-production-contract.ts"
-      ]
+      ],
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "proposed_collaborator_masterbot_id": 4
     },
     {
       "domain_id": "dreamsaas",
@@ -405,12 +969,14 @@
       "logical_database_namespace": "dreamco_domain_dreamsaas",
       "dataset_discovery_lane_id": "domain-discovery-dreamsaas",
       "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
+      "decision": "PENDING_GITHUB_IDENTITY_ATTESTATION",
       "review_required": true,
       "owner_approval": null,
       "evidence": [
         "shared/division-production-contract.ts"
-      ]
+      ],
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "proposed_collaborator_masterbot_id": 9
     },
     {
       "domain_id": "dreamstreaming",
@@ -420,12 +986,14 @@
       "logical_database_namespace": "dreamco_domain_dreamstreaming",
       "dataset_discovery_lane_id": "domain-discovery-dreamstreaming",
       "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
+      "decision": "PENDING_GITHUB_IDENTITY_ATTESTATION",
       "review_required": true,
       "owner_approval": null,
       "evidence": [
         "shared/division-production-contract.ts"
-      ]
+      ],
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "proposed_collaborator_masterbot_id": 11
     },
     {
       "domain_id": "dreamtravel",
@@ -435,12 +1003,15 @@
       "logical_database_namespace": "dreamco_domain_dreamtravel",
       "dataset_discovery_lane_id": "domain-discovery-dreamtravel",
       "resource_readiness_status": "requirements_defined_not_provisioned",
-      "decision": "PENDING_OWNER_REVIEW",
+      "decision": "PENDING_GITHUB_IDENTITY_ATTESTATION",
       "review_required": true,
       "owner_approval": null,
       "evidence": [
         "shared/division-production-contract.ts"
-      ]
+      ],
+      "user_approval_status": "APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION",
+      "proposed_collaborator_masterbot_id": 28
     }
-  ]
+  ],
+  "conversation_approval_record": "config/review/division-owner-conversation-approval.json"
 }
