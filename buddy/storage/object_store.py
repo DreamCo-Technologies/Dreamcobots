@@ -17,9 +17,30 @@ PREFIX_RE = re.compile(r"^[a-zA-Z0-9/_-]{1,120}$")
 
 def _classification(bucket: str, client: Any) -> dict[str, Any]:
     versioning=client.get_bucket_versioning(Bucket=bucket)
-    encryption=client.get_bucket_encryption(Bucket=bucket)
-    public=client.get_public_access_block(Bucket=bucket)
-    lifecycle=client.get_bucket_lifecycle_configuration(Bucket=bucket)
+    try:
+        encryption=client.get_bucket_encryption(Bucket=bucket)
+    except Exception as exc:
+        code=getattr(exc,"response",{}).get("Error",{}).get("Code")
+        if code in {"ServerSideEncryptionConfigurationNotFoundError","NoSuchServerSideEncryptionConfiguration"}:
+            encryption={}
+        else:
+            raise ObjectStoreError("bucket_encryption_inspection_failed") from None
+    try:
+        public=client.get_public_access_block(Bucket=bucket)
+    except Exception as exc:
+        code=getattr(exc,"response",{}).get("Error",{}).get("Code")
+        if code in {"NoSuchPublicAccessBlockConfiguration","NoSuchPublicAccessBlock"}:
+            public={}
+        else:
+            raise ObjectStoreError("bucket_public_access_inspection_failed") from None
+    try:
+        lifecycle=client.get_bucket_lifecycle_configuration(Bucket=bucket)
+    except Exception as exc:
+        code=getattr(exc,"response",{}).get("Error",{}).get("Code")
+        if code in {"NoSuchLifecycleConfiguration","NoSuchLifecycle"}:
+            lifecycle={}
+        else:
+            raise ObjectStoreError("bucket_lifecycle_inspection_failed") from None
     rules=lifecycle.get("Rules",[])
     retention=[]
     for rule in rules:
@@ -104,12 +125,22 @@ def run_object_store_healthcheck(*,client:Any=None,allow_canary:bool=False,
             raise ObjectStoreError("primary_canary_readback_mismatch")
         source={"Bucket":primary,"Key":primary_key}
         if version_id: source["VersionId"]=version_id
-        client.copy_object(Bucket=backup,Key=backup_key,CopySource=source)
+        backup_copy=client.copy_object(Bucket=backup,Key=backup_key,CopySource=source)
+        if not backup_copy.get("VersionId"):
+            raise ObjectStoreError("backup_object_version_id_missing")
+        backup_head=client.head_object(Bucket=backup,Key=backup_key)
+        if backup_head.get("ServerSideEncryption") not in {"AES256","aws:kms","aws:kms:dsse"}:
+            raise ObjectStoreError("backup_canary_object_encryption_not_verified")
         backup_read=client.get_object(Bucket=backup,Key=backup_key)
         if backup_read["Body"].read()!=payload:
             raise ObjectStoreError("backup_copy_readback_mismatch")
-        client.copy_object(Bucket=primary,Key=restore_key,
+        restore_copy=client.copy_object(Bucket=primary,Key=restore_key,
             CopySource={"Bucket":backup,"Key":backup_key})
+        if not restore_copy.get("VersionId"):
+            raise ObjectStoreError("restored_object_version_id_missing")
+        restore_head=client.head_object(Bucket=primary,Key=restore_key)
+        if restore_head.get("ServerSideEncryption") not in {"AES256","aws:kms","aws:kms:dsse"}:
+            raise ObjectStoreError("restored_canary_object_encryption_not_verified")
         restored=client.get_object(Bucket=primary,Key=restore_key)
         if restored["Body"].read()!=payload:
             raise ObjectStoreError("restore_readback_mismatch")
