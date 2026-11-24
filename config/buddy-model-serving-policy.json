@@ -4,6 +4,9 @@
   "default_mode": "disabled_until_explicit_call",
   "policy": {
     "paid_provider_calls_require_approval_id": true,
+    "data_classification_enforced": true,
+    "provider_output_training_requires_explicit_permission": true,
+    "provider_output_training_default": false,
     "automatic_paid_upgrade": false,
     "provider_failover": false,
     "arbitrary_base_urls": false,
@@ -14,8 +17,8 @@
     "production_promotion_from_inference_alone": false
   },
   "providers": [
-    {"provider_id":"openai","endpoint":"https://api.openai.com/v1/chat/completions","secret_env":"OPENAI_API_KEY","model_allowlist":["gpt-5.4-mini","gpt-5.4","gpt-4.1-mini"],"implementation":"buddy.models.provider_runtime.chat_completion","paid":true},
-    {"provider_id":"openrouter","endpoint":"https://openrouter.ai/api/v1/chat/completions","secret_env":"OPENROUTER_API_KEY","model_allowlist":"dynamic_catalog_model_id_validated_by_explicit_approval","implementation":"buddy.models.provider_runtime.chat_completion","paid":true}
+    {"provider_id":"openai","endpoint":"https://api.openai.com/v1/chat/completions","secret_env":"OPENAI_API_KEY","model_allowlist":["gpt-5.4-mini","gpt-5.4","gpt-4.1-mini"],"data_classification_max":"internal","output_training_permission":"UNKNOWN","implementation":"buddy.models.provider_runtime.chat_completion","paid":true},
+    {"provider_id":"openrouter","endpoint":"https://openrouter.ai/api/v1/chat/completions","secret_env":"OPENROUTER_API_KEY","model_allowlist":"dynamic_catalog_model_id_validated_by_explicit_approval","data_classification_max":"public","output_training_permission":"UNKNOWN","implementation":"buddy.models.provider_runtime.chat_completion","paid":true}
   ],
   "required_evidence_per_call": ["provider_id","model_id","paid_approval_id","request_timestamp","latency_ms","token_usage_when_returned","success_or_redacted_error_type"],
   "next_adapters": ["Anthropic native messages protocol","Google Gemini native generateContent protocol","Hugging Face Inference Endpoints","AWS Bedrock identity-based adapter","local OpenAI-compatible runtime with loopback-only endpoint policy"]
