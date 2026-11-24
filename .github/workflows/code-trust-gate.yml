@@ -80,6 +80,8 @@ jobs:
           node --import tsx tools/generate_buddy_success_program.ts
           python3 tools/audit_actions_health.py
           python3 tools/build_actions_prospectus.py
+          # Reconcile the registry after every generator has finished.
+          python3 tools/generate_repository_test_registry.py
       - name: Full repository verification
         run: npm run test:repository
       - name: Fleet end-to-end verification
