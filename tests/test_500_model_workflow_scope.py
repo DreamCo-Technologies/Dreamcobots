@@ -1,5 +1,6 @@
 from pathlib import Path
 import unittest
+from tools.run_500_model_benchmarks import build_status
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github/workflows/dreamco-unified-system.yml"
@@ -13,6 +14,16 @@ class FiveHundredModelWorkflowScopeTests(unittest.TestCase):
         self.assertNotIn("--fallback tools/run_everything_now.py", text)
         self.assertIn("BLOCKED_RUNNER_NOT_IMPLEMENTED", text)
         self.assertIn("all matrix rows remain unverified", text)
+
+    def test_execution_gate_records_blocked_without_fabricating_runs(self):
+        status = build_status("standard")
+        self.assertEqual(status["status"], "BLOCKED_RUNNER_NOT_IMPLEMENTED")
+        self.assertFalse(status["execution_started"])
+        self.assertEqual(status["provider_calls"], 0)
+        self.assertEqual(status["training_jobs"], 0)
+        self.assertEqual(status["verified_results"], 0)
+        with self.assertRaises(ValueError):
+            build_status("unapproved")
 
     def test_benchmark_workflow_does_not_install_unrelated_media_stack(self):
         text = WORKFLOW.read_text(encoding="utf-8")
