@@ -1,0 +1,33 @@
+name: DreamCo Private Holdout Benchmark
+on:
+  pull_request:
+    paths:
+      - "buddy/datasets/hub.py"
+      - "buddy/datasets/private_holdout_jobs.py"
+      - "buddy/datasets/private_holdout_runner.py"
+      - "tests/test_buddy_private_holdout_benchmark.py"
+      - "docs/DREAMCO_PRIVATE_HOLDOUT_BENCHMARKS.md"
+      - ".github/workflows/dreamco-private-holdout-benchmark.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/datasets/hub.py"
+      - "buddy/datasets/private_holdout_jobs.py"
+      - "buddy/datasets/private_holdout_runner.py"
+      - "tests/test_buddy_private_holdout_benchmark.py"
+      - "docs/DREAMCO_PRIVATE_HOLDOUT_BENCHMARKS.md"
+permissions:
+  contents: read
+jobs:
+  private-holdout-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run private holdout tests
+        run: python -m unittest discover -s tests -p 'test_buddy_private_holdout_benchmark.py' -v
+      - name: Compile benchmark modules
+        run: python -m py_compile buddy/datasets/hub.py buddy/datasets/private_holdout_jobs.py buddy/datasets/private_holdout_runner.py
