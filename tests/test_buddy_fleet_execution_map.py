@@ -42,6 +42,16 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
             self.assertFalse(plan["live_actions_allowed"])
             self.assertTrue(plan["owner_live_enable_required"])
 
+    def test_revenue_candidates_use_declared_authorized_source_categories(self):
+        import json
+        from tools.build_buddy_fleet_execution_map import OPPORTUNITY_SOURCES
+        allowed = set(json.loads(OPPORTUNITY_SOURCES.read_text(encoding="utf-8"))["categories"])
+        for bot in self.bots:
+            plan = bot["commercial_plan"]
+            if plan.get("candidate"):
+                self.assertTrue(plan["approved_source_categories"])
+                self.assertTrue(set(plan["approved_source_categories"]).issubset(allowed))
+
     def test_all_ten_specialist_portfolios_have_five_distinct_bot_charters(self):
         charters = __import__("json").loads(CHARTERS.read_text(encoding="utf-8"))
         self.assertEqual(len(charters["portfolios"]), 10)
