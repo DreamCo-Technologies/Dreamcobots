@@ -52,6 +52,14 @@ class TrainingEvidencePackagingTests(unittest.TestCase):
         self.assertEqual(fragment["division"]["division_model_id"],"DCM-001")
         self.assertEqual(fragment["evidence"]["training_result"]["sha256"],result["training_result_sha256"])
 
+    def test_short_run_can_package_without_intermediate_optimizer_checkpoints(self):
+        (self.checkpoints/"checkpoint-10.bin").unlink()
+        result=dict(self.result)
+        result["artifact_hashes"]={**self.result["artifact_hashes"],"checkpoints":[]}
+        packaged=package_training_evidence(result,self.root/"evidence-short")
+        self.assertEqual(packaged["status"],"TRAINED_PENDING_BENCHMARK_AND_REVIEW")
+        self.assertTrue((self.root/"evidence-short"/"checkpoints"/"division-001"/"weights"/"adapter.bin").is_file())
+
     def test_missing_tested_commit_or_checkpoint_hash_blocks_packaging(self):
         bad=dict(self.result);bad["tested_commit_sha"]=""
         with self.assertRaisesRegex(TrainingWorkerError,"tested commit"):
