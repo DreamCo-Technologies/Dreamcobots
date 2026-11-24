@@ -67,6 +67,16 @@ def build_routes(catalog: dict[str, Any], registry: dict[str, Any]) -> dict[str,
         raise ValueError("canonical 65-division registry with exactly 65 divisions required")
     if not isinstance(videos, list) or not videos:
         raise ValueError("non-empty source catalog required")
+    inventory = catalog.get("inventory") or {}
+    if (
+        catalog.get("inventory_status") != "complete"
+        or inventory.get("complete") is not True
+        or inventory.get("expected_entry_count") != len(videos)
+        or inventory.get("observed_entry_count") != len(videos)
+        or inventory.get("null_entry_count") != 0
+        or inventory.get("duplicate_video_id_count") != 0
+    ):
+        raise ValueError("verified complete freeCodeCamp inventory required before route generation")
     known = {row["id"] for row in categories}
     specs = {int(d["id"]): division_specialties(d["name"], known) for d in divisions}
     routes = []
@@ -114,6 +124,8 @@ def build_routes(catalog: dict[str, Any], registry: dict[str, Any]) -> dict[str,
     return {
         "schema": "dreamco.freecodecamp_source_routes.v1",
         "source_catalog_generated_at": catalog.get("generated_at"),
+        "source_inventory_status": catalog.get("inventory_status"),
+        "source_inventory": inventory,
         "catalog_video_count": len(routes),
         "division_count": len(division_rows),
         "all_videos_accessible_to_all_divisions": True,
@@ -126,6 +138,13 @@ def build_routes(catalog: dict[str, Any], registry: dict[str, Any]) -> dict[str,
 def validate(payload: dict[str, Any]) -> None:
     if payload.get("schema") != "dreamco.freecodecamp_source_routes.v1":
         raise ValueError("unsupported route schema")
+    source_inventory = payload.get("source_inventory") or {}
+    if (
+        payload.get("source_inventory_status") != "complete"
+        or source_inventory.get("complete") is not True
+        or source_inventory.get("observed_entry_count") != payload.get("catalog_video_count")
+    ):
+        raise ValueError("source routes must retain verified complete inventory evidence")
     if payload.get("division_count") != 65 or len(payload.get("divisions", [])) != 65:
         raise ValueError("routes must include all 65 divisions")
     videos = payload.get("videos", [])
