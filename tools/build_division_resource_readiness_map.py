@@ -166,23 +166,25 @@ def main():
     platform_ids=[row["id"] for row in reconciliation["shared_platform_masterbots"]]
     if platform_ids != list(range(46,66)):
         raise SystemExit("Shared platform MasterBot identities must remain exactly 46-65")
-    review_payload={"schema":"dreamco.masterbot_domain_owner_review.v2",
-        "status":"pending_owner_review_no_guessed_mappings",
+    review_payload={"schema":"dreamco.masterbot_domain_owner_review.v3",
+        "status":"user_approved_proposals_pending_github_identity_attestation",
         "source_refs":[
             "config/generated/masterbot-45-domain-crosswalk.json",
             "config/generated/masterbot-55-domain-crosswalk.json",
             "config/generated/division-reconciliation.json",
             "config/division-reconciliation-policy.json",
+            "config/review/division-owner-conversation-approval.json",
             "shared/division-production-contract.ts",
             "config/masterbot-65-registry.json"
         ],
         "counts":{"unresolved_masterbot_mappings":len(payload["owner_review"]["masterbot_domain_decisions"]),
+            "proposed_exact_name_matches":len(payload["owner_review"]["proposed_exact_name_matches"]),
             "unassigned_domain_profiles":len(payload["owner_review"]["unassigned_domain_profiles"]),
             "original_core_domain_profiles":reconciliation_counts["original_core_divisions"],
             "promoted_supplemental_domain_profiles":reconciliation_counts["promoted_supplemental_divisions"],
             "total_domain_profiles":reconciliation_counts["total_domain_divisions"],
-            "shared_platform_masterbots":len(platform_ids)},
-        "instructions":"Owner review only. Preserve all 45 original core domains, all ten promoted supplemental domains, and all 65 canonical MasterBots. Exact-name crosswalk matches remain proposals until an authorized owner records reviewer, evidence, decision date, and approval. Keep the 20 shared-platform MasterBots (IDs 46-65) as cross-domain services; do not force them into a primary domain. Empty candidate arrays and null approvals are intentional. Never infer ownership from names, keywords, or generic capability similarity. Resource bundles and shared service availability do not establish ownership, execution, mastery, or production readiness.",
+            "shared_platform_masterbots":len(payload["owner_review"]["shared_platform_services"])},
+        "instructions":"The user explicitly approved the 45 exact-name proposals, ten supplemental collaborator proposals, and shared-platform classification in chat on 2026-11-24. This conversational approval is recorded, but GitHub identity has not been independently attested. Preserve the approval provenance and do not represent it as a signed GitHub review. Keep MasterBots 46-65 as shared platform services with no primary domain owner. Do not infer any other mapping. Resource bundles remain requirements-defined, not provisioned; no training, mastery, or production readiness is implied.",
         "domain_taxonomy":{"original_core_divisions":reconciliation_counts["original_core_divisions"],
             "promoted_supplemental_divisions":reconciliation_counts["promoted_supplemental_divisions"],
             "total_domain_divisions":reconciliation_counts["total_domain_divisions"],
