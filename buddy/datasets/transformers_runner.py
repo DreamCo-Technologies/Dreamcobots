@@ -41,6 +41,13 @@ def _hash_tree(root:Path)->list[dict[str,str]]:
         files.append({"path":path.relative_to(root).as_posix(),"sha256":digest,"bytes":path.stat().st_size})
     return files
 
+def _directory_sha256(root:Path)->str:
+    digest=hashlib.sha256()
+    for item in _hash_tree(root):
+        digest.update(item["path"].encode("utf-8")+b"\\0")
+        digest.update(bytes.fromhex(item["sha256"]))
+    return digest.hexdigest()
+
 def validate_job(job: dict, approval_id: str) -> tuple[Path,list[dict]]:
     if job.get("schema")!="dreamco.model_training_job.v1" or job.get("execution_status")!="NOT_EXECUTED":
         raise TrainingExecutionError("Invalid or already executed job manifest")
@@ -169,7 +176,10 @@ def execute_job(job_path: str | Path, approval_id: str, output_root: str | Path,
         "baseline_validation_metrics":baseline_validation,"train_metrics":train_result.metrics,
         "validation_metrics":validation,"holdout_metrics":holdout,
         "artifact_paths":{"weights":str(weights_dir),"checkpoints":str(checkpoint_dir),"tokenizer":str(tokenizer_dir)},
-        "artifact_hashes":{"weights":weight_files,"checkpoints":checkpoint_files,"tokenizer":tokenizer_files},
+        "artifact_hashes":{"weights":weight_files,"checkpoints":checkpoint_files,"tokenizer":tokenizer_files,
+            "weights_directory_sha256":_directory_sha256(weights_dir),
+            "checkpoints_directory_sha256":_directory_sha256(checkpoint_dir),
+            "tokenizer_directory_sha256":_directory_sha256(tokenizer_dir)},
         "weights_trained":True,"production_promoted":False,
         "requires_independent_benchmark_and_review":True}
     (output/"training-result.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
