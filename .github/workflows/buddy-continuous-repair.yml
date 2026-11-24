@@ -111,7 +111,7 @@ jobs:
             echo "- Trigger: ${{ github.event_name }}"
             echo "- Hourly schedule: enabled"
             echo "- Failed workflow run: ${{ github.event.workflow_run.html_url || 'not applicable' }}"
-            echo "- Repair boundary: deterministic evidence refresh and regression-verified changes only"
+            echo "- Repair boundary: deterministic evidence refresh and regression-verified changes only\n            - PR creation: disabled by repository policy; verified changes are packaged for human review"
             echo "- Production deployment and direct pushes to main: disabled"
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -129,27 +129,31 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
-      - name: Open a repair pull request for verified changes
+      - name: Package verified changes for manual review
         if: success()
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ github.token }}
-          base: main
-          branch: bot/buddy-continuous-repair
-          delete-branch: false
-          commit-message: "fix(ci): refresh verified repository evidence"
-          title: "fix(ci): Buddy continuous safe repairs"
-          body: |
-            ## Automated safe repair
-
-            This pull request was created by the hourly Buddy Continuous Repair workflow.
-
-            - Rebuilt deterministic repository and Actions evidence.
-            - Ran Actions health, failure-learning, Pages feature, file-prospectus, and Actions-page regression tests.
-            - Only verified generated/evidence changes are proposed.
-            - No direct push to main, merge, production deployment, model training, or weight update is performed.
-
-            Review the workflow run and artifacts before merging.
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p reports/continuous-repair
+          git add -N -- config/generated reports 2>/dev/null || true
+          if ! git diff --quiet -- config/generated reports; then
+            git diff --check -- config/generated reports
+            git diff --binary -- config/generated reports > reports/continuous-repair/proposed-repair.patch
+            {
+              echo "## Human review handoff"
+              echo "- Verified generated/evidence changes were packaged as an artifact."
+              echo "- Automatic PR creation is unavailable because the repository does not permit GITHUB_TOKEN to create pull requests."
+              echo "- No PR, merge, direct push to main, or deployment was attempted."
+              echo
+              git diff --stat -- config/generated reports
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            {
+              echo "## Human review handoff"
+              echo "- No generated/evidence changes were produced; no patch artifact is required."
+              echo "- Automatic PR creation remains disabled by repository policy."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Open or update a human-triage issue if verification fails
         if: failure()
