@@ -111,6 +111,7 @@ class BootcampSeedDataTests(unittest.TestCase):
             self.assertEqual(first_manifest["candidate_sha256"], second_manifest["candidate_sha256"])
             self.assertEqual(first_rows, second_rows)
             self.assertEqual(first_manifest["primary_masterbot_id"], masterbot_id)
+            self.assertEqual(first_manifest["example_count"], 14)
             hashes.add(first_manifest["candidate_sha256"])
         self.assertEqual(len(hashes), 65)
 
