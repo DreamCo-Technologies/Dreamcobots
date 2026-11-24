@@ -71,12 +71,12 @@ const child = spawn(runner.command, runner.args, {
       process.env.AI_INTEGRATIONS_OPENAI_API_KEY ||
       process.env.OPENAI_API_KEY ||
       process.env.OPENAI_ADMIN_KEY ||
-      "sk-local-test-placeholder",
+      "local-test-placeholder-not-a-key",
     OPENAI_API_KEY:
       process.env.OPENAI_API_KEY ||
       process.env.AI_INTEGRATIONS_OPENAI_API_KEY ||
       process.env.OPENAI_ADMIN_KEY ||
-      "sk-local-test-placeholder",
+      "local-test-placeholder-not-a-key",
     PATH: `${resolve(process.execPath, "..")}:${process.env.PATH || ""}`,
     DREAMCO_DISABLE_AUTO_SYNC: process.env.DREAMCO_DISABLE_AUTO_SYNC || "1",
     DREAMCO_ENABLE_LOCAL_TEST_ACCOUNT: "1",
