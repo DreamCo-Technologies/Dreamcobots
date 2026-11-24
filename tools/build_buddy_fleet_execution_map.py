@@ -62,6 +62,19 @@ REVENUE_TERMS = (
     "licensing", "digital-product", "business-acquisition", "wealth", "arbitrage",
     "investing", "merchant", "checkout", "payout", "commission", "pricing",
 )
+REGISTRY_LANE_MAP = {
+    "services": ("freelance_bid_intel", "professional_services"),
+    "grants_contracts": ("rfp_matcher", "grants_contracts"),
+    "real_estate": ("business_acquisition", "property_opportunities"),
+    "settlements_claims": ("warranty_recall", "settlements"),
+    "lead_generation": ("local_service_leads", "professional_services"),
+    "revenue_orchestration": ("enterprise_automation", "software_partners"),
+    "software_services": ("enterprise_automation", "software_partners"),
+    "jobs": ("freelance_bid_intel", "jobs_gigs"),
+    "wealth_opportunities": ("business_acquisition", "business_marketplaces"),
+    "compute_or_digital_assets": ("digital_asset_scout", "licensed_data"),
+    "orchestration": ("enterprise_automation", "software_partners"),
+}
 LANE_RULES = [
     (("affiliate", "partner", "commission"), "parts_arbitrage", "affiliate_offers"),
     (("rfp", "procurement", "government-contract", "grant"), "rfp_matcher", "grants_contracts"),
@@ -101,7 +114,11 @@ def revenue_route(bot: dict[str, Any], registry: dict[str, Any], lane_index: dic
     if not registered and not new_registry and not keyword_hit:
         return None
 
-    lane_id = registered[0].get("lane") if registered else None
+    registered_lane = registered[0].get("lane") if registered else None
+    lane_id = registered_lane if registered_lane in lane_index else None
+    registry_source_group = None
+    if registered_lane and registered_lane in REGISTRY_LANE_MAP:
+        lane_id, registry_source_group = REGISTRY_LANE_MAP[registered_lane]
     if lane_id not in lane_index:
         for terms, candidate, _source in LANE_RULES:
             if any(term in text for term in terms):
@@ -111,7 +128,7 @@ def revenue_route(bot: dict[str, Any], registry: dict[str, Any], lane_index: dic
         lane_id = "local_service_leads"
     lane = lane_index.get(lane_id, {})
     source_group = next((group for terms, _candidate, group in LANE_RULES
-                         if any(term in text for term in terms)), "jobs_gigs")
+                         if any(term in text for term in terms)), registry_source_group or "jobs_gigs")
     approved_sources = source_categories.get("categories", {}).get(source_group, [])
     if not approved_sources:
         approved_sources = ["official_job_or_marketplace_apis"]
