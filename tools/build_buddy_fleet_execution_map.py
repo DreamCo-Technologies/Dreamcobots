@@ -93,6 +93,7 @@ REVENUE_EVENT_MAP = {
     "data_license": "licensed_delivery_paid",
     "savings_share": "contractually_verified_savings_event",
     "b2b_fee": "lead_accepted_or_qualified_by_buyer",
+    "professional_referral": "permitted_referral_fee_confirmed",
 }
 LANE_RULES = [
     (("affiliate", "partner", "commission"), "parts_arbitrage", "affiliate_offers"),
