@@ -53,7 +53,8 @@ def build_curriculum(masterbots:dict,tasks:dict,packs:dict,division_map:dict,ser
         task_ids.append(task_id.strip())
     if len(task_families)!=37 or len(set(task_ids))!=37:
         raise ValueError("expected 37 unique Hugging Face task family IDs")
-    source_registry=source_registry or {}
+    if source_registry is None:
+        source_registry=_read(SOURCE_REGISTRY) if SOURCE_REGISTRY.exists() else {}
     source_families=source_registry.get("source_families",[])
     source_ids=[item.get("id") for item in source_families if isinstance(item,dict)]
     required_source_families={"dreamco_original","official_technical_docs","public_dataset_catalogs",
