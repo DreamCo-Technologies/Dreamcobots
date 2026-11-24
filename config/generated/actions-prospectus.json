@@ -13,7 +13,7 @@
     "runtime_unknown_workflows": 145,
     "possible_duplicate_groups": 0,
     "possible_duplicate_workflows": 0,
-    "workflows_with_benchmark_commands": 42,
+    "workflows_with_benchmark_commands": 43,
     "goal_counts": {
       "Buddy automation": 33,
       "benchmarks": 16,
@@ -37,7 +37,7 @@
       "security",
       "verification"
     ],
-    "benchmarked_workflows": 42
+    "benchmarked_workflows": 43
   },
   "controls": [
     {
@@ -1419,7 +1419,7 @@
       "goal": "Buddy automation",
       "purpose": "Operate one governed Buddy capability",
       "what_happens": [
-        "Run bounded MasterBot training lane",
+        "Generate plan-only MasterBot lane evidence",
         "Publish lane checkpoint"
       ],
       "outputs": [
@@ -1758,7 +1758,7 @@
       "goal": "Buddy automation",
       "purpose": "Operate one governed Buddy capability",
       "what_happens": [
-        "Run isolated division learning lane",
+        "Generate plan-only division learning evidence",
         "Preserve division run evidence",
         "Download full-sweep division run records",
         "Build shared cross-run learning queue",
@@ -2283,7 +2283,7 @@
         "Validate committed Markdown audit evidence",
         "Generate and validate Markdown-to-code gap inventory",
         "Upload generated audit candidate",
-        "Open or update a reviewable PR for generated evidence"
+        "Publish manual-review instructions"
       ],
       "outputs": [
         "GitHub Actions run log",
@@ -2303,12 +2303,12 @@
       "runtime_status": "unknown_until_run_evidence_loaded",
       "errors": [],
       "warnings": [],
-      "runner_jobs": 3,
+      "runner_jobs": 2,
       "controls": {
         "permissions_declared": true,
         "concurrency_declared": true,
-        "job_timeouts_declared": 3,
-        "runner_jobs": 3,
+        "job_timeouts_declared": 2,
+        "runner_jobs": 2,
         "artifacts_declared": true
       },
       "upgrades": [
@@ -2523,6 +2523,11 @@
         "Validate the 65-lane Hugging Face taxonomy map",
         "Validate all 65 division resource bundles",
         "Build DreamCo dataset discovery routes",
+        "Sync FreeCodeCamp public video metadata",
+        "Build FreeCodeCamp routes and 55-domain daily lesson plan",
+        "Test FreeCodeCamp metadata, routing and permissioned study",
+        "Build weekly transcript evaluation queue (rights-cleared only)",
+        "Test Tolkien curriculum and weekly transcript rights gates",
         "Test 65 MasterBot dataset routing and training gates",
         "Test Buddy failure classification and verified-lesson safeguards",
         "Smoke test local unknown-problem routing",
@@ -2535,7 +2540,9 @@
         "GitHub Actions run log",
         "declared downloadable or deployment artifact"
       ],
-      "benchmark_commands": [],
+      "benchmark_commands": [
+        "tools/build_buddy_weekly_transcript_evaluation_plan.py"
+      ],
       "triggers": [
         "manual",
         "push",
@@ -2576,7 +2583,7 @@
       "purpose": "Operate one governed Buddy capability",
       "what_happens": [
         "Refresh public AI and technology sources",
-        "Validate the refreshed index and Pages mirror",
+        "Validate the refreshed index and public discovery policy",
         "Commit new discoveries without deleting history"
       ],
       "outputs": [
@@ -2827,6 +2834,7 @@
       ],
       "benchmark_commands": [
         "npm run test:repository",
+        "tools/audit_actions_health.py",
         "tools/audit_change_test_coverage.py",
         "tools/audit_trusted_code_delivery.py",
         "tools/generate_buddy_benchmark_index.py",
@@ -4799,7 +4807,7 @@
         "Refresh canonical generated registries before checks",
         "Inventory repository, runtime bindings, capabilities, and learning systems",
         "Discover every registered benchmark suite and model/provider",
-        "Execute every applicable suite for every catalogued model/provider",
+        "Record dedicated 500-model execution readiness",
         "Build complete model \u00d7 benchmark-suite prospectus matrix",
         "Execute learning and evidence-driven gap-closure cycle",
         "Run benchmark-policy and repository regression tests",
@@ -4814,7 +4822,8 @@
       ],
       "benchmark_commands": [
         "tools/generate_buddy_benchmark_index.py",
-        "tools/generate_repository_test_registry.py"
+        "tools/generate_repository_test_registry.py",
+        "tools/run_500_model_benchmarks.py"
       ],
       "triggers": [
         "manual",
@@ -6558,6 +6567,7 @@
         "Refresh generated verification contracts",
         "Generate repository master inventory",
         "Reconcile generated repository test registry after all generators",
+        "Refresh Actions health inventory and prospectus",
         "Verify repository and Pages contracts",
         "Write system watch summary",
         "Save inventory evidence"
@@ -6568,6 +6578,7 @@
       ],
       "benchmark_commands": [
         "npm run test:actions-page",
+        "tools/audit_actions_health.py",
         "tools/generate_repository_test_registry.py"
       ],
       "triggers": [

@@ -1,15 +1,15 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T06:27:35Z
+Generated: 2026-11-24T18:35:46Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1674
-- Actionable claim lines detected: 11916
+- Markdown documents scanned: 1677
+- Actionable claim lines detected: 11927
 - Documents with missing path references: 112
-- Documents without implementation references: 1589
+- Documents without implementation references: 1592
 - Documents with implementation references but no test references: 68
 - Documents with inventory count claims: 112
 - Inventory count claims requiring review: 389
@@ -13370,6 +13370,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/BUDDY_TOLKIEN_STUDY_TRACK.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 2
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/BUDDY_TOOL_SKILL_CATALOG.md
 
 - Status: implementation_reference_missing
@@ -13583,7 +13593,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/CROSS_REPOSITORY_COMPLETION_AND_COMPETITION.md
 
 - Status: broken_path_references
-- Actionable claim lines: 10
+- Actionable claim lines: 17
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: github/workflows/dreamco-c-runtime.yml
@@ -13694,6 +13704,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 - Status: implementation_reference_missing
 - Actionable claim lines: 24
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_CONTINUOUS_LEARNING_EXECUTION_TRUTH.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
@@ -13948,6 +13968,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: tests/test_build_queue.py
 - Missing paths: config/bots/run-policy-overrides.json
 - Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/FREECODECAMP_METADATA_AND_TRANSCRIPT_POLICY.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/FREE_FIRST_LEARNING_POLICY.md
