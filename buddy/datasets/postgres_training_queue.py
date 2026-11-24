@@ -118,6 +118,10 @@ class PostgresTrainingQueue:
         except Exception as exc: raise TrainingQueueError(f"training_queue_lease_failed:{type(exc).__name__}") from None
 
     def heartbeat(self,masterbot_id:int,job_id:str,worker_id:str,lease_seconds:int=900)->bool:
+        schema_name(masterbot_id)
+        if not re.fullmatch(r"[A-Za-z0-9._:-]{3,120}",worker_id): raise TrainingQueueError("worker_id_invalid")
+        if isinstance(lease_seconds,bool) or not isinstance(lease_seconds,int) or not 30<=lease_seconds<=7200:
+            raise TrainingQueueError("lease_seconds_must_be_30_to_7200")
         schema=f'"{schema_name(masterbot_id)}"'
         with self._connect(self.dsn,connect_timeout=5) as connection:
             with connection.cursor() as cursor:
