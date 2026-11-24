@@ -9,6 +9,8 @@
     "counts",
     "source_blob_shas",
     "resource_contract",
+    "machine_learning_practices",
+    "resource_templates",
     "routes",
     "owner_review",
     "truth"
@@ -82,16 +84,16 @@
           "masterbot_name",
           "resource_bundle_id",
           "readiness_status",
-          "database",
-          "datasets",
-          "teacher_models",
-          "machine_learning_practices",
-          "reverse_engineering",
-          "distillation",
-          "model_routing",
-          "compute",
-          "evaluation",
-          "operations",
+          "resource_template_ids",
+          "logical_database_namespace",
+          "dataset_discovery_lane_id",
+          "dataset_search_queries",
+          "dataset_rights_status",
+          "dataset_training_approved",
+          "subject_terms",
+          "task_pipeline_tags",
+          "capability_pack_ids",
+          "teacher_model_candidates",
           "domain_mapping"
         ],
         "properties": {
@@ -100,37 +102,61 @@
             "minimum": 1,
             "maximum": 65
           },
-          "readiness_status": {
-            "const": "requirements_defined_not_provisioned"
-          },
           "resource_bundle_id": {
             "type": "string"
           },
-          "datasets": {
-            "type": "object",
-            "required": [
-              "discovery_lane_id",
-              "training_approved",
-              "rights_status"
-            ],
-            "properties": {
-              "training_approved": {
-                "const": false
-              },
-              "rights_status": {
-                "const": "UNVERIFIED_DISCOVERY_ONLY"
+          "readiness_status": {
+            "const": "requirements_defined_not_provisioned"
+          },
+          "logical_database_namespace": {
+            "type": "string"
+          },
+          "dataset_training_approved": {
+            "const": false
+          },
+          "dataset_rights_status": {
+            "const": "UNVERIFIED_DISCOVERY_ONLY"
+          },
+          "resource_template_ids": {
+            "type": "array",
+            "minItems": 9
+          },
+          "teacher_model_candidates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "model_id",
+                "source_capability_pack",
+                "status",
+                "license_review_required",
+                "training_or_distillation_permission"
+              ],
+              "properties": {
+                "status": {
+                  "const": "catalog_candidate_not_validated"
+                },
+                "license_review_required": {
+                  "const": true
+                },
+                "training_or_distillation_permission": {
+                  "const": "UNVERIFIED"
+                }
               }
             }
           },
-          "teacher_models": {
+          "domain_mapping": {
             "type": "object",
             "required": [
-              "candidate_models"
-            ]
-          },
-          "machine_learning_practices": {
-            "type": "array",
-            "minItems": 20
+              "mapping_status",
+              "owner_review_required",
+              "unresolved"
+            ],
+            "properties": {
+              "owner_review_required": {
+                "const": true
+              }
+            }
           }
         }
       }
@@ -154,6 +180,24 @@
     },
     "truth": {
       "type": "string"
+    },
+    "machine_learning_practices": {
+      "type": "array",
+      "minItems": 20
+    },
+    "resource_templates": {
+      "type": "object",
+      "required": [
+        "database",
+        "datasets",
+        "teacher_models",
+        "reverse_engineering",
+        "distillation",
+        "model_routing",
+        "compute",
+        "evaluation",
+        "operations"
+      ]
     }
   },
   "additionalProperties": false
