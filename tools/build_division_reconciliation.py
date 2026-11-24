@@ -79,11 +79,20 @@ def build_reconciliation() -> dict:
             raise ValueError(f"{name} must preserve its named portfolio and at least five bot profiles")
         if len({bot.get("slug") for bot in bots}) != len(bots):
             raise ValueError(f"{name} contains duplicate bot slugs")
-        fleet_divisions = {bot.get("division") for bot in fleet}
-        if fleet_divisions != {name}:
+        if not isinstance(fleet, dict) or fleet.get("division") != name or not isinstance(fleet.get("bots"), list):
+            raise ValueError(f"{name} fleet manifest must use the generated division envelope")
+        fleet_bots = fleet["bots"]
+        fleet_divisions = {
+            bot.get("identity", {}).get("division")
+            for bot in fleet_bots if isinstance(bot, dict)
+        }
+        if not fleet_bots or fleet_divisions != {name}:
             raise ValueError(f"{name} fleet manifest has inconsistent division identity")
-        test_divisions = {bot.get("division") for bot in tests}
-        if test_divisions != {name}:
+        if not isinstance(tests, dict) or tests.get("division") != name or not isinstance(tests.get("profiles"), list):
+            raise ValueError(f"{name} capability test manifest must use the generated division envelope")
+        test_profiles = tests["profiles"]
+        test_divisions = {bot.get("division") for bot in test_profiles if isinstance(bot, dict)}
+        if not test_profiles or test_divisions != {name}:
             raise ValueError(f"{name} capability tests have inconsistent division identity")
         related = entry["related_domain"]
         if normalize(related) not in {normalize(x) for x in domains[:45]}:
