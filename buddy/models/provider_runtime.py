@@ -75,7 +75,7 @@ def chat_completion(provider_id: str, model: str, messages: list[dict[str, str]]
         raise ModelServingError("provider_data_classification_policy_invalid")
     if CLASSIFICATION_LEVELS[data_classification] > CLASSIFICATION_LEVELS[provider.data_classification_max]:
         raise ModelServingError("request_data_classification_exceeds_provider_approval")
-    if provider.paid and not paid_approval_id.strip():
+    if provider.paid and (not isinstance(paid_approval_id, str) or not paid_approval_id.strip()):
         raise ModelServingError("paid_request_requires_approval_id")
     if not isinstance(messages, list) or not messages or len(messages) > 100:
         raise ModelServingError("messages_must_contain_1_to_100_items")
