@@ -50,12 +50,14 @@ jobs:
       - name: Build five-lesson-per-division target and transcript readiness report
         run: |
           python tools/build_daily_lesson_plan.py --lessons-per-division 5
-          python tools/build_weekly_transcript_evaluation.py --output config/generated/buddy-weekly-transcript-evaluation.json
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
-          python -m unittest discover -s tests -p 'test_weekly_transcript_evaluation.py' -v
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
+          python -m unittest discover -s tests -p 'test_permissioned_study_worker.py' -v
+          python -m unittest discover -s tests -p 'test_study_artifact_cleanup.py' -v
+          python -m unittest discover -s tests -p 'test_original_lesson.py' -v
       - name: Propose generated metadata and curriculum through a pull request
         uses: peter-evans/create-pull-request@v7
         with:
@@ -68,7 +70,6 @@ jobs:
             config/generated/freecodecamp-division-learning-queues.json
             config/generated/freecodecamp-source-routes.json
             config/generated/daily-lesson-production-plan.json
-            config/generated/buddy-weekly-transcript-evaluation.json
             config/generated/buddy-bootcamp-curriculum.json
           commit-message: "chore: refresh Buddy Bootcamp learning metadata"
           title: "chore: refresh Buddy Bootcamp learning metadata"
