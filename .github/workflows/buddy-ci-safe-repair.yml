@@ -25,6 +25,10 @@ on:
       - "tests/test_file_prospectus_inventory.py"
       - "config/buddy-dataset-routing-policy.json"
       - "config/division-model-competitiveness-policy.json"
+      - "config/division-model-training-policy.json"
+      - "tools/generate_division_model_manifest.py"
+      - "config/generated/division-model-manifest.json"
+      - "tests/test_division_model_manifest.py"
       - "config/masterbot-65-registry.json"
       - ".github/workflows/buddy-ci-safe-repair.yml"
       - ".github/workflows/issue-lifecycle.yml"
@@ -143,6 +147,7 @@ jobs:
           set -euo pipefail
           python tools/build_buddy_dataset_routes.py
           python tools/build_division_model_fleet.py
+          python tools/generate_division_model_manifest.py
           python tools/build_pages_connection_index.py
           python tools/audit_actions_health.py
           python tools/build_actions_prospectus.py
@@ -154,6 +159,8 @@ jobs:
           set -euo pipefail
           python tools/build_buddy_dataset_routes.py --check
           python tools/build_division_model_fleet.py --check
+          python tools/generate_division_model_manifest.py --check
+          python -m unittest tests.test_division_model_manifest
           python tools/build_pages_connection_index.py --check
           python tools/build_actions_prospectus.py --check
           python tools/build_file_prospectus.py --check
