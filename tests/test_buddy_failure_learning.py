@@ -1,13 +1,45 @@
 import unittest
-from tools.buddy_failure_learning import classify,fingerprint,recommend,update_memory,route_masterbots,build_training_candidate,build_training_event
+from tools.buddy_failure_learning import classify,fingerprint,recommend,update_memory,route_masterbots,build_training_candidate,build_training_event,historical_candidates
 class BuddyFailureLearningTests(unittest.TestCase):
  def setUp(self):
   self.observation={"repository":"DreamCo-Technologies/Dreamcobots","workflow":"Actions Health",
    "job":"contract-tests","failed_step":"validate generated prospectus","error_signature":"inventory mismatch"}
+ def test_historical_candidates_are_ranked_but_never_verified_or_auto_applied(self):
+  index={"records":[
+   {"commit":"a"*40,"subject":"fix generated inventory mismatch","search_terms":["generated","inventory","mismatch"],
+    "changed_paths":["tools/inventory.py"],"test_paths":["tests/test_inventory.py"],
+    "verified_fix":False,"training_eligible":False},
+   {"commit":"b"*40,"subject":"unrelated documentation","search_terms":["documentation"],
+    "changed_paths":["README.md"],"test_paths":[],"verified_fix":False,"training_eligible":False},
+   {"commit":"c"*40,"subject":"unsafe candidate","search_terms":["inventory","mismatch"],
+    "changed_paths":["tools/x.py"],"verified_fix":True,"training_eligible":True}
+  ]}
+  candidates=historical_candidates(self.observation,index)
+  self.assertEqual(len(candidates),1)
+  self.assertEqual(candidates[0]["commit"],"a"*40)
+  self.assertFalse(candidates[0]["verified_fix"])
+  self.assertFalse(candidates[0]["training_eligible"])
+  self.assertFalse(candidates[0]["auto_apply_allowed"])
+ def test_recommendation_exposes_historical_leads_without_changing_risk_policy(self):
+  index={"records":[{"commit":"d"*40,"subject":"inventory mismatch repair",
+   "search_terms":["inventory","mismatch"],"changed_paths":["tools/inventory.py"],
+   "test_paths":["tests/test_inventory.py"],"verified_fix":False,"training_eligible":False}]}
+  plan=recommend(self.observation,{"incidents":[]},index)
+  self.assertTrue(plan["automatic_code_change_allowed"])
+  self.assertEqual(plan["historical_candidates"][0]["commit"],"d"*40)
+  self.assertFalse(plan["historical_candidates"][0]["auto_apply_allowed"])
  def test_fingerprint_ignores_run_and_commit_identifiers(self):
   self.assertEqual(fingerprint({**self.observation,"run_id":12,"commit":"abc"}),
    fingerprint({**self.observation,"run_id":99,"commit":"def"}))
  def test_classifies_generated_index_failure(self):self.assertEqual(classify(self.observation),"generated-index")
+ def test_classifies_real_safe_repair_verification_step_as_generated_index(self):
+  observation={"repository":"DreamCo-Technologies/Dreamcobots",
+   "workflow":"Buddy CI Safe Generated-Artifact Repair","job":"regenerate-and-verify",
+   "failed_step":"Verify repaired indexes and Buddy repair-learning tests",
+   "error_signature":"Verify repaired indexes and Buddy repair-learning tests"}
+  self.assertEqual(classify(observation),"generated-index")
+  plan=recommend(observation,{"incidents":[]})
+  self.assertEqual(plan["primary_masterbot_id"],41)
  def test_safe_generated_index_can_use_bounded_automation(self):
   p=recommend(self.observation,{"incidents":[]});self.assertTrue(p["automatic_code_change_allowed"])
   self.assertFalse(p["requires_human_approval"]);self.assertEqual(p["primary_masterbot_id"],41)
@@ -36,20 +68,18 @@ class BuddyFailureLearningTests(unittest.TestCase):
  def test_data_and_benchmark_route_to_specialists(self):
   self.assertEqual(route_masterbots("data"),[7,41]);self.assertEqual(route_masterbots("benchmark"),[47,63])
  def _verified_event_inputs(self,run_id="123"):
-  sha="a1234567890b1234567890c1234567890d123456"
   return {"original_failure":True,"regressions":True,"human_reviewed":True,"training_allowed":True,
    "rights_status":"VERIFIED","contains_secrets":False,"contains_personal_data":False,
    "third_party_content_included":False,"root_cause":"The health inventory omitted YAML workflow definitions.",
    "repair":"Include both .yml and .yaml files in the canonical workflow inventory.",
-   "source_url":"https://github.com/DreamCo-Technologies/Dreamcobots/commit/"+sha,
-   "source_commit":sha,"run_id":run_id,
+   "source_url":"https://github.com/DreamCo-Technologies/Dreamcobots/commit/"+"a"*40,
+   "source_commit":"a"*40,"run_id":run_id,
    "acceptance_criteria":["The report count matches both YAML extensions."],
    "test_evidence":["GitHub Actions run 44866516527 passed the Actions inventory contract."]}
  def test_verified_repair_exports_dataset_builder_compatible_candidate(self):
   from tools.build_dreamco_training_examples import build
   events=[build_training_event(self.observation,self._verified_event_inputs(str(i))) for i in (1,2,3)]
   self.assertEqual(events[0]["schema"],"dreamco.verified_repair_training_event.v1")
-  self.assertRegex(events[0]["source_fingerprint"],r"^[0-9a-f]{24}$")
   self.assertEqual(events[0]["event_id"],build_training_event(self.observation,self._verified_event_inputs("1"))["event_id"])
   candidate=build(events)
   self.assertEqual(candidate["accepted_source_events"],3)
@@ -64,6 +94,7 @@ class BuddyFailureLearningTests(unittest.TestCase):
   verification=self._verified_event_inputs()
   verification["test_evidence"]=[]
   with self.assertRaises(ValueError):build_training_event(self.observation,verification)
+
  def test_training_event_rejects_noncanonical_or_mismatched_commit_url(self):
   verification=self._verified_event_inputs()
   verification["source_url"]="https://example.com/not-dreamco"
@@ -71,4 +102,9 @@ class BuddyFailureLearningTests(unittest.TestCase):
   verification=self._verified_event_inputs()
   verification["source_commit"]="f"*40
   with self.assertRaises(ValueError):build_training_event(self.observation,verification)
+ def test_training_event_keeps_numeric_run_id_as_metadata(self):
+  verification=self._verified_event_inputs("44866516527")
+  event=build_training_event(self.observation,verification)
+  self.assertEqual(event["run_id"],"44866516527")
+  self.assertRegex(event["source_fingerprint"],r"^[0-9a-f]{24}$")
 if __name__=="__main__":unittest.main()
