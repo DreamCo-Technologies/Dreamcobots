@@ -1,0 +1,61 @@
+name: Buddy Bootcamp Curriculum
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/buddy-bootcamp-curriculum.yml"
+      - "tools/build_buddy_bootcamp_curriculum.py"
+      - "tests/test_buddy_bootcamp_curriculum.py"
+      - "config/masterbot-65-registry.json"
+      - "config/huggingface-task-taxonomy.json"
+      - "config/hf-capability-download-map.json"
+      - "config/generated/division-huggingface-taxonomy-map.json"
+      - "config/buddy-model-serving-policy.json"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/buddy-bootcamp-curriculum.yml"
+      - "tools/build_buddy_bootcamp_curriculum.py"
+      - "config/masterbot-65-registry.json"
+      - "config/huggingface-task-taxonomy.json"
+      - "config/hf-capability-download-map.json"
+      - "config/generated/division-huggingface-taxonomy-map.json"
+      - "config/buddy-model-serving-policy.json"
+  schedule:
+    - cron: "17 9 * * *"
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: buddy-bootcamp-curriculum
+  cancel-in-progress: false
+jobs:
+  generate-curriculum:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || 'main' }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build and validate curriculum
+        run: |
+          python tools/build_buddy_bootcamp_curriculum.py
+          python tools/build_buddy_bootcamp_curriculum.py --check
+          python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
+      - name: Propose generated curriculum
+        if: github.event_name != 'pull_request'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: automation/buddy-bootcamp-curriculum
+          delete-branch: false
+          add-paths: config/generated/buddy-bootcamp-curriculum.json
+          commit-message: "chore: refresh Buddy Bootcamp curriculum"
+          title: "chore: refresh Buddy Bootcamp curriculum"
+          body: |
+            Generated curriculum from the canonical 65-division registry, HF task taxonomy,
+            capability packs, and division discovery map. No datasets are downloaded and
+            no training or model promotion is performed.
