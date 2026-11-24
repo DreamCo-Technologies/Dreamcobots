@@ -50,6 +50,7 @@ on:
       - 'schemas/division-resource-readiness-map.schema.json'
       - 'tools/build_division_resource_readiness_map.py'
       - 'tests/test_division_resource_readiness.py'
+      - 'tests/test_division_resource_router.py'
       - 'buddy/resources/division_resource_router.py'
       - 'config/review/masterbot-domain-crosswalk-owner-review.json'
       - 'docs/architecture/DREAMCO_DIVISION_RESOURCE_READINESS.md'
@@ -132,6 +133,7 @@ jobs:
         run: |
           python tools/build_division_resource_readiness_map.py --check
           python -m unittest tests.test_division_resource_readiness
+          python -m unittest tests.test_division_resource_router
           python -m unittest tests.test_buddy_dataset_discovery_fleet
       - name: Build DreamCo dataset discovery routes
         run: python tools/build_buddy_dataset_routes.py
