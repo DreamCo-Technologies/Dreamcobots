@@ -12,7 +12,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MASTERBOTS = ROOT / "config/masterbot-65-registry.json"
+MASTERBOTS = ROOT / "config/masterbot-75-registry.json"
 DOMAIN_SOURCE = ROOT / "shared/division-production-contract.ts"
 OUTPUT = ROOT / "config/generated/masterbot-55-domain-crosswalk.json"
 
@@ -38,13 +38,13 @@ def load_domain_names(source: str) -> list[str]:
 
 def build_crosswalk(masterbot_doc: dict, domain_names: list[str]) -> dict:
     bots = masterbot_doc.get("divisions", [])
-    if masterbot_doc.get("canonical_count") != 65 or len(bots) != 65:
-        raise ValueError(f"Expected 65 canonical MasterBots; found {len(bots)}")
+    if masterbot_doc.get("canonical_count") != 75 or len(bots) != 75:
+        raise ValueError(f"Expected 75 MasterBots; found {len(bots)}")
     ids = [str(bot.get("id", "")) for bot in bots]
     names = [str(bot.get("name", "")) for bot in bots]
     if any(not value for value in ids + names):
         raise ValueError("MasterBot IDs and names must be non-empty")
-    if len(set(ids)) != 65 or len({normalize(name) for name in names}) != 65:
+    if len(set(ids)) != 75 or len({normalize(name) for name in names}) != 75:
         raise ValueError("MasterBot IDs and normalized names must be unique")
 
     domain_by_key = {normalize(name): name for name in domain_names}
@@ -52,50 +52,59 @@ def build_crosswalk(masterbot_doc: dict, domain_names: list[str]) -> dict:
     domains = []
     for domain in domain_names:
         bot = bot_by_key.get(normalize(domain))
+        approved = bool(bot and bot.get("primary_domain_approved"))
         domains.append({
             "domain_id": normalize(domain),
             "domain_name": domain,
             "masterbot_id": bot.get("id") if bot else None,
             "masterbot_name": bot.get("name") if bot else None,
-            "mapping_status": "proposed_exact_name_match" if bot else "unresolved",
-            "evidence": ["shared/division-production-contract.ts"],
-            "review_required": True,
-            "owner_approval": None,
+            "mapping_status": "owner_approved_exact_name_match" if approved else ("proposed_exact_name_match" if bot else "unresolved"),
+            "evidence": ["shared/division-production-contract.ts", "config/masterbot-75-registry.json"],
+            "review_required": not approved,
+            "owner_approval": bot.get("approval_source") if approved else None,
         })
 
     masterbot_rows = []
     for bot in bots:
         domain = domain_by_key.get(normalize(str(bot["name"])))
+        approved = bool(domain and bot.get("primary_domain_approved"))
+        collaborators = [
+            normalize(name) for name in bot.get("collaborators", [])
+            if normalize(name) in domain_by_key
+        ]
+        shared = not domain
         masterbot_rows.append({
             "masterbot_id": bot["id"],
             "masterbot_name": bot["name"],
             "primary_domain_id": normalize(domain) if domain else None,
             "primary_domain_name": domain,
-            "mapping_status": "proposed_exact_name_match" if domain else "unresolved",
-            "collaborator_domain_ids": [],
-            "review_required": True,
-            "owner_approval": None,
+            "mapping_status": "owner_approved_primary_domain" if approved else ("shared_platform_service" if shared else "proposed_exact_name_match"),
+            "collaborator_domain_ids": collaborators,
+            "review_required": not (approved or shared),
+            "owner_approval": bot.get("approval_source") if approved else ("not_applicable_shared_service" if shared else None),
         })
 
     return {
-        "schema": "dreamco.masterbot_domain_crosswalk.v1",
-        "status": "proposed_requires_owner_review",
+        "schema": "dreamco.masterbot_domain_crosswalk.v2",
+        "status": "owner_approved_domain_routes_with_shared_platform_services",
         "source_refs": [
-            "config/masterbot-65-registry.json",
+            "config/masterbot-75-registry.json",
             "shared/division-production-contract.ts",
         ],
         "counts": {
             "masterbots": len(masterbot_rows),
             "domain_divisions": len(domains),
-            "proposed_exact_name_matches": sum(x["masterbot_id"] is not None for x in domains),
+            "owner_approved_domain_mappings": sum(x["mapping_status"] == "owner_approved_exact_name_match" for x in domains),
             "unresolved_domain_divisions": sum(x["masterbot_id"] is None for x in domains),
-            "unresolved_masterbots": sum(x["primary_domain_id"] is None for x in masterbot_rows),
+            "shared_platform_masterbots": sum(x["mapping_status"] == "shared_platform_service" for x in masterbot_rows),
+            "unresolved_masterbots": sum(x["mapping_status"] == "proposed_exact_name_match" for x in masterbot_rows),
         },
         "rules": [
-            "Exact normalized name equality creates a proposed match only, never automatic ownership approval.",
-            "Fuzzy, keyword, and semantic matches are not assigned; they remain unresolved for owner review.",
-            "Each MasterBot has at most one primary domain; collaboration links require explicit review.",
-            "Do not train, route privileged work, or claim domain mastery from an unapproved proposed mapping.",
+            "Each of the 55 canonical domains has one owner-approved domain MasterBot.",
+            "MasterBots 46–65 remain shared platform services and are collaboration routes, not primary domain owners.",
+            "New division MasterBots 66–75 have unique domain charters and do not replace the existing 45 domain owners.",
+            "Explicit owner approval covers primary division routing only; external actions, spending, deployments, legal commitments and physical actuation remain separately gated.",
+            "Each MasterBot has at most one primary domain; collaborator links are secondary routes.",
         ],
         "domains": domains,
         "masterbots": masterbot_rows,
