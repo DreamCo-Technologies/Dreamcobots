@@ -14,7 +14,7 @@ class FakeCursor:
  def fetchone(self):
   if "pg_namespace" in self.last_query:
    name=self.last_params[0]
-   return (name,False,False,True)
+   return (name,False,False,False,True)
   if "SELECT migration_sha256" in self.last_query: return None
   return None
 
