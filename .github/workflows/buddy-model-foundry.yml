@@ -25,6 +25,9 @@ jobs:
         with:
           python-version: "3.11"
       - name: Test license gate, hashes and 65-division planner
+      - name: Compile Model Foundry source and entry points
+        run: python -m compileall -q buddy/learning/model_foundry.py tools/build_division_training_matrix.py tools/train_buddy_division_model.py
+      - name: Test license gate, hashes and 65-division planner
         run: python -m unittest discover -s tests -p 'test_model_foundry.py' -v
   plan:
     if: github.event_name == 'workflow_dispatch'
