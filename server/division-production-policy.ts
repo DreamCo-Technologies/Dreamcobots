@@ -16,7 +16,7 @@ const divisionName = z.string().trim().refine((value) => divisionNames.includes(
 
 export const dailyDivisionBenchmarkRequestSchema = z.object({
   ownerProfileId: z.string().trim().min(3).max(96).regex(/^[A-Za-z0-9_.:-]+$/),
-  divisions: z.array(divisionName).min(1).max(45),
+  divisions: z.array(divisionName).min(1).max(divisionNames.length),
   signedFixturesPerDivision: z.number().int().min(1).max(100).default(10),
   maxConcurrency: z.number().int().min(1).max(32).default(8),
   schedule: z.enum(["once", "daily"]).default("once"),
