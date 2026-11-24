@@ -24,7 +24,10 @@ def sha256_directory(root:Path)->str:
     root=root.resolve()
     if not root.is_dir(): raise DivisionBenchmarkExecutionError("weights_directory_missing")
     digest=hashlib.sha256()
-    files=sorted(x for x in root.rglob("*") if x.is_file())
+    discovered=list(root.rglob("*"))
+    if any(path.is_symlink() for path in discovered):
+        raise DivisionBenchmarkExecutionError("weights_directory_must_not_contain_symlinks")
+    files=sorted(x for x in discovered if x.is_file())
     if not files: raise DivisionBenchmarkExecutionError("weights_directory_empty")
     for path in files:
         rel=path.relative_to(root).as_posix()
