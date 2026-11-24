@@ -45,6 +45,13 @@ class DreamCoTrainingFactoryTests(unittest.TestCase):
             self.assertFalse(result["truth_boundary"]["weights_trained"])
             self.assertTrue(output.read_bytes().endswith(bytes([10])))
 
+    def test_uses_governed_nine_family_source_registry(self):
+        plan = build_factory_plan(self.configs)
+        source_ids = [item["id"] for item in self.configs["source_registry"]["source_families"]]
+        self.assertEqual(len(source_ids), 9)
+        self.assertEqual(plan["source_families"], source_ids)
+        self.assertEqual(plan["coverage"]["source_families"], 9)
+
     def test_no_data_or_training_is_claimed(self):
         plan = build_factory_plan(self.configs)
         self.assertEqual(plan["truth_boundary"]["weights_trained"], False)
