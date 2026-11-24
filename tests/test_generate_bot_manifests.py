@@ -37,8 +37,8 @@ class GeneratorTests(unittest.TestCase):
     def test_teammate_lanes_route_to_canonical_owners_and_keep_shared_masterbots(self):
         lanes = [b for b in self.collection["bots"] if "teammate_lane" in b["flags"]]
         self.assertEqual(len(lanes), 112)
-        self.assertTrue(all(b["source_division"] == "GrokTeammates" and b["engine"] != "unmapped" for b in lanes))
-        self.assertTrue(all(b["division"] in gen.load_route_metadata()["domain_names"] for b in lanes))
+        self.assertTrue(all(b["source_division"] == "GrokTeammates" and b["division"] == "GrokTeammates" and b["engine"] != "unmapped" for b in lanes))
+        self.assertTrue(all(b["primary_domain_owner"] in gen.load_route_metadata()["domain_names"] for b in lanes))
         self.assertTrue(all(b["shared_workforce_group"] == "GrokTeammates" for b in lanes))
         self.assertTrue(all(b["primary_masterbot_id"] in range(1, 46) for b in lanes))
         self.assertTrue(all(b["shared_teammate_masterbot_id"] in range(46, 66) for b in lanes))
@@ -75,9 +75,10 @@ class GeneratorTests(unittest.TestCase):
 
     def test_threejs_markdown_specs_are_specialized_and_owned_by_dreamcodelab(self):
         bot = self.by_slug["threejs-core"]
-        self.assertIn("md_only", bot["flags"])
-        self.assertEqual(bot["source_division"], "UNASSIGNED")
-        self.assertEqual(bot["division"], "DreamCodeLab")
+        self.assertNotIn("md_only", bot["flags"])
+        self.assertEqual(bot["source_division"], "Dream3D")
+        self.assertEqual(bot["division"], "Dream3D")
+        self.assertEqual(bot["primary_domain_owner"], "DreamCodeLab")
         self.assertEqual(bot["supplemental_portfolio"], "Dream3D")
         self.assertEqual(bot["specialist_capability_domain"], "interactive_web_3d_and_real_time_rendering")
         self.assertGreaterEqual(bot["caps"], 5)
@@ -109,15 +110,17 @@ class GeneratorTests(unittest.TestCase):
         committed = gen.DIV_OUT.read_text(encoding="utf-8")
         self.assertEqual(committed, text)
         divisions = {d["name"]: d for d in json.loads(text)["divisions"]}
-        canonical = set(gen.load_route_metadata()["domain_names"])
-        self.assertEqual(set(divisions), canonical)
-        self.assertEqual(len(divisions), 45)
-        for name in canonical:
+        expected_divisions = set(gen.load_route_metadata()["division_names"])
+        self.assertEqual(set(divisions), expected_divisions)
+        self.assertEqual(len(divisions), 57)
+        for name in expected_divisions:
             self.assertTrue(divisions[name]["smoke_bots"], name)
         charters = json.loads(gen.SUPPLEMENTAL_CHARTERS.read_text())
         for portfolio in charters["portfolios"]:
-            owner = portfolio["owner"]
-            self.assertTrue(any(path == f"App_bots/{portfolio['portfolio']}.json" for path in divisions[owner]["sources"]))
+            name = portfolio["portfolio"]
+            self.assertIn(f"App_bots/{name}.json", divisions[name]["sources"])
+            self.assertEqual(divisions[name]["primary_domain_owner"], portfolio["owner"])
+        self.assertEqual(divisions["GrokTeammates"]["bots"], 112)
         seeds = gen.seed_division_counts()
         self.assertTrue(seeds)
         for name, count in seeds.items():
