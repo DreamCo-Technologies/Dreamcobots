@@ -10,85 +10,78 @@ on:
   schedule:
     - cron: '17 */6 * * *'
 concurrency:
-  group: buddy-65-masterbot-training
+  group: buddy-65-masterbot-training-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 permissions:
   contents: read
 jobs:
-  masterbot-training:
+  prepare-fleet:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    outputs:
+      masterbots: ${{ steps.matrix.outputs.masterbots }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - id: matrix
+        name: Build matrix from canonical 65-division registry
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          registry = json.loads(Path("config/masterbot-65-registry.json").read_text(encoding="utf-8"))
+          divisions = registry.get("divisions", [])
+          expected = registry.get("canonical_count")
+          assert expected == 65, f"Expected canonical_count=65, got {expected}"
+          assert len(divisions) == expected, f"Registry has {len(divisions)} divisions"
+          names = [row.get("name") for row in divisions]
+          assert all(isinstance(name, str) and name.strip() for name in names), "Every division needs a name"
+          assert len(set(names)) == expected, "Duplicate division names"
+          print("masterbots=" + json.dumps(names, separators=(",", ":")))
+          PY
+
+  validate-plan-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Run plan-only regression tests
+        run: python -m unittest discover -s tests -p 'test_buddy_masterbot_training_lane.py' -v
+      - name: Generate one representative division plan
+        env:
+          MASTERBOT_NAME: DreamFinance
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: python tools/buddy_masterbot_training_lane.py
+      - name: Verify plan is not a checkpoint or training result
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          plan = json.loads(Path("artifacts/masterbot-training/DreamFinance/latest-plan.json").read_text())
+          assert plan["status"] == "PLAN_ONLY_NOT_EXECUTED"
+          assert plan["artifact_kind"] == "PLAN_ONLY_NOT_A_MODEL_CHECKPOINT"
+          assert plan["weights_trained"] is False
+          assert plan["training_job_executed"] is False
+          assert plan["compute_consumed"] is False
+          PY
+
+  prepare-masterbot-plans:
+    needs: prepare-fleet
+    if: github.event_name != 'pull_request'
     name: Prepare plan ${{ matrix.masterbot }}
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 4
     strategy:
       fail-fast: false
       max-parallel: 20
       matrix:
-        masterbot:
-          - CommandCore
-          - DreamSalesPro
-          - DreamFinance
-          - DreamRealEstate
-          - DreamAIInfra
-          - DreamRetail
-          - DreamProServices
-          - DreamData
-          - DreamGlobal
-          - DreamAutomation
-          - DreamContent
-          - DreamTrade
-          - DreamFlow
-          - DreamMarket
-          - DreamEmpire
-          - GameTitan
-          - DreamInfluence
-          - DreamDecision
-          - DreamOps
-          - DreamPlanetary
-          - DreamEntFinance
-          - DreamCustIntel
-          - DreamLegal
-          - DreamCyber
-          - DreamHealth
-          - DreamEducation
-          - DreamConstruction
-          - DreamTransport
-          - DreamFood
-          - DreamScience
-          - DreamArts
-          - DreamProtection
-          - DreamAgriculture
-          - DreamMaintenance
-          - DreamProduction
-          - DreamSocial
-          - DreamAdmin
-          - DreamCrypto
-          - DreamPayments
-          - DreamBizLaunch
-          - DreamCodeLab
-          - DreamLoans
-          - DreamPersonalCare
-          - DreamMilitary
-          - DreamAgents
-          - DreamResearch
-          - DreamBenchmark
-          - DreamKnowledge
-          - DreamEvolution
-          - DreamIntegration
-          - DreamReason
-          - DreamWorld
-          - DreamVision
-          - DreamVoice
-          - DreamHuman
-          - DreamSecurity
-          - DreamProduct
-          - DreamOperations
-          - DreamStrategy
-          - DreamExperiment
-          - DreamSimulation
-          - DreamDiscovery
-          - DreamQuality
-          - DreamResource
-          - DreamFuture
+        masterbot: ${{ fromJSON(needs.prepare-fleet.outputs.masterbots) }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -98,8 +91,8 @@ jobs:
         env:
           MASTERBOT_NAME: ${{ matrix.masterbot }}
         run: python tools/buddy_masterbot_training_lane.py
-      - name: Publish lane checkpoint
-        if: always()
+      - name: Publish plan artifact
+        if: success()
         uses: actions/upload-artifact@v7
         with:
           name: masterbot-plan-${{ matrix.masterbot }}-${{ github.run_id }}
