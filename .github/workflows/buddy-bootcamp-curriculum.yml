@@ -142,8 +142,8 @@ jobs:
           python tools/build_freecodecamp_division_queues.py --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
           python tools/build_freecodecamp_division_queues.py --check --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
           python -m unittest discover -s tests -p 'test_freecodecamp_division_queues.py' -v
-          python tools/build_freecodecamp_routes.py
-          python tools/build_freecodecamp_routes.py --check
+          python tools/build_freecodecamp_routes.py --out "$RUNNER_TEMP/freecodecamp-source-routes.json"
+          python tools/build_freecodecamp_routes.py --check --out "$RUNNER_TEMP/freecodecamp-source-routes.json"
           python -m unittest discover -s tests -p 'test_freecodecamp_source_routes.py' -v
           python -m unittest discover -s tests -p 'test_study_artifact_cleanup.py' -v
           python -m unittest discover -s tests -p 'test_permissioned_study_worker.py' -v
@@ -174,7 +174,7 @@ jobs:
           path: |
             buddy/bootcamp/sources/freecodecamp/catalog.json
             ${{ runner.temp }}/freecodecamp-division-learning-queues.json
-            config/generated/freecodecamp-source-routes.json
+            ${{ runner.temp }}/freecodecamp-source-routes.json
             config/generated/daily-lesson-production-plan.json
             config/generated/buddy-bootcamp-curriculum.json
           if-no-files-found: warn
