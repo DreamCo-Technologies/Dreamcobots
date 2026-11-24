@@ -41,11 +41,13 @@ jobs:
         with:
           python-version: "3.13"
       - name: Compile DreamCo Model Foundry source and entry points
-        run: python -m compileall -q buddy/learning/model_foundry.py tools/build_division_training_matrix.py tools/train_buddy_division_model.py
+        run: python -m compileall -q buddy/learning/model_foundry.py tools/build_division_training_matrix.py tools/train_buddy_division_model.py tools/build_model_release_candidate.py
       - name: Test Model Foundry rights gate and parallel division planner
         run: python -m unittest discover -s tests -p "test_model_foundry.py" -v
       - name: Validate pretrained model store catalog and publication gates
         run: python tools/validate_pretrained_model_catalog.py --check && python -m unittest tests.test_pretrained_model_catalog -v
+      - name: Test evidence-linked model release candidate gates
+        run: python -m compileall -q tools/build_model_release_candidate.py && python -m unittest tests.test_model_release_candidate -v
       - run: npm ci
       - name: Verify Buddy model progress center
         run: npm run buddy:model-progress
