@@ -623,6 +623,9 @@ def validate_site() -> dict[str, Any]:
         if not path.is_file() or any(part in skipped_roots for part in path.relative_to(ROOT).parts):
             continue
         relative = path.relative_to(ROOT).as_posix()
+        # Source catalogs preserve factual upstream repository names and URLs; they are not public-site branding.
+        if relative == "docs/FREECODECAMP_REPOSITORY_INVENTORY_2026-11-24.json":
+            continue
         if LEGACY_PROVIDER_NAME.search(relative):
             branding_hits.append(relative)
             continue
