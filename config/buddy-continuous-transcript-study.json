@@ -1,0 +1,39 @@
+{
+  "schema": "dreamco.continuous_transcript_study_policy.v1",
+  "cadence": "continuous",
+  "workflow_schedule_utc": "*/30 * * * *",
+  "daily_requirement": "Every rights-approved transcript permitted for study remains in the recurring study queue until mastery evidence is achieved.",
+  "manifest": "config/authorized-transcripts/manifest.json",
+  "ledger": "config/generated/buddy-continuous-study-ledger.json",
+  "study_permission_fields": [
+    "rights_status",
+    "study_allowed",
+    "rights_evidence_ref"
+  ],
+  "mastery": {
+    "minimum_passed_evaluations": 3,
+    "minimum_distinct_utc_days": 2,
+    "minimum_score": 0.9,
+    "critical_failures_allowed": 0,
+    "holdout_required": true,
+    "human_review_required": true,
+    "mastery_is_per_transcript_hash": true
+  },
+  "retry": {
+    "failed_attempts_remain_due": true,
+    "errors_remain_due": true,
+    "changed_transcript_hash_resets_mastery": true,
+    "never_generate_synthetic_evidence": true
+  },
+  "separation": {
+    "study_permission_does_not_grant_training_permission": true,
+    "evaluation_permission_does_not_grant_training_permission": true,
+    "model_training_requires_separate_per_source_training_approval": true
+  },
+  "execution": {
+    "planner_enabled": true,
+    "real_buddy_study_adapter_registered": false,
+    "continuous_model_execution_enabled": false,
+    "blocked_reason": "No approved transcript manifest or executable Buddy study/evaluation adapter is registered."
+  }
+}
