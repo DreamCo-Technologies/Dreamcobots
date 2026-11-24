@@ -10,7 +10,7 @@ on:
       - "tests/test_dreamco_bootcamp_seed_data.py"
       - ".github/workflows/dreamco-first-party-training-data.yml"
   push:
-    branches: [main]
+    branches: [main, "codex/**"]
     paths:
       - "data/dreamco_training/**"
       - "config/dreamco-training-source-registry.json"
@@ -33,11 +33,11 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout immutable commit
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
       - name: Compile builder and tests
