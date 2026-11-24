@@ -32,6 +32,11 @@ on:
       - "tests/test_original_lesson.py"
       - "buddy/bootcamp/sources/original-lesson.schema.json"
       - "buddy/bootcamp/templates/original-lesson.md"
+      - "config/buddy-weekly-transcript-evaluation.json"
+      - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
+      - "tools/build_weekly_transcript_evaluation.py"
+      - "tests/test_weekly_transcript_evaluation.py"
+      - ".github/workflows/buddy-weekly-transcript-evaluation.yml"
   push:
     branches: [main]
     paths:
@@ -65,6 +70,11 @@ on:
       - "tests/test_original_lesson.py"
       - "buddy/bootcamp/sources/original-lesson.schema.json"
       - "buddy/bootcamp/templates/original-lesson.md"
+      - "config/buddy-weekly-transcript-evaluation.json"
+      - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
+      - "tools/build_weekly_transcript_evaluation.py"
+      - "tests/test_weekly_transcript_evaluation.py"
+      - ".github/workflows/buddy-weekly-transcript-evaluation.yml"
   schedule:
     - cron: "17 9 * * *"
 permissions:
@@ -104,6 +114,16 @@ jobs:
           python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
           python -m unittest discover -s tests -p 'test_original_lesson.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
+          python -m unittest discover -s tests -p 'test_weekly_transcript_evaluation.py' -v
+          python tools/build_weekly_transcript_evaluation.py --output /tmp/buddy-weekly-transcript-evaluation.json
+      - name: Publish first weekly transcript coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-weekly-transcript-evaluation-first-run
+          path: /tmp/buddy-weekly-transcript-evaluation.json
+          if-no-files-found: warn
+          retention-days: 90
       - name: Commit discovered catalog back to this pull request branch
         if: github.event_name == 'pull_request'
         env:
