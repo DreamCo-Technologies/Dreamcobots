@@ -117,6 +117,48 @@ def search_kaggle(query: str, limit: int = 10) -> list[dict]:
         "license":x.get("licenseName"),"last_updated":x.get("lastUpdated"),
         "rights_status":"UNVERIFIED_REQUIRES_DATASET_TERMS_AND_FILE_REVIEW"} for x in data if x.get("ref") or x.get("id")]
 
+def search_openalex(query: str, limit: int = 10) -> list[dict]:
+    """Search OpenAlex works metadata; this is a research-reference adapter, not a paper downloader."""
+    params = urllib.parse.urlencode({"search": query, "per-page": max(1, min(limit, 30))})
+    data = _get_json("https://api.openalex.org/works?" + params)
+    return [{
+        "source": "openalex",
+        "id": str(item.get("id") or ""),
+        "name": item.get("display_name"),
+        "url": item.get("id"),
+        "doi": item.get("doi"),
+        "publication_year": item.get("publication_year"),
+        "type": item.get("type"),
+        "license": None,
+        "rights_status": "REFERENCE_METADATA_ONLY_REQUIRES_FULL_TEXT_AND_SUPPLEMENTARY_RIGHTS_REVIEW",
+    } for item in data.get("results", []) if item.get("id")]
+
+
+def search_crossref(query: str, limit: int = 10) -> list[dict]:
+    """Search Crossref scholarly metadata; metadata never grants article or dataset training rights."""
+    params = urllib.parse.urlencode({"query": query, "rows": max(1, min(limit, 30))})
+    data = _get_json("https://api.crossref.org/works?" + params)
+    rows = data.get("message", {}).get("items", [])
+    found = []
+    for item in rows:
+        doi = str(item.get("DOI") or "").strip()
+        titles = item.get("title") or []
+        if not doi:
+            continue
+        found.append({
+            "source": "crossref",
+            "id": doi,
+            "name": titles[0] if titles else None,
+            "url": item.get("URL") or "https://doi.org/" + doi,
+            "doi": doi,
+            "publisher": item.get("publisher"),
+            "type": item.get("type"),
+            "license": None,
+            "rights_status": "REFERENCE_METADATA_ONLY_REQUIRES_FULL_TEXT_AND_SUPPLEMENTARY_RIGHTS_REVIEW",
+        })
+    return found
+
+
 def inspect_huggingface_dataset_card(dataset_id: str) -> dict:
     if not dataset_id or "/" not in dataset_id:
         raise ValueError("A fully qualified Hugging Face dataset ID is required")
@@ -150,7 +192,7 @@ def discover(query: str, limit: int = 8, include_kaggle: bool = True) -> dict:
     if len((query or "").strip()) < 2:
         raise ValueError("A meaningful search query is required")
     results, errors = [], {}
-    for name, fn in (("huggingface", search_huggingface), ("openml", search_openml), ("uci", search_uci), ("github", search_github), ("zenodo", search_zenodo), ("data_gov", search_datagov)) + ((("kaggle", search_kaggle),) if include_kaggle else ()):
+    for name, fn in (("huggingface", search_huggingface), ("openml", search_openml), ("uci", search_uci), ("github", search_github), ("zenodo", search_zenodo), ("data_gov", search_datagov), ("openalex", search_openalex), ("crossref", search_crossref)) + ((("kaggle", search_kaggle),) if include_kaggle else ()):
         try:
             results.extend(fn(query, limit))
         except SourceAccessError as exc:
