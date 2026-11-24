@@ -62,7 +62,7 @@ jobs:
           FAILED_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           mkdir -p reports/continuous-repair
-          gh run view "$FAILED_RUN_ID" --json name,conclusion,headSha,url,jobs             > "reports/continuous-repair/failed-run-$FAILED_RUN_ID.json"
+          gh run view "$FAILED_RUN_ID" --json databaseId,name,conclusion,headSha,url,jobs             > "reports/continuous-repair/failed-run-$FAILED_RUN_ID.json"
 
       - name: Index repair history and diagnose failed jobs
         if: github.event_name == 'workflow_run'
