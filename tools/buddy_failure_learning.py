@@ -29,7 +29,7 @@ def classify(observation:dict[str,Any])->str:
  rules=[
   ("security",("secret","permission","codeql","vulnerability","unauthorized")),
   ("dependency-major",("dependency","lockfile","package version","pip resolver")),
-  ("generated-index",("prospectus","generated index","inventory mismatch","stale generated","dataset route","route index","division model fleet","generated artifact")),
+  ("generated-index",("prospectus","generated index","inventory mismatch","stale generated","dataset route","route index","division model fleet","generated artifact","verify repaired indexes","stale shard","index drift")),
   ("documentation",("markdown","link check","documentation")),
   ("deployment",("deploy","pages","release")),
   ("database",("database","migration","sql","postgres","sqlite")),
