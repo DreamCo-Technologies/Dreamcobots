@@ -40,3 +40,12 @@ The two-week deliverable is a working, measurable owner-controlled training syst
 ## Private execution
 
 The Model Foundry workflow uses a self-hosted GitHub Actions runner labelled `dreamco-private-training`. It does not upload training corpora or model checkpoints as repository artifacts. Checkpoints are written to `$HOME/DreamCo-models` on that runner. A runner must be installed, secured and labelled by the repository owner before manual training dispatch can execute.
+## Pretrained model marketplace
+
+DreamCo's catalog has no parameter-count ceiling. A sale listing is not a training blueprint: it must reference actual trained weights and tokenizer hashes, a training run, dataset provenance, an approved commercial model-use license, a model card, benchmark results, and a signed package location. Source datasets are never bundled with model downloads.
+
+The storefront at `website/pretrained-model-store.html` includes a first-pass weight-memory estimator. Approximate raw weight memory is parameter_count × bytes_per_parameter (0.5 for 4-bit, 1 for 8-bit, 2 for 16-bit, 4 for 32-bit), plus a 25% headroom estimate. This is only a rough lower-bound planning aid: architecture, quantization quality, KV cache, context length, runtime overhead, batching and operating system all affect real requirements.
+
+Buyers choose their own local compute for local inference. DreamCo does not charge inference usage for local execution; electricity and hardware remain the buyer's responsibility. Hosted inference, if offered, is separately metered. Very large models may require multiple GPUs, distributed inference, CPU/RAM offload, quantization, or cloud compute; an unlimited catalog does not mean every model fits every device.
+
+Checkout is intentionally disabled until payments, signed model-package delivery, entitlement enforcement, license display/acceptance, refund handling, and download integrity checks are implemented. The current catalog is empty and the storefront clearly says no models are available for purchase yet.
