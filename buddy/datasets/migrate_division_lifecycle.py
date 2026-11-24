@@ -57,13 +57,13 @@ def apply_division_lifecycle_migrations(approval_id:str,expected_migration_sha25
             with connection.cursor() as cursor:
                 for masterbot_id in range(1,66):
                     schema=schema_name(masterbot_id)
-                    cursor.execute("""SELECT r.rolname,r.rolcanlogin,r.rolsuper,
+                    cursor.execute("""SELECT r.rolname,r.rolcanlogin,r.rolsuper,r.rolbypassrls,
                         pg_has_role(current_user,r.oid,'MEMBER')
                         FROM pg_namespace n JOIN pg_roles r ON r.oid=n.nspowner
                         WHERE n.nspname=%s""",(schema,))
                     owner=cursor.fetchone()
                     if owner is None: raise DivisionMigrationError(f"division_schema_missing:{schema}")
-                    if owner[0]!=schema or owner[1] is not False or owner[2] is not False or owner[3] is not True:
+                    if owner[0]!=schema or owner[1] is not False or owner[2] is not False or owner[3] is not False or owner[4] is not True:
                         raise DivisionMigrationError(f"division_schema_owner_or_membership_invalid:{schema}")
                     quoted=f'"{schema}"'
                     cursor.execute(f"SET LOCAL ROLE {quoted}")
