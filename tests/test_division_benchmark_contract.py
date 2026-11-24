@@ -1,6 +1,6 @@
 import tempfile
 import unittest
-from buddy.benchmarks.division_benchmark_contract import create_benchmark_plan,validate_benchmark_evidence
+from buddy.benchmarks.division_benchmark_contract import create_benchmark_plan,validate_benchmark_evidence,assemble_benchmark_evidence
 
 def make_plan(tmp):
  return create_benchmark_plan(1,"dreamco/dreamfinance-mini","0.1.0","a"*64,"b"*64,"c"*64,
@@ -42,6 +42,16 @@ class DivisionBenchmarkContractTests(unittest.TestCase):
   self.assertFalse(result["certified"])
   self.assertFalse(result["production_deployed"])
   self.assertFalse(result["promotion_allowed"])
+ def test_assembler_builds_evidence_from_persisted_run_records(self):
+  with tempfile.TemporaryDirectory() as tmp:
+   plan=make_plan(tmp);raw=make_evidence(plan)
+   run_records=[]
+   for run in raw["runs"]:
+    run_records.append({"schema":"dreamco.division_benchmark_run.v1","plan_id":plan["plan_id"],**run})
+   evidence=assemble_benchmark_evidence(plan,run_records)
+   result=validate_benchmark_evidence(plan,evidence)
+  self.assertTrue(result["passed"])
+  self.assertEqual(evidence["holdout_rights_evidence"],"holdout-review-001")
  def test_duplicate_run_ids_and_seeds_are_blocked(self):
   with tempfile.TemporaryDirectory() as tmp:
    plan=make_plan(tmp);evidence=make_evidence(plan)
