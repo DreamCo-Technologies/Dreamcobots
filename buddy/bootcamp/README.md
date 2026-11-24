@@ -100,3 +100,25 @@ python -m unittest discover -s tests -p 'test_original_lesson.py' -v
 ```
 
 The authoring policy forbids copying transcripts, course text, exercises, or answer keys. Public metadata and source links may identify topics; actual source material may be used only within the applicable permission. Mark every lesson with provenance and rights review. Training DreamCo model weights on source-derived material remains disabled unless a separate rights approval explicitly permits it. Original DreamCo-authored lesson assets can be stored and reused under DreamCo's own content policy, subject to review.
+
+
+## Daily original-lesson production target
+
+The daily target is five original DreamCo lesson packages per division (65 divisions; 325 planned slots per UTC day). The scheduled workflow builds a metadata-only work plan. A slot remains `queued_not_created` until an actual lesson has original explanations, worked examples, practice, an assessment and answer key, source provenance, a rights review, schema validation, sandbox results, target and holdout benchmarks, and regression evidence. The planner does not count placeholders as lessons and does not claim that a target has been met merely because the workflow ran.
+
+Run locally:
+
+```bash
+python tools/build_daily_lesson_plan.py --lessons-per-division 5
+python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
+```
+
+## Permissioned study worker and temporary-file lifecycle
+
+All study adapters that create temporary working files must execute through `buddy.learning.permissioned_study_worker.run_study_attempt` (or the source adapter's `execute_study_plan`). The callback receives an attempt-scoped workspace and an explicit allowlist of operations. The workspace is erased in a `finally` block on normal completion, exceptions, and cancellation. The callback must place every temporary download, extracted file, and scratch artifact inside that workspace. Do not write media to the repository, shared caches, workflow artifacts, or persistent runner directories. Keep only original DreamCo-authored lesson content, learner notes intended for retention, rights/provenance records, hashes, and benchmark evidence outside the workspace.
+
+The freeCodeCamp catalog remains metadata-only. Its plans explicitly prohibit media downloads and transcript ingestion. A download or transcript operation is rejected unless the source is rights-approved and a rights evidence reference is supplied. Model training is always a separate permission and remains disabled by this worker. The daily plan artifact contains task metadata only, never course media.
+
+## Ownership and third-party rights
+
+DreamCo should retain records showing who authored each original lesson and when. DreamCo may claim rights in original expression it creates, subject to applicable law, agreements, and the actual authorship of the work. That does not transfer ownership of third-party course materials. Source links, attribution, license terms, permission evidence, and restrictions remain attached to each lesson. Public availability, a YouTube upload, or another creator's reuse does not by itself grant permission to copy, download, redistribute, or train on that material. When source permissions are uncertain, use only permitted metadata and independently written explanations/examples, and leave media, transcript, redistribution, and model-training gates closed until reviewed.
