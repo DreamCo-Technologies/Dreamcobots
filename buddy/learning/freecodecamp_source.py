@@ -2,6 +2,7 @@
 from __future__ import annotations
 import json
 from pathlib import Path
+from buddy.learning.permissioned_study_worker import StudyAuthorization, run_study_attempt
 from typing import Iterable
 from buddy.learning.study_resource_scheduler import Capability, Resource, choose_next, study_plan
 from buddy.learning.study_artifact_cleanup import study_download_workspace
@@ -68,3 +69,24 @@ def plan_next_lesson(division_id: int, capability: Capability, *, recent: set[in
         "workspace_context_manager": "buddy.learning.study_artifact_cleanup.study_download_workspace",
     })
     return plan
+
+
+def execute_study_plan(plan: dict, authorization: StudyAuthorization, study, workspace_root: Path) -> dict:
+    """Execute a queued plan through the permission and cleanup boundary.
+
+    The caller must supply a rights-reviewed operation set. freeCodeCamp plans
+    default to metadata-only; they cannot download media or ingest transcripts.
+    """
+    if plan.get("completion_status") != "queued_not_studied":
+        raise ValueError("only a queued, not-yet-studied plan can be executed")
+    if plan.get("source_url") != authorization.source_url:
+        raise ValueError("study authorization URL does not match the selected plan")
+    if plan.get("source") != authorization.source_name:
+        raise ValueError("study authorization source does not match the selected plan")
+    if plan.get("media_download_allowed") is not False or plan.get("transcript_ingestion_allowed") is not False:
+        raise PermissionError("freeCodeCamp catalog plans do not authorize media or transcript ingestion")
+    result = run_study_attempt(authorization, study, workspace_root)
+    result["division_id"] = plan["division_id"]
+    result["resource_id"] = plan["resource_id"]
+    result["completion_status"] = "attempted_evidence_pending"
+    return result
