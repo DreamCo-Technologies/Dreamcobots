@@ -50,6 +50,10 @@ The generated Bootcamp cards intentionally set these fields to false/pending. Th
 6. Hash the base model, tokenizer, data splits, code commit, configuration, checkpoints, and final weights.
 7. Run independent domain/general/safety/privacy/robustness/regression and resource benchmarks before any promotion.
 
+## Model-training method support
+
+The current first-run training-job contract supports supervised fine-tuning (SFT) and LoRA after dataset, base-model license, tokenizer, compute and owner approvals. QLoRA is planned but not supported by the current first-run runner. Distillation is policy-only until teacher-output rights are verified and a separate workflow exists; from-scratch foundation training remains a separately budgeted research program. Retrieval/tool improvements can be deployed without changing model weights and should be benchmarked before choosing fine-tuning.
+
 ## Current limitations
 
 - The seed pack is a small authored starting point, not a comprehensive domain corpus or a trained teacher model.
