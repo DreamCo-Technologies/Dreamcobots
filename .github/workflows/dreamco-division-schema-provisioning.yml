@@ -1,0 +1,36 @@
+name: DreamCo Division Schema Provisioning Tests
+
+on:
+  push:
+    branches:
+      - "codex/phase-2b-division-schema-provisioning"
+  pull_request:
+    paths:
+      - "buddy/datasets/provision_division_schemas.py"
+      - "tests/test_buddy_division_schema_provisioning.py"
+      - ".github/workflows/dreamco-division-schema-provisioning.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dreamco-division-schema-provisioning-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  provisioning-safety-tests:
+    name: Division schema provisioning safety tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run focused unit tests
+        env:
+          PYTHONPATH: .
+        run: python -m unittest discover -s tests -p 'test_buddy_division_schema_provisioning.py' -v
