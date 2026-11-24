@@ -4,18 +4,19 @@ This is discovery and categorization, not promotion to verified runtime instance
 """
 from __future__ import annotations
 import hashlib
+import json
 import re
 from collections import Counter
 from pathlib import Path
 from tools.place_original_bots import parse_category, parse_system, infer_owner
 
-DIVISION_ALIASES = {
-    'DreamStreaming':'DreamContent', 'DreamLicensing':'DreamLegal',
-    'DreamFoundry':'DreamAIInfra', 'DreamFranchise':'DreamBizLaunch',
-    'DreamSaaS':'DreamAutomation', 'DreamTravel':'DreamTransport',
-    'DreamAgency':'DreamProServices', 'DreamIntegrations':'DreamCodeLab',
-    'DreamAffiliate':'DreamSalesPro', 'DreamRobotics':'DreamAIInfra',
-}
+def load_division_aliases() -> dict[str, str]:
+    policy_path = Path(__file__).resolve().parents[1] / "config/division-reconciliation-policy.json"
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    return {name: entry["target"] for name, entry in policy["supplemental_portfolios"].items()}
+
+
+DIVISION_ALIASES = load_division_aliases()
 
 def section(text, heading):
     found=re.search(r'^## '+re.escape(heading)+r'\s*\n(.*?)(?=^## |\Z)',text,re.M|re.S)
