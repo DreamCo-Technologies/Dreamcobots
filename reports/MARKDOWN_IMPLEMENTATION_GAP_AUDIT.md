@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T06:27:35Z
+Generated: 2026-11-24T06:48:26Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1674
-- Actionable claim lines detected: 11916
+- Markdown documents scanned: 1676
+- Actionable claim lines detected: 11932
 - Documents with missing path references: 112
-- Documents without implementation references: 1589
-- Documents with implementation references but no test references: 68
-- Documents with inventory count claims: 112
-- Inventory count claims requiring review: 389
+- Documents without implementation references: 1590
+- Documents with implementation references but no test references: 69
+- Documents with inventory count claims: 113
+- Inventory count claims requiring review: 392
 
 ## Fixed-count claims requiring review
 
@@ -134,6 +134,9 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/DREAMCO_DIVISION_MODEL_LIFECYCLE.md:18 — The planner runs every five minutes and rotates a fair-share division lane. A six-hour full-fleet sweep preflights all 65 divisions. These are orchestration and evidence cycles, not a command to retrain every model every five minutes.
 - docs/DREAMCO_DIVISION_MODEL_LIFECYCLE.md:35 — The existing taxonomy map covers 37 task families and 10 capability packs across 65 MasterBots, with 55 proposed domain routes. Twenty MasterBot-to-domain mappings and ten standalone domain profiles remain pending owner review. They are deliberately not guessed or auto-assigned.
 - docs/DREAMCO_DIVISION_MODEL_LIFECYCLE.md:35 — The existing taxonomy map covers 37 task families and 10 capability packs across 65 MasterBots, with 55 proposed domain routes. Twenty MasterBot-to-domain mappings and ten standalone domain profiles remain pending owner review. They are deliberately not guessed or auto-assigned.
+- docs/DREAMCO_FIRST_PARTY_TRAINING_FACTORY_AND_BOOTCAMP.md:7 — The factory is not a promise that 65 models have already been trained. Each lane remains `SPECIFIED_NOT_TRAINED` until real checkpoints, hashes, training logs, and evaluation evidence exist.
+- docs/DREAMCO_FIRST_PARTY_TRAINING_FACTORY_AND_BOOTCAMP.md:37 — The 65-lane plan maps every division to the 37 structured Hugging Face task-family references (2,405 division/task assignments), division capability packs, Bootcamp levels, dataset planes and model identities. Hugging Face is one source taxonomy, not the entire curriculum.
+- docs/DREAMCO_FIRST_PARTY_TRAINING_FACTORY_AND_BOOTCAMP.md:46 — - 65 division-specific model identities with isolated adapters/checkpoints and evaluation lanes.
 - docs/DREAMCO_INDEPENDENT_DIVISION_MODEL_LIFECYCLE.md:3 — The canonical MasterBot registry defines 65 divisions. This lifecycle gives every division a distinct versioned model identity, weights directory, checkpoint directory, tokenizer snapshot, dataset lane, benchmark record and serving identity. The registry is a specification: it de
 - docs/DREAMCO_MASTERY_CONTINUITY_SYSTEM.md:92 — The new engine connects all 65 registry entries to logical lanes, goal routing, dependency metadata, shared regression execution, the existing lane planner, benchmark execution, and evidence artifacts. It does **not** yet implement every domain capability, execute every historica
 - docs/DREAMCO_MASTER_ROADMAP_2026.md:26 — ### 1–15 Workflow Organization & Dashboard
@@ -13583,7 +13586,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/CROSS_REPOSITORY_COMPLETION_AND_COMPETITION.md
 
 - Status: broken_path_references
-- Actionable claim lines: 10
+- Actionable claim lines: 17
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: github/workflows/dreamco-c-runtime.yml
@@ -13785,6 +13788,26 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Status: test_reference_missing
 - Actionable claim lines: 3
 - Implementation paths: tools/build_runtime_sync_plan.py, tools/recover_legacy_bots.py, tools/run_everything_now.py
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_FIRST_PARTY_TRAINING_DATA_FACTORY.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 4
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_FIRST_PARTY_TRAINING_FACTORY_AND_BOOTCAMP.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 5
+- Implementation paths: tools/build_dreamco_training_factory.py
 - Test paths: None detected
 - Missing paths: None detected
 - Next action: Add focused tests and acceptance evidence for the referenced implementation.
