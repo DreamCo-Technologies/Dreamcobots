@@ -21,7 +21,7 @@ class CrossRuntimeContractTests(unittest.TestCase):
     def test_cannot_start_c_before_contract_freeze(self):
         data = json.loads(json.dumps(self.data))
         data["completion_order"].remove("freeze_versioned_shared_contracts")
-        self.assertTrue(any("C runtime work" in error for error in validate(data)))
+        self.assertTrue(any("completion order must include" in error for error in validate(data)))
 
     def test_planning_is_not_training(self):
         data = json.loads(json.dumps(self.data))
