@@ -103,6 +103,13 @@ class BootcampSeedDataTests(unittest.TestCase):
             hashes.add(first_manifest["candidate_sha256"])
         self.assertEqual(len(hashes), 65)
 
+    def test_rejects_duplicate_prompt_response_content(self):
+        data = examples()
+        data[1]["prompt"] = data[0]["prompt"]
+        data[1]["response"] = data[0]["response"]
+        with self.assertRaisesRegex(ValueError, "duplicate prompt/response"):
+            build_candidate(data, 4, registry())
+
     def test_jsonl_loader_rejects_invalid_rows(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / "examples.jsonl"
