@@ -24,6 +24,7 @@ class MustHaveStudyTest(unittest.TestCase):
         self.assertEqual(len(track["lesson_sequence"]), 8)
         self.assertFalse(track["rights_and_safety"]["primary_tolkien_texts_training_eligible"])
         self.assertFalse(track["rights_and_safety"]["model_weight_training_authorized"])
+        self.assertFalse(track["rights_and_safety"]["materials_referencing_characters_stories_places_events_or_other_elements_authorized"])
         self.assertEqual(track["rights_and_safety"]["unknown_rights_status"], "BLOCKED")
 
     def test_database_and_dataset_track_is_ten_lessons_and_fail_closed(self):
