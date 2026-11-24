@@ -18,7 +18,7 @@ All tenant-scoped tables enable and FORCE row-level security. Policies require t
 ## Safe application
 
 1. Review the SQL and run `python -m buddy.datasets.migrate_division_lifecycle` for a read-only 65-schema plan.
-2. Verify all schemas and owner roles have been provisioned and the migration principal is a member of each matching NOLOGIN owner role.
+2. Verify all schemas and owner roles have been provisioned and the migration principal is a member of each matching NOLOGIN, non-superuser, non-BYPASSRLS owner role.
 3. Record a change approval ID and the exact migration SHA-256 from the plan.
 4. Set `DREAMCO_POSTGRES_DSN` in a protected environment and `DREAMCO_ALLOW_DIVISION_SCHEMA_MIGRATIONS=1`.
 5. Run with `--apply --approval-id ... --expected-migration-sha256 ...`.
