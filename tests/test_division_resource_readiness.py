@@ -37,7 +37,7 @@ class DivisionResourceReadinessTests(unittest.TestCase):
   standalone=[x for x in domains if x["route_type"]=="standalone_domain_resource_bundle"]
   self.assertEqual(len(linked),45)
   self.assertEqual(len(standalone),10)
-  self.assertTrue(all(x["resource_bundle_id"] for x in domains))
+  self.assertTrue(all(x["resource_bundle_id"] and len(x["dataset_search_queries"])>=3 for x in domains))
   self.assertTrue(all(x["dataset_training_approved"] is False for x in domains))
   self.assertTrue(all(x["masterbot_id"] is None for x in standalone))
  def test_teacher_models_are_candidates_not_certified_or_approved(self):
