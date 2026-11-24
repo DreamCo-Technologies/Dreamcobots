@@ -29,7 +29,7 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
         candidates = [bot for bot in self.bots if bot["commercial_plan"].get("candidate")]
         self.assertGreater(len(candidates), 0)
         required = {
-            "revenue_lane", "approved_source_categories", "workflow",
+            "revenue_lane", "approved_source_categories", "verified_revenue_event_types", "workflow",
             "revenue_event_required", "forecast_is_not_revenue",
             "live_status", "live_actions_allowed", "owner_live_enable_required",
         }
@@ -39,6 +39,7 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
             self.assertTrue(plan["approved_source_categories"])
             self.assertGreaterEqual(len(plan["workflow"]), 8)
             self.assertTrue(plan["revenue_event_required"])
+            self.assertTrue(plan["verified_revenue_event_types"])
             self.assertFalse(plan["live_actions_allowed"])
             self.assertTrue(plan["owner_live_enable_required"])
 
