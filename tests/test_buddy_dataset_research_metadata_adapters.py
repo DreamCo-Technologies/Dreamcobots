@@ -1,4 +1,6 @@
+import json
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 from urllib.parse import parse_qs, urlparse
 
@@ -40,6 +42,17 @@ class ResearchMetadataAdapterTests(unittest.TestCase):
         self.assertIsNone(rows[0]["license"])
         query = parse_qs(urlparse(mocked.call_args.args[0]).query)
         self.assertEqual(query["rows"], ["4"])
+
+    def test_source_registry_active_adapters_match_implemented_functions(self):
+        root = Path(__file__).resolve().parents[1]
+        registry = json.loads((root / "config/dreamco-training-source-registry.json").read_text(encoding="utf-8"))
+        adapters = registry["adapter_coverage"]["metadata_discovery_implemented"]
+        self.assertIn("openalex", adapters)
+        self.assertIn("crossref", adapters)
+        for source_id, function_names in adapters.items():
+            for function_name in function_names:
+                with self.subTest(source=source_id, function=function_name):
+                    self.assertTrue(callable(getattr(sources, function_name, None)))
 
     def test_discovery_includes_research_metadata_without_approving_training(self):
         with patch.object(sources, "search_huggingface", return_value=[]), \
