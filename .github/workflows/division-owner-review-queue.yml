@@ -1,0 +1,45 @@
+name: Division Owner Review Queue
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/division-owner-review-queue.yml"
+      - "tools/build_division_owner_review_queue.py"
+      - "config/generated/division-resource-readiness-map.json"
+  schedule:
+    - cron: "41 8 * * *"
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: division-owner-review-queue
+  cancel-in-progress: false
+jobs:
+  generate-review-queue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Generate and validate owner review queue
+        run: |
+          python tools/build_division_owner_review_queue.py
+          python tools/build_division_owner_review_queue.py --check
+          python -m unittest discover -s tests -p 'test_division_owner_review_queue.py' -v
+      - name: Propose updated review queue
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: automation/division-owner-review-queue
+          delete-branch: false
+          add-paths: config/generated/division-owner-review-queue.json
+          commit-message: "chore: refresh division owner review queue"
+          title: "chore: refresh division owner review queue"
+          body: |
+            Generated from the current division resource readiness map.
+            No domain mappings are inferred or approved by this workflow.
