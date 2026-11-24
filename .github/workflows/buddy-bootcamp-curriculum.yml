@@ -22,6 +22,8 @@ on:
       - "tools/build_freecodecamp_routes.py"
       - "buddy/learning/freecodecamp_source.py"
       - "tests/test_freecodecamp_source_routes.py"
+      - "buddy/learning/study_artifact_cleanup.py"
+      - "tests/test_study_artifact_cleanup.py"
   push:
     branches: [main]
     paths:
@@ -74,6 +76,7 @@ jobs:
           python tools/build_freecodecamp_routes.py
           python tools/build_freecodecamp_routes.py --check
           python -m unittest discover -s tests -p 'test_freecodecamp_source_routes.py' -v
+          python -m unittest discover -s tests -p 'test_study_artifact_cleanup.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
       - name: Commit discovered catalog back to this pull request branch
         if: github.event_name == 'pull_request'
