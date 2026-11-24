@@ -1,5 +1,5 @@
 import io,unittest
-from buddy.storage.object_store import ObjectStoreError,run_object_store_healthcheck
+from buddy.storage.object_store import ObjectStoreError,run_object_store_healthcheck,run_division_object_store_healthcheck
 
 class FakeS3:
  def __init__(self,versioning=True,encryption=True,public=True,retention=30):
@@ -46,6 +46,15 @@ class ObjectStoreTests(unittest.TestCase):
    evidence=run_object_store_healthcheck(client=client,primary_bucket="dreamco-primary",backup_bucket="dreamco-backup",allow_canary=True)
    self.assertEqual(evidence["status"],"BLOCKED")
    self.assertEqual(evidence["backup_restore_test"],"NOT_RUN")
+ def test_division_healthcheck_uses_isolated_namespace(self):
+  evidence=run_division_object_store_healthcheck(7,client=FakeS3(),primary_bucket="dreamco-primary",
+    backup_bucket="dreamco-backup",allow_canary=True)
+  self.assertEqual(evidence["masterbot_id"],7)
+  self.assertIn("/divisions/007/",evidence["primary_canary_key"])
+ def test_invalid_masterbot_id_is_rejected(self):
+  with self.assertRaisesRegex(ObjectStoreError,"masterbot_id"):
+   run_division_object_store_healthcheck(66,client=FakeS3(),primary_bucket="dreamco-primary",
+     backup_bucket="dreamco-backup",allow_canary=True)
  def test_distinct_bucket_names_are_required(self):
   with self.assertRaisesRegex(ObjectStoreError,"distinct_valid"):
    run_object_store_healthcheck(client=FakeS3(),primary_bucket="dreamco-primary",backup_bucket="dreamco-primary",allow_canary=True)
