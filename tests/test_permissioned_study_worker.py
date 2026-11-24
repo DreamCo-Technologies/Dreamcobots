@@ -65,6 +65,21 @@ class PermissionedStudyWorkerTests(unittest.TestCase):
             self.assertFalse(captured[0].exists())
             self.assertEqual(list(Path(tmp).iterdir()), [])
 
+    def test_workspace_is_erased_when_attempt_is_cancelled(self):
+        class CancelStudy(BaseException):
+            pass
+        with tempfile.TemporaryDirectory() as tmp:
+            auth = StudyAuthorization("source", "https://example.org", "approved")
+            captured = []
+            def cancel(ctx):
+                (ctx.workspace / "partial.tmp").write_text("partial")
+                captured.append(ctx.workspace)
+                raise CancelStudy("cancelled")
+            with self.assertRaises(CancelStudy):
+                run_study_attempt(auth, cancel, Path(tmp))
+            self.assertFalse(captured[0].exists())
+            self.assertEqual(list(Path(tmp).iterdir()), [])
+
     def test_transcript_permission_also_requires_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:
             auth = StudyAuthorization(
