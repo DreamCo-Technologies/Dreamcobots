@@ -48,7 +48,7 @@ def build_owner_review_queue(source_path:Path=SOURCE)->dict[str,Any]:
     domains=[x["domain_id"] for x in unassigned]
     if len(ids)!=len(set(ids)) or len(domains)!=len(set(domains)):
         raise OwnerReviewQueueError("duplicate_masterbot_or_domain_in_owner_review_source")
-    if any(x["decision"]!="PENDING_OWNER_REVIEW" or not x["no_mapping_inferred"] for x in pending+unassigned):
+    if any(x["decision"] not in {"PENDING_OWNER_REVIEW","PENDING_GITHUB_IDENTITY_ATTESTATION"} or not x["no_mapping_inferred"] for x in pending+unassigned):
         raise OwnerReviewQueueError("owner_review_items_must_remain_pending_without_inferred_mapping")
     return {"schema":"dreamco.division_owner_review_queue.v1",
         "source_map_sha256":hashlib.sha256(raw).hexdigest(),
