@@ -84,6 +84,7 @@ jobs:
           cards = sorted(root.glob("masterbot-*.card.json"))
           assert len(manifests) == 65, len(manifests)
           assert len(cards) == 65, len(cards)
+          total_examples = 0
           for manifest_path, card_path in zip(manifests, cards):
               manifest = json.loads(manifest_path.read_text())
               card = json.loads(card_path.read_text())
@@ -92,10 +93,13 @@ jobs:
               assert manifest["rights_status"] == "PENDING_HUMAN_REVIEW"
               assert card["training_approved"] is False
               assert card["primary_masterbot_id"] == manifest["primary_masterbot_id"]
+              assert manifest["example_count"] == 14
+              total_examples += manifest["example_count"]
               assert manifest["split_counts"]["train"] > 0
               assert manifest["split_counts"]["validation"] > 0
               assert manifest["split_counts"]["test"] > 0
-          print(json.dumps({"ok": True, "isolated_division_candidates": 65, "training_started": False}))
+          assert total_examples == 910, total_examples
+          print(json.dumps({"ok": True, "isolated_division_candidates": 65, "materialized_candidate_rows": total_examples, "training_started": False}))
           PY
       - name: Build and validate the 65-division factory plan
         shell: bash
