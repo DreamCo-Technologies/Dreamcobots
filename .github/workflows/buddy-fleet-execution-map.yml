@@ -19,6 +19,19 @@ on:
       - "buddy/fleet_runtime/**"
       - "tools/generate_bot_manifests.py"
       - "tests/test_fleet_runtime_routing.py"
+      - "App_bots/**"
+      - "tools/ensure_bots_production_ready.py"
+      - "tools/generate_bot_fleet_catalog.ts"
+      - "tools/generate_dreamco_search_index.ts"
+      - "tools/build_actions_prospectus.py"
+      - "tools/generate_production_evidence_ledger.py"
+      - "tools/fleet_runtime_audit.py"
+      - "buddy/fleet_runtime/divisions.py"
+      - "tests/test_fleet_divisions.py"
+      - "tests/test_generate_bot_manifests.py"
+      - "tests/test_production_evidence_ledger.py"
+      - "tests/bot-seed-registry.test.ts"
+      - "tests/dreamco-search.test.ts"
   push:
     branches: [main]
     paths:
@@ -38,6 +51,19 @@ on:
       - "buddy/fleet_runtime/**"
       - "tools/generate_bot_manifests.py"
       - "tests/test_fleet_runtime_routing.py"
+      - "App_bots/**"
+      - "tools/ensure_bots_production_ready.py"
+      - "tools/generate_bot_fleet_catalog.ts"
+      - "tools/generate_dreamco_search_index.ts"
+      - "tools/build_actions_prospectus.py"
+      - "tools/generate_production_evidence_ledger.py"
+      - "tools/fleet_runtime_audit.py"
+      - "buddy/fleet_runtime/divisions.py"
+      - "tests/test_fleet_divisions.py"
+      - "tests/test_generate_bot_manifests.py"
+      - "tests/test_production_evidence_ledger.py"
+      - "tests/bot-seed-registry.test.ts"
+      - "tests/dreamco-search.test.ts"
   workflow_dispatch:
   schedule:
     - cron: "17 */6 * * *"
@@ -59,6 +85,8 @@ jobs:
         with:
           node-version: "22"
           cache: npm
+      - name: Install Python test runner
+        run: python -m pip install pytest
       - name: Install locked Node dependencies
         run: npm ci --ignore-scripts
       - name: Validate production profile completeness
@@ -76,10 +104,12 @@ jobs:
           python tools/build_buddy_fleet_execution_map.py
           python tools/build_buddy_fleet_execution_map.py --check
           python tools/build_live_revenue_readiness.py
-          python tools/build_actions_prospectus.py
-          python tools/generate_production_evidence_ledger.py
       - name: Generate Buddy runtime division and bot status evidence
         run: python tools/fleet_runtime_audit.py --skip-folder-tests
+      - name: Generate division run prospectus and production evidence ledger
+        run: |
+          python tools/build_actions_prospectus.py
+          python tools/generate_production_evidence_ledger.py
       - name: Validate runtime routing, divisions, catalog and revenue plans
         run: |
           python -m unittest tests.test_fleet_runtime_routing
@@ -98,19 +128,26 @@ jobs:
             config/bots/division-manifests.generated.json
             config/generated/buddy-fleet-execution-map.json
             config/generated/bots.catalog.json
+            config/generated/dreamco_search_index.json
             config/generated/live-revenue-readiness.json
             config/generated/bot-production-readiness.json
             config/generated/production-evidence-ledger.json
-            config/generated/fleet-runtime-status.json
             website/data/bot-fleet-catalog.json
-            website/data/search-index.json
+            website/data/dreamco-search-index.js
+            website/data/repository-system-map.json
             website/data/fleet-runtime-status.json
+            website/data/actions-prospectus.json
             website/data/run-prospectus.json
             website/data/run-prospectus-bots.json
+            website/data/production-evidence-ledger.json
             website/data/buddy-routing-index.js
             website/data/bot-fleet/**
+            config/generated/actions-prospectus.json
+            config/buddy/run-with-buddy.generated.json
             reports/BOT_FLEET_PROSPECTUS.md
             reports/BOT_PRODUCTION_READINESS.md
+            reports/DREAMCO_SEARCH_INDEX.md
             reports/FLEET_RUNTIME_AUDIT.md
+            reports/PRODUCTION_EVIDENCE_LEDGER.md
           if-no-files-found: error
           retention-days: 14
