@@ -127,6 +127,9 @@ jobs:
           python3 tools/buddy_control_plane.py status --out website/data/buddy-control-status.json
       - name: Run deployment preflight
         run: |
+          python3 tools/refresh_buddy_technology_radar.py --project
+          python3 tools/refresh_buddy_technology_radar.py --check
+          python3 -m unittest tests.test_buddy_technology_radar
           python3 tools/check_deployment_cost_policy.py
           python3 tools/generate_buddy_model_router.py --check
           node tools/check_buddy_model_benchmarks.mjs
