@@ -92,10 +92,17 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
         })
     unresolved_bots=[{"masterbot_id":x["masterbot_id"],"masterbot_name":x["masterbot_name"],
         "primary_domain_id":None,"primary_domain_name":None,"candidate_domain_ids":[],
+        "resource_bundle_id":f"division-resource-{x['masterbot_id']:03d}",
+        "resource_readiness_status":"requirements_defined_not_provisioned",
         "decision":"PENDING_OWNER_REVIEW","review_required":True,"owner_approval":None,
         "evidence":x.get("evidence",[])} for x in crosswalk["masterbots"] if x.get("mapping_status")=="unresolved"]
     unresolved_domains=[{"domain_id":x["domain_id"],"domain_name":x["domain_name"],
-        "candidate_masterbot_ids":[],"decision":"PENDING_OWNER_REVIEW","review_required":True,
+        "candidate_masterbot_ids":[],
+        "standalone_resource_bundle_id":f"domain-resource-{x['domain_id']}",
+        "logical_database_namespace":f"dreamco_domain_{x['domain_id']}",
+        "dataset_discovery_lane_id":f"domain-discovery-{x['domain_id']}",
+        "resource_readiness_status":"requirements_defined_not_provisioned",
+        "decision":"PENDING_OWNER_REVIEW","review_required":True,
         "owner_approval":None,"evidence":x.get("evidence",[])}
         for x in crosswalk["domains"] if x.get("mapping_status")=="unresolved"]
     return {"schema":"dreamco.division_resource_readiness_map.v1",
