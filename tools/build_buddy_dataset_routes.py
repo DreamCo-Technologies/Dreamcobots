@@ -85,7 +85,8 @@ def build() -> dict:
             "candidates": [{
                 "dataset_id": row.get("name"), "source": row.get("href"),
                 "listed_license": row.get("license"), "category": row.get("category"),
-                "catalog_train_flag": bool(row.get("train")),
+                "source_catalog_train_hint": bool(row.get("train")),
+                "training_eligible": False,
                 "rights_status": "UNVERIFIED_DATASET_CARD_AND_TERMS_REQUIRED",
                 "training_status": "DISCOVERY_ONLY_NOT_TRAINING_APPROVED",
                 "evaluation_holdout": False
