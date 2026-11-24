@@ -15,7 +15,7 @@ SCHEMA = "dreamco.authorized_training_datasets.v1"
 DIVISION_COUNT = 65
 DEFAULT_CONFIG = {
     "family": "decoder_only_transformer",
-    "vocabulary": "byte_level_256_plus_special",
+    "vocabulary": "byte_level_256",
     "sequence_length": 64,
     "hidden_size": 128,
     "layers": 2,
@@ -80,6 +80,7 @@ def validate_manifest(manifest: dict[str, Any], data_root: Path) -> list[dict[st
             permissions.get("commercial_model_use") is True,
             permissions.get("derivative_models") is True,
             bool(item.get("approved_division_ids")),
+            item.get("training_strategy") in STRATEGY_PROFILES,
         )
         if not all(required):
             continue
@@ -126,7 +127,7 @@ def build_parallel_plan(registry: dict[str, Any], approved: list[dict[str, Any]]
             "dataset_id": dataset["dataset_id"],
             "dataset_path": dataset["_resolved_path"],
             "dataset_sha256": dataset["sha256"],
-            "strategy": STRATEGIES[(division_id - 1) % len(STRATEGIES)],
+            "strategy": dataset["training_strategy"],
             "seed": 20261124 + division_id,
         })
     return {
@@ -142,7 +143,8 @@ def build_parallel_plan(registry: dict[str, Any], approved: list[dict[str, Any]]
 
 
 def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str,
-                       division_id: int, strategy: str, seed: int, steps: int = 100) -> dict[str, Any]:
+                       division_id: int, strategy: str, seed: int, steps: int = 100,
+                       resume_from: Path | None = None) -> dict[str, Any]:
     """Train a small byte-level decoder-only model using PyTorch and local approved text."""
     if strategy not in STRATEGY_PROFILES:
         raise ValueError(f"unsupported training strategy: {strategy}")
@@ -198,6 +200,18 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
 
     model = TinyDecoder().to(device)  # fresh random initialization; no imported base weights
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+    resumed_steps = 0
+    if resume_from is not None:
+        saved = torch.load(resume_from, map_location=device)
+        saved_meta = saved.get("metadata", {})
+        if (saved_meta.get("dataset_id") != dataset_id or saved_meta.get("division_id") != division_id
+                or saved_meta.get("dataset_sha256") != sha256_file(dataset_path)
+                or saved_meta.get("training_strategy") != strategy):
+            raise ValueError("resume checkpoint provenance does not match this training run")
+        model.load_state_dict(saved["model_state_dict"])
+        if "optimizer_state_dict" in saved:
+            optimizer.load_state_dict(saved["optimizer_state_dict"])
+        resumed_steps = int(saved_meta.get("total_steps", saved_meta.get("steps", 0)))
     generator = torch.Generator(device="cpu").manual_seed(seed)
 
     def batch(source):
@@ -234,7 +248,9 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         "dataset_id": dataset_id,
         "training_strategy": strategy,
         "dataset_sha256": sha256_file(dataset_path),
-        "architecture": DEFAULT_CONFIG,
+        "architecture": {**DEFAULT_CONFIG, "sequence_length": sequence_length},
+        "tokenizer": {"type": "byte_level", "vocabulary_size": 256, "special_tokens": []},
+        "tokenizer_sha256": None,
         "parameter_count": sum(parameter.numel() for parameter in model.parameters()),
         "initialization": "random",
         "optimizer": "AdamW",
@@ -243,16 +259,27 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         "training_profile": profile,
         "seed": seed,
         "steps": steps,
+        "resumed_from_steps": resumed_steps,
+        "total_steps": resumed_steps + steps,
         "train_bytes": len(train_data),
         "validation_bytes": len(val_data),
         "holdout_bytes": len(holdout_data),
         "holdout_used_for_training": False,
         "validation_loss": validation_loss,
         "holdout_loss": holdout_loss,
+        "train_split_sha256": hashlib.sha256(bytes(train_data.tolist())).hexdigest(),
+        "validation_split_sha256": hashlib.sha256(bytes(val_data.tolist())).hexdigest(),
+        "holdout_split_sha256": hashlib.sha256(bytes(holdout_data.tolist())).hexdigest(),
+        "training_code_revision": __import__("os").environ.get("GITHUB_SHA"),
+        "torch_version": torch.__version__,
         "training_status": "trained_experimental_checkpoint_not_certified",
         "weights_sha256": None,
     }
-    torch.save({"model_state_dict": model.state_dict(), "metadata": metadata}, output_path)
+    tokenizer_bytes = json.dumps(metadata["tokenizer"], sort_keys=True, separators=(",", ":")).encode("utf-8")
+    tokenizer_path = output_path.with_suffix(output_path.suffix + ".tokenizer.json")
+    tokenizer_path.write_bytes(tokenizer_bytes)
+    metadata["tokenizer_sha256"] = hashlib.sha256(tokenizer_bytes).hexdigest()
+    torch.save({"model_state_dict": model.state_dict(), "optimizer_state_dict": optimizer.state_dict(), "metadata": metadata}, output_path)
     metadata["weights_sha256"] = sha256_file(output_path)
     metadata_path = output_path.with_suffix(output_path.suffix + ".json")
     metadata_path.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
