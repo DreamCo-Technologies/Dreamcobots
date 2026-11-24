@@ -18,6 +18,7 @@ from .contract import ROOT
 APP_BOTS = ROOT / "App_bots"
 BOTS_MD = ROOT / "bots"
 SEED = ROOT / "server" / "seed-bots.ts"
+SPECIALIST_CHARTERS = ROOT / "config" / "supplemental-portfolio-capability-charters.json"
 
 MD_META_RE = re.compile(r"Division:\*\*\s*([^|]+)\|\s*\*\*Tier:\*\*\s*([^|]+)\|", re.I)
 SEED_RE = re.compile(r'\bbot\(\s*"([^"]+)"\s*,\s*"([^"]+)"\s*,\s*"([^"]+)"\s*,\s*"([^"]*)"')
@@ -122,10 +123,27 @@ def _all_sources() -> dict[str, dict[str, Any]]:
     return load_sources()[0]
 
 
+@lru_cache(maxsize=1)
+def _specialist_charters() -> dict[str, dict[str, Any]]:
+    if not SPECIALIST_CHARTERS.is_file():
+        return {}
+    data = json.loads(SPECIALIST_CHARTERS.read_text(encoding="utf-8"))
+    return {
+        item[0]: {"purpose": item[1], "capabilities": item[2]}
+        for portfolio in data.get("portfolios", [])
+        for item in portfolio.get("bots", [])
+    }
+
+
 def profile_content(slug: str) -> dict[str, Any]:
-    """Return {name, description, capabilities, target_users?} for a bot."""
+    """Return canonical profile content enriched with its non-duplicative specialist charter."""
     entry = _all_sources().get(slug) or {}
     base = entry.get("app") or entry.get("md") or entry.get("lane") or {}
-    caps = list(dict.fromkeys(base.get("capabilities") or (entry.get("md") or {}).get("capabilities") or []))
-    return {"description": (base.get("description") or "")[:600], "capabilities_raw": caps,
+    specialist = _specialist_charters().get(slug, {})
+    source_caps = base.get("capabilities") or (entry.get("md") or {}).get("capabilities") or []
+    caps = list(dict.fromkeys(specialist.get("capabilities", []) + list(source_caps)))
+    description = " ".join(
+        part for part in (specialist.get("purpose", ""), base.get("description", "")) if part
+    )
+    return {"description": description[:600], "capabilities_raw": caps,
             "target_users": base.get("target_users", "")}
