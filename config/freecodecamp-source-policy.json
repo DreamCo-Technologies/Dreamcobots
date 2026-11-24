@@ -1,0 +1,33 @@
+{
+  "schema": "dreamco.freecodecamp_source_policy.v1",
+  "source": "freeCodeCamp.org official YouTube channel",
+  "channel_id": "UC8butISFwT-Wl7EV0hUK0BQ",
+  "metadata_feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UC8butISFwT-Wl7EV0hUK0BQ",
+  "metadata_only": true,
+  "daily_lesson_quota": {
+    "domain_profiles": 55,
+    "lessons_per_domain_per_day": 5,
+    "total_daily_slots": 275,
+    "execution_status": "PLAN_ONLY_NOT_EXECUTED"
+  },
+  "transcript_policy": {
+    "ingestion_enabled": false,
+    "download_enabled": false,
+    "weekly_evaluation": "only_after_transcript_is_rights_cleared_and_authorized",
+    "default_status": "not_ingested_rights_gate"
+  },
+  "training_policy": {
+    "model_training_requires_separate_rights_review": true,
+    "unknown_rights": "BLOCK",
+    "paid_compute_authorized": false,
+    "weight_updates_authorized": false
+  },
+  "coverage_limit": "The public channel RSS feed provides recent uploads, not the full historical channel archive. Full archive metadata requires an explicitly configured official YouTube Data API integration.",
+  "safeguards": [
+    "Never download video or audio media in this workflow.",
+    "Never scrape or mass-download captions/transcripts.",
+    "Do not infer transcript availability from a video URL.",
+    "Public metadata is discovery metadata, not training permission.",
+    "Keep each video tagged review_required until exact content and rights are reviewed."
+  ]
+}

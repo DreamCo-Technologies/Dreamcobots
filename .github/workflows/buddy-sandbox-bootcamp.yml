@@ -27,7 +27,24 @@ on:
       - 'tools/build_division_resource_readiness_map.py'
       - 'tests/test_division_resource_readiness.py'
       - 'tests/test_division_resource_router.py'
+      - 'buddy/learning/freecodecamp_source.py'
+      - 'buddy/learning/permissioned_study_worker.py'
+      - 'tools/build_freecodecamp_routes.py'
+      - 'tools/sync_freecodecamp_youtube_catalog.py'
+      - 'tests/test_freecodecamp_catalog.py'
+      - 'tests/test_freecodecamp_source_routes.py'
+      - 'config/generated/freecodecamp-youtube-catalog.json'
+      - 'config/freecodecamp-source-policy.json'
       - 'docs/architecture/DREAMCO_DIVISION_RESOURCE_READINESS.md'
+      - 'buddy/learning/freecodecamp_source.py'
+      - 'buddy/learning/permissioned_study_worker.py'
+      - 'tools/build_freecodecamp_routes.py'
+      - 'tools/sync_freecodecamp_youtube_catalog.py'
+      - 'tests/test_freecodecamp_catalog.py'
+      - 'tests/test_freecodecamp_source_routes.py'
+      - 'config/generated/freecodecamp-youtube-catalog.json'
+      - 'config/freecodecamp-source-policy.json'
+      - 'docs/FREECODECAMP_METADATA_AND_TRANSCRIPT_POLICY.md'
   push:
     paths:
       - '.github/workflows/buddy-sandbox-bootcamp.yml'
@@ -112,7 +129,7 @@ jobs:
         with:
           python-version: '3.13'
       - name: Compile sandbox, bootcamp, learning, and tiny GPT modules
-        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets buddy/resources buddy/gpt_baseline tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py buddy/datasets/discovery_fleet.py buddy/datasets/license_policy.py tools/run_buddy_dataset_discovery.py tools/create_buddy_model_benchmark.py tools/run_buddy_model_benchmark.py tools/run_buddy_gpt_baseline.py
+        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets buddy/resources buddy/gpt_baseline tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py buddy/datasets/discovery_fleet.py buddy/datasets/license_policy.py tools/run_buddy_dataset_discovery.py buddy/learning/freecodecamp_source.py buddy/learning/permissioned_study_worker.py tools/build_freecodecamp_routes.py tools/sync_freecodecamp_youtube_catalog.py tools/create_buddy_model_benchmark.py tools/run_buddy_model_benchmark.py tools/run_buddy_gpt_baseline.py
       - name: Run reproducible tiny GPT forward-pass baseline
         run: python tools/run_buddy_gpt_baseline.py --config config/buddy-tiny-gpt-baseline.json --output-dir artifacts/buddy-gpt-baseline --commit-sha "${{ github.event.pull_request.head.sha || github.sha }}"
       - name: Test tiny GPT baseline and safe dataset token scoping
@@ -145,6 +162,16 @@ jobs:
           python -m unittest tests.test_buddy_dataset_discovery_fleet
       - name: Build DreamCo dataset discovery routes
         run: python tools/build_buddy_dataset_routes.py
+      - name: Sync FreeCodeCamp public video metadata
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          python tools/sync_freecodecamp_youtube_catalog.py --existing .dreamco/dataset-hub/freecodecamp-youtube-catalog.json --output config/generated/freecodecamp-youtube-catalog.json
+          mkdir -p .dreamco/dataset-hub
+          cp config/generated/freecodecamp-youtube-catalog.json .dreamco/dataset-hub/freecodecamp-youtube-catalog.json
+      - name: Build FreeCodeCamp routes and 55-domain daily lesson plan
+        run: python tools/build_freecodecamp_routes.py --catalog config/generated/freecodecamp-youtube-catalog.json --registry config/masterbot-65-registry.json --domain-map config/generated/division-resource-readiness-map.json --output artifacts/buddy-dataset-hub/freecodecamp-routes.json --lessons-per-domain 5
+      - name: Test FreeCodeCamp metadata, routing and permissioned study
+        run: python -m unittest tests.test_freecodecamp_catalog tests.test_freecodecamp_source_routes
       - name: Test 65 MasterBot dataset routing and training gates
         run: python -m unittest tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime tests.test_buddy_database_sources tests.test_dreamco_original_training_examples tests.test_buddy_dataset_discovery_fleet tests.test_buddy_cross_model_benchmark
       - name: Test Buddy failure classification and verified-lesson safeguards
@@ -197,6 +224,8 @@ jobs:
           path: |
             artifacts/buddy-dataset-hub/dataset-routes.json
             artifacts/buddy-dataset-hub/discovery-fleet.json
+            artifacts/buddy-dataset-hub/freecodecamp-routes.json
+            config/generated/freecodecamp-youtube-catalog.json
             .dreamco/dataset-hub/
           if-no-files-found: warn
           retention-days: 90
