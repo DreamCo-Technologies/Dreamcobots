@@ -73,6 +73,7 @@ class DatasetIngestionWorkerTests(unittest.TestCase):
   card=sample_card()
   card.update({"license":"DREAMCO_INTERNAL_OWNED","license_url":"https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/config/buddy-training-data-provenance-policy.json",
    "source":"dreamco_authored","source_id":"dreamco.bootcamp.core.v1",
+   "source_url":"https://github.com/DreamCo-Technologies/Dreamcobots",
    "ai_training_allowed":True,"content_rights_verified":True,"privacy_review":"PASSED",
    "owner_assignment_verified":True,"contributor_rights_verified":True,
    "owner_approval_id":"OWNER-APPROVAL-001"})
