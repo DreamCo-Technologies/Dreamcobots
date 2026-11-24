@@ -62,6 +62,18 @@ REVENUE_TERMS = (
     "licensing", "digital-product", "business-acquisition", "wealth", "arbitrage",
     "investing", "merchant", "checkout", "payout", "commission", "pricing",
 )
+PORTFOLIO_REVENUE_ROUTES = {
+    "DreamAffiliate": ("affiliate_partnerships", "affiliate_offers"),
+    "DreamAgency": ("freelance_bid_intel", "professional_services"),
+    "DreamFoundry": ("ai_model_services", "ai_model_services"),
+    "DreamFranchise": ("franchise_growth", "franchise_opportunities"),
+    "DreamIntegrations": ("enterprise_automation", "software_partners"),
+    "DreamLicensing": ("licensing_marketplace", "licensing_rights"),
+    "DreamRobotics": ("equipment_arbitrage", "equipment_supply"),
+    "DreamSaaS": ("micro_saas", "software_partners"),
+    "DreamStreaming": ("creator_sponsorship", "creator_marketplaces"),
+    "DreamTravel": ("travel_booking", "travel_suppliers"),
+}
 REGISTRY_LANE_MAP = {
     "services": ("freelance_bid_intel", "professional_services"),
     "grants_contracts": ("rfp_matcher", "grants_contracts"),
@@ -96,7 +108,7 @@ REVENUE_EVENT_MAP = {
     "professional_referral": "permitted_referral_fee_confirmed",
 }
 LANE_RULES = [
-    (("affiliate", "partner", "commission"), "parts_arbitrage", "affiliate_offers"),
+    (("affiliate", "partner", "commission"), "affiliate_partnerships", "affiliate_offers"),
     (("rfp", "procurement", "government-contract", "grant"), "rfp_matcher", "grants_contracts"),
     (("settlement", "unclaimed", "claim"), "warranty_recall", "settlements"),
     (("real-estate", "foreclosure", "property", "home-buyer"), "business_acquisition", "property_opportunities"),
@@ -117,6 +129,9 @@ LANE_RULES = [
     (("automation", "workflow", "software"), "enterprise_automation", "software_partners"),
     (("data", "dataset", "analytics"), "data_quality", "licensed_data"),
     (("business", "startup", "acquisition"), "business_acquisition", "business_marketplaces"),
+    (("franchise", "franchisee"), "franchise_growth", "franchise_opportunities"),
+    (("licensing", "license", "royalty"), "licensing_marketplace", "licensing_rights"),
+    (("travel", "trip", "itinerary", "visa", "lodging", "flight"), "travel_booking", "travel_suppliers"),
 ]
 
 def revenue_route(bot: dict[str, Any], registry: dict[str, Any], lane_index: dict[str, dict[str, Any]],
@@ -131,12 +146,13 @@ def revenue_route(bot: dict[str, Any], registry: dict[str, Any], lane_index: dic
     new_registry = [row for row in registry.get("new_money_os_bots", [])
                     if slug_norm(row.get("name", "")) == slug]
     keyword_hit = any(term in text for term in REVENUE_TERMS)
-    if not registered and not new_registry and not keyword_hit:
+    portfolio_route = PORTFOLIO_REVENUE_ROUTES.get(str(bot.get("division", "")))
+    if not registered and not new_registry and not keyword_hit and not portfolio_route:
         return None
 
     registered_lane = registered[0].get("lane") if registered else None
-    lane_id = registered_lane if registered_lane in lane_index else None
-    registry_source_group = None
+    lane_id = registered_lane if registered_lane in lane_index else (portfolio_route[0] if portfolio_route else None)
+    registry_source_group = portfolio_route[1] if portfolio_route else None
     if registered_lane and registered_lane in REGISTRY_LANE_MAP:
         lane_id, registry_source_group = REGISTRY_LANE_MAP[registered_lane]
     if lane_id not in lane_index:
