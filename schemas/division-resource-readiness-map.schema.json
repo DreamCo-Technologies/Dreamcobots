@@ -190,7 +190,8 @@
           "capability_pack_ids",
           "dataset_training_approved",
           "owner_review_required",
-          "mapping_status"
+          "mapping_status",
+          "dataset_search_queries"
         ],
         "properties": {
           "route_type": {
@@ -210,6 +211,13 @@
           },
           "dataset_rights_status": {
             "const": "UNVERIFIED_DISCOVERY_ONLY"
+          },
+          "dataset_search_queries": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "string"
+            }
           }
         }
       }
