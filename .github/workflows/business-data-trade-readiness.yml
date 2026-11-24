@@ -1,12 +1,20 @@
 name: Business Data Trade Readiness
 
 on:
+  pull_request:
+    paths:
+      - "config/bots/bot-manifests.generated.json"
+      - "tools/build_live_revenue_readiness.py"
+      - "tests/test_live_revenue_readiness_coverage.py"
+      - ".github/workflows/business-data-trade-readiness.yml"
   workflow_dispatch:
   schedule:
     - cron: "7 15 * * *"
   push:
     branches: [main]
     paths:
+      - "tests/test_live_revenue_readiness_coverage.py"
+      - "config/bots/bot-manifests.generated.json"
       - "config/intelligent-data-storage-program.json"
       - "config/live-revenue-gate.json"
       - "config/system-progress-gauges.json"
@@ -62,7 +70,9 @@ jobs:
           python3 tools/build_engineering_gap_closure_plan.py
           python3 tools/build_system_progress_status.py
       - name: Run readiness tests
-        run: node --import tsx --test tests/business-data-trade-readiness.test.ts
+        run: |
+          node --import tsx --test tests/business-data-trade-readiness.test.ts
+          python3 -m unittest tests.test_live_revenue_readiness_coverage
       - name: Check marketplace page and generated data
         run: test -s website/manufacturer-marketplace.html && test -s website/data/manufacturer-marketplace.json
       - name: Owner summary
