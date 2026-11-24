@@ -10,7 +10,7 @@ from .license_policy import assess_training_candidate
 from .unknown_router import ALIASES
 
 ROOT=Path(__file__).resolve().parents[2]
-REGISTRY=ROOT/"config/masterbot-65-registry.json"
+REGISTRY=ROOT/"config/masterbot-75-registry.json"
 
 def _query_for(name:str)->str:
     tags=ALIASES.get(name)
@@ -25,7 +25,7 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
     if not 1<=limit<=10: raise ValueError("per-source result limit must be between 1 and 10")
     registry=json.loads(REGISTRY.read_text(encoding="utf-8"))
     bots=registry.get("divisions",[])
-    if len(bots)!=65: raise ValueError("Canonical registry must contain exactly 65 MasterBots")
+    if len(bots)!=65: raise ValueError("Canonical registry must contain exactly 75 MasterBots")
     if offset is None: offset=(datetime.now(timezone.utc).date().toordinal()*lanes_per_run)%65
     selected=[bots[(offset+i)%65] for i in range(lanes_per_run)]
     catalog=hub or DatasetHub()
