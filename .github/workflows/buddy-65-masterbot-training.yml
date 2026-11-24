@@ -6,6 +6,7 @@ on:
       - '.github/workflows/buddy-65-masterbot-training.yml'
       - 'config/masterbot-65-registry.json'
       - 'tools/buddy_masterbot_training_lane.py'
+      - 'tests/test_buddy_masterbot_training_lane.py'
   schedule:
     - cron: '17 */6 * * *'
 concurrency:
@@ -15,7 +16,7 @@ permissions:
   contents: read
 jobs:
   masterbot-training:
-    name: Train ${{ matrix.masterbot }}
+    name: Prepare plan ${{ matrix.masterbot }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
@@ -93,7 +94,7 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
-      - name: Run bounded MasterBot training lane
+      - name: Generate plan-only MasterBot lane evidence
         env:
           MASTERBOT_NAME: ${{ matrix.masterbot }}
         run: python tools/buddy_masterbot_training_lane.py
@@ -101,7 +102,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: masterbot-checkpoint-${{ matrix.masterbot }}-${{ github.run_id }}
-          path: artifacts/masterbot-training/${{ matrix.masterbot }}/latest-checkpoint.json
+          name: masterbot-plan-${{ matrix.masterbot }}-${{ github.run_id }}
+          path: artifacts/masterbot-training/${{ matrix.masterbot }}/latest-plan.json
           if-no-files-found: error
           retention-days: 3
