@@ -36,7 +36,7 @@ def build_manifest(registry: dict, source_text: str, policy: dict | None = None)
         slug = "".join(ch.lower() if ch.isalnum() else "-" for ch in division["name"]).strip("-")
         while "--" in slug:
             slug = slug.replace("--", "-")
-        model_id = f"dreamco.division.{slug}"
+        model_id = f"dreamco/{slug}-mini"
         checkpoint_template = policy["training"]["checkpoint_key_template"]
         checkpoint_template = checkpoint_template.replace("{division_id:03d}", f"{division['id']:03d}").replace("{model_id}", model_id)
         records.append({

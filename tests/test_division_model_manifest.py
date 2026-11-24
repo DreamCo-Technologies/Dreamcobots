@@ -29,7 +29,8 @@ class DivisionModelManifestTests(unittest.TestCase):
     def test_every_division_has_independent_model_and_training_plan(self):
         manifest = build_manifest(self.registry, self.source_text)
         for row in manifest["records"]:
-            self.assertTrue(row["model_id"].startswith("dreamco.division."))
+            self.assertTrue(row["model_id"].startswith("dreamco/"))
+            self.assertTrue(row["model_id"].endswith("-mini"))
             self.assertEqual(row["planned_model_version"], "0.1.0")
             self.assertEqual(row["tokenizer"]["mode"], "shared_per_base_model")
             self.assertEqual(row["training"]["schedule"]["planner_cron"], "*/5 * * * *")
