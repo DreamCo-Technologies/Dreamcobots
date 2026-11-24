@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MASTERBOTS = ROOT / "config/masterbot-65-registry.json"
 DOMAIN_SOURCE = ROOT / "shared/division-production-contract.ts"
-OUTPUT = ROOT / "config/generated/masterbot-45-domain-crosswalk.json"
+OUTPUT = ROOT / "config/generated/masterbot-55-domain-crosswalk.json"
 
 
 def normalize(value: str) -> str:
