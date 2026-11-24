@@ -11,6 +11,7 @@ CROSSWALK=ROOT/"config/generated/masterbot-55-domain-crosswalk.json"
 PACKS=ROOT/"config/hf-capability-download-map.json"
 ROUTER=ROOT/"config/buddy-model-router.json"
 OUTPUT=ROOT/"config/generated/division-resource-readiness-map.json"
+OWNER_REVIEW=ROOT/"config/review/masterbot-domain-crosswalk-owner-review.json"
 
 RESOURCE_CONTRACT=json.loads(r'''{"id":"dreamco.division.resource_bundle.v1","truth_status":"requirements_defined_not_provisioned","architecture":"Shared DreamCo infrastructure with isolated per-division namespaces, model identities, dataset lanes, authorization scopes, metrics, and rollback pointers.","model_strategy":"Start with shared, license-reviewed base models plus division-specific adapters or compact specialists. Each division still owns a distinct versioned model identity, checkpoint lineage, benchmark suite, endpoint identity, and release record. Do not claim 65 separately pretrained foundation models.","baseline_requirements":["persistent operational database namespace and schema migrations","versioned dataset catalog, object storage, provenance and rights manifests","teacher and student model candidate catalog with pinned revisions and license review","domain-specific ML curriculum and reproducible sandbox labs","authorized reverse-engineering workflow and clean-room specification practice","rights-cleared teacher-student distillation pipeline","task, privacy, quality, cost and latency-aware model resource routing","domain benchmarks, protected holdouts, safety and regression evaluation","compute planning, resource metering, run observability and rollback"],"readiness_states":["requirements_defined_not_provisioned","configured","connected","validated","certified"],"promotion_rule":"A resource becomes connected or certified only after a real integration test and evidence artifact. A catalog candidate, config entry, or successful workflow alone is not proof of availability."}''')
 ML_PRACTICES=json.loads(r'''["problem framing and measurable success criteria","data collection, provenance and consent","data validation, deduplication and quality profiling","label design, annotation agreement and inter-rater reliability","train-validation-test split design and leakage prevention","supervised learning and baseline selection","unsupervised learning and clustering","self-supervised and contrastive learning","feature engineering and representation learning","classification, regression and ranking","recommendation and retrieval","time-series forecasting and anomaly detection","calibration, uncertainty and out-of-distribution detection","neural network optimization and regularization","transformers, attention and sequence modeling","computer vision and OCR","speech recognition, audio understanding and synthesis","multimodal learning and fusion","reinforcement learning and simulation","RAG, embeddings, reranking and knowledge grounding","SFT, LoRA and QLoRA with rights-cleared data","teacher-student response and preference distillation","quantization, pruning and inference optimization","cross-validation, ablations and statistical confidence","robustness, adversarial testing, fairness and subgroup analysis","MLOps, reproducibility, model registry and experiment tracking","drift monitoring, scheduled evaluation and retraining gates","privacy, tenant isolation and secure ML supply chain","model serving, autoscaling, latency and cost optimization","model cards, licensing, governance and incident response"]''')
@@ -97,12 +98,24 @@ def main():
     payload=build(docs["masterbot_registry"],docs["taxonomy_map"],docs["domain_crosswalk"],
         docs["hf_capability_packs"],docs["buddy_model_router"],hashes)
     encoded=json.dumps(payload,indent=2,ensure_ascii=False)+"\n"
+    review_payload={"schema":"dreamco.masterbot_domain_owner_review.v1",
+        "status":"pending_owner_review_no_guessed_mappings",
+        "source":"config/generated/masterbot-55-domain-crosswalk.json",
+        "counts":{"unresolved_masterbot_mappings":len(payload["owner_review"]["masterbot_domain_decisions"]),
+            "unassigned_domain_profiles":len(payload["owner_review"]["unassigned_domain_profiles"])},
+        "instructions":"Please assign only with authoritative ownership evidence. Empty candidate arrays are intentional; do not infer a mapping from similar names. Record reviewer, evidence, decision date and approval.",
+        **payload["owner_review"]}
+    review_encoded=json.dumps(review_payload,indent=2,ensure_ascii=False)+"\\n"
     if args.check:
         if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8")!=encoded:
             raise SystemExit("Division resource readiness map is stale; regenerate it")
+        if not OWNER_REVIEW.exists() or OWNER_REVIEW.read_text(encoding="utf-8")!=review_encoded:
+            raise SystemExit("MasterBot/domain owner-review queue is stale; regenerate it")
     else:
         OUTPUT.parent.mkdir(parents=True,exist_ok=True)
+        OWNER_REVIEW.parent.mkdir(parents=True,exist_ok=True)
         OUTPUT.write_text(encoded,encoding="utf-8")
+        OWNER_REVIEW.write_text(review_encoded,encoding="utf-8")
     print(json.dumps({"ok":True,**payload["counts"],"readiness_status":payload["status"]},indent=2))
     return 0
 if __name__=="__main__":
