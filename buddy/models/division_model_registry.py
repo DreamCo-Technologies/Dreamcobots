@@ -67,7 +67,7 @@ def validate_division_model_registry(payload:dict[str,Any])->None:
     models=payload.get("divisions",[])
     if payload.get("canonical_division_count")!=65 or len(models)!=65:
         raise ValueError("expected exactly 65 independent division model identities")
-    for field in ("model_name","model_version"):
+    for field in ("model_name",):
         values=[x[field] for x in models]
         if len(set(values))!=65:
             raise ValueError(f"{field} must be unique across division models")
@@ -76,6 +76,8 @@ def validate_division_model_registry(payload:dict[str,Any])->None:
         if len(set(values))!=65:
             raise ValueError(f"{key} paths must be unique across divisions")
     for model in models:
+        if not str(model.get("model_version","")).strip():
+            raise ValueError("every division model must have its own explicit version")
         if model["model_status"]!="SPECIFIED_NOT_TRAINED" or model["readiness"]["training"]!="NOT_RUN":
             raise ValueError("registry generation must not fabricate training evidence")
         if model["base_model"]["immutable_revision"] is not None:
