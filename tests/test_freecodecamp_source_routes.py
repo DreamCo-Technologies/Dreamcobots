@@ -46,7 +46,7 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
             self.assertEqual(video["rights_status"], "review_required")
 
     def test_rejects_missing_division_or_duplicate_video(self):
-        with self.assertRaisesRegex(ValueError, "65 divisions"):
+        with self.assertRaisesRegex(ValueError, "65-division"):
             build_routes(self.catalog, {"divisions": self.registry["divisions"][:64]})
         broken = dict(self.catalog)
         broken["videos"] = [*self.catalog["videos"], self.catalog["videos"][0]]
