@@ -15,7 +15,7 @@ on:
       - "tests/test_dreamco_training_factory.py tests/test_buddy_dataset_research_metadata_adapters.py"
       - ".github/workflows/dreamco-first-party-training-data.yml"
   push:
-    branches: [main, "codex/**"]
+    branches: [main]
     paths:
       - "data/dreamco_training/**"
       - "config/dreamco-training-source-registry.json"
@@ -32,7 +32,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: dreamco-first-party-training-data-${{ github.workflow }}-${{ github.ref }}
+  group: dreamco-first-party-training-data-${{ github.workflow }}-${{ github.ref }}-${{ github.sha }}
   cancel-in-progress: false
 
 jobs:
