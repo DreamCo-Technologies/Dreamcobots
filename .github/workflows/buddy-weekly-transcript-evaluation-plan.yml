@@ -1,0 +1,40 @@
+name: Buddy Weekly Transcript Evaluation Plan
+
+on:
+  pull_request:
+    paths:
+      - "buddy/learning/transcript_evaluation_scheduler.py"
+      - "tools/build_buddy_weekly_transcript_evaluation_plan.py"
+      - "tests/test_buddy_transcript_evaluation_scheduler.py"
+      - "docs/BUDDY_WEEKLY_TRANSCRIPT_EVALUATION.md"
+      - ".github/workflows/buddy-weekly-transcript-evaluation-plan.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/learning/transcript_evaluation_scheduler.py"
+      - "tools/build_buddy_weekly_transcript_evaluation_plan.py"
+      - "tests/test_buddy_transcript_evaluation_scheduler.py"
+      - ".github/workflows/buddy-weekly-transcript-evaluation-plan.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-weekly-transcript-plan-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  plan-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Run weekly transcript plan tests
+        run: python -m unittest discover -s tests -p 'test_buddy_transcript_evaluation_scheduler.py' -v
+      - name: Compile planner
+        run: python -m py_compile buddy/learning/transcript_evaluation_scheduler.py tools/build_buddy_weekly_transcript_evaluation_plan.py
