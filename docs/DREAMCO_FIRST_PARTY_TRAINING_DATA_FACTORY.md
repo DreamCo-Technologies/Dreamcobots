@@ -8,7 +8,7 @@ Create DreamCo-originated teaching and task examples that can later be reviewed 
 
 ## Initial seed
 
-- `data/dreamco_training/bootcamp/core_lessons.v1.jsonl` contains 13 original Bootcamp teaching examples across the 13 core curriculum modules.
+- `data/dreamco_training/bootcamp/core_lessons.v1.jsonl` contains 14 original Bootcamp teaching examples across 13 core curriculum modules (one module has two examples).
 - Every record has a stable ID, split, prompt, answer, evaluation rubric, topic tags, source lineage, and authoring/rights state.
 - The current examples are draft candidates. `training_permission=NOT_GRANTED`, `owner_claim=PENDING_ASSIGNMENT_REVIEW`, and `human review` remain mandatory.
 - Train, validation, and test assignments are pinned in the source file. The builder never moves test examples into training.
