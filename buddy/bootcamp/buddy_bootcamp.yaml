@@ -12,6 +12,7 @@ tracks:
   - web_mobile
   - math_statistics
   - occupational_real_world
+  - freecodecamp_source_learning
 stages:
   - diagnose
   - select_resource
@@ -29,6 +30,19 @@ rules:
   require_regression_for_mastery: true
   preserve_original_model_catalog: true
   client_data_training_default: false
+learning_sources:
+  - id: freecodecamp
+    name: freeCodeCamp.org
+    channel_url: https://www.youtube.com/@freecodecamp
+    channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+    catalog_path: buddy/bootcamp/sources/freecodecamp/catalog.json
+    taxonomy_path: buddy/bootcamp/sources/freecodecamp/catalog.schema.json
+    applies_to: all_65_divisions
+    discovery: public_video_metadata_only
+    transcript_ingestion: disabled_by_default
+    media_download: disabled_by_default
+    rights_review_required_before_training: true
+    learning_evidence_required: [sandbox_exercise, targeted_benchmark, holdout, regression]
 metrics:
   - benchmark_score_delta
   - native_pass_rate
