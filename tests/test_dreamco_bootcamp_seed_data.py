@@ -168,6 +168,17 @@ class BootcampSeedDataTests(unittest.TestCase):
             self.assertEqual(result["split_manifest"], manifest["split_manifest"])
             self.assertEqual(result["rows_validated"], len(rows))
             self.assertFalse(result["training_started"])
+            training_request = create_training_job(
+                hub, manifest["dataset_id"], 4, "example/approved-student-model",
+                "a" * 40, compute_approval_id="COMPUTE-APPROVAL-FIXTURE",
+                model_license="Apache-2.0",
+                model_license_url="https://example.org/model-license",
+                model_license_status="VERIFIED",
+                model_license_evidence="model-license-review-fixture",
+                output_dir=Path(temp) / "training-jobs",
+            )
+            self.assertEqual(training_request["execution_status"], "NOT_EXECUTED")
+            self.assertFalse(training_request["weights_updated"])
 
     def test_jsonl_loader_rejects_invalid_rows(self):
         with tempfile.TemporaryDirectory() as temp:
