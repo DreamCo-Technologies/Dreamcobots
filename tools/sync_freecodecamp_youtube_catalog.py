@@ -45,7 +45,8 @@ def merge_catalog(existing,entries,generated_at=None):
   merged[row["video_id"]]["categories"]=sorted(set(old.get("categories",[]))|set(row.get("categories",[])))
  return {"schema":"dreamco.freecodecamp_catalog.v1","generated_at":generated_at or datetime.now(timezone.utc).isoformat(),
   "source":{"name":"freeCodeCamp.org","channel_id":CHANNEL_ID,"channel_url":f"https://www.youtube.com/channel/{CHANNEL_ID}",
-   "feed_url":FEED_URL,"coverage":"curated_seed_plus_latest_public_channel_rss_entries_per_poll_not_full_archive",\n   "curated_metadata_seed_count":sum(1 for row in merged.values() if row.get("metadata_source")=="official_freecodecamp_youtube_video_metadata")},
+   "feed_url":FEED_URL,"coverage":"curated_seed_plus_latest_public_channel_rss_entries_per_poll_not_full_archive",
+   "curated_metadata_seed_count":sum(1 for row in merged.values() if row.get("metadata_verified_at"))},
   "rights_policy":{"media_download_enabled":False,"transcript_ingestion_enabled":False,"model_training_requires_review":True,
    "metadata_only":True,"weekly_transcript_evaluation_requires_rights_cleared_transcript":True},
   "categories":[{"id":x} for x in sorted({c for row in merged.values() for c in row.get("categories",[])}|{"other_or_unclassified"})],
