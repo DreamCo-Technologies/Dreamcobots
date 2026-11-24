@@ -43,13 +43,13 @@ class FreeCodeCampLearningEvidenceTests(unittest.TestCase):
         record = self.record()
         record["sandbox"] = {}
         record["benchmark"] = {}
-        result = evaluate_learning_record(record)
+        result = self.evaluate(record)
         self.assertEqual(result["status"], "studied_unverified")
 
     def test_study_evidence_requires_original_notes_hash_and_attestation(self):
         record = self.record()
         record["study"]["original_notes_sha256"] = "not-a-hash"
-        self.assertEqual(evaluate_learning_record(record)["status"], "study_pending")
+        self.assertEqual(self.evaluate(record)["status"], "study_pending")
 
     def test_mismatched_catalog_video_or_url_cannot_be_mastered(self):
         record = self.record()
