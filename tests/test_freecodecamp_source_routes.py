@@ -12,6 +12,7 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
     def setUp(self):
         self.catalog = {
             "schema": "dreamco.freecodecamp_catalog.v1",
+            "video_count": 2,
             "inventory_status": "complete",
             "inventory": {
                 "enumerator": "yt-dlp", "enumerator_version": "2026.11.23",
