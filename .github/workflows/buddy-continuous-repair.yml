@@ -64,6 +64,26 @@ jobs:
           mkdir -p reports/continuous-repair
           gh run view "$FAILED_RUN_ID" --json name,conclusion,headSha,url,jobs             > "reports/continuous-repair/failed-run-$FAILED_RUN_ID.json"
 
+      - name: Index repair history and diagnose failed jobs
+        if: github.event_name == 'workflow_run'
+        env:
+          FAILED_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          mkdir -p reports/continuous-repair
+          python3 tools/study_buddy_repair_history.py --limit 500 --output reports/continuous-repair/historical-repair-index.json
+          python3 -m tools.build_buddy_failure_observations \
+            --run "reports/continuous-repair/failed-run-$FAILED_RUN_ID.json" \
+            --historical-index reports/continuous-repair/historical-repair-index.json \
+            --memory artifacts/failure-learning-memory.json \
+            --output reports/continuous-repair/historical-diagnosis.json
+          {
+            echo "## Buddy historical repair diagnosis"
+            echo "- Failed run: $FAILED_RUN_ID"
+            echo "- Historical matches are investigation-only and cannot be applied automatically."
+            echo "- No incident memory or training data is written by this step."
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Capture current Actions state
         env:
           GITHUB_TOKEN: ${{ github.token }}
