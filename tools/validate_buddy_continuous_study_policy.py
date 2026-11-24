@@ -7,20 +7,28 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY = ROOT / "config" / "buddy-continuous-study-policy.json"
-REGISTRY = ROOT / "config" / "masterbot-65-registry.json"
+CROSSWALK = ROOT / "config" / "generated" / "masterbot-55-domain-crosswalk.json"
 
 
-def validate(policy: dict, registry: dict) -> list[str]:
+def validate(policy: dict, crosswalk: dict) -> list[str]:
     errors: list[str] = []
     if policy.get("schema") != "dreamco.buddy_continuous_study_policy.v1":
         errors.append("unsupported policy schema")
     schedule = policy.get("schedule", {})
-    divisions = registry.get("divisions", registry.get("masterbots", []))
-    if len(divisions) != 65:
-        errors.append("canonical registry must contain exactly 65 divisions")
-    expected_slots = schedule.get("daily_lesson_slots_per_division", 0) * len(divisions)
+    domains = crosswalk.get("domains", [])
+    if len(domains) != 55:
+        errors.append("canonical crosswalk must contain exactly 55 domain divisions")
+    if sum(row.get("mapping_status") == "proposed_exact_name_match" for row in domains) != 45:
+        errors.append("crosswalk must preserve 45 original core domains")
+    if sum(row.get("mapping_status") == "unresolved" for row in domains) != 10:
+        errors.append("crosswalk must preserve 10 supplemental domains pending owner review")
+    if schedule.get("domain_count") != 55:
+        errors.append("domain_count must be 55; shared-platform MasterBots are not divisions")
+    if schedule.get("masterbot_count") != 65 or schedule.get("shared_platform_masterbot_count") != 20:
+        errors.append("65 MasterBots must remain separate from the 55 domain divisions")
+    expected_slots = schedule.get("daily_lesson_slots_per_domain", 0) * len(domains)
     if schedule.get("daily_planned_slots") != expected_slots:
-        errors.append("daily_planned_slots must equal per-division slots times registry size")
+        errors.append("daily_planned_slots must equal per-domain slots times the 55 domain profiles")
     if schedule.get("mode") != "continuous_24x7_with_resource_governors":
         errors.append("continuous schedule must retain resource governors")
     mastery = policy.get("mastery", {})
@@ -49,13 +57,13 @@ def validate(policy: dict, registry: dict) -> list[str]:
 
 def main() -> int:
     policy = json.loads(POLICY.read_text(encoding="utf-8"))
-    registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
-    errors = validate(policy, registry)
+    crosswalk = json.loads(CROSSWALK.read_text(encoding="utf-8"))
+    errors = validate(policy, crosswalk)
     if errors:
         for error in errors:
             print(f"ERROR: {error}")
         return 1
-    print("Continuous study policy valid: 65 divisions, 325 daily slots, governed 24x7 schedule, rights and budget gates enforced.")
+    print("Continuous study policy valid: 55 domain divisions, 65 MasterBots (20 shared platform), 275 daily slots, governed 24x7 schedule, rights and budget gates enforced.")
     return 0
 
 
