@@ -274,3 +274,15 @@ The main dataset-routing artifact records 2,976 catalog dataset rows, 727 unique
 #### PR snapshot pointer
 
 The 2026-11-24 PR metadata inventory is now persisted at `docs/engineering/pr-inventory-snapshots/2026-11-24.json`: 800 PRs, 77 open, 723 closed, 498 merged and 225 closed-unmerged. Every record is explicitly metadata-only; 0 have completed full forensic review. See `docs/engineering/PR_RECONCILIATION_LEDGER.md`.
+
+
+#### Build-acceleration changes in the FreeCodeCamp branch
+
+The FreeCodeCamp PR diff was reduced from 75,767 additions to 5,539 additions (92.7% fewer) by:
+- removing the redundant 45,251-line generated division-queue snapshot from tracked source;
+- keeping division queues and specialty route manifests as CI review artifacts;
+- compacting the 1,740-row legacy catalog to one JSON line per video (27,174 lines to 2,095 lines);
+- changing the runtime adapter to load the canonical catalog directly and validate completeness plus the 65-division registry, avoiding a required generated route file;
+- enabling branch-scoped cancellation of superseded Bootcamp CI runs.
+
+This is measured PR diff-size reduction only. No CI runtime or compute-cost improvement has yet been measured. The committed catalog remains partial (legacy 1,740 entries); the successful CI discovery artifact contained 1,741 entries, so runtime remains fail-closed until the refreshed complete inventory is committed.
