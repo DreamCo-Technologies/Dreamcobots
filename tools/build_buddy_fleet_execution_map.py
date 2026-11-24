@@ -322,8 +322,11 @@ def build() -> dict[str, Any]:
             duplicate_status = "unique_profile_candidate"
         seen_slugs.add(slug)
 
-        signature_parts = [str(source.get("category") or bot.get("category") or "")]
-        signature_parts.extend(str(x) for x in (source.get("capabilities") or []))
+        if is_teammate or not source.get("capabilities"):
+            signature_parts = [slug]
+        else:
+            signature_parts = [str(source.get("category") or bot.get("category") or "")]
+            signature_parts.extend(str(x) for x in (source.get("capabilities") or []))
         signature = "|".join(sorted(norm(x) for x in signature_parts if x))
         duplicate_groups[(norm(owner), signature)].append(slug)
 
@@ -367,7 +370,7 @@ def build() -> dict[str, Any]:
             "existing_run_policy": bot.get("run"),
             "profile_flags": flags,
             "division_review": {
-                "required": route_status != "mapped_to_canonical_domain",
+                "required": route_status == "discovery_review_required",
                 "suggested_domains_for_owner_review": suggested_divisions,
                 "suggestion_reason": "Three.js library component profiles appear to be developer tooling with 3D/visualization collaboration; placeholder descriptions prevent automatic primary ownership." if suggested_divisions else None,
                 "owner_approval_required": True,
