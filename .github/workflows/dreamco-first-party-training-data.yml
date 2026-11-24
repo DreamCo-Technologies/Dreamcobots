@@ -11,6 +11,8 @@ on:
       - "buddy/datasets/sources.py"
       - "buddy/datasets/license_policy.py"
       - "buddy/datasets/ingestion_worker.py"
+      - "buddy/datasets/hub.py"
+      - "tests/test_buddy_dataset_hub_runtime.py"
       - "tools/build_dreamco_bootcamp_seed_data.py"
       - "tools/build_dreamco_training_factory.py"
       - "tests/test_dreamco_bootcamp_seed_data.py"
@@ -30,6 +32,8 @@ on:
       - "buddy/datasets/sources.py"
       - "buddy/datasets/license_policy.py"
       - "buddy/datasets/ingestion_worker.py"
+      - "buddy/datasets/hub.py"
+      - "tests/test_buddy_dataset_hub_runtime.py"
       - "tools/build_dreamco_bootcamp_seed_data.py"
       - "tools/build_dreamco_training_factory.py"
       - "tests/test_dreamco_bootcamp_seed_data.py"
@@ -68,13 +72,15 @@ jobs:
             buddy/datasets/sources.py \
             buddy/datasets/license_policy.py \
             buddy/datasets/ingestion_worker.py \
+            buddy/datasets/hub.py \
             tools/build_dreamco_bootcamp_seed_data.py \
             tools/build_dreamco_training_factory.py \
             tests/test_dreamco_bootcamp_seed_data.py \
             tests/test_dreamco_training_factory.py \
             tests/test_buddy_dataset_research_metadata_adapters.py \
             tests/test_buddy_dataset_license_policy.py \
-            tests/test_buddy_dataset_ingestion_worker.py
+            tests/test_buddy_dataset_ingestion_worker.py \
+            tests/test_buddy_dataset_hub_runtime.py
 
       - name: Run governed data, rights, and reproducibility tests
         run: |
@@ -83,6 +89,7 @@ jobs:
           python -m unittest discover -s tests -p "test_buddy_dataset_research_metadata_adapters.py" -v
           python -m unittest discover -s tests -p "test_buddy_dataset_license_policy.py" -v
           python -m unittest discover -s tests -p "test_buddy_dataset_ingestion_worker.py" -v
+          python -m unittest discover -s tests -p "test_buddy_dataset_hub_runtime.py" -v
 
       - name: Materialize all 65 isolated common-foundation candidates
         shell: bash
