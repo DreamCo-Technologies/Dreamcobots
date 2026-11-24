@@ -31,7 +31,7 @@ def build_observations(run: dict[str, Any]) -> list[dict[str, Any]]:
                 str(step.get("conclusion", "")),
                 str(step.get("name", "")),
             ])),
-            "run_id": str(run.get("id", "")),
+            "run_id": str(run.get("id") or run.get("databaseId") or ""),
             "run_url": run.get("url", ""),
             "head_sha": run.get("headSha", ""),
         })
@@ -44,7 +44,7 @@ def build_report(run: dict[str, Any], history: dict[str, Any],
     return {
         "schema": "dreamco.buddy.historical_failure_diagnosis.v1",
         "source_run": {
-            "id": run.get("id"),
+            "id": run.get("id") or run.get("databaseId"),
             "name": run.get("name"),
             "conclusion": run.get("conclusion"),
             "url": run.get("url"),
@@ -68,10 +68,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run", required=True, type=Path)
     parser.add_argument("--historical-index", required=True, type=Path)
-    parser.add_argument("--memory", type=Path)
+    parser.add_argument("--memory", type=Path)\n    parser.add_argument("--repository", default="")
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
-    run = json.loads(args.run.read_text(encoding="utf-8"))
+    run = json.loads(args.run.read_text(encoding="utf-8"))\n    if args.repository:\n        run["repository"] = args.repository
     history = json.loads(args.historical_index.read_text(encoding="utf-8"))
     memory = json.loads(args.memory.read_text(encoding="utf-8")) if args.memory and args.memory.exists() else {"incidents": []}
     report = build_report(run, history, memory)
