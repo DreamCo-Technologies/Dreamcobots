@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a conservative crosswalk between 65 MasterBots and 45 domain divisions.
+"""Build a conservative crosswalk between 65 MasterBots and 55 domain divisions.
 
 Only exact normalized identity matches are proposed. No keyword or fuzzy match is
 promoted to ownership; unresolved entries remain explicit for owner review.
@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MASTERBOTS = ROOT / "config/masterbot-65-registry.json"
 DOMAIN_SOURCE = ROOT / "shared/division-production-contract.ts"
-OUTPUT = ROOT / "config/generated/masterbot-45-domain-crosswalk.json"
+OUTPUT = ROOT / "config/generated/masterbot-55-domain-crosswalk.json"
 
 
 def normalize(value: str) -> str:
@@ -29,8 +29,8 @@ def load_domain_names(source: str) -> list[str]:
         body = match.group(2)
         if "purpose:" in body and "focusAreas:" in body:
             names.append(match.group(1))
-    if len(names) != 45:
-        raise ValueError(f"Expected 45 domain profiles in {DOMAIN_SOURCE}; found {len(names)}")
+    if len(names) != 55:
+        raise ValueError(f"Expected 55 domain profiles in {DOMAIN_SOURCE}; found {len(names)}")
     if len({normalize(name) for name in names}) != len(names):
         raise ValueError("Domain profile names are not unique after normalization")
     return names

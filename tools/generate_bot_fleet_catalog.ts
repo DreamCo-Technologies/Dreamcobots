@@ -11,6 +11,7 @@ import { ALL_BOTS } from "../server/seed-bots.ts";
 import { CODELAB_BOTS } from "../server/seed-codelabs.ts";
 import { GITHUB_BOTS } from "../server/seed-github-bots.ts";
 import { SUPPLEMENTAL_BOTS } from "../server/seed-supplemental-bots.ts";
+import { DIVISION_DOMAIN_PROFILES, DIVISION_CAPABILITY_OPERATIONS } from "../shared/division-production-contract.ts";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const APP_BOTS_DIR = join(ROOT, "App_bots");
@@ -544,13 +545,19 @@ export function buildFleetCatalog() {
   if (missingRuntime.length) throw new Error(`${missingRuntime.length} catalog profiles have no Buddy runtime route`);
   if (bots.length !== 1051) throw new Error(`Expected 1,051 profiles, found ${bots.length}`);
 
-  const allDivisions = divisionFiles.map(({ name, content }) => ({
-    name: content.division,
-    profile_count: content.bots.length,
-    source: `App_bots/${name}`,
-    api_candidate_count: (DIVISION_API_REGISTRIES[content.division]?.categories || [])
-      .flatMap((category) => category.apis).length,
-  }));
+  const allDivisions = divisionFiles.map(({ name, content }) => {
+    const domainContract = DIVISION_DOMAIN_PROFILES[content.division];
+    if (!domainContract) throw new Error("Missing full domain contract for " + content.division);
+    return {
+      name: content.division,
+      profile_count: content.bots.length,
+      source: "App_bots/" + name,
+      api_candidate_count: (DIVISION_API_REGISTRIES[content.division]?.categories || [])
+        .flatMap((category) => category.apis).length,
+      domain_contract: domainContract,
+      capability_operations: DIVISION_CAPABILITY_OPERATIONS,
+    };
+  });
   const divisions = allDivisions.filter((division) => !supplementalSources.has(division.source));
   const supplementalDivisions = allDivisions.filter((division) => supplementalSources.has(division.source));
   const configuredApiCount = 0;

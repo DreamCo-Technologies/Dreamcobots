@@ -9,6 +9,7 @@ import { AI_PROVIDERS } from "../shared/ai-ecosystem.ts";
 import { MODEL_BENCHMARK_TARGETS } from "../shared/model-benchmark-targets.ts";
 import type { DreamSearchConfig, DreamSearchDocument } from "../shared/dreamco-search.ts";
 import { normalizeSearchText } from "../shared/dreamco-search.ts";
+import { DIVISION_DOMAIN_PROFILES, DIVISION_CAPABILITY_OPERATIONS } from "../shared/division-production-contract.ts";
 import { buildFleetCatalog } from "./generate_bot_fleet_catalog.ts";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -162,11 +163,14 @@ export function buildDreamSearchIndex() {
       id: `division:${mapped?.id || slug(division.name)}`,
       type: "division",
       title: division.name,
-      summary: production?.charter.purpose || mapped?.mission || `${division.profile_count} catalog profiles routed through Buddy's shared sandbox planning runtime. Production evidence is required.`,
+      summary: DIVISION_DOMAIN_PROFILES[division.name]?.purpose || production?.charter.purpose || mapped?.mission || `${division.profile_count} catalog profiles routed through Buddy's shared sandbox planning runtime. Production evidence is required.`,
       url: production ? "success.html#divisions" : `bots.html?q=${encodeURIComponent(division.name)}`,
       keywords: unique([
         "division", "specialists", "Buddy", `${division.profile_count} bots`,
         production ? `${production.capabilities.count} capability contracts` : undefined,
+        ...(DIVISION_DOMAIN_PROFILES[division.name]?.serves || []),
+        ...(DIVISION_DOMAIN_PROFILES[division.name]?.focusAreas || []),
+        ...DIVISION_CAPABILITY_OPERATIONS.map((operation) => operation.title),
         ...(production?.charter.serves || []),
         ...(production?.capabilities.focuses || []),
         ...(production?.benchmark_system.daily_operations.worker_roles || []),

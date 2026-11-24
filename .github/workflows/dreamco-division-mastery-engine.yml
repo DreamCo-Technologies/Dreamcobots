@@ -5,10 +5,15 @@ on:
   pull_request:
     paths:
       - "config/masterbot-65-registry.json"
+      - "config/division-reconciliation-policy.json"
+      - "config/generated/division-reconciliation.json"
+      - "tools/build_division_reconciliation.py"
+      - "tests/test_division_reconciliation.py"
+      - "tools/normalize_legacy_portfolios.py"
       - "shared/division-production-contract.ts"
       - "tools/build_masterbot_division_crosswalk.py"
       - "tests/test_masterbot_division_crosswalk.py"
-      - "config/generated/masterbot-45-domain-crosswalk.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
       - "config/dreamco-mastery-continuity-registry.json"
       - "config/division-model-competitiveness-policy.json"
       - "config/buddy-engineering-capability-contract.json"
@@ -82,6 +87,8 @@ jobs:
           MATRIX=$(python tools/dreamco_division_mastery_orchestrator.py --matrix)
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
           python tools/build_masterbot_division_crosswalk.py --check
+          python tools/build_division_reconciliation.py --check
+          python -m unittest tests.test_division_reconciliation
           python -m unittest tests.test_masterbot_division_crosswalk
           python -m unittest tests.test_dreamco_division_mastery_orchestrator tests.test_division_model_fleet tests.test_buddy_engineering_capability_contract tests.test_buddy_dataset_routing tests.test_buddy_dataset_hub_runtime tests.test_buddy_database_sources tests.test_buddy_database_router tests.test_dreamco_original_training_examples tests.test_buddy_dataset_discovery_fleet tests.test_buddy_cross_model_benchmark tests.test_buddy_failure_learning tests.test_buddy_safe_repair
           python tools/validate_buddy_engineering_capabilities.py
