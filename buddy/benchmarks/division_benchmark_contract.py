@@ -77,13 +77,16 @@ def validate_benchmark_evidence(plan:dict[str,Any],evidence:dict[str,Any])->dict
     if not isinstance(runs,list) or len(runs)<required:
         issues.append("insufficient_independent_benchmark_runs")
         runs=[] if not isinstance(runs,list) else runs
-    run_ids=[str(x.get("run_id","")) for x in runs]
+    normalized_runs=[x for x in runs if isinstance(x,dict)]
+    if len(normalized_runs)!=len(runs): issues.append("benchmark_run_record_must_be_object")
+    run_ids=[str(x.get("run_id","")) for x in normalized_runs]
     if any(not x for x in run_ids) or len(set(run_ids))!=len(run_ids): issues.append("run_ids_missing_or_duplicated")
-    seeds=[x.get("seed") for x in runs]
-    if len(set(seeds))!=len(seeds): issues.append("benchmark_seeds_must_be_independent")
+    seeds=[x.get("seed") for x in normalized_runs]
+    if any(isinstance(x,bool) or not isinstance(x,int) for x in seeds) or len(set(seeds))!=len(seeds):
+        issues.append("benchmark_seeds_must_be_independent")
     thresholds=plan.get("thresholds",DEFAULT_THRESHOLDS)
     evaluated=[]
-    for index,run in enumerate(runs):
+    for index,run in enumerate(normalized_runs):
         prefix=f"run_{index+1}"
         if not COMMIT.fullmatch(str(run.get("commit_sha",""))): issues.append(f"{prefix}_commit_sha_invalid")
         if not str(run.get("workflow_run_id","")).strip(): issues.append(f"{prefix}_workflow_run_id_missing")
@@ -91,17 +94,17 @@ def validate_benchmark_evidence(plan:dict[str,Any],evidence:dict[str,Any])->dict
         if run.get("evaluation_dataset_sha256")!=plan.get("holdout_dataset_sha256"): issues.append(f"{prefix}_holdout_hash_mismatch")
         if run.get("weights_sha256")!=plan.get("weights_sha256"): issues.append(f"{prefix}_weights_hash_mismatch")
         if run.get("private_holdout_used_for_training") is not False: issues.append(f"{prefix}_holdout_contamination")
-        suites=run.get("suites") or {}
+        suites=run.get("suites") if isinstance(run.get("suites"),dict) else {}
         for suite in REQUIRED_SUITES:
-            if suite not in suites: issues.append(f"{prefix}_missing_{suite}_suite")
+            if not isinstance(suites.get(suite),dict): issues.append(f"{prefix}_missing_{suite}_suite")
         metrics_ok=True
-        domain=suites.get("domain",{}).get("score")
-        general=suites.get("general",{}).get("score")
-        robustness=suites.get("robustness",{}).get("score")
-        safety=suites.get("safety",{}).get("critical_violations")
-        privacy=suites.get("privacy",{}).get("leaks")
-        regression=suites.get("regression",{}).get("passed")
-        performance=suites.get("performance",{})
+        domain=(suites.get("domain") or {}).get("score") if isinstance(suites.get("domain"),dict) else None
+        general=(suites.get("general") or {}).get("score") if isinstance(suites.get("general"),dict) else None
+        robustness=(suites.get("robustness") or {}).get("score") if isinstance(suites.get("robustness"),dict) else None
+        safety=(suites.get("safety") or {}).get("critical_violations") if isinstance(suites.get("safety"),dict) else None
+        privacy=(suites.get("privacy") or {}).get("leaks") if isinstance(suites.get("privacy"),dict) else None
+        regression=(suites.get("regression") or {}).get("passed") if isinstance(suites.get("regression"),dict) else None
+        performance=suites.get("performance") if isinstance(suites.get("performance"),dict) else {}
         latency=performance.get("p95_latency_ms")
         cost=performance.get("cost_usd_per_1k_tokens")
         for label,value in (("domain",domain),("general",general),("robustness",robustness)):
