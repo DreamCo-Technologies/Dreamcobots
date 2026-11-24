@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 from tools.build_freecodecamp_routes import build_routes, validate
-from buddy.learning.freecodecamp_source import resources_for_division, select_next_for_division, plan_next_lesson, execute_study_plan
+from buddy.learning.freecodecamp_source import resources_for_division, select_next_for_division, plan_next_lesson, execute_study_plan, stable_resource_id
 from buddy.learning.permissioned_study_worker import StudyAuthorization
 from buddy.learning.study_resource_scheduler import Capability
 
@@ -116,6 +116,38 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
             resource = select_next_for_division(1, iter([Capability(name="cyber", category="cybersecurity_and_privacy")]), path=path)
             self.assertIsNotNone(resource)
             self.assertEqual(resource.name, "Cybersecurity")
+
+    def test_resource_identity_survives_inserting_an_earlier_sorted_video(self):
+        original_routes = build_routes(self.catalog, self.registry)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "routes.json"
+            path.write_text(json.dumps(original_routes))
+            before = resources_for_division(1, path)
+            studied_id = next(resource.id for resource in before if resource.name == "Cybersecurity")
+
+            expanded_catalog = dict(self.catalog)
+            expanded_catalog["videos"] = [
+                {
+                    "video_id": "a-new-video",
+                    "title": "New earlier lesson",
+                    "url": "https://www.youtube.com/watch?v=a-new-video",
+                    "categories": ["python_and_automation"],
+                    "rights_status": "review_required",
+                    "learning_status": "not_studied",
+                },
+                *self.catalog["videos"],
+            ]
+            expanded_routes = build_routes(expanded_catalog, self.registry)
+            path.write_text(json.dumps(expanded_routes))
+            after = resources_for_division(1, path)
+            after_by_name = {resource.name: resource.id for resource in after}
+
+            self.assertEqual(after_by_name["Cybersecurity"], studied_id)
+            self.assertEqual(after_by_name["New earlier lesson"], stable_resource_id("a-new-video"))
+            selected = select_next_for_division(1, [], recent={studied_id}, path=path)
+            self.assertIsNotNone(selected)
+            self.assertNotEqual(selected.id, studied_id)
+            self.assertEqual(selected.name, "New earlier lesson")
 
     def test_runtime_scheduler_selects_candidate_and_validates_division(self):
         payload = build_routes(self.catalog, self.registry)
