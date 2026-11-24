@@ -39,6 +39,10 @@ def package_training_evidence(result:dict[str,Any],evidence_root:str|Path)->dict
         raise TrainingWorkerError("training result is missing immutable tested commit SHA")
     if not re.fullmatch(r"[0-9a-f]{64}",str(result.get("checkpoint_sha256",""))):
         raise TrainingWorkerError("training result is missing checkpoint manifest digest")
+    expected_checkpoint_digest=hashlib.sha256(
+        json.dumps(result.get("checkpoint_files") or [],sort_keys=True).encode("utf-8")).hexdigest()
+    if expected_checkpoint_digest!=result["checkpoint_sha256"]:
+        raise TrainingWorkerError("training checkpoint manifest digest does not match the file manifest")
     source_paths=result.get("artifact_paths") or {}
     root=Path(evidence_root).resolve()
     root.mkdir(parents=True,exist_ok=True)
