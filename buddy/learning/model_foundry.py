@@ -131,7 +131,7 @@ def build_parallel_plan(registry: dict[str, Any], approved: list[dict[str, Any]]
 
 
 def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str,
-                       division_id: int, seed: int, steps: int = 100) -> dict[str, Any]:
+                       division_id: int, strategy: str, seed: int, steps: int = 100) -> dict[str, Any]:
     """Train a small byte-level decoder-only model using PyTorch and local approved text."""
     try:
         import torch
@@ -181,7 +181,7 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
     generator = torch.Generator(device="cpu").manual_seed(seed)
 
     def batch(source):
-        starts = torch.randint(0, len(source) - 65, (8,), generator=generator)
+        starts = torch.randint(0, max(1, len(source) - 65), (8,), generator=generator)
         x = torch.stack([source[int(i):int(i) + 64] for i in starts])
         y = torch.stack([source[int(i) + 1:int(i) + 65] for i in starts])
         return x, y
@@ -208,6 +208,7 @@ def train_from_scratch(dataset_path: Path, output_path: Path, *, dataset_id: str
         "model_id": f"buddy-division-{division_id:02d}-scratch",
         "division_id": division_id,
         "dataset_id": dataset_id,
+        "training_strategy": strategy,
         "dataset_sha256": sha256_file(dataset_path),
         "architecture": DEFAULT_CONFIG,
         "parameter_count": sum(parameter.numel() for parameter in model.parameters()),
