@@ -52,7 +52,7 @@ def probe_postgres(
     connect: Callable[..., Any] | None = None,
 ) -> dict[str, Any]:
     """Run read-only SELECT probes and verify expected schemas already exist."""
-    configured_dsn = dsn if dsn is not None else os.environ.get("DREAMCO_POSTGRES_DSN")
+    configured_dsn = dsn if dsn is not None else (os.environ.get("DREAMCO_POSTGRES_DSN") or os.environ.get("DATABASE_URL"))
     if not configured_dsn:
         return {
             "schema": "dreamco.postgres_probe_evidence.v1",
