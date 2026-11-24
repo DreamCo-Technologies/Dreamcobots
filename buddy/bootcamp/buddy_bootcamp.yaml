@@ -13,14 +13,20 @@ tracks:
   - math_statistics
   - occupational_real_world
   - freecodecamp_source_learning
+  - hugging_face_dataset_and_model_learning
+  - ollama_local_model_learning
+  - division_language_model_research
 stages:
   - diagnose
   - select_resource
+  - rights_review
   - study
+  - original_study_guide
   - sandbox
   - targeted_benchmark
   - holdout
   - regression
+  - spaced_retrieval
   - promote
 rules:
   select_resource: highest_expected_gain_per_minute
@@ -30,6 +36,8 @@ rules:
   require_regression_for_mastery: true
   preserve_original_model_catalog: true
   client_data_training_default: false
+  continuous_study_policy: config/buddy-continuous-study-policy.json
+  original_study_guide_template: buddy/bootcamp/templates/study-guide-template.md
 learning_sources:
   - id: freecodecamp
     name: freeCodeCamp.org
@@ -49,6 +57,31 @@ learning_sources:
     media_download: disabled_by_default
     rights_review_required_before_training: true
     learning_evidence_required: [sandbox_exercise, targeted_benchmark, holdout, regression]
+  - id: hugging_face
+    name: Hugging Face Hub
+    discovery_policy: config/generated/division-huggingface-taxonomy-map.json
+    capability_map: config/hf-capability-download-map.json
+    applies_to: all_65_divisions
+    discovery: metadata_and_model_dataset_cards
+    dataset_ingestion: requires_item_level_license_and_terms_review
+    gated_access: requires_explicit_account_and_terms_approval
+    training_approval_default: false
+    training_evidence_required: [dataset_revision, license_evidence, provenance, split_hashes, benchmark, holdout, regression]
+  - id: ollama
+    name: Ollama local model runtime
+    purpose: local_model_import_inference_and_evaluation
+    model_license_review_required: true
+    base_model_and_adapter_match_required: true
+    paid_compute_default: false
+    model_training: external_training_pipeline_only
+    runtime_evidence_required: [model_digest, modelfile_hash, runtime_version, hardware, latency, memory, benchmark]
+  - id: division_45m_model_research
+    name: Division-specific 45M parameter model research
+    policy: config/buddy-continuous-study-policy.json
+    applies_to: all_65_divisions
+    parameter_target: 45000000
+    training_status: research_plan_only
+    training_from_scratch_requires: [authorized_corpus, compute_budget_approval, tokenizer, architecture_config, reproducible_run, holdout, regression, model_card]
 metrics:
   - benchmark_score_delta
   - native_pass_rate
@@ -58,3 +91,7 @@ metrics:
   - retries
   - regression_failures
   - capability_mastery_count
+  - transcript_weekly_coverage
+  - dataset_rights_coverage
+  - model_parameter_count
+  - model_training_compute_cost
