@@ -14,14 +14,22 @@ class ModelFoundryRightsTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.data = self.root / "owned.txt"
         self.data.write_text(("DreamCo original training example. " * 40), encoding="utf-8")
+        self.owner_evidence = self.root / "owner-attestation.txt"
+        self.owner_evidence.write_text("Owner created and controls this fixture.", encoding="utf-8")
+        self.license_evidence = self.root / "license-evidence.txt"
+        self.license_evidence.write_text("Explicit training, commercial and derivative permissions.", encoding="utf-8")
         self.entry = {
             "dataset_id": "dreamco-owner-authored-fixture-v1",
             "local_path": "owned.txt",
             "sha256": hashlib.sha256(self.data.read_bytes()).hexdigest(),
             "owner": "DreamCo",
             "owner_attestation_ref": "owner-attestation:fixture",
+            "owner_attestation_path": "owner-attestation.txt",
+            "owner_attestation_sha256": hashlib.sha256(self.owner_evidence.read_bytes()).hexdigest(),
             "license_id": "DreamCo-First-Party-Internal-v1",
             "license_evidence_ref": "internal-policy:fixture",
+            "license_evidence_path": "license-evidence.txt",
+            "license_evidence_sha256": hashlib.sha256(self.license_evidence.read_bytes()).hexdigest(),
             "rights_status": "APPROVED",
             "approved_division_ids": [1, 2],
             "training_strategy": "domain_adaptive_pretraining",
