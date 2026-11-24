@@ -86,6 +86,8 @@ The machine-readable curriculum is `specialized_study_tracks[tolkien]` in `confi
 
 The track explicitly disables copyrighted primary-text ingestion, transcript/audiobook downloads, reproduction of protected invented languages or scripts, derivative generation using protected characters/settings/stories, and model-weight training. Unknown rights remain BLOCKED. See `docs/BUDDY_TOLKIEN_STUDY_TRACK.md` for the lesson plan and official rights references.
 
+The same machine-readable registry now includes the ten-lesson `database-and-dataset-engineering` track, covering relational modeling, transactions, query plans, database comparison, Buddy routing, hybrid retrieval, dataset discovery/rights, quality/splits, lineage and governance. It uses synthetic fixtures and disables production access, writes, migrations, bulk downloads and model-weight training. See `docs/BUDDY_DATABASE_AND_DATASET_STUDY_TRACK.md`.
+
 Do not bulk-copy Tolkien novels, appendices, maps, artwork, audio, journal articles, or proprietary language materials. Build original exercises and original worldbuilding tasks; cite sources and keep protected source passages out of training data absent explicit permission.
 
 ## Buddy student assignments
