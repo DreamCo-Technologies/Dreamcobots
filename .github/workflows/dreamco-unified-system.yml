@@ -93,10 +93,10 @@ jobs:
         run: |
           if [ -f tools/run_500_model_benchmarks.py ]; then
             python3 tools/run_500_model_benchmarks.py --mode "$REQUESTED_MODE"
-            printf '{"status":"EXECUTED","runner":"tools/run_500_model_benchmarks.py","mode":"%s","paid_calls_enabled":false}\\n' "$REQUESTED_MODE" > website/data/benchmark-execution-status.json
+            printf '{"status":"EXECUTED","runner":"tools/run_500_model_benchmarks.py","mode":"%s","paid_calls_enabled":false}\n' "$REQUESTED_MODE" > website/data/benchmark-execution-status.json
           else
             echo "BLOCKED: dedicated 500-model execution runner is not implemented. No provider calls or training were started; all matrix rows remain unverified."
-            printf '{"status":"BLOCKED_RUNNER_NOT_IMPLEMENTED","runner":null,"mode":"%s","paid_calls_enabled":false,"training_started":false,"reason":"No dedicated benchmark runner exists; unrelated full-system certification is not a benchmark fallback."}\\n' "$REQUESTED_MODE" > website/data/benchmark-execution-status.json
+            printf '{"status":"BLOCKED_RUNNER_NOT_IMPLEMENTED","runner":null,"mode":"%s","paid_calls_enabled":false,"training_started":false,"reason":"No dedicated benchmark runner exists; unrelated full-system certification is not a benchmark fallback."}\n' "$REQUESTED_MODE" > website/data/benchmark-execution-status.json
             {
               echo "## Benchmark execution blocked"
               echo "- Dedicated 500-model runner is not implemented."
