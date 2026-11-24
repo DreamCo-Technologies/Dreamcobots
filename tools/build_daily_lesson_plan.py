@@ -59,7 +59,7 @@ def build_plan(registry: dict, day: str, lessons_per_division: int = 5) -> dict:
         "validated_lessons": 0,
         "slots": slots,
         "status": "target_planned_not_completed",
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": f"{day}T00:00:00+00:00",
         "policy": {
             "no_placeholder_counts_as_lesson": True,
             "no_mastery_without_benchmark_evidence": True,
@@ -71,7 +71,7 @@ def build_plan(registry: dict, day: str, lessons_per_division: int = 5) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--day", default=date.today().isoformat())
+    parser.add_argument("--day", default=datetime.now(timezone.utc).date().isoformat())
     parser.add_argument("--lessons-per-division", type=int, default=5)
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--check", action="store_true")
