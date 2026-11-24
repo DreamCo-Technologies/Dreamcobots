@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 from tools.build_freecodecamp_routes import build_routes, validate
-from buddy.learning.freecodecamp_source import resources_for_division, select_next_for_division, plan_next_lesson, execute_study_plan, stable_resource_id
+from buddy.learning.freecodecamp_source import resources_for_division, select_next_for_division, plan_next_lesson, execute_study_plan, stable_resource_id, load_routes
 from buddy.learning.permissioned_study_worker import StudyAuthorization
 from buddy.learning.study_resource_scheduler import Capability
 
@@ -71,6 +71,26 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
         }
         with self.assertRaisesRegex(ValueError, "duplicate"):
             validate(build_routes(broken, self.registry))
+
+    def test_runtime_loads_verified_catalog_without_generated_route_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "catalog.json"
+            path.write_text(json.dumps(self.catalog))
+            payload = load_routes(path)
+            self.assertEqual(payload["schema"], "dreamco.freecodecamp_runtime_catalog.v1")
+            self.assertEqual(payload["catalog_video_count"], 2)
+            for division_id in range(1, 66):
+                self.assertEqual(len(resources_for_division(division_id, path)), 2)
+
+    def test_runtime_rejects_partial_catalog_even_when_rows_exist(self):
+        partial = dict(self.catalog)
+        partial["inventory_status"] = "partial"
+        partial["inventory"] = {**self.catalog["inventory"], "complete": False}
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "catalog.json"
+            path.write_text(json.dumps(partial))
+            with self.assertRaisesRegex(ValueError, "not a verified complete inventory"):
+                load_routes(path)
 
     def test_runtime_returns_all_video_candidates_for_each_division(self):
         payload = build_routes(self.catalog, self.registry)
