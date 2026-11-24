@@ -453,10 +453,19 @@ def main() -> int:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--refresh", action="store_true", help="fetch configured public sources and update the living index")
     mode.add_argument("--check", action="store_true", help="validate existing index and published mirror without network calls")
+    mode.add_argument("--project", action="store_true", help="rebuild only the bounded Pages projection from the canonical archive without network calls")
     args = parser.parse_args()
     policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
     validate_policy(policy)
-    if args.refresh:
+    if args.project:
+        if not OUTPUT_PATH.exists():
+            raise SystemExit("canonical technology radar archive is missing")
+        catalog = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
+        validate_catalog(catalog)
+        projection = build_public_projection(catalog, int(policy.get("public_site", {}).get("maximum_records", 500)))
+        WEB_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        WEB_OUTPUT_PATH.write_text(json.dumps(projection, ensure_ascii=False, separators=(",", ":")) + "\\n", encoding="utf-8")
+    elif args.refresh:
         existing = json.loads(OUTPUT_PATH.read_text(encoding="utf-8")) if OUTPUT_PATH.exists() else {
             "schema": "dreamco.buddy.technology_radar.v1", "records": []
         }
