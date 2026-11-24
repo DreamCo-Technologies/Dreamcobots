@@ -146,7 +146,7 @@ def main() -> int:
     plan = build_factory_plan(configs, hashes)
     target = Path(args.out)
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(plan, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+    target.write_text(json.dumps(plan, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps({"status": plan["status"], "coverage": plan["coverage"], "output": str(target)}))
     return 0
 
