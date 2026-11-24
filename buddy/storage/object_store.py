@@ -28,7 +28,7 @@ def _valid_bucket_name(value: str) -> bool:
     labels = value.split(".")
     if any(not label or label.startswith("-") or label.endswith("-") for label in labels):
         return False
-    if re.fullmatch(r"\\d{1,3}(?:\\.\\d{1,3}){3}", value):
+    if len(labels) == 4 and all(label.isdigit() for label in labels):
         return False
     return True
 
