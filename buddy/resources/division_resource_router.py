@@ -41,7 +41,7 @@ def plan_resource_route(division_id:int,task_type:str,data_classification:str="p
     payload=json.loads(RESOURCE_MAP.read_text(encoding="utf-8"))
     pack=TASK_PACKS.get(task_type.casefold(),"pack.instruct")
     seed_catalog=payload["resource_templates"]["teacher_models"]["seed_models_by_capability_pack"]
-    candidates=[model_id for capability in route["capability_pack_ids"] for model_id in seed_catalog.get(capability,[]) if capability==pack]
+    candidates=list(dict.fromkeys(model_id for capability in route["capability_pack_ids"] if capability==pack for model_id in seed_catalog.get(capability,[])))
     available=set(available_local_model_ids or [])
     local=[model_id for model_id in candidates if model_id in available]
     classification=data_classification.casefold()
