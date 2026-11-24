@@ -25,7 +25,10 @@ def build_owner_review_queue(source_path:Path=SOURCE)->dict[str,Any]:
                 "resource_bundle_id":item.get("resource_bundle_id"),
                 "candidate_domain_ids":list(item.get("candidate_domain_ids") or []),
                 "proposed_primary_domain_id":item.get("primary_domain_id"),
-                "decision":"PENDING_OWNER_REVIEW","owner_approval":item.get("owner_approval"),
+                "decision":item.get("decision") if item.get("decision") in {"PENDING_OWNER_REVIEW","PENDING_GITHUB_IDENTITY_ATTESTATION"} else "PENDING_OWNER_REVIEW",
+                "user_approval_status":item.get("user_approval_status"),
+                "proposed_collaborator_masterbot_id":item.get("proposed_collaborator_masterbot_id"),
+                "owner_approval":item.get("owner_approval"),
                 "evidence":list(item.get("evidence") or []),"no_mapping_inferred":True})
     unassigned=[]
     for item in review.get("unassigned_domain_profiles",[]):
@@ -62,8 +65,14 @@ def validate_owner_review_queue(queue:dict[str,Any])->None:
         raise OwnerReviewQueueError("pending_masterbot_count_mismatch")
     if queue.get("counts",{}).get("unassigned_domain_profiles")!=len(queue.get("unassigned_domain_profiles",[])):
         raise OwnerReviewQueueError("unassigned_domain_count_mismatch")
+    for item in queue.get("proposed_exact_name_matches",[]):
+        if item.get("decision")!="PROPOSED_EXACT_NAME_MATCH" or item.get("user_approval_status")!="APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION" or item.get("owner_approval") is not None:
+            raise OwnerReviewQueueError("exact_name_proposal_approval_provenance_invalid")
+    shared=queue.get("shared_platform_services",[])
+    if [x.get("masterbot_id") for x in shared] != list(range(46,66)) or any(x.get("primary_domain_id") is not None for x in shared):
+        raise OwnerReviewQueueError("shared_platform_services_must_remain_ids_46_to_65_without_primary_owner")
     for item in queue.get("masterbot_domain_decisions",[])+queue.get("unassigned_domain_profiles",[]):
-        if item.get("decision")!="PENDING_OWNER_REVIEW" or item.get("no_mapping_inferred") is not True:
+        if item.get("decision") not in {"PENDING_OWNER_REVIEW","PENDING_GITHUB_IDENTITY_ATTESTATION"} or item.get("no_mapping_inferred") is not True:
             raise OwnerReviewQueueError("unapproved_mapping_or_inferred_assignment_detected")
         if item.get("owner_approval") is not None:
             raise OwnerReviewQueueError("approved_source_item_requires_a_separate_signed_decision_record")

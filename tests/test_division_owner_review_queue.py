@@ -14,6 +14,9 @@ class DivisionOwnerReviewQueueTests(unittest.TestCase):
   self.assertEqual(queue["counts"]["unassigned_domain_profiles"],10)
   self.assertTrue(all(x["no_mapping_inferred"] for x in queue["masterbot_domain_decisions"]))
   self.assertTrue(all(x["user_approval_status"]=="APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION" for x in queue["proposed_exact_name_matches"]))
+  self.assertEqual([x["masterbot_id"] for x in queue["shared_platform_services"]],list(range(46,66)))
+  self.assertTrue(all(x["primary_domain_id"] is None for x in queue["shared_platform_services"]))
+  self.assertTrue(all(x["decision"]=="PENDING_GITHUB_IDENTITY_ATTESTATION" and x["proposed_collaborator_masterbot_id"] for x in queue["unassigned_domain_profiles"]))
  def test_builds_pending_queue_without_guessing(self):
   source={"owner_review":{"masterbot_domain_decisions":[
    {"masterbot_id":1,"masterbot_name":"Alpha","primary_domain_id":None,
