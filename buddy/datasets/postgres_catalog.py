@@ -63,10 +63,20 @@ class PostgresDatasetCatalog:
     No DDL is issued by this adapter.
     """
 
-    def __init__(self, dsn: str | None = None, connect: Callable[..., Any] | None = None):
-        self.dsn = dsn or os.environ.get("DREAMCO_POSTGRES_DSN") or os.environ.get("DATABASE_URL")
-        if not self.dsn:
-            raise PostgresCatalogError("DREAMCO_POSTGRES_DSN or DATABASE_URL is required")
+    def __init__(self, dsn: str | None = None, connect: Callable[..., Any] | None = None,
+                 *, masterbot_id: int | None = None,
+                 dsn_resolver: Callable[[int], str | None] | None = None):
+        if masterbot_id is not None:
+            division_schema(masterbot_id)
+        if dsn and masterbot_id is None:
+            raise PostgresCatalogError("A direct DSN must be bound to one canonical masterbot_id")
+        if dsn and dsn_resolver:
+            raise PostgresCatalogError("Use either a division-scoped DSN or a per-division DSN resolver")
+        self.masterbot_id = masterbot_id
+        self.dsn = dsn
+        self.dsn_resolver = dsn_resolver or (
+            lambda division_id: os.environ.get(f"DREAMCO_POSTGRES_DSN_MASTERBOT_{division_id:03d}")
+        )
         if connect is None:
             try:
                 import psycopg
@@ -74,6 +84,17 @@ class PostgresDatasetCatalog:
                 raise PostgresCatalogError("Install psycopg to use the PostgreSQL catalog") from exc
             connect = psycopg.connect
         self._connect = connect
+
+    def _dsn_for(self, masterbot_id: int) -> str:
+        division_schema(masterbot_id)
+        if self.masterbot_id is not None and self.masterbot_id != masterbot_id:
+            raise PostgresCatalogError("catalog adapter is scoped to a different MasterBot identity")
+        dsn = self.dsn if self.dsn is not None else self.dsn_resolver(masterbot_id)
+        if not dsn or not str(dsn).strip():
+            raise PostgresCatalogError(
+                f"DREAMCO_POSTGRES_DSN_MASTERBOT_{masterbot_id:03d} is not configured"
+            )
+        return str(dsn)
 
     def register(self, masterbot_id: int, manifest: dict[str, Any]) -> dict[str, Any]:
         schema = division_schema(masterbot_id)
@@ -91,7 +112,7 @@ class PostgresDatasetCatalog:
             WHERE "{schema}".dataset_catalog.manifest_sha256 = EXCLUDED.manifest_sha256
             RETURNING dataset_id, version, manifest_sha256'''
         try:
-            with self._connect(self.dsn, connect_timeout=5) as connection:
+            with self._connect(self._dsn_for(masterbot_id), connect_timeout=5) as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(sql, (safe["dataset_id"], safe["version"], masterbot_id,
                                          serialized, manifest_hash, safe.get("content_sha256"), created_at))
