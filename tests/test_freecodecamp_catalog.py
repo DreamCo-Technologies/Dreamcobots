@@ -30,6 +30,16 @@ def test_merge_catalog_deduplicates_and_preserves_curated_tags():
  assert len(merged["videos"])==2
  assert "dreamco_curated" in next(x for x in merged["videos"] if x["video_id"]=="v-python")["categories"]
 
+def test_seed_catalog_contains_official_metadata_only_records():
+ from pathlib import Path
+ import json
+ catalog=json.loads((Path(__file__).resolve().parents[1]/"config/generated/freecodecamp-youtube-catalog.json").read_text(encoding="utf-8"))
+ assert len(catalog["videos"])>=5
+ assert catalog["source"]["channel_id"]=="UC8butISFwT-Wl7EV0hUK0BQ"
+ assert all(row["url"].startswith("https://www.youtube.com/watch?v=") for row in catalog["videos"])
+ assert all(row["rights_status"]=="review_required" and row["transcript_status"]=="not_ingested_rights_gate" for row in catalog["videos"])
+ assert all(row["media_download_allowed"] is False and row["transcript_ingestion_allowed"] is False and row["model_training_allowed"] is False for row in catalog["videos"])
+
 def test_daily_lesson_plan_targets_five_per_55_domains_and_reports_blocked_slots():
  entries=parse_feed(ATOM_FIXTURE);catalog=merge_catalog({},entries,generated_at="2026-11-24T00:00:00+00:00")
  registry={"divisions":[{"id":i,"name":"DreamCyber" if i==1 else f"DreamDivision{i}"} for i in range(1,66)]}
