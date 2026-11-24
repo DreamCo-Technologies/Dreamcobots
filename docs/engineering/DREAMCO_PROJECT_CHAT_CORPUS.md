@@ -201,3 +201,41 @@ For PR #17412 head SHA ca452a552ef2abaf9994f109cb50b87175709dd8, ten PR-triggere
 ### Bootcamp version delta and v3 test follow-up
 
 Bootcamp v3 was separately materialized and inspected: 25 archive entries, CRC passed, 51,714 uncompressed bytes. It adds source_policy.py and model_router.py plus corresponding model-router tests compared with v2. Local isolated fixture tests: v3 23 passed. Cross-version shared files are identical by SHA-256 where checked: learning_pipeline.py, scheduler.py, the learning/scheduler tests, and the path bootcamp remain unchanged across v2-v5; model_router.py and source_policy.py appear in v3 and remain unchanged in v4-v5; v4 adds capability_manager.py and routing_policy.py with tests; v5 adds routing_evidence.py and tests. Test totals rise v2 15, v3 23, v4 35, v5 43. This is a staged prototype progression, not evidence that the code is integrated into Dreamcobots or production.
+
+
+## Daily corpus update — 2026-11-24
+
+**Current repository snapshot:** `adc02c1ed95e225d33870ff696808bf95de67234`
+
+### Source inventory refresh
+
+- The recursive Project Library listing still returns **30 files**: 5 Markdown, 2 patch files, 10 ZIP archives, and 13 media assets. No new Library artifact was discovered in this refresh.
+- The initial review states above remain unchanged: `Pasted markdown.md` was previously read; the two large Master Codex directive copies remain partial and not hash-verified; the two unified patch files remain partial and not hash-verified; all 10 ZIP archives remain uninspected; the 13 media assets remain uninspected.
+- The current Files conversation surface returned **0 current-conversation file attachments**. This does not mean there are no historical conversations; it means no full additional transcript was available from that file surface during this run.
+- The existing `CHAT-01`…`CHAT-15` / 210 D01-D14 registry remains an initial index, not proof of complete chat-history coverage. No new CHAT number is assigned without a full source transcript and stable message locator.
+
+### Current-turn source record
+
+Add the current user message as a source record without inventing a conversation ID:
+
+- **Source ID:** `SRC-CURRENT-2026-11-24-DAILY-ENGINEERING`
+- **Locator:** current user message, sections “DAILY TEACHING CURRICULUM”, “DAILY TRAINING AND DISTILLATION WORKFLOW”, “DATABASE ARCHITECTURE, ROUTING, AND DATASET INTELLIGENCE”, “ADDITIONAL REQUIRED DAILY MARKDOWN / BUILD-PLAN RECONCILIATION”, “PULL REQUEST FORENSIC RECONCILIATION”, and “DREAMCO PROJECT-WIDE CHAT AND LIBRARY SOURCE RECONCILIATION”.
+- **Canonical requirement mappings introduced/confirmed:** `REQ-DAILY-5-LESSONS-PER-DIVISION`; `REQ-WEEKLY-REAL-BUDDY-TRANSCRIPT-EVALUATION`; `REQ-DATABASE-ROUTING-AND-SOURCE-REGISTRY`; `REQ-DATASET-RIGHTS-QUALITY-LINEAGE`; `REQ-ALL-MARKDOWN-MD-MDX-COVERAGE`; `REQ-ALL-STATE-PR-FORENSICS`; `REQ-PROJECT-WIDE-CHAT-LIBRARY-CORPUS`. These IDs map to this current-turn source; they do not imply implementation or verification.
+
+### Repository evidence mapped to current requirements
+
+- **Daily lessons:** PR #18207's planner defines five daily slots per each of 65 canonical divisions (325 slots). Its current curriculum-generation check passed, but the slots still require authored/admitted lesson content; no 325 completed lessons or student mastery is claimed.
+- **Weekly transcript evaluation:** PR #18207's weekly audit tests pass, but the run reports `BLOCKED` because `approved_transcript_manifest_missing`; transcript count is 0. No transcript was evaluated by a real Buddy model this week, and no transcript data was used for training.
+- **FreeCodeCamp discovery:** the workflow produced metadata-only video/catalog and routing counts. It did not download videos, audio, or transcripts, and did not train model weights.
+- **Database routing:** main contains `buddy/datasets/database_router.py`, `config/buddy-database-source-registry.json`, `buddy/datasets/hub.py`, and `buddy/datasets/postgres_catalog.py`. The router is policy-only and never connects or executes SQL. The registry contains four source records and is `DOCUMENTED_NOT_CONNECTED`; none is eligible for routing. Supabase and Firebase/Firestore are listed as unverified candidates, not connected services.
+- **Dataset inventory:** two logical repository dataset records are present: the O*NET Occupation Synthesis Pack (versions 0.0.1 skeleton and 0.0.2 44-row sample) and the Computer Science 11.0701 career-pathway candidate. The O*NET 0.0.2 asset gate is `approved_for_private_use`, but its overall quality report is partial, the dataset evaluation scorecard and benchmark are not run, and there are no train/validation/holdout splits. The CS candidate also has a private-use gate outcome but its source asset is not present under the candidate package path and its file integrity is not verified. Counts: **2 discovered/cataloged logical records; 2 private-use gate outcomes (one with an asset-integrity warning); 0 fully quality-approved; 0 training-ready; 0 used in an actual training run.** Do not interpret private-use approval as training approval.
+- **Markdown coverage:** the main Git tree contains **1,676 `.md` files and 0 `.mdx` files**. This is inventory only; nine targeted repository Markdown documents were read during this pass, not all 1,676 contents. The current audit collector uses `git ls-files -- '*.md'` even though its workflow watches `.mdx`; PR #18210 proposes adding MDX and a regression test. Full semantic scan remains incomplete.
+- **PR traceability:** current all-state GitHub listing has 795 PR records across eight pages; full forensic review remains 0. See the companion PR ledger's 2026-11-24 update.
+
+### Gmail project signals
+
+The DreamCo/GitHub/Buddy search returned 50 relevant thread results; four relevant threads were expanded for PR/workflow context. Only project subjects, technical decisions, and run/PR evidence were used. No unrelated personal email, credentials, raw personal correspondence, or third-party personal data was used as training material.
+
+### Remaining corpus work
+
+Continue deterministic line-range processing for the two large Master Codex directive files; compare patch hashes and inspect both patches; inventory each ZIP safely before reading contents; inspect the 13 media assets where they correspond to source-backed requirements; retrieve full historical conversation sources and stable message locators beyond CHAT-01…CHAT-15; map every extracted requirement to current code, tests, PRs, commits, and runtime evidence. Corpus coverage remains partial and must not be marked complete.
