@@ -24,6 +24,10 @@ on:
       - "tests/test_freecodecamp_source_routes.py"
       - "buddy/learning/study_artifact_cleanup.py"
       - "tests/test_study_artifact_cleanup.py"
+      - "buddy/learning/permissioned_study_worker.py"
+      - "tests/test_permissioned_study_worker.py"
+      - "tools/build_daily_lesson_plan.py"
+      - "tests/test_daily_lesson_plan.py"
       - "tools/validate_original_lesson.py"
       - "tests/test_original_lesson.py"
       - "buddy/bootcamp/sources/original-lesson.schema.json"
@@ -87,6 +91,9 @@ jobs:
           python tools/build_freecodecamp_routes.py --check
           python -m unittest discover -s tests -p 'test_freecodecamp_source_routes.py' -v
           python -m unittest discover -s tests -p 'test_study_artifact_cleanup.py' -v
+          python -m unittest discover -s tests -p 'test_permissioned_study_worker.py' -v
+          python tools/build_daily_lesson_plan.py
+          python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
           python -m unittest discover -s tests -p 'test_original_lesson.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
       - name: Commit discovered catalog back to this pull request branch
