@@ -1,20 +1,20 @@
 {
   "schema": "dreamco.buddy.markdown_implementation_gap_audit.v1",
-  "generated_at": "2026-11-24T05:03:02Z",
+  "generated_at": "2026-11-24T06:13:27Z",
   "inventory_mode": "all_tracked_markdown_files",
-  "document_count": 1667,
-  "actionable_claim_lines": 11865,
-  "documents_with_count_claims": 110,
-  "numeric_inventory_claim_count": 383,
+  "document_count": 1673,
+  "actionable_claim_lines": 11922,
+  "documents_with_count_claims": 112,
+  "numeric_inventory_claim_count": 389,
   "gap_status_counts": {
-    "broken_path_references": 109,
+    "broken_path_references": 112,
     "implementation_and_test_paths_referenced_not_verified": 5,
-    "implementation_reference_missing": 1419,
+    "implementation_reference_missing": 1422,
     "reference_only": 85,
     "test_reference_missing": 49
   },
-  "documents_with_missing_paths": 109,
-  "documents_without_implementation_references": 1583,
+  "documents_with_missing_paths": 112,
+  "documents_without_implementation_references": 1588,
   "documents_without_test_references": 68,
   "documents": [
     {
@@ -22496,8 +22496,8 @@
     {
       "path": "database/migrations/README_DIVISION_DATASET_CATALOG.md",
       "title": "Per-division dataset catalog migration",
-      "sha256": "8304b595095366bed53f6e06df4cb758778cb28ff11cf0fb7e2355b6014cec37",
-      "actionable_claim_lines": 9,
+      "sha256": "7a5172e1343afb07c20bdeda6a1b87189bfbc0d99acbcfd71ea42b2bb176302e",
+      "actionable_claim_lines": 8,
       "numeric_inventory_claims": [],
       "count_claim_review_required": false,
       "referenced_paths": [
@@ -24933,6 +24933,27 @@
       "execution_verified": false
     },
     {
+      "path": "docs/CROSS_REPOSITORY_COMPLETION_AND_COMPETITION.md",
+      "title": "DreamCo three-runtime completion and competition",
+      "sha256": "e23d85e655f23d569c44b653605c24b8e2853a9fe671245d755a41edd78898d5",
+      "actionable_claim_lines": 21,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [
+        "github/workflows/dreamco-c-runtime.yml",
+        "ireanjordan24/dreamcobots/.github/workflows/three-runtime-safe-verification.yml"
+      ],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "broken_path_references",
+      "next_action": "Repair or explicitly supersede the missing repository path references.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/CUSTOMER_PRODUCTION_RUNBOOK.md",
       "title": "DreamCo Customer Production Runbook",
       "sha256": "95d51f265ccae4563f9b0a7cab5bec4980d0d974939e5fb90db59437b7519f58",
@@ -25046,6 +25067,26 @@
       "documentation_paths": [],
       "gap_status": "implementation_reference_missing",
       "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/DREAMCO_APPROVED_TRAINING_EXECUTION.md",
+      "title": "DreamCo approved division training execution",
+      "sha256": "d66ffcba0b9618b2021b534090c422c272cece85beb9416bb0bb23256789ed21",
+      "actionable_claim_lines": 4,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [
+        "artifacts/buddy-training-jobs/*.json"
+      ],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "broken_path_references",
+      "next_action": "Repair or explicitly supersede the missing repository path references.",
       "execution_verified": false
     },
     {
@@ -25341,6 +25382,49 @@
       "execution_verified": false
     },
     {
+      "path": "docs/DREAMCO_DIVISION_MODEL_LIFECYCLE.md",
+      "title": "DreamCo per-division model lifecycle",
+      "sha256": "a1dba0d7c236a5069ec9fe71c1590eeb69db033d813330709d3e26de61d7494b",
+      "actionable_claim_lines": 3,
+      "numeric_inventory_claims": [
+        {
+          "line": 7,
+          "match": "65 division",
+          "excerpt": "Each of the 65 division records has:",
+          "review_required": true
+        },
+        {
+          "line": 18,
+          "match": "65 divisions",
+          "excerpt": "The planner runs every five minutes and rotates a fair-share division lane. A six-hour full-fleet sweep preflights all 65 divisions. These are orchestration and evidence cycles, not a command to retrain every model every five minutes.",
+          "review_required": true
+        },
+        {
+          "line": 35,
+          "match": "37 task",
+          "excerpt": "The existing taxonomy map covers 37 task families and 10 capability packs across 65 MasterBots, with 55 proposed domain routes. Twenty MasterBot-to-domain mappings and ten standalone domain profiles remain pending owner review. They are deliberately not guessed or auto-assigned. ",
+          "review_required": true
+        },
+        {
+          "line": 35,
+          "match": "10 capability",
+          "excerpt": "The existing taxonomy map covers 37 task families and 10 capability packs across 65 MasterBots, with 55 proposed domain routes. Twenty MasterBot-to-domain mappings and ten standalone domain profiles remain pending owner review. They are deliberately not guessed or auto-assigned. ",
+          "review_required": true
+        }
+      ],
+      "count_claim_review_required": true,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/DREAMCO_DIVISION_SCHEMA_PROVISIONING.md",
       "title": "DreamCo Division Schema Provisioning",
       "sha256": "89830f8f2607f965686bf2f5499ebd2bc351db2bb40f7ef331d08b92307a2289",
@@ -25602,6 +25686,24 @@
       "execution_verified": false
     },
     {
+      "path": "docs/DREAMCO_NATIVE_TEACHER_MODEL_ADAPTERS.md",
+      "title": "Native teacher-model adapters",
+      "sha256": "bbcd9e0e3a1190a95e91c10404b218c2e536f1a5b635b9e680b0cc51f149f118",
+      "actionable_claim_lines": 3,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
       "path": "docs/DREAMCO_POSTGRES_DIVISION_LIFECYCLE_MIGRATION.md",
       "title": "DreamCo PostgreSQL division lifecycle migration",
       "sha256": "fe1af4ef268e1d208a3afb034567b756951107325ed698d3b2f3c4464cbc1644",
@@ -25624,6 +25726,24 @@
       "title": "DreamCo PostgreSQL Division Probe",
       "sha256": "ceecf5af64ec55ab2daff42409af37ecb113cb6a97f48c863caa69608cb01e9f",
       "actionable_claim_lines": 2,
+      "numeric_inventory_claims": [],
+      "count_claim_review_required": false,
+      "referenced_paths": [],
+      "missing_paths": [],
+      "implementation_paths": [],
+      "test_paths": [],
+      "workflow_paths": [],
+      "configuration_paths": [],
+      "documentation_paths": [],
+      "gap_status": "implementation_reference_missing",
+      "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/DREAMCO_PRIVATE_HOLDOUT_BENCHMARKS.md",
+      "title": "DreamCo private holdout benchmark lane",
+      "sha256": "a644e9e76d0dc93288e103e808486335ed79f4f93dbd73ac4b47e807ee6cb061",
+      "actionable_claim_lines": 7,
       "numeric_inventory_claims": [],
       "count_claim_review_required": false,
       "referenced_paths": [],
@@ -27058,6 +27178,52 @@
       "documentation_paths": [],
       "gap_status": "implementation_reference_missing",
       "next_action": "Find or build the implementation, or record why the requirement is intentionally documentation-only.",
+      "execution_verified": false
+    },
+    {
+      "path": "docs/THREE_RUNTIME_TRACEABILITY_LEDGER.md",
+      "title": "DreamCo three-runtime traceability ledger",
+      "sha256": "061128cdf50aabb9d1fe82cb93d08d136568a651809563a9ac7acbd1488cde03",
+      "actionable_claim_lines": 20,
+      "numeric_inventory_claims": [
+        {
+          "line": 19,
+          "match": "65 divisions",
+          "excerpt": "| #18168 | Buddy Bootcamp curriculum for all 65 divisions | Merged | Verify curriculum coverage and that each learning path is backed by approved data/resources, not just catalog entries |",
+          "review_required": true
+        },
+        {
+          "line": 95,
+          "match": "223 pages",
+          "excerpt": "| [#14849](https://github.com/DreamCo-Technologies/Dreamcobots/pull/14849) | fix(ci): regenerate pages feature audit for 223 pages (was 205) | Review pending |",
+          "review_required": true
+        }
+      ],
+      "count_claim_review_required": true,
+      "referenced_paths": [
+        "buddy/datasets/postgres_catalog.py",
+        "buddy/models/provider_runtime.py",
+        "config/buddy-model-serving-policy.json",
+        "tests/test_buddy_postgres_catalog.py"
+      ],
+      "missing_paths": [
+        "buddy/storage/object_store.py",
+        "github/workflows/dreamco-c-runtime.yml"
+      ],
+      "implementation_paths": [
+        "buddy/datasets/postgres_catalog.py",
+        "buddy/models/provider_runtime.py"
+      ],
+      "test_paths": [
+        "tests/test_buddy_postgres_catalog.py"
+      ],
+      "workflow_paths": [],
+      "configuration_paths": [
+        "config/buddy-model-serving-policy.json"
+      ],
+      "documentation_paths": [],
+      "gap_status": "broken_path_references",
+      "next_action": "Repair or explicitly supersede the missing repository path references.",
       "execution_verified": false
     },
     {
