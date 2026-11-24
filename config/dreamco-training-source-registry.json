@@ -179,5 +179,33 @@
     "preference_optimization_when_approved",
     "from_scratch_only_with_separate_data_and_compute_case"
   ],
-  "training_boundary": "A source catalog entry, Bootcamp lesson, synthetic candidate, or dataset card does not start training. Only the separately approved training worker may update candidate weights; promotion always requires independent holdout evaluation and human release approval."
+  "training_boundary": "A source catalog entry, Bootcamp lesson, synthetic candidate, or dataset card does not start training. Only the separately approved training worker may update candidate weights; promotion always requires independent holdout evaluation and human release approval.",
+  "adapter_coverage": {
+    "metadata_discovery_implemented": {
+      "huggingface": "search_huggingface and search_huggingface_models",
+      "openml": "search_openml",
+      "uci": "search_uci",
+      "github": "search_github",
+      "zenodo": "search_zenodo",
+      "data_gov": "search_datagov",
+      "kaggle": "search_kaggle; operator credentials required",
+      "openalex": "search_openalex",
+      "crossref": "search_crossref"
+    },
+    "catalogued_reference_only": [
+      "official technical documentation",
+      "arXiv metadata",
+      "Semantic Scholar metadata",
+      "PubMed metadata",
+      "Papers with Code",
+      "AWS Open Data Registry",
+      "Google Dataset Search",
+      "GitLab projects",
+      "official package registries"
+    ],
+    "external_file_download": "NOT_IMPLEMENTED_BY_METADATA_DISCOVERY_ADAPTERS",
+    "external_training_ingestion": "NOT_IMPLEMENTED; use staged local files after rights and privacy approval",
+    "default_network": "DISABLED",
+    "default_training": "DISABLED"
+  }
 }
