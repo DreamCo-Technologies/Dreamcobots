@@ -34,8 +34,8 @@ def create_benchmark_plan(masterbot_id:int,model_name:str,model_version:str,
                            weights_sha256:str,training_dataset_sha256:str,
                            holdout_dataset_sha256:str,holdout_rights_evidence:str,
                            evaluation_approval_id:str,base_model_id:str="",base_model_revision:str="",
-                           training_method:str="sft",base_model_license:str="",
-                           base_model_license_evidence:str="",
+                           training_method:str="sft",base_model_license:str="",base_model_license_url:str="",
+                           base_model_license_status:str="UNKNOWN",base_model_license_evidence:str="",
                            output_dir:str|Path="artifacts/division-benchmarks",
                            thresholds:dict[str,Any]|None=None)->dict[str,Any]:
     division=_division(masterbot_id)
@@ -52,8 +52,8 @@ def create_benchmark_plan(masterbot_id:int,model_name:str,model_version:str,
     if not base_model_id.strip() or not COMMIT.fullmatch(base_model_revision):
         raise DivisionBenchmarkError("pinned_base_model_id_and_immutable_revision_required")
     if training_method not in {"sft","lora"}: raise DivisionBenchmarkError("training_method_must_be_sft_or_lora")
-    if not base_model_license.strip() or not base_model_license_evidence.strip():
-        raise DivisionBenchmarkError("verified_base_model_license_and_evidence_required")
+    if not base_model_license.strip() or not base_model_license_url.startswith("https://") or base_model_license_status!="VERIFIED" or not base_model_license_evidence.strip():
+        raise DivisionBenchmarkError("verified_base_model_license_url_status_and_evidence_required")
     limits={**DEFAULT_THRESHOLDS,**(thresholds or {})}
     plan={"schema":"dreamco.division_benchmark_plan.v1","plan_id":"division-bench-"+uuid.uuid4().hex[:16],
       "created_at":datetime.now(timezone.utc).isoformat(),"masterbot_id":int(masterbot_id),
@@ -63,6 +63,7 @@ def create_benchmark_plan(masterbot_id:int,model_name:str,model_version:str,
       "holdout_rights_evidence":holdout_rights_evidence,"evaluation_approval_id":evaluation_approval_id,
       "base_model_id":base_model_id,"base_model_revision":base_model_revision,
       "training_method":training_method,"base_model_license":base_model_license,
+      "base_model_license_url":base_model_license_url,"base_model_license_status":base_model_license_status,
       "base_model_license_evidence":base_model_license_evidence,
       "required_suites":list(REQUIRED_SUITES),"required_independent_runs":int(limits["required_independent_runs"]),
       "required_seeds":[101,202,303],"thresholds":limits,
