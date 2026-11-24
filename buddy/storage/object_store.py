@@ -33,6 +33,10 @@ def _valid_bucket_name(value: str) -> bool:
     return True
 
 
+def _valid_prefix(value: str) -> bool:
+    return bool(PREFIX_RE.fullmatch(value)) and not value.startswith("/") and not value.endswith("/") and "//" not in value
+
+
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -175,7 +179,7 @@ def run_object_store_healthcheck(
 
     if not _valid_bucket_name(primary) or not _valid_bucket_name(backup) or primary == backup:
         raise ObjectStoreError("distinct_valid_primary_and_backup_buckets_are_required")
-    if not PREFIX_RE.fullmatch(key_prefix):
+    if not _valid_prefix(key_prefix):
         raise ObjectStoreError("object_store_healthcheck_prefix_is_invalid")
     if not isinstance(allow_canary, bool):
         raise ObjectStoreError("allow_canary_must_be_boolean")
