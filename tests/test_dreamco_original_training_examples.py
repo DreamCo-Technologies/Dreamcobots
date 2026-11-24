@@ -33,6 +33,9 @@ class DreamCoOriginalTrainingExamplesTests(unittest.TestCase):
         self.assertTrue(all(row["derivation"] == "original_synthesis_from_verified_DreamCo_work" for row in result["rows"]))
         self.assertEqual(set(result["split_manifest"]), {"train", "validation", "test", "all_rows_sha256"})
         self.assertTrue(all(len(row["example_id"]) == 64 for row in result["rows"]))
+        train_bytes = "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\\n"
+                              for row in result["rows"] if row["split"] == "train").encode("utf-8")
+        self.assertEqual(result["split_manifest"]["train"]["sha256"], hashlib.sha256(train_bytes).hexdigest())
 
     def test_unverified_or_unlicensed_records_are_rejected(self):
         bad = event(1)
