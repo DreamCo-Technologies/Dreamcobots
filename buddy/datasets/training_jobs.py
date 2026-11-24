@@ -17,7 +17,9 @@ def create_training_job(dataset_hub: DatasetHub, dataset_id: str, masterbot_id: 
                         model_license: str = "", model_license_url: str = "",
                         model_license_status: str = "UNKNOWN", model_license_evidence: str = "",
                         training_method: str = "sft", max_steps: int = 100,
-                        output_dir: str | Path = "artifacts/buddy-training-jobs") -> dict[str, Any]:
+                        output_dir: str | Path = "artifacts/buddy-training-jobs",
+                        tokenizer_revision: str | None = None,
+                        tested_commit_sha: str = "") -> dict[str, Any]:
     card = dataset_hub.get(dataset_id)
     if not card:
         raise DatasetPolicyError("Dataset not found")
@@ -41,6 +43,11 @@ def create_training_job(dataset_hub: DatasetHub, dataset_id: str, masterbot_id: 
         raise DatasetPolicyError("Dataset is not assigned to this MasterBot lane")
     if not model_id.strip() or not re.fullmatch(r"[0-9a-f]{40}", base_model_revision.strip()):
         raise DatasetPolicyError("Pin model ID and a 40-character immutable base-model commit SHA")
+    tokenizer_revision = tokenizer_revision or base_model_revision
+    if not re.fullmatch(r"[0-9a-f]{40}", tokenizer_revision.strip()):
+        raise DatasetPolicyError("Pin a 40-character immutable tokenizer revision")
+    if tested_commit_sha and not re.fullmatch(r"[0-9a-f]{40}", tested_commit_sha):
+        raise DatasetPolicyError("tested_commit_sha must be a full immutable Git commit SHA")
     if not model_license.strip() or not model_license_url.startswith("https://") or model_license_status != "VERIFIED" or not model_license_evidence.strip():
         raise DatasetPolicyError("The base model license, HTTPS terms URL, verified status, and evidence reference are required")
     if training_method not in {"sft", "lora"}:
@@ -58,7 +65,8 @@ def create_training_job(dataset_hub: DatasetHub, dataset_id: str, masterbot_id: 
             "division_slug": identity["division_slug"], "artifact_root": identity["artifacts"]["root"],
             "tokenizer_strategy": identity["tokenizer"]["strategy"],
             "database_schema": identity["data"]["database_schema"]},
-        "base_model_revision": base_model_revision, "model_license": model_license,
+        "base_model_revision": base_model_revision, "tokenizer_revision": tokenizer_revision,
+        "tested_commit_sha": tested_commit_sha, "model_license": model_license,
         "model_license_url": model_license_url, "model_license_status": model_license_status,
         "model_license_evidence": model_license_evidence, "compute_approval_id": compute_approval_id,
         "training_method": training_method, "training_config": {"max_steps": int(max_steps),
