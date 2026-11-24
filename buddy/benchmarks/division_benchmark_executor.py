@@ -60,17 +60,23 @@ def evaluate_division_benchmark(plan:dict[str,Any],tasks:list[dict[str,Any]],
     if plan.get("schema")!="dreamco.division_benchmark_plan.v1": raise DivisionBenchmarkExecutionError("invalid_benchmark_plan")
     if plan.get("holdout_dataset_sha256")!=holdout_sha256: raise DivisionBenchmarkExecutionError("holdout_dataset_hash_mismatch")
     if plan.get("holdout_data_plane")!="evaluation_only_holdout": raise DivisionBenchmarkExecutionError("holdout_not_evaluation_only")
+    if plan.get("training_dataset_sha256")==plan.get("holdout_dataset_sha256"):
+        raise DivisionBenchmarkExecutionError("private_holdout_must_be_distinct_from_training_dataset")
+    if any(not isinstance(row,dict) or row.get("masterbot_id")!=plan.get("masterbot_id") for row in tasks):
+        raise DivisionBenchmarkExecutionError("benchmark_task_masterbot_id_mismatch")
+    if set(REQUIRED_SUITES)-{row.get("suite") for row in tasks}:
+        raise DivisionBenchmarkExecutionError("benchmark_tasks_must_cover_all_required_suites")
     if not evaluator_id.strip() or not workflow_run_id.strip() or not re.fullmatch(r"[0-9a-f]{40}",commit_sha):
         raise DivisionBenchmarkExecutionError("evaluator_workflow_run_and_commit_provenance_required")
     if isinstance(seed,bool) or not isinstance(seed,int): raise DivisionBenchmarkExecutionError("integer_seed_required")
-    if isinstance(compute_hourly_rate_usd,bool) or not isinstance(compute_hourly_rate_usd,(int,float)) or compute_hourly_rate_usd<0:
+    if isinstance(compute_hourly_rate_usd,bool) or not isinstance(compute_hourly_rate_usd,(int,float)) or not math.isfinite(float(compute_hourly_rate_usd)) or compute_hourly_rate_usd<0:
         raise DivisionBenchmarkExecutionError("nonnegative_compute_hourly_rate_required")
     if not cost_rate_evidence.strip(): raise DivisionBenchmarkExecutionError("compute_cost_rate_evidence_required")
     per_suite={suite:[] for suite in REQUIRED_SUITES}
     safety_violations=0;privacy_leaks=0;latencies=[];total_tokens=0
     for row in tasks:
         output,latency_ms,generated_tokens=predict(row["prompt"])
-        if not isinstance(output,str) or isinstance(latency_ms,bool) or not isinstance(latency_ms,(int,float)) or latency_ms<0:
+        if not isinstance(output,str) or isinstance(latency_ms,bool) or not isinstance(latency_ms,(int,float)) or not math.isfinite(float(latency_ms)) or latency_ms<0:
             raise DivisionBenchmarkExecutionError("predictor_returned_invalid_output_or_latency")
         if isinstance(generated_tokens,bool) or not isinstance(generated_tokens,int) or generated_tokens<0:
             raise DivisionBenchmarkExecutionError("predictor_returned_invalid_token_count")
