@@ -5,7 +5,7 @@ on:
   schedule:
     - cron: "17 10 * * *"
   push:
-    branches: [main]
+    branches: [main, feat/division-resource-readiness-blueprints-20261124]
     paths:
       - "App_bots/**"
       - "server/seed-bots.ts"
@@ -16,6 +16,17 @@ on:
       - "shared/division-production-contract.ts"
       - "tools/generate_bot_fleet_catalog.ts"
       - ".github/workflows/fleet-catalog-refresh-proposal.yml"
+      - "tools/audit_actions_health.py"
+      - "tools/build_actions_prospectus.py"
+      - "config/actions-control-prospectus.json"
+      - "config/generated/actions-health-report.json"
+      - "website/data/actions-health-report.json"
+      - "reports/ACTIONS_HEALTH_REPORT.md"
+      - "config/generated/actions-prospectus.json"
+      - "website/data/actions-prospectus.json"
+      - "config/buddy/run-with-buddy.generated.json"
+      - "website/data/run-prospectus.json"
+      - "website/data/run-prospectus-bots.json"
 
 permissions:
   contents: write
@@ -51,6 +62,12 @@ jobs:
       - name: Verify generated fleet catalog is deterministic
         run: npm run buddy:fleet
 
+      - name: Refresh Actions health and prospectus evidence
+        run: |
+          python3 tools/audit_actions_health.py
+          python3 -m pip install PyYAML==6.0.2
+          python3 tools/build_actions_prospectus.py
+
       - name: Check generated diff formatting
         run: git diff --check
 
@@ -80,3 +97,11 @@ jobs:
             website/data/buddy-routing-index.js
             website/data/bot-fleet/**
             reports/BOT_FLEET_PROSPECTUS.md
+            config/generated/actions-health-report.json
+            website/data/actions-health-report.json
+            reports/ACTIONS_HEALTH_REPORT.md
+            config/generated/actions-prospectus.json
+            website/data/actions-prospectus.json
+            config/buddy/run-with-buddy.generated.json
+            website/data/run-prospectus.json
+            website/data/run-prospectus-bots.json

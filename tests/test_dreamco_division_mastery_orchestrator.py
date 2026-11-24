@@ -15,6 +15,10 @@ class DivisionMasteryOrchestratorTests(unittest.TestCase):
         self.assertEqual(plan["division_lanes"], 65)
         self.assertEqual(len({lane["division_id"] for lane in plan["lanes"]}), 65)
         self.assertTrue(all(lane["goal_ids"] for lane in plan["lanes"]))
+        self.assertEqual(plan["resource_bundle_count"],65)
+        self.assertEqual(plan["resource_readiness_status"],"requirements_defined_not_provisioned")
+        self.assertEqual(len({lane["resource_bundle_id"] for lane in plan["lanes"]}),65)
+        self.assertTrue(all(lane["logical_database_namespace"] and lane["dataset_discovery_lane_id"] for lane in plan["lanes"]))
 
     def test_every_lane_has_dependency_gated_tasks(self):
         plan = module.build_plan()

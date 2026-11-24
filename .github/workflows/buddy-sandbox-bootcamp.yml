@@ -20,6 +20,14 @@ on:
       - 'tests/test_dreamco_division_mastery_orchestrator.py'
       - 'tools/build_division_model_fleet.py'
       - 'tests/test_division_model_fleet.py'
+      - 'buddy/resources/**'
+      - 'config/generated/division-resource-readiness-map.json'
+      - 'config/review/masterbot-domain-crosswalk-owner-review.json'
+      - 'schemas/division-resource-readiness-map.schema.json'
+      - 'tools/build_division_resource_readiness_map.py'
+      - 'tests/test_division_resource_readiness.py'
+      - 'tests/test_division_resource_router.py'
+      - 'docs/architecture/DREAMCO_DIVISION_RESOURCE_READINESS.md'
   push:
     paths:
       - '.github/workflows/buddy-sandbox-bootcamp.yml'
@@ -46,6 +54,14 @@ on:
       - 'config/buddy-dataset-routing-policy.json'
       - 'config/huggingface-task-taxonomy.json'
       - 'config/generated/division-huggingface-taxonomy-map.json'
+      - 'config/generated/division-resource-readiness-map.json'
+      - 'schemas/division-resource-readiness-map.schema.json'
+      - 'tools/build_division_resource_readiness_map.py'
+      - 'tests/test_division_resource_readiness.py'
+      - 'tests/test_division_resource_router.py'
+      - 'buddy/resources/division_resource_router.py'
+      - 'config/review/masterbot-domain-crosswalk-owner-review.json'
+      - 'docs/architecture/DREAMCO_DIVISION_RESOURCE_READINESS.md'
       - 'schemas/division-huggingface-taxonomy-map.schema.json'
       - 'tools/build_division_huggingface_taxonomy_map.py'
       - 'tests/test_division_huggingface_taxonomy_map.py'
@@ -96,7 +112,7 @@ jobs:
         with:
           python-version: '3.13'
       - name: Compile sandbox, bootcamp, learning, and tiny GPT modules
-        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets buddy/gpt_baseline tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py buddy/datasets/discovery_fleet.py buddy/datasets/license_policy.py tools/run_buddy_dataset_discovery.py tools/create_buddy_model_benchmark.py tools/run_buddy_model_benchmark.py tools/run_buddy_gpt_baseline.py
+        run: python -m compileall -q buddy/sandbox buddy/bootcamp buddy/learning buddy/datasets buddy/resources buddy/gpt_baseline tools/build_buddy_dataset_routes.py tools/route_buddy_unknown_problem.py tools/run_buddy_training_job.py tools/create_buddy_training_job.py tools/build_dreamco_training_examples.py tools/register_buddy_dataset.py buddy/datasets/discovery_fleet.py buddy/datasets/license_policy.py tools/run_buddy_dataset_discovery.py tools/create_buddy_model_benchmark.py tools/run_buddy_model_benchmark.py tools/run_buddy_gpt_baseline.py
       - name: Run reproducible tiny GPT forward-pass baseline
         run: python tools/run_buddy_gpt_baseline.py --config config/buddy-tiny-gpt-baseline.json --output-dir artifacts/buddy-gpt-baseline --commit-sha "${{ github.event.pull_request.head.sha || github.sha }}"
       - name: Test tiny GPT baseline and safe dataset token scoping
@@ -121,6 +137,12 @@ jobs:
         run: |
           python tools/build_division_huggingface_taxonomy_map.py --check
           python -m unittest tests.test_division_huggingface_taxonomy_map
+      - name: Validate all 65 division resource bundles
+        run: |
+          python tools/build_division_resource_readiness_map.py --check
+          python -m unittest tests.test_division_resource_readiness
+          python -m unittest tests.test_division_resource_router
+          python -m unittest tests.test_buddy_dataset_discovery_fleet
       - name: Build DreamCo dataset discovery routes
         run: python tools/build_buddy_dataset_routes.py
       - name: Test 65 MasterBot dataset routing and training gates

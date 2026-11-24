@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DreamCo Division Resource Readiness Map",
+  "type": "object",
+  "required": [
+    "schema",
+    "status",
+    "source_of_truth",
+    "counts",
+    "source_blob_shas",
+    "resource_contract",
+    "machine_learning_practices",
+    "resource_templates",
+    "routes",
+    "owner_review",
+    "truth",
+    "domain_routes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.division_resource_readiness_map.v1"
+    },
+    "status": {
+      "const": "requirements_defined_not_provisioned"
+    },
+    "source_of_truth": {
+      "const": "config/masterbot-65-registry.json"
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "masterbots",
+        "domain_divisions",
+        "unresolved_masterbot_mappings",
+        "unassigned_domain_profiles",
+        "domain_resource_routes",
+        "standalone_domain_resource_bundles"
+      ],
+      "properties": {
+        "masterbots": {
+          "const": 65
+        },
+        "domain_divisions": {
+          "const": 55
+        },
+        "unresolved_masterbot_mappings": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65
+        },
+        "unassigned_domain_profiles": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 55
+        },
+        "domain_resource_routes": {
+          "const": 55
+        },
+        "standalone_domain_resource_bundles": {
+          "const": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "source_blob_shas": {
+      "type": "object",
+      "minProperties": 5,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{40}$"
+      }
+    },
+    "resource_contract": {
+      "type": "object",
+      "required": [
+        "id",
+        "truth_status",
+        "architecture",
+        "model_strategy",
+        "baseline_requirements",
+        "readiness_states",
+        "promotion_rule"
+      ]
+    },
+    "routes": {
+      "type": "array",
+      "minItems": 65,
+      "maxItems": 65,
+      "items": {
+        "type": "object",
+        "required": [
+          "masterbot_id",
+          "masterbot_name",
+          "resource_bundle_id",
+          "readiness_status",
+          "logical_database_namespace",
+          "dataset_discovery_lane_id",
+          "dataset_rights_status",
+          "dataset_training_approved",
+          "capability_pack_ids",
+          "domain_mapping"
+        ],
+        "properties": {
+          "masterbot_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65
+          },
+          "resource_bundle_id": {
+            "type": "string"
+          },
+          "readiness_status": {
+            "const": "requirements_defined_not_provisioned"
+          },
+          "logical_database_namespace": {
+            "type": "string"
+          },
+          "dataset_training_approved": {
+            "const": false
+          },
+          "dataset_rights_status": {
+            "const": "UNVERIFIED_DISCOVERY_ONLY"
+          },
+          "domain_mapping": {
+            "type": "object",
+            "required": [
+              "mapping_status",
+              "owner_review_required",
+              "unresolved"
+            ],
+            "properties": {
+              "owner_review_required": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "owner_review": {
+      "type": "object",
+      "required": [
+        "masterbot_domain_decisions",
+        "unassigned_domain_profiles"
+      ],
+      "properties": {
+        "masterbot_domain_decisions": {
+          "type": "array",
+          "maxItems": 65
+        },
+        "unassigned_domain_profiles": {
+          "type": "array",
+          "maxItems": 55
+        }
+      }
+    },
+    "truth": {
+      "type": "string"
+    },
+    "machine_learning_practices": {
+      "type": "array",
+      "minItems": 20
+    },
+    "resource_templates": {
+      "type": "object",
+      "required": [
+        "database",
+        "datasets",
+        "teacher_models",
+        "reverse_engineering",
+        "distillation",
+        "model_routing",
+        "compute",
+        "evaluation",
+        "operations"
+      ]
+    },
+    "domain_routes": {
+      "type": "array",
+      "minItems": 55,
+      "maxItems": 55,
+      "items": {
+        "type": "object",
+        "required": [
+          "domain_id",
+          "domain_name",
+          "route_type",
+          "resource_bundle_id",
+          "readiness_status",
+          "logical_database_namespace",
+          "dataset_discovery_lane_id",
+          "capability_pack_ids",
+          "dataset_training_approved",
+          "owner_review_required",
+          "mapping_status",
+          "dataset_search_queries"
+        ],
+        "properties": {
+          "route_type": {
+            "enum": [
+              "linked_to_masterbot_resource_bundle",
+              "standalone_domain_resource_bundle"
+            ]
+          },
+          "readiness_status": {
+            "const": "requirements_defined_not_provisioned"
+          },
+          "dataset_training_approved": {
+            "const": false
+          },
+          "owner_review_required": {
+            "const": true
+          },
+          "dataset_rights_status": {
+            "const": "UNVERIFIED_DISCOVERY_ONLY"
+          },
+          "dataset_search_queries": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

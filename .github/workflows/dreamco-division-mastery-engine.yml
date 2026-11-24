@@ -20,6 +20,14 @@ on:
       - "config/buddy-dataset-routing-policy.json"
       - "config/huggingface-task-taxonomy.json"
       - "config/generated/division-huggingface-taxonomy-map.json"
+      - "config/generated/division-resource-readiness-map.json"
+      - "schemas/division-resource-readiness-map.schema.json"
+      - "tools/build_division_resource_readiness_map.py"
+      - "tests/test_division_resource_readiness.py"
+      - "tests/test_division_resource_router.py"
+      - "buddy/resources/**"
+      - "config/review/masterbot-domain-crosswalk-owner-review.json"
+      - "docs/architecture/DREAMCO_DIVISION_RESOURCE_READINESS.md"
       - "schemas/division-huggingface-taxonomy-map.schema.json"
       - "tools/build_division_huggingface_taxonomy_map.py"
       - "tests/test_division_huggingface_taxonomy_map.py"
@@ -76,6 +84,27 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  resource-readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile Buddy resource routing helpers
+        run: python -m compileall -q buddy/resources buddy/datasets/discovery_fleet.py tools/build_division_resource_readiness_map.py
+      - name: Verify generated resource and owner-review manifests
+        run: python tools/build_division_resource_readiness_map.py --check
+      - name: Test 65 division resource bundles and model routing
+        run: python -m unittest tests.test_division_resource_readiness tests.test_division_resource_router tests.test_buddy_dataset_discovery_fleet tests.test_dreamco_division_mastery_orchestrator
+      - name: Validate schemas and whitespace
+        run: |
+          python -m json.tool schemas/division-resource-readiness-map.schema.json > /dev/null
+          git diff --check
+
   prepare:
     runs-on: ubuntu-latest
     outputs:
@@ -103,6 +132,8 @@ jobs:
           python tools/build_division_model_fleet.py
           python tools/build_division_huggingface_taxonomy_map.py --check
           python -m unittest tests.test_division_huggingface_taxonomy_map
+          python tools/build_division_resource_readiness_map.py --check
+          python -m unittest tests.test_division_resource_readiness tests.test_division_resource_router
           python tools/build_buddy_dataset_routes.py
       - name: Preserve canonical division and dataset queues
         uses: actions/upload-artifact@v4
@@ -111,6 +142,8 @@ jobs:
           path: |
             artifacts/division-mastery/division-mastery-queue.json
             artifacts/buddy-dataset-hub/dataset-routes.json
+            config/generated/division-resource-readiness-map.json
+            config/review/masterbot-domain-crosswalk-owner-review.json
           if-no-files-found: error
           retention-days: 90
 
