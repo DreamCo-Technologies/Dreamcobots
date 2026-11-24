@@ -177,6 +177,7 @@ def revenue_route(bot: dict[str, Any], registry: dict[str, Any], lane_index: dic
         "value_hypothesis": lane.get("value", "qualified opportunity or service outcome"),
         "monetization_options": monetization,
         "verified_revenue_event_types": sorted({REVENUE_EVENT_MAP.get(option, "verified_contractual_payment_event") for option in monetization}),
+        "approved_source_category": source_group,
         "approved_source_categories": approved_sources,
         "source_policy": "Use only authorized official feeds, licensed APIs, user-supplied data or explicitly approved connectors.",
         "workflow": [
