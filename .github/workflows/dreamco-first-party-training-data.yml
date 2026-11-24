@@ -8,6 +8,17 @@ on:
       - "schemas/dreamco-training-example.schema.json"
       - "tools/build_dreamco_bootcamp_seed_data.py"
       - "tests/test_dreamco_bootcamp_seed_data.py"
+      - "config/dreamco-first-party-training-factory.json"
+      - "config/dreamco-mastery-continuity-registry.json"
+      - "config/buddy-dataset-routing-policy.json"
+      - "config/buddy-training-data-provenance-policy.json"
+      - "config/buddy-bootcamp-program.json"
+      - "config/buddy-bootcamp-curriculum-v1.json"
+      - "config/generated/division-resource-readiness-map.json"
+      - "tools/build_dreamco_training_factory.py"
+      - "tests/test_dreamco_training_factory.py"
+      - "tools/build_dreamco_training_examples.py"
+      - "tests/test_dreamco_original_training_examples.py"
       - ".github/workflows/dreamco-first-party-training-data.yml"
   push:
     branches: [main, "codex/**"]
@@ -40,10 +51,26 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: "3.11"
-      - name: Compile builder and tests
-        run: python -m py_compile tools/build_dreamco_bootcamp_seed_data.py tests/test_dreamco_bootcamp_seed_data.py
+      - name: Compile builders and tests
+        run: python -m py_compile tools/build_dreamco_bootcamp_seed_data.py tools/build_dreamco_training_factory.py tools/build_dreamco_training_examples.py tests/test_dreamco_bootcamp_seed_data.py tests/test_dreamco_training_factory.py tests/test_dreamco_original_training_examples.py
       - name: Run governance and reproducibility tests
-        run: python -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
+        run: |
+          python -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
+          python -m unittest discover -s tests -p "test_dreamco_training_factory.py" -v
+          python -m unittest discover -s tests -p "test_dreamco_original_training_examples.py" -v
+      - name: Build 65-division factory plan
+        run: |
+          python tools/build_dreamco_training_factory.py --out "${RUNNER_TEMP}/dreamco-first-party-training-factory-plan.json"
+          python - "${RUNNER_TEMP}/dreamco-first-party-training-factory-plan.json" <<'PY'
+          import json, sys
+          plan = json.load(open(sys.argv[1], encoding="utf-8"))
+          assert plan["coverage"]["masterbots"] == 65
+          assert plan["coverage"]["task_families"] == 37
+          assert plan["coverage"]["division_task_assignments"] == 2405
+          assert plan["coverage"]["source_families"] == 9
+          assert plan["truth_boundary"]["weights_trained"] is False
+          print(json.dumps({"ok": True, "coverage": plan["coverage"], "training_started": False}))
+          PY
       - name: Materialize all 65 isolated common-foundation candidates
         shell: bash
         run: |
