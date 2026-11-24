@@ -56,8 +56,8 @@ class DivisionResourceReadinessTests(unittest.TestCase):
   result=self.payload();review=result["owner_review"]
   self.assertEqual(len(review["masterbot_domain_decisions"]),20)
   self.assertEqual(len(review["unassigned_domain_profiles"]),10)
-  self.assertTrue(all(x["candidate_domain_ids"]==[] and x["decision"]=="PENDING_OWNER_REVIEW" for x in review["masterbot_domain_decisions"]))
-  self.assertTrue(all(x["candidate_masterbot_ids"]==[] and x["decision"]=="PENDING_OWNER_REVIEW" for x in review["unassigned_domain_profiles"]))
+  self.assertTrue(all(x["candidate_domain_ids"]==[] and x["decision"]=="PENDING_OWNER_REVIEW" and x["resource_bundle_id"] for x in review["masterbot_domain_decisions"]))
+  self.assertTrue(all(x["candidate_masterbot_ids"]==[] and x["decision"]=="PENDING_OWNER_REVIEW" and x["standalone_resource_bundle_id"] for x in review["unassigned_domain_profiles"]))
  def test_no_training_or_provider_is_marked_live_by_resource_blueprint(self):
   result=self.payload()
   self.assertEqual(result["status"],"requirements_defined_not_provisioned")
