@@ -250,8 +250,10 @@ def load_route_metadata() -> dict[str, Any]:
     for portfolio in charters.get("portfolios", []):
         if portfolio.get("owner") not in domain_names:
             raise ValueError(f"Unknown canonical owner for {portfolio.get('portfolio')}")
+    division_names = domain_names | set(portfolio_by_name) | {"GrokTeammates"}
     return {
         "domain_names": domain_names,
+        "division_names": division_names,
         "masterbot_by_domain": masterbot_by_domain,
         "portfolio_by_name": portfolio_by_name,
         "specialist_by_slug": specialist_by_slug,
@@ -277,16 +279,21 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
     teammate = route_metadata["teammate_by_slug"].get(slug) if lane else None
     supplemental_portfolio = specialist.get("portfolio") if specialist else None
     if specialist:
-        division = specialist["owner"]
+        division = source_division if source_division in route_metadata["portfolio_by_name"] else specialist["portfolio"]
+        primary_domain_owner = specialist["owner"]
         flags.add("supplemental_specialist_portfolio")
     elif teammate:
-        division = teammate["canonical_owner_division"]
+        division = source_division
+        primary_domain_owner = teammate["canonical_owner_division"]
         flags.add("shared_workforce_lane")
     else:
         division = source_division
+        primary_domain_owner = source_division if source_division in route_metadata["domain_names"] else "DreamDiscovery"
     if division not in known_divisions:
         flags.add("division_unknown")
         division = "DreamDiscovery"
+    if primary_domain_owner not in route_metadata["domain_names"]:
+        primary_domain_owner = "DreamDiscovery"
     seed_division = entry.get("seed_division")
     if seed_division and seed_division != source_division:
         flags.add("division_conflict_seed")
@@ -336,8 +343,9 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
         "name": base.get("name") or slug,
         "division": division or "DreamDiscovery",
         "source_division": source_division,
-        "primary_masterbot_id": route_metadata["masterbot_by_domain"].get(re.sub(r"[^a-z0-9]", "", division.casefold()), 62),
-        "division_route_status": "proposed_domain_masterbot_match_requires_owner_review" if division in known_divisions else "discovery_review_required",
+        "primary_domain_owner": primary_domain_owner,
+        "primary_masterbot_id": route_metadata["masterbot_by_domain"].get(re.sub(r"[^a-z0-9]", "", primary_domain_owner.casefold()), 62),
+        "division_route_status": "proposed_domain_masterbot_match_requires_owner_review" if primary_domain_owner in route_metadata["domain_names"] else "discovery_review_required",
         "owner_approval_required": True,
         "shared_platform_masterbot_ids": list(range(46, 66)),
         "tier": (base.get("tier") or "").lower(),
@@ -418,7 +426,7 @@ def build() -> dict[str, Any]:
         if path.exists():
             digest.update(path.relative_to(ROOT).as_posix().encode())
             digest.update(path.read_bytes())
-    known = set(route_metadata["domain_names"])
+    known = set(route_metadata["division_names"])
     manifests = [build_manifest(slug, entries[slug], api, known, route_metadata) for slug in sorted(entries)]
     mark_duplicates(manifests, entries)
     engines: dict[str, int] = {}
