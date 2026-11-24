@@ -17,7 +17,7 @@ Create DreamCo-originated teaching and task examples that can later be reviewed 
 
 `config/dreamco-training-source-registry.json` defines nine source families beyond any one catalog: DreamCo original work, official technical documentation, public dataset catalogs, research metadata, code/software, government/standards data, user contributions, teacher outputs, and evaluation-only assets.
 
-Metadata discovery is enabled only through explicitly configured adapters. Download and training remain disabled by default. Exact license, file-level rights, privacy, consent, provenance, and intended use must be reviewed before ingestion.
+Metadata discovery adapters currently cover Hugging Face, OpenML, UCI, GitHub, Zenodo, Data.gov, Kaggle (operator credentials required), OpenAlex and Crossref. arXiv, Semantic Scholar, PubMed, Papers with Code, AWS Open Data Registry, Google Dataset Search, GitLab and package registries are catalogued reference targets, not claimed as connected adapters. The active adapters return metadata only; they do not download dataset files. Download and training remain disabled by default. Exact license, file-level rights, privacy, consent, provenance, and intended use must be reviewed before ingestion.
 
 ## Sharing model
 
