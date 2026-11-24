@@ -1,0 +1,183 @@
+{
+  "schema": "dreamco.training_source_registry.v1",
+  "version": "1.0.0",
+  "purpose": "Discover, evaluate, govern, and route training resources for Buddy Teacher and the 65 division lanes. Discovery is not permission to ingest or train.",
+  "source_families": [
+    {
+      "id": "dreamco_original",
+      "priority": 1,
+      "examples": [
+        "original lessons and exercises",
+        "verified commits and tests",
+        "approved pull-request and workflow evidence",
+        "approved synthetic fixtures"
+      ],
+      "default_plane": "dreamco_owned_training",
+      "default_training_status": "REVIEW_REQUIRED",
+      "rights_rule": "Verify authorship, assignment, contributor rights, and human approval; no raw private chats or secrets."
+    },
+    {
+      "id": "official_technical_docs",
+      "priority": 2,
+      "examples": [
+        "PyTorch",
+        "Hugging Face Transformers and Datasets",
+        "PEFT",
+        "DeepSpeed",
+        "Accelerate",
+        "JAX",
+        "Ray",
+        "vLLM",
+        "llama.cpp",
+        "MLflow",
+        "Weights & Biases",
+        "OpenTelemetry",
+        "PostgreSQL",
+        "AWS",
+        "Google Cloud",
+        "Azure"
+      ],
+      "default_plane": "public_reference_and_retrieval",
+      "default_training_status": "NOT_AUTHORIZED",
+      "rights_rule": "Prefer metadata, links, and reference-only use; check exact terms before copying, transforming, or training."
+    },
+    {
+      "id": "public_dataset_catalogs",
+      "priority": 3,
+      "examples": [
+        "Hugging Face Hub",
+        "Kaggle",
+        "OpenML",
+        "UCI Machine Learning Repository",
+        "Zenodo",
+        "Data.gov",
+        "AWS Open Data Registry",
+        "Google Dataset Search",
+        "academic supplementary datasets"
+      ],
+      "default_plane": "public_reference_and_retrieval",
+      "default_training_status": "REVIEW_REQUIRED",
+      "rights_rule": "Review dataset and file-level terms, content rights, privacy, provenance, quality, and intended commercial use."
+    },
+    {
+      "id": "research_metadata",
+      "priority": 4,
+      "examples": [
+        "Crossref",
+        "OpenAlex",
+        "Semantic Scholar",
+        "arXiv metadata",
+        "PubMed metadata",
+        "Papers with Code"
+      ],
+      "default_plane": "public_reference_and_retrieval",
+      "default_training_status": "REFERENCE_ONLY",
+      "rights_rule": "Metadata discovery does not grant rights to papers, figures, code, or supplementary materials."
+    },
+    {
+      "id": "code_and_software",
+      "priority": 5,
+      "examples": [
+        "GitHub repositories and releases",
+        "GitLab projects",
+        "official package registries",
+        "owned source repositories"
+      ],
+      "default_plane": "public_reference_and_retrieval",
+      "default_training_status": "REVIEW_REQUIRED",
+      "rights_rule": "Check repository and file-level licenses, notices, dependencies, generated assets, and security before any training use."
+    },
+    {
+      "id": "government_and_standards",
+      "priority": 6,
+      "examples": [
+        "official government open-data portals",
+        "standards bodies",
+        "regulatory and statistical APIs"
+      ],
+      "default_plane": "public_reference_and_retrieval",
+      "default_training_status": "REVIEW_REQUIRED",
+      "rights_rule": "Check jurisdiction, public-sector reuse terms, privacy, attribution, and third-party embedded content."
+    },
+    {
+      "id": "user_contributed",
+      "priority": 7,
+      "examples": [
+        "user-uploaded datasets",
+        "customer-provided documents",
+        "organization knowledge bases"
+      ],
+      "default_plane": "user_contributed_opt_in_training",
+      "default_training_status": "BLOCKED_UNTIL_SPECIFIC_OPT_IN",
+      "rights_rule": "Purpose-specific consent, tenant isolation, revocation, retention, and deletion propagation required."
+    },
+    {
+      "id": "teacher_outputs",
+      "priority": 8,
+      "examples": [
+        "approved provider completions",
+        "local teacher-model generations",
+        "human-reviewed synthetic examples"
+      ],
+      "default_plane": "dreamco_owned_training",
+      "default_training_status": "BLOCKED_UNLESS_OUTPUT_RIGHTS_VERIFIED",
+      "rights_rule": "Record teacher/version, account terms, output-use rights, prompt recipe, filtering, human review, and contamination checks."
+    },
+    {
+      "id": "evaluation_only",
+      "priority": 9,
+      "examples": [
+        "private holdouts",
+        "red-team suites",
+        "blind expert assessments",
+        "benchmark answer keys"
+      ],
+      "default_plane": "evaluation_only_holdout",
+      "default_training_status": "NEVER_TRAIN",
+      "rights_rule": "Isolate access and storage; never route into training, retrieval augmentation for training, or distillation."
+    }
+  ],
+  "discovery_adapters": {
+    "metadata_only_by_default": true,
+    "network_in_default_ci": false,
+    "external_download_default": false,
+    "credentials_required_for_private_sources": true,
+    "rate_limits_and_terms_must_be_respected": true
+  },
+  "quality_gates": [
+    "schema validation",
+    "source and version provenance",
+    "license and file-level rights",
+    "privacy and consent",
+    "PII and secret scanning",
+    "deduplication",
+    "contamination and benchmark leakage",
+    "label and answer quality",
+    "coverage and imbalance",
+    "freshness",
+    "split isolation",
+    "content hashing",
+    "human review"
+  ],
+  "division_policy": {
+    "canonical_masterbots": 65,
+    "one_primary_owner_per_division_dataset": true,
+    "shared_foundation_assets_by_immutable_reference": true,
+    "private_division_data_shared": false,
+    "private_holdouts_shared": false,
+    "weights_and_checkpoints_shared": false,
+    "collaboration_requires_explicit_owner_grant": true,
+    "materialize_per_division_namespace": true
+  },
+  "training_methods": [
+    "retrieval_before_finetuning",
+    "supervised_finetuning",
+    "LoRA",
+    "QLoRA",
+    "continued_pretraining_when_justified",
+    "teacher_student_distillation_when_permitted",
+    "preference_optimization_when_approved",
+    "from_scratch_only_with_separate_data_and_compute_case"
+  ],
+  "training_boundary": "A source catalog entry, Bootcamp lesson, synthetic candidate, or dataset card does not start training. Only the separately approved training worker may update candidate weights; promotion always requires independent holdout evaluation and human release approval."
+}
