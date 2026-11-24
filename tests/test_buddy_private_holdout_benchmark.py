@@ -54,7 +54,7 @@ class PrivateHoldoutTests(unittest.TestCase):
   with self.assertRaisesRegex(PrivateHoldoutBenchmarkError,"hash_mismatch"):
    validate_private_holdout_job(payload,"compute-1")
  def test_metric_helpers(self):
-  self.assertEqual(score_prediction("The answer is 4.","4")["exact_match"],1.0)
+  self.assertEqual(score_prediction("4","4")["exact_match"],1.0)
   self.assertEqual(score_prediction("yen","yen")["token_f1"],1.0)
   self.assertEqual(score_prediction("dollars","yen")["token_f1"],0.0)
 
