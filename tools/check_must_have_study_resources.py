@@ -76,6 +76,7 @@ def validate_catalogs(root: Path = ROOT) -> dict:
                     "transcript_or_audiobook_download_authorized",
                     "invented_language_or_script_reproduction_authorized",
                     "character_setting_or_story_derivative_generation_authorized",
+                    "materials_referencing_characters_stories_places_events_or_other_elements_authorized",
                     "model_weight_training_authorized",
                 ):
                     if rights.get(flag) is not False:
