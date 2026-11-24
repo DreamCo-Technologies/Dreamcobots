@@ -145,7 +145,7 @@ class BootcampSeedDataTests(unittest.TestCase):
             rows, manifest = build_candidate(examples(), 4, registry())
             candidate = Path(temp) / "candidate.jsonl"
             candidate.write_text(
-                "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\\n" for row in rows),
+                "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\n" for row in rows),
                 encoding="utf-8",
             )
             card = build_dataset_card(manifest, str(candidate))
