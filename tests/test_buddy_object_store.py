@@ -154,6 +154,18 @@ class ObjectStoreHealthTests(unittest.TestCase):
             )
         self.assertEqual(client.objects, {})
 
+    def test_prefix_rejects_ambiguous_slash_forms(self):
+        for invalid in ("/absolute", "prefix/", "prefix//nested"):
+            with self.subTest(prefix=invalid):
+                with self.assertRaisesRegex(ObjectStoreError, "prefix_is_invalid"):
+                    run_object_store_healthcheck(
+                        client=FakeS3(),
+                        primary_bucket="dreamco-primary",
+                        backup_bucket="dreamco-backup",
+                        prefix=invalid,
+                        allow_canary=True,
+                    )
+
     def test_division_healthcheck_uses_isolated_prefix(self):
         evidence = run_division_object_store_healthcheck(
             7,
