@@ -1,5 +1,6 @@
 """Runtime adapter exposing every freeCodeCamp catalog item to Buddy's study scheduler."""
 from __future__ import annotations
+import hashlib
 import json
 from pathlib import Path
 from buddy.learning.permissioned_study_worker import StudyAuthorization, run_study_attempt
@@ -8,6 +9,14 @@ from buddy.learning.study_resource_scheduler import Capability, Resource, choose
 
 ROOT = Path(__file__).resolve().parents[2]
 ROUTES = ROOT / "config/generated/freecodecamp-source-routes.json"
+
+def stable_resource_id(video_id: str) -> int:
+    """Return a deterministic scheduler ID that survives catalog reordering."""
+    if not isinstance(video_id, str) or not video_id.strip():
+        raise ValueError("video_id must be a non-empty string")
+    value = int.from_bytes(hashlib.sha256(video_id.encode("utf-8")).digest()[:4], "big") & 0x7FFFFFFF
+    return value or 1
+
 
 def load_routes(path: Path = ROUTES) -> dict:
     payload = json.loads(path.read_text(encoding="utf-8"))
@@ -23,10 +32,17 @@ def resources_for_division(division_id: int, path: Path = ROUTES) -> list[Resour
     if division is None or division["available_video_count"] != payload["catalog_video_count"]:
         raise ValueError("division route is incomplete")
     resources = []
-    for index, video in enumerate(payload["videos"], 1):
+    seen_ids: dict[int, str] = {}
+    for video in payload["videos"]:
+        video_id = video["video_id"]
+        resource_id = stable_resource_id(video_id)
+        previous = seen_ids.get(resource_id)
+        if previous is not None and previous != video_id:
+            raise ValueError(f"stable resource ID collision between {previous} and {video_id}")
+        seen_ids[resource_id] = video_id
         categories = tuple(video["categories"])
         methods = ("open_official_source", "write_original_notes", "sandbox_exercise", "target_benchmark", "holdout", "regression")
-        resource = Resource(id=index, name=video["title"], category=" ".join(categories), url=video["url"], methods=methods)
+        resource = Resource(id=resource_id, name=video["title"], category=" ".join(categories), url=video["url"], methods=methods)
         resources.append(resource)
     # Keep stable resource IDs and return the full shared catalog. The caller's
     # capability gaps and recently studied IDs drive the actual selection.
