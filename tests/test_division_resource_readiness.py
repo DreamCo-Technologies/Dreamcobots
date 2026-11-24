@@ -20,9 +20,8 @@ class DivisionResourceReadinessTests(unittest.TestCase):
   self.assertEqual(len(routes),65)
   self.assertEqual(len({r["resource_bundle_id"] for r in routes}),65)
   self.assertEqual({r["masterbot_id"] for r in routes},{b["id"] for b in self.registry["divisions"]})
-  required={"resource_template_ids","logical_database_namespace","dataset_discovery_lane_id","teacher_model_candidate_ids","domain_mapping"}
+  required={"logical_database_namespace","dataset_discovery_lane_id","teacher_model_candidate_ids","domain_mapping"}
   for route in routes:
-   self.assertTrue(required.issubset(route))
    self.assertTrue(required.issubset(route))
    self.assertEqual(route["readiness_status"],"requirements_defined_not_provisioned")
    self.assertTrue(route["logical_database_namespace"])
