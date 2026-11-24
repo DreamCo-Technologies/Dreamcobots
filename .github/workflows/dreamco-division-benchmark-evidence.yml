@@ -3,7 +3,9 @@ on:
   pull_request:
     paths:
       - "buddy/benchmarks/division_benchmark_contract.py"
+      - "buddy/benchmarks/division_benchmark_executor.py"
       - "tests/test_division_benchmark_contract.py"
+      - "tests/test_division_benchmark_executor.py"
       - "docs/DREAMCO_DIVISION_BENCHMARK_EVIDENCE_GATES.md"
       - ".github/workflows/dreamco-division-benchmark-evidence.yml"
   push:
@@ -23,4 +25,4 @@ jobs:
         with:
           python-version: "3.11"
       - name: Validate benchmark evidence gates
-        run: python -m unittest discover -s tests -p 'test_division_benchmark_contract.py' -v
+        run: python -m unittest discover -s tests -p 'test_division_benchmark_*.py' -v
