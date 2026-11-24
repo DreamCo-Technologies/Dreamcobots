@@ -64,7 +64,7 @@ def build_routes(catalog: dict[str, Any], registry: dict[str, Any]) -> dict[str,
     videos = catalog.get("videos")
     categories = catalog.get("categories")
     if not isinstance(divisions, list) or len(divisions) != 65:
-        raise ValueError("canonical 65-division registry required")
+        raise ValueError("canonical registry with exactly 65 divisions required")
     if not isinstance(videos, list) or not videos:
         raise ValueError("non-empty source catalog required")
     known = {row["id"] for row in categories}
