@@ -70,6 +70,7 @@ def build_candidate(
     if len(examples) < 3:
         raise ValueError("at least three seed examples are required")
     ids: set[str] = set()
+    content_fingerprints: set[str] = set()
     modules: set[str] = set()
     counts = {"train": 0, "validation": 0, "test": 0}
     rows = []
@@ -102,6 +103,10 @@ def build_candidate(
         inspected = json.dumps(example, ensure_ascii=False)
         if any(pattern.search(inspected) for pattern in PII_PATTERNS.values()) or any(pattern.search(inspected) for pattern in SECRET_PATTERNS):
             raise ValueError(f"{example_id}: PII or secret pattern detected")
+        fingerprint = hashlib.sha256((prompt.casefold() + "\\0" + response.casefold()).encode("utf-8")).hexdigest()
+        if fingerprint in content_fingerprints:
+            raise ValueError(f"{example_id}: duplicate prompt/response content detected")
+        content_fingerprints.add(fingerprint)
         row = {
             "masterbot_id": masterbot_id,
             "split": split,
