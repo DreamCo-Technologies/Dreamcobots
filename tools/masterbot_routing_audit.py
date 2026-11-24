@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Conservative audit of bot inventory against the 65-MasterBot registry."""
+"""Conservative audit of bot inventory against the 75-MasterBot registry."""
 from __future__ import annotations
 import json,re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-REGISTRY=ROOT/"config/masterbot-65-registry.json"
+REGISTRY=ROOT/"config/masterbot-75-registry.json"
 ROOTS=[ROOT/"App_bots",ROOT/"bots",ROOT/"original-bots",ROOT/"website/data/bot-fleet"]
 def load(): return json.loads(REGISTRY.read_text(encoding="utf-8"))
 def explicit(path):
