@@ -74,6 +74,15 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
             self.assertEqual(plan["completion_status"], "queued_not_studied")
             self.assertFalse(plan["model_training_allowed"])
 
+    def test_scheduler_accepts_one_shot_gap_iterables(self):
+        payload = build_routes(self.catalog, self.registry)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "routes.json"
+            path.write_text(json.dumps(payload))
+            resource = select_next_for_division(1, iter([Capability(name="cyber", category="cybersecurity_and_privacy")]), path=path)
+            self.assertIsNotNone(resource)
+            self.assertEqual(resource.name, "Cybersecurity")
+
     def test_runtime_scheduler_selects_candidate_and_validates_division(self):
         payload = build_routes(self.catalog, self.registry)
         with tempfile.TemporaryDirectory() as tmp:
