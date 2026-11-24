@@ -452,7 +452,7 @@ def build() -> dict[str, Any]:
         duplicate_groups[(norm(owner), signature)].append(slug)
 
         revenue_input = {**bot, "division": source_division, "description": (teammate or {}).get("description", source.get("description", ""))}
-        revenue = revenue_route(revenue_input, registry, lanes, sources, source_portfolio)
+        revenue = None if is_teammate else revenue_route(revenue_input, registry, lanes, sources, source_portfolio)
         if revenue:
             revenue_lanes_count[revenue["revenue_lane"]] += 1
         capabilities = specialist[2] if specialist else [str(x) for x in source.get("capabilities", [])]
