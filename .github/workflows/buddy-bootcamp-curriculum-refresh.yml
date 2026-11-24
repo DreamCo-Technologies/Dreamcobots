@@ -1,0 +1,94 @@
+name: Buddy Bootcamp Scheduled Curriculum Refresh
+on:
+  schedule:
+    - cron: "17 9 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-bootcamp-scheduled-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh-and-propose:
+    if: github.repository == 'DreamCo-Technologies/Dreamcobots'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned metadata enumerator
+        run: python -m pip install --disable-pip-version-check "yt-dlp==2026.11.23"
+      - name: Validate previously committed catalog before refresh
+        run: |
+          if [ -f buddy/bootcamp/sources/freecodecamp/catalog.json ]; then
+            python tools/sync_freecodecamp_catalog.py --check
+          else
+            echo "No committed catalog yet; first discovery will create it."
+          fi
+      - name: Discover complete freeCodeCamp metadata inventory
+        run: |
+          python tools/sync_freecodecamp_catalog.py
+          python tools/sync_freecodecamp_catalog.py --check
+      - name: Build and validate division queues and routes
+        run: |
+          python tools/build_freecodecamp_division_queues.py --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
+          python tools/build_freecodecamp_division_queues.py --check --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
+          python tools/build_freecodecamp_routes.py --out "$RUNNER_TEMP/freecodecamp-source-routes.json"
+          python tools/build_freecodecamp_routes.py --check --out "$RUNNER_TEMP/freecodecamp-source-routes.json"
+          python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_division_queues.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_source_routes.py' -v
+      - name: Build five-lesson-per-division target and transcript readiness report
+        run: |
+          python tools/build_daily_lesson_plan.py --lessons-per-division 5
+          python tools/build_buddy_bootcamp_curriculum.py
+          python tools/build_buddy_bootcamp_curriculum.py --check
+          python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
+          python -m unittest discover -s tests -p 'test_permissioned_study_worker.py' -v
+          python -m unittest discover -s tests -p 'test_study_artifact_cleanup.py' -v
+          python -m unittest discover -s tests -p 'test_original_lesson.py' -v
+      - name: Upload division queue as review artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: freecodecamp-division-learning-queues
+          path: ${{ runner.temp }}/freecodecamp-division-learning-queues.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Upload source routes as review artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: freecodecamp-source-routes
+          path: ${{ runner.temp }}/freecodecamp-source-routes.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Propose generated metadata and curriculum through a pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: automation/buddy-bootcamp-curriculum
+          delete-branch: false
+          add-paths: |
+            buddy/bootcamp/sources/freecodecamp/catalog.json
+            config/generated/daily-lesson-production-plan.json
+            config/generated/buddy-bootcamp-curriculum.json
+          commit-message: "chore: refresh Buddy Bootcamp learning metadata"
+          title: "chore: refresh Buddy Bootcamp learning metadata"
+          body: |
+            Automated, metadata-only curriculum refresh from the public freeCodeCamp channel.
+            The catalog sync verifies the upstream expected count before marking inventory complete.
+            No video/audio/transcript payloads are downloaded. No model training or weight updates occur.
+            Weekly transcript readiness is reported separately; a blocked report is not evidence of evaluation.
