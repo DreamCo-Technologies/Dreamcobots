@@ -1,0 +1,106 @@
+{
+  "schema": "dreamco.first_party_model_factory.v1",
+  "status": "blueprint_not_trained",
+  "strategy": {
+    "primary_product": "DreamCo-owned first-party models",
+    "third_party_role": [
+      "temporary_wrapper",
+      "teacher_or_critic_when_terms_allow",
+      "benchmark_baseline",
+      "optional_customer_selected_fallback"
+    ],
+    "external_wrapper_default": false,
+    "first_party_route_preference": true
+  },
+  "ownership_labels": [
+    "dreamco_trained",
+    "dreamco_fine_tuned",
+    "dreamco_distilled",
+    "dreamco_hosted_wrapper",
+    "dreamco_retrieval_package"
+  ],
+  "division_model_families": {
+    "source_of_truth": "canonical_division_registry",
+    "one_record_per_active_division": true,
+    "shared_foundation_allowed": true,
+    "specialist_recipe_and_evaluation_per_division": true,
+    "states": [
+      "not_started",
+      "rights_review",
+      "corpus_ready",
+      "recipe_ready",
+      "training",
+      "evaluating",
+      "approved",
+      "deployed",
+      "blocked_with_reason"
+    ]
+  },
+  "training": {
+    "priority": "rights_cleared_compact_first_party_models",
+    "methods": [
+      "pretraining_when_justified",
+      "continued_pretraining_when_permitted",
+      "supervised_fine_tuning",
+      "lora",
+      "qlora",
+      "distillation_when_permitted",
+      "retrieval_augmented_generation"
+    ],
+    "reproducible_runs": true,
+    "immutable_dataset_manifests": true,
+    "stable_release_rollback": true,
+    "spend_caps": true,
+    "tenant_isolation": true
+  },
+  "teacher": {
+    "name": "Buddy Teacher",
+    "first_party_model_required": true,
+    "bootcamp": "Buddy Bootcamp",
+    "curriculum_levels": 12,
+    "capabilities": [
+      "adaptive_teaching",
+      "source_grounded_explanations",
+      "code_review",
+      "training_debugging",
+      "hands_on_labs",
+      "assessment_and_rubrics",
+      "model_evaluation",
+      "data_rights_and_licensing",
+      "deployment_and_mlops"
+    ],
+    "promotion_gates": [
+      "technical_correctness",
+      "pedagogical_quality",
+      "source_attribution",
+      "code_validity",
+      "student_learning_outcomes",
+      "safety",
+      "regression"
+    ]
+  },
+  "marketplace": {
+    "first_party_models_priority": true,
+    "products": [
+      "hosted_api",
+      "private_endpoint",
+      "team_enterprise",
+      "downloadable_weights_when_permitted",
+      "division_specialist_models",
+      "customer_finetuning",
+      "managed_retraining"
+    ],
+    "external_wrappers_may_remain_optional": true,
+    "ownership_and_license_disclosure_required": true
+  },
+  "gates": [
+    "rights_cleared",
+    "reproducible_artifact",
+    "benchmark_pass",
+    "privacy_and_safety_pass",
+    "security_pass",
+    "license_approved",
+    "human_release_approval"
+  ],
+  "truth": "Blueprint only. No model checkpoint or teacher quality claim until verified training artifacts and evaluations exist."
+}
