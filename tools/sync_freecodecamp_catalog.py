@@ -171,6 +171,22 @@ def build_catalog(videos: list[dict[str, Any]], inventory: dict[str, Any] | None
         "truth_boundary": "A catalog entry means discovered and categorized, not watched, understood, trained on, or mastered."
     }
 
+def render_catalog(payload: dict[str, Any]) -> str:
+    """Render one compact JSON line per video to keep generated catalog diffs reviewable."""
+    blocks = []
+    for key, value in payload.items():
+        if key == "videos":
+            records = ",\n".join(
+                "    " + json.dumps(row, separators=(",", ":"), ensure_ascii=False)
+                for row in value
+            )
+            blocks.append('  "videos": [\n' + records + "\n  ]")
+        else:
+            rendered = json.dumps({key: value}, indent=2, ensure_ascii=False)
+            blocks.append("\n".join(rendered.splitlines()[1:-1]))
+    return "{\n" + ",\n".join(blocks) + "\n}\n"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="validate the current catalog without changing it")
@@ -224,7 +240,7 @@ def main() -> int:
     videos, inventory = discover()
     catalog = build_catalog(videos, inventory)
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(catalog, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    args.out.write_text(render_catalog(catalog), encoding="utf-8")
     print(json.dumps({
         "written": str(args.out.relative_to(ROOT)),
         "inventory_status": catalog["inventory_status"],
