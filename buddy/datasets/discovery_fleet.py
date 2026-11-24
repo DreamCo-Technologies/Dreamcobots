@@ -85,8 +85,8 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
                     "routing_status":"DISCOVERY_ONLY_NOT_TRAINING_APPROVED"},
                 "division_resources":{"resource_bundle_id":resource_profile["resource_bundle_id"],
                     "readiness_status":resource_profile["readiness_status"],
-                    "database_namespace":resource_profile["database"]["logical_namespace"],
-                    "teacher_model_candidate_ids":[x["model_id"] for x in resource_profile["teacher_models"]["candidate_models"]],
+                    "database_namespace":resource_profile["logical_database_namespace"],
+                    "teacher_model_candidate_ids":resource_profile["teacher_model_candidate_ids"],
                     "model_routing_status":resource_profile["model_routing"]["status"],
                     "resource_truth":"requirements_defined_not_provisioned"}}
             if candidate.get("source")=="huggingface":
