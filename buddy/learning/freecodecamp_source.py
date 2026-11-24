@@ -3,7 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Iterable
-from buddy.learning.study_resource_scheduler import Capability, Resource, choose_next, study_plan\nfrom buddy.learning.study_artifact_cleanup import study_download_workspace
+from buddy.learning.study_resource_scheduler import Capability, Resource, choose_next, study_plan
+from buddy.learning.study_artifact_cleanup import study_download_workspace
 
 ROOT = Path(__file__).resolve().parents[2]
 ROUTES = ROOT / "config/generated/freecodecamp-source-routes.json"
@@ -62,6 +63,8 @@ def plan_next_lesson(division_id: int, capability: Capability, *, recent: set[in
         "media_download_allowed": False,
         "transcript_ingestion_allowed": False,
         "model_training_allowed": False,
-        "completion_status": "queued_not_studied",\n        "temporary_workspace_policy": "erase_on_success_failure_or_cancellation",\n        "workspace_context_manager": "buddy.learning.study_artifact_cleanup.study_download_workspace",
+        "completion_status": "queued_not_studied",
+        "temporary_workspace_policy": "erase_on_success_failure_or_cancellation",
+        "workspace_context_manager": "buddy.learning.study_artifact_cleanup.study_download_workspace",
     })
     return plan
