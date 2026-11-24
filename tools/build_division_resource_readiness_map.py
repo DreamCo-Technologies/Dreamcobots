@@ -12,6 +12,7 @@ PACKS=ROOT/"config/hf-capability-download-map.json"
 ROUTER=ROOT/"config/buddy-model-router.json"
 OUTPUT=ROOT/"config/generated/division-resource-readiness-map.json"
 OWNER_REVIEW=ROOT/"config/review/masterbot-domain-crosswalk-owner-review.json"
+RECONCILIATION=ROOT/"config/generated/division-reconciliation.json"
 
 RESOURCE_CONTRACT=json.loads(r'''{"id":"dreamco.division.resource_bundle.v1","truth_status":"requirements_defined_not_provisioned","architecture":"Shared DreamCo infrastructure with isolated per-division namespaces, model identities, dataset lanes, authorization scopes, metrics, and rollback pointers.","model_strategy":"Start with shared, license-reviewed base models plus division-specific adapters or compact specialists. Each division still owns a distinct versioned model identity, checkpoint lineage, benchmark suite, endpoint identity, and release record. Do not claim 65 separately pretrained foundation models.","baseline_requirements":["persistent operational database namespace and schema migrations","versioned dataset catalog, object storage, provenance and rights manifests","teacher and student model candidate catalog with pinned revisions and license review","domain-specific ML curriculum and reproducible sandbox labs","authorized reverse-engineering workflow and clean-room specification practice","rights-cleared teacher-student distillation pipeline","task, privacy, quality, cost and latency-aware model resource routing","domain benchmarks, protected holdouts, safety and regression evaluation","compute planning, resource metering, run observability and rollback"],"readiness_states":["requirements_defined_not_provisioned","configured","connected","validated","certified"],"promotion_rule":"A resource becomes connected or certified only after a real integration test and evidence artifact. A catalog candidate, config entry, or successful workflow alone is not proof of availability."}''')
 ML_PRACTICES=json.loads(r'''["problem framing and measurable success criteria","data collection, provenance and consent","data validation, deduplication and quality profiling","label design, annotation agreement and inter-rater reliability","train-validation-test split design and leakage prevention","supervised learning and baseline selection","unsupervised learning and clustering","self-supervised and contrastive learning","feature engineering and representation learning","classification, regression and ranking","recommendation and retrieval","time-series forecasting and anomaly detection","calibration, uncertainty and out-of-distribution detection","neural network optimization and regularization","transformers, attention and sequence modeling","computer vision and OCR","speech recognition, audio understanding and synthesis","multimodal learning and fusion","reinforcement learning and simulation","RAG, embeddings, reranking and knowledge grounding","SFT, LoRA and QLoRA with rights-cleared data","teacher-student response and preference distillation","quantization, pruning and inference optimization","cross-validation, ablations and statistical confidence","robustness, adversarial testing, fairness and subgroup analysis","MLOps, reproducibility, model registry and experiment tracking","drift monitoring, scheduled evaluation and retraining gates","privacy, tenant isolation and secure ML supply chain","model serving, autoscaling, latency and cost optimization","model cards, licensing, governance and incident response"]''')
@@ -129,12 +130,33 @@ def main():
     payload=build(docs["masterbot_registry"],docs["taxonomy_map"],docs["domain_crosswalk"],
         docs["hf_capability_packs"],docs["buddy_model_router"],hashes)
     encoded=json.dumps(payload,ensure_ascii=False,separators=(",",":"))+"\n"
-    review_payload={"schema":"dreamco.masterbot_domain_owner_review.v1",
+    reconciliation=json.loads(RECONCILIATION.read_text(encoding="utf-8"))
+    reconciliation_counts=reconciliation["counts"]
+    platform_ids=[row["id"] for row in reconciliation["shared_platform_masterbots"]]
+    if platform_ids != list(range(46,66)):
+        raise SystemExit("Shared platform MasterBot identities must remain exactly 46-65")
+    review_payload={"schema":"dreamco.masterbot_domain_owner_review.v2",
         "status":"pending_owner_review_no_guessed_mappings",
-        "source":"config/generated/masterbot-55-domain-crosswalk.json",
+        "source_refs":[
+            "config/generated/masterbot-45-domain-crosswalk.json",
+            "config/generated/masterbot-55-domain-crosswalk.json",
+            "config/generated/division-reconciliation.json",
+            "config/division-reconciliation-policy.json",
+            "shared/division-production-contract.ts",
+            "config/masterbot-65-registry.json"
+        ],
         "counts":{"unresolved_masterbot_mappings":len(payload["owner_review"]["masterbot_domain_decisions"]),
-            "unassigned_domain_profiles":len(payload["owner_review"]["unassigned_domain_profiles"])},
-        "instructions":"Please assign only with authoritative ownership evidence. Empty candidate arrays are intentional; do not infer a mapping from similar names. Record reviewer, evidence, decision date and approval. Resource bundles exist independently of ownership decisions.",
+            "unassigned_domain_profiles":len(payload["owner_review"]["unassigned_domain_profiles"]),
+            "original_core_domain_profiles":reconciliation_counts["original_core_divisions"],
+            "promoted_supplemental_domain_profiles":reconciliation_counts["promoted_supplemental_divisions"],
+            "total_domain_profiles":reconciliation_counts["total_domain_divisions"],
+            "shared_platform_masterbots":len(platform_ids)},
+        "instructions":"Owner review only. Preserve all 45 original core domains, all ten promoted supplemental domains, and all 65 canonical MasterBots. Exact-name crosswalk matches remain proposals until an authorized owner records reviewer, evidence, decision date, and approval. Keep the 20 shared-platform MasterBots (IDs 46-65) as cross-domain services; do not force them into a primary domain. Empty candidate arrays and null approvals are intentional. Never infer ownership from names, keywords, or generic capability similarity. Resource bundles and shared service availability do not establish ownership, execution, mastery, or production readiness.",
+        "domain_taxonomy":{"original_core_divisions":reconciliation_counts["original_core_divisions"],
+            "promoted_supplemental_divisions":reconciliation_counts["promoted_supplemental_divisions"],
+            "total_domain_divisions":reconciliation_counts["total_domain_divisions"],
+            "shared_platform_masterbot_ids":{"first":min(platform_ids),"last":max(platform_ids),"count":len(platform_ids)},
+            "policy":"The 20 shared-platform MasterBots are cross-domain services available to all 55 domain divisions; they are not additional domain divisions and receive no primary domain owner through this record."},
         **payload["owner_review"]}
     review_encoded=json.dumps(review_payload,indent=2,ensure_ascii=False)+"\n"
     if args.check:
