@@ -80,6 +80,23 @@ class PermissionedStudyWorkerTests(unittest.TestCase):
             self.assertFalse(captured[0].exists())
             self.assertEqual(list(Path(tmp).iterdir()), [])
 
+    def test_original_lesson_derivation_requires_approved_rights_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            auth = StudyAuthorization(
+                "source", "https://example.org", "public_metadata_only",
+                frozenset({"open_official_page", "derive_original_lesson"}),
+            )
+            with self.assertRaisesRegex(PermissionError, "approved rights review"):
+                run_study_attempt(auth, lambda _ctx: None, Path(tmp))
+
+    def test_rejected_source_is_blocked_even_with_empty_allowlist(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            auth = StudyAuthorization(
+                "source", "https://example.org", "rejected", frozenset(),
+            )
+            with self.assertRaisesRegex(PermissionError, "cannot be studied"):
+                run_study_attempt(auth, lambda _ctx: None, Path(tmp))
+
     def test_transcript_permission_also_requires_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:
             auth = StudyAuthorization(
