@@ -55,6 +55,12 @@ def validate_job(job: dict, approval_id: str) -> tuple[Path,list[dict]]:
         raise TrainingExecutionError("Compute approval ID does not match the job")
     if not re.fullmatch(r"[0-9a-f]{40}",str(job.get("base_model_revision",""))):
         raise TrainingExecutionError("Base model revision is not immutable")
+    tokenizer_revision=job.get("tokenizer_revision") or job.get("base_model_revision")
+    if not re.fullmatch(r"[0-9a-f]{40}",str(tokenizer_revision)):
+        raise TrainingExecutionError("Tokenizer revision is not immutable")
+    tested_commit_sha=os.environ.get("GITHUB_SHA") or job.get("tested_commit_sha","")
+    if not re.fullmatch(r"[0-9a-f]{40}",str(tested_commit_sha)):
+        raise TrainingExecutionError("Training requires the immutable tested commit SHA from GITHUB_SHA or the job manifest")
     if not job.get("model_license") or not str(job.get("model_license_url","")).startswith("https://") or job.get("model_license_status") != "VERIFIED" or not job.get("model_license_evidence"):
         raise TrainingExecutionError("Verified model license evidence is missing")
     if job.get("training_method") not in {"sft","lora"}:
@@ -113,7 +119,7 @@ def execute_job(job_path: str | Path, approval_id: str, output_root: str | Path,
         raise TrainingExecutionError("Install torch and transformers to execute SFT; install peft for LoRA") from exc
     cfg=job["training_config"]
     local_only=not allow_model_download
-    tokenizer=AutoTokenizer.from_pretrained(job["model_id"],revision=job["base_model_revision"],local_files_only=local_only)
+    tokenizer=AutoTokenizer.from_pretrained(job["model_id"],revision=tokenizer_revision,local_files_only=local_only)
     if tokenizer.pad_token is None: tokenizer.pad_token=tokenizer.eos_token
     model=AutoModelForCausalLM.from_pretrained(job["model_id"],revision=job["base_model_revision"],local_files_only=local_only)
     if job["training_method"]=="lora":
@@ -167,10 +173,17 @@ def execute_job(job_path: str | Path, approval_id: str, output_root: str | Path,
     checkpoint_files=_hash_tree(checkpoint_dir)
     weight_files=_hash_tree(weights_dir)
     tokenizer_files=_hash_tree(tokenizer_dir)
-    result={"schema":"dreamco.model_training_result.v2","job_id":job["job_id"],
-        "masterbot_id":int(job["masterbot_id"]),"division_model":identity,
-        "model_id":job["model_id"],"base_model_revision":job["base_model_revision"],
-        "dataset_id":job["dataset_id"],"dataset_sha256":job["dataset_sha256"],
+    checkpoint_files=weight_files
+    checkpoint_sha256=hashlib.sha256(json.dumps(checkpoint_files,sort_keys=True).encode("utf-8")).hexdigest()
+    result={"schema":"dreamco.model_training_result.v3","job_id":job["job_id"],
+        "execution_status":"COMPLETED","masterbot_id":int(job["masterbot_id"]),"division_model":identity,
+        "model_id":identity.get("model_name") if identity else job["model_id"],
+        "model_version":identity.get("model_version") if identity else "0.0.0",
+        "base_model_id":job["model_id"],"base_model_revision":job["base_model_revision"],
+        "tokenizer_revision":tokenizer_revision,"tested_commit_sha":tested_commit_sha,
+        "compute_approval_id":job.get("compute_approval_id"),
+        "dataset_id":job["dataset_id"],"dataset_version":job.get("dataset_version"),
+        "dataset_sha256":job["dataset_sha256"],
         "split_manifest":job["split_manifest"],"training_method":job["training_method"],
         "training_config":cfg,"global_step":train_result.global_step,
         "baseline_validation_metrics":baseline_validation,"train_metrics":train_result.metrics,
@@ -180,6 +193,9 @@ def execute_job(job_path: str | Path, approval_id: str, output_root: str | Path,
             "weights_directory_sha256":_directory_sha256(weights_dir),
             "checkpoints_directory_sha256":_directory_sha256(checkpoint_dir),
             "tokenizer_directory_sha256":_directory_sha256(tokenizer_dir)},
+        "checkpoint_root":str(weights_dir),"checkpoint_files":checkpoint_files,
+        "checkpoint_sha256":checkpoint_sha256,
+        "training_config_sha256":hashlib.sha256(json.dumps(cfg,sort_keys=True).encode("utf-8")).hexdigest(),
         "weights_trained":True,"production_promoted":False,
         "requires_independent_benchmark_and_review":True}
     (output/"training-result.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
