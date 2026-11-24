@@ -267,5 +267,28 @@
     "current_state": "SPECIFIED_NOT_CONNECTED",
     "blocker": "A cross-repository GitHub App installation or dedicated token with narrowly scoped Actions/Contents permissions must be configured by the repository owner; this assistant cannot create or reveal repository secrets.",
     "sequencing": "The bridge contract may be prepared in the Python repository now. Receiver workflow changes in the Swift repository are deferred until the Python repository completion gate is satisfied, except for a separately approved safe-run-only bridge implementation."
+  },
+  "clone_gate": {
+    "required_before_cloning_or_starting_C_and_Swift_implementation": [
+      "all main-repository workstreams have current evidence-backed status and every goal is on track, mastered, or explicitly blocked with owner, dependency, and next action",
+      "no unresolved failing required check on the candidate main commit and no unexplained cancelled or skipped required run",
+      "all relevant workflows have current successful runs on the exact candidate commit; historical failures remain recorded with verified fixes and regression evidence",
+      "all PRs have an explicit reviewed disposition and no unresolved critical security, data-loss, privacy, or production-isolation finding",
+      "Buddy end-to-end task execution and Bootcamp resource/curriculum gates are verified",
+      "approved tokenizer and model training plus required benchmark and private holdout evidence exist",
+      "database, storage, queue, worker, recovery, and observability dependencies are live-verified or explicitly excluded from the clone scope",
+      "shared contracts and conformance fixtures are frozen and versioned",
+      "human owner review approves the exact Python commit and clone manifest"
+    ],
+    "interpretation": "A historical failed run is not deleted or hidden. It must be diagnosed, fixed, and followed by passing evidence. A goal may remain blocked only when the blocker is external, documented, owned, and explicitly accepted; an untracked or silently failing goal blocks cloning.",
+    "clone_manifest": [
+      "canonical Python commit SHA",
+      "approved source paths and excluded paths",
+      "dependency lockfiles and build commands",
+      "contract and schema versions",
+      "dataset/model/tokenizer artifact IDs and hashes (never secrets)",
+      "test and benchmark evidence references",
+      "known limitations and rollback procedure"
+    ]
   }
 }
