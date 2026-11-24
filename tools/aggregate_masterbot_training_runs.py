@@ -12,7 +12,8 @@ def main() -> int:
     a=p.parse_args()
     root=Path(a.input)
     records=[]
-    paths = set(root.rglob("latest-plan.json")) | set(root.rglob("latest-checkpoint.json"))\n    for path in sorted(paths):
+    paths = set(root.rglob("latest-plan.json")) | set(root.rglob("latest-checkpoint.json"))
+    for path in sorted(paths):
         try:
             record=json.loads(path.read_text(encoding="utf-8"))
             records.append({
