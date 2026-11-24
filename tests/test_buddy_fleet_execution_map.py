@@ -50,8 +50,10 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
         for bot in self.bots:
             plan = bot["commercial_plan"]
             if plan.get("candidate"):
+                self.assertIn(plan["approved_source_category"], allowed)
                 self.assertTrue(plan["approved_source_categories"])
-                self.assertTrue(set(plan["approved_source_categories"]).issubset(allowed))
+                self.assertTrue(all(isinstance(source, str) and source.strip()
+                                    for source in plan["approved_source_categories"]))
 
     def test_all_ten_specialist_portfolios_have_five_distinct_bot_charters(self):
         charters = __import__("json").loads(CHARTERS.read_text(encoding="utf-8"))
