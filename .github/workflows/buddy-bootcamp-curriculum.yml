@@ -16,6 +16,9 @@ on:
       - "tests/test_freecodecamp_catalog.py"
       - "tools/build_freecodecamp_division_queues.py"
       - "tests/test_freecodecamp_division_queues.py"
+      - "tools/validate_freecodecamp_learning_evidence.py"
+      - "tests/test_freecodecamp_learning_evidence.py"
+      - "buddy/bootcamp/sources/freecodecamp/learning-evidence.schema.json"
   push:
     branches: [main]
     paths:
@@ -32,6 +35,9 @@ on:
       - "tests/test_freecodecamp_catalog.py"
       - "tools/build_freecodecamp_division_queues.py"
       - "tests/test_freecodecamp_division_queues.py"
+      - "tools/validate_freecodecamp_learning_evidence.py"
+      - "tests/test_freecodecamp_learning_evidence.py"
+      - "buddy/bootcamp/sources/freecodecamp/learning-evidence.schema.json"
   schedule:
     - cron: "17 9 * * *"
 permissions:
@@ -62,6 +68,7 @@ jobs:
           python tools/build_freecodecamp_division_queues.py
           python tools/build_freecodecamp_division_queues.py --check
           python -m unittest discover -s tests -p 'test_freecodecamp_division_queues.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
       - name: Commit discovered catalog back to this pull request branch
         if: github.event_name == 'pull_request'
         env:
