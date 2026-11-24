@@ -1,5 +1,7 @@
 import io
+import os
 import unittest
+from unittest.mock import patch
 
 from buddy.storage.object_store import (
     ObjectStoreError,
@@ -91,6 +93,17 @@ class ObjectStoreHealthTests(unittest.TestCase):
         self.assertEqual(backup, restored)
         self.assertFalse(evidence["credentials_emitted"])
         self.assertFalse(evidence["canary_payload_contains_secrets"])
+
+    def test_environment_opt_in_enables_only_the_generated_canary(self):
+        client = FakeS3()
+        with patch.dict(os.environ, {"DREAMCO_ALLOW_OBJECT_STORE_CANARY": "1"}, clear=True):
+            evidence = run_object_store_healthcheck(
+                client=client,
+                primary_bucket="dreamco-primary",
+                backup_bucket="dreamco-backup",
+            )
+        self.assertEqual(evidence["status"], "HEALTHY")
+        self.assertEqual(evidence["backup_restore_test"], "PASS")
 
     def test_missing_security_or_backup_retention_fails_closed(self):
         clients = (
