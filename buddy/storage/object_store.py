@@ -168,3 +168,70 @@ def run_division_object_store_healthcheck(masterbot_id:int, **kwargs:Any)->dict[
     evidence=run_object_store_healthcheck(prefix=f"{base}/divisions/{masterbot_id:03d}",**kwargs)
     evidence["masterbot_id"]=masterbot_id
     return evidence
+
+def upload_division_dataset(masterbot_id:int,dataset_id:str,dataset_version:int,source_file:str,
+                            content_sha256:str,upload_approval_id:str,*,client:Any=None,
+                            bucket:str|None=None,prefix:str="dreamco/datasets")->dict[str,Any]:
+    """Upload one verified dataset object into its division-isolated S3 prefix."""
+    import hashlib
+    from pathlib import Path
+    if isinstance(masterbot_id,bool) or not isinstance(masterbot_id,int) or not 1<=masterbot_id<=65:
+        raise ObjectStoreError("masterbot_id_must_be_between_1_and_65")
+    if not re.fullmatch(r"[A-Za-z0-9._-]{3,100}",str(dataset_id)):
+        raise ObjectStoreError("dataset_id_is_invalid")
+    if isinstance(dataset_version,bool) or not isinstance(dataset_version,int) or dataset_version<1:
+        raise ObjectStoreError("dataset_version_must_be_positive")
+    if not re.fullmatch(r"[0-9a-f]{64}",str(content_sha256)):
+        raise ObjectStoreError("content_sha256_must_be_lowercase_sha256")
+    if not str(upload_approval_id).strip():
+        raise ObjectStoreError("dataset_object_upload_approval_id_required")
+    if os.environ.get("DREAMCO_ALLOW_DATASET_OBJECT_UPLOAD")!="1":
+        raise ObjectStoreError("set_DREAMCO_ALLOW_DATASET_OBJECT_UPLOAD=1_for_explicit_upload")
+    target_bucket=bucket or os.environ.get("DREAMCO_OBJECT_STORE_BUCKET","").strip()
+    if not BUCKET_RE.fullmatch(target_bucket):
+        raise ObjectStoreError("valid_primary_object_store_bucket_required")
+    if not PREFIX_RE.fullmatch(prefix):
+        raise ObjectStoreError("object_store_dataset_prefix_is_invalid")
+    if client is None: client=_client_from_env()
+    config=_classification(target_bucket,client)
+    if not all(config[k] for k in ("versioning_enabled","encryption_at_rest","public_access_blocked")):
+        raise ObjectStoreError("object_store_bucket_security_configuration_incomplete")
+    source=Path(source_file).expanduser().resolve()
+    if not source.is_file(): raise ObjectStoreError("dataset_source_file_missing")
+    size=source.stat().st_size
+    if size>512*1024*1024: raise ObjectStoreError("dataset_source_file_exceeds_512_mib")
+    digest=hashlib.sha256(source.read_bytes()).hexdigest()
+    if digest!=content_sha256: raise ObjectStoreError("dataset_source_content_hash_mismatch")
+    key=f"{prefix}/divisions/{masterbot_id:03d}/datasets/{dataset_id}/v{dataset_version}/{digest}.jsonl"
+    metadata={"masterbot-id":str(masterbot_id),"dataset-id":dataset_id,
+        "dataset-version":str(dataset_version),"content-sha256":digest,
+        "upload-approval-ref":str(upload_approval_id)[:128]}
+    try:
+        with source.open("rb") as handle:
+            put=client.put_object(Bucket=target_bucket,Key=key,Body=handle,
+                Metadata=metadata)
+        version_id=put.get("VersionId")
+        if not version_id: raise ObjectStoreError("dataset_object_version_id_missing")
+        head=client.head_object(Bucket=target_bucket,Key=key)
+        if head.get("ContentLength")!=size or head.get("Metadata")!=metadata:
+            raise ObjectStoreError("dataset_object_metadata_or_size_verification_failed")
+        if head.get("ServerSideEncryption") not in {"AES256","aws:kms","aws:kms:dsse"}:
+            raise ObjectStoreError("dataset_object_encryption_not_verified")
+        body=client.get_object(Bucket=target_bucket,Key=key,VersionId=version_id)["Body"]
+        verified=hashlib.sha256()
+        while True:
+            chunk=body.read(1024*1024)
+            if not chunk: break
+            verified.update(chunk)
+        if verified.hexdigest()!=digest:
+            raise ObjectStoreError("dataset_object_readback_hash_mismatch")
+    except ObjectStoreError:
+        raise
+    except Exception as exc:
+        raise ObjectStoreError("dataset_object_upload_failed_"+type(exc).__name__) from None
+    return {"schema":"dreamco.division_dataset_object_evidence.v1","status":"PERSISTED",
+        "masterbot_id":masterbot_id,"dataset_id":dataset_id,"dataset_version":dataset_version,
+        "bucket":target_bucket,"object_key":key,"object_version_id":version_id,
+        "content_sha256":digest,"bytes":size,"server_side_encryption":head["ServerSideEncryption"],
+        "versioning_enabled":True,"public_access_blocked":True,
+        "upload_approval_ref":str(upload_approval_id)[:128],"credentials_emitted":False}
