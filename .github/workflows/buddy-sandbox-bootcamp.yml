@@ -118,7 +118,7 @@ jobs:
       - name: Test tiny GPT baseline and safe dataset token scoping
         run: python -m unittest tests.test_buddy_gpt_baseline tests.test_buddy_dataset_source_auth tests.test_bootcamp_lesson_planner tests.test_dreamco_division_mastery_orchestrator tests.test_division_model_fleet
       - name: Restore rotating Dataset Hub catalog
-        if: github.event_name == 'schedule'
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         uses: actions/cache@v4
         with:
           path: .dreamco/dataset-hub
@@ -185,7 +185,7 @@ jobs:
           print(f'validated {total} unique study resources toward target {target}')
           PY
       - name: Discover public datasets across rotating MasterBot lanes
-        if: github.event_name == 'schedule'
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         env:
           DREAMCO_ALLOW_SOURCE_NETWORK: '1'
         run: python tools/run_buddy_dataset_discovery.py --lanes-per-run 5 --limit 3
