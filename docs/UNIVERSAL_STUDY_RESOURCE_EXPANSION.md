@@ -82,6 +82,10 @@ Use the Tolkien-specific resources as a scholarly research lane, not a copyright
 
 Use the Digital Tolkien Project, Tolkien Estate resource links, Tolkien Society, peer-reviewed journals and university research guides as discovery gateways. Treat community databases as secondary references and verify claims against primary scholarship.
 
+The machine-readable curriculum is `specialized_study_tracks[tolkien]` in `config/buddy-study-resources-1101-1200-expansion.json`. It contains eight lessons: philological context; historical linguistics; comparative mythology; narrative architecture; archival provenance; digital humanities; scholarly reception; and a cited capstone. Completion requires a learner-authored artifact, source citations, rights review and rubric evidence—not metadata discovery alone.
+
+The track explicitly disables copyrighted primary-text ingestion, transcript/audiobook downloads, reproduction of protected invented languages or scripts, derivative generation using protected characters/settings/stories, and model-weight training. Unknown rights remain BLOCKED. See `docs/BUDDY_TOLKIEN_STUDY_TRACK.md` for the lesson plan and official rights references.
+
 Do not bulk-copy Tolkien novels, appendices, maps, artwork, audio, journal articles, or proprietary language materials. Build original exercises and original worldbuilding tasks; cite sources and keep protected source passages out of training data absent explicit permission.
 
 ## Buddy student assignments
