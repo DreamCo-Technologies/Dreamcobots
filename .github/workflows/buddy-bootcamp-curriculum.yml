@@ -5,6 +5,14 @@ on:
       - ".github/workflows/buddy-bootcamp-curriculum.yml"
       - "tools/build_buddy_bootcamp_curriculum.py"
       - "tests/test_buddy_bootcamp_curriculum.py"
+      - "config/buddy-study-resources-1101-1200-expansion.json"
+      - "artifacts/buddy-dataset-hub/dataset-routes.json"
+      - "tools/check_must_have_study_resources.py"
+      - "tools/build_buddy_dataset_routes.py"
+      - "tests/test_check_must_have_study_resources.py"
+      - "tests/test_buddy_dataset_route_check.py"
+      - "docs/BUDDY_TOLKIEN_STUDY_TRACK.md"
+      - "docs/UNIVERSAL_STUDY_RESOURCE_EXPANSION.md"
       - "config/masterbot-65-registry.json"
       - "config/huggingface-task-taxonomy.json"
       - "config/hf-capability-download-map.json"
@@ -44,6 +52,7 @@ jobs:
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
+          python -m unittest tests.test_check_must_have_study_resources tests.test_buddy_dataset_route_check -v
       - name: Propose generated curriculum
         if: github.event_name != 'pull_request'
         uses: peter-evans/create-pull-request@v7
