@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -47,31 +46,37 @@ def categorize(title: str, description: str = "") -> list[str]:
             matches.append(category_id)
     return matches or ["other_or_unclassified"]
 
-def discover() -> list[dict[str, Any]]:
-    command = [
-        sys.executable, "-m", "yt_dlp",
-        "--flat-playlist", "--dump-single-json", "--no-warnings",
-        "--ignore-errors", CHANNEL_URL,
-    ]
-    result = subprocess.run(command, check=True, capture_output=True, text=True, timeout=900)
-    payload = json.loads(result.stdout)
-    entries = payload.get("entries") or []
-    videos = []
-    seen = set()
+def parse_discovery_payload(payload: dict[str, Any], enumerator_version: str) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Accept a catalog as complete only when yt-dlp's channel count matches every unique entry."""
+    expected = payload.get("playlist_count")
+    entries = payload.get("entries")
+    if not isinstance(expected, int) or expected < 1:
+        raise RuntimeError("yt-dlp did not return a usable playlist_count; inventory completeness is unknown")
+    if not isinstance(entries, list):
+        raise RuntimeError("yt-dlp did not return a playlist entries list")
+    if len(entries) != expected:
+        raise RuntimeError(
+            f"Incomplete channel inventory: expected {expected} entries, received {len(entries)}"
+        )
+    if any(entry is None or not isinstance(entry, dict) for entry in entries):
+        raise RuntimeError("Incomplete channel inventory: one or more entries are missing or malformed")
+
+    videos: list[dict[str, Any]] = []
+    seen: set[str] = set()
     for entry in entries:
-        if not entry:
-            continue
         video_id = entry.get("id")
-        if not video_id or video_id in seen:
-            continue
+        if not isinstance(video_id, str) or not video_id.strip():
+            raise RuntimeError("Incomplete channel inventory: an entry has no stable video ID")
+        if video_id in seen:
+            raise RuntimeError(f"Incomplete channel inventory: duplicate video ID {video_id}")
         seen.add(video_id)
         title = str(entry.get("title") or "Untitled video").strip()
         url = entry.get("url") or f"https://www.youtube.com/watch?v={video_id}"
-        if not str(url).startswith("http"):
+        if not str(url).startswith("https://"):
             url = f"https://www.youtube.com/watch?v={video_id}"
         upload_date = entry.get("upload_date")
         videos.append({
-            "video_id": str(video_id),
+            "video_id": video_id,
             "title": title,
             "url": str(url),
             "description": "",
@@ -83,11 +88,63 @@ def discover() -> list[dict[str, Any]]:
             "learning_status": "not_studied",
             "all_divisions_foundation": True,
         })
-    if not videos:
-        raise RuntimeError("No channel videos were discovered; refusing to write an empty catalog.")
-    return videos
 
-def build_catalog(videos: list[dict[str, Any]]) -> dict[str, Any]:
+    if len(videos) != expected:
+        raise RuntimeError("Incomplete channel inventory: parsed video count does not match expected count")
+    inventory = {
+        "enumerator": "yt-dlp",
+        "enumerator_version": enumerator_version,
+        "expected_entry_count": expected,
+        "observed_entry_count": len(videos),
+        "null_entry_count": 0,
+        "duplicate_video_id_count": 0,
+        "complete": True,
+        "completeness_basis": "playlist_count equals every parsed, non-null, unique video entry; extraction aborts on errors",
+    }
+    return videos, inventory
+
+
+def discover() -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Enumerate public metadata only; fail closed when completeness cannot be proven."""
+    version_result = subprocess.run(
+        [sys.executable, "-m", "yt_dlp", "--version"],
+        check=True, capture_output=True, text=True, timeout=30,
+    )
+    enumerator_version = version_result.stdout.strip()
+    if not enumerator_version:
+        raise RuntimeError("Unable to determine pinned yt-dlp version")
+    command = [
+        sys.executable, "-m", "yt_dlp",
+        "--flat-playlist", "--dump-single-json", "--no-warnings",
+        "--abort-on-error", CHANNEL_URL,
+    ]
+    result = subprocess.run(command, check=True, capture_output=True, text=True, timeout=900)
+    payload = json.loads(result.stdout)
+    return parse_discovery_payload(payload, enumerator_version)
+
+
+def build_catalog(videos: list[dict[str, Any]], inventory: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Build a catalog; absent completeness evidence always means partial, never complete."""
+    if inventory is None:
+        inventory = {
+            "enumerator": "unknown",
+            "enumerator_version": "not-recorded",
+            "expected_entry_count": None,
+            "observed_entry_count": len(videos),
+            "null_entry_count": None,
+            "duplicate_video_id_count": None,
+            "complete": False,
+            "completeness_basis": "no upstream enumeration count was supplied",
+        }
+    complete = (
+        inventory.get("complete") is True
+        and inventory.get("expected_entry_count") == len(videos)
+        and inventory.get("observed_entry_count") == len(videos)
+        and inventory.get("null_entry_count") == 0
+        and inventory.get("duplicate_video_id_count") == 0
+    )
+    if inventory.get("complete") is True and not complete:
+        raise ValueError("inventory completeness evidence does not match the video records")
     categories = [
         {"id": cid, "label": label, "keywords": keywords,
          "division_routing": "all_65_divisions_as_shared_foundation; prioritize_divisions_by_capability_and_subject"}
@@ -100,7 +157,8 @@ def build_catalog(videos: list[dict[str, Any]]) -> dict[str, Any]:
         "source": {"name": "freeCodeCamp.org", "channel_url": "https://www.youtube.com/@freecodecamp",
                    "channel_id": CHANNEL_ID, "learning_platform": "https://www.freecodecamp.org/"},
         "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
-        "inventory_status": "complete",
+        "inventory_status": "complete" if complete else "partial",
+        "inventory": inventory,
         "video_count": len(videos),
         "categories": categories,
         "videos": sorted(videos, key=lambda row: (row.get("upload_date") or "", row["video_id"]), reverse=True),
@@ -122,20 +180,59 @@ def main() -> int:
         if not args.out.exists():
             raise SystemExit(f"Missing catalog: {args.out}")
         data = json.loads(args.out.read_text(encoding="utf-8"))
-        assert data["schema"] == "dreamco.freecodecamp_catalog.v1"
-        assert data["video_count"] == len(data["videos"]) > 0
-        assert len({v["video_id"] for v in data["videos"]}) == len(data["videos"])
-        assert all(v["categories"] for v in data["videos"])
-        assert data["rights_policy"]["media_download_enabled"] is False
-        assert data["rights_policy"]["transcript_ingestion_enabled"] is False
-        print(json.dumps({"ok": True, "video_count": data["video_count"], "categories": len(data["categories"])}, indent=2))
+        videos = data.get("videos")
+        inventory = data.get("inventory") or {}
+        if data.get("schema") != "dreamco.freecodecamp_catalog.v1":
+            raise SystemExit("Unsupported freeCodeCamp catalog schema")
+        if not isinstance(videos, list) or data.get("video_count") != len(videos) or not videos:
+            raise SystemExit("Catalog video_count does not match a non-empty videos list")
+        ids = [video.get("video_id") for video in videos]
+        if any(not isinstance(video_id, str) or not video_id for video_id in ids):
+            raise SystemExit("Catalog contains a missing video ID")
+        if len(set(ids)) != len(ids):
+            raise SystemExit("Catalog contains duplicate video IDs")
+        if inventory.get("observed_entry_count") != len(videos):
+            raise SystemExit("Inventory observed_entry_count does not match catalog")
+        if data.get("inventory_status") == "complete":
+            if not (
+                inventory.get("complete") is True
+                and inventory.get("expected_entry_count") == len(videos)
+                and inventory.get("null_entry_count") == 0
+                and inventory.get("duplicate_video_id_count") == 0
+            ):
+                raise SystemExit("Catalog claims complete without matching completeness evidence")
+        elif data.get("inventory_status") == "partial":
+            if inventory.get("complete") is not False:
+                raise SystemExit("Partial catalog must explicitly record complete=false")
+        else:
+            raise SystemExit("Catalog inventory_status must be complete or partial")
+        if not isinstance(data.get("categories"), list) or not data["categories"]:
+            raise SystemExit("Catalog must include categories")
+        if data["rights_policy"]["media_download_enabled"] is not False:
+            raise SystemExit("Media downloads must remain disabled")
+        if data["rights_policy"]["transcript_ingestion_enabled"] is not False:
+            raise SystemExit("Transcript ingestion must remain disabled")
+        print(json.dumps({
+            "ok": True,
+            "inventory_status": data["inventory_status"],
+            "video_count": len(videos),
+            "expected_entry_count": inventory.get("expected_entry_count"),
+            "enumerator_version": inventory.get("enumerator_version"),
+            "categories": len(data["categories"]),
+        }, indent=2))
         return 0
-    videos = discover()
-    catalog = build_catalog(videos)
+    videos, inventory = discover()
+    catalog = build_catalog(videos, inventory)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(catalog, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(json.dumps({"written": str(args.out.relative_to(ROOT)), "video_count": len(videos),
-                      "categorized": sum(bool(v["categories"]) for v in videos)}, indent=2))
+    print(json.dumps({
+        "written": str(args.out.relative_to(ROOT)),
+        "inventory_status": catalog["inventory_status"],
+        "video_count": len(videos),
+        "expected_entry_count": inventory["expected_entry_count"],
+        "enumerator_version": inventory["enumerator_version"],
+        "categorized": sum(bool(v["categories"]) for v in videos),
+    }, indent=2))
     return 0
 
 if __name__ == "__main__":
