@@ -83,7 +83,10 @@ jobs:
           python3 tools/audit_actions_health.py
           python3 tools/build_actions_prospectus.py
       - name: Verify first-party Bootcamp training data factory
-        run: python3 -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
+        run: |
+          python3 -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
+          python3 -m unittest discover -s tests -p "test_dreamco_training_factory.py" -v
+          python3 -m unittest discover -s tests -p "test_dreamco_original_training_examples.py" -v
       - name: Full repository verification
         run: npm run test:repository
       - name: Fleet end-to-end verification
