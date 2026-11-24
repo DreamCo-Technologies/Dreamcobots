@@ -64,6 +64,11 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
             build_routes(self.catalog, {"divisions": self.registry["divisions"][:64]})
         broken = dict(self.catalog)
         broken["videos"] = [*self.catalog["videos"], self.catalog["videos"][0]]
+        broken["inventory"] = {
+            **self.catalog["inventory"],
+            "expected_entry_count": 3,
+            "observed_entry_count": 3,
+        }
         with self.assertRaisesRegex(ValueError, "duplicate"):
             validate(build_routes(broken, self.registry))
 
@@ -151,6 +156,11 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
                 },
                 *self.catalog["videos"],
             ]
+            expanded_catalog["inventory"] = {
+                **self.catalog["inventory"],
+                "expected_entry_count": 3,
+                "observed_entry_count": 3,
+            }
             expanded_routes = build_routes(expanded_catalog, self.registry)
             path.write_text(json.dumps(expanded_routes))
             after = resources_for_division(1, path)
