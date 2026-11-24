@@ -34,10 +34,10 @@ def build_plan(crosswalk: dict, day: str, lessons_per_domain: int = 5, queues: d
     if not isinstance(lessons_per_domain, int) or not 1 <= lessons_per_domain <= 20:
         raise ValueError("lessons_per_domain must be between 1 and 20")
 
-    queue_by_division = {}
+    queue_by_domain = {}
     if queues is not None:
         inventory = queues.get("source_inventory") or {}
-        queue_rows = queues.get("divisions")
+        queue_rows = queues.get("domains")
         if (
             queues.get("schema") != "dreamco.freecodecamp_division_learning_queues.v1"
             or queues.get("domain_count") != 55
@@ -47,14 +47,14 @@ def build_plan(crosswalk: dict, day: str, lessons_per_domain: int = 5, queues: d
             or not isinstance(queue_rows, list)
             or len(queue_rows) != 55
         ):
-            raise ValueError("daily plan requires verified complete 65-division source queues")
+            raise ValueError("daily plan requires verified complete 55-domain source queues")
         for row in queue_rows:
             domain_id = row.get("domain_id")
             items = row.get("items")
-            if domain_id in queue_by_division or not isinstance(items, list):
+            if domain_id in queue_by_domain or not isinstance(items, list):
                 raise ValueError("division queues must have unique IDs and item lists")
-            ids = [item.get("video_id") for item in items]
-            if len(ids) != len(set(ids)) or any(not video_id for video_id in ids):
+            video_ids = [item.get("video_id") for item in items]
+            if len(video_ids) != len(set(video_ids)) or any(not video_id for video_id in video_ids):
                 raise ValueError("division queue video IDs must be unique and present")
             for item in items:
                 if (
@@ -64,13 +64,13 @@ def build_plan(crosswalk: dict, day: str, lessons_per_domain: int = 5, queues: d
                     or item.get("training_eligible") is not False
                 ):
                     raise ValueError("daily study candidates must remain rights-review-only and non-training")
-            queue_by_division[domain_id] = items
-        if set(queue_by_division) != set(ids):
+            queue_by_domain[domain_id] = items
+        if set(queue_by_domain) != set(ids):
             raise ValueError("domain queues must cover all 55 domain IDs exactly")
 
     slots = []
     for domain in sorted(domains, key=lambda row: row["domain_id"]):
-        candidates = queue_by_division.get(domain["domain_id"], []) if queues is not None else []
+        candidates = queue_by_domain.get(domain["domain_id"], []) if queues is not None else []
         for ordinal in range(1, lessons_per_domain + 1):
             slot = {
                 "slot_id": f"{day}-domain-{domain['domain_id']}-lesson-{ordinal:02d}",
@@ -135,7 +135,7 @@ def main() -> None:
     parser.add_argument("--day", default=datetime.now(timezone.utc).date().isoformat())
     parser.add_argument("--lessons-per-domain", type=int, default=5)
     parser.add_argument("--output", type=Path, default=OUTPUT)
-    parser.add_argument("--queues", type=Path, help="Verified division queue JSON produced by build_freecodecamp_division_queues.py")
+    parser.add_argument("--queues", type=Path, help="Verified 55-domain queue JSON produced by build_freecodecamp_division_queues.py")
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     queues = json.loads(args.queues.read_text(encoding="utf-8")) if args.queues else None
