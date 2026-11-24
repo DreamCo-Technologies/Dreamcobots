@@ -16,6 +16,7 @@ tracks:
   - hugging_face_dataset_and_model_learning
   - ollama_local_model_learning
   - division_language_model_research
+  - model_foundry_from_scratch
 stages:
   - diagnose
   - select_resource
@@ -93,6 +94,23 @@ learning_sources:
     blueprint_generator: tools/build_division_45m_model_blueprints.py
     training_status_truth: design_only_not_trained_until_weight_hash_and_run_evidence_exist
     training_from_scratch_requires: [authorized_corpus, compute_budget_approval, tokenizer, architecture_config, reproducible_run, holdout, regression, model_card]
+  - id: dreamco_model_foundry
+    name: DreamCo owner-controlled Model Foundry
+    purpose: train division-specific experimental weights from random initialization using approved local datasets
+    manifest: config/authorized-training-datasets/manifest.json
+    planner: tools/build_division_training_matrix.py
+    trainer: tools/train_buddy_division_model.py
+    runtime: buddy.learning.model_foundry
+    execution: owner_controlled_self_hosted_runner
+    runner_label: dreamco-private-training
+    max_parallel_jobs: 4
+    checkpoint_directory: $HOME/DreamCo-models
+    data_directory: $HOME/DreamCo-private-data
+    data_downloads: disabled
+    pretrained_base_models: prohibited_for_from_scratch_runs
+    training_requires: [owner_attestation, license_evidence, training_permission, commercial_model_use_permission, derivative_model_permission, dataset_sha256, division_scope, training_strategy]
+    current_capabilities: [random_initialization, byte_level_tokenizer, next_token_cross_entropy, train_validation_holdout_splits, checkpoint_resume, provenance_hashes]
+    planned_capabilities: [hybrid_linear_sparse_attention, mixture_of_experts, image_patch_multimodality, code_execution_reward_loop, multi_seed_significance]
 metrics:
   - benchmark_score_delta
   - native_pass_rate
