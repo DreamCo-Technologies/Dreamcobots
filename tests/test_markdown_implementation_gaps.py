@@ -68,7 +68,7 @@ class MarkdownImplementationGapTests(unittest.TestCase):
             "truth_boundary": "Reference mapping only."
         }
         report = render_report(data)
-        self.assertTrue(report.endswith("\\n"))
+        self.assertTrue(report.endswith("\n"))
         self.assertTrue(all(line == line.rstrip() for line in report.splitlines()))
         self.assertIn("- docs/example.md:1 — copied excerpt", report)
 
