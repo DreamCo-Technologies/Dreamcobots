@@ -30,15 +30,15 @@ jobs:
           python-version: "3.13"
       - name: Refresh public AI and technology sources
         run: python3 tools/refresh_buddy_technology_radar.py --refresh
-      - name: Validate the refreshed index and Pages mirror
+      - name: Validate the refreshed index and public discovery policy
         run: |
           python3 tools/refresh_buddy_technology_radar.py --check
           python3 -m unittest tests.test_buddy_technology_radar
       - name: Commit new discoveries without deleting history
         run: |
-          git diff --exit-code config/generated/buddy-technology-radar.json website/data/buddy-technology-radar.json && exit 0
+          if git diff --quiet -- config/generated/buddy-technology-radar.json website/data/technology-discovery-policy.json; then exit 0; fi
           git config user.name "DreamCo Buddy"
           git config user.email "buddy@dreamco.local"
-          git add config/generated/buddy-technology-radar.json website/data/buddy-technology-radar.json
+          git add config/generated/buddy-technology-radar.json website/data/technology-discovery-policy.json
           git commit -m "research: refresh living AI and technology radar"
           git push
