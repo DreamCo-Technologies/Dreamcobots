@@ -42,6 +42,9 @@ def build_manifest(registry: dict, source_text: str, policy: dict | None = None)
         records.append({
             "division_id": division["id"],
             "division_name": division["name"],
+            "resource_bundle_id": policy["resource_bundle"]["id_template"].replace("{division_id:03d}", f"{division['id']:03d}"),
+            "resource_bundle_status": policy["resource_bundle"]["status"],
+            "required_resource_services": policy["resource_bundle"]["required_services"],
             "model_id": model_id,
             "model_version": policy["identity"]["current_manifest_version"],
             "planned_model_version": policy["identity"]["planned_first_release_version"],
@@ -67,6 +70,11 @@ def build_manifest(registry: dict, source_text: str, policy: dict | None = None)
                 "schedule": policy["training"]["schedule"],
                 "required_lineage": policy["training"]["required_lineage"],
                 "status": "PLAN_ONLY_NOT_STARTED"
+            },
+            "reverse_engineering_plan": {
+                "allowed_practices": policy["reverse_engineering"]["allowed_practices"],
+                "blocked_practices": policy["reverse_engineering"]["blocked_practices"],
+                "required_output": policy["reverse_engineering"]["required_output"]
             },
             "teacher_plan": {
                 "coordinator": policy["teacher_policy"]["coordinator"],
