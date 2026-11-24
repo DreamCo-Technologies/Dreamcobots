@@ -87,13 +87,10 @@
           "resource_template_ids",
           "logical_database_namespace",
           "dataset_discovery_lane_id",
-          "dataset_search_queries",
           "dataset_rights_status",
           "dataset_training_approved",
-          "subject_terms",
-          "task_pipeline_tags",
           "capability_pack_ids",
-          "teacher_model_candidates",
+          "teacher_model_candidate_ids",
           "domain_mapping"
         ],
         "properties": {
@@ -121,28 +118,10 @@
             "type": "array",
             "minItems": 9
           },
-          "teacher_model_candidates": {
+          "teacher_model_candidate_ids": {
             "type": "array",
             "items": {
-              "type": "object",
-              "required": [
-                "model_id",
-                "source_capability_pack",
-                "status",
-                "license_review_required",
-                "training_or_distillation_permission"
-              ],
-              "properties": {
-                "status": {
-                  "const": "catalog_candidate_not_validated"
-                },
-                "license_review_required": {
-                  "const": true
-                },
-                "training_or_distillation_permission": {
-                  "const": "UNVERIFIED"
-                }
-              }
+              "type": "string"
             }
           },
           "domain_mapping": {
