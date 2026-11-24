@@ -1,0 +1,85 @@
+{
+  "schema": "dreamco.proprietary_division_model_program.v1",
+  "status": "architecture_plan_not_yet_implemented_or_trained",
+  "owner": "DreamCo Technologies",
+  "baseline": {
+    "division_profiles": "discover_from_canonical_registry",
+    "currently_discovered_profiles": 65,
+    "buddy_model": "separate_first_party_model_track"
+  },
+  "ownership_policy": {
+    "first_party_artifacts": [
+      "DreamCo-authored training data",
+      "DreamCo training recipes",
+      "DreamCo-produced adapters and checkpoints where rights allow",
+      "DreamCo model cards and release manifests",
+      "DreamCo inference packaging"
+    ],
+    "upstream_rights_preserved": true,
+    "prohibit_unlicensed_training_data": true,
+    "prohibit_claiming_exclusive_ownership_of_upstream_weights": true,
+    "counsel_review_required_before_external_license_release": true
+  },
+  "per_division_release_requirements": [
+    "canonical_division_id",
+    "independent_model_id_and_semver",
+    "pinned_base_model_and_license",
+    "tokenizer_and_config",
+    "rights_cleared_dataset_manifest",
+    "reproducible_training_recipe",
+    "weights_or_adapter_checkpoint",
+    "held_out_benchmarks",
+    "safety_and_privacy_evaluations",
+    "model_card",
+    "license_and_notice_bundle",
+    "inference_package",
+    "rollback_metadata"
+  ],
+  "preferred_training_strategy": [
+    "evaluate_compact_permissively_licensed_base",
+    "LoRA_or_QLoRA_finetuning",
+    "approved_distillation_when_teacher_terms_allow",
+    "from_scratch_only_when_justified"
+  ],
+  "taxonomy": {
+    "source": "live_Hugging_Face_Hub_taxonomy_and_metadata",
+    "coverage_states": [
+      "mapped",
+      "mapped_with_shared_owner",
+      "awaiting_owner",
+      "excluded_with_reason"
+    ],
+    "unmapped_in_scope_is_ci_failure": true,
+    "create_division_per_tag": false
+  },
+  "daily_loop": {
+    "rights_cleared_data_review": true,
+    "benchmark_and_regression": true,
+    "train_only_if_data_compute_and_quality_gates_pass": true,
+    "automatic_unreviewed_production_log_training": false
+  },
+  "bootcamp": {
+    "common_foundation": true,
+    "division_specific_curricula": true,
+    "teaching_mastery": true,
+    "independent_assessment": true
+  },
+  "status_gates": [
+    "planned",
+    "data_cleared",
+    "base_selected",
+    "trained",
+    "benchmarked",
+    "safety_approved",
+    "license_approved",
+    "deployed",
+    "released"
+  ],
+  "rollout": [
+    "inventory_and_rights_audit",
+    "three_division_pilot",
+    "all_division_expansion",
+    "taxonomy_and_bootcamp_coverage",
+    "reviewed_proprietary_release"
+  ]
+}
