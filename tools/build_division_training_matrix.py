@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", type=Path, default=ROOT / "config/authorized-training-datasets/manifest.json")
-    parser.add_argument("--data-root", type=Path, default=ROOT / "data/authorized")
+    parser.add_argument("--data-root", type=Path, default=Path(os.environ.get("DREAMCO_AUTHORIZED_DATA_ROOT", str(Path.home() / "DreamCo-private-data"))))
     parser.add_argument("--registry", type=Path, default=ROOT / "config/masterbot-65-registry.json")
     parser.add_argument("--out", type=Path, default=ROOT / "config/generated/division-training-plan.json")
     args = parser.parse_args()
