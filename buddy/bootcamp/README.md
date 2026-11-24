@@ -78,3 +78,25 @@ with study_download_workspace(Path("/tmp/dreamco-study")) as workspace:
 Keep learning evidence, provenance, benchmark results, and original learner-authored notes in the approved evidence store outside this temporary directory. Do not upload media or temporary study files as GitHub Actions artifacts or commit them to the repository. The current freeCodeCamp catalog workflow reads metadata only; it does not download lesson media. GitHub-hosted runner files are also discarded when each job's ephemeral runner is torn down.
 
 The cleanup helper is covered by tests for normal completion, exceptions, idempotence, and refusal to delete paths outside its managed workspace. A study worker must use this context manager for its temporary files; adding the helper does not imply that a video-watching worker is already running.
+
+
+## DreamCo-authored lesson factory
+
+External sources are reference inputs, not the curriculum output. Buddy must create an independently authored DreamCo lesson for each selected division/capability gap. A lesson package includes:
+
+- fresh, plain-language explanation and learning objectives
+- original worked examples and code or domain examples
+- guided, independent, and stretch practice
+- a hands-on project with acceptance criteria
+- quiz questions with original answer explanations
+- sandbox tasks, targeted benchmark, unseen holdout, and regression checks
+- accessibility notes, prerequisites, source provenance, and rights status
+
+The lesson contract is `buddy/bootcamp/sources/original-lesson.schema.json`; use `buddy/bootcamp/templates/original-lesson.md` as the authoring template. Validate JSON lesson packages with:
+
+```bash
+python tools/validate_original_lesson.py path/to/lesson.json
+python -m unittest discover -s tests -p 'test_original_lesson.py' -v
+```
+
+The authoring policy forbids copying transcripts, course text, exercises, or answer keys. Public metadata and source links may identify topics; actual source material may be used only within the applicable permission. Mark every lesson with provenance and rights review. Training DreamCo model weights on source-derived material remains disabled unless a separate rights approval explicitly permits it. Original DreamCo-authored lesson assets can be stored and reused under DreamCo's own content policy, subject to review.
