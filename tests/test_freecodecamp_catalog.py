@@ -48,6 +48,24 @@ class FreeCodeCampCatalogTests(unittest.TestCase):
             self.assertFalse(row["transcript_ingestion_allowed"])
             self.assertFalse(row["model_training_allowed"])
 
+    def test_current_catalog_produces_275_plan_only_slots_across_55_domains(self):
+        root=Path(__file__).resolve().parents[1]
+        catalog=json.loads((root/"config/generated/freecodecamp-youtube-catalog.json").read_text(encoding="utf-8"))
+        registry=json.loads((root/"config/masterbot-65-registry.json").read_text(encoding="utf-8"))
+        readiness=json.loads((root/"config/generated/division-resource-readiness-map.json").read_text(encoding="utf-8"))
+        result=build_routes(catalog,registry,readiness["domain_routes"],lessons_per_domain=5)
+        plan=result["daily_lesson_plan"]
+        self.assertEqual(plan["domain_count"],55)
+        self.assertEqual(plan["daily_target"],275)
+        self.assertEqual(plan["planned_lessons"],275)
+        self.assertEqual(plan["blocked_lessons"],0)
+        self.assertTrue(all(len(row["lessons"])==5 for row in plan["divisions"]))
+        for row in plan["divisions"]:
+            self.assertEqual(len({lesson["video_id"] for lesson in row["lessons"]}),5)
+            self.assertTrue(all(lesson["execution_status"]=="PLAN_ONLY_NOT_EXECUTED" for lesson in row["lessons"]))
+            self.assertTrue(all(lesson["status"]=="queued_not_studied" for lesson in row["lessons"]))
+            self.assertTrue(all(not lesson["media_download_allowed"] and not lesson["transcript_ingestion_allowed"] and not lesson["model_training_allowed"] for lesson in row["lessons"]))
+
     def test_topic_routing_uses_tokens_not_substring_accidents(self):
         registry={"divisions":[{"id":1,"name":"DreamAIInfra"},{"id":2,"name":"DreamRetail"},
             {"id":3,"name":"DreamMaintenance"},{"id":4,"name":"DreamResearch"},
