@@ -1,75 +1,98 @@
 import unittest
 from tools.build_freecodecamp_division_queues import build_queues, validate
 
-class FreeCodeCampDivisionQueueTests(unittest.TestCase):
+
+def crosswalk_fixture():
+    core_names = ["DreamCyber", "DreamCodeLab", "DreamRealEstate"] + [f"DreamCore{i}" for i in range(4, 46)]
+    supplemental_names = ["DreamFood"] + [f"DreamSupplemental{i}" for i in range(2, 11)]
+    domains = []
+    for index, name in enumerate(core_names, 1):
+        domains.append({"domain_id": name.casefold(), "domain_name": name, "masterbot_id": index,
+                        "mapping_status": "proposed_exact_name_match", "review_required": True,
+                        "owner_approval": None})
+    for name in supplemental_names:
+        domains.append({"domain_id": name.casefold(), "domain_name": name, "masterbot_id": None,
+                        "mapping_status": "unresolved", "review_required": True, "owner_approval": None})
+    return {"domains": domains}
+
+
+class FreeCodeCampDomainQueueTests(unittest.TestCase):
     def setUp(self):
         self.catalog = {
             "schema": "dreamco.freecodecamp_catalog.v1",
             "inventory_status": "complete",
-            "inventory": {
-                "enumerator": "yt-dlp", "enumerator_version": "2026.11.23",
-                "expected_entry_count": 3, "observed_entry_count": 3,
-                "null_entry_count": 0, "duplicate_video_id_count": 0,
-                "complete": True, "completeness_basis": "test fixture",
-            },
-            "rights_policy": {"media_download_enabled": False, "transcript_ingestion_enabled": False, "model_training_requires_review": True},
-            "categories": [{"id": x} for x in ["computer_science_and_fundamentals", "python_and_automation", "cybersecurity_and_privacy", "databases_and_sql", "javascript_and_typescript"]],
+            "inventory": {"enumerator": "yt-dlp", "enumerator_version": "2026.11.23",
+                          "expected_entry_count": 3, "observed_entry_count": 3,
+                          "null_entry_count": 0, "duplicate_video_id_count": 0,
+                          "complete": True, "completeness_basis": "test fixture"},
+            "rights_policy": {"media_download_enabled": False, "transcript_ingestion_enabled": False,
+                              "model_training_requires_review": True},
+            "categories": [{"id": x} for x in ["computer_science_and_fundamentals", "python_and_automation",
+                "cybersecurity_and_privacy", "databases_and_sql", "javascript_and_typescript"]],
             "videos": [
-                {"video_id": "a", "title": "Python foundations", "url": "https://www.youtube.com/watch?v=a", "categories": ["python_and_automation"]},
-                {"video_id": "b", "title": "Cybersecurity basics", "url": "https://www.youtube.com/watch?v=b", "categories": ["cybersecurity_and_privacy"]},
-                {"video_id": "c", "title": "Computer science foundations", "url": "https://www.youtube.com/watch?v=c", "categories": ["computer_science_and_fundamentals"]},
+                {"video_id": "a", "title": "Python foundations", "url": "https://www.youtube.com/watch?v=a",
+                 "categories": ["python_and_automation"]},
+                {"video_id": "b", "title": "Cybersecurity basics", "url": "https://www.youtube.com/watch?v=b",
+                 "categories": ["cybersecurity_and_privacy"]},
+                {"video_id": "c", "title": "Computer science foundations", "url": "https://www.youtube.com/watch?v=c",
+                 "categories": ["computer_science_and_fundamentals"]},
             ],
         }
-        self.registry = {"divisions": [{"id": i, "name": name} for i, name in enumerate(["DreamCyber", "DreamCodeLab", "DreamFood"] * 22, 1)][:65]}
+        self.crosswalk = crosswalk_fixture()
 
-    def test_builds_unique_queue_for_all_65_divisions(self):
-        result = build_queues(self.catalog, self.registry, limit=10)
+    def test_builds_unique_queues_for_55_domains_not_65_masterbots(self):
+        result = build_queues(self.catalog, self.crosswalk, limit=10)
         validate(result)
-        self.assertEqual(result["division_count"], 65)
-        self.assertEqual(len({x["division_id"] for x in result["divisions"]}), 65)
+        self.assertEqual(result["domain_count"], 55)
+        self.assertEqual(len(result["domains"]), 55)
+        self.assertEqual(len({x["domain_id"] for x in result["domains"]}), 55)
+        self.assertEqual(sum(x["mapping_status"] == "proposed_exact_name_match" for x in result["domains"]), 45)
+        self.assertEqual(sum(x["mapping_status"] == "unresolved" for x in result["domains"]), 10)
 
     def test_domain_hints_route_specialist_content(self):
-        result = build_queues(self.catalog, self.registry, limit=10)
-        cyber = result["divisions"][0]
+        result = build_queues(self.catalog, self.crosswalk, limit=10)
+        cyber = next(x for x in result["domains"] if x["domain_name"] == "DreamCyber")
         self.assertIn("cybersecurity_and_privacy", cyber["target_categories"])
         self.assertTrue(any("cybersecurity_and_privacy" in x["categories"] for x in cyber["items"]))
 
-    def test_unmapped_division_gets_foundation_queue_and_pending_status(self):
-        result = build_queues(self.catalog, self.registry, limit=10)
-        food = next(x for x in result["divisions"] if x["division_name"] == "DreamFood")
-        self.assertEqual(food["queue_status"], "foundation_only_owner_mapping_pending")
+    def test_unassigned_supplemental_domain_keeps_owner_review_pending(self):
+        result = build_queues(self.catalog, self.crosswalk, limit=10)
+        food = next(x for x in result["domains"] if x["domain_name"] == "DreamFood")
+        self.assertEqual(food["mapping_status"], "unresolved")
+        self.assertIsNone(food["masterbot_id"])
+        self.assertTrue(food["owner_review_required"])
         self.assertTrue(all(x["assignment_status"] == "queued_not_studied" for x in food["items"]))
 
-    def test_camel_case_division_name_routes_real_estate_specialty(self):
-        registry = {"divisions": [{"id": i, "name": "DreamRealEstate" if i == 1 else f"DreamDivision{i}"} for i in range(1, 66)]}
-        result = build_queues(self.catalog, registry, limit=10)
-        estate = result["divisions"][0]
+    def test_camel_case_domain_name_routes_real_estate_specialty(self):
+        result = build_queues(self.catalog, self.crosswalk, limit=10)
+        estate = next(x for x in result["domains"] if x["domain_name"] == "DreamRealEstate")
         self.assertIn("databases_and_sql", estate["target_categories"])
         self.assertEqual(estate["queue_status"], "subject_routed")
 
-    def test_partial_catalog_cannot_create_division_queues(self):
+    def test_partial_catalog_cannot_create_domain_queues(self):
         catalog = dict(self.catalog)
         catalog["inventory_status"] = "partial"
         catalog["inventory"] = {**self.catalog["inventory"], "complete": False}
         with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory"):
-            build_queues(catalog, self.registry, limit=10)
+            build_queues(catalog, self.crosswalk, limit=10)
 
     def test_no_queue_item_is_authorized_for_training_or_media_ingestion(self):
-        result = build_queues(self.catalog, self.registry, limit=10)
-        for division in result["divisions"]:
-            for item in division["items"]:
+        result = build_queues(self.catalog, self.crosswalk, limit=10)
+        for domain in result["domains"]:
+            for item in domain["items"]:
                 self.assertFalse(item["training_eligible"])
                 self.assertFalse(item["media_download_allowed"])
                 self.assertFalse(item["transcript_ingestion_allowed"])
                 self.assertEqual(item["rights_status"], "review_required")
 
-    def test_rejects_wrong_division_count_and_claims_of_learning(self):
-        with self.assertRaisesRegex(ValueError, "65-division"):
-            build_queues(self.catalog, {"divisions": self.registry["divisions"][:64]})
-        result = build_queues(self.catalog, self.registry, limit=10)
-        result["divisions"][0]["items"][0]["assignment_status"] = "mastered"
+    def test_rejects_wrong_domain_count_and_claims_of_learning(self):
+        with self.assertRaisesRegex(ValueError, "55-domain"):
+            build_queues(self.catalog, {"domains": self.crosswalk["domains"][:54]})
+        result = build_queues(self.catalog, self.crosswalk, limit=10)
+        result["domains"][0]["items"][0]["assignment_status"] = "mastered"
         with self.assertRaisesRegex(ValueError, "cannot claim study"):
             validate(result)
+
 
 if __name__ == "__main__":
     unittest.main()
