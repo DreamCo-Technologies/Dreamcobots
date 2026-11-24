@@ -141,6 +141,27 @@ class DatasetHub:
         if approved and not str(card.get("rights_evidence", "")).strip():
             raise DatasetPolicyError("Training approval requires a rights-evidence reference")
         if approved:
+            from .license_policy import assess_training_candidate
+            candidate = {
+                "source": card.get("source"),
+                "id": card.get("source_id"),
+                "url": card.get("source_url"),
+                "license": card.get("license"),
+                "ai_training_allowed": card.get("ai_training_allowed") is True,
+                "content_rights_verified": card.get("content_rights_verified") is True,
+                "privacy_review": card.get("privacy_review"),
+                "owner_assignment_verified": card.get("owner_assignment_verified") is True,
+                "contributor_rights_verified": card.get("contributor_rights_verified") is True,
+                "owner_approval_id": card.get("owner_approval_id"),
+                "rights_evidence": card.get("rights_evidence"),
+            }
+            rights = assess_training_candidate(candidate)
+            if rights["status"] not in {
+                "PERMISSIVE_LICENSE_TRAINING_CANDIDATE_REQUIRES_DATA_QUALITY_AND_FINAL_REVIEW",
+                "INTERNAL_OWNED_TRAINING_CANDIDATE_REQUIRES_DATA_QUALITY_AND_FINAL_REVIEW",
+            }:
+                raise DatasetPolicyError("Dataset rights policy rejected training approval: " + rights["status"])
+        if approved:
             registry = json.loads((ROOT / "config/masterbot-65-registry.json").read_text(encoding="utf-8"))
             valid_ids = {int(item["id"]) for item in registry.get("divisions", [])}
             primary = card.get("primary_masterbot_id")
