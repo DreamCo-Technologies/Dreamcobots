@@ -157,3 +157,12 @@ def run_object_store_healthcheck(*,client:Any=None,allow_canary:bool=False,
         "encryption_at_rest":True,"versioning_enabled":True,"public_access_blocked":True,
         "credentials_emitted":False,"canary_payload_contains_secrets":False,
         "note":"A cross-bucket canary copy/restore passed. This is not a full disaster-recovery exercise or proof of cross-account/region resilience."}
+
+def run_division_object_store_healthcheck(masterbot_id:int, **kwargs:Any)->dict[str,Any]:
+    """Run the canary under the canonical division's isolated key prefix."""
+    if isinstance(masterbot_id,bool) or not isinstance(masterbot_id,int) or not 1<=masterbot_id<=65:
+        raise ObjectStoreError("masterbot_id_must_be_between_1_and_65")
+    base=kwargs.pop("prefix",None) or os.environ.get("DREAMCO_OBJECT_STORE_HEALTHCHECK_PREFIX","dreamco/healthchecks")
+    evidence=run_object_store_healthcheck(prefix=f"{base}/divisions/{masterbot_id:03d}",**kwargs)
+    evidence["masterbot_id"]=masterbot_id
+    return evidence
