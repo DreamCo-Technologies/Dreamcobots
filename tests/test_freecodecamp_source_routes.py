@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 from tools.build_freecodecamp_routes import build_routes, validate
-from buddy.learning.freecodecamp_source import resources_for_division, select_next_for_division
+from buddy.learning.freecodecamp_source import resources_for_division, select_next_for_division, plan_next_lesson\nfrom buddy.learning.study_resource_scheduler import Capability
 
 class FreeCodeCampSourceRouteTests(unittest.TestCase):
     def setUp(self):
@@ -57,6 +57,20 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
             path.write_text(json.dumps(payload))
             for division_id in range(1, 66):
                 self.assertEqual(len(resources_for_division(division_id, path)), 2)
+
+    def test_plan_next_lesson_contains_official_url_and_evidence_steps(self):
+        payload = build_routes(self.catalog, self.registry)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "routes.json"
+            path.write_text(json.dumps(payload))
+            plan = plan_next_lesson(1, Capability(name="python", category="python_and_automation"), path=path)
+            self.assertIsNotNone(plan)
+            self.assertEqual(plan["source"], "freeCodeCamp.org")
+            self.assertTrue(plan["source_url"].startswith("https://www.youtube.com/"))
+            self.assertIn("practice_in_sandbox", plan["steps"])
+            self.assertIn("run_targeted_benchmark", plan["steps"])
+            self.assertEqual(plan["completion_status"], "queued_not_studied")
+            self.assertFalse(plan["model_training_allowed"])
 
     def test_runtime_scheduler_selects_candidate_and_validates_division(self):
         payload = build_routes(self.catalog, self.registry)
