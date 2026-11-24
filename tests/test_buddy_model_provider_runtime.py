@@ -38,9 +38,18 @@ class ProviderRuntimeTests(unittest.TestCase):
         self.assertEqual(result["response_text"],"ready")
         self.assertEqual(result["usage"]["total_tokens"],7)
         self.assertFalse(result["credentials_emitted"])
+        self.assertFalse(result["training_use_authorized"])
+        self.assertEqual(result["data_classification"], "internal")
+        self.assertTrue(result["request_id"].startswith("infer-"))
         self.assertEqual(captured["url"],"https://api.openai.com/v1/chat/completions")
         self.assertEqual(captured["auth"],"Bearer secret")
         self.assertEqual(captured["body"]["model"],"gpt-5.4-mini")
+    def test_provider_data_classification_is_enforced(self):
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY":"secret"}, clear=True):
+            with self.assertRaisesRegex(ModelServingError, "classification"):
+                chat_completion("openrouter", "vendor/model", [{"role":"user","content":"public"}], paid_approval_id="A")
+            with self.assertRaisesRegex(ModelServingError, "credential_not_configured"):
+                chat_completion("openrouter", "vendor/model", [{"role":"user","content":"public"}], paid_approval_id="A", data_classification="public")
     def test_invalid_message_and_token_limits_are_rejected(self):
         with patch.dict(os.environ, {"OPENAI_API_KEY":"secret"}, clear=True):
             with self.assertRaises(ModelServingError):
