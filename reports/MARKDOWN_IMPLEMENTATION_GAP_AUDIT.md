@@ -1,6 +1,6 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T04:51:19Z
+Generated: 2026-11-24T05:07:08Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
