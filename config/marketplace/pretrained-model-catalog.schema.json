@@ -66,7 +66,12 @@
           "supported_runtimes",
           "evaluation_report",
           "model_card",
-          "status"
+          "status",
+          "dataset_provenance",
+          "rights_evidence_ref",
+          "weights_package_uri",
+          "rights_approval_status",
+          "evaluation_status"
         ],
         "properties": {
           "model_id": {
@@ -132,6 +137,32 @@
               "benchmarked",
               "approved_for_sale",
               "withdrawn"
+            ]
+          },
+          "dataset_provenance": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rights_evidence_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "weights_package_uri": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rights_approval_status": {
+            "enum": [
+              "PENDING",
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "evaluation_status": {
+            "enum": [
+              "PENDING",
+              "PASSED",
+              "FAILED"
             ]
           }
         }
