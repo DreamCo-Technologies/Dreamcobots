@@ -20,21 +20,20 @@ class DivisionResourceReadinessTests(unittest.TestCase):
   self.assertEqual(len(routes),65)
   self.assertEqual(len({r["resource_bundle_id"] for r in routes}),65)
   self.assertEqual({r["masterbot_id"] for r in routes},{b["id"] for b in self.registry["divisions"]})
-  required={"logical_database_namespace","dataset_discovery_lane_id","teacher_model_candidate_ids","domain_mapping"}
+  required={"logical_database_namespace","dataset_discovery_lane_id","domain_mapping"}
   for route in routes:
    self.assertTrue(required.issubset(route))
    self.assertEqual(route["readiness_status"],"requirements_defined_not_provisioned")
    self.assertTrue(route["logical_database_namespace"])
    self.assertTrue(route["dataset_discovery_lane_id"])
-   self.assertTrue(route["teacher_model_candidate_ids"])
    self.assertFalse(route["dataset_training_approved"])
  def test_teacher_models_are_candidates_not_certified_or_approved(self):
   result=self.payload()
   self.assertGreaterEqual(len(result["machine_learning_practices"]),20)
   self.assertEqual(set(result["resource_templates"]),{"database","datasets","teacher_models","reverse_engineering","distillation","model_routing","compute","evaluation","operations"})
-  seed_ids={model for values in result["resource_templates"]["teacher_models"]["seed_models_by_capability_pack"].values() for model in values}
+  seed_catalog=result["resource_templates"]["teacher_models"]["seed_models_by_capability_pack"]
   for route in result["routes"]:
-   self.assertTrue(set(route["teacher_model_candidate_ids"]).issubset(seed_ids))
+   self.assertTrue(set(route["capability_pack_ids"]).issubset(seed_catalog))
  def test_distillation_and_reverse_engineering_have_rights_gates(self):
   templates=self.payload()["resource_templates"]
   self.assertIn("teacher/provider terms",templates["distillation"]["required_lineage"][2])
