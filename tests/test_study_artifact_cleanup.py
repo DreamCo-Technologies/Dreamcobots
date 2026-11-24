@@ -25,11 +25,16 @@ class StudyArtifactCleanupTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
             captured = None
-            with self.assertRaisesRegex(RuntimeError, "study failed"):
+
+            def fail_during_study():
+                nonlocal captured
                 with study_download_workspace(base) as workspace:
                     captured = workspace
                     (workspace / "lesson.tmp").write_text("temporary")
                     raise RuntimeError("study failed")
+
+            with self.assertRaisesRegex(RuntimeError, "study failed"):
+                fail_during_study()
             self.assertFalse(captured.exists())
 
     def test_cleanup_is_idempotent(self):
