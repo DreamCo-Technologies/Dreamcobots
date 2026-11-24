@@ -125,6 +125,7 @@ def normalize_item(source: dict[str, Any], raw: dict[str, Any], observed_at: str
     url = safe_url(raw.get("url"))
     summary = clean_text(raw.get("summary"))
     external_id = str(raw.get("external_id") or "")
+    metadata = raw.get("metadata") if isinstance(raw.get("metadata"), dict) else {}
     if not title:
         return None
     identity = url or external_id or title.casefold()
@@ -154,6 +155,9 @@ def normalize_item(source: dict[str, Any], raw: dict[str, Any], observed_at: str
         "evidence_class": "discovery_lead_not_verified",
         "verified_capability": False,
         "income_claim_verified": False,
+        "metadata": metadata,
+        "rights_status": "UNVERIFIED_DISCOVERY_ONLY",
+        "training_approved": False,
     }
 
 
@@ -208,7 +212,12 @@ def extract_source(source: dict[str, Any], content: bytes, observed_at: str, pol
             summary = get_path(item, source.get("summary_field")) if source.get("summary_field") else ""
             published = get_path(item, source.get("date_field")) if source.get("date_field") else None
             external_id = get_path(item, source.get("id_field")) if source.get("id_field") else None
-            raw_items.append({"title": title, "url": url, "summary": summary, "published_at": published, "external_id": external_id})
+            metadata = {
+                key: get_path(item, field_path)
+                for key, field_path in source.get("metadata_fields", {}).items()
+                if get_path(item, field_path) is not None
+            }
+            raw_items.append({"title": title, "url": url, "summary": summary, "published_at": published, "external_id": external_id, "metadata": metadata})
     else:
         raise ValueError(f"Unsupported source kind: {source.get('kind')}")
     output = []
