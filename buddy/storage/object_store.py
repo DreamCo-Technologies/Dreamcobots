@@ -22,6 +22,17 @@ PREFIX_RE = re.compile(r"^[A-Za-z0-9/_-]{1,120}$")
 ENCRYPTION_ALGORITHMS = {"AES256", "aws:kms", "aws:kms:dsse"}
 
 
+def _valid_bucket_name(value: str) -> bool:
+    if not BUCKET_RE.fullmatch(value) or ".." in value:
+        return False
+    labels = value.split(".")
+    if any(not label or label.startswith("-") or label.endswith("-") for label in labels):
+        return False
+    if re.fullmatch(r"\\d{1,3}(?:\\.\\d{1,3}){3}", value):
+        return False
+    return True
+
+
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -162,7 +173,7 @@ def run_object_store_healthcheck(
     backup = backup_value.strip()
     key_prefix = prefix_value.strip()
 
-    if not BUCKET_RE.fullmatch(primary) or not BUCKET_RE.fullmatch(backup) or primary == backup:
+    if not _valid_bucket_name(primary) or not _valid_bucket_name(backup) or primary == backup:
         raise ObjectStoreError("distinct_valid_primary_and_backup_buckets_are_required")
     if not PREFIX_RE.fullmatch(key_prefix):
         raise ObjectStoreError("object_store_healthcheck_prefix_is_invalid")
