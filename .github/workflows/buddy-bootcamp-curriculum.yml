@@ -78,8 +78,8 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: buddy-bootcamp-curriculum
-  cancel-in-progress: false
+  group: buddy-bootcamp-curriculum-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   weekly-transcript-audit:
     runs-on: ubuntu-latest
