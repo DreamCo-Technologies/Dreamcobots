@@ -16,6 +16,11 @@ class DreamCoTrainingFactoryTests(unittest.TestCase):
         self.assertEqual(plan["coverage"]["masterbots"], 65)
         self.assertEqual(plan["coverage"]["task_families"], 37)
         self.assertEqual(plan["coverage"]["division_task_assignments"], 2405)
+        self.assertEqual(plan["coverage"]["source_families"], 9)
+        self.assertEqual(plan["coverage"]["implemented_metadata_adapters"], 9)
+        self.assertIn("openalex", plan["source_registry"]["implemented_metadata_adapters"])
+        self.assertIn("crossref", plan["source_registry"]["implemented_metadata_adapters"])
+        self.assertIn("arXiv metadata", plan["source_registry"]["catalogued_reference_only"])
         self.assertEqual(len(plan["lanes"]), 65)
         for lane in plan["lanes"]:
             self.assertEqual(len(lane["task_families"]), 37)
