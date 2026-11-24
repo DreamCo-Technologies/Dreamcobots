@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Iterable
-from buddy.learning.study_resource_scheduler import Capability, Resource, choose_next
+from buddy.learning.study_resource_scheduler import Capability, Resource, choose_next, study_plan
 
 ROOT = Path(__file__).resolve().parents[2]
 ROUTES = ROOT / "config/generated/freecodecamp-source-routes.json"
@@ -42,3 +42,23 @@ def route_summary(path: Path = ROUTES) -> dict:
     return {"source": "freeCodeCamp.org", "catalog_video_count": payload["catalog_video_count"],
             "division_count": payload["division_count"], "all_divisions_have_full_access": True,
             "learning_is_automatic": False, "next_step": "select lesson, study authorized source, practice, benchmark and record evidence"}
+
+
+def plan_next_lesson(division_id: int, capability: Capability, *, recent: set[int] | None = None,
+                     path: Path = ROUTES) -> dict | None:
+    """Return the next official-source lesson and the scheduler's evidence loop."""
+    resource = select_next_for_division(division_id, [capability], recent=recent, path=path)
+    if resource is None:
+        return None
+    plan = study_plan(resource, capability)
+    plan.update({
+        "source_url": resource.url,
+        "division_id": division_id,
+        "source": "freeCodeCamp.org",
+        "rights_status": "review_required",
+        "media_download_allowed": False,
+        "transcript_ingestion_allowed": False,
+        "model_training_allowed": False,
+        "completion_status": "queued_not_studied",
+    })
+    return plan
