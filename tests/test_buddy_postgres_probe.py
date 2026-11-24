@@ -3,9 +3,8 @@ from __future__ import annotations
 import json
 import tempfile
 import unittest
-from unittest.mock import patch
 from pathlib import Path
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock, patch
 
 from buddy.datasets.postgres_probe import PostgresProbeError, load_expected_namespaces, main, probe_postgres
 
