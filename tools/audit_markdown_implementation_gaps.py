@@ -198,7 +198,8 @@ def render_report(data: dict[str, Any]) -> str:
             "",
         ])
     lines.extend(["## Truth boundary", "", data["truth_boundary"], ""])
-    # Keep generated Markdown clean under git diff --check, including when\n    # source documents contain unusual whitespace in copied excerpts.\n    return "\n".join(line.rstrip() for line in lines).rstrip() + "\n"
+    # Keep generated Markdown clean under git diff --check.
+    return "\n".join(line.rstrip() for line in lines).rstrip() + "\n"
 
 
 def main() -> int:
