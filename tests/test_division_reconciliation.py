@@ -39,6 +39,18 @@ class DivisionReconciliationTests(unittest.TestCase):
             self.assertEqual(row["masterbot_link_status"], "proposed_requires_owner_review")
             self.assertFalse(row["production_ready"])
 
+
+    def test_generated_fleet_and_test_manifests_use_their_actual_envelopes(self):
+        name = "DreamAffiliate"
+        fleet = json.loads((ROOT / "website/data/bot-fleet/DreamAffiliate.json").read_text(encoding="utf-8"))
+        tests = json.loads((ROOT / "website/data/bot-capability-tests/DreamAffiliate.json").read_text(encoding="utf-8"))
+        self.assertEqual(fleet["division"], name)
+        self.assertTrue(fleet["bots"])
+        self.assertEqual({bot["identity"]["division"] for bot in fleet["bots"]}, {name})
+        self.assertEqual(tests["division"], name)
+        self.assertTrue(tests["profiles"])
+        self.assertEqual({profile["division"] for profile in tests["profiles"]}, {name})
+
     def test_every_division_inherits_the_same_ten_operating_capabilities(self):
         expected = ["discover", "intake", "research", "design", "build", "simulate", "evaluate", "integrate", "operate", "improve"]
         for row in self.result["domain_divisions"]:
