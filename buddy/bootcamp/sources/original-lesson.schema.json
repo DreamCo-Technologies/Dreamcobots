@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.example/schemas/original-lesson.schema.json",
+  "title": "DreamCo Original Lesson",
+  "type": "object",
+  "required": ["schema", "lesson_id", "division_id", "title", "learning_objectives", "original_explanation", "worked_examples", "practice", "assessment", "provenance", "rights"],
+  "properties": {
+    "schema": {"const": "dreamco.original_lesson.v1"},
+    "lesson_id": {"type": "string", "minLength": 3},
+    "division_id": {"type": "integer", "minimum": 1, "maximum": 65},
+    "title": {"type": "string", "minLength": 5},
+    "level": {"enum": ["beginner", "intermediate", "advanced"]},
+    "prerequisites": {"type": "array", "items": {"type": "string"}},
+    "learning_objectives": {"type": "array", "minItems": 2, "items": {"type": "string", "minLength": 8}},
+    "original_explanation": {"type": "string", "minLength": 80},
+    "worked_examples": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["problem", "solution", "reasoning"], "properties": {"problem": {"type": "string"}, "solution": {"type": "string"}, "reasoning": {"type": "string"}}, "additionalProperties": false}},
+    "practice": {"type": "array", "minItems": 2, "items": {"type": "object", "required": ["prompt", "expected_artifact", "difficulty"], "properties": {"prompt": {"type": "string"}, "expected_artifact": {"type": "string"}, "difficulty": {"enum": ["guided", "independent", "stretch"]}}, "additionalProperties": false}},
+    "project": {"type": "object", "required": ["brief", "acceptance_criteria"], "properties": {"brief": {"type": "string"}, "acceptance_criteria": {"type": "array", "minItems": 2, "items": {"type": "string"}}}, "additionalProperties": false},
+    "assessment": {"type": "object", "required": ["questions", "answer_key", "benchmark_spec"], "properties": {"questions": {"type": "array", "minItems": 3, "items": {"type": "string"}}, "answer_key": {"type": "array", "minItems": 3, "items": {"type": "string"}}, "benchmark_spec": {"type": "string"}}, "additionalProperties": false},
+    "accessibility": {"type": "array", "items": {"type": "string"}},
+    "provenance": {"type": "object", "required": ["source_name", "source_url", "retrieved_at", "source_usage"], "properties": {"source_name": {"type": "string"}, "source_url": {"type": "string", "format": "uri"}, "retrieved_at": {"type": "string"}, "source_usage": {"enum": ["inspiration_only", "authorized_reference", "public_metadata_only"]}, "rights_review_ref": {"type": ["string", "null"]}}, "additionalProperties": false},
+    "rights": {"type": "object", "required": ["review_status", "source_material_copied", "training_allowed"], "properties": {"review_status": {"enum": ["pending", "approved", "restricted", "rejected"]}, "source_material_copied": {"const": false}, "training_allowed": {"const": false}}, "additionalProperties": false},
+    "quality_review": {"type": "object", "properties": {"technical_accuracy": {"type": "string"}, "editor_review": {"type": "string"}, "last_reviewed": {"type": "string"}}}
+  },
+  "additionalProperties": false
+}
