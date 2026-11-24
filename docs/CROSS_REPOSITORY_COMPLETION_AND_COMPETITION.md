@@ -59,3 +59,41 @@ Approved requirements, decisions, and completion status from ChatGPT conversatio
 ## Current state
 
 This contract records the intended three-candidate architecture and ordering. It does not claim that all three implementations are complete, that live services are connected, that model training has run, that a Mac runner is executing jobs, or that runtime competition has occurred. A passing contract validator proves only that the specification is structurally consistent.
+
+## Fair compute and anti-cheating protocol
+
+No candidate gets extra resources or more favorable conditions. Every comparison is assigned an immutable run manifest and an equal budget per candidate: wall-clock time, accelerator-active time where measurable, CPU allocation, memory cap, power/energy budget where measurable, warm-up, concurrency, and maximum attempts. The same laptop is one comparison cohort; GitHub runners are a separate cohort. A laptop result must not be directly ranked against a hosted GitHub runner unless hardware and environment equivalence is demonstrated.
+
+Freeze test cases, prompts, scoring, model/tokenizer revisions, context limits, permissions, dataset splits, and benchmark version before execution. Rotate candidate order to reduce cache and thermal bias. Record every attempt, failure, retry, cancellation, environment, cache state, resource measurement, and score. Infrastructure retries must be symmetric; preserve failed attempts. Candidate-specific optimizations must be disclosed and reported as a separate track. Never discard an inconvenient failure or give one runtime a private test-time advantage.
+
+## Division data ownership and controlled sharing
+
+Default to isolated division-owned datasets, database namespaces, access policies, splits, checkpoints, and audit records. Divisions may use a shared, centrally governed corpus only through immutable, versioned manifests after rights, privacy, purpose, retention, and scope approval. Each division receives a separately authorized derived view with source and transformation provenance.
+
+Use four explicit data classes: shared public/licensed corpus, approved sanitized common curriculum, division-private training data, and evaluation-only holdout. Private holdouts never enter training. A division cannot read another division's private raw data or train on it unless the owner has approved compatible rights and purpose. Every dataset version records source/license, rights approval, privacy review, purpose, expiry/revocation, content and split hashes, division access manifest, and transformation provenance. Shared learning should favor approved lessons, synthetic/sanitized examples, and capability metadata rather than copying private raw records across divisions.
+
+## Buddy's model and data access
+
+Buddy uses one canonical, provenance-backed catalog to discover the best eligible model and data source for each task. Model records must include immutable model/revision, provider, capability and modality support, context/tool support, license and output-use rights, data-classification ceiling, region/retention, availability/rate limits, latency/throughput/memory/cost, quality/safety/reliability scores, benchmark provenance, and safe fallbacks.
+
+Routing is a two-stage decision: first enforce hard eligibility (capability, permissions, privacy classification, licensing, safety, region, budget, and availability); then rank eligible candidates using fresh, comparable task-specific benchmark evidence. Missing or stale evidence means unverified, not best. Data selection follows the same rights and privacy gates and returns the best approved dataset/knowledge source for the task, with division boundaries preserved.
+
+## Daily evaluation after readiness
+
+Daily competitive testing starts only after Buddy's end-to-end task execution is verified, Bootcamp coverage and resources are audited, approved model artifacts exist, and benchmark runners are operational. Daily suites include routing accuracy, policy compliance, task quality/completion, p50/p95 latency, throughput, CPU/GPU utilization, accelerator-active time, peak memory, energy/power when measurable, cost, reliability/retries/timeouts/cancellation, safety, privacy leakage, retrieval grounding/provenance, tool-call correctness/recovery, regression, and reproducibility. Also rerun on material model, tokenizer, provider-policy, runtime, dataset, or benchmark changes. Daily results are monitoring evidence, not automatic production promotion.
+
+## Safe Python-to-Swift validation bridge
+
+The Python repository may define a narrow bridge for non-mutating checks against the preserved Swift repository: schema validation, static analysis, fixture-based unit tests, dependency/license inventory, secret scanning, read-only health checks, and shared-contract conformance. It must not run production deployments, paid inference, real training, database writes/migrations, credential changes, publishing, or access private datasets/secrets from untrusted PRs.
+
+A cross-repository GitHub App or dedicated least-privilege token is required to dispatch workflows. Only pinned commit SHA, run URL, contract version, and safe artifact digest may cross the boundary. The bridge is currently specified, not connected: the repository owner must configure the credential as a GitHub secret. The receiver workflow in the Swift repository remains deferred until the Python-first completion gate, except for a separately approved safe-run-only bridge.
+
+## Training resource discovery beyond Hugging Face
+
+Bootcamp resource coverage is not complete merely because Hugging Face categories are indexed. Maintain a source catalog and curriculum map across: core frameworks (PyTorch, TensorFlow/Keras, JAX/Flax); distributed and accelerator training (DeepSpeed, Megatron-LM, FSDP, TorchTitan, Lightning); fine-tuning and alignment (Transformers, PEFT, TRL, Axolotl, LLaMA-Factory, Unsloth); evaluation and observability (lm-evaluation-harness, HELM, Inspect, OpenCompass, EleutherAI evaluation resources); datasets and research repositories (Hugging Face Datasets, BigCode/The Stack, AllenAI, EleutherAI, Common Crawl, Wikipedia/Wikimedia, OpenML, UCI Machine Learning Repository, Kaggle, academic papers and institutional repositories); model and systems research (arXiv, Papers with Code, official framework/model documentation, benchmark leaderboards); and modality-specific resources for vision, audio, speech, video, robotics, retrieval, agents, and tool use.
+
+Every source is only a discovery candidate until its terms, provenance, permitted use, privacy, quality, duplication, and division fit are reviewed. Record canonical URLs, dataset/model IDs, immutable revisions, license evidence, allowed use, owner, refresh cadence, and which Bootcamp lessons and divisions consume it. Never infer training permission from public availability. Include a human-reviewed taxonomy coverage report and unresolved subject-to-division mappings; do not guess an owner when a category spans multiple divisions.
+
+## Python completion and clone gate
+
+Do not clone/rebuild the Apple C or Swift implementations or begin their implementation phases until the Python repository meets the clone gate in config/cross-runtime-contract.json. Every goal must be on track, mastered, or explicitly blocked with an owner and next action. Required workflows must be green on the exact candidate main commit; no unresolved failing required check or unexplained cancelled/skipped run may remain. Historical failures stay visible and need a verified fix plus passing regression evidence. All PRs need reviewed dispositions, Buddy and Bootcamp gates must be verified, training and benchmark evidence must exist, and shared contracts must be frozen. An external blocker can remain only when documented and explicitly accepted; an untracked failure blocks the clone.

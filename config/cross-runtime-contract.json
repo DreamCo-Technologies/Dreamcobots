@@ -108,7 +108,36 @@
     ],
     "fallback_required": true,
     "benchmark_suite_version_required": true,
-    "no_unverified_claims": true
+    "no_unverified_claims": true,
+    "fairness": {
+      "policy": "No candidate may receive a larger compute allocation, more benchmark attempts, more favorable scheduling, or relaxed resource limits than another candidate in the same comparison cohort.",
+      "allocation_unit": "per-runtime per-task per-platform cohort",
+      "required_equal_budgets": [
+        "wall_clock_seconds",
+        "accelerator_active_seconds_when_available",
+        "CPU_core_seconds_or_documented_equivalent",
+        "memory_limit_bytes",
+        "power_or_energy_budget_when_measurable",
+        "maximum_attempts",
+        "warmup_policy",
+        "concurrency"
+      ],
+      "platform_cohorts": [
+        "same physical laptop and same power/thermal conditions; rotate candidate order across repetitions",
+        "GitHub runner comparisons use identical runner image, hardware class, region when available, CPU/memory/GPU limits, and concurrency",
+        "laptop and GitHub results are separate cohorts unless hardware and environment are demonstrably equivalent"
+      ],
+      "anti_cheating": [
+        "freeze benchmark cases and scoring before a run",
+        "use identical prompts, model/tokenizer revisions, tool permissions, context limits, and dataset splits",
+        "randomize or rotate execution order to reduce thermal and cache bias",
+        "record all attempts, failures, retries, cancellations, cache state, environment and resource telemetry",
+        "no hidden candidate-specific optimizations unless disclosed and measured as a separate track",
+        "infra failure reruns are applied symmetrically to all candidates; preserve original failure records",
+        "do not compare incomparable hardware as a direct winner"
+      ],
+      "evidence": "immutable per-run manifests and raw telemetry plus aggregate scorecards"
+    }
   },
   "training": {
     "tokenizer_training": "approved_dataset_and_rights_review_required",
@@ -149,5 +178,117 @@
     "production_promotion_requires_explicit_release_gate": true,
     "native_language_does_not_imply_better_performance": true,
     "incomparable_hardware_results_must_not_be_ranked_as_direct_wins": true
+  },
+  "data_governance": {
+    "division_default": "isolated division-owned datasets, namespaces, access policies, train/validation/test splits, checkpoints, and audit records",
+    "shared_data": "A centrally governed shared corpus may be read by multiple divisions only through immutable versioned manifests after rights, privacy, purpose, retention, and division-scope approval. Each division receives an isolated derived view and provenance link.",
+    "forbidden": [
+      "implicit cross-division raw-data access",
+      "mixing private holdouts into training",
+      "using one division's private examples to train another without explicit compatible rights and approval",
+      "copying secrets, personal data, or unapproved provider outputs into shared datasets"
+    ],
+    "sharing_modes": [
+      "shared_public_or_licensed_corpus",
+      "approved_sanitized_common_curriculum",
+      "division_private_dataset",
+      "evaluation_only_holdout"
+    ],
+    "required_lineage": [
+      "source_and_license",
+      "rights_approval",
+      "privacy_review",
+      "purpose_and_scope",
+      "expiry_and_revocation",
+      "content_hash",
+      "split_hashes",
+      "division_access_manifest",
+      "transformation_provenance"
+    ]
+  },
+  "model_access": {
+    "registry": "canonical capability-aware model and provider catalog",
+    "required_metadata": [
+      "immutable_model_id_and_revision",
+      "provider_and_endpoint",
+      "capabilities_and_modalities",
+      "context_and_tool_support",
+      "license_and_output_use_rights",
+      "data_classification_ceiling",
+      "region_and_retention",
+      "availability_and_rate_limits",
+      "latency_throughput_memory_cost",
+      "quality_safety_reliability_scores",
+      "benchmark_provenance",
+      "fallbacks"
+    ],
+    "routing": "Buddy first filters by capability, user permission, data classification, licensing, safety, region, budget, and availability; then ranks eligible models using current comparable benchmark evidence and task-specific weights.",
+    "stale_evidence": "If benchmark evidence is stale or missing, mark model unverified and use a safe approved fallback; never claim best-model status from catalog popularity alone."
+  },
+  "daily_evaluation": {
+    "activation_gate": "Buddy end-to-end task execution and Buddy Bootcamp curriculum/resource coverage are verified, approved model artifacts exist, and benchmark runners are operational.",
+    "cadence": "daily after activation; also run on model, tokenizer, provider policy, runtime, dataset, or benchmark changes",
+    "suites": [
+      "routing accuracy and policy compliance",
+      "task quality and completion",
+      "latency p50/p95 and throughput",
+      "CPU/GPU utilization and accelerator-active time",
+      "peak memory and energy/power where measurable",
+      "cost per task and per 1000 tokens",
+      "reliability, retries, timeout and cancellation behavior",
+      "safety, privacy leakage and data-boundary tests",
+      "retrieval grounding and citation/provenance quality",
+      "tool-call correctness and recovery",
+      "regression and reproducibility"
+    ],
+    "promotion": "daily test results inform monitoring and candidate eligibility only; promotion requires the separate review and release gates."
+  },
+  "safe_run_bridge": {
+    "purpose": "Allow the most important non-mutating Python repository checks to validate shared contract compatibility in the preserved Swift repository without moving the Python-first completion boundary.",
+    "allowed": [
+      "schema validation",
+      "static analysis",
+      "unit tests using fixtures and mocks",
+      "dependency/license inventory",
+      "secret scanning without exposing findings",
+      "read-only repository health checks",
+      "contract conformance tests"
+    ],
+    "forbidden": [
+      "production deployment or release",
+      "paid compute or provider calls",
+      "real training or weight/tokenizer updates",
+      "database writes or destructive migrations",
+      "credential/permission changes",
+      "publishing or external account actions",
+      "access to private datasets or secrets from untrusted PRs"
+    ],
+    "transport": "A repository_dispatch or GitHub App workflow bridge requires an explicitly configured least-privilege cross-repository credential. The bridge must pass only a pinned commit SHA, workflow run URL, safe artifact digest, and contract version; it must never transmit secrets or private dataset contents.",
+    "current_state": "SPECIFIED_NOT_CONNECTED",
+    "blocker": "A cross-repository GitHub App installation or dedicated token with narrowly scoped Actions/Contents permissions must be configured by the repository owner; this assistant cannot create or reveal repository secrets.",
+    "sequencing": "The bridge contract may be prepared in the Python repository now. Receiver workflow changes in the Swift repository are deferred until the Python repository completion gate is satisfied, except for a separately approved safe-run-only bridge implementation."
+  },
+  "clone_gate": {
+    "required_before_cloning_or_starting_C_and_Swift_implementation": [
+      "all main-repository workstreams have current evidence-backed status and every goal is on track, mastered, or explicitly blocked with owner, dependency, and next action",
+      "no unresolved failing required check on the candidate main commit and no unexplained cancelled or skipped required run",
+      "all relevant workflows have current successful runs on the exact candidate commit; historical failures remain recorded with verified fixes and regression evidence",
+      "all PRs have an explicit reviewed disposition and no unresolved critical security, data-loss, privacy, or production-isolation finding",
+      "Buddy end-to-end task execution and Bootcamp resource/curriculum gates are verified",
+      "approved tokenizer and model training plus required benchmark and private holdout evidence exist",
+      "database, storage, queue, worker, recovery, and observability dependencies are live-verified or explicitly excluded from the clone scope",
+      "shared contracts and conformance fixtures are frozen and versioned",
+      "human owner review approves the exact Python commit and clone manifest"
+    ],
+    "interpretation": "A historical failed run is not deleted or hidden. It must be diagnosed, fixed, and followed by passing evidence. A goal may remain blocked only when the blocker is external, documented, owned, and explicitly accepted; an untracked or silently failing goal blocks cloning.",
+    "clone_manifest": [
+      "canonical Python commit SHA",
+      "approved source paths and excluded paths",
+      "dependency lockfiles and build commands",
+      "contract and schema versions",
+      "dataset/model/tokenizer artifact IDs and hashes (never secrets)",
+      "test and benchmark evidence references",
+      "known limitations and rollback procedure"
+    ]
   }
 }
