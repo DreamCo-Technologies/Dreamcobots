@@ -117,3 +117,13 @@ The following entries were returned by GitHub's open-PR search for the canonical
 | [#928](https://github.com/DreamCo-Technologies/Dreamcobots/pull/928) | feat: add DreamCo Money OS revenue integration | Review pending |
 
 Inventory count: 62 open PRs returned; 8 PR numbers already referenced in this ledger; 59 additional open PRs listed here. Refresh this inventory before every reconciliation pass because PR state changes over time.
+
+## Additional approved requirements (2026-11-24)
+
+- **Fair compute:** Python, C, and Swift receive equal per-candidate budgets for each comparison cohort: wall-clock, accelerator-active time when measurable, CPU, memory, power/energy where available, warm-up, concurrency, and attempt count. Laptop and GitHub hosted runner results are separate cohorts unless equivalence is proven. Freeze cases/scoring; rotate order; retain all failures/retries; symmetric infra reruns; disclose candidate-specific optimizations.
+- **Data boundaries:** each division owns isolated raw data, database namespace, splits, checkpoints, and audit trail by default. A shared corpus is permitted only as an immutable, rights/privacy-reviewed versioned manifest with scoped derived views and provenance. Private holdouts remain evaluation-only. No implicit cross-division access.
+- **Buddy model/data routing:** capability-aware, permission-aware, privacy/licensing-aware model and dataset catalogs; hard eligibility filters precede ranking by fresh measured quality, safety, reliability, latency, throughput, memory, cost, and availability. Stale evidence is unverified and triggers a safe fallback.
+- **Daily testing:** activate only after Buddy end-to-end operation, Bootcamp/resource coverage, approved artifacts, and benchmark runners are verified. Measure routing, quality, latency, throughput, compute, memory, cost, reliability, safety, privacy, retrieval provenance, tool correctness, recovery, regression, and reproducibility daily and after material changes.
+- **Swift safe-run bridge:** allowed scope is read-only validation, static analysis, fixture tests, dependency/license inventory, secret scanning, and contract conformance. It is not connected yet: a least-privilege GitHub App/token secret and receiver workflow are prerequisites. No deployments, paid calls, training, destructive DB operations, credentials, or private dataset access are permitted through this bridge. Main-repository Python completion remains the primary workstream.
+
+
