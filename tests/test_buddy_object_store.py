@@ -1,10 +1,12 @@
-import io,unittest
-from buddy.storage.object_store import ObjectStoreError,run_object_store_healthcheck,run_division_object_store_healthcheck
+import hashlib,io,os,tempfile,unittest
+from pathlib import Path
+from unittest.mock import patch
+from buddy.storage.object_store import ObjectStoreError,run_object_store_healthcheck,run_division_object_store_healthcheck,upload_division_dataset
 
 class FakeS3:
  def __init__(self,versioning=True,encryption=True,public=True,retention=30):
   self.versioning=versioning;self.encryption=encryption;self.public=public;self.retention=retention
-  self.objects={};self.copies=[]
+  self.objects={};self.metadata={};self.copies=[]
  def get_bucket_versioning(self,Bucket): return {"Status":"Enabled" if self.versioning else "Suspended"}
  def get_bucket_encryption(self,Bucket):
   if not self.encryption: return {"ServerSideEncryptionConfiguration":{"Rules":[]}}
@@ -14,11 +16,15 @@ class FakeS3:
   return {"PublicAccessBlockConfiguration":{k:value for k in ("BlockPublicAcls","IgnorePublicAcls","BlockPublicPolicy","RestrictPublicBuckets")}}
  def get_bucket_lifecycle_configuration(self,Bucket):
   return {"Rules":[{"Expiration":{"Days":self.retention}}]} if self.retention else {"Rules":[]}
- def put_object(self,Bucket,Key,Body):
-  self.objects[(Bucket,Key)]=Body
+ def put_object(self,Bucket,Key,Body,Metadata=None):
+  data=Body.read() if hasattr(Body,"read") else Body
+  self.objects[(Bucket,Key)]=data
+  self.metadata[(Bucket,Key)]=Metadata or {}
   return {"VersionId":"v-primary"}
- def head_object(self,Bucket,Key): return {"ServerSideEncryption":"AES256"}
- def get_object(self,Bucket,Key): return {"Body":io.BytesIO(self.objects[(Bucket,Key)])}
+ def head_object(self,Bucket,Key):
+  data=self.objects[(Bucket,Key)]
+  return {"ServerSideEncryption":"AES256","ContentLength":len(data),"Metadata":self.metadata.get((Bucket,Key),{})}
+ def get_object(self,Bucket,Key,VersionId=None): return {"Body":io.BytesIO(self.objects[(Bucket,Key)])}
  def copy_object(self,Bucket,Key,CopySource):
   source_bucket=CopySource["Bucket"];source_key=CopySource["Key"]
   self.objects[(Bucket,Key)]=self.objects[(source_bucket,source_key)]
@@ -46,6 +52,28 @@ class ObjectStoreTests(unittest.TestCase):
    evidence=run_object_store_healthcheck(client=client,primary_bucket="dreamco-primary",backup_bucket="dreamco-backup",allow_canary=True)
    self.assertEqual(evidence["status"],"BLOCKED")
    self.assertEqual(evidence["backup_restore_test"],"NOT_RUN")
+ def test_dataset_upload_is_approved_hashed_and_division_scoped(self):
+  client=FakeS3()
+  with tempfile.TemporaryDirectory() as temp:
+   source=Path(temp)/"train.jsonl";source.write_bytes(b'{"masterbot_id":7,"text":"safe"}\\n')
+   digest=hashlib.sha256(source.read_bytes()).hexdigest()
+   with patch.dict(os.environ,{"DREAMCO_ALLOW_DATASET_OBJECT_UPLOAD":"1"},clear=True):
+    evidence=upload_division_dataset(7,"finance.dataset",1,str(source),digest,"upload-approval-7",
+      client=client,bucket="dreamco-primary")
+   self.assertEqual(evidence["status"],"PERSISTED")
+   self.assertEqual(evidence["content_sha256"],digest)
+   self.assertIn("/divisions/007/",evidence["object_key"])
+   self.assertEqual(client.objects[("dreamco-primary",evidence["object_key"])],source.read_bytes())
+   self.assertFalse(evidence["credentials_emitted"])
+ def test_dataset_upload_requires_opt_in_and_exact_hash(self):
+  with tempfile.TemporaryDirectory() as temp:
+   source=Path(temp)/"train.jsonl";source.write_bytes(b"safe data")
+   with patch.dict(os.environ,{},clear=True):
+    with self.assertRaisesRegex(ObjectStoreError,"ALLOW_DATASET_OBJECT_UPLOAD"):
+     upload_division_dataset(1,"finance.dataset",1,str(source),"a"*64,"approval",client=FakeS3(),bucket="dreamco-primary")
+   with patch.dict(os.environ,{"DREAMCO_ALLOW_DATASET_OBJECT_UPLOAD":"1"},clear=True):
+    with self.assertRaisesRegex(ObjectStoreError,"content_hash_mismatch"):
+     upload_division_dataset(1,"finance.dataset",1,str(source),"a"*64,"approval",client=FakeS3(),bucket="dreamco-primary")
  def test_division_healthcheck_uses_isolated_namespace(self):
   evidence=run_division_object_store_healthcheck(7,client=FakeS3(),primary_bucket="dreamco-primary",
     backup_bucket="dreamco-backup",allow_canary=True)
