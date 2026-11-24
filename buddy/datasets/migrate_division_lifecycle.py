@@ -1,6 +1,6 @@
 """Approval-gated PostgreSQL migrations for the 65 division lifecycle schemas."""
 from __future__ import annotations
-import argparse,hashlib,json,os
+import argparse,hashlib,json,os,uuid
 from pathlib import Path
 from typing import Any,Callable
 
@@ -30,7 +30,8 @@ def build_migration_plan(path:Path=MIGRATION_PATH)->dict[str,Any]:
     return {"schema":"dreamco.division_lifecycle_migration_plan.v1",
         "migration_version":MIGRATION_VERSION,"migration_sha256":digest,
         "division_count":65,"schemas":[x["schema"] for x in divisions],
-        "ddl_statement_count":len(divisions),"execution_status":"DRY_RUN_ONLY",
+        "ddl_statements_per_schema":len([x for x in template.split(";") if x.strip()]),
+        "total_ddl_statements":65*len([x for x in template.split(";") if x.strip()]),"execution_status":"DRY_RUN_ONLY",
         "production_database_changed":False}
 
 def apply_division_lifecycle_migrations(approval_id:str,expected_migration_sha256:str,*,
@@ -75,11 +76,19 @@ def apply_division_lifecycle_migrations(approval_id:str,expected_migration_sha25
                             raise DivisionMigrationError(f"migration_hash_conflict:{schema}")
                         skipped+=1
                         continue
-                    sql=plan["schemas"] # schema list is evidence, not executable SQL
                     template=path.read_text(encoding="utf-8").replace("{schema}",quoted)
-                    cursor.execute(template)
+                    for statement in template.split(";"):
+                        if statement.strip():
+                            cursor.execute(statement)
                     cursor.execute(f"""INSERT INTO {quoted}.schema_migrations
                         (version,migration_sha256) VALUES (%s,%s)""",(MIGRATION_VERSION,actual_hash))
+                    cursor.execute("SELECT set_config('dreamco.masterbot_id',%s,true)",(str(masterbot_id),))
+                    cursor.execute(f"""INSERT INTO {quoted}.audit_events
+                        (event_id,masterbot_id,actor_ref,approval_ref,event_type,payload)
+                        VALUES (%s,%s,current_user,%s,%s,%s::jsonb)""",
+                        ("migration-"+uuid.uuid4().hex,masterbot_id,approval_id,
+                         "DIVISION_LIFECYCLE_SCHEMA_MIGRATION_APPLIED",
+                         json.dumps({"migration_version":MIGRATION_VERSION,"migration_sha256":actual_hash})))
                     applied+=1
     except DivisionMigrationError:
         raise
