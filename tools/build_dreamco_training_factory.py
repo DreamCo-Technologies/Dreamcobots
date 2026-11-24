@@ -19,6 +19,7 @@ FILES = {
     "resource_map": ROOT / "config/generated/division-resource-readiness-map.json",
     "dataset_policy": ROOT / "config/buddy-dataset-routing-policy.json",
     "provenance_policy": ROOT / "config/buddy-training-data-provenance-policy.json",
+    "source_registry": ROOT / "config/dreamco-training-source-registry.json",
     "bootcamp": ROOT / "config/buddy-bootcamp-program.json",
     "curriculum": ROOT / "config/buddy-bootcamp-curriculum-v1.json",
     "serving_policy": ROOT / "config/buddy-model-serving-policy.json",
@@ -51,7 +52,11 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
         raise ValueError("all route IDs must match the canonical MasterBot registry")
     policy = configs["dataset_policy"]
     bootcamp = configs["bootcamp"]
-    source_types = policy["architecture"]["source_registry"]
+    source_records = configs["source_registry"].get("source_families", [])
+    source_ids = [record.get("id") for record in source_records if isinstance(record, dict)]
+    if len(source_records) != 9 or len(source_ids) != 9 or len(set(source_ids)) != 9:
+        raise ValueError("the governed source registry must contain nine uniquely identified source families")
+    source_types = source_ids
     planes = policy["architecture"]["planes"]
     shared = policy["division_routing"]["shared_foundation_categories"]
     source_types = list(dict.fromkeys(source_types))
