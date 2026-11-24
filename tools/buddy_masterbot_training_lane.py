@@ -11,7 +11,7 @@ REGISTRY = ROOT / "config" / "masterbot-65-registry.json"
 OUT = ROOT / "artifacts" / "masterbot-training"
 
 
-def build_plan(bot: dict, *, run_id: str, run_attempt: str) -> dict:
+def build_plan(bot: dict, *, run_id: str, run_attempt: str, lifecycle: list) -> dict:
     """Build explicit plan-only evidence without invoking a model or compute worker."""
     return {
         "schema": "dreamco.masterbot_training_plan.v1",
@@ -23,7 +23,7 @@ def build_plan(bot: dict, *, run_id: str, run_attempt: str) -> dict:
         "masterbot": bot["name"],
         "mode": "sandbox_first",
         "status": "PLAN_ONLY_NOT_EXECUTED",
-        "lifecycle": [],
+        "lifecycle": lifecycle,
         "shared_learning_inputs": [
             "approved_lesson_metadata",
             "verified_benchmark_deltas",
@@ -68,6 +68,7 @@ def main() -> int:
         bot,
         run_id=os.environ.get("GITHUB_RUN_ID", "local"),
         run_attempt=os.environ.get("GITHUB_RUN_ATTEMPT", "1"),
+        lifecycle=registry.get("training_lifecycle", []),
     )
     destination = OUT / bot["name"]
     destination.mkdir(parents=True, exist_ok=True)
