@@ -1,0 +1,32 @@
+name: Buddy Weekly Transcript Evaluation
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: buddy-weekly-transcript-evaluation
+  cancel-in-progress: false
+jobs:
+  transcript-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test weekly transcript coverage planner
+        run: python -m unittest discover -s tests -p 'test_weekly_transcript_evaluation.py' -v
+      - name: Build honest weekly due-work report
+        run: |
+          python tools/build_weekly_transcript_evaluation.py \
+            --output /tmp/buddy-weekly-transcript-evaluation.json
+      - name: Publish weekly coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-weekly-transcript-evaluation
+          path: /tmp/buddy-weekly-transcript-evaluation.json
+          if-no-files-found: error
+          retention-days: 90
