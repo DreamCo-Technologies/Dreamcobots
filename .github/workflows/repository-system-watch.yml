@@ -55,6 +55,12 @@ jobs:
       - name: Reconcile generated repository test registry after all generators
         run: python3 tools/generate_repository_test_registry.py
 
+      - name: Refresh Actions health inventory and prospectus
+        run: |
+          python3 tools/audit_actions_health.py
+          python3 tools/build_actions_prospectus.py
+          python3 tools/build_actions_prospectus.py --check --check-buttons
+
       - name: Verify repository and Pages contracts
         run: |
           python3 tools/generate_repository_test_registry.py --check
