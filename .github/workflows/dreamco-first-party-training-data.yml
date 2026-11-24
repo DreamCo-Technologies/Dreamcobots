@@ -5,32 +5,38 @@ on:
     paths:
       - "data/dreamco_training/**"
       - "config/dreamco-training-source-registry.json"
-      - "schemas/dreamco-training-example.schema.json"
-      - "tools/build_dreamco_bootcamp_seed_data.py"
-      - "tests/test_dreamco_bootcamp_seed_data.py"
       - "config/dreamco-first-party-training-factory.json"
-      - "tests/test_buddy_dataset_research_metadata_adapters.py"
+      - "config/buddy-training-data-provenance-policy.json"
+      - "schemas/dreamco-training-example.schema.json"
       - "buddy/datasets/sources.py"
       - "buddy/datasets/license_policy.py"
-      - "config/buddy-training-data-provenance-policy.json"
-      - "tests/test_buddy_dataset_license_policy.py"
       - "buddy/datasets/ingestion_worker.py"
-      - "tests/test_buddy_dataset_license_policy.py"
-      - "tests/test_buddy_dataset_ingestion_worker.py tests/test_buddy_dataset_license_policy.py"
+      - "tools/build_dreamco_bootcamp_seed_data.py"
       - "tools/build_dreamco_training_factory.py"
-      - "tests/test_dreamco_training_factory.py tests/test_buddy_dataset_research_metadata_adapters.py"
+      - "tests/test_dreamco_bootcamp_seed_data.py"
+      - "tests/test_dreamco_training_factory.py"
+      - "tests/test_buddy_dataset_research_metadata_adapters.py"
+      - "tests/test_buddy_dataset_license_policy.py"
+      - "tests/test_buddy_dataset_ingestion_worker.py"
       - ".github/workflows/dreamco-first-party-training-data.yml"
   push:
     branches: [main]
     paths:
       - "data/dreamco_training/**"
       - "config/dreamco-training-source-registry.json"
-      - "schemas/dreamco-training-example.schema.json"
-      - "tools/build_dreamco_bootcamp_seed_data.py"
-      - "tests/test_dreamco_bootcamp_seed_data.py"
       - "config/dreamco-first-party-training-factory.json"
+      - "config/buddy-training-data-provenance-policy.json"
+      - "schemas/dreamco-training-example.schema.json"
+      - "buddy/datasets/sources.py"
+      - "buddy/datasets/license_policy.py"
+      - "buddy/datasets/ingestion_worker.py"
+      - "tools/build_dreamco_bootcamp_seed_data.py"
       - "tools/build_dreamco_training_factory.py"
+      - "tests/test_dreamco_bootcamp_seed_data.py"
       - "tests/test_dreamco_training_factory.py"
+      - "tests/test_buddy_dataset_research_metadata_adapters.py"
+      - "tests/test_buddy_dataset_license_policy.py"
+      - "tests/test_buddy_dataset_ingestion_worker.py"
       - ".github/workflows/dreamco-first-party-training-data.yml"
   workflow_dispatch:
 
@@ -44,25 +50,40 @@ concurrency:
 jobs:
   validate-corpus-and-division-lanes:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout immutable commit
         uses: actions/checkout@v7
         with:
           persist-credentials: false
+
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
           python-version: "3.11"
-      - name: Compile builder and tests
-        run: python -m py_compile tools/build_dreamco_bootcamp_seed_data.py tools/build_dreamco_training_factory.py tests/test_dreamco_bootcamp_seed_data.py tests/test_dreamco_training_factory.py
-      - name: Run governance and reproducibility tests
-        run: python -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
+
+      - name: Compile builders, adapters, and tests
+        run: |
+          python -m py_compile \
+            buddy/datasets/sources.py \
+            buddy/datasets/license_policy.py \
+            buddy/datasets/ingestion_worker.py \
+            tools/build_dreamco_bootcamp_seed_data.py \
+            tools/build_dreamco_training_factory.py \
+            tests/test_dreamco_bootcamp_seed_data.py \
+            tests/test_dreamco_training_factory.py \
+            tests/test_buddy_dataset_research_metadata_adapters.py \
+            tests/test_buddy_dataset_license_policy.py \
+            tests/test_buddy_dataset_ingestion_worker.py
+
+      - name: Run governed data, rights, and reproducibility tests
+        run: |
+          python -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
           python -m unittest discover -s tests -p "test_dreamco_training_factory.py" -v
           python -m unittest discover -s tests -p "test_buddy_dataset_research_metadata_adapters.py" -v
           python -m unittest discover -s tests -p "test_buddy_dataset_license_policy.py" -v
           python -m unittest discover -s tests -p "test_buddy_dataset_ingestion_worker.py" -v
-          python -m unittest discover -s tests -p "test_buddy_dataset_license_policy.py" -v
+
       - name: Materialize all 65 isolated common-foundation candidates
         shell: bash
         run: |
@@ -80,18 +101,24 @@ jobs:
           python - "$out" <<'PY'
           import json, pathlib, sys
           root = pathlib.Path(sys.argv[1])
+          datasets = sorted(root.glob("masterbot-*.jsonl"))
           manifests = sorted(root.glob("masterbot-*.manifest.json"))
           cards = sorted(root.glob("masterbot-*.card.json"))
-          assert len(manifests) == 65, len(manifests)
-          assert len(cards) == 65, len(cards)
+          assert len(datasets) == len(manifests) == len(cards) == 65
           total_examples = 0
-          for manifest_path, card_path in zip(manifests, cards):
-              manifest = json.loads(manifest_path.read_text())
-              card = json.loads(card_path.read_text())
+          for dataset_path, manifest_path, card_path in zip(datasets, manifests, cards):
+              manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+              card = json.loads(card_path.read_text(encoding="utf-8"))
               assert manifest["training_approved"] is False
               assert manifest["training_started"] is False
               assert manifest["rights_status"] == "PENDING_HUMAN_REVIEW"
               assert card["training_approved"] is False
+              assert card["ai_training_allowed"] is False
+              assert card["content_rights_verified"] is False
+              assert card["owner_assignment_verified"] is False
+              assert card["contributor_rights_verified"] is False
+              assert card["license"] == "DREAMCO_INTERNAL_OWNED"
+              assert card["license_url_status"] == "INTERNAL_POLICY_REFERENCE_NOT_A_PUBLIC_LICENSE"
               assert card["primary_masterbot_id"] == manifest["primary_masterbot_id"]
               assert manifest["example_count"] == 14
               total_examples += manifest["example_count"]
@@ -99,8 +126,15 @@ jobs:
               assert manifest["split_counts"]["validation"] > 0
               assert manifest["split_counts"]["test"] > 0
           assert total_examples == 910, total_examples
-          print(json.dumps({"ok": True, "isolated_division_candidates": 65, "materialized_candidate_rows": total_examples, "training_started": False}))
+          print(json.dumps({
+              "ok": True,
+              "isolated_division_candidates": 65,
+              "authored_seed_examples_per_lane": 14,
+              "materialized_candidate_rows": total_examples,
+              "training_started": False
+          }))
           PY
+
       - name: Build and validate the 65-division factory plan
         shell: bash
         run: |
@@ -109,13 +143,22 @@ jobs:
           python tools/build_dreamco_training_factory.py --out "$out/factory-plan.json"
           python - "$out/factory-plan.json" <<'PY'
           import json, pathlib, sys
-          plan = json.loads(pathlib.Path(sys.argv[1]).read_text())
+          plan = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
           assert plan["coverage"]["masterbots"] == 65
           assert plan["coverage"]["task_families"] == 37
           assert plan["coverage"]["division_task_assignments"] == 2405
+          assert plan["coverage"]["source_families"] == 9
+          assert plan["coverage"]["implemented_metadata_adapters"] == 10
           assert plan["truth_boundary"]["weights_trained"] is False
-          print(json.dumps({"ok": True, "division_task_assignments": 2405, "training_started": False}))
+          print(json.dumps({
+              "ok": True,
+              "division_task_assignments": 2405,
+              "source_families": 9,
+              "implemented_metadata_adapters": 10,
+              "training_started": False
+          }))
           PY
+
       - name: Preserve generated candidate datasets and manifests
         uses: actions/upload-artifact@v6
         with:
