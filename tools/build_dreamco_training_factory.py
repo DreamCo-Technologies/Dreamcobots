@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 FILES = {
     "masterbots": ROOT / "config/masterbot-65-registry.json",
     "tasks": ROOT / "config/huggingface-task-taxonomy.json",
