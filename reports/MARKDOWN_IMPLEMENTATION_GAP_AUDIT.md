@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T16:26:07Z
+Generated: 2026-11-24T16:27:15Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
 - Markdown documents scanned: 1675
-- Actionable claim lines detected: 11942
+- Actionable claim lines detected: 11945
 - Documents with missing path references: 113
 - Documents without implementation references: 1588
 - Documents with implementation references but no test references: 69
 - Documents with inventory count claims: 112
-- Inventory count claims requiring review: 398
+- Inventory count claims requiring review: 400
 
 ## Fixed-count claims requiring review
 
@@ -192,6 +192,8 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:23 — | LIB-MD-001 | `Pasted markdown.md` | `file_00000000ec84822fa5494193f142c5c9` | Read; 644 lines. Historical conversation transcript covering learning techniques, thinking strategies, repository organization, ChatGPT/GitHub integrations, GitLab/AWS/Ansible/Terraform/Kubernetes/Gra
 - docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:252 — | `SRC-CURRENT-2026-11-24-RESOURCES-01` | Add as many useful study resources as possible | `REQ-EXPAND-STUDY-RESOURCE-CATALOG` | PR #18214: 1101–1200 expansion; 100 resource pointers; Tolkien scholarly lane | 100 resource pointers cataloged; no bulk ingestion or blanket training
 - docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:252 — | `SRC-CURRENT-2026-11-24-RESOURCES-01` | Add as many useful study resources as possible | `REQ-EXPAND-STUDY-RESOURCE-CATALOG` | PR #18214: 1101–1200 expansion; 100 resource pointers; Tolkien scholarly lane | 100 resource pointers cataloged; no bulk ingestion or blanket training
+- docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:306 — The first clean-base Bootcamp CI run exposed a test-fixture omission (`video_count`) in the direct-catalog runtime test. The fixture was corrected in head commit `028f3d0c3138e66a9cd54280cc81ba1b7c463083`. The subsequent `generate-curriculum` job passed **67/67 focused tests**: c
+- docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:307 — - Current study artifact: run 45436272080, artifact ID `14939999424`, SHA-256 `fe1064eef3a290be4ac97b926c57ca99aa33bd37326c52cac3f2a0e4dc4be4ab`. It verifies 1,741/1,741 metadata entries, 0 null entries, 0 duplicate IDs, 65 divisions, 30 candidate references per division, 325 dai
 - docs/engineering/PR_RECONCILIATION_LEDGER.md:15 — ### 2026-11-24 refresh
 - docs/engineering/PR_RECONCILIATION_LEDGER.md:29 — ### 2026-11-18 historical snapshot
 - docs/engineering/PR_RECONCILIATION_LEDGER.md:84 — - Useful work: proposes caller identity checks on 14 model routes, plan-policy enforcement, allowlist-only model selection, owner-only discovery, paid-use approval, and UI fallback/sign-in notices with tests.
@@ -14942,7 +14944,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md
 
 - Status: broken_path_references
-- Actionable claim lines: 21
+- Actionable claim lines: 24
 - Implementation paths: buddy/datasets/database_router.py, buddy/datasets/hub.py, buddy/datasets/postgres_catalog.py, website/data/markdown-implementation-gap-audit.json
 - Test paths: None detected
 - Missing paths: config/buddy-study-resources-1101-1200-expansion.json
