@@ -5,7 +5,8 @@ import sys
 from unittest.mock import patch
 from pathlib import Path
 
-from tools.build_dreamco_bootcamp_seed_data import build_candidate, build_dataset_card, load_jsonl, main as build_main
+from tools.build_dreamco_bootcamp_seed_data import build_candidate, build_dataset_card, load_jsonl
+from buddy.datasets.hub import DatasetHub, DatasetPolicyError, main as build_main
 
 
 def registry():
@@ -120,6 +121,29 @@ class BootcampSeedDataTests(unittest.TestCase):
         data[1]["response"] = data[0]["response"]
         with self.assertRaisesRegex(ValueError, "duplicate prompt/response"):
             build_candidate(data, 4, registry())
+
+    def test_pending_card_registers_metadata_without_ingesting_training_data(self):
+        rows, manifest = build_candidate(examples(), 4, registry())
+        card = build_dataset_card(manifest, "candidate.jsonl")
+        with tempfile.TemporaryDirectory() as temp:
+            hub = DatasetHub(home=temp)
+            registered = hub.register(card)
+            self.assertEqual(registered["training_status"], "NOT_APPROVED")
+            self.assertFalse(registered["training_approved"])
+            self.assertIsNone(registered["object_path"])
+            self.assertIsNone(registered["content_sha256"])
+            self.assertEqual(list((Path(temp) / "objects").iterdir()), [])
+
+    def test_pending_card_cannot_ingest_candidate_file(self):
+        rows, manifest = build_candidate(examples(), 4, registry())
+        card = build_dataset_card(manifest, "candidate.jsonl")
+        with tempfile.TemporaryDirectory() as temp:
+            source = Path(temp) / "candidate.jsonl"
+            source.write_text("".join(json.dumps(row) + "\\n" for row in rows), encoding="utf-8")
+            hub = DatasetHub(home=Path(temp) / "hub")
+            with self.assertRaisesRegex(DatasetPolicyError, "disabled until an operator"):
+                hub.register(card, source_file=source)
+            self.assertEqual(list((Path(temp) / "hub" / "objects").iterdir()), [])
 
     def test_jsonl_loader_rejects_invalid_rows(self):
         with tempfile.TemporaryDirectory() as temp:
