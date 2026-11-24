@@ -10,17 +10,27 @@ class CrossRuntimeContractTests(unittest.TestCase):
     def setUpClass(cls):
         cls.data = json.loads(CONTRACT.read_text(encoding="utf-8"))
 
-    def test_canonical_contract_is_valid(self):
+    def test_three_candidate_contract_is_valid(self):
         self.assertEqual(validate(self.data), [])
 
-    def test_requires_both_implementations(self):
+    def test_requires_python_c_and_swift(self):
         data = json.loads(json.dumps(self.data))
-        data["implementations"] = [data["implementations"][0]]
-        self.assertTrue(any("both canonical" in error for error in validate(data)))
+        data["implementations"] = data["implementations"][:2]
+        self.assertTrue(any("Python, Apple C, and Apple Swift" in error for error in validate(data)))
 
-    def test_cannot_start_c_before_contract_freeze(self):
+    def test_competition_includes_all_three_candidates(self):
+        data = json.loads(json.dumps(self.data))
+        data["competition"]["runtime_candidates"].remove("apple-swift")
+        self.assertTrue(any("include Python, C, and Swift" in error for error in validate(data)))
+
+    def test_c_and_swift_must_follow_contract_freeze(self):
         data = json.loads(json.dumps(self.data))
         data["completion_order"].remove("freeze_versioned_shared_contracts")
+        self.assertTrue(any("completion order must include" in error for error in validate(data)))
+
+    def test_competition_follows_both_apple_candidates(self):
+        data = json.loads(json.dumps(self.data))
+        data["completion_order"].remove("preserve_and_adapt_apple_swift_runtime_to_shared_contract_after_python_completion")
         self.assertTrue(any("completion order must include" in error for error in validate(data)))
 
     def test_planning_is_not_training(self):
@@ -32,6 +42,11 @@ class CrossRuntimeContractTests(unittest.TestCase):
         data = json.loads(json.dumps(self.data))
         data["integration"]["no_credentials_or_private_chat_transcripts_in_git"] = False
         self.assertTrue(any("private chat" in error for error in validate(data)))
+
+    def test_native_language_is_not_a_performance_claim(self):
+        data = json.loads(json.dumps(self.data))
+        data["truth_rules"]["native_language_does_not_imply_better_performance"] = False
+        self.assertTrue(any("native language" in error for error in validate(data)))
 
 
 if __name__ == "__main__":
