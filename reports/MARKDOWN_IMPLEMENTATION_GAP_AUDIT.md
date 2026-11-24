@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T06:27:35Z
+Generated: 2026-11-24T14:55:19Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1674
-- Actionable claim lines detected: 11916
+- Markdown documents scanned: 1675
+- Actionable claim lines detected: 11933
 - Documents with missing path references: 112
-- Documents without implementation references: 1589
-- Documents with implementation references but no test references: 68
+- Documents without implementation references: 1588
+- Documents with implementation references but no test references: 69
 - Documents with inventory count claims: 112
-- Inventory count claims requiring review: 389
+- Inventory count claims requiring review: 391
 
 ## Fixed-count claims requiring review
 
@@ -191,6 +191,8 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/dreampayments_benchmark.md:12 — ## 30 capability scorecard
 - docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:23 — | LIB-MD-001 | `Pasted markdown.md` | `file_00000000ec84822fa5494193f142c5c9` | Read; 644 lines. Historical conversation transcript covering learning techniques, thinking strategies, repository organization, ChatGPT/GitHub integrations, GitLab/AWS/Ansible/Terraform/Kubernetes/Gra
 - docs/engineering/PR_RECONCILIATION_LEDGER.md:75 — - Useful work: proposes caller identity checks on 14 model routes, plan-policy enforcement, allowlist-only model selection, owner-only discovery, paid-use approval, and UI fallback/sign-in notices with tests.
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:144 — - **PR #18207 — freeCodeCamp Buddy Bootcamp integration:** `NEEDS_FIXES` + `NEEDS_REBASE`. Current head `197e8897ccb35263a8938bc70095f68576920e22`; base `9c1a7e109bc26bc5adc3bd4766baa547a6ac2c7c`; GitHub reports `mergeable_state=dirty`. Eleven review threads were returned; eight
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:144 — - **PR #18207 — freeCodeCamp Buddy Bootcamp integration:** `NEEDS_FIXES` + `NEEDS_REBASE`. Current head `197e8897ccb35263a8938bc70095f68576920e22`; base `9c1a7e109bc26bc5adc3bd4766baa547a6ac2c7c`; GitHub reports `mergeable_state=dirty`. Eleven review threads were returned; eight
 - docs/top-200-ideas-set-02.md:5 — ## 201–225 Systems & architecture
 - docs/top-200-ideas-set-02.md:5 — ## 201–225 Systems & architecture
 - docs/top-200-ideas-set-02.md:32 — ## 226–250 Memory & cognition
@@ -13583,7 +13585,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/CROSS_REPOSITORY_COMPLETION_AND_COMPETITION.md
 
 - Status: broken_path_references
-- Actionable claim lines: 10
+- Actionable claim lines: 17
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: github/workflows/dreamco-c-runtime.yml
@@ -13694,6 +13696,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 - Status: implementation_reference_missing
 - Actionable claim lines: 24
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_CONTINUOUS_LEARNING_EXECUTION_TRUTH.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
 - Implementation paths: None detected
 - Test paths: None detected
 - Missing paths: None detected
@@ -14922,21 +14934,21 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 ### docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md
 
-- Status: implementation_reference_missing
-- Actionable claim lines: 13
-- Implementation paths: None detected
+- Status: test_reference_missing
+- Actionable claim lines: 16
+- Implementation paths: buddy/datasets/database_router.py, buddy/datasets/hub.py, buddy/datasets/postgres_catalog.py
 - Test paths: None detected
 - Missing paths: None detected
-- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/engineering/PR_RECONCILIATION_LEDGER.md
 
 - Status: broken_path_references
-- Actionable claim lines: 16
-- Implementation paths: None detected
+- Actionable claim lines: 22
+- Implementation paths: tools/audit_markdown_implementation_gaps.py, website/data/bot-calculators.json, website/data/bot-fleet-catalog.json, website/data/buddy-technology-radar.json, website/data/command-center/capabilities.json, website/data/dreamco-search-index.js
 - Test paths: tests/test_buddy_resource_registry.py
-- Missing paths: buddy/bootcamp/training_methods_hub.py, github/workflows/buddy-training-methods-hub.yml, github/workflows/command-center-index.yml, github/workflows/keep-green.yml, tests/test_buddy_training_methods_hub.py
+- Missing paths: buddy/bootcamp/training_methods_hub.py, github/workflows/buddy-continuous-repair.yml, github/workflows/buddy-training-methods-hub.yml, github/workflows/command-center-index.yml, github/workflows/keep-green.yml, tests/test_buddy_training_methods_hub.py, tools/build_dreamco_training_factory.py
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
