@@ -1,0 +1,323 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.ai/schemas/dataset-manifest-1.0.0.json",
+  "title": "DreamCo Dataset Manifest",
+  "description": "Versioned provenance, rights, privacy, quality, and distribution record for a dataset. A schema pass is not a rights approval.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "dataset_id",
+    "version_id",
+    "owner_or_creator",
+    "source",
+    "acquired_at",
+    "rights",
+    "privacy",
+    "artifact",
+    "quality",
+    "review"
+  ],
+  "properties": {
+    "dataset_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "owner_or_creator": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "uri",
+        "acquisition_method"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "uri"
+        },
+        "acquisition_method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "acquired_by": {
+          "type": "string"
+        }
+      }
+    },
+    "acquired_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "rights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "class",
+        "license_id",
+        "license_reference",
+        "attribution",
+        "restrictions",
+        "permissions"
+      ],
+      "properties": {
+        "class": {
+          "enum": [
+            "owned",
+            "licensed_for_training",
+            "licensed_for_redistribution",
+            "public_restricted",
+            "customer_private",
+            "research_only",
+            "blocked"
+          ]
+        },
+        "license_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "license_reference": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attribution": {
+          "type": "string"
+        },
+        "restrictions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "permissions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "view",
+            "download",
+            "train",
+            "commercial_use",
+            "redistribute",
+            "sublicense",
+            "create_derivatives",
+            "resell"
+          ],
+          "properties": {
+            "view": {
+              "type": "boolean"
+            },
+            "download": {
+              "type": "boolean"
+            },
+            "train": {
+              "type": "boolean"
+            },
+            "commercial_use": {
+              "type": "boolean"
+            },
+            "redistribute": {
+              "type": "boolean"
+            },
+            "sublicense": {
+              "type": "boolean"
+            },
+            "create_derivatives": {
+              "type": "boolean"
+            },
+            "resell": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "assessment_status",
+        "cross_tenant_use"
+      ],
+      "properties": {
+        "classification": {
+          "enum": [
+            "public",
+            "internal",
+            "confidential",
+            "personal_data",
+            "sensitive_personal_data",
+            "customer_private",
+            "unknown"
+          ]
+        },
+        "assessment_status": {
+          "enum": [
+            "not_started",
+            "in_review",
+            "approved",
+            "rejected",
+            "quarantined"
+          ]
+        },
+        "consent_reference": {
+          "type": "string"
+        },
+        "retention_policy": {
+          "type": "string"
+        },
+        "cross_tenant_use": {
+          "const": false
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "size_bytes",
+        "content_hashes"
+      ],
+      "properties": {
+        "format": {
+          "type": "string",
+          "minLength": 1
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "content_hashes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "algorithm",
+              "digest"
+            ],
+            "properties": {
+              "algorithm": {
+                "enum": [
+                  "sha256",
+                  "sha512"
+                ]
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^[a-fA-F0-9]+$"
+              }
+            }
+          }
+        },
+        "schema_summary": {
+          "type": "string"
+        },
+        "language": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time_coverage": {
+          "type": "string"
+        }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_status",
+        "dataset_card_uri",
+        "quality_report_uri"
+      ],
+      "properties": {
+        "profile_status": {
+          "enum": [
+            "not_started",
+            "running",
+            "complete",
+            "failed",
+            "quarantined"
+          ]
+        },
+        "dataset_card_uri": {
+          "type": "string"
+        },
+        "quality_report_uri": {
+          "type": "string"
+        },
+        "split_strategy": {
+          "type": "string"
+        },
+        "leakage_checks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rights_status",
+        "security_status",
+        "approval_status"
+      ],
+      "properties": {
+        "rights_status": {
+          "enum": [
+            "not_started",
+            "in_review",
+            "approved",
+            "rejected",
+            "quarantined"
+          ]
+        },
+        "security_status": {
+          "enum": [
+            "not_started",
+            "in_review",
+            "passed",
+            "failed",
+            "quarantined"
+          ]
+        },
+        "approval_status": {
+          "enum": [
+            "pending",
+            "approved",
+            "rejected"
+          ]
+        },
+        "reviewer_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "approved_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "audit_event_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
