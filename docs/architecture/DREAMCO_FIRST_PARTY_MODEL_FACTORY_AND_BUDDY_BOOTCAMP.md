@@ -178,3 +178,29 @@ A customer purchase grants only the rights stated in the listing's license. Cust
 ## 10. Current truth
 
 This is a target architecture and rollout specification. It does not claim that DreamCo has already trained its own foundation models, that Buddy Teacher is already a top-performing teacher model, or that the marketplace is already selling production checkpoints. Those claims require actual artifacts, benchmark reports, rights manifests, deployed services, and verified customer flows.
+
+
+## 12. First-party verified-work data factory (candidate generation)
+
+The Python repository includes `tools/build_dreamco_training_examples.py`, which converts approved, independently verified DreamCo work records into original instruction/response candidates for one canonical MasterBot lane at a time. Its JSONL output is compatible with common dataset loaders (including Hugging Face Datasets' JSON loader) and can be adapted for other training frameworks. Compatibility does not grant rights to train or redistribute.
+
+Each source record must carry:
+- a unique event ID and HTTPS evidence URL;
+- an allowed evidence type (verified commit/test, approved PR/workflow, verified bug fix, original lesson, or approved synthetic example);
+- explicit `verified=true`, `human_reviewed=true`, `training_allowed=true`, and `rights_status=VERIFIED`;
+- explicit negative attestations for secrets, personal data, and third-party content;
+- one canonical integer MasterBot ID, an original task and lesson, acceptance criteria, and test evidence.
+
+The builder rejects duplicate IDs and duplicate task/lesson content, mixed MasterBot ownership, malformed evidence arrays, non-HTTPS sources, common PII patterns, and common credential/private-key patterns. It creates deterministic example IDs and SHA-256 hashes for source records, each split, the complete candidate rows, and the emitted JSONL file. The manifest is an integrity aid, not a proof of correctness, privacy, or legal rights.
+
+**Important limits:** the PII/secret checks are defense-in-depth heuristics, not a complete scanner. Human source review remains mandatory. Three or more records are required to create train/validation/test partitions, but small partitions are only bootstrap fixtures—not statistically sufficient model-evaluation datasets. Private benchmark holdouts must be maintained in a separate store and must never be exported by this builder.
+
+Every generated card is marked `PENDING_HUMAN_REVIEW`, `training_approved=false`; the builder does not register data, download third-party content, execute training, update weights, or promote a model. A separate approved training job must pin the dataset-card revision and content hashes, base model/tokenizer revisions, training recipe, compute approval, code commit, and held-out benchmark suite. Training other models is permitted only after each target model's license, data rights, output-use restrictions, and deployment terms have been reviewed independently.
+
+### Dataset lanes and sharing boundary
+
+- Build one primary-owner dataset at a time for each of the 65 MasterBots.
+- Shared foundation examples may be separately curated and explicitly scoped for reuse after rights/privacy review; division-private data, credentials, checkpoints, and private holdouts stay isolated.
+- Do not merge division datasets merely to increase row counts. Use a documented collaboration manifest when multiple divisions are authorized to share a source.
+- Keep source-event provenance and dataset-card versions with every exported training run.
+- Candidate generation does not imply that any division currently has sufficient data, trained weights, or a certified model.
