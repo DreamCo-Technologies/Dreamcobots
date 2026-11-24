@@ -3,10 +3,11 @@ from __future__ import annotations
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 from unittest.mock import MagicMock, Mock
 
-from buddy.datasets.postgres_probe import PostgresProbeError, load_expected_namespaces, probe_postgres
+from buddy.datasets.postgres_probe import PostgresProbeError, load_expected_namespaces, main, probe_postgres
 
 
 def resource_map(path: Path, *, count: int = 65, duplicate: bool = False) -> Path:
@@ -99,6 +100,16 @@ class PostgresProbeTests(unittest.TestCase):
             self.assertEqual(result["status"], "CONNECTED_SCHEMA_INCOMPLETE")
             self.assertEqual(result["verified_division_namespaces"], 64)
             self.assertEqual(result["missing_division_namespaces"], ["dreamco_division_065"])
+
+    def test_cli_output_file_is_valid_json_with_a_real_newline(self):
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "evidence.json"
+            with patch("sys.argv", ["postgres_probe", "--output", str(output)]):
+                self.assertEqual(main(), 2)
+            raw = output.read_text(encoding="utf-8")
+            self.assertTrue(raw.endswith("\\n"))
+            self.assertFalse(raw.endswith("\\\\n"))
+            self.assertEqual(json.loads(raw)["status"], "BLOCKED")
 
     def test_connection_errors_do_not_leak_dsn_or_exception_text(self):
         def fail(*args, **kwargs):
