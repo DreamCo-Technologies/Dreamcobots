@@ -1,7 +1,7 @@
 import hashlib
 import json
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from buddy.datasets.postgres_catalog import (
     PostgresCatalogError, PostgresDatasetCatalog, division_schema,
@@ -46,6 +46,18 @@ class PostgresCatalogTests(unittest.TestCase):
         catalog = PostgresDatasetCatalog(dsn="postgresql://division-001", masterbot_id=1, connect=MagicMock())
         with self.assertRaisesRegex(PostgresCatalogError, "different MasterBot"):
             catalog.get(2, "demo.dataset", 1)
+
+    def test_environment_resolver_uses_division_specific_dsn(self):
+        cursor = MagicMock()
+        cursor.fetchone.return_value = ("demo.dataset", 1, "b" * 64)
+        connection = MagicMock()
+        connection.cursor.return_value.__enter__.return_value = cursor
+        connect = MagicMock()
+        connect.return_value.__enter__.return_value = connection
+        with patch.dict("os.environ", {"DREAMCO_POSTGRES_DSN_MASTERBOT_001":"postgresql://division-001"}, clear=True):
+            catalog = PostgresDatasetCatalog(masterbot_id=1, connect=connect)
+            catalog.register(1, manifest())
+        self.assertEqual(connect.call_args.args[0], "postgresql://division-001")
 
     def test_training_manifest_requires_rights_and_owner(self):
         for changed in (
