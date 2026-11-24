@@ -24,6 +24,7 @@ class ModelFoundryRightsTests(unittest.TestCase):
             "license_evidence_ref": "internal-policy:fixture",
             "rights_status": "APPROVED",
             "approved_division_ids": [1, 2],
+            "training_strategy": "domain_adaptive_pretraining",
             "permissions": {
                 "training": True,
                 "commercial_model_use": True,
@@ -58,13 +59,17 @@ class ModelFoundryRightsTests(unittest.TestCase):
 
     def test_parallel_plan_covers_all_65_and_only_eligible_divisions(self):
         registry = {"divisions": [{"id": i, "name": f"Division{i}"} for i in range(1, 66)]}
-        approved = [{**self.entry, "_resolved_path": str(self.data)}]
+        approved = [
+            {**self.entry, "approved_division_ids": [1], "training_strategy": "domain_adaptive_pretraining", "_resolved_path": str(self.data)},
+            {**self.entry, "dataset_id": "second-fixture", "approved_division_ids": [2], "training_strategy": "code_and_tool_sequence_modeling", "_resolved_path": str(self.data)},
+        ]
         plan = build_parallel_plan(registry, approved)
         self.assertEqual(plan["division_count"], 65)
         self.assertEqual(plan["eligible_divisions"], 2)
         self.assertEqual(plan["blocked_divisions"], 63)
         self.assertEqual([row["division_id"] for row in plan["include"]], [1, 2])
-        self.assertNotEqual(plan["include"][0]["strategy"], plan["include"][1]["strategy"])
+        self.assertEqual(plan["include"][0]["strategy"], "domain_adaptive_pretraining")
+        self.assertEqual(plan["include"][1]["strategy"], "code_and_tool_sequence_modeling")
 
     def test_duplicate_dataset_ids_are_rejected(self):
         with self.assertRaisesRegex(ValueError, "unique"):
