@@ -58,6 +58,10 @@ class DivisionLifecycleMigrationTests(unittest.TestCase):
   audit_inserts=[(q,p) for q,p in connection.cursor_obj.executed if "audit_events" in q and "INSERT INTO" in q]
   self.assertEqual(len(audit_inserts),65)
   self.assertTrue(all(p[3]=="DIVISION_LIFECYCLE_SCHEMA_MIGRATION_APPLIED" for _q,p in audit_inserts))
+  role_switches=[q for q,_p in connection.cursor_obj.executed if q.startswith("SET LOCAL ROLE")]
+  role_resets=[q for q,_p in connection.cursor_obj.executed if q=="RESET ROLE"]
+  self.assertEqual(len(role_switches),65)
+  self.assertEqual(len(role_resets),65)
   self.assertFalse(result["credentials_emitted"])
  def test_missing_schema_aborts_transaction(self):
   connection=FakeConnection()
