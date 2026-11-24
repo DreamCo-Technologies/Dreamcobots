@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Create a weekly evaluation queue from rights-cleared transcript metadata only."""
-import argparse,json
+import argparse,json,sys
 from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
 from buddy.learning.transcript_evaluation_scheduler import build_weekly_transcript_evaluation_plan,validate_weekly_transcript_evaluation_plan
 
 def main():
