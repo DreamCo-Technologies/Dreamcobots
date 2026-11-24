@@ -5,6 +5,8 @@ on:
       - ".github/workflows/buddy-bootcamp-curriculum.yml"
       - "tools/build_buddy_bootcamp_curriculum.py"
       - "tests/test_buddy_bootcamp_curriculum.py"
+      - "tools/build_buddy_dataset_routes.py"
+      - "tests/test_buddy_dataset_route_check.py"
       - "config/masterbot-65-registry.json"
       - "config/huggingface-task-taxonomy.json"
       - "config/hf-capability-download-map.json"
@@ -167,6 +169,7 @@ jobs:
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
+          python -m unittest tests.test_buddy_dataset_route_check -v
       - name: Upload generated study artifacts for review
         if: always()
         uses: actions/upload-artifact@v4
