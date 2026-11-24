@@ -77,6 +77,20 @@ class IssueLifecycleTests(unittest.TestCase):
                 self.assertIn("${{ github.event.workflow_run.id || github.run_id }}", source)
                 self.assertIn("cancel-in-progress: false", source)
 
+    def test_continuous_repair_is_artifact_only_and_never_writes_branches(self):
+        source = (ROOT / ".github/workflows/buddy-continuous-repair.yml").read_text(encoding="utf-8")
+        permissions = source.split("permissions:", 1)[1].split("concurrency:", 1)[0]
+        self.assertIn("contents: read", permissions)
+        self.assertIn("issues: write", permissions)
+        self.assertIn("actions: read", permissions)
+        self.assertNotIn("contents: write", permissions)
+        self.assertNotIn("pull-requests: write", permissions)
+        self.assertNotIn("peter-evans/create-pull-request@", source)
+        self.assertNotRegex(source, r"(?m)^\\s*git push(?:\\s|$)")
+        self.assertNotIn("force-with-lease", source)
+        self.assertIn("actions/upload-artifact@v7", source)
+        self.assertIn("Open or update a human-triage issue if verification fails", source)
+
     def test_retest_requires_active_matching_run(self):
         original = {"workflow_id": 10, "head_branch": "main"}
         candidate = {"workflow_id": 10, "head_branch": "main", "status": "in_progress"}
