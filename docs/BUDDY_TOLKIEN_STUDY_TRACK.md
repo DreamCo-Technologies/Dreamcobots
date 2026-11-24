@@ -26,11 +26,11 @@ The track is registered in `config/buddy-study-resources-1101-1200-expansion.jso
 
 ## Rights and safety boundaries
 
-The Tolkien Estate's official guidance says published text quotations require permission through the publisher, Tolkien images and invented languages/scripts are protected, and public readings/recordings require permission. Marquette's Tolkien collection guidance separately states that manuscript reproduction or publication requires written permission. Accordingly:
+The Tolkien Estate's official FAQ states that published quotations require permission through HarperCollins; Tolkien artworks, maps, scripts and graphic works are protected; invented languages and scripts are protected; public readings require permission and may not be recorded or distributed; and it does not permit materials referring to characters, stories, places, events or other elements from Tolkien works. Marquette separately states that the Estate retains literary rights and copyright to the manuscripts, which may be reproduced or published only with written permission; its Anduin manuscript scans are accessible only on-site. Accordingly, this track is limited to scholarly study of Tolkien's life, philology, historical context, bibliography, criticism and reception—not fan fiction or story/character/world generation:
 
 - Tolkien primary texts, scans, audio, audiobook files and transcripts are **not approved training data**.
 - A public URL, search result, library catalog entry or open-access article label is not a training license.
-- Invented languages/scripts, characters, settings, stories and distinctive protected expression must not be reproduced or used for derivative content generation under this track.
+- Do not reproduce invented languages/scripts, characters, settings, stories or distinctive protected expression. Do not generate materials referring to Tolkien characters, stories, places, events or other elements from Tolkien works under this track.
 - Model-weight training is disabled. Any future permission request must be reviewed and recorded per item before use.
 - Unknown rights are **BLOCKED**.
 - Lessons may produce original scholarly commentary with citations, but may not reproduce substantial protected text.
