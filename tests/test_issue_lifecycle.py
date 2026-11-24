@@ -86,7 +86,7 @@ class IssueLifecycleTests(unittest.TestCase):
         self.assertNotIn("contents: write", permissions)
         self.assertNotIn("pull-requests: write", permissions)
         self.assertNotIn("peter-evans/create-pull-request@", source)
-        self.assertNotRegex(source, r"(?m)^\\s*git push(?:\\s|$)")
+        self.assertNotRegex(source, r"(?m)^\s*git push(?:\s|$)")
         self.assertNotIn("force-with-lease", source)
         self.assertIn("actions/upload-artifact@v7", source)
         self.assertIn("Open or update a human-triage issue if verification fails", source)
