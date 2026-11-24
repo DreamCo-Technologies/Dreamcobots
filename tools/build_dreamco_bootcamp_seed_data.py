@@ -210,8 +210,8 @@ def main() -> int:
     manifest["candidate_path"] = str(args.out)
     manifest["candidate_sha256"] = _sha_bytes(args.out.read_bytes())
     card = build_dataset_card(manifest, str(args.out))
-    args.manifest_out.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
-    args.card_out.write_text(json.dumps(card, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+    args.manifest_out.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    args.card_out.write_text(json.dumps(card, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps({
         "dataset_id": manifest["dataset_id"],
         "examples": manifest["example_count"],
