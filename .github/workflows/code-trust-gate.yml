@@ -3,7 +3,7 @@ name: Code Trust Gate
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, "codex/**"]
     paths:
       - "server/**"
       - "shared/**"
@@ -33,7 +33,6 @@ jobs:
   trusted-code:
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
         with:
