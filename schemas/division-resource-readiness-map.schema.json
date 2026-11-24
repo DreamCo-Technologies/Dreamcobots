@@ -39,10 +39,14 @@
           "const": 55
         },
         "unresolved_masterbot_mappings": {
-          "const": 20
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65
         },
         "unassigned_domain_profiles": {
-          "const": 10
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 55
         }
       },
       "additionalProperties": false
@@ -140,13 +144,11 @@
       "properties": {
         "masterbot_domain_decisions": {
           "type": "array",
-          "minItems": 20,
-          "maxItems": 20
+          "maxItems": 65
         },
         "unassigned_domain_profiles": {
           "type": "array",
-          "minItems": 10,
-          "maxItems": 10
+          "maxItems": 55
         }
       }
     },
