@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 
 REQUIRED = ("schema", "lesson_id", "division_id", "title", "learning_objectives",
             "original_explanation", "worked_examples", "practice", "assessment",
-            "provenance", "rights")
+            "authorship", "provenance", "rights")
 
 def validate_lesson(item: dict) -> list[str]:
     errors = [f"missing required field: {key}" for key in REQUIRED if key not in item]
@@ -28,6 +28,15 @@ def validate_lesson(item: dict) -> list[str]:
     assessment = item["assessment"]
     if len(assessment.get("questions", [])) < 3 or len(assessment.get("answer_key", [])) < 3:
         errors.append("assessment requires three questions and answer explanations")
+    authorship = item["authorship"]
+    if not authorship.get("authoring_entity", "").strip():
+        errors.append("authorship must identify the authoring entity")
+    if len(authorship.get("human_contribution", "").strip()) < 20:
+        errors.append("authorship must record meaningful human contribution")
+    if authorship.get("human_owner_confirmation") not in {"pending", "confirmed", "not_applicable"}:
+        errors.append("invalid human owner confirmation status")
+    if not authorship.get("created_at"):
+        errors.append("authorship must include a creation timestamp")
     provenance = item["provenance"]
     parsed = urlparse(provenance.get("source_url", ""))
     if parsed.scheme != "https" or not parsed.netloc:
@@ -39,6 +48,12 @@ def validate_lesson(item: dict) -> list[str]:
         errors.append("lesson training remains disabled until separate approval")
     if rights.get("review_status") not in {"pending", "approved", "restricted", "rejected"}:
         errors.append("invalid rights review status")
+    if not rights.get("owner_label", "").strip():
+        errors.append("rights record must identify the claimed owner label")
+    if rights.get("ownership_claim_status") not in {"pending_review", "confirmed", "disputed"}:
+        errors.append("invalid ownership claim status")
+    if rights.get("third_party_material_included") is not False:
+        errors.append("original lesson package must not include third-party material")
     if provenance.get("source_usage") not in {"inspiration_only", "authorized_reference", "public_metadata_only"}:
         errors.append("invalid source usage")
     return errors
