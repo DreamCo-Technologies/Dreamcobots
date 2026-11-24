@@ -1,7 +1,7 @@
 """Read-only PostgreSQL connectivity and division-schema verification.
 
 This module never creates schemas, migrates tables, or writes application data.
-It uses DREAMCO_POSTGRES_DSN from the environment and emits credential-free
+It prefers DREAMCO_POSTGRES_DSN and falls back to the application DATABASE_URL environment variable. It emits credential-free
 evidence suitable for an operator-reviewed provisioning workflow.
 """
 from __future__ import annotations
