@@ -26,7 +26,7 @@ CATEGORIES = {
     "javascript_typescript": ["javascript", "typescript", "node.js", "nodejs", "ecmascript"],
     "web_html_css": ["html", "css", "sass", "tailwind", "bootstrap"],
     "frontend": ["react", "vue", "angular", "svelte", "frontend", "front-end"],
-    "backend_apis": ["backend", "back-end", "api", "express", "rest api", "graphql"],
+    "backend_apis": ["backend", "back-end", "api", "apis", "fastapi", "express", "rest api", "graphql"],
     "databases_sql": ["sql", "postgres", "postgresql", "mysql", "mongodb", "database", "redis"],
     "data_engineering": ["data engineering", "etl", "airflow", "spark", "dbt", "warehouse"],
     "data_science": ["data science", "statistics", "data analysis", "visualization", "numpy"],
