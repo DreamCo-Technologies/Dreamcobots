@@ -127,8 +127,7 @@ jobs:
       - name: Run exact allowlisted repair for a failed default-branch workflow
         if: github.event_name == 'workflow_run'
         run: python -m tools.buddy_safe_repair --observation artifacts/buddy-safe-repair/observation.json --out artifacts/buddy-safe-repair/result.json
-      - name: Regenerate allowlisted deterministic indexes on non-main branches
-        if: github.event_name != 'workflow_run'
+      - name: Regenerate allowlisted deterministic indexes
         run: |
           set -euo pipefail
           python tools/build_buddy_dataset_routes.py
