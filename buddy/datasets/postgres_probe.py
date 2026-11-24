@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_RESOURCE_MAP = ROOT / "config/generated/division-resource-readiness-map.json"
 NAMESPACE_PATTERN = re.compile(r"^dreamco_division_[0-9]{3}$")
 
