@@ -38,7 +38,7 @@ on:
       - "tests/test_weekly_transcript_evaluation.py"
       - ".github/workflows/buddy-weekly-transcript-evaluation.yml"
   push:
-    branches: [main]
+    branches: [main, feature/buddy-bootcamp-freecodecamp-2026]
     paths:
       - ".github/workflows/buddy-bootcamp-curriculum.yml"
       - "tools/build_buddy_bootcamp_curriculum.py"
@@ -90,7 +90,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || 'main' }}
+          ref: ${{ github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -145,7 +145,7 @@ jobs:
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
       - name: Propose generated curriculum
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'schedule'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
