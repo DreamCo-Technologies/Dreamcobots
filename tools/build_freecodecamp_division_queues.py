@@ -60,7 +60,7 @@ def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.casefold()).strip("-")
 
 def _division_categories(name: str, subject_terms: list[str], known: set[str]) -> tuple[set[str], bool]:
-    haystack = " ".join([name, *subject_terms]).casefold().replace("dream", " ")
+    raw = " ".join([name, *subject_terms])\n    raw = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", raw)\n    raw = re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", raw)\n    haystack = raw.casefold().replace("dream", " ")
     selected = set()
     for alias, categories in ALIASES.items():
         if alias in haystack:
@@ -127,7 +127,7 @@ def build_queues(catalog: dict[str, Any], registry: dict[str, Any], limit: int =
         })
     return {
         "schema": "dreamco.freecodecamp_division_learning_queues.v1",
-        "source_catalog_sha256": hashlib.sha256(json.dumps(catalog, sort_keys=True).encode()).hexdigest(),
+        "source_catalog_sha256": hashlib.sha256(json.dumps({"videos": videos, "categories": categories}, sort_keys=True).encode()).hexdigest(),
         "division_count": len(rows),
         "catalog_video_count": len(videos),
         "queue_limit_per_division": limit,
