@@ -1,16 +1,16 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T04:24:23Z
+Generated: 2026-11-24T04:37:31Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
-- Markdown documents scanned: 1660
-- Actionable claim lines detected: 11826
+- Markdown documents scanned: 1662
+- Actionable claim lines detected: 11834
 - Documents with missing path references: 109
-- Documents without implementation references: 1578
-- Documents with implementation references but no test references: 66
+- Documents without implementation references: 1579
+- Documents with implementation references but no test references: 67
 - Documents with inventory count claims: 108
 - Inventory count claims requiring review: 378
 
@@ -13729,6 +13729,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
+### docs/DREAMCO_GOVERNED_DATASET_INGESTION.md
+
+- Status: test_reference_missing
+- Actionable claim lines: 7
+- Implementation paths: buddy/datasets/license_policy.py
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Execution verified: No; run-specific evidence is required.
+
 ### docs/DREAMCO_MASTERY_CONTINUITY_SYSTEM.md
 
 - Status: implementation_reference_missing
@@ -13757,6 +13767,16 @@ These are candidate count claims, not automatically incorrect values. Convert li
 - Test paths: None detected
 - Missing paths: framework/global_ai_sources_flow.py
 - Next action: Repair or explicitly supersede the missing repository path references.
+- Execution verified: No; run-specific evidence is required.
+
+### docs/DREAMCO_MODEL_PROVIDER_DATA_GOVERNANCE.md
+
+- Status: implementation_reference_missing
+- Actionable claim lines: 1
+- Implementation paths: None detected
+- Test paths: None detected
+- Missing paths: None detected
+- Next action: Find or build the implementation, or record why the requirement is intentionally documentation-only.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/DREAMCO_POSTGRES_DIVISION_PROBE.md
