@@ -48,8 +48,6 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
     routes=[]
     for bot in bots:
         tax=tax_routes[bot["id"]]
-        candidates=list(dict.fromkeys(model_id for pack_id in tax["capability_pack_ids"]
-            for model_id in packs.get("seed_models",{}).get(pack_id,[])))
         mapping=tax["domain_crosswalk"]
         routes.append({
             "masterbot_id":bot["id"],"masterbot_name":bot["name"],
@@ -60,7 +58,6 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
             "dataset_rights_status":"UNVERIFIED_DISCOVERY_ONLY",
             "dataset_training_approved":False,
             "capability_pack_ids":tax["capability_pack_ids"],
-            "teacher_model_candidate_ids":candidates,
             "domain_mapping":{"mapping_status":mapping.get("mapping_status"),
                 "domain_id":mapping.get("domain_id"),"domain_name":mapping.get("domain_name"),
                 "owner_review_required":True,"owner_approval":mapping.get("owner_approval"),
