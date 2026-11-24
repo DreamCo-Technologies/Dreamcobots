@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 from tools.build_freecodecamp_routes import build_routes, validate
-from buddy.learning.freecodecamp_source import resources_for_division, select_next_for_division, plan_next_lesson, execute_study_plan
+from buddy.learning.freecodecamp_source import resources_for_division, select_next_for_division, plan_next_lesson, execute_study_plan, stable_resource_id, load_routes
 from buddy.learning.permissioned_study_worker import StudyAuthorization
 from buddy.learning.study_resource_scheduler import Capability
 
@@ -12,6 +12,13 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
     def setUp(self):
         self.catalog = {
             "schema": "dreamco.freecodecamp_catalog.v1",
+            "inventory_status": "complete",
+            "inventory": {
+                "enumerator": "yt-dlp", "enumerator_version": "2026.11.23",
+                "expected_entry_count": 2, "observed_entry_count": 2,
+                "null_entry_count": 0, "duplicate_video_id_count": 0,
+                "complete": True, "completeness_basis": "test fixture",
+            },
             "generated_at": "2026-11-24T00:00:00+00:00",
             "rights_policy": {"media_download_enabled": False, "transcript_ingestion_enabled": False, "model_training_requires_review": True},
             "categories": [{"id": x} for x in ["python_and_automation", "cybersecurity_and_privacy", "other_or_unclassified"]],
@@ -37,6 +44,13 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
         self.assertEqual(cyber["specialty_division_ids"], [1])
         self.assertEqual(cyber["routing_status"], "specialty_and_shared")
 
+    def test_partial_catalog_cannot_create_source_routes(self):
+        catalog = dict(self.catalog)
+        catalog["inventory_status"] = "partial"
+        catalog["inventory"] = {**self.catalog["inventory"], "complete": False}
+        with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory"):
+            build_routes(catalog, self.registry)
+
     def test_training_media_and_transcript_gates_remain_closed(self):
         result = build_routes(self.catalog, self.registry)
         for video in result["videos"]:
@@ -46,12 +60,37 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
             self.assertEqual(video["rights_status"], "review_required")
 
     def test_rejects_missing_division_or_duplicate_video(self):
-        with self.assertRaisesRegex(ValueError, "65 divisions"):
+        with self.assertRaisesRegex(ValueError, "65-division"):
             build_routes(self.catalog, {"divisions": self.registry["divisions"][:64]})
         broken = dict(self.catalog)
         broken["videos"] = [*self.catalog["videos"], self.catalog["videos"][0]]
+        broken["inventory"] = {
+            **self.catalog["inventory"],
+            "expected_entry_count": 3,
+            "observed_entry_count": 3,
+        }
         with self.assertRaisesRegex(ValueError, "duplicate"):
             validate(build_routes(broken, self.registry))
+
+    def test_runtime_loads_verified_catalog_without_generated_route_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "catalog.json"
+            path.write_text(json.dumps(self.catalog))
+            payload = load_routes(path)
+            self.assertEqual(payload["schema"], "dreamco.freecodecamp_runtime_catalog.v1")
+            self.assertEqual(payload["catalog_video_count"], 2)
+            for division_id in range(1, 66):
+                self.assertEqual(len(resources_for_division(division_id, path)), 2)
+
+    def test_runtime_rejects_partial_catalog_even_when_rows_exist(self):
+        partial = dict(self.catalog)
+        partial["inventory_status"] = "partial"
+        partial["inventory"] = {**self.catalog["inventory"], "complete": False}
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "catalog.json"
+            path.write_text(json.dumps(partial))
+            with self.assertRaisesRegex(ValueError, "not a verified complete inventory"):
+                load_routes(path)
 
     def test_runtime_returns_all_video_candidates_for_each_division(self):
         payload = build_routes(self.catalog, self.registry)
@@ -116,6 +155,43 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
             resource = select_next_for_division(1, iter([Capability(name="cyber", category="cybersecurity_and_privacy")]), path=path)
             self.assertIsNotNone(resource)
             self.assertEqual(resource.name, "Cybersecurity")
+
+    def test_resource_identity_survives_inserting_an_earlier_sorted_video(self):
+        original_routes = build_routes(self.catalog, self.registry)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "routes.json"
+            path.write_text(json.dumps(original_routes))
+            before = resources_for_division(1, path)
+            studied_id = next(resource.id for resource in before if resource.name == "Cybersecurity")
+
+            expanded_catalog = dict(self.catalog)
+            expanded_catalog["videos"] = [
+                {
+                    "video_id": "a-new-video",
+                    "title": "New earlier lesson",
+                    "url": "https://www.youtube.com/watch?v=a-new-video",
+                    "categories": ["python_and_automation"],
+                    "rights_status": "review_required",
+                    "learning_status": "not_studied",
+                },
+                *self.catalog["videos"],
+            ]
+            expanded_catalog["inventory"] = {
+                **self.catalog["inventory"],
+                "expected_entry_count": 3,
+                "observed_entry_count": 3,
+            }
+            expanded_routes = build_routes(expanded_catalog, self.registry)
+            path.write_text(json.dumps(expanded_routes))
+            after = resources_for_division(1, path)
+            after_by_name = {resource.name: resource.id for resource in after}
+
+            self.assertEqual(after_by_name["Cybersecurity"], studied_id)
+            self.assertEqual(after_by_name["New earlier lesson"], stable_resource_id("a-new-video"))
+            selected = select_next_for_division(1, [], recent={studied_id}, path=path)
+            self.assertIsNotNone(selected)
+            self.assertNotEqual(selected.id, studied_id)
+            self.assertEqual(selected.name, "New earlier lesson")
 
     def test_runtime_scheduler_selects_candidate_and_validates_division(self):
         payload = build_routes(self.catalog, self.registry)
