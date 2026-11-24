@@ -20,6 +20,15 @@ class BuddyTechnologyRadarTests(unittest.TestCase):
         self.assertEqual(catalog["summary"]["sources_pending"], sum(run["status"] not in {"success", "failed"} for run in runs))
         self.assertTrue(all(run["status"] in {"success", "failed", "seeded_from_web_search", "not_yet_checked"} for run in runs))
 
+    def test_large_catalog_is_kept_out_of_the_static_site(self):
+        # Keep the full historical catalog in the repository, not duplicated in Pages.
+        self.assertTrue((ROOT / "config/generated/buddy-technology-radar.json").is_file())
+        self.assertFalse((ROOT / "website/data/buddy-technology-radar.json").exists())
+        page_script = (ROOT / "website/technology-radar.js").read_text(encoding="utf-8")
+        self.assertIn("raw.githubusercontent.com/DreamCo-Technologies/Dreamcobots/main/config/generated/buddy-technology-radar.json", page_script)
+        service_worker = (ROOT / "website/service-worker.js").read_text(encoding="utf-8")
+        self.assertNotIn("./data/buddy-technology-radar.json", service_worker)
+
     def test_feed_parser_accepts_rss_and_atom(self):
         rss = b"""<rss><channel><item><title>New AI coding agent</title><link>https://example.com/a</link><description>Build software with agents</description><pubDate>Sun, 08 Nov 2026 12:00:00 GMT</pubDate></item></channel></rss>"""
         atom = b"""<feed xmlns='http://www.w3.org/2005/Atom'><entry><title>Remote work AI</title><link href='https://example.com/b'/><summary>Work from home with AI</summary><updated>2026-11-08T12:00:00Z</updated></entry></feed>"""

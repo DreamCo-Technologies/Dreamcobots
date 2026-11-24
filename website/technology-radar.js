@@ -65,7 +65,7 @@
   async function init() {
     try {
       const [catalogResponse, policyResponse] = await Promise.all([
-        fetch('data/buddy-technology-radar.json', {cache:'no-store'}),
+        fetch('https://raw.githubusercontent.com/DreamCo-Technologies/Dreamcobots/main/config/generated/buddy-technology-radar.json', {cache:'no-store', mode:'cors'}),
         fetch('data/technology-discovery-policy.json', {cache:'no-store'}).catch(() => null)
       ]);
       if (!catalogResponse.ok) throw new Error('Technology index unavailable: HTTP ' + catalogResponse.status);

@@ -24,7 +24,7 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = ROOT / "config/buddy/technology-discovery-policy.json"
 OUTPUT_PATH = ROOT / "config/generated/buddy-technology-radar.json"
-WEB_OUTPUT_PATH = ROOT / "website/data/buddy-technology-radar.json"
+LEGACY_WEB_OUTPUT_PATH = ROOT / "website/data/buddy-technology-radar.json"
 POLICY_MIRROR_PATH = ROOT / "website/data/technology-discovery-policy.json"
 
 
@@ -434,17 +434,14 @@ def main() -> int:
         validate_catalog(catalog)
         OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
         OUTPUT_PATH.write_text(json.dumps(catalog, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        WEB_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-        WEB_OUTPUT_PATH.write_text(json.dumps(catalog, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
         POLICY_MIRROR_PATH.parent.mkdir(parents=True, exist_ok=True)
         POLICY_MIRROR_PATH.write_text(json.dumps(policy, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     else:
-        if not OUTPUT_PATH.exists() or not WEB_OUTPUT_PATH.exists():
-            raise SystemExit("technology radar output or Pages mirror is missing; run --refresh")
+        if not OUTPUT_PATH.exists():
+            raise SystemExit("technology radar source catalog is missing; run --refresh")
+        if LEGACY_WEB_OUTPUT_PATH.exists():
+            raise SystemExit("legacy public radar duplicate still exists; remove website/data/buddy-technology-radar.json")
         catalog = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
-        mirror = json.loads(WEB_OUTPUT_PATH.read_text(encoding="utf-8"))
-        if catalog != mirror:
-            raise SystemExit("technology radar Pages mirror is stale")
         if not POLICY_MIRROR_PATH.exists() or json.loads(POLICY_MIRROR_PATH.read_text(encoding="utf-8")) != policy:
             raise SystemExit("technology discovery policy Pages mirror is stale")
         validate_catalog(catalog)
