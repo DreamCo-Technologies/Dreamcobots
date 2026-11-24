@@ -179,5 +179,43 @@
     "preference_optimization_when_approved",
     "from_scratch_only_with_separate_data_and_compute_case"
   ],
-  "training_boundary": "A source catalog entry, Bootcamp lesson, synthetic candidate, or dataset card does not start training. Only the separately approved training worker may update candidate weights; promotion always requires independent holdout evaluation and human release approval."
+  "training_boundary": "A source catalog entry, Bootcamp lesson, synthetic candidate, or dataset card does not start training. Only the separately approved training worker may update candidate weights; promotion always requires independent holdout evaluation and human release approval.",
+  "training_method_execution": [
+    {
+      "method": "sft",
+      "implementation_status": "CODE_PATH_PRESENT_NOT_EXECUTED",
+      "scope": "The Transformers worker supports bounded supervised fine-tuning after an approved DatasetHub card, immutable base/tokenizer revisions, and compute approval."
+    },
+    {
+      "method": "lora",
+      "implementation_status": "CODE_PATH_PRESENT_NOT_EXECUTED",
+      "scope": "The Transformers worker supports LoRA adapter training after the same gates; PEFT and a real GPU runner remain required."
+    },
+    {
+      "method": "qlora",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "scope": "Quantized adapter training requires a separately tested backend, memory profile, and benchmark."
+    },
+    {
+      "method": "continued_pretraining",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "scope": "Requires a rights-cleared corpus, tokenizer/base compatibility review, and separate evaluation."
+    },
+    {
+      "method": "teacher_student_distillation",
+      "implementation_status": "NOT_IMPLEMENTED_AND_OUTPUT_RIGHTS_GATED",
+      "scope": "Requires verified teacher output-use permission, teacher version pins, reviewed targets, and a dedicated distillation runner."
+    },
+    {
+      "method": "preference_optimization",
+      "implementation_status": "NOT_IMPLEMENTED",
+      "scope": "Requires approved preference data, evaluator design, and safety regression gates."
+    },
+    {
+      "method": "from_scratch",
+      "implementation_status": "RESEARCH_PLAN_ONLY",
+      "scope": "Requires a separate compute, tokenizer, data-volume, safety, and economic feasibility decision."
+    }
+  ],
+  "execution_truth_boundary": "Only SFT and LoRA have a bounded code path. No live GPU runner, approved compute, actual model weight update, or completed training run is verified. Other methods are planned or not implemented; source discovery and curriculum generation never start training."
 }
