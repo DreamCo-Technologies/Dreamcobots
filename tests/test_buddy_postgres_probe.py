@@ -107,8 +107,8 @@ class PostgresProbeTests(unittest.TestCase):
             with patch("sys.argv", ["postgres_probe", "--output", str(output)]):
                 self.assertEqual(main(), 2)
             raw = output.read_text(encoding="utf-8")
-            self.assertTrue(raw.endswith("\\n"))
-            self.assertFalse(raw.endswith("\\\\n"))
+            self.assertTrue(raw.endswith("\n"))
+            self.assertFalse(raw.endswith("\\n"))
             self.assertEqual(json.loads(raw)["status"], "BLOCKED")
 
     def test_connection_errors_do_not_leak_dsn_or_exception_text(self):
