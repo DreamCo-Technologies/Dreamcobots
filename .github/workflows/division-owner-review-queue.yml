@@ -1,10 +1,17 @@
 name: Division Owner Review Queue
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
       - ".github/workflows/division-owner-review-queue.yml"
+      - ".github/workflows/dreamco-division-mastery-engine.yml"
       - "tools/build_division_owner_review_queue.py"
+      - "tools/build_division_resource_readiness_map.py"
+      - "tests/test_division_owner_review_queue.py"
+      - "tests/test_division_resource_readiness.py"
+      - "config/review/division-owner-conversation-approval.json"
+      - "config/review/masterbot-domain-crosswalk-owner-review.json"
       - "config/generated/division-resource-readiness-map.json"
       - "config/generated/division-reconciliation.json"
       - "config/division-reconciliation-policy.json"
@@ -12,47 +19,54 @@ on:
   pull_request:
     paths:
       - ".github/workflows/division-owner-review-queue.yml"
+      - ".github/workflows/dreamco-division-mastery-engine.yml"
       - "tools/build_division_owner_review_queue.py"
+      - "tools/build_division_resource_readiness_map.py"
       - "tests/test_division_owner_review_queue.py"
+      - "tests/test_division_resource_readiness.py"
+      - "config/review/division-owner-conversation-approval.json"
+      - "config/review/masterbot-domain-crosswalk-owner-review.json"
       - "config/generated/division-resource-readiness-map.json"
       - "config/generated/division-reconciliation.json"
       - "config/division-reconciliation-policy.json"
       - "website/data/masterbot-homepage-featured.json"
-  schedule:
-    - cron: "41 8 * * *"
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 concurrency:
-  group: division-owner-review-queue
+  group: division-owner-review-queue-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 jobs:
-  generate-review-queue:
+  validate-owner-review:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || 'main' }}
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-      - name: Generate and validate owner review queue
+          python-version: "3.12"
+      - name: Verify source-backed division and owner-review manifests
+        run: |
+          python tools/build_division_resource_readiness_map.py --check
+          python -m unittest tests.test_division_resource_readiness -v
+      - name: Build and validate owner-review queue
         run: |
           python tools/build_division_owner_review_queue.py
           python tools/build_division_owner_review_queue.py --check
-          python -m unittest discover -s tests -p 'test_division_owner_review_queue.py' -v
-      - name: Propose updated review queue
-        if: github.event_name != 'pull_request'
-        uses: peter-evans/create-pull-request@v7
+          python -m unittest tests.test_division_owner_review_queue -v
+      - name: Validate JSON and whitespace
+        run: |
+          python -m json.tool config/review/division-owner-conversation-approval.json > /dev/null
+          python -m json.tool config/review/masterbot-domain-crosswalk-owner-review.json > /dev/null
+          git diff --check
+      - name: Preserve review queue for owner inspection
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          branch: automation/division-owner-review-queue
-          delete-branch: false
-          add-paths: config/generated/division-owner-review-queue.json
-          commit-message: "chore: refresh division owner review queue"
-          title: "chore: refresh division owner review queue"
-          body: |
-            Generated from the current division resource readiness map and division reconciliation.
-            Shared platform roles are not assigned a primary domain. Supplemental collaborator links remain proposed and unapproved.
+          name: division-owner-review-queue-${{ github.run_id }}
+          path: |
+            config/generated/division-resource-readiness-map.json
+            config/review/masterbot-domain-crosswalk-owner-review.json
+            config/generated/division-owner-review-queue.json
+          if-no-files-found: error
+          retention-days: 90
