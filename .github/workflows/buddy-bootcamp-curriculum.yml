@@ -28,10 +28,6 @@ on:
       - "tests/test_original_lesson.py"
       - "buddy/bootcamp/sources/original-lesson.schema.json"
       - "buddy/bootcamp/templates/original-lesson.md"
-      - "tools/validate_original_lesson.py"
-      - "tests/test_original_lesson.py"
-      - "buddy/bootcamp/sources/original-lesson.schema.json"
-      - "buddy/bootcamp/templates/original-lesson.md"
   push:
     branches: [main]
     paths:
@@ -51,6 +47,12 @@ on:
       - "tools/validate_freecodecamp_learning_evidence.py"
       - "tests/test_freecodecamp_learning_evidence.py"
       - "buddy/bootcamp/sources/freecodecamp/learning-evidence.schema.json"
+      - "buddy/learning/study_artifact_cleanup.py"
+      - "tests/test_study_artifact_cleanup.py"
+      - "tools/validate_original_lesson.py"
+      - "tests/test_original_lesson.py"
+      - "buddy/bootcamp/sources/original-lesson.schema.json"
+      - "buddy/bootcamp/templates/original-lesson.md"
   schedule:
     - cron: "17 9 * * *"
 permissions:
