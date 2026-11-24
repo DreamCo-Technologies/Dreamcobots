@@ -1,0 +1,70 @@
+{
+  "schema": "dreamco.division_model_training_policy.v1",
+  "status": "PLAN_DEFINED_NOT_EXECUTED",
+  "identity": {
+    "model_id_pattern": "dreamco.division.{division_slug}",
+    "planned_first_release_version": "0.1.0",
+    "current_manifest_version": "0.0.0",
+    "version_truth": "0.0.0 remains the inventory slot until an actual checkpoint and model card exist"
+  },
+  "student_size": {
+    "initial_parameter_target": 25000000,
+    "planning_band": [25000000, 500000000],
+    "selection_rule": "Choose the smallest license-compatible student that passes the division baseline and fits measured runner memory/latency/cost; this is a target, not a claim that a model is available or trained"
+  },
+  "tokenizer": {
+    "default_mode": "shared_per_base_model",
+    "reference_rule": "Use the exact tokenizer shipped with the pinned base-model ID and immutable revision; store tokenizer files and SHA-256 beside each division checkpoint",
+    "division_specific_override": "Allowed only when the division benchmark proves a benefit and tokenizer compatibility/migration tests pass",
+    "required_evidence": ["tokenizer_id", "tokenizer_revision", "tokenizer_file_hashes", "special_token_map_hash"]
+  },
+  "training": {
+    "strategy": "SFT plus LoRA/QLoRA by default; full fine-tuning only after compute benchmarking; DPO only with separately approved preference data",
+    "distillation": "Use teacher-generated targets only when teacher license, output-use terms, data classification, provenance, and human review permit it; retain teacher ID/revision and teacher-evaluation evidence",
+    "checkpoint_key_template": "divisions/{division_id:03d}/models/{model_id}/v{version}/checkpoints/{run_id}/",
+    "weight_ownership": "Each division owns its adapter/full-weight checkpoint, optimizer state where retained, training config, dataset lineage, and model card; shared base weights are immutable references, not silently merged weights",
+    "required_lineage": ["masterbot_id", "model_id", "model_version", "base_model_id", "base_model_revision", "tokenizer_revision", "dataset_id", "dataset_version", "dataset_sha256", "split_hashes", "training_config_sha256", "seed", "tested_commit_sha", "checkpoint_file_hashes", "compute_approval_id"],
+    "schedule": {
+      "planner_cron": "*/5 * * * *",
+      "full_fleet_sweep_cron": "15 */6 * * *",
+      "planner_behavior": "One fair-share division lane per five-minute tick; full fleet preflight every six hours",
+      "actual_weight_training_trigger": "Only when a new approved job has rights-cleared data, a pinned base model/tokenizer, an available compute slot, and an explicit compute approval",
+      "unconditional_retraining_every_tick": false,
+      "retry_policy": "bounded retries with failure classification, quarantine, and no infinite retry loops"
+    }
+  },
+  "teacher_policy": {
+    "coordinator": "Buddy Bootcamp curriculum and teacher orchestration",
+    "teacher_candidates": ["license-verified Hugging Face open-weight models", "approved DreamCo-owned teacher checkpoints", "approved external teacher APIs where data classification permits"],
+    "requirements": ["immutable teacher revision", "verified model license", "provider output-training terms", "domain benchmark score", "safety score", "data classification compatibility"],
+    "proprietary_closed_model_weights": "never copy or claim access; API use is inference only and does not grant weight or training rights"
+  },
+  "dataset_policy": {
+    "taxonomy_source": "config/generated/division-huggingface-taxonomy-map.json",
+    "mapped_subject_divisions": 55,
+    "unresolved_masterbot_mappings": 20,
+    "task_families": 37,
+    "capability_packs": 10,
+    "requirements": ["source provenance", "file-level license review", "explicit AI training permission", "content-rights evidence", "privacy review", "canonical primary MasterBot", "versioned dataset card", "content SHA-256", "train/validation/test split hashes"],
+    "owner_review_required_for_unresolved_mappings": true,
+    "cross_division_raw_dataset_pooling": false
+  },
+  "evaluation": {
+    "required_suites": ["shared_general_capability", "division_domain_tasks", "private_evaluation_only_holdout", "safety_and_policy", "regression_and_failure_replay", "tool_and_runtime_workflows", "latency_throughput_memory_and_cost"],
+    "test_split_used_for_training": false,
+    "baseline_required": true,
+    "independent_reviewer_required": true,
+    "benchmark_lineage_must_match_checkpoint_dataset_and_tested_commit": true
+  },
+  "runtime": {
+    "candidate_modes": ["local_open_weight_runtime", "approved_provider_adapter"],
+    "requirements": ["model revision pinning", "tokenizer compatibility", "health checks", "timeouts", "rate limits", "classification-aware routing", "credential-free traces", "rollback checkpoint"],
+    "automatic_production_promotion": false
+  },
+  "promotion": {
+    "required_evidence": ["postgres_catalog_persisted", "object_storage_encryption_versioning_and_backup_restore", "provider_health_or_local_runtime_health", "rights_verified_dataset_card", "completed_training_checkpoint_hashes", "domain_benchmark_pass", "general_benchmark_pass", "private_holdout_pass", "safety_pass", "regression_pass", "runtime_health_pass", "independent_review_approval"],
+    "missing_evidence": "BLOCK",
+    "promotion_action": "independent review only; no automatic production traffic change"
+  },
+  "truth": "This policy defines a per-division model lifecycle plan. It does not select a base model, provision compute, train weights, prove teacher availability, or certify any division."
+}
