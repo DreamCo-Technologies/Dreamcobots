@@ -25,7 +25,7 @@ def now_iso() -> str:
 
 
 def tracked_markdown(root: Path = ROOT) -> list[Path]:
-    result = subprocess.run(["git", "ls-files", "--", "*.md"], cwd=root, check=True, capture_output=True, text=True)
+    result = subprocess.run(["git", "ls-files", "--", "*.md", "*.mdx"], cwd=root, check=True, capture_output=True, text=True)
     policy = json.loads((root / "config/buddy/markdown-implementation-gap-policy.json").read_text(encoding="utf-8"))
     excluded = set(policy["excluded_path_segments"])
     excluded_paths = set(policy.get("excluded_paths", []))
