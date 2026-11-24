@@ -58,3 +58,19 @@
 - Rights review: pending
 - Media/transcript copied: no
 - Model training permitted: no
+
+## Authorship record
+- Authoring entity: DreamCo
+- Created at: {{iso_8601_timestamp}}
+- Meaningful human contribution and review: {{describe_human_authorship_and_editorial_work}}
+- Human owner confirmation: pending
+- Revision history reference: {{revision_history_reference_or_null}}
+
+## Ownership and third-party rights
+- Claimed owner label: DreamCo
+- Ownership claim status: pending_review
+- Third-party material included in lesson: no
+- Source material copied: no
+- Training permission: no (separate approval required)
+
+A pending ownership record is not a legal ownership determination. Preserve human contribution, contributor agreements or assignments where applicable, version history, and review evidence before marking an ownership claim confirmed.
