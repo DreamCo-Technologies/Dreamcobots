@@ -88,8 +88,8 @@ class BootcampSeedDataTests(unittest.TestCase):
             card_data = json.loads(card.read_text(encoding="utf-8"))
             self.assertFalse(manifest_data["training_started"])
             self.assertFalse(card_data["training_approved"])
-            self.assertTrue(manifest.read_bytes().endswith(b"\\n"))
-            self.assertTrue(card.read_bytes().endswith(b"\\n"))
+            self.assertTrue(manifest.read_bytes().endswith(bytes([10])))
+            self.assertTrue(card.read_bytes().endswith(bytes([10])))
 
     def test_jsonl_loader_rejects_invalid_rows(self):
         with tempfile.TemporaryDirectory() as temp:
