@@ -7,6 +7,7 @@ on:
       - "config/masterbot-65-registry.json"
       - "tools/buddy_masterbot_training_lane.py"
       - "tools/aggregate_masterbot_training_runs.py"
+      - "tests/test_buddy_masterbot_training_lane.py"
       - ".github/workflows/buddy-continuous-learning-planner.yml"
   schedule:
     - cron: "*/5 * * * *"
@@ -17,7 +18,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: buddy-continuous-learning-fleet-${{ github.ref }}
+  group: buddy-continuous-learning-fleet-${{ github.ref }}-${{ github.event.schedule == '*/5 * * * *' && 'rotating' || 'full' }}
   cancel-in-progress: false
 
 jobs:
@@ -58,7 +59,7 @@ jobs:
           print("mode=" + mode)
           PY
 
-  train-each-division:
+  prepare-each-division-plan:
     needs: prepare-fleet
     runs-on: ubuntu-latest
     timeout-minutes: 4
@@ -72,7 +73,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run isolated division learning lane
+      - name: Generate plan-only division learning evidence
         env:
           MASTERBOT_NAME: ${{ matrix.division.name }}
           GITHUB_RUN_ID: ${{ github.run_id }}
@@ -81,13 +82,13 @@ jobs:
       - name: Preserve division run evidence
         uses: actions/upload-artifact@v4
         with:
-          name: masterbot-lane-${{ matrix.division.name }}-${{ github.run_id }}
-          path: artifacts/masterbot-training/${{ matrix.division.name }}/latest-checkpoint.json
+          name: masterbot-plan-${{ matrix.division.name }}-${{ github.run_id }}
+          path: artifacts/masterbot-training/${{ matrix.division.name }}/latest-plan.json
           if-no-files-found: error
           retention-days: 30
 
   cross-division-learning:
-    needs: [prepare-fleet, train-each-division]
+    needs: [prepare-fleet, prepare-each-division-plan]
     if: ${{ always() && (github.event_name != 'schedule' || github.event.schedule != '*/5 * * * *') }}
     runs-on: ubuntu-latest
     steps:
@@ -98,7 +99,7 @@ jobs:
       - name: Download full-sweep division run records
         uses: actions/download-artifact@v4
         with:
-          pattern: masterbot-lane-*
+          pattern: masterbot-plan-*
           path: artifacts/masterbot-training
           merge-multiple: false
       - name: Build shared cross-run learning queue
