@@ -1,19 +1,19 @@
 {
   "schema": "dreamco.buddy.markdown_implementation_gap_audit.v1",
-  "generated_at": "2026-11-24T15:01:58Z",
+  "generated_at": "2026-11-24T16:11:31Z",
   "inventory_mode": "all_tracked_markdown_files",
   "document_count": 1675,
-  "actionable_claim_lines": 11935,
+  "actionable_claim_lines": 11936,
   "documents_with_count_claims": 112,
-  "numeric_inventory_claim_count": 391,
+  "numeric_inventory_claim_count": 397,
   "gap_status_counts": {
-    "broken_path_references": 112,
+    "broken_path_references": 113,
     "implementation_and_test_paths_referenced_not_verified": 5,
     "implementation_reference_missing": 1423,
     "reference_only": 85,
-    "test_reference_missing": 50
+    "test_reference_missing": 49
   },
-  "documents_with_missing_paths": 112,
+  "documents_with_missing_paths": 113,
   "documents_without_implementation_references": 1588,
   "documents_without_test_references": 69,
   "documents": [
@@ -28124,13 +28124,25 @@
     {
       "path": "docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md",
       "title": "DreamCo Project Conversation and Source-Corpus Reconciliation",
-      "sha256": "911b39a5212b0d55222436c6fa917f6536fa7b1a1a9fe4a5763abbc464ddd6fa",
+      "sha256": "d38b39c491cc2dfcb31a32c6b47b611d7df8746e4e3e67b32e44d1ac463f5e6b",
       "actionable_claim_lines": 16,
       "numeric_inventory_claims": [
         {
           "line": 23,
           "match": "100 resources",
           "excerpt": "| LIB-MD-001 | `Pasted markdown.md` | `file_00000000ec84822fa5494193f142c5c9` | Read; 644 lines. Historical conversation transcript covering learning techniques, thinking strategies, repository organization, ChatGPT/GitHub integrations, GitLab/AWS/Ansible/Terraform/Kubernetes/Gra",
+          "review_required": true
+        },
+        {
+          "line": 252,
+          "match": "100 resource",
+          "excerpt": "| `SRC-CURRENT-2026-11-24-RESOURCES-01` | Add as many useful study resources as possible | `REQ-EXPAND-STUDY-RESOURCE-CATALOG` | PR #18214: 1101–1200 expansion; 100 resource pointers; Tolkien scholarly lane | 100 resource pointers cataloged; no bulk ingestion or blanket training ",
+          "review_required": true
+        },
+        {
+          "line": 252,
+          "match": "100 resource",
+          "excerpt": "| `SRC-CURRENT-2026-11-24-RESOURCES-01` | Add as many useful study resources as possible | `REQ-EXPAND-STUDY-RESOURCE-CATALOG` | PR #18214: 1101–1200 expansion; 100 resource pointers; Tolkien scholarly lane | 100 resource pointers cataloged; no bulk ingestion or blanket training ",
           "review_required": true
         }
       ],
@@ -28139,9 +28151,12 @@
         "buddy/datasets/database_router.py",
         "buddy/datasets/hub.py",
         "buddy/datasets/postgres_catalog.py",
-        "config/buddy-database-source-registry.json"
+        "config/buddy-database-source-registry.json",
+        "docs/engineering/pr-inventory-snapshots/2026-11-24.json"
       ],
-      "missing_paths": [],
+      "missing_paths": [
+        "config/buddy-study-resources-1101-1200-expansion.json"
+      ],
       "implementation_paths": [
         "buddy/datasets/database_router.py",
         "buddy/datasets/hub.py",
@@ -28152,39 +28167,66 @@
       "configuration_paths": [
         "config/buddy-database-source-registry.json"
       ],
-      "documentation_paths": [],
-      "gap_status": "test_reference_missing",
-      "next_action": "Add focused tests and acceptance evidence for the referenced implementation.",
+      "documentation_paths": [
+        "docs/engineering/pr-inventory-snapshots/2026-11-24.json"
+      ],
+      "gap_status": "broken_path_references",
+      "next_action": "Repair or explicitly supersede the missing repository path references.",
       "execution_verified": false
     },
     {
       "path": "docs/engineering/PR_RECONCILIATION_LEDGER.md",
       "title": "DreamCo Pull Request Reconciliation Ledger",
-      "sha256": "817cbbbab5791740b7073c2bcd729b4243dacb1ca0c38b46bb3dd9edc4bf9237",
-      "actionable_claim_lines": 24,
+      "sha256": "197bedeae4c6d52ba1b693d19899e9ed63d82ba3f0bf9b294cc288f95e6a9f26",
+      "actionable_claim_lines": 25,
       "numeric_inventory_claims": [
         {
-          "line": 75,
+          "line": 15,
+          "match": "### 2026-11",
+          "excerpt": "### 2026-11-24 refresh",
+          "review_required": true
+        },
+        {
+          "line": 29,
+          "match": "### 2026-11",
+          "excerpt": "### 2026-11-18 historical snapshot",
+          "review_required": true
+        },
+        {
+          "line": 84,
           "match": "14 model",
           "excerpt": "- Useful work: proposes caller identity checks on 14 model routes, plan-policy enforcement, allowlist-only model selection, owner-only discovery, paid-use approval, and UI fallback/sign-in notices with tests.",
           "review_required": true
         },
         {
-          "line": 144,
+          "line": 153,
           "match": "22 categories",
           "excerpt": "- **PR #18207 — freeCodeCamp Buddy Bootcamp integration:** `NEEDS_FIXES` + `NEEDS_REBASE`. Current head `197e8897ccb35263a8938bc70095f68576920e22`; base `9c1a7e109bc26bc5adc3bd4766baa547a6ac2c7c`; GitHub reports `mergeable_state=dirty`. Eleven review threads were returned; eight ",
           "review_required": true
         },
         {
-          "line": 144,
+          "line": 153,
           "match": "65 division",
           "excerpt": "- **PR #18207 — freeCodeCamp Buddy Bootcamp integration:** `NEEDS_FIXES` + `NEEDS_REBASE`. Current head `197e8897ccb35263a8938bc70095f68576920e22`; base `9c1a7e109bc26bc5adc3bd4766baa547a6ac2c7c`; GitHub reports `mergeable_state=dirty`. Eleven review threads were returned; eight ",
+          "review_required": true
+        },
+        {
+          "line": 182,
+          "match": "### 2026-11",
+          "excerpt": "### 2026-11-24 targeted duplicate reconciliation — PR #18212 and PR #18214",
+          "review_required": true
+        },
+        {
+          "line": 185,
+          "match": "100 resource",
+          "excerpt": "- The 100 resource records (IDs 1101–1200) are identical across both branches. The 727 unique dataset candidates and 1,783 route rows are also identical by candidate ID; PR #18214 replaces the ambiguous `catalog_train_flag` with `source_catalog_train_hint` and explicitly sets `tr",
           "review_required": true
         }
       ],
       "count_claim_review_required": true,
       "referenced_paths": [
         "config/buddy-model-selection-registry.json",
+        "docs/engineering/pr-inventory-snapshots/2026-11-24.json",
         "tests/test_buddy_resource_registry.py",
         "tools/audit_markdown_implementation_gaps.py",
         "website/data/bot-calculators.json",
@@ -28217,7 +28259,9 @@
       "configuration_paths": [
         "config/buddy-model-selection-registry.json"
       ],
-      "documentation_paths": [],
+      "documentation_paths": [
+        "docs/engineering/pr-inventory-snapshots/2026-11-24.json"
+      ],
       "gap_status": "broken_path_references",
       "next_action": "Repair or explicitly supersede the missing repository path references.",
       "execution_verified": false

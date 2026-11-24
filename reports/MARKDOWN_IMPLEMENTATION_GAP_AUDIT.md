@@ -1,18 +1,18 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T15:01:58Z
+Generated: 2026-11-24T16:11:31Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
 - Markdown documents scanned: 1675
-- Actionable claim lines detected: 11935
-- Documents with missing path references: 112
+- Actionable claim lines detected: 11936
+- Documents with missing path references: 113
 - Documents without implementation references: 1588
 - Documents with implementation references but no test references: 69
 - Documents with inventory count claims: 112
-- Inventory count claims requiring review: 391
+- Inventory count claims requiring review: 397
 
 ## Fixed-count claims requiring review
 
@@ -190,9 +190,15 @@ This is a live inventory of Git-tracked Markdown requirements and their linked r
 - docs/dreamco-lite/DREAMCO_LITE_MVP.md:9 — - **2 bots**
 - docs/dreampayments_benchmark.md:12 — ## 30 capability scorecard
 - docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:23 — | LIB-MD-001 | `Pasted markdown.md` | `file_00000000ec84822fa5494193f142c5c9` | Read; 644 lines. Historical conversation transcript covering learning techniques, thinking strategies, repository organization, ChatGPT/GitHub integrations, GitLab/AWS/Ansible/Terraform/Kubernetes/Gra
-- docs/engineering/PR_RECONCILIATION_LEDGER.md:75 — - Useful work: proposes caller identity checks on 14 model routes, plan-policy enforcement, allowlist-only model selection, owner-only discovery, paid-use approval, and UI fallback/sign-in notices with tests.
-- docs/engineering/PR_RECONCILIATION_LEDGER.md:144 — - **PR #18207 — freeCodeCamp Buddy Bootcamp integration:** `NEEDS_FIXES` + `NEEDS_REBASE`. Current head `197e8897ccb35263a8938bc70095f68576920e22`; base `9c1a7e109bc26bc5adc3bd4766baa547a6ac2c7c`; GitHub reports `mergeable_state=dirty`. Eleven review threads were returned; eight
-- docs/engineering/PR_RECONCILIATION_LEDGER.md:144 — - **PR #18207 — freeCodeCamp Buddy Bootcamp integration:** `NEEDS_FIXES` + `NEEDS_REBASE`. Current head `197e8897ccb35263a8938bc70095f68576920e22`; base `9c1a7e109bc26bc5adc3bd4766baa547a6ac2c7c`; GitHub reports `mergeable_state=dirty`. Eleven review threads were returned; eight
+- docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:252 — | `SRC-CURRENT-2026-11-24-RESOURCES-01` | Add as many useful study resources as possible | `REQ-EXPAND-STUDY-RESOURCE-CATALOG` | PR #18214: 1101–1200 expansion; 100 resource pointers; Tolkien scholarly lane | 100 resource pointers cataloged; no bulk ingestion or blanket training
+- docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md:252 — | `SRC-CURRENT-2026-11-24-RESOURCES-01` | Add as many useful study resources as possible | `REQ-EXPAND-STUDY-RESOURCE-CATALOG` | PR #18214: 1101–1200 expansion; 100 resource pointers; Tolkien scholarly lane | 100 resource pointers cataloged; no bulk ingestion or blanket training
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:15 — ### 2026-11-24 refresh
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:29 — ### 2026-11-18 historical snapshot
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:84 — - Useful work: proposes caller identity checks on 14 model routes, plan-policy enforcement, allowlist-only model selection, owner-only discovery, paid-use approval, and UI fallback/sign-in notices with tests.
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:153 — - **PR #18207 — freeCodeCamp Buddy Bootcamp integration:** `NEEDS_FIXES` + `NEEDS_REBASE`. Current head `197e8897ccb35263a8938bc70095f68576920e22`; base `9c1a7e109bc26bc5adc3bd4766baa547a6ac2c7c`; GitHub reports `mergeable_state=dirty`. Eleven review threads were returned; eight
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:153 — - **PR #18207 — freeCodeCamp Buddy Bootcamp integration:** `NEEDS_FIXES` + `NEEDS_REBASE`. Current head `197e8897ccb35263a8938bc70095f68576920e22`; base `9c1a7e109bc26bc5adc3bd4766baa547a6ac2c7c`; GitHub reports `mergeable_state=dirty`. Eleven review threads were returned; eight
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:182 — ### 2026-11-24 targeted duplicate reconciliation — PR #18212 and PR #18214
+- docs/engineering/PR_RECONCILIATION_LEDGER.md:185 — - The 100 resource records (IDs 1101–1200) are identical across both branches. The 727 unique dataset candidates and 1,783 route rows are also identical by candidate ID; PR #18214 replaces the ambiguous `catalog_train_flag` with `source_catalog_train_hint` and explicitly sets `tr
 - docs/top-200-ideas-set-02.md:5 — ## 201–225 Systems & architecture
 - docs/top-200-ideas-set-02.md:5 — ## 201–225 Systems & architecture
 - docs/top-200-ideas-set-02.md:32 — ## 226–250 Memory & cognition
@@ -14934,18 +14940,18 @@ These are candidate count claims, not automatically incorrect values. Convert li
 
 ### docs/engineering/DREAMCO_PROJECT_CHAT_CORPUS.md
 
-- Status: test_reference_missing
+- Status: broken_path_references
 - Actionable claim lines: 16
 - Implementation paths: buddy/datasets/database_router.py, buddy/datasets/hub.py, buddy/datasets/postgres_catalog.py
 - Test paths: None detected
-- Missing paths: None detected
-- Next action: Add focused tests and acceptance evidence for the referenced implementation.
+- Missing paths: config/buddy-study-resources-1101-1200-expansion.json
+- Next action: Repair or explicitly supersede the missing repository path references.
 - Execution verified: No; run-specific evidence is required.
 
 ### docs/engineering/PR_RECONCILIATION_LEDGER.md
 
 - Status: broken_path_references
-- Actionable claim lines: 24
+- Actionable claim lines: 25
 - Implementation paths: tools/audit_markdown_implementation_gaps.py, website/data/bot-calculators.json, website/data/bot-fleet-catalog.json, website/data/buddy-technology-radar.json, website/data/command-center/capabilities.json, website/data/dreamco-search-index.js
 - Test paths: tests/test_buddy_resource_registry.py
 - Missing paths: buddy/bootcamp/training_methods_hub.py, github/workflows/buddy-continuous-repair.yml, github/workflows/buddy-training-methods-hub.yml, github/workflows/command-center-index.yml, github/workflows/keep-green.yml, tests/test_buddy_training_methods_hub.py, tools/build_dreamco_training_factory.py
