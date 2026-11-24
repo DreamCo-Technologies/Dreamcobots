@@ -1,0 +1,268 @@
+{
+  "schema": "dreamco.proprietary_division_model_program.v1",
+  "status": "architecture_plan_not_yet_implemented_or_trained",
+  "owner": "DreamCo Technologies",
+  "baseline": {
+    "division_profiles": "discover_from_canonical_registry",
+    "currently_discovered_profiles": 65,
+    "buddy_model": "separate_first_party_model_track"
+  },
+  "ownership_policy": {
+    "first_party_artifacts": [
+      "DreamCo-authored training data",
+      "DreamCo training recipes",
+      "DreamCo-produced adapters and checkpoints where rights allow",
+      "DreamCo model cards and release manifests",
+      "DreamCo inference packaging"
+    ],
+    "upstream_rights_preserved": true,
+    "prohibit_unlicensed_training_data": true,
+    "prohibit_claiming_exclusive_ownership_of_upstream_weights": true,
+    "counsel_review_required_before_external_license_release": true
+  },
+  "per_division_release_requirements": [
+    "canonical_division_id",
+    "independent_model_id_and_semver",
+    "pinned_base_model_and_license",
+    "tokenizer_and_config",
+    "rights_cleared_dataset_manifest",
+    "reproducible_training_recipe",
+    "weights_or_adapter_checkpoint",
+    "held_out_benchmarks",
+    "safety_and_privacy_evaluations",
+    "model_card",
+    "license_and_notice_bundle",
+    "inference_package",
+    "rollback_metadata"
+  ],
+  "preferred_training_strategy": [
+    "evaluate_compact_permissively_licensed_base",
+    "LoRA_or_QLoRA_finetuning",
+    "approved_distillation_when_teacher_terms_allow",
+    "from_scratch_only_when_justified"
+  ],
+  "taxonomy": {
+    "source": "live_Hugging_Face_Hub_taxonomy_and_metadata",
+    "coverage_states": [
+      "mapped",
+      "mapped_with_shared_owner",
+      "awaiting_owner",
+      "excluded_with_reason"
+    ],
+    "unmapped_in_scope_is_ci_failure": true,
+    "create_division_per_tag": false
+  },
+  "daily_loop": {
+    "rights_cleared_data_review": true,
+    "benchmark_and_regression": true,
+    "train_only_if_data_compute_and_quality_gates_pass": true,
+    "automatic_unreviewed_production_log_training": false
+  },
+  "bootcamp": {
+    "common_foundation": true,
+    "division_specific_curricula": true,
+    "teaching_mastery": true,
+    "independent_assessment": true
+  },
+  "status_gates": [
+    "planned",
+    "data_cleared",
+    "base_selected",
+    "trained",
+    "benchmarked",
+    "safety_approved",
+    "license_approved",
+    "deployed",
+    "released"
+  ],
+  "rollout": [
+    "inventory_and_rights_audit",
+    "three_division_pilot",
+    "all_division_expansion",
+    "taxonomy_and_bootcamp_coverage",
+    "reviewed_proprietary_release"
+  ],
+  "per_division_contract": {
+    "identity": [
+      "stable_model_id",
+      "display_name",
+      "semantic_version",
+      "canonical_division_id",
+      "release_channel",
+      "lifecycle_state"
+    ],
+    "weights": [
+      "independent_trainable_weights_or_adapter",
+      "immutable_checkpoint_versions",
+      "exact_base_model_lineage",
+      "checkpoint_hashes",
+      "resumable_optimizer_state_when_supported"
+    ],
+    "tokenizer": [
+      "owned_tokenizer_artifact_or_documented_shared_tokenizer",
+      "tokenizer_revision",
+      "vocabulary_and_config_hashes",
+      "compatibility_tests"
+    ],
+    "data": [
+      "versioned_dataset_manifests",
+      "source_and_license_provenance",
+      "transformation_lineage",
+      "deduplication_and_split_strategy",
+      "artifact_hashes"
+    ],
+    "training": [
+      "reproducible_recipe",
+      "code_and_container_digest",
+      "dependency_lock",
+      "seed_and_hardware",
+      "compute_budget",
+      "run_logs_and_metrics"
+    ],
+    "evaluation": [
+      "division_benchmarks",
+      "held_out_data",
+      "acceptance_thresholds",
+      "safety_privacy_robustness_tests",
+      "champion_regression_comparison"
+    ],
+    "release": [
+      "model_card",
+      "license_and_notice_bundle",
+      "signed_release_manifest",
+      "rollback_target"
+    ],
+    "serving": [
+      "independent_logical_endpoint",
+      "version_pinned_api",
+      "scoped_authentication",
+      "quotas_and_rate_limits",
+      "health_readiness",
+      "telemetry",
+      "rollback"
+    ]
+  },
+  "api_contract": {
+    "model_list": "GET /v1/divisions/{division_id}/models",
+    "inference": "POST /v1/divisions/{division_id}/models/{model_version}/responses",
+    "required_response_metadata": [
+      "division_id",
+      "model_id",
+      "model_version",
+      "tokenizer_version",
+      "deployment_revision",
+      "request_trace_id",
+      "usage_metadata"
+    ],
+    "safeguards": [
+      "authentication",
+      "authorization_scope",
+      "timeouts",
+      "cancellation",
+      "quotas",
+      "rate_limits",
+      "sensitive_prompt_logging_disabled_by_default",
+      "wrapper_identity_disclosure"
+    ]
+  },
+  "continuous_learning": {
+    "per_division_lane": true,
+    "source_categories": [
+      "research_papers",
+      "model_releases",
+      "dataset_releases",
+      "benchmark_suites",
+      "framework_documentation",
+      "security_advisories",
+      "standards",
+      "domain_knowledge",
+      "curated_educational_material"
+    ],
+    "source_ledger_fields": [
+      "source_uri",
+      "author",
+      "published_or_revision_at",
+      "retrieved_at",
+      "license_and_terms",
+      "content_hash",
+      "modality",
+      "subject_tags",
+      "intended_use"
+    ],
+    "stages": [
+      "discover",
+      "provenance_capture",
+      "taxonomy_route",
+      "rights_privacy_security_quality_review",
+      "versioned_knowledge_or_training_candidate",
+      "offline_evaluation",
+      "budgeted_training_if_eligible",
+      "sandbox_canary_human_approval",
+      "promotion_or_rollback",
+      "evidence_and_cost_report"
+    ],
+    "cadence": {
+      "feed_monitoring": "continuous_when_integrated",
+      "taxonomy_and_source_reconciliation": "daily",
+      "evaluation": "daily_when_compute_available",
+      "training": "event_or_schedule_driven_only_when_candidate_passes_gates"
+    },
+    "safeguards": [
+      "separate_retrieval_updates_from_weight_updates",
+      "no_raw_production_prompt_training",
+      "no_customer_private_cross_tenant_training",
+      "no_unlicensed_data",
+      "no_benchmark_answer_key_contamination",
+      "prevent_catastrophic_forgetting",
+      "human_approval_for_release"
+    ],
+    "customer_training_isolated_and_opt_in": true
+  },
+  "buddy_ml_practice_domains": [
+    "problem_framing_and_metrics",
+    "data_engineering_and_annotation",
+    "data_quality_and_leakage",
+    "classical_supervised_learning",
+    "unsupervised_learning_and_anomaly_detection",
+    "ranking_and_recommendation",
+    "probabilistic_models_and_calibration",
+    "causal_inference_and_experiment_design",
+    "deep_learning_and_optimization",
+    "transformers_and_attention",
+    "graph_neural_networks",
+    "generative_and_diffusion_models",
+    "llm_pretraining_and_sft",
+    "preference_optimization_and_alignment",
+    "lora_qlora_and_parameter_efficient_tuning",
+    "quantization_and_distillation",
+    "retrieval_augmented_generation_and_agents",
+    "computer_vision_and_ocr",
+    "speech_and_audio",
+    "video_and_multimodal",
+    "time_series_and_forecasting",
+    "geospatial_and_sensor_ml",
+    "reinforcement_learning",
+    "federated_learning_and_differential_privacy",
+    "evaluation_and_statistics",
+    "fairness_explainability_and_robustness",
+    "adversarial_security_and_privacy_testing",
+    "distributed_training_and_gpu_optimization",
+    "experiment_tracking_and_reproducibility",
+    "mlops_deployment_and_observability",
+    "drift_monitoring_and_retraining",
+    "model_governance_and_documentation",
+    "research_literacy_and_reproduction",
+    "ml_product_economics_and_licensing"
+  ],
+  "bootcamp_learning_requirements": {
+    "adaptive_instruction": true,
+    "multiple_depth_levels": true,
+    "runnable_labs": true,
+    "practical_projects": true,
+    "transparent_rubrics": true,
+    "misconception_detection": true,
+    "independent_assessment": true,
+    "cite_current_authoritative_sources": true,
+    "distinguish_established_practice_from_active_research_and_speculation": true
+  }
+}
