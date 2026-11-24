@@ -12,16 +12,28 @@ GATE = ROOT / "config" / "live-revenue-gate.json"
 BUSINESS = ROOT / "config" / "generated" / "bot-business-owner-curriculum.json"
 SANDBOX = ROOT / "config" / "generated" / "bot-sandbox-curriculum.json"
 OUT = ROOT / "config" / "generated" / "live-revenue-readiness.json"
+MANIFESTS = ROOT / "config" / "bots" / "bot-manifests.generated.json"
 
 
 def canonical_bots() -> list[tuple[str, str]]:
+    """Use the complete generated manifest, not only the 1,051 App_bots source profiles."""
+    if not MANIFESTS.is_file():
+        raise SystemExit("Missing canonical bot manifest; run tools/generate_bot_manifests.py first.")
+    manifest = json.loads(MANIFESTS.read_text(encoding="utf-8"))
+    bots = manifest.get("bots", [])
+    expected = manifest.get("summary", {}).get("bots")
+    if expected != len(bots):
+        raise SystemExit(f"Bot manifest count mismatch: summary={expected}, profiles={len(bots)}")
     rows = []
-    for path in sorted(APP_BOTS.glob("*.json")):
-        payload = json.loads(path.read_text(encoding="utf-8"))
-        division = payload.get("division") or path.stem
-        for bot in payload.get("bots", []):
-            if bot.get("slug"):
-                rows.append((bot["slug"], division))
+    seen = set()
+    for bot in bots:
+        slug = str(bot.get("slug", "")).strip()
+        if not slug:
+            raise SystemExit("Canonical bot manifest contains a profile without a slug.")
+        if slug in seen:
+            raise SystemExit(f"Duplicate bot slug in canonical manifest: {slug}")
+        seen.add(slug)
+        rows.append((slug, str(bot.get("division") or "DreamDiscovery")))
     return rows
 
 
