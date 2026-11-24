@@ -15,6 +15,7 @@ DOMAIN_SOURCE = ROOT / "shared/division-production-contract.ts"
 MASTERBOTS = ROOT / "config/masterbot-65-registry.json"
 CROSSWALK = ROOT / "config/generated/masterbot-45-domain-crosswalk.json"
 CHARTERS = ROOT / "config/supplemental-portfolio-capability-charters.json"
+TEAMMATE_CROSSWALK = ROOT / "config/bots/teammate-lane-division-crosswalk.json"
 MONEY_REGISTRY = ROOT / "money_os/config/bot_registry.json"
 REVENUE_LANES = ROOT / "money_os/config/revenue_lanes_expanded.json"
 OPPORTUNITY_SOURCES = ROOT / "money_os/data/opportunity_sources.json"
@@ -111,6 +112,7 @@ PORTFOLIO_REVENUE_ROUTES = {
     "DreamSaaS": ("micro_saas", "software_partners"),
     "DreamStreaming": ("creator_sponsorship", "creator_marketplaces"),
     "DreamTravel": ("travel_booking", "travel_suppliers"),
+    "Dream3D": ("enterprise_automation", "software_partners"),
 }
 REGISTRY_LANE_MAP = {
     "services": ("freelance_bid_intel", "professional_services"),
@@ -150,7 +152,7 @@ LANE_RULES = [
     (("rfp", "procurement", "government-contract", "grant"), "rfp_matcher", "grants_contracts"),
     (("settlement", "unclaimed", "claim"), "warranty_recall", "settlements"),
     (("real-estate", "foreclosure", "property", "home-buyer"), "business_acquisition", "property_opportunities"),
-    (("coupon", "deal", "price-drop", "clearance"), "price_drops", "price_drops"),
+    (("coupon", "deal", "price-drop", "clearance"), "affiliate_partnerships", "price_drops"),
     (("vehicle", "auto", "car"), "auto_opportunities", "auto_opportunities"),
     (("equipment", "parts", "inventory"), "equipment_arbitrage", "equipment_supply"),
     (("insurance",), "insurance_leads", "insurance_opportunities"),
@@ -173,7 +175,7 @@ LANE_RULES = [
 ]
 
 def revenue_route(bot: dict[str, Any], registry: dict[str, Any], lane_index: dict[str, dict[str, Any]],
-                  source_categories: dict[str, Any]) -> dict[str, Any] | None:
+                  source_categories: dict[str, Any], portfolio: str | None = None) -> dict[str, Any] | None:
     text = " ".join(str(bot.get(k, "")) for k in ("slug", "name", "category", "division", "description")).casefold()
     slug = slug_norm(bot.get("slug", ""))
     registered = []
@@ -184,7 +186,7 @@ def revenue_route(bot: dict[str, Any], registry: dict[str, Any], lane_index: dic
     new_registry = [row for row in registry.get("new_money_os_bots", [])
                     if slug_norm(row.get("name", "")) == slug]
     keyword_hit = any(term in text for term in REVENUE_TERMS)
-    portfolio_route = PORTFOLIO_REVENUE_ROUTES.get(str(bot.get("division", "")))
+    portfolio_route = PORTFOLIO_REVENUE_ROUTES.get(portfolio or str(bot.get("division", "")))
     if not registered and not new_registry and not keyword_hit and not portfolio_route:
         return None
 
@@ -205,7 +207,7 @@ def revenue_route(bot: dict[str, Any], registry: dict[str, Any], lane_index: dic
                          if any(term in text for term in terms)), registry_source_group or "jobs_gigs")
     approved_sources = source_categories.get("categories", {}).get(source_group, [])
     if not approved_sources:
-        approved_sources = ["official_job_or_marketplace_apis"]
+        raise ValueError(f"No approved opportunity source category configured: {source_group} for {slug}")
     monetization = lane.get("monetization", ["subscription"])
     return {
         "candidate": True,
@@ -252,8 +254,14 @@ def build() -> dict[str, Any]:
         raise ValueError("Expected 45 domain crosswalk rows")
     charters = json.loads(CHARTERS.read_text(encoding="utf-8"))
     portfolio_by_name = {row["portfolio"]: row for row in charters.get("portfolios", [])}
-    if len(portfolio_by_name) != 10:
-        raise ValueError("Expected ten specialist portfolio charters")
+    if len(portfolio_by_name) != 11:
+        raise ValueError("Expected ten original supplemental portfolios plus Dream3D")
+    teammate_crosswalk = json.loads(TEAMMATE_CROSSWALK.read_text(encoding="utf-8"))
+    teammate_owner_by_slug = {row["lane_slug"]: row["canonical_owner_division"] for row in teammate_crosswalk.get("lanes", [])}
+    if teammate_crosswalk.get("lane_count") != 112 or len(teammate_owner_by_slug) != 112:
+        raise ValueError("Expected all 112 Grok teammate lanes in the division crosswalk")
+    if any(norm(owner) not in domain_by_key for owner in teammate_owner_by_slug.values()):
+        raise ValueError("Teammate crosswalk contains an unknown canonical division")
     source_bots = load_source_bots()
     teammate_lanes = load_teammate_lanes()
     canonical_owner_capabilities: dict[str, set[str]] = defaultdict(set)
@@ -284,7 +292,7 @@ def build() -> dict[str, Any]:
         source_rows = source_bots.get(slug, [])
         source = source_rows[0] if source_rows else {}
         source_division = str(source.get("_source_division") or bot.get("division") or "").strip()
-        source_portfolio = source_division if source_division in portfolio_by_name else None
+        source_portfolio = source_division if source_division in portfolio_by_name else ("Dream3D" if slug.startswith("threejs-") else None)
         charter = portfolio_by_name.get(source_portfolio) if source_portfolio else None
         is_teammate = source_division == "GrokTeammates"
         teammate = teammate_lanes.get(slug) if is_teammate else None
@@ -299,7 +307,7 @@ def build() -> dict[str, Any]:
             if exact_overlap:
                 raise ValueError(f"Specialist scope duplicates canonical owner capabilities for {slug}: {exact_overlap}")
         elif is_teammate:
-            owner = None
+            owner = teammate_owner_by_slug.get(slug, "DreamDiscovery")
             specialist = None
         elif norm(bot.get("division", "")) in domain_by_key:
             owner = domain_by_key[norm(bot.get("division", ""))]
@@ -309,9 +317,11 @@ def build() -> dict[str, Any]:
             specialist = None
 
         if is_teammate:
-            masterbot_id, teammate_route = teammate_masterbot_route(teammate)
-            route_status = "proposed_shared_teammate_platform_route"
+            shared_teammate_masterbot_id, teammate_route = teammate_masterbot_route(teammate)
+            masterbot_id = master_by_domain.get(norm(owner)) if owner != "DreamDiscovery" else 62
+            route_status = "proposed_domain_masterbot_match_requires_owner_review" if owner != "DreamDiscovery" and masterbot_id else "discovery_review_required"
         else:
+            shared_teammate_masterbot_id = None
             masterbot_id = master_by_domain.get(norm(owner)) if owner != "DreamDiscovery" else 62
             teammate_route = None
             route_status = "proposed_domain_masterbot_match_requires_owner_review" if owner != "DreamDiscovery" and masterbot_id else "discovery_review_required"
@@ -331,7 +341,7 @@ def build() -> dict[str, Any]:
         duplicate_groups[(norm(owner), signature)].append(slug)
 
         revenue_input = {**bot, "division": source_division, "description": (teammate or {}).get("description", source.get("description", ""))}
-        revenue = revenue_route(revenue_input, registry, lanes, sources)
+        revenue = revenue_route(revenue_input, registry, lanes, sources, source_portfolio)
         if revenue:
             revenue_lanes_count[revenue["revenue_lane"]] += 1
         capabilities = specialist[2] if specialist else [str(x) for x in source.get("capabilities", [])]
@@ -349,7 +359,7 @@ def build() -> dict[str, Any]:
             "source_division": source_division or bot.get("division"),
             "canonical_owner_division": owner,
             "shared_workforce_group": "GrokTeammates" if is_teammate else None,
-            "teammate_lane_route": {"masterbot_id": masterbot_id, "route": teammate_route, "description": teammate.get("description")} if is_teammate else None,
+            "teammate_lane_route": {"shared_masterbot_id": shared_teammate_masterbot_id, "route": teammate_route, "description": teammate.get("description")} if is_teammate else None,
             "supplemental_portfolio": source_portfolio,
             "specialist_capability_domain": charter["unique_domain"] if charter else None,
             "specialist_mission": charter["mission"] if charter else None,
@@ -381,9 +391,10 @@ def build() -> dict[str, Any]:
                 "route_scope": "non_privileged_planning_only_until_owner_approval" if route_status != "discovery_review_required" else "discovery_only",
                 "primary_masterbot_id": masterbot_id,
                 "primary_masterbot_name": master["divisions"][masterbot_id - 1]["name"] if masterbot_id else None,
-                "primary_domain_owner": owner if not is_teammate else None,
+                "primary_domain_owner": owner,
                 "shared_workforce_group": "GrokTeammates" if is_teammate else None,
                 "teammate_route_rule": teammate_route,
+                "shared_teammate_masterbot_id": shared_teammate_masterbot_id,
                 "shared_platform_masterbot_ids": shared_ids,
                 "unresolved_owner_goes_to": "DreamDiscovery" if route_status == "discovery_review_required" else None,
                 "owner_approval_required_for_remap": True,
@@ -436,7 +447,9 @@ def build() -> dict[str, Any]:
             "proposed_domain_masterbot_matches": status_counts["proposed_domain_masterbot_match_requires_owner_review"],
             "discovery_review_required": status_counts["discovery_review_required"],
             "unresolved_owner_count": status_counts["discovery_review_required"],
-            "shared_teammate_profiles": status_counts["proposed_shared_teammate_platform_route"],
+            "shared_teammate_profiles": sum(1 for row in records if row["shared_workforce_group"] == "GrokTeammates"),
+            "grok_teammate_lanes_routed_to_canonical_owners": sum(1 for row in records if row["shared_workforce_group"] == "GrokTeammates" and row["canonical_owner_division"] != "DreamDiscovery"),
+            "threejs_profiles_routed_to_dream3d": sum(1 for row in records if row["supplemental_portfolio"] == "Dream3D"),
             "duplicate_capability_groups_for_review": len(duplicate_sets),
             "shared_platform_masterbots": len(shared_ids),
             "live_enabled_bots": 0,
@@ -452,6 +465,8 @@ def build() -> dict[str, Any]:
         "monetization_truth_policy": monetization["default_rules"],
         "global_rules": [
             "All manifest profiles receive a Buddy route, a primary canonical owner or DreamDiscovery review route, and a plan record.",
+            "GrokTeammates are a shared cross-functional workforce pool; every lane also has one canonical business-division owner and a shared platform MasterBot route.",
+            "Dream3D owns the Three.js interactive 3D specialist portfolio under DreamCodeLab; general software engineering remains with DreamCodeLab.",
             "Only evidence-backed, permissioned, owner-approved execution may leave plan_only.",
             "Declared API names are integration targets, not proof that credentials or live connections exist.",
             "Duplicate capability groups are flagged for review; do not launch competing copies of the same offer.",
