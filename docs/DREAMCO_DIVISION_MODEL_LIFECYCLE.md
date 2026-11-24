@@ -37,3 +37,9 @@ The existing taxonomy map covers 37 task families and 10 capability packs across
 ## Promotion
 
 A division remains BLOCKED until its exact checkpoint, dataset lineage, test commit, general/domain/private-holdout/safety/regression benchmarks, object storage and backup/restore evidence, runtime health, and independent approval are joined by the release gate. A successful unit test or schedule run is not a trained model.
+
+## Resource bundles and reverse engineering
+
+Every model profile references its matching division-resource-NNN bundle. Required services include the per-division PostgreSQL catalog, encrypted/versioned object storage and backup, rights-cleared dataset ingestion, teacher registry, model resource router, isolated training sandbox, general/domain benchmarks, private holdout, safety/regression suite, serving runtime, and cross-run evidence ledger. Resource status remains requirements_defined_not_provisioned until live health evidence exists.
+
+Reverse engineering is contract-first and sandbox-only: analyze authorized public interfaces and documentation, extract API/schema behavior, build reproducible fixtures, test failure modes, and record benchmark evidence. Credential/access-control bypass, private-data exfiltration, copying proprietary weights/code, and license circumvention are explicitly blocked.
