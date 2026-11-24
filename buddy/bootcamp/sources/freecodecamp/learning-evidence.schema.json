@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dreamco.example/schemas/freecodecamp-learning-evidence.schema.json",
+  "title": "DreamCo freeCodeCamp learning evidence record",
+  "type": "object",
+  "required": [
+    "schema",
+    "video_id",
+    "source_url",
+    "division_id",
+    "rights",
+    "study",
+    "sandbox",
+    "benchmark"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.freecodecamp_learning_evidence.v1"
+    },
+    "video_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "division_id": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65
+    },
+    "rights": {
+      "type": "object",
+      "required": [
+        "verified",
+        "evidence_ref"
+      ],
+      "properties": {
+        "verified": {
+          "type": "boolean"
+        },
+        "evidence_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "study": {
+      "type": "object",
+      "properties": {
+        "completed": {
+          "type": "boolean"
+        },
+        "minutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "attestation_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "original_notes_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "sandbox": {
+      "type": "object",
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "exercise_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "result_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "benchmark": {
+      "type": "object",
+      "properties": {
+        "target_passed": {
+          "type": "boolean"
+        },
+        "holdout_passed": {
+          "type": "boolean"
+        },
+        "regression_passed": {
+          "type": "boolean"
+        },
+        "target_run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "holdout_run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "regression_run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}
