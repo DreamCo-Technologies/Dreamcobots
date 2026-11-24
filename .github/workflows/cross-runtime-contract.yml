@@ -29,4 +29,4 @@ jobs:
       - name: Validate contract
         run: python tools/validate_cross_runtime_contract.py
       - name: Run focused tests
-        run: python -m unittest tests.test_cross_runtime_contract -v
+        run: python -m unittest discover -s tests -p 'test_cross_runtime_contract.py' -v
