@@ -12,6 +12,13 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
     def setUp(self):
         self.catalog = {
             "schema": "dreamco.freecodecamp_catalog.v1",
+            "inventory_status": "complete",
+            "inventory": {
+                "enumerator": "yt-dlp", "enumerator_version": "2026.11.23",
+                "expected_entry_count": 2, "observed_entry_count": 2,
+                "null_entry_count": 0, "duplicate_video_id_count": 0,
+                "complete": True, "completeness_basis": "test fixture",
+            },
             "generated_at": "2026-11-24T00:00:00+00:00",
             "rights_policy": {"media_download_enabled": False, "transcript_ingestion_enabled": False, "model_training_requires_review": True},
             "categories": [{"id": x} for x in ["python_and_automation", "cybersecurity_and_privacy", "other_or_unclassified"]],
@@ -36,6 +43,13 @@ class FreeCodeCampSourceRouteTests(unittest.TestCase):
         cyber = next(x for x in result["videos"] if x["video_id"] == "v2")
         self.assertEqual(cyber["specialty_division_ids"], [1])
         self.assertEqual(cyber["routing_status"], "specialty_and_shared")
+
+    def test_partial_catalog_cannot_create_source_routes(self):
+        catalog = dict(self.catalog)
+        catalog["inventory_status"] = "partial"
+        catalog["inventory"] = {**self.catalog["inventory"], "complete": False}
+        with self.assertRaisesRegex(ValueError, "verified complete freeCodeCamp inventory"):
+            build_routes(catalog, self.registry)
 
     def test_training_media_and_transcript_gates_remain_closed(self):
         result = build_routes(self.catalog, self.registry)
