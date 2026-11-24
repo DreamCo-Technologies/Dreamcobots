@@ -1,0 +1,63 @@
+{
+  "schema": "dreamco.division_gpt_training_policy.v1",
+  "goal": "Prepare one independently versioned GPT-style specialist model profile for each canonical MasterBot division.",
+  "target_parameters": 45000000,
+  "architecture": {
+    "family": "decoder_only_gpt",
+    "vocab_size": 32768,
+    "d_model": 512,
+    "n_layers": 9,
+    "n_heads": 8,
+    "d_ff": 2048,
+    "max_seq_len": 2048,
+    "position_encoding": "rotary",
+    "normalization": "pre_layernorm",
+    "activation": "gelu",
+    "attention_bias": true,
+    "mlp_bias": true,
+    "tied_token_embeddings_and_lm_head": true,
+    "dropout": 0.1
+  },
+  "parameter_count": {
+    "expected": 45149696,
+    "tolerance": 0,
+    "counting_contract": "Token embedding + 9 blocks (QKV/output projections, two MLP projections, two LayerNorms) + final LayerNorm; rotary positions add no learned parameters; LM head is tied."
+  },
+  "training_defaults": {
+    "optimizer": "AdamW",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.1,
+    "warmup_steps": 500,
+    "gradient_clip_norm": 1.0,
+    "precision": "bf16_when_supported_else_fp32",
+    "checkpoint_every_steps": 500,
+    "validation_split": 0.1,
+    "early_stopping_metric": "validation_loss"
+  },
+  "pipeline": [
+    "source_discovery",
+    "rights_and_license_review",
+    "dataset_cleaning_and_deduplication",
+    "train_validation_holdout_split",
+    "division_tokenizer_training_and_validation",
+    "causal_language_model_pretraining",
+    "checkpoint_and_loss_validation",
+    "supervised_finetuning_on_authorized_examples",
+    "safety_and_domain_benchmarks",
+    "human_review",
+    "versioned_release"
+  ],
+  "guardrails": {
+    "public_metadata_is_not_training_permission": true,
+    "transcript_evaluation_permission_is_not_training_permission": true,
+    "no_training_without_per_source_training_rights": true,
+    "no_synthetic_training_evidence": true,
+    "no_claim_of_gpt5_equivalence": true,
+    "require_holdout_and_regression_benchmarks": true
+  },
+  "execution": {
+    "profile_generation_enabled": true,
+    "model_training_enabled": false,
+    "reason_training_disabled": "No division-specific, rights-approved training corpus, verified GPU/compute budget, or training runtime has been registered yet."
+  }
+}
