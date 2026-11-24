@@ -23,7 +23,7 @@ All tenant-scoped tables enable and FORCE row-level security. Policies require t
 4. Set `DREAMCO_POSTGRES_DSN` in a protected environment and `DREAMCO_ALLOW_DIVISION_SCHEMA_MIGRATIONS=1`.
 5. Run with `--apply --approval-id ... --expected-migration-sha256 ...`.
 
-The apply path validates all 65 schemas and roles before committing DDL, records the migration hash in each schema, and writes an approval-linked audit event. It uses one transaction so any failure rolls back the full 65-schema migration. Re-running an already applied identical hash is a no-op; a changed hash for the same version is blocked.
+The apply path validates each of the 65 schemas and owner roles, switches to that division's NOLOGIN owner role for its DDL, records the migration hash in that schema, and writes an approval-linked audit event with the original migration principal recorded as the actor. It uses one transaction so any failure rolls back the full 65-schema migration. Re-running an already applied identical hash is a no-op; a changed hash for the same version is blocked.
 
 ## Current truth
 
