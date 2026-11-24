@@ -1,4 +1,4 @@
-"""Explicitly invoked SFT/LoRA runner for rights-approved local JSONL datasets.
+"""Explicit SFT/LoRA runner with division-isolated weights, checkpoints and tokenizer snapshots.
 
 No network download or GPU use occurs unless the operator passes the explicit
 execution flag, a matching compute approval ID, and enables model download.
@@ -32,6 +32,14 @@ def _load_rows(path: Path) -> list[dict]:
 def _split_hash(rows: list[dict], split: str) -> str:
     payload="".join(json.dumps(row,sort_keys=True,ensure_ascii=False)+"\n" for row in rows if row["split"]==split)
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+def _hash_tree(root:Path)->list[dict[str,str]]:
+    files=[]
+    if not root.exists(): return files
+    for path in sorted(x for x in root.rglob("*") if x.is_file()):
+        digest=hashlib.sha256(path.read_bytes()).hexdigest()
+        files.append({"path":path.relative_to(root).as_posix(),"sha256":digest,"bytes":path.stat().st_size})
+    return files
 
 def validate_job(job: dict, approval_id: str) -> tuple[Path,list[dict]]:
     if job.get("schema")!="dreamco.model_training_job.v1" or job.get("execution_status")!="NOT_EXECUTED":
@@ -73,6 +81,14 @@ def validate_job(job: dict, approval_id: str) -> tuple[Path,list[dict]]:
     for split in ("train","validation","test"):
         if not any(row["split"]==split for row in lane_rows):
             raise TrainingExecutionError(f"MasterBot {target_masterbot} has no {split} examples")
+    identity=job.get("division_model")
+    if identity:
+        if int(job.get("masterbot_id",-1))<1 or not re.fullmatch(r"dreamco/[a-z0-9-]+-mini",str(identity.get("model_name",""))):
+            raise TrainingExecutionError("Division model identity is invalid")
+        if not identity.get("model_version") or not identity.get("artifact_root"):
+            raise TrainingExecutionError("Division model version and artifact namespace are required")
+        if not identity.get("database_schema")==f"dreamco_division_{target_masterbot:03d}":
+            raise TrainingExecutionError("Division database namespace does not match MasterBot ID")
     return object_path,lane_rows
 
 def execute_job(job_path: str | Path, approval_id: str, output_root: str | Path,
@@ -112,33 +128,49 @@ def execute_job(job_path: str | Path, approval_id: str, output_root: str | Path,
     train_ds,validation_ds,test_ds=Rows("train"),Rows("validation"),Rows("test")
     if not len(train_ds) or not len(validation_ds) or not len(test_ds):
         raise TrainingExecutionError("All three data splits must contain tokenizable records")
-    output=Path(output_root)/job["job_id"]
-    output.mkdir(parents=True,exist_ok=True)
-    args_kwargs={"output_dir":str(output/"trainer"),"max_steps":int(cfg["max_steps"]),
+    identity=job.get("division_model") or {"division_slug":"legacy","model_version":"0.0.0"}
+    output=Path(output_root)/f"masterbot-{int(job['masterbot_id']):03d}-{identity['division_slug']}"/f"v{identity['model_version']}"/job["job_id"]
+    checkpoint_dir=output/"checkpoints"
+    weights_dir=output/"weights"
+    tokenizer_dir=output/"tokenizer"
+    checkpoint_dir.mkdir(parents=True,exist_ok=True)
+    weights_dir.mkdir(parents=True,exist_ok=True)
+    tokenizer_dir.mkdir(parents=True,exist_ok=True)
+    checkpoint_interval=max(1,min(10,int(cfg["max_steps"])//5 or 1))
+    args_kwargs={"output_dir":str(checkpoint_dir),"max_steps":int(cfg["max_steps"]),
         "per_device_train_batch_size":int(cfg["per_device_train_batch_size"]),
         "gradient_accumulation_steps":int(cfg["gradient_accumulation_steps"]),
         "learning_rate":float(cfg["learning_rate"]),"seed":int(cfg["seed"]),
-        "report_to":[],"save_strategy":"no","logging_steps":1}
+        "report_to":[],"save_strategy":"steps","save_steps":checkpoint_interval,
+        "save_total_limit":3,"logging_steps":1,"load_best_model_at_end":True,
+        "metric_for_best_model":"eval_loss","greater_is_better":False}
     import inspect
     signature=inspect.signature(TrainingArguments)
     if "eval_strategy" in signature.parameters: args_kwargs["eval_strategy"]="steps"
     else: args_kwargs["evaluation_strategy"]="steps"
-    args_kwargs["eval_steps"]=max(1,min(10,int(cfg["max_steps"])//5 or 1))
+    args_kwargs["eval_steps"]=checkpoint_interval
     trainer=Trainer(model=model,args=TrainingArguments(**args_kwargs),train_dataset=train_ds,
         eval_dataset=validation_ds,data_collator=DataCollatorForLanguageModeling(tokenizer=tokenizer,mlm=False))
     baseline_validation=trainer.evaluate(validation_ds,metric_key_prefix="baseline_validation")
     train_result=trainer.train()
     validation=trainer.evaluate(validation_ds,metric_key_prefix="validation")
     holdout=trainer.evaluate(test_ds,metric_key_prefix="holdout")
-    model.save_pretrained(output/"model")
-    tokenizer.save_pretrained(output/"model")
-    result={"schema":"dreamco.model_training_result.v1","job_id":job["job_id"],
+    trainer.model.save_pretrained(weights_dir)
+    tokenizer.save_pretrained(tokenizer_dir)
+    checkpoint_files=_hash_tree(checkpoint_dir)
+    weight_files=_hash_tree(weights_dir)
+    tokenizer_files=_hash_tree(tokenizer_dir)
+    result={"schema":"dreamco.model_training_result.v2","job_id":job["job_id"],
+        "masterbot_id":int(job["masterbot_id"]),"division_model":identity,
         "model_id":job["model_id"],"base_model_revision":job["base_model_revision"],
         "dataset_id":job["dataset_id"],"dataset_sha256":job["dataset_sha256"],
-        "training_method":job["training_method"],"global_step":train_result.global_step,
-        "baseline_validation_metrics":baseline_validation,
-        "train_metrics":train_result.metrics,"validation_metrics":validation,"holdout_metrics":holdout,
-        "artifact_dir":str(output/"model"),"weights_trained":True,
-        "production_promoted":False,"requires_independent_benchmark_and_review":True}
+        "split_manifest":job["split_manifest"],"training_method":job["training_method"],
+        "training_config":cfg,"global_step":train_result.global_step,
+        "baseline_validation_metrics":baseline_validation,"train_metrics":train_result.metrics,
+        "validation_metrics":validation,"holdout_metrics":holdout,
+        "artifact_paths":{"weights":str(weights_dir),"checkpoints":str(checkpoint_dir),"tokenizer":str(tokenizer_dir)},
+        "artifact_hashes":{"weights":weight_files,"checkpoints":checkpoint_files,"tokenizer":tokenizer_files},
+        "weights_trained":True,"production_promoted":False,
+        "requires_independent_benchmark_and_review":True}
     (output/"training-result.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
     return result
