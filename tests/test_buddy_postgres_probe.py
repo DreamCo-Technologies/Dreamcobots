@@ -18,6 +18,37 @@ def resource_map(path: Path, *, count: int = 65, duplicate: bool = False) -> Pat
     return path
 
 
+
+class CursorContext:
+    def __init__(self, cursor):
+        self.cursor = cursor
+
+    def __enter__(self):
+        return self.cursor
+
+    def __exit__(self, exc_type, exc, tb):
+        return False
+
+
+class ConnectionContext:
+    def __init__(self, connection):
+        self.connection = connection
+
+    def __enter__(self):
+        return self.connection
+
+    def __exit__(self, exc_type, exc, tb):
+        return False
+
+
+class FakeConnection:
+    def __init__(self, cursor):
+        self.cursor_context = CursorContext(cursor)
+
+    def cursor(self):
+        return self.cursor_context
+
+
 class PostgresProbeTests(unittest.TestCase):
     def test_missing_dsn_is_blocked_without_connecting(self):
         connect = MagicMock()
@@ -41,10 +72,8 @@ class PostgresProbeTests(unittest.TestCase):
             cursor = MagicMock()
             cursor.fetchone.return_value = ("dreamco", "dreamco_probe")
             cursor.fetchall.return_value = [(f"dreamco_division_{i:03d}",) for i in range(1, 66)]
-            connection = MagicMock()
-            connection.cursor.return_value.__enter__.return_value = cursor
-            connect = MagicMock()
-            connect.return_value.__enter__.return_value = connection
+            connection = FakeConnection(cursor)
+            connect = MagicMock(return_value=ConnectionContext(connection))
 
             result = probe_postgres(dsn="postgresql://redacted", resource_map_path=mapping, connect=connect)
 
@@ -62,10 +91,8 @@ class PostgresProbeTests(unittest.TestCase):
             cursor = MagicMock()
             cursor.fetchone.return_value = ("dreamco", "probe")
             cursor.fetchall.return_value = [(f"dreamco_division_{i:03d}",) for i in range(1, 65)]
-            connection = MagicMock()
-            connection.cursor.return_value.__enter__.return_value = cursor
-            connect = MagicMock()
-            connect.return_value.__enter__.return_value = connection
+            connection = FakeConnection(cursor)
+            connect = MagicMock(return_value=ConnectionContext(connection))
 
             result = probe_postgres(dsn="postgresql://secret", resource_map_path=mapping, connect=connect)
 
