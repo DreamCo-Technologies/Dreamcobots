@@ -1,0 +1,111 @@
+{
+  "schema": "dreamco.first_party_training_factory.v1",
+  "version": "1.0.0",
+  "planner": "tools/build_dreamco_training_factory.py",
+  "test": "tests/test_dreamco_training_factory.py",
+  "output": "artifacts/training-factory/first-party-training-factory-plan.json",
+  "status": "PLANNER_IMPLEMENTED_TRAINING_NOT_EXECUTED",
+  "division_count": 65,
+  "task_family_count": 37,
+  "planned_division_task_assignments": 2405,
+  "first_party_data_streams": [
+    "verified_engineering_lessons",
+    "original_bootcamp_exercises",
+    "expert_reviewed_domain_lessons",
+    "sandbox_simulation_traces",
+    "opt_in_user_contributions"
+  ],
+  "external_resource_families": [
+    "Hugging Face",
+    "GitHub",
+    "OpenML",
+    "UCI Machine Learning Repository",
+    "Kaggle where terms permit",
+    "government open-data portals",
+    "Zenodo",
+    "academic repositories and supplementary data",
+    "official documentation and APIs",
+    "DreamCo-owned repositories, code, tests and workflows"
+  ],
+  "data_planes": [
+    "dreamco_owned_training",
+    "licensed_training",
+    "user_contributed_opt_in_training",
+    "public_reference_and_retrieval",
+    "evaluation_only_holdout"
+  ],
+  "sharing_model": "shared_foundation_and_isolated_specialist_lanes",
+  "shared_assets": [
+    "approved generic lessons",
+    "schemas",
+    "public-reference indexes",
+    "reusable tools",
+    "safe synthetic fixtures",
+    "evaluation methodology"
+  ],
+  "isolated_assets": [
+    "division-specific rows and labels",
+    "customer/user data",
+    "private holdouts and answer keys",
+    "division weights and checkpoints"
+  ],
+  "hard_gates": [
+    "provenance",
+    "license_and_terms",
+    "explicit_training_permission",
+    "privacy_and_secret_scan",
+    "primary_owner",
+    "quality_and_deduplication",
+    "contamination_scan",
+    "immutable_split_hashes",
+    "base_model_and_tokenizer_revision",
+    "compute_approval",
+    "independent_evaluation"
+  ],
+  "training_methods": [
+    "retrieval_and_tool_use_first",
+    "SFT",
+    "LoRA",
+    "QLoRA",
+    "teacher_student_distillation_when_permitted",
+    "from_scratch_research_separately_approved"
+  ],
+  "metrics": [
+    "task_quality",
+    "correctness",
+    "safety",
+    "privacy",
+    "robustness",
+    "latency",
+    "throughput",
+    "tokens_per_second",
+    "examples_per_second",
+    "CPU_GPU_memory",
+    "storage",
+    "wall_time",
+    "cost",
+    "energy_relevant_utilization",
+    "reproducibility",
+    "regression"
+  ],
+  "truth_boundary": {
+    "plan_is_not_data": true,
+    "metadata_discovery_is_not_rights_approval": true,
+    "training_automatically_started": false,
+    "production_storage_verified": false,
+    "weights_updated": false
+  },
+  "seed_corpus": {
+    "path": "data/dreamco_training/bootcamp/core_lessons.v1.jsonl",
+    "example_count": 14,
+    "module_count": 13,
+    "split_counts": {
+      "train": 10,
+      "validation": 2,
+      "test": 2
+    },
+    "rights_status": "PENDING_HUMAN_REVIEW",
+    "training_permission": "NOT_GRANTED",
+    "training_started": false
+  }
+}
