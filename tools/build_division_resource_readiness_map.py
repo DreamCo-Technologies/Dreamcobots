@@ -51,6 +51,7 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
     for bot in bots:
         tax=tax_routes[bot["id"]]
         mapping=tax["domain_crosswalk"]
+        shared_platform_service=46<=bot["id"]<=65
         routes.append({
             "masterbot_id":bot["id"],"masterbot_name":bot["name"],
             "resource_bundle_id":f"division-resource-{bot['id']:03d}",
@@ -60,10 +61,12 @@ def build(registry,taxonomy,crosswalk,packs,router,source_blob_shas):
             "dataset_rights_status":"UNVERIFIED_DISCOVERY_ONLY",
             "dataset_training_approved":False,
             "capability_pack_ids":tax["capability_pack_ids"],
-            "domain_mapping":{"mapping_status":mapping.get("mapping_status"),
-                "domain_id":mapping.get("domain_id"),"domain_name":mapping.get("domain_name"),
-                "owner_review_required":True,"owner_approval":mapping.get("owner_approval"),
-                "unresolved":mapping.get("mapping_status")=="unresolved"}
+            "domain_mapping":{"mapping_status":"shared_platform_service_no_primary_domain" if shared_platform_service else mapping.get("mapping_status"),
+                "domain_id":None if shared_platform_service else mapping.get("domain_id"),
+                "domain_name":None if shared_platform_service else mapping.get("domain_name"),
+                "owner_review_required":not shared_platform_service,"owner_approval":mapping.get("owner_approval"),
+                "unresolved":False if shared_platform_service else mapping.get("mapping_status")=="unresolved",
+                "shared_platform_service":shared_platform_service}
         })
     masterbot_routes={row["masterbot_id"]:row for row in routes}
     domain_routes=[]

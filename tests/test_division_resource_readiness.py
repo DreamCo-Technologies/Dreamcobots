@@ -28,6 +28,15 @@ class DivisionResourceReadinessTests(unittest.TestCase):
    self.assertTrue(route["dataset_discovery_lane_id"])
    self.assertFalse(route["dataset_training_approved"])
 
+ def test_shared_platform_masterbots_are_not_marked_as_unresolved_domain_owners(self):
+  routes=self.payload()["routes"]
+  platform=[x for x in routes if 46<=x["masterbot_id"]<=65]
+  core=[x for x in routes if 1<=x["masterbot_id"]<=45]
+  self.assertEqual(len(platform),20)
+  self.assertTrue(all(x["domain_mapping"]["mapping_status"]=="shared_platform_service_no_primary_domain" for x in platform))
+  self.assertTrue(all(x["domain_mapping"]["shared_platform_service"] is True and x["domain_mapping"]["unresolved"] is False and x["domain_mapping"]["owner_review_required"] is False and x["domain_mapping"]["domain_id"] is None for x in platform))
+  self.assertTrue(all(x["domain_mapping"]["shared_platform_service"] is False and x["domain_mapping"]["owner_review_required"] is True for x in core))
+
  def test_all_55_domain_profiles_receive_linked_or_standalone_resource_bundles(self):
   result=self.payload()
   domains=result["domain_routes"]
