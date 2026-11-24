@@ -61,6 +61,11 @@ jobs:
         run: python3 tools/audit_all_bots_categories_and_agents.py
       - name: Refresh derived repository registry after all generators
         run: python3 tools/generate_repository_test_registry.py
+      - name: Build bounded public technology radar projection
+        run: |
+          python3 tools/refresh_buddy_technology_radar.py --project
+          python3 tools/refresh_buddy_technology_radar.py --check
+          python3 -m unittest tests.test_buddy_technology_radar
       - name: Run DreamCo Universal Verification Engine
         run: npx tsx tools/run_universal_verification.ts
       - name: Save debugging evidence
