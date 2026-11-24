@@ -1,0 +1,34 @@
+name: Buddy Daily Lesson Production Target
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 5 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-daily-lesson-target
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build five-lesson-per-division daily target
+        run: python tools/build_daily_lesson_plan.py --lessons-per-division 5
+      - name: Validate daily target planner
+        run: python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
+      - name: Publish metadata-only production plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-daily-lesson-production-plan
+          path: config/generated/daily-lesson-production-plan.json
+          if-no-files-found: error
+          retention-days: 7
