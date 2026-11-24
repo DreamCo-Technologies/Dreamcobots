@@ -78,10 +78,10 @@ jobs:
           python3 tools/generate_command_center_data.py
           node --import tsx tools/generate_dreamco_search_index.ts
           node --import tsx tools/generate_buddy_success_program.ts
-      - name: Refresh Actions workflow inventory before prospectus tests
-        run: |
           python3 tools/audit_actions_health.py
           python3 tools/build_actions_prospectus.py
+          # Reconcile the registry after every generator has finished.
+          python3 tools/generate_repository_test_registry.py
       - name: Verify first-party Bootcamp training data factory
         run: |
           python3 -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
