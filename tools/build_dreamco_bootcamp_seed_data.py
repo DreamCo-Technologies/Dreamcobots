@@ -68,7 +68,7 @@ def build_candidate(
     if len(divisions) != 65:
         raise ValueError("canonical registry must contain exactly 65 MasterBots")
     if len(examples) < 3:
-        raise ValueError("at least three reviewed seed examples are required")
+        raise ValueError("at least three seed examples are required")
     ids: set[str] = set()
     modules: set[str] = set()
     counts = {"train": 0, "validation": 0, "test": 0}
@@ -95,7 +95,7 @@ def build_candidate(
             raise ValueError(f"{example_id}: at least two meaningful rubric checks are required")
         if not isinstance(tags, list) or not tags or not all(isinstance(x, str) and x.strip() for x in tags):
             raise ValueError(f"{example_id}: at least one subject tag is required")
-        if example.get("source", {}).get("external_text_included") is not False:
+        if not isinstance(example.get("source"), dict) or example["source"].get("external_text_included") is not False:
             raise ValueError(f"{example_id}: seed data must not include unreviewed external text")
         if example.get("authoring") != REQUIRED_AUTHORING:
             raise ValueError(f"{example_id}: authoring and rights must remain pending human review")
@@ -106,7 +106,7 @@ def build_candidate(
             "masterbot_id": masterbot_id,
             "split": split,
             "task_id": example_id,
-            "text": f"### Instruction:\\n{prompt}\\n### Response:\\n{response}",
+            "text": f"### Instruction:\n{prompt}\n### Response:\n{response}",
             "prompt": prompt,
             "expected": response,
             "rubric": rubric,
@@ -166,6 +166,30 @@ def build_candidate(
         "notice": "Candidate generation only. No rights approval, ingestion, training, or model ownership claim is made.",
     }
     return rows, manifest
+
+
+def build_dataset_card(manifest: dict[str, Any], candidate_path: str) -> dict[str, Any]:
+    return {
+        "dataset_id": manifest["dataset_id"],
+        "name": manifest["dataset_name"],
+        "owner": "DreamCo Technologies - pending assignment review",
+        "license": "UNASSIGNED_PENDING_HUMAN_REVIEW",
+        "license_url": "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/config/buddy-training-data-provenance-policy.json",
+        "source_url": "https://github.com/DreamCo-Technologies/Dreamcobots",
+        "data_plane": "dreamco_owned_training",
+        "rights_status": "PENDING_HUMAN_REVIEW",
+        "rights_evidence": "",
+        "training_approved": False,
+        "holdout": False,
+        "primary_masterbot_id": manifest["primary_masterbot_id"],
+        "collaborating_masterbot_ids": [],
+        "split_manifest": manifest["split_manifest"],
+        "content_sha256": manifest["candidate_sha256"],
+        "candidate_data_path": candidate_path,
+        "privacy_review": "NOT_STARTED",
+        "human_review_required": True,
+        "owner_assignment_review_required": True,
+    }
 
 
 def main() -> int:
