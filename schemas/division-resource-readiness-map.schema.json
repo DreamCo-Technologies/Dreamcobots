@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DreamCo Division Resource Readiness Map",
+  "type": "object",
+  "required": [
+    "schema",
+    "status",
+    "source_of_truth",
+    "counts",
+    "source_blob_shas",
+    "resource_contract",
+    "routes",
+    "owner_review",
+    "truth"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.division_resource_readiness_map.v1"
+    },
+    "status": {
+      "const": "requirements_defined_not_provisioned"
+    },
+    "source_of_truth": {
+      "const": "config/masterbot-65-registry.json"
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "masterbots",
+        "domain_divisions",
+        "unresolved_masterbot_mappings",
+        "unassigned_domain_profiles"
+      ],
+      "properties": {
+        "masterbots": {
+          "const": 65
+        },
+        "domain_divisions": {
+          "const": 55
+        },
+        "unresolved_masterbot_mappings": {
+          "const": 20
+        },
+        "unassigned_domain_profiles": {
+          "const": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "source_blob_shas": {
+      "type": "object",
+      "minProperties": 5,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{40}$"
+      }
+    },
+    "resource_contract": {
+      "type": "object",
+      "required": [
+        "id",
+        "truth_status",
+        "architecture",
+        "model_strategy",
+        "baseline_requirements",
+        "readiness_states",
+        "promotion_rule"
+      ]
+    },
+    "routes": {
+      "type": "array",
+      "minItems": 65,
+      "maxItems": 65,
+      "items": {
+        "type": "object",
+        "required": [
+          "masterbot_id",
+          "masterbot_name",
+          "resource_bundle_id",
+          "readiness_status",
+          "database",
+          "datasets",
+          "teacher_models",
+          "machine_learning_practices",
+          "reverse_engineering",
+          "distillation",
+          "model_routing",
+          "compute",
+          "evaluation",
+          "operations",
+          "domain_mapping"
+        ],
+        "properties": {
+          "masterbot_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65
+          },
+          "readiness_status": {
+            "const": "requirements_defined_not_provisioned"
+          },
+          "resource_bundle_id": {
+            "type": "string"
+          },
+          "datasets": {
+            "type": "object",
+            "required": [
+              "discovery_lane_id",
+              "training_approved",
+              "rights_status"
+            ],
+            "properties": {
+              "training_approved": {
+                "const": false
+              },
+              "rights_status": {
+                "const": "UNVERIFIED_DISCOVERY_ONLY"
+              }
+            }
+          },
+          "teacher_models": {
+            "type": "object",
+            "required": [
+              "candidate_models"
+            ]
+          },
+          "machine_learning_practices": {
+            "type": "array",
+            "minItems": 20
+          }
+        }
+      }
+    },
+    "owner_review": {
+      "type": "object",
+      "required": [
+        "masterbot_domain_decisions",
+        "unassigned_domain_profiles"
+      ],
+      "properties": {
+        "masterbot_domain_decisions": {
+          "type": "array",
+          "minItems": 20,
+          "maxItems": 20
+        },
+        "unassigned_domain_profiles": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10
+        }
+      }
+    },
+    "truth": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
