@@ -122,7 +122,7 @@ class BootcampSeedDataTests(unittest.TestCase):
                 create_training_job(hub, manifest["dataset_id"], 4, "example/model", "a" * 40)
             candidate = Path(temp) / "candidate.jsonl"
             candidate.write_text(
-                "".join(json.dumps(row, ensure_ascii=False) + "\\n" for row in rows),
+                "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rows),
                 encoding="utf-8",
             )
             with self.assertRaisesRegex(DatasetPolicyError, "File ingestion is disabled"):
