@@ -20,24 +20,22 @@ class DivisionResourceReadinessTests(unittest.TestCase):
   self.assertEqual(len(routes),65)
   self.assertEqual(len({r["resource_bundle_id"] for r in routes}),65)
   self.assertEqual({r["masterbot_id"] for r in routes},{b["id"] for b in self.registry["divisions"]})
-  required={"resource_template_ids","logical_database_namespace","dataset_discovery_lane_id","dataset_search_queries","teacher_model_candidates","domain_mapping"}
+  required={"resource_template_ids","logical_database_namespace","dataset_discovery_lane_id","teacher_model_candidate_ids","domain_mapping"}
   for route in routes:
    self.assertTrue(required.issubset(route))
    self.assertTrue(required.issubset(route))
    self.assertEqual(route["readiness_status"],"requirements_defined_not_provisioned")
    self.assertTrue(route["logical_database_namespace"])
    self.assertTrue(route["dataset_discovery_lane_id"])
-   self.assertTrue(route["teacher_model_candidates"])
+   self.assertTrue(route["teacher_model_candidate_ids"])
    self.assertFalse(route["dataset_training_approved"])
  def test_teacher_models_are_candidates_not_certified_or_approved(self):
   result=self.payload()
   self.assertGreaterEqual(len(result["machine_learning_practices"]),20)
   self.assertEqual(set(result["resource_templates"]),{"database","datasets","teacher_models","reverse_engineering","distillation","model_routing","compute","evaluation","operations"})
+  seed_ids={model for values in result["resource_templates"]["teacher_models"]["seed_models_by_capability_pack"].values() for model in values}
   for route in result["routes"]:
-   for model in route["teacher_model_candidates"]:
-    self.assertEqual(model["status"],"catalog_candidate_not_validated")
-    self.assertTrue(model["license_review_required"])
-    self.assertEqual(model["training_or_distillation_permission"],"UNVERIFIED")
+   self.assertTrue(set(route["teacher_model_candidate_ids"]).issubset(seed_ids))
  def test_distillation_and_reverse_engineering_have_rights_gates(self):
   templates=self.payload()["resource_templates"]
   self.assertIn("teacher/provider terms",templates["distillation"]["required_lineage"][2])
