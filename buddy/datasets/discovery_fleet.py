@@ -12,6 +12,7 @@ from .unknown_router import ALIASES
 ROOT=Path(__file__).resolve().parents[2]
 REGISTRY=ROOT/"config/masterbot-65-registry.json"
 TAXONOMY_MAP=ROOT/"config/generated/division-huggingface-taxonomy-map.json"
+RESOURCE_MAP=ROOT/"config/generated/division-resource-readiness-map.json"
 
 def _load_taxonomy_routes()->dict[int,dict[str,Any]]:
     payload=json.loads(TAXONOMY_MAP.read_text(encoding="utf-8"))
@@ -23,6 +24,18 @@ def _load_taxonomy_routes()->dict[int,dict[str,Any]]:
     indexed={int(row["masterbot_id"]):row for row in routes}
     if len(indexed)!=65:
         raise ValueError("Hugging Face taxonomy map contains duplicate MasterBot routes")
+    return indexed
+
+def _load_resource_profiles()->dict[int,dict[str,Any]]:
+    payload=json.loads(RESOURCE_MAP.read_text(encoding="utf-8"))
+    if payload.get("status")!="requirements_defined_not_provisioned":
+        raise ValueError("division resource map must retain honest readiness status")
+    routes=payload.get("routes",[])
+    if len(routes)!=65:
+        raise ValueError("division resource map must cover all 65 MasterBots")
+    indexed={int(row["masterbot_id"]):row for row in routes}
+    if len(indexed)!=65:
+        raise ValueError("division resource map contains duplicate MasterBot routes")
     return indexed
 
 def _query_for(name:str,taxonomy_route:dict[str,Any]|None=None)->str:
@@ -44,8 +57,12 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
     bots=registry.get("divisions",[])
     if len(bots)!=65: raise ValueError("Canonical registry must contain exactly 65 MasterBots")
     taxonomy_routes=_load_taxonomy_routes()
-    if {int(bot["id"]) for bot in bots}!=set(taxonomy_routes):
+    resource_profiles=_load_resource_profiles()
+    canonical_ids={int(bot["id"]) for bot in bots}
+    if canonical_ids!=set(taxonomy_routes):
         raise ValueError("Hugging Face taxonomy lanes do not match canonical MasterBot IDs")
+    if canonical_ids!=set(resource_profiles):
+        raise ValueError("division resource bundles do not match canonical MasterBot IDs")
     if offset is None: offset=(datetime.now(timezone.utc).date().toordinal()*lanes_per_run)%65
     selected=[bots[(offset+i)%65] for i in range(lanes_per_run)]
     catalog=hub or DatasetHub()
@@ -54,6 +71,7 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
         "network_enabled":os.environ.get("DREAMCO_ALLOW_SOURCE_NETWORK")=="1","files_downloaded":False,"training_approved":False,"weights_trained":False}
     for bot in selected:
         taxonomy_route=taxonomy_routes[int(bot["id"])]
+        resource_profile=resource_profiles[int(bot["id"])]
         query=_query_for(bot["name"],taxonomy_route)
         found=discover(query,limit=limit)
         recorded=0
@@ -64,7 +82,13 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
                     "capability_pack_ids":taxonomy_route["capability_pack_ids"],
                     "candidate_pipeline_tags":taxonomy_route["candidate_pipeline_tags"],
                     "domain_crosswalk":taxonomy_route["domain_crosswalk"],
-                    "routing_status":"DISCOVERY_ONLY_NOT_TRAINING_APPROVED"}}
+                    "routing_status":"DISCOVERY_ONLY_NOT_TRAINING_APPROVED"},
+                "division_resources":{"resource_bundle_id":resource_profile["resource_bundle_id"],
+                    "readiness_status":resource_profile["readiness_status"],
+                    "database_namespace":resource_profile["database"]["logical_namespace"],
+                    "teacher_model_candidate_ids":[x["model_id"] for x in resource_profile["teacher_models"]["candidate_models"]],
+                    "model_routing_status":resource_profile["model_routing"]["status"],
+                    "resource_truth":"requirements_defined_not_provisioned"}}
             if candidate.get("source")=="huggingface":
                 try:
                     card=inspect_huggingface_dataset_card(str(candidate.get("id","")))
@@ -86,7 +110,9 @@ def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|
         report["lanes_scanned"].append({"masterbot_id":bot["id"],"masterbot":bot["name"],
             "query":query,"candidate_count":recorded,"status":"DISCOVERY_ONLY_RIGHTS_UNVERIFIED",
             "taxonomy_lane_id":taxonomy_route["lane_id"],
-            "candidate_pipeline_tags":taxonomy_route["candidate_pipeline_tags"]})
+            "candidate_pipeline_tags":taxonomy_route["candidate_pipeline_tags"],
+            "resource_bundle_id":resource_profile["resource_bundle_id"],
+            "resource_readiness_status":resource_profile["readiness_status"]})
     report["next_offset"]=(offset+lanes_per_run)%65
     report["catalog_stats"]=catalog.stats()
     report["limitations"]=["Metadata discovery only; no dataset files downloaded",
