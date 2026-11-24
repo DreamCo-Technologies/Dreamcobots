@@ -6,7 +6,7 @@ Create one isolated PostgreSQL schema for each of the 65 MasterBot resource bund
 
 ## Owner-role contract
 
-Each namespace `dreamco_division_NNN` must have a pre-created PostgreSQL group role with the same name. Every owner role must be `NOLOGIN` and not a superuser. The provisioning tool never creates roles, assigns passwords, or grants membership to the application role. Service identities and membership grants require a separate least-privilege review.
+Each namespace `dreamco_division_NNN` must have a pre-created PostgreSQL group role with the same name. Every owner role must be `NOLOGIN` and not a superuser. The provisioning principal must already be a member of each role whose schema it needs to create. The provisioning tool never creates roles, assigns passwords, or grants membership to the application role. Service identities and membership grants require a separate least-privilege review.
 
 ## Dry-run
 
