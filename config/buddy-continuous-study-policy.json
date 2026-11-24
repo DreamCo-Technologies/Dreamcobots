@@ -1,0 +1,85 @@
+{
+  "schema": "dreamco.buddy_continuous_study_policy.v1",
+  "status": "policy_ready_runtime_and_authorized_corpus_required",
+  "schedule": {
+    "mode": "continuous_24x7_with_resource_governors",
+    "daily_lesson_slots_per_division": 5,
+    "division_count": 65,
+    "daily_planned_slots": 325,
+    "repeat_unmastered_topics": true,
+    "weekly_transcript_evaluation": true,
+    "timezone": "UTC"
+  },
+  "study_loop": [
+    "diagnose_capability_gap",
+    "select_authorized_source",
+    "retrieve_only_permitted_content",
+    "build_original_study_guide",
+    "run_sandbox_practice",
+    "run_targeted_benchmark",
+    "run_unseen_holdout",
+    "run_regression_suite",
+    "record_evidence",
+    "schedule_spaced_retrieval"
+  ],
+  "mastery": {
+    "minimum_targeted_pass_rate": 0.9,
+    "minimum_holdout_pass_rate": 0.85,
+    "regression_must_pass": true,
+    "minimum_independent_successful_attempts": 3,
+    "require_distinct_question_seeds": true,
+    "require_evidence_hashes": true,
+    "retest_after_days": [1, 3, 7, 14, 30],
+    "failure_action": "return_to_targeted_study",
+    "mastery_is_not_training_permission": true
+  },
+  "resource_governors": {
+    "max_concurrent_training_jobs": 1,
+    "max_concurrent_transcript_evaluations": 2,
+    "pause_when_no_authorized_work_exists": true,
+    "pause_on_budget_limit": true,
+    "paid_compute_requires_separate_approval": true,
+    "paid_provider_calls_require_existing_approval_policy": true,
+    "no_infinite_retry_loops": true,
+    "checkpoint_and_resume": true,
+    "prefer_local_cpu_or_existing_local_gpu": true
+  },
+  "source_permissions": {
+    "public_metadata_discovery": true,
+    "transcript_download_default": false,
+    "media_download_default": false,
+    "model_training_default": false,
+    "require_item_level_rights_evidence": true,
+    "evaluation_permission_separate_from_training_permission": true,
+    "hugging_face_dataset_card_and_license_review_required": true,
+    "gated_dataset_terms_review_required": true,
+    "ollama_model_license_and_base_model_review_required": true,
+    "unknown_rights": "BLOCKED"
+  },
+  "model_build": {
+    "target_parameters_per_division": 45000000,
+    "architecture_template": "decoder_only_transformer",
+    "training_from_scratch_is_experimental": true,
+    "shared_tokenizer_and_reusable_training_code": true,
+    "division_specific_data_and_evaluation": true,
+    "division_specific_adapters_allowed_after_base_model_validation": true,
+    "no_claim_of_gpt5_equivalence": true,
+    "required_evidence": [
+      "architecture_config",
+      "parameter_count",
+      "tokenizer_hash",
+      "dataset_manifest_and_rights",
+      "train_validation_test_split_hashes",
+      "training_config",
+      "compute_and_cost_record",
+      "training_run_id",
+      "loss_curves",
+      "benchmark_results",
+      "holdout_results",
+      "regression_results",
+      "model_card",
+      "weight_hash"
+    ]
+  },
+  "truth_boundary": "This policy schedules work; it does not itself download transcripts, run Buddy inference, train weights, or prove mastery. A lesson slot is not a completed lesson. A dataset/model listing is not permission to train. A 45M-parameter model is not GPT-5-equivalent."
+}
