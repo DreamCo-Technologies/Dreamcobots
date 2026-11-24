@@ -93,6 +93,7 @@ class PostgresDatasetCatalog:
         try:
             with self._connect(self.dsn, connect_timeout=5) as connection:
                 with connection.cursor() as cursor:
+                    cursor.execute("SELECT set_config('dreamco.masterbot_id', %s, true)", (str(masterbot_id),))
                     cursor.execute(sql, (safe["dataset_id"], safe["version"], masterbot_id,
                                          serialized, manifest_hash, safe.get("content_sha256"), created_at))
                     row = cursor.fetchone()
@@ -116,6 +117,7 @@ class PostgresDatasetCatalog:
         try:
             with self._connect(self.dsn, connect_timeout=5) as connection:
                 with connection.cursor() as cursor:
+                    cursor.execute("SELECT set_config('dreamco.masterbot_id', %s, true)", (str(masterbot_id),))
                     cursor.execute(f'''SELECT manifest, manifest_sha256 FROM "{schema}".dataset_catalog
                         WHERE dataset_id = %s AND version = %s''', (dataset_id, version))
                     row = cursor.fetchone()
