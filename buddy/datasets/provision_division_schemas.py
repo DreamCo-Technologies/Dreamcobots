@@ -115,6 +115,8 @@ def provision_division_schemas(
                     status = "BLOCKED"
                 elif not apply:
                     status = "PLAN_READY"
+                elif not inventory["missing_schemas"]:
+                    status = "ALREADY_PROVISIONED"
                 else:
                     for namespace in inventory["missing_schemas"]:
                         # Names have already passed a strict identifier allowlist.
@@ -179,7 +181,7 @@ def main() -> int:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(rendered + "\\n", encoding="utf-8")
     print(rendered)
-    return 0 if evidence["status"] in {"PLAN_READY", "PROVISIONED"} else (2 if evidence["status"] == "BLOCKED" else 1)
+    return 0 if evidence["status"] in {"PLAN_READY", "PROVISIONED", "ALREADY_PROVISIONED"} else (2 if evidence["status"] == "BLOCKED" else 1)
 
 
 if __name__ == "__main__":
