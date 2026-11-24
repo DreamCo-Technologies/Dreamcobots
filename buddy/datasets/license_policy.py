@@ -36,7 +36,27 @@ def assess_training_candidate(candidate: dict[str, Any]) -> dict[str, Any]:
     privacy = candidate.get("privacy_review") == "PASSED"
     provenance = bool(candidate.get("source") and candidate.get("id") and str(candidate.get("url", "")).startswith("https://"))
     allowed_license = license_id in ALLOWLIST
-    if allowed_license and explicit and content_rights and privacy and provenance:
+    internal_owned = license_id == "DREAMCO_INTERNAL_OWNED"
+    internal_evidence = (
+        candidate.get("source") == "dreamco_authored"
+        and candidate.get("owner_assignment_verified") is True
+        and candidate.get("contributor_rights_verified") is True
+        and bool(str(candidate.get("owner_approval_id") or "").strip())
+        and bool(str(candidate.get("rights_evidence") or "").strip())
+    )
+    if internal_owned and explicit and content_rights and privacy and provenance and internal_evidence:
+        status = "INTERNAL_OWNED_TRAINING_CANDIDATE_REQUIRES_DATA_QUALITY_AND_FINAL_REVIEW"
+    elif internal_owned and not explicit:
+        status = "BLOCKED_NO_EXPLICIT_AI_TRAINING_PERMISSION"
+    elif internal_owned and not content_rights:
+        status = "BLOCKED_CONTENT_RIGHTS_UNVERIFIED"
+    elif internal_owned and not privacy:
+        status = "BLOCKED_PRIVACY_REVIEW"
+    elif internal_owned and not provenance:
+        status = "BLOCKED_PROVENANCE"
+    elif internal_owned:
+        status = "BLOCKED_INTERNAL_OWNERSHIP_OR_CONTRIBUTOR_RIGHTS"
+    elif allowed_license and explicit and content_rights and privacy and provenance:
         status = "PERMISSIVE_LICENSE_TRAINING_CANDIDATE_REQUIRES_DATA_QUALITY_AND_FINAL_REVIEW"
     elif not license_id or license_id.lower() in {"unknown", "other", "none", "null"}:
         status = "BLOCKED_UNKNOWN_LICENSE"
@@ -53,10 +73,12 @@ def assess_training_candidate(candidate: dict[str, Any]) -> dict[str, Any]:
     return {
         "license": license_id or None,
         "allowlisted_license": allowed_license,
+        "internal_owned_path": internal_owned,
+        "internal_ownership_evidence_verified": internal_evidence,
         "ai_training_permission_explicit": explicit,
         "content_rights_verified": content_rights,
         "privacy_review": privacy,
         "status": status,
         "training_approved": False,
-        "note": "This automated triage is not legal advice or final dataset approval; inspect every source, file, contributor right, privacy obligation and applicable term."
+        "note": "A DreamCo-internal designation is not a public license: it requires verified ownership, contributor rights, an owner approval ID, evidence, explicit AI-training permission, privacy review and provenance. This triage is not final approval; dataset quality and the separate ingestion/training approvals still apply."
     }
