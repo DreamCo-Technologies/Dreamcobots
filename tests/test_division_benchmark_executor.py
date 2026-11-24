@@ -5,7 +5,7 @@ from buddy.benchmarks.division_benchmark_contract import create_benchmark_plan
 
 def make_plan(tmp):
  return create_benchmark_plan(1,"dreamco/dreamfinance-mini","0.1.0","a"*64,"b"*64,"c"*64,
-  "holdout-review","eval-approval",tmp)
+  "holdout-review","eval-approval",base_model_id="owner/base-model",base_model_revision="e"*40,training_method="sft",base_model_license="Apache-2.0",base_model_license_evidence="model-license-review-1",output_dir=tmp)
 
 def make_tasks():
  return [
