@@ -13,12 +13,28 @@ ROOT=Path(__file__).resolve().parents[2]
 REGISTRY=ROOT/"config/masterbot-65-registry.json"
 TAXONOMY_MAP=ROOT/"config/generated/division-huggingface-taxonomy-map.json"
 
-def _query_for(name:str)->str:
+def _load_taxonomy_routes()->dict[int,dict[str,Any]]:
+    payload=json.loads(TAXONOMY_MAP.read_text(encoding="utf-8"))
+    if payload.get("status")!="discovery_only_requires_owner_and_rights_review":
+        raise ValueError("Hugging Face taxonomy map must remain discovery-only")
+    routes=payload.get("routes",[])
+    if len(routes)!=65:
+        raise ValueError("Hugging Face taxonomy map must cover all 65 MasterBots")
+    indexed={int(row["masterbot_id"]):row for row in routes}
+    if len(indexed)!=65:
+        raise ValueError("Hugging Face taxonomy map contains duplicate MasterBot routes")
+    return indexed
+
+def _query_for(name:str,taxonomy_route:dict[str,Any]|None=None)->str:
+    if taxonomy_route:
+        queries=taxonomy_route.get("search_queries",[])
+        if queries and str(queries[0]).strip():
+            return str(queries[0]).strip()
     tags=ALIASES.get(name)
     if tags:
         return " ".join(tags[:3])
     value=re.sub(r"(?<=[a-z])(?=[A-Z])"," ",name)
-    value=re.sub(r"^Dream\s*","",value,flags=re.I)
+    value=re.sub(r"^Dream\\s*","",value,flags=re.I)
     return value.strip() or name
 
 def run_discovery_fleet(hub:DatasetHub|None=None,lanes_per_run:int=5,offset:int|None=None,limit:int=3)->dict[str,Any]:
