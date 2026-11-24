@@ -41,12 +41,25 @@ def build_curriculum(masterbots:dict,tasks:dict,packs:dict,division_map:dict,ser
     capability_packs=packs.get("packs",[])
     routes={int(x["masterbot_id"]):x for x in division_map.get("routes",[])}
     if len(divisions)!=65 or len(routes)!=65: raise ValueError("canonical 65-division registry and taxonomy map required")
-    if len(task_families)!=37 or len(set(task_families))!=37: raise ValueError("expected 37 unique Hugging Face task families")
+    # The canonical taxonomy stores task-family records, not bare strings.
+    # Validate stable IDs while preserving each record's modality and task metadata.
+    task_ids=[x.get("id") if isinstance(x,dict) else x for x in task_families]
+    if len(task_ids)!=37 or any(not isinstance(x,str) or not x for x in task_ids) or len(set(task_ids))!=37:
+        raise ValueError("expected 37 unique Hugging Face task-family IDs")
     if len(capability_packs)!=10 or len({x["id"] for x in capability_packs})!=10:
         raise ValueError("expected 10 unique Hugging Face capability packs")
-    all_tasks=[{"task_family":family,"required_for_every_division":True,
-        "discovery_source":"Hugging Face Hub task taxonomy","training_rights":"REVIEW_REQUIRED",
-        "training_status":"NOT_RUN"} for family in task_families]
+    all_tasks=[{
+        "task_family":record.get("id") if isinstance(record,dict) else record,
+        "family":record.get("family") if isinstance(record,dict) else "unspecified",
+        "modality":record.get("modality") if isinstance(record,dict) else "unspecified",
+        "pipeline_tag":record.get("pipeline_tag") if isinstance(record,dict) else None,
+        "description":record.get("description") if isinstance(record,dict) else "",
+        "task_id_status":record.get("task_id_status") if isinstance(record,dict) else "legacy_string",
+        "required_for_every_division":True,
+        "discovery_source":"Hugging Face Hub task taxonomy",
+        "training_rights":"REVIEW_REQUIRED",
+        "training_status":"NOT_RUN"
+    } for record in task_families]
     pack_index={x["id"]:x for x in capability_packs}
     route_records=[]
     for division in sorted(divisions,key=lambda x:int(x["id"])):
