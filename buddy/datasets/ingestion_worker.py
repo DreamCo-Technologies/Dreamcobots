@@ -1,4 +1,4 @@
-"""Explicit, reproducible worker for rights-cleared local JSONL ingestion."""
+"""Explicit, reproducible worker for rights-cleared local JSONL dataset ingestion."""
 from __future__ import annotations
 import hashlib,json,os,re,uuid
 from datetime import datetime,timezone
@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 from .hub import DatasetHub,DatasetPolicyError,sha256_file
 from .license_policy import assess_training_candidate
+from .object_store import dataset_object_key,ObjectStoreError
 
 class DatasetIngestionError(RuntimeError):
     """An ingestion request failed a policy or provenance gate."""
@@ -48,7 +49,31 @@ def create_ingestion_job(card:dict[str,Any],source_file:str|Path,approval_id:str
     payload["manifest_path"]=str(path)
     return payload
 
+def _persist_external(record:dict[str,Any],catalog:DatasetHub,masterbot_id:int,
+                      approval_id:str,object_store:Any,postgres_catalog:Any)->dict[str,Any]:
+    if postgres_catalog is not None and object_store is None:
+        raise DatasetIngestionError("postgres_catalog_requires_approved_object_store")
+    if object_store is None: return {}
+    local_object=(catalog.home/record["object_path"]).resolve()
+    key=dataset_object_key(masterbot_id,record["dataset_id"],int(record["version"]),record["content_sha256"])
+    try:
+        storage=object_store.upload_file(local_object,key,masterbot_id,approval_id,
+            record["content_sha256"],"dataset")
+    except ObjectStoreError as exc:
+        raise DatasetIngestionError(f"object_store_persistence_failed_{type(exc).__name__}") from None
+    postgres=None
+    if postgres_catalog is not None:
+        manifest={**record,"masterbot_id":masterbot_id,"primary_masterbot_id":masterbot_id,
+            "local_object_path":record["object_path"],"object_path":key,
+            "object_store_bucket":storage.get("bucket"),"object_store_version_id":storage.get("version_id"),
+            "ingestion_approval_ref":approval_id}
+        try: postgres=postgres_catalog.register(masterbot_id,manifest)
+        except Exception as exc:
+            raise DatasetIngestionError(f"postgres_catalog_persistence_failed_{type(exc).__name__}") from None
+    return {"object_store":storage,"postgres_catalog":postgres,"object_store_key":key}
+
 def execute_ingestion_job(job_path:str|Path,approval_id:str,*,hub:DatasetHub|None=None,
+                          object_store:Any|None=None,postgres_catalog:Any|None=None,
                           max_bytes:int=512*1024*1024)->dict[str,Any]:
     job=json.loads(Path(job_path).read_text(encoding="utf-8"))
     if job.get("schema")!="dreamco.dataset_ingestion_job.v1" or job.get("execution_status")!="NOT_EXECUTED":
@@ -57,6 +82,8 @@ def execute_ingestion_job(job_path:str|Path,approval_id:str,*,hub:DatasetHub|Non
         raise DatasetIngestionError("ingestion_approval_id_mismatch")
     if os.environ.get("DREAMCO_ALLOW_DATASET_INGESTION")!="1":
         raise DatasetIngestionError("set_DREAMCO_ALLOW_DATASET_INGESTION=1_for_explicit_ingestion")
+    if postgres_catalog is not None and object_store is None:
+        raise DatasetIngestionError("postgres_catalog_requires_approved_object_store")
     source=Path(job["source_file"]).resolve()
     if not source.is_file() or source.suffix.lower()!=".jsonl":
         raise DatasetIngestionError("only_staged_jsonl_files_are_supported")
@@ -85,16 +112,22 @@ def execute_ingestion_job(job_path:str|Path,approval_id:str,*,hub:DatasetHub|Non
     digest=sha256_file(source)
     catalog=hub or DatasetHub()
     previous=catalog.get(dataset_id)
-    if previous and previous.get("content_sha256")==digest:
-        return {"schema":"dreamco.dataset_ingestion_evidence.v1","status":"ALREADY_INGESTED",
+    immutable_card_fields=("license","license_url","source_url","rights_status","rights_evidence",
+        "training_approved","data_plane","primary_masterbot_id","privacy_review","split_manifest")
+    same_metadata=bool(previous) and all(previous.get(key)==card.get(key) for key in immutable_card_fields)
+    if previous and previous.get("content_sha256")==digest and same_metadata:
+        external=_persist_external(previous,catalog,masterbot_id,approval_id,object_store,postgres_catalog)
+        return {"schema":"dreamco.dataset_ingestion_evidence.v1",
+          "status":"ALREADY_INGESTED_PERSISTED" if external else "ALREADY_INGESTED",
           "job_id":job["job_id"],"dataset_id":dataset_id,"dataset_version":previous["version"],
-          "content_sha256":digest,"rows_validated":len(rows),"training_started":False,
-          "network_download_performed":False,"credentials_emitted":False}
+          "content_sha256":digest,"rows_validated":len(rows),"split_manifest":split_hashes,
+          **external,"training_started":False,"network_download_performed":False,"credentials_emitted":False}
     try: record=catalog.register(card,source_file=source)
     except DatasetPolicyError as exc: raise DatasetIngestionError(f"dataset_hub_policy_rejected_{type(exc).__name__}") from None
+    external=_persist_external(record,catalog,masterbot_id,approval_id,object_store,postgres_catalog)
     return {"schema":"dreamco.dataset_ingestion_evidence.v1","status":"INGESTED_PENDING_BENCHMARK",
       "job_id":job["job_id"],"dataset_id":record["dataset_id"],"dataset_version":record["version"],
       "content_sha256":record["content_sha256"],"manifest_path":f"cards/{record['dataset_id']}.v{record['version']}.json",
       "split_manifest":split_hashes,"rows_validated":len(rows),"quality":record.get("quality"),
-      "rights_assessment":rights,"training_started":False,"network_download_performed":False,
+      "rights_assessment":rights,**external,"training_started":False,"network_download_performed":False,
       "credentials_emitted":False,"next_gate":"run_baseline_and_domain_benchmarks_before_training"}

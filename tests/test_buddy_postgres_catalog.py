@@ -59,6 +59,9 @@ class PostgresCatalogTests(unittest.TestCase):
         result = catalog.register(1, manifest(token="never-store", raw_data="never-store"))
         self.assertEqual(result["status"], "PERSISTED")
         self.assertFalse(result["credentials_emitted"])
+        scope_args = cursor.execute.call_args_list[0].args
+        self.assertIn("set_config('dreamco.masterbot_id'", scope_args[0])
+        self.assertEqual(scope_args[1], ("1",))
         args = cursor.execute.call_args.args
         self.assertIn('"dreamco_division_001".dataset_catalog', args[0])
         self.assertNotIn("never-store", args[1][3])
@@ -85,6 +88,9 @@ class PostgresCatalogTests(unittest.TestCase):
         connect.return_value.__enter__.return_value = connection
         result = PostgresDatasetCatalog(dsn="postgresql://safe", connect=connect).get(1, "demo.dataset", 1)
         self.assertEqual(result["dataset_id"], "demo.dataset")
+        scope_args = cursor.execute.call_args_list[0].args
+        self.assertIn("set_config('dreamco.masterbot_id'", scope_args[0])
+        self.assertEqual(scope_args[1], ("1",))
 
     def test_get_rejects_tampered_manifest(self):
         payload = manifest(training_approved=False)
