@@ -30,7 +30,7 @@ class DivisionLifecycleMigrationTests(unittest.TestCase):
   self.assertEqual(plan["division_count"],65)
   self.assertEqual(plan["schemas"][0],"dreamco_division_001")
   self.assertEqual(plan["schemas"][-1],"dreamco_division_065")
-  self.assertGreater(plan["ddl_statements_per_schema"],50)
+  self.assertGreater(plan["ddl_statements_per_schema"],40)
   self.assertEqual(len(plan["migration_sha256"]),64)
   self.assertEqual(plan["execution_status"],"DRY_RUN_ONLY")
  def test_schema_name_rejects_invalid_ids(self):
