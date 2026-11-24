@@ -13,6 +13,12 @@ on:
       - "tests/test_live_revenue_readiness_coverage.py"
       - "tests/test_buddy_fleet_execution_map.py"
       - ".github/workflows/buddy-fleet-execution-map.yml"
+      - "config/bots/teammate-lane-division-crosswalk.json"
+      - "config/bots/teammate-lanes.json"
+      - "config/bots/bot-runtime-contract.schema.json"
+      - "buddy/fleet_runtime/**"
+      - "tools/generate_bot_manifests.py"
+      - "tests/test_fleet_runtime_routing.py"
   push:
     branches: [main]
     paths:
@@ -26,6 +32,12 @@ on:
       - "tools/build_live_revenue_readiness.py"
       - "tests/test_live_revenue_readiness_coverage.py"
       - "tests/test_buddy_fleet_execution_map.py"
+      - "config/bots/teammate-lane-division-crosswalk.json"
+      - "config/bots/teammate-lanes.json"
+      - "config/bots/bot-runtime-contract.schema.json"
+      - "buddy/fleet_runtime/**"
+      - "tools/generate_bot_manifests.py"
+      - "tests/test_fleet_runtime_routing.py"
   workflow_dispatch:
   schedule:
     - cron: "17 */6 * * *"
@@ -43,16 +55,24 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
+      - name: Generate canonical division and MasterBot manifests
+        run: |
+          python tools/generate_bot_manifests.py
+          python tools/generate_bot_manifests.py --check
       - name: Build deterministic full-fleet plan
         run: python tools/build_buddy_fleet_execution_map.py
-      - name: Validate every bot and specialist portfolio
+      - name: Validate runtime routing, specialist portfolios and revenue plans
         run: |
+          python -m unittest tests.test_fleet_runtime_routing
           python -m unittest tests.test_buddy_fleet_execution_map
           python -m unittest tests.test_live_revenue_readiness_coverage
-      - name: Upload plan evidence
+      - name: Upload generated manifests and fleet evidence
         uses: actions/upload-artifact@v7
         with:
           name: buddy-fleet-execution-map-${{ github.run_id }}
-          path: config/generated/buddy-fleet-execution-map.json
+          path: |
+            config/bots/bot-manifests.generated.json
+            config/bots/division-manifests.generated.json
+            config/generated/buddy-fleet-execution-map.json
           if-no-files-found: error
           retention-days: 14
