@@ -15,6 +15,32 @@ concurrency:
 permissions:
   contents: read
 jobs:
+  prepare-fleet:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    outputs:
+      masterbots: ${{ steps.matrix.outputs.masterbots }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - id: matrix
+        name: Build matrix from canonical 65-division registry
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          registry = json.loads(Path("config/masterbot-65-registry.json").read_text(encoding="utf-8"))
+          divisions = registry.get("divisions", [])
+          expected = registry.get("canonical_count")
+          assert expected == 65, f"Expected canonical_count=65, got {expected}"
+          assert len(divisions) == expected, f"Registry has {len(divisions)} divisions"
+          names = [row.get("name") for row in divisions]
+          assert all(isinstance(name, str) and name.strip() for name in names), "Every division needs a name"
+          assert len(set(names)) == expected, "Duplicate division names"
+          print("masterbots=" + json.dumps(names, separators=(",", ":")))
+          PY
+
   validate-plan-contract:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
@@ -46,6 +72,7 @@ jobs:
           PY
 
   prepare-masterbot-plans:
+    needs: prepare-fleet
     if: github.event_name != 'pull_request'
     name: Prepare plan ${{ matrix.masterbot }}
     runs-on: ubuntu-latest
@@ -54,72 +81,7 @@ jobs:
       fail-fast: false
       max-parallel: 20
       matrix:
-        masterbot:
-          - CommandCore
-          - DreamSalesPro
-          - DreamFinance
-          - DreamRealEstate
-          - DreamAIInfra
-          - DreamRetail
-          - DreamProServices
-          - DreamData
-          - DreamGlobal
-          - DreamAutomation
-          - DreamContent
-          - DreamTrade
-          - DreamFlow
-          - DreamMarket
-          - DreamEmpire
-          - GameTitan
-          - DreamInfluence
-          - DreamDecision
-          - DreamOps
-          - DreamPlanetary
-          - DreamEntFinance
-          - DreamCustIntel
-          - DreamLegal
-          - DreamCyber
-          - DreamHealth
-          - DreamEducation
-          - DreamConstruction
-          - DreamTransport
-          - DreamFood
-          - DreamScience
-          - DreamArts
-          - DreamProtection
-          - DreamAgriculture
-          - DreamMaintenance
-          - DreamProduction
-          - DreamSocial
-          - DreamAdmin
-          - DreamCrypto
-          - DreamPayments
-          - DreamBizLaunch
-          - DreamCodeLab
-          - DreamLoans
-          - DreamPersonalCare
-          - DreamMilitary
-          - DreamAgents
-          - DreamResearch
-          - DreamBenchmark
-          - DreamKnowledge
-          - DreamEvolution
-          - DreamIntegration
-          - DreamReason
-          - DreamWorld
-          - DreamVision
-          - DreamVoice
-          - DreamHuman
-          - DreamSecurity
-          - DreamProduct
-          - DreamOperations
-          - DreamStrategy
-          - DreamExperiment
-          - DreamSimulation
-          - DreamDiscovery
-          - DreamQuality
-          - DreamResource
-          - DreamFuture
+        masterbot: ${{ fromJSON(needs.prepare-fleet.outputs.masterbots) }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
