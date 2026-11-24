@@ -48,7 +48,7 @@ def test_division_manifests_are_generated_not_hand_edited():
     assert (ROOT / "config/bots/division-manifests.generated.json").read_text() == text
 
 
-@pytest.mark.parametrize("name", CANONICAL_DIVISIONS)
+@pytest.mark.parametrize("name", RUNTIME_DIVISIONS)
 def test_division_smoke_runs_its_own_bots_end_to_end_offline(name):
     executor = FleetExecutor(env={}, customizations={})
     result = division_smoke(executor, DIVISIONS[name])
