@@ -1,13 +1,13 @@
 # Markdown-to-Implementation Gap Audit
 
-Generated: 2026-11-24T14:55:54Z
+Generated: 2026-11-24T15:01:09Z
 
 This is a live inventory of Git-tracked Markdown requirements and their linked repository paths. Counts are computed from the current Git tree; no document, claim, or reference count is a fixed ceiling.
 
 ## Current derived summary
 
 - Markdown documents scanned: 1675
-- Actionable claim lines detected: 11933
+- Actionable claim lines detected: 11935
 - Documents with missing path references: 112
 - Documents without implementation references: 1588
 - Documents with implementation references but no test references: 69
@@ -14945,7 +14945,7 @@ These are candidate count claims, not automatically incorrect values. Convert li
 ### docs/engineering/PR_RECONCILIATION_LEDGER.md
 
 - Status: broken_path_references
-- Actionable claim lines: 22
+- Actionable claim lines: 24
 - Implementation paths: tools/audit_markdown_implementation_gaps.py, website/data/bot-calculators.json, website/data/bot-fleet-catalog.json, website/data/buddy-technology-radar.json, website/data/command-center/capabilities.json, website/data/dreamco-search-index.js
 - Test paths: tests/test_buddy_resource_registry.py
 - Missing paths: buddy/bootcamp/training_methods_hub.py, github/workflows/buddy-continuous-repair.yml, github/workflows/buddy-training-methods-hub.yml, github/workflows/command-center-index.yml, github/workflows/keep-green.yml, tests/test_buddy_training_methods_hub.py, tools/build_dreamco_training_factory.py
