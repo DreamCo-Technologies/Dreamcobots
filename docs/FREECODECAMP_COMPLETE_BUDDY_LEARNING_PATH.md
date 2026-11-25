@@ -100,7 +100,7 @@ The public video catalog and original DreamCo learning paths are separate record
 - Specialist paths are assigned to canonical divisions and MasterBot lanes. The runtime learning queue filters by the requested division or MasterBot so specialist resources do not leak into unrelated queues.
 - Original implementation briefs remain `authoring_backlog`; Buddy must not mark them studied or mastered until a rights-cleared guide, completed exercises, benchmark, holdout/regression evidence, and reviewer approval exist.
 
-The current category-aware routing covers every catalog row tagged as machine learning/deep learning, AI agents/MCP, and cloud DevOps/CI/CD, plus TypeScript videos identified by title. Curated demonstrations include algorithmic trading (paper-only), multi-agent PR review, agentic AI, OpenClaw patterns, self-healing CI/CD, TypeScript, ML foundations, MLOps, and neural networks from first principles.
+The current snapshot contains 1,740 public video-metadata records and 262 distinct video-linked original DreamCo implementation paths. Category-aware routing covers every catalog row tagged as machine learning/deep learning, AI agents/MCP, and cloud DevOps/CI/CD, plus TypeScript videos identified by title. Curated demonstrations include algorithmic trading (paper-only), multi-agent PR review, agentic AI, OpenClaw patterns, self-healing CI/CD, TypeScript, ML foundations, MLOps, and neural networks from first principles.
 
 ### Required Buddy demonstration sequence
 
