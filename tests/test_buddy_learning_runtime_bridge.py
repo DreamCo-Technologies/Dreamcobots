@@ -93,6 +93,13 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
         self.assertFalse(queue["external_model_call_performed"])
 
+    def test_library_learning_queue_supports_masterbot_lanes(self):
+        queue = self.bridge.library_learning_queue(
+            masterbot="DreamCodeLab", query="React", limit=5
+        )
+        self.assertEqual(queue["masterbot"], "DreamCodeLab")
+        self.assertGreaterEqual(queue["returned_count"], 1)
+
     def test_library_learning_queue_requires_exactly_one_owner(self):
         with self.assertRaises(ValueError):
             self.bridge.library_learning_queue(query="React")
