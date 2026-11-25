@@ -75,6 +75,60 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertEqual(self.bridge.sop_candidates("alice", "technical")[0]["steps"], [])
         self.assertFalse(self.bridge.coach("alice", "technical")["automated"])
 
+    def test_library_knowledge_is_internal_first_and_network_off_by_default(self):
+        result = self.bridge.library_knowledge("React", external_discovery=False)
+        self.assertEqual(result["route"], "internal_knowledge_gap")
+        self.assertTrue(result["internal"]["seed_candidate_matches"])
+        self.assertFalse(result["external_discovery_performed"])
+        self.assertFalse(result["external_model_call_performed"])
+
+    def test_library_coverage_reports_guides_and_discovery_backlog_separately(self):
+        report = self.bridge.library_coverage()
+        self.assertEqual(report["seed_candidate_count"], 531)
+        self.assertEqual(report["ecosystem_count"], 38)
+        self.assertGreaterEqual(report["review_required_guide_count"], 1)
+        self.assertFalse(report["worldwide_completeness_claimed"])
+
+    def test_library_learning_queue_serves_internal_curriculum_without_mastery_claims(self):
+        queue = self.bridge.library_learning_queue(
+            division="DreamCodeLab", query="React", limit=10
+        )
+        self.assertEqual(queue["schema"], "dreamco.buddy_library_learning_queue.v1")
+        self.assertGreaterEqual(queue["available_count"], 1)
+        self.assertTrue(any("React" in item["title"] for item in queue["items"]))
+        self.assertTrue(all(item["completion_status"] == "queued_not_studied" for item in queue["items"]))
+        self.assertTrue(all(item["mastery_awarded"] is False for item in queue["items"]))
+        self.assertFalse(queue["external_model_call_performed"])
+
+    def test_library_learning_queue_contains_all_seed_and_ecosystem_lanes(self):
+        queue = self.bridge.library_learning_queue(division="DreamCodeLab", limit=100)
+        self.assertGreaterEqual(queue["available_count"], 569)
+        self.assertEqual(queue["returned_count"], 100)
+
+    def test_library_learning_queue_supports_masterbot_lanes(self):
+        queue = self.bridge.library_learning_queue(
+            masterbot="DreamCodeLab", query="React", limit=5
+        )
+        self.assertEqual(queue["masterbot"], "DreamCodeLab")
+        self.assertGreaterEqual(queue["returned_count"], 1)
+
+    def test_library_learning_queue_requires_exactly_one_owner(self):
+        with self.assertRaises(ValueError):
+            self.bridge.library_learning_queue(query="React")
+        with self.assertRaises(ValueError):
+            self.bridge.library_learning_queue(division="DreamCodeLab", masterbot="DreamCodeLab")
+        with self.assertRaises(ValueError):
+            self.bridge.library_learning_queue(division="DreamCodeLab", limit=101)
+
+    def test_library_gap_persistence_requires_redaction(self):
+        with self.assertRaises(PermissionError):
+            self.bridge.library_knowledge("React", persist_gap=True, query_is_redacted=False)
+        result = self.bridge.library_knowledge(
+            "React", persist_gap=True, query_is_redacted=True, gap_root=Path(self.temp.name)
+        )
+        self.assertTrue(result["gap_recorded"])
+        self.assertTrue((Path(self.temp.name) / ".dreamco/library-knowledge-gaps.jsonl").exists())
+
     def test_adapter_registration_requires_review(self):
         adapter = FakeCapabilityAdapter()
         with self.assertRaises(PermissionError):
