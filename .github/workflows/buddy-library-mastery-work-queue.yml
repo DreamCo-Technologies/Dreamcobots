@@ -1,0 +1,29 @@
+name: Buddy Library Mastery Work Queue
+on:
+  pull_request:
+    paths:
+      - "config/library_ecosystems.json"
+      - "config/buddy-library-ecosystem-adapter-coverage.json"
+      - "data/buddy-library-seed-catalog.json"
+      - "config/buddy-library-mastery-work-queue.json"
+      - "tools/validate_buddy_library_mastery_work_queue.py"
+      - "tests/test_buddy_library_mastery_work_queue.py"
+      - ".github/workflows/buddy-library-mastery-work-queue.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: buddy-library-mastery-queue-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_buddy_library_mastery_work_queue.py
+      - run: python tools/validate_buddy_library_mastery_work_queue.py
