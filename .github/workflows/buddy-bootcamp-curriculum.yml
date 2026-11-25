@@ -76,6 +76,8 @@ on:
       - "data/buddy-library-study-guides/**"
       - "tests/test_buddy_library_registry_discovery.py"
       - "tools/buddy_library_knowledge.py"
+      - "tools/create_buddy_library_guide_draft.py"
+      - "tests/test_buddy_library_guide_draft.py"
       - "tests/test_buddy_universal_library_registry.py"
       - "tests/test_freecodecamp_learning_inventory.py"
       - "tools/sync_freecodecamp_learning_inventory.py"
@@ -237,8 +239,10 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
           python tools/build_weekly_transcript_evaluation.py --output /tmp/buddy-weekly-transcript-evaluation.json
       - name: Publish first weekly transcript coverage report
         if: always()
@@ -261,6 +265,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_universal_library_registry.py' -v
           python -m unittest discover -s tests -p 'test_buddy_library_registry_discovery.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_library_guide_draft.py' -v
           python -m unittest discover -s tests -p 'test_buddy_universal_library_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_bootcamp_seed_data.py' -v
           python -m unittest discover -s tests -p 'test_dreamco_training_factory.py' -v
