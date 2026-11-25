@@ -4,8 +4,9 @@ import unittest
 from pathlib import Path
 
 from buddy.learning.dreamco_summary_source import (
-    append_progress_event, resources_for_division, select_next_for_division,
+    append_progress_event, execute_study_plan, resources_for_division, select_next_for_division,
 )
+from buddy.learning.permissioned_study_worker import StudyAuthorization
 from buddy.learning.study_resource_scheduler import Capability
 
 
@@ -18,7 +19,7 @@ class DreamCoSummarySourceTests(unittest.TestCase):
         package = {
             "asset_id": "asset-001",
             "division_ids": ["DreamAI"],
-            "source": {"url": "https://example.org/guide", "revision": "rev-1"},
+            "source": {"source_id": "example/guide", "url": "https://example.org/guide", "revision": "rev-1"},
             "rights": {
                 "study_permission": True,
                 "summary_derivative_permission": True,
@@ -86,6 +87,59 @@ class DreamCoSummarySourceTests(unittest.TestCase):
             self.progress, asset_id="asset-001", division="DreamAI",
             event_type="training_run_started", evidence_ref="run:3", organization_path=self.organization
         )
+
+
+    def test_approved_summary_executes_read_only_and_records_evidence(self):
+        plan = select_next_for_division(
+            "DreamAI", [Capability(name="AI", category="DreamAI")], self.organization
+        )
+        authorization = StudyAuthorization(
+            source_name="example/guide",
+            source_url="https://example.org/guide",
+            review_status="approved",
+            allowed_operations=frozenset({"open_official_page"}),
+            evidence_ref="rights-review-1",
+        )
+        result = execute_study_plan(
+            plan,
+            authorization,
+            lambda selected, context: {
+                "evidence_ref": "study-run:1",
+                "lesson_completed": True,
+                "lesson_evidence_ref": "lesson:1",
+            },
+            self.root / "workspace",
+            self.progress,
+            self.organization,
+        )
+        self.assertEqual(result["completion_status"], "lesson_completed_with_evidence")
+        self.assertFalse(result["model_training_performed"])
+        self.assertTrue(result["temporary_workspace_erased"])
+        events = [json.loads(line) for line in self.progress.read_text(encoding="utf-8").splitlines()]
+        self.assertEqual([x["event_type"] for x in events], ["study_started", "lesson_completed"])
+
+    def test_summary_execution_rejects_mismatched_rights_and_write_operations(self):
+        plan = select_next_for_division(
+            "DreamAI", [Capability(name="AI", category="DreamAI")], self.organization
+        )
+        mismatched = StudyAuthorization(
+            source_name="example/guide",
+            source_url="https://example.org/guide",
+            review_status="approved",
+            allowed_operations=frozenset({"open_official_page"}),
+            evidence_ref="wrong-evidence",
+        )
+        with self.assertRaises(PermissionError):
+            execute_study_plan(plan, mismatched, lambda *_: {}, self.root / "workspace", self.progress, self.organization)
+        write_access = StudyAuthorization(
+            source_name="example/guide",
+            source_url="https://example.org/guide",
+            review_status="approved",
+            allowed_operations=frozenset({"open_official_page", "download_media"}),
+            evidence_ref="rights-review-1",
+        )
+        with self.assertRaises(PermissionError):
+            execute_study_plan(plan, write_access, lambda *_: {}, self.root / "workspace", self.progress, self.organization)
 
     def test_mastery_cannot_be_self_reported(self):
         with self.assertRaises(PermissionError):
