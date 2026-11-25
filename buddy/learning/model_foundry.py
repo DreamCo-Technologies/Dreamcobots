@@ -72,6 +72,8 @@ def estimate_decoder_parameter_count(architecture: dict[str, Any]) -> int:
     per_layer = 4 * width**2 + 2 * width * feed_forward
     if bias:
         per_layer += 9 * width + feed_forward
+    else:
+        per_layer += 2 * width
     return embeddings + layers * per_layer + 2 * width
 
 
