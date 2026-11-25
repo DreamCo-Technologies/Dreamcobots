@@ -10,6 +10,8 @@ import argparse
 import json
 import os
 import subprocess
+import urllib.request
+import urllib.error
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -17,6 +19,8 @@ ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "config/production-readiness-contract.json"
 OUT = ROOT / "data/production-readiness-report.json"
 MD_OUT = ROOT / "reports/PRODUCTION_READINESS_REPORT.md"
+AREA_EVIDENCE = ROOT / "governance/production-readiness-area-evidence.json"
+AREA_EVIDENCE_SCHEMA = "dreamco.production_readiness_area_evidence.v1"
 
 def exists_any(patterns: list[str]) -> list[str]:
     found=[]
@@ -174,6 +178,115 @@ def check_runtime_contracts() -> list[dict]:
     })
     return checks
 
+
+def verify_github_check(repository: str, check_id: str, current_sha: str, token: str | None) -> bool:
+    """Require a successful Actions run/check-run on the exact current revision."""
+    if not token or not check_id.isdigit():
+        return False
+    endpoints = (
+        f"https://api.github.com/repos/{repository}/actions/runs/{check_id}",
+        f"https://api.github.com/repos/{repository}/check-runs/{check_id}",
+    )
+    for url in endpoints:
+        request = urllib.request.Request(url, headers={
+            "Accept": "application/vnd.github+json",
+            "Authorization": f"Bearer {token}",
+            "X-GitHub-Api-Version": "2022-11-28",
+        })
+        try:
+            with urllib.request.urlopen(request, timeout=20) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            if exc.code == 404:
+                continue
+            return False
+        except Exception:
+            return False
+        return (
+            payload.get("head_sha") == current_sha
+            and payload.get("status") == "completed"
+            and payload.get("conclusion") == "success"
+        )
+    return False
+
+
+def build_area_reports(
+    contract: dict,
+    evidence_manifest: dict,
+    current_sha: str,
+    repository: str,
+    token: str | None,
+    *,
+    root: Path = ROOT,
+    verify_check=verify_github_check,
+) -> list[dict]:
+    """Resolve every contract area from evidence, never from file presence alone."""
+    if evidence_manifest.get("schema") != AREA_EVIDENCE_SCHEMA:
+        raise ValueError("unsupported production-readiness area evidence schema")
+    entries = evidence_manifest.get("areas")
+    if not isinstance(entries, dict):
+        raise ValueError("production-readiness area evidence must contain an areas object")
+    reports = []
+    for area in contract.get("areas", []):
+        area_id = area["id"]
+        entry = entries.get(area_id)
+        refs = entry.get("evidence", []) if isinstance(entry, dict) else []
+        errors = []
+        verified_refs = []
+        if not isinstance(entry, dict):
+            errors.append("no evidence entry recorded")
+        elif entry.get("status") != "VERIFIED":
+            errors.append("area evidence status is not VERIFIED")
+        if not isinstance(refs, list) or not refs:
+            errors.append("no evidence references recorded")
+        else:
+            for ref in refs:
+                if not isinstance(ref, dict) or not all(ref.get(key) for key in ("path", "sha", "check_id")):
+                    errors.append("evidence reference is missing path, sha, or check_id")
+                    continue
+                relative = Path(str(ref["path"]))
+                if relative.is_absolute() or ".." in relative.parts:
+                    errors.append("evidence path is unsafe")
+                    continue
+                artifact = (root / relative).resolve()
+                try:
+                    artifact.relative_to(root.resolve())
+                except ValueError:
+                    errors.append("evidence path escapes repository root")
+                    continue
+                if not artifact.is_file():
+                    errors.append(f"evidence artifact does not exist: {relative.as_posix()}")
+                    continue
+                if ref["sha"] != current_sha:
+                    errors.append("evidence SHA does not match current revision")
+                    continue
+                check_id = str(ref["check_id"])
+                if not check_id.isdigit():
+                    errors.append("check_id must be a GitHub Actions run or check-run ID")
+                    continue
+                if not verify_check(repository, check_id, current_sha, token):
+                    errors.append("linked GitHub check is not successful on the current revision")
+                    continue
+                verified_refs.append(ref)
+        verified = (
+            isinstance(entry, dict)
+            and entry.get("status") == "VERIFIED"
+            and not errors
+            and len(verified_refs) == len(refs)
+        )
+        status = "verified" if verified else ("partial" if isinstance(entry, dict) else "unknown")
+        reports.append({
+            "id": area_id,
+            "label": area.get("label", area_id),
+            "status": status,
+            "evidence": verified_refs if verified else [],
+            "evidence_errors": errors,
+            "revision": current_sha,
+            "required_evidence": area.get("required", []),
+        })
+    return reports
+
+
 def summarize_readiness(areas: list[dict], runtime_checks: list[dict]) -> dict:
     """Classify certification from evidence states, never from file presence alone."""
     critical_ids = {"buddy_orchestration", "benchmark_framework", "security", "deployment", "observability"}
@@ -272,7 +385,13 @@ def main() -> int:
     parser.add_argument("--certification", action="store_true", help="Fail unless every area is evidence-verified and all runtime/external configuration gates pass.")
     args = parser.parse_args()
     contract=json.loads(CONTRACT.read_text())
-    reports=[]
+    current_sha = git_sha()
+    repository = os.getenv("GITHUB_REPOSITORY", "DreamCo-Technologies/Dreamcobots")
+    token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
+    evidence_manifest = json.loads(AREA_EVIDENCE.read_text()) if AREA_EVIDENCE.exists() else {
+        "schema": AREA_EVIDENCE_SCHEMA, "areas": {}
+    }
+    reports = build_area_reports(contract, evidence_manifest, current_sha, repository, token)
     common={
         "buddy_orchestration":["buddy_os/**","tools/*buddy*","tests/*buddy*"],
         "benchmark_framework":["docs/*BENCHMARK*","tools/*benchmark*","tests/*benchmark*"],
@@ -294,13 +413,11 @@ def main() -> int:
         "observability":["*observability*","server/*observability*","tests/*observability*","*telemetry*","*tracing*","tools/*observ*"],
         "cost_accounting":["*cost*","*billing*","*usage*","tools/*cost*","tools/*usage*"]
     }
-    for area in contract["areas"]:
-        found=exists_any(common.get(area["id"],[]))
-        status="partial" if found else "unknown"
-        reports.append({"id":area["id"],"label":area["label"],"status":status,"repository_evidence":found,"required_evidence":area["required"]})
+    for report in reports:
+        report["repository_evidence"] = exists_any(common.get(report["id"], []))
     runtime_checks = check_runtime_contracts()
     readiness = summarize_readiness(reports, runtime_checks)
-    report={"schema_version":3,"generated_at":datetime.now(timezone.utc).isoformat(),"commit":git_sha(),"policy":"evidence-first","areas":reports,"runtime_checks":runtime_checks,**readiness,"note":"Repository file presence is inventory only. Production certification requires every area to be evidence-verified, runtime checks to pass, and external production configuration to be confirmed. This report is not a claim of production certification unless production_ready is true."}
+    report={"schema_version":4,"generated_at":datetime.now(timezone.utc).isoformat(),"commit":current_sha,"policy":"evidence-first","areas":reports,"runtime_checks":runtime_checks,**readiness,"note":"Repository file presence is inventory only. Production certification requires every area to be evidence-verified, runtime checks to pass, and external production configuration to be confirmed. This report is not a claim of production certification unless production_ready is true."}
     OUT.parent.mkdir(parents=True,exist_ok=True)
     OUT.write_text(json.dumps(report,indent=2)+"\n")
     write_markdown(report)
