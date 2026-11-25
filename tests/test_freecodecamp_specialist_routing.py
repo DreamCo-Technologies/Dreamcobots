@@ -4,13 +4,13 @@ import json
 import unittest
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-
 from buddy.learning.course_track_registry import (
     load_course_lessons,
     resources_for_division,
     resources_for_masterbot,
 )
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
@@ -56,7 +56,6 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
         self.assertTrue(all(row.division_targets for row in typescript))
         self.assertTrue(all("DreamCodeLab" in row.division_targets for row in typescript))
 
-
     def test_agentic_ai_machine_learning_and_mlops_courses_have_demonstrable_paths(self):
         agentic = self.by_video["Zy7EXDONlTY"]
         ml = self.by_video["i_LwzRVP7bg"]
@@ -75,7 +74,6 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
         self.assertIn(mlops.title, infra)
         self.assertIn(agentic.title, agents)
 
-
     def test_subject_category_routing_covers_courses_without_keywords_in_the_title(self):
         mcp_security = self.by_video["gYXLRMycVMk"]
         computer_vision = self.by_video["Q5U-b6gRTaY"]
@@ -85,7 +83,6 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
         self.assertIn("DreamAIInfra", computer_vision.division_targets)
         self.assertGreaterEqual(len(mcp_security.implementation_steps), 8)
         self.assertGreaterEqual(len(computer_vision.implementation_steps), 8)
-
 
     def test_every_cataloged_machine_learning_agentic_and_devops_video_is_routed(self):
         catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
