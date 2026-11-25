@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from functools import lru_cache
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Any
@@ -87,6 +88,25 @@ def _rows(track: dict, data: dict) -> list[dict]:
              "assessment": "Complete a task-specific benchmark, rights review and independent holdout."}
             for row in data.get("task_families", [])
         ]
+    if parser == "freecodecamp_video_catalog":
+        inventory = data.get("inventory") or {}
+        videos = data.get("videos") or []
+        if int(data.get("video_count", -1)) != len(videos):
+            raise ValueError("freeCodeCamp video catalog count does not match its video rows")
+        if int(inventory.get("observed_entry_count", -1)) != len(videos):
+            raise ValueError("freeCodeCamp observed inventory count does not match video rows")
+        return [
+            {
+                "id": f"fcc-video-{row['video_id']}",
+                "title": row["title"],
+                "objective": row.get("description") or "Study the video only after an authorized transcript or equivalent source is available; title and metadata are not lesson content.",
+                "practice": "Locate item-level study, derivative-summary and evaluation permissions; if authorized, create an original timestamped guide with exercises and answer key. Otherwise remain metadata-only.",
+                "assessment": "Do not mark studied or mastered from a title, video URL or metadata row. Require a rights-cleared source, detailed guide, original exercise and independent assessment.",
+                "benchmark": "FreeCodeCamp detailed video study-guide acceptance suite.",
+                "source_url": row["url"],
+            }
+            for row in videos
+        ]
     if parser == "huggingface_learning_map":
         courses = [
             {"id": row["id"], "title": row["title"], "objective": row["topics"],
@@ -126,6 +146,7 @@ def _rows(track: dict, data: dict) -> list[dict]:
     raise ValueError(f"unsupported course track parser: {parser}")
 
 
+@lru_cache(maxsize=4)
 def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
     registry = _read(root / "config/buddy-course-track-registry.json")
     if registry.get("schema") != "dreamco.buddy_course_track_registry.v1":
@@ -162,7 +183,7 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 practice=str(row.get("practice", "")).strip(),
                 assessment=str(row.get("assessment", "")).strip(),
                 benchmark=str(row.get("benchmark", "independent task and regression suite")).strip(),
-                source_url=track["source_url"],
+                source_url=str(row.get("source_url") or track["source_url"]),
                 guide_path=track["guide"],
                 rights_mode=track["rights"],
                 delivery=track["delivery"],
