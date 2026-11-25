@@ -19,12 +19,12 @@ const index = JSON.parse(readFileSync("config/generated/dreamco_search_index.jso
 const fleet = JSON.parse(readFileSync("config/generated/bots.catalog.json", "utf8"));
 
 test("DreamSearch indexes the complete routed fleet and reference catalogs", () => {
-  assert.equal(index.summary.indexed_bot_profiles, 1101);
+  assert.equal(index.summary.indexed_bot_profiles, 1120);
   assert.equal(index.summary.canonical_indexed_bot_profiles, 1051);
-  assert.equal(index.summary.supplemental_indexed_bot_profiles, 50);
-  assert.equal(index.summary.searchable_capability_terms, 8460);
+  assert.equal(index.summary.supplemental_indexed_bot_profiles, 69);
+  assert.equal(index.summary.searchable_capability_terms, 8555);
   assert.equal(index.summary.canonical_searchable_capability_terms, 8408);
-  assert.equal(index.summary.supplemental_searchable_capability_terms, 52);
+  assert.equal(index.summary.supplemental_searchable_capability_terms, 147);
   assert.equal(index.summary.indexed_divisions, 55);
   assert.equal(index.summary.canonical_indexed_divisions, 45);
   assert.equal(index.summary.supplemental_indexed_divisions, 10);
@@ -35,7 +35,7 @@ test("DreamSearch indexes the complete routed fleet and reference catalogs", () 
   assert.equal(index.summary.web_results_claimed, 0);
 
   const indexedBots = new Set(index.documents.filter((item) => item.type === "bot").map((item) => item.id.slice(4)));
-  assert.equal(indexedBots.size, 1101);
+  assert.equal(indexedBots.size, 1120);
   for (const bot of [...fleet.bots, ...fleet.supplemental_bots]) {
     const record = index.documents.find((item) => item.id === `bot:${bot.identity.slug}`);
     assert.ok(record, `missing search record for ${bot.identity.slug}`);
@@ -57,6 +57,9 @@ test("supplemental division documents are usable search results with source evid
     assert.equal(record.url, `bots.html?q=${encodeURIComponent(division.name)}`);
     assert.ok(rankDreamSearchDocuments(index.documents, division.name, searchConfig, { type: "division" }).some((result) => result.document.id === record.id));
   }
+  const dream3dPortfolioBots = fleet.supplemental_bots.filter((bot: any) => bot.evidence.catalog_source === "App_bots/Dream3D.json");
+  assert.equal(dream3dPortfolioBots.length, 19);
+  assert.ok(!fleet.supplemental_divisions.some((division: any) => division.name === "Dream3D"));
   for (const bot of fleet.supplemental_bots) {
     const record = index.documents.find((item) => item.id === `bot:${bot.identity.slug}`)!;
     assert.equal(record.status, "routed_shared_sandbox_planning");

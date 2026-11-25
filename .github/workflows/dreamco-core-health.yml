@@ -87,6 +87,8 @@ jobs:
         run: |
           npx tsx tools/generate_bot_fleet_catalog.ts
           npm run buddy:fleet-quality
+          # Regenerate deterministic E2E evidence before the strict committed-artifact check.
+          node --import tsx tools/run_bot_fleet_e2e.ts
           npm run buddy:fleet:e2e
 
       - name: Governed regression tests
@@ -106,5 +108,8 @@ jobs:
           path: |
             reports/**
             config/generated/**
+            website/data/bot-fleet-e2e.json
+            website/data/buddy-capability-certifications.js
+            website/data/bot-capability-tests/**
           if-no-files-found: ignore
           retention-days: 14

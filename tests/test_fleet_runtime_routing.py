@@ -112,7 +112,7 @@ class BuddyFleetRoutingTests(unittest.TestCase):
 
     def test_supplemental_executor_result_does_not_promote_proposed_owner(self):
         executor = FleetExecutor(collection=self.collection, customizations={})
-        result = executor.run("affiliate-link-auditor", {"objective": "Plan an offline affiliate-link audit"})
+        result = executor.run("offer-researcher", {"objective": "Plan an offline affiliate-link audit"})
         route = result["routing"]
         self.assertFalse(route["route_valid"])
         self.assertIsNone(route["primary_masterbot_id"])

@@ -28,14 +28,16 @@ def norm(value: str) -> str:
 def slug_norm(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", str(value).casefold()).strip("-")
 
-def domain_names(source: str) -> list[str]:
+def domain_names(source: str, canonical_domain_keys: set[str] | None = None) -> list[str]:
     pattern = re.compile(r"^  ([A-Za-z][A-Za-z0-9]+): \{\n([\s\S]*?)^  \},?$", re.MULTILINE)
-    names = [m.group(1) for m in pattern.finditer(source)
-             if "purpose:" in m.group(2) and "focusAreas:" in m.group(2)]
+    parsed = [m.group(1) for m in pattern.finditer(source)
+              if "purpose:" in m.group(2) and "focusAreas:" in m.group(2)]
+    names = [name for name in parsed if canonical_domain_keys is None or norm(name) in canonical_domain_keys]
     if len(names) != 45 or len({norm(x) for x in names}) != 45:
         raise ValueError(f"Expected exactly 45 unique canonical domains, found {len(names)}")
+    if canonical_domain_keys is not None and {norm(name) for name in names} != canonical_domain_keys:
+        raise ValueError("Canonical 45-domain crosswalk and production-contract source do not match")
     return names
-
 def load_source_bots() -> dict[str, list[dict[str, Any]]]:
     result: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for path in sorted((ROOT / "App_bots").glob("*.json")):
@@ -308,6 +310,8 @@ def build_money_os_catalog(registry: dict[str, Any], lane_index: dict[str, dict[
             raise ValueError(f"Money OS source group is not configured: {source_group}")
         monetization = lane.get("monetization", ["subscription"])
         related_slug = MONEY_OS_PROFILE_ALIASES.get(slug)
+        # Ownership proposals must come from the registry; never infer an owner.
+        proposed_owner = row.get("proposed_owner_division")
         catalog.append({
             "slug": slug,
             "name": raw_name,
@@ -353,16 +357,17 @@ def build() -> dict[str, Any]:
     manifests = json.loads(MANIFESTS.read_text(encoding="utf-8"))
     if manifests.get("summary", {}).get("bots") != len(manifests.get("bots", [])):
         raise ValueError("Bot manifest summary count does not match its profile list")
-    domains = domain_names(DOMAIN_SOURCE.read_text(encoding="utf-8"))
+    crosswalk = json.loads(CROSSWALK.read_text(encoding="utf-8"))
+    if len(crosswalk.get("domains", [])) != 45:
+        raise ValueError("Expected 45 domain crosswalk rows")
+    canonical_domain_keys = {norm(row["domain_name"]) for row in crosswalk.get("domains", [])}
+    domains = domain_names(DOMAIN_SOURCE.read_text(encoding="utf-8"), canonical_domain_keys)
     domain_by_key = {norm(x): x for x in domains}
     master = json.loads(MASTERBOTS.read_text(encoding="utf-8"))
     if master.get("canonical_count") != 65 or len(master.get("divisions", [])) != 65:
         raise ValueError("Expected the 65-entry MasterBot registry")
-    crosswalk = json.loads(CROSSWALK.read_text(encoding="utf-8"))
     master_by_domain = {norm(row["domain_name"]): row.get("masterbot_id")
                         for row in crosswalk.get("domains", [])}
-    if len(crosswalk.get("domains", [])) != 45:
-        raise ValueError("Expected 45 domain crosswalk rows")
     charters = json.loads(CHARTERS.read_text(encoding="utf-8"))
     portfolio_by_name = {row["portfolio"]: row for row in charters.get("portfolios", [])}
     if len(portfolio_by_name) != 11:

@@ -74,3 +74,14 @@ test("never calls catalog API candidates connected or profiles production ready"
     api.status === "configuration_required" && api.sandbox_required
   )));
 });
+
+test("Dream3D remains a 19-profile supplemental portfolio, not a domain division", () => {
+  const catalog = buildFleetCatalog();
+  assert.equal(catalog.divisions.length, 45);
+  assert.equal(catalog.supplemental_divisions.length, 10);
+  assert.equal(catalog.bots.length, 1051);
+  assert.equal(catalog.supplemental_bots.length, 69);
+  const dream3d = catalog.supplemental_bots.filter((bot) => bot.identity.division === "Dream3D");
+  assert.equal(dream3d.length, 19);
+  assert.ok(!catalog.supplemental_divisions.some((division) => division.name === "Dream3D"));
+});

@@ -43,7 +43,8 @@
     "Missing slug/category/capabilities/status metadata is a release blocker.",
     "High-confidence placement move candidates are reviewed, not auto-moved.",
     "Specialist GitHub agents are accounted separately from the fixed 1,051 profile fleet until formally onboarded through the fleet runtime/catalog generator.",
-    "New specialist agents must declare a primary DreamCo owner division."
+    "New specialist agents must declare a primary DreamCo owner division.",
+    "Registered specialist subportfolios remain supplemental profiles but do not inflate the supplemental domain-division count; each subportfolio count and owner must be explicitly registered."
   ],
   "outputs": [
     "config/generated/bot-accounting-placement-audit.json",
@@ -51,9 +52,9 @@
   ],
   "truth_rule": "Accounting completeness and placement scoring are separate. Canonical profiles, supplemental growth profiles, and specialist agent definitions are counted separately; none is proof of operational capability. Placement changes require canonical-owner review and regression tests.",
   "supplemental_fleet": {
-    "profiles": 50,
+    "profiles": 69,
     "divisions": 10,
-    "source": "App_bots/*.json where growth is true",
+    "source": "App_bots/*.json where growth is true; includes ten supplemental domains and explicitly registered specialist subportfolios",
     "division_profiles": {
       "DreamAffiliate": 5,
       "DreamAgency": 5,
@@ -65,6 +66,9 @@
       "DreamSaaS": 5,
       "DreamStreaming": 5,
       "DreamTravel": 5
+    },
+    "subportfolio_profiles": {
+      "Dream3D": 19
     }
   }
 }
