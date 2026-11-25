@@ -5,7 +5,8 @@ import unittest
 from pathlib import Path
 
 from buddy.trading.backtest import BacktestConfig, Bar, run_backtest, sma_crossover_signals
-from buddy.trading.demo import synthetic_bars
+from buddy.trading.demo import synthetic_bars, synthetic_momentum_universe
+from buddy.trading.momentum import calculate_momentum_score, rank_momentum_universe
 from buddy.trading.paper_broker import LIVE_TRADING_ENABLED, PaperBroker, RiskLimitError
 
 
@@ -74,6 +75,33 @@ class PaperBrokerTests(unittest.TestCase):
         self.assertIn("python -m buddy.trading.demo", lesson["buddy_demo"])
         self.assertTrue(any("python -m buddy.trading.demo" in step for step in lesson["implementation_steps"]))
         self.assertIn("paper-only", lesson["buddy_demo"].lower())
+
+
+    def test_252_bar_momentum_score_uses_exact_lookback(self):
+        prices = [100.0] + [101.0] * 252
+        self.assertAlmostEqual(calculate_momentum_score(prices, lookback=252), 0.01)
+
+    def test_momentum_universe_ranks_highest_score_first_with_stable_ties(self):
+        histories = {
+            "AAA": [100.0, 110.0],
+            "CCC": [100.0, 120.0],
+            "BBB": [100.0, 120.0],
+        }
+        ranked = rank_momentum_universe(histories, lookback=1, top_n=3)
+        self.assertEqual([row["symbol"] for row in ranked], ["BBB", "CCC", "AAA"])
+        self.assertGreater(ranked[0]["momentum_score"], ranked[-1]["momentum_score"])
+
+    def test_momentum_requires_sufficient_finite_positive_prices(self):
+        with self.assertRaisesRegex(ValueError, "at least"):
+            calculate_momentum_score([100.0, 101.0], lookback=2)
+        with self.assertRaisesRegex(ValueError, "finite and positive"):
+            calculate_momentum_score([100.0, 0.0], lookback=1)
+
+    def test_demo_uses_a_50_symbol_252_bar_synthetic_universe(self):
+        universe = synthetic_momentum_universe()
+        self.assertEqual(len(universe), 50)
+        self.assertTrue(all(len(history) == 253 for history in universe.values()))
+        self.assertEqual(len(rank_momentum_universe(universe, lookback=252, top_n=5)), 5)
 
 class BacktestTests(unittest.TestCase):
     def test_sma_signal_uses_only_prior_bars(self):
