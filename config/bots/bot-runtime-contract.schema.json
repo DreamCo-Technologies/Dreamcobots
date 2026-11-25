@@ -439,16 +439,23 @@
           "type": "string"
         },
         "primary_domain_owner": {
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "primary_masterbot_id": {
-          "type": "integer",
+          "type": [
+            "integer",
+            "null"
+          ],
           "minimum": 1,
           "maximum": 65
         },
         "division_route_status": {
           "enum": [
             "proposed_domain_masterbot_match_requires_owner_review",
+            "supplemental_domain_unassigned_pending_owner_review",
             "discovery_review_required"
           ]
         },
@@ -480,6 +487,14 @@
         },
         "shared_teammate_masterbot_route": {
           "type": "string"
+        },
+        "proposed_domain_owner": {
+          "type": "string"
+        },
+        "proposed_primary_masterbot_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 45
         }
       }
     },
@@ -591,16 +606,23 @@
           "type": "string"
         },
         "primary_domain_owner": {
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "primary_masterbot_id": {
-          "type": "integer",
+          "type": [
+            "integer",
+            "null"
+          ],
           "minimum": 1,
           "maximum": 65
         },
         "division_route_status": {
           "enum": [
             "proposed_domain_masterbot_match_requires_owner_review",
+            "supplemental_domain_unassigned_pending_owner_review",
             "discovery_review_required"
           ]
         },
@@ -632,6 +654,14 @@
         },
         "shared_teammate_masterbot_route": {
           "type": "string"
+        },
+        "proposed_domain_owner": {
+          "type": "string"
+        },
+        "proposed_primary_masterbot_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 45
         }
       }
     }
