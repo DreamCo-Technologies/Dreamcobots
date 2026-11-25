@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 from urllib.error import URLError
+import traceback
 from tools.catalog_freecodecamp_youtube import catalog_all, classify_video, _api_get, YouTubeAPIError
 
 
@@ -13,7 +14,7 @@ class FreeCodeCampCatalogTests(unittest.TestCase):
             with self.assertRaises(YouTubeAPIError) as caught:
                 _api_get("videos", {"part": "snippet"}, secret)
         self.assertNotIn(secret, str(caught.exception))
-        self.assertNotIn(secret, repr(caught.exception.__context__))
+        self.assertNotIn(secret, "".join(traceback.format_exception(caught.exception)))
 
     def test_video_gets_multiple_subject_categories(self):
         result = classify_video("Build a Python RAG app with FastAPI", "Learn retrieval augmented generation and REST APIs")
