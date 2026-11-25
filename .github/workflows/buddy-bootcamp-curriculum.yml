@@ -8,6 +8,11 @@ on:
       - "tools/build_buddy_dataset_routes.py"
       - "tests/test_buddy_dataset_route_check.py"
       - "config/masterbot-65-registry.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "config/buddy-continuous-study-policy.json"
+      - "config/freecodecamp-source-policy.json"
+      - "tools/validate_buddy_continuous_study_policy.py"
+      - "tests/test_buddy_continuous_study_policy.py"
       - "config/huggingface-task-taxonomy.json"
       - "config/hf-capability-download-map.json"
       - "config/generated/division-huggingface-taxonomy-map.json"
@@ -48,6 +53,11 @@ on:
       - ".github/workflows/buddy-bootcamp-curriculum.yml"
       - "tools/build_buddy_bootcamp_curriculum.py"
       - "config/masterbot-65-registry.json"
+      - "config/generated/masterbot-55-domain-crosswalk.json"
+      - "config/buddy-continuous-study-policy.json"
+      - "config/freecodecamp-source-policy.json"
+      - "tools/validate_buddy_continuous_study_policy.py"
+      - "tests/test_buddy_continuous_study_policy.py"
       - "config/huggingface-task-taxonomy.json"
       - "config/hf-capability-download-map.json"
       - "config/generated/division-huggingface-taxonomy-map.json"
@@ -144,6 +154,8 @@ jobs:
         run: |
           python tools/sync_freecodecamp_catalog.py --check
           python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
+          python tools/validate_buddy_continuous_study_policy.py
+          python -m unittest discover -s tests -p 'test_buddy_continuous_study_policy.py' -v
           python tools/build_freecodecamp_division_queues.py --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
           python tools/build_freecodecamp_division_queues.py --check --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
           python -m unittest discover -s tests -p 'test_freecodecamp_division_queues.py' -v
