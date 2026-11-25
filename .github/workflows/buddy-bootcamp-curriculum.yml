@@ -20,6 +20,13 @@ on:
       - "buddy/bootcamp/buddy_bootcamp.yaml"
       - "buddy/bootcamp/sources/freecodecamp/**"
       - "tools/sync_freecodecamp_catalog.py"
+      - "config/freecodecamp-youtube-catalog-policy.json"
+      - "tools/catalog_freecodecamp_youtube.py"
+      - "tests/test_freecodecamp_youtube_catalog.py"
+      - "docs/FREECODECAMP_YOUTUBE_LEARNING_LIBRARY.md"
+      - "docs/BUDDY_HUMAN_CENTRIC_MULTIMODAL_REQUIREMENTS.md"
+      - "tests/test_buddy_bootcamp_workflow_safety.py"
+      - "tests/test_buddy_tolkien_study_track.py"
       - "tests/test_freecodecamp_catalog.py"
       - "tools/build_freecodecamp_division_queues.py"
       - "tests/test_freecodecamp_division_queues.py"
@@ -66,6 +73,13 @@ on:
       - "buddy/bootcamp/buddy_bootcamp.yaml"
       - "buddy/bootcamp/sources/freecodecamp/**"
       - "tools/sync_freecodecamp_catalog.py"
+      - "config/freecodecamp-youtube-catalog-policy.json"
+      - "tools/catalog_freecodecamp_youtube.py"
+      - "tests/test_freecodecamp_youtube_catalog.py"
+      - "docs/FREECODECAMP_YOUTUBE_LEARNING_LIBRARY.md"
+      - "docs/BUDDY_HUMAN_CENTRIC_MULTIMODAL_REQUIREMENTS.md"
+      - "tests/test_buddy_bootcamp_workflow_safety.py"
+      - "tests/test_buddy_tolkien_study_track.py"
       - "tests/test_freecodecamp_catalog.py"
       - "tools/build_freecodecamp_division_queues.py"
       - "tests/test_freecodecamp_division_queues.py"
@@ -156,6 +170,8 @@ jobs:
         run: |
           python tools/sync_freecodecamp_catalog.py --check
           python -m unittest discover -s tests -p 'test_freecodecamp_catalog.py' -v
+          python -m py_compile tools/catalog_freecodecamp_youtube.py
+          python -m unittest discover -s tests -p 'test_freecodecamp_youtube_catalog.py' -v
           python tools/validate_buddy_continuous_study_policy.py
           python -m unittest discover -s tests -p 'test_buddy_continuous_study_policy.py' -v
           python tools/build_freecodecamp_division_queues.py --out "$RUNNER_TEMP/freecodecamp-division-learning-queues.json"
@@ -186,6 +202,12 @@ jobs:
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_bootcamp_workflow_safety.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_tolkien_study_track.py' -v
+          python -m unittest discover -s tests -p 'test_dreamco_bootcamp_seed_data.py' -v
+          python -m unittest discover -s tests -p 'test_dreamco_training_factory.py' -v
+          python -m unittest discover -s tests -p 'test_dreamco_original_training_examples.py' -v
+          python -m py_compile tools/build_dreamco_bootcamp_seed_data.py tools/build_dreamco_training_factory.py tools/build_dreamco_training_examples.py
           python -m unittest tests.test_buddy_dataset_route_check -v
       - name: Upload generated study artifacts for review
         if: always()
@@ -200,3 +222,13 @@ jobs:
             config/generated/buddy-bootcamp-curriculum.json
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Publish manual-review instructions
+        if: success() && github.event_name != 'pull_request'
+        run: |
+          {
+            echo "## Buddy Bootcamp curriculum artifact ready"
+            echo "- Generated curriculum and study artifacts are available in the workflow artifact."
+            echo "- No dataset downloads, training, certification, or model promotion occurred."
+            echo "- This workflow is read-only; inspect artifacts and create a human-reviewed PR if generated output should be committed."
+          } >> "$GITHUB_STEP_SUMMARY"
