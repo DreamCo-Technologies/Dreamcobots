@@ -158,6 +158,7 @@ jobs:
           retention-days: 14
 
   propose-generated:
+    needs: validate
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 40
