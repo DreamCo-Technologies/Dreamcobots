@@ -37,6 +37,8 @@ on:
       - "config/buddy-weekly-transcript-evaluation.json"
       - "config/authorized-transcripts/manifest.json"
       - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
+      - "config/buddy-tolkien-study-track.json"
+      - "tests/test_buddy_tolkien_study_track.py"
       - "tools/build_weekly_transcript_evaluation.py"
       - "tests/test_weekly_transcript_evaluation.py"
       - ".github/workflows/buddy-weekly-transcript-evaluation.yml"
@@ -155,6 +157,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_original_lesson.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
           python -m unittest discover -s tests -p 'test_weekly_transcript_evaluation.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_tolkien_study_track.py' -v
           python tools/build_weekly_transcript_evaluation.py --output /tmp/buddy-weekly-transcript-evaluation.json
       - name: Publish first weekly transcript coverage report
         if: always()
