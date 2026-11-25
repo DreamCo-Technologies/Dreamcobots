@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import re
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -26,10 +27,15 @@ def _tokens(value: str) -> set[str]:
     }
 
 
+@lru_cache(maxsize=8)
+def _cached_course_lessons(root: Path):
+    return tuple(load_course_lessons(root))
+
+
 def _course_matches(query: str, root: Path, limit: int) -> list[dict[str, Any]]:
     query_tokens = _tokens(query)
     matches: list[dict[str, Any]] = []
-    for lesson in load_course_lessons(root):
+    for lesson in _cached_course_lessons(root.resolve()):
         searchable = " ".join((
             lesson.title, lesson.lesson_id, lesson.track_id, lesson.category,
             lesson.objective, lesson.practice, lesson.assessment, lesson.benchmark,
@@ -70,6 +76,8 @@ def route_buddy_learning_query(
     """
     if not isinstance(query, str) or not query.strip():
         raise ValueError("query must be a non-empty string")
+    if len(query) > 1000:
+        raise ValueError("query must be at most 1000 characters")
     if limit < 1 or limit > 25:
         raise ValueError("limit must be between 1 and 25")
 
