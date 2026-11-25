@@ -14,6 +14,7 @@ on:
       - 'config/bots/bot-manifests.generated.json'
       - 'App_bots/**'
       - 'tests/test_division_superbot_manifests.py'
+      - '.github/workflows/superbot-migration-ledger.yml'
   push:
     branches: [main, 'codex/superbot-consolidation']
     paths:
@@ -29,7 +30,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   compile:
@@ -68,20 +68,19 @@ jobs:
             config/generated/legacy-bot-recovery-manifest.json
             reports/LEGACY_BOT_RECOVERY.md
             config/divisions/
-      - name: Open generated Division Superbot manifest review PR
+      - name: Update generated Division Superbot review branch
         if: github.ref == 'refs/heads/main'
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          branch: automation/division-superbot-manifests
-          delete-branch: false
-          add-paths: |
-            config/divisions/**
-          commit-message: "chore: refresh source-backed Division Superbot manifests"
-          title: "chore: refresh source-backed Division Superbot manifests"
-          body: |
-            Generated from canonical bot profiles, owner-routing metadata, and repository inventory.
-            Canonical capabilities and proposed-owner candidates are kept separate.
-            Tools/connectors/benchmarks are not marked connected, tested, or measured without evidence.
-            Review all provenance and gap records before merging.
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main' '+refs/heads/automation/division-superbot-manifests:refs/remotes/origin/automation/division-superbot-manifests'
+          git checkout -B automation/division-superbot-manifests origin/main
+          git add config/divisions/
+          if git diff --cached --quiet; then
+            echo "Division Superbot manifests are already current." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "chore: refresh source-backed Division Superbot manifests"
+          git push --force-with-lease origin automation/division-superbot-manifests
+          echo "Generated manifests pushed to [the review branch](https://github.com/DreamCo-Technologies/Dreamcobots/tree/automation/division-superbot-manifests)." >> "$GITHUB_STEP_SUMMARY"
+          echo "The repository does not allow GITHUB_TOKEN to create pull requests, so the review PR must be opened manually." >> "$GITHUB_STEP_SUMMARY"
