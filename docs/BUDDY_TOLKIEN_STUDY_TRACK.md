@@ -89,3 +89,9 @@ Buddy may mark a unit mastered only after completing its original assignment, pa
 - Resource ingestion/transcripts: not performed.
 - Buddy lesson evaluations: not run.
 - Model weights trained on Tolkien material: none; not authorized.
+
+## Division and scheduler integration
+
+The existing eight foundational Tolkien curriculum areas and twelve advanced units are registered in `config/buddy-course-track-registry.json` and exposed through `buddy.learning.course_track_registry`. The study path is available as a shared elective to all 55 canonical domains and 65 MasterBot lanes; it is not a mandatory specialization for unrelated work. The 55-domain and 65-lane distinction is preserved, and unresolved specialist ownership remains review-required.
+
+The scheduler creates queued lesson plans only. It does not mark Buddy as having studied a unit. Completion still requires an original artifact, citations, item-level rights review, rubric result, independent unseen assessment and reviewer evidence. The exact additional Tolkien course slot remains pending a specific course URL; no unrelated course has been substituted.
