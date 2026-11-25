@@ -15,6 +15,9 @@ on:
       - 'App_bots/**'
       - 'tests/test_division_superbot_manifests.py'
       - '.github/workflows/superbot-migration-ledger.yml'
+      - 'shared/division-production-contract.ts'
+      - 'config/generated/division-model-manifest.json'
+      - 'config/division-model-training-policy.json'
   push:
     branches: [main, 'codex/superbot-consolidation']
     paths:
@@ -73,8 +76,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch origin '+refs/heads/main:refs/remotes/origin/main' '+refs/heads/automation/division-superbot-manifests:refs/remotes/origin/automation/division-superbot-manifests'
-          git checkout -B automation/division-superbot-manifests origin/main
+          git checkout -B automation/division-superbot-manifests
           git add config/divisions/
           if git diff --cached --quiet; then
             echo "Division Superbot manifests are already current." >> "$GITHUB_STEP_SUMMARY"
