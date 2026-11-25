@@ -11,7 +11,7 @@ from buddy.learning.universal_library_registry import (
     search_internal_library_knowledge,
     validate_library_guide_document,
 )
-from buddy.learning.course_track_registry import load_course_lessons
+from buddy.learning.course_track_registry import _rows, load_course_lessons
 
 
 class UniversalLibraryRegistryTests(unittest.TestCase):
@@ -122,6 +122,13 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         report = library_coverage_report(root=root)
         self.assertGreaterEqual(report["review_required_guide_count"], 1)
         self.assertFalse(report["worldwide_completeness_claimed"])
+
+    def test_approved_internal_guides_enter_the_shared_course_registry(self):
+        self.write_guide()
+        rows = _rows({"parser": "universal_library_curriculum"}, {}, self.root)
+        guide_rows = [row for row in rows if row["id"] == "library-guide-python-requests"]
+        self.assertEqual(len(guide_rows), 1)
+        self.assertEqual(guide_rows[0]["guide_path"], "data/buddy-library-study-guides/requests.json")
 
     def test_policy_counts_match_the_live_course_registry(self):
         root = Path(__file__).resolve().parents[1]
