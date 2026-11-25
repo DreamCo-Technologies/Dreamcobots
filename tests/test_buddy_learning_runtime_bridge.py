@@ -158,6 +158,18 @@ class RuntimeBridgeTests(unittest.TestCase):
 
 
 
+
+    def test_onet_outlines_are_discoverable_as_internal_authoring_backlog(self):
+        queue = self.bridge.bootcamp_learning_queue(
+            division="DreamCodeLab", query="worker requirements", limit=20
+        )
+        matches = [item for item in queue["items"] if item["track_id"] == "onet"]
+        self.assertTrue(matches)
+        self.assertTrue(all(item["completion_status"] == "authoring_backlog" for item in matches))
+        self.assertTrue(all(item["study_allowed"] is False for item in matches))
+        self.assertTrue(all(item["authoring_required"] is True for item in matches))
+        self.assertTrue(all(item["mastery_awarded"] is False for item in matches))
+
     def test_freecodecamp_video_metadata_is_not_presented_as_study_content(self):
         queue = self.bridge.bootcamp_learning_queue(
             division="DreamCodeLab", query="fcc-video", limit=100
