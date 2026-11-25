@@ -16,6 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def slug(value: str) -> str:
+    if "/" in value or "\\" in value or ".." in value:
+        raise ValueError("library identifier must not contain path separators or traversal")
     result = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
     if not result or len(result) > 100:
         raise ValueError("library identifier must produce a 1-100 character slug")
