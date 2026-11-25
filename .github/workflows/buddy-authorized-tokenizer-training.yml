@@ -59,7 +59,7 @@ jobs:
           PY
 
       - name: Run tokenizer regression tests
-        run: python -m unittest tests.test_buddy_byte_bpe_trainer
+        run: python -m unittest discover -s tests -p 'test_buddy_byte_bpe_trainer.py'
 
       - name: Train tokenizer from rights-cleared local corpus
         env:
@@ -93,11 +93,11 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-  authorization-required:
+  authorization-not-provided:
     if: inputs.confirm_authorized_training != true
     runs-on: ubuntu-latest
     steps:
-      - name: Refuse unconfirmed training
+      - name: Record that training was intentionally not started
         run: |
-          echo "No tokenizer training occurred. Re-run manually with confirm_authorized_training=true."
-          exit 1
+          echo "Tokenizer training was not started because explicit authorization was not provided."
+          echo "No corpus was read and no model artifact was produced." >> "$GITHUB_STEP_SUMMARY"
