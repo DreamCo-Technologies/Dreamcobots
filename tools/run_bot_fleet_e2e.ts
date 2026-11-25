@@ -8,6 +8,8 @@ const webJsonPath = resolve(process.cwd(), "website", "data", "bot-fleet-e2e.jso
 const webScriptPath = resolve(process.cwd(), "website", "data", "buddy-capability-certifications.js");
 const webShardDir = resolve(process.cwd(), "website", "data", "bot-capability-tests");
 const checkOnly = process.argv.includes("--check");
+const writeOnly = process.argv.includes("--write-only");
+if (checkOnly && writeOnly) throw new Error("Choose either --check or --write-only, not both.");
 
 const report = FleetRuntimeRegistry.fromFile().certifyAllEndToEnd();
 const webIndex = {
@@ -99,10 +101,13 @@ if (checkOnly) {
 }
 
 if (
+  !writeOnly &&
+  (
   !report.summary.repositoryControlledFlowComplete ||
   !report.summary.allDeclaredCapabilitiesTested ||
   report.summary.failed > 0 ||
   report.summary.sandboxCapabilityTestsFailed > 0
+  )
 ) {
   process.exitCode = 1;
 }
