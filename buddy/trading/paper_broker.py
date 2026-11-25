@@ -78,14 +78,14 @@ class PaperBroker:
         slippage = self.slippage_bps / 10_000.0
         execution_price = reference_price * (1 + slippage if side == "buy" else 1 - slippage)
         notional = quantity * execution_price
-        if notional > self.max_order_notional:
+        if notional > self.max_order_notional + 1e-9:
             raise RiskLimitError("order exceeds max_order_notional")
 
         current_position = self.positions.get(symbol, 0.0)
         fee = notional * self.fee_bps / 10_000.0
         if side == "buy":
             projected_position = current_position + quantity
-            if projected_position * execution_price > self.max_position_notional:
+            if projected_position * execution_price > self.max_position_notional + 1e-9:
                 raise RiskLimitError("order exceeds max_position_notional")
             total_cost = notional + fee
             if total_cost > self.cash:
@@ -96,8 +96,8 @@ class PaperBroker:
             if quantity > current_position and not self.allow_short:
                 raise RiskLimitError("short selling is disabled in this paper broker")
             projected_position = current_position - quantity
-            if abs(projected_position) * execution_price > self.max_position_notional:
-                raise RiskLimitError("order exceeds max_position_notional")
+            if projected_position < 0 and abs(projected_position) * execution_price > self.max_position_notional + 1e-9:
+                raise RiskLimitError("short position exceeds max_position_notional")
             self.cash += notional - fee
             if abs(projected_position) < 1e-12:
                 self.positions.pop(symbol, None)
