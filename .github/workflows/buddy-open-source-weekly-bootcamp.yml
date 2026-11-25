@@ -209,8 +209,9 @@ jobs:
             --huggingface-taxonomy "$RUNNER_TEMP/buddy-huggingface-taxonomy.json" \
             --bootcamp-config config/buddy-open-source-bootcamp.json \
             --freecodecamp-roadmap config/freecodecamp-complete-learning-path.json \
-            --onet "$RUNNER_TEMP/buddy-bootcamp-weekly/onet/onet-task-curricula.json" \
+            --onet-curricula "$RUNNER_TEMP/buddy-bootcamp-weekly/onet/onet-task-curricula.json" \
             --university-curriculum config/buddy-university-curriculum.json \
+            --freecodecamp-catalog "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json" \
             --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly/university"
 
       - name: Organize approved summaries into division study paths and progress ledger
