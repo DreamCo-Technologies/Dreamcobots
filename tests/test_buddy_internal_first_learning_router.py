@@ -68,6 +68,8 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
             route_buddy_learning_query(" ")
         with self.assertRaises(ValueError):
             route_buddy_learning_query("python", limit=0)
+        with self.assertRaises(ValueError):
+            route_buddy_learning_query("x" * 1001)
 
 
 if __name__ == "__main__":
