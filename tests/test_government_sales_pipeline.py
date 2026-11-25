@@ -17,6 +17,14 @@ class SalesPipelineTests(unittest.TestCase):
         result=build(tasks,{"opportunities":[good,bad]},date(2026,11,24))
         self.assertEqual(result["government_opportunities"][0]["status"],"bid_review_ready")
         self.assertEqual(result["government_opportunities"][1]["status"],"expired_or_inactive")
+    def test_invalid_due_date_never_qualifies_for_bid_review(self):
+        result=build({"occupations":[]},{"opportunities":[{"opportunity_id":"C","active":True,
+          "eligibility_verified":True,"capability_match_verified":True,"compliance_review_passed":True}]},date(2026,11,24))
+        opportunity=result["government_opportunities"][0]
+        self.assertEqual(opportunity["status"],"human_review_required")
+        self.assertIn("due_date_valid",opportunity["missing_checks"])
+        self.assertEqual(opportunity["readiness_checks"],6)
+
     def test_no_automatic_outreach_or_bid(self):
         result=build({"occupations":[]},{"opportunities":[]},date(2026,11,24))
         self.assertTrue(result["policy"]["no_auto_outreach"])
