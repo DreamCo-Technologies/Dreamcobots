@@ -58,7 +58,7 @@ def route_problem(problem: str, hub: DatasetHub | None = None, external: bool | 
         external = os.environ.get("DREAMCO_AUTO_DISCOVERY") == "1" and os.environ.get("DREAMCO_ALLOW_SOURCE_NETWORK") == "1"
     local = catalog.search(clean, limit=15)
     outside = discover(clean, limit=5) if external else {"query": clean, "results": [], "source_errors": {"network": "Not requested"}, "downloaded_files": False, "training_approved": False}
-    library_related = bool(re.search(r"\\b(library|libraries|framework|frameworks|sdk|sdks|package|packages|dependency|dependencies|module|modules|plugin|plugins|http client|api client)\\b", clean, re.IGNORECASE))
+    library_related = bool(re.search(r"\b(library|libraries|framework|frameworks|sdk|sdks|package|packages|dependency|dependencies|module|modules|plugin|plugins|http client|api client)\b", clean, re.IGNORECASE))
     library_knowledge = route_library_question(clean, external_discovery=bool(external)) if library_related else None
     routed_masterbot = int(ranked[0]["masterbot_id"]) if ranked else 62
     recorded = 0
@@ -83,7 +83,7 @@ def route_problem(problem: str, hub: DatasetHub | None = None, external: bool | 
             "verify_primary_masterbot_and_collaborators", "review_source_license_terms_and_access",
             "inspect_authorized_sample", "create_versioned_dataset_card_and_quality_report",
             "create_holdout_benchmark_fixture", "retest_unknown_problem"
-        ] + (["study_internal_library_guide"] if library_knowledge and library_knowledge.get("route") == "internal_approved_guide" else ["discover_library_sources_and_review_rights"] if library_related else [])
+        ] + (["study_internal_library_guide"] if library_knowledge and library_knowledge.get("route") == "internal_approved_guide" else ["discover_library_sources_and_review_rights"] if library_related else []),
         "claims": {"problem_solved": False, "datasets_downloaded": False, "weights_trained": False, "mastery_awarded": False,
                    "library_guide_mastery_awarded": False}
     }
