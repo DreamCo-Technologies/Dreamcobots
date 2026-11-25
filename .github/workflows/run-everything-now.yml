@@ -28,6 +28,8 @@ jobs:
         run: |
           npm ci
           python3 -m pip install --disable-pip-version-check openpyxl
+      - name: Validate Run Everything mode dependency plans
+        run: python3 -m unittest discover -s tests -p 'test_run_everything_now.py' -v
       - name: Refresh generated verification contracts
         run: |
           python3 tools/generate_repository_test_registry.py
