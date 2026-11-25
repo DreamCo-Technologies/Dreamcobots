@@ -148,6 +148,8 @@ def load_approved_guides(root: Path = ROOT) -> list[LibraryGuide]:
     seen: set[str] = set()
     for path in _guide_files(root):
         data = _read_json(path)
+        if not isinstance(data, dict):
+            raise ValueError(f"library guide must be a JSON object: {path}")
         library = data.get("library") if isinstance(data.get("library"), dict) else {}
         canonical_id = str(library.get("canonical_id", "")).strip()
         name = str(library.get("name", "")).strip()
