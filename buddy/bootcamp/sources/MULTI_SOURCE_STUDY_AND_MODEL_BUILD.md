@@ -87,7 +87,7 @@ A 45M model is a useful compact research model, not a frontier GPT-5 system. Rea
 
 ### One shared engine, 65 division targets
 
-Keep one tested training codebase and architecture generator. Generate 65 division-specific configurations, datasets, evaluation suites and model cards from the canonical 65-division registry. Do not silently share training data across divisions: each corpus item must be rights-cleared and routed under its approved scope. If compute is constrained, first train and validate one representative pilot; scale to the remaining divisions only after measured cost, throughput and quality justify it. Division adapters may be compared with independent full models, but do not claim they are equivalent.
+Keep one tested training codebase and architecture generator. Generate 55 domain-division configurations, datasets, evaluation suites and model cards from the canonical 55-domain registry, then map them to the 65-MasterBot fleet without confusing shared-platform MasterBots with domain divisions. Do not silently share training data across divisions: each corpus item must be rights-cleared and routed under its approved scope. If compute is constrained, first train and validate one representative pilot; scale to the remaining divisions only after measured cost, throughput and quality justify it. Division adapters may be compared with independent full models, but do not claim they are equivalent.
 
 ## Original Buddy Bootcamp course factory
 
@@ -143,3 +143,12 @@ For this explicit no-bias architecture, the count is:
 That yields **45,038,208 trainable parameters** per blueprint, about 45.038M. The generator validates all 65 division IDs and uploads a JSON blueprint artifact. This is an architecture calculation—not a trained model, not a 45M weight file, and not evidence of GPT-5-level capability. The output intentionally leaves tokenizer/weight hashes and authorized dataset manifests empty and sets training approval false.
 
 The separate Ollama and blueprint workflows validate the adapter contract and exact parameter arithmetic. They do not incur GPU charges or start a training run.
+
+
+## User-designated summary library integration
+
+Every approved source guide is converted into the `dreamco.buddy_learning_package.v1` format by `tools/organize_buddy_learning_assets.py`. The package retains the original source revision, rights evidence and attribution, extracts the best knowledge, and includes a sequenced study path, examples, exercises, answer key, knowledge checks, capstone and spaced review. The user is recorded as the designated owner of original DreamCo-authored instructional expression, subject to applicable law, contributor agreements and upstream license terms; third-party materials remain owned by their respective rightsholders.
+
+The adapter `buddy.learning.dreamco_summary_source` routes eligible packages into the existing `buddy.learning.study_resource_scheduler`. It validates canonical division and asset IDs, source revisions and rights before returning a study plan. Progress events are append-only and evidence-linked; model-training events additionally require the package's explicit asset-level training permission. A package is queued, not studied, until Buddy completes the learning activity and evidence is recorded. Mastery requires independent assessment and capstone evidence.
+
+The current source rights manifest and user-data manifest are empty. Therefore the pipeline correctly produces an empty or partial approved-guide library until sources and user data are individually authorized and guides are completed and reviewed. This is not a claim that 1,000 summaries, every Hugging Face artifact, or all transcripts already exist.
