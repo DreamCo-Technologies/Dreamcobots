@@ -114,7 +114,8 @@ def validate_library_guide_document(data: dict[str, Any]) -> list[str]:
             errors.append("approved guide requires evaluation permission")
         if not str(rights.get("evidence_reference", "")).strip():
             errors.append("approved guide requires a rights evidence reference")
-        if any(not str(row.get("license_or_terms_note", "")).strip() for row in sources if isinstance(row, dict)):
+        rights_sources = sources if isinstance(sources, list) else []
+        if any(not str(row.get("license_or_terms_note", "")).strip() for row in rights_sources if isinstance(row, dict)):
             errors.append("approved guide requires source-level license/terms notes")
     return errors
 
