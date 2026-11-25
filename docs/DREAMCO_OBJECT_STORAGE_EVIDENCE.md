@@ -35,3 +35,23 @@ No bucket credentials, endpoints, or live-service claims are committed to this r
 ## Operational authorization
 
 Do not attach the live-canary opt-in to five-minute planners, scheduled fleet workflows, pull-request CI, or general-purpose Buddy tasks. A live canary must be a separately approved, bounded operation against owner-selected existing buckets. Keep the canary prefix isolated from dataset prefixes, record the approving operator and run ID in the evidence store, and verify that lifecycle retention will expire generated objects. The adapter's fake-client tests must remain the default CI path.
+
+## Rights-gated dataset persistence
+
+The storage adapter now has an opt-in path for persisting a dataset already
+registered by DatasetHub.register. It accepts only a returned registration
+card whose training approval, verified rights, training data plane, owner
+approval reference, split hashes, content hash, and quality/PII checks are
+present and consistent. Evaluation-only holdouts are rejected.
+
+Uploads require DREAMCO_ALLOW_DATASET_OBJECT_UPLOAD=1, a separate upload
+approval reference, a bucket with versioning/encryption/public-access blocking,
+and a source file whose SHA-256 matches the registered dataset card. Objects
+are placed under a fixed MasterBot-specific prefix and read back by object
+version to verify the content hash. Credentials are never included in
+evidence.
+
+This records persistent storage only. It does not start training, promote a
+model, or imply that a model has learned from the dataset. The upload approval
+reference is an audit reference; the upstream operator workflow remains
+responsible for authenticating the approver and validating that authorization.
