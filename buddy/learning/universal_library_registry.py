@@ -317,8 +317,11 @@ def record_library_knowledge_gap(
     reason: str = "no_approved_internal_guide_match",
     root: Path = ROOT,
     requested_by: str = "buddy",
+    query_is_redacted: bool = False,
 ) -> dict[str, Any]:
-    """Append a gap event. This does not initiate network access or external routing."""
+    """Append a redacted gap event. This does not initiate network access or external routing."""
+    if not query_is_redacted:
+        raise PermissionError("redact the query before persisting a knowledge gap")
     if not isinstance(query, str) or not query.strip():
         raise ValueError("query must be a non-empty string")
     if not isinstance(reason, str) or not reason.strip():
