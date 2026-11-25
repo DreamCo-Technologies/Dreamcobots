@@ -1,7 +1,7 @@
 # Buddy Resource Map
 
 Source of truth: [`config/buddy/resource-registry.json`](../config/buddy/resource-registry.json) (schema `dreamco.buddy.resource_registry.v1`).
-Scanned on 2026-10-05 with read-only `gh api` calls, a repo grep and the box-local Grok teammate roster.
+Scanned on 2026-11-25 with read-only `gh api` calls, a repo grep and the box-local Grok teammate roster.
 
 > Listing a resource is not a live integration. 'connected' means wired in this repository or the GitHub org, with evidence named in wired_into. Secrets are recorded by name and presence only, never by value. Nothing here sets production_ready, claimable or mastered.
 
