@@ -76,7 +76,7 @@ def route_library_question(
     if persist_gap:
         if not query_is_redacted:
             raise PermissionError("redact the query before persisting a knowledge gap")
-        gap = record_library_knowledge_gap(query, root=gap_root or root, requested_by=requested_by)
+        gap = record_library_knowledge_gap(query, root=gap_root or root, requested_by=requested_by, query_is_redacted=True)
 
     registry_results = []
     provider_errors = []
