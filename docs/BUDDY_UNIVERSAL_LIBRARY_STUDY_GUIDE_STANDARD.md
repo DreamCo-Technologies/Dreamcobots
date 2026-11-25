@@ -174,3 +174,8 @@ Approved guides must include `latest_version_checked_at`. The internal retrieval
 
 
 When a query has no approved guide, internal search also checks the 531-entry seed catalog and may return candidate names/categories. These are explicitly labeled `seed_candidate_unverified`, never as guides or answers. Buddy can then open a gap and use the permissioned metadata discovery workflow to find official sources.
+
+
+## Ecosystem adapter coverage
+
+`config/buddy-library-ecosystem-adapter-coverage.json` records the actual state of all 38 ecosystem lanes. At this stage, eight ecosystem lanes have query or exact-lookup adapters (npm, crates.io, NuGet, RubyGems, Packagist, exact-name PyPI, and Hugging Face model/dataset metadata, with npm also used for Solidity SDK discovery). Thirty lanes remain manual first-party catalog review. The coverage report exposes these counts rather than implying all registries are automated. Each manual lane remains a scheduled discovery task until an official, terms-reviewed adapter is implemented.
