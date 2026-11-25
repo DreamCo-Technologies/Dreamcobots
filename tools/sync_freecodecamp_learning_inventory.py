@@ -10,7 +10,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-from buddy.learning.course_track_registry import load_course_lessons
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = Path("buddy/bootcamp/sources/freecodecamp/catalog.json")
@@ -60,6 +59,7 @@ def build_payloads(root: Path = ROOT) -> tuple[dict, dict]:
 
     policy = read_json(root / POLICY)
     registry = read_json(root / TRACKS)
+    from buddy.learning.course_track_registry import load_course_lessons
     lesson_count = len(load_course_lessons(root))
     policy.setdefault("study_assets", {})
     policy["study_assets"].update({
