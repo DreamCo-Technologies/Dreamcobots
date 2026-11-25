@@ -82,6 +82,13 @@ class RuntimeBridgeTests(unittest.TestCase):
         self.assertFalse(result["external_discovery_performed"])
         self.assertFalse(result["external_model_call_performed"])
 
+    def test_library_coverage_reports_guides_and_discovery_backlog_separately(self):
+        report = self.bridge.library_coverage()
+        self.assertEqual(report["seed_candidate_count"], 531)
+        self.assertEqual(report["ecosystem_count"], 38)
+        self.assertGreaterEqual(report["review_required_guide_count"], 1)
+        self.assertFalse(report["worldwide_completeness_claimed"])
+
     def test_library_learning_queue_serves_internal_curriculum_without_mastery_claims(self):
         queue = self.bridge.library_learning_queue(
             division="DreamCodeLab", query="React", limit=10
