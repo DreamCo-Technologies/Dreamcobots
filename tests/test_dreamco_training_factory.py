@@ -1,6 +1,8 @@
 import json
 import unittest
 import sys
+import os
+import subprocess
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
@@ -58,6 +60,22 @@ class DreamCoTrainingFactoryTests(unittest.TestCase):
             self.assertEqual(result["coverage"]["masterbots"], 65)
             self.assertFalse(result["truth_boundary"]["weights_trained"])
             self.assertTrue(output.read_bytes().endswith(bytes([10])))
+
+    def test_cli_imports_from_outside_repository_working_directory(self):
+        root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "factory-plan.json"
+            env = os.environ.copy()
+            env.pop("PYTHONPATH", None)
+            completed = subprocess.run(
+                [sys.executable, str(root / "tools/build_dreamco_training_factory.py"),
+                 "--out", str(output)],
+                cwd=temp, env=env, capture_output=True, text=True, timeout=60,
+            )
+            self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
+            plan = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(plan["coverage"]["masterbots"], 65)
+            self.assertEqual(plan["coverage"]["division_task_assignments"], 2405)
 
     def test_uses_governed_nine_family_source_registry(self):
         plan = build_factory_plan(self.configs)
