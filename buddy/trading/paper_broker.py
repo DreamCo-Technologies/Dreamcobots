@@ -41,8 +41,8 @@ class PaperBroker:
     ) -> None:
         if initial_cash <= 0:
             raise ValueError("initial_cash must be positive")
-        if fee_bps < 0 or slippage_bps < 0:
-            raise ValueError("fees and slippage cannot be negative")
+        if fee_bps < 0 or not 0 <= slippage_bps < 10_000:
+            raise ValueError("fees must be non-negative and slippage must be in [0, 10000) bps")
         if max_order_notional <= 0 or max_position_notional <= 0:
             raise ValueError("notional risk limits must be positive")
         self.initial_cash = float(initial_cash)
