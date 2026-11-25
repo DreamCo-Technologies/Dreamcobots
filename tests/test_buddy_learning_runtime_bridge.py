@@ -156,6 +156,42 @@ class RuntimeBridgeTests(unittest.TestCase):
             self.assertEqual(Path(self.path).stat().st_mode & 0o777, 0o600)
 
 
+
+
+
+    def test_onet_outlines_are_discoverable_as_internal_authoring_backlog(self):
+        queue = self.bridge.bootcamp_learning_queue(
+            division="DreamCodeLab", query="worker requirements", limit=20
+        )
+        matches = [item for item in queue["items"] if item["track_id"] == "onet"]
+        self.assertTrue(matches)
+        self.assertTrue(all(item["completion_status"] == "authoring_backlog" for item in matches))
+        self.assertTrue(all(item["study_allowed"] is False for item in matches))
+        self.assertTrue(all(item["authoring_required"] is True for item in matches))
+        self.assertTrue(all(item["mastery_awarded"] is False for item in matches))
+
+    def test_freecodecamp_video_metadata_is_not_presented_as_study_content(self):
+        queue = self.bridge.bootcamp_learning_queue(
+            division="DreamCodeLab", query="fcc-video", limit=100
+        )
+        video_items = [item for item in queue["items"] if item["track_id"] == "freecodecamp-video-catalog"]
+        self.assertTrue(video_items)
+        self.assertTrue(all(item["completion_status"] == "metadata_only" for item in video_items))
+        self.assertTrue(all(item["study_allowed"] is False for item in video_items))
+        self.assertTrue(all(item["authoring_required"] is True for item in video_items))
+        self.assertTrue(all(item["mastery_awarded"] is False for item in video_items))
+
+    def test_benchmark_guide_work_items_are_discoverable_in_internal_queue(self):
+        queue = self.bridge.bootcamp_learning_queue(
+            division="DreamCodeLab", query="long_context", limit=20
+        )
+        matches = [item for item in queue["items"] if item["track_id"] == "benchmark-guides"]
+        self.assertTrue(matches)
+        self.assertTrue(all(item["completion_status"] == "authoring_backlog" for item in matches))
+        self.assertTrue(all(item["study_allowed"] is False for item in matches))
+        self.assertTrue(all(item["authoring_required"] is True for item in matches))
+        self.assertTrue(all(item["mastery_awarded"] is False for item in matches))
+
     def test_workforce_playbooks_appear_as_authoring_backlog_not_study_ready(self):
         queue = self.bridge.bootcamp_learning_queue(
             division="DreamCodeLab", query="government grants", limit=20

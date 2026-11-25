@@ -30,6 +30,8 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         library_ecosystems = load("config/library_ecosystems.json")
         library_seed_catalog = load("data/buddy-library-seed-catalog.json")
         workforce = load("config/buddy-workforce-entrepreneurship-bootcamp.json")
+        benchmark_index = load("config/buddy-benchmark-index.json")
+        benchmark_tasks = load("config/buddy-benchmark-task-registry.json")
         onet_task_index_path = root / "data/onet/onet-task-index.json"
         onet_task_count = 0
         if onet_task_index_path.is_file():
@@ -49,6 +51,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             + len(library_ecosystems["ecosystems"])
             + len(library_seed_catalog["candidates"])
             + sum(len(path["subjects"]) for path in workforce["training_paths"])
+            + len(benchmark_index["programs"]) + len(benchmark_tasks["tasks"])
         )
         self.assertEqual(len(lessons), expected_count)
         fcc_lessons = [lesson for lesson in lessons if lesson.track_id == "freecodecamp"]
@@ -57,7 +60,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertTrue(any(lesson.lesson_id == "fcc-primitive-workshops" for lesson in fcc_lessons))
         self.assertEqual(len({lesson.resource_id for lesson in lessons}), len(lessons))
         self.assertEqual(len({(lesson.track_id, lesson.lesson_id) for lesson in lessons}), len(lessons))
-        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "universal-software-libraries", "workforce-entrepreneurship"}
+        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "universal-software-libraries", "workforce-entrepreneurship", "benchmark-guides"}
         self.assertEqual({lesson.track_id for lesson in lessons}, expected)
 
     def test_every_canonical_division_receives_the_shared_course_queue(self):
@@ -112,6 +115,9 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertEqual(len(lessons), len(catalog["videos"]))
         self.assertTrue(all(lesson.rights_mode == "metadata_only_until_item_level_permissions" for lesson in lessons))
         self.assertTrue(all(lesson.source_url.startswith("https://www.youtube.com/watch?v=") for lesson in lessons))
+        self.assertTrue(all(lesson.content_status == "metadata_only" for lesson in lessons))
+        video_titles = {lesson.title for lesson in lessons}
+        self.assertFalse(any(resource.name in video_titles for resource in resources_for_division("DreamAIInfra")))
 
     def test_course_scheduler_returns_queued_lesson_not_mastery(self):
         from pathlib import Path
@@ -140,6 +146,25 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             for resource in resources_for_division("DreamAIInfra")
             for lesson in lessons
         ))
+
+
+
+    def test_onet_subject_and_task_outlines_are_authoring_backlog(self):
+        lessons = [lesson for lesson in load_course_lessons() if lesson.track_id == "onet"]
+        self.assertTrue(lessons)
+        self.assertTrue(all(lesson.content_status == "authoring_backlog" for lesson in lessons))
+        lesson_titles = {lesson.title for lesson in lessons}
+        self.assertFalse(any(resource.name in lesson_titles
+                             for resource in resources_for_division("DreamAIInfra")))
+
+    def test_benchmark_programs_and_tasks_are_internal_authoring_backlog(self):
+        lessons = [lesson for lesson in load_course_lessons() if lesson.track_id == "benchmark-guides"]
+        self.assertEqual(len(lessons), 13 + 11)
+        self.assertTrue(all(lesson.content_status == "authoring_backlog" for lesson in lessons))
+        self.assertTrue(all("benchmark" in lesson.objective.lower() for lesson in lessons))
+        self.assertFalse(any(resource.name == lesson.title
+                             for resource in resources_for_division("DreamAIInfra")
+                             for lesson in lessons))
 
     def test_unknown_division_is_rejected(self):
         with self.assertRaises(ValueError):

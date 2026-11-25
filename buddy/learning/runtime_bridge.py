@@ -247,9 +247,13 @@ class BuddyLearningBridge:
             "guide_path": lesson.guide_path,
             "rights_mode": lesson.rights_mode,
             "content_status": lesson.content_status,
-            "completion_status": "queued_not_studied" if lesson.content_status == "authored" else "authoring_backlog",
+            "completion_status": (
+                "queued_not_studied" if lesson.content_status == "authored"
+                else "metadata_only" if lesson.content_status == "metadata_only"
+                else "authoring_backlog"
+            ),
             "study_allowed": lesson.content_status == "authored",
-            "authoring_required": lesson.content_status != "authored",
+            "authoring_required": lesson.content_status in {"authoring_backlog", "metadata_only"},
             "mastery_awarded": False,
             "model_weight_training_authorized": False,
             "paid_compute_authorized": False,
