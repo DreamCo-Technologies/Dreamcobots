@@ -169,6 +169,8 @@ def audit_weekly_tests(
             raise ValueError("weekly test evidence video IDs must be unique and non-empty")
         by_video[record["video_id"]] = record
 
+    known_video_ids = {str(row.get("video_id", "")) for row in intake.get("queue", [])}
+    unknown_evidence_ids = sorted(set(by_video) - known_video_ids)
     eligible = [row for row in intake.get("queue", []) if row.get("weekly_evaluation_permission_verified") is True]
     results = []
     missing = []
