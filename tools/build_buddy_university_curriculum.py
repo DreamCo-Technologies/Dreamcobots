@@ -135,7 +135,8 @@ AGENT_CAPABILITY_CATALOG = {
 }
 def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any],
           onet: dict[str, Any], taxonomy: dict[str, Any], college: dict[str, Any] | None = None,
-          fcc_catalog: dict[str, Any] | None = None, workforce: dict[str, Any] | None = None,\n          government: dict[str, Any] | None = None) -> dict[str, Any]:
+          fcc_catalog: dict[str, Any] | None = None, workforce: dict[str, Any] | None = None,
+          government: dict[str, Any] | None = None) -> dict[str, Any]:
     college = college or {}
     workforce = workforce or {}
     government = government or {}
@@ -299,7 +300,8 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "hugging_face_subjects": sorted(set(division_hf[name])),
             "freecodecamp_tracks": sorted(set(division_fcc[name])),
             "freecodecamp_video_subject_categories": sorted(set(division_fcc_videos[name])),
-            "freecodecamp_video_ids": sorted(set(division_videos[name])),\n            "venture_and_workforce_tracks": sorted(set(division_ventures[name])),
+            "freecodecamp_video_ids": sorted(set(division_videos[name])),
+            "venture_and_workforce_tracks": sorted(set(division_ventures[name])),
             "college_domains": sorted(division_college[name], key=lambda x: (-x["score"], x["domain_id"] or "")),
             "source_families": sorted(set(division_source_families[name])),
             "agent_capability_catalog": college.get("agent_capability_matrix", AGENT_CAPABILITY_CATALOG),
@@ -321,7 +323,8 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "freecodecamp_video_subject_categories": len(video_tracks), "freecodecamp_channel_videos": len(video_rows),
             "freecodecamp_channel_inventory_status": (fcc_catalog or {}).get("inventory_status", "not_supplied"),
             "college_domains": len(college_domains), "source_families": len(source_families), "onet_occupations": len(occupations),
-            "venture_and_workforce_tracks": len(venture_rows),\n            "divisions_with_venture_tracks": sum(bool(x["venture_and_workforce_tracks"]) for x in divisions),\n            "onet_task_statements": len(task_rows), "onet_tasks_with_division_routes": sum(bool(x["division_ids"]) for x in task_rows),
+            "venture_and_workforce_tracks": len(venture_rows),
+            "divisions_with_venture_tracks": sum(bool(x["venture_and_workforce_tracks"]) for x in divisions),\n            "onet_task_statements": len(task_rows), "onet_tasks_with_division_routes": sum(bool(x["division_ids"]) for x in task_rows),
             "divisions_with_hf_subjects": sum(bool(x["hugging_face_subjects"]) for x in divisions),
             "divisions_with_freecodecamp_tracks": sum(bool(x["freecodecamp_tracks"]) for x in divisions),
             "divisions_with_freecodecamp_video_categories": sum(bool(x["freecodecamp_video_subject_categories"]) for x in divisions),
@@ -357,7 +360,14 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "instructional_model": instructional_model, "scope_policy": college.get("scope_policy", {})},
         "source_family_routes": source_family_routes,
         "agent_capability_catalog": college.get("agent_capability_matrix", AGENT_CAPABILITY_CATALOG),
-        "onet_task_routes": task_rows,\n        "venture_and_workforce_tracks": venture_rows,\n        "government_and_community_curriculum": {"official_sources": government.get("official_sources", []),\n            "procurement_pipeline": government.get("procurement_pipeline", []),\n            "grant_pipeline": government.get("grant_pipeline", []),\n            "program_eligibility_rules": government.get("program_eligibility_rules", []),\n            "community_delivery_models": government.get("community_delivery_models", []),\n            "benefit_protections": government.get("benefit_protections", {}),\n            "contracting_reality": government.get("contracting_reality", {})},
+        "onet_task_routes": task_rows,
+        "venture_and_workforce_tracks": venture_rows,\n        "government_and_community_curriculum": {"official_sources": government.get("official_sources", []),
+            "procurement_pipeline": government.get("procurement_pipeline", []),
+            "grant_pipeline": government.get("grant_pipeline", []),
+            "program_eligibility_rules": government.get("program_eligibility_rules", []),
+            "community_delivery_models": government.get("community_delivery_models", []),
+            "benefit_protections": government.get("benefit_protections", {}),
+            "contracting_reality": government.get("contracting_reality", {})},
         "divisions": divisions,
         "unclassified_subjects": [x for x in subject_rows if x["mapping_status"] == "unclassified_shared_review"],
         "mapping_policy": {"all_algorithmic_routes_are_suggestions": True, "owner_approval_required_before_domain_specific_promotion": True,
@@ -383,7 +393,9 @@ def main() -> int:
     read = lambda value: json.loads(Path(value).read_text(encoding="utf-8"))
     profiles = division_profiles(Path(args.division_source).read_text(encoding="utf-8"))
     fcc_catalog = read(args.freecodecamp_catalog) if args.freecodecamp_catalog else None
-    result = build(profiles, read(args.huggingface_taxonomy), read(args.freecodecamp_roadmap),\n                   read(args.onet_curricula), read(args.bootcamp_config), read(args.university_curriculum),\n                   fcc_catalog, read(args.workforce_curriculum), read(args.government_curriculum))
+    result = build(profiles, read(args.huggingface_taxonomy), read(args.freecodecamp_roadmap),
+                   read(args.onet_curricula), read(args.bootcamp_config), read(args.university_curriculum),
+                   fcc_catalog, read(args.workforce_curriculum), read(args.government_curriculum))
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
     (out / "buddy-university-learning-map.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
