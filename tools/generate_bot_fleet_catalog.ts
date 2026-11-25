@@ -545,7 +545,17 @@ export function buildFleetCatalog() {
   if (missingRuntime.length) throw new Error(`${missingRuntime.length} catalog profiles have no Buddy runtime route`);
   if (bots.length !== 1051) throw new Error(`Expected 1,051 profiles, found ${bots.length}`);
 
-  const allDivisions = divisionFiles.map(({ name, content }) => {
+  // Growth profiles without a canonical domain contract are specialist portfolios,
+  // not additional domain divisions. Their bots remain in supplemental_bots.
+  const supplementalPortfolioSources = new Set(
+    divisionFiles
+      .filter(({ content }) => content.growth === true && !DIVISION_DOMAIN_PROFILES[content.division])
+      .map(({ name }) => `App_bots/${name}`),
+  );
+  const divisionFilesForIndex = divisionFiles.filter(
+    ({ name }) => !supplementalPortfolioSources.has(`App_bots/${name}`),
+  );
+  const allDivisions = divisionFilesForIndex.map(({ name, content }) => {
     const domainContract = DIVISION_DOMAIN_PROFILES[content.division];
     if (!domainContract) throw new Error("Missing full domain contract for " + content.division);
     return {
