@@ -223,8 +223,10 @@ def main() -> int:
         raise SystemExit("--limit must be between 1 and 100")
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
     crosswalk = json.loads(CROSSWALK.read_text(encoding="utf-8"))
-    payload = build_queues(catalog, crosswalk, args.limit)
+    payload = build_queues(catalog, crosswalk, args.limit, allow_partial=args.allow_partial)
     validate(payload)
+    if args.allow_partial and args.out == OUTPUT:
+        args.out = OUTPUT.with_name("freecodecamp-provisional-division-learning-queues.json")
     rendered = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
     if args.check:
         if not args.out.exists() or args.out.read_text(encoding="utf-8") != rendered:
