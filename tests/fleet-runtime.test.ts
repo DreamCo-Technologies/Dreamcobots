@@ -120,7 +120,7 @@ test("Buddy honors an explicitly selected bot and still gates live actions", () 
 test("Buddy can explicitly route every catalog profile", () => {
   const registry = FleetRuntimeRegistry.fromFile();
   const catalog = JSON.parse(readFileSync(resolve(process.cwd(), "config", "generated", "bots.catalog.json"), "utf8"));
-  for (const bot of catalog.bots) {
+  for (const bot of [...catalog.bots, ...catalog.supplemental_bots]) {
     const result = registry.routeCapability({
       objective: `Prepare a sandbox task for ${bot.identity.display_name}.`,
       preferredBotSlug: bot.identity.slug,
@@ -178,7 +178,7 @@ test("certifies the repository-controlled end-to-end flow for every bot", () => 
   const expectedCapabilities = report.profiles.reduce((total, profile) => total + profile.capabilityTests.length, 0);
   assert.ok(expectedProfiles > 0);
   assert.equal(report.summary.profilesTested, expectedProfiles);
-  assert.equal(report.summary.divisionsTested, 55);
+  assert.equal(report.summary.divisionsTested, report.divisions.length);
   assert.equal(report.summary.sandboxCertified, expectedProfiles);
   assert.equal(report.summary.failed, 0);
   assert.equal(report.summary.declaredCapabilitiesTested, expectedCapabilities);
