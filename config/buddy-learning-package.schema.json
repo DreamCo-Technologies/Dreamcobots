@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dreamco.buddy_learning_package.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "asset_id",
+    "ownership",
+    "source",
+    "rights",
+    "summary",
+    "study_path",
+    "division_ids",
+    "assessment",
+    "training",
+    "progress"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dreamco.buddy_learning_package.v1"
+    },
+    "asset_id": {
+      "type": "string"
+    },
+    "ownership": {
+      "type": "object",
+      "required": [
+        "artifact_owner",
+        "upstream_material_owner",
+        "attribution_required",
+        "user_data_is_separately_governed"
+      ]
+    },
+    "source": {
+      "type": "object"
+    },
+    "rights": {
+      "type": "object"
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "executive_overview",
+        "detailed_explanation",
+        "best_knowledge_extracted"
+      ]
+    },
+    "study_path": {
+      "type": "object",
+      "required": [
+        "learning_objectives",
+        "sequence",
+        "recommended_spaced_review_days"
+      ]
+    },
+    "division_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "assessment": {
+      "type": "object"
+    },
+    "training": {
+      "type": "object",
+      "required": [
+        "study_or_rag_eligible",
+        "weight_training_eligible",
+        "training_permission"
+      ]
+    },
+    "progress": {
+      "type": "object",
+      "required": [
+        "status",
+        "lessons_completed",
+        "assessment_attempts",
+        "mastery_status"
+      ]
+    }
+  }
+}
