@@ -180,7 +180,8 @@ def build_work_queue(catalog: dict[str, Any], manifest: dict[str, Any], guides: 
                 "teach_back", "unseen_transfer", "spaced_review"],
             "guide_validation_errors": errors,
             "transcript_hash": rights.get("transcript_sha256") if rights else None,
-            "model_training_authorized": bool(rights and rights.get("training_permission") is True and rights.get("training_rights_evidence_ref")),\n            "model_training_started": False,
+            "model_training_authorized": bool(rights and rights.get("training_permission") is True and rights.get("training_rights_evidence_ref")),
+            "model_training_started": False,
         })
     unknown_ids = sorted(set(rights_by_id) - seen)
     if unknown_ids:
