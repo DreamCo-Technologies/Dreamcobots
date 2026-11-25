@@ -198,6 +198,16 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             division_college[route["division"]].append({"domain_id": domain.get("id"), "name": domain.get("name"),
                 "mapping_status": route["mapping_status"], "score": route["score"]})
 
+    division_source_families: dict[str, list[str]] = defaultdict(list)
+    source_family_routes = []
+    for family in source_families:
+        family_terms = " ".join([family.get("id", ""), family.get("scope", ""), family.get("source", "")])
+        routes = suggest_divisions(family_terms, profiles, limit=6)
+        route_names = [row["division"] for row in routes]
+        source_family_routes.append({"source_family_id": family.get("id"), "routes": routes})
+        for division in route_names:
+            division_source_families[division].append(str(family.get("id")))
+
     division_tasks: dict[str, list[str]] = defaultdict(list)
     division_videos: dict[str, list[str]] = defaultdict(list)
     video_rows = []
@@ -276,7 +286,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "domain_divisions": len(divisions), "hugging_face_subject_terms": len(hf_terms),
             "hugging_face_subjects_with_suggested_routes": sum(bool(x["routes"]) for x in subject_rows),
             "freecodecamp_tracks": len(fcc_rows), "freecodecamp_certification_phases": len(fcc_phases),
-            "freecodecamp_video_subject_categories": len(video_tracks), "college_domains": len(college_domains), "source_families": len(source_families), "onet_occupations": len(occupations),
+            "freecodecamp_video_subject_categories": len(video_tracks), "freecodecamp_channel_videos": len(video_rows),\n            "freecodecamp_channel_inventory_status": (fcc_catalog or {}).get("inventory_status", "not_supplied"),\n            "college_domains": len(college_domains), "source_families": len(source_families), "onet_occupations": len(occupations),
             "onet_task_statements": len(task_rows), "onet_tasks_with_division_routes": sum(bool(x["division_ids"]) for x in task_rows),
             "divisions_with_hf_subjects": sum(bool(x["hugging_face_subjects"]) for x in divisions),
             "divisions_with_freecodecamp_tracks": sum(bool(x["freecodecamp_tracks"]) for x in divisions),
@@ -308,7 +318,7 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "shared_core": college.get("shared_core", {}), "academic_structure": academic_structure,
             "instructional_model": instructional_model, "scope_policy": college.get("scope_policy", {})},
         "source_family_routes": source_family_routes,
-        "agent_capability_catalog": AGENT_CAPABILITY_CATALOG,
+        "agent_capability_catalog": college.get("agent_capability_matrix", AGENT_CAPABILITY_CATALOG),
         "onet_task_routes": task_rows,
         "divisions": divisions,
         "unclassified_subjects": [x for x in subject_rows if x["mapping_status"] == "unclassified_shared_review"],
