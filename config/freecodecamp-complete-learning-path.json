@@ -422,7 +422,16 @@
     "daily_original_lesson_target_per_domain": 5,
     "daily_slots": 275,
     "route_rule": "Each video is multi-label tagged. Shared foundations are available to all domains; specialty routing requires explicit evidence and owner approval. Do not assume every video is relevant to every domain.",
-    "unresolved_divisions": "Receive approved shared foundations while specialty ownership remains unresolved."
+    "unresolved_divisions": "Receive approved shared foundations while specialty ownership remains unresolved.",
+    "ai_model_course_delivery": {
+      "course_id": "buddy-25m-cpu-llm-from-scratch",
+      "canonical_divisions": 55,
+      "masterbot_lanes": 65,
+      "shared_foundation_available_to_all": true,
+      "specialization_requires_reviewed_ownership": true,
+      "map": "config/buddy-25m-cpu-llm-course.json",
+      "no_claim_of_mastery_from_catalog_or_video_metadata": true
+    }
   },
   "cadence": {
     "daily": [
@@ -1091,5 +1100,56 @@
       "source": "https://projecteuler.net/; https://rosettacode.org/; https://www.theodinproject.com/",
       "usage": "Optional linked practice and partner resources; preserve their own terms, attribution and source ownership."
     }
-  ]
+  ],
+  "featured_ai_model_courses": [
+    {
+      "id": "FCC-25M-2026-10-08",
+      "title": "Build and Train a 25M Parameter LLM From Scratch on Your CPU",
+      "article_url": "https://www.freecodecamp.org/news/build-and-train-a-25m-parameter-llm-from-scratch-on-your-cpu/",
+      "video_url": "https://www.youtube.com/watch?v=-gfgQfw2g_E",
+      "video_title": "Build & Train a GLM-5.3-Flash Model From Scratch with Python",
+      "publication_date": "2026-10-08",
+      "module_manifest": "config/buddy-25m-cpu-llm-course.json",
+      "study_guide": "docs/BUDDY_25M_CPU_LLM_STUDY_GUIDE.md",
+      "coverage": [
+        "tokenization",
+        "embeddings",
+        "transformer architecture",
+        "hyperconnections",
+        "weight tying",
+        "RMSNorm",
+        "RoPE and NoPE",
+        "linear and sparse attention",
+        "Mixture of Experts",
+        "vision patches",
+        "pretraining",
+        "data interleaving",
+        "reinforcement learning",
+        "GRPO",
+        "parameter-efficient updates",
+        "frozen layers",
+        "multi-seed research",
+        "statistical significance"
+      ],
+      "status": "catalogued_curriculum_mapped_not_studied"
+    }
+  ],
+  "interactive_curriculum_inventory": {
+    "source": "Official freeCodeCamp v9 curriculum GraphQL/source inventory",
+    "verified_on": "2026-11-24",
+    "superblocks": 37,
+    "chapters": 38,
+    "modules": 217,
+    "unique_blocks": 779,
+    "challenges": 14038,
+    "status": "dated_snapshot_refresh_required",
+    "coverage_rule": "Use stable curriculum identifiers and versioned source metadata for every challenge/lesson. Do not claim the challenge text has been ingested, studied or reproduced until the source refresh and rights review are complete."
+  },
+  "youtube_video_inventory": {
+    "catalog_path": "buddy/bootcamp/sources/freecodecamp/catalog.json",
+    "observed_video_count": 1740,
+    "inventory_complete": false,
+    "completeness_basis": "Legacy snapshot did not persist yt-dlp playlist_count or enumerator version; retained as partial until a verified resync.",
+    "refresh_requirement": "Refresh the official uploads playlist using the configured YouTube Data API integration; persist expected playlist count, enumerator version and source digest. Do not claim full archive coverage until expected count equals unique parsed IDs."
+  }
 }
