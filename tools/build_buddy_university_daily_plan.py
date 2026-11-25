@@ -135,6 +135,13 @@ def build_daily_plan(university_map: dict[str, Any], organization_path: Path,
         "day": day,
         "teacher": university_map.get("instructional_model", {}).get("teacher", {}),
         "student": university_map.get("instructional_model", {}).get("student", {}),
+        "parallel_execution": {
+            "logical_division_lanes": len(division_plans),
+            "eligible_for_parallel_study": len(division_plans),
+            "policy": university_map.get("university_curriculum", {}).get("parallel_learning_policy", {}),
+            "weight_training_jobs_started": 0,
+            "truth_boundary": "Logical parallel study lanes do not imply available compute or model-weight training; runtime capacity and per-asset approvals control execution."
+        },
         "division_count": len(division_plans),
         "lessons_per_division_target": lessons_per_division,
         "daily_target_slots": len(division_plans) * lessons_per_division,
