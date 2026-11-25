@@ -78,9 +78,18 @@ class DreamCoSummarySourceTests(unittest.TestCase):
                 self.progress, asset_id="asset-001", division="DreamAI",
                 event_type="training_run_started", evidence_ref="run:1"
             )
+        with self.assertRaises(PermissionError):
+            append_progress_event(
+                self.progress, asset_id="asset-001", division="DreamAI",
+                event_type="training_run_started", evidence_ref="run:2", organization_path=self.organization
+            )
+        payload = json.loads(self.organization.read_text(encoding="utf-8"))
+        payload["packages"][0]["training"]["weight_training_eligible"] = True
+        payload["packages"][0]["rights"]["training_permission"] = True
+        self.organization.write_text(json.dumps(payload), encoding="utf-8")
         append_progress_event(
             self.progress, asset_id="asset-001", division="DreamAI",
-            event_type="training_run_started", evidence_ref="run:2", training_permission=True
+            event_type="training_run_started", evidence_ref="run:3", organization_path=self.organization
         )
 
     def test_mastery_cannot_be_self_reported(self):
