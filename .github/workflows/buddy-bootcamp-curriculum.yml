@@ -58,6 +58,9 @@ on:
       - "buddy/bootcamp/sources/TRANSCRIPT_EVALUATION.md"
       - "config/buddy-tolkien-study-track.json"
       - "config/buddy-course-track-registry.json"
+      - "tools/sync_freecodecamp_learning_inventory.py"
+      - "tests/test_freecodecamp_learning_inventory.py"
+      - ".github/workflows/freecodecamp-catalog-refresh.yml"
       - "config/freecodecamp-complete-learning-path.json"
       - "docs/FREECODECAMP_COMPLETE_BUDDY_LEARNING_PATH.md"
       - "config/buddy-huggingface-full-learning-map.json"
@@ -217,6 +220,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_buddy_tokenizer_training_curriculum.py' -v
           python -m unittest discover -s tests -p 'test_buddy_25m_cpu_llm_course.py' -v
           python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
+          python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
           python tools/build_weekly_transcript_evaluation.py --output /tmp/buddy-weekly-transcript-evaluation.json
       - name: Publish first weekly transcript coverage report
         if: always()
