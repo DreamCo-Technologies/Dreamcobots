@@ -134,5 +134,20 @@ class ModelFoundryRightsTests(unittest.TestCase):
         self.assertIsNone(validate_training_authorization(approved))
 
 
+    def test_checkpoint_architecture_metadata_uses_profile_dimensions(self):
+        from buddy.learning.model_foundry import build_architecture_metadata
+        architecture = {
+            "vocab_size": 256, "context_size": 256, "width": 640,
+            "layers": 5, "attention_heads": 10, "feed_forward_size": 2560,
+        }
+        metadata = build_architecture_metadata(architecture, sequence_length=64)
+        self.assertEqual(metadata["hidden_size"], 640)
+        self.assertEqual(metadata["layers"], 5)
+        self.assertEqual(metadata["attention_heads"], 10)
+        self.assertEqual(metadata["feed_forward_size"], 2560)
+        self.assertEqual(metadata["context_size"], 256)
+        self.assertEqual(metadata["sequence_length"], 64)
+
+
 if __name__ == "__main__":
     unittest.main()
