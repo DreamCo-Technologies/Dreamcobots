@@ -34,6 +34,9 @@ class BenchmarkResult:
     failures: list[str] = field(default_factory=list)
     remediation: list[str] = field(default_factory=list)
     evidence: list[str] = field(default_factory=list)
+    mastery_eligible: bool = False
+    mastery_state: str = "discovered"
+    result_type: str = "deterministic_scaffold_simulation"
 
 
 def load_tasks(path: Path) -> dict[str, Any]:
@@ -57,7 +60,7 @@ def evaluate_task(task: dict[str, Any], score: float | None = None) -> Benchmark
     return BenchmarkResult(
         benchmark_id=benchmark_id,
         task_id=task_id,
-        status="mastered" if passed else "practiced",
+        status="SIMULATED_THRESHOLD_MET" if passed else "SIMULATED_BELOW_THRESHOLD",
         score=measured_score,
         threshold=threshold,
         passed=passed,
@@ -66,7 +69,10 @@ def evaluate_task(task: dict[str, Any], score: float | None = None) -> Benchmark
         model_route="free-first/local-runner",
         failures=failures,
         remediation=remediation,
-        evidence=evidence,
+        evidence=["deterministic_local_runner_scaffold_only"],
+        mastery_eligible=False,
+        mastery_state="discovered",
+        result_type="score_override_simulation" if score is not None else "configured_baseline_placeholder",
     )
 
 
@@ -79,6 +85,9 @@ def run(path: Path, score_override: float | None = None) -> dict[str, Any]:
         "tasks": len(results),
         "passed": passed,
         "pass_rate": passed / len(results) if results else 0.0,
+        "pass_rate_semantics": "simulated threshold rate only; not a measured model pass rate",
+        "simulation_only": True,
+        "mastery_awarded": False,
         "cost_usd": 0.0,
         "free_first": True,
         "results": [asdict(result) for result in results],

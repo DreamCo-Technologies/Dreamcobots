@@ -1,0 +1,26 @@
+name: Benchmark Runner Mastery Truth
+
+on:
+  pull_request:
+    paths:
+      - "benchmarks/buddy_benchmark_runner.py"
+      - "tests/test_benchmark_runner_mastery_truth.py"
+      - "docs/benchmarks/BENCHMARK_RUNNER_TRUTH_BOUNDARY.md"
+      - ".github/workflows/benchmark-runner-mastery-truth.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: benchmark-runner-truth-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pytest -q tests/test_benchmark_runner_mastery_truth.py
