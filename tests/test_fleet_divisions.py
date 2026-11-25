@@ -44,8 +44,13 @@ def test_every_source_division_is_reconciled_to_56_business_divisions_and_shared
         name = portfolio["portfolio"]
         owner = portfolio["owner"]
         assert f"App_bots/{name}.json" in DIVISIONS[name]["sources"]
-        assert DIVISIONS[name]["primary_domain_owner"] == owner
-        assert DIVISIONS[name]["primary_masterbot_id"] is not None
+        if portfolio.get("classification") == "supplemental_domain_profile":
+            assert DIVISIONS[name]["primary_domain_owner"] is None
+            assert DIVISIONS[name]["proposed_domain_owner"] == owner
+            assert DIVISIONS[name]["primary_masterbot_id"] is None
+        else:
+            assert DIVISIONS[name]["primary_domain_owner"] == owner
+            assert DIVISIONS[name]["primary_masterbot_id"] is not None
     assert len(DIVISIONS["GrokTeammates"]["owner_routes"]) > 1
 
 
