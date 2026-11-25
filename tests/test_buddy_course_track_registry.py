@@ -27,6 +27,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         fcc = load("config/freecodecamp-complete-learning-path.json")
         hf_full = load("config/buddy-huggingface-full-learning-map.json")
         fcc_catalog = load("buddy/bootcamp/sources/freecodecamp/catalog.json")
+        fcc_overrides = load("config/freecodecamp-division-routing-overrides.json")
         library_ecosystems = load("config/library_ecosystems.json")
         library_seed_catalog = load("data/buddy-library-seed-catalog.json")
         workforce = load("config/buddy-workforce-entrepreneurship-bootcamp.json")
@@ -38,6 +39,21 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             onet_task_index = load("data/onet/onet-task-index.json")
             if onet_task_index.get("inventory", {}).get("complete") is True:
                 onet_task_count = len(onet_task_index.get("tasks", []))
+        specialist_entries = {str(row.get("video_id")) for row in fcc_overrides.get("entries", [])}
+        specialist_rules = fcc_overrides.get("routing_rules", [])
+        specialist_video_ids = set()
+        for video in fcc_catalog["videos"]:
+            searchable = f"{video.get('title', '')} {video.get('description', '')}".casefold()
+            categories = {str(value).casefold() for value in video.get("categories", [])}
+            if str(video.get("video_id")) in specialist_entries or any(
+                any(str(term).casefold() in searchable for term in rule.get("match_title_terms", []))
+                or bool(categories.intersection(str(value).casefold() for value in rule.get("match_categories", [])))
+                for rule in specialist_rules
+            ):
+                specialist_video_ids.add(str(video["video_id"]))
+        specialist_paths = [
+            lesson for lesson in lessons if lesson.track_id == "freecodecamp-specialist-learning-paths"
+        ]
         expected_count = (
             len(tol["curriculum"]) + len(tol["extended_study_path"])
             + len(tok["lessons"]) + len(cpu["modules"]) + len(onet["subject_inventory"]) + onet_task_count
@@ -52,6 +68,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             + len(library_seed_catalog["candidates"])
             + sum(len(path["subjects"]) for path in workforce["training_paths"])
             + len(benchmark_index["programs"]) + len(benchmark_tasks["tasks"])
+            + len(specialist_video_ids)
         )
         self.assertEqual(len(lessons), expected_count)
         fcc_lessons = [lesson for lesson in lessons if lesson.track_id == "freecodecamp"]
@@ -60,8 +77,24 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertTrue(any(lesson.lesson_id == "fcc-primitive-workshops" for lesson in fcc_lessons))
         self.assertEqual(len({lesson.resource_id for lesson in lessons}), len(lessons))
         self.assertEqual(len({(lesson.track_id, lesson.lesson_id) for lesson in lessons}), len(lessons))
-        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "universal-software-libraries", "workforce-entrepreneurship", "benchmark-guides"}
+        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "freecodecamp-specialist-learning-paths", "universal-software-libraries", "workforce-entrepreneurship", "benchmark-guides"}
         self.assertEqual({lesson.track_id for lesson in lessons}, expected)
+
+
+    def test_specialist_paths_are_original_authoring_backlog_not_study_ready(self):
+        lessons = [
+            lesson for lesson in load_course_lessons()
+            if lesson.track_id == "freecodecamp-specialist-learning-paths"
+        ]
+        self.assertGreaterEqual(len(lessons), 200)
+        self.assertTrue(all(lesson.content_status == "original_implementation_brief" for lesson in lessons))
+        self.assertTrue(all(lesson.source_video_id for lesson in lessons))
+        self.assertTrue(all(lesson.implementation_steps and lesson.buddy_demo for lesson in lessons))
+        self.assertFalse(any(
+            resource.name == lesson.title
+            for resource in resources_for_division("DreamAIInfra")
+            for lesson in lessons
+        ))
 
     def test_every_canonical_division_receives_the_shared_course_queue(self):
         from pathlib import Path
