@@ -196,7 +196,7 @@ def plan_next_for_division(
     if chosen is None:
         return None
     lesson = next(row for row in load_course_lessons(root) if row.resource_id == chosen.id)
-    capability = gap_list[0] if gap_list else Capability(name=division, category=lesson.category)
+    capability = next((gap for gap in gap_list if gap.category.lower() == lesson.category.lower()), gap_list[0] if gap_list else Capability(name=division, category=lesson.category))
     plan = study_plan(chosen, capability)
     plan.update({
         "division": division,
