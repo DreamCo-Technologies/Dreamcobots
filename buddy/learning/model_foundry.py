@@ -79,8 +79,8 @@ def estimate_decoder_parameter_count(architecture: dict[str, Any]) -> int:
 
 def validate_training_authorization(profile, *, explicit_authorization=False, authorization_reference=None, approved_by=None):
     """Fail closed unless policy, runtime approval, and an approval record all exist."""
-    if not isinstance(profile, dict):
-        raise PermissionError("an explicit training profile is required for every weight update")
+    if not isinstance(profile, dict) or profile.get("schema") != "dreamco.buddy_cpu_llm_architecture_profile.v1":
+        raise PermissionError("a versioned explicit training profile is required for every weight update")
     policy = profile.get("training_policy")
     if not isinstance(policy, dict):
         raise PermissionError("training profile must include an explicit training_policy")
@@ -88,14 +88,22 @@ def validate_training_authorization(profile, *, explicit_authorization=False, au
         raise PermissionError("model weight updates are not enabled and authorized by the profile")
     if policy.get("requires_rights_cleared_local_dataset") is not True:
         raise PermissionError("training profile must require a rights-cleared local dataset")
-    if policy.get("external_data_allowed") is not False:
-        raise PermissionError("this trainer only accepts local rights-cleared datasets")
+    if policy.get("external_data_allowed") is not False or policy.get("paid_compute_authorized") is not False:
+        raise PermissionError("this trainer only accepts local CPU training with no paid compute authorization")
+    profile_reference = policy.get("authorization_reference")
+    profile_approver = policy.get("approved_by")
+    if not isinstance(profile_reference, str) or not profile_reference.strip():
+        raise PermissionError("training profile must record an authorization_reference")
+    if not isinstance(profile_approver, str) or not profile_approver.strip():
+        raise PermissionError("training profile must record approved_by")
     if explicit_authorization is not True:
         raise PermissionError("explicit --authorize-weight-updates approval is required at execution time")
     if not isinstance(authorization_reference, str) or len(authorization_reference.strip()) < 6:
         raise PermissionError("a non-empty authorization reference is required")
     if not isinstance(approved_by, str) or len(approved_by.strip()) < 2:
         raise PermissionError("an approving owner identity is required")
+    if authorization_reference.strip() != profile_reference.strip() or approved_by.strip() != profile_approver.strip():
+        raise PermissionError("runtime approval must match the authorization recorded in the profile")
 
 
 def sha256_file(path: Path) -> str:
