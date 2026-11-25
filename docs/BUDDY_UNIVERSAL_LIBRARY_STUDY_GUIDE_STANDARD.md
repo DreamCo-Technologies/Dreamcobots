@@ -145,3 +145,12 @@ Before a guide can be searched internally, the adapter checks its core structure
 ### Current runtime boundary
 
 The adapter does not yet crawl package registries or automatically author guides. Registry discovery must be a separately scheduled, rate-limited process with per-provider pagination, cache/cursor persistence, package deduplication, source/version/license metadata, and an explicit opt-in network mode. It must never execute downloaded packages. External research is a gap-resolution step, not the default Buddy response path.
+
+
+## Opt-in public registry metadata discovery
+
+The opt-in metadata-only provider adapter is `buddy.learning.library_registry_discovery.search_public_registry`, configured by `config/buddy-library-registry-adapters.json`. Initial providers cover npm, crates.io, NuGet, RubyGems, Packagist, Hugging Face model metadata, Hugging Face dataset metadata, and exact-name PyPI metadata lookup.
+
+The CLI requires the explicit `discover PROVIDER QUERY --allow-network` flag for one network request. Requests use HTTPS host allowlists, bounded response sizes, bounded timeouts and a fixed user agent. Pagination is caller-controlled and one page is requested per invocation. Results are normalized candidate metadata only, with license/source review pending and download, execution, evaluation and training permissions false or pending.
+
+This is not exhaustive registry crawling: query APIs are ranked/search interfaces, not proof of full package inventory. PyPI support is exact-name lookup rather than global enumeration. Additional ecosystem providers and verified pagination/cursor workflows must be added as their official APIs and terms are reviewed. Do not infer a package's license from a search result; fetch and review authoritative metadata and source terms in a separate governed step.
