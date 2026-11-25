@@ -87,6 +87,8 @@ jobs:
           python3 tools/build_actions_prospectus.py
           # Reconcile the registry after every generator has finished.
           python3 tools/generate_repository_test_registry.py
+      - name: Verify Buddy tokenizer curriculum and study-guide coverage
+        run: python3 -m unittest tests.test_buddy_tokenizer_training_curriculum -v
       - name: Verify first-party Bootcamp training data factory
         run: |
           python3 -m unittest discover -s tests -p "test_dreamco_bootcamp_seed_data.py" -v
