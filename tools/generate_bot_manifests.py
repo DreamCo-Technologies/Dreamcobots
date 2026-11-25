@@ -270,7 +270,7 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
     if not SLUG_RE.match(slug):
         flags.add("invalid_slug")
     if app and md:
-        if md["division"] and md["division"] != app["division"]:
+        if md["division"] and md["division"] not in {"UNASSIGNED", app["division"]}:
             flags.add("division_conflict_md")
     elif md and not app and not lane:
         flags.add("md_only")
@@ -295,7 +295,7 @@ def build_manifest(slug: str, entry: dict[str, Any], api: dict[str, list[str]], 
     if primary_domain_owner not in route_metadata["domain_names"]:
         primary_domain_owner = "DreamDiscovery"
     seed_division = entry.get("seed_division")
-    if seed_division and seed_division != source_division:
+    if seed_division and seed_division not in {"UNASSIGNED", source_division}:
         flags.add("division_conflict_seed")
     source_caps = base.get("capabilities") or (md or {}).get("capabilities", [])
     raw_caps = list(dict.fromkeys((specialist or {}).get("capabilities", []) + list(source_caps)))
