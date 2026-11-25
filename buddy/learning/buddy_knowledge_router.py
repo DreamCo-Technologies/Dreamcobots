@@ -213,7 +213,7 @@ def route_buddy_learning_query(
             "seed_candidate_matches": seed_matches,
             "knowledge_gap": library.get("knowledge_gap"),
             "external_discovery_available": False,
-            "external_discovery_requires_explicit_opt_in": missing_supporting_guide_count > 0,
+            "external_discovery_requires_explicit_opt_in": supporting_guide_count == 0,
             "external_discovery_performed": False,
             "external_model_routing_performed": False,
             "study_required": True,
