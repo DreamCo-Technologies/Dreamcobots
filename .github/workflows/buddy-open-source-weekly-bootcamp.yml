@@ -13,6 +13,17 @@ on:
       - "docs/BUDDY_CAPABILITY_MASTERY_AND_REVENUE_CURRICULUM.md"
       - "config/buddy-open-source-bootcamp.json"
       - "config/buddy-university-curriculum.json"
+      - "config/buddy-course-track-registry.json"
+      - "config/buddy-tokenizer-training-curriculum.json"
+      - "config/buddy-25m-cpu-llm-course.json"
+      - "config/buddy-ai-model-course-division-map.json"
+      - "config/buddy-onet-content-model-curriculum.json"
+      - "config/buddy-course-source-resources.json"
+      - "config/buddy-tolkien-study-track.json"
+      - "buddy/learning/course_track_registry.py"
+      - "tests/test_buddy_course_track_registry.py"
+      - "tests/test_buddy_25m_cpu_llm_course.py"
+      - "tests/test_buddy_tokenizer_training_curriculum.py"
       - "config/buddy-college-curriculum.json"
       - "config/freecodecamp-complete-learning-path.json"
       - "tests/test_huggingface_subject_taxonomy.py"
@@ -77,6 +88,17 @@ on:
       - "tests/test_huggingface_subject_taxonomy.py"
       - "config/freecodecamp-complete-learning-path.json"
       - "config/buddy-university-curriculum.json"
+      - "config/buddy-course-track-registry.json"
+      - "config/buddy-tokenizer-training-curriculum.json"
+      - "config/buddy-25m-cpu-llm-course.json"
+      - "config/buddy-ai-model-course-division-map.json"
+      - "config/buddy-onet-content-model-curriculum.json"
+      - "config/buddy-course-source-resources.json"
+      - "config/buddy-tolkien-study-track.json"
+      - "buddy/learning/course_track_registry.py"
+      - "tests/test_buddy_course_track_registry.py"
+      - "tests/test_buddy_25m_cpu_llm_course.py"
+      - "tests/test_buddy_tokenizer_training_curriculum.py"
       - "config/buddy-open-source-bootcamp.json"
       - "config/buddy-source-study-guide.schema.json"
       - "config/buddy-source-rights-manifest.json"
@@ -234,6 +256,12 @@ jobs:
             --freecodecamp-path config/freecodecamp-complete-learning-path.json \
             --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly"
 
+      - name: Verify all Buddy course tracks and training curricula
+        run: |
+          python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_25m_cpu_llm_course.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_tokenizer_training_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_tolkien_study_track.py' -v
       - name: Build cross-disciplinary Buddy University curriculum map
         run: |
           python tools/build_buddy_university_curriculum.py \
