@@ -67,7 +67,7 @@ def build_factory_plan(configs: dict[str, dict[str, Any]], source_hashes: dict[s
     domain_ids = {str(x.get("id")) for x in university_domains}
     university_course_ids = [f"UNI-{str(domain.get('id')).upper()}-{str(level.get('level'))}"
                              for domain in university_domains for level in university_levels]
-    shared_core_course_ids = ["CORE-" + __import__("re").sub(r"[^A-Z0-9]+", "-", str(x).upper()).strip("-")
+    shared_core_course_ids = ["CORE-" + re.sub(r"[^A-Z0-9]+", "-", str(x).upper()).strip("-")
                               for x in shared_core]
     fcc = configs.get("freecodecamp", {})
     fcc_inventory = fcc.get("official_platform_inventory", {})
