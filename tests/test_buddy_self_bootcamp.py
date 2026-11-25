@@ -1,7 +1,16 @@
 import unittest
-from tools.build_buddy_self_bootcamp import build
+from tools.build_buddy_self_bootcamp import build, division_names
 
 class SelfBootcampTests(unittest.TestCase):
+    def test_parser_requires_exactly_55_complete_division_profiles(self):
+        source="\\n".join(
+            f"  Division{i}: {{\\n    purpose: 'purpose',\\n    focusAreas: [],\\n    serves: [],\\n    outcome: 'outcome',\\n    boundary: 'boundary',\\n  }}"
+            for i in range(55)
+        )
+        self.assertEqual(len(division_names(source)),55)
+        with self.assertRaises(ValueError):
+            division_names(source.replace("  Division54:", "  Missing54:").replace("    boundary: 'boundary',", "    boundary: 'boundary',", 1))
+
     def test_builds_all_division_paths_and_preserves_truth_boundary(self):
         names=[f"Division{i}" for i in range(55)]
         workforce={"training_paths":[{"id":"sales"}]}
