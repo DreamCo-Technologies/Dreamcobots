@@ -1,0 +1,103 @@
+name: Buddy Authorized Byte BPE Tokenizer Training
+
+on:
+  workflow_dispatch:
+    inputs:
+      manifest_path:
+        description: "Rights-cleared manifest under data/buddy-authorized-corpora/"
+        required: true
+        type: string
+      vocab_size:
+        description: "Target vocabulary size (256–65536)"
+        required: true
+        default: "512"
+        type: string
+      confirm_authorized_training:
+        description: "Explicitly authorize this local tokenizer training run"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buddy-authorized-tokenizer-training
+  cancel-in-progress: false
+
+jobs:
+  train-tokenizer:
+    if: inputs.confirm_authorized_training == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out the approved source revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate manifest location and vocabulary size
+        env:
+          MANIFEST_PATH: ${{ inputs.manifest_path }}
+          VOCAB_SIZE: ${{ inputs.vocab_size }}
+        run: |
+          case "$MANIFEST_PATH" in
+            data/buddy-authorized-corpora/*.json) ;;
+            *) echo "Manifest must be inside data/buddy-authorized-corpora/"; exit 2 ;;
+          esac
+          test -f "$MANIFEST_PATH"
+          python - <<'PY'
+          import os
+          value = int(os.environ["VOCAB_SIZE"])
+          if not 256 <= value <= 65536:
+              raise SystemExit("vocab_size must be between 256 and 65536")
+          PY
+
+      - name: Run tokenizer regression tests
+        run: python -m unittest tests.test_buddy_byte_bpe_trainer
+
+      - name: Train tokenizer from rights-cleared local corpus
+        env:
+          MANIFEST_PATH: ${{ inputs.manifest_path }}
+          VOCAB_SIZE: ${{ inputs.vocab_size }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          python buddy/learning/byte_bpe_trainer.py \
+            --manifest "$MANIFEST_PATH" \
+            --output "artifacts/buddy-tokenizer-training/$RUN_ID/tokenizer.json" \
+            --vocab-size "$VOCAB_SIZE" \
+            --confirm-authorized-training
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          path = Path("artifacts/buddy-tokenizer-training") / __import__("os").environ["RUN_ID"] / "tokenizer.json"
+          model = json.loads(path.read_text(encoding="utf-8"))
+          print("# Buddy tokenizer training evidence")
+          print(f"- Vocabulary size: {model['vocab_size']}")
+          print(f"- Training sources: {len(model['training_provenance'])}")
+          print("- Rights gate: passed")
+          print("- Model-weight training: not performed by this tokenizer job")
+          print(f"- Artifact SHA-256: {__import__('hashlib').sha256(path.read_bytes()).hexdigest()}")
+          PY
+
+      - name: Upload reproducible tokenizer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-tokenizer-${{ github.run_id }}
+          path: artifacts/buddy-tokenizer-training/${{ github.run_id }}/tokenizer.json
+          if-no-files-found: error
+          retention-days: 30
+
+  authorization-required:
+    if: inputs.confirm_authorized_training != true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refuse unconfirmed training
+        run: |
+          echo "No tokenizer training occurred. Re-run manually with confirm_authorized_training=true."
+          exit 1
