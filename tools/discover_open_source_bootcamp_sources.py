@@ -93,7 +93,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--out-dir", default=str(DEFAULT_OUT))
     parser.add_argument("--hf-limit-per-subject", type=int, default=20)
-    parser.add_argument("--github-limit-per-topic", type=int, default=10)
+    parser.add_argument("--github-limit-per-topic", type=int, default=10)\n    parser.add_argument("--taxonomy-file", default=None, help="Live Hugging Face subject taxonomy JSON")
     args = parser.parse_args()
     config = json.loads(CONFIG.read_text(encoding="utf-8"))
     out_dir = Path(args.out_dir)
@@ -124,7 +124,7 @@ def main() -> int:
             errors.append({"source": f"github-topic:{topic}", "error": str(exc)})
         time.sleep(0.2)
 
-    for subject in config["discovery"]["hugging_face_subjects"]:
+    for subject in subjects:
         for kind in config["discovery"]["hugging_face_hub_types"]:
             try:
                 for row in hf_search(kind, subject, args.hf_limit_per_subject):
@@ -142,17 +142,17 @@ def main() -> int:
     final = {
         "schema": "dreamco.buddy_bootcamp_discovery_snapshot.v1",
         "generated_at": now(),
-        "discovery_scope": {"hf_subject_count": len(config["discovery"]["hugging_face_subjects"]),
+        "discovery_scope": {"hf_subject_count": len(subjects),\n                            "hf_seed_subject_count": len(config["discovery"]["hugging_face_subjects"]),\n                            "hf_dynamic_taxonomy_status": taxonomy_status,
                             "hf_artifact_types": config["discovery"]["hugging_face_hub_types"],
                             "github_seed_count": len(seen)},
-        "counts": {"discovered_unique": len(unique), "rights_pending_or_review": sum(r["rights_state"] != "approved" for r in unique.values()),
+        "counts": {"discovered_unique": len(unique), "hugging_face_subjects_searched": len(subjects), "rights_pending_or_review": sum(r["rights_state"] != "approved" for r in unique.values()),
                    "errors": len(errors)},
         "resources": list(unique.values()), "errors": errors,
         "truth_boundary": "Discovery metadata is not a summary, rights approval, training authorization, or mastery evidence."
     }
     (out_dir / "discovery-snapshot.json").write_text(json.dumps(final, indent=2) + "\n", encoding="utf-8")
     summary = ["# Buddy Bootcamp weekly discovery", "", f"- Generated: {final['generated_at']}",
-               f"- Unique resources discovered: {len(unique)}", f"- Rights review required: {final['counts']['rights_pending_or_review']}",
+               f"- Hugging Face subjects searched: {len(subjects)} ({taxonomy_status})", f"- Unique resources discovered: {len(unique)}", f"- Rights review required: {final['counts']['rights_pending_or_review']}",
                f"- Discovery errors: {len(errors)}", "",
                "This run discovers metadata only. It does not download source media, create full guides, or train Buddy."]
     (out_dir / "summary.md").write_text("\n".join(summary) + "\n", encoding="utf-8")
