@@ -22,6 +22,8 @@ class MustHaveStudyTest(unittest.TestCase):
         expansion = json.loads((ROOT / "config/buddy-study-resources-1101-1200-expansion.json").read_text())
         track = next(x for x in expansion["specialized_study_tracks"] if x["track_id"] == "tolkien")
         self.assertEqual(len(track["lesson_sequence"]), 8)
+        self.assertEqual(len(track["extended_lesson_sequence"]), 12)
+        self.assertEqual(track["course_integration"]["status"], "NEEDS_USER_SUPPLIED_COURSE_REFERENCE")
         self.assertFalse(track["rights_and_safety"]["primary_tolkien_texts_training_eligible"])
         self.assertFalse(track["rights_and_safety"]["model_weight_training_authorized"])
         self.assertFalse(track["rights_and_safety"]["materials_referencing_characters_stories_places_events_or_other_elements_authorized"])
