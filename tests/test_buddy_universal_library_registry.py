@@ -8,7 +8,7 @@ from pathlib import Path
 from buddy.learning.universal_library_registry import (
     library_coverage_report,
     record_library_knowledge_gap,
-    search_internal_library_knowledge,
+    search_internal_library_knowledge,\n    validate_library_guide_document,
 )
 from buddy.learning.course_track_registry import load_course_lessons
 
@@ -44,18 +44,29 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
                 "objectives": ["Use Python HTTP requests safely"],
                 "concepts": [{"name": "sessions", "explanation": "Reuse connections"}],
             },
-            "use_cases": [{"category": "production", "scenario": "HTTP clients", "implementation_pattern": "sessions"}],
+            "api_inventory": {"inventory_method": "official API reference review", "coverage": "partial", "entries": []},
+            "use_cases": [{"category": "production", "scenario": "HTTP clients", "implementation_pattern": "sessions", "tradeoffs": [], "evidence": ["https://requests.readthedocs.io/"]}],
+            "practice": {
+                "worked_examples": [],
+                "exercises": [{"difficulty": "beginner", "prompt": "Build a client", "acceptance_criteria": ["works"], "tests": ["test"]}] * 3,
+                "projects": [],
+                "debugging_playbook": [],
+            },
             "rights": {
                 "documentation_access": access,
                 "derivative_summary_permission": derivative,
                 "evaluation_permission": "approved",
                 "training_permission": "pending",
             },
-            "evaluation": {"evidence_state": "guide_reviewed"},
+            "evaluation": {"target_benchmark": "HTTP client benchmark", "holdout": "unseen request cases", "regression": "API regression suite", "evidence_state": "guide_reviewed"},
             "status": status,
         }
         path = self.root / "data/buddy-library-study-guides/requests.json"
         path.write_text(json.dumps(guide), encoding="utf-8")
+
+    def test_validator_rejects_missing_api_and_rights_evidence(self):
+        errors = validate_library_guide_document({"schema_version": "wrong"})
+        self.assertTrue(any("missing top-level fields" in error for error in errors))
 
     def test_internal_search_returns_approved_guide_and_never_claims_mastery(self):
         self.write_guide()
