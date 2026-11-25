@@ -141,6 +141,19 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
         self.assertTrue(all({"interactive_sandbox", "retrieval_quiz", "spaced_repetition"}.issubset(set(row.learning_modes)) for row in self.paths_by_video.values()))
         self.assertTrue(all(row.division_targets and row.masterbot_targets for row in self.triage_by_video.values()))
 
+
+    def test_pr_review_openclaw_and_self_healing_paths_use_real_buddy_controls(self):
+        reviewer = self.paths_by_video["iqRcGCah0Kw"]
+        openclaw = self.paths_by_video["n1sfrc-RjyM"]
+        cicd = self.paths_by_video["vj68el9hRvU"]
+        self.assertIn("DreamCo PR Review Guardian", reviewer.buddy_demo)
+        self.assertIn("change-impact-test-policy.json", reviewer.buddy_demo)
+        self.assertIn("human approval", reviewer.buddy_demo.lower())
+        self.assertIn("isolated branch", openclaw.buddy_demo)
+        self.assertIn("never writes directly to main", openclaw.buddy_demo)
+        self.assertIn("tools/run_everything_now.py", cicd.tool_tags)
+        self.assertIn("no failed or unverified change is auto-merged", cicd.buddy_demo)
+
     def test_course_overrides_reference_real_divisions_and_masterbot_lanes(self):
         canonical = {
             name for row in self.lessons for name in row.division_targets
