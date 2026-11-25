@@ -6,17 +6,27 @@ on:
   pull_request:
     paths:
       - "config/buddy-open-source-bootcamp.json"
-      - "tools/discover_open_source_bootcamp_sources.py"
-      - "tools/build_buddy_source_study_queue.py"
       - "config/buddy-source-study-guide.schema.json"
       - "config/buddy-source-rights-manifest.json"
+      - "config/buddy-authorized-media-rights.json"
+      - "tools/discover_open_source_bootcamp_sources.py"
+      - "tools/build_buddy_source_study_queue.py"
+      - "tools/process_authorized_bootcamp_media.py"
       - "tests/test_buddy_source_study_queue.py"
+      - "tests/test_process_authorized_bootcamp_media.py"
       - ".github/workflows/buddy-open-source-weekly-bootcamp.yml"
   push:
     branches: [main]
     paths:
       - "config/buddy-open-source-bootcamp.json"
+      - "config/buddy-source-study-guide.schema.json"
+      - "config/buddy-source-rights-manifest.json"
+      - "config/buddy-authorized-media-rights.json"
       - "tools/discover_open_source_bootcamp_sources.py"
+      - "tools/build_buddy_source_study_queue.py"
+      - "tools/process_authorized_bootcamp_media.py"
+      - "tests/test_buddy_source_study_queue.py"
+      - "tests/test_process_authorized_bootcamp_media.py"
       - ".github/workflows/buddy-open-source-weekly-bootcamp.yml"
 
 permissions:
@@ -43,9 +53,12 @@ jobs:
           python -m json.tool config/buddy-open-source-bootcamp.json > /dev/null
           python -m json.tool config/buddy-source-study-guide.schema.json > /dev/null
           python -m json.tool config/buddy-source-rights-manifest.json > /dev/null
-          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/build_buddy_source_study_queue.py
+          python -m json.tool config/buddy-authorized-media-rights.json > /dev/null
+          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py
       - name: Run source rights and guide-queue tests
         run: python -m unittest discover -s tests -p 'test_buddy_source_study_queue.py' -v
+      - name: Run local media rights and hash tests
+        run: python -m unittest discover -s tests -p 'test_process_authorized_bootcamp_media.py' -v
       - name: Discover GitHub repositories and Hugging Face subjects
         env:
           GITHUB_TOKEN: ${{ github.token }}
