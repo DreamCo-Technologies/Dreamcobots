@@ -1,0 +1,33 @@
+name: Revenue Scout Curriculum Coverage
+
+on:
+  pull_request:
+    paths:
+      - "config/buddy-master-scout-opportunity-resource-library-program.json"
+      - "config/buddy-revenue-scout-curriculum-artifacts.json"
+      - "money_os/config/revenue_lanes_expanded.json"
+      - "money_os/data/opportunity_sources.json"
+      - "tools/audit_revenue_scout_curriculum.py"
+      - "tests/test_revenue_scout_curriculum.py"
+      - ".github/workflows/revenue-scout-curriculum.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: revenue-scout-curriculum-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check pytest
+      - run: python -m pytest -q tests/test_revenue_scout_curriculum.py
+      - run: python tools/audit_revenue_scout_curriculum.py
