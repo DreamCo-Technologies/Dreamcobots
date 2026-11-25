@@ -150,3 +150,27 @@ Each weekly run should add:
 
 No automated contact, application, bid, benefits action, financial transaction or grant submission is permitted without explicit human authorization.
 \n## Current implementation boundary\n\nThe pull request currently defines the source taxonomy, O*NET import/build path, per-task guide-authoring briefs, government opportunity pipeline, and rights-gated source queue. The weekly workflow refreshes metadata and creates artifacts; it does not yet run a generative Buddy guide-authoring service, persist approved guides to the repository, perform real model fine-tuning, or prove weekly mastery. Those are separate runtime integrations and must be reported as pending until their own tests and evidence exist. The default source-rights manifest grants no third-party training permissions.\n
+
+## DreamCo-owned summaries, division study paths, and progress
+
+Every completed, rights-cleared guide is intended to become a reusable DreamCo learning asset. The guide-authoring output should be original instructional expression, not copied source text, and must retain upstream attribution, source revision, license and rights evidence. DreamCo's ownership claim applies to the original expression and structure it creates, subject to applicable law and the upstream license; it does not transfer ownership of third-party facts, code, datasets, media, model weights or documentation.
+
+Every learning asset must preserve:
+- An executive overview and a detailed explanation of the subject.
+- The best knowledge extracted into structured concepts, key principles, detailed sections, examples, limitations, and references.
+- Prerequisites, learning objectives, a sequenced study path, practical exercises, knowledge checks, answer key, and independent capstone.
+- Explicit mappings to one or more of the 55 DreamCo domain divisions.
+- A source revision and rights/attribution record, plus a stable asset ID.
+- A progress record for assignment, study, lesson completion, assessments, capstone, remediation and mastery.
+
+The organizer in `tools/organize_buddy_learning_assets.py` packages approved guide JSON files from `data/buddy-study-guides/` into division-linked learning paths. It produces a package for each guide and a curriculum index for each division. Draft, rejected, rights-pending or unmapped guides are excluded. The current repository may contain zero completed guides; an empty output is an honest status, not a completed curriculum.
+
+### Data ownership and consent
+
+The user-data manifest at `config/buddy-user-learning-data-manifest.json` is an opt-in registry, not a data import. User-provided data remains user-owned and is only eligible for the specific purposes the user has authorized: study, summary creation, evaluation, or model training. No permission is inferred from a file being uploaded, connected, or present in the repository. Keep private user data in an access-controlled store; never commit secrets, credentials, private records or sensitive personal data into a public repository. Record hashes and provenance rather than copying private data into public reports.
+
+### Training and progression
+
+There are distinct stages: discovered, rights-cleared, summarized, approved, assigned, studied, assessed, training-eligible, trained, and mastered. The organizer prepares a study path and a progress ledger; the live Buddy runtime must emit progress events. A summary can be used for retrieval/study only when those permissions allow it. Weight training additionally requires explicit training permission for every included asset, an approved dataset manifest, baseline and held-out evaluations, compute authorization, a versioned checkpoint and rollback plan. Never count reading a summary as model-weight training or mastery.
+
+Per-division queues should prioritize prerequisite order, the five-lessons-per-day target, review intervals and weekly assessment coverage. When a learner fails an assessment, record the gap and assign remediation; when a source revision changes, revalidate the guide and schedule a re-study assessment.
