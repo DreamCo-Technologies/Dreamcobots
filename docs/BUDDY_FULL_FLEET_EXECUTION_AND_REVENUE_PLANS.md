@@ -2,7 +2,7 @@
 
 ## Canonical structure
 
-DreamCo retains 45 canonical business divisions. Eleven supplemental specialist portfolios sit beneath canonical owners; they do not create duplicate primary ownership.
+DreamCo retains 45 canonical business divisions. Ten supplemental domain profiles sit beneath proposed canonical owners, plus one Dream3D specialist subportfolio under DreamCodeLab. These are not eleven new canonical domains and do not create duplicate primary ownership.
 
 | Specialist portfolio | Canonical owner | Exclusive operating domain | Specialist bots |
 |---|---|---|---:|
@@ -18,7 +18,11 @@ DreamCo retains 45 canonical business divisions. Eleven supplemental specialist 
 | DreamTravel | DreamTransport | Traveler journey planning and support | 5 |
 | Dream3D | DreamCodeLab | Interactive Three.js, real-time 3D and GPU rendering | 19 |
 
-The first ten portfolios contain 50 existing specialist identities. Dream3D adds 19 Three.js Markdown-only profiles that were previously UNASSIGNED. Each receives a distinct capability charter with five implementable capabilities, approved source types, monetization options and a measurable outcome event. DreamCodeLab retains general software engineering; Dream3D owns the narrower real-time 3D implementation domain, with DreamContent and DreamAIInfra as collaborators.
+The ten supplemental domain profiles contain 50 existing specialist identities. Their canonical-owner routes remain proposals pending owner/identity review. Dream3D adds 19 Three.js Markdown-only profiles that were previously UNASSIGNED; Dream3D is a specialist subportfolio, not an eleventh supplemental domain. Each receives a distinct capability charter with five implementable capabilities, approved source types, monetization options and a measurable outcome event. DreamCodeLab retains general software engineering; Dream3D owns the narrower real-time 3D implementation domain, with DreamContent and DreamAIInfra as collaborators.
+
+## Shared platform MasterBots
+
+MasterBots 46–65 are shared platform services, not primary domain owners. They can support all 45 canonical domains and ten supplemental domain profiles through explicitly proposed routes. The 20 services remain subject to owner confirmation; the runtime records shared access but does not grant privileged execution.
 
 ## GrokTeammates workforce routing
 
