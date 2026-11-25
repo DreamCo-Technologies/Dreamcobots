@@ -17,3 +17,8 @@ The hub reports `availability_verified: false` and `price_verified: false` for e
 
 ## Approval and execution truth
 A source-based method is eligible for review only when content rights and owner approval are verified. Weight-changing methods additionally require model-license verification. The hub never starts training, purchases compute, uploads data, or claims a checkpoint. Actual execution requires a separate approved job manifest, rights-cleared dataset, pinned model/tokenizer, compute authorization, worker, and evaluation receipts.
+
+## Tokenizer course and study path
+
+Use the canonical [Buddy Tokenizer Engineering and Training Course](BUDDY_TOKENIZER_TRAINING_STUDY_GUIDE.md) and machine-readable syllabus at `config/buddy-tokenizer-training-curriculum.json`. It covers BPE, WordPiece, Unigram, byte-level coverage, Hugging Face Tokenizers, SentencePiece, special tokens, chat templates, model compatibility, evaluation and release operations. A tokenizer artifact is separate from model weights. Reading or a successful plan is not proof of training.
+
