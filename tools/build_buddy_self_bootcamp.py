@@ -75,7 +75,8 @@ def main()->int:
     names=division_names(Path(a.division_source).read_text(encoding="utf-8"))
     result=build(names,read(a.hf_taxonomy),read(a.onet),read(a.source_queue),read(a.workforce),read(a.government))
     out=Path(a.out_dir); out.mkdir(parents=True,exist_ok=True)
-    (out/"buddy-self-authoring-bootcamp.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")\n    (out/"buddy-division-names.json").write_text(json.dumps(names,indent=2)+"\n",encoding="utf-8")
+    (out/"buddy-self-authoring-bootcamp.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
+    (out/"buddy-division-names.json").write_text(json.dumps(names,indent=2)+"\n",encoding="utf-8")
     lines=["# Buddy self-authoring bootcamp","",f"- Domain divisions: {result['coverage']['domain_divisions']}",f"- Hugging Face task/subject terms: {result['coverage']['hugging_face_subject_terms']}",f"- O*NET occupations in import: {result['coverage']['onet_occupations']}",f"- O*NET task statements: {result['coverage']['onet_task_statements']}",f"- Sources discovered: {result['coverage']['source_discovered']}",f"- Rights-cleared guide candidates: {result['coverage']['source_guide_authoring_eligible']}","", "Buddy must author detailed guides, study them, pass weekly assessments, and propose the next bootcamp version. This plan is not evidence that those actions have run."]
     (out/"buddy-self-authoring-bootcamp.md").write_text("\n".join(lines)+"\n",encoding="utf-8")
     print(json.dumps(result["coverage"],indent=2))
