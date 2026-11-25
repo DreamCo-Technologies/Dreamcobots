@@ -176,14 +176,12 @@ class RuntimeBridgeTests(unittest.TestCase):
 
     def test_bootcamp_learning_queue_filters_and_supports_masterbot_lanes(self):
         queue = self.bridge.bootcamp_learning_queue(
-            masterbot="DreamCodeLab", query="Hugging Face LLM", limit=10
+            masterbot="DreamCodeLab", query="hf-llm-course", limit=10
         )
         self.assertEqual(queue["masterbot"], "DreamCodeLab")
         self.assertGreaterEqual(queue["returned_count"], 1)
-        self.assertTrue(any(track in {"hugging-face", "huggingface-full"} for track in queue["track_ids"]))
-        self.assertTrue(all("hugging" in item["title"].lower() or "llm" in item["title"].lower()
-                            or "hugging" in item["objective"].lower() or "llm" in item["objective"].lower()
-                            for item in queue["items"]))
+        self.assertIn("huggingface-full", queue["track_ids"])
+        self.assertTrue(all(item["lesson_id"] == "hf-llm-course" for item in queue["items"]))
 
     def test_bootcamp_learning_queue_requires_exactly_one_owner_and_bounded_query(self):
         with self.assertRaises(ValueError):
