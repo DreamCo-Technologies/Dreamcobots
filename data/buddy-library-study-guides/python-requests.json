@@ -1,0 +1,702 @@
+{
+  "schema_version": "dreamco.buddy_library_study_guide.v1",
+  "library": {
+    "canonical_id": "python-requests",
+    "name": "Requests",
+    "ecosystem": "python",
+    "artifact_type": "library",
+    "official_homepage": "https://requests.readthedocs.io/en/latest/",
+    "official_documentation": [
+      "https://requests.readthedocs.io/en/latest/",
+      "https://requests.readthedocs.io/en/latest/user/quickstart/",
+      "https://requests.readthedocs.io/en/latest/user/advanced/",
+      "https://requests.readthedocs.io/en/latest/api/"
+    ],
+    "repository": "https://github.com/psf/requests",
+    "version_reviewed": "2.34.2",
+    "latest_version_checked_at": "2026-11-25",
+    "maintenance_status": "active",
+    "license": "Apache-2.0",
+    "supported_platforms": [
+      "Python 3.10+",
+      "PyPy"
+    ]
+  },
+  "provenance": {
+    "sources": [
+      {
+        "url": "https://requests.readthedocs.io/en/latest/",
+        "source_type": "official_documentation",
+        "accessed_at": "2026-11-25",
+        "revision_or_version": "Requests 2.34.2",
+        "license_or_terms_note": "Official documentation; DreamCo lesson text and exercises are original."
+      },
+      {
+        "url": "https://requests.readthedocs.io/en/latest/api/",
+        "source_type": "official_api_reference",
+        "accessed_at": "2026-11-25",
+        "revision_or_version": "Requests 2.34.2",
+        "license_or_terms_note": "API inventory is explicitly partial pending symbol-by-symbol review."
+      },
+      {
+        "url": "https://requests.readthedocs.io/en/latest/user/quickstart/",
+        "source_type": "official_tutorial",
+        "accessed_at": "2026-11-25",
+        "revision_or_version": "Requests 2.34.2",
+        "license_or_terms_note": "Original explanation and exercises; link to upstream source."
+      },
+      {
+        "url": "https://docs.python-requests.org/en/latest/community/updates/",
+        "source_type": "official_release_history",
+        "accessed_at": "2026-11-25",
+        "revision_or_version": "2.34.2",
+        "license_or_terms_note": "Used to pin release-specific notes."
+      },
+      {
+        "url": "https://pypi.org/project/requests/",
+        "source_type": "package_registry_metadata",
+        "accessed_at": "2026-11-25",
+        "revision_or_version": "2.34.2",
+        "license_or_terms_note": "Registry metadata is not permission to redistribute package files."
+      }
+    ],
+    "reviewed_at": "2026-11-25",
+    "reviewer": "automated_draft_requires_human_review"
+  },
+  "learning_map": {
+    "prerequisites": [
+      "Python functions, exceptions and context managers",
+      "HTTP request/response basics",
+      "URLs, headers, query strings and JSON",
+      "TLS certificate verification fundamentals"
+    ],
+    "objectives": [
+      "Choose Requests for synchronous HTTP/1.1 client workflows and recognize when async or HTTP/2 alternatives are more appropriate.",
+      "Build robust GET, POST, PUT, PATCH, DELETE, HEAD and OPTIONS requests.",
+      "Handle query parameters, form bodies, JSON bodies, multipart uploads, response encodings and binary content.",
+      "Use Session objects for connection reuse, cookie persistence, shared headers and authentication.",
+      "Apply explicit connect/read timeouts, status validation, bounded retries and safe error handling.",
+      "Configure TLS verification, client certificates, proxies and custom transport adapters without weakening security.",
+      "Stream large responses safely and close response resources deterministically.",
+      "Test HTTP client behavior with deterministic mocks, local test servers and contract fixtures.",
+      "Profile latency, connection reuse, memory use and retry behavior under representative workloads.",
+      "Explain version-specific API changes and preserve reproducible dependency constraints."
+    ],
+    "concepts": [
+      {
+        "name": "Request/Response model",
+        "explanation": "A request describes an HTTP method, URL, headers, query parameters and optional body. Requests sends it and returns a Response with status, headers, body accessors, URL and redirect history.",
+        "analogy": "A typed message sent to a remote service and a structured receipt returned.",
+        "limitations": [
+          "A successful transport does not imply the application-level operation succeeded.",
+          "Requests is synchronous and blocking."
+        ]
+      },
+      {
+        "name": "Session and connection pooling",
+        "explanation": "A Session persists cookies and configuration and reuses underlying connections through urllib3 when the server and response lifecycle permit it.",
+        "analogy": "A reusable service desk rather than opening a new counter for every interaction.",
+        "limitations": [
+          "Sessions should not be shared across concurrent workers without a deliberate thread-safety strategy.",
+          "Unconsumed streamed responses can tie up pooled connections."
+        ]
+      },
+      {
+        "name": "Timeout semantics",
+        "explanation": "Requests supports connect/read timeout configuration. The read timeout is an inactivity interval between received bytes, not a hard total wall-clock deadline for the complete download.",
+        "analogy": "A maximum wait for the connection and a maximum silence interval while receiving.",
+        "limitations": [
+          "No timeout is applied by default.",
+          "A caller needing a total deadline must enforce one at a higher orchestration layer."
+        ]
+      },
+      {
+        "name": "Status and exception handling",
+        "explanation": "Network failures raise RequestException subclasses. HTTP status failures are not automatically raised by every call; raise_for_status provides explicit status validation.",
+        "analogy": "Separate whether the message arrived from whether the service accepted the operation.",
+        "limitations": [
+          "JSON decoding can fail even on a successful HTTP status.",
+          "Retrying non-idempotent operations can duplicate side effects."
+        ]
+      },
+      {
+        "name": "Streaming and resource lifecycle",
+        "explanation": "stream=True allows incremental response consumption; callers must consume or close responses so connections can return to the pool.",
+        "analogy": "Read a large file in chunks instead of loading the whole file into memory.",
+        "limitations": [
+          "Streaming does not itself provide integrity verification or safe file destination handling.",
+          "Always impose size and time budgets."
+        ]
+      },
+      {
+        "name": "Transport adapters",
+        "explanation": "HTTPAdapter and mounted adapters customize connection pools and transport behavior for URL prefixes, including retry policy when configured with urllib3 utilities.",
+        "analogy": "A replaceable network engine behind a stable request interface.",
+        "limitations": [
+          "Retry semantics must match HTTP method idempotency and application behavior.",
+          "Adapter internals and urllib3 compatibility are version-sensitive."
+        ]
+      },
+      {
+        "name": "TLS verification and certificates",
+        "explanation": "Requests verifies server certificates by default and supports CA bundle paths and client-side certificates for mutual TLS.",
+        "analogy": "Verify the server's identity and optionally present the client's identity.",
+        "limitations": [
+          "Disabling verification exposes the connection to interception.",
+          "Certificate and proxy configuration are environment-sensitive."
+        ]
+      }
+    ]
+  },
+  "api_inventory": {
+    "inventory_method": "Manual top-level interface and official Developer Interface review for version 2.34.2; class/method inventory remains partial and must be expanded from the full API reference.",
+    "coverage": "partial",
+    "entries": [
+      {
+        "symbol_or_feature": "requests.request",
+        "purpose": "Send a request using an explicit HTTP method.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.get",
+        "purpose": "Convenience function for the GET HTTP method.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.options",
+        "purpose": "Convenience function for the OPTIONS HTTP method.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.head",
+        "purpose": "Convenience function for the HEAD HTTP method.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.post",
+        "purpose": "Convenience function for the POST HTTP method.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.put",
+        "purpose": "Convenience function for the PUT HTTP method.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.patch",
+        "purpose": "Convenience function for the PATCH HTTP method.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.delete",
+        "purpose": "Convenience function for the DELETE HTTP method.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.Session",
+        "purpose": "Public class or exception family: Session.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.Response",
+        "purpose": "Public class or exception family: Response.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.Request",
+        "purpose": "Public class or exception family: Request.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.PreparedRequest",
+        "purpose": "Public class or exception family: PreparedRequest.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.HTTPError",
+        "purpose": "Public class or exception family: HTTPError.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.ConnectionError",
+        "purpose": "Public class or exception family: ConnectionError.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.Timeout",
+        "purpose": "Public class or exception family: Timeout.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.TooManyRedirects",
+        "purpose": "Public class or exception family: TooManyRedirects.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.RequestException",
+        "purpose": "Public class or exception family: RequestException.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "requests.HTTPAdapter",
+        "purpose": "Public class or exception family: HTTPAdapter.",
+        "source": "https://requests.readthedocs.io/en/latest/api/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "Session.mount",
+        "purpose": "Attach a transport adapter to a URL prefix.",
+        "source": "https://requests.readthedocs.io/en/latest/user/advanced/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      },
+      {
+        "symbol_or_feature": "Response.raise_for_status",
+        "purpose": "Raise HTTPError for unsuccessful HTTP status codes.",
+        "source": "https://requests.readthedocs.io/en/latest/user/quickstart/",
+        "example_status": "not_yet_written",
+        "breaking_change_notes": []
+      }
+    ]
+  },
+  "use_cases": [
+    {
+      "category": "common",
+      "scenario": "Call JSON REST APIs from scripts and services.",
+      "implementation_pattern": "Use requests.get/post with params or json, explicit timeout, status validation and response.json handling.",
+      "tradeoffs": [
+        "Blocking execution",
+        "Requires careful retry and deadline policy"
+      ],
+      "evidence": [
+        "https://requests.readthedocs.io/en/latest/user/quickstart/"
+      ],
+      "confidence": "high"
+    },
+    {
+      "category": "production",
+      "scenario": "Build a shared authenticated API client.",
+      "implementation_pattern": "Wrap a configured Session with base headers, authentication, bounded timeouts, structured logging and explicit close lifecycle.",
+      "tradeoffs": [
+        "Session lifetime must be managed",
+        "Credential refresh belongs in an explicit auth layer"
+      ],
+      "evidence": [
+        "https://requests.readthedocs.io/en/latest/user/advanced/"
+      ],
+      "confidence": "high"
+    },
+    {
+      "category": "production",
+      "scenario": "Upload or download large files.",
+      "implementation_pattern": "Use multipart file uploads or stream=True with chunked reads, byte limits, checksums and atomic file replacement.",
+      "tradeoffs": [
+        "Streaming requires deterministic close",
+        "Retries need resumability or idempotent semantics"
+      ],
+      "evidence": [
+        "https://requests.readthedocs.io/en/latest/user/quickstart/",
+        "https://requests.readthedocs.io/en/latest/user/advanced/"
+      ],
+      "confidence": "high"
+    },
+    {
+      "category": "advanced",
+      "scenario": "Apply custom transport policy for a specific API host.",
+      "implementation_pattern": "Mount a custom HTTPAdapter on a host prefix with connection pool sizing and a bounded, method-aware retry strategy.",
+      "tradeoffs": [
+        "Adapter configuration is version-sensitive",
+        "Blind retries can duplicate writes"
+      ],
+      "evidence": [
+        "https://requests.readthedocs.io/en/latest/user/advanced/"
+      ],
+      "confidence": "high"
+    },
+    {
+      "category": "cross_domain",
+      "scenario": "Integrate with Hugging Face Hub or other model/dataset metadata APIs.",
+      "implementation_pattern": "Use Requests only as a synchronous transport layer; keep authentication, pagination, response validation, dataset/model rights review and provenance in separate components.",
+      "tradeoffs": [
+        "Does not replace official client libraries when they provide richer semantics",
+        "A metadata API response never grants download or training permission"
+      ],
+      "evidence": [
+        "https://requests.readthedocs.io/en/latest/user/quickstart/"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "category": "experimental",
+      "scenario": "Generate an adaptive API client from a reviewed OpenAPI description and use Requests for transport.",
+      "implementation_pattern": "Compile a typed client from a pinned OpenAPI schema, validate inputs locally, call through a single policy-controlled Session, and compare generated calls against contract tests.",
+      "tradeoffs": [
+        "Schema drift can break generated clients",
+        "Must prevent untrusted schema from creating arbitrary network destinations"
+      ],
+      "evidence": [
+        "https://requests.readthedocs.io/en/latest/api/"
+      ],
+      "confidence": "hypothesis"
+    }
+  ],
+  "architecture_patterns": [
+    {
+      "pattern": "One Session per worker or service client",
+      "when_to_use": "Repeated calls to the same hosts with shared auth, headers or cookies.",
+      "failure_modes": [
+        "Leaked sessions",
+        "Cross-thread sharing without explicit safety",
+        "Stale credentials"
+      ],
+      "integrations": [
+        "urllib3",
+        "certifi",
+        "requests-oauthlib"
+      ]
+    },
+    {
+      "pattern": "Transport adapter with bounded retries",
+      "when_to_use": "Read-heavy API clients with documented retryable status codes and idempotent methods.",
+      "failure_modes": [
+        "Retry storms",
+        "Duplicate writes",
+        "Retrying permanent client errors"
+      ],
+      "integrations": [
+        "urllib3 Retry",
+        "HTTPAdapter"
+      ]
+    },
+    {
+      "pattern": "Streaming pipeline with integrity checks",
+      "when_to_use": "Large downloads where memory must remain bounded.",
+      "failure_modes": [
+        "Unclosed response",
+        "Unbounded disk usage",
+        "Partial files treated as complete"
+      ],
+      "integrations": [
+        "hashlib",
+        "pathlib",
+        "tempfile"
+      ]
+    }
+  ],
+  "security": {
+    "threats": [
+      "TLS verification disabled",
+      "Credentials leaked in URLs or logs",
+      "Unbounded response bodies",
+      "SSRF through user-controlled URLs",
+      "Redirects to untrusted hosts",
+      "Retrying non-idempotent writes",
+      "Proxy environment misconfiguration"
+    ],
+    "safe_defaults": [
+      "Keep TLS verification enabled",
+      "Use explicit connect/read timeouts",
+      "Validate destination hosts against allowlists when URLs are user-controlled",
+      "Redact Authorization, Cookie and proxy credentials",
+      "Bound response sizes and download time",
+      "Use method-aware retries only",
+      "Close streamed responses"
+    ],
+    "secret_handling": "Use a dedicated secret store or environment injection; never hardcode tokens, log authorization headers, or place secrets in query strings.",
+    "supply_chain": [
+      "Pin dependency versions and hashes in production lockfiles",
+      "Review Requests and urllib3 release notes",
+      "Run dependency and vulnerability scans",
+      "Use trusted package indexes and verify provenance where available"
+    ],
+    "sandbox_required": true
+  },
+  "performance": {
+    "profiling_methods": [
+      "Measure connect time, time to first byte, total duration and payload size separately",
+      "Compare Session reuse with one-shot calls",
+      "Measure peak memory for streamed versus buffered downloads",
+      "Record retry counts and connection-pool saturation"
+    ],
+    "scaling_limits": [
+      "Synchronous calls block their calling thread",
+      "Use bounded worker pools for concurrency",
+      "For async workloads evaluate HTTPX or aiohttp rather than wrapping unlimited threads"
+    ],
+    "cost_model": "Requests is an open-source client library; operational cost comes from network calls, server usage, retries, compute, bandwidth and storage."
+  },
+  "practice": {
+    "worked_examples": [
+      {
+        "goal": "Call a JSON endpoint safely.",
+        "steps": [
+          "Create a GET request with query parameters.",
+          "Set connect and read timeouts.",
+          "Call raise_for_status.",
+          "Parse JSON and handle decoding errors separately."
+        ],
+        "verification": [
+          "A deterministic test verifies query encoding, status handling and timeout propagation."
+        ]
+      },
+      {
+        "goal": "Create a reusable authenticated client.",
+        "steps": [
+          "Create a Session.",
+          "Set default headers and auth.",
+          "Add a wrapper that applies bounded timeouts.",
+          "Close the session when the client lifecycle ends."
+        ],
+        "verification": [
+          "Tests prove headers persist, cookies are retained and secrets are redacted."
+        ]
+      }
+    ],
+    "exercises": [
+      {
+        "difficulty": "beginner",
+        "prompt": "Write a function that fetches JSON from a supplied HTTPS URL using query parameters, a timeout and status validation.",
+        "acceptance_criteria": [
+          "Timeout is mandatory",
+          "HTTP errors are surfaced",
+          "JSON decoding errors are distinguishable",
+          "No credentials are logged"
+        ],
+        "tests": [
+          "Mock successful JSON response",
+          "Mock HTTP 500 response",
+          "Mock timeout",
+          "Mock invalid JSON"
+        ]
+      },
+      {
+        "difficulty": "intermediate",
+        "prompt": "Build a Session-backed API client with token injection, pagination and safe structured logging.",
+        "acceptance_criteria": [
+          "Session is reused",
+          "Token is never logged",
+          "Pagination stops on repeated cursors",
+          "Request count and errors are observable"
+        ],
+        "tests": [
+          "Token redaction",
+          "Pagination cursor loop guard",
+          "Connection error handling",
+          "Session close lifecycle"
+        ]
+      },
+      {
+        "difficulty": "advanced",
+        "prompt": "Implement a bounded streaming download service with SHA-256 verification, size limits and atomic output replacement.",
+        "acceptance_criteria": [
+          "Streaming is enabled",
+          "Maximum bytes are enforced",
+          "Partial files are removed",
+          "Checksum mismatch blocks promotion"
+        ],
+        "tests": [
+          "Oversized body",
+          "Interrupted stream",
+          "Hash mismatch",
+          "Successful atomic replacement"
+        ]
+      }
+    ],
+    "projects": [
+      {
+        "name": "DreamCo API Connector",
+        "deliverable": "A reusable, typed, Session-backed HTTP client with configurable auth, pagination, timeouts, structured telemetry and contract tests.",
+        "rubric": [
+          "Secure secret handling",
+          "Explicit timeout policy",
+          "Method-aware retry behavior",
+          "Test coverage",
+          "Version-pinned dependency"
+        ]
+      },
+      {
+        "name": "Safe Metadata Harvester",
+        "deliverable": "A bounded metadata-only harvester that consumes allowlisted public APIs and records provenance without downloading package source or executing code.",
+        "rubric": [
+          "HTTPS host allowlist",
+          "Redirect policy",
+          "Response size limit",
+          "Rate and page budget",
+          "Rights remain pending"
+        ]
+      }
+    ],
+    "debugging_playbook": [
+      {
+        "symptom": "Connect timeout",
+        "likely_causes": [
+          "DNS failure",
+          "Firewall or proxy issue",
+          "Unreachable host"
+        ],
+        "diagnosis": [
+          "Check host resolution and route",
+          "Inspect proxy environment",
+          "Measure connect time separately"
+        ],
+        "fix": [
+          "Correct network/proxy config",
+          "Use an explicit connect timeout"
+        ],
+        "prevention": [
+          "Record endpoint and connection telemetry"
+        ]
+      },
+      {
+        "symptom": "Read timeout",
+        "likely_causes": [
+          "Slow server",
+          "Stalled response stream",
+          "Read timeout too short"
+        ],
+        "diagnosis": [
+          "Measure time to first byte and inter-byte gaps",
+          "Check payload size and server latency"
+        ],
+        "fix": [
+          "Tune read timeout within a total request deadline",
+          "Use streaming for large bodies"
+        ],
+        "prevention": [
+          "Enforce request budgets and alert on tail latency"
+        ]
+      },
+      {
+        "symptom": "HTTPError",
+        "likely_causes": [
+          "4xx or 5xx status",
+          "Expired auth",
+          "Rate limiting"
+        ],
+        "diagnosis": [
+          "Inspect status code and redacted response metadata",
+          "Check retry-after when present"
+        ],
+        "fix": [
+          "Correct request or auth",
+          "Retry only when policy and idempotency allow"
+        ],
+        "prevention": [
+          "Status-specific error handling and circuit breaking"
+        ]
+      },
+      {
+        "symptom": "SSLError",
+        "likely_causes": [
+          "Untrusted CA",
+          "Expired certificate",
+          "Hostname mismatch",
+          "Intercepting proxy"
+        ],
+        "diagnosis": [
+          "Inspect certificate chain and hostname",
+          "Verify trusted CA bundle and proxy settings"
+        ],
+        "fix": [
+          "Repair trust configuration; never disable verification as a workaround"
+        ],
+        "prevention": [
+          "Certificate monitoring and secure proxy configuration"
+        ]
+      },
+      {
+        "symptom": "Connection pool appears exhausted",
+        "likely_causes": [
+          "Unclosed streamed responses",
+          "Session lifecycle leak",
+          "Concurrency exceeds pool sizing"
+        ],
+        "diagnosis": [
+          "Inspect response close paths",
+          "Measure active workers and pool waits"
+        ],
+        "fix": [
+          "Use context managers or close responses",
+          "Bound concurrency and configure adapter pools"
+        ],
+        "prevention": [
+          "Resource lifecycle tests and pool telemetry"
+        ]
+      }
+    ]
+  },
+  "crosswalks": {
+    "onet_tasks": [],
+    "onet_skills": [],
+    "huggingface_tasks": [],
+    "benchmarks": [
+      "DreamCo HTTP client reliability benchmark",
+      "DreamCo API connector contract benchmark"
+    ],
+    "dreamco_divisions": [],
+    "masterbot_lanes": [],
+    "revenue_playbooks": []
+  },
+  "innovation": [
+    {
+      "hypothesis": "A schema-generated typed client with policy-controlled Requests transport can reduce integration defects compared with handwritten request wrappers.",
+      "baseline": "Handwritten Session wrapper with the same endpoints and tests.",
+      "experiment": "Generate a client from a pinned OpenAPI schema; add host allowlists, validation, retries and contract tests; compare defect rate and latency on held-out API fixtures.",
+      "risk_review": "Untrusted schemas must not control arbitrary destinations or inject executable code; all calls remain sandboxed and metadata-only during evaluation.",
+      "evaluation": "Compare correctness, invalid-request rejection, latency, maintainability and security test results; retain as hypothesis until reproduced.",
+      "result": "proposed"
+    }
+  ],
+  "evaluation": {
+    "target_benchmark": "DreamCo HTTP client reliability benchmark: status handling, timeout behavior, auth redaction, pagination, retries, streaming and connection lifecycle.",
+    "holdout": "Unseen HTTP fixtures and failure injection scenarios, not used while authoring exercises.",
+    "regression": "Requests 2.34.2 API compatibility, security controls, response cleanup and existing DreamCo connector tests.",
+    "evidence_state": "guide_drafted",
+    "run_ids": [],
+    "model_version": ""
+  },
+  "rights": {
+    "documentation_access": "public",
+    "derivative_summary_permission": "not_required_for_original_notes",
+    "evaluation_permission": "approved",
+    "training_permission": "pending",
+    "download_permission": "pending",
+    "evidence_reference": "Official documentation URLs recorded in provenance; item-level training rights not granted."
+  },
+  "status": "review_required"
+}
