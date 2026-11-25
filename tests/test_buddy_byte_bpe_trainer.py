@@ -12,6 +12,11 @@ class ByteBpeTrainerTests(unittest.TestCase):
   model=train_byte_bpe(texts,300)
   for text in ["hello hello","DreamCo 🚀 tokenizer","", "漢字 — café"]:
    self.assertEqual(decode(encode(text,model)),text)
+ def test_merge_tokens_are_byte_concatenations(self):
+  model=train_byte_bpe([b"abababab"],260)
+  self.assertTrue(model["merges"])
+  for merge in model["merges"]:
+   self.assertEqual(bytes.fromhex(merge["token_hex"]),bytes.fromhex(merge["left_hex"])+bytes.fromhex(merge["right_hex"]))
  def test_vocab_size_never_exceeds_target(self):
   model=train_byte_bpe([b"abababababab"],260)
   self.assertLessEqual(model["vocab_size"],260)
