@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0.0",
+  "program": "Buddy Open-Source Multimodal Bootcamp",
+  "source_priority": ["source_repositories", "official_project_documentation", "papers_and_benchmarks", "datasets_with_explicit_terms", "videos_and_audio_with_verified_access"],
+  "continuous_discovery": {
+    "enabled": true,
+    "cadence": "weekly",
+    "manual_dispatch": true,
+    "discoveries_per_cycle": 100,
+    "shortlist_per_cycle": 25,
+    "promotion_requires_human_review": true,
+    "never_auto_install_or_execute_discovered_code": true,
+    "never_auto_accept_license_or_dataset_terms": true
+  },
+  "source_policy": {
+    "record_repository_url_and_commit": true,
+    "record_license_expression_and_license_file": true,
+    "record_last_commit_and_archived_status": true,
+    "record_security_advisories_and_dependency_risks": true,
+    "record_model_card_and_dataset_card_separately": true,
+    "separate_code_weights_data_documentation_and_media_rights": true,
+    "unknown_license_state": "quarantine",
+    "copyleft_or_noncommercial_or_research_only": "human_review",
+    "no_training_or_derivative_permission": "study_metadata_only",
+    "no_secrets_or_personal_data_in_training_corpus": true
+  },
+  "multimodal_learning": {
+    "repository_code": {
+      "enabled": true,
+      "methods": ["static_analysis", "dependency_graph", "architecture_extraction", "test_execution_in_sandbox", "issue_and_pr_pattern_study", "reimplementation_exercises"]
+    },
+    "documentation_and_papers": {
+      "enabled": true,
+      "methods": ["structured_extraction", "claim_evidence_linking", "concept_graph", "citation_preservation", "question_generation"]
+    },
+    "video": {
+      "enabled": true,
+      "methods": ["authorized_file_or_stream_ingestion", "scene_sampling", "ocr", "speech_transcription", "temporal_event_alignment", "video_question_answering", "code_demo_reconstruction"],
+      "must_preserve_timestamps": true,
+      "must_check_source_and_media_rights": true
+    },
+    "audio_and_speech": {
+      "enabled": true,
+      "methods": ["audio_event_classification", "asr", "speaker_diarization_when_permitted", "audio_captioning", "speech_understanding", "temporal_alignment"]
+    },
+    "music": {
+      "enabled": true,
+      "methods": ["audio_signal_analysis", "beat_and_tempo_estimation", "key_and_chord_estimation", "structure_segmentation", "instrument_and_timbre_analysis", "midi_or_symbolic_representation_when_permitted", "music_captioning", "music_information_retrieval"],
+      "must_check_composition_recording_dataset_and_model_terms_separately": true
+    }
+  },
+  "weekly_cycle": [
+    "discover",
+    "deduplicate",
+    "verify_repository_health",
+    "inspect_license_and_provenance",
+    "risk_and_security_triage",
+    "rank_relevance_to_55_bootcamp_divisions",
+    "human_review_shortlist",
+    "create_source_specific_learning_units",
+    "assign_five_lessons_per_day_per_division",
+    "run_sandbox_labs",
+    "run_buddy_skill_and_regression_evaluations",
+    "publish_weekly_bootcamp_build",
+    "record_failures_and_retraining_candidates"
+  ],
+  "learning_unit_requirements": [
+    "source_commit_or_version",
+    "license_and_permission_state",
+    "learning_objectives",
+    "prerequisites",
+    "concepts_and_evidence",
+    "worked_example",
+    "hands_on_lab",
+    "independent_transfer_task",
+    "automated_tests",
+    "rubric",
+    "citations",
+    "review_state"
+  ],
+  "mastery": {
+    "requires_independent_implementation": true,
+    "requires_tests_and_regression_pass": true,
+    "requires_held_out_transfer_task": true,
+    "requires_source_citations": true,
+    "requires_no_critical_security_or_license_violations": true,
+    "minimum_score": 0.9,
+    "retest_interval_days": 7,
+    "mastery_is_not_inferred_from_reading_or_summarization": true
+  },
+  "weekly_training_targets": {
+    "lessons_per_day_per_division": 5,
+    "divisions": 55,
+    "weekly_buddy_transcript_or_source_skill_test": true,
+    "build_new_bootcamp_release": true,
+    "retain_previous_benchmark_baselines": true
+  }
+}
