@@ -26,6 +26,11 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
             for lesson in cls.lessons
             if lesson.track_id == "freecodecamp-specialist-learning-paths"
         }
+        cls.triage_by_video = {
+            lesson.source_video_id: lesson
+            for lesson in cls.lessons
+            if lesson.track_id == "freecodecamp-metadata-triage"
+        }
 
     def test_algorithmic_trading_routes_to_dreamfinance_not_unrelated_divisions(self):
         metadata = self.by_video["zH2Mg782XhA"]
@@ -106,6 +111,29 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
                 self.assertIn(division, metadata.division_targets, row["video_id"])
                 self.assertEqual(path.content_status, "original_implementation_brief", row["video_id"])
                 self.assertIn(division, path.division_targets, row["video_id"])
+
+
+    def test_unclassified_video_records_route_to_metadata_triage(self):
+        catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        expected = {
+            row["video_id"] for row in catalog["videos"]
+            if {str(value).casefold() for value in row.get("categories", [])} == {"other_or_unclassified"}
+        }
+        self.assertEqual(set(self.triage_by_video), expected)
+        for lesson in self.triage_by_video.values():
+            self.assertEqual(lesson.content_status, "metadata_only")
+            self.assertEqual(lesson.rights_mode, "metadata_only_until_item_level_permissions")
+            self.assertEqual(set(lesson.division_targets), {"DreamEducation", "CommandCore"})
+            self.assertIn("DreamDiscovery", lesson.masterbot_targets)
+            self.assertTrue(lesson.implementation_steps)
+            self.assertTrue(lesson.buddy_demo)
+            self.assertNotIn(lesson.source_video_id, self.paths_by_video)
+
+    def test_every_video_has_a_specialist_path_or_a_triage_record(self):
+        catalog = json.loads((ROOT / "buddy/bootcamp/sources/freecodecamp/catalog.json").read_text(encoding="utf-8"))
+        all_ids = {row["video_id"] for row in catalog["videos"]}
+        self.assertFalse(set(self.paths_by_video).intersection(self.triage_by_video))
+        self.assertEqual(set(self.paths_by_video).union(self.triage_by_video), all_ids)
 
     def test_course_overrides_reference_real_divisions_and_masterbot_lanes(self):
         canonical = {
