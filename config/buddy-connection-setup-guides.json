@@ -1,0 +1,1241 @@
+{
+  "schema": "dreamco.buddy_connection_setup_guides.v1",
+  "version": "1.0.0",
+  "source": "config/buddy-universal-connection-catalog.json",
+  "connection_count": 18,
+  "truth_boundary": "A setup guide, URL, secret reference, or saved preference does not prove a working connection. Live status requires an implemented adapter, current permission, sandbox health evidence, and runtime verification.",
+  "global_policy": {
+    "buddy_is_beginner_friendly_front_door": true,
+    "explain_auth_and_scopes_before_setup": true,
+    "no_password_or_raw_secret_collection_in_chat": true,
+    "secrets_storage": [
+      "host_environment_excluded_from_git",
+      "operating_system_keychain",
+      "managed_server_vault"
+    ],
+    "never_store_secrets_in": [
+      "repository",
+      "browser_local_storage",
+      "logs",
+      "analytics"
+    ],
+    "default_access": "read_only_or_mock",
+    "write_actions": "exact_preview_and_separate_owner_approval",
+    "spend": "separate_explicit_owner_approval",
+    "live_connection_requires": [
+      "adapter_present",
+      "permission_granted",
+      "secret_reference_configured_when_required",
+      "sandbox_health_check_passed",
+      "runtime_evidence_current"
+    ]
+  },
+  "profiles": [
+    {
+      "connection_id": "local-model",
+      "display_name": "Local AI runtime",
+      "auth_type": "local_runtime",
+      "secret_reference": null,
+      "beginner_explanation": "Local AI runtime lets Buddy work with the knowledge area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "local_only",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": false,
+        "secret_reference": null,
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Check a local, open-source, public-data, or manual workflow that meets the same task and licensing requirements; verify coverage and current terms before choosing it.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://ollama.com/download",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "openai",
+      "display_name": "OpenAI models",
+      "auth_type": "api_key",
+      "secret_reference": "OPENAI_API_KEY",
+      "beginner_explanation": "OpenAI models lets Buddy work with the knowledge area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "read_only_or_mock",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": true,
+        "secret_reference": "OPENAI_API_KEY",
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Local Ollama or another rights-cleared local model; compare quality and hardware requirements.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://platform.openai.com/api-keys",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "github",
+      "display_name": "GitHub",
+      "auth_type": "oauth_or_app",
+      "secret_reference": "GITHUB_TOKEN",
+      "beginner_explanation": "GitHub lets Buddy work with the development area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "read_only_or_mock",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": true,
+        "secret_reference": "GITHUB_TOKEN",
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Local Git repository and CLI workflows; authenticated GitHub access is still needed for hosted repository actions.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://github.com/settings/apps",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "mcp",
+      "display_name": "MCP server",
+      "auth_type": "mcp_transport",
+      "secret_reference": null,
+      "beginner_explanation": "MCP server lets Buddy work with the tools area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "read_only_or_mock",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": false,
+        "secret_reference": null,
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Check a local, open-source, public-data, or manual workflow that meets the same task and licensing requirements; verify coverage and current terms before choosing it.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://modelcontextprotocol.io/docs/getting-started/intro",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "google-maps",
+      "display_name": "Google Maps",
+      "auth_type": "api_key",
+      "secret_reference": "GOOGLE_MAPS_API_KEY",
+      "beginner_explanation": "Google Maps lets Buddy work with the geospatial area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "read_only_or_mock",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": true,
+        "secret_reference": "GOOGLE_MAPS_API_KEY",
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "OpenStreetMap-based data and local GIS tooling where coverage and license fit; verify geocoding and routing terms.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://developers.google.com/maps/documentation/javascript/get-api-key",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "reso-mls",
+      "display_name": "Authorized MLS / RESO provider",
+      "auth_type": "oauth_or_api_key",
+      "secret_reference": "PROPERTY_PROVIDER_TOKEN",
+      "beginner_explanation": "Authorized MLS / RESO provider lets Buddy work with the property area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "read_only_or_mock",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": true,
+        "secret_reference": "PROPERTY_PROVIDER_TOKEN",
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Public property records and public listing sources where lawful; they are not a substitute for licensed MLS data.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://www.reso.org/reso-web-api/",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "ffmpeg",
+      "display_name": "FFmpeg local media engine",
+      "auth_type": "local_runtime",
+      "secret_reference": null,
+      "beginner_explanation": "FFmpeg local media engine lets Buddy work with the video audio area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "local_only",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": false,
+        "secret_reference": null,
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Check a local, open-source, public-data, or manual workflow that meets the same task and licensing requirements; verify coverage and current terms before choosing it.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://ffmpeg.org/download.html",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "blender",
+      "display_name": "Blender local 3D/VFX engine",
+      "auth_type": "local_runtime",
+      "secret_reference": null,
+      "beginner_explanation": "Blender local 3D/VFX engine lets Buddy work with the video 3d area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "local_only",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": false,
+        "secret_reference": null,
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Check a local, open-source, public-data, or manual workflow that meets the same task and licensing requirements; verify coverage and current terms before choosing it.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://www.blender.org/download/",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "audacity",
+      "display_name": "Audacity local audio editor",
+      "auth_type": "local_runtime",
+      "secret_reference": null,
+      "beginner_explanation": "Audacity local audio editor lets Buddy work with the voice music area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "local_only",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": false,
+        "secret_reference": null,
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Check a local, open-source, public-data, or manual workflow that meets the same task and licensing requirements; verify coverage and current terms before choosing it.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://www.audacityteam.org/download/",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "musicgen",
+      "display_name": "AudioCraft / MusicGen",
+      "auth_type": "local_runtime",
+      "secret_reference": null,
+      "beginner_explanation": "AudioCraft / MusicGen lets Buddy work with the music area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "local_only",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": false,
+        "secret_reference": null,
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Local audio tools and user-created or rights-cleared assets; review model and dataset licenses.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://github.com/facebookresearch/audiocraft",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "whisper",
+      "display_name": "Whisper speech recognition",
+      "auth_type": "local_runtime",
+      "secret_reference": null,
+      "beginner_explanation": "Whisper speech recognition lets Buddy work with the voice area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "local_only",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": false,
+        "secret_reference": null,
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Local transcription alternatives and manual transcription; verify model license and hardware requirements.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://github.com/openai/whisper",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "usaspending",
+      "display_name": "USAspending API",
+      "auth_type": "public_api",
+      "secret_reference": null,
+      "beginner_explanation": "USAspending API lets Buddy work with the government area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "read_only_or_mock",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": false,
+        "secret_reference": null,
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Check a local, open-source, public-data, or manual workflow that meets the same task and licensing requirements; verify coverage and current terms before choosing it.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://api.usaspending.gov/",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "simpler-grants",
+      "display_name": "Simpler.Grants.gov API",
+      "auth_type": "api_key",
+      "secret_reference": "SIMPLER_GRANTS_API_KEY",
+      "beginner_explanation": "Simpler.Grants.gov API lets Buddy work with the government area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "read_only_or_mock",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": true,
+        "secret_reference": "SIMPLER_GRANTS_API_KEY",
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Official Grants.gov and agency pages; confirm API availability and access requirements.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://simpler.grants.gov/developers",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "world-bank",
+      "display_name": "World Bank Open Data API",
+      "auth_type": "public_api",
+      "secret_reference": null,
+      "beginner_explanation": "World Bank Open Data API lets Buddy work with the global government area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "read_only_or_mock",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": false,
+        "secret_reference": null,
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Check a local, open-source, public-data, or manual workflow that meets the same task and licensing requirements; verify coverage and current terms before choosing it.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://datahelpdesk.worldbank.org/knowledgebase/topics/125589-developer-information",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "oecd",
+      "display_name": "OECD Data Explorer",
+      "auth_type": "public_data",
+      "secret_reference": null,
+      "beginner_explanation": "OECD Data Explorer lets Buddy work with the global government area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "read_only_or_mock",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": false,
+        "secret_reference": null,
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Check a local, open-source, public-data, or manual workflow that meets the same task and licensing requirements; verify coverage and current terms before choosing it.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://data-explorer.oecd.org/",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "un-data",
+      "display_name": "United Nations Data",
+      "auth_type": "public_data",
+      "secret_reference": null,
+      "beginner_explanation": "United Nations Data lets Buddy work with the global government area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "read_only_or_mock",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": false,
+        "secret_reference": null,
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Check a local, open-source, public-data, or manual workflow that meets the same task and licensing requirements; verify coverage and current terms before choosing it.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://data.un.org/",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "sam",
+      "display_name": "SAM.gov API",
+      "auth_type": "api_key",
+      "secret_reference": "SAM_GOV_API_KEY",
+      "beginner_explanation": "SAM.gov API lets Buddy work with the contracts manufacturing area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "read_only_or_mock",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": true,
+        "secret_reference": "SAM_GOV_API_KEY",
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "SAM.gov public search pages and official notices; API access and registration may still be required.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://open.gsa.gov/api/sam-api/",
+      "current_provider_terms_review": "required_before_enablement"
+    },
+    {
+      "connection_id": "nist-mep",
+      "display_name": "NIST MEP supplier scouting",
+      "auth_type": "account_handoff",
+      "secret_reference": null,
+      "beginner_explanation": "NIST MEP supplier scouting lets Buddy work with the manufacturing area. A catalog entry is only a setup guide; it is not a connected account.",
+      "setup_steps": [
+        "Open the official setup page and verify the current domain, documentation, terms, and supported countries.",
+        "Create or select an account/runtime controlled by the owner; never share a password in chat or commit credentials.",
+        "Review requested permissions and choose the narrowest scopes; start read-only or local where possible.",
+        "Configure credentials only through an approved host environment, OS keychain, or managed vault; store only a reference in DreamCo.",
+        "Run a non-destructive sandbox or health check and record the timestamp, adapter version, scopes, and result.",
+        "Test denied permissions, expired credentials, rate limits, and disconnect/revocation before enabling workflows."
+      ],
+      "permission_review": {
+        "default_mode": "read_only_or_mock",
+        "requested_scopes": "must_be_documented_before_authorization",
+        "write_actions": "require_exact_preview_and_separate_owner_approval",
+        "credential_values_in_chat": false,
+        "browser_storage_for_secrets": false,
+        "repository_storage_for_secrets": false
+      },
+      "credential_handling": {
+        "required": false,
+        "secret_reference": null,
+        "allowed_storage": [
+          "host_environment_excluded_from_git",
+          "operating_system_keychain",
+          "managed_server_vault"
+        ],
+        "raw_secret_display": false,
+        "rotation_and_revocation_required": true
+      },
+      "cost_review": {
+        "status": "verify_current_provider_pricing_before_enablement",
+        "check": [
+          "free_tier_and_limits",
+          "paid_plan_requirements",
+          "usage_based_charges",
+          "rate_limits",
+          "overage_and_cancellation_terms"
+        ],
+        "spending_authorization": "separate_explicit_owner_approval"
+      },
+      "local_or_low_cost_alternative": "Check a local, open-source, public-data, or manual workflow that meets the same task and licensing requirements; verify coverage and current terms before choosing it.",
+      "health_check": {
+        "required": true,
+        "status": "not_run_by_catalog",
+        "evidence_fields": [
+          "checked_at",
+          "adapter_version",
+          "granted_scopes",
+          "test_mode",
+          "result",
+          "error_code_if_any"
+        ]
+      },
+      "disconnect_and_recovery": [
+        "Stop dependent jobs and revoke the provider token/session at the provider.",
+        "Remove the host-side secret or vault reference and rotate credentials if exposure is suspected.",
+        "Mark the connection disconnected and preserve the audit record without retaining raw secrets.",
+        "Retry in read-only/mock mode after correcting the documented failure."
+      ],
+      "status": "guide_template_ready_live_connection_unverified",
+      "official_setup_url": "https://www.nist.gov/mep",
+      "current_provider_terms_review": "required_before_enablement"
+    }
+  ]
+}
