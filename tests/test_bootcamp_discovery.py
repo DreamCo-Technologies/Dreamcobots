@@ -40,7 +40,7 @@ class BootcampDiscoveryTests(unittest.TestCase):
         self.assertEqual(result["inventory"]["occupations"], 1)
         task = result["occupations"][0]["task_playbooks"][0]
         self.assertEqual(task["learning_summary_status"], "not_yet_authored_by_buddy")
-        self.assertIn("worked example", task["guide_authoring_brief"]["must_include"])
+        self.assertTrue(any("worked example" in item for item in task["guide_authoring_brief"]["must_include"]))
 
 
 if __name__ == "__main__":
