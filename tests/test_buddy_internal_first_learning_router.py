@@ -88,7 +88,7 @@ class BuddyInternalFirstLearningRouterTests(unittest.TestCase):
                 )
             self.assertEqual(result["gap_event"]["status"], "open")
             self.assertFalse(result["gap_event"]["external_routing_performed"])
-            self.assertTrue((root / "data/buddy-library-knowledge-gaps.jsonl").is_file())
+            self.assertTrue((root / ".dreamco/library-knowledge-gaps.jsonl").is_file())
 
     def test_invalid_query_and_limit_are_rejected(self):
         with self.assertRaises(ValueError):
