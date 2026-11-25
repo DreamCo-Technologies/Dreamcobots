@@ -1,6 +1,6 @@
 # DreamTrade Paper-Trading Sandbox
 
-This is a local, deterministic paper-trading teaching environment for the FreeCodeCamp algorithmic-trading learning path. It is designed for experiments and engineering practice, not investment advice or live execution.
+This is a local, deterministic paper-trading teaching environment for the FreeCodeCamp algorithmic-trading learning path (source video ID `zH2Mg782XhA`). It is designed for experiments and engineering practice, not investment advice or live execution. The video catalog record is metadata-only; this guide is an original DreamCo implementation exercise, not a transcript or substitute for the video.
 
 ## Run the demo
 
