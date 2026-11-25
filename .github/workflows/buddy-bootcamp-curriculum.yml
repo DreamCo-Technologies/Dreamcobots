@@ -10,6 +10,17 @@ on:
       - "config/hf-capability-download-map.json"
       - "config/generated/division-huggingface-taxonomy-map.json"
       - "config/buddy-model-serving-policy.json"
+      - "data/dreamco_training/**"
+      - "tools/build_dreamco_bootcamp_seed_data.py"
+      - "tests/test_dreamco_bootcamp_seed_data.py"
+      - "config/dreamco-training-source-registry.json"
+      - "config/dreamco-first-party-training-factory.json"
+      - "config/buddy-training-data-provenance-policy.json"
+      - "config/dreamco-mastery-continuity-registry.json"
+      - "tools/build_dreamco_training_factory.py"
+      - "tests/test_dreamco_training_factory.py"
+      - "tools/build_dreamco_training_examples.py"
+      - "tests/test_dreamco_original_training_examples.py"
       - "buddy/bootcamp/buddy_bootcamp.yaml"
       - "buddy/bootcamp/sources/freecodecamp/**"
       - "tools/sync_freecodecamp_catalog.py"
@@ -53,6 +64,17 @@ on:
       - "config/hf-capability-download-map.json"
       - "config/generated/division-huggingface-taxonomy-map.json"
       - "config/buddy-model-serving-policy.json"
+      - "data/dreamco_training/**"
+      - "tools/build_dreamco_bootcamp_seed_data.py"
+      - "tests/test_dreamco_bootcamp_seed_data.py"
+      - "config/dreamco-training-source-registry.json"
+      - "config/dreamco-first-party-training-factory.json"
+      - "config/buddy-training-data-provenance-policy.json"
+      - "config/dreamco-mastery-continuity-registry.json"
+      - "tools/build_dreamco_training_factory.py"
+      - "tests/test_dreamco_training_factory.py"
+      - "tools/build_dreamco_training_examples.py"
+      - "tests/test_dreamco_original_training_examples.py"
       - "buddy/bootcamp/buddy_bootcamp.yaml"
       - "buddy/bootcamp/sources/freecodecamp/**"
       - "tools/sync_freecodecamp_catalog.py"
@@ -179,6 +201,10 @@ jobs:
           python tools/build_buddy_bootcamp_curriculum.py
           python tools/build_buddy_bootcamp_curriculum.py --check
           python -m unittest discover -s tests -p 'test_buddy_bootcamp_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_dreamco_bootcamp_seed_data.py' -v
+          python -m unittest discover -s tests -p 'test_dreamco_training_factory.py' -v
+          python -m unittest discover -s tests -p 'test_dreamco_original_training_examples.py' -v
+          python -m py_compile tools/build_dreamco_bootcamp_seed_data.py tools/build_dreamco_training_factory.py tools/build_dreamco_training_examples.py
       - name: Upload generated study artifacts for review
         if: always()
         uses: actions/upload-artifact@v4
