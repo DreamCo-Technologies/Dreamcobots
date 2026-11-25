@@ -219,3 +219,40 @@ The weekly workflow builds a daily plan with five lesson slots per division (275
 The source-guide organizer preserves authorship, user ownership designation, source provenance, upstream licenses and purpose-specific rights. Every guide must identify the AI authoring model, the user's contribution/commissioning role and the owner-confirmation status. User-provided data stays in a separate user-owned registry. The repository's current user-data manifest is empty until the user explicitly registers assets and their consent scopes.
 
 DreamCo's ownership designation applies to original instructional expression it creates, subject to applicable law and contributor agreements. Third-party materials, source code, datasets, model weights, video/audio and documentation keep their own ownership and licenses. Study, summary creation, evaluation, redistribution, commercial use and model-weight training remain separate permissions. A summary or course blueprint is not proof that Buddy has studied or mastered it.
+
+## Complete Hugging Face ecosystem study map
+
+Buddy's living Hub study map covers model, dataset and Space repositories/cards; task families; Transformers and Transformers.js; Tokenizers; Datasets; Accelerate; PEFT; TRL; Diffusers; timm; Sentence Transformers; Kernels; Optimum; Safetensors; Bitsandbytes; Lighteval; Inference Providers and dedicated Endpoints; Gradio; Trackio; smolagents; OpenEnv; LeRobot and Reachy Mini; Chat UI; Leaderboards; Xet; Hub APIs/clients; deployment to AWS, Azure and Google Cloud; and relevant hardware/serving backends. Refresh product documentation and record the products actually found; this seed map is not a permanent exhaustive count.
+
+## CPU-first 25M-class model course
+
+The course manifest `config/buddy-25m-cpu-llm-course.json` contains 18 original lessons mapped from the freeCodeCamp 25M CPU LLM article and linked YouTube course. It includes byte-level tokenization, embeddings, exact parameter accounting, hyperconnections, RMSNorm, RoPE/NoPE, linear and sparse attention, MoE, image patches, pretraining, data interleaving, sandboxed code RL, reward functions/GRPO, parameter-efficient updates, multi-seed experiments, statistical evaluation and release/rollback. The 260-token vocabulary, 192-token context and 32×32 image/16-patch example are course-specific reference settings, not universal defaults.
+
+## O*NET full content model
+
+O*NET coverage includes worker characteristics, worker requirements, experience requirements, occupational requirements, occupation-specific information and workforce characteristics, plus the detailed subject and task inventories in `config/buddy-onet-content-model-curriculum.json`. Every task is classified individually for assistive AI, bounded automation, human-supervised/regulated work, physical/sensor-dependent work or not-assessed. O*NET records are not evidence that AI can perform every job or that a user has professional qualifications.
+
+## Shared course scheduler
+
+`config/buddy-course-track-registry.json` and `buddy/learning/course_track_registry.py` expose Tolkien, tokenizer, CPU-first LLM, O*NET, Hugging Face and freeCodeCamp paths as queued lessons for all 55 canonical domains and 65 MasterBot lanes. The adapter reports `queued_not_studied`; it does not award mastery, download media, ingest transcripts, train model weights or authorize paid compute.
+
+## Complete official Hugging Face Learn course catalog
+
+Verified against the official [Hugging Face Learn index](https://huggingface.co/learn) on 2026-11-24. The full 12-course inventory is machine-readable in `config/buddy-huggingface-full-learning-map.json`:
+
+- [LLM Course](https://huggingface.co/learn/llm-course/chapter1/1)
+- [Context Course](https://huggingface.co/learn/context-course/unit0/introduction)
+- [Robotics Course](https://huggingface.co/learn/robotics-course/unit0/1)
+- [A smol course](https://huggingface.co/learn/smol-course/unit0/1)
+- [Agents Course](https://huggingface.co/learn/agents-course/unit0/introduction)
+- [Deep RL Course](https://huggingface.co/learn/deep-rl-course/unit0/introduction)
+- [Community Computer Vision Course](https://huggingface.co/learn/computer-vision-course/unit0/welcome/welcome)
+- [Audio Course](https://huggingface.co/learn/audio-course/chapter0/introduction)
+- [Open-Source AI Cookbook](https://huggingface.co/learn/cookbook/index)
+- [ML for Games Course](https://huggingface.co/learn/ml-games-course/unit0/introduction)
+- [Diffusion Course](https://huggingface.co/learn/diffusion-course/unit0/1)
+- [ML for 3D Course](https://huggingface.co/learn/ml-for-3d-course/unit0/introduction)
+
+The map adds 18 original DreamCo ecosystem modules spanning Hub governance, cards and provenance, dataset engineering, Spaces, Transformers, tokenizers, Accelerate, PEFT, TRL, Diffusers, timm, embeddings/retrieval, kernels/quantization, evaluation, inference/deployment, Gradio/Trackio, agents/environments and robotics/games/3D. The existing 37 task-family taxonomy remains a separate layer.
+
+The Deep RL course is marked low-maintenance because its own introduction notes that some challenge and leaderboard features are no longer operational. A course's presence in Learn does not guarantee every external notebook, service or challenge still works. All courses are queued for original exercises and evidence; links or reading do not count as mastery or grant transcript/model-training rights.
