@@ -1,0 +1,40 @@
+name: Buddy Opt-In Evidence Learning Integration
+on:
+  pull_request:
+    paths:
+      - 'buddy/learning/evidence_acquisition.py'
+      - 'buddy/learning/runtime_bridge.py'
+      - 'tests/test_buddy_evidence_acquisition.py'
+      - 'tests/test_buddy_learning_runtime_bridge.py'
+      - 'docs/BUDDY_OPT_IN_EVIDENCE_LEARNING.md'
+      - '.github/workflows/buddy-opt-in-evidence-learning.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'buddy/learning/evidence_acquisition.py'
+      - 'buddy/learning/runtime_bridge.py'
+      - 'tests/test_buddy_evidence_acquisition.py'
+      - 'tests/test_buddy_learning_runtime_bridge.py'
+      - 'docs/BUDDY_OPT_IN_EVIDENCE_LEARNING.md'
+permissions:
+  contents: read
+concurrency:
+  group: buddy-opt-in-evidence-learning
+  cancel-in-progress: false
+jobs:
+  offline-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Run offline evidence and runtime integration tests
+        run: |
+          python -m unittest discover -s tests -p 'test_buddy_evidence_acquisition.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_learning_runtime_bridge.py' -v
