@@ -30,6 +30,12 @@ class LibraryRegistryDiscoveryTests(unittest.TestCase):
                 "host": "search.maven.org", "query_parameter": "q",
                 "page_parameter": "start", "page_size_parameter": "rows",
                 "parser": "maven", "supports_pagination": True,
+            }, {
+                "id": "metacpan", "kind": "package_search",
+                "endpoint": "https://fastapi.metacpan.org/v1/release/_search",
+                "host": "fastapi.metacpan.org", "query_parameter": "q",
+                "page_parameter": "from", "page_size_parameter": "size",
+                "parser": "metacpan", "supports_pagination": True,
             }],
         }
         (self.root / "config/buddy-library-registry-adapters.json").write_text(json.dumps(config), encoding="utf-8")
@@ -88,6 +94,37 @@ class LibraryRegistryDiscoveryTests(unittest.TestCase):
         self.assertIn("start=20", captured["url"])
         self.assertIn("rows=10", captured["url"])
         self.assertIn("wt=json", captured["url"])
+        self.assertIsNone(result["next_page"])
+
+    def test_metacpan_normalizes_release_metadata_and_uses_offset_pagination(self):
+        payload = {"hits": {"hits": [{
+            "_source": {
+                "distribution": "HTTP-Message", "version": "7.00",
+                "abstract": "HTTP message parsing and construction.",
+                "resources": {
+                    "homepage": "https://metacpan.org/pod/HTTP::Message",
+                    "repository": {"url": "https://github.com/libwww-perl/HTTP-Message"},
+                },
+                "license": ["perl_5"], "author": "OALDERS", "date": "2026-10-01",
+            }
+        }]}}
+        captured = {}
+        def opener(request, timeout):
+            captured["url"] = request.full_url
+            return io.BytesIO(json.dumps(payload).encode("utf-8"))
+        result = search_public_registry(
+            "metacpan", "HTTP", allow_network=True, page=2, limit=10,
+            root=self.root, opener=opener,
+        )
+        candidate = result["candidates"][0]
+        self.assertEqual(candidate["name"], "HTTP-Message")
+        self.assertEqual(candidate["version"], "7.00")
+        self.assertEqual(candidate["license"], ["perl_5"])
+        self.assertEqual(candidate["repository"], "https://github.com/libwww-perl/HTTP-Message")
+        self.assertFalse(candidate["download_authorized"])
+        self.assertEqual(candidate["training_permission"], "pending")
+        self.assertIn("from=20", captured["url"])
+        self.assertIn("size=10", captured["url"])
         self.assertIsNone(result["next_page"])
 
     def test_rejects_unknown_provider_and_invalid_query(self):
