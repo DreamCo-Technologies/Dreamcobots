@@ -86,6 +86,31 @@ class OnetTaskIndexTests(unittest.TestCase):
             self.assertIn("unseen assessment", task["assessment"].lower())
             self.assertEqual(task["source_url"], "https://www.onetcenter.org/tasks.json")
 
+    def test_runtime_does_not_route_unverified_index_rows(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            index_path = root / "data/onet/onet-task-index.json"
+            index_path.parent.mkdir(parents=True)
+            index_path.write_text(json.dumps({
+                "source": {"official_download_url": "https://www.onetcenter.org/tasks.json"},
+                "inventory": {"complete": False},
+                "tasks": [{
+                    "occupation_code": "15-1252.00",
+                    "occupation_title": "Software Developers",
+                    "task_id": "123",
+                    "task_statement": "Analyze user needs.",
+                    "onet_release": "32.0",
+                }],
+            }), encoding="utf-8")
+            track = {
+                "parser": "onet",
+                "task_index_path": "data/onet/onet-task-index.json",
+                "guide": "docs/BUDDY_ONET_FULL_CONTENT_MODEL_AND_TASK_PLAYBOOKS.md",
+                "rights": "onet_cc_by_4.0_attribution",
+            }
+            rows = _rows(track, {"subject_inventory": []}, root)
+            self.assertFalse(any(row["id"].startswith("onet-task-") for row in rows))
+
 
 if __name__ == "__main__":
     unittest.main()
