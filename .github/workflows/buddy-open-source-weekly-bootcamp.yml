@@ -41,7 +41,9 @@ jobs:
       - name: Validate bootcamp configuration and discovery script
         run: |
           python -m json.tool config/buddy-open-source-bootcamp.json > /dev/null
-          python -m py_compile tools/discover_open_source_bootcamp_sources.py
+          python -m json.tool config/buddy-source-study-guide.schema.json > /dev/null
+          python -m json.tool config/buddy-source-rights-manifest.json > /dev/null
+          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/build_buddy_source_study_queue.py
       - name: Run source rights and guide-queue tests
         run: python -m unittest discover -s tests -p 'test_buddy_source_study_queue.py' -v
       - name: Discover GitHub repositories and Hugging Face subjects
