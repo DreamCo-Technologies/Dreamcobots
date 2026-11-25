@@ -46,6 +46,7 @@ class HuggingFaceTaxonomyTests(unittest.TestCase):
         self.assertIn("audio-classification", result["subject_terms"])
         self.assertIn("computer-vision", result["subject_terms"])
         self.assertEqual(result["counts"]["space_subject_terms"], 2)
+        self.assertNotIn("id", result["subject_terms"])
         self.assertTrue(result["capabilities"]["spaces"])
 
     def test_missing_spaces_taxonomy_is_reported_not_hidden(self):
