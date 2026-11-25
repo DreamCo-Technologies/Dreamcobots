@@ -36,13 +36,19 @@ def resolve_route(manifest: dict[str, Any]) -> dict[str, Any]:
     row = _domain_index().get(owner)
     masterbots = _masterbot_index()
     proposed_id = row.get("masterbot_id") if row else None
-    supplied_id = manifest.get("primary_masterbot_id")
-    if supplied_id is not None:
+    raw_supplied_id = manifest.get("primary_masterbot_id")
+    invalid_supplied_id = isinstance(raw_supplied_id, bool)
+    supplied_id = raw_supplied_id
+    if supplied_id is not None and not invalid_supplied_id:
         try:
             supplied_id = int(supplied_id)
         except (TypeError, ValueError):
+            invalid_supplied_id = True
             supplied_id = None
-    if supplied_id is not None and supplied_id != proposed_id:
+    if invalid_supplied_id:
+        proposed_id = None
+        status = "blocked_invalid_primary_masterbot_id"
+    elif supplied_id is not None and supplied_id != proposed_id:
         proposed_id = None
         status = "blocked_inconsistent_primary_masterbot"
     elif not row:
@@ -65,6 +71,7 @@ def resolve_route(manifest: dict[str, Any]) -> dict[str, Any]:
         proposed_id = None
 
     shared_id = manifest.get("shared_teammate_masterbot_id")
+    shared_route_status = "not_requested"
     if shared_id is not None:
         try:
             shared_id = int(shared_id)
@@ -72,7 +79,9 @@ def resolve_route(manifest: dict[str, Any]) -> dict[str, Any]:
             shared_id = None
         if shared_id not in range(46, 66) or shared_id not in masterbots:
             shared_id = None
-            status = "blocked_invalid_shared_masterbot_route"
+            shared_route_status = "blocked_invalid_shared_masterbot_route"
+        else:
+            shared_route_status = "proposed_shared_service_collaboration_pending_owner_confirmation"
 
     return {
         "orchestrator": "Buddy",
@@ -82,6 +91,8 @@ def resolve_route(manifest: dict[str, Any]) -> dict[str, Any]:
         "primary_masterbot_id": proposed_id,
         "primary_masterbot_name": masterbots.get(proposed_id) if proposed_id else None,
         "shared_teammate_masterbot_id": shared_id,
+        "shared_route_status": shared_route_status,
+        "shared_route_valid": shared_id is not None,
         "shared_platform_masterbot_ids": list(range(46, 66)),
         "collaborating_masterbot_ids": [shared_id] if shared_id else [],
         "mapping_status": row.get("mapping_status") if row else "unresolved",
