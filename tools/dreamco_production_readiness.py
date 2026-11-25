@@ -59,6 +59,10 @@ def classify_requirement(evidence: dict) -> str:
     return "CONFIRMED_REQUIREMENT" if evidence.get("confirmed_requirement") is True else "UNTRIAGED_CANDIDATE"
 
 
+def missing_requirement_evidence(evidence: dict) -> list[str]:
+    return [key for key in ("implementation", "tests", "runtime_routes", "benchmark_evidence") if not evidence.get(key)]
+
+
 def build_candidate_triage(requirements: list[dict]) -> list[dict]:
     grouped: dict[str, dict] = {}
     for item in requirements:
@@ -180,7 +184,7 @@ def main() -> int:
             }
             requirements.append(item)
             if classification == "CONFIRMED_REQUIREMENT":
-                missing = [key for key in ("implementation", "tests", "runtime_routes", "benchmark_evidence") if not item_evidence.get(key)]
+                missing = missing_requirement_evidence(item_evidence)
                 if missing:
                     findings.append({
                         "id": "GAP-" + requirement_id,
