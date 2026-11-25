@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -42,7 +43,7 @@ def categorize(title: str, description: str = "") -> list[str]:
     text = f" {title} {description} ".casefold()
     matches = []
     for category_id, _label, keywords in CATEGORIES:
-        if any(keyword in text for keyword in keywords):
+        if any(re.search(r"(?<![a-z0-9])" + re.escape(keyword.strip()) + r"(?![a-z0-9])", text) for keyword in keywords):
             matches.append(category_id)
     return matches or ["other_or_unclassified"]
 
