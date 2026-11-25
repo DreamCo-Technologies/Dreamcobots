@@ -246,12 +246,16 @@
       "name": "foundry/local_rag.py (dependency-free local RAG store)",
       "category": "repo_tool",
       "rank": 8,
-      "gives_buddy": "Retrieval over DreamCo docs for grounding, on laptops and in the sandbox, with no hosted embeddings. Covered by tests/test_foundry_local_rag.py, but the router and runtime don't call it yet.",
+      "gives_buddy": "Dependency-free local TF-IDF retrieval for approved library guides. Used by BuddyLearningBridge and the unknown-problem router for internal-first library knowledge; broader general DreamCo-document RAG remains follow-up.",
       "connection_status": "connected",
       "wired_into": [
-        "foundry/local_rag.py"
+        "foundry/local_rag.py",
+        "buddy/learning/universal_library_registry.py",
+        "buddy/learning/library_knowledge_router.py",
+        "buddy/learning/runtime_bridge.py",
+        "buddy/datasets/unknown_router.py"
       ],
-      "blocker": "Not called from server/buddy-model-policy.ts. That integration is a code change, not config, so it is not done in this PR.",
+      "blocker": "Broader general-purpose RAG across all DreamCo documents and direct integration into the main model policy router remain follow-up; library guide retrieval is wired.",
       "owner_action": null,
       "owner_lane": "Grok-Prod-Data-Wiring",
       "source_url": null,
