@@ -80,6 +80,11 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
         task = result["onet_task_routes"][0]
         self.assertIn("DreamCodeLab", task["division_ids"])
         self.assertIn(task["task_ref"], next(x for x in result["divisions"] if x["division"] == "DreamCodeLab")["onet_task_refs"])
+        self.assertEqual(task["teacher_model"],"GPT-6")
+        self.assertEqual(task["student_model"],"Buddy")
+        self.assertTrue(task["software_capability_categories"])
+        self.assertTrue(task["agent_capabilities_to_assess"])
+        self.assertFalse(task["model_training_eligible"])
         self.assertEqual(task["task_specific_software_category_count"], 2)
         self.assertEqual(task["agent_capability_count"], 1)
         self.assertIn("O*NET", task["task_playbook_source"])
@@ -115,6 +120,7 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
         self.assertEqual(result["instructional_model"]["teacher"]["role"], "GPT-6 instructor")
         self.assertTrue(result["source_family_routes"])
         self.assertTrue(result["venture_and_workforce_tracks"])
+        self.assertTrue(all(row["teacher_model"]=="GPT-6" and row["student_model"]=="Buddy" for row in result["venture_and_workforce_tracks"]))
         self.assertTrue(result["government_and_community_curriculum"]["benefit_protections"]["no_eligibility_guarantees"])
 
     def test_full_freecodecamp_specialist_and_certification_inventory_maps(self):
