@@ -57,7 +57,7 @@ def _stable_id(track_id: str, lesson_id: str) -> int:
     return (int.from_bytes(digest[:8], "big") & 0x7FFFFFFFFFFFFFFF) or 1
 
 
-def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
+def _rows(track: dict, data: dict, root: Path = ROOT, *, include_blueprint: bool = False) -> list[dict]:
     parser = track["parser"]
     if parser == "universal_library_curriculum":
         ecosystem_data = _read(root / "config/library_ecosystems.json")
@@ -376,10 +376,10 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
             rows.append({
                 "id": f"fcc-video-{row['video_id']}",
                 "title": row["title"],
-                "objective": overlay.get("objective") or row.get("description") or "Study the video only after an authorized transcript or equivalent source is available; title and metadata are not lesson content.",
-                "practice": overlay.get("practice") or "Locate item-level study, derivative-summary and evaluation permissions; if authorized, create an original timestamped guide with exercises and answer key. Otherwise remain metadata-only.",
-                "assessment": overlay.get("assessment") or "Do not mark studied or mastered from a title, video URL or metadata row. Require a rights-cleared source, detailed guide, original exercise and independent assessment.",
-                "benchmark": overlay.get("benchmark", "FreeCodeCamp detailed video study-guide acceptance suite."),
+                "objective": (overlay.get("objective") if include_blueprint else None) or row.get("description") or "Metadata-only reference; a title and public video URL are not course content.",
+                "practice": (overlay.get("practice") if include_blueprint else None) or "Verify item-level study, summary and evaluation permissions before authoring a lesson.",
+                "assessment": (overlay.get("assessment") if include_blueprint else None) or "Do not mark studied or mastered from public metadata; require an authorized source and independent assessment.",
+                "benchmark": (overlay.get("benchmark") if include_blueprint else None) or "FreeCodeCamp metadata inventory integrity checks; no study or mastery claim.",
                 "source_url": row["url"],
                 "source_video_id": str(row["video_id"]),
                 "content_status": "metadata_only",
@@ -388,15 +388,15 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
                 "capability_tags": overlay.get("capability_tags", []),
                 "tool_tags": overlay.get("tool_tags", []),
                 "agent_tags": overlay.get("agent_tags", []),
-                "implementation_steps": overlay.get("implementation_steps", []),
-                "buddy_demo": overlay.get("buddy_demo", ""),
+                "implementation_steps": overlay.get("implementation_steps", []) if include_blueprint else [],
+                "buddy_demo": overlay.get("buddy_demo", "") if include_blueprint else "",
                 "rights_mode": "metadata_only_until_item_level_permissions",
             })
         return rows
     if parser == "freecodecamp_specialist_learning_paths":
         # Keep third-party video metadata in its own metadata-only track. These are
         # separate, original DreamCo learning paths linked to the video as a source.
-        metadata_rows = _rows({"parser": "freecodecamp_video_catalog"}, data, root)
+        metadata_rows = _rows({"parser": "freecodecamp_video_catalog"}, data, root, include_blueprint=True)
         return [
             {
                 **row,
