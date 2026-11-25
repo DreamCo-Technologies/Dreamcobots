@@ -1,0 +1,30 @@
+{
+  "schema": "dreamco.buddy_cpu_llm_architecture_profile.v1",
+  "profile_id": "buddy-25m-byte-bpe-cpu-decoder-v1",
+  "description": "A roughly 25-million-parameter byte-level BPE decoder profile. The tokenizer is fit only on the authorized training split; validation and holdout are encoded after tokenizer fitting and never used to create merges.",
+  "parameter_target": 25000000,
+  "tolerance_fraction": 0.02,
+  "vocab_size": 512,
+  "context_size": 256,
+  "width": 640,
+  "layers": 5,
+  "attention_heads": 10,
+  "feed_forward_size": 2560,
+  "tied_embeddings": true,
+  "bias": true,
+  "tokenizer": {
+    "type": "byte_bpe",
+    "requested_vocab_size": 512,
+    "fit_on_training_split_only": true,
+    "holdout_used_for_training": false
+  },
+  "training_policy": {
+    "enabled": false,
+    "weight_updates_authorized": false,
+    "paid_compute_authorized": false,
+    "external_data_allowed": false,
+    "requires_rights_cleared_local_dataset": true,
+    "requires_explicit_training_approval": true
+  },
+  "execution_note": "The expected parameter count is 25,110,400 if the trained tokenizer reaches exactly 512 vocabulary entries. Model Foundry must compare the actual BPE vocabulary size with this profile and reject mismatches; use a matching reviewed profile if the corpus yields fewer merges. This is not a trained model or a training authorization."
+}
