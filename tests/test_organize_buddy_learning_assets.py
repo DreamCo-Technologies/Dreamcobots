@@ -17,6 +17,11 @@ class LearningOrganizationTests(unittest.TestCase):
         self.assertEqual(p["division_ids"],["AI"])
         self.assertEqual(len(p["study_path"]["sequence"]),7)
         self.assertFalse(p["training"]["weight_training_eligible"])
+        self.assertIn("core_concepts",p["summary"]["best_knowledge_extracted"])
+        self.assertIn("detailed_sections",p["summary"]["best_knowledge_extracted"])
+        self.assertIn("capstone",p["summary"]["best_knowledge_extracted"])
+        self.assertEqual(p["study_path"]["sequence"][-1]["type"],"capstone")
+        self.assertEqual(p["progress"]["mastery_status"],"not_assessed")
         self.assertEqual(result["division_curricula"][0]["available_learning_assets"],1)
     def test_only_approved_guides_are_organized(self):
         result=organize([self.guide(review="draft")],["AI"])
@@ -29,5 +34,8 @@ class LearningOrganizationTests(unittest.TestCase):
         result=organize([],["AI"],data)
         self.assertEqual(result["user_data_registry"][0]["owner"],"user")
         self.assertFalse(result["user_data_registry"][0]["training_allowed"])
+        self.assertEqual(result["user_data_registry"][0]["owner"],"user")
+        self.assertIn("purpose-specific",result["user_data_registry"][0]["ownership_note"])
+        self.assertEqual(result["coverage"]["user_data_assets_registered"],1)
 
 if __name__=="__main__":unittest.main()
