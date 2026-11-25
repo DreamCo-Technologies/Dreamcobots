@@ -281,7 +281,8 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
             {"id": row["id"], "title": row["name"],
              "objective": f"Understand the O*NET subject {row['name']} and apply its occupational evidence without inferring qualification or authority.",
              "practice": "Build an original subject guide, connect relevant tasks and tools, and classify AI/human responsibilities.",
-             "assessment": "Pass a source-grounded subject assessment and task-specific suitability review."}
+             "assessment": "Pass a source-grounded subject assessment and task-specific suitability review.",
+             "content_status": "authoring_backlog"}
             for row in data.get("subject_inventory", [])
         ]
         task_index_path = track.get("task_index_path")
@@ -319,6 +320,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
                         "benchmark": "O*NET task-specific workflow, safety, tool-use and unseen-transfer benchmark.",
                         "source_url": source_url,
                         "guide_path": track["guide"],
+                        "content_status": "authoring_backlog",
                         "rights_mode": track["rights"],
                     })
         return rows
