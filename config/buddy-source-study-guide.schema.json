@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dreamco.buddy_source_study_guide.v1",
+  "title": "Buddy cross-source detailed study guide",
+  "type": "object",
+  "required": ["schema","source","rights","summary","sections","learning_objectives","key_concepts","worked_examples","exercises","capstone","knowledge_checks","answer_key","division_mapping","references","review"],
+  "properties": {
+    "schema": {"const":"dreamco.buddy_source_study_guide.v1"},
+    "source": {"type":"object","required":["source_type","source_id","url","revision"],"properties":{"source_type":{"type":"string"},"source_id":{"type":"string"},"url":{"type":"string","format":"uri"},"revision":{"type":["string","null"]},"license":{"type":["string","null"]},"discovered_at":{"type":["string","null"]}}},
+    "rights": {"type":"object","required":["study_permission","summary_derivative_permission","evaluation_permission","training_permission","evidence_ref"],"properties":{"study_permission":{"type":"boolean"},"summary_derivative_permission":{"type":"boolean"},"evaluation_permission":{"type":"boolean"},"training_permission":{"type":"boolean"},"evidence_ref":{"type":"string"}}},
+    "summary": {"type":"object","required":["executive_overview","detailed_explanation"],"properties":{"executive_overview":{"type":"string","minLength":100},"detailed_explanation":{"type":"string","minLength":500}}},
+    "sections": {"type":"array","minItems":1,"items":{"type":"object","required":["heading","explanation","source_locator"],"properties":{"heading":{"type":"string"},"explanation":{"type":"string","minLength":80},"source_locator":{"type":"string"}}}},
+    "learning_objectives":{"type":"array","minItems":3,"items":{"type":"string"}},
+    "key_concepts":{"type":"array","minItems":5,"items":{"type":"object","required":["name","explanation"],"properties":{"name":{"type":"string"},"explanation":{"type":"string"}}}},
+    "worked_examples":{"type":"array","minItems":1},
+    "exercises":{"type":"array","minItems":3},
+    "capstone":{"type":"object","required":["goal","acceptance_tests"]},
+    "knowledge_checks":{"type":"array","minItems":5},
+    "answer_key":{"type":"array","minItems":5},
+    "division_mapping":{"type":"array","minItems":1},
+    "references":{"type":"array","minItems":1},
+    "review":{"type":"object","required":["status","reviewer","reviewed_at"],"properties":{"status":{"enum":["draft","needs_review","approved","rejected"]},"reviewer":{"type":"string"},"reviewed_at":{"type":["string","null"]}}}
+  }
+}
