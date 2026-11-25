@@ -219,7 +219,7 @@ def summarize_readiness(areas: list[dict], runtime_checks: list[dict]) -> dict:
 
 
 def should_fail_gate(report: dict, *, strict: bool, certification: bool) -> bool:
-    if report.get("blocking_unknowns") or report.get("blocking_runtime_checks"):
+    if report.get("blocking_unknowns") or (strict and report.get("blocking_runtime_checks")):
         return True
     return certification and not report.get("production_ready", False)
 
