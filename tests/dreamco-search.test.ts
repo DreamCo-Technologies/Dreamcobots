@@ -18,7 +18,7 @@ const index = JSON.parse(readFileSync("config/generated/dreamco_search_index.jso
 };
 const fleet = JSON.parse(readFileSync("config/generated/bots.catalog.json", "utf8"));
 const allBots = [...fleet.bots, ...fleet.supplemental_bots];
-const expectedCapabilityTerms = allBots.reduce((total: number, bot: any) => total + bot.capabilities.length, 0);
+const expectedCapabilityTerms = allBots.reduce((total: number, bot: any) => total + bot.capability_count, 0);
 
 test("DreamSearch indexes the complete routed fleet and reference catalogs", () => {
   assert.equal(index.summary.indexed_bot_profiles, allBots.length);
