@@ -163,13 +163,17 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
             "agentic_occupation_playbooks": {"required_sections": 26, "status": "generate_per_occupation_task_and_venture"},
         })
 
+    fcc_phases = fcc.get("study_sequence", [])
+    video_tracks = fcc.get("video_learning_tracks", [])
+    platform_inventory = fcc.get("official_platform_inventory", {})
     return {
         "schema": "dreamco.buddy_university_learning_map.v1",
         "status": "generated_crosswalk_suggestions_owner_review_and_source_guides_required",
         "coverage": {
             "domain_divisions": len(divisions), "hugging_face_subject_terms": len(hf_terms),
             "hugging_face_subjects_with_suggested_routes": sum(bool(x["routes"]) for x in subject_rows),
-            "freecodecamp_tracks": len(fcc_rows), "onet_occupations": len(occupations),
+            "freecodecamp_tracks": len(fcc_rows), "freecodecamp_certification_phases": len(fcc_phases),
+            "freecodecamp_video_subject_categories": len(video_tracks), "onet_occupations": len(occupations),
             "onet_task_statements": len(task_rows), "onet_tasks_with_division_routes": sum(bool(x["division_ids"]) for x in task_rows),
             "divisions_with_hf_subjects": sum(bool(x["hugging_face_subjects"]) for x in divisions),
             "divisions_with_freecodecamp_tracks": sum(bool(x["freecodecamp_tracks"]) for x in divisions),
@@ -178,13 +182,17 @@ def build(profiles: list[dict[str, Any]], hf: dict[str, Any], fcc: dict[str, Any
         "source_inventory": {
             "hugging_face": {"source": "live Hub model/dataset tags plus configured seeds", "subject_terms": len(hf_terms),
                              "boundary": "not an exhaustive inventory of every Hub repo, model, dataset, Space or discipline"},
-            "freecodecamp": {"source": "canonical roadmap specialist_track_details", "tracks": len(fcc_rows),
+            "freecodecamp": {"source": "canonical roadmap and official curriculum inventory", "tracks": len(fcc_rows),
+                             "certification_phases": fcc_phases, "video_subject_categories": video_tracks,
+                             "official_platform_inventory": platform_inventory,
                              "boundary": "track roadmap; refresh the official curriculum and channel inventory before claiming every lesson/video is ingested"},
             "onet": {"source": onet.get("source", {}), "occupations": len(occupations), "tasks": len(task_rows),
                      "boundary": onet.get("inventory", {}).get("coverage_warning", "source coverage not independently established")},
         },
         "hugging_face_subject_routes": subject_rows,
         "freecodecamp_track_routes": fcc_rows,
+        "freecodecamp_certification_phases": fcc_phases,
+        "freecodecamp_video_subject_categories": video_tracks,
         "onet_task_routes": task_rows,
         "divisions": divisions,
         "unclassified_subjects": [x for x in subject_rows if x["mapping_status"] == "unclassified_shared_review"],
@@ -214,7 +222,9 @@ def main() -> int:
     lines = ["# DreamCo Buddy University learning map", "",
              f"- Domain divisions: {result['coverage']['domain_divisions']}",
              f"- Hugging Face subject tags: {result['coverage']['hugging_face_subject_terms']}",
-             f"- freeCodeCamp tracks: {result['coverage']['freecodecamp_tracks']}",
+             f"- freeCodeCamp specialist tracks: {result['coverage']['freecodecamp_tracks']}",
+             f"- freeCodeCamp certification phases: {result['coverage']['freecodecamp_certification_phases']}",
+             f"- freeCodeCamp video subject categories: {result['coverage']['freecodecamp_video_subject_categories']}",
              f"- O*NET occupations: {result['coverage']['onet_occupations']}",
              f"- O*NET tasks: {result['coverage']['onet_task_statements']}", "",
              "Mappings are suggestions pending owner review. Source discovery is not guide creation, study, training or mastery."]
