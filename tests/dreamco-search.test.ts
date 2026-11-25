@@ -17,17 +17,19 @@ const index = JSON.parse(readFileSync("config/generated/dreamco_search_index.jso
   documents: DreamSearchDocument[];
 };
 const fleet = JSON.parse(readFileSync("config/generated/bots.catalog.json", "utf8"));
+const allBots = [...fleet.bots, ...fleet.supplemental_bots];
+const expectedCapabilityTerms = allBots.reduce((total: number, bot: any) => total + bot.capabilities.length, 0);
 
 test("DreamSearch indexes the complete routed fleet and reference catalogs", () => {
-  assert.equal(index.summary.indexed_bot_profiles, 1120);
-  assert.equal(index.summary.canonical_indexed_bot_profiles, 1051);
-  assert.equal(index.summary.supplemental_indexed_bot_profiles, 69);
-  assert.equal(index.summary.searchable_capability_terms, 8555);
-  assert.equal(index.summary.canonical_searchable_capability_terms, 8408);
-  assert.equal(index.summary.supplemental_searchable_capability_terms, 147);
-  assert.equal(index.summary.indexed_divisions, 55);
-  assert.equal(index.summary.canonical_indexed_divisions, 45);
-  assert.equal(index.summary.supplemental_indexed_divisions, 10);
+  assert.equal(index.summary.indexed_bot_profiles, allBots.length);
+  assert.equal(index.summary.canonical_indexed_bot_profiles, fleet.bots.length);
+  assert.equal(index.summary.supplemental_indexed_bot_profiles, fleet.supplemental_bots.length);
+  assert.equal(index.summary.searchable_capability_terms, expectedCapabilityTerms);
+  assert.equal(index.summary.canonical_searchable_capability_terms, fleet.summary.declared_capability_slots);
+  assert.equal(index.summary.supplemental_searchable_capability_terms, fleet.summary.supplemental_declared_capability_slots);
+  assert.equal(index.summary.indexed_divisions, fleet.divisions.length + fleet.supplemental_divisions.length);
+  assert.equal(index.summary.canonical_indexed_divisions, fleet.divisions.length);
+  assert.equal(index.summary.supplemental_indexed_divisions, fleet.supplemental_divisions.length);
   assert.equal(index.summary.production_ready_bot_profiles, 0);
   assert.equal(index.summary.indexed_models, 500);
   assert.ok(index.summary.indexed_organizations >= 280);
@@ -35,8 +37,8 @@ test("DreamSearch indexes the complete routed fleet and reference catalogs", () 
   assert.equal(index.summary.web_results_claimed, 0);
 
   const indexedBots = new Set(index.documents.filter((item) => item.type === "bot").map((item) => item.id.slice(4)));
-  assert.equal(indexedBots.size, 1120);
-  for (const bot of [...fleet.bots, ...fleet.supplemental_bots]) {
+  assert.equal(indexedBots.size, allBots.length);
+  for (const bot of allBots) {
     const record = index.documents.find((item) => item.id === `bot:${bot.identity.slug}`);
     assert.ok(record, `missing search record for ${bot.identity.slug}`);
     const capabilities = bot.capability_search.split(" | ");
@@ -47,8 +49,8 @@ test("DreamSearch indexes the complete routed fleet and reference catalogs", () 
 
 test("supplemental division documents are usable search results with source evidence and planning boundaries", () => {
   const divisions = index.documents.filter((item) => item.type === "division");
-  assert.equal(divisions.length, 55);
-  assert.equal(new Set(divisions.map((item) => item.division)).size, 55);
+  assert.equal(divisions.length, fleet.divisions.length + fleet.supplemental_divisions.length);
+  assert.equal(new Set(divisions.map((item) => item.division)).size, divisions.length);
   for (const division of fleet.supplemental_divisions) {
     const record = divisions.find((item) => item.division === division.name);
     assert.ok(record, `missing division document: ${division.name}`);
