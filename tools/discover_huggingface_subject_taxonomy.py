@@ -48,13 +48,24 @@ def main()->int:
     api=HfApi()
     model=plain(api.get_model_tags())
     dataset=plain(api.get_dataset_tags())
-    model_terms=values_under(model,{"pipeline_tags","tasks","task","pipeline_tag","task_categories"})
-    dataset_terms=values_under(dataset,{"task_categories","task_ids","tasks","task"})
-    terms=sorted({x.lower().replace(" ","-") for x in model_terms+dataset_terms if len(x.strip())>1})
+    space_method=getattr(api,"get_space_tags",None)
+    space=plain(space_method()) if callable(space_method) else None
+    allowed={"pipeline_tags","tasks","task","pipeline_tag","task_categories","task_ids","tags","tag","categories","category"}
+    model_terms=values_under(model,allowed)
+    dataset_terms=values_under(dataset,allowed)
+    space_terms=values_under(space,allowed) if space is not None else []
+    normalize=lambda values: sorted({x.strip().lower().replace(" ","-").replace("_","-") for x in values if len(x.strip())>1})
+    model_subjects=normalize(model_terms)
+    dataset_subjects=normalize(dataset_terms)
+    space_subjects=normalize(space_terms)
+    terms=sorted(set(model_subjects+dataset_subjects+space_subjects))
     if not terms: raise SystemExit("Hub taxonomy response did not expose recognized task categories; refusing empty refresh.")
     result={"schema":"dreamco.huggingface_subject_taxonomy.v1","source":"Hugging Face Hub HfApi.get_model_tags/get_dataset_tags",
-      "model_tag_taxonomy":model,"dataset_tag_taxonomy":dataset,"subject_terms":terms,
-      "counts":{"subject_terms":len(terms)},"status":"refreshed_from_live_hub_taxonomy",
+      "model_tag_taxonomy":model,"dataset_tag_taxonomy":dataset,"space_tag_taxonomy":space,
+      "subject_terms":terms,"subject_terms_by_artifact_type":{"models":model_subjects,"datasets":dataset_subjects,"spaces":space_subjects},
+      "counts":{"subject_terms":len(terms),"model_subject_terms":len(model_subjects),"dataset_subject_terms":len(dataset_subjects),"space_subject_terms":len(space_subjects)},
+      "capabilities":{"models":True,"datasets":True,"spaces":space is not None},
+      "status":"refreshed_from_live_hub_taxonomy" if space is not None else "refreshed_models_and_datasets_spaces_taxonomy_unavailable",
       "coverage_note":"These are current task/tag categories, not every repository or every possible subject. Discovery inventory must report pagination and coverage separately."}
     path=Path(a.out); path.parent.mkdir(parents=True,exist_ok=True)
     path.write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
