@@ -303,3 +303,156 @@ def run_division_object_store_healthcheck(masterbot_id: int, **kwargs: Any) -> d
     )
     evidence["masterbot_id"] = masterbot_id
     return evidence
+
+
+def upload_approved_division_dataset(
+    masterbot_id: int,
+    registered_dataset: dict[str, Any],
+    source_file: str,
+    upload_approval_id: str,
+    *,
+    client: Any = None,
+    bucket: str | None = None,
+    prefix: str = "dreamco/datasets",
+    max_bytes: int = 512 * 1024 * 1024,
+) -> dict[str, Any]:
+    """Persist only a DatasetHub-approved training dataset to its isolated S3 namespace.
+
+    The caller must pass the card returned by DatasetHub.register after its
+    rights, owner, split, PII, and quality gates have passed. This is storage
+    persistence evidence only; it does not launch or authorize model training.
+    """
+    import hashlib
+    from pathlib import Path
+
+    if isinstance(masterbot_id, bool) or not isinstance(masterbot_id, int) or not 1 <= masterbot_id <= 65:
+        raise ObjectStoreError("masterbot_id_must_be_between_1_and_65")
+    if not isinstance(registered_dataset, dict):
+        raise ObjectStoreError("registered_dataset_card_required")
+    if registered_dataset.get("training_approved") is not True:
+        raise ObjectStoreError("dataset_training_approval_required")
+    if registered_dataset.get("rights_status") != "VERIFIED":
+        raise ObjectStoreError("dataset_rights_must_be_verified")
+    if registered_dataset.get("data_plane") not in {
+        "dreamco_owned_training", "licensed_training", "user_contributed_opt_in_training"
+    } or registered_dataset.get("holdout") is True:
+        raise ObjectStoreError("dataset_must_use_training_eligible_data_plane")
+    if registered_dataset.get("training_status") != "APPROVED_PENDING_TRAINING":
+        raise ObjectStoreError("dataset_hub_registration_evidence_required")
+    if not str(registered_dataset.get("rights_evidence", "")).strip():
+        raise ObjectStoreError("dataset_rights_evidence_required")
+    if not str(registered_dataset.get("owner_approval_id", "")).strip():
+        raise ObjectStoreError("dataset_owner_approval_id_required")
+    if registered_dataset.get("primary_masterbot_id") != masterbot_id:
+        raise ObjectStoreError("dataset_primary_masterbot_mismatch")
+    quality = registered_dataset.get("quality") or {}
+    if quality.get("quality_status") != "STRUCTURE_CHECKS_PASSED" or quality.get("pii_review_required") is not False:
+        raise ObjectStoreError("dataset_quality_or_pii_review_not_passed")
+    split_manifest = registered_dataset.get("split_manifest") or {}
+    for key in ("train_sha256", "validation_sha256", "test_sha256"):
+        if not re.fullmatch(r"[0-9a-f]{64}", str(split_manifest.get(key, ""))):
+            raise ObjectStoreError("dataset_split_manifest_hashes_required")
+
+    dataset_id = str(registered_dataset.get("dataset_id", ""))
+    version = registered_dataset.get("version")
+    digest = str(registered_dataset.get("content_sha256", ""))
+    if not re.fullmatch(r"[A-Za-z0-9._-]{3,100}", dataset_id):
+        raise ObjectStoreError("dataset_id_is_invalid")
+    if isinstance(version, bool) or not isinstance(version, int) or version < 1:
+        raise ObjectStoreError("dataset_version_must_be_positive")
+    if not re.fullmatch(r"[0-9a-f]{64}", digest):
+        raise ObjectStoreError("registered_dataset_content_hash_required")
+    if not isinstance(upload_approval_id, str) or not upload_approval_id.strip():
+        raise ObjectStoreError("dataset_object_upload_approval_id_required")
+    if os.environ.get("DREAMCO_ALLOW_DATASET_OBJECT_UPLOAD") != "1":
+        raise ObjectStoreError("set_DREAMCO_ALLOW_DATASET_OBJECT_UPLOAD=1_for_explicit_upload")
+
+    target_bucket = bucket if bucket is not None else os.environ.get("DREAMCO_OBJECT_STORE_BUCKET", "")
+    if not isinstance(target_bucket, str) or not _valid_bucket_name(target_bucket.strip()):
+        raise ObjectStoreError("valid_primary_object_store_bucket_required")
+    target_bucket = target_bucket.strip()
+    if not _valid_prefix(prefix):
+        raise ObjectStoreError("object_store_dataset_prefix_is_invalid")
+    if isinstance(max_bytes, bool) or not isinstance(max_bytes, int) or max_bytes < 1:
+        raise ObjectStoreError("max_bytes_must_be_positive")
+
+    source = Path(source_file).expanduser().resolve()
+    if not source.is_file():
+        raise ObjectStoreError("dataset_source_file_missing")
+    size = source.stat().st_size
+    if size > max_bytes:
+        raise ObjectStoreError("dataset_source_file_exceeds_configured_size_limit")
+    file_digest = hashlib.sha256()
+    with source.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            file_digest.update(chunk)
+    if file_digest.hexdigest() != digest:
+        raise ObjectStoreError("dataset_source_content_hash_mismatch")
+
+    if client is None:
+        client = _client_from_env()
+    config = _classification(target_bucket, client)
+    if not all(config[key] for key in ("versioning_enabled", "encryption_at_rest", "public_access_blocked")):
+        raise ObjectStoreError("object_store_bucket_security_configuration_incomplete")
+
+    key = (
+        f"{prefix}/divisions/{masterbot_id:03d}/datasets/{dataset_id}/"
+        f"v{version}/{digest}.data"
+    )
+    metadata = {
+        "masterbot-id": str(masterbot_id),
+        "dataset-id": dataset_id,
+        "dataset-version": str(version),
+        "content-sha256": digest,
+        "rights-evidence-ref": str(registered_dataset["rights_evidence"])[:256],
+        "owner-approval-ref": str(registered_dataset["owner_approval_id"])[:128],
+        "upload-approval-ref": upload_approval_id.strip()[:128],
+        "data-plane": str(registered_dataset["data_plane"]),
+    }
+    try:
+        with source.open("rb") as handle:
+            put = client.put_object(Bucket=target_bucket, Key=key, Body=handle, Metadata=metadata)
+        version_id = put.get("VersionId")
+        if not version_id:
+            raise ObjectStoreError("dataset_object_version_id_missing")
+        head = client.head_object(Bucket=target_bucket, Key=key, VersionId=version_id)
+        if head.get("ContentLength") != size or head.get("Metadata") != metadata:
+            raise ObjectStoreError("dataset_object_metadata_or_size_verification_failed")
+        if head.get("ServerSideEncryption") not in ENCRYPTION_ALGORITHMS:
+            raise ObjectStoreError("dataset_object_encryption_not_verified")
+        body = client.get_object(Bucket=target_bucket, Key=key, VersionId=version_id)["Body"]
+        verified = hashlib.sha256()
+        try:
+            for chunk in iter(lambda: body.read(1024 * 1024), b""):
+                verified.update(chunk)
+        finally:
+            close = getattr(body, "close", None)
+            if callable(close):
+                close()
+        if verified.hexdigest() != digest:
+            raise ObjectStoreError("dataset_object_readback_hash_mismatch")
+    except ObjectStoreError:
+        raise
+    except Exception as exc:
+        raise ObjectStoreError(f"dataset_object_upload_failed_{type(exc).__name__}") from None
+
+    return {
+        "schema": "dreamco.division_dataset_object_evidence.v1",
+        "status": "PERSISTED",
+        "masterbot_id": masterbot_id,
+        "dataset_id": dataset_id,
+        "dataset_version": version,
+        "bucket": target_bucket,
+        "object_key": key,
+        "object_version_id": version_id,
+        "content_sha256": digest,
+        "bytes": size,
+        "server_side_encryption": head["ServerSideEncryption"],
+        "versioning_enabled": True,
+        "public_access_blocked": True,
+        "rights_status": "VERIFIED",
+        "training_status": "APPROVED_PENDING_TRAINING",
+        "upload_approval_ref": upload_approval_id.strip()[:128],
+        "credentials_emitted": False,
+        "weights_trained": False,
+    }
