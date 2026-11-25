@@ -40,6 +40,23 @@ def _fixture(root: Path) -> None:
         "counts": {"domain_divisions": 55},
         "domains": [{"owner_approval": None} for _ in range(55)]
     })
+    _write(root, "config/buddy-workforce-entrepreneurship-bootcamp.json", {
+        "training_paths": [
+            {"id": "career", "subjects": ["resume", "interview"]},
+            {"id": "business", "subjects": ["pricing"]}
+        ],
+        "task_capability_catalog": {"task_playbook_requirements": ["task_definition", "workflow_steps", "acceptance_tests"]}
+    })
+    _write(root, "config/buddy-benchmark-index.json", {
+        "programs": [{"id": "repo", "name": "Repository tests"}]
+    })
+    _write(root, "config/buddy-benchmark-task-registry.json", {
+        "tasks": ["coding", "reasoning"]
+    })
+    _write(root, "config/buddy-25m-cpu-architecture-profile.json", {
+        "parameter_target": 25000000,
+        "training_policy": {"enabled": False, "weight_updates_authorized": False}
+    })
 
 
 def test_audit_reports_inventory_without_claiming_mastery(tmp_path: Path):
@@ -51,6 +68,33 @@ def test_audit_reports_inventory_without_claiming_mastery(tmp_path: Path):
     assert report["tracks"]["freecodecamp"]["transcripts_complete"] is False
     assert report["errors"] == []
     assert report["status"] == "coverage_gaps_present"
+
+
+
+def test_audit_includes_revenue_benchmark_and_cpu_model_backlogs(tmp_path: Path):
+    _fixture(tmp_path)
+    report = audit(tmp_path)
+    assert report["tracks"]["workforce_and_revenue"]["training_path_count"] == 2
+    assert report["tracks"]["workforce_and_revenue"]["subject_work_items"] == 3
+    assert report["tracks"]["benchmarks"]["program_count"] == 1
+    assert report["tracks"]["benchmarks"]["task_count"] == 2
+    assert report["tracks"]["benchmarks"]["measured_count"] == 0
+    assert report["tracks"]["cpu_25m_model"]["parameter_target"] == 25000000
+    assert report["tracks"]["cpu_25m_model"]["training_enabled"] is False
+    assert report["tracks"]["onet_task_index"]["status"] == "refresh_workflow_required"
+    assert report["errors"] == []
+
+
+def test_optional_complete_onet_task_index_is_reported(tmp_path: Path):
+    _fixture(tmp_path)
+    _write(tmp_path, "data/onet/onet-task-index.json", {
+        "source": {"release_version": "31.0"},
+        "inventory": {"complete": True},
+        "tasks": [{"task_id": "1"}, {"task_id": "2"}]
+    })
+    report = audit(tmp_path)
+    assert report["tracks"]["onet_task_index"]["complete"] is True
+    assert report["tracks"]["onet_task_index"]["task_records"] == 2
 
 
 def test_audit_fails_when_required_manifest_is_missing(tmp_path: Path):
