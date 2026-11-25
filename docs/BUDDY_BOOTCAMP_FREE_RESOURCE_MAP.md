@@ -120,3 +120,24 @@ Every lesson should include:
 
 Buddy's original tokenizer study guide links to [Hugging Face Tokenizers](https://huggingface.co/docs/tokenizers), the [Hugging Face NLP Course tokenizer chapter](https://huggingface.co/learn/nlp-course/chapter6/1), [SentencePiece](https://github.com/google/sentencepiece), and freeCodeCamp's [Train Your Own LLM](https://www.youtube.com/watch?v=9Ge0sMm65jo). These are study references, not blanket permission to reproduce course materials, download captions, or train on third-party text. The corresponding original 12-lesson syllabus is `config/buddy-tokenizer-training-curriculum.json`.
 
+
+## CPU-first 25M-class LLM and modern GLM architecture course
+
+- [freeCodeCamp 25M CPU LLM course article](https://www.freecodecamp.org/news/build-and-train-a-25m-parameter-llm-from-scratch-on-your-cpu/)
+- [freeCodeCamp YouTube: GLM-5.3-Flash from scratch](https://www.youtube.com/watch?v=-gfgQfw2g_E)
+- [Expanded GLM-5.3-Flash course article](https://www.freecodecamp.org/news/build-and-train-a-glm-53-flash-model-from-scratch-with-python/)
+- Original DreamCo syllabus: `config/buddy-25m-cpu-llm-course.json`; detailed guide: `docs/BUDDY_25M_CPU_LLM_STUDY_GUIDE.md`.
+
+The 18-module path covers byte-level tokenization, embeddings, exact parameter counting, residual/hyperconnection paths, RMSNorm, RoPE/NoPE, linear and sparse attention, MoE/shared experts, vision patches, pretraining, data interleaving, sandboxed code reinforcement learning, reward design/GRPO, parameter-efficient updates, hyperparameter experiments, multi-seed statistical evaluation, regressions and rollback. It is shared with all 55 canonical divisions and 65 MasterBot lanes; specialist ownership follows the reviewed crosswalk. The course/video are references only, not permission to ingest transcripts or use third-party text as training data.
+
+## O*NET full content-model curriculum
+
+The full worker, job and market taxonomy plus task-by-task AI suitability rules are defined in `config/buddy-onet-content-model-curriculum.json` and `docs/BUDDY_ONET_FULL_CONTENT_MODEL_AND_TASK_PLAYBOOKS.md`. It covers worker characteristics, skills, knowledge, abilities, education, experience, licensing, work activities, work context, technology/tools and workforce outlook. Each task is classified individually; O*NET coverage is not proof an AI can perform every occupation.
+
+## All official Hugging Face Learn courses
+
+Buddy's current 12-course Hugging Face Learn inventory is tracked in `config/buddy-huggingface-full-learning-map.json` and is linked from the shared course scheduler. It covers LLMs, context engineering, robotics, compact post-training, agents, Deep RL, computer vision, audio, open-source AI recipes, games, diffusion and 3D. The map is refreshed against [huggingface.co/learn](https://huggingface.co/learn); the Deep RL course is flagged low-maintenance where upstream challenge/leaderboard features are retired or nonfunctional. Eighteen original ecosystem modules and all 37 task families are also mapped.
+
+## FreeCodeCamp full video queue and interactive curriculum inventory
+
+The shared course scheduler exposes every video ID in the checked-in freeCodeCamp metadata catalog to all 55 canonical divisions and 65 MasterBot lanes. The legacy snapshot currently contains 1,740 records and is explicitly **partial** (`inventory.complete=false`); the count is dynamic and must be refreshed from the official uploads playlist. A scheduled metadata-only workflow now verifies playlist-count/unique-ID equality and opens a review PR; it never pushes directly to main. The interactive curriculum's 37 superblocks, 38 chapters, 217 modules, 779 unique blocks and 14,038 challenges are a dated inventory snapshot and require an upstream refresh before any full-coverage claim. Lesson content, tests and transcripts remain rights-gated and must be individually verified.

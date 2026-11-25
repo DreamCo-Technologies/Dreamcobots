@@ -13,12 +13,30 @@ on:
       - "docs/BUDDY_CAPABILITY_MASTERY_AND_REVENUE_CURRICULUM.md"
       - "config/buddy-open-source-bootcamp.json"
       - "config/buddy-university-curriculum.json"
+      - "config/buddy-course-track-registry.json"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "buddy/bootcamp/sources/freecodecamp/catalog.json"
+      - "docs/FREECODECAMP_COMPLETE_BUDDY_LEARNING_PATH.md"
+      - "config/buddy-huggingface-full-learning-map.json"
+      - "config/buddy-tokenizer-training-curriculum.json"
+      - "config/buddy-25m-cpu-llm-course.json"
+      - "config/buddy-ai-model-course-division-map.json"
+      - "config/buddy-onet-content-model-curriculum.json"
+      - "config/buddy-course-source-resources.json"
+      - "config/buddy-tolkien-study-track.json"
+      - "buddy/learning/course_track_registry.py"
+      - "tests/test_buddy_course_track_registry.py"
+      - "tests/test_buddy_25m_cpu_llm_course.py"
+      - "tests/test_buddy_tokenizer_training_curriculum.py"
       - "config/buddy-college-curriculum.json"
       - "config/freecodecamp-complete-learning-path.json"
       - "tests/test_huggingface_subject_taxonomy.py"
       - "config/buddy-agentic-occupation-playbook.schema.json"
       - "config/freecodecamp-complete-learning-path.json"
       - "tools/sync_freecodecamp_catalog.py"
+      - "tools/sync_freecodecamp_learning_inventory.py"
+      - "tests/test_freecodecamp_learning_inventory.py"
+      - ".github/workflows/freecodecamp-catalog-refresh.yml"
       - "config/buddy-source-study-guide.schema.json"
       - "config/buddy-source-rights-manifest.json"
       - "config/buddy-authorized-media-rights.json"
@@ -77,6 +95,21 @@ on:
       - "tests/test_huggingface_subject_taxonomy.py"
       - "config/freecodecamp-complete-learning-path.json"
       - "config/buddy-university-curriculum.json"
+      - "config/buddy-course-track-registry.json"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "buddy/bootcamp/sources/freecodecamp/catalog.json"
+      - "docs/FREECODECAMP_COMPLETE_BUDDY_LEARNING_PATH.md"
+      - "config/buddy-huggingface-full-learning-map.json"
+      - "config/buddy-tokenizer-training-curriculum.json"
+      - "config/buddy-25m-cpu-llm-course.json"
+      - "config/buddy-ai-model-course-division-map.json"
+      - "config/buddy-onet-content-model-curriculum.json"
+      - "config/buddy-course-source-resources.json"
+      - "config/buddy-tolkien-study-track.json"
+      - "buddy/learning/course_track_registry.py"
+      - "tests/test_buddy_course_track_registry.py"
+      - "tests/test_buddy_25m_cpu_llm_course.py"
+      - "tests/test_buddy_tokenizer_training_curriculum.py"
       - "config/buddy-open-source-bootcamp.json"
       - "config/buddy-source-study-guide.schema.json"
       - "config/buddy-source-rights-manifest.json"
@@ -152,7 +185,7 @@ jobs:
           python -m json.tool config/buddy-user-learning-data-manifest.json > /dev/null
           python -m json.tool config/buddy-continuous-study-policy.json > /dev/null
           python -m json.tool config/buddy_1000_source_learning_policy.json > /dev/null
-          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/discover_huggingface_subject_taxonomy.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py tools/build_onet_task_curricula.py tools/fetch_onet_task_curricula.py tools/build_government_sales_pipeline.py tools/build_buddy_self_bootcamp.py tools/build_buddy_university_curriculum.py tools/build_buddy_university_daily_plan.py tools/organize_buddy_learning_assets.py buddy/learning/dreamco_summary_source.py tools/sync_freecodecamp_catalog.py
+          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/discover_huggingface_subject_taxonomy.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py tools/build_onet_task_curricula.py tools/fetch_onet_task_curricula.py tools/build_government_sales_pipeline.py tools/build_buddy_self_bootcamp.py tools/build_buddy_university_curriculum.py tools/build_buddy_university_daily_plan.py tools/organize_buddy_learning_assets.py buddy/learning/dreamco_summary_source.py tools/sync_freecodecamp_catalog.py tools/sync_freecodecamp_learning_inventory.py
       - name: Run source rights and guide-queue tests
         run: python -m unittest discover -s tests -p 'test_buddy_source_study_queue.py' -v
       - name: Run local media rights and hash tests
@@ -161,6 +194,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
       - name: Run freeCodeCamp transcript rights and guide-queue tests
         run: python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
+      - name: Run FreeCodeCamp inventory and queue synchronization tests
+        run: python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
       - name: Run Hugging Face taxonomy tests
         run: python -m unittest discover -s tests -p 'test_huggingface_subject_taxonomy.py' -v
       - name: Run Hugging Face and O*NET discovery regression tests
@@ -196,6 +231,11 @@ jobs:
           mkdir -p "$RUNNER_TEMP/buddy-bootcamp-weekly"
           python tools/sync_freecodecamp_catalog.py --out "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json"
           python tools/sync_freecodecamp_catalog.py --check --out "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json"
+          cp "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json" buddy/bootcamp/sources/freecodecamp/catalog.json
+          python tools/sync_freecodecamp_learning_inventory.py
+          python tools/sync_freecodecamp_learning_inventory.py --check
+          python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
 
       - name: Build rights-gated freeCodeCamp detailed video guide queue
         run: |
@@ -234,6 +274,12 @@ jobs:
             --freecodecamp-path config/freecodecamp-complete-learning-path.json \
             --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly"
 
+      - name: Verify all Buddy course tracks and training curricula
+        run: |
+          python -m unittest discover -s tests -p 'test_buddy_course_track_registry.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_25m_cpu_llm_course.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_tokenizer_training_curriculum.py' -v
+          python -m unittest discover -s tests -p 'test_buddy_tolkien_study_track.py' -v
       - name: Build cross-disciplinary Buddy University curriculum map
         run: |
           python tools/build_buddy_university_curriculum.py \

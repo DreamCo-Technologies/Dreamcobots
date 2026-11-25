@@ -12,6 +12,10 @@ This course expands the existing tokenizer, local-model, Hugging Face, Transform
 - [Hugging Face NLP Course: Tokenizers](https://huggingface.co/learn/nlp-course/chapter6/1) — tokenizer concepts and hands-on learning.
 - [freeCodeCamp — Train Your Own LLM](https://www.youtube.com/watch?v=9Ge0sMm65jo) — broader LLM course with BPE tokenization in the data/model training sequence.
 - [SentencePiece](https://github.com/google/sentencepiece) — Unigram and BPE implementation reference.
+- [freeCodeCamp: Build and Train a 25M Parameter LLM From Scratch on Your CPU](https://www.freecodecamp.org/news/build-and-train-a-25m-parameter-llm-from-scratch-on-your-cpu/) — CPU-first model course with byte-level vocabulary and tokenizer/model integration.
+- [freeCodeCamp YouTube: Build & Train a GLM-5.3-Flash Model From Scratch with Python](https://www.youtube.com/watch?v=-gfgQfw2g_E) — course chapter on byte-level vocabulary and tokenization before embeddings and architecture.
+- [Expanded GLM-5.3-Flash course article](https://www.freecodecamp.org/news/build-and-train-a-glm-53-flash-model-from-scratch-with-python/) — updated model example and tokenizer configuration context.
+- [Buddy 25M CPU LLM course manifest](../config/buddy-25m-cpu-llm-course.json) — 18 original modules and machine-checkable acceptance criteria.
 
 These are link-only study references. Do not copy course chapters, download captions/media, redistribute course materials, or use their contents as model-training data without item-level rights evidence. Buddy should create original explanations, examples, labs, quizzes and rubrics.
 
