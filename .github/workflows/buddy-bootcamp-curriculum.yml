@@ -285,7 +285,8 @@ jobs:
           python -m unittest discover -s tests -p 'test_study_artifact_cleanup.py' -v
           python -m unittest discover -s tests -p 'test_study_resource_scheduler.py' -v
           python -m unittest discover -s tests -p 'test_permissioned_study_worker.py' -v
-          python tools/build_daily_lesson_plan.py --queues "$RUNNER_TEMP/freecodecamp-provisional-division-learning-queues.json"
+          echo "Source inventory is partial; daily lesson slots are generated without candidate assignments."
+          python tools/build_daily_lesson_plan.py
           python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
           python -m unittest discover -s tests -p 'test_original_lesson.py' -v
           python -m unittest discover -s tests -p 'test_freecodecamp_learning_evidence.py' -v
