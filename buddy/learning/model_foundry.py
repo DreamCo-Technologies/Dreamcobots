@@ -86,12 +86,15 @@ def validate_training_authorization(profile, *, explicit_authorization=False, au
         raise PermissionError("training profile must include an explicit training_policy")
     if policy.get("enabled") is not True or policy.get("weight_updates_authorized") is not True:
         raise PermissionError("model weight updates are not enabled and authorized by the profile")
-    if policy.get("requires_rights_cleared_local_dataset") is not True:
-        raise PermissionError("training profile must require a rights-cleared local dataset")
+    if policy.get("requires_rights_cleared_local_dataset") is not True or policy.get("requires_explicit_training_approval") is not True:
+        raise PermissionError("training profile must require a rights-cleared local dataset and explicit approval")
     if policy.get("external_data_allowed") is not False or policy.get("paid_compute_authorized") is not False:
         raise PermissionError("this trainer only accepts local CPU training with no paid compute authorization")
     profile_reference = policy.get("authorization_reference")
     profile_approver = policy.get("approved_by")
+    profile_approved_at = policy.get("approved_at")
+    if not isinstance(profile_approved_at, str) or not profile_approved_at.strip():
+        raise PermissionError("training profile must record approved_at")
     if not isinstance(profile_reference, str) or not profile_reference.strip():
         raise PermissionError("training profile must record an authorization_reference")
     if not isinstance(profile_approver, str) or not profile_approver.strip():
