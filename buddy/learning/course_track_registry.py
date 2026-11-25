@@ -45,6 +45,7 @@ class CourseLesson:
     agent_tags: tuple[str, ...] = ()
     implementation_steps: tuple[str, ...] = ()
     buddy_demo: str = ""
+    source_video_id: str = ""
 
 
 def _read(path: Path) -> dict:
@@ -380,7 +381,8 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
                 "assessment": overlay.get("assessment") or "Do not mark studied or mastered from a title, video URL or metadata row. Require a rights-cleared source, detailed guide, original exercise and independent assessment.",
                 "benchmark": overlay.get("benchmark", "FreeCodeCamp detailed video study-guide acceptance suite."),
                 "source_url": row["url"],
-                "content_status": overlay.get("content_status", "metadata_only"),
+                "source_video_id": str(row["video_id"]),
+                "content_status": "metadata_only",
                 "division_targets": overlay.get("division_targets", []),
                 "masterbot_targets": overlay.get("masterbot_targets", []),
                 "capability_tags": overlay.get("capability_tags", []),
@@ -391,6 +393,21 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
                 "rights_mode": overlay.get("rights_mode", "metadata_only_until_item_level_permissions"),
             })
         return rows
+    if parser == "freecodecamp_specialist_learning_paths":
+        # Keep third-party video metadata in its own metadata-only track. These are
+        # separate, original DreamCo learning paths linked to the video as a source.
+        metadata_rows = _rows({"parser": "freecodecamp_video_catalog"}, data, root)
+        return [
+            {
+                **row,
+                "id": f"fcc-specialist-path-{row['source_video_id']}",
+                "title": f"DreamCo implementation path: {row['title']}",
+                "content_status": "original_implementation_brief",
+                "rights_mode": "original_dreamco_learning_path_video_metadata_reference_only",
+            }
+            for row in metadata_rows
+            if row.get("implementation_steps") and row.get("buddy_demo")
+        ]
     if parser == "huggingface_learning_map":
         courses = [
             {"id": row["id"], "title": row["title"], "objective": row["topics"],
@@ -509,6 +526,7 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 agent_tags=tuple(str(value) for value in row.get("agent_tags", [])),
                 implementation_steps=tuple(str(value) for value in row.get("implementation_steps", [])),
                 buddy_demo=str(row.get("buddy_demo", "")),
+                source_video_id=str(row.get("source_video_id", "")),
             ))
     return lessons
 
@@ -577,6 +595,7 @@ def plan_next_for_division(
         "agent_tags": list(lesson.agent_tags),
         "implementation_steps": list(lesson.implementation_steps),
         "buddy_demo": lesson.buddy_demo,
+        "source_video_id": lesson.source_video_id,
         "completion_status": "queued_not_studied",
         "mastery_awarded": False,
         "model_weight_training_authorized": False,
