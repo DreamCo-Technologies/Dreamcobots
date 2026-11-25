@@ -3,11 +3,14 @@ import unittest
 from pathlib import Path
 
 from tools.build_buddy_fleet_execution_map import CHARTERS, build
+from tools.generate_bot_manifests import main as generate_manifests
 
 
 class BuddyFleetExecutionMapTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        if generate_manifests([]) != 0:
+            raise RuntimeError("could not generate current bot manifests")
         cls.payload = build()
         cls.bots = cls.payload["bots"]
 
