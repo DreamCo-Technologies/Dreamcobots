@@ -72,7 +72,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B automation/division-superbot-manifests
+          git fetch origin '+refs/heads/main:refs/remotes/origin/main' '+refs/heads/automation/division-superbot-manifests:refs/remotes/origin/automation/division-superbot-manifests'
+          git checkout -B automation/division-superbot-manifests origin/main
           git add config/divisions/
           if git diff --cached --quiet; then
             echo "Division Superbot manifests are already current." >> "$GITHUB_STEP_SUMMARY"
