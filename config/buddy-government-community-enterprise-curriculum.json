@@ -1,29 +1,174 @@
 {
-  "schema":"dreamco.buddy_government_community_enterprise.v1",
-  "jurisdictions":["federal","Wisconsin","county","municipal","tribal"],
-  "official_sources":[
-    {"id":"sam-entity-registration","url":"https://sam.gov/entity-registration","purpose":"UEI and federal entity registration","refresh_days":30},
-    {"id":"sam-contract-opportunities","url":"https://sam.gov/content/opportunities","purpose":"Federal solicitations and notices","refresh_days":7},
-    {"id":"sba-contracting","url":"https://www.sba.gov/federal-contracting","purpose":"Small business contracting readiness and programs","refresh_days":30},
-    {"id":"sba-size-standards","url":"https://www.sba.gov/size-standards","purpose":"NAICS-specific size standards","refresh_days":30},
-    {"id":"grants-gov","url":"https://www.grants.gov/","purpose":"Federal funding notices and eligibility","refresh_days":7},
-    {"id":"usaspending","url":"https://www.usaspending.gov/","purpose":"Historical awards and buyer research","refresh_days":30},
-    {"id":"dol-onet","url":"https://www.onetcenter.org/database.html","purpose":"Occupation and task data","refresh_days":90},
-    {"id":"dol-vets-grants","url":"https://www.dol.gov/agencies/vets/serviceproviders/grants","purpose":"Veteran service provider grants and eligibility","refresh_days":30},
-    {"id":"hvrp","url":"https://www.dol.gov/agencies/vets/programs/hvrp/","purpose":"Homeless Veterans Reintegration Program","refresh_days":30},
-    {"id":"jvsg","url":"https://www.dol.gov/agencies/vets/programs/grants/state/jvsg","purpose":"State-administered Jobs for Veterans State Grants","refresh_days":30},
-    {"id":"wisconsin-esupplier","url":"https://doa.wi.gov/Pages/DoingBusiness/Register-to-do-Business-with-the-State.aspx","purpose":"Wisconsin vendor registration and bid alerts","refresh_days":30},
-    {"id":"wisconsin-vendornet","url":"https://vendornet.wi.gov/","purpose":"Wisconsin state and local bid notices","refresh_days":7},
-    {"id":"madison-procurement","url":"https://www.cityofmadison.com/finance/purchasing/vendor-resources/bid-opportunities-competition","purpose":"City of Madison vendor opportunities","refresh_days":7}
+  "schema": "dreamco.buddy_government_community_enterprise.v1",
+  "jurisdictions": [
+    "federal",
+    "Wisconsin",
+    "county",
+    "municipal",
+    "tribal"
   ],
-  "procurement_pipeline":["market_research","capability_gap_analysis","buyer_and_contract_history","entity_registration_check","naics_and_size_check","certification_eligibility_check","insurance_bonding_and_license_check","solicitation_download","eligibility_and_scope_review","bid_no_bid_decision","pricing_and_cashflow_review","proposal_compliance_matrix","human_approval","submission","award_or_loss_capture","delivery_and_reporting","invoice_and_closeout"],
-  "grant_pipeline":["discover_notice","parse_NOFO","verify_applicant_type","verify_geography_and_population","verify_matching_and_cost_rules","verify_deadline","map_capabilities_and_partners","build_logic_model","build_budget","human_eligibility_review","human_approval","submit_through_official_portal","track_reporting_and_audit_obligations"],
-  "program_eligibility_rules":[
-    {"program":"JVSG","rule":"State government agencies are the eligible applicants; Buddy must not tell DreamCo it can apply directly as a private company."},
-    {"program":"HVRP","rule":"Applicant categories and service-area requirements must be checked against the current Funding Opportunity Announcement; potential eligible applicants include specified nonprofit, government, workforce-board, educational, faith-based and for-profit entities."},
-    {"program":"Grants.gov general","rule":"Each notice controls eligibility; many awards are not personal financial assistance and are for organizations."}
+  "official_sources": [
+    {
+      "id": "sam-entity-registration",
+      "url": "https://sam.gov/entity-registration",
+      "purpose": "UEI and federal entity registration",
+      "refresh_days": 30
+    },
+    {
+      "id": "sam-contract-opportunities",
+      "url": "https://sam.gov/content/opportunities",
+      "purpose": "Federal solicitations and notices",
+      "refresh_days": 7
+    },
+    {
+      "id": "sba-contracting",
+      "url": "https://www.sba.gov/federal-contracting",
+      "purpose": "Small business contracting readiness and programs",
+      "refresh_days": 30
+    },
+    {
+      "id": "sba-size-standards",
+      "url": "https://www.sba.gov/size-standards",
+      "purpose": "NAICS-specific size standards",
+      "refresh_days": 30
+    },
+    {
+      "id": "grants-gov",
+      "url": "https://www.grants.gov/",
+      "purpose": "Federal funding notices and eligibility",
+      "refresh_days": 7
+    },
+    {
+      "id": "usaspending",
+      "url": "https://www.usaspending.gov/",
+      "purpose": "Historical awards and buyer research",
+      "refresh_days": 30
+    },
+    {
+      "id": "dol-onet",
+      "url": "https://www.onetcenter.org/database.html",
+      "purpose": "Occupation and task data",
+      "refresh_days": 90
+    },
+    {
+      "id": "dol-vets-grants",
+      "url": "https://www.dol.gov/agencies/vets/serviceproviders/grants",
+      "purpose": "Veteran service provider grants and eligibility",
+      "refresh_days": 30
+    },
+    {
+      "id": "hvrp",
+      "url": "https://www.dol.gov/agencies/vets/programs/hvrp/",
+      "purpose": "Homeless Veterans Reintegration Program",
+      "refresh_days": 30
+    },
+    {
+      "id": "jvsg",
+      "url": "https://www.dol.gov/agencies/vets/programs/grants/state/jvsg",
+      "purpose": "State-administered Jobs for Veterans State Grants",
+      "refresh_days": 30
+    },
+    {
+      "id": "wisconsin-esupplier",
+      "url": "https://doa.wi.gov/Pages/DoingBusiness/Register-to-do-Business-with-the-State.aspx",
+      "purpose": "Wisconsin vendor registration and bid alerts",
+      "refresh_days": 30
+    },
+    {
+      "id": "wisconsin-vendornet",
+      "url": "https://vendornet.wi.gov/",
+      "purpose": "Wisconsin state and local bid notices",
+      "refresh_days": 7
+    },
+    {
+      "id": "madison-procurement",
+      "url": "https://www.cityofmadison.com/finance/purchasing/vendor-resources/bid-opportunities-competition",
+      "purpose": "City of Madison vendor opportunities",
+      "refresh_days": 7
+    },
+    {
+      "id": "wisconsin-employment-grants",
+      "url": "https://energyandhousing.wi.gov/Pages/AgencyResources/Employment-Grant.aspx",
+      "purpose": "Municipal employment grants connecting people experiencing homelessness to paid work experience, training and employment support; verify annual cycle and local government eligibility",
+      "refresh_days": 30
+    },
+    {
+      "id": "rock-county-purchasing",
+      "url": "https://www.co.rock.wi.us/departments/financial-services-purchasing",
+      "purpose": "Janesville-area county purchasing, current DemandStar bids, bidder registration and purchasing ordinance",
+      "refresh_days": 7
+    }
   ],
-  "community_delivery_models":["qualified nonprofit prime with DreamCo as disclosed technology subcontractor","municipality or county prime with DreamCo as disclosed vendor","workforce development board partnership","veteran-service organization partnership","public housing authority partnership","school or technical college partnership"],
-  "benefit_protections":{"no_eligibility_guarantees":true,"no_benefit_amount_calculations_without_current_program_rules":true,"refer_to_authorized_benefits_counselor_or_agency":true,"collect_minimum_sensitive_data":true,"informed_consent_required":true,"never_charge_for_referral_or_promise_benefits":true},
-  "contracting_reality":{"contracts_are_competitive":true,"no_award_guarantee":true,"verify_cashflow_and_delivery_capacity":true,"maintain_private_customers_and_reserves":true,"SAM_registration_is_free":true,"avoid_paid_middlemen_claiming_to_guarantee_awards":true}
+  "procurement_pipeline": [
+    "market_research",
+    "capability_gap_analysis",
+    "buyer_and_contract_history",
+    "entity_registration_check",
+    "naics_and_size_check",
+    "certification_eligibility_check",
+    "insurance_bonding_and_license_check",
+    "solicitation_download",
+    "eligibility_and_scope_review",
+    "bid_no_bid_decision",
+    "pricing_and_cashflow_review",
+    "proposal_compliance_matrix",
+    "human_approval",
+    "submission",
+    "award_or_loss_capture",
+    "delivery_and_reporting",
+    "invoice_and_closeout"
+  ],
+  "grant_pipeline": [
+    "discover_notice",
+    "parse_NOFO",
+    "verify_applicant_type",
+    "verify_geography_and_population",
+    "verify_matching_and_cost_rules",
+    "verify_deadline",
+    "map_capabilities_and_partners",
+    "build_logic_model",
+    "build_budget",
+    "human_eligibility_review",
+    "human_approval",
+    "submit_through_official_portal",
+    "track_reporting_and_audit_obligations"
+  ],
+  "program_eligibility_rules": [
+    {
+      "program": "JVSG",
+      "rule": "State government agencies are the eligible applicants; Buddy must not tell DreamCo it can apply directly as a private company."
+    },
+    {
+      "program": "HVRP",
+      "rule": "Applicant categories and service-area requirements must be checked against the current Funding Opportunity Announcement; potential eligible applicants include specified nonprofit, government, workforce-board, educational, faith-based and for-profit entities."
+    },
+    {
+      "program": "Grants.gov general",
+      "rule": "Each notice controls eligibility; many awards are not personal financial assistance and are for organizations."
+    }
+  ],
+  "community_delivery_models": [
+    "qualified nonprofit prime with DreamCo as disclosed technology subcontractor",
+    "municipality or county prime with DreamCo as disclosed vendor",
+    "workforce development board partnership",
+    "veteran-service organization partnership",
+    "public housing authority partnership",
+    "school or technical college partnership"
+  ],
+  "benefit_protections": {
+    "no_eligibility_guarantees": true,
+    "no_benefit_amount_calculations_without_current_program_rules": true,
+    "refer_to_authorized_benefits_counselor_or_agency": true,
+    "collect_minimum_sensitive_data": true,
+    "informed_consent_required": true,
+    "never_charge_for_referral_or_promise_benefits": true
+  },
+  "contracting_reality": {
+    "contracts_are_competitive": true,
+    "no_award_guarantee": true,
+    "verify_cashflow_and_delivery_capacity": true,
+    "maintain_private_customers_and_reserves": true,
+    "SAM_registration_is_free": true,
+    "avoid_paid_middlemen_claiming_to_guarantee_awards": true
+  }
 }
