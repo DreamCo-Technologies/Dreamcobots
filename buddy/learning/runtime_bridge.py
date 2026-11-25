@@ -341,16 +341,26 @@ class BuddyLearningBridge:
             "assessment": lesson.assessment,
             "benchmark": lesson.benchmark,
             "source_url": lesson.source_url,
+            "source_video_id": lesson.source_video_id,
             "guide_path": lesson.guide_path,
             "rights_mode": lesson.rights_mode,
             "content_status": lesson.content_status,
+            "division_targets": list(lesson.division_targets),
+            "masterbot_targets": list(lesson.masterbot_targets),
+            "capability_tags": list(lesson.capability_tags),
+            "tool_tags": list(lesson.tool_tags),
+            "agent_tags": list(lesson.agent_tags),
+            "implementation_steps": list(lesson.implementation_steps),
+            "buddy_demo": lesson.buddy_demo,
             "completion_status": (
                 "queued_not_studied" if lesson.content_status == "authored"
                 else "metadata_only" if lesson.content_status == "metadata_only"
                 else "authoring_backlog"
             ),
             "study_allowed": lesson.content_status == "authored",
-            "authoring_required": lesson.content_status in {"authoring_backlog", "metadata_only"},
+            "authoring_required": lesson.content_status in {
+                "authoring_backlog", "metadata_only", "original_implementation_brief"
+            },
             "mastery_awarded": False,
             "model_weight_training_authorized": False,
             "paid_compute_authorized": False,
