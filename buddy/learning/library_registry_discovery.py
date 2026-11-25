@@ -153,6 +153,8 @@ def search_public_registry(
         url = endpoint.replace("{query}", quote(safe_name, safe=".-_"))
     else:
         params: dict[str, Any] = {provider["query_parameter"]: query.strip()}
+        if provider_id == "maven-central":
+            params["wt"] = "json"
         size_key = provider.get("page_size_parameter")
         if size_key:
             params[size_key] = limit
