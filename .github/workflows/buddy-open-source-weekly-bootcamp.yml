@@ -20,6 +20,7 @@ on:
       - "tools/fetch_onet_task_curricula.py"
       - "tools/build_government_sales_pipeline.py"
       - "tests/test_onet_task_curricula.py"
+      - "tests/test_bootcamp_discovery.py"
       - "tests/test_government_sales_pipeline.py"
       - "tests/test_buddy_source_study_queue.py"
       - "tests/test_process_authorized_bootcamp_media.py"
@@ -84,6 +85,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_process_authorized_bootcamp_media.py' -v
       - name: Run O*NET task curriculum tests
         run: python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
+      - name: Run Hugging Face and O*NET discovery regression tests
+        run: python -m unittest discover -s tests -p 'test_bootcamp_discovery.py' -v
       - name: Run sales and procurement pipeline tests
         run: python -m unittest discover -s tests -p 'test_government_sales_pipeline.py' -v
       - name: Refresh live Hugging Face model and dataset task taxonomy
