@@ -117,6 +117,14 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         self.assertEqual(result["matches"], [])
         self.assertEqual(result["knowledge_gap"]["status"], "internal_knowledge_gap")
 
+    def test_curated_seed_candidates_are_scheduled_as_discovery_not_mastery(self):
+        root = Path(__file__).resolve().parents[1]
+        rows = _rows({"parser": "universal_library_curriculum"}, {}, root)
+        candidates = [row for row in rows if row["id"].startswith("candidate-discovery-seed-")]
+        self.assertEqual(len(candidates), 531)
+        self.assertTrue(all(row["rights_mode"] == "metadata_discovery_only_no_download_no_execution" for row in candidates))
+        self.assertTrue(all("Candidate discovery alone is not mastery" not in row["assessment"] for row in candidates))
+
     def test_repository_coverage_report_counts_unreviewed_requests_draft(self):
         root = Path(__file__).resolve().parents[1]
         report = library_coverage_report(root=root)
