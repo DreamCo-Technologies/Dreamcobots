@@ -20,6 +20,10 @@ class DivisionOwnerReviewQueueTests(unittest.TestCase):
             ROOT / "config/review/division-owner-conversation-approval.json",
         )
         validate_owner_review_queue(queue)
+        self.assertEqual(queue["conversation_approval_record"]["record_id"], "chat-approval-2026-11-24-01")
+        self.assertFalse(queue["conversation_approval_record"]["is_signed_github_review"])
+        self.assertTrue(queue["conversation_approval_record"]["github_identity_attestation_required"])
+        self.assertEqual(len(queue["conversation_approval_record"]["sha256"]), 64)
         self.assertEqual(queue["counts"]["pending_masterbot_mappings"], 45)
         self.assertEqual([row["masterbot_id"] for row in queue["masterbot_domain_decisions"]], list(range(1, 46)))
         self.assertTrue(all(row["decision"] == "PENDING_OWNER_REVIEW" for row in queue["masterbot_domain_decisions"]))
