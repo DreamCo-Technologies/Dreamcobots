@@ -6,6 +6,7 @@ import json
 import math
 
 from .backtest import BacktestConfig, Bar, run_backtest
+from .momentum import rank_momentum_universe
 
 
 def synthetic_bars(count: int = 80) -> list[Bar]:
@@ -31,6 +32,26 @@ def synthetic_bars(count: int = 80) -> list[Bar]:
     return bars
 
 
+
+def synthetic_momentum_universe(
+    symbol_count: int = 50,
+    observations: int = 253,
+) -> dict[str, list[float]]:
+    """Create a deterministic 50-symbol universe for momentum-ranking practice."""
+    if symbol_count <= 0 or observations < 253:
+        raise ValueError("require a positive universe and at least 253 daily prices")
+    histories = {}
+    midpoint = (symbol_count - 1) / 2
+    for index in range(symbol_count):
+        symbol = f"SYN{index + 1:02d}"
+        daily_drift = (index - midpoint) * 0.00005
+        histories[symbol] = [
+            100.0 * ((1 + daily_drift) ** step) * (1 + 0.002 * math.sin(step / 13 + index / 7))
+            for step in range(observations)
+        ]
+    return histories
+
+
 def main() -> None:
     result = run_backtest(
         synthetic_bars(),
@@ -44,6 +65,11 @@ def main() -> None:
         ),
     )
     report = result.to_dict()
+    universe = synthetic_momentum_universe()
+    report["momentum_universe_size"] = len(universe)
+    report["momentum_lookback_bars"] = 252
+    report["top_momentum_symbols"] = rank_momentum_universe(universe, lookback=252, top_n=5)
+    report["momentum_selection_note"] = "synthetic ranking demonstration only; no multi-symbol portfolio orders are executed"
     report["data_source"] = "deterministic_synthetic_ohlcv"
     report["safety_notice"] = "paper simulation only; no broker connection or live orders"
     print(json.dumps(report, indent=2, sort_keys=True))
