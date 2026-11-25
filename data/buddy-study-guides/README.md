@@ -10,6 +10,6 @@ A guide is not ready for this library until:
 - At least one real DreamCo division is mapped.
 - A reviewer has approved the guide.
 
-DreamCo claims rights only in the original instructional expression it creates, subject to applicable law and upstream license terms. Keep third-party source ownership, attribution and license information. User-provided data stays user-owned and must be registered separately in `config/buddy-user-learning-data-manifest.json` with purpose-specific consent. Do not commit private data, credentials, personal records, or restricted datasets here.
+The user is recorded as the designated owner of original DreamCo-authored instructional expression and study-package structure, subject to applicable law, contributor agreements, and upstream license terms. Keep third-party source ownership, attribution and license information. User-provided data stays user-owned and must be registered separately in `config/buddy-user-learning-data-manifest.json` with purpose-specific consent. Do not commit private data, credentials, personal records, or restricted datasets here.
 
 A guide in this directory is an instructional asset, not proof that Buddy has studied it or that model weights have changed. The runtime must record study, assessments, training runs and mastery evidence separately.
