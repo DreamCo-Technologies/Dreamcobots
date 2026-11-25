@@ -11,6 +11,10 @@ on:
       - "governance/**"
       - "config/masterbot-65-registry.json"
       - "tools/dreamco_production_readiness.py"
+      - "tests/test_dreamco_production_readiness.py"
+      - "governance/dreamco-requirement-evidence.json"
+      - "tests/test_dreamco_production_readiness.py"
+      - "governance/dreamco-requirement-evidence.json"
       - ".github/workflows/**"
   push:
     branches: [main]
@@ -44,7 +48,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: python tools/dreamco_production_readiness.py
       - name: Validate readiness contracts
-        run: python -m unittest tests/test_dreamco_production_readiness.py
+        run: python -m unittest discover -s tests -p 'test_dreamco_production_readiness.py' -v
       - name: Upload master list and routing inventory
         if: always()
         uses: actions/upload-artifact@v7
