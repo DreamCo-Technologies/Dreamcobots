@@ -48,7 +48,8 @@ def build_owner_review_queue(
     source = json.loads(source_raw)
     reconciliation = json.loads(reconciliation_raw)
     review = source.get("owner_review") or {}
-    approval = json.loads(approval_path.read_text(encoding="utf-8")) if approval_path else {}
+    approval_raw = approval_path.read_bytes() if approval_path else b""
+    approval = json.loads(approval_raw) if approval_raw else {}
     if approval and approval.get("schema") != "dreamco.division_owner_conversation_approval.v1":
         raise OwnerReviewQueueError("invalid_conversation_approval_record_schema")
     approved_core = {int(row["masterbot_id"]): row for row in approval.get("exact_name_matches", [])}
@@ -199,6 +200,13 @@ def build_owner_review_queue(
         "schema": "dreamco.division_owner_review_queue.v1",
         "source_map_sha256": hashlib.sha256(source_raw).hexdigest(),
         "reconciliation_sha256": hashlib.sha256(reconciliation_raw).hexdigest(),
+        "conversation_approval_record": {
+            "record_id": approval.get("approval_record_id"),
+            "status": approval.get("status"),
+            "sha256": hashlib.sha256(approval_raw).hexdigest() if approval_raw else None,
+            "github_identity_attestation_required": bool(approval),
+            "is_signed_github_review": False,
+        },
         "masterbot_domain_decisions": pending,
         "shared_platform_masterbots": shared_platform,
         "unassigned_domain_profiles": unassigned,
@@ -217,12 +225,13 @@ def build_owner_review_queue(
             "evidence_reference_required": True,
             "shared_platform_roles_are_not_domain_owners": True,
             "training_or_model_promotion_blocked_until_required_review": True,
+            "conversation_approval_is_not_signed_github_review": True,
         },
         "truth_boundary": (
             "The 20 MasterBots classified by the reconciliation policy as shared platform services "
             "are not assigned to a primary domain. Their role and operational owner still require "
             "owner confirmation. Supplemental-domain collaborator IDs are evidence-backed proposals, "
-            "not approved assignments. No model training or production readiness is implied."
+            "not approved assignments. Chat approval provenance does not replace GitHub identity attestation or owner review. No model training or production readiness is implied."
         ),
     }
 
