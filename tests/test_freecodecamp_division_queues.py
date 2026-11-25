@@ -94,5 +94,36 @@ class FreeCodeCampDomainQueueTests(unittest.TestCase):
             validate(result)
 
 
+    def test_partial_catalog_can_create_explicitly_provisional_queues(self):
+        catalog = dict(self.catalog)
+        catalog["inventory_status"] = "partial"
+        catalog["inventory"] = {
+            **self.catalog["inventory"],
+            "expected_entry_count": None,
+            "complete": False,
+            "completeness_basis": "partial fixture; full archive not verified",
+        }
+        result = build_queues(catalog, self.crosswalk, limit=10, allow_partial=True)
+        validate(result)
+        self.assertEqual(result["queue_mode"], "provisional_partial_inventory")
+        self.assertEqual(result["source_inventory_status"], "partial")
+        self.assertIn("full historical freeCodeCamp video archive is not verified", result["coverage_warning"])
+        self.assertEqual(result["domain_count"], 55)
+        self.assertTrue(all(item["assignment_status"] == "queued_not_studied"
+                            for domain in result["domains"] for item in domain["items"]))
+
+    def test_partial_mode_does_not_allow_duplicate_or_missing_observed_rows(self):
+        catalog = dict(self.catalog)
+        catalog["inventory_status"] = "partial"
+        catalog["inventory"] = {
+            **self.catalog["inventory"],
+            "expected_entry_count": None,
+            "complete": False,
+            "observed_entry_count": 2,
+        }
+        with self.assertRaisesRegex(ValueError, "verified complete inventory"):
+            build_queues(catalog, self.crosswalk, limit=10, allow_partial=True)
+
+
 if __name__ == "__main__":
     unittest.main()

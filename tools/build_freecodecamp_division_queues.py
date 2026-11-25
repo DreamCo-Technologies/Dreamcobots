@@ -74,7 +74,7 @@ def _division_categories(name: str, subject_terms: list[str], known: set[str]) -
             selected.add(category_id)
     return selected, bool(selected)
 
-def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int = 30) -> dict[str, Any]:
+def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int = 30, *, allow_partial: bool = False) -> dict[str, Any]:
     if catalog.get("schema") != "dreamco.freecodecamp_catalog.v1":
         raise ValueError("unsupported freeCodeCamp catalog schema")
     videos = catalog.get("videos")
@@ -83,15 +83,24 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
     if not isinstance(videos, list) or not videos:
         raise ValueError("non-empty freeCodeCamp catalog required")
     inventory = catalog.get("inventory") or {}
-    if (
-        catalog.get("inventory_status") != "complete"
-        or inventory.get("complete") is not True
-        or inventory.get("expected_entry_count") != len(videos)
-        or inventory.get("observed_entry_count") != len(videos)
-        or inventory.get("null_entry_count") != 0
-        or inventory.get("duplicate_video_id_count") != 0
-    ):
-        raise ValueError("verified complete freeCodeCamp inventory required before division queue generation")
+    complete_inventory = (
+        catalog.get("inventory_status") == "complete"
+        and inventory.get("complete") is True
+        and inventory.get("expected_entry_count") == len(videos)
+        and inventory.get("observed_entry_count") == len(videos)
+        and inventory.get("null_entry_count") == 0
+        and inventory.get("duplicate_video_id_count") == 0
+    )
+    provisional_inventory = (
+        allow_partial
+        and catalog.get("inventory_status") == "partial"
+        and inventory.get("complete") is False
+        and inventory.get("observed_entry_count") == len(videos)
+        and inventory.get("null_entry_count") == 0
+        and inventory.get("duplicate_video_id_count") == 0
+    )
+    if not complete_inventory and not provisional_inventory:
+        raise ValueError("verified complete inventory required, or pass allow_partial=True for a clearly provisional queue with verified observed-row integrity")
     if not isinstance(domains, list) or len(domains) != 55:
         raise ValueError("canonical 55-domain crosswalk required")
     domain_ids = [row.get("domain_id") for row in domains]
@@ -152,6 +161,8 @@ def build_queues(catalog: dict[str, Any], crosswalk: dict[str, Any], limit: int 
         "source_catalog_generated_at": catalog.get("generated_at"),
         "source_inventory_status": catalog.get("inventory_status"),
         "source_inventory": inventory,
+        "queue_mode": "complete_verified_inventory" if complete_inventory else "provisional_partial_inventory",
+        "coverage_warning": None if complete_inventory else "Only observed catalog entries are queued. The full historical freeCodeCamp video archive is not verified; do not claim complete source coverage.",
         "domain_count": len(rows),
         "catalog_video_count": len(videos),
         "queue_limit_per_domain": limit,
@@ -165,12 +176,24 @@ def validate(payload: dict[str, Any]) -> None:
     if payload.get("schema") != "dreamco.freecodecamp_division_learning_queues.v1" or len(rows) != 55:
         raise ValueError("exactly 55 domain queues are required")
     source_inventory = payload.get("source_inventory") or {}
-    if (
-        payload.get("source_inventory_status") != "complete"
-        or source_inventory.get("complete") is not True
-        or source_inventory.get("observed_entry_count") != payload.get("catalog_video_count")
-    ):
-        raise ValueError("domain queues must retain verified complete source inventory evidence")
+    complete_inventory = (
+        payload.get("queue_mode") == "complete_verified_inventory"
+        and payload.get("source_inventory_status") == "complete"
+        and source_inventory.get("complete") is True
+        and source_inventory.get("expected_entry_count") == payload.get("catalog_video_count")
+        and source_inventory.get("observed_entry_count") == payload.get("catalog_video_count")
+    )
+    provisional_inventory = (
+        payload.get("queue_mode") == "provisional_partial_inventory"
+        and payload.get("source_inventory_status") == "partial"
+        and source_inventory.get("complete") is False
+        and source_inventory.get("observed_entry_count") == payload.get("catalog_video_count")
+        and source_inventory.get("null_entry_count") == 0
+        and source_inventory.get("duplicate_video_id_count") == 0
+        and bool(payload.get("coverage_warning"))
+    )
+    if not complete_inventory and not provisional_inventory:
+        raise ValueError("domain queues must retain complete inventory evidence or an explicit provisional partial-inventory warning")
     ids = [row["domain_id"] for row in rows]
     if len(set(ids)) != 55:
         raise ValueError("domain IDs must be unique")
@@ -193,14 +216,17 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--limit", type=int, default=30)
+    parser.add_argument("--allow-partial", action="store_true", help="Build a provisional queue from observed entries only; never claim full archive coverage.")
     parser.add_argument("--out", type=Path, default=OUTPUT)
     args = parser.parse_args()
     if not 1 <= args.limit <= 100:
         raise SystemExit("--limit must be between 1 and 100")
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
     crosswalk = json.loads(CROSSWALK.read_text(encoding="utf-8"))
-    payload = build_queues(catalog, crosswalk, args.limit)
+    payload = build_queues(catalog, crosswalk, args.limit, allow_partial=args.allow_partial)
     validate(payload)
+    if args.allow_partial and args.out == OUTPUT:
+        args.out = OUTPUT.with_name("freecodecamp-provisional-division-learning-queues.json")
     rendered = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
     if args.check:
         if not args.out.exists() or args.out.read_text(encoding="utf-8") != rendered:
@@ -208,7 +234,7 @@ def main() -> int:
     else:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(rendered, encoding="utf-8")
-    print(json.dumps({"ok": True, "domains": 55, "catalog_videos": len(catalog["videos"]),
+    print(json.dumps({"ok": True, "queue_mode": payload["queue_mode"], "domains": 55, "catalog_videos": len(catalog["videos"]),
                       "queued_items": sum(row["queue_count"] for row in payload["domains"]),
                       "subject_routed": sum(row["queue_status"] == "subject_routed" for row in payload["domains"]),
                       "foundation_only": sum(row["queue_status"] != "subject_routed" for row in payload["domains"])}, indent=2))
