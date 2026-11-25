@@ -47,6 +47,20 @@ class UniversalLibraryCurriculumTests(unittest.TestCase):
         self.assertEqual(next(row for row in ecosystems if row["id"] == "java")["provider"], "maven-central")
         self.assertEqual(next(row for row in ecosystems if row["id"] == "perl")["provider"], "metacpan")
 
+    def test_runtime_bridge_and_discovery_counts_are_consistent(self):
+        curriculum = self.read_json("config/buddy-universal-library-curriculum.json")
+        runtime = curriculum["runtime"]
+        coverage = self.read_json("config/buddy-library-ecosystem-adapter-coverage.json")
+        self.assertEqual(runtime["host_bridge"], "buddy.learning.runtime_bridge.BuddyLearningBridge.library_knowledge")
+        self.assertEqual(runtime["internal_retrieval_engine"], "foundry.local_rag.LocalRagStore.tfidf")
+        self.assertEqual(runtime["automated_ecosystem_metadata_discovery_count"], coverage["automated_ecosystem_count"])
+        self.assertEqual(runtime["manual_ecosystem_catalog_review_count"], coverage["manual_ecosystem_count"])
+        self.assertTrue(runtime["external_discovery_requires_explicit_host_opt_in"])
+        self.assertTrue(runtime["gap_persistence_requires_redacted_query"])
+        self.assertFalse(runtime["general_external_model_routing_on_gap"])
+        self.assertEqual(runtime["study_queue_completion_default"], "queued_not_studied")
+        self.assertFalse(runtime["study_queue_mastery_default"])
+
     def test_guide_schema_requires_evidence_and_rights(self):
         schema = self.read_json("config/buddy-library-study-guide.schema.json")
         required = set(schema["required"])
