@@ -573,14 +573,40 @@ def build() -> dict[str, Any]:
     ]
     revenue_count = sum(1 for row in records if row["commercial_plan"].get("candidate"))
     supplemental_count = sum(1 for row in records if row["supplemental_portfolio"])
+    unassigned_supplemental_domains = sorted({
+        row["execution_division"] for row in records
+        if row["division_route"]["status"] == "supplemental_domain_unassigned_pending_owner_review"
+    })
+    unassigned_supplemental_bots = status_counts["supplemental_domain_unassigned_pending_owner_review"]
+    unresolved_owner_count = status_counts["discovery_review_required"] + unassigned_supplemental_bots
     app_bot_count = sum(1 for row in records if any(str(x).startswith("App_bots/") for x in row["source_paths"]))
+    review_groups = {}
+    for row in records:
+        if not row["division_review"]["required"]:
+            continue
+        key = row["execution_division"]
+        item = review_groups.setdefault(key, {
+            "division_or_portfolio": key,
+            "proposed_owner": row.get("proposed_owner_division") or row["division_route"].get("proposed_domain_owner"),
+            "suggested_domains": row["division_review"]["suggested_domains_for_owner_review"],
+            "bot_count": 0,
+            "source_paths": set(),
+            "route_status": row["division_route"]["status"],
+        })
+        item["bot_count"] += 1
+        item["source_paths"].update(row["source_paths"])
+    division_review_queue = [
+        {**item, "source_paths": sorted(item["source_paths"])}
+        for _key, item in sorted(review_groups.items())
+    ]
     payload = {
         "schema": "dreamco.buddy_fleet_execution_map.v1",
         "status": "full_catalog_planned_runtime_evidence_pending",
         "counts": {
             "manifest_bot_profiles": len(records),
             "canonical_business_divisions": 45,
-            "supplemental_specialist_portfolios": len(portfolio_by_name),
+            "supplemental_domain_profiles": sum(1 for row in charters["portfolios"] if row.get("classification") == "supplemental_domain_profile"),
+            "specialist_subportfolios": sum(1 for row in charters["portfolios"] if row.get("classification") == "supplemental_portfolio"),
             "execution_division_labels": len(set(row["execution_division"] for row in records)),
             "bots_in_supplemental_portfolios": supplemental_count,
             "profiles_with_app_bots_source": app_bot_count,
@@ -588,11 +614,15 @@ def build() -> dict[str, Any]:
             "revenue_candidates_with_plans": revenue_count,
             "internal_or_unclassified_profiles": len(records) - revenue_count,
             "proposed_domain_masterbot_matches": status_counts["proposed_domain_masterbot_match_requires_owner_review"],
+            "proposed_specialist_subportfolio_routes": status_counts["proposed_specialist_subportfolio_route_pending_owner_review"],
             "discovery_review_required": status_counts["discovery_review_required"],
-            "unresolved_owner_count": status_counts["discovery_review_required"],
+            "unassigned_supplemental_domain_profiles": len(unassigned_supplemental_domains),
+            "unassigned_supplemental_bot_profiles": unassigned_supplemental_bots,
+            "unresolved_owner_count": unresolved_owner_count,
+            "owner_review_queue_entries": len(division_review_queue),
             "shared_teammate_profiles": sum(1 for row in records if row["shared_workforce_group"] == "GrokTeammates"),
             "grok_teammate_lanes_routed_to_canonical_owners": sum(1 for row in records if row["shared_workforce_group"] == "GrokTeammates" and row["canonical_owner_division"] != "DreamDiscovery"),
-            "threejs_profiles_routed_to_dream3d": sum(1 for row in records if row["supplemental_portfolio"] == "Dream3D"),
+            "threejs_profiles_proposed_for_dream3d": sum(1 for row in records if row["supplemental_portfolio"] == "Dream3D"),
             "duplicate_capability_groups_for_review": len(duplicate_sets),
             "shared_platform_masterbots": len(shared_ids),
             "live_enabled_bots": 0,
@@ -604,16 +634,17 @@ def build() -> dict[str, Any]:
         "execution_division_profile_counts": dict(sorted(Counter(row["execution_division"] for row in records).items())),
         "revenue_lane_candidate_counts": dict(sorted(revenue_lanes_count.items())),
         "portfolio_charters": [
-            {"portfolio": row["portfolio"], "canonical_owner": row["owner"],
-             "unique_domain": row["unique_domain"], "bot_count": len(row["bots"]),
+            {"portfolio": row["portfolio"], "proposed_canonical_owner": row["owner"],
+             "classification": row.get("classification"), "unique_domain": row["unique_domain"], "bot_count": len(row["bots"]),
              "collaborators": row["collaborators"]}
             for row in charters["portfolios"]
         ],
         "monetization_truth_policy": monetization["default_rules"],
         "global_rules": [
-            "All manifest profiles receive a Buddy route, a primary canonical owner or DreamDiscovery review route, and a plan record.",
-            "GrokTeammates are a shared cross-functional workforce pool; every lane also has one canonical business-division owner and a shared platform MasterBot route.",
-            "Dream3D owns the Three.js interactive 3D specialist portfolio under DreamCodeLab; general software engineering remains with DreamCodeLab.",
+            "All manifest profiles receive a Buddy plan record; only the 45 exact core routes and 112 teammate routes are structurally mapped, and all remain owner-review-gated.",
+            "The ten supplemental domain profiles remain unassigned as primary owners; charter owner links are proposals only until identity attestation and explicit approval.",
+            "GrokTeammates are a shared cross-functional workforce pool; each lane has a proposed canonical business-domain owner and one shared platform MasterBot route.",
+            "Dream3D is a proposed specialist subportfolio under DreamCodeLab, not an eleventh supplemental domain; its route remains owner-review-gated.",
             "Only evidence-backed, permissioned, owner-approved execution may leave plan_only.",
             "Declared API names are integration targets, not proof that credentials or live connections exist.",
             "Duplicate capability groups are flagged for review; do not launch competing copies of the same offer.",
@@ -623,16 +654,7 @@ def build() -> dict[str, Any]:
         ],
         "bots": records,
         "money_os_catalog": money_os_catalog,
-        "division_review_queue": [
-            {
-                "slug": row["slug"],
-                "source_division": row["source_division"],
-                "suggested_domains": row["division_review"]["suggested_domains_for_owner_review"],
-                "flags": row["profile_flags"],
-                "source_paths": row["source_paths"],
-            }
-            for row in records if row["division_review"]["required"]
-        ],
+        "division_review_queue": division_review_queue,
         "duplicate_capability_groups": duplicate_sets,
         "truth_boundary": "This is a deterministic plan and routing map for the complete generated bot manifest. It does not prove runtime availability, integrations, customer demand, revenue, learning or production readiness.",
     }
