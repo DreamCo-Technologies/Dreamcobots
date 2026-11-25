@@ -64,6 +64,8 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
         result["errors"].append("Hugging Face official_courses must be a non-empty array")
     if isinstance(courses, list) and hf.get("course_count") != len(courses):
         result["warnings"].append("Hugging Face declared course_count differs from records")
+    if isinstance(modules, list) and hf.get("ecosystem_module_count") != len(modules):
+        result["warnings"].append("Hugging Face declared ecosystem_module_count differs from records")
 
     onet = docs.get("onet", {})
     areas = onet.get("content_model_areas", [])
@@ -134,6 +136,8 @@ def audit(root: Path = ROOT) -> dict[str, Any]:
     }
     if crosswalk.get("counts", {}).get("domain_divisions") != 55:
         result["errors"].append("Division crosswalk must declare 55 canonical divisions")
+    if not isinstance(domains, list) or len(domains) != 55:
+        result["errors"].append("Division crosswalk must contain exactly 55 domain records")
     if crosswalk.get("status") != "approved":
         result["warnings"].append("55-division ownership crosswalk is not approved; do not infer primary ownership")
 
