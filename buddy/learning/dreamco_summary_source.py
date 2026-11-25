@@ -70,8 +70,7 @@ def resources_for_division(division: str, path: Path) -> list[Resource]:
     return resources
 
 
-def select_next_for_division(division: str, gaps: Iterable[Capability], *, recent: set[int] | None = None,
-                             path: Path) -> dict | None:
+def select_next_for_division(division: str, gaps: Iterable[Capability], path: Path, *, recent: set[int] | None = None) -> dict | None:
     payload = load_organization(path)
     resources = resources_for_division(division, path)
     gap_list = list(gaps)
