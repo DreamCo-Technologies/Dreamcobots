@@ -77,6 +77,8 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         self.write_guide()
         result = search_internal_library_knowledge("Python HTTP sessions", root=self.root)
         self.assertEqual(result["source"], "dreamco_approved_library_guides")
+        self.assertEqual(result["retrieval_engine"], "foundry.local_rag.LocalRagStore.tfidf")
+        self.assertFalse(result["embeddings_or_external_model_calls"])
         self.assertEqual(result["matches"][0]["canonical_id"], "python-requests")
         self.assertIsNone(result["knowledge_gap"])
 
