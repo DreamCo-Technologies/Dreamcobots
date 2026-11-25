@@ -5,6 +5,9 @@ on:
     - cron: "17 9 * * 1"
   pull_request:
     paths:
+      - "docs/BUDDY_TEACHER_AUTHORING_QUEUE.md"
+      - "tests/test_buddy_teacher_authoring_queue.py"
+      - "tools/build_buddy_teacher_authoring_queue.py"
       - "tests/test_freecodecamp_study_guides.py"
       - "tools/build_freecodecamp_study_guides.py"
       - "config/freecodecamp-detailed-video-study-guide.schema.json"
@@ -63,6 +66,9 @@ on:
   push:
     branches: [main]
     paths:
+      - "docs/BUDDY_TEACHER_AUTHORING_QUEUE.md"
+      - "tests/test_buddy_teacher_authoring_queue.py"
+      - "tools/build_buddy_teacher_authoring_queue.py"
       - "tests/test_freecodecamp_study_guides.py"
       - "tools/build_freecodecamp_study_guides.py"
       - "config/freecodecamp-detailed-video-study-guide.schema.json"
@@ -152,7 +158,7 @@ jobs:
           python -m json.tool config/buddy-user-learning-data-manifest.json > /dev/null
           python -m json.tool config/buddy-continuous-study-policy.json > /dev/null
           python -m json.tool config/buddy_1000_source_learning_policy.json > /dev/null
-          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/discover_huggingface_subject_taxonomy.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py tools/build_onet_task_curricula.py tools/fetch_onet_task_curricula.py tools/build_government_sales_pipeline.py tools/build_buddy_self_bootcamp.py tools/build_buddy_university_curriculum.py tools/build_buddy_university_daily_plan.py tools/organize_buddy_learning_assets.py buddy/learning/dreamco_summary_source.py tools/sync_freecodecamp_catalog.py
+          python -m py_compile tools/discover_open_source_bootcamp_sources.py tools/discover_huggingface_subject_taxonomy.py tools/build_buddy_source_study_queue.py tools/process_authorized_bootcamp_media.py tools/build_onet_task_curricula.py tools/fetch_onet_task_curricula.py tools/build_government_sales_pipeline.py tools/build_buddy_self_bootcamp.py tools/build_buddy_university_curriculum.py tools/build_buddy_university_daily_plan.py tools/organize_buddy_learning_assets.py buddy/learning/dreamco_summary_source.py tools/sync_freecodecamp_catalog.py tools/build_buddy_teacher_authoring_queue.py
       - name: Run source rights and guide-queue tests
         run: python -m unittest discover -s tests -p 'test_buddy_source_study_queue.py' -v
       - name: Run local media rights and hash tests
@@ -173,6 +179,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_buddy_university_curriculum.py' -v
       - name: Run Buddy University daily assignment tests
         run: python -m unittest discover -s tests -p 'test_buddy_university_daily_plan.py' -v
+      - name: Run teacher authoring queue tests
+        run: python -m unittest discover -s tests -p 'test_buddy_teacher_authoring_queue.py' -v
       - name: Run summary-to-division learning organization tests
         run: python -m unittest discover -s tests -p 'test_organize_buddy_learning_assets.py' -v
       - name: Run DreamCo summary scheduler adapter tests
@@ -213,6 +221,18 @@ jobs:
               --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly"
           else
             echo "Discovery snapshot missing; source study queue not generated."
+          fi
+      - name: Build ChatGPT teacher authoring work orders
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/buddy-bootcamp-weekly/authorized-source-bundles"
+          if [ -f "$RUNNER_TEMP/buddy-bootcamp-weekly/source-study-queue.json" ]; then
+            python tools/build_buddy_teacher_authoring_queue.py \
+              --source-queue "$RUNNER_TEMP/buddy-bootcamp-weekly/source-study-queue.json" \
+              --bundles-dir "$RUNNER_TEMP/buddy-bootcamp-weekly/authorized-source-bundles" \
+              --out "$RUNNER_TEMP/buddy-bootcamp-weekly/teacher-authoring-queue.json"
+          else
+            echo "Source queue unavailable; no teacher work orders generated."
           fi
       - name: Build O*NET task-by-task sales and procurement playbooks
         run: |
