@@ -346,6 +346,7 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
                 "assessment": "Do not mark studied or mastered from a title, video URL or metadata row. Require a rights-cleared source, detailed guide, original exercise and independent assessment.",
                 "benchmark": "FreeCodeCamp detailed video study-guide acceptance suite.",
                 "source_url": row["url"],
+                "content_status": "metadata_only",
             }
             for row in videos
         ]
