@@ -57,6 +57,23 @@ class CanonicalFleetRoutingTests(unittest.TestCase):
         self.assertTrue(result["routing"]["owner_approval_required"])
         self.assertFalse(result["routing"]["privileged_execution_enabled"])
 
+    def test_malformed_primary_id_fails_closed(self):
+        for value in (True, "not-an-id"):
+            route = resolve_route({"division": "DreamAIInfra", "primary_masterbot_id": value})
+            self.assertFalse(route["route_valid"])
+            self.assertIsNone(route["primary_masterbot_id"])
+            self.assertEqual(route["route_status"], "blocked_invalid_primary_masterbot_id")
+
+    def test_invalid_shared_collaborator_does_not_corrupt_valid_primary_route(self):
+        route = resolve_route({
+            "division": "DreamAIInfra",
+            "primary_masterbot_id": 4,
+            "shared_teammate_masterbot_id": 4,
+        })
+        self.assertTrue(route["route_valid"])
+        self.assertFalse(route["shared_route_valid"])
+        self.assertEqual(route["shared_route_status"], "blocked_invalid_shared_masterbot_route")
+
     def test_unknown_domain_fails_closed_without_assigning_masterbot(self):
         route = resolve_route({"division": "UnknownDivision"})
         self.assertFalse(route["route_valid"])
