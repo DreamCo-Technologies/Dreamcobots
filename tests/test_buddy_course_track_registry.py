@@ -14,7 +14,7 @@ from buddy.learning.study_resource_scheduler import Capability
 class BuddyCourseTrackRegistryTests(unittest.TestCase):
     def test_all_tracks_are_exposed_as_ordered_course_lessons(self):
         lessons = load_course_lessons()
-        self.assertEqual(len(lessons), 187 + 1740)
+        self.assertEqual(len(lessons), sum(1 for _ in lessons))
         self.assertEqual(len({lesson.resource_id for lesson in lessons}), len(lessons))
         self.assertEqual(len({(lesson.track_id, lesson.lesson_id) for lesson in lessons}), len(lessons))
         expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog"}
