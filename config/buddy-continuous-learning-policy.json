@@ -22,7 +22,12 @@
     "five_minute_mode": "ONE_DISTINCT_MASTERBOT_LANE_PER_RUN_ROTATING_ROUND_ROBIN",
     "full_sweep_mode": "ALL_65_MASTERBOTS_PER_RUN",
     "queue_policy": "PRIORITY_FAIR_SHARE_RETRY_FAILED_LANES",
-    "no_division_starvation": true
+    "no_division_starvation": true,
+    "concurrency_groups": {
+      "five_minute_rotating_lane": "separate rotating-lane group",
+      "six_hour_full_sweep": "separate full-sweep group",
+      "allow_overlap_between_plan_only_workflows": true
+    }
   },
   "lanes": {
     "dedicated_logical_lane_per_masterbot": true,
@@ -86,7 +91,11 @@
     "github_schedule_best_effort": true,
     "pause_on_resource_or_security_alert": true,
     "resume_requires_health_check": true,
-    "actual_model_weight_training": "NOT_ENABLED_BY_THIS_PLANNER_WORKFLOW"
+    "actual_model_weight_training": "NOT_ENABLED_BY_THIS_PLANNER_WORKFLOW",
+    "planner_outputs": "PLAN_ONLY_NOT_EXECUTED",
+    "weights_trained_by_planner": false,
+    "training_artifact_filename": "latest-plan.json",
+    "actual_training_requires": "approved_training_job_manifest + rights-cleared persistent dataset + pinned model/tokenizer + compute approval + available runner"
   },
   "evidence": {
     "required_per_run": [
