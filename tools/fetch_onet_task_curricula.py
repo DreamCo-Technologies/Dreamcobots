@@ -17,7 +17,7 @@ from pathlib import Path
 from urllib.parse import urljoin, urlparse
 from typing import Any
 
-from build_onet_task_curricula import build, pick, read_rows
+from build_onet_task_curricula import build, pick
 
 SOURCE_PAGE = "https://www.onetcenter.org/database.html"
 USER_AGENT = "DreamCo-Buddy-Bootcamp/1.1 (O*NET attribution preserved)"
@@ -121,6 +121,31 @@ def fetch_json_table(url: str, *, timeout: int = 180) -> bytes:
         return response.read()
 
 
+def read_table_rows(path: Path) -> list[dict[str, str]]:
+    document = json.loads(path.read_text(encoding="utf-8-sig"))
+    def locate(value: Any) -> list[dict[str, Any]]:
+        if isinstance(value, list):
+            if value and all(isinstance(item, dict) for item in value):
+                return value
+            for item in value:
+                found = locate(item)
+                if found:
+                    return found
+        elif isinstance(value, dict):
+            for key in ("data", "rows", "records", "items", "results"):
+                if key in value:
+                    found = locate(value[key])
+                    if found:
+                        return found
+            for child in value.values():
+                found = locate(child)
+                if found:
+                    return found
+        return []
+    records = locate(document)
+    return [{str(key): "" if value is None else str(value) for key, value in row.items()} for row in records]
+
+
 def compact_record(row: dict[str, str], table: str) -> dict[str, Any]:
     keys = (
         "element_id", "element_name", "scale_id", "scale_name", "data_value",
@@ -207,29 +232,16 @@ def enrich_occupations(result: dict[str, Any], exports: dict[str, list[dict[str,
             if row.get("workplace_example") and row.get("in_demand", "").upper() == "Y"
         ]
         for playbook in occupation.get("task_playbooks", []):
-            playbook["official_occupation_profile"] = {
-                "description": occupation.get("description", ""),
-                "job_zone": occupation.get("job_zone", {}),
-                "skills": profile["essential_skills"],
-                "transferable_skills": profile["transferable_skills"],
-                "knowledge": profile["knowledge"],
-                "abilities": profile["abilities"],
-                "software_skills": profile["software_skills"],
-                "work_activities": profile["work_activities"],
-                "work_context": profile["work_context"],
-                "work_styles": profile["work_styles"],
-                "education": profile["education"],
-                "training_and_experience": profile["training_and_experience"],
-                "software_skill_examples": profile["software_skill_examples"],
-                "hot_technologies": profile["hot_technologies"],
-                "in_demand_software": profile["in_demand_software"],
-            }
-            playbook["guide_authoring_brief"]["official_software_examples"] = profile["software_skill_examples"]
+            playbook["occupation_profile_ref"] = occupation.get("occupation_code")
+            playbook["occupation_profile_counts"] = occupation.get("profile_counts", {})
+            playbook["guide_authoring_brief"]["official_software_examples"] = profile["software_skill_examples"][:25]
+            playbook["guide_authoring_brief"]["official_hot_technologies"] = profile["hot_technologies"][:25]
+            playbook["guide_authoring_brief"]["official_in_demand_software"] = profile["in_demand_software"][:25]
             playbook["guide_authoring_brief"]["official_skills_and_knowledge"] = {
-                "essential_skills": profile["essential_skills"],
-                "transferable_skills": profile["transferable_skills"],
-                "knowledge": profile["knowledge"],
-                "abilities": profile["abilities"],
+                "essential_skills": profile["essential_skills"][:20],
+                "transferable_skills": profile["transferable_skills"][:20],
+                "knowledge": profile["knowledge"][:20],
+                "abilities": profile["abilities"][:20],
             }
     result["source"]["license"] = "Creative Commons Attribution 4.0 International. Attribute O*NET 31.0 Database and the U.S. Department of Labor, Employment and Training Administration; link the license and disclose changes."
     result["source"]["data_files"] = file_manifest
