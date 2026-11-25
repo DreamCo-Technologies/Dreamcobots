@@ -1,3 +1,4 @@
+import json
 import unittest
 from pathlib import Path
 
@@ -179,6 +180,21 @@ class BuddyFleetExecutionMapTests(unittest.TestCase):
             self.assertTrue(group["requires_review"])
             self.assertGreater(len(group["bot_slugs"]), 1)
 
+
+
+    def test_ten_supplemental_domains_and_dream3d_subportfolio_keep_owner_review(self):
+        data = json.loads(CHARTERS.read_text(encoding="utf-8"))
+        supplemental = [x for x in data["portfolios"] if x["classification"] == "supplemental_domain_profile"]
+        dream3d = [x for x in data["portfolios"] if x["portfolio"] == "Dream3D"]
+        self.assertEqual(len(supplemental), 10)
+        self.assertEqual(len(dream3d), 1)
+        self.assertEqual(dream3d[0]["classification"], "supplemental_portfolio")
+        for portfolio in supplemental + dream3d:
+            self.assertTrue(portfolio["owner_approval_required"])
+            self.assertTrue(portfolio["owner"])
+        for bot in self.bots:
+            self.assertTrue(bot["division_route"]["owner_approval_required"])
+            self.assertFalse(bot["division_route"]["privileged_execution_enabled"])
 
 if __name__ == "__main__":
     unittest.main()
