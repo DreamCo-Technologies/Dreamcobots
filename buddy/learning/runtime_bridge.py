@@ -9,10 +9,14 @@ from __future__ import annotations
 from dataclasses import asdict
 import json
 import os
+import re
 import sqlite3
 from pathlib import Path
 from typing import Any
 
+from buddy.learning.library_knowledge_router import route_library_question
+from buddy.learning.universal_library_registry import library_coverage_report
+from buddy.learning.course_track_registry import load_course_lessons, resources_for_division, resources_for_masterbot
 from buddy.learning.evidence_acquisition import (
     Capability, CapabilityRegistry, LearningEvent, LearningLedger, benchmark_gate,
 )
@@ -28,6 +32,14 @@ class PrivateLearningStore:
             db.execute("""CREATE TABLE IF NOT EXISTS learning_evidence (
                 tenant TEXT NOT NULL, event_id TEXT NOT NULL, payload TEXT NOT NULL,
                 PRIMARY KEY (tenant, event_id))""")
+            db.execute("""CREATE TABLE IF NOT EXISTS library_study_progress (
+                tenant TEXT NOT NULL, owner_type TEXT NOT NULL, owner_id TEXT NOT NULL,
+                lesson_id TEXT NOT NULL, guide_revision TEXT NOT NULL, status TEXT NOT NULL,
+                attempts INTEGER NOT NULL, evidence_id TEXT NOT NULL,
+                benchmark_passed INTEGER NOT NULL, holdout_passed INTEGER NOT NULL,
+                regression_passed INTEGER NOT NULL, reviewer_approved INTEGER NOT NULL,
+                updated_at TEXT NOT NULL,
+                PRIMARY KEY (tenant, owner_type, owner_id, lesson_id))""")
         os.chmod(self.filename, 0o600)
 
     def _connect(self):
@@ -66,12 +78,79 @@ class PrivateLearningStore:
             ledger.record(LearningEvent(**row))
         return ledger
 
+    def record_library_progress(self, *, tenant_id: str, owner_type: str, owner_id: str,
+                                 lesson_id: str, guide_revision: str, evidence_id: str,
+                                 capture_consent: bool, redacted: bool, outcome_verified: bool,
+                                 benchmark_passed: bool, holdout_passed: bool,
+                                 regression_passed: bool, reviewer_approved: bool) -> dict[str, Any]:
+        if not isinstance(tenant_id, str) or not tenant_id.strip():
+            raise ValueError("authenticated tenant ID required")
+        if owner_type not in {"division", "masterbot"} or not owner_id.strip():
+            raise ValueError("canonical division or MasterBot owner required")
+        for label, value in (("lesson_id", lesson_id), ("guide_revision", guide_revision), ("evidence_id", evidence_id)):
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError(f"{label} is required")
+        if not capture_consent or not redacted:
+            raise PermissionError("explicit consent and redacted evidence are required")
+        if not outcome_verified:
+            raise ValueError("library lesson outcome must be verified")
+        if any(type(value) is not bool for value in (benchmark_passed, holdout_passed, regression_passed, reviewer_approved)):
+            raise ValueError("assessment and review outcomes must be booleans")
+        all_assessments_passed = benchmark_passed and holdout_passed and regression_passed
+        status = "mastered" if all_assessments_passed and reviewer_approved else (
+            "assessment_passed" if all_assessments_passed else "in_progress"
+        )
+        now = __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()
+        with self._connect() as db:
+            existing = db.execute(
+                "SELECT guide_revision, attempts FROM library_study_progress "
+                "WHERE tenant=? AND owner_type=? AND owner_id=? AND lesson_id=?",
+                (tenant_id, owner_type, owner_id, lesson_id),
+            ).fetchone()
+            attempts = existing[1] + 1 if existing and existing[0] == guide_revision else 1
+            db.execute(
+                """INSERT OR REPLACE INTO library_study_progress
+                (tenant, owner_type, owner_id, lesson_id, guide_revision, status, attempts,
+                 evidence_id, benchmark_passed, holdout_passed, regression_passed,
+                 reviewer_approved, updated_at)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                (tenant_id, owner_type, owner_id, lesson_id, guide_revision, status, attempts,
+                 evidence_id, int(benchmark_passed), int(holdout_passed), int(regression_passed),
+                 int(reviewer_approved), now),
+            )
+        return {"lesson_id": lesson_id, "status": status, "attempts": attempts,
+                "evidence_id": evidence_id, "guide_revision": guide_revision,
+                "mastery_awarded": status == "mastered",
+                "model_weight_training_authorized": False}
+
+    def load_library_progress(self, tenant_id: str, owner_type: str, owner_id: str) -> dict[str, dict[str, Any]]:
+        if not isinstance(tenant_id, str) or not tenant_id.strip():
+            raise ValueError("authenticated tenant ID required")
+        if owner_type not in {"division", "masterbot"} or not owner_id.strip():
+            raise ValueError("canonical division or MasterBot owner required")
+        with self._connect() as db:
+            rows = db.execute(
+                """SELECT lesson_id, guide_revision, status, attempts, evidence_id,
+                benchmark_passed, holdout_passed, regression_passed, reviewer_approved, updated_at
+                FROM library_study_progress WHERE tenant=? AND owner_type=? AND owner_id=?""",
+                (tenant_id, owner_type, owner_id),
+            ).fetchall()
+        return {
+            row[0]: {
+                "guide_revision": row[1], "status": row[2], "attempts": row[3],
+                "evidence_id": row[4], "benchmark_passed": bool(row[5]),
+                "holdout_passed": bool(row[6]), "regression_passed": bool(row[7]),
+                "reviewer_approved": bool(row[8]), "updated_at": row[9],
+            } for row in rows
+        }
+
     def forget(self, tenant_id: str) -> int:
         if not isinstance(tenant_id, str) or not tenant_id.strip():
             raise ValueError("authenticated tenant ID required")
         with self._connect() as db:
-            result = db.execute("DELETE FROM learning_evidence WHERE tenant=?", (tenant_id,))
-            return result.rowcount
+            evidence = db.execute("DELETE FROM learning_evidence WHERE tenant=?", (tenant_id,))
+            progress = db.execute("DELETE FROM library_study_progress WHERE tenant=?", (tenant_id,))
+            return evidence.rowcount + progress.rowcount
 
 
 class BuddyLearningBridge:
@@ -107,6 +186,80 @@ class BuddyLearningBridge:
                 "teaching": {"mode": "guided", "next_step": summary["next_step"],
                              "check_understanding": "Would you like to review a verified example?"},
                 "automated": False}
+
+    def library_knowledge(self, query: str, *, external_discovery: bool = False,
+                          persist_gap: bool = False, query_is_redacted: bool = False,
+                          gap_root: Path | None = None) -> dict[str, Any]:
+        """Internal-first library retrieval; network and gap persistence require explicit opt-in."""
+        return route_library_question(
+            query,
+            external_discovery=external_discovery,
+            persist_gap=persist_gap,
+            query_is_redacted=query_is_redacted,
+            requested_by="buddy-runtime",
+            gap_root=gap_root,
+        )
+
+    def library_coverage(self) -> dict[str, Any]:
+        """Return transparent library catalog, guide, rights and freshness coverage."""
+        return library_coverage_report()
+
+    def library_learning_queue(self, *, division: str | None = None,
+                               masterbot: str | None = None, query: str = "",
+                               limit: int = 50) -> dict[str, Any]:
+        """Return queued library lessons for a canonical division or MasterBot lane."""
+        if bool(division) == bool(masterbot):
+            raise ValueError("provide exactly one canonical division or MasterBot lane")
+        if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1 or limit > 100:
+            raise ValueError("limit must be an integer between 1 and 100")
+        if not isinstance(query, str):
+            raise ValueError("query must be a string")
+        if division:
+            resources_for_division(division)
+            owner = {"division": division}
+        else:
+            resources_for_masterbot(str(masterbot))
+            owner = {"masterbot": masterbot}
+        lessons = [
+            lesson for lesson in load_course_lessons()
+            if lesson.track_id == "universal-software-libraries"
+        ]
+        if query.strip():
+            terms = {token for token in re.findall(r"[a-z0-9]+", query.lower()) if len(token) > 1}
+            lessons = [
+                lesson for lesson in lessons
+                if terms & set(__import__("re").findall(
+                    r"[a-z0-9]+",
+                    f"{lesson.title} {lesson.category} {lesson.objective}".lower()
+                ))
+            ]
+        items = [{
+            "resource_id": lesson.resource_id,
+            "lesson_id": lesson.lesson_id,
+            "track_id": lesson.track_id,
+            "title": lesson.title,
+            "category": lesson.category,
+            "objective": lesson.objective,
+            "practice": lesson.practice,
+            "assessment": lesson.assessment,
+            "benchmark": lesson.benchmark,
+            "source_url": lesson.source_url,
+            "guide_path": lesson.guide_path,
+            "rights_mode": lesson.rights_mode,
+            "completion_status": "queued_not_studied",
+            "mastery_awarded": False,
+            "model_weight_training_authorized": False,
+            "paid_compute_authorized": False,
+        } for lesson in lessons[:limit]]
+        return {
+            "schema": "dreamco.buddy_library_learning_queue.v1",
+            **owner,
+            "query": query,
+            "available_count": len(lessons),
+            "returned_count": len(items),
+            "items": items,
+            "external_model_call_performed": False,
+        }
 
     def sop_candidates(self, tenant_id: str, domain: str, *, minimum_successes: int = 3) -> list[dict]:
         """Produce review-only SOP outlines, not inferred steps or executable automation."""
