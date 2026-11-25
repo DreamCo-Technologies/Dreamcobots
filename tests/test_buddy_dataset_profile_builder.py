@@ -43,7 +43,7 @@ class DatasetProfileBuilderTests(unittest.TestCase):
 
     def test_unknown_rights_cannot_be_approved(self):
         self.profile["sources"] = [verified_source(rights="unknown")]
-        self.assertTrue(any("rights must be reviewed" in error for error in MODULE.validate_profile(self.profile)))
+        self.assertTrue(any("verified rights evidence and permission" in error for error in MODULE.validate_profile(self.profile)))
 
     def test_unknown_rights_can_be_recorded_pending_but_never_learned(self):
         source = verified_source(rights="unknown", status="pending_review",
@@ -98,6 +98,19 @@ class DatasetProfileBuilderTests(unittest.TestCase):
         manifest = MODULE.build_training_manifest(self.profile, plan)
         self.assertEqual(manifest["execution_state"], "planned_not_executed")
         self.assertFalse(manifest["weight_change_claim"])
+
+    def test_training_manifest_rejects_tampered_plan_sources(self):
+        self.profile["sources"] = [verified_source()]
+        plan = MODULE.build_learning_plan(self.profile)
+        plan["source_manifest"][0]["source_id"] = "unapproved-source"
+        with self.assertRaisesRegex(ValueError, "source manifest does not match"):
+            MODULE.build_training_manifest(self.profile, plan)
+
+    def test_training_manifest_rejects_false_execution_guardrails(self):
+        plan = MODULE.build_learning_plan(self.profile)
+        plan["requires_worker_execution"] = False
+        with self.assertRaisesRegex(ValueError, "execution truth guardrails"):
+            MODULE.build_training_manifest(self.profile, plan)
 
     def test_advanced_methods_require_review(self):
         self.profile["training_methods"] = ["continued_pretraining"]
