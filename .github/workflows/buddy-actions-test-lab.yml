@@ -103,6 +103,8 @@ jobs:
         run: |
           set -o pipefail
           suite="${{ inputs.suite || 'quick' }}"
+          # Keep generated fleet/search artifacts synchronized before any selected suite.
+          npx tsx tools/generate_bot_fleet_catalog.ts
           case "$suite" in
             quick)
               npx tsx tools/run_universal_verification.ts --quick 2>&1 | tee tmp/buddy-actions/test.log
