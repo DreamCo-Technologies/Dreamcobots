@@ -107,6 +107,16 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             search_internal_library_knowledge("python", root=self.root, limit=0)
 
+    def test_requests_guide_draft_is_valid_but_not_searchable_until_reviewed(self):
+        root = Path(__file__).resolve().parents[1]
+        path = root / "data/buddy-library-study-guides/python-requests.json"
+        guide = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(validate_library_guide_document(guide), [])
+        self.assertEqual(guide["status"], "review_required")
+        result = search_internal_library_knowledge("Requests Python HTTP", root=root)
+        self.assertEqual(result["matches"], [])
+        self.assertEqual(result["knowledge_gap"]["status"], "internal_knowledge_gap")
+
     def test_policy_counts_match_the_live_course_registry(self):
         root = Path(__file__).resolve().parents[1]
         policy = json.loads((root / "config/buddy-continuous-study-policy.json").read_text(encoding="utf-8"))
