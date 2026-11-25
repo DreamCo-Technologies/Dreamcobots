@@ -61,16 +61,53 @@ class ProductionReadinessContractTests(unittest.TestCase):
   self.assertEqual([(item["source"],item["candidate_count"]) for item in result],[("docs/a.md",2),("docs/b.md",1)])
   self.assertLessEqual(len(result[0]["sample_requirement_ids"]),5)
 
- def test_production_gates_require_verifiable_evidence_references(self):
+ def test_production_gates_require_existing_same_sha_artifacts_and_successful_checks(self):
   from tools.dreamco_production_readiness import build_production_gate_records
   policy={"production_gates":["tests_pass"]}
-  records,findings=build_production_gate_records(policy,{})
+  current_sha="a"*40
+  records,findings=build_production_gate_records(policy,{},current_sha,"DreamCo-Technologies/Dreamcobots","test-token")
   self.assertEqual(records[0]["status"],"BLOCKED")
   self.assertEqual(len(findings),1)
-  evidence={"production_gates":{"tests_pass":{"status":"VERIFIED","evidence":[{"path":"tests/test_example.py","sha":"abc123","check_id":"run-123"}]}}}
-  records,findings=build_production_gate_records(policy,evidence)
-  self.assertEqual(records[0]["status"],"VERIFIED")
-  self.assertEqual(findings,[])
+  with tempfile.TemporaryDirectory() as temp:
+   root=Path(temp)
+   artifact=root/"tests/test_example.py"
+   artifact.parent.mkdir(parents=True)
+   artifact.write_text("test",encoding="utf-8")
+   evidence={"production_gates":{"tests_pass":{"status":"VERIFIED","evidence":[
+    {"path":"tests/test_example.py","sha":current_sha,"check_id":"12345"}
+   ]}}}
+   verifier=lambda repository,check_id,sha,token: repository=="DreamCo-Technologies/Dreamcobots" and check_id=="12345" and sha==current_sha and token=="test-token"
+   records,findings=build_production_gate_records(
+    policy,evidence,current_sha,"DreamCo-Technologies/Dreamcobots","test-token",root=root,verify_check=verifier
+   )
+   self.assertEqual(records[0]["status"],"VERIFIED")
+   self.assertEqual(findings,[])
+   stale={"production_gates":{"tests_pass":{"status":"VERIFIED","evidence":[
+    {"path":"tests/test_example.py","sha":"b"*40,"check_id":"12345"}
+   ]}}}
+   records,findings=build_production_gate_records(
+    policy,stale,current_sha,"DreamCo-Technologies/Dreamcobots","test-token",root=root,verify_check=verifier
+   )
+   self.assertEqual(records[0]["status"],"BLOCKED")
+   self.assertTrue(any("SHA" in item for item in records[0]["verification_errors"]))
+   failed=lambda *args: False
+   records,findings=build_production_gate_records(
+    policy,evidence,current_sha,"DreamCo-Technologies/Dreamcobots","test-token",root=root,verify_check=failed
+   )
+   self.assertEqual(records[0]["status"],"BLOCKED")
+   self.assertTrue(any("successfully" in item for item in records[0]["verification_errors"]))
+
+ def test_github_check_verification_requires_success_and_exact_sha(self):
+  from tools.dreamco_production_readiness import verify_github_check
+  sha="c"*40
+  success={"head_sha":sha,"status":"completed","conclusion":"success"}
+  with patch("tools.dreamco_production_readiness.urllib.request.urlopen",return_value=io.BytesIO(json.dumps(success).encode())):
+   self.assertTrue(verify_github_check("DreamCo-Technologies/Dreamcobots","12345",sha,"test-token"))
+  wrong_sha={**success,"head_sha":"d"*40}
+  with patch("tools.dreamco_production_readiness.urllib.request.urlopen",return_value=io.BytesIO(json.dumps(wrong_sha).encode())):
+   self.assertFalse(verify_github_check("DreamCo-Technologies/Dreamcobots","12345",sha,"test-token"))
+  self.assertFalse(verify_github_check("DreamCo-Technologies/Dreamcobots","not-a-run-id",sha,"test-token"))
+  self.assertFalse(verify_github_check("DreamCo-Technologies/Dreamcobots","12345",sha,None))
 
  def test_requirement_source_filter_excludes_notes_and_generated_catalogs(self):
   from tools.dreamco_production_readiness import ROOT, is_requirement_source

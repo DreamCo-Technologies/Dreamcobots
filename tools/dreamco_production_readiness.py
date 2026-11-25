@@ -8,6 +8,7 @@ import os
 import re
 import subprocess
 import urllib.request
+import urllib.error
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -74,22 +75,105 @@ def build_candidate_triage(requirements: list[dict]) -> list[dict]:
     return sorted(grouped.values(), key=lambda item: (-item["candidate_count"], item["source"]))
 
 
-def build_production_gate_records(policy: dict, evidence: dict) -> tuple[list[dict], list[dict]]:
+def verify_github_check(repository: str, check_id: str, current_sha: str, token: str | None) -> bool:
+    """Verify a GitHub Actions run or check-run completed successfully on this exact SHA."""
+    if not token or not check_id.isdigit():
+        return False
+    endpoints = (
+        f"https://api.github.com/repos/{repository}/actions/runs/{check_id}",
+        f"https://api.github.com/repos/{repository}/check-runs/{check_id}",
+    )
+    for url in endpoints:
+        request = urllib.request.Request(
+            url,
+            headers={
+                "Accept": "application/vnd.github+json",
+                "Authorization": f"Bearer {token}",
+                "X-GitHub-Api-Version": "2022-11-28",
+            },
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=20) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            if exc.code == 404:
+                continue
+            return False
+        except Exception:
+            return False
+        return (
+            payload.get("head_sha") == current_sha
+            and payload.get("status") == "completed"
+            and payload.get("conclusion") == "success"
+        )
+    return False
+
+
+def build_production_gate_records(
+    policy: dict,
+    evidence: dict,
+    current_sha: str,
+    repository: str,
+    token: str | None,
+    *,
+    root: Path = ROOT,
+    verify_check=verify_github_check,
+) -> tuple[list[dict], list[dict]]:
+    """Require existing evidence artifacts and a successful GitHub check on the same SHA."""
     records = []
     findings = []
     gate_evidence = evidence.get("production_gates", {})
     for gate in policy.get("production_gates", []):
         entry = gate_evidence.get(gate, {})
         refs = entry.get("evidence", []) if isinstance(entry, dict) else []
+        verified_refs = []
+        errors = []
+        if not isinstance(refs, list) or not refs:
+            errors.append("no evidence references recorded")
+        else:
+            for ref in refs:
+                if not isinstance(ref, dict) or not all(ref.get(key) for key in ("path", "sha", "check_id")):
+                    errors.append("evidence reference is missing path, sha, or check_id")
+                    continue
+                relative = Path(str(ref["path"]))
+                if relative.is_absolute() or ".." in relative.parts:
+                    errors.append("evidence path is unsafe")
+                    continue
+                artifact = (root / relative).resolve()
+                try:
+                    artifact.relative_to(root.resolve())
+                except ValueError:
+                    errors.append("evidence path escapes repository root")
+                    continue
+                if not artifact.is_file():
+                    errors.append(f"evidence artifact does not exist: {relative.as_posix()}")
+                    continue
+                if ref["sha"] != current_sha:
+                    errors.append("evidence SHA does not match the current revision")
+                    continue
+                if not str(ref["check_id"]).isdigit():
+                    errors.append("check_id must be a GitHub Actions run or check-run ID")
+                    continue
+                if not verify_check(repository, str(ref["check_id"]), current_sha, token):
+                    errors.append("linked GitHub check did not complete successfully on the current revision")
+                    continue
+                verified_refs.append(ref)
+
+        if isinstance(entry, dict) and entry.get("status") != "VERIFIED":
+            errors.append("evidence ledger entry status is not VERIFIED")
         verified = (
             isinstance(entry, dict)
             and entry.get("status") == "VERIFIED"
-            and isinstance(refs, list)
-            and bool(refs)
-            and all(isinstance(ref, dict) and all(ref.get(key) for key in ("path", "sha", "check_id")) for ref in refs)
+            and not errors
+            and len(verified_refs) == len(refs)
         )
-        record = {"gate": gate, "status": "VERIFIED" if verified else "BLOCKED", "evidence": refs if verified else []}
-        records.append(record)
+        records.append({
+            "gate": gate,
+            "status": "VERIFIED" if verified else "BLOCKED",
+            "revision": current_sha,
+            "evidence": verified_refs if verified else [],
+            "verification_errors": errors,
+        })
         if not verified:
             findings.append({
                 "id": "GATE-" + sha(gate)[:12].upper(),
@@ -97,7 +181,8 @@ def build_production_gate_records(policy: dict, evidence: dict) -> tuple[list[di
                 "severity": "high",
                 "production_gate": gate,
                 "status": "BLOCKED",
-                "next_action": f"Provide reviewed evidence with repository path, commit SHA and check/run ID for production gate: {gate}.",
+                "verification_errors": errors,
+                "next_action": f"Provide an existing artifact and a successful GitHub Actions run/check-run on the same current SHA for production gate: {gate}.",
             })
     return records, findings
 
@@ -153,7 +238,11 @@ def main() -> int:
     routes = []
     findings = []
 
-    production_gates, gate_findings = build_production_gate_records(policy, evidence)
+    current_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip() if (ROOT / ".git").exists() else "unknown"
+    production_gates, gate_findings = build_production_gate_records(
+        policy, evidence, current_sha, os.getenv("GITHUB_REPOSITORY", "DreamCo-Technologies/Dreamcobots"),
+        os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN"),
+    )
     findings.extend(gate_findings)
 
     for path in tracked():
@@ -281,6 +370,7 @@ def main() -> int:
     summary = {
         "generated_at": now,
         "repository": repository,
+        "current_sha": current_sha,
         "requirements_candidate_count": len(requirements),
         "requirements_confirmed_count": confirmed_count,
         "untriaged_candidate_count": len(requirements) - confirmed_count,
@@ -323,6 +413,7 @@ def main() -> int:
         "# DreamCo Production Readiness Master List",
         "",
         f"Generated: {now}",
+        f"Current revision: {current_sha}",
         "",
         f"**Status: {readiness}**",
         "",
