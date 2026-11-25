@@ -8,90 +8,677 @@
     "include_github_repositories": true,
     "include_technical_books_and_docs": true,
     "include_video_audio_music_and_multimodal": true,
-    "never_claim_exhaustive_coverage_without_verified_inventory": true
+    "never_claim_exhaustive_coverage_without_verified_inventory": true,
+    "include_onet_occupational_tasks": true,
+    "include_us_department_of_labor_resources": true,
+    "include_government_procurement_and_grants": true,
+    "include_entrepreneurship_sales_workforce_and_community_services": true
   },
   "discovery": {
     "cadence": "weekly",
     "continuous_mode": "scheduled discovery plus on-demand scans",
-    "github_search_topics": ["machine-learning", "deep-learning", "artificial-intelligence", "computer-vision", "natural-language-processing", "audio", "music-information-retrieval", "video-understanding", "robotics", "data-engineering", "cybersecurity", "web-development", "cloud", "accessibility", "3d", "game-development"],
-    "hugging_face_hub_types": ["datasets", "models", "spaces"],
+    "github_search_topics": [
+      "machine-learning",
+      "deep-learning",
+      "artificial-intelligence",
+      "computer-vision",
+      "natural-language-processing",
+      "audio",
+      "music-information-retrieval",
+      "video-understanding",
+      "robotics",
+      "data-engineering",
+      "cybersecurity",
+      "web-development",
+      "cloud",
+      "accessibility",
+      "3d",
+      "game-development"
+    ],
+    "hugging_face_hub_types": [
+      "datasets",
+      "models",
+      "spaces"
+    ],
     "hugging_face_subjects": [
-      "audio", "automatic-speech-recognition", "text-to-speech", "audio-classification", "music", "music-generation", "music-information-retrieval",
-      "video", "video-classification", "video-text-to-text", "text-to-video", "image", "computer-vision", "image-classification", "object-detection",
-      "multimodal", "vision-language", "document-question-answering", "ocr", "text", "text-generation", "question-answering", "summarization",
-      "translation", "token-classification", "embeddings", "sentence-similarity", "retrieval", "reinforcement-learning", "robotics",
-      "tabular", "time-series", "forecasting", "geospatial", "graph-machine-learning", "scientific-computing", "biology", "chemistry",
-      "mathematics", "code", "software-engineering", "agents", "tool-use", "synthetic-data", "evaluation", "safety", "privacy",
-      "3d", "depth-estimation", "pose-estimation", "segmentation", "generative-art", "speech", "language-learning"
+      "audio",
+      "automatic-speech-recognition",
+      "text-to-speech",
+      "audio-classification",
+      "music",
+      "music-generation",
+      "music-information-retrieval",
+      "video",
+      "video-classification",
+      "video-text-to-text",
+      "text-to-video",
+      "image",
+      "computer-vision",
+      "image-classification",
+      "object-detection",
+      "multimodal",
+      "vision-language",
+      "document-question-answering",
+      "ocr",
+      "text",
+      "text-generation",
+      "question-answering",
+      "summarization",
+      "translation",
+      "token-classification",
+      "embeddings",
+      "sentence-similarity",
+      "retrieval",
+      "reinforcement-learning",
+      "robotics",
+      "tabular",
+      "time-series",
+      "forecasting",
+      "geospatial",
+      "graph-machine-learning",
+      "scientific-computing",
+      "biology",
+      "chemistry",
+      "mathematics",
+      "code",
+      "software-engineering",
+      "agents",
+      "tool-use",
+      "synthetic-data",
+      "evaluation",
+      "safety",
+      "privacy",
+      "3d",
+      "depth-estimation",
+      "pose-estimation",
+      "segmentation",
+      "generative-art",
+      "speech",
+      "language-learning",
+      "agriculture",
+      "forestry",
+      "food",
+      "nutrition",
+      "healthcare",
+      "medical-imaging",
+      "medical-text",
+      "clinical-nlp",
+      "pharmacy",
+      "public-health",
+      "mental-health",
+      "education",
+      "educational-content",
+      "law",
+      "legal-research",
+      "government",
+      "public-administration",
+      "public-policy",
+      "civic-tech",
+      "economics",
+      "finance",
+      "accounting",
+      "insurance",
+      "business",
+      "entrepreneurship",
+      "sales",
+      "marketing",
+      "customer-support",
+      "human-resources",
+      "recruiting",
+      "project-management",
+      "operations-research",
+      "supply-chain",
+      "logistics",
+      "manufacturing",
+      "construction",
+      "architecture",
+      "interior-design",
+      "energy",
+      "climate",
+      "weather",
+      "earth-science",
+      "astronomy",
+      "physics",
+      "materials-science",
+      "genomics",
+      "ecology",
+      "geology",
+      "oceanography",
+      "social-science",
+      "psychology",
+      "sociology",
+      "history",
+      "geography",
+      "journalism",
+      "accessibility",
+      "assistive-technology",
+      "sign-language",
+      "document-understanding",
+      "table-question-answering",
+      "web-search",
+      "recommendation",
+      "ranking",
+      "anomaly-detection",
+      "fraud-detection",
+      "graph-ml",
+      "database",
+      "sql",
+      "programming",
+      "low-code",
+      "mobile-development",
+      "frontend",
+      "backend",
+      "devops",
+      "site-reliability",
+      "networking",
+      "operating-systems",
+      "embedded-systems",
+      "hardware",
+      "electronics",
+      "quantum-computing",
+      "cryptography",
+      "privacy-engineering",
+      "threat-detection",
+      "penetration-testing",
+      "digital-forensics",
+      "game-ai",
+      "simulation",
+      "virtual-reality",
+      "augmented-reality",
+      "animation",
+      "3d-reconstruction",
+      "motion-capture",
+      "voice-conversion",
+      "speaker-identification",
+      "sound-event-detection",
+      "music-source-separation",
+      "audio-to-audio",
+      "video-generation",
+      "video-to-video",
+      "temporal-localization",
+      "action-recognition",
+      "visual-question-answering",
+      "image-to-image",
+      "image-editing",
+      "optical-flow",
+      "face-analysis",
+      "document-layout-analysis",
+      "geospatial-vision",
+      "remote-sensing",
+      "autonomous-driving",
+      "drones",
+      "robotics-manipulation",
+      "robot-learning",
+      "operations",
+      "fitness",
+      "sports-science",
+      "strength-training",
+      "personal-finance",
+      "financial-literacy",
+      "wealth-building",
+      "real-estate",
+      "ecommerce",
+      "affiliate-marketing",
+      "freelancing",
+      "remote-work",
+      "gig-economy",
+      "government-contracting",
+      "grant-writing",
+      "nonprofit-management",
+      "homelessness-services",
+      "veteran-services",
+      "workforce-development",
+      "benefits-navigation",
+      "social-services"
     ],
     "github_seed_repositories": [
-      {"repo":"huggingface/transformers","subjects":["nlp","vision","audio","multimodal"],"license":"Apache-2.0"},
-      {"repo":"huggingface/datasets","subjects":["datasets","audio","video","vision","text"],"license":"Apache-2.0"},
-      {"repo":"huggingface/peft","subjects":["parameter-efficient-fine-tuning"],"license":"Apache-2.0"},
-      {"repo":"huggingface/trl","subjects":["preference-optimization","reinforcement-learning"],"license":"Apache-2.0"},
-      {"repo":"huggingface/evaluate","subjects":["evaluation"],"license":"Apache-2.0"},
-      {"repo":"huggingface/accelerate","subjects":["distributed-training"],"license":"Apache-2.0"},
-      {"repo":"huggingface/diffusers","subjects":["image-generation","audio-generation","video-generation"],"license":"Apache-2.0"},
-      {"repo":"huggingface/education-toolkit","subjects":["machine-learning-education"],"license":"review-required"},
-      {"repo":"pytorch/pytorch","subjects":["deep-learning"],"license":"BSD-3-Clause"},
-      {"repo":"scikit-learn/scikit-learn","subjects":["classical-machine-learning"],"license":"BSD-3-Clause"},
-      {"repo":"ray-project/ray","subjects":["distributed-compute","reinforcement-learning"],"license":"Apache-2.0"},
-      {"repo":"mlflow/mlflow","subjects":["experiment-tracking","model-lifecycle"],"license":"Apache-2.0"},
-      {"repo":"mlflow/mlflow","subjects":["evaluation","model-registry"],"license":"Apache-2.0"},
-      {"repo":"librosa/librosa","subjects":["audio-analysis","music-information-retrieval"],"license":"ISC"},
-      {"repo":"facebookresearch/audiocraft","subjects":["music-generation","audio-generation"],"license":"MIT"},
-      {"repo":"m-bain/whisperX","subjects":["speech-recognition","audio-alignment"],"license":"BSD-2-Clause"},
-      {"repo":"open-mmlab/mmaction2","subjects":["video-understanding"],"license":"Apache-2.0"},
-      {"repo":"opencv/opencv","subjects":["computer-vision","video-processing"],"license":"Apache-2.0"},
-      {"repo":"pytorch/torchaudio","subjects":["audio","speech"],"license":"BSD-2-Clause"},
-      {"repo":"microsoft/ML-For-Beginners","subjects":["machine-learning-education"],"license":"MIT"},
-      {"repo":"microsoft/AI-For-Beginners","subjects":["ai-education"],"license":"MIT"},
-      {"repo":"microsoft/Data-Science-For-Beginners","subjects":["data-science-education"],"license":"MIT"},
-      {"repo":"TheAlgorithms/Python","subjects":["algorithms","computer-science"],"license":"MIT"},
-      {"repo":"rasbt/LLMs-from-scratch","subjects":["llm-engineering"],"license":"Apache-2.0"}
-    ]
+      {
+        "repo": "huggingface/transformers",
+        "subjects": [
+          "nlp",
+          "vision",
+          "audio",
+          "multimodal"
+        ],
+        "license": "Apache-2.0"
+      },
+      {
+        "repo": "huggingface/datasets",
+        "subjects": [
+          "datasets",
+          "audio",
+          "video",
+          "vision",
+          "text"
+        ],
+        "license": "Apache-2.0"
+      },
+      {
+        "repo": "huggingface/peft",
+        "subjects": [
+          "parameter-efficient-fine-tuning"
+        ],
+        "license": "Apache-2.0"
+      },
+      {
+        "repo": "huggingface/trl",
+        "subjects": [
+          "preference-optimization",
+          "reinforcement-learning"
+        ],
+        "license": "Apache-2.0"
+      },
+      {
+        "repo": "huggingface/evaluate",
+        "subjects": [
+          "evaluation"
+        ],
+        "license": "Apache-2.0"
+      },
+      {
+        "repo": "huggingface/accelerate",
+        "subjects": [
+          "distributed-training"
+        ],
+        "license": "Apache-2.0"
+      },
+      {
+        "repo": "huggingface/diffusers",
+        "subjects": [
+          "image-generation",
+          "audio-generation",
+          "video-generation"
+        ],
+        "license": "Apache-2.0"
+      },
+      {
+        "repo": "huggingface/education-toolkit",
+        "subjects": [
+          "machine-learning-education"
+        ],
+        "license": "review-required"
+      },
+      {
+        "repo": "pytorch/pytorch",
+        "subjects": [
+          "deep-learning"
+        ],
+        "license": "BSD-3-Clause"
+      },
+      {
+        "repo": "scikit-learn/scikit-learn",
+        "subjects": [
+          "classical-machine-learning"
+        ],
+        "license": "BSD-3-Clause"
+      },
+      {
+        "repo": "ray-project/ray",
+        "subjects": [
+          "distributed-compute",
+          "reinforcement-learning"
+        ],
+        "license": "Apache-2.0"
+      },
+      {
+        "repo": "mlflow/mlflow",
+        "subjects": [
+          "experiment-tracking",
+          "model-lifecycle"
+        ],
+        "license": "Apache-2.0"
+      },
+      {
+        "repo": "mlflow/mlflow",
+        "subjects": [
+          "evaluation",
+          "model-registry"
+        ],
+        "license": "Apache-2.0"
+      },
+      {
+        "repo": "librosa/librosa",
+        "subjects": [
+          "audio-analysis",
+          "music-information-retrieval"
+        ],
+        "license": "ISC"
+      },
+      {
+        "repo": "facebookresearch/audiocraft",
+        "subjects": [
+          "music-generation",
+          "audio-generation"
+        ],
+        "license": "MIT"
+      },
+      {
+        "repo": "m-bain/whisperX",
+        "subjects": [
+          "speech-recognition",
+          "audio-alignment"
+        ],
+        "license": "BSD-2-Clause"
+      },
+      {
+        "repo": "open-mmlab/mmaction2",
+        "subjects": [
+          "video-understanding"
+        ],
+        "license": "Apache-2.0"
+      },
+      {
+        "repo": "opencv/opencv",
+        "subjects": [
+          "computer-vision",
+          "video-processing"
+        ],
+        "license": "Apache-2.0"
+      },
+      {
+        "repo": "pytorch/torchaudio",
+        "subjects": [
+          "audio",
+          "speech"
+        ],
+        "license": "BSD-2-Clause"
+      },
+      {
+        "repo": "microsoft/ML-For-Beginners",
+        "subjects": [
+          "machine-learning-education"
+        ],
+        "license": "MIT"
+      },
+      {
+        "repo": "microsoft/AI-For-Beginners",
+        "subjects": [
+          "ai-education"
+        ],
+        "license": "MIT"
+      },
+      {
+        "repo": "microsoft/Data-Science-For-Beginners",
+        "subjects": [
+          "data-science-education"
+        ],
+        "license": "MIT"
+      },
+      {
+        "repo": "TheAlgorithms/Python",
+        "subjects": [
+          "algorithms",
+          "computer-science"
+        ],
+        "license": "MIT"
+      },
+      {
+        "repo": "rasbt/LLMs-from-scratch",
+        "subjects": [
+          "llm-engineering"
+        ],
+        "license": "Apache-2.0"
+      }
+    ],
+    "hugging_face_dynamic_task_taxonomy": true,
+    "hugging_face_tag_taxonomy_refresh": "weekly"
   },
   "learning_artifacts": {
-    "repository_summary": ["purpose", "architecture", "setup", "key_modules", "core_algorithms", "examples", "tests", "limitations", "security", "license", "upstream_attribution", "division_mapping", "original_exercises", "capstone", "knowledge_checks"],
-    "hugging_face_dataset_summary": ["dataset_purpose", "subject", "task", "splits", "features", "sample_inspection", "collection_method", "known_biases", "license", "privacy", "recommended_use", "evaluation_design"],
-    "hugging_face_model_summary": ["model_purpose", "architecture", "intended_tasks", "inputs_outputs", "inference_example", "training_data_disclosure", "evaluation", "limitations", "license", "hardware_requirements", "safety"],
-    "hugging_face_space_summary": ["app_purpose", "user_flow", "models_and_datasets", "dependencies", "reproducible_demo", "limitations", "license"],
-    "video_summary": ["chapter_timestamps", "detailed_explanation", "key_concepts", "worked_examples", "original_exercises", "capstone", "knowledge_checks", "citations"],
-    "audio_music_summary": ["audio_metadata", "signal_and_feature_explanations", "music_theory", "structure_and_sections", "rhythm_and_tempo", "instrumentation_when_supported", "production_and_mixing_concepts", "original_exercises", "rights_and_provenance"]
+    "repository_summary": [
+      "purpose",
+      "architecture",
+      "setup",
+      "key_modules",
+      "core_algorithms",
+      "examples",
+      "tests",
+      "limitations",
+      "security",
+      "license",
+      "upstream_attribution",
+      "division_mapping",
+      "original_exercises",
+      "capstone",
+      "knowledge_checks"
+    ],
+    "hugging_face_dataset_summary": [
+      "dataset_purpose",
+      "subject",
+      "task",
+      "splits",
+      "features",
+      "sample_inspection",
+      "collection_method",
+      "known_biases",
+      "license",
+      "privacy",
+      "recommended_use",
+      "evaluation_design"
+    ],
+    "hugging_face_model_summary": [
+      "model_purpose",
+      "architecture",
+      "intended_tasks",
+      "inputs_outputs",
+      "inference_example",
+      "training_data_disclosure",
+      "evaluation",
+      "limitations",
+      "license",
+      "hardware_requirements",
+      "safety"
+    ],
+    "hugging_face_space_summary": [
+      "app_purpose",
+      "user_flow",
+      "models_and_datasets",
+      "dependencies",
+      "reproducible_demo",
+      "limitations",
+      "license"
+    ],
+    "video_summary": [
+      "chapter_timestamps",
+      "detailed_explanation",
+      "key_concepts",
+      "worked_examples",
+      "original_exercises",
+      "capstone",
+      "knowledge_checks",
+      "citations"
+    ],
+    "audio_music_summary": [
+      "audio_metadata",
+      "signal_and_feature_explanations",
+      "music_theory",
+      "structure_and_sections",
+      "rhythm_and_tempo",
+      "instrumentation_when_supported",
+      "production_and_mixing_concepts",
+      "original_exercises",
+      "rights_and_provenance"
+    ],
+    "onet_occupation_summary": [
+      "occupation_code",
+      "title",
+      "occupation_description",
+      "all_core_and_supplemental_tasks",
+      "task_importance_and_frequency_when_available",
+      "skills_knowledge_abilities",
+      "tools_and_technology",
+      "work_activities",
+      "education_and_job_zone",
+      "related_occupations",
+      "source_version",
+      "attribution"
+    ],
+    "government_opportunity_guide": [
+      "agency_or_buyer",
+      "notice_or_program_id",
+      "opportunity_type",
+      "eligibility",
+      "NAICS_or_assistance_code",
+      "scope",
+      "deadline",
+      "registration_requirements",
+      "required_documents",
+      "compliance",
+      "budget_or_award_if_published",
+      "match_or_cost_share",
+      "subcontracting_options",
+      "delivery_risks",
+      "official_source_links"
+    ],
+    "entrepreneurial_task_playbook": [
+      "task_id",
+      "customer_problem",
+      "target_buyers",
+      "service_or_product_offer",
+      "skills_and_credentials_required",
+      "scope_and_deliverables",
+      "pricing_model_and_costs",
+      "sales_discovery_questions",
+      "ethical_outreach_script",
+      "proposal_outline",
+      "delivery_checklist",
+      "quality_metrics",
+      "legal_and_insurance_checks",
+      "proof_of_capability",
+      "next_actions"
+    ]
   },
   "multimodal_learning": {
     "video": {
-      "pipeline": ["verify_media_rights", "extract_audio", "speech_to_text", "sample_frames", "detect_scenes", "describe_visual_events", "align_audio_and_frames", "create_timestamped_guide", "human_or_benchmark_review"],
+      "pipeline": [
+        "verify_media_rights",
+        "extract_audio",
+        "speech_to_text",
+        "sample_frames",
+        "detect_scenes",
+        "describe_visual_events",
+        "align_audio_and_frames",
+        "create_timestamped_guide",
+        "human_or_benchmark_review"
+      ],
       "frame_sampling": "configurable sparse sampling; increase only when the task requires temporal detail",
       "media_download": "only when explicitly authorized; otherwise process user-provided or licensed local media"
     },
     "audio": {
-      "pipeline": ["verify_media_rights", "decode_audio", "speech_or_sound_classification", "transcribe_when_speech_exists", "align_timestamps", "extract_features", "summarize_and_evaluate"],
-      "music": ["tempo_and_meter_estimation", "key_and_harmony_estimation", "structure_detection", "instrument_or_timbre_analysis_when_supported", "mix_and_production_concepts", "MIDI_or_score_analysis_when_available"],
+      "pipeline": [
+        "verify_media_rights",
+        "decode_audio",
+        "speech_or_sound_classification",
+        "transcribe_when_speech_exists",
+        "align_timestamps",
+        "extract_features",
+        "summarize_and_evaluate"
+      ],
+      "music": [
+        "tempo_and_meter_estimation",
+        "key_and_harmony_estimation",
+        "structure_detection",
+        "instrument_or_timbre_analysis_when_supported",
+        "mix_and_production_concepts",
+        "MIDI_or_score_analysis_when_available"
+      ],
       "copyright_boundary": "Do not train on, reproduce, or generate close imitations of copyrighted recordings or artists without the required rights. Prefer public-domain, permissively licensed, or user-owned material."
     }
   },
   "machine_learning_strategies": [
-    {"id":"retrieval_augmented_learning","use":"grounded knowledge from versioned, cited source summaries","mastery_evidence":"answer with citations and source conflict resolution"},
-    {"id":"supervised_instruction_tuning","use":"only rights-cleared examples with curated target answers","mastery_evidence":"held-out task accuracy and rubric scores"},
-    {"id":"self_supervised_pretraining","use":"only permissively licensed or owned corpora with documented provenance","mastery_evidence":"downstream benchmark improvement"},
-    {"id":"contrastive_representation_learning","use":"paired text-image, text-audio, video-text, code-doc examples with rights","mastery_evidence":"retrieval and alignment benchmarks"},
-    {"id":"parameter_efficient_adaptation","use":"LoRA/adapters for domain specialization when base model terms permit","mastery_evidence":"adapter ablation and regression suite"},
-    {"id":"knowledge_distillation","use":"teacher-generated targets reviewed and checked against sources","mastery_evidence":"student quality versus teacher and baseline"},
-    {"id":"preference_optimization","use":"DPO or similar only on consented, curated preference pairs","mastery_evidence":"blind preference evaluation and safety guardrails"},
-    {"id":"reinforcement_learning_in_sandbox","use":"tool-use and coding agents in isolated, budgeted environments","mastery_evidence":"task success, cost, safety, reproducibility"},
-    {"id":"continual_learning_and_replay","use":"versioned incremental updates with replay and forgetting checks","mastery_evidence":"new-skill gains without old-skill regression"},
-    {"id":"curriculum_and_mastery_learning","use":"prerequisite graph, adaptive difficulty, spaced repetition","mastery_evidence":"retention and transfer after delays"},
-    {"id":"program_synthesis_and_execution","use":"learn from code repositories by building independent implementations","mastery_evidence":"tests, security checks, documentation and unseen variants"},
-    {"id":"ensemble_and_model_routing","use":"route tasks to the best certified specialist model","mastery_evidence":"benchmark win rate, latency, cost and fallback quality"}
+    {
+      "id": "retrieval_augmented_learning",
+      "use": "grounded knowledge from versioned, cited source summaries",
+      "mastery_evidence": "answer with citations and source conflict resolution"
+    },
+    {
+      "id": "supervised_instruction_tuning",
+      "use": "only rights-cleared examples with curated target answers",
+      "mastery_evidence": "held-out task accuracy and rubric scores"
+    },
+    {
+      "id": "self_supervised_pretraining",
+      "use": "only permissively licensed or owned corpora with documented provenance",
+      "mastery_evidence": "downstream benchmark improvement"
+    },
+    {
+      "id": "contrastive_representation_learning",
+      "use": "paired text-image, text-audio, video-text, code-doc examples with rights",
+      "mastery_evidence": "retrieval and alignment benchmarks"
+    },
+    {
+      "id": "parameter_efficient_adaptation",
+      "use": "LoRA/adapters for domain specialization when base model terms permit",
+      "mastery_evidence": "adapter ablation and regression suite"
+    },
+    {
+      "id": "knowledge_distillation",
+      "use": "teacher-generated targets reviewed and checked against sources",
+      "mastery_evidence": "student quality versus teacher and baseline"
+    },
+    {
+      "id": "preference_optimization",
+      "use": "DPO or similar only on consented, curated preference pairs",
+      "mastery_evidence": "blind preference evaluation and safety guardrails"
+    },
+    {
+      "id": "reinforcement_learning_in_sandbox",
+      "use": "tool-use and coding agents in isolated, budgeted environments",
+      "mastery_evidence": "task success, cost, safety, reproducibility"
+    },
+    {
+      "id": "continual_learning_and_replay",
+      "use": "versioned incremental updates with replay and forgetting checks",
+      "mastery_evidence": "new-skill gains without old-skill regression"
+    },
+    {
+      "id": "curriculum_and_mastery_learning",
+      "use": "prerequisite graph, adaptive difficulty, spaced repetition",
+      "mastery_evidence": "retention and transfer after delays"
+    },
+    {
+      "id": "program_synthesis_and_execution",
+      "use": "learn from code repositories by building independent implementations",
+      "mastery_evidence": "tests, security checks, documentation and unseen variants"
+    },
+    {
+      "id": "ensemble_and_model_routing",
+      "use": "route tasks to the best certified specialist model",
+      "mastery_evidence": "benchmark win rate, latency, cost and fallback quality"
+    }
   ],
   "weekly_bootcamp_build": {
     "enabled": true,
     "cadence": "weekly",
-    "outputs": ["source_discovery_snapshot", "rights_review_queue", "source_summaries_queue", "division_curricula", "five_daily_lessons_per_division", "weekly_buddy_assessments", "training_candidate_manifest", "regression_report", "next_week_plan"],
+    "outputs": [
+      "source_discovery_snapshot",
+      "rights_review_queue",
+      "source_summaries_queue",
+      "division_curricula",
+      "five_daily_lessons_per_division",
+      "weekly_buddy_assessments",
+      "training_candidate_manifest",
+      "regression_report",
+      "next_week_plan",
+      "hugging_face_dynamic_subject_taxonomy",
+      "onet_occupation_and_task_curricula",
+      "sales_and_service_playbooks_for_eligible_tasks",
+      "government_contract_and_grant_opportunity_briefs",
+      "entrepreneurship_and_remote_work_lessons",
+      "community_workforce_program_designs",
+      "weekly_business_pipeline_and_bid_no_bid_report"
+    ],
     "lessons_per_day_per_division_target": 5,
     "weekly_transcript_or_source_test": "at least once per eligible source per week; record coverage and never count blocked sources as tested",
-    "train_only_after": ["rights_gate", "data_quality_gate", "deduplication", "PII_and_secret_scan", "train_validation_test_split", "benchmark_baseline", "compute_budget_approval", "rollback_checkpoint"]
+    "train_only_after": [
+      "rights_gate",
+      "data_quality_gate",
+      "deduplication",
+      "PII_and_secret_scan",
+      "train_validation_test_split",
+      "benchmark_baseline",
+      "compute_budget_approval",
+      "rollback_checkpoint"
+    ]
   },
   "rights_and_safety": {
     "unknown_license": "BLOCKED_FOR_TRAINING; metadata discovery and link-only reference may continue",
@@ -105,8 +692,317 @@
     "user_owned_content_requires_explicit_scope_and_retention_consent": true
   },
   "mastery": {
-    "states": ["discovered", "rights_pending", "review_pending", "summarized", "studying", "practiced", "benchmark_pending", "mastered", "blocked", "stale"],
-    "mastered_requires": ["source_grounded_explanation", "independent_implementation_or_performance", "unit_and_integration_tests", "held_out_transfer_task", "safety_and_license_compliance", "no_material_regression"],
+    "states": [
+      "discovered",
+      "rights_pending",
+      "review_pending",
+      "summarized",
+      "studying",
+      "practiced",
+      "benchmark_pending",
+      "mastered",
+      "blocked",
+      "stale"
+    ],
+    "mastered_requires": [
+      "source_grounded_explanation",
+      "independent_implementation_or_performance",
+      "unit_and_integration_tests",
+      "held_out_transfer_task",
+      "safety_and_license_compliance",
+      "no_material_regression"
+    ],
     "never_infer_mastery_from_reading_or_summary_alone": true
+  },
+  "occupational_sales_and_service": {
+    "source": "O*NET task statements and occupation data",
+    "objective": "Map every published task statement to learning, practice, and a commercial or community-service pathway where appropriate.",
+    "stages": [
+      "ingest_all_occupations_and_tasks",
+      "summarize_occupation_and_task_families",
+      "map_task_to_skills_tools_and_credentials",
+      "classify_employment_freelance_remote_work_business_or_community_pathway",
+      "identify_real_buyers_and_procurement_channels",
+      "create_service_offer_and_scope",
+      "qualify_lead_and_discover_needs",
+      "prepare_truthful_capability_statement_and_proposal",
+      "price_with_labor_overhead_risk_and_margin",
+      "deliver_and_measure_quality",
+      "capture_references_and_improve"
+    ],
+    "sales_guardrails": [
+      "never_claim_credentials_or_experience_not_verified",
+      "never_send_unsolicited_bulk_messages_or_spam",
+      "human_approval_before_external_contact_or_bid_submission",
+      "never_guarantee_income_or_contract_awards",
+      "regulated_work_requires_qualified_human_and_required_license"
+    ],
+    "sales_rep_mode": "For each task, Buddy can act as a supervised business-development representative for a verified DreamCo or partner offer, not pretend to be the worker or licensed professional."
+  },
+  "entrepreneurship_tracks": [
+    {
+      "id": "entrepreneurship-and-small-business",
+      "subjects": [
+        "business-model-design",
+        "market-research",
+        "customer-discovery",
+        "pricing",
+        "bookkeeping",
+        "tax-basics",
+        "cash-flow",
+        "business-credit",
+        "insurance",
+        "risk-management",
+        "business-formation",
+        "operations",
+        "customer-service"
+      ],
+      "capstone": "Launch and operate a small service business with a tested offer, budget, delivery SOP and customer feedback."
+    },
+    {
+      "id": "sales-and-business-development",
+      "subjects": [
+        "prospecting",
+        "lead-qualification",
+        "CRM",
+        "discovery",
+        "consultative-selling",
+        "proposal-writing",
+        "negotiation",
+        "account-management",
+        "retention",
+        "partnerships",
+        "ethical-outreach"
+      ],
+      "capstone": "Build a verified pipeline, deliver a buyer-specific proposal and report conversion and delivery metrics."
+    },
+    {
+      "id": "remote-work-and-freelancing",
+      "subjects": [
+        "remote-job-search",
+        "portfolio",
+        "resume",
+        "interviewing",
+        "freelance-marketplaces",
+        "service-packaging",
+        "contractor-taxes",
+        "time-management",
+        "client-delivery"
+      ],
+      "capstone": "Create a portfolio-backed remote-work or freelance offer and complete a simulated client engagement."
+    },
+    {
+      "id": "autonomous-income-and-ecommerce",
+      "subjects": [
+        "workflow-automation",
+        "affiliate-marketing",
+        "ecommerce",
+        "digital-products",
+        "content-marketing",
+        "lead-generation",
+        "subscription-business",
+        "marketplaces",
+        "unit-economics",
+        "fraud-prevention"
+      ],
+      "capstone": "Launch a small compliant automation-backed revenue experiment and measure net profit after costs."
+    },
+    {
+      "id": "personal-finance-and-wealth-building",
+      "subjects": [
+        "budgeting",
+        "debt-management",
+        "emergency-funds",
+        "saving",
+        "investing-basics",
+        "compound-growth",
+        "retirement",
+        "tax-awareness",
+        "risk-and-scams",
+        "financial-goal-planning"
+      ],
+      "capstone": "Produce a transparent personal/business financial plan with downside scenarios; no guaranteed returns."
+    },
+    {
+      "id": "muscle-fitness-and-sports-science",
+      "subjects": [
+        "anatomy",
+        "exercise-physiology",
+        "resistance-training",
+        "program-design",
+        "progressive-overload",
+        "recovery",
+        "nutrition-fundamentals",
+        "injury-prevention",
+        "coaching-ethics"
+      ],
+      "capstone": "Build an evidence-informed general strength-training education plan with safety screening and referral boundaries."
+    },
+    {
+      "id": "real-estate-and-property-services",
+      "subjects": [
+        "property-research",
+        "maintenance",
+        "facility-services",
+        "property-management",
+        "real-estate-finance",
+        "public-records",
+        "contractor-qualification",
+        "fair-housing"
+      ],
+      "capstone": "Prepare a compliant property-services proposal and operating-cost model."
+    },
+    {
+      "id": "government-contracting-and-procurement",
+      "subjects": [
+        "SAM.gov",
+        "UEI",
+        "NAICS",
+        "capability-statements",
+        "market-research",
+        "solicitation-analysis",
+        "bid-no-bid",
+        "pricing",
+        "FAR-basics",
+        "subcontracting",
+        "insurance",
+        "cybersecurity",
+        "invoice-and-performance"
+      ],
+      "capstone": "Create a bid-ready capability package and a fully costed mock response to a real public solicitation."
+    },
+    {
+      "id": "grants-and-nonprofit-programs",
+      "subjects": [
+        "Grants.gov",
+        "DOL-programs",
+        "HVRP",
+        "JVSG",
+        "Stand-Down",
+        "WIOA",
+        "program-design",
+        "logic-models",
+        "budgets",
+        "grant-compliance",
+        "outcomes-reporting",
+        "subrecipient-monitoring"
+      ],
+      "capstone": "Build an eligibility-checked grant concept with partner roles, measurable outcomes and a compliant budget."
+    },
+    {
+      "id": "community-workforce-and-housing",
+      "subjects": [
+        "homelessness-services",
+        "veteran-transition",
+        "benefits-navigation",
+        "workforce-training",
+        "apprenticeships",
+        "supportive-services",
+        "case-management-basics",
+        "trauma-informed-service",
+        "privacy",
+        "referral-networks"
+      ],
+      "capstone": "Design a partner-led workforce and service-navigation pilot with consent, privacy, safeguarding and outcome metrics."
+    },
+    {
+      "id": "government-and-civic-literacy",
+      "subjects": [
+        "federal-government",
+        "state-government",
+        "local-government",
+        "municipal-budgets",
+        "public-records",
+        "public-meetings",
+        "procurement",
+        "grants",
+        "public-benefits",
+        "labor-law",
+        "civil-rights",
+        "ethics"
+      ],
+      "capstone": "Produce a sourced civic-program map and a transparent public-service proposal."
+    }
+  ],
+  "government_and_workforce_sources": [
+    {
+      "source": "O*NET Database and Web Services",
+      "url": "https://www.onetcenter.org/database.html",
+      "use": "All occupation/task/skill records and task ratings",
+      "rights": "Follow O*NET data license/attribution and version requirements."
+    },
+    {
+      "source": "SAM.gov Contract Opportunities",
+      "url": "https://sam.gov/opportunities",
+      "use": "Federal solicitations, notices, awards and procurement signals",
+      "rights": "Public opportunity discovery; vendor registration and eligibility checks remain separate."
+    },
+    {
+      "source": "SAM.gov Entity Registration",
+      "url": "https://sam.gov/entity-registration",
+      "use": "UEI and entity registration readiness",
+      "rights": "Registration is free; no fee-charging intermediary is required."
+    },
+    {
+      "source": "SBA Contracting Guide",
+      "url": "https://www.sba.gov/counseling/get-started/",
+      "use": "Small-business contracting readiness, size standards, NAICS, certifications and market research",
+      "rights": "Verify current program rules and eligibility before claiming status."
+    },
+    {
+      "source": "Wisconsin DWD Procurement",
+      "url": "https://dwd.wisconsin.gov/asd/procurement",
+      "use": "Wisconsin eSupplier and state bid/RFP notifications",
+      "rights": "Vendor registration and bid rules apply."
+    },
+    {
+      "source": "DOL VETS Grants",
+      "url": "https://www.dol.gov/agencies/vets/serviceproviders/grants",
+      "use": "HVRP, JVSG, Stand Down and veteran employment service pathways",
+      "rights": "Each grant has distinct eligible applicants; JVSG applications are limited to state agencies."
+    },
+    {
+      "source": "Grants.gov",
+      "url": "https://www.grants.gov/",
+      "use": "Federal assistance notices and application requirements",
+      "rights": "Grant applicant eligibility and notices must be checked individually."
+    },
+    {
+      "source": "USAspending.gov",
+      "url": "https://www.usaspending.gov/",
+      "use": "Award history and buyer/vendor market research",
+      "rights": "Historical awards do not guarantee future awards."
+    }
+  ],
+  "community_and_benefits_safeguards": {
+    "do_not_promise_contracts_grants_jobs_or_income": true,
+    "do_not_charge_people_for_access_to_public_benefits_or_claim_to_control_eligibility": true,
+    "do_not_collect_sensitive_benefits_or_health_data_without_explicit_need_and_consent": true,
+    "refer_eligibility_and_appeals_to_authorized_agencies_or_qualified_navigators": true,
+    "benefits_cliff_and_income_reporting_warning_required": true,
+    "human_caseworker_or_partner_review_for_individual_benefits_guidance": true,
+    "protect_veteran_and_homeless_client_privacy": true,
+    "prioritize_free_accessible_trauma_informed_services": true,
+    "disclose_if_DreamCo_is_a_vendor_not_a_grantmaking_agency": true
+  },
+  "contracting_readiness": {
+    "phases": [
+      "buyer_and_spend_research",
+      "entity_setup_and_UEI",
+      "NAICS_and_size_standard_review",
+      "insurance_and_licenses",
+      "capability_statement",
+      "past_performance_or_partner_evidence",
+      "solicitation_compliance_matrix",
+      "bid_no_bid_analysis",
+      "cost_and_price_model",
+      "proposal_and_subcontract_plan",
+      "human_review_and_authorized_submission",
+      "delivery_quality_and_invoice",
+      "closeout_and_past_performance"
+    ],
+    "no_easy_money_warning": "Government contracting is competitive and may require substantial working capital, compliance and a long sales cycle. Never represent a contract as easy or guaranteed.",
+    "submission_requires_human_approval": true,
+    "check_active_registration_and_current_solicitation": true
   }
 }
