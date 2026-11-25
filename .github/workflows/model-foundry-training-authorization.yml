@@ -1,0 +1,35 @@
+name: Model Foundry Training Authorization
+
+on:
+  pull_request:
+    paths:
+      - "buddy/learning/model_foundry.py"
+      - "tools/train_buddy_division_model.py"
+      - "tests/test_model_foundry.py"
+      - "tests/test_train_buddy_division_model_cli.py"
+      - "config/buddy-25m-cpu-architecture-profile.json"
+      - "config/buddy-small-cpu-architecture-profile.json"
+      - "config/authorized-training-datasets/manifest.json"
+      - ".github/workflows/model-foundry-training-authorization.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: model-foundry-authorization-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  authorization-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify training gates without starting a training run
+        run: |
+          python -m unittest tests.test_model_foundry tests.test_train_buddy_division_model_cli
+          python -m py_compile buddy/learning/model_foundry.py tools/train_buddy_division_model.py
