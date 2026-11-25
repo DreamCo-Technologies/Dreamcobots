@@ -18,6 +18,7 @@ METHODS = {
 }
 SOURCE_STATES = {"approved", "pending_review", "blocked"}
 RIGHTS_ALLOWED = {"owned", "open_license", "public_domain", "licensed", "user_authorized"}
+RIGHTS_STATES = RIGHTS_ALLOWED | {"unknown", "restricted"}
 CONTENT_STATES = {"content_available", "metadata_only", "not_ingested"}
 LICENSED_RIGHTS = {"open_license", "public_domain", "licensed"}
 DEFAULT_MIX = {
@@ -112,8 +113,8 @@ def validate_profile(profile: dict) -> list[str]:
         source_id = source.get("id", "<unknown>")
         if source.get("status") not in SOURCE_STATES:
             errors.append(f"source {source_id}: invalid status")
-        if source.get("rights") not in RIGHTS_ALLOWED:
-            errors.append(f"source {source_id}: rights must be reviewed")
+        if source.get("rights") not in RIGHTS_STATES:
+            errors.append(f"source {source_id}: invalid rights state")
         if source.get("content_state") not in CONTENT_STATES:
             errors.append(f"source {source_id}: invalid content_state")
         if source.get("status") == "approved" and not _source_rights_verified(source):
