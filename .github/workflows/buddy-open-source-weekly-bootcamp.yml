@@ -52,6 +52,11 @@ on:
   push:
     branches: [main]
     paths:
+      - "tools/build_buddy_university_curriculum.py"
+      - "tests/test_buddy_university_curriculum.py"
+      - "tests/test_huggingface_subject_taxonomy.py"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "config/buddy-university-curriculum.json"
       - "config/buddy-open-source-bootcamp.json"
       - "config/buddy-source-study-guide.schema.json"
       - "config/buddy-source-rights-manifest.json"
@@ -131,6 +136,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_process_authorized_bootcamp_media.py' -v
       - name: Run O*NET task curriculum tests
         run: python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
+      - name: Run Hugging Face taxonomy tests
+        run: python -m unittest discover -s tests -p 'test_huggingface_subject_taxonomy.py' -v
       - name: Run Hugging Face and O*NET discovery regression tests
         run: python -m unittest discover -s tests -p 'test_bootcamp_discovery.py' -v
       - name: Run sales and procurement pipeline tests
@@ -143,7 +150,7 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_organize_buddy_learning_assets.py' -v
       - name: Run DreamCo summary scheduler adapter tests
         run: python -m unittest discover -s tests -p 'test_dreamco_summary_source.py' -v
-      - name: Refresh live Hugging Face model and dataset task taxonomy
+      - name: Refresh live Hugging Face model, dataset and Space task taxonomy
         run: |
           python tools/discover_huggingface_subject_taxonomy.py \
             --out "$RUNNER_TEMP/buddy-huggingface-taxonomy.json"
