@@ -20,9 +20,12 @@ jobs:
         with:
           python-version: "3.11"
       - name: Build five-lesson-per-division daily target
-        run: python tools/build_daily_lesson_plan.py --lessons-per-division 5
+        run: python tools/build_daily_lesson_plan.py --lessons-per-domain 5
       - name: Validate daily target planner
-        run: python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
+        run: |
+          python tools/validate_buddy_continuous_study_policy.py
+          python -m unittest discover -s tests -p 'test_buddy_continuous_study_policy.py' -v
+          python -m unittest discover -s tests -p 'test_daily_lesson_plan.py' -v
       - name: Publish metadata-only production plan
         uses: actions/upload-artifact@v4
         with:
