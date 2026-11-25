@@ -1,12 +1,16 @@
+import hashlib
 import io
 import os
+import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 from buddy.storage.object_store import (
     ObjectStoreError,
     run_division_object_store_healthcheck,
     run_object_store_healthcheck,
+    upload_approved_division_dataset,
 )
 
 
@@ -17,6 +21,7 @@ class FakeS3:
         self.public = public
         self.retention = retention
         self.objects = {}
+        self.metadata = {}
         self.copies = []
         self.sequence = 0
 
@@ -39,14 +44,16 @@ class FakeS3:
         rules = [{"Expiration": {"Days": self.retention}}] if self.retention else []
         return {"Rules": rules}
 
-    def put_object(self, Bucket, Key, Body):
+    def put_object(self, Bucket, Key, Body, Metadata=None):
         self.sequence += 1
-        self.objects[(Bucket, Key)] = Body
+        data = Body.read() if hasattr(Body, "read") else Body
+        self.objects[(Bucket, Key)] = data
+        self.metadata[(Bucket, Key)] = Metadata or {}
         return {"VersionId": f"v{self.sequence}"}
 
-    def head_object(self, Bucket, Key):
+    def head_object(self, Bucket, Key, VersionId=None):
         body = self.objects[(Bucket, Key)]
-        return {"ServerSideEncryption": "AES256", "ContentLength": len(body)}
+        return {"ServerSideEncryption": "AES256", "ContentLength": len(body), "Metadata": self.metadata.get((Bucket, Key), {})}
 
     def get_object(self, Bucket, Key, VersionId=None):
         return {"Body": io.BytesIO(self.objects[(Bucket, Key)])}
@@ -206,5 +213,73 @@ class ObjectStoreHealthTests(unittest.TestCase):
             )
 
 
+    def _approved_dataset_card(self, source: Path) -> dict:
+        digest = hashlib.sha256(source.read_bytes()).hexdigest()
+        return {
+            "dataset_id": "finance.dataset", "version": 1, "content_sha256": digest,
+            "training_approved": True, "rights_status": "VERIFIED",
+            "data_plane": "dreamco_owned_training", "holdout": False,
+            "training_status": "APPROVED_PENDING_TRAINING",
+            "rights_evidence": "approved-authorship-register:finance-fixture",
+            "owner_approval_id": "OWNER-APPROVAL-FINANCE-001", "primary_masterbot_id": 41,
+            "quality": {"quality_status": "STRUCTURE_CHECKS_PASSED", "pii_review_required": False},
+            "split_manifest": {"train_sha256": "a" * 64, "validation_sha256": "b" * 64, "test_sha256": "c" * 64},
+        }
+
+    def test_upload_persists_only_registered_rights_approved_dataset(self):
+        client = FakeS3()
+        payload = b'{"masterbot_id":41,"text":"safe"}\\n'
+        with tempfile.TemporaryDirectory() as temp:
+            source = Path(temp) / "train.jsonl"
+            source.write_bytes(payload)
+            card = self._approved_dataset_card(source)
+            with patch.dict(os.environ, {"DREAMCO_ALLOW_DATASET_OBJECT_UPLOAD": "1"}, clear=True):
+                evidence = upload_approved_division_dataset(41, card, str(source), "UPLOAD-APPROVAL-2026-001", client=client, bucket="dreamco-primary")
+        self.assertEqual(evidence["status"], "PERSISTED")
+        self.assertEqual(evidence["training_status"], "APPROVED_PENDING_TRAINING")
+        self.assertFalse(evidence["weights_trained"])
+        self.assertFalse(evidence["credentials_emitted"])
+        self.assertIn("/divisions/041/", evidence["object_key"])
+        self.assertEqual(client.objects[("dreamco-primary", evidence["object_key"])], payload)
+        self.assertEqual(client.metadata[("dreamco-primary", evidence["object_key"])]["owner-approval-ref"], "OWNER-APPROVAL-FINANCE-001")
+
+    def test_upload_requires_opt_in_and_rights_approval(self):
+        with tempfile.TemporaryDirectory() as temp:
+            source = Path(temp) / "train.jsonl"
+            source.write_bytes(b"safe dataset")
+            card = self._approved_dataset_card(source)
+            with patch.dict(os.environ, {}, clear=True):
+                with self.assertRaisesRegex(ObjectStoreError, "ALLOW_DATASET_OBJECT_UPLOAD"):
+                    upload_approved_division_dataset(41, card, str(source), "UPLOAD-001", client=FakeS3(), bucket="dreamco-primary")
+            with patch.dict(os.environ, {"DREAMCO_ALLOW_DATASET_OBJECT_UPLOAD": "1"}, clear=True):
+                with self.assertRaisesRegex(ObjectStoreError, "training_approval_required"):
+                    upload_approved_division_dataset(41, {**card, "training_approved": False}, str(source), "UPLOAD-001", client=FakeS3(), bucket="dreamco-primary")
+                holdout = {**card, "holdout": True, "data_plane": "evaluation_only_holdout"}
+                with self.assertRaisesRegex(ObjectStoreError, "training_eligible_data_plane"):
+                    upload_approved_division_dataset(41, holdout, str(source), "UPLOAD-001", client=FakeS3(), bucket="dreamco-primary")
+
+    def test_upload_requires_matching_owner_hash_and_split_evidence(self):
+        with tempfile.TemporaryDirectory() as temp:
+            source = Path(temp) / "train.jsonl"
+            source.write_bytes(b"safe dataset")
+            card = self._approved_dataset_card(source)
+            with patch.dict(os.environ, {"DREAMCO_ALLOW_DATASET_OBJECT_UPLOAD": "1"}, clear=True):
+                with self.assertRaisesRegex(ObjectStoreError, "primary_masterbot_mismatch"):
+                    upload_approved_division_dataset(42, card, str(source), "UPLOAD-001", client=FakeS3(), bucket="dreamco-primary")
+                with self.assertRaisesRegex(ObjectStoreError, "content_hash_mismatch"):
+                    upload_approved_division_dataset(41, {**card, "content_sha256": "0" * 64}, str(source), "UPLOAD-001", client=FakeS3(), bucket="dreamco-primary")
+                with self.assertRaisesRegex(ObjectStoreError, "split_manifest_hashes_required"):
+                    upload_approved_division_dataset(41, {**card, "split_manifest": {}}, str(source), "UPLOAD-001", client=FakeS3(), bucket="dreamco-primary")
+
+    def test_upload_requires_upload_approval_and_secure_bucket(self):
+        with tempfile.TemporaryDirectory() as temp:
+            source = Path(temp) / "train.jsonl"
+            source.write_bytes(b"safe dataset")
+            card = self._approved_dataset_card(source)
+            with patch.dict(os.environ, {"DREAMCO_ALLOW_DATASET_OBJECT_UPLOAD": "1"}, clear=True):
+                with self.assertRaisesRegex(ObjectStoreError, "upload_approval_id_required"):
+                    upload_approved_division_dataset(41, card, str(source), " ", client=FakeS3(), bucket="dreamco-primary")
+                with self.assertRaisesRegex(ObjectStoreError, "bucket_security_configuration_incomplete"):
+                    upload_approved_division_dataset(41, card, str(source), "UPLOAD-001", client=FakeS3(encryption=False), bucket="dreamco-primary")
 if __name__ == "__main__":
     unittest.main()
