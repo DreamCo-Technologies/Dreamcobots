@@ -28,6 +28,15 @@ class DivisionResourceReadinessTests(unittest.TestCase):
    self.assertTrue(route["dataset_discovery_lane_id"])
    self.assertFalse(route["dataset_training_approved"])
 
+ def test_shared_platform_masterbots_are_not_marked_as_unresolved_domain_owners(self):
+  routes=self.payload()["routes"]
+  platform=[x for x in routes if 46<=x["masterbot_id"]<=65]
+  core=[x for x in routes if 1<=x["masterbot_id"]<=45]
+  self.assertEqual(len(platform),20)
+  self.assertTrue(all(x["domain_mapping"]["mapping_status"]=="shared_platform_service_no_primary_domain" for x in platform))
+  self.assertTrue(all(x["domain_mapping"]["shared_platform_service"] is True and x["domain_mapping"]["unresolved"] is False and x["domain_mapping"]["owner_review_required"] is False and x["domain_mapping"]["domain_id"] is None for x in platform))
+  self.assertTrue(all(x["domain_mapping"]["shared_platform_service"] is False and x["domain_mapping"]["owner_review_required"] is True for x in core))
+
  def test_all_55_domain_profiles_receive_linked_or_standalone_resource_bundles(self):
   result=self.payload()
   domains=result["domain_routes"]
@@ -52,12 +61,20 @@ class DivisionResourceReadinessTests(unittest.TestCase):
   self.assertIn("teacher/provider terms",templates["distillation"]["required_lineage"][2])
   self.assertTrue(any("authentication" in x for x in templates["reverse_engineering"]["prohibited"]))
   self.assertTrue(any("copying protected" in x for x in templates["reverse_engineering"]["prohibited"]))
- def test_unresolved_20_masterbots_and_10_domain_profiles_stay_unassigned(self):
+ def test_shared_platform_services_are_not_counted_as_unresolved_domain_mappings(self):
   result=self.payload();review=result["owner_review"]
-  self.assertEqual(len(review["masterbot_domain_decisions"]),20)
+  self.assertEqual(result["counts"]["unresolved_masterbot_mappings"],0)
+  self.assertEqual(result["counts"]["proposed_exact_name_matches"],45)
+  self.assertEqual(result["counts"]["shared_platform_masterbots"],20)
+  self.assertEqual(len(review["masterbot_domain_decisions"]),0)
+  self.assertEqual([x["masterbot_id"] for x in review["shared_platform_services"]],list(range(46,66)))
+  self.assertTrue(all(x["primary_domain_id"] is None and x["decision"]=="SHARED_PLATFORM_SERVICE_NO_PRIMARY_DOMAIN" for x in review["shared_platform_services"]))
+ def test_45_exact_name_matches_and_10_supplemental_links_retain_chat_approval_provenance(self):
+  review=self.payload()["owner_review"]
+  self.assertEqual(len(review["proposed_exact_name_matches"]),45)
+  self.assertTrue(all(x["user_approval_status"]=="APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION" and x["owner_approval"] is None for x in review["proposed_exact_name_matches"]))
   self.assertEqual(len(review["unassigned_domain_profiles"]),10)
-  self.assertTrue(all(x["candidate_domain_ids"]==[] and x["decision"]=="PENDING_OWNER_REVIEW" and x["resource_bundle_id"] for x in review["masterbot_domain_decisions"]))
-  self.assertTrue(all(x["candidate_masterbot_ids"]==[] and x["decision"]=="PENDING_OWNER_REVIEW" and x["standalone_resource_bundle_id"] for x in review["unassigned_domain_profiles"]))
+  self.assertTrue(all(x["user_approval_status"]=="APPROVED_BY_USER_IN_CHAT_PENDING_GITHUB_IDENTITY_ATTESTATION" and x["proposed_collaborator_masterbot_id"] for x in review["unassigned_domain_profiles"]))
  def test_no_training_or_provider_is_marked_live_by_resource_blueprint(self):
   result=self.payload()
   self.assertEqual(result["status"],"requirements_defined_not_provisioned")

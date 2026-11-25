@@ -53,9 +53,12 @@ def build_owner_review_queue(
         raise OwnerReviewQueueError("shared_platform_masterbots_must_cover_canonical_ids_46_through_65")
 
     source_routes = _unique_index(source.get("routes", []), "masterbot_id", "resource_route")
-    source_decisions = _unique_index(
-        review.get("masterbot_domain_decisions", []), "masterbot_id", "masterbot_decision"
+    decision_rows = (
+        list(review.get("masterbot_domain_decisions", []))
+        + list(review.get("proposed_exact_name_matches", []))
+        + list(review.get("shared_platform_services", []))
     )
+    source_decisions = _unique_index(decision_rows, "masterbot_id", "masterbot_decision")
     for ident, platform in platform_by_id.items():
         route = source_routes.get(ident)
         decision = source_decisions.get(ident)
@@ -74,7 +77,7 @@ def build_owner_review_queue(
 
     pending = []
     shared_platform = []
-    for item in review.get("masterbot_domain_decisions", []):
+    for item in decision_rows:
         ident = int(item["masterbot_id"])
         if ident in platform_by_id:
             platform = platform_by_id[ident]
@@ -97,16 +100,24 @@ def build_owner_review_queue(
                 "no_domain_owner_inferred": True,
             })
             continue
-        if item.get("decision") == "PENDING_OWNER_REVIEW" or item.get("primary_domain_id") is None:
+        if item.get("mapping_status") == "proposed_exact_name_match" or item.get("decision") == "PENDING_OWNER_REVIEW" or item.get("primary_domain_id") is None:
+            proposed_domain = item.get("primary_domain_id")
+            evidence = list(item.get("evidence") or [])
+            if not evidence:
+                evidence = [
+                    "config/generated/masterbot-55-domain-crosswalk.json",
+                    "config/review/masterbot-domain-crosswalk-owner-review.json",
+                    "config/review/division-owner-conversation-approval.json",
+                ]
             pending.append({
                 "masterbot_id": ident,
                 "masterbot_name": str(item["masterbot_name"]),
-                "resource_bundle_id": item.get("resource_bundle_id"),
-                "candidate_domain_ids": list(item.get("candidate_domain_ids") or []),
-                "proposed_primary_domain_id": item.get("primary_domain_id"),
+                "resource_bundle_id": item.get("resource_bundle_id") or route.get("resource_bundle_id"),
+                "candidate_domain_ids": list(item.get("candidate_domain_ids") or ([proposed_domain] if proposed_domain else [])),
+                "proposed_primary_domain_id": proposed_domain,
                 "decision": "PENDING_OWNER_REVIEW",
                 "owner_approval": item.get("owner_approval"),
-                "evidence": list(item.get("evidence") or []),
+                "evidence": evidence,
                 "no_mapping_inferred": True,
             })
 
