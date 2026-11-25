@@ -43,6 +43,32 @@ def run(command:list[str])->str:
     proc=subprocess.run(command,check=True,capture_output=True,text=True)
     return proc.stdout
 
+def analyze_music(audio:Path)->dict[str,Any]:
+    """Optional local librosa feature extraction; never uploads audio or trains."""
+    try:
+        import librosa
+        import numpy as np
+    except ImportError:
+        return {"status":"adapter_not_installed","features":{}}
+    try:
+        signal,sr=librosa.load(str(audio),sr=22050,duration=300,mono=True)
+        tempo,_=librosa.beat.beat_track(y=signal,sr=sr)
+        chroma=librosa.feature.chroma_stft(y=signal,sr=sr)
+        centroid=librosa.feature.spectral_centroid(y=signal,sr=sr)
+        rms=librosa.feature.rms(y=signal)
+        zcr=librosa.feature.zero_crossing_rate(y=signal)
+        names=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
+        profile=np.mean(chroma,axis=1)
+        return {"status":"analyzed","analysis_window_seconds":min(300,len(signal)/sr),
+                "tempo_bpm_estimate":float(np.asarray(tempo).reshape(-1)[0]),
+                "dominant_chroma_pitch_estimate":names[int(np.argmax(profile))],
+                "spectral_centroid_mean_hz":float(np.mean(centroid)),
+                "rms_mean":float(np.mean(rms)),"zero_crossing_rate_mean":float(np.mean(zcr)),
+                "caveat":"Tempo and dominant chroma are approximate signal features, not a definitive musical key or transcription."}
+    except Exception as exc:
+        return {"status":"analysis_failed","error_type":type(exc).__name__,"features":{}}
+
+
 def process(path:Path, asset_id:str, manifest:dict[str,Any], out_dir:Path, frame_interval:int=10)->dict[str,Any]:
     source,grant=verify_asset(path,asset_id,manifest)
     for binary in ("ffprobe","ffmpeg"):
