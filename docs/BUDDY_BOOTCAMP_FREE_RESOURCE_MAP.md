@@ -133,3 +133,7 @@ The 18-module path covers byte-level tokenization, embeddings, exact parameter c
 ## O*NET full content-model curriculum
 
 The full worker, job and market taxonomy plus task-by-task AI suitability rules are defined in `config/buddy-onet-content-model-curriculum.json` and `docs/BUDDY_ONET_FULL_CONTENT_MODEL_AND_TASK_PLAYBOOKS.md`. It covers worker characteristics, skills, knowledge, abilities, education, experience, licensing, work activities, work context, technology/tools and workforce outlook. Each task is classified individually; O*NET coverage is not proof an AI can perform every occupation.
+
+## All official Hugging Face Learn courses
+
+Buddy's current 12-course Hugging Face Learn inventory is tracked in `config/buddy-huggingface-full-learning-map.json` and is linked from the shared course scheduler. It covers LLMs, context engineering, robotics, compact post-training, agents, Deep RL, computer vision, audio, open-source AI recipes, games, diffusion and 3D. The map is refreshed against [huggingface.co/learn](https://huggingface.co/learn); the Deep RL course is flagged low-maintenance where upstream challenge/leaderboard features are retired or nonfunctional. Eighteen original ecosystem modules and all 37 task families are also mapped.
