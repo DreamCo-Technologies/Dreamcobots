@@ -40,6 +40,7 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
             "related_divisions": ["DreamCodeLab"], "learning_outcomes": ["Build tested software"],
             "capstone": "Build an app", "required_before_mastery": ["unseen holdout"]
         }], "video_learning_tracks": ["programming", "audio production"]}
+        self.fcc_catalog = {"schema": "dreamco.freecodecamp_catalog.v1", "inventory_status": "partial", "video_count": 2, "inventory": {"complete": False, "expected_entry_count": 1800, "observed_entry_count": 2}, "videos": [{"video_id": "abc123", "title": "JavaScript course", "categories": ["javascript_and_typescript"], "rights_status": "review_required", "learning_status": "not_studied"}, {"video_id": "xyz789", "title": "Unclassified lesson", "categories": ["other_or_unclassified"], "rights_status": "review_required", "learning_status": "not_studied"}]}
         self.university = {"title": "DreamCo Buddy University", "knowledge_domains": [{"id": "computer-science", "scope": "Algorithms and software engineering"}], "source_families": [{"id": "open-academic-research", "scope": "research papers and scholarly datasets"}], "academic_structure": {"levels": [{"level": "100"}]}, "instructional_model": {"teacher": {"role": "ChatGPT"}, "student": {"role": "Buddy"}}}
         self.onet = {"source": {"name": "O*NET"}, "inventory": {"occupations": 1, "task_statements": 1},
                      "occupations": [{"occupation_code": "15-1252.00", "occupation_title": "Software Developers",
@@ -52,7 +53,7 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
             division_profiles(profile_source().replace('  DreamTravel: {', '  DreamTravelRemoved: {').replace('  DreamTravelRemoved: {\n    purpose:', ''))
 
     def test_huggingface_and_freecodecamp_routes_are_connected(self):
-        result = build(self.profiles, self.hf, self.fcc, self.onet, self.taxonomy, self.university)
+        result = build(self.profiles, self.hf, self.fcc, self.onet, self.taxonomy, self.university, self.fcc_catalog)
         self.assertEqual(result["coverage"]["domain_divisions"], 55)
         self.assertEqual(result["coverage"]["freecodecamp_tracks"], 1)
         code = next(row for row in result["divisions"] if row["division"] == "DreamCodeLab")
@@ -62,6 +63,10 @@ class BuddyUniversityCurriculumTests(unittest.TestCase):
         self.assertTrue(code["college_domains"])
         self.assertTrue(code["source_families"])
         self.assertGreater(result["coverage"]["hugging_face_subject_terms"], 0)
+        self.assertEqual(result["coverage"]["freecodecamp_catalog_videos"], 2)
+        self.assertEqual(result["coverage"]["freecodecamp_inventory_status"], "partial")
+        self.assertEqual(len(result["freecodecamp_video_routes"]), 2)
+        self.assertIn("DreamCodeLab", result["freecodecamp_video_routes"][0]["specialty_division_ids"])
 
     def test_unclassified_topics_are_not_silently_dropped(self):
         result = build(self.profiles, self.hf, self.fcc, self.onet, self.taxonomy)
