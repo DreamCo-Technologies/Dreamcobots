@@ -122,7 +122,7 @@ class BuddyModelRegistryTests(unittest.TestCase):
     def test_unverified_model_license_blocks_routing(self):
         candidate = eligible_candidate()
         candidate["lineage"]["model_license_status"] = "UNKNOWN"
-        decision = route_model({"schema": "dreamco.buddy.model_registry.v1", "models": [candidate]},
+        decision = route_model(registry_with([candidate]),
                                "causal_language_modeling")
         self.assertEqual(decision["status"], "BLOCKED_NO_ELIGIBLE_MODEL")
         self.assertIn("model_license_not_verified", decision["blocked_candidates"][0]["reasons"])
