@@ -34,16 +34,32 @@ class DownloadLinkParser(HTMLParser):
         self.page_text.append(data)
 
 
+def discover_json_links(parser: DownloadLinkParser) -> dict[str, str]:
+    """Return exact JSON download links from the official O*NET database page."""
+    discovered: dict[str, str] = {}
+    for href in parser.links:
+        path = href.split("?", 1)[0]
+        if "/dl_files/database/" not in path:
+            continue
+        filename = path.rsplit("/", 1)[-1]
+        if not filename.lower().endswith(".json"):
+            continue
+        key = filename[:-5]
+        if key:
+            discovered[key] = href
+    return discovered
+
+
 def fetch_current_export() -> tuple[bytes, str, str]:
     request = urllib.request.Request(SOURCE_PAGE, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(request, timeout=45) as response:
         html = response.read().decode("utf-8", errors="replace")
     parser = DownloadLinkParser()
     parser.feed(html)
-    candidates = [link for link in parser.links if "task_statements.json" in link and "/dl_files/database/" in link]
-    if not candidates:
+    discovered = discover_json_links(parser)
+    href = discovered.get("task_statements")
+    if not href:
         raise RuntimeError("Could not locate the official current O*NET task_statements.json link; refusing to use a stale guessed URL.")
-    href = candidates[0]
     if href.startswith("/"):
         url = "https://www.onetcenter.org" + href
     elif href.startswith("http"):
