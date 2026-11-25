@@ -18,6 +18,7 @@ def test_queue_preserves_every_subject_across_all_canonical_paths():
     assert len(result["playbooks"]) == expected
     assert result["authored_count"] == result["reviewed_count"] == 0
     assert all(row["status"] == "not_authored" for row in result["playbooks"])
+    assert all(row["capstone_status"] == "needs_definition" for row in result["playbooks"])
     assert len({row["playbook_id"] for row in result["playbooks"]}) == expected
 
 
@@ -43,11 +44,12 @@ def test_duplicate_track_or_subject_is_rejected():
         build_queue(config)
 
 
-def test_missing_capstone_is_rejected():
+def test_missing_capstone_is_explicitly_queued_for_definition():
     config = {
         "schema": "dreamco.buddy_workforce_entrepreneurship_bootcamp.v1",
         "task_capability_catalog": {"task_playbook_requirements": ["task_definition"]},
         "training_paths": [{"id": "one", "title": "One", "subjects": ["sales"]}],
     }
-    with pytest.raises(ValueError, match="capstone"):
-        build_queue(config)
+    result = build_queue(config)
+    assert result["playbooks"][0]["capstone_status"] == "needs_definition"
+    assert result["playbooks"][0]["capstone_outcome"] is None
