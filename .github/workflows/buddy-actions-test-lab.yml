@@ -193,6 +193,10 @@ jobs:
               tail -n 100 tmp/buddy-actions/install.log
               echo '```'
             fi
+            if [ -d tmp/dreamco-verification/logs ]; then
+              mkdir -p tmp/buddy-actions/verification-logs
+              cp -R tmp/dreamco-verification/logs/. tmp/buddy-actions/verification-logs/
+            fi
             if [ -f tmp/dreamco-verification/latest.json ]; then
               echo
               echo "### Universal verification"
