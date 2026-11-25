@@ -112,7 +112,7 @@ class MasterBotTrainingPlanTests(unittest.TestCase):
         self.assertIs(policy["availability"]["weights_trained_by_planner"], False)
         self.assertEqual(policy["availability"]["training_artifact_filename"], "latest-plan.json")
         self.assertIn("approved_training_job_manifest", policy["availability"]["actual_training_requires"])
-        self.assertEqual(policy["fleet"]["count_semantics"]["masterbot_lanes"], 65)
+        self.assertEqual(policy["fleet"]["expected_masterbot_count"], 65)
         self.assertEqual(policy["fleet"]["count_semantics"]["domain_divisions"], 55)
         self.assertEqual(policy["fleet"]["count_semantics"]["shared_platform_masterbots"], 20)
         groups = policy["fleet"]["concurrency_groups"]
