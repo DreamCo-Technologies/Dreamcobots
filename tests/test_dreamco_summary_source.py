@@ -60,7 +60,7 @@ class DreamCoSummarySourceTests(unittest.TestCase):
         self.organization.write_text(json.dumps(payload), encoding="utf-8")
         self.assertEqual(resources_for_division("DreamAI", self.organization), [])
 
-    def test_progress_is_append_only_jsonl_and_idempotency_is_not_assumed(self):
+    def test_progress_is_append_only_jsonl_and_idempotent(self):
         event = append_progress_event(
             self.progress, asset_id="asset-001", division="DreamAI",
             event_type="study_started", evidence_ref="evidence:1", source_revision="rev-1"
