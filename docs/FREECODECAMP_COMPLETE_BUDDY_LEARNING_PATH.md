@@ -77,3 +77,11 @@ python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
 ```
 
 The guide pipeline produces one queue row per catalog video. It will not invent summaries for videos with missing transcripts or missing derivative-summary permission.
+
+## Division-wide course scheduler integration
+
+The eight-track registry now exposes the existing Tolkien, tokenizer, CPU-first LLM, O*NET, Hugging Face task-family, Hugging Face Learn course, freeCodeCamp curriculum and freeCodeCamp video paths through `buddy.learning.course_track_registry`. Every video ID in the checked-in catalog is available in the shared queue for each of the 55 canonical divisions and 65 MasterBot lanes. The legacy snapshot currently contains 1,740 metadata records; the count is derived from the catalog and changes when the verified refresh PR is merged.
+
+**Important completeness boundary:** the checked-in 1,740-video catalog explicitly reports `inventory.complete=false` and `inventory_status=partial`. It is not the complete freeCodeCamp channel archive. The 14,038 challenge / 217 module / 779 unique block curriculum figures are a dated source snapshot, not proof that every current challenge's text, tests, answer keys or prerequisites have been ingested. A verified upstream playlist count and a versioned official curriculum ID inventory are required before marking full coverage complete. The new scheduled refresh workflow enumerates the uploads playlist with pinned yt-dlp, checks count/unique-ID equality and opens a review PR; it never pushes directly to main.
+
+Every queued video remains metadata-only until item-level source rights and transcript/equivalent content are reviewed. The scheduler does not download transcripts, mark lessons studied, or award mastery from a title or description.
