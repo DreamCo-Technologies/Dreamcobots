@@ -135,6 +135,7 @@ class FreeCodeCampSpecialistRoutingTests(unittest.TestCase):
         all_ids = {row["video_id"] for row in catalog["videos"]}
         self.assertFalse(set(self.paths_by_video).intersection(self.triage_by_video))
         self.assertEqual(set(self.paths_by_video).union(self.triage_by_video), all_ids)
+        self.assertTrue(all(row.division_targets and row.masterbot_targets for row in self.by_video.values()))
         self.assertTrue(all(row.division_targets and row.masterbot_targets for row in self.paths_by_video.values()))
         self.assertTrue(all(row.division_targets and row.masterbot_targets for row in self.triage_by_video.values()))
 
