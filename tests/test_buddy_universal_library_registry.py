@@ -139,6 +139,14 @@ class UniversalLibraryRegistryTests(unittest.TestCase):
         self.assertTrue(all(row["rights_mode"] == "metadata_discovery_only_no_download_no_execution" for row in candidates))
         self.assertTrue(all("Candidate discovery alone is not mastery" in row["assessment"] for row in candidates))
 
+    def test_seed_candidate_match_is_not_misrepresented_as_a_study_guide(self):
+        root = Path(__file__).resolve().parents[1]
+        result = search_internal_library_knowledge("React", root=root)
+        self.assertEqual(result["matches"], [])
+        self.assertTrue(result["seed_candidates_are_not_guides"])
+        self.assertTrue(any(row["name"].startswith("React") and not row["guide_available"] for row in result["seed_candidate_matches"]))
+        self.assertEqual(result["knowledge_gap"]["status"], "internal_knowledge_gap")
+
     def test_repository_coverage_report_counts_unreviewed_requests_draft(self):
         root = Path(__file__).resolve().parents[1]
         report = library_coverage_report(root=root)
