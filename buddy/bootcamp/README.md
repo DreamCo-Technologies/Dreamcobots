@@ -137,3 +137,15 @@ python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
 ```
 
 The weekly workflow publishes queue coverage as an artifact. Metadata-only videos remain pending; the generator never invents a summary from a title. A transcript must have separately evidenced study, derivative-summary and evaluation permissions before Buddy may author and retain a detailed guide. Model training remains a separate permission.
+
+
+## DreamCo summary library integration
+
+Approved summary packages created by `tools/organize_buddy_learning_assets.py` are consumable by `buddy.learning.dreamco_summary_source`. This adapter uses the existing evidence-driven `buddy.learning.study_resource_scheduler` rather than introducing a second scheduler.
+
+Build the organization artifact first, then use the adapter:
+- `resources_for_division(canonical_division_name, organization_path)` exposes only packages whose study, derivative-summary, and evaluation permissions are explicitly true.
+- `select_next_for_division(...)` returns the chosen DreamCo summary, full study path, assessment, source revision, rights, and ownership record with status `queued_not_studied`.
+- `append_progress_event(...)` writes append-only JSONL evidence events. Training events require an explicit training-permission argument. Mastery cannot be self-reported through this event writer; it must come from the independent evidence verifier.
+
+The adapter does not create a guide, fetch private user data, execute model training, or award mastery. The organizer artifact must be generated from validated, approved guides. User-owned data remains in its separate registry and is not copied into the summary packages.
