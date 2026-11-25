@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0.0",
+  "name": "Buddy Open-Source Mastery Strategy Matrix",
+  "principle": "Select the smallest evidence-backed combination of learning methods for each task; do not equate model size or training volume with capability.",
+  "strategies": [
+    {"id":"retrieval_augmented_learning","when":"rapidly changing knowledge, repository/document study, traceable answers","method":"index versioned sources with lexical and vector retrieval, rerank, cite evidence, evaluate groundedness","updates_base_weights":false},
+    {"id":"supervised_finetuning","when":"stable task formats, instruction following, structured outputs, domain-specific demonstrations","method":"curate licensed high-quality input-output examples, deduplicate, split by source and time, train adapters first","updates_base_weights":true},
+    {"id":"continued_pretraining","when":"large, permission-cleared domain corpus and sufficient compute","method":"domain-adaptive next-token training with replay, held-out corpora, contamination checks, and rollback","updates_base_weights":true},
+    {"id":"self_supervised_learning","when":"unlabeled permitted text, audio, video, images, code, or music","method":"masked prediction, next-token prediction, temporal prediction, representation learning, reconstruction","updates_base_weights":true},
+    {"id":"contrastive_multimodal_learning","when":"paired text-image, text-audio, video-audio, code-document or music-caption data","method":"align positive pairs and hard negatives; evaluate retrieval and cross-modal transfer","updates_base_weights":true},
+    {"id":"curriculum_and_mastery_learning","when":"all Bootcamp divisions","method":"order prerequisites, increase task difficulty, use spaced retrieval, interleaving, mastery gates and remedial loops","updates_base_weights":false},
+    {"id":"project_based_learning","when":"software engineering, tools, deployment, product and applied skills","method":"build end-to-end projects from specs, require tests, code review, threat modeling and independent variants","updates_base_weights":false},
+    {"id":"knowledge_distillation","when":"compressing capable teacher behavior into smaller Buddy models","method":"teacher-generated targets only from authorized inputs; compare logits or task outputs; preserve teacher and benchmark baselines","updates_base_weights":true},
+    {"id":"parameter_efficient_finetuning","when":"limited compute or many specialist divisions","method":"LoRA/QLoRA or adapters per domain; benchmark adapter composition and interference before promotion","updates_base_weights":true},
+    {"id":"preference_optimization","when":"human-reviewed preference pairs exist","method":"DPO or related offline preference optimization; retain safety and truthfulness constraints","updates_base_weights":true},
+    {"id":"reinforcement_learning","when":"verifiable tool use, code execution, planning or simulator tasks","method":"reward only externally verifiable outcomes; use bounded sandboxes, reward audits, exploit tests and human approval for real-world actions","updates_base_weights":true},
+    {"id":"tool_use_and_agent_training","when":"Buddy must operate developer tools and workflows","method":"train on synthetic and reviewed tool traces, schema validation, error recovery, permission checks and stop conditions","updates_base_weights":true},
+    {"id":"continual_learning_with_replay","when":"weekly Bootcamp updates","method":"version datasets and adapters, replay representative old tasks, detect forgetting, evaluate drift and support rollback","updates_base_weights":true},
+    {"id":"programmatic_data_generation","when":"coverage gaps and scarce examples","method":"generate exercises, tests and counterexamples from verified specs; label synthetic provenance; reject unsupported factual claims","updates_base_weights":false},
+    {"id":"active_learning","when":"human review capacity is limited","method":"select uncertain, high-impact, disagreement and failure cases for review; never auto-label high-risk data as truth","updates_base_weights":false},
+    {"id":"test_time_computation","when":"hard reasoning and code tasks","method":"use decomposition, multiple candidate solutions, tool execution, verifier-guided selection and budget controls","updates_base_weights":false},
+    {"id":"ensemble_and_specialist_routing","when":"heterogeneous division expertise","method":"route to certified specialist models or adapters; compare calibrated outputs and fallback to general Buddy","updates_base_weights":false},
+    {"id":"benchmark_driven_error_learning","when":"every weekly build","method":"cluster failures, create regression cases, prioritize fixes, rerun fixed and held-out suites","updates_base_weights":false}
+  ],
+  "promotion_gates": [
+    "data_provenance_and_license_review",
+    "train_validation_test_split_by_source_or_project",
+    "benchmark_baseline_and_held_out_transfer",
+    "safety_privacy_and_security_review",
+    "catastrophic_forgetting_and_regression_check",
+    "compute_cost_and_latency_measurement",
+    "human_approval_before_production_promotion"
+  ],
+  "anti_patterns": [
+    "training_on_everything_without_license_or_quality_review",
+    "using_test_data_for_training",
+    "measuring_mlm_or_loss_as_the_only_mastery_metric",
+    "reward_hacking_or_unverified_self_grading",
+    "automatically_running_discovered_repository_install_scripts",
+    "mixing_code_license_with_model_weight_or_dataset_license",
+    "claiming_official_certification_from_internal_bootcamp_scores"
+  ]
+}
