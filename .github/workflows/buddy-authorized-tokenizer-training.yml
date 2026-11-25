@@ -1,11 +1,25 @@
 name: Buddy Authorized Byte BPE Tokenizer Training
 
 on:
+  pull_request:
+    paths:
+      - "buddy/learning/byte_bpe_trainer.py"
+      - "tests/test_buddy_byte_bpe_trainer.py"
+      - "data/buddy-authorized-corpora/synthetic-ci-*"
+      - ".github/workflows/buddy-authorized-tokenizer-training.yml"
+  push:
+    branches: [main]
+    paths:
+      - "buddy/learning/byte_bpe_trainer.py"
+      - "tests/test_buddy_byte_bpe_trainer.py"
+      - "data/buddy-authorized-corpora/synthetic-ci-*"
+      - ".github/workflows/buddy-authorized-tokenizer-training.yml"
   workflow_dispatch:
     inputs:
       manifest_path:
         description: "Rights-cleared manifest under data/buddy-authorized-corpora/"
         required: true
+        default: "data/buddy-authorized-corpora/synthetic-ci-manifest.json"
         type: string
       vocab_size:
         description: "Target vocabulary size (256–65536)"
@@ -26,8 +40,53 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  synthetic-ci-smoke:
+    if: github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run tokenizer regression tests
+        run: python -m unittest discover -s tests -p 'test_buddy_byte_bpe_trainer.py' -v
+      - name: Train a tokenizer on the synthetic CI-only corpus
+        run: |
+          python buddy/learning/byte_bpe_trainer.py \
+            --manifest data/buddy-authorized-corpora/synthetic-ci-manifest.json \
+            --output artifacts/buddy-tokenizer-ci/tokenizer.json \
+            --vocab-size 512 \
+            --confirm-authorized-training
+      - name: Verify tokenizer artifact and Unicode round trip
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from buddy.learning.byte_bpe_trainer import encode, decode
+          model = json.loads(Path("artifacts/buddy-tokenizer-ci/tokenizer.json").read_text(encoding="utf-8"))
+          assert model["training_executed"] is True
+          assert model["rights_gate_passed"] is True
+          assert model["model_weight_training_executed"] is False
+          assert model["training_provenance"][0]["source_type"] == "synthetic"
+          sample = "Buddy tokenizer 🚀 — DreamCo"
+          assert decode(encode(sample, model)) == sample
+          print(json.dumps({"status": "synthetic_tokenizer_training_passed", "vocab_size": model["vocab_size"], "model_weight_training_executed": False}, indent=2))
+          PY
+      - name: Upload synthetic tokenizer evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: buddy-synthetic-tokenizer-${{ github.run_id }}
+          path: artifacts/buddy-tokenizer-ci/tokenizer.json
+          if-no-files-found: error
+          retention-days: 7
+
   train-tokenizer:
-    if: inputs.confirm_authorized_training == true
+    if: github.event_name == 'workflow_dispatch' && inputs.confirm_authorized_training == true
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -94,7 +153,7 @@ jobs:
           retention-days: 30
 
   authorization-not-provided:
-    if: inputs.confirm_authorized_training != true
+    if: github.event_name == 'workflow_dispatch' && inputs.confirm_authorized_training != true
     runs-on: ubuntu-latest
     steps:
       - name: Record that training was intentionally not started
