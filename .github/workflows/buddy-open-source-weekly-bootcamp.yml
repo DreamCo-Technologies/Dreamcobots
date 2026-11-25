@@ -56,8 +56,6 @@ concurrency:
 
 jobs:
   discover-and-build-weekly-learning-queue:
-    env:
-      ONET_API_KEY: ${{ secrets.ONET_API_KEY }}
     if: github.repository == 'DreamCo-Technologies/Dreamcobots'
     runs-on: ubuntu-latest
     timeout-minutes: 90
@@ -100,12 +98,8 @@ jobs:
             --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly" \
             --taxonomy-file "$RUNNER_TEMP/buddy-huggingface-taxonomy.json" \
             --hf-limit-per-subject 20
-      - name: Build O*NET task curricula when API access is configured
-        if: ${{ env.ONET_API_KEY != '' }}
+      - name: Download current public O*NET task export and build occupation curricula
         run: python tools/fetch_onet_task_curricula.py --out-dir "$RUNNER_TEMP/buddy-bootcamp-weekly/onet"
-      - name: Report O*NET setup requirement when API access is absent
-        if: ${{ env.ONET_API_KEY == '' }}
-        run: echo "O*NET API key not configured; add ONET_API_KEY after free O*NET developer registration to fetch the complete task curriculum." >> "$GITHUB_STEP_SUMMARY"
       - name: Build rights-gated source study queue
         if: always()
         run: |
