@@ -40,7 +40,7 @@ class UniversalLibraryCurriculumTests(unittest.TestCase):
         self.assertEqual(coverage["automated_ecosystem_count"] + coverage["manual_ecosystem_count"], len(ecosystems))
         provider_ids = {provider["id"] for provider in adapters["providers"]}
         for ecosystem in ecosystems:
-            if ecosystem["adapter_status"] == "implemented_query_api":
+            if ecosystem["adapter_status"].startswith("implemented_"):
                 self.assertTrue(set(ecosystem["provider"].split(";")).issubset(provider_ids))
             else:
                 self.assertEqual(ecosystem["adapter_status"], "manual_review_required")
