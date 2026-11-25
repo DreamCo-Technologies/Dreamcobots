@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: production-readiness-${{ github.ref }}
@@ -16,6 +17,9 @@ concurrency:
 
 jobs:
   evidence-gate:
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      GITHUB_REPOSITORY: ${{ github.repository }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
