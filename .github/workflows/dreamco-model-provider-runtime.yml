@@ -5,6 +5,7 @@ on:
       - "buddy/models/**"
       - "config/buddy-model-serving-policy.json"
       - "tests/test_buddy_model_provider_runtime.py"
+      - "docs/DREAMCO_MODEL_PROVIDER_DATA_GOVERNANCE.md"
       - ".github/workflows/dreamco-model-provider-runtime.yml"
   push:
     branches: [main]
@@ -12,6 +13,7 @@ on:
       - "buddy/models/**"
       - "config/buddy-model-serving-policy.json"
       - "tests/test_buddy_model_provider_runtime.py"
+      - "docs/DREAMCO_MODEL_PROVIDER_DATA_GOVERNANCE.md"
 permissions:
   contents: read
 jobs:
@@ -25,3 +27,5 @@ jobs:
           python-version: "3.11"
       - name: Run provider runtime contract tests
         run: python -m unittest discover -s tests -p 'test_buddy_model_provider_runtime.py' -v
+      - name: Compile provider runtime
+        run: python -m py_compile buddy/models/provider_runtime.py
