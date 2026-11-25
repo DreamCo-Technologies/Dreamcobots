@@ -56,7 +56,8 @@ def build_queue(config: dict[str, Any]) -> dict[str, Any]:
         track_id = str(track.get("id", "")).strip()
         title = str(track.get("title", "")).strip()
         subjects = track.get("subjects")
-        capstone = str(track.get("capstone", "")).strip()
+        capstone_value = track.get("capstone")
+        capstone = str(capstone_value).strip() if capstone_value else ""
         if not track_id or track_id in seen_tracks or not title:
             raise ValueError("training path IDs must be unique and titles non-empty")
         seen_tracks.add(track_id)
@@ -76,7 +77,8 @@ def build_queue(config: dict[str, Any]) -> dict[str, Any]:
                 "track_title": title,
                 "sequence": index,
                 "subject": normalized,
-                "capstone_outcome": capstone,
+                "capstone_outcome": capstone or None,
+                "capstone_status": "defined" if capstone else "needs_definition",
                 "status": "not_authored",
                 "authored_lesson_ref": None,
                 "reviewed_playbook_ref": None,
@@ -92,6 +94,7 @@ def build_queue(config: dict[str, Any]) -> dict[str, Any]:
                         "costs, pricing and operational constraints",
                         "human decisions and approval boundaries",
                         "measurable acceptance criteria",
+                        "a capstone outcome linked to this track",
                     ],
                     "must_not_assume": [
                         "guaranteed employment, income, funding or business success",
