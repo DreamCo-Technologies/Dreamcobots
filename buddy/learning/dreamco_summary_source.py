@@ -101,18 +101,23 @@ def select_next_for_division(division: str, gaps: Iterable[Capability], path: Pa
 
 def append_progress_event(path: Path, *, asset_id: str, division: str, event_type: str,
                           evidence_ref: str, source_revision: str | None = None,
-                          score: float | None = None, organization_path: Path | None = None) -> dict:
+                          score: float | None = None, organization_path: Path) -> dict:
     if event_type == "mastery_awarded":
         raise PermissionError("mastery is computed only by the evidence verifier, never self-reported")
     if event_type not in EVENTS:
         raise ValueError(f"unsupported progress event: {event_type}")
-    if event_type.startswith("training_run_"):
-        if organization_path is None:
-            raise PermissionError("training events require the source organization artifact")
-        organization = load_organization(organization_path)
-        package = next((row for row in organization["packages"] if row.get("asset_id") == asset_id), None)
-        if package is None or package.get("training", {}).get("weight_training_eligible") is not True:
-            raise PermissionError("this learning asset is not explicitly authorized for model-weight training")
+    organization = load_organization(organization_path)
+    package = next((row for row in organization["packages"] if row.get("asset_id") == asset_id), None)
+    if package is None or division not in package.get("division_ids", []):
+        raise ValueError("progress event must reference a known asset assigned to this division")
+    package_revision = (package.get("source") or {}).get("revision")
+    if source_revision is not None and source_revision != package_revision:
+        raise ValueError("progress event source revision does not match the learning asset")
+    if event_type.startswith("training_run_") and (
+        package.get("training", {}).get("weight_training_eligible") is not True
+        or (package.get("rights") or {}).get("training_permission") is not True
+    ):
+        raise PermissionError("this learning asset is not explicitly authorized for model-weight training")
     if not asset_id or not division or not evidence_ref:
         raise ValueError("asset_id, division and evidence_ref are required")
     if score is not None and not 0 <= score <= 1:
