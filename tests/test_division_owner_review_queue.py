@@ -1,3 +1,4 @@
+"""Regression tests for non-inferred owner and resource-bundle lineage."""
 import json
 import tempfile
 import unittest
