@@ -68,6 +68,9 @@ class DreamCoSummarySourceTests(unittest.TestCase):
         lines = self.progress.read_text(encoding="utf-8").splitlines()
         self.assertEqual(len(lines), 1)
         self.assertEqual(json.loads(lines[0])["event_id"], event["event_id"])
+        duplicate = append_progress_event(self.progress, asset_id="asset-001", division="DreamAI", event_type="study_started", evidence_ref="evidence:1", source_revision="rev-1")
+        self.assertEqual(len(self.progress.read_text(encoding="utf-8").splitlines()), 1)
+        self.assertEqual(duplicate["event_id"], event["event_id"])
 
     def test_training_events_require_explicit_permission(self):
         with self.assertRaises(PermissionError):
