@@ -78,7 +78,7 @@ def organize(guides:list[dict[str,Any]], divisions:list[str], user_data:list[dic
         package={
           "schema":SCHEMA,
           "asset_id":hashlib.sha256((str(source.get("source_type"))+"|"+str(source.get("source_id"))+"|"+str(source.get("revision"))).encode()).hexdigest()[:20],
-          "ownership":{"artifact_owner":"user_designated_owner","project":"DreamCo-Technologies","owner_designation":"User-designated ownership of original instructional expression, subject to applicable law and contributor agreements","artifact_type":"DreamCo_original_derived_study_package","upstream_material_owner":"upstream_rightsholder","upstream_license":source.get("license"),"attribution_required":True,"rights_evidence_ref":rights.get("evidence_ref"),"user_data_is_separately_governed":True},
+          "ownership":{"artifact_owner":"user_designated_owner","project":"DreamCo-Technologies","owner_designation":"User-designated ownership of original instructional expression, subject to applicable law and contributor agreements","authorship":guide.get("authorship",{}),"artifact_type":"DreamCo_original_derived_study_package","upstream_material_owner":"upstream_rightsholder","upstream_license":source.get("license"),"attribution_required":True,"rights_evidence_ref":rights.get("evidence_ref"),"user_data_is_separately_governed":True},
           "source":source,
           "rights":rights,
           "summary":{
@@ -94,6 +94,13 @@ def organize(guides:list[dict[str,Any]], divisions:list[str], user_data:list[dic
               "knowledge_checks":checks,
               "answer_key":guide.get("answer_key",[]),
               "limitations_and_risks":guide.get("limitations_and_risks",[]),
+              "knowledge_map":guide.get("knowledge_map",{}),
+              "software_and_tools":guide.get("software_and_tools",[]),
+              "agent_capabilities":guide.get("agent_capabilities",[]),
+              "workflow":guide.get("workflow",[]),
+              "occupation_or_venture":guide.get("occupation_or_venture",{}),
+              "commercial_pathway":guide.get("commercial_pathway",{}),
+              "teaching_notes":guide.get("teaching_notes",{}),
               "references":guide.get("references",[])
             }
           },
@@ -102,14 +109,18 @@ def organize(guides:list[dict[str,Any]], divisions:list[str], user_data:list[dic
             "source_revision":source.get("revision"),
             "prerequisites":guide.get("prerequisites",[]),
             "learning_objectives":objectives,
+            "teacher_student_protocol":guide.get("teaching_notes",{}),
             "sequence":[
               {"step":1,"type":"orient","content":"Read the executive overview, source identity, revision, license and prerequisites","completion_evidence":"Learner can explain why this source matters and identify its boundaries"},
               {"step":2,"type":"deep_read","content":"Study the detailed explanation and every source-linked section in order","sections":[s.get("heading") for s in sections if isinstance(s,dict)],"completion_evidence":"Learner can explain each section in their own words"},
               {"step":3,"type":"concept_retrieval","concepts":[c.get("name") for c in concepts if isinstance(c,dict)],"completion_evidence":"Learner correctly explains and applies the core concepts"},
-              {"step":4,"type":"worked_examples","items":guide.get("worked_examples",[]),"completion_evidence":"Learner reproduces and explains at least one example"},
-              {"step":5,"type":"deliberate_practice","exercises":exercises,"completion_evidence":"Exercise acceptance criteria pass"},
-              {"step":6,"type":"knowledge_check","checks":checks,"answer_key":guide.get("answer_key",[]),"completion_evidence":"Configured assessment threshold is met"},
-              {"step":7,"type":"capstone","capstone":guide.get("capstone",{}),"completion_evidence":"Independent capstone acceptance tests pass"}
+              {"step":4,"type":"software_and_tool_lab","items":guide.get("software_and_tools",[]),"completion_evidence":"Learner selects and uses an appropriate tool and explains alternatives"},
+              {"step":5,"type":"workflow_simulation","workflow":guide.get("workflow",[]),"completion_evidence":"Learner completes the workflow with verified inputs, outputs and exception handling"},
+              {"step":6,"type":"worked_examples","items":guide.get("worked_examples",[]),"completion_evidence":"Learner reproduces and explains at least one example"},
+              {"step":7,"type":"deliberate_practice","exercises":exercises,"completion_evidence":"Exercise acceptance criteria pass"},
+              {"step":8,"type":"knowledge_check","checks":checks,"answer_key":guide.get("answer_key",[]),"completion_evidence":"Configured assessment threshold is met"},
+              {"step":9,"type":"capstone","capstone":guide.get("capstone",{}),"completion_evidence":"Independent capstone acceptance tests pass"},
+              {"step":10,"type":"teach_back_and_transfer","teaching_notes":guide.get("teaching_notes",{}),"completion_evidence":"Learner explains the concept without the guide and passes an unseen transfer task"}
             ],
             "recommended_spaced_review_days":[1,3,7,14,30]
           },
