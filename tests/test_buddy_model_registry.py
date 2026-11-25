@@ -12,6 +12,7 @@ from buddy.modeling.registry import (
 )
 
 
+
 ROOT = Path(__file__).resolve().parents[1]
 SHA = "a" * 64
 COMMIT = "b" * 40
@@ -24,6 +25,10 @@ def eligible_candidate():
         "model_card": "models/test/README.md",
         "code_path": "buddy/modeling/tiny_gpt.py",
         "capabilities": ["causal_language_modeling"],
+        "parameter_count": 25000000,
+        "training_mode": "from_scratch",
+        "compute_profile": {"status": "VERIFIED", "hardware_cohort": "cpu-reference", "estimated_training_seconds": 1200, "estimated_peak_memory_gb": 2, "estimated_storage_gb": 1, "estimated_cost_usd": 0, "available_compute_hours": 1},
+        "marketplace": {"eligible_for_sale": False, "status": "NOT_SELLABLE"},
         "lineage": {
             "parent_model_id": None,
             "dataset_card": "config/test-data-card.json",
@@ -58,6 +63,14 @@ def eligible_candidate():
     }
 
 
+
+
+def registry_with(models):
+    registry = load_registry()
+    registry["models"] = models
+    return registry
+
+
 class BuddyModelRegistryTests(unittest.TestCase):
     def test_committed_baseline_is_registered_but_never_routed(self):
         registry = load_registry(ROOT / "config" / "buddy-model-registry.json")
@@ -72,7 +85,7 @@ class BuddyModelRegistryTests(unittest.TestCase):
         self.assertIn("dataset_rights_not_verified", reasons)
 
     def test_complete_rights_lineage_and_benchmark_can_be_routed(self):
-        registry = {"schema": "dreamco.buddy.model_registry.v1", "models": [eligible_candidate()]}
+        registry = registry_with([eligible_candidate()])
         decision = route_model(registry, "causal_language_modeling")
         self.assertEqual(decision["status"], "ELIGIBLE_FOR_ROUTING")
         self.assertEqual(decision["selected_model_id"], "dreamco/test-candidate")
@@ -82,7 +95,7 @@ class BuddyModelRegistryTests(unittest.TestCase):
     def test_missing_training_authorization_blocks_routing(self):
         candidate = eligible_candidate()
         candidate["lineage"]["training_authorization_id"] = None
-        decision = route_model({"schema": "dreamco.buddy.model_registry.v1", "models": [candidate]},
+        decision = route_model(registry_with([candidate]),
                                "causal_language_modeling")
         self.assertEqual(decision["status"], "BLOCKED_NO_ELIGIBLE_MODEL")
         self.assertIn("separate_training_authorization_missing", decision["blocked_candidates"][0]["reasons"])
@@ -120,6 +133,28 @@ class BuddyModelRegistryTests(unittest.TestCase):
             validate_registry({"schema": "dreamco.buddy.model_registry.v1",
                                "models": [candidate, copy.deepcopy(candidate)]})
 
+
+
+    def test_user_defined_parameter_counts_have_no_fixed_catalog_ceiling(self):
+        candidate = eligible_candidate()
+        candidate["parameter_count"] = 9876543210
+        registry = registry_with([candidate])
+        self.assertTrue(registry["parameter_sizing_policy"]["custom_parameter_count_allowed"])
+        self.assertIsNone(registry["parameter_sizing_policy"]["maximum_parameters"])
+        self.assertEqual(validate_registry(registry)["models"][0]["parameter_count"], 9876543210)
+
+    def test_zero_or_negative_parameter_count_is_rejected(self):
+        candidate = eligible_candidate()
+        candidate["parameter_count"] = 0
+        with self.assertRaises(ModelRegistryError):
+            validate_registry(registry_with([candidate]))
+
+    def test_untrained_baseline_cannot_be_marked_sellable(self):
+        registry = load_registry()
+        registry["marketplace_policy"]["sale_enabled"] = True
+        registry["models"][0]["marketplace"]["eligible_for_sale"] = True
+        with self.assertRaisesRegex(ModelRegistryError, "untrained or unverified model cannot be sold"):
+            validate_registry(registry)
 
 if __name__ == "__main__":
     unittest.main()
