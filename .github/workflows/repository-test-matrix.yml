@@ -82,6 +82,8 @@ jobs:
           python3 -m unittest tests.test_buddy_technology_radar
       - name: Final repository test registry reconciliation
         run: python3 tools/generate_repository_test_registry.py
+      - name: Validate Buddy self-authoring Bootcamp curriculum contracts
+        run: python3 -m unittest tests.test_buddy_self_bootcamp tests.test_bootcamp_discovery -v
       - name: Run DreamCo Universal Verification Engine
         run: npx tsx tools/run_universal_verification.ts
       - name: Save debugging evidence
