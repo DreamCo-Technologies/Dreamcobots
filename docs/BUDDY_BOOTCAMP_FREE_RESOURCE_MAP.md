@@ -137,3 +137,7 @@ The full worker, job and market taxonomy plus task-by-task AI suitability rules 
 ## All official Hugging Face Learn courses
 
 Buddy's current 12-course Hugging Face Learn inventory is tracked in `config/buddy-huggingface-full-learning-map.json` and is linked from the shared course scheduler. It covers LLMs, context engineering, robotics, compact post-training, agents, Deep RL, computer vision, audio, open-source AI recipes, games, diffusion and 3D. The map is refreshed against [huggingface.co/learn](https://huggingface.co/learn); the Deep RL course is flagged low-maintenance where upstream challenge/leaderboard features are retired or nonfunctional. Eighteen original ecosystem modules and all 37 task families are also mapped.
+
+## FreeCodeCamp full video queue and interactive curriculum inventory
+
+The shared course scheduler now exposes all 1,740 currently cataloged freeCodeCamp video metadata records to all 55 canonical divisions and 65 MasterBot lanes. This checked-in archive is explicitly **partial** (`inventory.complete=false`); do not claim complete channel coverage until the official uploads-playlist count matches the unique parsed IDs. The interactive curriculum's 37 superblocks, 38 chapters, 217 modules, 779 unique blocks and 14,038 challenges are a dated inventory snapshot and require an upstream refresh before any full-coverage claim. Lesson content, tests and transcripts remain rights-gated and must be individually verified.
