@@ -32,6 +32,14 @@ class PrivateLearningStore:
             db.execute("""CREATE TABLE IF NOT EXISTS learning_evidence (
                 tenant TEXT NOT NULL, event_id TEXT NOT NULL, payload TEXT NOT NULL,
                 PRIMARY KEY (tenant, event_id))""")
+            db.execute("""CREATE TABLE IF NOT EXISTS library_study_progress (
+                tenant TEXT NOT NULL, owner_type TEXT NOT NULL, owner_id TEXT NOT NULL,
+                lesson_id TEXT NOT NULL, guide_revision TEXT NOT NULL, status TEXT NOT NULL,
+                attempts INTEGER NOT NULL, evidence_id TEXT NOT NULL,
+                benchmark_passed INTEGER NOT NULL, holdout_passed INTEGER NOT NULL,
+                regression_passed INTEGER NOT NULL, reviewer_approved INTEGER NOT NULL,
+                updated_at TEXT NOT NULL,
+                PRIMARY KEY (tenant, owner_type, owner_id, lesson_id))""")
         os.chmod(self.filename, 0o600)
 
     def _connect(self):
@@ -70,12 +78,79 @@ class PrivateLearningStore:
             ledger.record(LearningEvent(**row))
         return ledger
 
+    def record_library_progress(self, *, tenant_id: str, owner_type: str, owner_id: str,
+                                 lesson_id: str, guide_revision: str, evidence_id: str,
+                                 capture_consent: bool, redacted: bool, outcome_verified: bool,
+                                 benchmark_passed: bool, holdout_passed: bool,
+                                 regression_passed: bool, reviewer_approved: bool) -> dict[str, Any]:
+        if not isinstance(tenant_id, str) or not tenant_id.strip():
+            raise ValueError("authenticated tenant ID required")
+        if owner_type not in {"division", "masterbot"} or not owner_id.strip():
+            raise ValueError("canonical division or MasterBot owner required")
+        for label, value in (("lesson_id", lesson_id), ("guide_revision", guide_revision), ("evidence_id", evidence_id)):
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError(f"{label} is required")
+        if not capture_consent or not redacted:
+            raise PermissionError("explicit consent and redacted evidence are required")
+        if not outcome_verified:
+            raise ValueError("library lesson outcome must be verified")
+        if any(type(value) is not bool for value in (benchmark_passed, holdout_passed, regression_passed, reviewer_approved)):
+            raise ValueError("assessment and review outcomes must be booleans")
+        all_assessments_passed = benchmark_passed and holdout_passed and regression_passed
+        status = "mastered" if all_assessments_passed and reviewer_approved else (
+            "assessment_passed" if all_assessments_passed else "in_progress"
+        )
+        now = __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()
+        with self._connect() as db:
+            existing = db.execute(
+                "SELECT guide_revision, attempts FROM library_study_progress "
+                "WHERE tenant=? AND owner_type=? AND owner_id=? AND lesson_id=?",
+                (tenant_id, owner_type, owner_id, lesson_id),
+            ).fetchone()
+            attempts = existing[1] + 1 if existing and existing[0] == guide_revision else 1
+            db.execute(
+                """INSERT OR REPLACE INTO library_study_progress
+                (tenant, owner_type, owner_id, lesson_id, guide_revision, status, attempts,
+                 evidence_id, benchmark_passed, holdout_passed, regression_passed,
+                 reviewer_approved, updated_at)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                (tenant_id, owner_type, owner_id, lesson_id, guide_revision, status, attempts,
+                 evidence_id, int(benchmark_passed), int(holdout_passed), int(regression_passed),
+                 int(reviewer_approved), now),
+            )
+        return {"lesson_id": lesson_id, "status": status, "attempts": attempts,
+                "evidence_id": evidence_id, "guide_revision": guide_revision,
+                "mastery_awarded": status == "mastered",
+                "model_weight_training_authorized": False}
+
+    def load_library_progress(self, tenant_id: str, owner_type: str, owner_id: str) -> dict[str, dict[str, Any]]:
+        if not isinstance(tenant_id, str) or not tenant_id.strip():
+            raise ValueError("authenticated tenant ID required")
+        if owner_type not in {"division", "masterbot"} or not owner_id.strip():
+            raise ValueError("canonical division or MasterBot owner required")
+        with self._connect() as db:
+            rows = db.execute(
+                """SELECT lesson_id, guide_revision, status, attempts, evidence_id,
+                benchmark_passed, holdout_passed, regression_passed, reviewer_approved, updated_at
+                FROM library_study_progress WHERE tenant=? AND owner_type=? AND owner_id=?""",
+                (tenant_id, owner_type, owner_id),
+            ).fetchall()
+        return {
+            row[0]: {
+                "guide_revision": row[1], "status": row[2], "attempts": row[3],
+                "evidence_id": row[4], "benchmark_passed": bool(row[5]),
+                "holdout_passed": bool(row[6]), "regression_passed": bool(row[7]),
+                "reviewer_approved": bool(row[8]), "updated_at": row[9],
+            } for row in rows
+        }
+
     def forget(self, tenant_id: str) -> int:
         if not isinstance(tenant_id, str) or not tenant_id.strip():
             raise ValueError("authenticated tenant ID required")
         with self._connect() as db:
-            result = db.execute("DELETE FROM learning_evidence WHERE tenant=?", (tenant_id,))
-            return result.rowcount
+            evidence = db.execute("DELETE FROM learning_evidence WHERE tenant=?", (tenant_id,))
+            progress = db.execute("DELETE FROM library_study_progress WHERE tenant=?", (tenant_id,))
+            return evidence.rowcount + progress.rowcount
 
 
 class BuddyLearningBridge:
