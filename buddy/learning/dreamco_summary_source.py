@@ -74,13 +74,14 @@ def select_next_for_division(division: str, gaps: Iterable[Capability], *, recen
                              path: Path) -> dict | None:
     payload = load_organization(path)
     resources = resources_for_division(division, path)
-    resource = choose_next(resources, list(gaps), recent=recent)
+    gap_list = list(gaps)
+    resource = choose_next(resources, gap_list, recent=recent)
     if resource is None:
         return None
     package = next((row for row in payload["packages"] if stable_resource_id(row.get("asset_id")) == resource.id), None)
     if package is None:
         raise ValueError("selected learning resource has no package")
-    capability = next(iter(gaps), None) if not isinstance(gaps, (list, tuple)) else (gaps[0] if gaps else None)
+    capability = gap_list[0] if gap_list else None
     if capability is None:
         capability = Capability(name=division, category=division)
     plan = study_plan(resource, capability)
@@ -101,15 +102,17 @@ def select_next_for_division(division: str, gaps: Iterable[Capability], *, recen
 
 def append_progress_event(path: Path, *, asset_id: str, division: str, event_type: str,
                           evidence_ref: str, source_revision: str | None = None,
-                          score: float | None = None) -> dict:
+                          score: float | None = None, training_permission: bool = False) -> dict:
+    if event_type == "mastery_awarded":
+        raise PermissionError("mastery is computed only by the evidence verifier, never self-reported")
     if event_type not in EVENTS:
         raise ValueError(f"unsupported progress event: {event_type}")
+    if event_type.startswith("training_run_") and training_permission is not True:
+        raise PermissionError("training progress requires explicit asset training permission")
     if not asset_id or not division or not evidence_ref:
         raise ValueError("asset_id, division and evidence_ref are required")
     if score is not None and not 0 <= score <= 1:
         raise ValueError("score must be between 0 and 1")
-    if event_type == "mastery_awarded":
-        raise PermissionError("mastery is computed only by the evidence verifier, never self-reported")
     event = {
         "event_id": hashlib.sha256(f"{asset_id}|{division}|{event_type}|{evidence_ref}".encode()).hexdigest(),
         "asset_id": asset_id,
