@@ -124,8 +124,19 @@ class ExecutorTests(unittest.TestCase):
         self.assertEqual(out["status"], "invalid_input")
 
     def test_unmapped_bot_is_not_faked(self):
-        slug = next(s for s, b in self.ex.bots.items() if b["engine"] == "unmapped")
-        out = self.ex.run(slug, {"objective": "x"})
+        # The current production registry has no unmapped profiles. Inject a
+        # synthetic unmapped manifest so the fail-closed runtime branch remains tested.
+        import copy
+        collection = load_manifests()
+        bot = copy.deepcopy(collection["bots"][0])
+        bot["slug"] = "synthetic-unmapped-bot"
+        bot["engine"] = "unmapped"
+        bot["engine_confidence"] = 0.0
+        bot["flags"] = sorted(set(bot.get("flags", [])) | {"engine_unmapped"})
+        bot["run"] = "spec_only"
+        collection["bots"].append(bot)
+        executor = FleetExecutor(collection=collection, env={})
+        out = executor.run("synthetic-unmapped-bot", {"objective": "x"})
         self.assertEqual(out["status"], "unmapped")
         self.assertIsNone(out["result"])
 
