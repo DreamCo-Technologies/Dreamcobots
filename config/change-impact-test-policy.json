@@ -501,9 +501,23 @@
       "tests": [
         "tests/test_freecodecamp_specialist_routing.py",
         "tests/test_buddy_course_track_registry.py",
-        "tests/test_buddy_learning_runtime_bridge.py"
+        "tests/test_buddy_learning_runtime_bridge.py",
+        "tests/test_paper_trading_sandbox.py"
       ],
       "reason": "Validate full-catalog FreeCodeCamp routing, canonical division/MasterBot ownership, triage separation, and Buddy runtime demonstrations"
+    },
+    {
+      "sources": [
+        "buddy/trading/paper_broker.py",
+        "buddy/trading/backtest.py",
+        "buddy/trading/demo.py",
+        "buddy/trading/__init__.py",
+        "buddy/trading/momentum.py"
+      ],
+      "tests": [
+        "tests/test_paper_trading_sandbox.py"
+      ],
+      "reason": "Paper-only broker risk limits, next-bar backtesting, transaction costs, deterministic demo, and FreeCodeCamp course-to-demo wiring"
     }
   ],
   "evidence_rules": {
