@@ -110,6 +110,8 @@ class RuntimeBridgeTests(unittest.TestCase):
             self.bridge.library_learning_queue(query="React")
         with self.assertRaises(ValueError):
             self.bridge.library_learning_queue(division="DreamCodeLab", masterbot="DreamCodeLab")
+        with self.assertRaises(ValueError):
+            self.bridge.library_learning_queue(division="DreamCodeLab", limit=101)
 
     def test_library_gap_persistence_requires_redaction(self):
         with self.assertRaises(PermissionError):
