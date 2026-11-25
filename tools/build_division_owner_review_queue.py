@@ -266,6 +266,9 @@ def validate_owner_review_queue(queue: dict[str, Any]) -> None:
             raise OwnerReviewQueueError("unapproved_mapping_or_inferred_assignment_detected")
         if item.get("owner_approval") is not None:
             raise OwnerReviewQueueError("approved_source_item_requires_a_separate_signed_decision_record")
+    for item in queue.get("masterbot_domain_decisions", []):
+        if not item.get("resource_bundle_id") or not item.get("evidence"):
+            raise OwnerReviewQueueError("pending_masterbot_mapping_missing_resource_or_evidence_lineage")
 
     for item in queue.get("shared_platform_masterbots", []):
         if (
