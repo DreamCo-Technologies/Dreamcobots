@@ -111,12 +111,17 @@ def validate_profile(profile: dict) -> list[str]:
             errors.append(f"training.{key} must be a non-negative number")
     for source in profile.get("sources", []):
         source_id = source.get("id", "<unknown>")
+        for field in ("id", "uri", "category"):
+            if not isinstance(source.get(field), str) or not source[field].strip():
+                errors.append(f"source {source_id}: {field} is required")
         if source.get("status") not in SOURCE_STATES:
             errors.append(f"source {source_id}: invalid status")
         if source.get("rights") not in RIGHTS_STATES:
             errors.append(f"source {source_id}: invalid rights state")
         if source.get("content_state") not in CONTENT_STATES:
             errors.append(f"source {source_id}: invalid content_state")
+        if source.get("category") not in mix:
+            errors.append(f"source {source_id}: category must have a source_mix weight")
         if source.get("status") == "approved" and not _source_rights_verified(source):
             errors.append(f"source {source_id}: approved training use requires verified rights evidence and permission")
         if source.get("content_state") == "content_available":
@@ -183,8 +188,17 @@ def build_learning_plan(profile: dict) -> dict:
 
 def build_training_manifest(profile: dict, plan: dict) -> dict:
     """Describe trainable artifacts and guardrails for an execution adapter."""
+    errors = validate_profile(profile)
+    if errors:
+        raise ValueError("; ".join(errors))
     if plan.get("profile_id") != profile.get("profile_id"):
         raise ValueError("plan/profile mismatch")
+    expected_plan = build_learning_plan(profile)
+    if plan.get("source_manifest") != expected_plan.get("source_manifest"):
+        raise ValueError("plan source manifest does not match currently eligible profile sources")
+    if (plan.get("must_not_claim_weights_changed_until_checkpoint_receipt") is not True
+            or plan.get("requires_worker_execution") is not True):
+        raise ValueError("plan execution truth guardrails are required")
     return {
         "schema": "dreamco.buddy.training_manifest.v1",
         "profile_id": profile["profile_id"],
