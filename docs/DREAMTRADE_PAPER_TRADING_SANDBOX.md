@@ -17,6 +17,7 @@ The demo uses deterministic synthetic OHLCV bars. It does not connect to a broke
 - `sma_crossover_signals`: a simple baseline strategy. Each signal uses only prior bars.
 - `run_backtest`: executes at the next bar open, marks positions to market, and records an equity curve and fills.
 - `synthetic_bars`: deterministic sample data so tests and demonstrations are reproducible.
+- `calculate_momentum_score` and `rank_momentum_universe`: a 252-bar (12-month proxy) cross-sectional ranking across 50 synthetic symbols. The demo ranks candidates but does not execute multi-symbol portfolio orders.
 
 ## Required build sequence
 
@@ -43,7 +44,7 @@ The demo uses deterministic synthetic OHLCV bars. It does not connect to a broke
 
 ## Source-course expansion roadmap
 
-The source course describes a larger Django application with market-data ingestion, portfolio/account connectivity, a 12-month momentum strategy across a 50-stock universe, a dashboard, historical backfills, and paper execution. The current DreamTrade package is deliberately a smaller local-only foundation. Build the larger system in these reviewed phases:
+The source course describes a larger Django application with market-data ingestion, portfolio/account connectivity, a 12-month momentum strategy across a 50-stock universe, a dashboard, historical backfills, and paper execution. The current DreamTrade package is deliberately a smaller local-only foundation: it now demonstrates a 252-bar momentum ranking across 50 synthetic symbols plus a single-symbol paper backtest, but it does not yet build a multi-symbol portfolio or external integrations. Build the larger system in these reviewed phases:
 
 1. Create Django apps and relational models for symbols, OHLCV bars, portfolio snapshots, strategy runs, signals, orders, and fills.
 2. Add Django admin views and validation for market data, portfolios, and strategy configuration.
