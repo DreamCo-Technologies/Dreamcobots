@@ -98,6 +98,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertEqual(len(lessons), len(catalog["videos"]) - triage_count)
         self.assertTrue(all(lesson.content_status == "original_implementation_brief" for lesson in lessons))
         self.assertTrue(all(lesson.source_video_id for lesson in lessons))
+        self.assertTrue(all(lesson.division_targets and lesson.masterbot_targets for lesson in lessons))
         self.assertTrue(all(lesson.implementation_steps and lesson.buddy_demo for lesson in lessons))
         self.assertFalse(any(
             resource.name == lesson.title
@@ -120,6 +121,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertTrue(all(lesson.content_status == "metadata_only" for lesson in triage))
         self.assertTrue(all(lesson.rights_mode == "metadata_only_until_item_level_permissions" for lesson in triage))
         self.assertTrue(all(lesson.implementation_steps and lesson.buddy_demo for lesson in triage))
+        self.assertTrue(all(lesson.division_targets and lesson.masterbot_targets for lesson in triage))
         self.assertTrue(all(set(lesson.division_targets) == {"DreamEducation", "CommandCore"} for lesson in triage))
         self.assertTrue(all("DreamDiscovery" in lesson.masterbot_targets for lesson in triage))
         self.assertFalse(any(
