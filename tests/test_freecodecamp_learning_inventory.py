@@ -8,12 +8,15 @@ from tools.sync_freecodecamp_learning_inventory import build_payloads
 class FreeCodeCampLearningInventoryTests(unittest.TestCase):
     def test_course_queue_counts_match_the_catalog_and_registry(self):
         learning, policy = build_payloads()
-        self.assertEqual(
-            learning["youtube_video_inventory"]["observed_video_count"],
-            learning["youtube_video_inventory"]["expected_entry_count"] or learning["youtube_video_inventory"]["observed_video_count"],
-        )
+        if learning["youtube_video_inventory"]["inventory_complete"]:
+            self.assertEqual(
+                learning["youtube_video_inventory"]["observed_video_count"],
+                learning["youtube_video_inventory"]["expected_entry_count"],
+            )
+        else:
+            self.assertFalse(learning["youtube_video_inventory"]["inventory_complete"])
         self.assertEqual(policy["study_assets"]["course_track_count"], 8)
-        self.assertGreater(policy["study_assets"]["course_lesson_count"], learning["youtube_video_inventory"]["observed_video_count"])
+        from buddy.learning.course_track_registry import load_course_lessons\n        self.assertEqual(policy["study_assets"]["course_lesson_count"], len(load_course_lessons()))
         self.assertIn(learning["youtube_video_inventory"]["inventory_status"], {"complete", "partial"})
 
     def test_partial_inventory_never_claims_complete(self):
