@@ -226,5 +226,33 @@
     "external_training_ingestion": "NOT_IMPLEMENTED; use staged local files after rights and privacy approval",
     "default_network": "DISABLED",
     "default_training": "DISABLED"
-  }
+  },
+  "training_method_execution": [
+    {
+      "method": "sft",
+      "implementation_status": "CODE_PATH_PRESENT_NOT_EXECUTED",
+      "implementation_paths": [
+        "tools/build_dreamco_training_factory.py",
+        "tools/build_dreamco_training_examples.py",
+        "buddy/datasets/training_jobs.py"
+      ],
+      "execution_evidence": "Plan and job-manifest code only; no training job or weight update is claimed."
+    },
+    {
+      "method": "lora",
+      "implementation_status": "CODE_PATH_PRESENT_NOT_EXECUTED",
+      "implementation_paths": [
+        "tools/build_dreamco_training_factory.py",
+        "tools/build_dreamco_training_examples.py",
+        "buddy/datasets/training_jobs.py"
+      ],
+      "execution_evidence": "Plan and job-manifest code only; no adapter training or weight update is claimed."
+    },
+    {
+      "method": "teacher_student_distillation",
+      "implementation_status": "NOT_IMPLEMENTED_AND_OUTPUT_RIGHTS_GATED",
+      "implementation_paths": [],
+      "execution_evidence": "Distillation remains disabled until teacher output rights, student lineage, consent, and independent evaluation are implemented."
+    }
+  ]
 }
