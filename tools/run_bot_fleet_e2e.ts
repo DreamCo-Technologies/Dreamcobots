@@ -63,7 +63,7 @@ This report executes every registered bot through the repository-controlled Budd
 | Profiles tested | ${report.summary.profilesTested.toLocaleString("en-US")} |
 | Sandbox certified | ${report.summary.sandboxCertified.toLocaleString("en-US")} |
 | Failed | ${report.summary.failed.toLocaleString("en-US")} |
-| Divisions tested | ${report.summary.divisionsTested} |
+| Domain divisions tested | ${report.summary.divisionsTested} |\n| Distinct profile division labels | ${report.summary.profileDivisionLabelsTested} |\n| Supplemental portfolio groups | ${report.summary.supplementalPortfolioGroupsTested} |
 | Declared capabilities tested | ${report.summary.declaredCapabilitiesTested.toLocaleString("en-US")} |
 | Capability contracts passed | ${report.summary.sandboxCapabilityTestsPassed.toLocaleString("en-US")} |
 | Capability contracts failed | ${report.summary.sandboxCapabilityTestsFailed.toLocaleString("en-US")} |
