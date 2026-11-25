@@ -122,3 +122,18 @@ The freeCodeCamp catalog remains metadata-only. Its plans explicitly prohibit me
 ## Ownership and third-party rights
 
 DreamCo should retain records showing who authored each original lesson and when. DreamCo may claim rights in original expression it creates, subject to applicable law, agreements, and the actual authorship of the work. That does not transfer ownership of third-party course materials. Source links, attribution, license terms, permission evidence, and restrictions remain attached to each lesson. Public availability, a YouTube upload, or another creator's reuse does not by itself grant permission to copy, download, redistribute, or train on that material. When source permissions are uncertain, use only permitted metadata and independently written explanations/examples, and leave media, transcript, redistribution, and model-training gates closed until reviewed.
+
+## Complete freeCodeCamp learning path and per-video study guides
+
+The full source map and ordered learning path live in `config/freecodecamp-complete-learning-path.json`. This includes the seven current core full-stack certification tracks, additional language/C# certifications, current and legacy material, specialist electives, the official YouTube library, technical publication and community/open-source references.
+
+The complete video guide contract is `config/freecodecamp-detailed-video-study-guide.schema.json`. Every catalog video receives a work-queue row; every authorized video must receive a detailed independent guide with timestamped chapter notes, learning objectives, concepts, glossary, code patterns, worked examples, original exercises/projects, debugging playbook, knowledge checks/answer key, division applications, citations and human review.
+
+Build and validate the per-video queue:
+
+```bash
+python tools/build_freecodecamp_study_guides.py --out-dir artifacts/freecodecamp-study-guides
+python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
+```
+
+The weekly workflow publishes queue coverage as an artifact. Metadata-only videos remain pending; the generator never invents a summary from a title. A transcript must have separately evidenced study, derivative-summary and evaluation permissions before Buddy may author and retain a detailed guide. Model training remains a separate permission.
