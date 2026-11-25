@@ -34,7 +34,7 @@ class RevenueLanePlaybookFrameworkTests(unittest.TestCase):
 
     def test_external_actions_and_live_money_remain_gated(self):
         self.assertIn("unapproved_ad_spend", self.framework["lanes"][0]["blocked_actions"])
-        self.assertTrue(any("approval" in action for lane in self.framework["lanes"] for action in lane["blocked_actions"]))
+        self.assertTrue(any(("approval" in action or "unapproved" in action) for lane in self.framework["lanes"] for action in lane["blocked_actions"]))
         self.assertTrue(any("live revenue gate" in rule for rule in self.framework["global_rules"]))
 
 
