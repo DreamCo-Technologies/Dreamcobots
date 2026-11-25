@@ -26,7 +26,7 @@ def pick(row:dict[str,str],*names:str)->str:
     return ""
 
 def build(rows:list[dict[str,str]],version:str)->dict[str,Any]:
-    occupations:dict[str,dict[str,Any]]=defaultdict(lambda:{"occupation_code":"","tasks":[]})
+    occupations:dict[str,dict[str,Any]]=defaultdict(lambda:{"occupation_code":"","occupation_title":"","tasks":[]})
     for row in rows:
         code=pick(row,"O*NET-SOC Code","O*NET SOC Code","occupation code")
         task_id=pick(row,"Task ID","task id")
@@ -34,9 +34,10 @@ def build(rows:list[dict[str,str]],version:str)->dict[str,Any]:
         if not code or not task_id or not title: continue
         item=occupations[code]
         item["occupation_code"]=code
+        item["occupation_title"]=pick(row,"Occupation Title","Title") or item["occupation_title"]
         item["tasks"].append({"task_id":task_id,"task":title,
           "task_type":pick(row,"Task Type","task type") or "unspecified",
-          "date":pick(row,"Date","date"),"domain_source":pick(row,"Domain Source","domain source")})
+          "date":pick(row,"Date","date"),"domain_source":pick(row,"Domain Source","domain source"),\n          "importance":pick(row,"Importance","importance") or None})
     output=[]
     for code,item in sorted(occupations.items()):
         tasks=sorted(item["tasks"],key=lambda x:(x["task_type"]!="Core",x["task_id"]))
