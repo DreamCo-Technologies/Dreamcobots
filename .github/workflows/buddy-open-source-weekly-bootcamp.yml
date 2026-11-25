@@ -34,6 +34,9 @@ on:
       - "config/buddy-agentic-occupation-playbook.schema.json"
       - "config/freecodecamp-complete-learning-path.json"
       - "tools/sync_freecodecamp_catalog.py"
+      - "tools/sync_freecodecamp_learning_inventory.py"
+      - "tests/test_freecodecamp_learning_inventory.py"
+      - ".github/workflows/freecodecamp-catalog-refresh.yml"
       - "config/buddy-source-study-guide.schema.json"
       - "config/buddy-source-rights-manifest.json"
       - "config/buddy-authorized-media-rights.json"
@@ -191,6 +194,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_onet_task_curricula.py' -v
       - name: Run freeCodeCamp transcript rights and guide-queue tests
         run: python -m unittest discover -s tests -p 'test_freecodecamp_study_guides.py' -v
+      - name: Run FreeCodeCamp inventory and queue synchronization tests
+        run: python -m unittest discover -s tests -p 'test_freecodecamp_learning_inventory.py' -v
       - name: Run Hugging Face taxonomy tests
         run: python -m unittest discover -s tests -p 'test_huggingface_subject_taxonomy.py' -v
       - name: Run Hugging Face and O*NET discovery regression tests
@@ -227,6 +232,8 @@ jobs:
           python tools/sync_freecodecamp_catalog.py --out "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json"
           python tools/sync_freecodecamp_catalog.py --check --out "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json"
           cp "$RUNNER_TEMP/buddy-bootcamp-weekly/freecodecamp-catalog.json" buddy/bootcamp/sources/freecodecamp/catalog.json
+          python tools/sync_freecodecamp_learning_inventory.py
+          python tools/sync_freecodecamp_learning_inventory.py --check
 
       - name: Build rights-gated freeCodeCamp detailed video guide queue
         run: |
