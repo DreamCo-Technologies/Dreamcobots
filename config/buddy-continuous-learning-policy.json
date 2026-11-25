@@ -6,17 +6,17 @@
     "scheduler_cron": "*/5 * * * *",
     "full_fleet_sweep_cron": "15 */6 * * *",
     "unique_fleet_run_every_minutes": 5,
-    "lane_runs_per_division_per_day": 4,
-    "rotating_lane_runs_per_division_per_325_minutes": 1,
+    "lane_runs_per_masterbot_per_day": 4,
+    "rotating_lane_runs_per_masterbot_per_325_minutes": 1,
     "daily_review_utc": "0 2 * * *",
     "benchmark_review_utc": "0 4 * * 1",
-    "cycle_scope": "ALL_65_DIVISIONS_WITH_ROTATING_FIVE_MINUTE_RUNS_AND_SIX_HOURLY_FULL_SWEEPS"
+    "cycle_scope": "ALL_65_MASTERBOT_LANES_WITH_ROTATING_FIVE_MINUTE_RUNS_AND_SIX_HOURLY_FULL_SWEEPS"
   },
   "fleet": {
     "registry_source": "config/masterbot-65-registry.json",
-    "expected_division_count": 65,
+    "expected_masterbot_count": 65,
     "require_registry_count_match": true,
-    "every_division_gets_lane": true,
+    "every_masterbot_gets_lane": true,
     "matrix_execution": true,
     "max_parallel_lanes": 5,
     "five_minute_mode": "ONE_DISTINCT_MASTERBOT_LANE_PER_RUN_ROTATING_ROUND_ROBIN",
@@ -54,8 +54,8 @@
     "parallelism": "bounded_by_runner_capacity_and_resource_budget"
   },
   "cycle": [
-    "load_canonical_65_division_registry",
-    "select_fair_share_division_for_five_minute_tick_or_all_divisions_for_full_sweep",
+    "load_canonical_65_masterbot_registry",
+    "select_fair_share_masterbot_lane_for_five_minute_tick_or_all_masterbot_lanes_for_full_sweep",
     "ingest_approved_cross_run_learning_events",
     "inventory_capability_gaps",
     "select_highest_priority_gap",
