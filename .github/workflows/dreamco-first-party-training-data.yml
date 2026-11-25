@@ -3,6 +3,10 @@ name: DreamCo First-Party Training Data Factory
 on:
   pull_request:
     paths:
+      - "config/buddy-government-community-enterprise-curriculum.json"
+      - "config/buddy-workforce-entrepreneurship-bootcamp.json"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "config/buddy-university-curriculum.json"
       - "data/dreamco_training/**"
       - "config/dreamco-training-source-registry.json"
       - "config/dreamco-first-party-training-factory.json"
@@ -24,6 +28,10 @@ on:
   push:
     branches: [main]
     paths:
+      - "config/buddy-government-community-enterprise-curriculum.json"
+      - "config/buddy-workforce-entrepreneurship-bootcamp.json"
+      - "config/freecodecamp-complete-learning-path.json"
+      - "config/buddy-university-curriculum.json"
       - "data/dreamco_training/**"
       - "config/dreamco-training-source-registry.json"
       - "config/dreamco-first-party-training-factory.json"
@@ -155,12 +163,18 @@ jobs:
           assert plan["coverage"]["task_families"] == 37
           assert plan["coverage"]["division_task_assignments"] == 2405
           assert plan["coverage"]["source_families"] == 9
+          assert plan["coverage"]["university_domains"] == 45
+          assert plan["coverage"]["university_course_blueprints"] == 190
+          assert plan["coverage"]["shared_core_courses"] == 10
           assert plan["coverage"]["implemented_metadata_adapters"] == 10
           assert plan["truth_boundary"]["weights_trained"] is False
           print(json.dumps({
               "ok": True,
               "division_task_assignments": 2405,
               "source_families": 9,
+              "university_domains": 45,
+              "university_course_blueprints": 190,
+              "shared_core_courses": 10,
               "implemented_metadata_adapters": 10,
               "training_started": False
           }))
