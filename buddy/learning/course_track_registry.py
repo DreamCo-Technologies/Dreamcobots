@@ -47,8 +47,126 @@ def _stable_id(track_id: str, lesson_id: str) -> int:
     return (int.from_bytes(digest[:8], "big") & 0x7FFFFFFFFFFFFFFF) or 1
 
 
-def _rows(track: dict, data: dict) -> list[dict]:
+def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
     parser = track["parser"]
+    if parser == "universal_library_curriculum":
+        ecosystem_data = _read(root / "config/library_ecosystems.json")
+        rows = []
+        registry_urls = {
+            "python": "https://pypi.org/",
+            "javascript": "https://www.npmjs.com/",
+            "java": "https://central.sonatype.com/",
+            "dotnet": "https://www.nuget.org/",
+            "rust": "https://crates.io/",
+            "go": "https://pkg.go.dev/",
+            "ruby": "https://rubygems.org/",
+            "php": "https://packagist.org/",
+            "dart": "https://pub.dev/",
+            "swift": "https://swift.org/",
+            "objective-c": "https://cocoapods.org/",
+            "cpp": "https://conan.io/center",
+            "r": "https://cran.r-project.org/",
+            "julia": "https://julialang.org/",
+            "perl": "https://www.cpan.org/",
+            "lua": "https://luarocks.org/",
+            "haskell": "https://hackage.haskell.org/",
+            "elixir": "https://hex.pm/",
+            "nim": "https://nimble.directory/",
+            "ocaml": "https://opam.ocaml.org/",
+            "racket": "https://pkgs.racket-lang.org/",
+            "conda": "https://conda-forge.org/",
+            "docker": "https://hub.docker.com/",
+            "terraform": "https://registry.terraform.io/",
+            "helm": "https://artifacthub.io/",
+            "github-actions": "https://github.com/marketplace?type=actions",
+            "raku": "https://raku.land/",
+            "d": "https://code.dlang.org/",
+            "crystal": "https://shardbox.org/",
+            "elm": "https://package.elm-lang.org/",
+            "clojure": "https://clojars.org/",
+            "matlab": "https://www.mathworks.com/matlabcentral/fileexchange/",
+            "powershell": "https://www.powershellgallery.com/",
+            "solidity": "https://www.npmjs.com/",
+            "move": "https://github.com/",
+            "embedded": "https://registry.platformio.org/",
+            "game-engines": "https://godotengine.org/asset-library/",
+            "ml-model-tools": "https://huggingface.co/docs",
+        }
+        for ecosystem in ecosystem_data.get("ecosystems", []):
+            ecosystem_id = str(ecosystem.get("id", "")).strip()
+            if not ecosystem_id:
+                continue
+            rows.append({
+                "id": f"ecosystem-discovery-{ecosystem_id}",
+                "title": f"{ecosystem_id.replace('-', ' ').title()} library ecosystem discovery",
+                "objective": (
+                    f"Discover and normalize authoritative libraries, frameworks, SDKs and developer tools "
+                    f"for {ecosystem_id}. Languages: {', '.join(ecosystem.get('languages', []))}. "
+                    f"Registry targets: {', '.join(ecosystem.get('registries', []))}. "
+                    "Candidate discovery is not proof of package verification or guide completeness."
+                ),
+                "practice": (
+                    "Create a bounded, rate-limited registry inventory; deduplicate package identities; "
+                    "capture exact versions, source URLs, maintenance metadata and license evidence; "
+                    "queue original guide authoring without executing downloaded code."
+                ),
+                "assessment": (
+                    "Verify registry provenance, candidate deduplication, version pinning, item-level rights, "
+                    "guide schema, sandbox tests, relevant benchmark, unseen holdout and regression evidence."
+                ),
+                "benchmark": "Universal library discovery and guide evidence acceptance suite.",
+                "source_url": registry_urls.get(ecosystem_id, "https://github.com/"),
+            })
+        from buddy.learning.universal_library_registry import load_approved_guides
+        for approved_guide in load_approved_guides(root):
+            guide = approved_guide.document
+            library = guide.get("library", {})
+            rows.append({
+                "id": f"library-guide-{approved_guide.canonical_id}",
+                "title": f"Study {approved_guide.name}",
+                "objective": "; ".join(guide.get("learning_map", {}).get("objectives", [])),
+                "practice": "Complete the guide exercises and original capstone in an isolated sandbox.",
+                "assessment": "Pass the guide's targeted benchmark, unseen holdout and regression checks.",
+                "benchmark": guide.get("evaluation", {}).get("target_benchmark", "library-specific benchmark"),
+                "source_url": library.get("official_homepage", "https://github.com/"),
+                "guide_path": approved_guide.path.relative_to(root).as_posix(),
+            })
+        seed_catalog_path = data.get("seed_catalog", "data/buddy-library-seed-catalog.json")
+        seed_catalog_file = root / seed_catalog_path
+        if seed_catalog_file.exists():
+            seed_catalog = _read(seed_catalog_file)
+            for candidate in seed_catalog.get("candidates", []):
+                if candidate.get("status") != "seed_candidate_unverified":
+                    continue
+                candidate_id = str(candidate.get("id", "")).strip()
+                candidate_name = str(candidate.get("name", "")).strip()
+                if not candidate_id or not candidate_name:
+                    continue
+                categories = ", ".join(candidate.get("categories", []))
+                rows.append({
+                    "id": f"candidate-discovery-{candidate_id}",
+                    "title": f"Discover and verify {candidate_name}",
+                    "objective": (
+                        f"Verify the identity and purpose of the {candidate_name} candidate from {categories}. "
+                        "Find first-party documentation, determine whether it is a library, framework, SDK, API, "
+                        "runtime, platform or concept, pin an exact version, review maintenance and license terms, "
+                        "then author an original guide with relevant O*NET, Hugging Face and benchmark crosswalks."
+                    ),
+                    "practice": (
+                        "Use approved metadata-only registry discovery and first-party documentation. "
+                        "Do not download package source, execute code, fetch model weights or datasets, "
+                        "or infer evaluation/training permission. Create a review-required guide draft."
+                    ),
+                    "assessment": (
+                        "Pass canonical identity, official source, version, API inventory coverage, license/terms, "
+                        "security, exercises, relevant O*NET/Hugging Face mapping, task-matched benchmark, holdout "
+                        "and regression review. Candidate discovery alone is not mastery."
+                    ),
+                    "benchmark": "Library candidate provenance and study-guide evidence benchmark.",
+                    "source_url": "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/server/seed-buddy-bot.ts",
+                    "rights_mode": "metadata_discovery_only_no_download_no_execution",
+                })
+        return rows
     if parser == "tolkien":
         return [
             *[{"id": row["id"], "title": row["id"].replace("-", " ").title(),
@@ -182,7 +300,7 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
     resource_ids: set[int] = set()
     for track in registry.get("tracks", []):
         data = _read(root / track["source"])
-        for row in _rows(track, data):
+        for row in _rows(track, data, root):
             lesson_id = str(row.get("id", "")).strip()
             title = str(row.get("title", "")).strip()
             if not lesson_id or not title:
@@ -206,8 +324,8 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 assessment=str(row.get("assessment", "")).strip(),
                 benchmark=str(row.get("benchmark", "independent task and regression suite")).strip(),
                 source_url=str(row.get("source_url") or track["source_url"]),
-                guide_path=track["guide"],
-                rights_mode=track["rights"],
+                guide_path=str(row.get("guide_path") or track["guide"]),
+                rights_mode=str(row.get("rights_mode") or track["rights"]),
                 delivery=track["delivery"],
             ))
     return lessons

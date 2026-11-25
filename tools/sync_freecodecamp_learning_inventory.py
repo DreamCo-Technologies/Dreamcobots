@@ -71,9 +71,15 @@ def build_payloads(root: Path = ROOT) -> tuple[dict, dict]:
         "freecodecamp_video_inventory_status": "complete" if complete else "partial",
         "freecodecamp_video_count": len(videos),
         "course_track_rule": (
-            "All canonical divisions and MasterBot lanes receive shared foundation queues. "
-            "Every currently cataloged freeCodeCamp video is included. Video metadata is not lesson content; "
-            "item-level rights and a detailed guide are required before study completion or mastery."
+            "All canonical divisions and MasterBot lanes receive shared foundation queues. The registry includes "
+            "12 official Hugging Face Learn courses, 18 Hugging Face ecosystem modules, all 37 Hugging Face task families, "
+            "12 current/additional freeCodeCamp certifications, all seven curriculum primitives, 10 learning phases, "
+            "22 video subject tracks, every currently cataloged freeCodeCamp video, Tolkien, tokenizer, CPU-first LLM, "
+            "O*NET subject lessons, one discovery lesson for each of 38 registered software library ecosystems, and "
+            "531 unverified technology/library candidates extracted from Buddy's existing mastery curriculum. Video "
+            "metadata remains metadata-only until item-level rights are reviewed; the checked-in video snapshot is "
+            "partial. Ecosystem and seed-candidate discovery lessons are not verified package records or mastered "
+            "library guides."
         ),
     })
     return learning, policy

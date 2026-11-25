@@ -55,7 +55,28 @@ learning_sources:
     curriculum: config/buddy-universal-library-curriculum.json
     guide_schema: config/buddy-library-study-guide.schema.json
     guide_standard: docs/BUDDY_UNIVERSAL_LIBRARY_STUDY_GUIDE_STANDARD.md
-    runtime_adapter: planned_buddy_learning_universal_library_registry
+    runtime_adapter: buddy.learning.universal_library_registry
+    scheduler: buddy.learning.course_track_registry
+    internal_search: search_internal_library_knowledge
+    gap_recorder: record_library_knowledge_gap
+    coverage_report: library_coverage_report
+    cli: tools/buddy_library_knowledge.py
+    registry_adapters: config/buddy-library-registry-adapters.json
+    ecosystem_adapter_coverage: config/buddy-library-ecosystem-adapter-coverage.json
+    automated_ecosystem_discovery_count: 8
+    manual_ecosystem_review_count: 30
+    metadata_discovery: buddy.learning.library_registry_discovery.search_public_registry
+    metadata_discovery_network_default: disabled
+    metadata_discovery_requires_explicit_opt_in: true
+    guide_draft_builder: tools/create_buddy_library_guide_draft.py
+    draft_status: review_required
+    draft_rights_default: pending
+    automatic_guide_approval: false
+    curated_seed_catalog: data/buddy-library-seed-catalog.json
+    curated_seed_builder: tools/build_buddy_library_seed_catalog.py
+    curated_seed_candidate_count: 531
+    curated_seed_candidates_are_unverified: true
+    package_downloads_and_execution: prohibited_by_discovery_adapter
     applies_to: all_55_canonical_divisions_and_65_masterbot_lanes
     discovery: authoritative_package_registries_first_party_docs_and_source_repositories
     internal_first: true

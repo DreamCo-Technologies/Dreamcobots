@@ -127,3 +127,55 @@ Never collapse these into one misleading "percent complete" number. Distinguish 
 5. Add deterministic validators and CI checks for schema, provenance, stale versions, rights, crosswalks and evidence.
 6. Connect the registry to Buddy's internal retrieval and study scheduler.
 7. Publish only validated internal knowledge; retain unknowns and partial coverage honestly.
+
+
+## Runtime adapter and existing ecosystem catalog
+
+The first production-facing adapter is `buddy.learning.universal_library_registry`. It provides:
+
+- `search_internal_library_knowledge(query)`: searches only DreamCo-owned, approved, rights-eligible guide files in `data/buddy-library-study-guides/`.
+- `record_library_knowledge_gap(query)`: appends a local JSONL gap event. It does not call an external model, fetch a website or start a download.
+- `library_coverage_report()`: reports ecosystem lanes, approved guide count and recorded gaps without claiming worldwide completeness.
+- `tools/buddy_library_knowledge.py`: CLI for `search`, `record-gap` and `report`.
+
+The existing `config/library_ecosystems.json` is the extensible discovery-lane catalog. The shared `buddy.learning.course_track_registry` now emits an initial discovery lesson for each listed ecosystem, making those lessons available through the existing shared 55-domain / 65-MasterBot queue. These are discovery assignments, not individual package records and not completed study guides.
+
+Before a guide can be searched internally, the adapter checks its core structure, version, official HTTPS home, source provenance, learning objectives, API coverage declaration, use cases, practice exercises, evaluation plan and explicit rights fields. Approved guides with gated or unknown documentation access, or without an approved derivative-summary basis and reviewed evidence state, are rejected.
+
+### Current runtime boundary
+
+The adapter does not yet crawl package registries or automatically author guides. Registry discovery must be a separately scheduled, rate-limited process with per-provider pagination, cache/cursor persistence, package deduplication, source/version/license metadata, and an explicit opt-in network mode. It must never execute downloaded packages. External research is a gap-resolution step, not the default Buddy response path.
+
+
+## Opt-in public registry metadata discovery
+
+The opt-in metadata-only provider adapter is `buddy.learning.library_registry_discovery.search_public_registry`, configured by `config/buddy-library-registry-adapters.json`. Initial providers cover npm, crates.io, NuGet, RubyGems, Packagist, Hugging Face model metadata, Hugging Face dataset metadata, and exact-name PyPI metadata lookup.
+
+The CLI requires the explicit `discover PROVIDER QUERY --allow-network` flag for one network request. Requests use HTTPS host allowlists, bounded response sizes, bounded timeouts and a fixed user agent. Pagination is caller-controlled and one page is requested per invocation. Results are normalized candidate metadata only, with license/source review pending and download, execution, evaluation and training permissions false or pending.
+
+This is not exhaustive registry crawling: query APIs are ranked/search interfaces, not proof of full package inventory. PyPI support is exact-name lookup rather than global enumeration. Additional ecosystem providers and verified pagination/cursor workflows must be added as their official APIs and terms are reviewed. Do not infer a package's license from a search result; fetch and review authoritative metadata and source terms in a separate governed step.
+
+
+## Guide authoring workflow
+
+`tools/create_buddy_library_guide_draft.py` creates a structured, original DreamCo guide skeleton from a discovered candidate's canonical ID, name, ecosystem and official HTTPS documentation URLs. It never downloads or executes the library. It writes `review_required`, unknown API coverage, unknown documentation access, and pending evaluation/training/download permissions. It refuses to overwrite an existing guide. The generator is a starting point for research, not an AI-generated assertion that a library has been fully studied.
+
+The first seeded example is `data/buddy-library-study-guides/python-requests.json`, pinned to Requests 2.34.2. It contains an original learning map, partial API inventory, established and experimental use cases, security guidance, exercises, capstones, debugging playbook, benchmark goals, and initial O*NET skill / DreamCo division crosswalks. It remains `review_required`; Buddy's internal search intentionally does not surface it until a reviewer approves it and all rights/evidence gates pass.
+
+
+## Existing DreamCo library mastery seed inventory
+
+The repository's existing `server/seed-buddy-bot.ts` contains a "Complete Library Mastery Curriculum" spanning 37 technology categories. `tools/build_buddy_library_seed_catalog.py` parses that source into `data/buddy-library-seed-catalog.json`: 536 raw entries deduplicated to 531 candidate records. Every candidate is explicitly marked unverified, with unknown version/license/documentation and no download, execution, evaluation or training permission.
+
+All 531 candidates are now included as discovery lessons in the shared course registry, alongside the 38 ecosystem discovery lanes. These assignments require Buddy to verify whether each item is actually a library, framework, SDK, runtime, platform, API or concept; find official sources; pin a version; review rights; and create an original guide. They are not 531 completed study guides. The seed catalog is a useful starting inventory, not a complete map of every software library in the world.
+
+
+Approved guides must include `latest_version_checked_at`. The internal retrieval adapter applies the curriculum freshness window (30 days by default) and excludes overdue guides even if their stored status still says `approved_for_study`. Coverage reporting counts these separately as stale-by-age so old documentation cannot silently remain Buddy's current answer.
+
+
+When a query has no approved guide, internal search also checks the 531-entry seed catalog and may return candidate names/categories. These are explicitly labeled `seed_candidate_unverified`, never as guides or answers. Buddy can then open a gap and use the permissioned metadata discovery workflow to find official sources.
+
+
+## Ecosystem adapter coverage
+
+`config/buddy-library-ecosystem-adapter-coverage.json` records the actual state of all 38 ecosystem lanes. At this stage, eight ecosystem lanes have query or exact-lookup adapters (npm, crates.io, NuGet, RubyGems, Packagist, exact-name PyPI, and Hugging Face model/dataset metadata, with npm also used for Solidity SDK discovery). Thirty lanes remain manual first-party catalog review. The coverage report exposes these counts rather than implying all registries are automated. Each manual lane remains a scheduled discovery task until an official, terms-reviewed adapter is implemented.

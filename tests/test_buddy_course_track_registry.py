@@ -27,6 +27,8 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         fcc = load("config/freecodecamp-complete-learning-path.json")
         hf_full = load("config/buddy-huggingface-full-learning-map.json")
         fcc_catalog = load("buddy/bootcamp/sources/freecodecamp/catalog.json")
+        library_ecosystems = load("config/library_ecosystems.json")
+        library_seed_catalog = load("data/buddy-library-seed-catalog.json")
         expected_count = (
             len(tol["curriculum"]) + len(tol["extended_study_path"])
             + len(tok["lessons"]) + len(cpu["modules"]) + len(onet["subject_inventory"])
@@ -37,6 +39,8 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
             + len(fcc["study_sequence"]) + len(fcc["video_learning_tracks"])
             + len(hf_full["official_courses"]) + len(hf_full["ecosystem_modules"])
             + len(fcc_catalog["videos"])
+            + len(library_ecosystems["ecosystems"])
+            + len(library_seed_catalog["candidates"])
         )
         self.assertEqual(len(lessons), expected_count)
         fcc_lessons = [lesson for lesson in lessons if lesson.track_id == "freecodecamp"]
@@ -45,7 +49,7 @@ class BuddyCourseTrackRegistryTests(unittest.TestCase):
         self.assertTrue(any(lesson.lesson_id == "fcc-primitive-workshops" for lesson in fcc_lessons))
         self.assertEqual(len({lesson.resource_id for lesson in lessons}), len(lessons))
         self.assertEqual(len({(lesson.track_id, lesson.lesson_id) for lesson in lessons}), len(lessons))
-        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog"}
+        expected = {"tolkien", "tokenizer", "cpu-first-llm", "onet", "hugging-face", "freecodecamp", "huggingface-full", "freecodecamp-video-catalog", "universal-software-libraries"}
         self.assertEqual({lesson.track_id for lesson in lessons}, expected)
 
     def test_every_canonical_division_receives_the_shared_course_queue(self):

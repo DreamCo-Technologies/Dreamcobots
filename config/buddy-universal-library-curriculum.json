@@ -4,27 +4,151 @@
   "status": "discovery_driven_curriculum_contract",
   "purpose": "Build versioned, source-backed study guides for software libraries, frameworks, SDKs, APIs, developer tools and technical platforms, then connect each capability to practical exercises, benchmarks, O*NET tasks and DreamCo ownership.",
   "scope": {
-    "ecosystems": ["python", "javascript", "typescript", "java", "kotlin", "scala", "c", "cpp", "csharp", "dotnet", "go", "rust", "swift", "objective_c", "ruby", "php", "r", "julia", "dart", "elixir", "erlang", "haskell", "lua", "perl", "shell", "sql", "web_platform", "mobile", "game_development", "data_engineering", "machine_learning", "deep_learning", "generative_ai", "agents_and_mcp", "cloud", "devops", "security", "observability", "design_and_media", "embedded_and_iot", "blockchain_and_distributed_systems"],
-    "artifact_types": ["library", "framework", "sdk", "api", "cli", "runtime", "database", "protocol", "platform", "developer_tool", "model_tooling"],
+    "ecosystems": [
+      "python",
+      "javascript",
+      "typescript",
+      "java",
+      "kotlin",
+      "scala",
+      "c",
+      "cpp",
+      "csharp",
+      "dotnet",
+      "go",
+      "rust",
+      "swift",
+      "objective_c",
+      "ruby",
+      "php",
+      "r",
+      "julia",
+      "dart",
+      "elixir",
+      "erlang",
+      "haskell",
+      "lua",
+      "perl",
+      "shell",
+      "sql",
+      "web_platform",
+      "mobile",
+      "game_development",
+      "data_engineering",
+      "machine_learning",
+      "deep_learning",
+      "generative_ai",
+      "agents_and_mcp",
+      "cloud",
+      "devops",
+      "security",
+      "observability",
+      "design_and_media",
+      "embedded_and_iot",
+      "blockchain_and_distributed_systems"
+    ],
+    "artifact_types": [
+      "library",
+      "framework",
+      "sdk",
+      "api",
+      "cli",
+      "runtime",
+      "database",
+      "protocol",
+      "platform",
+      "developer_tool",
+      "model_tooling"
+    ],
     "catalog_strategy": "continuously_discover_from_authoritative_registries_and_first_party_sources",
     "no_finite_worldwide_completeness_claim": true,
     "unknown_or_unverified_items_remain_visible": true
   },
   "discovery_sources": [
-    {"id":"pypi","ecosystem":"python","url":"https://pypi.org/","kind":"package_registry"},
-    {"id":"npm","ecosystem":"javascript_typescript","url":"https://www.npmjs.com/","kind":"package_registry"},
-    {"id":"crates","ecosystem":"rust","url":"https://crates.io/","kind":"package_registry"},
-    {"id":"maven","ecosystem":"java_kotlin","url":"https://central.sonatype.com/","kind":"package_registry"},
-    {"id":"nuget","ecosystem":"dotnet","url":"https://www.nuget.org/","kind":"package_registry"},
-    {"id":"rubygems","ecosystem":"ruby","url":"https://rubygems.org/","kind":"package_registry"},
-    {"id":"packagist","ecosystem":"php","url":"https://packagist.org/","kind":"package_registry"},
-    {"id":"go","ecosystem":"go","url":"https://pkg.go.dev/","kind":"documentation_index"},
-    {"id":"swift","ecosystem":"swift","url":"https://swift.org/","kind":"language_and_package_ecosystem"},
-    {"id":"hex","ecosystem":"elixir_erlang","url":"https://hex.pm/","kind":"package_registry"},
-    {"id":"huggingface","ecosystem":"machine_learning","url":"https://huggingface.co/docs","kind":"model_dataset_and_tooling_catalog"},
-    {"id":"github","ecosystem":"cross_ecosystem","url":"https://github.com/","kind":"source_repository_index"},
-    {"id":"mdn","ecosystem":"web_platform","url":"https://developer.mozilla.org/","kind":"first_party_reference_index"},
-    {"id":"linux_foundation","ecosystem":"cloud_devops","url":"https://www.linuxfoundation.org/","kind":"standards_and_projects_index"}
+    {
+      "id": "pypi",
+      "ecosystem": "python",
+      "url": "https://pypi.org/",
+      "kind": "package_registry"
+    },
+    {
+      "id": "npm",
+      "ecosystem": "javascript_typescript",
+      "url": "https://www.npmjs.com/",
+      "kind": "package_registry"
+    },
+    {
+      "id": "crates",
+      "ecosystem": "rust",
+      "url": "https://crates.io/",
+      "kind": "package_registry"
+    },
+    {
+      "id": "maven",
+      "ecosystem": "java_kotlin",
+      "url": "https://central.sonatype.com/",
+      "kind": "package_registry"
+    },
+    {
+      "id": "nuget",
+      "ecosystem": "dotnet",
+      "url": "https://www.nuget.org/",
+      "kind": "package_registry"
+    },
+    {
+      "id": "rubygems",
+      "ecosystem": "ruby",
+      "url": "https://rubygems.org/",
+      "kind": "package_registry"
+    },
+    {
+      "id": "packagist",
+      "ecosystem": "php",
+      "url": "https://packagist.org/",
+      "kind": "package_registry"
+    },
+    {
+      "id": "go",
+      "ecosystem": "go",
+      "url": "https://pkg.go.dev/",
+      "kind": "documentation_index"
+    },
+    {
+      "id": "swift",
+      "ecosystem": "swift",
+      "url": "https://swift.org/",
+      "kind": "language_and_package_ecosystem"
+    },
+    {
+      "id": "hex",
+      "ecosystem": "elixir_erlang",
+      "url": "https://hex.pm/",
+      "kind": "package_registry"
+    },
+    {
+      "id": "huggingface",
+      "ecosystem": "machine_learning",
+      "url": "https://huggingface.co/docs",
+      "kind": "model_dataset_and_tooling_catalog"
+    },
+    {
+      "id": "github",
+      "ecosystem": "cross_ecosystem",
+      "url": "https://github.com/",
+      "kind": "source_repository_index"
+    },
+    {
+      "id": "mdn",
+      "ecosystem": "web_platform",
+      "url": "https://developer.mozilla.org/",
+      "kind": "first_party_reference_index"
+    },
+    {
+      "id": "linux_foundation",
+      "ecosystem": "cloud_devops",
+      "url": "https://www.linuxfoundation.org/",
+      "kind": "standards_and_projects_index"
+    }
   ],
   "guide_contract": "config/buddy-library-study-guide.schema.json",
   "guide_standard": "docs/BUDDY_UNIVERSAL_LIBRARY_STUDY_GUIDE_STANDARD.md",
@@ -61,7 +185,14 @@
   },
   "routing": {
     "internal_first": true,
-    "internal_search_order": ["approved_study_guides","versioned_api_notes","original_examples","sandbox_labs","benchmark_history","crosswalks"],
+    "internal_search_order": [
+      "approved_study_guides",
+      "versioned_api_notes",
+      "original_examples",
+      "sandbox_labs",
+      "benchmark_history",
+      "crosswalks"
+    ],
     "external_discovery_only_for_gaps_or_freshness": true,
     "external_model_call_is_not_a_substitute_for_missing_curriculum": true,
     "missing_knowledge_action": "create_gap_record_then_discover_authoritative_sources_then_propose_original_guide",
@@ -69,7 +200,20 @@
     "all_65_masterbot_lanes_receive_shared_foundations": true,
     "specialist_ownership_requires_reviewed_crosswalk": true
   },
-  "evidence_states": ["discovered","metadata_verified","source_reviewed","guide_drafted","guide_reviewed","sandbox_passed","benchmark_passed","holdout_passed","regression_passed","mastered","stale","blocked"],
+  "evidence_states": [
+    "discovered",
+    "metadata_verified",
+    "source_reviewed",
+    "guide_drafted",
+    "guide_reviewed",
+    "sandbox_passed",
+    "benchmark_passed",
+    "holdout_passed",
+    "regression_passed",
+    "mastered",
+    "stale",
+    "blocked"
+  ],
   "safety": {
     "public_metadata_does_not_grant_content_or_training_rights": true,
     "item_level_license_and_terms_review_required": true,
@@ -105,5 +249,37 @@
     "require_regression": true,
     "record_model_version_and_run_ids": true,
     "promotion_requires_human_review_for_high_impact_capabilities": true
-  }
+  },
+  "discovery_registry": "config/library_ecosystems.json",
+  "guide_storage": "data/buddy-library-study-guides/",
+  "knowledge_gap_log": "data/buddy-library-knowledge-gaps.jsonl",
+  "runtime": {
+    "internal_search": "buddy.learning.universal_library_registry.search_internal_library_knowledge",
+    "gap_recorder": "buddy.learning.universal_library_registry.record_library_knowledge_gap",
+    "coverage_report": "buddy.learning.universal_library_registry.library_coverage_report",
+    "shared_scheduler": "buddy.learning.course_track_registry",
+    "cli": "tools/buddy_library_knowledge.py",
+    "current_boundary": "Internal retrieval and gap recording are implemented; live registry crawling and automatic guide authoring remain separate follow-up components.",
+    "registry_metadata_discovery": "buddy.learning.library_registry_discovery.search_public_registry",
+    "registry_metadata_discovery_network_default": false,
+    "registry_metadata_discovery_requires_explicit_opt_in": true,
+    "registry_metadata_discovery_scope": "metadata_only_no_source_download_no_package_execution_no_dataset_or_weight_download",
+    "guide_draft_builder": "tools/create_buddy_library_guide_draft.py",
+    "guide_draft_default_status": "review_required",
+    "guide_draft_rights_default": "pending",
+    "automatic_guide_approval": false,
+    "internal_search_requires_approved_guide": true,
+    "seed_catalog_generator": "tools/build_buddy_library_seed_catalog.py",
+    "seed_catalog_status": "candidate_discovery_only_no_download_no_execution",
+    "ecosystem_adapter_coverage": "config/buddy-library-ecosystem-adapter-coverage.json",
+    "automated_ecosystem_metadata_discovery_count": 8,
+    "manual_ecosystem_catalog_review_count": 30
+  },
+  "registry_adapters": "config/buddy-library-registry-adapters.json",
+  "seed_catalog": "data/buddy-library-seed-catalog.json",
+  "seed_catalog_builder": "tools/build_buddy_library_seed_catalog.py",
+  "seed_catalog_source": "server/seed-buddy-bot.ts",
+  "seed_catalog_candidate_count": 531,
+  "seed_catalog_status": "partial_unverified_seed_inventory",
+  "ecosystem_adapter_coverage": "config/buddy-library-ecosystem-adapter-coverage.json"
 }
