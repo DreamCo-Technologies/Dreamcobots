@@ -127,3 +127,21 @@ Never collapse these into one misleading "percent complete" number. Distinguish 
 5. Add deterministic validators and CI checks for schema, provenance, stale versions, rights, crosswalks and evidence.
 6. Connect the registry to Buddy's internal retrieval and study scheduler.
 7. Publish only validated internal knowledge; retain unknowns and partial coverage honestly.
+
+
+## Runtime adapter and existing ecosystem catalog
+
+The first production-facing adapter is `buddy.learning.universal_library_registry`. It provides:
+
+- `search_internal_library_knowledge(query)`: searches only DreamCo-owned, approved, rights-eligible guide files in `data/buddy-library-study-guides/`.
+- `record_library_knowledge_gap(query)`: appends a local JSONL gap event. It does not call an external model, fetch a website or start a download.
+- `library_coverage_report()`: reports ecosystem lanes, approved guide count and recorded gaps without claiming worldwide completeness.
+- `tools/buddy_library_knowledge.py`: CLI for `search`, `record-gap` and `report`.
+
+The existing `config/library_ecosystems.json` is the extensible discovery-lane catalog. The shared `buddy.learning.course_track_registry` now emits an initial discovery lesson for each listed ecosystem, making those lessons available through the existing shared 55-domain / 65-MasterBot queue. These are discovery assignments, not individual package records and not completed study guides.
+
+Before a guide can be searched internally, the adapter checks its core structure, version, official HTTPS home, source provenance, learning objectives, API coverage declaration, use cases, practice exercises, evaluation plan and explicit rights fields. Approved guides with gated or unknown documentation access, or without an approved derivative-summary basis and reviewed evidence state, are rejected.
+
+### Current runtime boundary
+
+The adapter does not yet crawl package registries or automatically author guides. Registry discovery must be a separately scheduled, rate-limited process with per-provider pagination, cache/cursor persistence, package deduplication, source/version/license metadata, and an explicit opt-in network mode. It must never execute downloaded packages. External research is a gap-resolution step, not the default Buddy response path.
