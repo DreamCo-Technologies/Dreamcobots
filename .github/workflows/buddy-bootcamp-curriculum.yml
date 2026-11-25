@@ -142,7 +142,7 @@ jobs:
           PY
       - name: Upload first transcript readiness report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: buddy-weekly-transcript-evaluation-first-run
           path: /tmp/buddy-weekly-transcript-evaluation.json
@@ -192,7 +192,7 @@ jobs:
           python tools/build_weekly_transcript_evaluation.py --output /tmp/buddy-weekly-transcript-evaluation.json
       - name: Publish first weekly transcript coverage report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: buddy-weekly-transcript-evaluation-first-run
           path: /tmp/buddy-weekly-transcript-evaluation.json
@@ -210,7 +210,7 @@ jobs:
           python -m py_compile tools/build_dreamco_bootcamp_seed_data.py tools/build_dreamco_training_factory.py tools/build_dreamco_training_examples.py
       - name: Upload generated study artifacts for review
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: buddy-bootcamp-study-artifacts
           path: |
@@ -221,3 +221,12 @@ jobs:
             config/generated/buddy-bootcamp-curriculum.json
           if-no-files-found: warn
           retention-days: 14
+      - name: Publish manual-review instructions
+        if: success() && github.event_name != 'pull_request'
+        run: |
+          {
+            echo "## Buddy Bootcamp curriculum artifact ready"
+            echo "- The generated 65-division curriculum and study artifacts are available in the workflow artifact."
+            echo "- No dataset downloads, training, certification, or model promotion occurred."
+            echo "- This workflow is read-only; inspect the artifact and create a human-reviewed PR if generated output should be committed."
+          } >> "$GITHUB_STEP_SUMMARY"
