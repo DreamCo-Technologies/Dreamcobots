@@ -68,16 +68,20 @@ def _safe_int(value: Any) -> tuple[int | None, bool]:
 def resolve_route(manifest: dict[str, Any]) -> dict[str, Any]:
     """Resolve only structurally valid core routes; keep supplemental domains unassigned."""
     division = str(manifest.get("division") or "")
+    source_division = str(manifest.get("source_division") or "")
+    portfolio_name = str(manifest.get("supplemental_portfolio") or source_division or division)
+    if division in {"", "UNASSIGNED"} and source_division:
+        division = source_division
     masterbots = _masterbot_index()
     domains = _domain_index()
     portfolios = _portfolio_index()
     teammates = _teammate_index()
 
-    portfolio = portfolios.get(division)
+    portfolio = portfolios.get(portfolio_name) or portfolios.get(division)
     is_supplemental_domain = bool(
         portfolio and portfolio.get("classification") == "supplemental_domain_profile"
     )
-    is_dream3d = division == "Dream3D"
+    is_dream3d = portfolio_name == "Dream3D" or division == "Dream3D"
     is_teammate = division == "GrokTeammates" or manifest.get("shared_workforce_group") == "GrokTeammates"
 
     proposed_owner = None
@@ -86,9 +90,9 @@ def resolve_route(manifest: dict[str, Any]) -> dict[str, Any]:
 
     if is_supplemental_domain:
         # Charter owner is a proposal only. The 55-domain crosswalk remains unresolved.
-        owner = division
+        owner = portfolio_name
         proposed_owner = str(portfolio.get("owner") or "") or None
-        row = domains.get(division)
+        row = domains.get(portfolio_name)
         status = "supplemental_domain_unassigned_pending_owner_review"
     elif is_dream3d:
         # Dream3D is a specialist portfolio under a core owner, not a new domain.
