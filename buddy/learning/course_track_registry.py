@@ -131,6 +131,41 @@ def _rows(track: dict, data: dict, root: Path = ROOT) -> list[dict]:
                 "source_url": library.get("official_homepage", "https://github.com/"),
                 "guide_path": approved_guide.path.relative_to(root).as_posix(),
             })
+        seed_catalog_path = data.get("seed_catalog", "data/buddy-library-seed-catalog.json")
+        seed_catalog_file = root / seed_catalog_path
+        if seed_catalog_file.exists():
+            seed_catalog = _read(seed_catalog_file)
+            for candidate in seed_catalog.get("candidates", []):
+                if candidate.get("status") != "seed_candidate_unverified":
+                    continue
+                candidate_id = str(candidate.get("id", "")).strip()
+                candidate_name = str(candidate.get("name", "")).strip()
+                if not candidate_id or not candidate_name:
+                    continue
+                categories = ", ".join(candidate.get("categories", []))
+                rows.append({
+                    "id": f"candidate-discovery-{candidate_id}",
+                    "title": f"Discover and verify {candidate_name}",
+                    "objective": (
+                        f"Verify the identity and purpose of the {candidate_name} candidate from {categories}. "
+                        "Find first-party documentation, determine whether it is a library, framework, SDK, API, "
+                        "runtime, platform or concept, pin an exact version, review maintenance and license terms, "
+                        "then author an original guide with relevant O*NET, Hugging Face and benchmark crosswalks."
+                    ),
+                    "practice": (
+                        "Use approved metadata-only registry discovery and first-party documentation. "
+                        "Do not download package source, execute code, fetch model weights or datasets, "
+                        "or infer evaluation/training permission. Create a review-required guide draft."
+                    ),
+                    "assessment": (
+                        "Pass canonical identity, official source, version, API inventory coverage, license/terms, "
+                        "security, exercises, relevant O*NET/Hugging Face mapping, task-matched benchmark, holdout "
+                        "and regression review. Candidate discovery alone is not mastery."
+                    ),
+                    "benchmark": "Library candidate provenance and study-guide evidence benchmark.",
+                    "source_url": "https://github.com/DreamCo-Technologies/Dreamcobots/blob/main/server/seed-buddy-bot.ts",
+                    "rights_mode": "metadata_discovery_only_no_download_no_execution",
+                })
         return rows
     if parser == "tolkien":
         return [
@@ -290,7 +325,7 @@ def load_course_lessons(root: Path = ROOT) -> list[CourseLesson]:
                 benchmark=str(row.get("benchmark", "independent task and regression suite")).strip(),
                 source_url=str(row.get("source_url") or track["source_url"]),
                 guide_path=str(row.get("guide_path") or track["guide"]),
-                rights_mode=track["rights"],
+                rights_mode=str(row.get("rights_mode") or track["rights"]),
                 delivery=track["delivery"],
             ))
     return lessons
